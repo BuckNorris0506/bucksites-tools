@@ -1,0 +1,4 @@
+brand_slug,slug,oem_part_number,name,replacement_interval_months,notes
+acme-appliances,acme-oem-100,ACME-100,OEM inline cartridge,6,Twist-in filter; replace when flow slows.
+acme-appliances,acme-oem-200,ACME-200,Premium cartridge,6,
+northstar-cooling,northstar-ns-1,NS1-FILTER,Northstar primary,6,

@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local CSV seed files (templates tracked as *.sample.csv)
+/data/*.csv
+!data/*.sample.csv

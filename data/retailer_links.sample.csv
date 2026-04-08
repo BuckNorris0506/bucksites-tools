@@ -1,0 +1,4 @@
+filter_slug,retailer_name,affiliate_url,is_primary,sort_order
+acme-oem-100,Example Mart,https://example.com/p/acme-100,true,0
+acme-oem-100,Filter Supply Co,https://example.com/buy/acme-100-alt,false,1
+acme-oem-200,Example Mart,https://example.com/p/acme-200,true,0
