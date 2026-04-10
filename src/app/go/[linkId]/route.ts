@@ -17,7 +17,8 @@ function isSafeRedirectUrl(url: string): boolean {
 }
 
 /**
- * Logs a click to `click_events`, then redirects to the retailer URL.
+ * Legacy fridge wedge: logs `click_events` with filter_id + retailer_slug + page_type/page_slug
+ * (no retailer_link_id column). Then redirects to the retailer URL.
  */
 export async function GET(
   request: NextRequest,
@@ -30,28 +31,34 @@ export async function GET(
     return NextResponse.redirect(new URL("/", base), 302);
   }
 
-  let target: string | null = null;
+  let row: Awaited<ReturnType<typeof getRetailerLinkById>> = null;
   try {
-    const row = await getRetailerLinkById(linkId);
-    target = row?.affiliate_url ?? null;
+    row = await getRetailerLinkById(linkId);
   } catch {
     return NextResponse.redirect(new URL("/", base), 302);
   }
 
-  if (!target || !isSafeRedirectUrl(target)) {
+  const target = row?.affiliate_url ?? null;
+  if (!row || !target || !isSafeRedirectUrl(target)) {
     return NextResponse.redirect(new URL("/", base), 302);
   }
 
   try {
     const supabase = getSupabaseServerClient();
-    await supabase.from("click_events").insert({
-      retailer_link_id: linkId,
-      target_url: target,
+    const pageSlug = row.filter_slug?.trim() || "unknown";
+    const { error: insErr } = await supabase.from("click_events").insert({
+      filter_id: row.filter_id,
+      retailer_slug: row.retailer_key,
+      page_type: "refrigerator_filter",
+      page_slug: pageSlug,
       user_agent: request.headers.get("user-agent"),
       referrer: request.headers.get("referer"),
     });
-  } catch {
-    // Still send the user to the retailer if logging fails.
+    if (insErr) {
+      console.error("[go/fridge] click_events insert failed:", insErr.message);
+    }
+  } catch (e) {
+    console.error("[go/fridge] click_events insert exception:", e);
   }
 
   return NextResponse.redirect(target, 302);

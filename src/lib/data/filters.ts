@@ -1,5 +1,7 @@
 import type { Brand, Filter, FridgeModel, RetailerLink } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 
 export type FilterDetail = Filter & {
   brand: Pick<Brand, "slug" | "name">;
@@ -77,7 +79,7 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
 
   const { data: links, error: lErr } = await supabase
     .from("retailer_links")
-    .select("id, filter_id, retailer_name, affiliate_url, is_primary")
+    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key")
     .eq("filter_id", filterRow.id)
     .order("is_primary", { ascending: false })
     .order("retailer_name", { ascending: true });
@@ -87,7 +89,7 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
   return {
     ...filterRow,
     fridge_models: fridges,
-    retailer_links: (links ?? []) as RetailerLink[],
+    retailer_links: filterRealBuyRetailerLinks((links ?? []) as RetailerLink[]),
   };
 }
 
@@ -100,5 +102,7 @@ export async function listFiltersByBrand(brandId: string) {
     .order("oem_part_number", { ascending: true });
 
   if (error) throw error;
-  return data ?? [];
+  const rows = data ?? [];
+  const useful = await loadRefrigeratorUsefulFilterIds();
+  return rows.filter((f) => useful.has((f as { id: string }).id));
 }

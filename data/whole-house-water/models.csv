@@ -1,0 +1,17 @@
+brand_slug,slug,model_number,title,series,notes
+pentek,pentek-bb10-housing-158643,158643,Pentek #10 Big Blue housing (1 in. inlet),Big Blue,Housing for 10 x 4.5 in. cartridges; confirm NPT port size and pressure rating before fittings.
+pentek,pentek-bb10-housing-158002,158002,Pentek #10 Big Blue housing (0.5 in. inlet),Big Blue,Same 10 x 4.5 in. sump as other BB10 housings; port size differs from 158643 — match fittings to stamped NPT size.
+pentek,pentek-bb10-housing-158234,158234,Pentek #10 Big Blue housing (0.75 in. inlet),Big Blue,10 x 4.5 in. sump; common alternate port size vs 158643 — verify stamped NPT before fittings.
+pentek,pentek-bb10-housing-158368,158368,Pentek #10 Big Blue stainless reinforced housing,Big Blue,10 x 4.5 in. sump; stainless wrap/reinforcement style varies by revision — confirm bracket and o-ring kit.
+pentek,pentek-bb20-housing-158257,158257,Pentek #20 Big Blue housing (1 in. inlet),Big Blue,Housing for 20 x 4.5 in. cartridges; confirm port size and bracket load before install.
+pentek,pentek-bb20-housing-158129,158129,Pentek #20 Big Blue housing (alt port layout),Big Blue,20 x 4.5 in. sump compatible with standard BB20 cartridges — compare stamped ports to your existing head.
+pentek,pentek-slim-housing-158115,158115,Pentek #10 slim line clear housing,Slim Line,Housing for 9.75 x 2.5 in. standard slim cartridges — not compatible with Big Blue 10 x 4.5 in. cartridges.
+ge,ge-whole-house-gxwh20s,GXWH20S,GE whole home water filtration system,FX Series,Often serviced with GE FXHTC (sediment) and FXWPC (carbon); confirm your installed manifold.
+ge,ge-whole-house-gxwh40f,GXWH40F,GE whole home water filtration system,FX Series,Higher-capacity GE whole-house line; commonly uses FXHTC / FXWPC / FXHSC class cartridges — verify stamped OEM.
+ge,ge-whole-house-gxwh35f,GXWH35F,GE whole home water filtration system,FX Series,GE whole-house line; confirm which FX cartridges your installed head accepts.
+ge,ge-whole-house-gxwh30c,GXWH30C,GE whole home water filtration system,FX Series,GE whole-house line; verify stamped OEM numbers before ordering.
+culligan,culligan-housing-wh-hd-950-c,WH-HD-950-C,Culligan whole-house heavy-duty housing,HD-950,Heavy-duty sump sized for standard 10 x 4.5 in. cartridges; CW5-BB is a common Culligan-branded fit.
+3m,3m-aquapure-ap801,AP801,3M Aqua-Pure whole house water filter system,Aqua-Pure,AP810 is the common OEM sediment replacement; verify model sticker on installed head.
+3m,3m-aquapure-ap802,AP802,3M Aqua-Pure dual-stage whole house system,Aqua-Pure,Typically AP810 (sediment) plus AP811 (carbon) on OEM dual-stage AP802 installs — confirm series.
+whirlpool,whirlpool-whkf-dwhbb,WHKF-DWHBB,Whirlpool dual Big Blue whole house filtration system,WHKF,Commonly serviced with WHKF-GD05 and WHKF-WHPL; confirm your manifold order and clip style.
+watts,watts-w50whd-housing,W50WHD,Watts Flowmatic whole house filter housing,Flowmatic,Watts BB-style sump; commonly paired with W50PEHD cartridges and often cross-compatible with standard BB10 cartridges — verify o-ring and sump length.

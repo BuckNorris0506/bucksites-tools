@@ -3,45 +3,94 @@ BuckSites Tools — CSV column reference for scripts/import-seed.ts
 
 Place files under ./data/ (or use --sample to read *.sample.csv).
 
+Import order (do not reorder in code):
+  brands → filters → fridge_models → fridge_model_aliases → filter_aliases
+  → compatibility_mappings → retailer_links
+
+--------------------------------------------------------------------
 1) brands.csv
+--------------------------------------------------------------------
    Required:
      slug   — URL-safe id (matches /brand/[slug])
      name   — Display name
 
+--------------------------------------------------------------------
 2) filters.csv
+--------------------------------------------------------------------
    Required:
      brand_slug                  — Must exist in brands after import
      slug                        — URL-safe id (matches /filter/[slug])
-     oem_part_number             — OEM part number string
+     oem_part_number             — OEM part number as printed (search normalizes)
    Optional:
      name                        — Marketing / short description
      replacement_interval_months — Integer months (empty = null)
      notes                       — Free text (empty = null)
 
+   At scale (15–25+ SKUs): one row per sellable OEM number; use filter_aliases for
+   retailer SKUs and cross-references.
+
+--------------------------------------------------------------------
 3) fridge_models.csv
+--------------------------------------------------------------------
    Required:
      brand_slug                  — Must exist in brands
      slug                        — URL-safe id (matches /fridge/[slug])
-     model_number                — As printed on unit / manual
+     model_number                — As on rating plate / manual
    Optional:
-     replacement_interval_months — Integer (empty = null)
+     replacement_interval_months — Optional if tracked on filter rows instead
      notes                       — Free text (empty = null)
 
-4) compatibility_mappings.csv
+   At scale (100+ rows): keep slugs stable (never recycle); model_number is the
+   canonical string; add fridge_model_aliases for pasted variants.
+
+--------------------------------------------------------------------
+4) fridge_model_aliases.csv  (OPTIONAL — skip if file missing)
+--------------------------------------------------------------------
+   Required:
+     fridge_slug  — fridge_models.slug
+     alias        — Alternate text users type (SKU prefix, no spaces, etc.)
+
+   Unique per (fridge, alias) after migration 20260409110000.
+
+--------------------------------------------------------------------
+5) filter_aliases.csv  (OPTIONAL — skip if file missing)
+--------------------------------------------------------------------
+   Required:
+     filter_slug  — filters.slug
+     alias        — Alternate part / retailer number / marketing code
+
+--------------------------------------------------------------------
+6) compatibility_mappings.csv
+--------------------------------------------------------------------
    Required:
      fridge_slug  — fridge_models.slug
      filter_slug  — filters.slug
-   (Composite key; re-importing the same pair updates nothing new.)
+   Composite key (fridge_model_id, filter_id); re-upsert is safe.
 
-5) retailer_links.csv
+   Many-to-many: repeat rows for each fridge↔filter pair.
+
+--------------------------------------------------------------------
+7) retailer_links.csv  (LIVE affiliate links only)
+--------------------------------------------------------------------
    Required:
      filter_slug    — filters.slug
      affiliate_url  — Full https (or http) outbound URL
    Optional:
-     retailer_name  — Label for the button (empty = null)
-     is_primary     — true/false/1/0 (empty treated as false)
-     sort_order     — Integer, default 0
+     retailer_name, is_primary, sort_order, retailer_key
 
-Upsert behavior:
-   retailer_links: same filter_slug + affiliate_url updates name/flags/order;
-                   new URL rows are inserted.
+--------------------------------------------------------------------
+8) retailer_link_candidates
+--------------------------------------------------------------------
+   Not CSV-imported. Use Supabase SQL / service role. See schema comments.
+
+--------------------------------------------------------------------
+Bulk demo pack: ./data/bulk/*.bulk.sample.csv + ./data/bulk/README.txt
+--------------------------------------------------------------------
+   Copy into ./data/ with standard filenames and run npm run seed:import
+   (without --sample) for a ~100 fridge / ~21 filter demo. Apply DB migrations first.
+
+--------------------------------------------------------------------
+Upsert behavior
+--------------------------------------------------------------------
+   retailer_links: same filter_slug + affiliate_url updates fields; new URLs insert.
+   fridge_model_aliases / filter_aliases: upsert on (parent id, alias).

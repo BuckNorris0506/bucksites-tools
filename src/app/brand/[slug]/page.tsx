@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getBrandBySlug } from "@/lib/data/brands";
 import { listFiltersByBrand } from "@/lib/data/filters";
 import { listFridgeModelsByBrand } from "@/lib/data/fridges";
+import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${brand.name} water filters`,
     description: `Refrigerator models and OEM water filters for ${brand.name}.`,
-    openGraph: { title: `${brand.name} · BuckSites Tools` },
+    openGraph: { title: `${brand.name} · ${SITE_DISPLAY_NAME}` },
   };
 }
 

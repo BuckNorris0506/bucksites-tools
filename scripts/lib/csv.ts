@@ -59,3 +59,14 @@ export function dataCsvPath(
   const suffix = useSample ? `${baseName}.sample.csv` : `${baseName}.csv`;
   return path.join(cwd, "data", suffix);
 }
+
+/** e.g. `data/air-purifier/filters.sample.csv` */
+export function categoryDataCsvPath(
+  cwd: string,
+  categoryDir: string,
+  baseName: string,
+  useSample: boolean,
+): string {
+  const suffix = useSample ? `${baseName}.sample.csv` : `${baseName}.csv`;
+  return path.join(cwd, "data", categoryDir, suffix);
+}

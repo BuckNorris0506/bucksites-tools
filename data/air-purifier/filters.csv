@@ -1,0 +1,51 @@
+brand_slug,slug,oem_part_number,name,replacement_interval_months,notes
+levoit,levoit-rf-rar029,LEVOIT-RF-RAR029,Core 300 / Core 300S HEPA 3-in-1 filter,6,HEPA + carbon prefilter bundle for Core 300 family
+levoit,levoit-rf-rar040,LEVOIT-RF-RAR040,Core 400 / Core 400S replacement filter,6,3-in-1 for Core 400 series
+levoit,levoit-rf-rar060,LEVOIT-RF-RAR060,Core 600 / Core 600S replacement filter,6,3-in-1 for Core 600 series
+levoit,levoit-rf-cr200,LEVOIT-RF-CR200,Core 200 / Core 200S replacement filter,6,Compact Core 200 family cartridge
+levoit,levoit-vital100-rf,LEVOIT-VITAL100-RF,Vital 100 replacement filter,6,HEPA cartridge for Vital 100
+levoit,levoit-vital200-rf,LEVOIT-VITAL200-RF,Vital 200 replacement filter,6,HEPA cartridge for Vital 200
+levoit,levoit-rf-c131,LEVOIT-RF-C131,LV-PUR131 replacement filter,6,3-in-1 for LV-PUR131 tower
+coway,coway-max2-hepa,COWAY-3304899,Airmega Mighty / 1512 series Max2 filter set,12,HEPA + washable prefilter for AP-1512 family
+coway,coway-airmega250-rf,COWAY-3712487,Airmega 250 / 250S replacement filter set,12,Max2-style set for 250 series
+coway,coway-airmega400-rf,COWAY-AMI400-RF,Airmega 300 / 400 series replacement set,12,Combined filter pack for larger Airmega
+winix,winix-hepa-115115,WINIX-115115,Winix Filter H (HEPA),12,Primary HEPA cartridge (Filter A / 115115)
+winix,winix-carbon-116131,WINIX-116131,Winix activated carbon filter,3,Granular carbon sheet (Filter B / 116131)
+honeywell,honeywell-hrf-r1,HONEYWELL-HRF-R1,HPA100 series True HEPA R filter,12,Size 1 HEPA for compact Honeywell units
+honeywell,honeywell-hrf-r2,HONEYWELL-HRF-R2,HPA200 series True HEPA R filter,12,Size 2 HEPA
+honeywell,honeywell-hrf-r3,HONEYWELL-HRF-R3,HPA300 series True HEPA R filter,12,Size 3 HEPA
+germguardian,gg-flt4825,GUARDIAN-FLT4825,FLT4825 HEPA + charcoal combo,6,"FLT4825 for 22"" tower Guardian models"
+germguardian,gg-flt5000,GUARDIAN-FLT5000,FLT5000 HEPA + charcoal combo,6,"FLT5000 for 28"" tower Guardian models"
+blueair,blueair-f2-211,BLUEAIR-F2MAX211PAC,Blue Pure 211+ particle + carbon filter,6,F2MAX for Blue Pure 211+ family
+blueair,blueair-particle-411,BLUEAIR-PART411,Blue Pure 411 particle + carbon filter,6,Replacement for Blue Pure 411 / Mini
+medify,medify-ma25-rf,MEDIFY-MA-25-RF,MA-25 replacement HEPA filter,6,MA-25 cartridge
+medify,medify-ma40-rf,MEDIFY-MA-40-RF,MA-40 replacement HEPA filter,6,MA-40 / MA-40W
+medify,medify-ma50-rf,MEDIFY-MA-50-RF,MA-50 replacement HEPA filter,6,MA-50 cartridge
+medify,medify-ma112-rf,MEDIFY-MA-112-RF,MA-112 replacement HEPA filter,6,Large-room MA-112 cartridge
+alen,alen-bf35,ALEN-BF35-HEPA,BreatheSmart Classic HEPA-Pure filter,12,BF35 for Classic / Fit50 family
+alen,alen-fl40,ALEN-FL40-HEPA,BreatheSmart 45i / Flex HEPA layer,12,FL40 layer for newer BreatheSmart
+levoit,levoit-rf-lv-h133,LEVOIT-RF-LV-H133,LV-H133 tower HEPA replacement,6,Tower line 3-in-1
+levoit,levoit-rf-lv-h128,LEVOIT-RF-LV-H128,LV-H128 compact HEPA replacement,6,Petite / desktop
+levoit,levoit-rf-meta-air,LEVOIT-RF-META,Meta Air / PlasmaPro cartridge,6,Meta Air family
+coway,coway-airmega100-rf,COWAY-AMI100-RF,Airmega 100 compact filter set,12,Small-room Airmega
+germguardian,gg-flt4100,GUARDIAN-FLT4100,FLT4100 HEPA + carbon combo,6,"Slim 22"" tower"
+germguardian,gg-flt5650,GUARDIAN-FLT5650,FLT5650 large HEPA combo,6,Large pet tower
+shark,shark-hepa-hp100,SHARK-HEPA-HP100,HEPA filter for compact Shark purifiers,6,HP1xx family
+shark,shark-hepa-hp200,SHARK-HEPA-HP200,HEPA filter for mid-size Shark purifiers,6,HP2xx family
+shark,shark-hepa-hp400,SHARK-HEPA-HP400,HEPA filter for large Shark purifiers,6,HP4xx family
+shark,shark-carbon-foam,SHARK-CARBON-FOAM,Carbon / foam secondary cartridge,3,Paired with HP series
+holmes,holmes-hapf30,HOLMES-HAPF30,HAPF30 / HAPF300 HEPA filter,6,AER1 tower line
+holmes,holmes-hapf30-od,HOLMES-HAPF30-OD,HAPF30AO odor-reducing carbon filter,6,Odor variant
+hamilton-beach,hb-trueair-04384,HB-04384,TrueAir 04384 green meadow cartridge,12,Compact TrueAir
+hamilton-beach,hb-trueair-04948,HB-04948,TrueAir 04948 odor-absorbing cartridge,12,Mid TrueAir
+vornado,vornado-md1-0023,VORNADO-MD1-0023,AC350/500/550 HEPA cartridge,12,Primary HEPA stack
+vornado,vornado-carbon-pad,VORNADO-CARBON-PAD,Carbon prefilter pad,3,Washable / replaceable pad
+renpho,renpho-rp-ap088,RENPHO-RP-AP088,RP-AP088 HEPA replacement,6,Compact 088
+renpho,renpho-rp-ap068,RENPHO-RP-AP068,RP-AP068 HEPA replacement,6,Desktop 068
+renpho,renpho-rp-ap003,RENPHO-RP-AP003,RP-AP003 / AP001 series HEPA,6,001 family
+rabbit-air,rabbit-biogs-minusa2,RABBIT-BIOGS-MA2,BioGS HEPA for MinusA2,12,Primary layer
+rabbit-air,rabbit-carbon-minusa2,RABBIT-CARBON-MA2,Customizable carbon for MinusA2,12,Secondary layer
+blueair,blueair-pro-m-particle,BLUEAIR-PRO-M-PART,Pro M particle filter,12,Pro series
+medify,medify-ma35-rf,MEDIFY-MA-35-RF,MA-35 replacement HEPA,6,MA-35
+medify,medify-ma18-rf,MEDIFY-MA-18-RF,MA-18 replacement HEPA,6,MA-18
+alen,alen-b75-mp,ALEN-B75-MP,BreatheSmart 75i medical-grade layer,12,75i large room

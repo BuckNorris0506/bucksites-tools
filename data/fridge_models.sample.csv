@@ -1,4 +1,2 @@
 brand_slug,slug,model_number,replacement_interval_months,notes
-acme-appliances,acme-xf-9000,XF-9000,6,Dispenser on door. Reset indicator after install.
-acme-appliances,acme-xf-9100,XF-9100,,
-northstar-cooling,northstar-rs-50,RS-50,6,Bottom freezer layout.
+northstar-cooling,northstar-rs-50,RS-50,6,Sample model row for import --sample only.

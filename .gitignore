@@ -38,3 +38,11 @@ next-env.d.ts
 # Local CSV seed files (templates tracked as *.sample.csv)
 /data/*.csv
 !data/*.sample.csv
+# BuckParts refrigerator bulk seed (regenerate: npx tsx scripts/generate-fridge-homekeep-bulk-csv.ts)
+!data/brands.csv
+!data/filters.csv
+!data/fridge_models.csv
+!data/fridge_model_aliases.csv
+!data/filter_aliases.csv
+!data/compatibility_mappings.csv
+!data/retailer_links.csv

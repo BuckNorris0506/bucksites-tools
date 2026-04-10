@@ -1,0 +1,58 @@
+brand_slug,slug,oem_part_number,name,replacement_interval_months,notes
+pentek,pentek-dgd-5005,DGD-5005,Pentek dual-gradient sediment cartridge,6,10 x 4.5 in. Big Blue; 50/5 micron layers. Fits standard BB10 housings (verify sump length).
+pentek,pentek-wp10bb97p,WP10BB97P,Pentek string-wound sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 10 micron. Fits standard BB10 housings.
+pentek,pentek-ep-10bb,EP-10BB,Pentek carbon block cartridge,12,10 x 4.5 in. Big Blue carbon block. Typically after a sediment stage.
+pentek,pentek-s1-bb,S1-BB,Pentek polypropylene sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 20 micron. Fits standard BB10 housings.
+pentek,pentek-r50-bb,R50-BB,Pentek pleated sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 50 micron. Fits standard BB10 housings.
+pentek,pentek-p5-bb,P5-BB,Pentek polypropylene sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 5 micron. Fits standard BB10 housings.
+pentek,pentek-cbc-10bb,CBC-10BB,Pentek carbon block cartridge,12,10 x 4.5 in. Big Blue; chloramine-capable carbon block. Fits standard BB10 housings.
+pentek,pentek-gac-10bb,GAC-10BB,Pentek granular activated carbon cartridge,12,10 x 4.5 in. Big Blue GAC. Fits standard BB10 housings.
+pentek,pentek-cc-10bb,CC-10BB,Pentek coconut shell GAC cartridge,12,10 x 4.5 in. Big Blue. Fits standard BB10 housings.
+pentek,pentek-epm-10bb,EPM-10BB,Pentek carbon block cartridge,12,10 x 4.5 in. Big Blue carbon block. Fits standard BB10 housings.
+pentek,pentek-rfccw-bb,RFCCW-BB,Pentek radial-flow coconut carbon cartridge,12,10 x 4.5 in. Big Blue. Fits standard BB10 housings.
+pentek,pentek-rffe10-bb,RFFE10-BB,Pentek iron reduction cartridge,12,10 x 4.5 in. Big Blue iron reduction media. Fits standard BB10 housings.
+pentek,pentek-to-10bb,TO-10BB,Pentek organic / tannin reduction cartridge,12,10 x 4.5 in. Big Blue. Fits standard BB10 housings.
+pentek,pentek-pcc-10bb,PCC-10BB,Pentek phosphate crystal cartridge,6,10 x 4.5 in. Big Blue scale inhibitor media. Fits standard BB10 housings.
+pentek,pentek-fcb-10bb,FCB-10BB,Pentek fibrillated carbon block cartridge,12,10 x 4.5 in. Big Blue. Fits standard BB10 housings.
+pentek,pentek-cfb-plus10bb,CFB-PLUS10BB,Pentek lead-reduction carbon block cartridge,12,10 x 4.5 in. Big Blue. Fits standard BB10 housings; confirm your certification needs.
+pentek,pentek-wp1bb97p,WP1BB97P,Pentek string-wound sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 1 micron. Fits standard BB10 housings.
+pentek,pentek-wp25bb97p,WP25BB97P,Pentek string-wound sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 25 micron. Fits standard BB10 housings.
+pentek,pentek-dgd-5001,DGD-5001,Pentek dual-gradient sediment cartridge,6,10 x 4.5 in. Big Blue; layered sediment. Fits standard BB10 housings.
+pentek,pentek-swc-10bb,SWC-10BB,Pentek string-wound cellulose cartridge,6,10 x 4.5 in. Big Blue. Fits standard BB10 housings.
+pentek,pentek-ecp1-10bb,ECP1-10BB,Pentek pleated sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 1 micron. Fits standard BB10 housings.
+pentek,pentek-ecp5-10bb,ECP5-10BB,Pentek pleated sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 5 micron. Fits standard BB10 housings.
+pentek,pentek-r30-bb,R30-BB,Pentek pleated sediment cartridge,6,10 x 4.5 in. Big Blue; nominal 30 micron. Fits standard BB10 housings.
+pentek,pentek-dgd-7525,DGD-7525,Pentek dual-gradient sediment cartridge,6,20 x 4.5 in. Big Blue; 75/25 micron layers. Fits standard BB20 housings.
+pentek,pentek-ecp20-bb,ECP20-BB,Pentek pleated sediment cartridge,6,20 x 4.5 in. Big Blue; nominal 50 micron. Fits standard BB20 housings.
+pentek,pentek-wp25bb20p,WP25BB20P,Pentek string-wound sediment cartridge,6,20 x 4.5 in. Big Blue; nominal 25 micron. Fits standard BB20 housings.
+pentek,pentek-rfc-20bb,RFC-20BB,Pentek radial-flow GAC cartridge,12,20 x 4.5 in. Big Blue. Fits standard BB20 housings.
+pentek,pentek-ep-20bb,EP-20BB,Pentek carbon block cartridge,12,20 x 4.5 in. Big Blue carbon block. Fits standard BB20 housings.
+pentek,pentek-gac-20bb,GAC-20BB,Pentek granular activated carbon cartridge,12,20 x 4.5 in. Big Blue GAC. Fits standard BB20 housings.
+pentek,pentek-cc-20bb,CC-20BB,Pentek coconut shell GAC cartridge,12,20 x 4.5 in. Big Blue. Fits standard BB20 housings.
+pentek,pentek-epm-20bb,EPM-20BB,Pentek carbon block cartridge,12,20 x 4.5 in. Big Blue carbon block. Fits standard BB20 housings.
+pentek,pentek-to-20bb,TO-20BB,Pentek organic / tannin reduction cartridge,12,20 x 4.5 in. Big Blue. Fits standard BB20 housings.
+pentek,pentek-pcc-20bb,PCC-20BB,Pentek phosphate crystal cartridge,6,20 x 4.5 in. Big Blue scale inhibitor media. Fits standard BB20 housings.
+pentek,pentek-rffe20-bb,RFFE20-BB,Pentek iron reduction cartridge,12,20 x 4.5 in. Big Blue iron reduction media. Fits standard BB20 housings.
+pentek,pentek-r30-20bb,R30-20BB,Pentek pleated sediment cartridge,6,20 x 4.5 in. Big Blue; nominal 30 micron. Fits standard BB20 housings.
+pentek,pentek-p1-slim,P1,Pentek pleated sediment cartridge,6,9.75 x 2.5 in. slim line housing (e.g. 158115-class sumps).
+pentek,pentek-p5-slim,P5,Pentek polypropylene sediment cartridge,6,9.75 x 2.5 in. slim line housing; nominal 5 micron.
+pentek,pentek-p25-slim,P25,Pentek polypropylene sediment cartridge,6,9.75 x 2.5 in. slim line housing; nominal 25 micron.
+pentek,pentek-ep-10-slim,EP-10,Pentek carbon block cartridge,12,9.75 x 2.5 in. slim line housing carbon block.
+pentek,pentek-gac-10-slim,GAC-10,Pentek granular activated carbon cartridge,12,9.75 x 2.5 in. slim line GAC.
+pentek,pentek-rfc-10-slim,RFC-10,Pentek radial-flow carbon cartridge,12,9.75 x 2.5 in. slim line radial carbon.
+ge,ge-fxhtc,FXHTC,GE whole home sediment filter,6,OEM sediment cartridge for select GE whole-house systems.
+ge,ge-fxwpc,FXWPC,GE whole home carbon filter,6,OEM carbon cartridge for select GE whole-house systems.
+ge,ge-fxhsc,FXHSC,GE whole home heavy-sediment filter,6,OEM sediment cartridge for select GE whole-house systems.
+ge,ge-fxusc,FXUSC,GE whole home string-wound sediment filter,6,OEM string-wound sediment for select GE whole-house systems.
+ge,ge-fxwtc,FXWTC,GE whole home carbon filter,12,OEM carbon cartridge for select GE whole-house systems; confirm head accepts FXWTC.
+3m,3m-ap810,AP810,3M Aqua-Pure sediment replacement cartridge,6,OEM sediment cartridge for AP801 / AP802 whole-house filter systems.
+3m,3m-ap811,AP811,3M Aqua-Pure carbon replacement cartridge,12,OEM carbon cartridge for select AP801 / AP802 whole-house systems.
+culligan,culligan-cw5-bb,CW5-BB,Culligan Level 4 sediment cartridge,6,10 x 4.5 in. cartridge for Culligan heavy-duty housings such as WH-HD-950 (confirm sump).
+culligan,culligan-rfc-bbsa,RFC-BBSA,Culligan radial-flow carbon cartridge,12,10 x 4.5 in. Culligan carbon cartridge for compatible BB sumps.
+culligan,culligan-cw25-bb,CW25-BB,Culligan Level 4 sediment cartridge,6,20 x 4.5 in. cartridge for Culligan BB20-class housings (confirm sump length).
+whirlpool,whirlpool-whkf-gd05,WHKF-GD05,Whirlpool whole home sediment filter,6,OEM cartridge for select Whirlpool whole-house filter systems.
+whirlpool,whirlpool-whkf-whpl,WHKF-WHPL,Whirlpool whole home filter cartridge,6,OEM cartridge for select Whirlpool whole-house filter systems.
+whirlpool,whirlpool-whkf-gac,WHKF-GAC,Whirlpool whole home GAC cartridge,12,OEM GAC cartridge for select Whirlpool WHKF manifolds.
+whirlpool,whirlpool-whkf-gd25,WHKF-GD25,Whirlpool whole home sediment filter,6,OEM sediment cartridge for select Whirlpool WHKF systems.
+watts,watts-w50pehd,W50PEHD,Watts pleated sediment cartridge,6,10 x 4.5 in. cartridge for Watts Flowmatic BB-style housings (e.g. W50WHD-class).
+watts,watts-w20ffphd,W20FFPHD,Watts phosphate / scale inhibitor cartridge,6,20 x 4.5 in. cartridge for compatible BB20 sumps; confirm media type vs your need.

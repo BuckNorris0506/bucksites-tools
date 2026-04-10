@@ -10,13 +10,23 @@
  *     brand_slug,slug,oem_part_number,name,replacement_interval_months,notes
  *
  *   fridge_models.csv
- *     brand_slug,slug,model_number,replacement_interval_months,notes
+ *     brand_slug,slug,model_number,notes
+ *   Optional: title — display title; default "{Brand name} {model_number} Refrigerator"
  *
  *   compatibility_mappings.csv
  *     fridge_slug,filter_slug
  *
+ *   fridge_model_aliases.csv  (optional)
+ *     fridge_slug,alias
+ *
+ *   filter_aliases.csv  (optional)
+ *     filter_slug,alias
+ *
  *   retailer_links.csv
- *     filter_slug,retailer_name,affiliate_url,is_primary,sort_order
+ *     filter_slug,retailer_name,affiliate_url,is_primary
+ *   Optional: destination_url (defaults to affiliate_url), retailer_slug, retailer_key (stable slot id; one live row per filter + key).
+ *   retailer_slug defaults from retailer_slug → retailer_key → slugified retailer_name.
+ *   Live links only — pre-approval URLs belong in retailer_link_candidates (SQL / service role).
  *
  * Env: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (.env.local)
  *
@@ -25,9 +35,12 @@
  *   npx tsx scripts/import-seed.ts --sample
  */
 
+import fs from "node:fs";
+
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import { readCsvFile, dataCsvPath } from "./lib/csv";
+import { bulkApplyRetailerLinksByAffiliateMatch } from "./lib/bulk-retailer-links-import";
 import { log, warn } from "./lib/log";
 
 loadEnv();
@@ -55,6 +68,29 @@ function optBool(v: string | undefined): boolean | null {
   if (["1", "true", "yes", "y"].includes(s)) return true;
   if (["0", "false", "no", "n"].includes(s)) return false;
   throw new Error(`Not a boolean: "${v}"`);
+}
+
+function slugifyRetailerKey(raw: string): string {
+  const s = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return s || "store";
+}
+
+function retailerKeyFromRow(r: Record<string, string>): string {
+  const explicit = optStr(r.retailer_key)?.trim();
+  if (explicit) return slugifyRetailerKey(explicit);
+  return slugifyRetailerKey(optStr(r.retailer_name) ?? "store");
+}
+
+function retailerSlugFromRow(r: Record<string, string>): string {
+  const fromSlug = optStr(r.retailer_slug);
+  if (fromSlug) return slugifyRetailerKey(fromSlug);
+  const fromKey = optStr(r.retailer_key);
+  if (fromKey) return slugifyRetailerKey(fromKey);
+  return slugifyRetailerKey(optStr(r.retailer_name) ?? "store");
 }
 
 async function importBrands() {
@@ -140,11 +176,14 @@ async function importFridgeModels() {
   const supabase = getSupabaseAdmin();
   const { data: brands, error: bErr } = await supabase
     .from("brands")
-    .select("id, slug");
+    .select("id, slug, name");
 
   if (bErr) throw bErr;
   const brandBySlug = new Map(
     (brands ?? []).map((b) => [b.slug as string, b.id as string]),
+  );
+  const brandNameBySlug = new Map(
+    (brands ?? []).map((b) => [b.slug as string, b.name as string]),
   );
 
   const payload = rows.map((r) => {
@@ -155,22 +194,115 @@ async function importFridgeModels() {
         `fridge_models.csv: unknown brand_slug "${brand_slug}" for fridge slug "${r.slug}"`,
       );
     }
+    const model_number = r.model_number.trim();
+    const brandName = brandNameBySlug.get(brand_slug) ?? brand_slug;
+    const titleFromCsv = optStr(r.title);
+    const title =
+      titleFromCsv && titleFromCsv.trim().length > 0
+        ? titleFromCsv.trim()
+        : `${brandName} ${model_number} Refrigerator`;
     return {
       brand_id,
       slug: r.slug.trim(),
-      model_number: r.model_number.trim(),
-      replacement_interval_months: optInt(r.replacement_interval_months),
+      model_number,
+      title,
       notes: optStr(r.notes),
     };
   });
 
   const { error } = await supabase.from("fridge_models").upsert(payload, {
-    onConflict: "slug",
+    onConflict: "model_number",
     ignoreDuplicates: false,
   });
 
   if (error) throw error;
   log("fridge_models", `Upserted ${payload.length} row(s) from ${file}`);
+}
+
+async function importFridgeModelAliases() {
+  const file = dataCsvPath(cwd, "fridge_model_aliases", useSample);
+  if (!fs.existsSync(file)) {
+    warn("fridge_model_aliases", `Skip (missing): ${file}`);
+    return;
+  }
+  const rows = readCsvFile(file, ["fridge_slug", "alias"]);
+  if (rows.length === 0) {
+    warn("fridge_model_aliases", `Skip (empty): ${file}`);
+    return;
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { data: fridges, error: fErr } = await supabase
+    .from("fridge_models")
+    .select("id, slug");
+
+  if (fErr) throw fErr;
+  const fridgeBySlug = new Map(
+    (fridges ?? []).map((x) => [x.slug as string, x.id as string]),
+  );
+
+  const payload = rows.map((r) => {
+    const fs = r.fridge_slug.trim();
+    const alias = r.alias.trim();
+    const fridge_model_id = fridgeBySlug.get(fs);
+    if (!fridge_model_id) {
+      throw new Error(
+        `fridge_model_aliases.csv: unknown fridge_slug "${fs}" for alias "${alias}"`,
+      );
+    }
+    return { fridge_model_id, alias };
+  });
+
+  const { error } = await supabase.from("fridge_model_aliases").upsert(payload, {
+    onConflict: "fridge_model_id,alias",
+    ignoreDuplicates: false,
+  });
+
+  if (error) throw error;
+  log("fridge_model_aliases", `Upserted ${payload.length} row(s) from ${file}`);
+}
+
+async function importFilterAliases() {
+  const file = dataCsvPath(cwd, "filter_aliases", useSample);
+  if (!fs.existsSync(file)) {
+    warn("filter_aliases", `Skip (missing): ${file}`);
+    return;
+  }
+  const rows = readCsvFile(file, ["filter_slug", "alias"]);
+  if (rows.length === 0) {
+    warn("filter_aliases", `Skip (empty): ${file}`);
+    return;
+  }
+
+  const supabase = getSupabaseAdmin();
+  const { data: filters, error: flErr } = await supabase
+    .from("filters")
+    .select("id, slug");
+
+  if (flErr) throw flErr;
+  const filterBySlug = new Map(
+    (filters ?? []).map((x) => [x.slug as string, x.id as string]),
+  );
+
+  const payload = rows.map((r) => {
+    const fs = r.filter_slug.trim();
+    const alias = r.alias.trim();
+    const filter_id = filterBySlug.get(fs);
+    if (!filter_id) {
+      throw new Error(
+        `filter_aliases.csv: unknown filter_slug "${fs}" for alias "${alias}"`,
+      );
+    }
+    return { filter_id, alias };
+  });
+
+  const { error } = await supabase.from("filter_aliases").upsert(payload, {
+    onConflict: "filter_id,alias",
+    ignoreDuplicates: false,
+  });
+
+  if (error) throw error;
+  log("filter_aliases", `Upserted ${payload.length} row(s) from ${file}`);
 }
 
 async function importCompatibilityMappings() {
@@ -243,12 +375,10 @@ async function importRetailerLinks() {
     (filters ?? []).map((x) => [x.slug as string, x.id as string]),
   );
 
-  let inserted = 0;
-  let updated = 0;
-
-  for (const r of rows) {
+  const ops = rows.map((r) => {
     const filter_slug = r.filter_slug.trim();
     const affiliate_url = r.affiliate_url.trim();
+    const destination_url = optStr(r.destination_url) ?? affiliate_url;
     const filter_id = filterBySlug.get(filter_slug);
     if (!filter_id) {
       throw new Error(
@@ -256,46 +386,45 @@ async function importRetailerLinks() {
       );
     }
 
-    const patch = {
+    const retailer_key = retailerKeyFromRow(r);
+    const retailer_slug = retailerSlugFromRow(r);
+
+    const insertRow = {
       filter_id,
       retailer_name: optStr(r.retailer_name),
       affiliate_url,
+      destination_url,
       is_primary: optBool(r.is_primary) ?? false,
-      sort_order: optInt(r.sort_order) ?? 0,
+      retailer_key,
+      retailer_slug,
     };
 
-    const { data: existing, error: qErr } = await supabase
-      .from("retailer_links")
-      .select("id")
-      .eq("filter_id", filter_id)
-      .eq("affiliate_url", affiliate_url)
-      .maybeSingle();
+    const updateRow = {
+      retailer_name: insertRow.retailer_name,
+      destination_url: insertRow.destination_url,
+      is_primary: insertRow.is_primary,
+      retailer_key: insertRow.retailer_key,
+      retailer_slug: insertRow.retailer_slug,
+    };
 
-    if (qErr) throw qErr;
+    return {
+      filterId: filter_id,
+      affiliate_url,
+      insertRow,
+      updateRow,
+    };
+  });
 
-    if (existing?.id) {
-      const { error: uErr } = await supabase
-        .from("retailer_links")
-        .update({
-          retailer_name: patch.retailer_name,
-          is_primary: patch.is_primary,
-          sort_order: patch.sort_order,
-        })
-        .eq("id", existing.id);
-      if (uErr) throw uErr;
-      updated += 1;
-    } else {
-      const { error: iErr } = await supabase
-        .from("retailer_links")
-        .insert(patch);
-      if (iErr) throw iErr;
-      inserted += 1;
-    }
-  }
+  const { inserted, updated, uniquePairs } =
+    await bulkApplyRetailerLinksByAffiliateMatch(supabase, {
+      table: "retailer_links",
+      filterFkColumn: "filter_id",
+      ops,
+    });
 
   log(
     "retailer_links",
-    `Processed ${rows.length} row(s) from ${file} (inserted ${inserted}, updated ${updated})`,
+    `Processed ${rows.length} CSV line(s), ${uniquePairs} unique (filter, affiliate_url) from ${file} (inserted ${inserted}, updated ${updated})`,
   );
 }
 
@@ -309,6 +438,8 @@ async function main() {
     await importBrands();
     await importFilters();
     await importFridgeModels();
+    await importFridgeModelAliases();
+    await importFilterAliases();
     await importCompatibilityMappings();
     await importRetailerLinks();
   } catch (e) {

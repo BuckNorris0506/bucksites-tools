@@ -1,0 +1,271 @@
+brand_slug,slug,model_number,title,series,notes
+levoit,levoit-core-300,Core 300,Levoit Core 300 Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
+levoit,levoit-core-300s,Core 300S,Levoit Core 300S Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
+levoit,levoit-core-300-rf,Core 300-RF,Levoit Core 300-RF Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
+levoit,levoit-core-300-rac,Core 300-RAC,Levoit Core 300-RAC Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
+levoit,levoit-core-300-rwm,Core 300-RWM,Levoit Core 300-RWM Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
+levoit,levoit-lap-c301s,LAP-C301S-WAAA,Levoit LAP-C301S-WAAA Air Purifier,Core 300,Levoit SKU variant of Core 300S
+levoit,levoit-core-400s,Core 400S,Levoit Core 400S Air Purifier,Core 400,
+levoit,levoit-core-400s-rf,Core 400S-RF,Levoit Core 400S-RF Air Purifier,Core 400,
+levoit,levoit-core-400-rf,Core 400-RF,Levoit Core 400-RF Air Purifier,Core 400,
+levoit,levoit-lap-c401s-wusr,LAP-C401S-WUSR,Levoit LAP-C401S-WUSR Air Purifier,Core 400,
+levoit,levoit-core-600,Core 600,Levoit Core 600 Air Purifier,Core 600,
+levoit,levoit-core-600s,Core 600S,Levoit Core 600S Air Purifier,Core 600,
+levoit,levoit-lap-c601s-wus,LAP-C601S-WUS,Levoit LAP-C601S-WUS Air Purifier,Core 600,
+levoit,levoit-core-200s,Core 200S,Levoit Core 200S Air Purifier,Core 200,
+levoit,levoit-core-200s-rf,Core 200S-RF,Levoit Core 200S-RF Air Purifier,Core 200,
+levoit,levoit-core-200,Core 200,Levoit Core 200 Air Purifier,Core 200,
+levoit,levoit-vital-100,Vital 100,Levoit Vital 100 Air Purifier,Vital,
+levoit,levoit-vital-100-rf,Vital 100-RF,Levoit Vital 100-RF Air Purifier,Vital,
+levoit,levoit-vital-100-rac,Vital 100-RAC,Levoit Vital 100-RAC Air Purifier,Vital,
+levoit,levoit-vital-200,Vital 200,Levoit Vital 200 Air Purifier,Vital,
+levoit,levoit-vital-200-rf,Vital 200-RF,Levoit Vital 200-RF Air Purifier,Vital,
+levoit,levoit-lap-v201s-wus,LAP-V201S-WUS,Levoit LAP-V201S-WUS Air Purifier,Vital,
+levoit,levoit-lv-pur131,LV-PUR131,Levoit LV-PUR131 Air Purifier,PUR131,
+levoit,levoit-lv-pur131s,LV-PUR131S,Levoit LV-PUR131S Air Purifier,PUR131,
+levoit,levoit-lv-pur131-rf,LV-PUR131-RF,Levoit LV-PUR131-RF Air Purifier,PUR131,
+coway,coway-ap-1512hh,AP-1512HH,Coway AP-1512HH Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512p,AP-1512P,Coway AP-1512P Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512rhd,AP-1512RHD,Coway AP-1512RHD Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512f-p,AP-1512F(P),Coway AP-1512F(P) Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512l,AP-1512L,Coway AP-1512L Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512rhs,AP-1512RHS,Coway AP-1512RHS Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512hes,AP-1512HES,Coway AP-1512HES Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-ap-1512hh-w,AP-1512HH(W),Coway AP-1512HH(W) Air Purifier,Airmega Mighty,Max2 filter set
+coway,coway-airmega-250,Airmega 250,Coway Airmega 250 Air Purifier,Airmega 250,
+coway,coway-airmega-250s,Airmega 250S,Coway Airmega 250S Air Purifier,Airmega 250,
+coway,coway-ap-2520f-p-,AP-2520F(P),Coway AP-2520F(P) Air Purifier,Airmega 250,
+coway,coway-airmega-300,Airmega 300,Coway Airmega 300 Air Purifier,Airmega 300/400,
+coway,coway-airmega-300s,Airmega 300S,Coway Airmega 300S Air Purifier,Airmega 300/400,
+coway,coway-airmega-400,Airmega 400,Coway Airmega 400 Air Purifier,Airmega 300/400,
+coway,coway-airmega-400s,Airmega 400S,Coway Airmega 400S Air Purifier,Airmega 300/400,
+coway,coway-ap-3019f-p-,AP-3019F(P),Coway AP-3019F(P) Air Purifier,Airmega 300/400,
+winix,winix-5500-2,5500-2,Winix 5500-2 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-c535,C535,Winix C535 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-5300-2,5300-2,Winix 5300-2 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-c545,C545,Winix C545 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-hr900,HR900,Winix HR900 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-hr950,HR950,Winix HR950 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-am90,AM90,Winix AM90 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-am80,AM80,Winix AM80 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-nk105,NK105,Winix NK105 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+winix,winix-p450,P450,Winix P450 Air Purifier,PlasmaWave,Typically uses Filter A + Filter B
+honeywell,honeywell-hpa100,HPA100,Honeywell HPA100 Air Purifier,HPA100,
+honeywell,honeywell-hpa101,HPA101,Honeywell HPA101 Air Purifier,HPA100,
+honeywell,honeywell-hpa200,HPA200,Honeywell HPA200 Air Purifier,HPA200,
+honeywell,honeywell-hpa201,HPA201,Honeywell HPA201 Air Purifier,HPA200,
+honeywell,honeywell-hpa300,HPA300,Honeywell HPA300 Air Purifier,HPA300,
+honeywell,honeywell-hpa304,HPA304,Honeywell HPA304 Air Purifier,HPA300,
+honeywell,honeywell-hpa3100,HPA3100,Honeywell HPA3100 Air Purifier,HPA3100,
+honeywell,honeywell-hpa3300,HPA3300,Honeywell HPA3300 Air Purifier,HPA3300,
+honeywell,honeywell-hpa5200,HPA5200,Honeywell HPA5200 Air Purifier,InSight,
+germguardian,gg-ac4825,AC4825,Germguardian AC4825 Air Purifier,Tower,
+germguardian,gg-ac4825dlx,AC4825DLX,Germguardian AC4825DLX Air Purifier,Tower,
+germguardian,gg-ac4300,AC4300BPTCA,Germguardian AC4300BPTCA Air Purifier,Tower,
+germguardian,gg-ac4900,AC4900CA,Germguardian AC4900CA Air Purifier,Tower,
+germguardian,gg-ac5350,AC5350W,Germguardian AC5350W Air Purifier,Tower,
+germguardian,gg-ac5350b,AC5350B,Germguardian AC5350B Air Purifier,Tower,
+germguardian,gg-ac5300,AC5300BPTCA,Germguardian AC5300BPTCA Air Purifier,Tower,
+germguardian,gg-ac5250,AC5250PT,Germguardian AC5250PT Air Purifier,Tower,
+germguardian,gg-ac5900,AC5900W,Germguardian AC5900W Air Purifier,Tower,
+germguardian,gg-cdap5500,CDAP5500BCA,Germguardian CDAP5500BCA Air Purifier,Tower,
+blueair,blueair-211-plus,Blue Pure 211+,Blueair Blue Pure 211+ Air Purifier,Blue Pure,
+blueair,blueair-211-auto,Blue Pure 211+ Auto,Blueair Blue Pure 211+ Auto Air Purifier,Blue Pure,
+blueair,blueair-121,Blue Pure 121,Blueair Blue Pure 121 Air Purifier,Blue Pure,
+blueair,blueair-411,Blue Pure 411,Blueair Blue Pure 411 Air Purifier,Blue Pure,
+blueair,blueair-411a-max,Blue Pure 411a Max,Blueair Blue Pure 411a Max Air Purifier,Blue Pure,
+blueair,blueair-mini-max,Blue Pure Mini Max,Blueair Blue Pure Mini Max Air Purifier,Blue Pure,
+medify,medify-ma25,MA-25,Medify MA-25 Air Purifier,Medify,
+medify,medify-ma40,MA-40,Medify MA-40 Air Purifier,Medify,
+medify,medify-ma40w,MA-40W,Medify MA-40W Air Purifier,Medify,
+medify,medify-ma50,MA-50,Medify MA-50 Air Purifier,Medify,
+medify,medify-ma112,MA-112,Medify MA-112 Air Purifier,Medify,
+medify,medify-ma14,MA-14,Medify MA-14 Air Purifier,Medify,
+medify,medify-ma15,MA-15,Medify MA-15 Air Purifier,Medify,
+medify,medify-ma-smart,MA-Smart,Medify MA-Smart Air Purifier,Medify,
+alen,alen-breathesmart-classic,BreatheSmart Classic,Alen BreatheSmart Classic Air Purifier,BreatheSmart,
+alen,alen-fit50,BreatheSmart FIT50,Alen BreatheSmart FIT50 Air Purifier,BreatheSmart,
+alen,alen-45i,BreatheSmart 45i,Alen BreatheSmart 45i Air Purifier,BreatheSmart,
+alen,alen-flex,BreatheSmart Flex,Alen BreatheSmart Flex Air Purifier,BreatheSmart,
+levoit,levoit-lap-c302s-wusr,LAP-C302S-WUSR,Levoit LAP-C302S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lap-c303s-wusr,LAP-C303S-WUSR,Levoit LAP-C303S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-300-black,Core 300 (Black),Levoit Core 300 (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-300-white,Core 300 (White),Levoit Core 300 (White) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-300s-black,Core 300S (Black),Levoit Core 300S (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-300s-white,Core 300S (White),Levoit Core 300S (White) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lap-c302s-waaa,LAP-C302S-WAAA,Levoit LAP-C302S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lap-c303s-waaa,LAP-C303S-WAAA,Levoit LAP-C303S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-p350,Core P350,Levoit Core P350 Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-core-300-smart,Core 300 Smart,Levoit Core 300 Smart Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lv-h132,LV-H132,Levoit LV-H132 Air Purifier,Compact,Petite tower; LV-H128 cartridge family
+levoit,levoit-lv-h133,LV-H133,Levoit LV-H133 Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lv-h134,LV-H134,Levoit LV-H134 Air Purifier,Tower,LV-H133 tower cartridge family
+levoit,levoit-core-450s,Core 450S,Levoit Core 450S Air Purifier,Core 400/600,
+levoit,levoit-lap-c451s-wusr,LAP-C451S-WUSR,Levoit LAP-C451S-WUSR Air Purifier,Core 400/600,
+levoit,levoit-core-650s,Core 650S,Levoit Core 650S Air Purifier,Core 400/600,
+levoit,levoit-lap-c651s-wus,LAP-C651S-WUS,Levoit LAP-C651S-WUS Air Purifier,Core 400/600,
+levoit,levoit-lv-h133-rf,LV-H133-RF,Levoit LV-H133-RF Air Purifier,Tower,
+levoit,levoit-lap-h133s-wus,LAP-H133S-WUS,Levoit LAP-H133S-WUS Air Purifier,Tower,
+levoit,levoit-lv-h128,LV-H128,Levoit LV-H128 Air Purifier,Compact,
+levoit,levoit-lv-h128-rf,LV-H128-RF,Levoit LV-H128-RF Air Purifier,Compact,
+levoit,levoit-meta-air-s,Meta Air S,Levoit Meta Air S Air Purifier,Meta Air,
+levoit,levoit-meta-air,Meta Air,Levoit Meta Air Air Purifier,Meta Air,
+levoit,levoit-lap-ma101s-wus,LAP-MA101S-WUS,Levoit LAP-MA101S-WUS Air Purifier,Meta Air,
+coway,coway-ap-1512gis,AP-1512GIS,Coway AP-1512GIS Air Purifier,Airmega,
+coway,coway-ap-1512h,AP-1512H,Coway AP-1512H Air Purifier,Airmega,
+coway,coway-ap-1512hh-b,AP-1512HH(B),Coway AP-1512HH(B) Air Purifier,Airmega,
+coway,coway-ap-1512f,AP-1512F,Coway AP-1512F Air Purifier,Airmega,
+coway,coway-airmega-100,Airmega 100,Coway Airmega 100 Air Purifier,Airmega,
+coway,coway-airmega-100s,Airmega 100S,Coway Airmega 100S Air Purifier,Airmega,
+coway,coway-ap-1019f-p,AP-1019F(P),Coway AP-1019F(P) Air Purifier,Airmega,
+coway,coway-airmega-150,Airmega 150,Coway Airmega 150 Air Purifier,Airmega,
+coway,coway-airmega-160,Airmega 160,Coway Airmega 160 Air Purifier,Airmega,
+coway,coway-airmega-240,Airmega 240,Coway Airmega 240 Air Purifier,Airmega,
+coway,coway-airmega-250-graphite,Airmega 250 (Graphite),Coway Airmega 250 (Graphite) Air Purifier,Airmega,
+winix,winix-c555,C555,Winix C555 Air Purifier,PlasmaWave,Batch-2
+winix,winix-c909,C909,Winix C909 Air Purifier,PlasmaWave,Batch-2
+winix,winix-c555b,C555B,Winix C555B Air Purifier,PlasmaWave,Batch-2
+winix,winix-am90c,AM90C,Winix AM90C Air Purifier,PlasmaWave,Batch-2
+winix,winix-xlc,XLC,Winix XLC Air Purifier,PlasmaWave,Batch-2
+winix,winix-u450,U450,Winix U450 Air Purifier,PlasmaWave,Batch-2
+winix,winix-wac9500,WAC9500,Winix WAC9500 Air Purifier,PlasmaWave,Batch-2
+winix,winix-wac5500,WAC5500,Winix WAC5500 Air Purifier,PlasmaWave,Batch-2
+winix,winix-u300,U300,Winix U300 Air Purifier,PlasmaWave,Batch-2
+winix,winix-c535b,C535B,Winix C535B Air Purifier,PlasmaWave,Batch-2
+winix,winix-c545b,C545B,Winix C545B Air Purifier,PlasmaWave,Batch-2
+winix,winix-nk100,NK100,Winix NK100 Air Purifier,PlasmaWave,Batch-2
+winix,winix-p300,P300,Winix P300 Air Purifier,PlasmaWave,Batch-2
+winix,winix-t1,T1,Winix T1 Air Purifier,PlasmaWave,Batch-2
+winix,winix-b451,B451,Winix B451 Air Purifier,PlasmaWave,Batch-2
+winix,winix-b151,B151,Winix B151 Air Purifier,PlasmaWave,Batch-2
+winix,winix-b303,B303,Winix B303 Air Purifier,PlasmaWave,Batch-2
+winix,winix-hr1000,HR1000,Winix HR1000 Air Purifier,PlasmaWave,Batch-2
+honeywell,honeywell-hpa094,HPA094,Honeywell HPA094 Air Purifier,HPA,
+honeywell,honeywell-hpa100c,HPA100C,Honeywell HPA100C Air Purifier,HPA,
+honeywell,honeywell-hpa104,HPA104,Honeywell HPA104 Air Purifier,HPA,
+honeywell,honeywell-hpa105,HPA105,Honeywell HPA105 Air Purifier,HPA,
+honeywell,honeywell-hpa106,HPA106,Honeywell HPA106 Air Purifier,HPA,
+honeywell,honeywell-hpa160,HPA160,Honeywell HPA160 Air Purifier,HPA,
+honeywell,honeywell-hpa174,HPA174,Honeywell HPA174 Air Purifier,HPA,
+honeywell,honeywell-hpa200c,HPA200C,Honeywell HPA200C Air Purifier,HPA,
+honeywell,honeywell-hpa204,HPA204,Honeywell HPA204 Air Purifier,HPA,
+honeywell,honeywell-hpa250,HPA250,Honeywell HPA250 Air Purifier,HPA,
+honeywell,honeywell-hpa300c,HPA300C,Honeywell HPA300C Air Purifier,HPA,
+honeywell,honeywell-hpa304c,HPA304C,Honeywell HPA304C Air Purifier,HPA,
+honeywell,honeywell-hpa330,HPA330,Honeywell HPA330 Air Purifier,HPA,
+honeywell,honeywell-hpa340,HPA340,Honeywell HPA340 Air Purifier,HPA,
+honeywell,honeywell-hpa5200b,HPA5200B,Honeywell HPA5200B Air Purifier,HPA,
+honeywell,honeywell-hpa5300b,HPA5300B,Honeywell HPA5300B Air Purifier,HPA,
+honeywell,honeywell-hpa8350,HPA8350,Honeywell HPA8350 Air Purifier,HPA,
+honeywell,honeywell-hpa094wdq,HPA094WDQ,Honeywell HPA094WDQ Air Purifier,HPA,
+honeywell,honeywell-hpa3100b,HPA3100B,Honeywell HPA3100B Air Purifier,HPA,
+honeywell,honeywell-hpa3300b,HPA3300B,Honeywell HPA3300B Air Purifier,HPA,
+honeywell,honeywell-hpa5200w,HPA5200W,Honeywell HPA5200W Air Purifier,HPA,
+honeywell,honeywell-hpa082,HPA082,Honeywell HPA082 Air Purifier,HPA,
+honeywell,honeywell-hpa083,HPA083,Honeywell HPA083 Air Purifier,HPA,
+honeywell,honeywell-hpa084,HPA084,Honeywell HPA084 Air Purifier,HPA,
+germguardian,gg-ac4100,AC4100,GermGuardian AC4100 Air Purifier,Tower,
+germguardian,gg-ac4150,AC4150,GermGuardian AC4150 Air Purifier,Tower,
+germguardian,gg-ac4175,AC4175,GermGuardian AC4175 Air Purifier,Tower,
+germguardian,gg-ac4225,AC4225,GermGuardian AC4225 Air Purifier,Tower,
+germguardian,gg-ac4230,AC4230,GermGuardian AC4230 Air Purifier,Tower,
+germguardian,gg-ac4820,AC4820,GermGuardian AC4820 Air Purifier,Tower,
+germguardian,gg-ac5000,AC5000,GermGuardian AC5000 Air Purifier,Tower,
+germguardian,gg-ac5350bca,AC5350BCA,GermGuardian AC5350BCA Air Purifier,Tower,
+germguardian,gg-ac5600,AC5600,GermGuardian AC5600 Air Purifier,Tower,
+germguardian,gg-ac5650,AC5650,GermGuardian AC5650 Air Purifier,Tower,
+germguardian,gg-ac5737,AC5737,GermGuardian AC5737 Air Purifier,Tower,
+germguardian,gg-ac5800,AC5800,GermGuardian AC5800 Air Purifier,Tower,
+germguardian,gg-ac5900ca,AC5900CA,GermGuardian AC5900CA Air Purifier,Tower,
+germguardian,gg-cdap4500,CDAP4500,GermGuardian CDAP4500 Air Purifier,Tower,
+germguardian,gg-cdap5200,CDAP5200,GermGuardian CDAP5200 Air Purifier,Tower,
+blueair,blueair-blue-pure-311,Blue Pure 311,Blueair Blue Pure 311 Air Purifier,Blueair,
+blueair,blueair-blue-pure-311-auto,Blue Pure 311 Auto,Blueair Blue Pure 311 Auto Air Purifier,Blueair,
+blueair,blueair-pro-m,Pro M,Blueair Pro M Air Purifier,Blueair,
+blueair,blueair-pro-l,Pro L,Blueair Pro L Air Purifier,Blueair,
+blueair,blueair-healthprotect-7470i,HealthProtect 7470i,Blueair HealthProtect 7470i Air Purifier,Blueair,
+medify,medify-ma-35,MA-35,Medify MA-35 Air Purifier,Medify,
+medify,medify-ma-18,MA-18,Medify MA-18 Air Purifier,Medify,
+medify,medify-ma-20,MA-20,Medify MA-20 Air Purifier,Medify,
+medify,medify-ma-22,MA-22,Medify MA-22 Air Purifier,Medify,
+medify,medify-ma-32,MA-32,Medify MA-32 Air Purifier,Medify,
+alen,alen-breathesmart-75i,BreatheSmart 75i,Alen BreatheSmart 75i Air Purifier,BreatheSmart,
+alen,alen-breathesmart-75i-white,BreatheSmart 75i (White),Alen BreatheSmart 75i (White) Air Purifier,BreatheSmart,
+alen,alen-breathesmart-45i-pet,BreatheSmart 45i (Pet),Alen BreatheSmart 45i (Pet) Air Purifier,BreatheSmart,
+alen,alen-breathesmart-flex-pet,BreatheSmart Flex (Pet),Alen BreatheSmart Flex (Pet) Air Purifier,BreatheSmart,
+shark,shark-hp102,Shark HP102,Shark HP102 Air Purifier,Shark,
+shark,shark-hp102pet,Shark HP102PET,Shark HP102PET Air Purifier,Shark,
+shark,shark-hp102petnc,Shark HP102PETNC,Shark HP102PETNC Air Purifier,Shark,
+shark,shark-hp132,Shark HP132,Shark HP132 Air Purifier,Shark,
+shark,shark-hp141,Shark HP141,Shark HP141 Air Purifier,Shark,
+shark,shark-hp151,Shark HP151,Shark HP151 Air Purifier,Shark,
+shark,shark-hp201,Shark HP201,Shark HP201 Air Purifier,Shark,
+shark,shark-hp202,Shark HP202,Shark HP202 Air Purifier,Shark,
+shark,shark-hp232,Shark HP232,Shark HP232 Air Purifier,Shark,
+shark,shark-hp302,Shark HP302,Shark HP302 Air Purifier,Shark,
+shark,shark-hp401,Shark HP401,Shark HP401 Air Purifier,Shark,
+shark,shark-hp402,Shark HP402,Shark HP402 Air Purifier,Shark,
+shark,shark-hp452,Shark HP452,Shark HP452 Air Purifier,Shark,
+shark,shark-hp462,Shark HP462,Shark HP462 Air Purifier,Shark,
+shark,shark-hp602,Shark HP602,Shark HP602 Air Purifier,Shark,
+shark,shark-hp652,Shark HP652,Shark HP652 Air Purifier,Shark,
+holmes,holmes-hap412bcs,HAP412BCS,Holmes HAP412BCS Air Purifier,AER1,
+holmes,holmes-hap412bns,HAP412BNS,Holmes HAP412BNS Air Purifier,AER1,
+holmes,holmes-hap422b,HAP422B,Holmes HAP422B Air Purifier,AER1,
+holmes,holmes-hap424-u,HAP424-U,Holmes HAP424-U Air Purifier,AER1,
+holmes,holmes-hap424-u8,HAP424-U8,Holmes HAP424-U8 Air Purifier,AER1,
+holmes,holmes-hap706-u,HAP706-U,Holmes HAP706-U Air Purifier,AER1,
+holmes,holmes-hap716-u,HAP716-U,Holmes HAP716-U Air Purifier,AER1,
+holmes,holmes-hap726-u,HAP726-U,Holmes HAP726-U Air Purifier,AER1,
+holmes,holmes-hap9412-ua,HAP9412-UA,Holmes HAP9412-UA Air Purifier,AER1,
+holmes,holmes-hap9412b-ua,HAP9412B-UA,Holmes HAP9412B-UA Air Purifier,AER1,
+holmes,holmes-hap9413,HAP9413,Holmes HAP9413 Air Purifier,AER1,
+holmes,holmes-hap9414,HAP9414,Holmes HAP9414 Air Purifier,AER1,
+holmes,holmes-hap9422,HAP9422,Holmes HAP9422 Air Purifier,AER1,
+holmes,holmes-hap9423,HAP9423,Holmes HAP9423 Air Purifier,AER1,
+holmes,holmes-hap9424,HAP9424,Holmes HAP9424 Air Purifier,AER1,
+holmes,holmes-hap9426,HAP9426,Holmes HAP9426 Air Purifier,AER1,
+holmes,holmes-hap9726,HAP9726,Holmes HAP9726 Air Purifier,AER1,
+holmes,holmes-hap616-u,HAP616-U,Holmes HAP616-U Air Purifier,AER1,
+holmes,holmes-hap625-u,HAP625-U,Holmes HAP625-U Air Purifier,AER1,
+holmes,holmes-hap633-u,HAP633-U,Holmes HAP633-U Air Purifier,AER1,
+holmes,holmes-hap633w,HAP633W,Holmes HAP633W Air Purifier,AER1,
+holmes,holmes-hap701-u,HAP701-U,Holmes HAP701-U Air Purifier,AER1,
+holmes,holmes-hap702-u,HAP702-U,Holmes HAP702-U Air Purifier,AER1,
+holmes,holmes-hap703-u,HAP703-U,Holmes HAP703-U Air Purifier,AER1,
+holmes,holmes-hap704-u,HAP704-U,Holmes HAP704-U Air Purifier,AER1,
+holmes,holmes-hap705-u,HAP705-U,Holmes HAP705-U Air Purifier,AER1,
+holmes,holmes-hap706b,HAP706B,Holmes HAP706B Air Purifier,AER1,
+holmes,holmes-hap9240,HAP9240,Holmes HAP9240 Air Purifier,AER1,
+holmes,holmes-hap9241,HAP9241,Holmes HAP9241 Air Purifier,AER1,
+holmes,holmes-hap9242,HAP9242,Holmes HAP9242 Air Purifier,AER1,
+holmes,holmes-hap9243,HAP9243,Holmes HAP9243 Air Purifier,AER1,
+hamilton-beach,hb-04384,04384,Hamilton Beach 04384 Air Purifier,TrueAir,
+hamilton-beach,hb-04385,04385,Hamilton Beach 04385 Air Purifier,TrueAir,
+hamilton-beach,hb-04386,04386,Hamilton Beach 04386 Air Purifier,TrueAir,
+hamilton-beach,hb-04948,04948,Hamilton Beach 04948 Air Purifier,TrueAir,
+hamilton-beach,hb-04949,04949,Hamilton Beach 04949 Air Purifier,TrueAir,
+hamilton-beach,hb-trueair-04530gm,TrueAir 04530GM,Hamilton Beach TrueAir 04530GM Air Purifier,TrueAir,
+hamilton-beach,hb-04162,04162,Hamilton Beach 04162 Air Purifier,TrueAir,
+vornado,vornado-ac350,AC350,Vornado AC350 Air Purifier,AC,
+vornado,vornado-ac500,AC500,Vornado AC500 Air Purifier,AC,
+vornado,vornado-ac550,AC550,Vornado AC550 Air Purifier,AC,
+vornado,vornado-pc300,PC300,Vornado PC300 Air Purifier,AC,
+vornado,vornado-ac500b,AC500B,Vornado AC500B Air Purifier,AC,
+vornado,vornado-ac550w,AC550W,Vornado AC550W Air Purifier,AC,
+renpho,renpho-rp-ap088,RP-AP088,Renpho RP-AP088 Air Purifier,Renpho,
+renpho,renpho-rp-ap088w,RP-AP088W,Renpho RP-AP088W Air Purifier,Renpho,
+renpho,renpho-rp-ap068,RP-AP068,Renpho RP-AP068 Air Purifier,Renpho,
+renpho,renpho-rp-ap068w,RP-AP068W,Renpho RP-AP068W Air Purifier,Renpho,
+renpho,renpho-rp-ap003,RP-AP003,Renpho RP-AP003 Air Purifier,Renpho,
+renpho,renpho-rp-ap001,RP-AP001,Renpho RP-AP001 Air Purifier,Renpho,
+renpho,renpho-rp-ap002,RP-AP002,Renpho RP-AP002 Air Purifier,Renpho,
+renpho,renpho-rp-ap080,RP-AP080,Renpho RP-AP080 Air Purifier,Renpho,
+rabbit-air,rabbit-minusa2-spa-780a,MinusA2 SPA-780A,Rabbit Air MinusA2 SPA-780A Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-spa-780n,MinusA2 SPA-780N,Rabbit Air MinusA2 SPA-780N Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-spa-780j,MinusA2 SPA-780J,Rabbit Air MinusA2 SPA-780J Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-pet,MinusA2 (Pet),Rabbit Air MinusA2 (Pet) Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-voc,MinusA2 (VOC),Rabbit Air MinusA2 (VOC) Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-germ,MinusA2 (Germ),Rabbit Air MinusA2 (Germ) Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-toxin,MinusA2 (Toxin),Rabbit Air MinusA2 (Toxin) Air Purifier,MinusA2,
+rabbit-air,rabbit-minusa2-odor,MinusA2 (Odor),Rabbit Air MinusA2 (Odor) Air Purifier,MinusA2,

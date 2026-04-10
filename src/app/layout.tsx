@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { AnalyticsScripts } from "@/components/AnalyticsScripts";
 import { SiteShell } from "@/components/SiteShell";
+import {
+  SITE_DEFAULT_DESCRIPTION,
+  SITE_DISPLAY_NAME,
+} from "@/lib/site-brand";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,23 +19,28 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-const siteName = "BuckSites Tools";
-const siteDesc =
-  "Find the right refrigerator water filter by model number or part number. Compatible filters, replacement intervals, and buy links.";
+const siteName = SITE_DISPLAY_NAME;
+const siteDesc = SITE_DEFAULT_DESCRIPTION;
+
+const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   ),
   title: {
-    default: `${siteName} — Water filter finder`,
+    default: `${siteName} — Replacement filters & parts lookup`,
     template: `%s · ${siteName}`,
   },
   description: siteDesc,
   openGraph: {
     siteName,
     type: "website",
+    description: siteDesc,
   },
+  ...(googleVerification
+    ? { verification: { google: googleVerification } }
+    : {}),
 };
 
 export default function RootLayout({
@@ -43,6 +53,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
+        <AnalyticsScripts />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

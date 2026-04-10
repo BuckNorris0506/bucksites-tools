@@ -6,6 +6,7 @@ import type {
   RetailerLink,
 } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 
 export type FridgeDetail = FridgeModel & {
   brand: Pick<Brand, "id" | "slug" | "name">;
@@ -75,7 +76,7 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
 
   const { data: links, error: lErr } = await supabase
     .from("retailer_links")
-    .select("id, filter_id, retailer_name, affiliate_url, is_primary")
+    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key")
     .in("filter_id", filterIds)
     .order("is_primary", { ascending: false })
     .order("retailer_name", { ascending: true });
@@ -91,7 +92,7 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
 
   const filterList = ((filters ?? []) as Filter[]).map((f) => ({
     ...f,
-    retailer_links: byFilter.get(f.id) ?? [],
+    retailer_links: filterRealBuyRetailerLinks(byFilter.get(f.id) ?? []),
   }));
 
   filterList.sort((a, b) =>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BuyLinks } from "@/components/BuyLinks";
+import { TieredBuyLinks } from "@/components/TieredBuyLinks";
 import { Prose } from "@/components/Prose";
 import { getFilterBySlug } from "@/lib/data/filters";
+import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description: `OEM part ${filter.oem_part_number}. Compatible refrigerators and replacement interval.`,
-    openGraph: { title: `${filter.oem_part_number} · BuckSites Tools` },
+    openGraph: { title: `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}` },
   };
 }
 
@@ -90,7 +91,7 @@ export default async function FilterPage({ params }: Props) {
         <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
           Buy
         </h2>
-        <BuyLinks links={filter.retailer_links} />
+        <TieredBuyLinks links={filter.retailer_links} goBase="/go" />
       </section>
     </article>
   );

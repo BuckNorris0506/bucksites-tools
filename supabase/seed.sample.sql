@@ -1,33 +1,31 @@
--- Optional demo rows (edit before running). Requires schema.sql applied.
+-- Optional sample rows (edit before running). Requires schema.sql applied.
 
 insert into public.brands (slug, name)
-values ('acme-appliances', 'Acme Appliances')
+values ('northstar-cooling', 'Northstar Cooling')
 on conflict (slug) do update set name = excluded.name;
 
 insert into public.filters (brand_id, slug, oem_part_number, name, replacement_interval_months, notes)
-select id, 'acme-filter-100', 'ACME-100', 'OEM inline filter', 6,
-  'Twist-in refrigerator filter cartridge.'
-from public.brands where slug = 'acme-appliances';
+select id, 'northstar-ns-1', 'NS1-FILTER', 'Northstar primary cartridge', 6,
+  'Sample row for local SQL seed only.'
+from public.brands where slug = 'northstar-cooling';
 
 insert into public.fridge_models (brand_id, slug, model_number, replacement_interval_months, notes)
-select id, 'acme-xf-9000', 'XF-9000', 6,
-  'Dispenser on freezer door. Reset light after installs.'
-from public.brands where slug = 'acme-appliances';
+select id, 'northstar-rs-50', 'RS-50', 6,
+  'Sample model for local SQL seed only.'
+from public.brands where slug = 'northstar-cooling';
 
 insert into public.compatibility_mappings (fridge_model_id, filter_id)
 select fm.id, f.id
 from public.fridge_models fm
-join public.filters f on f.slug = 'acme-filter-100'
-where fm.slug = 'acme-xf-9000';
+join public.filters f on f.slug = 'northstar-ns-1'
+where fm.slug = 'northstar-rs-50';
 
-insert into public.retailer_links (filter_id, retailer_name, affiliate_url, sort_order)
-select f.id, 'Example Retailer', 'https://example.com/buy/acme-100', 0
-from public.filters f where slug = 'acme-filter-100';
+-- No sample retailer_links: launch inventory omits web-search placeholders; add real URLs separately.
 
 insert into public.reset_instructions (brand_id, title, body)
 select id, 'Dispenser reset',
   E'1) Press and hold the WATER pad for 3 seconds.\n2) Release when the indicator turns blue.'
-from public.brands where slug = 'acme-appliances';
+from public.brands where slug = 'northstar-cooling';
 
 insert into public.help_pages (slug, title, body, meta_description)
 values (

@@ -1,21 +1,45 @@
-import Link from "next/link";
-import type { RetailerLink } from "@/lib/types/database";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 
-export function BuyLinks({ links }: { links: RetailerLink[] }) {
-  if (!links.length) {
+export type BuyLinkRow = {
+  id: string;
+  retailer_name: string | null;
+  affiliate_url: string;
+  is_primary?: boolean | null;
+  /** When present, used to hide import mistakes / legacy placeholder keys in buy UI. */
+  retailer_key?: string | null;
+};
+
+/**
+ * Plain `<a href>` (not Next `Link`) so the browser performs a normal navigation to `/go/...`.
+ * Next.js `Link` can still trigger duplicate GETs to Route Handlers despite `prefetch={false}`.
+ */
+export function BuyLinks({
+  links,
+  goBase = "/go",
+}: {
+  links: BuyLinkRow[];
+  /** e.g. `/air-purifier/go` — no trailing slash */
+  goBase?: string;
+}) {
+  const realLinks = filterRealBuyRetailerLinks(links);
+
+  if (!realLinks.length) {
     return (
       <p className="text-sm text-neutral-500 dark:text-neutral-400">
-        No retailer links yet for this filter.
+        No store checkout links listed here yet. Use the OEM number to shop at a retailer you
+        trust.
       </p>
     );
   }
 
+  const base = goBase.replace(/\/$/, "");
+
   return (
     <ul className="flex flex-col gap-2">
-      {links.map((link) => (
+      {realLinks.map((link) => (
         <li key={link.id}>
-          <Link
-            href={`/go/${link.id}`}
+          <a
+            href={`${base}/${link.id}`}
             rel="nofollow sponsored"
             className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
           >
@@ -23,7 +47,7 @@ export function BuyLinks({ links }: { links: RetailerLink[] }) {
             <span className="ml-2 text-neutral-400" aria-hidden>
               →
             </span>
-          </Link>
+          </a>
         </li>
       ))}
     </ul>

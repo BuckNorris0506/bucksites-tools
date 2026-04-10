@@ -1,0 +1,27 @@
+import type { Brand } from "@/lib/types/database";
+
+export type AirPurifierFilterRow = {
+  id: string;
+  slug: string;
+  brand_id: string;
+  oem_part_number: string;
+  name: string | null;
+  replacement_interval_months: number | null;
+  notes: string | null;
+};
+
+export type AirPurifierModelListRow = {
+  id: string;
+  slug: string;
+  model_number: string;
+  brand: Pick<Brand, "slug" | "name">;
+};
+
+export type AirPurifierRetailerLink = {
+  id: string;
+  air_purifier_filter_id: string;
+  retailer_name: string | null;
+  affiliate_url: string;
+  is_primary: boolean | null;
+  retailer_key: string;
+};
