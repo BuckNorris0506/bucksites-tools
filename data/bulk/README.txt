@@ -2,8 +2,14 @@ Bulk refrigerator water filter seed pack
 =========================================
 
 Large curated pack (BuckParts fridge wedge): run `npm run seed:generate:fridge-bulk` to write
-`data/brands.csv` … `data/retailer_links.csv` (~46 filters, ~275 models, mappings, links,
-aliases). Then `npm run seed:import`. Generator: `scripts/generate-fridge-homekeep-bulk-csv.ts`.
+`data/brands.csv` … `data/retailer_links.csv` (57 filters, 500 models, ~967 compatibility rows,
+one OEM/parts-catalog keyword row per filter, aliases). Then import:
+
+  npm run seed:import
+  # If the DB still has stale fridge_models / filters from an older pack, align it to the CSV:
+  npm run seed:import:fridge:prune
+
+Generator: `scripts/generate-fridge-homekeep-bulk-csv.ts`.
 
 Goal: scale the same CSV pipeline to 100+ fridge rows, 15–25+ filter SKUs, aliases, and mappings.
 

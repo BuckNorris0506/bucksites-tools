@@ -1,4 +1,5 @@
 import type { Brand } from "@/lib/types/database";
+import { normalizeSearchCompact } from "@/lib/search/normalize";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
 import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
@@ -21,15 +22,7 @@ export type WholeHouseWaterModelWithParts = WholeHouseWaterModelDetail & {
   })[];
 };
 
-export async function getWholeHouseWaterModelBySlug(
-  slug: string,
-): Promise<WholeHouseWaterModelWithParts | null> {
-  const supabase = getSupabaseServerClient();
-
-  const { data: row, error: rowErr } = await supabase
-    .from("whole_house_water_models")
-    .select(
-      `
+const MODEL_HEAD_SELECT = `
       id,
       slug,
       brand_id,
@@ -38,12 +31,47 @@ export async function getWholeHouseWaterModelBySlug(
       series,
       notes,
       brand:brands!inner ( id, slug, name )
-    `,
-    )
-    .eq("slug", slug)
+    `;
+
+export async function getWholeHouseWaterModelBySlug(
+  slug: string,
+): Promise<WholeHouseWaterModelWithParts | null> {
+  const supabase = getSupabaseServerClient();
+  const slugParam = slug.trim();
+
+  const { data: byExact, error: e1 } = await supabase
+    .from("whole_house_water_models")
+    .select(MODEL_HEAD_SELECT)
+    .eq("slug", slugParam)
     .maybeSingle();
 
-  if (rowErr) throw rowErr;
+  if (e1) throw e1;
+
+  let row = byExact;
+
+  if (!row) {
+    const { data: byIlike, error: e2 } = await supabase
+      .from("whole_house_water_models")
+      .select(MODEL_HEAD_SELECT)
+      .ilike("slug", slugParam)
+      .maybeSingle();
+    if (e2) throw e2;
+    row = byIlike;
+  }
+
+  if (!row) {
+    const n = normalizeSearchCompact(slugParam);
+    if (n.length >= 5) {
+      const { data: byNorm, error: e3 } = await supabase
+        .from("whole_house_water_models")
+        .select(MODEL_HEAD_SELECT)
+        .eq("model_number_norm", n)
+        .limit(2);
+      if (e3) throw e3;
+      if (byNorm?.length === 1) row = byNorm[0]!;
+    }
+  }
+
   if (!row) return null;
 
   const modelRow = row as unknown as WholeHouseWaterModelDetail;

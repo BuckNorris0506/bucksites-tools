@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SearchForm } from "@/components/SearchForm";
 import {
-  ALL_CATALOGS,
   CATALOG_LABELS,
   CATALOG_REFRIGERATOR_WATER_FILTER,
+  CATALOG_WHOLE_HOUSE_WATER_FILTERS,
+  LAUNCH_SCOPE_CATALOG_IDS,
   type CatalogId,
 } from "@/lib/catalog/constants";
 import { catalogFilterPath, catalogModelPath } from "@/lib/catalog/paths";
@@ -25,17 +26,46 @@ type Props = { searchParams: { q?: string } };
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const query = searchParams.q?.trim() ?? "";
   if (!query) {
-    return { title: "Search all catalogs" };
+    return { title: "Search refrigerator, air purifier & whole-house filters" };
   }
   return {
     title: `Search: ${query}`,
-    description: `Replacement filters and parts across ${SITE_DISPLAY_NAME} catalogs for “${query}”.`,
+    description: `Replacement filters across ${SITE_DISPLAY_NAME} launch catalogs for “${query}” (refrigerator water, room air purifiers, whole-house water).`,
     robots: query ? undefined : { index: false },
   };
 }
 
 const searchResultCardClass =
   "block rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80";
+
+const searchResultCardStaticClass =
+  "rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950";
+
+function globalSearchModelHref(
+  catalog: CatalogId,
+  hit: SearchHitFridge | SearchHitModel,
+): string | null {
+  if (hit.kind === "fridge") {
+    return catalogModelPath(CATALOG_REFRIGERATOR_WATER_FILTER, hit.slug);
+  }
+  if (
+    hit.catalog === CATALOG_WHOLE_HOUSE_WATER_FILTERS &&
+    hit.catalogDetailHref === null
+  ) {
+    return null;
+  }
+  return catalogModelPath(catalog, hit.slug);
+}
+
+function globalSearchFilterHref(catalog: CatalogId, hit: SearchHitFilter): string | null {
+  if (
+    hit.catalog === CATALOG_WHOLE_HOUSE_WATER_FILTERS &&
+    hit.catalogDetailHref === null
+  ) {
+    return null;
+  }
+  return catalogFilterPath(catalog, hit.slug);
+}
 
 function CatalogHitMeta({
   catalogLabel,
@@ -74,15 +104,15 @@ function ModelHitCard({
   catalogLabel,
 }: {
   hit: SearchHitFridge | SearchHitModel;
-  href: string;
+  href: string | null;
   catalogLabel: string;
 }) {
   const parts = hit.compatible_filters ?? [];
   const primaryPart = parts[0];
   const moreCount = parts.length > 1 ? parts.length - 1 : 0;
 
-  return (
-    <Link href={href} data-catalog={hit.catalog} className={searchResultCardClass}>
+  const body = (
+    <>
       <CatalogHitMeta catalogLabel={catalogLabel} kindLabel="Model or unit" />
       <p className="mt-3 font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
         {hit.model_number}
@@ -101,15 +131,35 @@ function ModelHitCard({
           )}
         </p>
       )}
-      <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
-        Opens the page with fit check, timing if we have it, and where to buy.
-      </p>
+      {href ? (
+        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+          Opens the page with fit check, timing if we have it, and where to buy.
+        </p>
+      ) : (
+        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+          Matched in search, but there is no published detail page for this link yet.
+        </p>
+      )}
       {hit.via === "alias" && hit.matchedAlias && (
         <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
           Matched using an alternate number: {hit.matchedAlias}
         </p>
       )}
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} data-catalog={hit.catalog} className={searchResultCardClass}>
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <div data-catalog={hit.catalog} className={searchResultCardStaticClass}>
+      {body}
+    </div>
   );
 }
 
@@ -119,11 +169,11 @@ function FilterHitCard({
   catalogLabel,
 }: {
   hit: SearchHitFilter;
-  href: string;
+  href: string | null;
   catalogLabel: string;
 }) {
-  return (
-    <Link href={href} data-catalog={hit.catalog} className={searchResultCardClass}>
+  const body = (
+    <>
       <CatalogHitMeta catalogLabel={catalogLabel} kindLabel="Replacement part" />
       <p className="mt-3 font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
         {hit.oem_part_number}
@@ -132,15 +182,35 @@ function FilterHitCard({
         <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{hit.name}</p>
       )}
       <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Brand: {hit.brand_name}</p>
-      <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
-        Opens models this part fits, notes, and buying options.
-      </p>
+      {href ? (
+        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+          Opens models this part fits, notes, and buying options.
+        </p>
+      ) : (
+        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+          Matched in search, but there is no published detail page for this link yet.
+        </p>
+      )}
       {hit.via === "alias" && hit.matchedAlias && (
         <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
           Matched using an alternate number: {hit.matchedAlias}
         </p>
       )}
-    </Link>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link href={href} data-catalog={hit.catalog} className={searchResultCardClass}>
+        {body}
+      </Link>
+    );
+  }
+
+  return (
+    <div data-catalog={hit.catalog} className={searchResultCardStaticClass}>
+      {body}
+    </div>
   );
 }
 
@@ -168,12 +238,11 @@ export default async function SearchPage({ searchParams }: Props) {
     <div className="space-y-10">
       <div className="space-y-4">
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl">
-          Search all catalogs
+          Search launch catalogs
         </h1>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          One search across refrigerator water filters, air purifiers, vacuums, humidifiers,
-          appliance air filters, and whole-house water cartridges. Results are tagged by
-          catalog.
+          One search across refrigerator water filters, room air purifier cartridges, and
+          whole-house water cartridges. Results are grouped by catalog.
         </p>
         <SearchForm initialQuery={query} />
       </div>
@@ -192,7 +261,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
       {query.length >= 2 && !error && (
         <div className="space-y-12">
-          {ALL_CATALOGS.map((catalog) => {
+          {LAUNCH_SCOPE_CATALOG_IDS.map((catalog) => {
             const label = CATALOG_LABELS[catalog];
             const models = modelHitsForCatalog(catalog, hits);
             const filters = filterHitsForCatalog(catalog, hits);
@@ -218,7 +287,7 @@ export default async function SearchPage({ searchParams }: Props) {
                         <li key={`${hit.catalog}-${hit.kind}-${hit.slug}`}>
                           <ModelHitCard
                             hit={hit}
-                            href={catalogModelPath(catalog, hit.slug)}
+                            href={globalSearchModelHref(catalog, hit)}
                             catalogLabel={label}
                           />
                         </li>
@@ -237,7 +306,7 @@ export default async function SearchPage({ searchParams }: Props) {
                         <li key={`${hit.catalog}-${hit.kind}-${hit.slug}`}>
                           <FilterHitCard
                             hit={hit}
-                            href={catalogFilterPath(catalog, hit.slug)}
+                            href={globalSearchFilterHref(catalog, hit)}
                             catalogLabel={label}
                           />
                         </li>

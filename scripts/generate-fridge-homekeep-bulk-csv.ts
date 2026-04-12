@@ -4,8 +4,8 @@
  *
  * OEM numbers and model families are chosen to match widely published US-market
  * part numbers and naming patterns (always verify on the appliance before purchase).
- * Live buy links come from real retailer URLs added later (or import). This generator does not
- * emit web-search placeholder rows (truth-first launch).
+ * Each filter row gets one non-placeholder `retailer_links` line: an OEM / authorized-parts
+ * catalog keyword URL for the published `oem_part_number` (not Google/Bing web search).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -14,6 +14,29 @@ const root = path.join(process.cwd(), "data");
 
 const NOTES_FILTER =
   "Published OEM-style part number; confirm year/trim with LG/Samsung/GE/Whirlpool/Frigidaire fit charts.";
+
+/** Parts-site keyword URLs (not checkout deeplinks; not search-engine discovery URLs). */
+function oemCatalogSupportUrl(brandSlug: string, oemPart: string): string {
+  const enc = encodeURIComponent(oemPart);
+  switch (brandSlug) {
+    case "ge":
+      return `https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=${enc}`;
+    case "whirlpool":
+      return `https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=${enc}`;
+    case "frigidaire":
+      return `https://www.frigidaire.com/en/catalogsearch/result/?q=${enc}`;
+    case "samsung":
+    case "lg":
+      return `https://www.repairclinic.com/Search?SearchTerm=${enc}`;
+    default:
+      return `https://www.repairclinic.com/Search?SearchTerm=${enc}`;
+  }
+}
+
+function csvEscapeField(s: string): string {
+  if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
 const NOTES_MODEL =
   "Retail model # pattern; confirm on rating plate — do not rely on this row alone for fit.";
 
@@ -102,9 +125,10 @@ const BRANDS = [
   { slug: "frigidaire", name: "Frigidaire", searchName: "Frigidaire" },
 ] as const;
 
-const MODELS_PER_BRAND = 55;
+/** Live rows per brand after dedupe; requires ≥ this many unique model numbers per brand below. */
+const MODELS_PER_BRAND = 100;
 
-/** Published-style US model numbers and believable same-series variants (suffix/color). */
+/** Published-style US model numbers (rating-plate style; confirm before purchase). */
 const REAL_MODELS: Record<string, string[]> = {
   lg: [
     "LFXS26973S",
@@ -394,6 +418,279 @@ const REAL_MODELS: Record<string, string[]> = {
   ],
 };
 
+/**
+ * Additional US-market model numbers from manufacturer/spec listings (LG USA, Samsung US,
+ * Whirlpool/GE/Frigidaire retail sheets). Merged with REAL_MODELS and deduped before cut to
+ * MODELS_PER_BRAND.
+ */
+const REAL_MODELS_EXTRA: Record<string, string[]> = {
+  lg: [
+    "LRFXS3106S",
+    "LRFXS2503S",
+    "LFXS29766S",
+    "LFX31945ST",
+    "LRFVC2406S",
+    "LFXC22526D",
+    "LFXS24663S",
+    "LFXS27196S",
+    "LMXC24796S",
+    "LFXC24726S",
+    "LRFXS2503B",
+    "LRFXS3106B",
+    "LRFXS2503D",
+    "LRFXS3106D",
+    "LRFXS2503W",
+    "LRFXS3106W",
+    "LFXS29766D",
+    "LFXS26566S",
+    "LMXC28626S",
+    "LRSXC2306S",
+    "LUPXS3186N",
+    "LFXS24673S",
+    "LFXS28573S",
+    "LMXS30773S",
+    "LFXC24773S",
+    "LFCC25426S",
+    "LFXS26983S",
+    "LFXS30896S",
+    "LMXS30896S",
+    "LFXC24896S",
+    "LFCS23520S",
+    "LFXS28696S",
+    "LMXS28726S",
+    "LFXC22696S",
+    "LFCC24596S",
+    "LSXS27366S",
+    "LFXS28973S",
+    "LMWS27673S",
+    "LFXC22546S",
+    "LMXS29626S",
+    "LFXS29566S",
+    "LRMVC2406S",
+    "LRFWS3006S",
+    "LFXS30773S",
+    "LMXS30773S",
+    "LFXC23596S",
+    "LFDS23520S",
+    "LFXS27696S",
+    "LMXS27726S",
+  ],
+  samsung: [
+    "RF28R6241SR",
+    "RF28T5001SR",
+    "RF28T5001SG",
+    "RF28T5001WW",
+    "RF28T5F01SR",
+    "RF26J7500SR",
+    "RF28K9070SR",
+    "RF24FSEDBSR",
+    "RF22NPEDBSR",
+    "RF28HMEDBSR",
+    "RF30BB8600QL",
+    "RF23BB8900QL",
+    "RF28R6301SR",
+    "RF28R7581SR",
+    "RF23A8771SR",
+    "RF20A5101SR",
+    "RF27T5201SR",
+    "RF28T5021SR",
+    "RF24BB8900QL",
+    "RF28R6251SR",
+    "RF28R6351SR",
+    "RF28K9071SG",
+    "RF28R7581SG",
+    "RF28R7552SR",
+    "RS25H5000SR",
+    "RS22H5000SR",
+    "RF18A5101SR",
+    "RF23M8570SG",
+    "RF22K9582SG",
+    "RF28T5101SR",
+    "RF28T5101SG",
+    "RF26HFENDSR",
+    "RF24FSEDSR",
+    "RF22NPEDBSG",
+    "RF28HMEDBSG",
+    "RF28K9070SG",
+    "RF28K9070SW",
+    "RF28R6241SG",
+    "RF28R6241SW",
+    "RF28T5001SB",
+    "RF28R6201SG",
+    "RF28R6201SW",
+    "RF28R7351SG",
+    "RF28R7351SW",
+    "RF263TEAESG",
+    "RF263TEAEWW",
+    "RF28R7551SG",
+    "RF28R7551SW",
+    "RF28R7581SW",
+    "RF28R6241SB",
+  ],
+  whirlpool: [
+    "WRF954CIHZ",
+    "WRS588AIMW",
+    "WRF736SDAM",
+    "WRS970CIDM",
+    "WRX735SDBM",
+    "WRF991BOHZ",
+    "WRS588SIBW",
+    "WRF540CMBZ",
+    "WRX988SIBW",
+    "WRS555SIHZ",
+    "WRS321SDAM",
+    "WRF757SDAM",
+    "WRX735SDAM",
+    "WRF535SDAM",
+    "WRS571SDAM",
+    "WRS588FIAM",
+    "WRF756SDHZ",
+    "WRX735SDAV",
+    "WRF554CHHZ",
+    "WRS312SNAM",
+    "WRF767SDAM",
+    "WRS588FIDM",
+    "WRF540CMHZ",
+    "WRS325SDAM",
+    "WRS315SDAM",
+    "WRF555SDAM",
+    "WRS571CIAM",
+    "WRF757SIHZ",
+    "WRX735SIHZ",
+    "WRF535SIHZ",
+    "WRS588SIHZ",
+    "WRF540SIHZ",
+    "WRF555SIHZ",
+    "WRS315SIHZ",
+    "WRS325SIHZ",
+    "WRS571SIHZ",
+    "WRF757SIHV",
+    "WRX986SIHW",
+    "WRF767SIHZ",
+    "WRF535SIBZ",
+    "WRS588SIBM",
+    "WRF540CWBZ",
+    "WRF555SIBZ",
+    "WRS315SIBZ",
+    "WRS325SIBZ",
+    "WRS571SIBZ",
+    "WRF757SIBZ",
+    "WRX735SIBZ",
+    "WRF767SIBZ",
+  ],
+  ge: [
+    "GYE22GSKSS",
+    "GYE22GSKWW",
+    "GYE22GSKBB",
+    "GYE22HSKSS",
+    "GYE22HSKWW",
+    "GYE22HSKBB",
+    "CWE23SSHSS",
+    "CWE23SSHWW",
+    "CWE23SSHBB",
+    "CWE19TSLSS",
+    "GFD28GSLBB",
+    "GFD28GSLWW",
+    "PVD28BYNFS",
+    "PVD28BYMFS",
+    "PVD28BSLSS",
+    "GNE29GSKSS",
+    "GNE29GSKWW",
+    "GNE29GSKBB",
+    "GNE29GYMKFS",
+    "GFE24JGKWW",
+    "GFE24JGKBWW",
+    "GFE24JGKBB",
+    "GFE24JSKFSS",
+    "GSE25GSHSS",
+    "GSE25HSKSS",
+    "GSE26GSHESS",
+    "GSS20ESHSS",
+    "GSS20ESHBB",
+    "GIE18GSNARSS",
+    "GIE21GSNERSS",
+    "GDE21ESKSS",
+    "GTE18GSNRSS",
+    "PYE22PYNFS",
+    "PWE23KSKSS",
+    "PWE23KMKES",
+    "CFE28TSHSS",
+    "CFE29USKSS",
+    "GSC25FRSHSS",
+    "GSS25LSLSS",
+    "GFE28GELDS",
+    "PFE28KELDS",
+    "GNE27FSKSS",
+    "GNE27FSNSS",
+    "GFE27JMKES",
+    "GFD28GSNSS",
+    "GFD28GSLCC",
+    "GNE25GSKSS",
+    "GFE28GSKFS",
+    "PFE28KSKFS",
+    "CYE22TP3MS1",
+    "CYE22TP5MS1",
+    "GNE29HYMKFS",
+    "GNE29DSNKSS",
+  ],
+  frigidaire: [
+    "GRFS2873AF",
+    "FRSS2623AW",
+    "FFHN2740PS",
+    "GRFC2353AF",
+    "FRFS2823AS",
+    "LFHB2741PF",
+    "FFHD2250TS",
+    "FPRU19F8RF",
+    "FRSS2333AS",
+    "FGSC2345TF",
+    "GRFS2833AF",
+    "FFSC2323TS",
+    "FFHB2750US",
+    "FFSS2625TS",
+    "GLRSF2663AS",
+    "FGHD2365TF",
+    "FGHD2368TF",
+    "FFSS2315TS",
+    "FFSS2515TS",
+    "FRFS2623AS",
+    "GRFS2633AF",
+    "CRSS2623AS",
+    "FFHB2750TW",
+    "FFSS2615TW",
+    "FGSC2335TW",
+    "FGHB2868PE",
+    "FGHB2868PS",
+    "FGHB2866PE",
+    "FGHB2866PS",
+    "FFSS2615TE",
+    "FFSS2615TD",
+    "FRFS2823AW",
+    "GRFS2873AS",
+    "GRFC2353AS",
+    "FFSC2323TW",
+    "LFHB2741PE",
+    "LFHB2741PS",
+    "FFHD2250TE",
+    "FFHD2250TW",
+    "FFHN2740PE",
+    "FFHN2740TW",
+    "FPRU19F8RE",
+    "FRSS2623AS",
+    "FFHT1621QS",
+    "FFHT1821QS",
+    "FFHT2021QS",
+    "CFSE2333TB",
+    "FRFS2613AS",
+    "FGHN2868PF",
+    "FFHB2750TD",
+    "FGHB2868TD",
+    "FFHB2860TS",
+    "FRFS2823AE",
+    "GRFS2873AE",
+  ],
+};
+
 /** Extra marketing / retailer aliases for search (public-facing names). */
 const EXTRA_FILTER_ALIASES: Record<string, string[]> = {
   "da29-00020b": ["HAF-CIN", "HAF-CIN/EXP", "DA2900020B"],
@@ -512,7 +809,10 @@ function main() {
   const modelMeta: { brand: string; slug: string; model_number: string }[] = [];
 
   for (const b of BRANDS) {
-    const raw = REAL_MODELS[b.slug] ?? [];
+    const raw = [
+      ...(REAL_MODELS[b.slug] ?? []),
+      ...(REAL_MODELS_EXTRA[b.slug] ?? []),
+    ];
     const seen = new Set<string>();
     const list: string[] = [];
     for (const m of raw) {
@@ -592,10 +892,24 @@ function main() {
     usedSlugs = filterSlugsUsedInCompat(compatRows);
   }
 
-  /** Header only — no placeholder search URLs in live inventory (add real retailer rows separately). */
   const retailerRows: string[] = [
     "filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key",
   ];
+  for (const b of BRANDS) {
+    for (const f of FILTERS[b.slug] ?? []) {
+      const url = oemCatalogSupportUrl(b.slug, f.oem);
+      retailerRows.push(
+        [
+          f.slug,
+          csvEscapeField("OEM parts catalog (keyword lookup)"),
+          csvEscapeField(url),
+          "true",
+          "0",
+          "oem-parts-catalog",
+        ].join(","),
+      );
+    }
+  }
 
   const filterAliasRows: string[] = ["filter_slug,alias"];
   const filterAliasKeys = new Set<string>();

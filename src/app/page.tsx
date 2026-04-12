@@ -55,7 +55,7 @@ export default async function HomePage() {
             href="/catalog"
             className="font-medium text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
           >
-            Browse all catalogs
+            Browse categories
           </Link>
           <span className="mx-2 text-neutral-400 dark:text-neutral-600">·</span>
           <Link

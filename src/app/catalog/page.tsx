@@ -6,7 +6,8 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Catalog",
-  description: "Browse replacement part categories with active listings.",
+  description:
+    "Browse refrigerator water filters, room air purifiers, and whole-house water categories with active listings.",
 };
 
 export default async function CatalogPage() {
@@ -32,7 +33,7 @@ export default async function CatalogPage() {
             href="/search"
             className="text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
           >
-            Search all catalogs
+            Search launch catalogs
           </Link>
         </p>
       </header>

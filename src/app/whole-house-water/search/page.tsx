@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CATALOG_WHOLE_HOUSE_WATER_FILTERS } from "@/lib/catalog/constants";
+import { catalogFilterPath, catalogModelPath } from "@/lib/catalog/paths";
 import { SearchForm } from "@/components/SearchForm";
 import {
   enrichWholeHouseWaterModelHitsWithFilters,
@@ -27,6 +29,12 @@ function ResultBadge({ children }: { children: ReactNode }) {
     </span>
   );
 }
+
+const cardLinkClass =
+  "block rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80";
+
+const cardStaticClass =
+  "rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950";
 
 export default async function WholeHouseWaterSearchPage({ searchParams }: Props) {
   const query = searchParams.q?.trim() ?? "";
@@ -77,12 +85,13 @@ export default async function WholeHouseWaterSearchPage({ searchParams }: Props)
                 Systems / housings ({models.length})
               </h2>
               <ul className="space-y-2">
-                {models.map((hit) => (
-                  <li key={hit.slug}>
-                    <Link
-                      href={`/whole-house-water/model/${hit.slug}`}
-                      className="block rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
-                    >
+                {models.map((hit) => {
+                  const href =
+                    hit.catalogDetailHref === null
+                      ? null
+                      : catalogModelPath(CATALOG_WHOLE_HOUSE_WATER_FILTERS, hit.slug);
+                  const inner = (
+                    <>
                       <ResultBadge>Model</ResultBadge>
                       <p className="mt-2 font-mono font-semibold text-neutral-900 dark:text-neutral-100">
                         {hit.model_number}
@@ -104,9 +113,25 @@ export default async function WholeHouseWaterSearchPage({ searchParams }: Props)
                           Matched: {hit.matchedAlias}
                         </p>
                       )}
-                    </Link>
-                  </li>
-                ))}
+                      {!href && (
+                        <p className="mt-2 text-xs text-neutral-500">
+                          No published detail page for this match yet.
+                        </p>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li key={hit.slug}>
+                      {href ? (
+                        <Link href={href} className={cardLinkClass}>
+                          {inner}
+                        </Link>
+                      ) : (
+                        <div className={cardStaticClass}>{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           )}
@@ -117,19 +142,36 @@ export default async function WholeHouseWaterSearchPage({ searchParams }: Props)
                 Cartridges ({filters.length})
               </h2>
               <ul className="space-y-2">
-                {filters.map((hit) => (
-                  <li key={hit.slug}>
-                    <Link
-                      href={`/whole-house-water/filter/${hit.slug}`}
-                      className="block rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
-                    >
+                {filters.map((hit) => {
+                  const href =
+                    hit.catalogDetailHref === null
+                      ? null
+                      : catalogFilterPath(CATALOG_WHOLE_HOUSE_WATER_FILTERS, hit.slug);
+                  const inner = (
+                    <>
                       <ResultBadge>Part SKU</ResultBadge>
                       <p className="mt-2 font-mono font-semibold">{hit.oem_part_number}</p>
                       {hit.name && <p className="text-sm text-neutral-600">{hit.name}</p>}
                       <p className="mt-1 text-sm text-neutral-600">{hit.brand_name}</p>
-                    </Link>
-                  </li>
-                ))}
+                      {!href && (
+                        <p className="mt-2 text-xs text-neutral-500">
+                          No published detail page for this match yet.
+                        </p>
+                      )}
+                    </>
+                  );
+                  return (
+                    <li key={hit.slug}>
+                      {href ? (
+                        <Link href={href} className={cardLinkClass}>
+                          {inner}
+                        </Link>
+                      ) : (
+                        <div className={cardStaticClass}>{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           )}

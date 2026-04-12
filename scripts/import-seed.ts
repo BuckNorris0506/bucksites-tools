@@ -33,9 +33,14 @@
  * Usage:
  *   npx tsx scripts/import-seed.ts
  *   npx tsx scripts/import-seed.ts --sample
+ *
+ * Full fridge catalog reset (DB matches CSV; removes orphan fridge_models / filters such as
+ * stale imports not present in the latest fridge_models.csv / filters.csv):
+ *   npx tsx scripts/import-seed.ts --prune-fridge-catalog
  */
 
 import fs from "node:fs";
+import path from "node:path";
 
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
@@ -46,6 +51,7 @@ import { log, warn } from "./lib/log";
 loadEnv();
 const cwd = process.cwd();
 const useSample = process.argv.includes("--sample");
+const pruneFridgeCatalog = process.argv.includes("--prune-fridge-catalog");
 
 function optStr(v: string | undefined): string | null {
   const s = v?.trim();
@@ -91,6 +97,112 @@ function retailerSlugFromRow(r: Record<string, string>): string {
   const fromKey = optStr(r.retailer_key);
   if (fromKey) return slugifyRetailerKey(fromKey);
   return slugifyRetailerKey(optStr(r.retailer_name) ?? "store");
+}
+
+/**
+ * Align legacy fridge inventory with the current CSV pack: wipe derived rows, delete models and
+ * filters absent from the CSV files, then let the normal import repopulate.
+ */
+async function pruneFridgeCatalogToMatchCsv() {
+  const fridgeFile = dataCsvPath(cwd, "fridge_models", useSample);
+  const filterFile = dataCsvPath(cwd, "filters", useSample);
+  const fridgeRows = readCsvFile(fridgeFile, ["brand_slug", "slug", "model_number"]);
+  const filterRows = readCsvFile(filterFile, ["brand_slug", "slug", "oem_part_number"]);
+  if (fridgeRows.length === 0 || filterRows.length === 0) {
+    throw new Error(
+      "--prune-fridge-catalog requires non-empty fridge_models.csv and filters.csv",
+    );
+  }
+
+  const allowedFridge = new Set(fridgeRows.map((r) => r.slug.trim()));
+  const allowedFilters = new Set(filterRows.map((r) => r.slug.trim()));
+
+  const supabase = getSupabaseAdmin();
+
+  const { error: e1 } = await supabase
+    .from("compatibility_mappings")
+    .delete()
+    .not("fridge_model_id", "is", null);
+  if (e1) throw e1;
+  log(
+    "prune-fridge-catalog",
+    "Deleted all compatibility_mappings (re-import from CSV next)",
+  );
+
+  const { error: e2 } = await supabase
+    .from("retailer_links")
+    .delete()
+    .not("filter_id", "is", null);
+  if (e2) throw e2;
+  log("prune-fridge-catalog", "Deleted all retailer_links (re-import from CSV next)");
+
+  const { error: e3 } = await supabase
+    .from("fridge_model_aliases")
+    .delete()
+    .not("fridge_model_id", "is", null);
+  if (e3) throw e3;
+  log("prune-fridge-catalog", "Deleted all fridge_model_aliases (re-import from CSV next)");
+
+  const { error: e4 } = await supabase
+    .from("filter_aliases")
+    .delete()
+    .not("filter_id", "is", null);
+  if (e4) throw e4;
+  log("prune-fridge-catalog", "Deleted all filter_aliases (re-import from CSV next)");
+
+  const { data: allFridges, error: fErr } = await supabase
+    .from("fridge_models")
+    .select("id, slug");
+  if (fErr) throw fErr;
+  const orphanFridges = (allFridges ?? []).filter(
+    (r) => !allowedFridge.has(r.slug as string),
+  );
+  const orphanFridgeIds = orphanFridges.map((r) => r.id as string);
+
+  if (orphanFridgeIds.length > 0) {
+    const slugs = orphanFridges.map((r) => r.slug as string);
+    log(
+      "prune-fridge-catalog",
+      `Removing ${orphanFridgeIds.length} fridge_models not in ${path.basename(fridgeFile)} ` +
+        `(sample=${useSample}). First slugs: ${slugs.slice(0, 40).join(", ")}${slugs.length > 40 ? " …" : ""}`,
+    );
+    const CHUNK = 200;
+    for (let i = 0; i < orphanFridgeIds.length; i += CHUNK) {
+      const chunk = orphanFridgeIds.slice(i, i + CHUNK);
+      const { error } = await supabase.from("fridge_models").delete().in("id", chunk);
+      if (error) throw error;
+    }
+  } else {
+    log("prune-fridge-catalog", "No orphan fridge_models to remove");
+  }
+
+  const { data: allFilters, error: flErr } = await supabase
+    .from("filters")
+    .select("id, slug");
+  if (flErr) throw flErr;
+  const orphanFilters = (allFilters ?? []).filter(
+    (r) => !allowedFilters.has(r.slug as string),
+  );
+  const orphanFilterIds = orphanFilters.map((r) => r.id as string);
+
+  if (orphanFilterIds.length > 0) {
+    const slugs = orphanFilters.map((r) => r.slug as string);
+    log(
+      "prune-fridge-catalog",
+      `Removing ${orphanFilterIds.length} filters not in ${path.basename(filterFile)}. ` +
+        `First slugs: ${slugs.slice(0, 40).join(", ")}${slugs.length > 40 ? " …" : ""}`,
+    );
+    const CHUNK = 200;
+    for (let i = 0; i < orphanFilterIds.length; i += CHUNK) {
+      const chunk = orphanFilterIds.slice(i, i + CHUNK);
+      const { error } = await supabase.from("filters").delete().in("id", chunk);
+      if (error) throw error;
+    }
+  } else {
+    log("prune-fridge-catalog", "No orphan filters to remove");
+  }
+
+  log("prune-fridge-catalog", "Prune complete; running CSV upserts.");
 }
 
 async function importBrands() {
@@ -435,6 +547,14 @@ async function main() {
   );
 
   try {
+    if (pruneFridgeCatalog && useSample) {
+      throw new Error(
+        "--prune-fridge-catalog cannot be used with --sample (would clear live tables using tiny CSVs)",
+      );
+    }
+    if (pruneFridgeCatalog) {
+      await pruneFridgeCatalogToMatchCsv();
+    }
     await importBrands();
     await importFilters();
     await importFridgeModels();

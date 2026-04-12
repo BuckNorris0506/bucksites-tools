@@ -5,6 +5,7 @@ import {
   CATALOG_REFRIGERATOR_WATER_FILTER,
   CATALOG_VACUUM_FILTERS,
   CATALOG_WHOLE_HOUSE_WATER_FILTERS,
+  LAUNCH_SCOPE_CATALOG_IDS,
   type CatalogId,
 } from "@/lib/catalog/constants";
 import { HOMEKEEP_GLOBAL_SEARCH_CATALOG } from "@/lib/catalog/identity";
@@ -14,6 +15,7 @@ import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadRefrigeratorUsefulFilterSlugs } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadAirPurifierUsefulFilterSlugs } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterSlugs } from "@/lib/data/whole-house-water-filter-usefulness";
+import { applyWholeHouseWaterSearchNavResolutionToCatalogHits } from "@/lib/data/whole-house-water-search-nav";
 
 export type SearchHitFridge = {
   catalog: typeof CATALOG_REFRIGERATOR_WATER_FILTER;
@@ -42,6 +44,11 @@ export type SearchHitModel = {
   via?: "model" | "alias";
   matchedAlias?: string;
   compatible_filters?: { oem_part_number: string; slug: string }[];
+  /**
+   * Whole-house-water only: when `null`, global search must not link this hit (no
+   * matching `whole_house_water_models` row for the returned slug/OEM tokens).
+   */
+  catalogDetailHref?: string | null;
 };
 
 export type SearchHitFilter = {
@@ -54,6 +61,11 @@ export type SearchHitFilter = {
   brand_slug: string;
   via?: "oem" | "alias";
   matchedAlias?: string;
+  /**
+   * Whole-house-water only: when `null`, global search must not link this hit (no
+   * matching `whole_house_water_parts` row for the returned slug/OEM tokens).
+   */
+  catalogDetailHref?: string | null;
 };
 
 export type SearchHit = SearchHitFridge | SearchHitModel | SearchHitFilter;
@@ -727,13 +739,18 @@ export async function searchCatalog(
     );
   }
 
+  const resolvedOut = await applyWholeHouseWaterSearchNavResolutionToCatalogHits(
+    supabase,
+    out,
+  );
+
   const [usefulFridgeFilterSlugs, usefulAirPurifierFilterSlugs, usefulWholeHouseWaterFilterSlugs] =
     await Promise.all([
       loadRefrigeratorUsefulFilterSlugs(),
       loadAirPurifierUsefulFilterSlugs(),
       loadWholeHouseWaterUsefulFilterSlugs(),
     ]);
-  const gated = out.filter((h) => {
+  const gated = resolvedOut.filter((h) => {
     if (h.kind !== "filter") return true;
     if (h.catalog === CATALOG_REFRIGERATOR_WATER_FILTER) {
       return usefulFridgeFilterSlugs.has(h.slug);
@@ -747,15 +764,19 @@ export async function searchCatalog(
     return true;
   });
 
+  const launchGated = gated.filter((h) =>
+    LAUNCH_SCOPE_CATALOG_IDS.includes(h.catalog as CatalogId),
+  );
+
   if (!options?.skipTelemetry) {
     await logSearchTelemetry({
       rawQuery,
-      resultsCount: gated.length,
+      resultsCount: launchGated.length,
       catalog: HOMEKEEP_GLOBAL_SEARCH_CATALOG,
     });
   }
 
-  return gated;
+  return launchGated;
 }
 
 export async function enrichFridgeHitsWithCompatibleFilters(

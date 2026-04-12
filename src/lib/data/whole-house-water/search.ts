@@ -1,6 +1,7 @@
 import { CATALOG_WHOLE_HOUSE_WATER_FILTERS } from "@/lib/catalog/constants";
 import { wedgeCatalogForCatalogId } from "@/lib/catalog/identity";
 import { loadWholeHouseWaterUsefulFilterSlugs } from "@/lib/data/whole-house-water-filter-usefulness";
+import { applyWholeHouseWaterSearchNavResolutionToVerticalHits } from "@/lib/data/whole-house-water-search-nav";
 import { normalizeSearchCompact, trimSearchInput } from "@/lib/search/normalize";
 import { logSearchTelemetry } from "@/lib/search/telemetry";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
@@ -17,6 +18,8 @@ export type WholeHouseWaterSearchHitModel = {
   via?: "model" | "alias";
   matchedAlias?: string;
   compatible_filters?: { oem_part_number: string; slug: string }[];
+  /** When `null`, vertical search must not link this hit (no live model row). */
+  catalogDetailHref?: string | null;
 };
 
 export type WholeHouseWaterSearchHitFilter = {
@@ -28,6 +31,8 @@ export type WholeHouseWaterSearchHitFilter = {
   brand_slug: string;
   via?: "oem" | "alias";
   matchedAlias?: string;
+  /** When `null`, vertical search must not link this hit (no live part row). */
+  catalogDetailHref?: string | null;
 };
 
 export type WholeHouseWaterSearchHit =
@@ -191,8 +196,13 @@ export async function searchWholeHouseWaterCatalog(
     });
   }
 
+  const resolved = await applyWholeHouseWaterSearchNavResolutionToVerticalHits(
+    supabase,
+    out,
+  );
+
   const usefulSlugs = await loadWholeHouseWaterUsefulFilterSlugs();
-  const gated = out.filter(
+  const gated = resolved.filter(
     (h) => h.kind !== "filter" || usefulSlugs.has(h.slug),
   );
 

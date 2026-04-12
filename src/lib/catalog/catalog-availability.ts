@@ -1,5 +1,12 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import type { CatalogBrowseCategory } from "@/lib/catalog/browse";
+
+/** Catalog hub (/catalog) lists only launch wedges — not vacuum / humidifier / appliance-air. */
+const CATALOG_HUB_LAUNCH_ONLY = new Set<CatalogBrowseCategory>([
+  "refrigerator_water",
+  "air_purifier",
+  "whole_house_water",
+]);
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
@@ -66,7 +73,7 @@ export type CatalogCardDef = {
   description: string;
 };
 
-const CATALOG_CARD_DEFS: CatalogCardDef[] = [
+const CATALOG_CARD_DEFS_ALL: CatalogCardDef[] = [
   {
     category: "refrigerator_water",
     href: "/",
@@ -104,6 +111,10 @@ const CATALOG_CARD_DEFS: CatalogCardDef[] = [
     description: "System cartridges and housings.",
   },
 ];
+
+const CATALOG_CARD_DEFS = CATALOG_CARD_DEFS_ALL.filter((def) =>
+  CATALOG_HUB_LAUNCH_ONLY.has(def.category),
+);
 
 /** Categories that have at least one model or filter row (safe to surface in nav/catalog). */
 export async function listPopulatedCatalogCards(): Promise<CatalogCardDef[]> {

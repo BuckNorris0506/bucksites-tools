@@ -1,7 +1,8 @@
 /**
  * Legacy script name: previously emitted Google/Bing search rows into retailer_links.csv.
  * For truth-first launch, live inventory must not contain search placeholders — this writes
- * header-only CSVs. Add real retailer URLs via import or another pipeline.
+ * header-only CSVs. Do not use this for production packs; instead run
+ * `npm run seed:generate:ap-wh-retailer-links` after editing `filters.csv`, then import.
  *
  *   npx tsx scripts/emit-vertical-search-retailer-links.ts air-purifier
  *   npx tsx scripts/emit-vertical-search-retailer-links.ts whole-house-water

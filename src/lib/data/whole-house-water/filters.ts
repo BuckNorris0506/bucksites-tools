@@ -1,4 +1,5 @@
 import type { Brand } from "@/lib/types/database";
+import { normalizeSearchCompact } from "@/lib/search/normalize";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import type {
   WholeHouseWaterModelListRow,
@@ -16,21 +17,49 @@ export type WholeHouseWaterPartWithModels = WholeHouseWaterPartDetail & {
   retailer_links: WholeHouseWaterRetailerLink[];
 };
 
+const PART_HEAD_SELECT =
+  "id, slug, brand_id, oem_part_number, name, replacement_interval_months, notes";
+
 export async function getWholeHouseWaterPartBySlug(
   slug: string,
 ): Promise<WholeHouseWaterPartWithModels | null> {
   const supabase = getSupabaseServerClient();
   const slugParam = slug.trim();
 
-  const { data: part, error: fErr } = await supabase
+  const { data: byExact, error: e0 } = await supabase
     .from("whole_house_water_parts")
-    .select(
-      "id, slug, brand_id, oem_part_number, name, replacement_interval_months, notes",
-    )
-    .ilike("slug", slugParam)
+    .select(PART_HEAD_SELECT)
+    .eq("slug", slugParam)
     .maybeSingle();
 
-  if (fErr) throw fErr;
+  if (e0) throw e0;
+
+  let part = byExact;
+
+  if (!part) {
+    const { data: byIlike, error: fErr } = await supabase
+      .from("whole_house_water_parts")
+      .select(PART_HEAD_SELECT)
+      .ilike("slug", slugParam)
+      .maybeSingle();
+
+    if (fErr) throw fErr;
+    part = byIlike;
+  }
+
+  if (!part) {
+    const n = normalizeSearchCompact(slugParam);
+    if (n.length >= 4) {
+      const { data: byNorm, error: nErr } = await supabase
+        .from("whole_house_water_parts")
+        .select(PART_HEAD_SELECT)
+        .eq("oem_part_number_norm", n)
+        .limit(2);
+      if (nErr) throw nErr;
+      if (byNorm?.length === 1) part = byNorm[0]!;
+    }
+  }
+
   if (!part) return null;
 
   const { data: brand, error: bErr } = await supabase

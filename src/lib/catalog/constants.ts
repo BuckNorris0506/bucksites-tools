@@ -30,6 +30,16 @@ export const ALL_CATALOGS: CatalogId[] = [
   CATALOG_WHOLE_HOUSE_WATER_FILTERS,
 ];
 
+/**
+ * Public launch scope: Homekeep monetization wedges only. Used for /search, /catalog hub,
+ * search telemetry, and JSON search API so thin parallel verticals are not mixed into launch UX.
+ */
+export const LAUNCH_SCOPE_CATALOG_IDS: CatalogId[] = [
+  CATALOG_REFRIGERATOR_WATER_FILTER,
+  CATALOG_AIR_PURIFIER_FILTERS,
+  CATALOG_WHOLE_HOUSE_WATER_FILTERS,
+];
+
 export const CATALOG_LABELS: Record<CatalogId, string> = {
   [CATALOG_REFRIGERATOR_WATER_FILTER]: "Refrigerator water filter",
   [CATALOG_AIR_PURIFIER_FILTERS]: "Air purifier filter",
