@@ -198,11 +198,9 @@ shark,shark-hp102pet,Shark HP102PET,Shark HP102PET Air Purifier,Shark,
 shark,shark-hp102petnc,Shark HP102PETNC,Shark HP102PETNC Air Purifier,Shark,
 shark,shark-hp132,Shark HP132,Shark HP132 Air Purifier,Shark,
 shark,shark-hp141,Shark HP141,Shark HP141 Air Purifier,Shark,
-shark,shark-hp151,Shark HP151,Shark HP151 Air Purifier,Shark,
 shark,shark-hp201,Shark HP201,Shark HP201 Air Purifier,Shark,
 shark,shark-hp202,Shark HP202,Shark HP202 Air Purifier,Shark,
 shark,shark-hp232,Shark HP232,Shark HP232 Air Purifier,Shark,
-shark,shark-hp302,Shark HP302,Shark HP302 Air Purifier,Shark,
 shark,shark-hp401,Shark HP401,Shark HP401 Air Purifier,Shark,
 shark,shark-hp402,Shark HP402,Shark HP402 Air Purifier,Shark,
 shark,shark-hp452,Shark HP452,Shark HP452 Air Purifier,Shark,
@@ -273,3 +271,12 @@ livepure,livepure-aspen-lp350th,LP350TH,LivePure Aspen Series Air Purifier,Aspen
 iqair,iqair-healthpro-250-plus,IQ250PLUS,IQAir HealthPro 250 Plus Air Purifier,HealthPro,Sticker may read HealthPro 250 or 250 Plus — confirm stack height and pre-filter type with IQAir if unsure.
 austin-air,austin-air-healthmate-hm400,HM400,Austin Air HealthMate HM400 Air Purifier,HealthMate,Standard HealthMate tower family; confirm stamped model before ordering filter blend.
 airdoctor,airdoctor-ad3000,AD3000,AirDoctor AD3000 4-in-1 Air Purifier,AirDoctor,Verify AD3000 vs AD3500 on rating plate before ordering ADF401-class cartridges.
+shark,shark-hp100,Shark HP100,Shark HP100 Air Purifier,Shark,SharkNinja first-party HE1FKBAS (Anti-Allergen HEPA with True HEPA) compatibility list includes HP100 alongside HP102-class units.
+shark,shark-hp150,Shark HP150,Shark HP150 Air Purifier,NeverChange HP150,SharkNinja first-party HE15FKPET compatibility list includes HP150/HP151/HP152/HP155 as NeverChange HP150-family units.
+shark,shark-hp151,Shark HP151,Shark HP151 Air Purifier,NeverChange HP150,
+shark,shark-hp152,Shark HP152,Shark HP152 Air Purifier,NeverChange HP150,
+shark,shark-hp155,Shark HP155,Shark HP155 Air Purifier,NeverChange HP150,
+shark,shark-hp300,Shark HP300,Shark HP300 Air Purifier,NeverChange HP300,SharkNinja first-party HE3FKPET compatibility list includes HP300/HP301/HP302/HP305 (NeverChange MAX family).
+shark,shark-hp301,Shark HP301,Shark HP301 Air Purifier,NeverChange HP300,
+shark,shark-hp302,Shark HP302,Shark HP302 Air Purifier,NeverChange HP300,
+shark,shark-hp305,Shark HP305,Shark HP305 Air Purifier,NeverChange HP300,
