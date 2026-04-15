@@ -1,5 +1,6 @@
 filter_slug,retailer_name,affiliate_url,is_primary,retailer_key,retailer_slug,destination_url
 levoit-rf-rar029,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-RAR029,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-RAR029
+levoit-rf-rar029,Amazon,https://www.amazon.com/dp/B0DR6X4N35?tag=buckparts20-20,false,amazon,amazon,https://www.amazon.com/dp/B0DR6X4N35?tag=buckparts20-20
 levoit-rf-rar040,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-RAR040,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-RAR040
 levoit-rf-rar060,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-RAR060,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-RAR060
 levoit-rf-cr200,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-CR200,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-CR200
