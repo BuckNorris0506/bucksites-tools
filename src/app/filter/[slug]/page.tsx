@@ -2,19 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
 import { Prose } from "@/components/Prose";
+import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFilterBySlug } from "@/lib/data/filters";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
+import { intervalLabel } from "@/lib/vertical/interval";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: { slug: string } };
-
-function intervalLabel(months: number | null | undefined): string | null {
-  if (months == null || months <= 0) return null;
-  if (months === 1) return "About every month";
-  return `About every ${months} months`;
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filter = await getFilterBySlug(params.slug);
@@ -36,33 +33,65 @@ export default async function FilterPage({ params }: Props) {
   const interval = intervalLabel(filter.replacement_interval_months);
 
   return (
-    <article className="space-y-8">
-      <header className="space-y-2">
-        <p className="text-sm text-neutral-500">
-          <Link
-            href={`/brand/${filter.brand.slug}`}
-            className="hover:text-neutral-700 dark:hover:text-neutral-300"
-          >
-            {filter.brand.name}
-          </Link>
+    <article className="space-y-10">
+      <FridgeWinnerFamilyRail currentSlug={filter.slug} />
+
+      <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+          Brand
         </p>
-        <h1 className="font-mono text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <Link
+          href={`/brand/${filter.brand.slug}`}
+          className="mt-1 block text-lg font-semibold text-neutral-900 hover:text-neutral-700 dark:text-neutral-50 dark:hover:text-neutral-200"
+        >
+          {filter.brand.name}
+        </Link>
+
+        <p className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm leading-relaxed text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
+          {FILTER_PAGE_FIT_CONFIRMATION}
+        </p>
+
+        <h1 className="mt-6 font-mono text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
           {filter.oem_part_number}
         </h1>
         {filter.name && (
-          <p className="text-neutral-700 dark:text-neutral-300">{filter.name}</p>
+          <p className="mt-2 text-base text-neutral-700 dark:text-neutral-300">{filter.name}</p>
         )}
         {interval && (
-          <p className="text-sm text-neutral-700 dark:text-neutral-300">
-            Replacement interval: {interval}
-          </p>
+          <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">{interval}</p>
         )}
-        <Prose>{filter.notes}</Prose>
-      </header>
+        {filter.also_known_as.length > 0 ? (
+          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">
+              Also known as:
+            </span>{" "}
+            {filter.also_known_as.join(" · ")}
+          </p>
+        ) : null}
+
+        {filter.notes ? (
+          <div className="mt-4">
+            <Prose>{filter.notes}</Prose>
+          </div>
+        ) : null}
+
+        <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
+          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+            Where to buy
+          </p>
+          <div className="mt-3">
+            <TieredBuyLinks
+              links={filter.retailer_links}
+              goBase="/go"
+              primaryCtaLabel="Buy this part at"
+            />
+          </div>
+        </div>
+      </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Compatible refrigerator models
+        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+          Compatible refrigerator models ({filter.fridge_models.length})
         </h2>
         {filter.fridge_models.length === 0 ? (
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
@@ -85,13 +114,6 @@ export default async function FilterPage({ params }: Props) {
             ))}
           </ul>
         )}
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Buy
-        </h2>
-        <TieredBuyLinks links={filter.retailer_links} goBase="/go" />
       </section>
     </article>
   );
