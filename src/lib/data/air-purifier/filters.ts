@@ -1,4 +1,5 @@
 import type { Brand } from "@/lib/types/database";
+import { uniqueFilterAliasesForPdp } from "@/lib/data/filter-alias-helpers";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import type {
   AirPurifierFilterRow,
@@ -14,6 +15,8 @@ export type AirPurifierFilterDetail = AirPurifierFilterRow & {
 export type AirPurifierFilterWithModels = AirPurifierFilterDetail & {
   models: AirPurifierModelListRow[];
   retailer_links: AirPurifierRetailerLink[];
+  /** Search aliases from air_purifier_filter_aliases (excludes redundant OEM echo). */
+  also_known_as: string[];
 };
 
 export async function getAirPurifierFilterBySlug(
@@ -88,11 +91,21 @@ export async function getAirPurifierFilterBySlug(
 
   if (lErr) throw lErr;
 
+  const { data: aliasRows, error: aErr } = await supabase
+    .from("air_purifier_filter_aliases")
+    .select("alias")
+    .eq("air_purifier_filter_id", filterRow.id);
+
+  if (aErr) throw aErr;
+  const rawAliases = (aliasRows ?? []).map((r) => (r as { alias: string }).alias);
+  const also_known_as = uniqueFilterAliasesForPdp(rawAliases, filterRow.oem_part_number);
+
   return {
     ...filterRow,
     models,
     retailer_links: filterRealBuyRetailerLinks(
       (links ?? []) as AirPurifierRetailerLink[],
     ),
+    also_known_as,
   };
 }

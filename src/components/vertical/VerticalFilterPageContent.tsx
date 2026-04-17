@@ -32,6 +32,8 @@ type Props = {
   notesSectionTitle?: string;
   /** Richer “search again” line for hub pages (air purifier, whole-house water, etc.). */
   expandedSearchFooter?: boolean;
+  /** Search / packaging tokens from filter aliases (deduped; excludes OEM echo). */
+  alsoKnownAs?: string[];
 };
 
 export function VerticalFilterPageContent({
@@ -50,6 +52,7 @@ export function VerticalFilterPageContent({
   utilityIntro,
   notesSectionTitle = "Extra notes",
   expandedSearchFooter = false,
+  alsoKnownAs,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
   const interval = intervalLabel(replacementIntervalMonths);
@@ -83,6 +86,14 @@ export function VerticalFilterPageContent({
         {interval && (
           <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">{interval}</p>
         )}
+        {alsoKnownAs && alsoKnownAs.length > 0 ? (
+          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
+            <span className="font-medium text-neutral-700 dark:text-neutral-300">
+              Also known as:
+            </span>{" "}
+            {alsoKnownAs.join(" · ")}
+          </p>
+        ) : null}
 
         <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
