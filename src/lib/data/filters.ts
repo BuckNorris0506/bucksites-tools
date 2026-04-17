@@ -1,4 +1,5 @@
 import type { Brand, Filter, FridgeModel, RetailerLink } from "@/lib/types/database";
+import { uniqueFilterAliasesForPdp } from "@/lib/data/filter-alias-helpers";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
@@ -17,6 +18,8 @@ export type FridgeModelListRow = Pick<
 export type FilterWithFridges = FilterDetail & {
   fridge_models: FridgeModelListRow[];
   retailer_links: RetailerLink[];
+  /** Search aliases for this filter (excludes redundant OEM echo). */
+  also_known_as: string[];
 };
 
 export async function getFilterBySlug(slug: string): Promise<FilterWithFridges | null> {
@@ -86,10 +89,20 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
 
   if (lErr) throw lErr;
 
+  const { data: aliasRows, error: aErr } = await supabase
+    .from("filter_aliases")
+    .select("alias")
+    .eq("filter_id", filterRow.id);
+
+  if (aErr) throw aErr;
+  const rawAliases = (aliasRows ?? []).map((r) => (r as { alias: string }).alias);
+  const also_known_as = uniqueFilterAliasesForPdp(rawAliases, filterRow.oem_part_number);
+
   return {
     ...filterRow,
     fridge_models: fridges,
     retailer_links: filterRealBuyRetailerLinks((links ?? []) as RetailerLink[]),
+    also_known_as,
   };
 }
 
