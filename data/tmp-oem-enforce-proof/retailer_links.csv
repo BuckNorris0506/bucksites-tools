@@ -1,0 +1,2 @@
+filter_slug,retailer_name,affiliate_url,is_primary,retailer_key,retailer_slug,destination_url
+enforce-proof-slug,OEM / manufacturer catalog (keyword lookup),https://www.frigidaire.com/en/catalogsearch/result/?q=WFCB,true,oem-parts-catalog,oem-parts-catalog,
