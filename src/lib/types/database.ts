@@ -60,6 +60,9 @@ export type RetailerLink = {
   affiliate_url: string;
   is_primary: boolean | null;
   retailer_key: string;
+  browser_truth_classification?: string | null;
+  browser_truth_notes?: string | null;
+  browser_truth_checked_at?: string | null;
 };
 
 export type RetailerLinkCandidateReviewStatus = "pending" | "rejected";

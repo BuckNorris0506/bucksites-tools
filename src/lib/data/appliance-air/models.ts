@@ -1,5 +1,6 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
 import type { ApplianceAirPartRow, ApplianceAirRetailerLink } from "./types";
 
@@ -17,6 +18,7 @@ export type ApplianceAirModelDetail = {
 export type ApplianceAirModelWithParts = ApplianceAirModelDetail & {
   filters: (ApplianceAirPartRow & {
     retailer_links: ApplianceAirRetailerLink[];
+    is_recommended_fit: boolean;
   })[];
 };
 
@@ -95,7 +97,8 @@ export async function getApplianceAirModelBySlug(
 
   const partList = ((parts ?? []) as ApplianceAirPartRow[]).map((f) => ({
     ...f,
-    retailer_links: byPart.get(f.id) ?? [],
+    retailer_links: filterRealBuyRetailerLinks(byPart.get(f.id) ?? []),
+    is_recommended_fit: recommendedByPartId.get(f.id) === true,
   }));
 
   sortModelFiltersByCompatRecommendation(partList, recommendedByPartId);

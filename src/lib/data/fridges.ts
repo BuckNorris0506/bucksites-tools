@@ -76,7 +76,7 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
 
   const { data: links, error: lErr } = await supabase
     .from("retailer_links")
-    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key")
+    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at")
     .in("filter_id", filterIds)
     .order("is_primary", { ascending: false })
     .order("retailer_name", { ascending: true });

@@ -1,57 +1,56 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { NextRequest } from "next/server";
 import { getWholeHouseWaterRetailerLinkById } from "@/lib/data/whole-house-water/retailers";
+import {
+  GO_LINK_UUID_RE,
+  goFallbackRedirect,
+  logClickEventForGoRoute,
+  nextResponseRedirectAffiliateIfSafe,
+} from "@/lib/retailers/go-affiliate-route-handler";
 
 export const dynamic = "force-dynamic";
-
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isSafeRedirectUrl(url: string): boolean {
-  try {
-    const u = new URL(url);
-    return u.protocol === "https:" || u.protocol === "http:";
-  } catch {
-    return false;
-  }
-}
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ linkId: string }> },
 ) {
   const { linkId } = await params;
-  const base = new URL(request.url).origin;
 
-  if (!UUID_RE.test(linkId)) {
-    return NextResponse.redirect(new URL("/whole-house-water", base), 302);
+  if (!GO_LINK_UUID_RE.test(linkId)) {
+    return goFallbackRedirect(request, "/whole-house-water");
   }
 
   let target: string | null = null;
+  let retailerKey: string | null = null;
+  let classification: string | undefined = undefined;
+
   try {
     const row = await getWholeHouseWaterRetailerLinkById(linkId);
     target = row?.affiliate_url ?? null;
+    retailerKey = row?.retailer_key ?? null;
+    classification = row?.browser_truth_classification ?? undefined;
   } catch {
-    return NextResponse.redirect(new URL("/whole-house-water", base), 302);
+    return goFallbackRedirect(request, "/whole-house-water");
   }
 
-  if (!target || !isSafeRedirectUrl(target)) {
-    return NextResponse.redirect(new URL("/whole-house-water", base), 302);
+  if (!target) {
+    return goFallbackRedirect(request, "/whole-house-water");
   }
 
-  try {
-    const supabase = getSupabaseServerClient();
-    const { error: insErr } = await supabase.from("click_events").insert({
-      whole_house_water_retailer_link_id: linkId,
-      user_agent: request.headers.get("user-agent"),
-      referrer: request.headers.get("referer"),
-    });
-    if (insErr) {
-      console.error("[go/whole-house-water] click_events insert failed:", insErr.message);
-    }
-  } catch (e) {
-    console.error("[go/whole-house-water] click_events insert exception:", e);
+  const go = nextResponseRedirectAffiliateIfSafe(
+    retailerKey,
+    target,
+    classification,
+  );
+  if (!go) {
+    return goFallbackRedirect(request, "/whole-house-water");
   }
 
-  return NextResponse.redirect(target, 302);
+  await logClickEventForGoRoute(
+    request,
+    go,
+    { whole_house_water_retailer_link_id: linkId },
+    "[go/whole-house-water]",
+  );
+
+  return go.response;
 }

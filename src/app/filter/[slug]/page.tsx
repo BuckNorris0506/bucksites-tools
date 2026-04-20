@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import { PartTrustPanel } from "@/components/trust/PartTrustPanel";
+import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
 import { Prose } from "@/components/Prose";
 import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFilterBySlug } from "@/lib/data/filters";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
+import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +33,13 @@ export default async function FilterPage({ params }: Props) {
   if (!filter) notFound();
 
   const interval = intervalLabel(filter.replacement_interval_months);
+  const trustSummary = buildPartPageTrust({
+    modelsCount: filter.fridge_models.length,
+    retailerLinks: filter.retailer_links,
+    oemPartNumber: filter.oem_part_number,
+    alsoKnownAs: filter.also_known_as,
+    notes: filter.notes,
+  });
 
   return (
     <article className="space-y-10">
@@ -69,6 +78,8 @@ export default async function FilterPage({ params }: Props) {
           </p>
         ) : null}
 
+        <PartTrustPanel trust={trustSummary} />
+
         {filter.notes ? (
           <div className="mt-4">
             <Prose>{filter.notes}</Prose>
@@ -80,10 +91,13 @@ export default async function FilterPage({ params }: Props) {
             Where to buy
           </p>
           <div className="mt-3">
-            <TieredBuyLinks
+            <TrustAwareBuySection
+              trust={trustSummary}
               links={filter.retailer_links}
               goBase="/go"
               primaryCtaLabel="Buy this part at"
+              suppressMessage="BuckParts does not have enough proof to show a buy button for this refrigerator filter yet. Verify the OEM number against the old part or your manual first."
+              gateSuppressionSummary={filter.buy_path_gate_suppression}
             />
           </div>
         </div>

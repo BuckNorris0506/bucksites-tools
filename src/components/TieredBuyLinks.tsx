@@ -1,5 +1,9 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  buyLinkGateFailureKind,
+  filterRealBuyRetailerLinks,
+  isOemCatalogSlotKey,
+} from "@/lib/retailers/launch-buy-links";
 
 function sortRetailerLinks(links: BuyLinkRow[]): BuyLinkRow[] {
   return [...links].sort((a, b) => {
@@ -11,6 +15,19 @@ function sortRetailerLinks(links: BuyLinkRow[]): BuyLinkRow[] {
 }
 
 const MAX_SECONDARY = 2;
+
+/**
+ * OEM catalog slot rows that fail live buy gating but are clearly manufacturer site-search URLs.
+ * Shown only as direct outbound links (never `/go`) when at least one gated buy link exists.
+ */
+function firstSuppressedOemCatalogFootnoteLink(links: BuyLinkRow[]): BuyLinkRow | null {
+  for (const l of links) {
+    if (!isOemCatalogSlotKey(l.retailer_key)) continue;
+    const k = buyLinkGateFailureKind(l);
+    if (k === "unsafe_browser_truth" || k === "search_placeholder") return l;
+  }
+  return null;
+}
 
 /**
  * One primary storefront CTA and up to two alternates. Reduces choice overload.
@@ -43,6 +60,7 @@ export function TieredBuyLinks({
   const primary = sorted[0];
   const alternates = sorted.slice(1, 1 + MAX_SECONDARY);
   const hiddenCount = Math.max(0, sorted.length - 1 - MAX_SECONDARY);
+  const oemCatalogFootnote = firstSuppressedOemCatalogFootnoteLink(links);
 
   const primaryName = primary.retailer_name?.trim() || "Recommended store";
 
@@ -91,6 +109,27 @@ export function TieredBuyLinks({
           )}
         </div>
       )}
+
+      {oemCatalogFootnote ? (
+        <div className="border-t border-neutral-200 pt-3 dark:border-neutral-800">
+          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+            Manufacturer catalog lookup
+          </p>
+          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+            Not a verified checkout deep link — opens the OEM site directly (not a BuckParts /go hop).
+          </p>
+          <a
+            href={oemCatalogFootnote.affiliate_url}
+            rel="nofollow noopener noreferrer"
+            className="mt-2 inline-flex text-sm font-medium text-neutral-700 underline-offset-2 hover:underline dark:text-neutral-200"
+          >
+            {oemCatalogFootnote.retailer_name?.trim() || "OEM / manufacturer catalog (keyword lookup)"}
+            <span className="ml-1 text-neutral-400" aria-hidden>
+              ↗
+            </span>
+          </a>
+        </div>
+      ) : null}
     </div>
   );
 }

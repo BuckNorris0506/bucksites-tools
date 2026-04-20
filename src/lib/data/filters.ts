@@ -2,7 +2,11 @@ import type { Brand, Filter, FridgeModel, RetailerLink } from "@/lib/types/datab
 import { uniqueFilterAliasesForPdp } from "@/lib/data/filter-alias-helpers";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 
 export type FilterDetail = Filter & {
   brand: Pick<Brand, "slug" | "name">;
@@ -18,6 +22,8 @@ export type FridgeModelListRow = Pick<
 export type FilterWithFridges = FilterDetail & {
   fridge_models: FridgeModelListRow[];
   retailer_links: RetailerLink[];
+  /** Why on-file retailer rows are not eligible for live buy CTAs (parallel to `filterRealBuyRetailerLinks`). */
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
   /** Search aliases for this filter (excludes redundant OEM echo). */
   also_known_as: string[];
 };
@@ -82,12 +88,14 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
 
   const { data: links, error: lErr } = await supabase
     .from("retailer_links")
-    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key")
+        .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at")
     .eq("filter_id", filterRow.id)
     .order("is_primary", { ascending: false })
     .order("retailer_name", { ascending: true });
 
   if (lErr) throw lErr;
+
+  const rawRetailerLinks = (links ?? []) as RetailerLink[];
 
   const { data: aliasRows, error: aErr } = await supabase
     .from("filter_aliases")
@@ -101,7 +109,8 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
   return {
     ...filterRow,
     fridge_models: fridges,
-    retailer_links: filterRealBuyRetailerLinks((links ?? []) as RetailerLink[]),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
     also_known_as,
   };
 }

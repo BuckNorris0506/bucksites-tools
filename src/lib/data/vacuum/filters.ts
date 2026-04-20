@@ -1,5 +1,6 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 import type {
   VacuumFilterRow,
   VacuumModelListRow,
@@ -90,6 +91,6 @@ export async function getVacuumFilterBySlug(
   return {
     ...filterRow,
     models,
-    retailer_links: (links ?? []) as VacuumRetailerLink[],
+    retailer_links: filterRealBuyRetailerLinks((links ?? []) as VacuumRetailerLink[]),
   };
 }

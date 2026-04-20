@@ -19,6 +19,7 @@ export type WholeHouseWaterModelDetail = {
 export type WholeHouseWaterModelWithParts = WholeHouseWaterModelDetail & {
   filters: (WholeHouseWaterPartRow & {
     retailer_links: WholeHouseWaterRetailerLink[];
+    is_recommended_fit: boolean;
   })[];
 };
 
@@ -106,7 +107,7 @@ export async function getWholeHouseWaterModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("whole_house_water_retailer_links")
     .select(
-      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
     )
     .in("whole_house_water_part_id", partIds)
     .eq("status", "approved")
@@ -125,6 +126,7 @@ export async function getWholeHouseWaterModelBySlug(
   const partList = ((parts ?? []) as WholeHouseWaterPartRow[]).map((f) => ({
     ...f,
     retailer_links: filterRealBuyRetailerLinks(byPart.get(f.id) ?? []),
+    is_recommended_fit: recommendedByPartId.get(f.id) === true,
   }));
 
   sortModelFiltersByCompatRecommendation(partList, recommendedByPartId);
