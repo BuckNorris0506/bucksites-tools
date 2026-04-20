@@ -7,6 +7,8 @@ export type BuyLinkRow = {
   is_primary?: boolean | null;
   /** When present, used to hide import mistakes / legacy placeholder keys in buy UI. */
   retailer_key?: string | null;
+  /** Present on DB-backed rows; required for Phase 1 buy-path gating in TieredBuyLinks. */
+  browser_truth_classification?: string | null;
 };
 
 /**

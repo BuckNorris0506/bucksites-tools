@@ -1,5 +1,6 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
 import type { HumidifierFilterRow, HumidifierRetailerLink } from "./types";
 
@@ -17,6 +18,7 @@ export type HumidifierModelDetail = {
 export type HumidifierModelWithFilters = HumidifierModelDetail & {
   filters: (HumidifierFilterRow & {
     retailer_links: HumidifierRetailerLink[];
+    is_recommended_fit: boolean;
   })[];
 };
 
@@ -95,7 +97,8 @@ export async function getHumidifierModelBySlug(
 
   const filterList = ((filters ?? []) as HumidifierFilterRow[]).map((f) => ({
     ...f,
-    retailer_links: byFilter.get(f.id) ?? [],
+    retailer_links: filterRealBuyRetailerLinks(byFilter.get(f.id) ?? []),
+    is_recommended_fit: recommendedByFilterId.get(f.id) === true,
   }));
 
   sortModelFiltersByCompatRecommendation(filterList, recommendedByFilterId);

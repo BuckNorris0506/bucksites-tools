@@ -82,7 +82,7 @@ export async function getAirPurifierFilterBySlug(
   const { data: links, error: lErr } = await supabase
     .from("air_purifier_retailer_links")
     .select(
-      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("air_purifier_filter_id", filterRow.id)
     .eq("status", "approved")

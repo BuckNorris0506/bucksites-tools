@@ -1,65 +1,60 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { NextRequest } from "next/server";
 import { getRetailerLinkById } from "@/lib/data/retailers";
+import {
+  GO_LINK_UUID_RE,
+  goFallbackRedirect,
+  logClickEventForGoRoute,
+  nextResponseRedirectAffiliateIfSafe,
+} from "@/lib/retailers/go-affiliate-route-handler";
 
 export const dynamic = "force-dynamic";
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isSafeRedirectUrl(url: string): boolean {
-  try {
-    const u = new URL(url);
-    return u.protocol === "https:" || u.protocol === "http:";
-  } catch {
-    return false;
-  }
-}
-
 /**
- * Legacy fridge wedge: logs `click_events` with filter_id + retailer_slug + page_type/page_slug
- * (no retailer_link_id column). Then redirects to the retailer URL.
+ * Legacy fridge wedge: `click_events` uses filter_id + retailer_slug + page_type/page_slug
+ * (no retailer_link_id). Outbound truth is `target_url` = `go.outboundUrl` (see handler).
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ linkId: string }> },
 ) {
   const { linkId } = await params;
-  const base = new URL(request.url).origin;
 
-  if (!UUID_RE.test(linkId)) {
-    return NextResponse.redirect(new URL("/", base), 302);
+  if (!GO_LINK_UUID_RE.test(linkId)) {
+    return goFallbackRedirect(request, "/");
   }
 
   let row: Awaited<ReturnType<typeof getRetailerLinkById>> = null;
   try {
     row = await getRetailerLinkById(linkId);
   } catch {
-    return NextResponse.redirect(new URL("/", base), 302);
+    return goFallbackRedirect(request, "/");
   }
 
   const target = row?.affiliate_url ?? null;
-  if (!row || !target || !isSafeRedirectUrl(target)) {
-    return NextResponse.redirect(new URL("/", base), 302);
+  if (!row || !target) {
+    return goFallbackRedirect(request, "/");
   }
 
-  try {
-    const supabase = getSupabaseServerClient();
-    const pageSlug = row.filter_slug?.trim() || "unknown";
-    const { error: insErr } = await supabase.from("click_events").insert({
+    const go = nextResponseRedirectAffiliateIfSafe(
+    row.retailer_key,
+    target,
+    row.browser_truth_classification ?? undefined,
+  );
+  if (!go) {
+    return goFallbackRedirect(request, "/");
+  }
+
+  await logClickEventForGoRoute(
+    request,
+    go,
+    {
       filter_id: row.filter_id,
       retailer_slug: row.retailer_key,
       page_type: "refrigerator_filter",
-      page_slug: pageSlug,
-      user_agent: request.headers.get("user-agent"),
-      referrer: request.headers.get("referer"),
-    });
-    if (insErr) {
-      console.error("[go/fridge] click_events insert failed:", insErr.message);
-    }
-  } catch (e) {
-    console.error("[go/fridge] click_events insert exception:", e);
-  }
+      page_slug: row.filter_slug?.trim() || "unknown",
+    },
+    "[go/fridge]",
+  );
 
-  return NextResponse.redirect(target, 302);
+  return go.response;
 }

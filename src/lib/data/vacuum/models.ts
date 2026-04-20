@@ -1,5 +1,6 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
 import type { VacuumFilterRow, VacuumRetailerLink } from "./types";
 
@@ -15,7 +16,10 @@ export type VacuumModelDetail = {
 };
 
 export type VacuumModelWithFilters = VacuumModelDetail & {
-  filters: (VacuumFilterRow & { retailer_links: VacuumRetailerLink[] })[];
+  filters: (VacuumFilterRow & {
+    retailer_links: VacuumRetailerLink[];
+    is_recommended_fit: boolean;
+  })[];
 };
 
 export async function getVacuumModelBySlug(
@@ -93,7 +97,8 @@ export async function getVacuumModelBySlug(
 
   const filterList = ((filters ?? []) as VacuumFilterRow[]).map((f) => ({
     ...f,
-    retailer_links: byFilter.get(f.id) ?? [],
+    retailer_links: filterRealBuyRetailerLinks(byFilter.get(f.id) ?? []),
+    is_recommended_fit: recommendedByFilterId.get(f.id) === true,
   }));
 
   sortModelFiltersByCompatRecommendation(filterList, recommendedByFilterId);

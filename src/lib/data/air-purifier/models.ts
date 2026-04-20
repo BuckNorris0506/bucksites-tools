@@ -18,6 +18,7 @@ export type AirPurifierModelDetail = {
 export type AirPurifierModelWithFilters = AirPurifierModelDetail & {
   filters: (AirPurifierFilterRow & {
     retailer_links: AirPurifierRetailerLink[];
+    is_recommended_fit: boolean;
   })[];
 };
 
@@ -78,7 +79,7 @@ export async function getAirPurifierModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("air_purifier_retailer_links")
     .select(
-      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
     )
     .in("air_purifier_filter_id", filterIds)
     .eq("status", "approved")
@@ -97,6 +98,7 @@ export async function getAirPurifierModelBySlug(
   const filterList = ((filters ?? []) as AirPurifierFilterRow[]).map((f) => ({
     ...f,
     retailer_links: filterRealBuyRetailerLinks(byFilter.get(f.id) ?? []),
+    is_recommended_fit: recommendedByFilterId.get(f.id) === true,
   }));
 
   sortModelFiltersByCompatRecommendation(filterList, recommendedByFilterId);
