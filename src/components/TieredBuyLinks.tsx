@@ -3,16 +3,8 @@ import {
   buyLinkGateFailureKind,
   filterRealBuyRetailerLinks,
   isOemCatalogSlotKey,
+  sortBestVerifiedBuyLinks,
 } from "@/lib/retailers/launch-buy-links";
-
-function sortRetailerLinks(links: BuyLinkRow[]): BuyLinkRow[] {
-  return [...links].sort((a, b) => {
-    const ap = a.is_primary ? 1 : 0;
-    const bp = b.is_primary ? 1 : 0;
-    if (bp !== ap) return bp - ap;
-    return (a.retailer_name ?? "").localeCompare(b.retailer_name ?? "");
-  });
-}
 
 const MAX_SECONDARY = 2;
 
@@ -56,7 +48,7 @@ export function TieredBuyLinks({
     );
   }
 
-  const sorted = sortRetailerLinks(realLinks);
+  const sorted = sortBestVerifiedBuyLinks(realLinks);
   const primary = sorted[0];
   const alternates = sorted.slice(1, 1 + MAX_SECONDARY);
   const hiddenCount = Math.max(0, sorted.length - 1 - MAX_SECONDARY);

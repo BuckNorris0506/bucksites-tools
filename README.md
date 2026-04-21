@@ -72,6 +72,19 @@ Import order is fixed: **brands → filters → fridge_models → compatibility_
 2. Build command: `npm run build` (default from `netlify.toml`).
 3. The Next.js runtime plugin handles SSR and routing.
 
+### Branch/Deploy Integrity Closure (BuckParts)
+
+- Canonical branch: `main`
+- Production deploy branch: `main`
+- Integrity lane status: resolved
+- Post-switch production validation: passed
+  - `https://buckparts.com/` -> `200`
+  - `https://buckparts.com/filter/mwf` -> `200`
+  - `https://buckparts.com/air-purifier/filter/honeywell-hrf-r1` -> `200`
+  - Valid real `/go/{linkId}` -> `302` to expected retailer
+  - Invalid `/go/{uuid}` -> `302` fallback behavior
+- UNKNOWN: exact live Netlify production deploy SHA was not proven in this lane.
+
 ## Project layout
 
 | Path | Role |

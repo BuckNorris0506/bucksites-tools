@@ -31,18 +31,44 @@ export const SEARCH_PLACEHOLDER_RETAILER_KEYS = new Set([
 const OEM_CATALOG_SLOT_KEYS = new Set(["oem-catalog", "oem-parts-catalog"]);
 
 /**
+ * Canonical key for repo-known broken/indirect URLs so eligibility cannot drift on
+ * harmless serialization differences (http vs https, path case, trailing slash, hash,
+ * tracking query params).
+ */
+export function normalizeUrlForKnownTruthLookup(url: string): string {
+  try {
+    const u = new URL(url.trim());
+    u.hash = "";
+    if (u.protocol === "http:") {
+      u.protocol = "https:";
+    }
+    u.hostname = u.hostname.toLowerCase();
+    let path = u.pathname.replace(/\/+$/, "");
+    if (path === "") path = "/";
+    path = path.toLowerCase();
+    u.pathname = path;
+    u.search = "";
+    return u.href;
+  } catch {
+    return url.trim();
+  }
+}
+
+/**
  * Repo-proven indirect/info destinations that must not drive primary buy CTAs or `/go`.
  * Keep this list narrow until broader stricter-standard verification is complete.
  */
-const KNOWN_INDIRECT_DISCOVERY_URLS = new Set([
-  "https://www.solventum.com/en-us/home/v/v000075117/",
-  "https://www.kinetico.com/en-us/for-home/water-filtration/",
-]);
+const KNOWN_INDIRECT_DISCOVERY_URLS = new Set(
+  [
+    "https://www.solventum.com/en-us/home/v/v000075117/",
+    "https://www.kinetico.com/en-us/for-home/water-filtration/",
+  ].map(normalizeUrlForKnownTruthLookup),
+);
 
 /** Repo-proven broken destinations that must not drive primary buy CTAs or `/go`. */
-const KNOWN_BROKEN_URLS = new Set([
-  "https://www.geapplianceparts.com/store/parts/spec/MWF",
-]);
+const KNOWN_BROKEN_URLS = new Set(
+  ["https://www.geapplianceparts.com/store/parts/spec/MWF"].map(normalizeUrlForKnownTruthLookup),
+);
 
 function stripLeadingWww(hostname: string): string {
   let h = hostname.toLowerCase();
@@ -190,19 +216,11 @@ export function isSearchEngineDiscoveryUrl(url: string): boolean {
 }
 
 export function isKnownIndirectDiscoveryUrl(url: string): boolean {
-  try {
-    return KNOWN_INDIRECT_DISCOVERY_URLS.has(new URL(url).toString());
-  } catch {
-    return false;
-  }
+  return KNOWN_INDIRECT_DISCOVERY_URLS.has(normalizeUrlForKnownTruthLookup(url));
 }
 
 export function isKnownBrokenUrl(url: string): boolean {
-  try {
-    return KNOWN_BROKEN_URLS.has(new URL(url).toString());
-  } catch {
-    return false;
-  }
+  return KNOWN_BROKEN_URLS.has(normalizeUrlForKnownTruthLookup(url));
 }
 
 /** A row must never be a launch buy CTA or `/go` target when this is true. */
@@ -296,4 +314,79 @@ export function filterRealBuyRetailerLinks<
   },
 >(links: T[]): T[] {
   return links.filter((l) => buyLinkGateFailureKind(l) === null);
+}
+
+type WinnerSelectableBuyLink = {
+  id: string;
+  affiliate_url: string;
+  retailer_name?: string | null;
+  browser_truth_checked_at?: string | null;
+};
+
+function buyPathSpecificityScore(url: string): number {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return -1000;
+  }
+
+  const path = u.pathname.toLowerCase();
+  const segments = path.split("/").filter(Boolean);
+  let score = 0;
+
+  // Deeper URLs are generally closer to a specific product destination.
+  score += Math.min(segments.length, 6);
+
+  // Product/PDP-like tokens suggest an exact buyable target.
+  if (/(^|\/)(dp|gp\/product|product|products|parts|spec|sku|item|itm)(\/|$)/.test(path)) {
+    score += 4;
+  }
+
+  // Search-like URLs are less exact, even if they somehow pass classification gates.
+  const query = u.searchParams;
+  const searchish = ["q", "query", "search", "searchterm", "searchkeyword", "keywords", "ntt"];
+  if (searchish.some((k) => (query.get(k) ?? "").trim().length > 0)) {
+    score -= 5;
+  }
+
+  return score;
+}
+
+function checkedAtUnixMs(value: string | null | undefined): number {
+  if (!value) return Number.NEGATIVE_INFINITY;
+  const t = Date.parse(value);
+  return Number.isNaN(t) ? Number.NEGATIVE_INFINITY : t;
+}
+
+/**
+ * Deterministic winner arbitration for Phase 1 corrected standard.
+ * Precedence:
+ * 1) Highest verified destination specificity from affiliate URL shape.
+ * 2) Most recently checked browser-truth timestamp.
+ * 3) Stable lexical tie-breaks (retailer_name, then id).
+ *
+ * OEM/retailer identity alone never wins; only verifiable buy-path evidence and explicit tie-breaks do.
+ */
+export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(links: T[]): T[] {
+  return [...links].sort((a, b) => {
+    const specificityDelta =
+      buyPathSpecificityScore(b.affiliate_url) - buyPathSpecificityScore(a.affiliate_url);
+    if (specificityDelta !== 0) return specificityDelta;
+
+    const checkedAtA = checkedAtUnixMs(a.browser_truth_checked_at);
+    const checkedAtB = checkedAtUnixMs(b.browser_truth_checked_at);
+    if (checkedAtA !== checkedAtB) {
+      return checkedAtB > checkedAtA ? 1 : -1;
+    }
+
+    const nameDelta = (a.retailer_name ?? "").localeCompare(b.retailer_name ?? "");
+    if (nameDelta !== 0) return nameDelta;
+
+    return a.id.localeCompare(b.id);
+  });
+}
+
+export function selectBestVerifiedBuyLink<T extends WinnerSelectableBuyLink>(links: T[]): T | null {
+  return sortBestVerifiedBuyLinks(links)[0] ?? null;
 }

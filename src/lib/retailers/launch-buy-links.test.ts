@@ -9,6 +9,8 @@ import {
   isKnownIndirectDiscoveryUrl,
   isSearchEngineDiscoveryUrl,
   isSearchPlaceholderBuyLink,
+  selectBestVerifiedBuyLink,
+  sortBestVerifiedBuyLinks,
   summarizeBuyPathGateSuppression,
 } from "./launch-buy-links";
 
@@ -201,6 +203,19 @@ describe("isKnownBrokenUrl", () => {
       true,
     );
   });
+
+  it("still flags GE MWF when path case, scheme, trailing slash, hash, or query drift", () => {
+    const variants = [
+      "https://www.geapplianceparts.com/store/parts/spec/mwf",
+      "http://www.geapplianceparts.com/store/parts/spec/MWF",
+      "https://www.geapplianceparts.com/store/parts/spec/MWF/",
+      "https://www.geapplianceparts.com/store/parts/spec/MWF#section",
+      "https://www.geapplianceparts.com/store/parts/spec/MWF?utm_source=x",
+    ];
+    for (const u of variants) {
+      assert.equal(isKnownBrokenUrl(u), true, `expected broken for ${u}`);
+    }
+  });
 });
 
 describe("isExplicitBuyableClassification", () => {
@@ -368,6 +383,89 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         },
       ]).length,
       0,
+    );
+  });
+});
+
+describe("best-verified winner arbitration", () => {
+  it("prefers exact product-like URL over is_primary/position", () => {
+    const winner = selectBestVerifiedBuyLink([
+      {
+        id: "1",
+        retailer_name: "OEM Catalog",
+        is_primary: true,
+        affiliate_url: "https://oem.example.com/search?q=wf3cb",
+        browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+      },
+      {
+        id: "2",
+        retailer_name: "Retailer PDP",
+        is_primary: false,
+        affiliate_url: "https://store.example.com/product/wf3cb-filter",
+        browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+      },
+    ]);
+    assert.equal(winner?.id, "2");
+  });
+
+  it("uses most-recent browser truth timestamp when specificity ties", () => {
+    const sorted = sortBestVerifiedBuyLinks([
+      {
+        id: "a",
+        retailer_name: "Store A",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T01:00:00.000Z",
+      },
+      {
+        id: "b",
+        retailer_name: "Store B",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T09:00:00.000Z",
+      },
+    ]);
+    assert.deepEqual(
+      sorted.map((r) => r.id),
+      ["b", "a"],
+    );
+  });
+
+  it("uses deterministic lexical tie-breaks when signals are identical", () => {
+    const sorted = sortBestVerifiedBuyLinks([
+      {
+        id: "b-id",
+        retailer_name: "Zeta Store",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T09:00:00.000Z",
+      },
+      {
+        id: "a-id",
+        retailer_name: "Alpha Store",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T09:00:00.000Z",
+      },
+    ]);
+    assert.deepEqual(
+      sorted.map((r) => r.id),
+      ["a-id", "b-id"],
+    );
+  });
+
+  it("still reaches lexical tie-break when both browser truth timestamps are missing", () => {
+    const sorted = sortBestVerifiedBuyLinks([
+      {
+        id: "b-id",
+        retailer_name: "Zeta Store",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+      },
+      {
+        id: "a-id",
+        retailer_name: "Alpha Store",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+      },
+    ]);
+    assert.deepEqual(
+      sorted.map((r) => r.id),
+      ["a-id", "b-id"],
     );
   });
 });

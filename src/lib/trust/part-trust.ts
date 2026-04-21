@@ -1,4 +1,5 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { selectBestVerifiedBuyLink } from "@/lib/retailers/launch-buy-links";
 
 export type MatchConfidence = "high" | "medium" | "unknown";
 export type MatchBasis =
@@ -42,9 +43,7 @@ type ModelPageTrustArgs = {
 };
 
 function preferredWinnerLink(links: BuyLinkRow[]): BuyLinkRow | null {
-  if (links.length === 0) return null;
-  const primary = links.find((link) => link.is_primary);
-  return primary ?? links[0] ?? null;
+  return selectBestVerifiedBuyLink(links);
 }
 
 export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
