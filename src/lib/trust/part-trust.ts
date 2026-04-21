@@ -1,4 +1,5 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import type { BuyPathSortContext } from "@/lib/retailers/launch-buy-links";
 import { selectBestVerifiedBuyLink } from "@/lib/retailers/launch-buy-links";
 
 export type MatchConfidence = "high" | "medium" | "unknown";
@@ -31,6 +32,8 @@ type PartPageTrustArgs = {
   oemPartNumber: string;
   alsoKnownAs?: string[];
   notes?: string | null;
+  /** Aligns preferred winner with `TieredBuyLinks` primary CTA ordering. */
+  buyPathSortContext?: BuyPathSortContext;
 };
 
 type ModelPageTrustArgs = {
@@ -40,15 +43,22 @@ type ModelPageTrustArgs = {
   retailerLinks: BuyLinkRow[];
   oemPartNumber: string;
   modelNumber: string;
+  buyPathSortContext?: BuyPathSortContext;
 };
 
-function preferredWinnerLink(links: BuyLinkRow[]): BuyLinkRow | null {
-  return selectBestVerifiedBuyLink(links);
+function preferredWinnerLink(
+  links: BuyLinkRow[],
+  sortContext?: BuyPathSortContext,
+): BuyLinkRow | null {
+  return selectBestVerifiedBuyLink(links, sortContext);
 }
 
 export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
   const approved_retailer_links = args.retailerLinks.length;
-  const preferred_winner_link = preferredWinnerLink(args.retailerLinks);
+  const preferred_winner_link = preferredWinnerLink(
+    args.retailerLinks,
+    args.buyPathSortContext,
+  );
   const evidence_notes = [
     args.modelsCount > 0
       ? `${args.modelsCount} mapped compatible model${args.modelsCount === 1 ? "" : "s"} in the repo`
@@ -92,15 +102,18 @@ export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
     preferred_winner_link,
     replacement_reasoning_summary:
       args.modelsCount > 0
-        ? `${args.oemPartNumber} is backed by repo compatibility mappings; BuckParts can show a buy CTA only when an approved live link is also present.`
-        : `${args.oemPartNumber} is not proven by repo compatibility mappings yet, so BuckParts should not treat it as buy-ready.`,
+        ? `${args.oemPartNumber} matches model mappings on this page, and buy links show only when we can verify a direct checkout page for this part number.`
+        : `${args.oemPartNumber} does not have model mappings on this page yet, so verify the part number in your manual or on your current filter before checkout.`,
     buyer_path_state,
   };
 }
 
 export function buildModelPageTrust(args: ModelPageTrustArgs): PartTrustSummary {
   const approved_retailer_links = args.retailerLinks.length;
-  const preferred_winner_link = preferredWinnerLink(args.retailerLinks);
+  const preferred_winner_link = preferredWinnerLink(
+    args.retailerLinks,
+    args.buyPathSortContext,
+  );
   const evidence_notes = [
     args.totalFits === 0
       ? "No compatible parts are mapped for this model in the repo"
@@ -156,8 +169,8 @@ export function buildModelPageTrust(args: ModelPageTrustArgs): PartTrustSummary 
     preferred_winner_link,
     replacement_reasoning_summary:
       buyer_path_state === "show_confident_buy"
-        ? `${args.oemPartNumber} is the current buy-ready winner for model ${args.modelNumber} under BuckParts trust rules.`
-        : `${args.oemPartNumber} may fit model ${args.modelNumber}, but BuckParts does not have enough proof to make this a buy-ready winner yet.`,
+        ? `${args.oemPartNumber} is the part shown first for model ${args.modelNumber}; match that part number before checkout.`
+        : `${args.oemPartNumber} may fit model ${args.modelNumber}, but verify the part number carefully before checkout.`,
     buyer_path_state,
   };
 }
