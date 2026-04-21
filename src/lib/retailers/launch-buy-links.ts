@@ -321,7 +321,62 @@ type WinnerSelectableBuyLink = {
   affiliate_url: string;
   retailer_name?: string | null;
   browser_truth_checked_at?: string | null;
+  retailer_key?: string | null;
+  browser_truth_classification?: string | null;
 };
+
+/** Optional context from the money-page PDP (never per-filter slug special cases in the sorter). */
+export type BuyPathSortContext = {
+  /**
+   * When true, a verified Amazon row may outrank other retailers that tie on URL specificity
+   * and browser-truth recency. When false (compatible-style PDP), Amazon never receives that boost.
+   */
+  exactOemCatalogPart: boolean;
+  /** Canonical OEM part token for this PDP (e.g. `MWF`, `HRF-R1`) to avoid cross-pack winner drift. */
+  expectedOemPartNumber?: string | null;
+};
+
+/**
+ * Heuristic from published filter metadata: certified-alternate / aftermarket-style PDPs should
+ * not get Amazon primary promotion over other verified storefront links.
+ */
+export function isCompatibleReplacementFilterPdp(
+  slug: string,
+  name: string | null | undefined,
+): boolean {
+  const s = slug.trim().toLowerCase();
+  if (/^lt\d+pc$/i.test(s)) return true;
+  const n = (name ?? "").toLowerCase();
+  if (/\b(certified alternate|alternate listing)\b/.test(n)) return true;
+  if (/\b(aftermarket|non-oem|non oem)\b/.test(n)) return true;
+  return false;
+}
+
+export function buyPathSortContextForFilter(
+  slug: string,
+  name: string | null | undefined,
+  oemPartNumber?: string | null,
+): BuyPathSortContext {
+  return {
+    exactOemCatalogPart: !isCompatibleReplacementFilterPdp(slug, name),
+    expectedOemPartNumber: oemPartNumber ?? null,
+  };
+}
+
+function isAmazonRetailerKey(key: string | null | undefined): boolean {
+  return key?.trim().toLowerCase() === "amazon";
+}
+
+/** Extra sort key: 1 when Amazon may be preferred as primary CTA for an exact-OEM PDP. */
+function amazonExactOemPrimaryBoost(
+  link: WinnerSelectableBuyLink,
+  sortContext: BuyPathSortContext | undefined,
+): number {
+  if (!sortContext?.exactOemCatalogPart) return 0;
+  if (!isAmazonRetailerKey(link.retailer_key)) return 0;
+  if (!isExplicitBuyableClassification(link.browser_truth_classification)) return 0;
+  return 1;
+}
 
 function buyPathSpecificityScore(url: string): number {
   let u: URL;
@@ -362,16 +417,32 @@ function checkedAtUnixMs(value: string | null | undefined): number {
 /**
  * Deterministic winner arbitration for Phase 1 corrected standard.
  * Precedence:
- * 1) Highest verified destination specificity from affiliate URL shape.
- * 2) Most recently checked browser-truth timestamp.
- * 3) Stable lexical tie-breaks (retailer_name, then id).
+ * 1) When {@link BuyPathSortContext.exactOemCatalogPart} is true, prefer verified Amazon
+ *    (`retailer_key` amazon + `direct_buyable`) before URL-shape arbitration.
+ * 2) Highest verified destination specificity from affiliate URL shape.
+ * 3) Most recently checked browser-truth timestamp.
+ * 4) Stable lexical tie-breaks (retailer_name, then id).
  *
- * OEM/retailer identity alone never wins; only verifiable buy-path evidence and explicit tie-breaks do.
+ * Callers pass {@link BuyPathSortContext} from PDP metadata (e.g. `buyPathSortContextForFilter`);
+ * omitting it skips Amazon promotion (legacy ordering).
  */
-export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(links: T[]): T[] {
+export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(
+  links: T[],
+  sortContext?: BuyPathSortContext,
+): T[] {
   return [...links].sort((a, b) => {
+    const scoreA = buyPathSpecificityScore(a.affiliate_url);
+    const scoreB = buyPathSpecificityScore(b.affiliate_url);
+
+    // Policy: exact-OEM pages prefer verified Amazon over other direct-buyable rows.
+    const boostA = amazonExactOemPrimaryBoost(a, sortContext);
+    const boostB = amazonExactOemPrimaryBoost(b, sortContext);
+    if (boostA !== boostB) {
+      return boostB - boostA;
+    }
+
     const specificityDelta =
-      buyPathSpecificityScore(b.affiliate_url) - buyPathSpecificityScore(a.affiliate_url);
+      scoreB - scoreA;
     if (specificityDelta !== 0) return specificityDelta;
 
     const checkedAtA = checkedAtUnixMs(a.browser_truth_checked_at);
@@ -387,6 +458,9 @@ export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(link
   });
 }
 
-export function selectBestVerifiedBuyLink<T extends WinnerSelectableBuyLink>(links: T[]): T | null {
-  return sortBestVerifiedBuyLinks(links)[0] ?? null;
+export function selectBestVerifiedBuyLink<T extends WinnerSelectableBuyLink>(
+  links: T[],
+  sortContext?: BuyPathSortContext,
+): T | null {
+  return sortBestVerifiedBuyLinks(links, sortContext)[0] ?? null;
 }

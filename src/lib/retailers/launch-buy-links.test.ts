@@ -3,7 +3,9 @@ import { describe, it } from "node:test";
 
 import {
   buyLinkGateFailureKind,
+  buyPathSortContextForFilter,
   filterRealBuyRetailerLinks,
+  isCompatibleReplacementFilterPdp,
   isExplicitBuyableClassification,
   isKnownBrokenUrl,
   isKnownIndirectDiscoveryUrl,
@@ -467,5 +469,156 @@ describe("best-verified winner arbitration", () => {
       sorted.map((r) => r.id),
       ["a-id", "b-id"],
     );
+  });
+
+  it("prefers verified Amazon when specificity and recency tie (exact-OEM PDP)", () => {
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "aaa",
+          retailer_key: "other",
+          retailer_name: "AAA Parts",
+          affiliate_url: "https://www.amazon.com/dp/B000AAAAAA",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "amz",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000BBBBBB",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      { exactOemCatalogPart: true },
+    );
+    assert.deepEqual(
+      sorted.map((r) => r.id),
+      ["amz", "aaa"],
+    );
+  });
+
+  it("does not prefer Amazon when exactOemCatalogPart is false (compatible-style PDP)", () => {
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "amz",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AAAAAA",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "aaa",
+          retailer_key: "other",
+          retailer_name: "AAA Parts",
+          affiliate_url: "https://www.amazon.com/dp/B000BBBBBB",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      { exactOemCatalogPart: false },
+    );
+    assert.deepEqual(
+      sorted.map((r) => r.id),
+      ["aaa", "amz"],
+    );
+  });
+
+  it("prefers Amazon on exact-OEM PDP even when OEM URL shape is more specific", () => {
+    const winner = selectBestVerifiedBuyLink(
+      [
+        {
+          id: "deep",
+          retailer_key: "oem",
+          retailer_name: "Deep PDP",
+          affiliate_url: "https://oem.example.com/store/parts/spec/WF3CB/extra",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "amz",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AAAAAA",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      { exactOemCatalogPart: true },
+    );
+    assert.equal(winner?.id, "amz");
+  });
+
+  it("prefers Amazon over OEM multipack variant on same OEM intent (MWF vs MWFP3PK)", () => {
+    const winner = selectBestVerifiedBuyLink(
+      [
+        {
+          id: "ge-3pk",
+          retailer_key: "ge-appliance-parts",
+          retailer_name: "GE Appliance Parts",
+          affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWFP3PK",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "amz-single",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AST3AK",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      { exactOemCatalogPart: true, expectedOemPartNumber: "MWF" },
+    );
+    assert.equal(winner?.id, "amz-single");
+  });
+
+  it("prefers Amazon over OEM single + multipack pages for MWF policy case", () => {
+    const winner = selectBestVerifiedBuyLink(
+      [
+        {
+          id: "ge-mwfp3pk",
+          retailer_key: "ge-appliance-parts",
+          retailer_name: "GE Appliance Parts",
+          affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWFP3PK",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "ge-mwfp",
+          retailer_key: "ge-appliance-parts",
+          retailer_name: "GE Appliance Parts",
+          affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          id: "amazon",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AST3AK",
+          browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      { exactOemCatalogPart: true, expectedOemPartNumber: "MWF" },
+    );
+    assert.equal(winner?.id, "amazon");
+  });
+});
+
+describe("buyPathSortContextForFilter / isCompatibleReplacementFilterPdp", () => {
+  it("flags LG certified-alternate rows as non-exact-OEM for sort context", () => {
+    assert.equal(isCompatibleReplacementFilterPdp("lt1000pc", "LG LT1000PC (certified alternate listing)"), true);
+    assert.equal(buyPathSortContextForFilter("lt1000pc", "LG LT1000PC (certified alternate listing)").exactOemCatalogPart, false);
+  });
+
+  it("treats canonical OEM filter rows as exact-OEM for sort context", () => {
+    assert.equal(isCompatibleReplacementFilterPdp("mwf", "GE MWF"), false);
+    assert.equal(buyPathSortContextForFilter("mwf", "GE MWF").exactOemCatalogPart, true);
   });
 });
