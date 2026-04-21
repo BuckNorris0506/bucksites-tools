@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  AMAZON_AFFILIATE_TAG,
   isAffiliateUrlSafeForGoRedirect,
   isHttpOrHttpsUrl,
   nextResponseRedirectAffiliateIfSafe,
@@ -235,21 +236,23 @@ describe("go-redirect-gate", () => {
   });
 
   describe("nextResponseRedirectAffiliateIfSafe", () => {
-    it("returns response + outboundUrl; Location matches outboundUrl exactly", () => {
+    it("returns response + outboundUrl; Location matches outboundUrl exactly (Amazon tag)", () => {
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
+      const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
       const r = nextResponseRedirectAffiliateIfSafe("amazon", url, "direct_buyable");
       assert.ok(r);
-      assert.equal(r.outboundUrl, url);
+      assert.equal(r.outboundUrl, expected);
       assert.equal(r.response.status, 302);
       assert.equal(r.response.headers.get("location"), r.outboundUrl);
     });
 
     it("trims affiliate URL for both outboundUrl and Location", () => {
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
+      const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
       const r = nextResponseRedirectAffiliateIfSafe("amazon", `  ${url}  `, "direct_buyable");
       assert.ok(r);
-      assert.equal(r.outboundUrl, url);
-      assert.equal(r.response.headers.get("location"), url);
+      assert.equal(r.outboundUrl, expected);
+      assert.equal(r.response.headers.get("location"), expected);
     });
 
     it("returns null when the URL would not be safe to redirect", () => {

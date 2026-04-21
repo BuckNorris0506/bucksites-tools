@@ -8,6 +8,10 @@ import {
   goFallbackRedirect,
   nextResponseRedirectAffiliateIfSafe,
 } from "@/lib/retailers/go-affiliate-route-handler";
+import {
+  AMAZON_AFFILIATE_TAG,
+  applyAmazonAffiliateRedirectUrl,
+} from "@/lib/retailers/go-redirect-gate";
 
 function requestAt(url: string, headers?: Record<string, string>): NextRequest {
   return new NextRequest(url, { headers: new Headers(headers ?? {}) });
@@ -61,7 +65,10 @@ describe("buildGoClickEventInsertRow", () => {
       },
       requestAt("https://x.test/go/y", { "user-agent": "UA", referer: "https://ref/" }),
     );
-    assert.equal(row.target_url, "https://www.amazon.com/dp/B00CANON");
+    assert.equal(
+      row.target_url,
+      `https://www.amazon.com/dp/B00CANON?tag=${AMAZON_AFFILIATE_TAG}`,
+    );
     assert.equal(row.vacuum_retailer_link_id, "550e8400-e29b-41d4-a716-446655440000");
     assert.equal(row.affiliate_url, "https://www.amazon.com/dp/B00WRONG");
     assert.equal(row.user_agent, "UA");
@@ -79,7 +86,10 @@ describe("buildGoClickEventInsertRow", () => {
       { target_url: "https://evil.example/phish" },
       requestAt("https://x.test/go/y"),
     );
-    assert.equal(row.target_url, "https://www.amazon.com/dp/B00SAFE");
+    assert.equal(
+      row.target_url,
+      `https://www.amazon.com/dp/B00SAFE?tag=${AMAZON_AFFILIATE_TAG}`,
+    );
   });
   it("uses trimmed outbound from gate (matches Location)", () => {
     const go = nextResponseRedirectAffiliateIfSafe(
@@ -89,7 +99,10 @@ describe("buildGoClickEventInsertRow", () => {
     );
     assert.ok(go);
     const row = buildGoClickEventInsertRow(go, { id: "1" }, requestAt("https://x.test/"));
-    assert.equal(row.target_url, "https://www.amazon.com/dp/B00TRIM");
+    assert.equal(
+      row.target_url,
+      `https://www.amazon.com/dp/B00TRIM?tag=${AMAZON_AFFILIATE_TAG}`,
+    );
     assert.equal(go.response.headers.get("location"), row.target_url);
   });
 });
@@ -101,11 +114,44 @@ describe("nextResponseRedirectAffiliateIfSafe (re-export path)", () => {
       null,
     );
   });
-  it("returns response whose Location matches outboundUrl", () => {
+  it("returns response whose Location matches outboundUrl (includes Amazon tag)", () => {
     const u = "https://www.amazon.com/dp/B00X";
     const go = nextResponseRedirectAffiliateIfSafe("amazon", u, "direct_buyable");
     assert.ok(go);
-    assert.equal(go.outboundUrl, u);
-    assert.equal(go.response.headers.get("location"), u);
+    const expected = `https://www.amazon.com/dp/B00X?tag=${AMAZON_AFFILIATE_TAG}`;
+    assert.equal(go.outboundUrl, expected);
+    assert.equal(go.response.headers.get("location"), expected);
+  });
+});
+
+describe("applyAmazonAffiliateRedirectUrl", () => {
+  it("normalizes /dp/{ASIN} on subdomains to www + uppercase ASIN and preserves query", () => {
+    const out = applyAmazonAffiliateRedirectUrl(
+      "https://smile.amazon.com/dp/b000ast3ak/ref=nos?psc=1",
+    );
+    const u = new URL(out);
+    assert.equal(u.origin, "https://www.amazon.com");
+    assert.equal(u.pathname, "/dp/B000AST3AK");
+    assert.equal(u.searchParams.get("psc"), "1");
+    assert.equal(u.searchParams.get("tag"), AMAZON_AFFILIATE_TAG);
+  });
+
+  it("does not duplicate tag (overwrites existing)", () => {
+    const out = applyAmazonAffiliateRedirectUrl(
+      `https://www.amazon.com/dp/B000AST3AK?tag=other&psc=1`,
+    );
+    const u = new URL(out);
+    assert.equal(u.searchParams.get("tag"), AMAZON_AFFILIATE_TAG);
+    assert.equal(u.searchParams.get("psc"), "1");
+  });
+
+  it("leaves non-Amazon URLs unchanged", () => {
+    const u = "https://www.homedepot.com/p/foo/123";
+    assert.equal(applyAmazonAffiliateRedirectUrl(u), u);
+  });
+
+  it("does not tag amazon.co.uk", () => {
+    const u = "https://www.amazon.co.uk/dp/B000AST3AK";
+    assert.equal(applyAmazonAffiliateRedirectUrl(u), u);
   });
 });
