@@ -8,6 +8,7 @@ import { Prose } from "@/components/Prose";
 import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFilterBySlug } from "@/lib/data/filters";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
 
@@ -33,12 +34,18 @@ export default async function FilterPage({ params }: Props) {
   if (!filter) notFound();
 
   const interval = intervalLabel(filter.replacement_interval_months);
+  const buyPathSortContext = buyPathSortContextForFilter(
+    filter.slug,
+    filter.name,
+    filter.oem_part_number,
+  );
   const trustSummary = buildPartPageTrust({
     modelsCount: filter.fridge_models.length,
     retailerLinks: filter.retailer_links,
     oemPartNumber: filter.oem_part_number,
     alsoKnownAs: filter.also_known_as,
     notes: filter.notes,
+    buyPathSortContext,
   });
 
   return (
@@ -98,6 +105,7 @@ export default async function FilterPage({ params }: Props) {
               primaryCtaLabel="Buy this part at"
               suppressMessage="BuckParts does not have enough proof to show a buy button for this refrigerator filter yet. Verify the OEM number against the old part or your manual first."
               gateSuppressionSummary={filter.buy_path_gate_suppression}
+              buyPathSortContext={buyPathSortContext}
             />
           </div>
         </div>

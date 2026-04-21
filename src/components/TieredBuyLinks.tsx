@@ -4,6 +4,7 @@ import {
   filterRealBuyRetailerLinks,
   isOemCatalogSlotKey,
   sortBestVerifiedBuyLinks,
+  type BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
 
 const MAX_SECONDARY = 2;
@@ -29,11 +30,14 @@ export function TieredBuyLinks({
   links,
   goBase = "/go",
   primaryCtaLabel = "Buy replacement",
+  buyPathSortContext,
 }: {
   links: BuyLinkRow[];
   goBase?: string;
   /** Screen-reader + button prefix; store name is appended. */
   primaryCtaLabel?: string;
+  /** When set (e.g. from `buyPathSortContextForFilter`), Amazon may rank first among ties after gating. */
+  buyPathSortContext?: BuyPathSortContext;
 }) {
   const base = goBase.replace(/\/$/, "");
 
@@ -48,7 +52,7 @@ export function TieredBuyLinks({
     );
   }
 
-  const sorted = sortBestVerifiedBuyLinks(realLinks);
+  const sorted = sortBestVerifiedBuyLinks(realLinks, buyPathSortContext);
   const primary = sorted[0];
   const alternates = sorted.slice(1, 1 + MAX_SECONDARY);
   const hiddenCount = Math.max(0, sorted.length - 1 - MAX_SECONDARY);

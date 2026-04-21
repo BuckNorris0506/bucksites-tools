@@ -1,6 +1,9 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
-import type { BuyPathGateSuppressionSummary } from "@/lib/retailers/launch-buy-links";
+import type {
+  BuyPathGateSuppressionSummary,
+  BuyPathSortContext,
+} from "@/lib/retailers/launch-buy-links";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSuppressionSummary }) {
@@ -42,6 +45,7 @@ export function TrustAwareBuySection({
   primaryCtaLabel,
   suppressMessage,
   gateSuppressionSummary,
+  buyPathSortContext,
 }: {
   trust: PartTrustSummary;
   links: BuyLinkRow[];
@@ -50,6 +54,7 @@ export function TrustAwareBuySection({
   suppressMessage: string;
   /** When buy is suppressed but inventory rows exist, explains why they are gated (refrigerator filter hub). */
   gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
+  buyPathSortContext?: BuyPathSortContext;
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (
@@ -69,7 +74,12 @@ export function TrustAwareBuySection({
           Verify the exact OEM part number before using these buy links.
         </p>
       )}
-      <TieredBuyLinks links={links} goBase={goBase} primaryCtaLabel={primaryCtaLabel} />
+      <TieredBuyLinks
+        links={links}
+        goBase={goBase}
+        primaryCtaLabel={primaryCtaLabel}
+        buyPathSortContext={buyPathSortContext}
+      />
     </div>
   );
 }
