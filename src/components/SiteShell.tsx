@@ -15,10 +15,26 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col gap-4 py-5 lg:py-6">
             <div className="flex items-center justify-between gap-4">
               <Link href="/" className="flex items-center gap-3">
-                <span
-                  aria-hidden
-                  className="h-9 w-9 rounded-md border border-neutral-900 bg-white dark:border-neutral-100 dark:bg-neutral-950"
-                />
+                <span aria-hidden className="grid h-9 w-9 place-items-center">
+                  <svg
+                    viewBox="0 0 48 48"
+                    className="h-9 w-9 text-neutral-900 dark:text-neutral-100"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M14 8L10 16L16 20L20 14L24 20L28 14L32 20L38 16L34 8"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="square"
+                      strokeLinejoin="miter"
+                    />
+                    <path
+                      d="M16 24L24 40L32 24L24 18L16 24Z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
                 <span className="text-xl font-semibold tracking-[0.08em] text-neutral-900 dark:text-neutral-50 sm:text-2xl">
                   {SITE_DISPLAY_NAME}
                 </span>
@@ -57,8 +73,8 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
         <div
           className={`mx-auto ${shellMax} ${shellPad} py-8 text-center text-sm leading-relaxed text-neutral-600 dark:text-neutral-400`}
         >
-          Replacement part lookup: confirm fit and timing, then shop via linked retailers where
-          available. We only show links we can verify to your exact filter code.
+          Check your part number first. We only show store links we can match to your exact filter
+          code.
         </div>
       </footer>
     </div>
