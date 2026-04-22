@@ -32,14 +32,14 @@ export function SearchForm({
         name="q"
         type="search"
         autoComplete="off"
-        placeholder="e.g. WRX735SDHZ00 or 4396841"
+        placeholder="Search by model number or part number"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        className="min-h-12 flex-1 rounded-md border border-neutral-300 bg-white px-4 text-base text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+        className="min-h-14 flex-1 rounded-md border border-neutral-300 bg-white px-4 text-base text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
       />
       <button
         type="submit"
-        className="min-h-12 shrink-0 rounded-md bg-neutral-900 px-5 text-base font-medium text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+        className="min-h-14 shrink-0 rounded-md bg-neutral-900 px-6 text-base font-semibold text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
       >
         Search
       </button>
