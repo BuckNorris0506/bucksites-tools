@@ -6,7 +6,19 @@ import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const metadata: Metadata = {
   title: "Replacement filters & parts lookup",
-  description: `${SITE_DISPLAY_NAME} helps you match refrigerator water filters, room air purifier cartridges, and whole-house water cartridges to your model or OEM number—then compare store links when you’re ready to buy.`,
+  description:
+    "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+  openGraph: {
+    title: "Replacement filters & parts lookup",
+    description:
+      "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Replacement filters & parts lookup",
+    description:
+      "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+  },
 };
 
 export default async function HomePage() {
