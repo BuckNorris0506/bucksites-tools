@@ -66,6 +66,13 @@ export type RetailerLink = {
 };
 
 export type RetailerLinkCandidateReviewStatus = "pending" | "rejected";
+export type RetailerLinkCandidateState =
+  | "candidate_found"
+  | "token_verified"
+  | "browser_truth_checked"
+  | "direct_buyable"
+  | "likely_valid"
+  | "rejected";
 
 /** Not exposed to anon RLS; use service role for ingest / promotion scripts. */
 export type RetailerLinkCandidate = {
@@ -76,6 +83,18 @@ export type RetailerLinkCandidate = {
   retailer_name: string | null;
   source: string;
   review_status: RetailerLinkCandidateReviewStatus;
+  candidate_state: RetailerLinkCandidateState;
+  canonical_url: string | null;
+  asin: string | null;
+  token_required: string[] | null;
+  token_evidence_ok: boolean | null;
+  token_evidence_notes: string | null;
+  browser_truth_classification: string | null;
+  browser_truth_notes: string | null;
+  browser_truth_checked_at: string | null;
+  retry_after: string | null;
+  retry_count: number;
+  last_error: string | null;
   notes: string | null;
   created_at: string;
 };
