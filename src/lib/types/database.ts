@@ -52,7 +52,7 @@ export type VerticalCompatibilityIsRecommended = {
   is_recommended: boolean;
 };
 
-/** Live outbound links only (`retailer_link_candidates` holds pre-approval URLs). */
+/** Live outbound links only (`retailer_offer_candidates` holds pre-approval URLs). */
 export type RetailerLink = {
   id: string;
   filter_id: string;
@@ -65,8 +65,8 @@ export type RetailerLink = {
   browser_truth_checked_at?: string | null;
 };
 
-export type RetailerLinkCandidateReviewStatus = "pending" | "rejected";
-export type RetailerLinkCandidateState =
+export type RetailerOfferCandidateReviewStatus = "pending" | "rejected";
+export type RetailerOfferCandidateState =
   | "candidate_found"
   | "token_verified"
   | "browser_truth_checked"
@@ -74,16 +74,24 @@ export type RetailerLinkCandidateState =
   | "likely_valid"
   | "rejected";
 
-/** Not exposed to anon RLS; use service role for ingest / promotion scripts. */
-export type RetailerLinkCandidate = {
+/**
+ * Unified pre-approval offer queue (all verticals). Exactly one wedge FK should be set per row.
+ * Not exposed to anon RLS; use service role for ingest / promotion scripts.
+ */
+export type RetailerOfferCandidate = {
   id: string;
-  filter_id: string;
+  filter_id: string | null;
+  air_purifier_filter_id: string | null;
+  vacuum_filter_id: string | null;
+  humidifier_filter_id: string | null;
+  whole_house_water_part_id: string | null;
+  appliance_air_part_id: string | null;
   retailer_key: string;
   candidate_url: string;
   retailer_name: string | null;
   source: string;
-  review_status: RetailerLinkCandidateReviewStatus;
-  candidate_state: RetailerLinkCandidateState;
+  review_status: RetailerOfferCandidateReviewStatus;
+  candidate_state: RetailerOfferCandidateState;
   canonical_url: string | null;
   asin: string | null;
   token_required: string[] | null;

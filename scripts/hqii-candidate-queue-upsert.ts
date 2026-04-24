@@ -14,8 +14,46 @@ type CandidateState =
   | "likely_valid"
   | "rejected";
 
+const CATALOG_WEDGES = [
+  "refrigerator_water",
+  "air_purifier",
+  "vacuum",
+  "humidifier",
+  "whole_house_water",
+  "appliance_air",
+] as const;
+
+type CatalogWedge = (typeof CATALOG_WEDGES)[number];
+
+const WEDGE_TABLE_FK: Record<CatalogWedge, { table: string; fkColumn: string }> = {
+  refrigerator_water: { table: "filters", fkColumn: "filter_id" },
+  air_purifier: { table: "air_purifier_filters", fkColumn: "air_purifier_filter_id" },
+  vacuum: { table: "vacuum_filters", fkColumn: "vacuum_filter_id" },
+  humidifier: { table: "humidifier_filters", fkColumn: "humidifier_filter_id" },
+  whole_house_water: {
+    table: "whole_house_water_parts",
+    fkColumn: "whole_house_water_part_id",
+  },
+  appliance_air: { table: "appliance_air_parts", fkColumn: "appliance_air_part_id" },
+};
+
+const NULL_FK_COLUMNS = {
+  filter_id: null as string | null,
+  air_purifier_filter_id: null as string | null,
+  vacuum_filter_id: null as string | null,
+  humidifier_filter_id: null as string | null,
+  whole_house_water_part_id: null as string | null,
+  appliance_air_part_id: null as string | null,
+};
+
 type QueueInputRow = {
+  /** Catalog part slug within the wedge table (e.g. filters.slug). */
   filter_slug: string;
+  /**
+   * Which vertical catalog row to attach to. Defaults to refrigerator_water
+   * (public.filters) for existing HQII fridge JSON.
+   */
+  wedge?: CatalogWedge;
   retailer_name?: string;
   url: string;
   token_required?: string[];
@@ -52,6 +90,15 @@ function argValue(flag: string): string | null {
 function inferAsinFromCanonical(canonicalUrl: string): string | null {
   const m = canonicalUrl.match(/\/dp\/([A-Z0-9]{10})$/i);
   return m ? m[1].toUpperCase() : null;
+}
+
+export function catalogWedgeFromInput(wedge: string | undefined): CatalogWedge {
+  const t = wedge?.trim();
+  if (!t) return "refrigerator_water";
+  if ((CATALOG_WEDGES as readonly string[]).includes(t)) return t as CatalogWedge;
+  throw new Error(
+    `Unknown wedge "${t}". Expected one of: ${CATALOG_WEDGES.join(", ")}`,
+  );
 }
 
 export function buildQueueRowDraft(row: QueueInputRow): QueueRowDraft {
@@ -136,70 +183,93 @@ async function main() {
     throw new Error("Input must be a JSON array.");
   }
 
-  const drafts = (parsed as QueueInputRow[]).map(buildQueueRowDraft);
-  const filterSlugs = [...new Set(drafts.map((d) => d.filter_slug).filter(Boolean))];
+  const rows = (parsed as QueueInputRow[]).map((row) => ({
+    wedge: catalogWedgeFromInput(row.wedge),
+    draft: buildQueueRowDraft(row),
+  }));
 
+  const idBySlugByWedge = new Map<CatalogWedge, Map<string, string>>();
   const supabase = getSupabaseAdmin();
-  const { data: filters, error: filterErr } = await supabase
-    .from("filters")
-    .select("id, slug")
-    .in("slug", filterSlugs);
-  if (filterErr) throw filterErr;
-  const filterIdBySlug = new Map((filters ?? []).map((f) => [String(f.slug), String(f.id)]));
 
-  const accepted = drafts.filter((d) => filterIdBySlug.has(d.filter_slug));
-  const rejectedUnknownSlug = drafts
-    .filter((d) => !filterIdBySlug.has(d.filter_slug))
-    .map((d) => ({ ...d, candidate_state: "rejected" as const, review_status: "rejected" as const, last_error: "unknown_filter_slug" }));
+  for (const w of CATALOG_WEDGES) {
+    const slugs = [
+      ...new Set(
+        rows.filter((r) => r.wedge === w).map((r) => r.draft.filter_slug).filter(Boolean),
+      ),
+    ];
+    if (slugs.length === 0) continue;
+    const { table } = WEDGE_TABLE_FK[w];
+    const { data, error } = await supabase.from(table).select("id, slug").in("slug", slugs);
+    if (error) throw error;
+    idBySlugByWedge.set(
+      w,
+      new Map((data ?? []).map((row) => [String(row.slug), String(row.id)])),
+    );
+  }
+
+  const accepted: { wedge: CatalogWedge; draft: QueueRowDraft; entityId: string }[] = [];
+  const rejectedUnknownSlug = rows
+    .filter(({ wedge, draft }) => !idBySlugByWedge.get(wedge)?.has(draft.filter_slug))
+    .map(({ draft }) => ({
+      ...draft,
+      candidate_state: "rejected" as const,
+      review_status: "rejected" as const,
+      last_error: "unknown_filter_slug",
+    }));
+
+  for (const { wedge, draft } of rows) {
+    const entityId = idBySlugByWedge.get(wedge)?.get(draft.filter_slug);
+    if (entityId) accepted.push({ wedge, draft, entityId });
+  }
 
   let inserted = 0;
   let updated = 0;
   if (write && accepted.length > 0) {
-    for (const d of accepted) {
-      const filterId = filterIdBySlug.get(d.filter_slug)!;
+    for (const { wedge, draft, entityId } of accepted) {
+      const { fkColumn } = WEDGE_TABLE_FK[wedge];
+      const fkPayload = { ...NULL_FK_COLUMNS, [fkColumn]: entityId };
+
       const { data: existing, error: existingErr } = await supabase
-        .from("retailer_link_candidates")
+        .from("retailer_offer_candidates")
         .select("id")
-        .eq("filter_id", filterId)
-        .eq("retailer_key", d.retailer_key)
+        .eq(fkColumn, entityId)
+        .eq("retailer_key", draft.retailer_key)
         .eq("review_status", "pending")
         .limit(1);
       if (existingErr) throw existingErr;
 
       const payload = {
-        filter_id: filterId,
-        retailer_key: d.retailer_key,
-        candidate_url: d.candidate_url,
-        retailer_name: d.retailer_name,
-        source: d.source,
-        review_status: d.review_status,
-        notes: d.notes,
-        candidate_state: d.candidate_state,
-        canonical_url: d.canonical_url,
-        asin: d.asin,
-        token_required: d.token_required,
-        token_evidence_ok: d.token_evidence_ok,
-        token_evidence_notes: d.token_evidence_notes,
+        ...fkPayload,
+        retailer_key: draft.retailer_key,
+        candidate_url: draft.candidate_url,
+        retailer_name: draft.retailer_name,
+        source: draft.source,
+        review_status: draft.review_status,
+        notes: draft.notes,
+        candidate_state: draft.candidate_state,
+        canonical_url: draft.canonical_url,
+        asin: draft.asin,
+        token_required: draft.token_required,
+        token_evidence_ok: draft.token_evidence_ok,
+        token_evidence_notes: draft.token_evidence_notes,
         browser_truth_classification: null,
         browser_truth_notes: null,
         browser_truth_checked_at: null,
         retry_after: null,
         retry_count: 0,
-        last_error: d.last_error,
+        last_error: draft.last_error,
       };
 
       if ((existing ?? []).length > 0) {
         const id = String(existing![0]!.id);
         const { error: updateErr } = await supabase
-          .from("retailer_link_candidates")
+          .from("retailer_offer_candidates")
           .update(payload)
           .eq("id", id);
         if (updateErr) throw updateErr;
         updated += 1;
       } else {
-        const { error: insertErr } = await supabase
-          .from("retailer_link_candidates")
-          .insert(payload);
+        const { error: insertErr } = await supabase.from("retailer_offer_candidates").insert(payload);
         if (insertErr) throw insertErr;
         inserted += 1;
       }
@@ -210,11 +280,11 @@ async function main() {
     JSON.stringify(
       {
         dry_run: !write,
-        input_count: drafts.length,
+        input_count: rows.length,
         matched_filter_slugs: accepted.length,
         unknown_filter_slugs: rejectedUnknownSlug.map((r) => r.filter_slug),
-        state_counts: drafts.reduce(
-          (acc, d) => {
+        state_counts: rows.reduce(
+          (acc, { draft: d }) => {
             acc[d.candidate_state] = (acc[d.candidate_state] ?? 0) + 1;
             return acc;
           },
@@ -222,7 +292,7 @@ async function main() {
         ),
         inserted,
         updated,
-        rows: drafts,
+        rows: rows.map((r) => r.draft),
       },
       null,
       2,
