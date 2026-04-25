@@ -78,6 +78,13 @@ function parsePromotedLimit(): number {
   return Number.isFinite(n) && n > 0 ? n : 20;
 }
 
+function parseFamilyLimit(): number {
+  const idx = process.argv.indexOf("--family-limit");
+  if (idx === -1) return 15;
+  const n = Number.parseInt(process.argv[idx + 1] ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 15;
+}
+
 function ratio(num: number, den: number): number | null {
   if (den <= 0) return null;
   return num / den;
@@ -588,6 +595,7 @@ async function main() {
   loadEnv();
   const sinceDays = parseSinceDays();
   const promotedFetchLimit = parsePromotedLimit();
+  const familyLimit = parseFamilyLimit();
   const sinceIso = new Date(Date.now() - sinceDays * 86400000).toISOString();
   const lastDayIso = new Date(Date.now() - 86400000).toISOString();
 
@@ -759,6 +767,14 @@ async function main() {
       amazon_cta_coverage_ratio: ratio(acc.amazon_cta_covered_pages, acc.live_pages),
     }))
     .sort((a, b) => b.pages_with_zero_valid_buy_cta - a.pages_with_zero_valid_buy_cta);
+  const byFamilyForValidCoverage = [...byFamily].sort(
+    (a, b) => b.pages_with_valid_buy_cta - a.pages_with_valid_buy_cta,
+  );
+  const byFamilyForAmazonCoverage = [...byFamily].sort(
+    (a, b) => b.amazon_cta_covered_pages - a.amazon_cta_covered_pages,
+  );
+  const topFamilyForValidCoverage = byFamilyForValidCoverage.slice(0, familyLimit);
+  const topFamilyForAmazonCoverage = byFamilyForAmazonCoverage.slice(0, familyLimit);
 
   const moneyScoreboardV1 = {
     generated_at: new Date().toISOString(),
@@ -772,13 +788,18 @@ async function main() {
         count: r.live_pages_with_valid_buy_cta,
         ratio: ratio(r.live_pages_with_valid_buy_cta, r.live_pages),
       })),
-      by_family: byFamily.map((r) => ({
-        family: r.family,
-        confidence: r.confidence,
-        confidence_method: r.confidence_method,
-        count: r.pages_with_valid_buy_cta,
-        ratio: ratio(r.pages_with_valid_buy_cta, r.live_pages),
-      })),
+      by_family: {
+        total_family_count: byFamilyForValidCoverage.length,
+        included_family_count: topFamilyForValidCoverage.length,
+        omitted_family_count: Math.max(0, byFamilyForValidCoverage.length - topFamilyForValidCoverage.length),
+        rows: topFamilyForValidCoverage.map((r) => ({
+          family: r.family,
+          confidence: r.confidence,
+          confidence_method: r.confidence_method,
+          count: r.pages_with_valid_buy_cta,
+          ratio: ratio(r.pages_with_valid_buy_cta, r.live_pages),
+        })),
+      },
     },
     live_pages_with_zero_valid_buy_cta: {
       overall: {
@@ -797,14 +818,19 @@ async function main() {
       live_pages: r.live_pages,
       ratio: r.amazon_cta_coverage_ratio,
     })),
-    amazon_cta_coverage_by_family: byFamily.map((r) => ({
-      family: r.family,
-      confidence: r.confidence,
-      confidence_method: r.confidence_method,
-      covered_pages: r.amazon_cta_covered_pages,
-      live_pages: r.live_pages,
-      ratio: r.amazon_cta_coverage_ratio,
-    })),
+    amazon_cta_coverage_by_family: {
+      total_family_count: byFamilyForAmazonCoverage.length,
+      included_family_count: topFamilyForAmazonCoverage.length,
+      omitted_family_count: Math.max(0, byFamilyForAmazonCoverage.length - topFamilyForAmazonCoverage.length),
+      rows: topFamilyForAmazonCoverage.map((r) => ({
+        family: r.family,
+        confidence: r.confidence,
+        confidence_method: r.confidence_method,
+        covered_pages: r.amazon_cta_covered_pages,
+        live_pages: r.live_pages,
+        ratio: r.amazon_cta_coverage_ratio,
+      })),
+    },
     newly_monetized_slugs_last_day: {
       supported: true,
       window_iso_start: lastDayIso,
@@ -841,6 +867,14 @@ async function main() {
       medium: byFamily.filter((r) => r.confidence === "medium").length,
       low: byFamily.filter((r) => r.confidence === "low").length,
     },
+    family_array_limits: {
+      family_limit: familyLimit,
+      applies_to: [
+        "live_pages_with_valid_buy_cta.by_family",
+        "amazon_cta_coverage_by_family",
+        "biggest_monetization_gaps_by_family.top_families",
+      ],
+    },
     blocked_metrics: {
       discovery_hit_rate_by_family: {
         status: "blocked",
@@ -866,6 +900,7 @@ async function main() {
       since_days: sinceDays,
       since_iso: sinceIso,
       promoted_limit: promotedFetchLimit,
+      family_limit: familyLimit,
       definitions: {
         live_model_count: "Count of rows in the wedge models table.",
         live_filter_part_count: "Count of rows in the wedge filters/parts table (includes orphans).",
