@@ -1,0 +1,21 @@
+{
+  "canaries": [
+    {
+      "canary": "whole_house_water:pentek-wp25bb20p",
+      "candidate_urls": [
+        "https://www.amazon.com/dp/B005XTQSMM"
+      ]
+    },
+    {
+      "canary": "refrigerator_water:da97-17376a",
+      "candidate_urls": [
+        "https://www.amazon.com/dp/B0GKG3CLRB",
+        "https://www.amazon.com/dp/B083KNLJGF",
+        "https://www.amazon.com/dp/B07DW3H4JN",
+        "https://www.amazon.com/dp/B0CJ4JYSB5",
+        "https://www.amazon.com/dp/B08DDDX276",
+        "https://www.amazon.com/dp/B00EZAD3QO"
+      ]
+    }
+  ]
+}
