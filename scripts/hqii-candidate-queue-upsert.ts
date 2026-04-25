@@ -25,8 +25,8 @@ const CATALOG_WEDGES = [
 
 type CatalogWedge = (typeof CATALOG_WEDGES)[number];
 
-const WEDGE_TABLE_FK: Record<CatalogWedge, { table: string; fkColumn: string }> = {
-  refrigerator_water: { table: "filters", fkColumn: "filter_id" },
+const WEDGE_TABLE_FK: Record<CatalogWedge, { table: string; fkColumn: QueueFkColumn }> = {
+  refrigerator_water: { table: "filters", fkColumn: "refrigerator_filter_id" },
   air_purifier: { table: "air_purifier_filters", fkColumn: "air_purifier_filter_id" },
   vacuum: { table: "vacuum_filters", fkColumn: "vacuum_filter_id" },
   humidifier: { table: "humidifier_filters", fkColumn: "humidifier_filter_id" },
@@ -38,13 +38,14 @@ const WEDGE_TABLE_FK: Record<CatalogWedge, { table: string; fkColumn: string }> 
 };
 
 const NULL_FK_COLUMNS = {
-  filter_id: null as string | null,
+  refrigerator_filter_id: null as string | null,
   air_purifier_filter_id: null as string | null,
   vacuum_filter_id: null as string | null,
   humidifier_filter_id: null as string | null,
   whole_house_water_part_id: null as string | null,
   appliance_air_part_id: null as string | null,
 };
+type QueueFkColumn = keyof typeof NULL_FK_COLUMNS;
 
 type QueueInputRow = {
   /** Catalog part slug within the wedge table (e.g. filters.slug). */
@@ -65,11 +66,11 @@ type QueueRowDraft = {
   filter_slug: string;
   retailer_key: "amazon";
   retailer_name: string;
-  candidate_url: string;
+  offer_url: string;
   canonical_url: string;
   asin: string;
-  source: string;
-  review_status: "pending" | "rejected";
+  source_kind: string;
+  validation_status: "pending" | "rejected";
   candidate_state: CandidateState;
   token_required: string[] | null;
   token_evidence_ok: boolean | null;
@@ -119,11 +120,11 @@ export function buildQueueRowDraft(row: QueueInputRow): QueueRowDraft {
       filter_slug: filterSlug,
       retailer_key: "amazon",
       retailer_name: retailerName,
-      candidate_url: rawUrl,
+      offer_url: rawUrl,
       canonical_url: rawUrl,
       asin: "",
-      source: SOURCE,
-      review_status: "rejected",
+      source_kind: SOURCE,
+      validation_status: "rejected",
       candidate_state: "rejected",
       token_required: tokenRequired,
       token_evidence_ok: tokenEvidenceOk,
@@ -136,7 +137,7 @@ export function buildQueueRowDraft(row: QueueInputRow): QueueRowDraft {
   const asin = inferAsinFromCanonical(canonical) ?? "";
 
   let candidate_state: CandidateState = "candidate_found";
-  let review_status: "pending" | "rejected" = "pending";
+  let validation_status: "pending" | "rejected" = "pending";
   let last_error: string | null = null;
   let notes: string | null = null;
 
@@ -145,7 +146,7 @@ export function buildQueueRowDraft(row: QueueInputRow): QueueRowDraft {
     notes = "Token evidence verified from enrichment output.";
   } else if (tokenEvidenceOk === false) {
     candidate_state = "rejected";
-    review_status = "rejected";
+    validation_status = "rejected";
     last_error = "token_evidence_missing";
     notes = "Rejected: required token evidence not found in candidate body.";
   } else {
@@ -157,17 +158,46 @@ export function buildQueueRowDraft(row: QueueInputRow): QueueRowDraft {
     filter_slug: filterSlug,
     retailer_key: "amazon",
     retailer_name: retailerName,
-    candidate_url: rawUrl,
+    offer_url: rawUrl,
     canonical_url: canonical,
     asin,
-    source: SOURCE,
-    review_status,
+    source_kind: SOURCE,
+    validation_status,
     candidate_state,
     token_required: tokenRequired,
     token_evidence_ok: tokenEvidenceOk,
     token_evidence_notes: tokenEvidenceNotes,
     last_error,
     notes,
+  };
+}
+
+export function buildOfferCandidatePayload(
+  fkColumn: QueueFkColumn,
+  entityId: string,
+  draft: QueueRowDraft,
+) {
+  const fkPayload = { ...NULL_FK_COLUMNS, [fkColumn]: entityId };
+  return {
+    ...fkPayload,
+    retailer_key: draft.retailer_key,
+    offer_url: draft.offer_url,
+    retailer_name: draft.retailer_name,
+    source_kind: draft.source_kind,
+    validation_status: draft.validation_status,
+    notes: draft.notes,
+    candidate_state: draft.candidate_state,
+    canonical_url: draft.canonical_url,
+    asin: draft.asin,
+    token_required: draft.token_required,
+    token_evidence_ok: draft.token_evidence_ok,
+    token_evidence_notes: draft.token_evidence_notes,
+    browser_truth_classification: null,
+    browser_truth_notes: null,
+    browser_truth_checked_at: null,
+    retry_after: null,
+    retry_count: 0,
+    last_error: draft.last_error,
   };
 }
 
@@ -227,38 +257,17 @@ async function main() {
   if (write && accepted.length > 0) {
     for (const { wedge, draft, entityId } of accepted) {
       const { fkColumn } = WEDGE_TABLE_FK[wedge];
-      const fkPayload = { ...NULL_FK_COLUMNS, [fkColumn]: entityId };
 
       const { data: existing, error: existingErr } = await supabase
         .from("retailer_offer_candidates")
         .select("id")
         .eq(fkColumn, entityId)
         .eq("retailer_key", draft.retailer_key)
-        .eq("review_status", "pending")
+        .eq("validation_status", "pending")
         .limit(1);
       if (existingErr) throw existingErr;
 
-      const payload = {
-        ...fkPayload,
-        retailer_key: draft.retailer_key,
-        candidate_url: draft.candidate_url,
-        retailer_name: draft.retailer_name,
-        source: draft.source,
-        review_status: draft.review_status,
-        notes: draft.notes,
-        candidate_state: draft.candidate_state,
-        canonical_url: draft.canonical_url,
-        asin: draft.asin,
-        token_required: draft.token_required,
-        token_evidence_ok: draft.token_evidence_ok,
-        token_evidence_notes: draft.token_evidence_notes,
-        browser_truth_classification: null,
-        browser_truth_notes: null,
-        browser_truth_checked_at: null,
-        retry_after: null,
-        retry_count: 0,
-        last_error: draft.last_error,
-      };
+      const payload = buildOfferCandidatePayload(fkColumn, entityId, draft);
 
       if ((existing ?? []).length > 0) {
         const id = String(existing![0]!.id);
