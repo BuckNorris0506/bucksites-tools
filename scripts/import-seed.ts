@@ -24,7 +24,8 @@
  *
  *   retailer_links.csv
  *     filter_slug,retailer_name,affiliate_url,is_primary
- *   Optional: destination_url (defaults to affiliate_url), retailer_slug, retailer_key (stable slot id; one live row per filter + key).
+ *   Optional: destination_url (defaults to affiliate_url), retailer_slug, retailer_key (stable slot id; one live row per filter + key),
+ *     browser_truth_classification, browser_truth_notes, browser_truth_checked_at (buy-path gating; direct_buyable required for live CTAs).
  *   retailer_slug defaults from retailer_slug → retailer_key → slugified retailer_name.
  *   Live links only — pre-approval URLs belong in retailer_link_candidates (SQL / service role).
  *
@@ -41,6 +42,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
@@ -498,33 +500,7 @@ async function importRetailerLinks() {
       );
     }
 
-    const retailer_key = retailerKeyFromRow(r);
-    const retailer_slug = retailerSlugFromRow(r);
-
-    const insertRow = {
-      filter_id,
-      retailer_name: optStr(r.retailer_name),
-      affiliate_url,
-      destination_url,
-      is_primary: optBool(r.is_primary) ?? false,
-      retailer_key,
-      retailer_slug,
-    };
-
-    const updateRow = {
-      retailer_name: insertRow.retailer_name,
-      destination_url: insertRow.destination_url,
-      is_primary: insertRow.is_primary,
-      retailer_key: insertRow.retailer_key,
-      retailer_slug: insertRow.retailer_slug,
-    };
-
-    return {
-      filterId: filter_id,
-      affiliate_url,
-      insertRow,
-      updateRow,
-    };
+    return buildRetailerLinkBulkOp(r, filter_id);
   });
 
   const { inserted, updated, uniquePairs } =
@@ -539,6 +515,47 @@ async function importRetailerLinks() {
     `Processed ${rows.length} CSV line(s), ${uniquePairs} unique (filter, affiliate_url) from ${file} (inserted ${inserted}, updated ${updated})`,
   );
 }
+
+function buildRetailerLinkBulkOp(r: Record<string, string>, filterId: string) {
+  const affiliate_url = r.affiliate_url.trim();
+  const destination_url = optStr(r.destination_url) ?? affiliate_url;
+  const retailer_key = retailerKeyFromRow(r);
+  const retailer_slug = retailerSlugFromRow(r);
+  const insertRow = {
+    filter_id: filterId,
+    retailer_name: optStr(r.retailer_name),
+    affiliate_url,
+    destination_url,
+    is_primary: optBool(r.is_primary) ?? false,
+    retailer_key,
+    retailer_slug,
+    browser_truth_classification: optStr(r.browser_truth_classification),
+    browser_truth_notes: optStr(r.browser_truth_notes),
+    browser_truth_checked_at: optStr(r.browser_truth_checked_at),
+  };
+
+  const updateRow = {
+    retailer_name: insertRow.retailer_name,
+    destination_url: insertRow.destination_url,
+    is_primary: insertRow.is_primary,
+    retailer_key: insertRow.retailer_key,
+    retailer_slug: insertRow.retailer_slug,
+    browser_truth_classification: insertRow.browser_truth_classification,
+    browser_truth_notes: insertRow.browser_truth_notes,
+    browser_truth_checked_at: insertRow.browser_truth_checked_at,
+  };
+
+  return {
+    filterId,
+    affiliate_url,
+    insertRow,
+    updateRow,
+  };
+}
+
+export const __testables = {
+  buildRetailerLinkBulkOp,
+};
 
 async function main() {
   log(
@@ -579,4 +596,6 @@ async function main() {
   log("import-seed", "Done.");
 }
 
-main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main();
+}

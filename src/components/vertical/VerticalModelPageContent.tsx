@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { Prose } from "@/components/Prose";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import {
   intervalLabel,
   sharedFilterIntervalLabel,
@@ -89,7 +90,7 @@ export function VerticalModelPageContent({
 
         {filters.length === 0 ? (
           <p className="mt-6 text-sm text-neutral-600 dark:text-neutral-400">
-            We don’t have a replacement part mapped to this model yet. Try another spelling in
+            We don’t have a replacement filter listed for this model yet. Try another spelling in
             search, or check the sticker on the unit and your manual for the OEM part number.
           </p>
         ) : (
@@ -117,6 +118,11 @@ export function VerticalModelPageContent({
                   links={primary.retailer_links}
                   goBase={goBase}
                   primaryCtaLabel="Buy replacement at"
+                  buyPathSortContext={buyPathSortContextForFilter(
+                    primary.slug,
+                    primary.name,
+                    primary.oem_part_number,
+                  )}
                 />
               </div>
 

@@ -621,4 +621,31 @@ describe("buyPathSortContextForFilter / isCompatibleReplacementFilterPdp", () =>
     assert.equal(isCompatibleReplacementFilterPdp("mwf", "GE MWF"), false);
     assert.equal(buyPathSortContextForFilter("mwf", "GE MWF").exactOemCatalogPart, true);
   });
+
+  it("propagated sort context changes winner ordering for compatible replacement PDPs", () => {
+    const links = [
+      {
+        id: "amazon",
+        retailer_key: "amazon",
+        retailer_name: "Amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00LP8LJUG",
+        browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        id: "oem-compat",
+        retailer_key: "ge-appliance-parts",
+        retailer_name: "GE Appliance Parts",
+        affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        browser_truth_checked_at: "2026-04-20T12:00:00.000Z",
+        browser_truth_classification: "direct_buyable",
+      },
+    ] as const;
+
+    const exactCtx = buyPathSortContextForFilter("mwf", "GE MWF");
+    const compatibleCtx = buyPathSortContextForFilter("lt1000pc", "LG LT1000PC (certified alternate listing)");
+
+    assert.equal(selectBestVerifiedBuyLink(links, exactCtx)?.id, "amazon");
+    assert.equal(selectBestVerifiedBuyLink(links, compatibleCtx)?.id, "oem-compat");
+  });
 });

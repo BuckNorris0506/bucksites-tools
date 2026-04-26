@@ -136,6 +136,13 @@ describe("applyAmazonAffiliateRedirectUrl", () => {
     assert.equal(u.searchParams.get("tag"), AMAZON_AFFILIATE_TAG);
   });
 
+  it("normalizes SEO slug + /dp/{ASIN} on www.amazon.com to canonical /dp + tag (Pentek CFB-PLUS10BB repro)", () => {
+    const out = applyAmazonAffiliateRedirectUrl(
+      "https://www.amazon.com/Pentek-CFB-PLUS10BB-Fibredyne-Modified-Carbon/dp/B00LP8LJUG/",
+    );
+    assert.equal(out, `https://www.amazon.com/dp/B00LP8LJUG?tag=${AMAZON_AFFILIATE_TAG}`);
+  });
+
   it("does not duplicate tag (overwrites existing)", () => {
     const out = applyAmazonAffiliateRedirectUrl(
       `https://www.amazon.com/dp/B000AST3AK?tag=other&psc=1`,

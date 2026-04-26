@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { Prose } from "@/components/Prose";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 
@@ -34,6 +35,8 @@ type Props = {
   expandedSearchFooter?: boolean;
   /** Search / packaging tokens from filter aliases (deduped; excludes OEM echo). */
   alsoKnownAs?: string[];
+  /** Optional PDP slug for buy-path ordering (Amazon primary when exact-OEM catalog part). */
+  filterSlug?: string;
 };
 
 export function VerticalFilterPageContent({
@@ -53,8 +56,10 @@ export function VerticalFilterPageContent({
   notesSectionTitle = "Extra notes",
   expandedSearchFooter = false,
   alsoKnownAs,
+  filterSlug,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
+  const buyPathSortContext = buyPathSortContextForFilter(filterSlug ?? oemPartNumber, name, oemPartNumber);
   const interval = intervalLabel(replacementIntervalMonths);
   const count = models.length;
 
@@ -104,6 +109,7 @@ export function VerticalFilterPageContent({
               links={retailerLinks}
               goBase={goBase}
               primaryCtaLabel="Buy this part at"
+              buyPathSortContext={buyPathSortContext}
             />
           </div>
         </div>
