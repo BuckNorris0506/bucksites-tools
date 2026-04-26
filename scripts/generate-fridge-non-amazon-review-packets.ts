@@ -1,5 +1,6 @@
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import {
   buildReviewPacket,
   ctaStatusFromRetailerRows,
@@ -35,6 +36,46 @@ function parseLimit(): number {
     throw new Error(`Invalid --limit "${raw}" (must be > 0).`);
   }
   return n;
+}
+
+type FridgeCoverageRow = {
+  slug: string;
+  number_of_valid_links: number;
+  number_of_direct_buyable_links: number;
+  has_primary_amazon: boolean;
+};
+
+function computeTier(c: {
+  number_of_valid_links: number;
+  number_of_direct_buyable_links: number;
+  has_primary_amazon: boolean;
+}): 1 | 2 | 3 | 4 {
+  if (c.number_of_direct_buyable_links === 0) return 1;
+  if (c.number_of_direct_buyable_links === 1) return 2;
+  if (c.number_of_valid_links >= 2 && !c.has_primary_amazon) return 3;
+  return 4;
+}
+
+export function rankFridgeCoverageRows(rows: FridgeCoverageRow[]): FridgeCoverageRow[] {
+  return [...rows].sort((a, b) => {
+    const tierDelta =
+      computeTier({
+        number_of_valid_links: a.number_of_valid_links,
+        number_of_direct_buyable_links: a.number_of_direct_buyable_links,
+        has_primary_amazon: a.has_primary_amazon,
+      }) -
+      computeTier({
+        number_of_valid_links: b.number_of_valid_links,
+        number_of_direct_buyable_links: b.number_of_direct_buyable_links,
+        has_primary_amazon: b.has_primary_amazon,
+      });
+    if (tierDelta !== 0) return tierDelta;
+    const directDelta = a.number_of_direct_buyable_links - b.number_of_direct_buyable_links;
+    if (directDelta !== 0) return directDelta;
+    const validDelta = a.number_of_valid_links - b.number_of_valid_links;
+    if (validDelta !== 0) return validDelta;
+    return a.slug.localeCompare(b.slug);
+  });
 }
 
 async function loadCurrentCtaStatusBySlug(slugs: string[]): Promise<Map<string, string>> {
@@ -91,6 +132,65 @@ async function loadCurrentCtaStatusBySlug(slugs: string[]): Promise<Map<string, 
   return out;
 }
 
+async function loadTopFridgeBatchSlugs(limit: number, includeMonetized: boolean): Promise<string[]> {
+  const supabase = getSupabaseAdmin();
+  const { data: filters, error: filterErr } = await supabase.from("filters").select("id,slug");
+  if (filterErr) throw filterErr;
+
+  const slugById = new Map<string, string>();
+  for (const row of (filters ?? []) as Array<{ id: string; slug: string }>) {
+    if (!row.id || !row.slug) continue;
+    slugById.set(row.id, row.slug);
+  }
+
+  const { data: links, error: linksErr } = await supabase
+    .from("retailer_links")
+    .select("filter_id,retailer_key,affiliate_url,browser_truth_classification,is_primary");
+  if (linksErr) throw linksErr;
+
+  const bySlug = new Map<string, FridgeCoverageRow>();
+  for (const slug of slugById.values()) {
+    bySlug.set(slug, {
+      slug,
+      number_of_valid_links: 0,
+      number_of_direct_buyable_links: 0,
+      has_primary_amazon: false,
+    });
+  }
+
+  for (const row of (links ?? []) as Array<{
+    filter_id: string;
+    retailer_key: string;
+    affiliate_url: string;
+    browser_truth_classification: string | null;
+    is_primary: boolean | null;
+  }>) {
+    const slug = slugById.get(row.filter_id);
+    if (!slug) continue;
+    const gate = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key ?? "",
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification ?? null,
+    });
+    if (gate !== null) continue;
+    const acc = bySlug.get(slug);
+    if (!acc) continue;
+    acc.number_of_valid_links += 1;
+    if ((row.browser_truth_classification ?? "").trim() === "direct_buyable") {
+      acc.number_of_direct_buyable_links += 1;
+    }
+    if ((row.retailer_key ?? "").trim().toLowerCase() === "amazon" && Boolean(row.is_primary)) {
+      acc.has_primary_amazon = true;
+    }
+  }
+
+  const ranked = rankFridgeCoverageRows([...bySlug.values()]);
+  const filtered = includeMonetized
+    ? ranked
+    : ranked.filter((row) => row.number_of_valid_links === 0);
+  return filtered.slice(0, limit).map((row) => row.slug);
+}
+
 export async function generateFridgeNonAmazonReviewPackets(slugs: string[]): Promise<ReviewPacket[]> {
   const ctaStatusBySlug = await loadCurrentCtaStatusBySlug(slugs);
   const packets: ReviewPacket[] = [];
@@ -128,23 +228,6 @@ export async function generateFridgeNonAmazonReviewPackets(slugs: string[]): Pro
   return packets;
 }
 
-export function selectBatchSlugs(args: {
-  candidateSlugs: string[];
-  ctaStatusBySlug: Map<string, string>;
-  limit: number;
-  includeMonetized: boolean;
-}): string[] {
-  const zeroCta: string[] = [];
-  const hasCta: string[] = [];
-  for (const slug of args.candidateSlugs) {
-    const status = args.ctaStatusBySlug.get(slug) ?? "unknown_slug";
-    if (status.startsWith("has_valid_cta")) hasCta.push(slug);
-    else zeroCta.push(slug);
-  }
-  const ordered = args.includeMonetized ? [...zeroCta, ...hasCta] : zeroCta;
-  return ordered.slice(0, args.limit);
-}
-
 async function main() {
   loadEnv();
   const wedgeArg = argValue("--wedge") ?? "refrigerator_water";
@@ -160,14 +243,7 @@ async function main() {
   if (explicitSlugs && explicitSlugs.length > 0) {
     slugs = explicitSlugs;
   } else {
-    const candidateSlugs = Object.keys(DEFAULT_REFRIGERATOR_REVIEW_CANDIDATES);
-    const ctaStatusBySlug = await loadCurrentCtaStatusBySlug(candidateSlugs);
-    slugs = selectBatchSlugs({
-      candidateSlugs,
-      ctaStatusBySlug,
-      limit,
-      includeMonetized,
-    });
+    slugs = await loadTopFridgeBatchSlugs(limit, includeMonetized);
   }
   const packets = await generateFridgeNonAmazonReviewPackets(slugs);
   const output = {

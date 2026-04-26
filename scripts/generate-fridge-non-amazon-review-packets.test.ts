@@ -1,32 +1,23 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { selectBatchSlugs } from "./generate-fridge-non-amazon-review-packets";
+import { rankFridgeCoverageRows } from "./generate-fridge-non-amazon-review-packets";
 
-test("batch mode excludes monetized slugs by default", () => {
-  const selected = selectBatchSlugs({
-    candidateSlugs: ["da97-08006b", "da97-15217d", "da29-00012b"],
-    ctaStatusBySlug: new Map([
-      ["da97-08006b", "has_valid_cta (1)"],
-      ["da97-15217d", "has_valid_cta (1)"],
-      ["da29-00012b", "no_valid_cta"],
-    ]),
-    limit: 10,
-    includeMonetized: false,
+test("ranking supports returning top 10 zero-CTA slugs beyond fixture keys", () => {
+  const rows = Array.from({ length: 12 }, (_, idx) => ({
+    slug: `slug-${idx + 1}`,
+    number_of_valid_links: 0,
+    number_of_direct_buyable_links: 0,
+    has_primary_amazon: false,
+  }));
+  rows.push({
+    slug: "monetized-slug",
+    number_of_valid_links: 1,
+    number_of_direct_buyable_links: 1,
+    has_primary_amazon: false,
   });
-  assert.deepEqual(selected, ["da29-00012b"]);
-});
-
-test("batch mode can include monetized slugs with flag", () => {
-  const selected = selectBatchSlugs({
-    candidateSlugs: ["da97-08006b", "da97-15217d", "da29-00012b"],
-    ctaStatusBySlug: new Map([
-      ["da97-08006b", "has_valid_cta (1)"],
-      ["da97-15217d", "has_valid_cta (1)"],
-      ["da29-00012b", "no_valid_cta"],
-    ]),
-    limit: 10,
-    includeMonetized: true,
-  });
-  assert.deepEqual(selected, ["da29-00012b", "da97-08006b", "da97-15217d"]);
+  const ranked = rankFridgeCoverageRows(rows);
+  const zeroCtaTop10 = ranked.filter((r) => r.number_of_valid_links === 0).slice(0, 10);
+  assert.equal(zeroCtaTop10.length, 10);
+  assert.equal(zeroCtaTop10.some((r) => r.slug === "monetized-slug"), false);
 });
