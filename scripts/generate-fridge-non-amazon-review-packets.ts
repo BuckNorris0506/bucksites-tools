@@ -14,13 +14,27 @@ function argValue(flag: string): string | null {
   return v && !v.startsWith("--") ? v : null;
 }
 
-function parseSlugArg(): string[] {
+function hasFlag(flag: string): boolean {
+  return process.argv.includes(flag);
+}
+
+function parseSlugArg(): string[] | null {
   const raw = argValue("--slugs");
-  if (!raw) return ["da97-08006b", "da97-15217d", "da29-00012b"];
+  if (!raw) return null;
   return raw
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+function parseLimit(): number {
+  const raw = argValue("--limit");
+  if (!raw) return 10;
+  const n = Number.parseInt(raw, 10);
+  if (!Number.isFinite(n) || n <= 0) {
+    throw new Error(`Invalid --limit "${raw}" (must be > 0).`);
+  }
+  return n;
 }
 
 async function loadCurrentCtaStatusBySlug(slugs: string[]): Promise<Map<string, string>> {
@@ -114,6 +128,23 @@ export async function generateFridgeNonAmazonReviewPackets(slugs: string[]): Pro
   return packets;
 }
 
+export function selectBatchSlugs(args: {
+  candidateSlugs: string[];
+  ctaStatusBySlug: Map<string, string>;
+  limit: number;
+  includeMonetized: boolean;
+}): string[] {
+  const zeroCta: string[] = [];
+  const hasCta: string[] = [];
+  for (const slug of args.candidateSlugs) {
+    const status = args.ctaStatusBySlug.get(slug) ?? "unknown_slug";
+    if (status.startsWith("has_valid_cta")) hasCta.push(slug);
+    else zeroCta.push(slug);
+  }
+  const ordered = args.includeMonetized ? [...zeroCta, ...hasCta] : zeroCta;
+  return ordered.slice(0, args.limit);
+}
+
 async function main() {
   loadEnv();
   const wedgeArg = argValue("--wedge") ?? "refrigerator_water";
@@ -121,13 +152,30 @@ async function main() {
     throw new Error(`Unsupported --wedge "${wedgeArg}". This generator is refrigerator_water-only.`);
   }
 
-  const slugs = parseSlugArg();
+  const explicitSlugs = parseSlugArg();
+  const limit = parseLimit();
+  const includeMonetized = hasFlag("--include-monetized");
+
+  let slugs: string[];
+  if (explicitSlugs && explicitSlugs.length > 0) {
+    slugs = explicitSlugs;
+  } else {
+    const candidateSlugs = Object.keys(DEFAULT_REFRIGERATOR_REVIEW_CANDIDATES);
+    const ctaStatusBySlug = await loadCurrentCtaStatusBySlug(candidateSlugs);
+    slugs = selectBatchSlugs({
+      candidateSlugs,
+      ctaStatusBySlug,
+      limit,
+      includeMonetized,
+    });
+  }
   const packets = await generateFridgeNonAmazonReviewPackets(slugs);
   const output = {
     wedge: "refrigerator_water",
     read_only: true,
     non_amazon_only: true,
     auto_approve: false,
+    include_monetized: includeMonetized,
     packet_count: packets.length,
     packets,
   };
