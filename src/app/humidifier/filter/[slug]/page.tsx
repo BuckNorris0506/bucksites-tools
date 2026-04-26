@@ -27,6 +27,7 @@ export default async function HumidifierFilterPage({ params }: Props) {
   return (
     <VerticalFilterPageContent
       brandName={filter.brand.name}
+      filterSlug={filter.slug}
       oemPartNumber={filter.oem_part_number}
       name={filter.name}
       replacementIntervalMonths={filter.replacement_interval_months}

@@ -30,6 +30,7 @@ export default async function WholeHouseWaterFilterPage({ params }: Props) {
   return (
     <VerticalFilterPageContent
       brandName={part.brand.name}
+      filterSlug={part.slug}
       oemPartNumber={part.oem_part_number}
       name={part.name}
       replacementIntervalMonths={part.replacement_interval_months}
