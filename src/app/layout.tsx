@@ -21,6 +21,7 @@ const geistMono = localFont({
 
 const siteName = SITE_DISPLAY_NAME;
 const siteDesc = SITE_DEFAULT_DESCRIPTION;
+const impactVerificationValue = "bd3fcd9a-5fb7-4016-b37d-afad3a592b71";
 
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
@@ -50,6 +51,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Impact requires the verification token in the meta `value` attribute. */}
+        {/* @ts-expect-error Impact verification uses non-standard meta attribute `value`. */}
+        <meta name="impact-site-verification" value={impactVerificationValue} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
