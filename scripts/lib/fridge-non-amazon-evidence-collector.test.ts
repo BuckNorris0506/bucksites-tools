@@ -7,6 +7,7 @@ import {
   collectEvidenceForCandidate,
   extractEvidenceFromPageText,
   isAllowedNonAmazonProductCandidateUrl,
+  parseManualFallbackCaptures,
 } from "./fridge-non-amazon-evidence-collector";
 
 test("rejects Amazon/search/category URLs", () => {
@@ -106,6 +107,167 @@ test("da29-00012b snippet-only evidence does not become PASS", async () => {
     evidence,
   });
   assert.notEqual(packet.decision, "PASS");
+});
+
+test("403 fetch + no fallback => UNKNOWN", async () => {
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-15217d",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+      source: "seeded",
+    },
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da97-15217d",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.equal(packet.decision, "UNKNOWN");
+});
+
+test("403 fetch + fallback token+buyability+no warning => PASS", async () => {
+  const fallbackByUrl = parseManualFallbackCaptures(
+    JSON.stringify([
+      {
+        url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+        captured_at: "2026-04-26T23:00:00.000Z",
+        raw_excerpt:
+          "Samsung DA97-15217D Refrigerator Ice Maker Assembly OEM Part. Manufacturer's Part Number: DA97-15217D. In Stock. Add to Cart. $123.60",
+      },
+    ]),
+  );
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-15217d",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+      source: "seeded",
+    },
+    fallbackByUrl,
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da97-15217d",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.equal(packet.decision, "PASS");
+  assert.equal(evidence.evidence_source, "manual_capture");
+});
+
+test("403 fetch + fallback missing required signal => not PASS", async () => {
+  const fallbackByUrl = parseManualFallbackCaptures(
+    JSON.stringify([
+      {
+        url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+        captured_at: "2026-04-26T23:00:00.000Z",
+        raw_excerpt: "Samsung DA97-15217D Refrigerator Ice Maker Assembly OEM Part.",
+      },
+    ]),
+  );
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-15217d",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+      source: "seeded",
+    },
+    fallbackByUrl,
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da97-15217d",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.notEqual(packet.decision, "PASS");
+});
+
+test("fallback with substitution/discontinued warning => not PASS", async () => {
+  const fallbackByUrl = parseManualFallbackCaptures(
+    JSON.stringify([
+      {
+        url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+        captured_at: "2026-04-26T23:00:00.000Z",
+        raw_excerpt:
+          "DA97-15217D In Stock Add to Cart but this part is discontinued and replaced by DA97-15217E.",
+      },
+    ]),
+  );
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-15217d",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+      source: "seeded",
+    },
+    fallbackByUrl,
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da97-15217d",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.notEqual(packet.decision, "PASS");
+});
+
+test("provenance fields appear in collected evidence", async () => {
+  const fallbackByUrl = parseManualFallbackCaptures(
+    JSON.stringify([
+      {
+        url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+        captured_at: "2026-04-26T23:00:00.000Z",
+        raw_excerpt:
+          "Samsung DA97-15217D Refrigerator Ice Maker Assembly OEM Part. In Stock. Add to Cart.",
+      },
+    ]),
+  );
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-15217d",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-assy-ice-maker-da97-15217d-ap6261445.html",
+      source: "seeded",
+    },
+    fallbackByUrl,
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 403,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  assert.equal(evidence.evidence_source, "manual_capture");
+  assert.equal(Boolean(evidence.captured_at), true);
+  assert.equal(Boolean(evidence.raw_excerpt), true);
 });
 
 test("collector has no write side effects", () => {

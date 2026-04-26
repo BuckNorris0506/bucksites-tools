@@ -1,8 +1,13 @@
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import fs from "node:fs";
 import { buildReviewPacket, type ReviewPacket } from "./lib/non-amazon-review-packets";
 import { buildFridgeNonAmazonCandidates } from "./lib/fridge-non-amazon-candidate-generator";
-import { collectEvidenceForCandidate } from "./lib/fridge-non-amazon-evidence-collector";
+import {
+  collectEvidenceForCandidate,
+  parseManualFallbackCaptures,
+  type ManualFallbackCapture,
+} from "./lib/fridge-non-amazon-evidence-collector";
 import { rankFridgeCoverageRows } from "./generate-fridge-non-amazon-review-packets";
 
 type CoverageRow = {
@@ -16,7 +21,16 @@ type SlugEvidencePacket = {
   filter_slug: string;
   current_cta_status: string;
   candidate_count: number;
-  packets: ReviewPacket[];
+  packets: Array<{
+    packet: ReviewPacket;
+    evidence_provenance: {
+      source: "fetched_page" | "manual_capture";
+      captured_at: string | null;
+      raw_excerpt: string | null;
+      fetch_status: "ok" | "fetch_failed" | "invalid_candidate_url";
+      fetch_error: string | null;
+    };
+  }>;
 };
 
 function argValue(flag: string): string | null {
@@ -41,6 +55,10 @@ function parseLimit(): number {
   const n = Number.parseInt(raw, 10);
   if (!Number.isFinite(n) || n <= 0) throw new Error(`Invalid --limit "${raw}" (must be > 0).`);
   return n;
+}
+
+function parseFallbackCaptureFile(): string | null {
+  return argValue("--fallback-capture-file");
 }
 
 function ctaStatusFromCoverage(row: CoverageRow | undefined): string {
@@ -115,6 +133,12 @@ async function main() {
 
   const limit = parseLimit();
   const explicitSlugs = parseSlugsOrNull();
+  const fallbackCaptureFile = parseFallbackCaptureFile();
+  let fallbackByUrl: Map<string, ManualFallbackCapture> | undefined;
+  if (fallbackCaptureFile) {
+    const raw = fs.readFileSync(fallbackCaptureFile, "utf8");
+    fallbackByUrl = parseManualFallbackCaptures(raw);
+  }
   const slugs = await chooseSlugs(limit, explicitSlugs);
   const coverage = await loadFridgeCoverageRows();
   const coverageBySlug = new Map(coverage.map((row) => [row.slug, row]));
@@ -123,16 +147,28 @@ async function main() {
   for (const slug of slugs) {
     const currentStatus = ctaStatusFromCoverage(coverageBySlug.get(slug));
     const candidates = buildFridgeNonAmazonCandidates(slug);
-    const packets: ReviewPacket[] = [];
+    const packets: SlugEvidencePacket["packets"] = [];
     for (const candidate of candidates) {
-      const evidence = await collectEvidenceForCandidate({ slug, candidate });
-      packets.push(
-        buildReviewPacket({
+      const evidence = await collectEvidenceForCandidate({
+        slug,
+        candidate,
+        fallbackByUrl,
+      });
+      const packet = buildReviewPacket({
           filter_slug: slug,
           current_cta_status: currentStatus,
           evidence,
-        }),
-      );
+      });
+      packets.push({
+        packet,
+        evidence_provenance: {
+          source: evidence.evidence_source,
+          captured_at: evidence.captured_at,
+          raw_excerpt: evidence.raw_excerpt,
+          fetch_status: evidence.fetch_status,
+          fetch_error: evidence.fetch_error,
+        },
+      });
     }
     results.push({
       filter_slug: slug,
@@ -147,6 +183,7 @@ async function main() {
     read_only: true,
     non_amazon_only: true,
     auto_approve: false,
+    fallback_capture_file: fallbackCaptureFile,
     packet_count: results.length,
     results,
   };

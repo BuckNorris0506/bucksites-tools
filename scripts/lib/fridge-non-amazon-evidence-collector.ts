@@ -5,6 +5,15 @@ export type CollectedEvidence = CandidateEvidence & {
   fetch_status: "ok" | "fetch_failed" | "invalid_candidate_url";
   fetch_error: string | null;
   snippet_only_evidence: boolean;
+  evidence_source: "fetched_page" | "manual_capture";
+  captured_at: string | null;
+  raw_excerpt: string | null;
+};
+
+export type ManualFallbackCapture = {
+  url: string;
+  captured_at: string;
+  raw_excerpt: string;
 };
 
 function stripHtml(html: string): string {
@@ -83,6 +92,50 @@ export function extractEvidenceFromPageText(args: {
     fetch_status: "ok",
     fetch_error: null,
     snippet_only_evidence: false,
+    evidence_source: "fetched_page",
+    captured_at: null,
+    raw_excerpt: args.pageText.slice(0, 600),
+  };
+}
+
+export function parseManualFallbackCaptures(jsonText: string): Map<string, ManualFallbackCapture> {
+  const parsed = JSON.parse(jsonText) as unknown;
+  if (!Array.isArray(parsed)) throw new Error("Fallback capture file must be an array.");
+  const out = new Map<string, ManualFallbackCapture>();
+  for (const row of parsed) {
+    const candidate = row as Partial<ManualFallbackCapture>;
+    if (!candidate.url || !candidate.captured_at || !candidate.raw_excerpt) {
+      throw new Error("Fallback capture row must include url, captured_at, raw_excerpt.");
+    }
+    out.set(candidate.url, {
+      url: candidate.url,
+      captured_at: candidate.captured_at,
+      raw_excerpt: candidate.raw_excerpt,
+    });
+  }
+  return out;
+}
+
+function applyManualFallback(args: {
+  slug: string;
+  candidate: CandidateUrl;
+  fallback: ManualFallbackCapture;
+}): CollectedEvidence {
+  const base = extractEvidenceFromPageText({
+    slug: args.slug,
+    retailer: args.candidate.retailer,
+    retailer_key: args.candidate.retailer_key,
+    url: args.candidate.url,
+    pageText: args.fallback.raw_excerpt,
+  });
+  return {
+    ...base,
+    fetch_status: "ok",
+    fetch_error: null,
+    snippet_only_evidence: false,
+    evidence_source: "manual_capture",
+    captured_at: args.fallback.captured_at,
+    raw_excerpt: args.fallback.raw_excerpt,
   };
 }
 
@@ -90,6 +143,7 @@ export async function collectEvidenceForCandidate(args: {
   slug: string;
   candidate: CandidateUrl;
   fetchImpl?: typeof fetch;
+  fallbackByUrl?: Map<string, ManualFallbackCapture>;
 }): Promise<CollectedEvidence> {
   const fetchFn = args.fetchImpl ?? fetch;
   const token = args.slug.toUpperCase();
@@ -109,6 +163,9 @@ export async function collectEvidenceForCandidate(args: {
       fetch_status: "invalid_candidate_url",
       fetch_error: null,
       snippet_only_evidence: true,
+      evidence_source: "fetched_page",
+      captured_at: null,
+      raw_excerpt: null,
     };
   }
 
@@ -117,6 +174,14 @@ export async function collectEvidenceForCandidate(args: {
   try {
     const res = await fetchFn(args.candidate.url, { signal: controller.signal });
     if (!res.ok) {
+      const fallback = args.fallbackByUrl?.get(args.candidate.url);
+      if (fallback) {
+        return applyManualFallback({
+          slug: args.slug,
+          candidate: args.candidate,
+          fallback,
+        });
+      }
       return {
         retailer: args.candidate.retailer,
         retailer_key: args.candidate.retailer_key,
@@ -131,6 +196,9 @@ export async function collectEvidenceForCandidate(args: {
         fetch_status: "fetch_failed",
         fetch_error: `HTTP ${res.status}`,
         snippet_only_evidence: true,
+        evidence_source: "fetched_page",
+        captured_at: null,
+        raw_excerpt: null,
       };
     }
     const html = await res.text();
@@ -143,6 +211,14 @@ export async function collectEvidenceForCandidate(args: {
       pageText: text,
     });
   } catch (err) {
+    const fallback = args.fallbackByUrl?.get(args.candidate.url);
+    if (fallback) {
+      return applyManualFallback({
+        slug: args.slug,
+        candidate: args.candidate,
+        fallback,
+      });
+    }
     return {
       retailer: args.candidate.retailer,
       retailer_key: args.candidate.retailer_key,
@@ -157,6 +233,9 @@ export async function collectEvidenceForCandidate(args: {
       fetch_status: "fetch_failed",
       fetch_error: err instanceof Error ? err.message : String(err),
       snippet_only_evidence: true,
+      evidence_source: "fetched_page",
+      captured_at: null,
+      raw_excerpt: null,
     };
   } finally {
     clearTimeout(timeout);
