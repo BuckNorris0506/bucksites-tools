@@ -197,8 +197,17 @@ function urlLooksLikeProductLevel(normalizedUrl: string): boolean {
     return false;
   }
   const pathLower = u.pathname.toLowerCase();
+  const hostLower = u.hostname.toLowerCase();
   if (pathLower === "/" || pathLower === "") return false;
   if (canonicalAmazonDpUrl(u)) return true;
+  if (
+    hostLower.endsWith("appliancepartspros.com") &&
+    pathLower.endsWith(".html") &&
+    !pathLower.includes("/search") &&
+    !pathLower.includes("/category")
+  ) {
+    return true;
+  }
   if (
     pathLower === "/search" ||
     pathLower.startsWith("/search/") ||
@@ -220,9 +229,25 @@ function urlLooksLikeProductLevel(normalizedUrl: string): boolean {
   );
 }
 
-function classifyDiscovery(retailerKey: string): DiscoveryClassification {
+function hasExactTokenEvidence(notes: string | null): boolean {
+  if (!notes) return false;
+  return /\bexact token\b/i.test(notes) && /\bpresent\b/i.test(notes);
+}
+
+function classifyDiscovery(
+  retailerKey: string,
+  normalizedUrl: string,
+  notes: string | null,
+): DiscoveryClassification {
   if (retailerKey === "amazon") return "direct_buyable";
   if (retailerKey.endsWith("-official") || retailerKey.startsWith("oem-")) {
+    return "direct_buyable";
+  }
+  if (
+    retailerKey === "appliancepartspros" &&
+    urlLooksLikeProductLevel(normalizedUrl) &&
+    hasExactTokenEvidence(notes)
+  ) {
     return "direct_buyable";
   }
   if (BIG_BOX_KEYS.has(retailerKey)) return "likely_valid";
@@ -233,6 +258,7 @@ export const __testables = {
   canonicalAmazonDpUrl,
   normalizeUrl,
   urlLooksLikeProductLevel,
+  classifyDiscovery,
 };
 
 function parseInputJson(jsonPath: string): HqIIRawDiscovery[] {
@@ -332,7 +358,7 @@ async function main() {
       retailer_key,
       retailer_slug: retailer_key,
       affiliate_url: normalized,
-      classification: classifyDiscovery(retailer_key),
+      classification: classifyDiscovery(retailer_key, normalized, row.notes?.trim() || null),
       notes: row.notes?.trim() || null,
     });
   }
