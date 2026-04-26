@@ -5,7 +5,10 @@ import {
   enrichCandidatesWithBodyEvidence,
   extractAmazonProductCandidates,
 } from "./discovery-candidate-enrichment";
-import { generateHqiiAmazonCandidatesFromSearchHits } from "./hqii-discovery-candidate-generation";
+import {
+  diagnoseHqiiAmazonEnrichment,
+  generateHqiiAmazonCandidatesFromSearchHits,
+} from "./hqii-discovery-candidate-generation";
 
 test("pentek-cfb-plus10bb fixture: slugged Amazon PDP is promoted only after body evidence", async () => {
   const hits = [
@@ -126,4 +129,109 @@ test("second-family negative: da29 slug rejects when PDP body lacks strict token
   });
 
   assert.equal(rows.length, 0);
+});
+
+test("pentek-cbc-10bb canary positive: slugged PDP promotes when body has strict token", async () => {
+  const rows = await generateHqiiAmazonCandidatesFromSearchHits({
+    filterSlug: "pentek-cbc-10bb",
+    searchHits: [
+      {
+        url: "https://www.amazon.com/Pentek-CBC-BB-Carbon-Filter-Cartridge/dp/B00310NIU0",
+        snippet: "Pentek big blue carbon cartridge replacement filter",
+      },
+    ],
+    fetchBodyText: async (url) => {
+      assert.equal(url, "https://www.amazon.com/dp/B00310NIU0");
+      return "Pentek CBC-10BB Carbon Filter Cartridge, 10 x 4.5 inch Big Blue";
+    },
+  });
+
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0]?.filter_slug, "pentek-cbc-10bb");
+  assert.equal(rows[0]?.url, "https://www.amazon.com/dp/B00310NIU0");
+});
+
+test("pentek-cbc-10bb canary negative: slugged PDP rejects when body lacks strict token", async () => {
+  const rows = await generateHqiiAmazonCandidatesFromSearchHits({
+    filterSlug: "pentek-cbc-10bb",
+    searchHits: [
+      {
+        url: "https://www.amazon.com/Pentek-CBC-BB-Carbon-Filter-Cartridge/dp/B00310NIU0",
+        snippet: "Pentek big blue carbon cartridge replacement filter",
+      },
+    ],
+    fetchBodyText: async () => "Pentek Carbon Filter Cartridge, 10 x 4.5 inch Big Blue",
+  });
+
+  assert.equal(rows.length, 0);
+});
+
+test("diagnostics classifies continue-shopping interstitial as fetch_interstitial", async () => {
+  const result = await diagnoseHqiiAmazonEnrichment({
+    filterSlug: "pentek-cbc-10bb",
+    wedge: "whole_house_water",
+    catalogTokensBySlug: new Map([["pentek-cbc-10bb", ["CBC-10BB", "CBC10BB"]]]),
+    searchHits: [
+      {
+        url: "https://www.amazon.com/Pentek-CBC-BB-Carbon-Filter-Cartridge/dp/B00310NIU0",
+        snippet: "Pentek big blue carbon cartridge replacement filter",
+      },
+    ],
+    fetchBodyText: async () =>
+      "Click the button below to continue shopping Continue shopping Conditions of Use Privacy Policy",
+  });
+
+  assert.equal(result.classification, "fetch_interstitial");
+});
+
+test("diagnostics classifies PDP-like body without token as candidate_token_mismatch", async () => {
+  const result = await diagnoseHqiiAmazonEnrichment({
+    filterSlug: "pentek-cbc-10bb",
+    wedge: "whole_house_water",
+    catalogTokensBySlug: new Map([["pentek-cbc-10bb", ["CBC-10BB", "CBC10BB"]]]),
+    searchHits: [
+      {
+        url: "https://www.amazon.com/Pentek-CBC-BB-Carbon-Filter-Cartridge/dp/B00310NIU0",
+        snippet: "Pentek big blue carbon cartridge replacement filter",
+      },
+    ],
+    fetchBodyText: async () => "Pentek Carbon Filter Cartridge, 10 x 4.5 inch Big Blue",
+  });
+
+  assert.equal(result.classification, "candidate_token_mismatch");
+});
+
+test("diagnostics classifies PDP-like body with token as token_pass", async () => {
+  const result = await diagnoseHqiiAmazonEnrichment({
+    filterSlug: "pentek-cbc-10bb",
+    wedge: "whole_house_water",
+    catalogTokensBySlug: new Map([["pentek-cbc-10bb", ["CBC-10BB", "CBC10BB"]]]),
+    searchHits: [
+      {
+        url: "https://www.amazon.com/Pentek-CBC-BB-Carbon-Filter-Cartridge/dp/B00310NIU0",
+        snippet: "Pentek big blue carbon cartridge replacement filter",
+      },
+    ],
+    fetchBodyText: async () => "Pentek CBC-10BB Carbon Filter Cartridge, 10 x 4.5 inch Big Blue",
+  });
+
+  assert.equal(result.classification, "token_pass");
+});
+
+test("diagnostics uses catalog-backed tokens even when slug-derived token differs", async () => {
+  const result = await diagnoseHqiiAmazonEnrichment({
+    filterSlug: "pentek-rfc-10-slim",
+    wedge: "whole_house_water",
+    catalogTokensBySlug: new Map([["pentek-rfc-10-slim", ["RFC-10", "RFC10"]]]),
+    searchHits: [
+      {
+        url: "https://www.amazon.com/FiltersFast-FF10BBS-25-Replacement-Pentek-RFC-BB/dp/B01MR4B9IK",
+        snippet: "replacement cartridge",
+      },
+    ],
+    fetchBodyText: async () => "Pentek RFC10 radial-flow carbon replacement cartridge",
+  });
+
+  assert.equal(result.classification, "token_pass");
+  assert.deepEqual(result.required_tokens, ["RFC-10", "RFC10"]);
 });
