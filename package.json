@@ -27,6 +27,7 @@
     "seed:ingest:hqii-retailer-links": "tsx scripts/ingest-hqii-retailer-links.ts",
     "buckparts:prioritize:coverage": "tsx scripts/prioritize-coverage-next-batch.ts",
     "buckparts:review-packets:fridge": "tsx scripts/generate-fridge-non-amazon-review-packets.ts",
+    "buckparts:evidence:fridge": "tsx scripts/collect-fridge-non-amazon-evidence.ts",
     "search:gaps:rank": "tsx scripts/search-gaps-rank.ts",
     "search:gaps:classify": "tsx scripts/search-gaps-classify.ts",
     "search:gaps:candidates": "tsx scripts/search-gap-candidates-generate.ts",
