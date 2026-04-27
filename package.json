@@ -28,6 +28,7 @@
     "buckparts:prioritize:coverage": "tsx scripts/prioritize-coverage-next-batch.ts",
     "buckparts:review-packets:fridge": "tsx scripts/generate-fridge-non-amazon-review-packets.ts",
     "buckparts:evidence:fridge": "tsx scripts/collect-fridge-non-amazon-evidence.ts",
+    "buckparts:operator:fridge-non-amazon": "tsx scripts/run-fridge-non-amazon-operator.ts",
     "search:gaps:rank": "tsx scripts/search-gaps-rank.ts",
     "search:gaps:classify": "tsx scripts/search-gaps-classify.ts",
     "search:gaps:candidates": "tsx scripts/search-gap-candidates-generate.ts",
