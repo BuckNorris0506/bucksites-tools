@@ -118,3 +118,24 @@ test("da97-19467c unverified guess still considered plausible for manual capture
   });
   assert.equal(plausible, true);
 });
+
+test("manual capture with not-found text => BLOCKED 404/not_found", () => {
+  const candidate = mkCandidate("unverified_url_guess", "https://www.appliancepartspros.com/samsung-da97-19467c.html");
+  const evidence = mkEvidence({
+    fetch_status: "ok",
+    fetch_error: null,
+    evidence_source: "manual_capture",
+    raw_excerpt:
+      "Page not found - AppliancePartsPros.com. The page requested was not found on this server.",
+  });
+  const packet = mkPacket();
+  const outcome = classifyOutcome({
+    slug: "da97-19467c",
+    candidate,
+    packet,
+    evidence,
+  });
+  assert.equal("reason" in outcome, true);
+  assert.equal("reason" in outcome ? outcome.reason : "", "404/not_found");
+  assert.equal("capture_instructions" in outcome, false);
+});

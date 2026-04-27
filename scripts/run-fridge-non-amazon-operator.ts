@@ -18,6 +18,7 @@ type CoverageRow = {
 type BlockedReason =
   | "no candidate"
   | "404"
+  | "404/not_found"
   | "discontinued/substitution"
   | "suffix drift"
   | "no exact token"
@@ -116,6 +117,19 @@ function hasSuffixDrift(slug: string, text: string): boolean {
   return nearby.some((token) => token.slice(-1) !== expectedSuffix);
 }
 
+function manualCaptureLooksNotFound(evidence: CollectedEvidence): boolean {
+  if (evidence.evidence_source !== "manual_capture") return false;
+  const text = (evidence.raw_excerpt ?? "").toLowerCase();
+  if (!text) return false;
+  const notFoundMarkers = [
+    "page not found",
+    "not found on this server",
+    "404",
+    "the page requested was not found",
+  ];
+  return notFoundMarkers.some((marker) => text.includes(marker));
+}
+
 export function isPlausibleManualCaptureCandidate(args: {
   slug: string;
   candidate: CandidateUrl;
@@ -148,6 +162,17 @@ export function classifyOutcome(args: {
       risk_label: packet.risk_label,
       decision: "PASS",
       recommended_next_action: packet.recommended_next_action,
+    };
+  }
+
+  if (manualCaptureLooksNotFound(evidence)) {
+    return {
+      filter_slug: slug,
+      retailer: packet.retailer,
+      pdp_url: packet.pdp_url,
+      candidate_source: candidate.source,
+      reason: "404/not_found",
+      detail: "Manual capture indicates page not found/non-PDP state; candidate is blocked.",
     };
   }
 
