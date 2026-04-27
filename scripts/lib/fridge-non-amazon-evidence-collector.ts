@@ -174,7 +174,9 @@ export async function collectEvidenceForCandidate(args: {
   try {
     const res = await fetchFn(args.candidate.url, { signal: controller.signal });
     if (!res.ok) {
-      const fallback = args.fallbackByUrl?.get(args.candidate.url);
+      const isHardReject404 = res.status === 404;
+      const allowFallback = res.status === 403;
+      const fallback = allowFallback ? args.fallbackByUrl?.get(args.candidate.url) : undefined;
       if (fallback) {
         return applyManualFallback({
           slug: args.slug,
@@ -186,11 +188,15 @@ export async function collectEvidenceForCandidate(args: {
         retailer: args.candidate.retailer,
         retailer_key: args.candidate.retailer_key,
         pdp_url: args.candidate.url,
-        exact_token_or_alias_proof: `Fetch status ${res.status}; exact token ${token} not proven.`,
+        exact_token_or_alias_proof: isHardReject404
+          ? `Fetch status 404; candidate URL rejected as non-existent for ${token}.`
+          : `Fetch status ${res.status}; exact token ${token} not proven.`,
         has_exact_token_or_alias_proof: false,
-        buyability_evidence: `Fetch status ${res.status}; buyability not proven.`,
+        buyability_evidence: isHardReject404
+          ? "Candidate URL returned 404; no buyability can be verified."
+          : `Fetch status ${res.status}; buyability not proven.`,
         has_buyability_evidence: false,
-        substitution_or_discontinued_warning_present: "unknown",
+        substitution_or_discontinued_warning_present: isHardReject404 ? "yes" : "unknown",
         part_label: "Unknown",
         family_gap_source: "money_scoreboard_v1:refrigerator_water:unknown",
         fetch_status: "fetch_failed",

@@ -98,7 +98,7 @@ test("da29-00012b snippet-only evidence does not become PASS", async () => {
       retailer: "AllFilters",
       retailer_key: "allfilters",
       url: "https://www.allfilters.com/search?query=DA29-00012B",
-      source: "heuristic",
+      source: "unverified_url_guess",
     },
   });
   const packet = buildReviewPacket({
@@ -107,6 +107,30 @@ test("da29-00012b snippet-only evidence does not become PASS", async () => {
     evidence,
   });
   assert.notEqual(packet.decision, "PASS");
+});
+
+test("guessed AppliancePartsPros slug URL with 404 => FAIL/rejected candidate", async () => {
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da97-17376a",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-da97-17376a.html",
+      source: "unverified_url_guess",
+    },
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 404,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da97-17376a",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.equal(packet.decision, "FAIL");
 });
 
 test("403 fetch + no fallback => UNKNOWN", async () => {
@@ -236,6 +260,42 @@ test("fallback with substitution/discontinued warning => not PASS", async () => 
     evidence,
   });
   assert.notEqual(packet.decision, "PASS");
+});
+
+test("fetch 404 => FAIL and fallback is ignored", async () => {
+  const fallbackByUrl = parseManualFallbackCaptures(
+    JSON.stringify([
+      {
+        url: "https://www.appliancepartspros.com/samsung-da29-00019a.html",
+        captured_at: "2026-04-26T23:00:00.000Z",
+        raw_excerpt:
+          "DA29-00019A In Stock Add to Cart $59.00 (manual excerpt that must be ignored for 404).",
+      },
+    ]),
+  );
+  const evidence = await collectEvidenceForCandidate({
+    slug: "da29-00019a",
+    candidate: {
+      retailer: "AppliancePartsPros",
+      retailer_key: "appliancepartspros",
+      url: "https://www.appliancepartspros.com/samsung-da29-00019a.html",
+      source: "unverified_url_guess",
+    },
+    fallbackByUrl,
+    fetchImpl: async () =>
+      ({
+        ok: false,
+        status: 404,
+        text: async () => "",
+      }) as unknown as Response,
+  });
+  const packet = buildReviewPacket({
+    filter_slug: "da29-00019a",
+    current_cta_status: "no_valid_cta",
+    evidence,
+  });
+  assert.equal(packet.decision, "FAIL");
+  assert.equal(evidence.evidence_source, "fetched_page");
 });
 
 test("provenance fields appear in collected evidence", async () => {

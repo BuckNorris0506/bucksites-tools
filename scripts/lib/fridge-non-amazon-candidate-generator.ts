@@ -2,7 +2,7 @@ export type CandidateUrl = {
   retailer: string;
   retailer_key: string;
   url: string;
-  source: "seeded" | "heuristic";
+  source: "seeded" | "unverified_url_guess";
 };
 
 const SEEDED_BY_SLUG: Record<string, CandidateUrl[]> = {
@@ -41,13 +41,13 @@ export function buildFridgeNonAmazonCandidates(slug: string): CandidateUrl[] {
   const seeded = SEEDED_BY_SLUG[key] ?? [];
   if (seeded.length > 0) return seeded;
 
-  // Heuristic fallback for manual review queueing only; truth is verified in fetched evidence stage.
+  // Unverified URL guess for queueing only. Not treated as proven candidate unless live fetch succeeds.
   return [
     {
       retailer: "AppliancePartsPros",
       retailer_key: "appliancepartspros",
       url: `https://www.appliancepartspros.com/samsung-${key}.html`,
-      source: "heuristic",
+      source: "unverified_url_guess",
     },
   ];
 }
