@@ -1,5 +1,6 @@
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import fs from "node:fs";
 import { rankFridgeCoverageRows } from "./generate-fridge-non-amazon-review-packets";
 import { buildFridgeNonAmazonCandidates, type CandidateUrl } from "./lib/fridge-non-amazon-candidate-generator";
 import {
@@ -67,12 +68,30 @@ type OperatorRowResult = {
   outcomes: Array<PassCandidate | ManualCaptureNeeded | BlockedCandidate | UnknownCandidate>;
 };
 
+type OperatorBlockedLedgerEntry = {
+  slug: string;
+  url: string;
+  reason: string;
+  source: string;
+};
+
+type OperatorBlockedLedger = {
+  blocked_entries: OperatorBlockedLedgerEntry[];
+};
+
+type OperatorBlockedIndex = {
+  bySlug: Set<string>;
+  byUrl: Set<string>;
+  entries: OperatorBlockedLedgerEntry[];
+};
+
 const DEFAULT_KNOWN_BLOCKED_SLUGS = new Set([
   "da29-00012b",
   "da29-00019a",
   "da97-17376a",
   "adq75795101",
 ]);
+const LEDGER_PATH = "data/operator-blocked-fridge-non-amazon.json";
 
 function argValue(flag: string): string | null {
   const idx = process.argv.indexOf(flag);
@@ -100,6 +119,44 @@ function parseSlugsOrNull(): string[] | null {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
+}
+
+function loadBlockedLedger(ledgerPath: string = LEDGER_PATH): OperatorBlockedLedger {
+  const raw = fs.readFileSync(ledgerPath, "utf8");
+  const parsed = JSON.parse(raw) as Partial<OperatorBlockedLedger>;
+  const entries = Array.isArray(parsed.blocked_entries) ? parsed.blocked_entries : [];
+  return { blocked_entries: entries };
+}
+
+export function buildBlockedIndex(ledger: OperatorBlockedLedger): OperatorBlockedIndex {
+  const bySlug = new Set<string>();
+  const byUrl = new Set<string>();
+  const entries: OperatorBlockedLedgerEntry[] = [];
+  for (const row of ledger.blocked_entries) {
+    const slug = (row.slug ?? "").trim().toLowerCase();
+    const url = (row.url ?? "").trim().toLowerCase();
+    if (slug) bySlug.add(slug);
+    if (url) byUrl.add(url);
+    entries.push({
+      slug,
+      url,
+      reason: (row.reason ?? "").trim(),
+      source: (row.source ?? "").trim(),
+    });
+  }
+  return { bySlug, byUrl, entries };
+}
+
+export function isBlockedByLedger(args: {
+  slug: string;
+  url?: string;
+  blockedIndex: OperatorBlockedIndex;
+}): boolean {
+  const slug = args.slug.trim().toLowerCase();
+  const url = (args.url ?? "").trim().toLowerCase();
+  if (args.blockedIndex.bySlug.has(slug)) return true;
+  if (url && args.blockedIndex.byUrl.has(url)) return true;
+  return false;
 }
 
 function ctaStatusFromCoverage(row: CoverageRow | undefined): string {
@@ -307,14 +364,19 @@ async function chooseSlugs(args: {
   limit: number;
   explicitSlugs: string[] | null;
   excludeKnownBlocked: boolean;
+  includeBlocked: boolean;
+  blockedIndex: OperatorBlockedIndex;
 }): Promise<string[]> {
   if (args.explicitSlugs && args.explicitSlugs.length > 0) {
-    return args.explicitSlugs;
+    return args.includeBlocked
+      ? args.explicitSlugs
+      : args.explicitSlugs.filter((slug) => !isBlockedByLedger({ slug, blockedIndex: args.blockedIndex }));
   }
   const coverage = await loadFridgeCoverageRows();
   return coverage
     .filter((row) => row.number_of_valid_links === 0)
     .filter((row) => (args.excludeKnownBlocked ? !DEFAULT_KNOWN_BLOCKED_SLUGS.has(row.slug) : true))
+    .filter((row) => (args.includeBlocked ? true : !isBlockedByLedger({ slug: row.slug, blockedIndex: args.blockedIndex })))
     .slice(0, args.limit)
     .map((row) => row.slug);
 }
@@ -323,6 +385,8 @@ async function runOperator(args: {
   limit: number;
   explicitSlugs: string[] | null;
   excludeKnownBlocked: boolean;
+  includeBlocked: boolean;
+  blockedIndex: OperatorBlockedIndex;
 }) {
   const coverage = await loadFridgeCoverageRows();
   const coverageBySlug = new Map(coverage.map((row) => [row.slug, row]));
@@ -331,8 +395,13 @@ async function runOperator(args: {
   const rows: OperatorRowResult[] = [];
   for (const slug of slugs) {
     const candidates = buildFridgeNonAmazonCandidates(slug);
+    const activeCandidates = args.includeBlocked
+      ? candidates
+      : candidates.filter(
+          (candidate) => !isBlockedByLedger({ slug, url: candidate.url, blockedIndex: args.blockedIndex }),
+        );
     const outcomes: OperatorRowResult["outcomes"] = [];
-    if (candidates.length === 0) {
+    if (activeCandidates.length === 0) {
       outcomes.push({
         filter_slug: slug,
         retailer: "UNKNOWN",
@@ -342,7 +411,7 @@ async function runOperator(args: {
         detail: "No non-Amazon candidate URL generated for this slug.",
       });
     } else {
-      for (const candidate of candidates) {
+      for (const candidate of activeCandidates) {
         const evidence = await collectEvidenceForCandidate({ slug, candidate });
         const packet = buildReviewPacket({
           filter_slug: slug,
@@ -355,7 +424,7 @@ async function runOperator(args: {
     rows.push({
       slug,
       current_cta_status: ctaStatusFromCoverage(coverageBySlug.get(slug)),
-      candidate_count: candidates.length,
+      candidate_count: activeCandidates.length,
       outcomes,
     });
   }
@@ -371,6 +440,7 @@ async function runOperator(args: {
       else if ("reason" in outcome && (
         outcome.reason === "no candidate" ||
         outcome.reason === "404" ||
+        outcome.reason === "404/not_found" ||
         outcome.reason === "discontinued/substitution" ||
         outcome.reason === "suffix drift" ||
         outcome.reason === "no exact token" ||
@@ -389,8 +459,11 @@ async function runOperator(args: {
     data_mutation: false,
     ingest_called: false,
     include_monetized: false,
+    include_blocked: args.includeBlocked,
     exclude_known_blocked_slugs: args.excludeKnownBlocked,
     known_blocked_slugs: [...DEFAULT_KNOWN_BLOCKED_SLUGS],
+    blocked_ledger_path: LEDGER_PATH,
+    blocked_ledger_entry_count: args.blockedIndex.entries.length,
     evaluated_slug_count: rows.length,
     evaluated_slugs: rows.map((r) => r.slug),
     groups: {
@@ -417,8 +490,10 @@ async function main() {
   }
   const limit = parseLimit();
   const explicitSlugs = parseSlugsOrNull();
+  const includeBlocked = hasFlag("--include-blocked");
   const excludeKnownBlocked = !hasFlag("--include-known-blocked");
-  const output = await runOperator({ limit, explicitSlugs, excludeKnownBlocked });
+  const blockedIndex = buildBlockedIndex(loadBlockedLedger());
+  const output = await runOperator({ limit, explicitSlugs, excludeKnownBlocked, includeBlocked, blockedIndex });
   console.log(JSON.stringify(output, null, 2));
 }
 

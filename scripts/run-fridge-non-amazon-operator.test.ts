@@ -1,7 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import fs from "node:fs";
 
-import { classifyOutcome, isPlausibleManualCaptureCandidate } from "./run-fridge-non-amazon-operator";
+import {
+  buildBlockedIndex,
+  classifyOutcome,
+  isBlockedByLedger,
+  isPlausibleManualCaptureCandidate,
+} from "./run-fridge-non-amazon-operator";
 import type { CandidateUrl } from "./lib/fridge-non-amazon-candidate-generator";
 import type { CollectedEvidence } from "./lib/fridge-non-amazon-evidence-collector";
 import type { ReviewPacket } from "./lib/non-amazon-review-packets";
@@ -138,4 +144,75 @@ test("manual capture with not-found text => BLOCKED 404/not_found", () => {
   assert.equal("reason" in outcome, true);
   assert.equal("reason" in outcome ? outcome.reason : "", "404/not_found");
   assert.equal("capture_instructions" in outcome, false);
+});
+
+test("ledger suppresses da97-19467c by slug and URL by default", () => {
+  const blockedIndex = buildBlockedIndex({
+    blocked_entries: [
+      {
+        slug: "da97-19467c",
+        url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+        reason: "not-found",
+        source: "manual_capture",
+      },
+    ],
+  });
+  assert.equal(
+    isBlockedByLedger({
+      slug: "da97-19467c",
+      url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+      blockedIndex,
+    }),
+    true,
+  );
+});
+
+test("--include-blocked audit mode semantics: blocked entries are identifiable", () => {
+  const blockedIndex = buildBlockedIndex({
+    blocked_entries: [
+      {
+        slug: "da97-19467c",
+        url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+        reason: "not-found",
+        source: "manual_capture",
+      },
+    ],
+  });
+  const blocked = isBlockedByLedger({
+    slug: "da97-19467c",
+    url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+    blockedIndex,
+  });
+  assert.equal(blocked, true);
+});
+
+test("operator ledger helpers have no write side effects", () => {
+  const original = fs.writeFileSync;
+  let writeCalled = false;
+  const fakeWrite: typeof fs.writeFileSync = ((...args: Parameters<typeof fs.writeFileSync>) => {
+    writeCalled = true;
+    return original(...args);
+  }) as typeof fs.writeFileSync;
+  fs.writeFileSync = fakeWrite;
+  try {
+    const blockedIndex = buildBlockedIndex({
+      blocked_entries: [
+        {
+          slug: "da97-19467c",
+          url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+          reason: "not-found",
+          source: "manual_capture",
+        },
+      ],
+    });
+    const blocked = isBlockedByLedger({
+      slug: "da97-19467c",
+      url: "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+      blockedIndex,
+    });
+    assert.equal(blocked, true);
+    assert.equal(writeCalled, false);
+  } finally {
+    fs.writeFileSync = original;
+  }
 });

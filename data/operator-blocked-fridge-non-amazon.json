@@ -1,0 +1,34 @@
+{
+  "blocked_entries": [
+    {
+      "slug": "da29-00012b",
+      "url": "https://www.allfilters.com/refrigeratorfilters/samsung/da29-00012a-hafcn",
+      "reason": "discontinued on AllFilters",
+      "source": "manual_rescue"
+    },
+    {
+      "slug": "da29-00019a",
+      "url": "https://www.appliancepartspros.com/samsung-da29-00019a.html",
+      "reason": "AppliancePartsPros guessed URL 404",
+      "source": "operator_evidence"
+    },
+    {
+      "slug": "da97-17376a",
+      "url": "https://www.appliancepartspros.com/samsung-da97-17376a.html",
+      "reason": "AppliancePartsPros guessed URL 404 / no A->B proof",
+      "source": "manual_rescue"
+    },
+    {
+      "slug": "adq75795101",
+      "url": "",
+      "reason": "discovery-blocked / no exact PDP proof",
+      "source": "manual_discovery"
+    },
+    {
+      "slug": "da97-19467c",
+      "url": "https://www.appliancepartspros.com/samsung-da97-19467c.html",
+      "reason": "AppliancePartsPros guessed URL not-found",
+      "source": "manual_capture"
+    }
+  ]
+}
