@@ -71,10 +71,38 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
       </main>
       <footer className="border-t border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950">
         <div
-          className={`mx-auto ${shellMax} ${shellPad} py-8 text-center text-sm leading-relaxed text-neutral-600 dark:text-neutral-400`}
+          className={`mx-auto ${shellMax} ${shellPad} flex flex-col items-center gap-4 py-8 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400`}
         >
-          Check your part number first. We only show store links we can match to your exact filter
-          code.
+          <nav
+            aria-label="Legal and trust"
+            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            <Link href="/privacy" className="underline-offset-2 hover:underline">
+              Privacy
+            </Link>
+            <span aria-hidden className="text-neutral-400 dark:text-neutral-600">
+              ·
+            </span>
+            <Link href="/disclosure" className="underline-offset-2 hover:underline">
+              Affiliate Disclosure
+            </Link>
+            <span aria-hidden className="text-neutral-400 dark:text-neutral-600">
+              ·
+            </span>
+            <Link href="/about" className="underline-offset-2 hover:underline">
+              About
+            </Link>
+            <span aria-hidden className="text-neutral-400 dark:text-neutral-600">
+              ·
+            </span>
+            <Link href="/terms" className="underline-offset-2 hover:underline">
+              Terms
+            </Link>
+          </nav>
+          <p className="max-w-2xl text-center">
+            Check your part number first. We only show store links we can match to your exact filter
+            code.
+          </p>
         </div>
       </footer>
     </div>
