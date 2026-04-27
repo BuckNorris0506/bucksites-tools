@@ -4,6 +4,7 @@ import fs from "node:fs";
 
 import {
   buildFridgeNonAmazonCandidates,
+  buildFridgeNonAmazonCandidatesWithDiscovery,
   inferredBrandPrefixForSlug,
 } from "./fridge-non-amazon-candidate-generator";
 
@@ -43,4 +44,31 @@ test("candidate generator has no write side effects", () => {
   } finally {
     fs.writeFileSync = original;
   }
+});
+
+test("search_discovered URL included and labeled correctly", async () => {
+  const candidates = await buildFridgeNonAmazonCandidatesWithDiscovery({
+    slug: "lt1000p",
+    searchImpl: async () => [
+      {
+        url: "https://www.partselect.com/LT1000P-Refrigerator-Water-Filter.htm",
+        snippet: "LT1000P refrigerator water filter in stock",
+      },
+    ],
+  });
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].source, "search_discovered");
+  assert.equal(candidates[0].retailer_key, "partselect");
+});
+
+test("search/category and amazon URLs are filtered out", async () => {
+  const candidates = await buildFridgeNonAmazonCandidatesWithDiscovery({
+    slug: "lt1000p",
+    searchImpl: async () => [
+      { url: "https://www.partselect.com/Search?SearchTerm=LT1000P", snippet: "search page" },
+      { url: "https://www.amazon.com/dp/B000TEST", snippet: "amazon listing" },
+    ],
+  });
+  assert.equal(candidates.length, 1);
+  assert.equal(candidates[0].source, "unverified_url_guess");
 });

@@ -1,8 +1,12 @@
+import { discoverFridgeNonAmazonCandidates } from "./fridge-non-amazon-search-discovery";
+
 export type CandidateUrl = {
   retailer: string;
   retailer_key: string;
   url: string;
-  source: "seeded" | "unverified_url_guess";
+  source: "seeded" | "unverified_url_guess" | "search_discovered";
+  query?: string;
+  snippet?: string;
 };
 
 const SEEDED_BY_SLUG: Record<string, CandidateUrl[]> = {
@@ -60,4 +64,25 @@ export function buildFridgeNonAmazonCandidates(slug: string): CandidateUrl[] {
       source: "unverified_url_guess",
     },
   ];
+}
+
+export async function buildFridgeNonAmazonCandidatesWithDiscovery(args: {
+  slug: string;
+  maxCandidates?: number;
+  retailerAllowlist?: string[];
+  searchImpl?: (query: string, numResults: number) => Promise<Array<{ url: string; snippet?: string; title?: string }>>;
+}): Promise<CandidateUrl[]> {
+  const key = normalizedToken(args.slug);
+  const seeded = SEEDED_BY_SLUG[key] ?? [];
+  if (seeded.length > 0) return seeded;
+
+  const discovered = await discoverFridgeNonAmazonCandidates({
+    slug: key,
+    maxCandidates: args.maxCandidates,
+    retailerAllowlist: args.retailerAllowlist,
+    searchImpl: args.searchImpl,
+  });
+  if (discovered.length > 0) return discovered;
+
+  return buildFridgeNonAmazonCandidates(key);
 }

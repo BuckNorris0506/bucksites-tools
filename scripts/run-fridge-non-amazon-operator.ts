@@ -2,7 +2,10 @@ import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import fs from "node:fs";
 import { rankFridgeCoverageRows } from "./generate-fridge-non-amazon-review-packets";
-import { buildFridgeNonAmazonCandidates, type CandidateUrl } from "./lib/fridge-non-amazon-candidate-generator";
+import {
+  buildFridgeNonAmazonCandidatesWithDiscovery,
+  type CandidateUrl,
+} from "./lib/fridge-non-amazon-candidate-generator";
 import {
   collectEvidenceForCandidate,
   type CollectedEvidence,
@@ -394,7 +397,10 @@ async function runOperator(args: {
 
   const rows: OperatorRowResult[] = [];
   for (const slug of slugs) {
-    const candidates = buildFridgeNonAmazonCandidates(slug);
+    const candidates = await buildFridgeNonAmazonCandidatesWithDiscovery({
+      slug,
+      maxCandidates: 5,
+    });
     const activeCandidates = args.includeBlocked
       ? candidates
       : candidates.filter(
