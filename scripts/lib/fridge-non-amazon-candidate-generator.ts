@@ -36,17 +36,27 @@ function normalizedToken(slug: string): string {
   return slug.trim().toLowerCase();
 }
 
+export function inferredBrandPrefixForSlug(slug: string): string | null {
+  const key = normalizedToken(slug);
+  if (key.startsWith("da")) return "samsung";
+  if (key.startsWith("adq") || key.startsWith("lt")) return "lg";
+  return null;
+}
+
 export function buildFridgeNonAmazonCandidates(slug: string): CandidateUrl[] {
   const key = normalizedToken(slug);
   const seeded = SEEDED_BY_SLUG[key] ?? [];
   if (seeded.length > 0) return seeded;
+
+  const brandPrefix = inferredBrandPrefixForSlug(key);
+  if (!brandPrefix) return [];
 
   // Unverified URL guess for queueing only. Not treated as proven candidate unless live fetch succeeds.
   return [
     {
       retailer: "AppliancePartsPros",
       retailer_key: "appliancepartspros",
-      url: `https://www.appliancepartspros.com/samsung-${key}.html`,
+      url: `https://www.appliancepartspros.com/${brandPrefix}-${key}.html`,
       source: "unverified_url_guess",
     },
   ];
