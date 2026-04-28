@@ -23,6 +23,7 @@ test("all required top-level keys exist", () => {
     "docs_present",
     "gsc_exports_present",
     "learning_outcomes_contract",
+    "affiliate_tracker",
     "known_unknowns",
     "recommended_next_step",
   ];
@@ -74,5 +75,66 @@ test("learning_outcomes runtime status is UNKNOWN_NOT_QUERIED", () => {
 
 test("recommended_next_step matches Step 13", () => {
   const report = buildBuckpartsCommandSurfaceReport();
-  assert.equal(report.recommended_next_step, "Step 13: Affiliate approval tracker");
+  assert.equal(
+    report.recommended_next_step,
+    "Resolve affiliate reapply-required blockers before expanding monetized link volume.",
+  );
+});
+
+test("command surface includes affiliate_tracker", () => {
+  const report = buildBuckpartsCommandSurfaceReport();
+  assert.ok("affiliate_tracker" in report);
+  assert.equal(typeof report.affiliate_tracker.tracker_present, "boolean");
+});
+
+test("valid tracker with REAPPLY_REQUIRED -> ACTION_REQUIRED", () => {
+  const report = buildBuckpartsCommandSurfaceReport();
+  assert.equal(report.affiliate_tracker.health.status, "ACTION_REQUIRED");
+});
+
+test("tracker missing -> UNKNOWN without crashing", () => {
+  const report = buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) => !absolutePath.endsWith("data/affiliate/affiliate-application-tracker.json"),
+  });
+  assert.equal(report.affiliate_tracker.tracker_present, false);
+  assert.equal(report.affiliate_tracker.health.status, "UNKNOWN");
+  assert.equal(report.affiliate_tracker.record_count, null);
+});
+
+test("approved count is counted", () => {
+  const report = buildBuckpartsCommandSurfaceReport({
+    readTextFile: () =>
+      JSON.stringify([
+        {
+          id: "approved-program",
+          network: "Impact",
+          retailer: "Example Retailer",
+          programUrl: null,
+          status: "APPROVED",
+          submittedAt: null,
+          lastStatusAt: null,
+          decisionAt: null,
+          rejectionReason: null,
+          nextAction: "Monitor conversion quality",
+          nextActionDueAt: null,
+          notes: null,
+        },
+      ]),
+  });
+  assert.equal(report.affiliate_tracker.approved_count, 1);
+  assert.equal(report.affiliate_tracker.health.status, "OK");
+});
+
+test("recommended next step changes when action required", () => {
+  const report = buildBuckpartsCommandSurfaceReport();
+  assert.equal(
+    report.recommended_next_step,
+    "Resolve affiliate reapply-required blockers before expanding monetized link volume.",
+  );
+});
+
+test("report remains read_only true and data_mutation false", () => {
+  const report = buildBuckpartsCommandSurfaceReport();
+  assert.equal(report.read_only, true);
+  assert.equal(report.data_mutation, false);
 });
