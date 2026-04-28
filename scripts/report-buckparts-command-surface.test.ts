@@ -31,6 +31,7 @@ test("all required top-level keys exist", async () => {
     "gsc_exports_present",
     "learning_outcomes_contract",
     "learning_outcomes_metrics",
+    "cta_coverage_metrics",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -272,6 +273,75 @@ test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async (
   assert.equal(report.learning_outcomes_metrics.cta_status_counts.live, "UNKNOWN");
   assert.equal(report.learning_outcomes_metrics.confidence_counts.exact, "UNKNOWN");
   assert.equal(report.learning_outcomes_metrics.recency.max_days_since_checked, "UNKNOWN");
+});
+
+test("cta_coverage_metrics exists", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    skipCtaCoverageQuery: true,
+  });
+  assert.ok("cta_coverage_metrics" in report);
+  assert.equal(report.cta_coverage_metrics.source, "supabase_retailer_links");
+});
+
+test("CTA DB unavailable returns UNKNOWN_DB_UNAVAILABLE with UNKNOWN counts", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => {
+      throw new Error("db unavailable");
+    },
+  });
+  assert.equal(report.cta_coverage_metrics.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+  assert.equal(report.cta_coverage_metrics.total_retailer_links, "UNKNOWN");
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, "UNKNOWN");
+});
+
+test("mock CTA rows produce correct counts", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      { retailer_key: "amazon", browser_truth_classification: "direct_buyable" },
+      { retailer_key: "amazon", browser_truth_classification: "likely_valid" },
+      { retailer_key: "oem", browser_truth_classification: null },
+      { retailer_key: "oem", browser_truth_classification: "direct_buyable" },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.runtime_status, "OK");
+  assert.equal(report.cta_coverage_metrics.total_retailer_links, 4);
+  assert.equal(report.cta_coverage_metrics.direct_buyable_links, 2);
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 2);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 1);
+  assert.equal(report.cta_coverage_metrics.missing_browser_truth_links, 1);
+  assert.equal(
+    typeof report.cta_coverage_metrics.retailer_counts === "object",
+    true,
+  );
+});
+
+test("missing/ambiguous CTA table returns UNKNOWN, not fake counts", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => {
+      throw new Error("relation does not exist");
+    },
+  });
+  assert.equal(report.cta_coverage_metrics.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+  assert.equal(report.cta_coverage_metrics.total_retailer_links, "UNKNOWN");
+  assert.equal(report.cta_coverage_metrics.retailer_counts, "UNKNOWN");
+});
+
+test("safe_cta_links counts only direct_buyable", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      { retailer_key: "r1", browser_truth_classification: "direct_buyable" },
+      { retailer_key: "r1", browser_truth_classification: "likely_valid" },
+      { retailer_key: "r2", browser_truth_classification: "likely_search_results" },
+      { retailer_key: "r3", browser_truth_classification: null },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 1);
+  assert.equal(report.cta_coverage_metrics.direct_buyable_links, 1);
 });
 
 test("contract table_runtime_status matches metrics runtime_status when queried", async () => {
@@ -581,6 +651,7 @@ test("affiliate action required makes CRITICAL", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -596,6 +667,7 @@ test("unknown learning outcomes makes CRITICAL", () => {
     learning_outcomes_metrics: { runtime_status: "UNKNOWN_DB_UNAVAILABLE" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -611,6 +683,7 @@ test("unknown state systems makes CRITICAL", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "UNKNOWN_NO_DATA" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -626,6 +699,7 @@ test("missing GSC export makes WARNING when no criticals", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: false,
       coverage_zip: true,
@@ -641,6 +715,7 @@ test("zero approved affiliates makes WARNING when no criticals", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -656,6 +731,7 @@ test("degrading trend makes WARNING when no criticals", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "DEGRADING" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -671,6 +747,7 @@ test("OK when no reasons", () => {
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -679,6 +756,22 @@ test("OK when no reasons", () => {
   });
   assert.equal(health.status, "OK");
   assert.deepEqual(health.reasons, []);
+});
+
+test("system_health reacts to UNKNOWN CTA metrics", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "UNKNOWN_DB_UNAVAILABLE" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "CRITICAL");
 });
 
 test("recommended next step changes for CRITICAL", async () => {

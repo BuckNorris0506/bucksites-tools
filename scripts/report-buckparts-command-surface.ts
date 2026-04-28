@@ -21,6 +21,10 @@ type LearningOutcomesMetricsRow = {
   confidence: string | null;
   date_checked: string | null;
 };
+type CtaCoverageRow = {
+  retailer_key: string | null;
+  browser_truth_classification: string | null;
+};
 
 export type CommandSurfaceReport = {
   report_name: string;
@@ -75,6 +79,16 @@ export type CommandSurfaceReport = {
       max_days_since_checked: UnknownableNumber;
       median_days_since_checked: UnknownableNumber;
     };
+  };
+  cta_coverage_metrics: {
+    source: "supabase_retailer_links";
+    runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    total_retailer_links: number | "UNKNOWN";
+    direct_buyable_links: number | "UNKNOWN";
+    safe_cta_links: number | "UNKNOWN";
+    blocked_or_unsafe_links: number | "UNKNOWN";
+    missing_browser_truth_links: number | "UNKNOWN";
+    retailer_counts: Record<string, number> | "UNKNOWN";
   };
   state_system_metrics: {
     source: "local_contracts_and_available_local_data";
@@ -151,6 +165,8 @@ type BuildOptions = {
   now?: () => Date;
   fetchLearningOutcomesRows?: () => Promise<LearningOutcomesMetricsRow[]>;
   skipLearningOutcomesQuery?: boolean;
+  fetchCtaCoverageRows?: () => Promise<CtaCoverageRow[]>;
+  skipCtaCoverageQuery?: boolean;
 };
 
 type RunOptions = BuildOptions & {
@@ -330,6 +346,90 @@ async function readLearningOutcomesRowsViaSupabase(): Promise<LearningOutcomesMe
     rows.push(...chunk);
     if (chunk.length < PAGE_SIZE) break;
   }
+  return rows;
+}
+
+function unknownCtaCoverageMetrics(
+  runtime_status: "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED",
+): CommandSurfaceReport["cta_coverage_metrics"] {
+  return {
+    source: "supabase_retailer_links",
+    runtime_status,
+    total_retailer_links: "UNKNOWN",
+    direct_buyable_links: "UNKNOWN",
+    safe_cta_links: "UNKNOWN",
+    blocked_or_unsafe_links: "UNKNOWN",
+    missing_browser_truth_links: "UNKNOWN",
+    retailer_counts: "UNKNOWN",
+  };
+}
+
+function buildCtaCoverageMetricsFromRows(
+  rows: CtaCoverageRow[],
+): CommandSurfaceReport["cta_coverage_metrics"] {
+  let directBuyable = 0;
+  let blockedOrUnsafe = 0;
+  let missingBrowserTruth = 0;
+  const retailerCounts: Record<string, number> = {};
+
+  for (const row of rows) {
+    const retailerKey =
+      typeof row.retailer_key === "string" && row.retailer_key.trim().length > 0
+        ? row.retailer_key
+        : "(unknown_retailer)";
+    retailerCounts[retailerKey] = (retailerCounts[retailerKey] ?? 0) + 1;
+
+    const cls = row.browser_truth_classification;
+    if (cls == null || (typeof cls === "string" && cls.trim().length === 0)) {
+      missingBrowserTruth += 1;
+      continue;
+    }
+    if (cls === "direct_buyable") {
+      directBuyable += 1;
+    } else {
+      blockedOrUnsafe += 1;
+    }
+  }
+
+  return {
+    source: "supabase_retailer_links",
+    runtime_status: "OK",
+    total_retailer_links: rows.length,
+    direct_buyable_links: directBuyable,
+    safe_cta_links: directBuyable,
+    blocked_or_unsafe_links: blockedOrUnsafe,
+    missing_browser_truth_links: missingBrowserTruth,
+    retailer_counts: retailerCounts,
+  };
+}
+
+async function readCtaCoverageRowsViaSupabase(): Promise<CtaCoverageRow[]> {
+  loadEnv();
+  const supabase = getSupabaseAdmin();
+  const pageSize = 1000;
+  const rows: CtaCoverageRow[] = [];
+
+  const readTable = async (table: string, approvedOnly: boolean) => {
+    for (let from = 0; ; from += pageSize) {
+      let query = supabase
+        .from(table)
+        .select("retailer_key,browser_truth_classification")
+        .range(from, from + pageSize - 1);
+      if (approvedOnly) {
+        query = query.eq("status", "approved");
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      const chunk = (data ?? []) as CtaCoverageRow[];
+      rows.push(...chunk);
+      if (chunk.length < pageSize) break;
+    }
+  };
+
+  // Canonical runtime wedges currently covered by command surface and affiliate reports.
+  await readTable("retailer_links", false);
+  await readTable("air_purifier_retailer_links", true);
+  await readTable("whole_house_water_retailer_links", true);
   return rows;
 }
 
@@ -601,7 +701,12 @@ function computeTrend(args: {
 
 type SystemHealthInputs = Pick<
   CommandSurfaceReport,
-  "affiliate_tracker" | "learning_outcomes_metrics" | "state_system_metrics" | "trend" | "gsc_exports_present"
+  | "affiliate_tracker"
+  | "learning_outcomes_metrics"
+  | "state_system_metrics"
+  | "trend"
+  | "gsc_exports_present"
+  | "cta_coverage_metrics"
 >;
 
 export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceReport["system_health"] {
@@ -616,6 +721,9 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
   }
   if (input.state_system_metrics.runtime_status === "UNKNOWN_NO_DATA") {
     criticalReasons.push("state_system_metrics.runtime_status is UNKNOWN_NO_DATA");
+  }
+  if (input.cta_coverage_metrics.runtime_status.startsWith("UNKNOWN")) {
+    criticalReasons.push("cta_coverage_metrics.runtime_status is UNKNOWN");
   }
 
   if (criticalReasons.length > 0) {
@@ -636,6 +744,12 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
   }
   if (input.affiliate_tracker.approved_count === 0) {
     warningReasons.push("affiliate_tracker.approved_count is 0");
+  }
+  if (
+    input.cta_coverage_metrics.runtime_status === "OK" &&
+    input.cta_coverage_metrics.safe_cta_links === 0
+  ) {
+    warningReasons.push("cta_coverage_metrics.safe_cta_links is 0");
   }
 
   if (warningReasons.length > 0) {
@@ -769,6 +883,19 @@ export async function buildBuckpartsCommandSurfaceReport(
     learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_NOT_QUERIED");
     learningOutcomesContractStatus = "UNKNOWN_NOT_QUERIED";
   }
+
+  let ctaCoverageMetrics: CommandSurfaceReport["cta_coverage_metrics"] =
+    unknownCtaCoverageMetrics("UNKNOWN_NOT_QUERIED");
+  const shouldQueryCtaCoverage = options.skipCtaCoverageQuery !== true;
+  if (shouldQueryCtaCoverage) {
+    const fetchCtaRows = options.fetchCtaCoverageRows ?? readCtaCoverageRowsViaSupabase;
+    try {
+      const rows = await fetchCtaRows();
+      ctaCoverageMetrics = buildCtaCoverageMetricsFromRows(rows);
+    } catch {
+      ctaCoverageMetrics = unknownCtaCoverageMetrics("UNKNOWN_DB_UNAVAILABLE");
+    }
+  }
   const stateSystemMetrics = buildStateSystemMetrics({
     checks,
     abs,
@@ -793,6 +920,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     learning_outcomes_metrics: learningOutcomesMetrics,
     state_system_metrics: stateSystemMetrics,
     trend,
+    cta_coverage_metrics: ctaCoverageMetrics,
     gsc_exports_present: {
       sitemap_xml: checks.sitemap_xml,
       coverage_zip: checks.coverage_zip,
@@ -819,6 +947,9 @@ export async function buildBuckpartsCommandSurfaceReport(
       : null,
     learningOutcomesMetrics.runtime_status !== "OK"
       ? `learning_outcomes_metrics ${learningOutcomesMetrics.runtime_status}: runtime metrics unavailable.`
+      : null,
+    ctaCoverageMetrics.runtime_status !== "OK"
+      ? `cta_coverage_metrics ${ctaCoverageMetrics.runtime_status}: runtime metrics unavailable or ambiguous.`
       : null,
     !stateSystemMetrics.page_state.computable
       ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
@@ -887,6 +1018,7 @@ export async function buildBuckpartsCommandSurfaceReport(
       table_runtime_status: learningOutcomesContractStatus,
     },
     learning_outcomes_metrics: learningOutcomesMetrics,
+    cta_coverage_metrics: ctaCoverageMetrics,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
