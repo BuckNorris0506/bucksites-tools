@@ -119,6 +119,17 @@ export type CommandSurfaceReport = {
       reason: string;
     };
   };
+  trend: {
+    comparison_basis: "previous_local_snapshot";
+    previous_snapshot_present: boolean;
+    delta_summary: {
+      learning_outcomes_runtime_status_changed: boolean | "UNKNOWN";
+      affiliate_health_changed: boolean | "UNKNOWN";
+      reapply_required_delta: number | "UNKNOWN";
+    };
+    overall_trend: "IMPROVING" | "DEGRADING" | "FLAT" | "UNKNOWN";
+    reason: string;
+  };
   known_unknowns: string[];
   recommended_next_step: string;
 };
@@ -148,6 +159,8 @@ function resolvePaths(rootDir: string) {
     learning_outcomes_migration:
       "supabase/migrations/20260428200500_learning_outcomes.sql",
     affiliate_tracker_json: "data/affiliate/affiliate-application-tracker.json",
+    previous_command_surface_snapshot:
+      "data/reports/buckparts-command-surface.json",
   } as const;
 
   const abs = Object.fromEntries(
@@ -335,6 +348,139 @@ function buildStateSystemMetrics(): CommandSurfaceReport["state_system_metrics"]
   };
 }
 
+function healthRank(value: "OK" | "ACTION_REQUIRED" | "UNKNOWN"): number {
+  if (value === "OK") return 2;
+  if (value === "ACTION_REQUIRED") return 1;
+  return 0;
+}
+
+function buildUnknownTrend(
+  previous_snapshot_present: boolean,
+  reason: string,
+): CommandSurfaceReport["trend"] {
+  return {
+    comparison_basis: "previous_local_snapshot",
+    previous_snapshot_present,
+    delta_summary: {
+      learning_outcomes_runtime_status_changed: "UNKNOWN",
+      affiliate_health_changed: "UNKNOWN",
+      reapply_required_delta: "UNKNOWN",
+    },
+    overall_trend: "UNKNOWN",
+    reason,
+  };
+}
+
+function computeTrend(args: {
+  previousSnapshotRaw: string | null;
+  currentLearningRuntimeStatus: CommandSurfaceReport["learning_outcomes_metrics"]["runtime_status"];
+  currentAffiliateHealth: CommandSurfaceReport["affiliate_tracker"]["health"]["status"];
+  currentReapplyRequiredCount: number | null;
+}): CommandSurfaceReport["trend"] {
+  if (args.previousSnapshotRaw === null) {
+    return buildUnknownTrend(false, "Previous snapshot not found.");
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(args.previousSnapshotRaw);
+  } catch {
+    return buildUnknownTrend(true, "Previous snapshot is malformed JSON.");
+  }
+
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    return buildUnknownTrend(true, "Previous snapshot has invalid shape.");
+  }
+
+  const prev = parsed as Record<string, unknown>;
+  const prevLearning = (prev.learning_outcomes_metrics as Record<string, unknown> | undefined)
+    ?.runtime_status;
+  const prevAffiliateHealth = (
+    (prev.affiliate_tracker as Record<string, unknown> | undefined)?.health as
+      | Record<string, unknown>
+      | undefined
+  )?.status;
+  const prevReapply = (prev.affiliate_tracker as Record<string, unknown> | undefined)
+    ?.reapply_required_count;
+
+  if (
+    typeof prevLearning !== "string" ||
+    typeof prevAffiliateHealth !== "string" ||
+    typeof prevReapply !== "number" ||
+    typeof args.currentReapplyRequiredCount !== "number"
+  ) {
+    return buildUnknownTrend(
+      true,
+      "Previous snapshot missing deterministic comparison fields.",
+    );
+  }
+
+  const learningChanged = prevLearning !== args.currentLearningRuntimeStatus;
+  const affiliateHealthChanged = prevAffiliateHealth !== args.currentAffiliateHealth;
+  const reapplyDelta = args.currentReapplyRequiredCount - prevReapply;
+
+  const currentLearningUnknown = args.currentLearningRuntimeStatus !== "OK";
+  const previousLearningUnknown = prevLearning !== "OK";
+  const currentAffiliateUnknown = args.currentAffiliateHealth === "UNKNOWN";
+  const previousAffiliateUnknown = prevAffiliateHealth === "UNKNOWN";
+
+  if (
+    currentLearningUnknown ||
+    previousLearningUnknown ||
+    currentAffiliateUnknown ||
+    previousAffiliateUnknown
+  ) {
+    return {
+      comparison_basis: "previous_local_snapshot",
+      previous_snapshot_present: true,
+      delta_summary: {
+        learning_outcomes_runtime_status_changed: learningChanged,
+        affiliate_health_changed: affiliateHealthChanged,
+        reapply_required_delta: reapplyDelta,
+      },
+      overall_trend: "UNKNOWN",
+      reason: "At least one comparison field is UNKNOWN.",
+    };
+  }
+
+  const affiliateRankDelta =
+    healthRank(args.currentAffiliateHealth) -
+    healthRank(prevAffiliateHealth as "OK" | "ACTION_REQUIRED");
+  const improving = reapplyDelta < 0 || affiliateRankDelta > 0;
+  const degrading = reapplyDelta > 0 || affiliateRankDelta < 0;
+
+  let overallTrend: CommandSurfaceReport["trend"]["overall_trend"];
+  let reason: string;
+  if (improving && !degrading) {
+    overallTrend = "IMPROVING";
+    reason = "Reapply-required count decreased or affiliate health moved toward OK.";
+  } else if (degrading && !improving) {
+    overallTrend = "DEGRADING";
+    reason = "Reapply-required count increased or affiliate health worsened.";
+  } else if (!improving && !degrading && !learningChanged && !affiliateHealthChanged) {
+    overallTrend = "FLAT";
+    reason = "Deterministic comparison fields did not change.";
+  } else if (!improving && !degrading) {
+    overallTrend = "FLAT";
+    reason = "No degrading or improving trend signal detected.";
+  } else {
+    overallTrend = "UNKNOWN";
+    reason = "Trend signals conflict between reapply delta and health movement.";
+  }
+
+  return {
+    comparison_basis: "previous_local_snapshot",
+    previous_snapshot_present: true,
+    delta_summary: {
+      learning_outcomes_runtime_status_changed: learningChanged,
+      affiliate_health_changed: affiliateHealthChanged,
+      reapply_required_delta: reapplyDelta,
+    },
+    overall_trend: overallTrend,
+    reason,
+  };
+}
+
 export async function buildBuckpartsCommandSurfaceReport(
   options: BuildOptions = {},
 ): Promise<CommandSurfaceReport> {
@@ -441,6 +587,20 @@ export async function buildBuckpartsCommandSurfaceReport(
     }
   }
   const stateSystemMetrics = buildStateSystemMetrics();
+  let previousSnapshotRaw: string | null = null;
+  if (checks.previous_command_surface_snapshot) {
+    try {
+      previousSnapshotRaw = readTextFile(abs.previous_command_surface_snapshot);
+    } catch {
+      previousSnapshotRaw = "{";
+    }
+  }
+  const trend = computeTrend({
+    previousSnapshotRaw,
+    currentLearningRuntimeStatus: learningOutcomesMetrics.runtime_status,
+    currentAffiliateHealth: affiliateTracker.health.status,
+    currentReapplyRequiredCount: affiliateTracker.reapply_required_count,
+  });
 
   const known_unknowns = [
     "learning_outcomes runtime table status is UNKNOWN_NOT_QUERIED (DB intentionally not queried).",
@@ -479,6 +639,12 @@ export async function buildBuckpartsCommandSurfaceReport(
       : null,
     !stateSystemMetrics.replacement_safety.computable
       ? `state_system_metrics.replacement_safety non-computable: ${stateSystemMetrics.replacement_safety.reason}`
+      : null,
+    !trend.previous_snapshot_present
+      ? "trend previous snapshot missing: data/reports/buckparts-command-surface.json not found."
+      : null,
+    trend.overall_trend === "UNKNOWN"
+      ? `trend deltas UNKNOWN: ${trend.reason}`
       : null,
     ...affiliateTracker.known_unknowns.map((item) => `Affiliate tracker: ${item}`),
   ].filter((v): v is string => typeof v === "string");
@@ -521,6 +687,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     learning_outcomes_metrics: learningOutcomesMetrics,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
+    trend,
     known_unknowns,
     recommended_next_step,
   };

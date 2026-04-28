@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 import { buildBuckpartsCommandSurfaceReport } from "./report-buckparts-command-surface";
@@ -26,6 +27,7 @@ test("all required top-level keys exist", async () => {
     "learning_outcomes_metrics",
     "state_system_metrics",
     "affiliate_tracker",
+    "trend",
     "known_unknowns",
     "recommended_next_step",
   ];
@@ -274,4 +276,130 @@ test("known_unknowns includes non-computable state distributions", async () => {
     ),
     true,
   );
+});
+
+test("no snapshot -> UNKNOWN trend", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      !absolutePath.endsWith("data/reports/buckparts-command-surface.json"),
+  });
+  assert.equal(report.trend.previous_snapshot_present, false);
+  assert.equal(report.trend.overall_trend, "UNKNOWN");
+  assert.equal(report.trend.delta_summary.reapply_required_delta, "UNKNOWN");
+});
+
+test("valid snapshot -> correct delta values", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/reports/buckparts-command-surface.json")) {
+        return JSON.stringify({
+          learning_outcomes_metrics: { runtime_status: "UNKNOWN_DB_UNAVAILABLE" },
+          affiliate_tracker: {
+            health: { status: "ACTION_REQUIRED" },
+            reapply_required_count: 4,
+          },
+        });
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+  });
+  assert.equal(report.trend.previous_snapshot_present, true);
+  assert.equal(report.trend.delta_summary.learning_outcomes_runtime_status_changed, false);
+  assert.equal(report.trend.delta_summary.affiliate_health_changed, false);
+  assert.equal(report.trend.delta_summary.reapply_required_delta, -2);
+});
+
+test("reapply decrease -> IMPROVING", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/reports/buckparts-command-surface.json")) {
+        return JSON.stringify({
+          learning_outcomes_metrics: { runtime_status: "OK" },
+          affiliate_tracker: {
+            health: { status: "ACTION_REQUIRED" },
+            reapply_required_count: 5,
+          },
+        });
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    fetchLearningOutcomesRows: async () => [],
+  });
+  assert.equal(report.trend.overall_trend, "IMPROVING");
+  assert.equal(report.trend.delta_summary.reapply_required_delta, -3);
+});
+
+test("reapply increase -> DEGRADING", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/reports/buckparts-command-surface.json")) {
+        return JSON.stringify({
+          learning_outcomes_metrics: { runtime_status: "OK" },
+          affiliate_tracker: {
+            health: { status: "ACTION_REQUIRED" },
+            reapply_required_count: 1,
+          },
+        });
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    fetchLearningOutcomesRows: async () => [],
+  });
+  assert.equal(report.trend.overall_trend, "DEGRADING");
+  assert.equal(report.trend.delta_summary.reapply_required_delta, 1);
+});
+
+test("no change -> FLAT", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/reports/buckparts-command-surface.json")) {
+        return JSON.stringify({
+          learning_outcomes_metrics: { runtime_status: "OK" },
+          affiliate_tracker: {
+            health: { status: "ACTION_REQUIRED" },
+            reapply_required_count: 2,
+          },
+        });
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    fetchLearningOutcomesRows: async () => [],
+  });
+  assert.equal(report.trend.overall_trend, "FLAT");
+  assert.equal(report.trend.delta_summary.reapply_required_delta, 0);
+  assert.equal(report.trend.delta_summary.affiliate_health_changed, false);
+});
+
+test("malformed snapshot -> handled safely", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/reports/buckparts-command-surface.json")) {
+        return "{bad-json";
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+  });
+  assert.equal(report.trend.previous_snapshot_present, true);
+  assert.equal(report.trend.overall_trend, "UNKNOWN");
+  assert.equal(report.trend.delta_summary.affiliate_health_changed, "UNKNOWN");
 });
