@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -134,6 +134,8 @@ export type CommandSurfaceReport = {
     status: "OK" | "WARNING" | "CRITICAL";
     reasons: string[];
   };
+  snapshot_written: boolean;
+  snapshot_path: "data/reports/buckparts-command-surface.json";
   known_unknowns: string[];
   recommended_next_step: string;
 };
@@ -144,6 +146,10 @@ type BuildOptions = {
   readTextFile?: (absolutePath: string) => string;
   now?: () => Date;
   fetchLearningOutcomesRows?: () => Promise<LearningOutcomesMetricsRow[]>;
+};
+
+type RunOptions = BuildOptions & {
+  writeSnapshot?: boolean;
 };
 
 function resolvePaths(rootDir: string) {
@@ -754,13 +760,43 @@ export async function buildBuckpartsCommandSurfaceReport(
     affiliate_tracker: affiliateTracker,
     trend,
     system_health: systemHealth,
+    snapshot_written: false,
+    snapshot_path: "data/reports/buckparts-command-surface.json",
     known_unknowns,
     recommended_next_step,
   };
 }
 
+export async function runCommandSurfaceReport(
+  options: RunOptions = {},
+): Promise<CommandSurfaceReport> {
+  const rootDir = options.rootDir ?? process.cwd();
+  const writeSnapshot = options.writeSnapshot === true;
+  const report = await buildBuckpartsCommandSurfaceReport(options);
+  const snapshotPathRel = "data/reports/buckparts-command-surface.json" as const;
+
+  if (!writeSnapshot) {
+    return {
+      ...report,
+      snapshot_written: false,
+      snapshot_path: snapshotPathRel,
+    };
+  }
+
+  const snapshotAbsPath = path.resolve(rootDir, snapshotPathRel);
+  mkdirSync(path.dirname(snapshotAbsPath), { recursive: true });
+  writeFileSync(snapshotAbsPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+
+  return {
+    ...report,
+    snapshot_written: true,
+    snapshot_path: snapshotPathRel,
+  };
+}
+
 export async function main(): Promise<void> {
-  const report = await buildBuckpartsCommandSurfaceReport();
+  const writeSnapshot = process.argv.includes("--write-snapshot");
+  const report = await runCommandSurfaceReport({ writeSnapshot });
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 

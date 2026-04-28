@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
   buildBuckpartsCommandSurfaceReport,
   computeSystemHealth,
+  runCommandSurfaceReport,
 } from "./report-buckparts-command-surface";
 
 test("report is read_only true and data_mutation false", async () => {
@@ -32,6 +35,8 @@ test("all required top-level keys exist", async () => {
     "affiliate_tracker",
     "trend",
     "system_health",
+    "snapshot_written",
+    "snapshot_path",
     "known_unknowns",
     "recommended_next_step",
   ];
@@ -527,4 +532,70 @@ test("recommended next step changes for CRITICAL", async () => {
     report.recommended_next_step,
     "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
   );
+});
+
+test("default run does not write snapshot", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-no-write-"));
+  try {
+    const report = await runCommandSurfaceReport({
+      rootDir: tmpDir,
+      writeSnapshot: false,
+    });
+    const snapshotAbs = path.join(tmpDir, "data/reports/buckparts-command-surface.json");
+    assert.equal(existsSync(snapshotAbs), false);
+    assert.equal(report.snapshot_written, false);
+    assert.equal(report.data_mutation, false);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("--write-snapshot writes snapshot", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-write-"));
+  try {
+    const report = await runCommandSurfaceReport({
+      rootDir: tmpDir,
+      writeSnapshot: true,
+    });
+    const snapshotAbs = path.join(tmpDir, "data/reports/buckparts-command-surface.json");
+    assert.equal(existsSync(snapshotAbs), true);
+    assert.equal(report.snapshot_written, true);
+    assert.equal(report.data_mutation, false);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("snapshot contains valid command surface JSON", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-valid-"));
+  try {
+    await runCommandSurfaceReport({
+      rootDir: tmpDir,
+      writeSnapshot: true,
+    });
+    const snapshotAbs = path.join(tmpDir, "data/reports/buckparts-command-surface.json");
+    const parsed = JSON.parse(readFileSync(snapshotAbs, "utf8"));
+    assert.equal(typeof parsed.report_name, "string");
+    assert.equal(parsed.read_only, true);
+    assert.equal(parsed.data_mutation, false);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("trend detects previous snapshot after write", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-trend-"));
+  try {
+    await runCommandSurfaceReport({
+      rootDir: tmpDir,
+      writeSnapshot: true,
+    });
+    const second = await runCommandSurfaceReport({
+      rootDir: tmpDir,
+      writeSnapshot: false,
+    });
+    assert.equal(second.trend.previous_snapshot_present, true);
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

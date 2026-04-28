@@ -55,6 +55,7 @@
     "buckparts:report:business-scorecard": "tsx scripts/report-homekeep-business-scorecard.ts",
     "buckparts:report:launch-readiness": "tsx scripts/report-homekeep-launch-readiness.ts",
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
+    "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "test:whw-search-nav": "node --import tsx --test src/lib/data/whole-house-water-search-nav.test.ts",
     "buckparts:staged-filter:review-brand": "tsx scripts/review-staged-filter-brand-refrigerator.ts",
