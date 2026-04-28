@@ -6,6 +6,9 @@ import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRa
 import { Prose } from "@/components/Prose";
 import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFilterBySlug } from "@/lib/data/filters";
+import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
+import { classifyPageState } from "@/lib/page-state/page-state";
+import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
@@ -20,11 +23,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!filter) {
     return { title: "Filter not found" };
   }
+  const usefulFilterIds = await loadRefrigeratorUsefulFilterIds();
+  const pageState = classifyPageState({
+    isIndexable: usefulFilterIds.has(filter.id),
+    validCtaCount: filter.retailer_links.length,
+    buyerPathState:
+      filter.fridge_models.length > 0 && filter.retailer_links.length > 0
+        ? "show_buy"
+        : "suppress_buy",
+    hasDemandSignal: null,
+  });
   const title = `${filter.oem_part_number} refrigerator filter`;
   return {
     title,
     description: `OEM part ${filter.oem_part_number}. Compatible refrigerators and replacement interval.`,
     openGraph: { title: `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}` },
+    robots: getRobotsFromPageState(pageState),
   };
 }
 

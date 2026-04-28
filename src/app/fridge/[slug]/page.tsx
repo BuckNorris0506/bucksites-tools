@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { BuyLinks } from "@/components/BuyLinks";
 import { Prose } from "@/components/Prose";
 import { getFridgeBySlug } from "@/lib/data/fridges";
+import { classifyPageState } from "@/lib/page-state/page-state";
+import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 
 export const dynamic = "force-dynamic";
 
@@ -33,11 +35,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!fridge) {
     return { title: "Model not found" };
   }
+  const hasAnyMappedFilters = fridge.filters.length > 0;
+  const validCtaCount = fridge.filters.reduce((count, f) => count + f.retailer_links.length, 0);
+  const pageState = classifyPageState({
+    isIndexable: hasAnyMappedFilters,
+    validCtaCount,
+    hasDemandSignal: null,
+  });
   const title = `${fridge.model_number} water filter`;
   return {
     title,
     description: `Compatible water filters and replacement schedule for ${fridge.brand.name} model ${fridge.model_number}.`,
     openGraph: { title: `${fridge.model_number} · ${fridge.brand.name}` },
+    robots: getRobotsFromPageState(pageState),
   };
 }
 
