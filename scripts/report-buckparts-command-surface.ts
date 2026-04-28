@@ -11,6 +11,7 @@ import {
   isValidAffiliateApplicationRecord,
 } from "@/lib/affiliates/affiliate-application-status";
 import { classifyPageState } from "@/lib/page-state/page-state";
+import { classifyPublishabilityState } from "@/lib/page-state/publishability-state";
 
 type BoolMap = Record<string, boolean>;
 type UnknownableNumber = number | "UNKNOWN";
@@ -349,11 +350,12 @@ function extractSitemapUrls(sitemapText: string): string[] {
 
 function computePageStateDistributionFromSitemap(
   sitemapText: string,
-): { distribution: Record<string, number>; urlCount: number } | null {
+): { distribution: Record<string, number>; pageStates: string[]; urlCount: number } | null {
   const urls = extractSitemapUrls(sitemapText);
   if (urls.length === 0) return null;
 
   const distribution: Record<string, number> = {};
+  const pageStates: string[] = [];
   for (const _url of urls) {
     const state = classifyPageState({
       isIndexable: true,
@@ -361,9 +363,10 @@ function computePageStateDistributionFromSitemap(
       buyerPathState: null,
       hasDemandSignal: null,
     });
+    pageStates.push(state);
     distribution[state] = (distribution[state] ?? 0) + 1;
   }
-  return { distribution, urlCount: urls.length };
+  return { distribution, pageStates, urlCount: urls.length };
 }
 
 function buildStateSystemMetrics(args: {
@@ -374,11 +377,13 @@ function buildStateSystemMetrics(args: {
   let pageState = unknownStateDistribution(
     "No local sitemap/page dataset is available to compute PageState distribution.",
   );
+  let derivedPageStates: string[] | null = null;
   if (args.checks.sitemap_xml) {
     try {
       const sitemapText = args.readTextFile(args.abs.sitemap_xml);
       const computed = computePageStateDistributionFromSitemap(sitemapText);
       if (computed) {
+        derivedPageStates = computed.pageStates;
         pageState = {
           computable: true,
           distribution: computed.distribution,
@@ -398,9 +403,28 @@ function buildStateSystemMetrics(args: {
     }
   }
 
-  const publishabilityState = unknownStateDistribution(
+  let publishabilityState = unknownStateDistribution(
     "No local publishability input dataset is available to compute PublishabilityState distribution.",
   );
+  if (derivedPageStates && derivedPageStates.length > 0) {
+    const distribution: Record<string, number> = {};
+    for (const pageStateValue of derivedPageStates) {
+      const publishability = classifyPublishabilityState({
+        pageState: pageStateValue as Parameters<typeof classifyPublishabilityState>[0]["pageState"],
+        isInfoPage: true,
+        hasQualityIssue: null,
+        isBlockedOrRetired: null,
+      });
+      distribution[publishability] = (distribution[publishability] ?? 0) + 1;
+    }
+    publishabilityState = {
+      computable: true,
+      distribution,
+      reason:
+        "Derived from locally computed sitemap-only PageState records. " +
+        "Coverage excludes CTA/trust/replacement quality signals not present in sitemap parsing.",
+    };
+  }
   const retailerLinkState = unknownStateDistribution(
     "Local retailer files do not contain full gate/browser/operator inputs required for canonical RetailerLinkState mapping.",
   );

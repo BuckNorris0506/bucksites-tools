@@ -195,6 +195,68 @@ test("page_state distribution is included", async () => {
   );
 });
 
+test("publishability_state distribution is included", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/gsc/sitemap.xml")) {
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+  <url><loc>https://buckparts.com/filter/a</loc></url>
+  <url><loc>https://buckparts.com/fridge/b</loc></url>
+</urlset>`;
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    skipLearningOutcomesQuery: true,
+  });
+  assert.equal(report.state_system_metrics.publishability_state.computable, true);
+  assert.equal(
+    typeof report.state_system_metrics.publishability_state.distribution === "object",
+    true,
+  );
+});
+
+test("distribution is derived only from computed PageState records", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/gsc/sitemap.xml")) {
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+  <url><loc>https://buckparts.com/filter/a</loc></url>
+  <url><loc>https://buckparts.com/fridge/b</loc></url>
+  <url><loc>https://buckparts.com/brand/c</loc></url>
+</urlset>`;
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    skipLearningOutcomesQuery: true,
+  });
+
+  const pageDist = report.state_system_metrics.page_state.distribution;
+  const pubDist = report.state_system_metrics.publishability_state.distribution;
+  assert.equal(typeof pageDist === "object", true);
+  assert.equal(typeof pubDist === "object", true);
+
+  const pageTotal =
+    typeof pageDist === "object"
+      ? Object.values(pageDist).reduce((sum, value) => sum + value, 0)
+      : 0;
+  const pubTotal =
+    typeof pubDist === "object"
+      ? Object.values(pubDist).reduce((sum, value) => sum + value, 0)
+      : 0;
+  assert.equal(pageTotal, 3);
+  assert.equal(pubTotal, pageTotal);
+});
+
 test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fetchLearningOutcomesRows: async () => {
@@ -354,6 +416,8 @@ test("missing dataset keeps UNKNOWN", async () => {
   });
   assert.equal(report.state_system_metrics.page_state.computable, false);
   assert.equal(report.state_system_metrics.page_state.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.publishability_state.computable, false);
+  assert.equal(report.state_system_metrics.publishability_state.distribution, "UNKNOWN");
 });
 
 test("known_unknowns includes non-computable state distributions", async () => {
