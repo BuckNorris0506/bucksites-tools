@@ -130,6 +130,10 @@ export type CommandSurfaceReport = {
     overall_trend: "IMPROVING" | "DEGRADING" | "FLAT" | "UNKNOWN";
     reason: string;
   };
+  system_health: {
+    status: "OK" | "WARNING" | "CRITICAL";
+    reasons: string[];
+  };
   known_unknowns: string[];
   recommended_next_step: string;
 };
@@ -481,6 +485,52 @@ function computeTrend(args: {
   };
 }
 
+type SystemHealthInputs = Pick<
+  CommandSurfaceReport,
+  "affiliate_tracker" | "learning_outcomes_metrics" | "state_system_metrics" | "trend" | "gsc_exports_present"
+>;
+
+export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceReport["system_health"] {
+  const criticalReasons: string[] = [];
+  const warningReasons: string[] = [];
+
+  if (input.affiliate_tracker.health.status === "ACTION_REQUIRED") {
+    criticalReasons.push("affiliate_tracker.health.status is ACTION_REQUIRED");
+  }
+  if (input.learning_outcomes_metrics.runtime_status.startsWith("UNKNOWN")) {
+    criticalReasons.push("learning_outcomes_metrics.runtime_status is UNKNOWN");
+  }
+  if (input.state_system_metrics.runtime_status === "UNKNOWN_NO_DATA") {
+    criticalReasons.push("state_system_metrics.runtime_status is UNKNOWN_NO_DATA");
+  }
+
+  if (criticalReasons.length > 0) {
+    return { status: "CRITICAL", reasons: criticalReasons };
+  }
+
+  if (input.trend.overall_trend === "DEGRADING") {
+    warningReasons.push("trend.overall_trend is DEGRADING");
+  }
+  if (input.gsc_exports_present.sitemap_xml === false) {
+    warningReasons.push("gsc_exports_present.sitemap_xml is false");
+  }
+  if (input.gsc_exports_present.coverage_zip === false) {
+    warningReasons.push("gsc_exports_present.coverage_zip is false");
+  }
+  if (input.gsc_exports_present.performance_zip === false) {
+    warningReasons.push("gsc_exports_present.performance_zip is false");
+  }
+  if (input.affiliate_tracker.approved_count === 0) {
+    warningReasons.push("affiliate_tracker.approved_count is 0");
+  }
+
+  if (warningReasons.length > 0) {
+    return { status: "WARNING", reasons: warningReasons };
+  }
+
+  return { status: "OK", reasons: [] };
+}
+
 export async function buildBuckpartsCommandSurfaceReport(
   options: BuildOptions = {},
 ): Promise<CommandSurfaceReport> {
@@ -601,6 +651,17 @@ export async function buildBuckpartsCommandSurfaceReport(
     currentAffiliateHealth: affiliateTracker.health.status,
     currentReapplyRequiredCount: affiliateTracker.reapply_required_count,
   });
+  const systemHealth = computeSystemHealth({
+    affiliate_tracker: affiliateTracker,
+    learning_outcomes_metrics: learningOutcomesMetrics,
+    state_system_metrics: stateSystemMetrics,
+    trend,
+    gsc_exports_present: {
+      sitemap_xml: checks.sitemap_xml,
+      coverage_zip: checks.coverage_zip,
+      performance_zip: checks.performance_zip,
+    },
+  });
 
   const known_unknowns = [
     "learning_outcomes runtime table status is UNKNOWN_NOT_QUERIED (DB intentionally not queried).",
@@ -650,9 +711,13 @@ export async function buildBuckpartsCommandSurfaceReport(
   ].filter((v): v is string => typeof v === "string");
 
   const recommended_next_step =
-    affiliateTracker.health.status === "ACTION_REQUIRED"
-      ? "Resolve affiliate reapply-required blockers before expanding monetized link volume."
-      : "Step 13: Affiliate approval tracker";
+    systemHealth.status === "CRITICAL"
+      ? "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume."
+      : systemHealth.status === "WARNING"
+        ? "Resolve warning-level command-surface issues before expanding."
+        : affiliateTracker.health.status === "ACTION_REQUIRED"
+          ? "Resolve affiliate reapply-required blockers before expanding monetized link volume."
+          : "Step 13: Affiliate approval tracker";
 
   return {
     report_name: "buckparts_command_surface_v1",
@@ -688,6 +753,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
+    system_health: systemHealth,
     known_unknowns,
     recommended_next_step,
   };

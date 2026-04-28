@@ -2,7 +2,10 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
-import { buildBuckpartsCommandSurfaceReport } from "./report-buckparts-command-surface";
+import {
+  buildBuckpartsCommandSurfaceReport,
+  computeSystemHealth,
+} from "./report-buckparts-command-surface";
 
 test("report is read_only true and data_mutation false", async () => {
   const report = await buildBuckpartsCommandSurfaceReport();
@@ -28,6 +31,7 @@ test("all required top-level keys exist", async () => {
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
+    "system_health",
     "known_unknowns",
     "recommended_next_step",
   ];
@@ -81,7 +85,7 @@ test("recommended_next_step matches Step 13", async () => {
   const report = await buildBuckpartsCommandSurfaceReport();
   assert.equal(
     report.recommended_next_step,
-    "Resolve affiliate reapply-required blockers before expanding monetized link volume.",
+    "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
   );
 });
 
@@ -133,7 +137,7 @@ test("recommended next step changes when action required", async () => {
   const report = await buildBuckpartsCommandSurfaceReport();
   assert.equal(
     report.recommended_next_step,
-    "Resolve affiliate reapply-required blockers before expanding monetized link volume.",
+    "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
   );
 });
 
@@ -402,4 +406,125 @@ test("malformed snapshot -> handled safely", async () => {
   assert.equal(report.trend.previous_snapshot_present, true);
   assert.equal(report.trend.overall_trend, "UNKNOWN");
   assert.equal(report.trend.delta_summary.affiliate_health_changed, "UNKNOWN");
+});
+
+test("system_health exists", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.ok("system_health" in report);
+  assert.ok(Array.isArray(report.system_health.reasons));
+});
+
+test("affiliate action required makes CRITICAL", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "ACTION_REQUIRED" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "CRITICAL");
+});
+
+test("unknown learning outcomes makes CRITICAL", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "UNKNOWN_DB_UNAVAILABLE" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "CRITICAL");
+});
+
+test("unknown state systems makes CRITICAL", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "UNKNOWN_NO_DATA" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "CRITICAL");
+});
+
+test("missing GSC export makes WARNING when no criticals", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: false,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "WARNING");
+});
+
+test("zero approved affiliates makes WARNING when no criticals", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 0 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "WARNING");
+});
+
+test("degrading trend makes WARNING when no criticals", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "DEGRADING" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "WARNING");
+});
+
+test("OK when no reasons", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "OK");
+  assert.deepEqual(health.reasons, []);
+});
+
+test("recommended next step changes for CRITICAL", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.equal(report.system_health.status, "CRITICAL");
+  assert.equal(
+    report.recommended_next_step,
+    "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
+  );
 });
