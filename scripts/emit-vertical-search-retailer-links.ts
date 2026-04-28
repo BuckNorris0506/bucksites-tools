@@ -32,6 +32,11 @@ function emitHeaderOnly(subdir: string): void {
 
 const arg = process.argv[2];
 if (arg && VERTICALS[arg]) {
+  if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true") {
+    throw new Error(
+      "FROZEN_SCRIPT_BLOCKED: Set BUCKPARTS_ALLOW_FROZEN=true to run this frozen/tactical script intentionally.",
+    );
+  }
   emitHeaderOnly(VERTICALS[arg].dir);
 } else {
   console.error(

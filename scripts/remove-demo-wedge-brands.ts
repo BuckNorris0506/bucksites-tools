@@ -30,7 +30,14 @@ async function main() {
   );
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exitCode = 1;
-});
+if (process.argv[1]?.endsWith("remove-demo-wedge-brands.ts")) {
+  if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true") {
+    throw new Error(
+      "FROZEN_SCRIPT_BLOCKED: Set BUCKPARTS_ALLOW_FROZEN=true to run this frozen/tactical script intentionally.",
+    );
+  }
+  main().catch((e) => {
+    console.error(e);
+    process.exitCode = 1;
+  });
+}

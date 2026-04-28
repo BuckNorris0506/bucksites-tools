@@ -40,6 +40,7 @@ type AuditSources = {
   packageJson: string;
   commandSurfaceReport: string;
   scriptManifest: string;
+  frozenScriptContentsByPath?: Record<string, string>;
 };
 
 function parseJson<T>(raw: string): T | null {
@@ -195,9 +196,16 @@ function checkFrozenScriptsExposure(
   if (pkg == null || !pkg.scripts || frozenScriptPaths.length === 0) return;
 
   const exposedWithoutGuard: string[] = [];
+  const requiredFrozenGuard =
+    'if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true")';
   for (const [scriptName, command] of Object.entries(pkg.scripts)) {
     for (const frozenPath of frozenScriptPaths) {
-      if (command.includes(frozenPath) && !commandHasGuard(command)) {
+      const hasCommandGuard = commandHasGuard(command);
+      const hasScriptGuard =
+        (sources.frozenScriptContentsByPath?.[frozenPath] ?? "").includes(
+          requiredFrozenGuard,
+        );
+      if (command.includes(frozenPath) && !hasCommandGuard && !hasScriptGuard) {
         exposedWithoutGuard.push(`${scriptName} -> ${frozenPath}`);
       }
     }
@@ -321,7 +329,16 @@ export function runBuckpartsSystemContractAudit(
     packageJson: readTextFile(resolved.packageJson),
     commandSurfaceReport: readTextFile(resolved.commandSurfaceReport),
     scriptManifest: readTextFile(resolved.scriptManifest),
+    frozenScriptContentsByPath: {},
   };
+
+  const frozenPaths = parseFrozenScriptPathsFromManifest(sources.scriptManifest);
+  for (const frozenPath of frozenPaths) {
+    const absPath = path.resolve(rootDir, frozenPath);
+    if (fileExists(absPath)) {
+      sources.frozenScriptContentsByPath[frozenPath] = readTextFile(absPath);
+    }
+  }
 
   return evaluateBuckpartsSystemContractAudit(sources);
 }

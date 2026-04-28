@@ -504,6 +504,11 @@ async function main() {
 }
 
 if (process.argv[1]?.endsWith("run-fridge-non-amazon-operator.ts")) {
+  if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true") {
+    throw new Error(
+      "FROZEN_SCRIPT_BLOCKED: Set BUCKPARTS_ALLOW_FROZEN=true to run this frozen/tactical script intentionally.",
+    );
+  }
   main().catch((err) => {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`[run-fridge-non-amazon-operator] FAILED: ${message}`);

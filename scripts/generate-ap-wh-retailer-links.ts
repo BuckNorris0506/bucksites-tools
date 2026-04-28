@@ -135,5 +135,11 @@ function writeVerticalRetailerLinks(
   console.log(JSON.stringify({ wrote: outPath, data_rows: rows.length }, null, 2));
 }
 
+if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true") {
+  throw new Error(
+    "FROZEN_SCRIPT_BLOCKED: Set BUCKPARTS_ALLOW_FROZEN=true to run this frozen/tactical script intentionally.",
+  );
+}
+
 writeVerticalRetailerLinks("ap", "air-purifier", airPurifierCatalogUrl);
 writeVerticalRetailerLinks("wh", "whole-house-water", wholeHouseCatalogUrl);

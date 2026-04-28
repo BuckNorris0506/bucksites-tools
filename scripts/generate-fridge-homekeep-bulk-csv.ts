@@ -794,6 +794,11 @@ function pickFiltersForModel(
 }
 
 function main() {
+  if (process.env.BUCKPARTS_ALLOW_FROZEN !== "true") {
+    throw new Error(
+      "FROZEN_SCRIPT_BLOCKED: Set BUCKPARTS_ALLOW_FROZEN=true to run this frozen/tactical script intentionally.",
+    );
+  }
   const filterRows: string[] = [
     "brand_slug,slug,oem_part_number,name,replacement_interval_months,notes",
   ];
