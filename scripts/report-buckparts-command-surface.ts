@@ -12,6 +12,7 @@ import {
 } from "@/lib/affiliates/affiliate-application-status";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { classifyPublishabilityState } from "@/lib/page-state/publishability-state";
+import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
 type BoolMap = Record<string, boolean>;
@@ -24,7 +25,10 @@ type LearningOutcomesMetricsRow = {
 };
 type CtaCoverageRow = {
   retailer_key: string | null;
+  affiliate_url: string | null;
   browser_truth_classification: string | null;
+  browser_truth_notes?: string | null;
+  browser_truth_checked_at?: string | null;
   gate_failure_kind?: string | null;
 };
 
@@ -380,6 +384,7 @@ function buildCtaCoverageMetricsFromRows(
   rows: CtaCoverageRow[],
 ): CommandSurfaceReport["cta_coverage_metrics"] {
   let directBuyable = 0;
+  let safeCtaLinks = 0;
   let blockedOrUnsafe = 0;
   let missingBrowserTruth = 0;
   const retailerCounts: Record<string, number> = {};
@@ -392,12 +397,23 @@ function buildCtaCoverageMetricsFromRows(
     retailerCounts[retailerKey] = (retailerCounts[retailerKey] ?? 0) + 1;
 
     const cls = row.browser_truth_classification;
-    if (cls == null || (typeof cls === "string" && cls.trim().length === 0)) {
+    const classificationMissing =
+      cls == null || (typeof cls === "string" && cls.trim().length === 0);
+    if (classificationMissing) {
       missingBrowserTruth += 1;
-      continue;
     }
+
+    const gateFailure = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
+
     if (cls === "direct_buyable") {
       directBuyable += 1;
+    }
+    if (gateFailure === null) {
+      safeCtaLinks += 1;
     } else {
       blockedOrUnsafe += 1;
     }
@@ -408,7 +424,7 @@ function buildCtaCoverageMetricsFromRows(
     runtime_status: "OK",
     total_retailer_links: rows.length,
     direct_buyable_links: directBuyable,
-    safe_cta_links: directBuyable,
+    safe_cta_links: safeCtaLinks,
     blocked_or_unsafe_links: blockedOrUnsafe,
     missing_browser_truth_links: missingBrowserTruth,
     retailer_counts: retailerCounts,
@@ -463,7 +479,9 @@ async function readCtaCoverageRowsViaSupabase(): Promise<CtaCoverageRow[]> {
     for (let from = 0; ; from += pageSize) {
       let query = supabase
         .from(table)
-        .select("retailer_key,browser_truth_classification")
+        .select(
+          "retailer_key,affiliate_url,browser_truth_classification,browser_truth_notes,browser_truth_checked_at",
+        )
         .range(from, from + pageSize - 1);
       if (approvedOnly) {
         query = query.eq("status", "approved");

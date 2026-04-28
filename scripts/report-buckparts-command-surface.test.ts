@@ -322,17 +322,33 @@ test("mock CTA rows produce correct counts", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
-      { retailer_key: "amazon", browser_truth_classification: "direct_buyable" },
-      { retailer_key: "amazon", browser_truth_classification: "likely_valid" },
-      { retailer_key: "oem", browser_truth_classification: null },
-      { retailer_key: "oem", browser_truth_classification: "direct_buyable" },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000001",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000002",
+        browser_truth_classification: "likely_valid",
+      },
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWF",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/1",
+        browser_truth_classification: "direct_buyable",
+      },
     ],
   });
   assert.equal(report.cta_coverage_metrics.runtime_status, "OK");
   assert.equal(report.cta_coverage_metrics.total_retailer_links, 4);
   assert.equal(report.cta_coverage_metrics.direct_buyable_links, 2);
   assert.equal(report.cta_coverage_metrics.safe_cta_links, 2);
-  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 1);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 2);
   assert.equal(report.cta_coverage_metrics.missing_browser_truth_links, 1);
   assert.equal(
     typeof report.cta_coverage_metrics.retailer_counts === "object",
@@ -344,8 +360,16 @@ test("retailer_link_state_metrics UNKNOWN when insufficient inputs", async () =>
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
-      { retailer_key: "amazon", browser_truth_classification: "direct_buyable" },
-      { retailer_key: "oem", browser_truth_classification: null },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000003",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/2",
+        browser_truth_classification: null,
+      },
     ],
   });
   assert.equal(report.retailer_link_state_metrics.runtime_status, "UNKNOWN");
@@ -357,11 +381,24 @@ test("retailer_link_state_metrics mock rows produce correct counts", async () =>
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
-      { retailer_key: "r1", browser_truth_classification: "direct_buyable" },
-      { retailer_key: "r1", browser_truth_classification: "likely_valid" },
-      { retailer_key: "r2", browser_truth_classification: "likely_search_results" },
+      {
+        retailer_key: "r1",
+        affiliate_url: "https://www.amazon.com/dp/B000000004",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "r1",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/3",
+        browser_truth_classification: "likely_valid",
+      },
+      {
+        retailer_key: "r2",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/4",
+        browser_truth_classification: "likely_search_results",
+      },
       {
         retailer_key: "r3",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/5",
         browser_truth_classification: "likely_valid",
         gate_failure_kind: "blocked_by_buy_link_policy",
       },
@@ -380,7 +417,11 @@ test("retailer_link_state_metrics does not emit enum-only fake distribution", as
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
-      { retailer_key: "r1", browser_truth_classification: "direct_buyable" },
+      {
+        retailer_key: "r1",
+        affiliate_url: "https://www.amazon.com/dp/B000000005",
+        browser_truth_classification: "direct_buyable",
+      },
     ],
   });
   assert.equal(report.retailer_link_state_metrics.runtime_status, "OK");
@@ -405,14 +446,104 @@ test("safe_cta_links counts only direct_buyable", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
-      { retailer_key: "r1", browser_truth_classification: "direct_buyable" },
-      { retailer_key: "r1", browser_truth_classification: "likely_valid" },
-      { retailer_key: "r2", browser_truth_classification: "likely_search_results" },
-      { retailer_key: "r3", browser_truth_classification: null },
+      {
+        retailer_key: "r1",
+        affiliate_url: "https://www.amazon.com/dp/B000000006",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "r1",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/6",
+        browser_truth_classification: "likely_valid",
+      },
+      {
+        retailer_key: "r2",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/7",
+        browser_truth_classification: "likely_search_results",
+      },
+      {
+        retailer_key: "r3",
+        affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWF",
+        browser_truth_classification: null,
+      },
     ],
   });
   assert.equal(report.cta_coverage_metrics.safe_cta_links, 1);
   assert.equal(report.cta_coverage_metrics.direct_buyable_links, 1);
+});
+
+test("direct_buyable + search placeholder URL is not safe_cta_links", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=mwf+filter",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.direct_buyable_links, 1);
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 0);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 1);
+});
+
+test("direct_buyable + known broken/indirect URL is not safe_cta_links", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem-parts-catalog",
+        affiliate_url: "https://www.geapplianceparts.com/store/parts/spec/MWF",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://www.kinetico.com/en-us/for-home/water-filtration/",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.direct_buyable_links, 2);
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 0);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 2);
+});
+
+test("direct_buyable + valid URL is safe_cta_links", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000007",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.direct_buyable_links, 1);
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 1);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 0);
+});
+
+test("missing browser truth counted separately", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem-parts-catalog",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/8",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-parts-catalog",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/9",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(report.cta_coverage_metrics.missing_browser_truth_links, 1);
+  assert.equal(report.cta_coverage_metrics.safe_cta_links, 1);
+  assert.equal(report.cta_coverage_metrics.blocked_or_unsafe_links, 1);
 });
 
 test("contract table_runtime_status matches metrics runtime_status when queried", async () => {
