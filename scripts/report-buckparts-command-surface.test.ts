@@ -24,6 +24,7 @@ test("all required top-level keys exist", async () => {
     "gsc_exports_present",
     "learning_outcomes_contract",
     "learning_outcomes_metrics",
+    "state_system_metrics",
     "affiliate_tracker",
     "known_unknowns",
     "recommended_next_step",
@@ -146,6 +147,15 @@ test("command surface includes learning_outcomes_metrics", async () => {
   assert.equal(report.learning_outcomes_metrics.source, "public.learning_outcomes");
 });
 
+test("command surface includes state_system_metrics", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.ok("state_system_metrics" in report);
+  assert.equal(
+    report.state_system_metrics.source,
+    "local_contracts_and_available_local_data",
+  );
+});
+
 test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fetchLearningOutcomesRows: async () => {
@@ -229,4 +239,39 @@ test("mock rows produce recency values", async () => {
   });
   assert.equal(report.learning_outcomes_metrics.recency.max_days_since_checked, 7);
   assert.equal(report.learning_outcomes_metrics.recency.median_days_since_checked, 3);
+});
+
+test("missing local data returns UNKNOWN_NO_DATA or PARTIAL", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.ok(
+    report.state_system_metrics.runtime_status === "UNKNOWN_NO_DATA" ||
+      report.state_system_metrics.runtime_status === "PARTIAL",
+  );
+});
+
+test("no distribution is invented from enum constants alone", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.equal(report.state_system_metrics.page_state.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.publishability_state.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.retailer_link_state.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.no_buy_reason.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.wrong_purchase_risk.distribution, "UNKNOWN");
+  assert.equal(report.state_system_metrics.replacement_safety.safe_count, "UNKNOWN");
+  assert.equal(report.state_system_metrics.replacement_safety.unsafe_count, "UNKNOWN");
+});
+
+test("known_unknowns includes non-computable state distributions", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.equal(
+    report.known_unknowns.some((entry) =>
+      entry.startsWith("state_system_metrics.page_state non-computable:"),
+    ),
+    true,
+  );
+  assert.equal(
+    report.known_unknowns.some((entry) =>
+      entry.startsWith("state_system_metrics.replacement_safety non-computable:"),
+    ),
+    true,
+  );
 });

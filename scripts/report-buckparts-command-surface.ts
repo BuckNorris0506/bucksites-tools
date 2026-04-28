@@ -2,8 +2,6 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { loadEnv } from "./lib/load-env";
-import { getSupabaseAdmin } from "./lib/supabase-admin";
 import {
   AFFILIATE_APPLICATION_STATUSES,
   type AffiliateApplicationRecord,
@@ -72,6 +70,41 @@ export type CommandSurfaceReport = {
     recency: {
       max_days_since_checked: UnknownableNumber;
       median_days_since_checked: UnknownableNumber;
+    };
+  };
+  state_system_metrics: {
+    source: "local_contracts_and_available_local_data";
+    runtime_status: "OK" | "PARTIAL" | "UNKNOWN_NO_DATA";
+    page_state: {
+      computable: boolean;
+      distribution: Record<string, number> | "UNKNOWN";
+      reason: string;
+    };
+    publishability_state: {
+      computable: boolean;
+      distribution: Record<string, number> | "UNKNOWN";
+      reason: string;
+    };
+    retailer_link_state: {
+      computable: boolean;
+      distribution: Record<string, number> | "UNKNOWN";
+      reason: string;
+    };
+    no_buy_reason: {
+      computable: boolean;
+      distribution: Record<string, number> | "UNKNOWN";
+      reason: string;
+    };
+    wrong_purchase_risk: {
+      computable: boolean;
+      distribution: Record<string, number> | "UNKNOWN";
+      reason: string;
+    };
+    replacement_safety: {
+      computable: boolean;
+      safe_count: number | "UNKNOWN";
+      unsafe_count: number | "UNKNOWN";
+      reason: string;
     };
   };
   affiliate_tracker: {
@@ -255,21 +288,51 @@ function buildLearningOutcomesMetricsFromRows(
 }
 
 async function readLearningOutcomesRowsViaSupabase(): Promise<LearningOutcomesMetricsRow[]> {
-  loadEnv();
-  const supabase = getSupabaseAdmin();
-  const rows: LearningOutcomesMetricsRow[] = [];
-  const PAGE_SIZE = 1000;
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await supabase
-      .from("learning_outcomes")
-      .select("outcome, cta_status, confidence, date_checked")
-      .range(from, from + PAGE_SIZE - 1);
-    if (error) throw error;
-    const chunk = (data ?? []) as LearningOutcomesMetricsRow[];
-    rows.push(...chunk);
-    if (chunk.length < PAGE_SIZE) break;
-  }
-  return rows;
+  throw new Error("Network/DB reads are disabled for this command surface step.");
+}
+
+function unknownStateDistribution(reason: string) {
+  return {
+    computable: false,
+    distribution: "UNKNOWN" as const,
+    reason,
+  };
+}
+
+function buildStateSystemMetrics(): CommandSurfaceReport["state_system_metrics"] {
+  const pageState = unknownStateDistribution(
+    "No local page-level signal dataset is available to compute PageState distribution.",
+  );
+  const publishabilityState = unknownStateDistribution(
+    "No local publishability input dataset is available to compute PublishabilityState distribution.",
+  );
+  const retailerLinkState = unknownStateDistribution(
+    "Local retailer files do not contain full gate/browser/operator inputs required for canonical RetailerLinkState mapping.",
+  );
+  const noBuyReason = unknownStateDistribution(
+    "No local no-buy event dataset is available to compute NoBuyReason distribution.",
+  );
+  const wrongPurchaseRisk = unknownStateDistribution(
+    "No local risk-signal dataset is available to compute WrongPurchaseRisk distribution.",
+  );
+  const replacementSafety = {
+    computable: false,
+    safe_count: "UNKNOWN" as const,
+    unsafe_count: "UNKNOWN" as const,
+    reason:
+      "No local replacement-chain records are available to compute safe/unsafe replacement counts.",
+  };
+
+  return {
+    source: "local_contracts_and_available_local_data",
+    runtime_status: "UNKNOWN_NO_DATA",
+    page_state: pageState,
+    publishability_state: publishabilityState,
+    retailer_link_state: retailerLinkState,
+    no_buy_reason: noBuyReason,
+    wrong_purchase_risk: wrongPurchaseRisk,
+    replacement_safety: replacementSafety,
+  };
 }
 
 export async function buildBuckpartsCommandSurfaceReport(
@@ -377,6 +440,7 @@ export async function buildBuckpartsCommandSurfaceReport(
       learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_DB_UNAVAILABLE");
     }
   }
+  const stateSystemMetrics = buildStateSystemMetrics();
 
   const known_unknowns = [
     "learning_outcomes runtime table status is UNKNOWN_NOT_QUERIED (DB intentionally not queried).",
@@ -397,6 +461,24 @@ export async function buildBuckpartsCommandSurfaceReport(
       : null,
     learningOutcomesMetrics.runtime_status !== "OK"
       ? `learning_outcomes_metrics ${learningOutcomesMetrics.runtime_status}: runtime metrics unavailable.`
+      : null,
+    !stateSystemMetrics.page_state.computable
+      ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
+      : null,
+    !stateSystemMetrics.publishability_state.computable
+      ? `state_system_metrics.publishability_state non-computable: ${stateSystemMetrics.publishability_state.reason}`
+      : null,
+    !stateSystemMetrics.retailer_link_state.computable
+      ? `state_system_metrics.retailer_link_state non-computable: ${stateSystemMetrics.retailer_link_state.reason}`
+      : null,
+    !stateSystemMetrics.no_buy_reason.computable
+      ? `state_system_metrics.no_buy_reason non-computable: ${stateSystemMetrics.no_buy_reason.reason}`
+      : null,
+    !stateSystemMetrics.wrong_purchase_risk.computable
+      ? `state_system_metrics.wrong_purchase_risk non-computable: ${stateSystemMetrics.wrong_purchase_risk.reason}`
+      : null,
+    !stateSystemMetrics.replacement_safety.computable
+      ? `state_system_metrics.replacement_safety non-computable: ${stateSystemMetrics.replacement_safety.reason}`
       : null,
     ...affiliateTracker.known_unknowns.map((item) => `Affiliate tracker: ${item}`),
   ].filter((v): v is string => typeof v === "string");
@@ -437,6 +519,7 @@ export async function buildBuckpartsCommandSurfaceReport(
       table_runtime_status: "UNKNOWN_NOT_QUERIED",
     },
     learning_outcomes_metrics: learningOutcomesMetrics,
+    state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     known_unknowns,
     recommended_next_step,
