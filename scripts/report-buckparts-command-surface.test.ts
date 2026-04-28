@@ -78,12 +78,15 @@ test("does not require GSC files to pass", async () => {
   assert.equal(report.data_mutation, false);
 });
 
-test("learning_outcomes runtime status is UNKNOWN_NOT_QUERIED", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
+test("UNKNOWN_NOT_QUERIED only appears when query intentionally skipped", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+  });
   assert.equal(
     report.learning_outcomes_contract.table_runtime_status,
     "UNKNOWN_NOT_QUERIED",
   );
+  assert.equal(report.learning_outcomes_metrics.runtime_status, "UNKNOWN_NOT_QUERIED");
 });
 
 test("recommended_next_step matches Step 13", async () => {
@@ -173,11 +176,33 @@ test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async (
       throw new Error("db down");
     },
   });
+  assert.equal(
+    report.learning_outcomes_contract.table_runtime_status,
+    "UNKNOWN_DB_UNAVAILABLE",
+  );
   assert.equal(report.learning_outcomes_metrics.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
   assert.equal(report.learning_outcomes_metrics.outcome_counts.pass, "UNKNOWN");
   assert.equal(report.learning_outcomes_metrics.cta_status_counts.live, "UNKNOWN");
   assert.equal(report.learning_outcomes_metrics.confidence_counts.exact, "UNKNOWN");
   assert.equal(report.learning_outcomes_metrics.recency.max_days_since_checked, "UNKNOWN");
+});
+
+test("contract table_runtime_status matches metrics runtime_status when queried", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => [],
+  });
+  assert.equal(report.learning_outcomes_contract.table_runtime_status, "OK");
+  assert.equal(report.learning_outcomes_metrics.runtime_status, "OK");
+});
+
+test("SELECT success with zero rows returns OK and unknown recency", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => [],
+  });
+  assert.equal(report.learning_outcomes_contract.table_runtime_status, "OK");
+  assert.equal(report.learning_outcomes_metrics.runtime_status, "OK");
+  assert.equal(report.learning_outcomes_metrics.recency.max_days_since_checked, "UNKNOWN");
+  assert.equal(report.learning_outcomes_metrics.recency.median_days_since_checked, "UNKNOWN");
 });
 
 test("mock rows produce correct outcome counts", async () => {
@@ -299,6 +324,9 @@ test("no snapshot -> UNKNOWN trend", async () => {
 
 test("valid snapshot -> correct delta values", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => {
+      throw new Error("db unavailable for deterministic trend test");
+    },
     fileExists: (absolutePath) =>
       absolutePath.endsWith("data/reports/buckparts-command-surface.json")
         ? true

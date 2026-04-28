@@ -2,6 +2,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadEnv } from "./lib/load-env";
+import { getSupabaseAdmin } from "./lib/supabase-admin";
 import {
   AFFILIATE_APPLICATION_STATUSES,
   type AffiliateApplicationRecord,
@@ -46,7 +48,7 @@ export type CommandSurfaceReport = {
   };
   learning_outcomes_contract: {
     migration_present: boolean;
-    table_runtime_status: "UNKNOWN_NOT_QUERIED";
+    table_runtime_status: "OK" | "UNKNOWN_NOT_QUERIED" | "UNKNOWN_DB_UNAVAILABLE";
   };
   learning_outcomes_metrics: {
     source: "public.learning_outcomes";
@@ -146,6 +148,7 @@ type BuildOptions = {
   readTextFile?: (absolutePath: string) => string;
   now?: () => Date;
   fetchLearningOutcomesRows?: () => Promise<LearningOutcomesMetricsRow[]>;
+  skipLearningOutcomesQuery?: boolean;
 };
 
 type RunOptions = BuildOptions & {
@@ -311,7 +314,21 @@ function buildLearningOutcomesMetricsFromRows(
 }
 
 async function readLearningOutcomesRowsViaSupabase(): Promise<LearningOutcomesMetricsRow[]> {
-  throw new Error("Network/DB reads are disabled for this command surface step.");
+  loadEnv();
+  const supabase = getSupabaseAdmin();
+  const rows: LearningOutcomesMetricsRow[] = [];
+  const PAGE_SIZE = 1000;
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("learning_outcomes")
+      .select("outcome, cta_status, confidence, date_checked")
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    const chunk = (data ?? []) as LearningOutcomesMetricsRow[];
+    rows.push(...chunk);
+    if (chunk.length < PAGE_SIZE) break;
+  }
+  return rows;
 }
 
 function unknownStateDistribution(reason: string) {
@@ -633,14 +650,33 @@ export async function buildBuckpartsCommandSurfaceReport(
 
   let learningOutcomesMetrics: CommandSurfaceReport["learning_outcomes_metrics"] =
     unknownLearningOutcomesMetrics("UNKNOWN_NOT_QUERIED");
-  if (checks.learning_outcomes_migration) {
+  let learningOutcomesContractStatus: CommandSurfaceReport["learning_outcomes_contract"]["table_runtime_status"] =
+    "UNKNOWN_NOT_QUERIED";
+  const shouldQueryLearningOutcomes =
+    checks.learning_outcomes_migration && options.skipLearningOutcomesQuery !== true;
+
+  if (shouldQueryLearningOutcomes) {
     const fetchRows = options.fetchLearningOutcomesRows ?? readLearningOutcomesRowsViaSupabase;
     try {
       const rows = await fetchRows();
       learningOutcomesMetrics = buildLearningOutcomesMetricsFromRows(rows, nowDate);
+      learningOutcomesContractStatus = "OK";
+      if (rows.length === 0) {
+        learningOutcomesMetrics = {
+          ...learningOutcomesMetrics,
+          recency: {
+            max_days_since_checked: "UNKNOWN",
+            median_days_since_checked: "UNKNOWN",
+          },
+        };
+      }
     } catch {
       learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_DB_UNAVAILABLE");
+      learningOutcomesContractStatus = "UNKNOWN_DB_UNAVAILABLE";
     }
+  } else if (checks.learning_outcomes_migration) {
+    learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_NOT_QUERIED");
+    learningOutcomesContractStatus = "UNKNOWN_NOT_QUERIED";
   }
   const stateSystemMetrics = buildStateSystemMetrics();
   let previousSnapshotRaw: string | null = null;
@@ -753,7 +789,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     },
     learning_outcomes_contract: {
       migration_present: checks.learning_outcomes_migration,
-      table_runtime_status: "UNKNOWN_NOT_QUERIED",
+      table_runtime_status: learningOutcomesContractStatus,
     },
     learning_outcomes_metrics: learningOutcomesMetrics,
     state_system_metrics: stateSystemMetrics,
