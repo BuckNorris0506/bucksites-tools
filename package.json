@@ -55,6 +55,7 @@
     "buckparts:report:affiliate-clicks": "tsx scripts/report-homekeep-affiliate-clicks.ts",
     "buckparts:report:business-scorecard": "tsx scripts/report-homekeep-business-scorecard.ts",
     "buckparts:report:launch-readiness": "tsx scripts/report-homekeep-launch-readiness.ts",
+    "buckparts:audit": "tsx scripts/audit-buckparts-system-contracts.ts",
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
     "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
