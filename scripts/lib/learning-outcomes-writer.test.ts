@@ -8,6 +8,7 @@ import {
 
 function validInput() {
   return {
+    slug: "mwf-replacement-filter",
     part_number: "MWF",
     model_number: "GSS25GSHSS",
     candidate_url: "https://example.com/product/mwf",
@@ -28,6 +29,11 @@ test("valid insert payload passes validation", () => {
 test("missing required fields fails", () => {
   const input = { ...validInput(), reason: "" };
   assert.throws(() => validateLearningOutcomeInput(input), /reason is required/);
+});
+
+test("slug is required", () => {
+  const input = { ...validInput(), slug: "" };
+  assert.throws(() => validateLearningOutcomeInput(input), /slug is required/);
 });
 
 test("invalid enum values fail", () => {
@@ -78,6 +84,7 @@ test("insert function calls supabase with correct payload shape (mock client)", 
 
   assert.equal(tableName, "learning_outcomes");
   assert.equal(inserted?.outcome, input.outcome);
+  assert.equal(inserted?.slug, input.slug);
   assert.equal(inserted?.reason, input.reason);
   assert.equal(inserted?.confidence, input.confidence);
   assert.equal(inserted?.cta_status, input.cta_status);

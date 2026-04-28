@@ -60,14 +60,14 @@
     "network": "Amazon Associates",
     "retailer": "Amazon",
     "programUrl": null,
-    "status": "NOT_STARTED",
+    "status": "APPROVED",
     "submittedAt": null,
-    "lastStatusAt": null,
+    "lastStatusAt": "2026-04-28T00:00:00.000Z",
     "decisionAt": null,
     "rejectionReason": null,
     "nextAction": "Confirm account/application state before launch ramp",
     "nextActionDueAt": null,
-    "notes": null
+    "notes": "User reported Amazon Associates approval. Exact tag verification remains UNKNOWN."
   },
   {
     "id": "walmart",

@@ -33,8 +33,12 @@ export type CommandSurfaceReport = {
   generated_at: string;
   read_only: true;
   data_mutation: false;
-  completed_cleanup_steps: 11;
-  total_cleanup_steps: 20;
+  cleanup_progress: {
+    status: "PINNED_MANUAL";
+    completed_steps: 20;
+    total_steps: 20;
+    reason: "Manual Phase 1 cleanup counter; not auto-computed.";
+  };
   source_files_checked: string[];
   contract_modules_present: {
     page_state: boolean;
@@ -1065,8 +1069,12 @@ export async function buildBuckpartsCommandSurfaceReport(
     generated_at: now().toISOString(),
     read_only: true,
     data_mutation: false,
-    completed_cleanup_steps: 11,
-    total_cleanup_steps: 20,
+    cleanup_progress: {
+      status: "PINNED_MANUAL",
+      completed_steps: 20,
+      total_steps: 20,
+      reason: "Manual Phase 1 cleanup counter; not auto-computed.",
+    },
     source_files_checked,
     contract_modules_present: {
       page_state: checks.page_state,

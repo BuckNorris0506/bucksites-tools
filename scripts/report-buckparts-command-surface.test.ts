@@ -23,8 +23,7 @@ test("all required top-level keys exist", async () => {
     "generated_at",
     "read_only",
     "data_mutation",
-    "completed_cleanup_steps",
-    "total_cleanup_steps",
+    "cleanup_progress",
     "source_files_checked",
     "contract_modules_present",
     "docs_present",
@@ -46,6 +45,16 @@ test("all required top-level keys exist", async () => {
   for (const key of expectedKeys) {
     assert.ok(key in report);
   }
+});
+
+test("cleanup_progress uses pinned manual truth", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.deepEqual(report.cleanup_progress, {
+    status: "PINNED_MANUAL",
+    completed_steps: 20,
+    total_steps: 20,
+    reason: "Manual Phase 1 cleanup counter; not auto-computed.",
+  });
 });
 
 test("detects present contract modules", async () => {

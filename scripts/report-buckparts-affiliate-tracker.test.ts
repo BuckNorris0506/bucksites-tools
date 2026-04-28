@@ -18,8 +18,8 @@ test("counts statuses correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.equal(report.status_counts.REAPPLY_REQUIRED, 2);
   assert.equal(report.status_counts.DRAFTING, 1);
-  assert.equal(report.status_counts.NOT_STARTED, 3);
-  assert.equal(report.status_counts.APPROVED, 0);
+  assert.equal(report.status_counts.NOT_STARTED, 2);
+  assert.equal(report.status_counts.APPROVED, 1);
   assert.equal(report.status_counts.REJECTED, 0);
   assert.equal(report.status_counts.SUBMITTED, 0);
   assert.equal(report.status_counts.IN_REVIEW, 0);

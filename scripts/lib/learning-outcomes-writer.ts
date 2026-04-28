@@ -6,6 +6,7 @@ const CONFIDENCE = new Set(["exact", "likely", "uncertain"]);
 const CTA_STATUS = new Set(["live", "not_live", "blocked"]);
 
 export type LearningOutcomeInsertInput = {
+  slug: string;
   part_number: string | null;
   model_number: string | null;
   candidate_url: string | null;
@@ -51,6 +52,9 @@ export function validateLearningOutcomeInput(
   if (!OUTCOMES.has(String(value.outcome ?? ""))) {
     throw new Error("outcome is required and must be pass|fail|blocked|unknown");
   }
+  if (!isNonEmptyString(value.slug)) {
+    throw new Error("slug is required");
+  }
   if (!isNonEmptyString(value.reason)) {
     throw new Error("reason is required");
   }
@@ -93,6 +97,7 @@ export async function insertLearningOutcome(
     })();
 
   const payload: Record<string, unknown> = {
+    slug: input.slug,
     part_number: input.part_number,
     model_number: input.model_number,
     candidate_url: input.candidate_url,

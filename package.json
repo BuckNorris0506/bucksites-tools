@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "node --import tsx --test \"src/**/*.test.ts\" \"scripts/**/*.test.ts\"",
     "lint": "next lint",
     "seed:import": "tsx scripts/import-seed.ts",
     "seed:import:fridge:prune": "tsx scripts/import-seed.ts --prune-fridge-catalog",
