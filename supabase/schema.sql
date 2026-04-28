@@ -1,4 +1,6 @@
 -- BuckSites Tools — Supabase schema + RLS for public read + click logging.
+-- IMPORTANT: Migrations in supabase/migrations are the authoritative source of truth.
+-- This schema.sql is a baseline/legacy snapshot and may lag newer migrations.
 -- Run in Supabase SQL editor or via migration tooling.
 
 create extension if not exists "pgcrypto";
