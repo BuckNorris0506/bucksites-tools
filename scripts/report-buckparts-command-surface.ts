@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { loadEnv } from "./lib/load-env";
+import { getSupabaseAdmin } from "./lib/supabase-admin";
 import {
   AFFILIATE_APPLICATION_STATUSES,
   type AffiliateApplicationRecord,
@@ -10,6 +12,13 @@ import {
 } from "@/lib/affiliates/affiliate-application-status";
 
 type BoolMap = Record<string, boolean>;
+type UnknownableNumber = number | "UNKNOWN";
+type LearningOutcomesMetricsRow = {
+  outcome: string | null;
+  cta_status: string | null;
+  confidence: string | null;
+  date_checked: string | null;
+};
 
 export type CommandSurfaceReport = {
   report_name: string;
@@ -41,6 +50,30 @@ export type CommandSurfaceReport = {
     migration_present: boolean;
     table_runtime_status: "UNKNOWN_NOT_QUERIED";
   };
+  learning_outcomes_metrics: {
+    source: "public.learning_outcomes";
+    runtime_status: "OK" | "UNKNOWN_NOT_QUERIED" | "UNKNOWN_DB_UNAVAILABLE";
+    outcome_counts: {
+      pass: UnknownableNumber;
+      fail: UnknownableNumber;
+      blocked: UnknownableNumber;
+      unknown: UnknownableNumber;
+    };
+    cta_status_counts: {
+      live: UnknownableNumber;
+      not_live: UnknownableNumber;
+      blocked: UnknownableNumber;
+    };
+    confidence_counts: {
+      exact: UnknownableNumber;
+      likely: UnknownableNumber;
+      uncertain: UnknownableNumber;
+    };
+    recency: {
+      max_days_since_checked: UnknownableNumber;
+      median_days_since_checked: UnknownableNumber;
+    };
+  };
   affiliate_tracker: {
     tracker_present: boolean;
     record_count: number | null;
@@ -62,6 +95,7 @@ type BuildOptions = {
   fileExists?: (absolutePath: string) => boolean;
   readTextFile?: (absolutePath: string) => string;
   now?: () => Date;
+  fetchLearningOutcomesRows?: () => Promise<LearningOutcomesMetricsRow[]>;
 };
 
 function resolvePaths(rootDir: string) {
@@ -123,13 +157,129 @@ function parseAffiliateTracker(raw: string): AffiliateApplicationRecord[] {
   return out;
 }
 
-export function buildBuckpartsCommandSurfaceReport(
+function unknownLearningOutcomesMetrics(
+  runtime_status: "UNKNOWN_NOT_QUERIED" | "UNKNOWN_DB_UNAVAILABLE",
+): CommandSurfaceReport["learning_outcomes_metrics"] {
+  return {
+    source: "public.learning_outcomes",
+    runtime_status,
+    outcome_counts: {
+      pass: "UNKNOWN",
+      fail: "UNKNOWN",
+      blocked: "UNKNOWN",
+      unknown: "UNKNOWN",
+    },
+    cta_status_counts: {
+      live: "UNKNOWN",
+      not_live: "UNKNOWN",
+      blocked: "UNKNOWN",
+    },
+    confidence_counts: {
+      exact: "UNKNOWN",
+      likely: "UNKNOWN",
+      uncertain: "UNKNOWN",
+    },
+    recency: {
+      max_days_since_checked: "UNKNOWN",
+      median_days_since_checked: "UNKNOWN",
+    },
+  };
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 0) {
+    return (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+  return sorted[mid];
+}
+
+function buildLearningOutcomesMetricsFromRows(
+  rows: LearningOutcomesMetricsRow[],
+  nowDate: Date,
+): CommandSurfaceReport["learning_outcomes_metrics"] {
+  const outcomeCounts: CommandSurfaceReport["learning_outcomes_metrics"]["outcome_counts"] = {
+    pass: 0,
+    fail: 0,
+    blocked: 0,
+    unknown: 0,
+  };
+  const ctaStatusCounts: CommandSurfaceReport["learning_outcomes_metrics"]["cta_status_counts"] = {
+    live: 0,
+    not_live: 0,
+    blocked: 0,
+  };
+  const confidenceCounts: CommandSurfaceReport["learning_outcomes_metrics"]["confidence_counts"] = {
+    exact: 0,
+    likely: 0,
+    uncertain: 0,
+  };
+  const recencyDays: number[] = [];
+
+  for (const row of rows) {
+    if (row.outcome === "pass") outcomeCounts.pass += 1;
+    else if (row.outcome === "fail") outcomeCounts.fail += 1;
+    else if (row.outcome === "blocked") outcomeCounts.blocked += 1;
+    else if (row.outcome === "unknown") outcomeCounts.unknown += 1;
+
+    if (row.cta_status === "live") ctaStatusCounts.live += 1;
+    else if (row.cta_status === "not_live") ctaStatusCounts.not_live += 1;
+    else if (row.cta_status === "blocked") ctaStatusCounts.blocked += 1;
+
+    if (row.confidence === "exact") confidenceCounts.exact += 1;
+    else if (row.confidence === "likely") confidenceCounts.likely += 1;
+    else if (row.confidence === "uncertain") confidenceCounts.uncertain += 1;
+
+    if (typeof row.date_checked === "string") {
+      const parsed = Date.parse(row.date_checked);
+      if (!Number.isNaN(parsed)) {
+        const days = Math.max(0, (nowDate.getTime() - parsed) / 86400000);
+        recencyDays.push(days);
+      }
+    }
+  }
+
+  return {
+    source: "public.learning_outcomes",
+    runtime_status: "OK",
+    outcome_counts: outcomeCounts,
+    cta_status_counts: ctaStatusCounts,
+    confidence_counts: confidenceCounts,
+    recency: {
+      max_days_since_checked: recencyDays.length ? Math.max(...recencyDays) : 0,
+      median_days_since_checked: recencyDays.length ? median(recencyDays) : 0,
+    },
+  };
+}
+
+async function readLearningOutcomesRowsViaSupabase(): Promise<LearningOutcomesMetricsRow[]> {
+  loadEnv();
+  const supabase = getSupabaseAdmin();
+  const rows: LearningOutcomesMetricsRow[] = [];
+  const PAGE_SIZE = 1000;
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("learning_outcomes")
+      .select("outcome, cta_status, confidence, date_checked")
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    const chunk = (data ?? []) as LearningOutcomesMetricsRow[];
+    rows.push(...chunk);
+    if (chunk.length < PAGE_SIZE) break;
+  }
+  return rows;
+}
+
+export async function buildBuckpartsCommandSurfaceReport(
   options: BuildOptions = {},
-): CommandSurfaceReport {
+): Promise<CommandSurfaceReport> {
   const rootDir = options.rootDir ?? process.cwd();
   const fileExists = options.fileExists ?? existsSync;
   const readTextFile = options.readTextFile ?? ((absolutePath: string) => readFileSync(absolutePath, "utf8"));
   const now = options.now ?? (() => new Date());
+  const nowDate = now();
   const { rel, abs } = resolvePaths(rootDir);
 
   const checks: BoolMap = {};
@@ -216,6 +366,18 @@ export function buildBuckpartsCommandSurfaceReport(
     }
   }
 
+  let learningOutcomesMetrics: CommandSurfaceReport["learning_outcomes_metrics"] =
+    unknownLearningOutcomesMetrics("UNKNOWN_NOT_QUERIED");
+  if (checks.learning_outcomes_migration) {
+    const fetchRows = options.fetchLearningOutcomesRows ?? readLearningOutcomesRowsViaSupabase;
+    try {
+      const rows = await fetchRows();
+      learningOutcomesMetrics = buildLearningOutcomesMetricsFromRows(rows, nowDate);
+    } catch {
+      learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_DB_UNAVAILABLE");
+    }
+  }
+
   const known_unknowns = [
     "learning_outcomes runtime table status is UNKNOWN_NOT_QUERIED (DB intentionally not queried).",
     checks.coverage_zip
@@ -232,6 +394,9 @@ export function buildBuckpartsCommandSurfaceReport(
       : null,
     affiliateTracker.health.status === "UNKNOWN"
       ? `Affiliate tracker health UNKNOWN: ${affiliateTracker.health.reason}`
+      : null,
+    learningOutcomesMetrics.runtime_status !== "OK"
+      ? `learning_outcomes_metrics ${learningOutcomesMetrics.runtime_status}: runtime metrics unavailable.`
       : null,
     ...affiliateTracker.known_unknowns.map((item) => `Affiliate tracker: ${item}`),
   ].filter((v): v is string => typeof v === "string");
@@ -271,18 +436,22 @@ export function buildBuckpartsCommandSurfaceReport(
       migration_present: checks.learning_outcomes_migration,
       table_runtime_status: "UNKNOWN_NOT_QUERIED",
     },
+    learning_outcomes_metrics: learningOutcomesMetrics,
     affiliate_tracker: affiliateTracker,
     known_unknowns,
     recommended_next_step,
   };
 }
 
-export function main(): void {
-  const report = buildBuckpartsCommandSurfaceReport();
+export async function main(): Promise<void> {
+  const report = await buildBuckpartsCommandSurfaceReport();
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 
 const THIS_FILE = fileURLToPath(import.meta.url);
 if (process.argv[1] && path.resolve(process.argv[1]) === THIS_FILE) {
-  main();
+  main().catch((error) => {
+    console.error("[report-buckparts-command-surface] failed", error);
+    process.exit(1);
+  });
 }
