@@ -170,6 +170,31 @@ test("command surface includes state_system_metrics", async () => {
   );
 });
 
+test("page_state distribution is included", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/gsc/sitemap.xml")) {
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+  <url><loc>https://buckparts.com/filter/a</loc></url>
+  <url><loc>https://buckparts.com/fridge/b</loc></url>
+</urlset>`;
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    skipLearningOutcomesQuery: true,
+  });
+  assert.equal(report.state_system_metrics.page_state.computable, true);
+  assert.equal(
+    typeof report.state_system_metrics.page_state.distribution === "object",
+    true,
+  );
+});
+
 test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fetchLearningOutcomesRows: async () => {
@@ -286,7 +311,11 @@ test("missing local data returns UNKNOWN_NO_DATA or PARTIAL", async () => {
 });
 
 test("no distribution is invented from enum constants alone", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml") ? false : existsSync(absolutePath),
+    skipLearningOutcomesQuery: true,
+  });
   assert.equal(report.state_system_metrics.page_state.distribution, "UNKNOWN");
   assert.equal(report.state_system_metrics.publishability_state.distribution, "UNKNOWN");
   assert.equal(report.state_system_metrics.retailer_link_state.distribution, "UNKNOWN");
@@ -296,8 +325,43 @@ test("no distribution is invented from enum constants alone", async () => {
   assert.equal(report.state_system_metrics.replacement_safety.unsafe_count, "UNKNOWN");
 });
 
+test("partial computation sets runtime_status PARTIAL", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml")
+        ? true
+        : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/gsc/sitemap.xml")) {
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset>
+  <url><loc>https://buckparts.com/filter/a</loc></url>
+</urlset>`;
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    skipLearningOutcomesQuery: true,
+  });
+  assert.equal(report.state_system_metrics.page_state.computable, true);
+  assert.equal(report.state_system_metrics.runtime_status, "PARTIAL");
+});
+
+test("missing dataset keeps UNKNOWN", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml") ? false : existsSync(absolutePath),
+    skipLearningOutcomesQuery: true,
+  });
+  assert.equal(report.state_system_metrics.page_state.computable, false);
+  assert.equal(report.state_system_metrics.page_state.distribution, "UNKNOWN");
+});
+
 test("known_unknowns includes non-computable state distributions", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml") ? false : existsSync(absolutePath),
+    skipLearningOutcomesQuery: true,
+  });
   assert.equal(
     report.known_unknowns.some((entry) =>
       entry.startsWith("state_system_metrics.page_state non-computable:"),

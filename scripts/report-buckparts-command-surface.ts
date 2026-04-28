@@ -10,6 +10,7 @@ import {
   type AffiliateApplicationStatus,
   isValidAffiliateApplicationRecord,
 } from "@/lib/affiliates/affiliate-application-status";
+import { classifyPageState } from "@/lib/page-state/page-state";
 
 type BoolMap = Record<string, boolean>;
 type UnknownableNumber = number | "UNKNOWN";
@@ -339,10 +340,64 @@ function unknownStateDistribution(reason: string) {
   };
 }
 
-function buildStateSystemMetrics(): CommandSurfaceReport["state_system_metrics"] {
-  const pageState = unknownStateDistribution(
-    "No local page-level signal dataset is available to compute PageState distribution.",
+function extractSitemapUrls(sitemapText: string): string[] {
+  const matches = sitemapText.match(/<loc>(https?:\/\/[^<]+)<\/loc>/g) ?? [];
+  return matches
+    .map((line) => line.replace("<loc>", "").replace("</loc>", "").trim())
+    .filter((url) => url.length > 0);
+}
+
+function computePageStateDistributionFromSitemap(
+  sitemapText: string,
+): { distribution: Record<string, number>; urlCount: number } | null {
+  const urls = extractSitemapUrls(sitemapText);
+  if (urls.length === 0) return null;
+
+  const distribution: Record<string, number> = {};
+  for (const _url of urls) {
+    const state = classifyPageState({
+      isIndexable: true,
+      validCtaCount: null,
+      buyerPathState: null,
+      hasDemandSignal: null,
+    });
+    distribution[state] = (distribution[state] ?? 0) + 1;
+  }
+  return { distribution, urlCount: urls.length };
+}
+
+function buildStateSystemMetrics(args: {
+  checks: BoolMap;
+  abs: Record<string, string>;
+  readTextFile: (absolutePath: string) => string;
+}): CommandSurfaceReport["state_system_metrics"] {
+  let pageState = unknownStateDistribution(
+    "No local sitemap/page dataset is available to compute PageState distribution.",
   );
+  if (args.checks.sitemap_xml) {
+    try {
+      const sitemapText = args.readTextFile(args.abs.sitemap_xml);
+      const computed = computePageStateDistributionFromSitemap(sitemapText);
+      if (computed) {
+        pageState = {
+          computable: true,
+          distribution: computed.distribution,
+          reason:
+            `Computed from local sitemap URLs only (${computed.urlCount} URLs). ` +
+            "Coverage excludes non-sitemap pages and lacks CTA/trust-demand signals, so only partial PageState coverage is represented.",
+        };
+      } else {
+        pageState = unknownStateDistribution(
+          "Local sitemap.xml is present but contains no parseable <loc> URLs for PageState computation.",
+        );
+      }
+    } catch {
+      pageState = unknownStateDistribution(
+        "Local sitemap.xml could not be parsed for PageState computation.",
+      );
+    }
+  }
+
   const publishabilityState = unknownStateDistribution(
     "No local publishability input dataset is available to compute PublishabilityState distribution.",
   );
@@ -363,9 +418,21 @@ function buildStateSystemMetrics(): CommandSurfaceReport["state_system_metrics"]
       "No local replacement-chain records are available to compute safe/unsafe replacement counts.",
   };
 
+  const computableCount = [
+    pageState.computable,
+    publishabilityState.computable,
+    retailerLinkState.computable,
+    noBuyReason.computable,
+    wrongPurchaseRisk.computable,
+    replacementSafety.computable,
+  ].filter(Boolean).length;
+
+  const runtime_status: CommandSurfaceReport["state_system_metrics"]["runtime_status"] =
+    computableCount === 0 ? "UNKNOWN_NO_DATA" : computableCount === 6 ? "OK" : "PARTIAL";
+
   return {
     source: "local_contracts_and_available_local_data",
-    runtime_status: "UNKNOWN_NO_DATA",
+    runtime_status,
     page_state: pageState,
     publishability_state: publishabilityState,
     retailer_link_state: retailerLinkState,
@@ -678,7 +745,11 @@ export async function buildBuckpartsCommandSurfaceReport(
     learningOutcomesMetrics = unknownLearningOutcomesMetrics("UNKNOWN_NOT_QUERIED");
     learningOutcomesContractStatus = "UNKNOWN_NOT_QUERIED";
   }
-  const stateSystemMetrics = buildStateSystemMetrics();
+  const stateSystemMetrics = buildStateSystemMetrics({
+    checks,
+    abs,
+    readTextFile,
+  });
   let previousSnapshotRaw: string | null = null;
   if (checks.previous_command_surface_snapshot) {
     try {
