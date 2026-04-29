@@ -11,6 +11,7 @@ test("report is read_only true and data_mutation false", () => {
     { filters: [], links: [] },
     () => new Date("2026-04-29T00:00:00.000Z"),
   );
+  assert.equal(report.runtime_status, "OK");
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
 });
@@ -23,7 +24,7 @@ test("excludes proven-dead target tokens from candidates", () => {
           id: "f-1",
           slug: "frig-242017801",
           oem_part_number: "242017801",
-          brand_slug: "frigidaire",
+          brand_id: "b-frigidaire",
         },
       ],
       links: [
@@ -54,7 +55,7 @@ test("includes candidate with blocked oem and non-oem rows", () => {
           id: "f-2",
           slug: "wf3cb",
           oem_part_number: "WF3CB",
-          brand_slug: "frigidaire",
+          brand_id: "b-frigidaire",
         },
       ],
       links: [
@@ -97,7 +98,7 @@ test("does not claim immediate CTA improvement when direct_buyable non-oem is ze
           id: "f-3",
           slug: "ultrawf",
           oem_part_number: "ULTRAWF",
-          brand_slug: "frigidaire",
+          brand_id: "b-frigidaire",
         },
       ],
       links: [
@@ -135,7 +136,22 @@ test("unknown payload when source query fails", async () => {
       throw new Error("db unavailable");
     },
   });
+  assert.equal(report.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
   assert.equal(report.candidates.length, 0);
   assert.equal(report.known_unknowns.length > 0, true);
+});
+
+test("empty but readable dataset returns OK with no known unknowns", () => {
+  const report = buildFrigidaireNextMonetizableCandidatesReportFromData(
+    { filters: [], links: [] },
+    () => new Date("2026-04-29T00:00:00.000Z"),
+  );
+  assert.equal(report.runtime_status, "OK");
+  assert.equal(report.candidates.length, 0);
+  assert.deepEqual(report.known_unknowns, []);
+  assert.equal(
+    report.recommended_next_action,
+    "No Frigidaire candidate with blocked OEM plus non-OEM link exists in current data.",
+  );
 });
 

@@ -13,7 +13,7 @@ type FilterRow = {
   id: string;
   slug: string | null;
   oem_part_number: string | null;
-  brand_slug: string | null;
+  brand_id: string | null;
 };
 
 type RetailerLinkRow = {
@@ -35,6 +35,7 @@ type CandidateRow = {
 export type FrigidaireNextMonetizableCandidatesReport = {
   report_name: "buckparts_frigidaire_next_monetizable_candidates_v1";
   generated_at: string;
+  runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE";
   read_only: true;
   data_mutation: false;
   excluded_tokens: string[];
@@ -58,12 +59,23 @@ async function fetchDataViaSupabase(): Promise<FetchResult> {
   const supabase = getSupabaseAdmin();
   const pageSize = 1000;
 
+  const { data: brandRows, error: brandError } = await supabase
+    .from("brands")
+    .select("id")
+    .eq("slug", "frigidaire")
+    .limit(1);
+  if (brandError) throw brandError;
+  const frigidaireBrandId = brandRows?.[0]?.id;
+  if (typeof frigidaireBrandId !== "string" || frigidaireBrandId.trim().length === 0) {
+    return { filters: [], links: [] };
+  }
+
   const filters: FilterRow[] = [];
   for (let from = 0; ; from += pageSize) {
     const { data, error } = await supabase
       .from("filters")
-      .select("id,slug,oem_part_number,brand_slug")
-      .eq("brand_slug", "frigidaire")
+      .select("id,slug,oem_part_number,brand_id")
+      .eq("brand_id", frigidaireBrandId)
       .range(from, from + pageSize - 1);
     if (error) throw error;
     const chunk = (data ?? []) as FilterRow[];
@@ -121,6 +133,9 @@ function buildRecommendedAction(directBuyableNonOemCount: number): string {
 function buildRecommendedNextAction(candidates: CandidateRow[]): string {
   if (candidates.some((row) => row.direct_buyable_non_oem_count > 0)) {
     return "Start with candidates already containing direct_buyable non-OEM links and promote safely after final review.";
+  }
+  if (candidates.length === 0) {
+    return "No Frigidaire candidate with blocked OEM plus non-OEM link exists in current data.";
   }
   return "No immediate safe-CTA uplift candidates are proven; gather browser-truth evidence for non-OEM links first.";
 }
@@ -185,6 +200,7 @@ export function buildFrigidaireNextMonetizableCandidatesReportFromData(
   return {
     report_name: "buckparts_frigidaire_next_monetizable_candidates_v1",
     generated_at: now().toISOString(),
+    runtime_status: "OK",
     read_only: true,
     data_mutation: false,
     excluded_tokens: [...EXCLUDED_TOKENS],
@@ -205,6 +221,7 @@ export async function buildFrigidaireNextMonetizableCandidatesReport(
     return {
       report_name: "buckparts_frigidaire_next_monetizable_candidates_v1",
       generated_at: now().toISOString(),
+      runtime_status: "UNKNOWN_DB_UNAVAILABLE",
       read_only: true,
       data_mutation: false,
       excluded_tokens: [...EXCLUDED_TOKENS],
