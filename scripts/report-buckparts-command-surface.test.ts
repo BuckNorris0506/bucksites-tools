@@ -369,7 +369,7 @@ test("mock CTA rows produce correct counts", async () => {
   );
 });
 
-test("retailer_link_state_metrics UNKNOWN when insufficient inputs", async () => {
+test("missing browser truth row maps BLOCKED_BROWSER_TRUTH_MISSING", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
     fetchCtaCoverageRows: async () => [
@@ -385,9 +385,12 @@ test("retailer_link_state_metrics UNKNOWN when insufficient inputs", async () =>
       },
     ],
   });
-  assert.equal(report.retailer_link_state_metrics.runtime_status, "UNKNOWN");
-  assert.equal(report.retailer_link_state_metrics.distribution, "UNKNOWN");
-  assert.equal(report.retailer_link_state_metrics.total_links, "UNKNOWN");
+  assert.equal(report.retailer_link_state_metrics.runtime_status, "OK");
+  assert.equal(report.retailer_link_state_metrics.total_links, 2);
+  assert.deepEqual(report.retailer_link_state_metrics.distribution, {
+    LIVE_DIRECT_BUYABLE: 1,
+    BLOCKED_BROWSER_TRUTH_MISSING: 1,
+  });
 });
 
 test("retailer_link_state_metrics mock rows produce correct counts", async () => {
@@ -413,7 +416,6 @@ test("retailer_link_state_metrics mock rows produce correct counts", async () =>
         retailer_key: "r3",
         affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/5",
         browser_truth_classification: "likely_valid",
-        gate_failure_kind: "blocked_by_buy_link_policy",
       },
     ],
   });
@@ -421,8 +423,24 @@ test("retailer_link_state_metrics mock rows produce correct counts", async () =>
   assert.equal(report.retailer_link_state_metrics.total_links, 4);
   assert.deepEqual(report.retailer_link_state_metrics.distribution, {
     LIVE_DIRECT_BUYABLE: 1,
-    LIVE_LIKELY_VALID_NON_BUYABLE: 2,
-    CANDIDATE_PENDING_REVIEW: 1,
+    BLOCKED_BROWSER_TRUTH_UNSAFE: 3,
+  });
+});
+
+test("direct_buyable blocked/search URL maps blocked state", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=filter",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(report.retailer_link_state_metrics.runtime_status, "OK");
+  assert.deepEqual(report.retailer_link_state_metrics.distribution, {
+    BLOCKED_SEARCH_OR_DISCOVERY: 1,
   });
 });
 
@@ -1038,6 +1056,29 @@ test("system_health reacts to UNKNOWN retailer_link_state_metrics", () => {
     },
   });
   assert.equal(health.status, "CRITICAL");
+});
+
+test("system_health does not include retailer_link_state_metrics UNKNOWN when CTA data exists", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000010",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/10",
+        browser_truth_classification: null,
+      },
+    ],
+  });
+  assert.equal(report.retailer_link_state_metrics.runtime_status, "OK");
+  assert.equal(
+    report.system_health.reasons.includes("retailer_link_state_metrics.runtime_status is UNKNOWN"),
+    false,
+  );
 });
 
 test("system_health WARNING when BLOCKED_* exceeds LIVE_*", () => {

@@ -449,20 +449,16 @@ function unknownRetailerLinkStateMetrics(): CommandSurfaceReport["retailer_link_
 function buildRetailerLinkStateMetricsFromRows(
   rows: CtaCoverageRow[],
 ): CommandSurfaceReport["retailer_link_state_metrics"] {
-  const hasMissingRequiredSignals = rows.some(
-    (row) =>
-      row.browser_truth_classification == null ||
-      row.browser_truth_classification.trim().length === 0,
-  );
-  if (hasMissingRequiredSignals) {
-    return unknownRetailerLinkStateMetrics();
-  }
-
   const distribution: Record<string, number> = {};
   for (const row of rows) {
+    const gateFailureKind = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
     const state = mapSignalsToRetailerLinkState({
       browserTruthClassification: row.browser_truth_classification,
-      gateFailureKind: row.gate_failure_kind ?? null,
+      gateFailureKind,
     });
     distribution[state] = (distribution[state] ?? 0) + 1;
   }
