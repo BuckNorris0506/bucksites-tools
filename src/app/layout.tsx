@@ -7,6 +7,7 @@ import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_DISPLAY_NAME,
 } from "@/lib/site-brand";
+import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,9 +27,7 @@ const impactVerificationValue = "bd3fcd9a-5fb7-4016-b37d-afad3a592b71";
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: new URL(getRequiredSiteUrl()),
   title: {
     default: `${siteName} — Replacement filters & parts lookup`,
     template: `%s · ${siteName}`,

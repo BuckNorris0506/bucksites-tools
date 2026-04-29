@@ -6,11 +6,12 @@ import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
+import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const PAGE = 1000;
 
 function siteBase(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  return getRequiredSiteUrl();
 }
 
 function abs(path: string): string {
