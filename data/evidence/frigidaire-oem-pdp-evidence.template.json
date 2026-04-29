@@ -1,0 +1,63 @@
+[
+  {
+    "token": "242017801",
+    "current_search_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242017801",
+    "direct_pdp_url": null,
+    "exact_token_visible": null,
+    "product_title": null,
+    "buyability_signal": null,
+    "browser_truth_classification_candidate": null,
+    "decision": "UNKNOWN",
+    "evidence_notes": null,
+    "checked_at": null
+  },
+  {
+    "token": "242086201",
+    "current_search_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242086201",
+    "direct_pdp_url": null,
+    "exact_token_visible": null,
+    "product_title": null,
+    "buyability_signal": null,
+    "browser_truth_classification_candidate": null,
+    "decision": "UNKNOWN",
+    "evidence_notes": null,
+    "checked_at": null
+  },
+  {
+    "token": "242294502",
+    "current_search_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242294502",
+    "direct_pdp_url": null,
+    "exact_token_visible": null,
+    "product_title": null,
+    "buyability_signal": null,
+    "browser_truth_classification_candidate": null,
+    "decision": "UNKNOWN",
+    "evidence_notes": null,
+    "checked_at": null
+  },
+  {
+    "token": "EPTWFU01",
+    "current_search_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=EPTWFU01",
+    "direct_pdp_url": null,
+    "exact_token_visible": null,
+    "product_title": null,
+    "buyability_signal": null,
+    "browser_truth_classification_candidate": null,
+    "decision": "UNKNOWN",
+    "evidence_notes": null,
+    "checked_at": null
+  },
+  {
+    "token": "FPPWFU01",
+    "current_search_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+    "direct_pdp_url": null,
+    "exact_token_visible": null,
+    "product_title": null,
+    "buyability_signal": null,
+    "browser_truth_classification_candidate": null,
+    "decision": "UNKNOWN",
+    "evidence_notes": null,
+    "checked_at": null
+  }
+]
+
