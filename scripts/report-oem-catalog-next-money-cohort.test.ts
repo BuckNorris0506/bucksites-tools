@@ -105,6 +105,63 @@ test("domain ranking desc then lexical, candidate ranking prefers refrigerator t
   }
 });
 
+test("recommended cohort must be an actionable table-domain pair", () => {
+  const report = buildOemCatalogNextMoneyCohortReportFromRows(
+    [
+      {
+        table: "air_purifier_retailer_links",
+        rows: [
+          {
+            id: "air-r1",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://www.repairclinic.com/Search?SearchTerm=AP1",
+            browser_truth_classification: null,
+          },
+          {
+            id: "air-r2",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://www.repairclinic.com/Search?SearchTerm=AP2",
+            browser_truth_classification: null,
+          },
+        ],
+      },
+      {
+        table: "retailer_links",
+        rows: [
+          {
+            id: "fr-w1",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://www.whirlpoolparts.com/catalog.jsp?searchKeyword=W1",
+            browser_truth_classification: null,
+          },
+          {
+            id: "fr-w2",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://www.whirlpoolparts.com/catalog.jsp?searchKeyword=W2",
+            browser_truth_classification: null,
+          },
+          {
+            id: "fr-w3",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://www.whirlpoolparts.com/catalog.jsp?searchKeyword=W3",
+            browser_truth_classification: null,
+          },
+        ],
+      },
+    ],
+    () => new Date("2026-04-29T00:00:00.000Z"),
+  );
+
+  assert.equal(
+    report.recommended_next_cohort.includes("retailer_links rows on domain www.whirlpoolparts.com"),
+    true,
+  );
+  assert.equal(
+    report.recommended_next_cohort.includes("air_purifier_retailer_links rows on domain www.whirlpoolparts.com"),
+    false,
+  );
+});
+
 test("top candidate rows limited to 25", () => {
   const rows = Array.from({ length: 40 }, (_, i) => ({
     id: `id-${i + 1}`,

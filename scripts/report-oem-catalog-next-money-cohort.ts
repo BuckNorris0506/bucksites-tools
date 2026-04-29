@@ -148,15 +148,32 @@ function countBy<T extends string>(
 }
 
 function buildRecommendedNextCohort(
-  topDomains: Array<{ domain: string; blocked_count: number }>,
-  topTables: Array<{ table: string; blocked_count: number }>,
+  topCandidateRows: CandidateRow[],
 ): string {
-  const topDomain = topDomains[0]?.domain;
-  const topTable = topTables[0]?.table;
-  if (!topDomain || !topTable) {
+  if (topCandidateRows.length === 0) {
     return "No remaining non-Frigidaire OEM blocked-search cohort is currently available.";
   }
-  return `Start with ${topTable} rows on domain ${topDomain} (highest remaining blocked-search concentration).`;
+  const pairCounts = new Map<string, { table: string; domain: string; count: number }>();
+  for (const row of topCandidateRows) {
+    const key = `${row.table}||${row.domain}`;
+    const existing = pairCounts.get(key);
+    if (existing) {
+      existing.count += 1;
+    } else {
+      pairCounts.set(key, { table: row.table, domain: row.domain, count: 1 });
+    }
+  }
+  const bestPair = Array.from(pairCounts.values()).sort((a, b) => {
+    return (
+      b.count - a.count ||
+      tablePriority(a.table) - tablePriority(b.table) ||
+      a.domain.localeCompare(b.domain)
+    );
+  })[0];
+  if (!bestPair || bestPair.count < 1) {
+    return "No remaining non-Frigidaire OEM blocked-search cohort is currently available.";
+  }
+  return `Start with ${bestPair.table} rows on domain ${bestPair.domain} (highest actionable blocked-search concentration).`;
 }
 
 export function buildOemCatalogNextMoneyCohortReportFromRows(
@@ -228,7 +245,7 @@ export function buildOemCatalogNextMoneyCohortReportFromRows(
     top_domains: topDomains,
     top_tables: topTables,
     top_candidate_rows: topCandidateRows,
-    recommended_next_cohort: buildRecommendedNextCohort(topDomains, topTables),
+    recommended_next_cohort: buildRecommendedNextCohort(topCandidateRows),
     known_unknowns: [],
   };
 }
