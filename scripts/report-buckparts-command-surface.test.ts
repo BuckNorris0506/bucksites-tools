@@ -32,6 +32,7 @@ test("all required top-level keys exist", async () => {
     "learning_outcomes_metrics",
     "cta_coverage_metrics",
     "retailer_link_state_metrics",
+    "blocked_retailer_link_remediation",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -319,6 +320,18 @@ test("retailer_link_state_metrics exists", async () => {
   );
 });
 
+test("blocked_retailer_link_remediation UNKNOWN when CTA unavailable", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => {
+      throw new Error("db unavailable");
+    },
+  });
+  assert.equal(report.blocked_retailer_link_remediation.runtime_status, "UNKNOWN");
+  assert.equal(report.blocked_retailer_link_remediation.top_blocked_states, "UNKNOWN");
+  assert.equal(report.blocked_retailer_link_remediation.top_blocked_retailer_keys, "UNKNOWN");
+});
+
 test("CTA DB unavailable returns UNKNOWN_DB_UNAVAILABLE with UNKNOWN counts", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
@@ -425,6 +438,142 @@ test("retailer_link_state_metrics mock rows produce correct counts", async () =>
     LIVE_DIRECT_BUYABLE: 1,
     BLOCKED_BROWSER_TRUTH_UNSAFE: 3,
   });
+});
+
+test("blocked remediation top blocked states sorted by count then lexical", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=1",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=2",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-a",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/1",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-b",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/2",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-c",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/3",
+        browser_truth_classification: "likely_valid",
+      },
+    ],
+  });
+  assert.equal(report.blocked_retailer_link_remediation.runtime_status, "OK");
+  assert.deepEqual(report.blocked_retailer_link_remediation.top_blocked_states, [
+    { state: "BLOCKED_BROWSER_TRUTH_MISSING", count: 2 },
+    { state: "BLOCKED_SEARCH_OR_DISCOVERY", count: 2 },
+    { state: "BLOCKED_BROWSER_TRUTH_UNSAFE", count: 1 },
+  ]);
+});
+
+test("blocked remediation top retailer keys sorted by count", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=1",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=2",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-a",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/1",
+        browser_truth_classification: null,
+      },
+    ],
+  });
+  assert.deepEqual(report.blocked_retailer_link_remediation.top_blocked_retailer_keys, [
+    { retailer_key: "google-search", count: 2 },
+    { retailer_key: "oem-a", count: 1 },
+  ]);
+});
+
+test("blocked remediation excludes LIVE states", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000011",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=filter",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  const topStates = report.blocked_retailer_link_remediation.top_blocked_states;
+  assert.equal(Array.isArray(topStates), true);
+  if (Array.isArray(topStates)) {
+    assert.equal(topStates.some((entry) => entry.state.startsWith("LIVE_")), false);
+  }
+});
+
+test("blocked remediation recommended action follows top blocked state", async () => {
+  const searchTop = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=filter",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(
+    searchTop.blocked_retailer_link_remediation.recommended_next_action,
+    "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+  );
+
+  const unsafeTop = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/11",
+        browser_truth_classification: "likely_valid",
+      },
+    ],
+  });
+  assert.equal(
+    unsafeTop.blocked_retailer_link_remediation.recommended_next_action,
+    "Recheck browser-truth evidence for highest-volume unsafe retailer keys.",
+  );
+
+  const missingTop = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12",
+        browser_truth_classification: null,
+      },
+    ],
+  });
+  assert.equal(
+    missingTop.blocked_retailer_link_remediation.recommended_next_action,
+    "Collect browser-truth evidence for rows missing verification.",
+  );
 });
 
 test("direct_buyable blocked/search URL maps blocked state", async () => {

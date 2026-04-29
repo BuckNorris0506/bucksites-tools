@@ -106,6 +106,13 @@ export type CommandSurfaceReport = {
     distribution: Record<string, number> | "UNKNOWN";
     total_links: number | "UNKNOWN";
   };
+  blocked_retailer_link_remediation: {
+    source: "derived_from_cta_coverage_dataset";
+    runtime_status: "OK" | "UNKNOWN";
+    top_blocked_states: Array<{ state: string; count: number }> | "UNKNOWN";
+    top_blocked_retailer_keys: Array<{ retailer_key: string; count: number }> | "UNKNOWN";
+    recommended_next_action: string;
+  };
   state_system_metrics: {
     source: "local_contracts_and_available_local_data";
     runtime_status: "OK" | "PARTIAL" | "UNKNOWN_NO_DATA";
@@ -446,6 +453,17 @@ function unknownRetailerLinkStateMetrics(): CommandSurfaceReport["retailer_link_
   };
 }
 
+function unknownBlockedRetailerLinkRemediation(): CommandSurfaceReport["blocked_retailer_link_remediation"] {
+  return {
+    source: "derived_from_cta_coverage_dataset",
+    runtime_status: "UNKNOWN",
+    top_blocked_states: "UNKNOWN",
+    top_blocked_retailer_keys: "UNKNOWN",
+    recommended_next_action:
+      "CTA coverage dataset unavailable; blocked-state remediation queue cannot be derived.",
+  };
+}
+
 function buildRetailerLinkStateMetricsFromRows(
   rows: CtaCoverageRow[],
 ): CommandSurfaceReport["retailer_link_state_metrics"] {
@@ -468,6 +486,77 @@ function buildRetailerLinkStateMetricsFromRows(
     runtime_status: "OK",
     distribution,
     total_links: rows.length,
+  };
+}
+
+function sortCountsDescThenLexical(
+  counts: Record<string, number>,
+): Array<{ key: string; count: number }> {
+  return Object.entries(counts)
+    .map(([key, count]) => ({ key, count }))
+    .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key));
+}
+
+function recommendedBlockedRemediationAction(topState: string | null): string {
+  if (topState === "BLOCKED_SEARCH_OR_DISCOVERY") {
+    return "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.";
+  }
+  if (topState === "BLOCKED_BROWSER_TRUTH_UNSAFE") {
+    return "Recheck browser-truth evidence for highest-volume unsafe retailer keys.";
+  }
+  if (topState === "BLOCKED_BROWSER_TRUTH_MISSING") {
+    return "Collect browser-truth evidence for rows missing verification.";
+  }
+  return "Review highest-volume blocked retailer-link states.";
+}
+
+function buildBlockedRetailerLinkRemediationFromRows(
+  rows: CtaCoverageRow[],
+): CommandSurfaceReport["blocked_retailer_link_remediation"] {
+  const blockedStateCounts: Record<string, number> = {};
+  const blockedRetailerKeyCounts: Record<string, number> = {};
+
+  for (const row of rows) {
+    const gateFailureKind = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
+    const state = mapSignalsToRetailerLinkState({
+      browserTruthClassification: row.browser_truth_classification,
+      gateFailureKind,
+    });
+    if (!state.startsWith("BLOCKED_")) {
+      continue;
+    }
+    blockedStateCounts[state] = (blockedStateCounts[state] ?? 0) + 1;
+
+    const retailerKey =
+      typeof row.retailer_key === "string" && row.retailer_key.trim().length > 0
+        ? row.retailer_key
+        : "(unknown_retailer)";
+    blockedRetailerKeyCounts[retailerKey] = (blockedRetailerKeyCounts[retailerKey] ?? 0) + 1;
+  }
+
+  const topBlockedStates = sortCountsDescThenLexical(blockedStateCounts).map((entry) => ({
+    state: entry.key,
+    count: entry.count,
+  }));
+  const topBlockedRetailerKeys = sortCountsDescThenLexical(blockedRetailerKeyCounts).map(
+    (entry) => ({
+      retailer_key: entry.key,
+      count: entry.count,
+    }),
+  );
+
+  return {
+    source: "derived_from_cta_coverage_dataset",
+    runtime_status: "OK",
+    top_blocked_states: topBlockedStates,
+    top_blocked_retailer_keys: topBlockedRetailerKeys,
+    recommended_next_action: recommendedBlockedRemediationAction(
+      topBlockedStates[0]?.state ?? null,
+    ),
   };
 }
 
@@ -991,6 +1080,8 @@ export async function buildBuckpartsCommandSurfaceReport(
     unknownCtaCoverageMetrics("UNKNOWN_NOT_QUERIED");
   let retailerLinkStateMetrics: CommandSurfaceReport["retailer_link_state_metrics"] =
     unknownRetailerLinkStateMetrics();
+  let blockedRetailerLinkRemediation: CommandSurfaceReport["blocked_retailer_link_remediation"] =
+    unknownBlockedRetailerLinkRemediation();
   const shouldQueryCtaCoverage = options.skipCtaCoverageQuery !== true;
   if (shouldQueryCtaCoverage) {
     const fetchCtaRows = options.fetchCtaCoverageRows ?? readCtaCoverageRowsViaSupabase;
@@ -998,9 +1089,11 @@ export async function buildBuckpartsCommandSurfaceReport(
       const rows = await fetchCtaRows();
       ctaCoverageMetrics = buildCtaCoverageMetricsFromRows(rows);
       retailerLinkStateMetrics = buildRetailerLinkStateMetricsFromRows(rows);
+      blockedRetailerLinkRemediation = buildBlockedRetailerLinkRemediationFromRows(rows);
     } catch {
       ctaCoverageMetrics = unknownCtaCoverageMetrics("UNKNOWN_DB_UNAVAILABLE");
       retailerLinkStateMetrics = unknownRetailerLinkStateMetrics();
+      blockedRetailerLinkRemediation = unknownBlockedRetailerLinkRemediation();
     }
   }
   const stateSystemMetrics = buildStateSystemMetrics({
@@ -1135,6 +1228,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     learning_outcomes_metrics: learningOutcomesMetrics,
     cta_coverage_metrics: ctaCoverageMetrics,
     retailer_link_state_metrics: retailerLinkStateMetrics,
+    blocked_retailer_link_remediation: blockedRetailerLinkRemediation,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
