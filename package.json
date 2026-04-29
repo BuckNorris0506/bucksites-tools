@@ -59,6 +59,7 @@
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
     "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
+    "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",
     "test:whw-search-nav": "node --import tsx --test src/lib/data/whole-house-water-search-nav.test.ts",
     "buckparts:staged-filter:review-brand": "tsx scripts/review-staged-filter-brand-refrigerator.ts",
     "buckparts:staged-filter:apply-brand": "tsx scripts/apply-staged-filter-brand-refrigerator.ts",
