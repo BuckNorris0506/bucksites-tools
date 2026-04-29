@@ -72,6 +72,101 @@ test("sample rows limited to 25", async () => {
   }
 });
 
+test("prioritization order works", async () => {
+  const report = await buildBuckpartsOemCatalogBlockedDetailsReport({
+    fetchRows: async () => [
+      {
+        table: "air_purifier_retailer_links",
+        rows: [
+          {
+            id: "ap-1",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://ap.example.com/b",
+            browser_truth_classification: "likely_valid",
+          },
+        ],
+      },
+      {
+        table: "whole_house_water_retailer_links",
+        rows: [
+          {
+            id: "wh-1",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://wh.example.com/a",
+            browser_truth_classification: "likely_valid",
+          },
+        ],
+      },
+      {
+        table: "retailer_links",
+        rows: [
+          {
+            id: "fr-1",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://fr.example.com/b",
+            browser_truth_classification: "likely_valid",
+          },
+          {
+            id: "fr-2",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://fr.example.com/a",
+            browser_truth_classification: null,
+          },
+        ],
+      },
+    ],
+  });
+  assert.equal(Array.isArray(report.prioritized_rows), true);
+  if (Array.isArray(report.prioritized_rows)) {
+    assert.deepEqual(
+      report.prioritized_rows.map((row) => row.link_id),
+      ["fr-1", "fr-2", "wh-1", "ap-1"],
+    );
+    assert.deepEqual(
+      report.prioritized_rows.map((row) => row.priority_rank),
+      [1, 2, 3, 4],
+    );
+  }
+});
+
+test("priority_reason present on prioritized rows", async () => {
+  const report = await buildBuckpartsOemCatalogBlockedDetailsReport({
+    fetchRows: async () => [
+      {
+        table: "retailer_links",
+        rows: [
+          {
+            id: "fr-3",
+            retailer_key: "oem-catalog",
+            affiliate_url: "https://fr.example.com/c",
+            browser_truth_classification: null,
+          },
+        ],
+      },
+    ],
+  });
+  assert.equal(Array.isArray(report.prioritized_rows), true);
+  if (Array.isArray(report.prioritized_rows)) {
+    assert.equal(report.prioritized_rows[0]?.priority_reason.length > 0, true);
+  }
+});
+
+test("prioritized rows limited to 25", async () => {
+  const rows = Array.from({ length: 40 }, (_, i) => ({
+    id: `id-${i + 1}`,
+    retailer_key: "oem-catalog",
+    affiliate_url: `https://example.com/search?q=${i + 1}`,
+    browser_truth_classification: null as string | null,
+  }));
+  const report = await buildBuckpartsOemCatalogBlockedDetailsReport({
+    fetchRows: async () => [{ table: "retailer_links", rows }],
+  });
+  assert.equal(Array.isArray(report.prioritized_rows), true);
+  if (Array.isArray(report.prioritized_rows)) {
+    assert.equal(report.prioritized_rows.length, 25);
+  }
+});
+
 test("returns UNKNOWN payload when source data unavailable", async () => {
   const report = await buildBuckpartsOemCatalogBlockedDetailsReport({
     fetchRows: async () => {
@@ -82,6 +177,7 @@ test("returns UNKNOWN payload when source data unavailable", async () => {
   assert.equal(report.rows_by_table, "UNKNOWN");
   assert.equal(report.rows_by_blocked_state, "UNKNOWN");
   assert.equal(report.sample_rows, "UNKNOWN");
+  assert.equal(report.prioritized_rows, "UNKNOWN");
   assert.equal(report.known_unknowns.length > 0, true);
 });
 
