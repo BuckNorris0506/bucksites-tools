@@ -1,0 +1,49 @@
+{
+  "recorded_at": "2026-04-29T00:00:00.000Z",
+  "scope": "buckparts_phase3_step17_frigidaire_db_routing_outcome",
+  "read_only_record": true,
+  "db_mutation_performed_in_this_step": false,
+  "notes": "Evidence-only record of prior DB action from Phase 3 Step 16.",
+  "targets": [
+    {
+      "token": "242017801",
+      "db_row_updated_prior_step": true
+    },
+    {
+      "token": "242086201",
+      "db_row_updated_prior_step": true
+    },
+    {
+      "token": "242294502",
+      "db_row_updated_prior_step": true
+    },
+    {
+      "token": "EPTWFU01",
+      "db_row_updated_prior_step": true
+    },
+    {
+      "token": "FPPWFU01",
+      "db_row_updated_prior_step": true
+    }
+  ],
+  "db_routing_outcome": {
+    "dead_oem_rows_updated_count": 5,
+    "mutations_applied_prior_step": {
+      "is_primary_set_false": true,
+      "browser_truth_classification_set_to": "likely_not_found"
+    },
+    "aftermarket_availability": {
+      "valid_aftermarket_retailer_links_exist_for_target_slugs": false,
+      "aftermarket_cta_promotion_occurred": false
+    }
+  },
+  "command_surface_outcome_after_prior_step": {
+    "safe_cta_links": 50,
+    "blocked_or_unsafe_links": 202,
+    "system_health_status": "WARNING"
+  },
+  "claims_guardrail": {
+    "monetization_improved_claimed": false,
+    "safe_cta_links_increased_claimed": false
+  }
+}
