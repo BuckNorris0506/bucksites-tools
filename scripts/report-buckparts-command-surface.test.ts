@@ -161,7 +161,7 @@ test("affiliate tracker includes tag verification summary", async () => {
   assert.deepEqual(report.affiliate_tracker.tag_verification, {
     verified_count: 0,
     unverified_count: 1,
-    unknown_count: 5,
+    unknown_count: 6,
     unverified_records: ["amazon-associates"],
   });
 });

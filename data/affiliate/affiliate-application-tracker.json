@@ -100,5 +100,22 @@
     "tagVerified": null,
     "tagVerifiedAt": null,
     "tagValue": null
+  },
+  {
+    "id": "repairclinic",
+    "network": "UNKNOWN",
+    "retailer": "RepairClinic",
+    "programUrl": null,
+    "status": "NOT_STARTED",
+    "submittedAt": null,
+    "lastStatusAt": null,
+    "decisionAt": null,
+    "rejectionReason": null,
+    "nextAction": "Find and apply to RepairClinic affiliate program or network listing before prioritizing RepairClinic PDP evidence.",
+    "nextActionDueAt": "2026-04-29T00:00:00.000Z",
+    "notes": "User reported not applied to RepairClinic affiliate program.",
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   }
 ]

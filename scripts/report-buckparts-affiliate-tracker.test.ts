@@ -11,14 +11,14 @@ test("report is read_only true and data_mutation false", () => {
 
 test("counts records correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.record_count, 6);
+  assert.equal(report.record_count, 7);
 });
 
 test("counts statuses correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.equal(report.status_counts.REAPPLY_REQUIRED, 0);
   assert.equal(report.status_counts.DRAFTING, 0);
-  assert.equal(report.status_counts.NOT_STARTED, 1);
+  assert.equal(report.status_counts.NOT_STARTED, 2);
   assert.equal(report.status_counts.SUBMITTED, 1);
   assert.equal(report.status_counts.IN_REVIEW, 3);
   assert.equal(report.status_counts.APPROVED, 1);
@@ -117,7 +117,7 @@ test("includes tag verification summary", () => {
   assert.deepEqual(report.tag_verification, {
     verified_count: 0,
     unverified_count: 1,
-    unknown_count: 5,
+    unknown_count: 6,
     unverified_records: ["amazon-associates"],
   });
 });
