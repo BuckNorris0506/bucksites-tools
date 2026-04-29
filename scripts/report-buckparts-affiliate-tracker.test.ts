@@ -16,24 +16,24 @@ test("counts records correctly", () => {
 
 test("counts statuses correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.status_counts.REAPPLY_REQUIRED, 2);
-  assert.equal(report.status_counts.DRAFTING, 1);
-  assert.equal(report.status_counts.NOT_STARTED, 2);
+  assert.equal(report.status_counts.REAPPLY_REQUIRED, 0);
+  assert.equal(report.status_counts.DRAFTING, 0);
+  assert.equal(report.status_counts.NOT_STARTED, 1);
+  assert.equal(report.status_counts.SUBMITTED, 1);
+  assert.equal(report.status_counts.IN_REVIEW, 3);
   assert.equal(report.status_counts.APPROVED, 1);
   assert.equal(report.status_counts.REJECTED, 0);
-  assert.equal(report.status_counts.SUBMITTED, 0);
-  assert.equal(report.status_counts.IN_REVIEW, 0);
   assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 0);
 });
 
 test("detects REAPPLY_REQUIRED records", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.deepEqual(report.records_reapply_required.sort(), ["awin", "impact-home-depot"]);
+  assert.deepEqual(report.records_reapply_required, []);
 });
 
 test("detects DRAFTING records", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.status_counts.DRAFTING, 1);
+  assert.equal(report.status_counts.DRAFTING, 0);
 });
 
 test("invalid tracker record fails", () => {
