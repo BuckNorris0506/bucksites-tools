@@ -25,6 +25,9 @@ export type AffiliateApplicationRecord = {
   nextAction: string | null;
   nextActionDueAt: string | null;
   notes: string | null;
+  tagVerified: boolean | null;
+  tagVerifiedAt: string | null;
+  tagValue: string | null;
 };
 
 function isNonEmptyString(value: unknown): value is string {
@@ -54,6 +57,14 @@ function isNullableIsoDateString(value: unknown): value is string | null {
   return value === null || isIsoDateString(value);
 }
 
+function isNullableBoolean(value: unknown): value is boolean | null {
+  return value === null || typeof value === "boolean";
+}
+
+function isNullableNonEmptyString(value: unknown): value is string | null {
+  return value === null || isNonEmptyString(value);
+}
+
 export function isValidAffiliateApplicationRecord(
   input: unknown,
 ): input is AffiliateApplicationRecord {
@@ -72,6 +83,9 @@ export function isValidAffiliateApplicationRecord(
   if (!isNullableString(value.nextAction)) return false;
   if (!isNullableIsoDateString(value.nextActionDueAt)) return false;
   if (!isNullableString(value.notes)) return false;
+  if (!isNullableBoolean(value.tagVerified)) return false;
+  if (!isNullableIsoDateString(value.tagVerifiedAt)) return false;
+  if (!isNullableNonEmptyString(value.tagValue)) return false;
 
   return true;
 }

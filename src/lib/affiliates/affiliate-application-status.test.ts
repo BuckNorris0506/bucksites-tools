@@ -23,6 +23,9 @@ function buildValidRecord() {
     nextAction: "Reapply with updated traffic and trust pages",
     nextActionDueAt: null,
     notes: null,
+    tagVerified: null,
+    tagVerifiedAt: null,
+    tagValue: null,
   };
 }
 
@@ -81,8 +84,35 @@ test("nullable fields allowed", () => {
     rejectionReason: null,
     nextAction: null,
     notes: null,
+    tagVerified: null,
+    tagVerifiedAt: null,
+    tagValue: null,
   };
   assert.equal(isValidAffiliateApplicationRecord(record), true);
+});
+
+test("tagVerified must be boolean or null", () => {
+  const record = {
+    ...buildValidRecord(),
+    tagVerified: "false",
+  };
+  assert.equal(isValidAffiliateApplicationRecord(record), false);
+});
+
+test("tagVerifiedAt must be null or ISO datetime", () => {
+  const record = {
+    ...buildValidRecord(),
+    tagVerifiedAt: "not-a-date",
+  };
+  assert.equal(isValidAffiliateApplicationRecord(record), false);
+});
+
+test("tagValue must be null or non-empty string", () => {
+  const record = {
+    ...buildValidRecord(),
+    tagValue: "   ",
+  };
+  assert.equal(isValidAffiliateApplicationRecord(record), false);
 });
 
 test("starter tracker JSON records all validate", () => {

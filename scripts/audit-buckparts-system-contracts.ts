@@ -113,6 +113,32 @@ function checkAmazonAffiliateTruthAlignment(
   }
 }
 
+function checkAmazonAffiliateTagVerification(
+  failures: AuditFailure[],
+  sources: AuditSources,
+): void {
+  const tracker = parseJson<
+    Array<{ id?: unknown; status?: unknown; tagVerified?: unknown }>
+  >(sources.affiliateTrackerJson);
+  const tag = extractAmazonTag(sources.goRedirectGate);
+  if (tag == null || tracker == null) return;
+
+  const amazonRecord = tracker.find((record) => record.id === "amazon-associates");
+  if (!amazonRecord || amazonRecord.status !== "APPROVED") return;
+  if (amazonRecord.tagVerified !== true) {
+    addFailure(failures, {
+      id: "amazon_affiliate_tag_unverified",
+      severity: "HIGH",
+      system: "affiliate_tracker_tag_verification",
+      message:
+        "Amazon affiliate tag is configured and account is APPROVED, but tracker does not prove tag verification.",
+      evidence: `AMAZON_AFFILIATE_TAG=${tag}; amazon-associates.tagVerified=${String(amazonRecord.tagVerified)}`,
+      recommended_fix:
+        "Keep APPROVED status, but set amazon-associates.tagVerified=true only after exact tag proof is confirmed.",
+    });
+  }
+}
+
 function checkTestRunnerWired(failures: AuditFailure[], sources: AuditSources): void {
   const pkg = parseJson<{ scripts?: Record<string, string> }>(sources.packageJson);
   if (pkg == null) return;
@@ -246,6 +272,7 @@ export function evaluateBuckpartsSystemContractAudit(
 
   checkLearningOutcomesSchemaVsWriter(failures, sources);
   checkAmazonAffiliateTruthAlignment(failures, sources);
+  checkAmazonAffiliateTagVerification(failures, sources);
   checkTestRunnerWired(failures, sources);
   checkCommandSurfaceTruthFields(failures, sources);
   checkFrozenScriptsExposure(failures, sources);

@@ -22,6 +22,12 @@ export type AffiliateTrackerReport = {
   records_reapply_required: string[];
   records_approved: string[];
   records_rejected: string[];
+  tag_verification: {
+    verified_count: number;
+    unverified_count: number;
+    unknown_count: number;
+    unverified_records: string[];
+  };
   known_unknowns: string[];
   recommended_next_action: string;
 };
@@ -113,6 +119,14 @@ export function buildBuckpartsAffiliateTrackerReport(
   const records_rejected = records
     .filter((record) => record.status === AFFILIATE_APPLICATION_STATUSES.REJECTED)
     .map((record) => record.id);
+  const tag_verification = {
+    verified_count: records.filter((record) => record.tagVerified === true).length,
+    unverified_count: records.filter((record) => record.tagVerified === false).length,
+    unknown_count: records.filter((record) => record.tagVerified === null).length,
+    unverified_records: records
+      .filter((record) => record.tagVerified === false)
+      .map((record) => record.id),
+  };
 
   const known_unknowns = records
     .filter((record) => typeof record.notes === "string" && record.notes.toUpperCase().includes("UNKNOWN"))
@@ -129,6 +143,7 @@ export function buildBuckpartsAffiliateTrackerReport(
     records_reapply_required,
     records_approved,
     records_rejected,
+    tag_verification,
     known_unknowns,
     recommended_next_action: getRecommendedNextAction(status_counts),
   };

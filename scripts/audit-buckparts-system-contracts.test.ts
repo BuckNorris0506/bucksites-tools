@@ -9,7 +9,7 @@ function baseSources() {
     learningOutcomesWriter:
       "const payload = { slug: input.slug, part_number: input.part_number };",
     affiliateTrackerJson: JSON.stringify([
-      { id: "amazon-associates", status: "APPROVED" },
+      { id: "amazon-associates", status: "APPROVED", tagVerified: true },
     ]),
     goRedirectGate: 'export const AMAZON_AFFILIATE_TAG = "buckparts20-20";',
     packageJson: JSON.stringify({
@@ -103,6 +103,22 @@ test("HIGH-only findings keep PASS and blocking false", () => {
   assert.equal(
     report.failures.some(
       (f) => f.id === "frozen_scripts_exposed_without_guard" && f.severity === "HIGH",
+    ),
+    true,
+  );
+});
+
+test("unverified amazon tag emits HIGH but stays PASS", () => {
+  const sources = baseSources();
+  sources.affiliateTrackerJson = JSON.stringify([
+    { id: "amazon-associates", status: "APPROVED", tagVerified: false },
+  ]);
+  const report = evaluateBuckpartsSystemContractAudit(sources);
+  assert.equal(report.status, "PASS");
+  assert.equal(report.blocking, false);
+  assert.equal(
+    report.failures.some(
+      (f) => f.id === "amazon_affiliate_tag_unverified" && f.severity === "HIGH",
     ),
     true,
   );

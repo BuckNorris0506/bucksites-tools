@@ -55,6 +55,9 @@ test("invalid tracker record fails", () => {
               nextAction: null,
               nextActionDueAt: null,
               notes: null,
+              tagVerified: null,
+              tagVerifiedAt: null,
+              tagValue: null,
             },
           ]),
       }),
@@ -79,6 +82,9 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
           nextAction: "Reapply",
           nextActionDueAt: null,
           notes: null,
+          tagVerified: null,
+          tagVerifiedAt: null,
+          tagValue: null,
         },
         {
           id: "b",
@@ -93,6 +99,9 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
           nextAction: "Draft",
           nextActionDueAt: null,
           notes: null,
+          tagVerified: null,
+          tagVerifiedAt: null,
+          tagValue: null,
         },
       ]),
   });
@@ -101,4 +110,14 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
     report.recommended_next_action,
     "Resolve reapply-required affiliate applications before expanding monetized link volume.",
   );
+});
+
+test("includes tag verification summary", () => {
+  const report = buildBuckpartsAffiliateTrackerReport();
+  assert.deepEqual(report.tag_verification, {
+    verified_count: 0,
+    unverified_count: 1,
+    unknown_count: 5,
+    unverified_records: ["amazon-associates"],
+  });
 });

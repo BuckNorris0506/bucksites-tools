@@ -11,7 +11,10 @@
     "rejectionReason": "generic rejection / did not meet criteria",
     "nextAction": "Reapply with updated site profile and compliance pages",
     "nextActionDueAt": null,
-    "notes": null
+    "notes": null,
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   },
   {
     "id": "impact-home-depot",
@@ -25,7 +28,10 @@
     "rejectionReason": "declined",
     "nextAction": "Reapply after demonstrating stronger approved-link coverage and traffic quality",
     "nextActionDueAt": null,
-    "notes": null
+    "notes": null,
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   },
   {
     "id": "cj",
@@ -39,7 +45,10 @@
     "rejectionReason": null,
     "nextAction": "Complete publisher profile and submit application",
     "nextActionDueAt": null,
-    "notes": null
+    "notes": null,
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   },
   {
     "id": "shareasale",
@@ -53,7 +62,10 @@
     "rejectionReason": null,
     "nextAction": "Evaluate fit and prepare submission packet",
     "nextActionDueAt": null,
-    "notes": null
+    "notes": null,
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   },
   {
     "id": "amazon-associates",
@@ -67,7 +79,10 @@
     "rejectionReason": null,
     "nextAction": "Confirm account/application state before launch ramp",
     "nextActionDueAt": null,
-    "notes": "User reported Amazon Associates approval. Exact tag verification remains UNKNOWN."
+    "notes": "User reported Amazon Associates approval. Exact tag verification remains UNKNOWN.",
+    "tagVerified": false,
+    "tagVerifiedAt": null,
+    "tagValue": "buckparts20-20"
   },
   {
     "id": "walmart",
@@ -81,6 +96,9 @@
     "rejectionReason": null,
     "nextAction": "Determine whether to apply directly or via network path",
     "nextActionDueAt": null,
-    "notes": "UNKNOWN"
+    "notes": "UNKNOWN",
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
   }
 ]

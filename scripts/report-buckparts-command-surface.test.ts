@@ -145,11 +145,24 @@ test("approved count is counted", async () => {
           nextAction: "Monitor conversion quality",
           nextActionDueAt: null,
           notes: null,
+          tagVerified: true,
+          tagVerifiedAt: "2026-04-28T00:00:00.000Z",
+          tagValue: "buckparts20-20",
         },
       ]),
   });
   assert.equal(report.affiliate_tracker.approved_count, 1);
   assert.equal(report.affiliate_tracker.health.status, "OK");
+});
+
+test("affiliate tracker includes tag verification summary", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport();
+  assert.deepEqual(report.affiliate_tracker.tag_verification, {
+    verified_count: 0,
+    unverified_count: 1,
+    unknown_count: 5,
+    unverified_records: ["amazon-associates"],
+  });
 });
 
 test("recommended next step changes when action required", async () => {
@@ -918,6 +931,32 @@ test("missing GSC export makes WARNING when no criticals", () => {
 test("zero approved affiliates makes WARNING when no criticals", () => {
   const health = computeSystemHealth({
     affiliate_tracker: { health: { status: "OK" }, approved_count: 0 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
+    retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "WARNING");
+});
+
+test("unverified affiliate tag makes WARNING when no criticals", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: {
+      health: { status: "OK" },
+      approved_count: 1,
+      tag_verification: {
+        verified_count: 0,
+        unverified_count: 1,
+        unknown_count: 0,
+        unverified_records: ["amazon-associates"],
+      },
+    } as never,
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
     state_system_metrics: { runtime_status: "PARTIAL" } as never,
     trend: { overall_trend: "FLAT" } as never,

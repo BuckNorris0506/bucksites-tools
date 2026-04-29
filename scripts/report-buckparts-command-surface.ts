@@ -147,6 +147,12 @@ export type CommandSurfaceReport = {
     status_counts: Record<AffiliateApplicationStatus, number> | null;
     reapply_required_count: number | null;
     approved_count: number | null;
+    tag_verification: {
+      verified_count: number;
+      unverified_count: number;
+      unknown_count: number;
+      unverified_records: string[];
+    } | null;
     known_unknowns: string[];
     health: {
       status: "OK" | "ACTION_REQUIRED" | "UNKNOWN";
@@ -817,6 +823,9 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
   if (input.affiliate_tracker.approved_count === 0) {
     warningReasons.push("affiliate_tracker.approved_count is 0");
   }
+  if ((input.affiliate_tracker.tag_verification?.unverified_count ?? 0) > 0) {
+    warningReasons.push("affiliate_tracker.tag_verification has unverified tags");
+  }
   if (
     input.cta_coverage_metrics.runtime_status === "OK" &&
     input.cta_coverage_metrics.safe_cta_links === 0
@@ -878,6 +887,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     status_counts: null,
     reapply_required_count: null,
     approved_count: null,
+    tag_verification: null,
     known_unknowns: [],
     health: {
       status: "UNKNOWN",
@@ -903,6 +913,14 @@ export async function buildBuckpartsCommandSurfaceReport(
             record.notes.toUpperCase().includes("UNKNOWN"),
         )
         .map((record) => `${record.id}: notes include UNKNOWN`);
+      const tagVerification = {
+        verified_count: records.filter((record) => record.tagVerified === true).length,
+        unverified_count: records.filter((record) => record.tagVerified === false).length,
+        unknown_count: records.filter((record) => record.tagVerified === null).length,
+        unverified_records: records
+          .filter((record) => record.tagVerified === false)
+          .map((record) => record.id),
+      };
 
       affiliateTracker = {
         tracker_present: true,
@@ -910,6 +928,7 @@ export async function buildBuckpartsCommandSurfaceReport(
         status_counts: statusCounts,
         reapply_required_count: reapplyRequiredCount,
         approved_count: approvedCount,
+        tag_verification: tagVerification,
         known_unknowns: affiliateKnownUnknowns,
         health:
           reapplyRequiredCount > 0
@@ -931,6 +950,7 @@ export async function buildBuckpartsCommandSurfaceReport(
         status_counts: null,
         reapply_required_count: null,
         approved_count: null,
+        tag_verification: null,
         known_unknowns: [],
         health: {
           status: "UNKNOWN",
