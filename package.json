@@ -63,6 +63,7 @@
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
     "buckparts:discover:frigidaire-oem-pdps": "tsx scripts/discover-frigidaire-oem-direct-pdp-candidates.ts",
     "buckparts:frigidaire-replacement-strategy": "tsx scripts/report-frigidaire-replacement-strategy.ts",
+    "buckparts:frigidaire-dead-oem-link-ids": "tsx scripts/report-frigidaire-dead-oem-link-ids.ts",
     "test:whw-search-nav": "node --import tsx --test src/lib/data/whole-house-water-search-nav.test.ts",
     "buckparts:staged-filter:review-brand": "tsx scripts/review-staged-filter-brand-refrigerator.ts",
     "buckparts:staged-filter:apply-brand": "tsx scripts/apply-staged-filter-brand-refrigerator.ts",
