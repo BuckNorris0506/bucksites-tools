@@ -67,6 +67,7 @@
     "buckparts:frigidaire-next-candidates": "tsx scripts/report-frigidaire-next-monetizable-candidates.ts",
     "buckparts:oem-next-money-cohort": "tsx scripts/report-oem-catalog-next-money-cohort.ts",
     "buckparts:repairclinic-air-blocked-details": "tsx scripts/report-repairclinic-air-purifier-blocked-details.ts",
+    "buckparts:repairclinic-fridge-blocked-details": "tsx scripts/report-repairclinic-refrigerator-blocked-details.ts",
     "test:whw-search-nav": "node --import tsx --test src/lib/data/whole-house-water-search-nav.test.ts",
     "buckparts:staged-filter:review-brand": "tsx scripts/review-staged-filter-brand-refrigerator.ts",
     "buckparts:staged-filter:apply-brand": "tsx scripts/apply-staged-filter-brand-refrigerator.ts",
