@@ -46,3 +46,9 @@ next-env.d.ts
 !data/filter_aliases.csv
 !data/compatibility_mappings.csv
 !data/retailer_links.csv
+
+# BuckParts local exports/snapshots (generated, volatile)
+/data/gsc/*
+/data/reports/*
+!/data/gsc/.gitkeep
+!/data/reports/.gitkeep
