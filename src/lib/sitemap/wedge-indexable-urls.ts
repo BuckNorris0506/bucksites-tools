@@ -6,6 +6,7 @@ import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
+import { getSitemapLaunchVerticals } from "@/lib/catalog/vertical-launch-state";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const PAGE = 1000;
@@ -115,22 +116,49 @@ export type SitemapUrl = {
   priority?: number;
 };
 
-export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
-  const now = new Date();
+function liveStaticPaths(now: Date): SitemapUrl[] {
+  const live = new Set(getSitemapLaunchVerticals());
   const staticPaths: SitemapUrl[] = [
     { url: abs("/"), lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: abs("/catalog"), lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { url: abs("/search"), lastModified: now, changeFrequency: "daily", priority: 0.85 },
-    { url: abs("/air-purifier"), lastModified: now, changeFrequency: "weekly", priority: 0.85 },
-    { url: abs("/air-purifier/search"), lastModified: now, changeFrequency: "weekly", priority: 0.75 },
-    { url: abs("/whole-house-water"), lastModified: now, changeFrequency: "weekly", priority: 0.85 },
-    {
-      url: abs("/whole-house-water/search"),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.75,
-    },
   ];
+
+  if (live.has("air-purifier")) {
+    staticPaths.push(
+      { url: abs("/air-purifier"), lastModified: now, changeFrequency: "weekly", priority: 0.85 },
+      {
+        url: abs("/air-purifier/search"),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.75,
+      },
+    );
+  }
+
+  if (live.has("whole-house-water")) {
+    staticPaths.push(
+      {
+        url: abs("/whole-house-water"),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.85,
+      },
+      {
+        url: abs("/whole-house-water/search"),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.75,
+      },
+    );
+  }
+
+  return staticPaths;
+}
+
+export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
+  const now = new Date();
+  const staticPaths = liveStaticPaths(now);
 
   const usefulFridge = await loadRefrigeratorUsefulFilterIds();
   const usefulAp = await loadAirPurifierUsefulFilterIds();
@@ -253,3 +281,7 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
 
   return [...staticPaths, ...dynamic];
 }
+
+export const __test_only__ = {
+  liveStaticPaths,
+};
