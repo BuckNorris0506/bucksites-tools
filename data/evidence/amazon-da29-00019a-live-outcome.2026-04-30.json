@@ -1,0 +1,44 @@
+{
+  "report_name": "buckparts_amazon_da29_00019a_live_outcome_v1",
+  "generated_at": "2026-04-30",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "DA29-00019A",
+  "committed_live_row": {
+    "link_id": "72029713-27b2-4598-bd4f-33ba5a0e22cc",
+    "filter_id": "7f84c6ad-b8ba-4b7e-98b6-c4f5c1d6cd7d",
+    "retailer_key": "amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G",
+    "destination_url": "https://www.amazon.com/dp/B019HPTP3G",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE"
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": 50,
+      "after": 51,
+      "delta": 1
+    },
+    "total_retailer_links": {
+      "before": 252,
+      "after": 253,
+      "delta": 1
+    },
+    "direct_buyable_links": {
+      "before": 50,
+      "after": 51,
+      "delta": 1
+    },
+    "live_direct_buyable": {
+      "before": 50,
+      "after": 51,
+      "delta": 1
+    }
+  },
+  "notes": [
+    "Evidence only. No DB mutation performed by this record.",
+    "No runtime code changes.",
+    "No revenue improvement claim."
+  ]
+}

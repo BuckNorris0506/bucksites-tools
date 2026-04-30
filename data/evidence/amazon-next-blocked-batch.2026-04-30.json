@@ -1,0 +1,106 @@
+{
+  "report_name": "buckparts_amazon_next_blocked_batch_v1",
+  "generated_at": "2026-04-30",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "focus_tokens": [
+    "ADQ36006101",
+    "DA29-00003G",
+    "DA29-00020A",
+    "ADQ74793502",
+    "ADQ36006101"
+  ],
+  "classification_results": [
+    {
+      "token": "ADQ36006101",
+      "canonical_dp_url": "https://www.amazon.com/dp/B0042ACZU2",
+      "classification": "MULTIPACK_DIRECT_BUYABLE",
+      "evidence_basis": "Live retailer_links amazon row exists and is direct_buyable with MULTIPACK_DIRECT_BUYABLE subtype."
+    },
+    {
+      "token": "DA29-00003G",
+      "canonical_dp_url": "https://www.amazon.com/dp/B004MU3EDE",
+      "classification": "MULTIPACK_DIRECT_BUYABLE",
+      "evidence_basis": "Live retailer_links amazon row exists and is direct_buyable with MULTIPACK_DIRECT_BUYABLE subtype."
+    },
+    {
+      "token": "DA29-00020A",
+      "canonical_dp_url": "https://www.amazon.com/dp/B07FPQ2CLC",
+      "classification": "MULTIPACK_DIRECT_BUYABLE",
+      "evidence_basis": "Live retailer_links amazon row exists and is direct_buyable with MULTIPACK_DIRECT_BUYABLE subtype."
+    },
+    {
+      "token": "ADQ74793502",
+      "canonical_dp_url": "https://www.amazon.com/dp/B0D5D9495X",
+      "classification": "COMPATIBLE_ONLY",
+      "evidence_basis": "Live retailer_links amazon row exists and is direct_buyable but subtype is unset; current evidence does not prove multipack-specific subtype."
+    }
+  ],
+  "staged_candidates": [
+    {
+      "token": "ADQ36006101",
+      "filter_id": "b4695e6a-26de-4e36-bd35-7fb8dd77b2b8",
+      "existing_link_id": "13db0ab4-7bee-4bfc-8194-7729f98d0893",
+      "canonical_dp_url": "https://www.amazon.com/dp/B0042ACZU2",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "staging_action": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00003G",
+      "filter_id": "37ee90b5-1739-48c4-a267-d699144d2432",
+      "existing_link_id": "e27d19d0-d2d9-40ca-b584-f4b462700f69",
+      "canonical_dp_url": "https://www.amazon.com/dp/B004MU3EDE",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "staging_action": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00020A",
+      "filter_id": "548039af-34e5-461e-abc1-d9299b69fd7d",
+      "existing_link_id": "e2cb724e-e87f-4b0c-b6b9-defe74cf0312",
+      "canonical_dp_url": "https://www.amazon.com/dp/B07FPQ2CLC",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "staging_action": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "ADQ74793502",
+      "filter_id": "85cbb8bc-4cdf-4fed-8b4c-71164ef8d804",
+      "existing_link_id": "db5fec6e-6970-4b04-adc4-e4b352e6b16f",
+      "canonical_dp_url": "https://www.amazon.com/dp/B0D5D9495X",
+      "buyable_subtype": null,
+      "staging_action": "HOLD_REVIEW_COMPATIBLE_ONLY"
+    }
+  ],
+  "preflight_status": {
+    "adq36006101": {
+      "duplicate_status": "DUPLICATE_FOUND",
+      "ready_for_sql_plan": false
+    },
+    "da29_00003g": {
+      "duplicate_status": "DUPLICATE_FOUND",
+      "ready_for_sql_plan": false
+    },
+    "da29_00020a": {
+      "duplicate_status": "DUPLICATE_FOUND",
+      "ready_for_sql_plan": false
+    },
+    "adq74793502": {
+      "duplicate_status": "DUPLICATE_FOUND",
+      "ready_for_sql_plan": false
+    }
+  },
+  "sql_plan_decisions": {
+    "required": [],
+    "not_safe_or_not_needed": [
+      "ADQ36006101 already live with multipack subtype; no insert/update plan needed.",
+      "DA29-00003G already live with multipack subtype; no insert/update plan needed.",
+      "DA29-00020A already live with multipack subtype; no insert/update plan needed.",
+      "ADQ74793502 has existing amazon slot and only COMPATIBLE_ONLY confidence for subtype mapping; hold SQL until stronger subtype evidence."
+    ]
+  },
+  "notes": [
+    "Evidence/staging only; no DB writes executed by this artifact.",
+    "No runtime code changes.",
+    "No revenue improvement claim."
+  ]
+}

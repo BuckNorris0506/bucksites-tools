@@ -11,7 +11,7 @@ test("report is read_only true and data_mutation false", () => {
 
 test("counts records correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.record_count, 13);
+  assert.equal(report.record_count, 14);
 });
 
 test("counts statuses correctly", () => {
@@ -22,7 +22,7 @@ test("counts statuses correctly", () => {
   assert.equal(report.status_counts.SUBMITTED, 1);
   assert.equal(report.status_counts.IN_REVIEW, 2);
   assert.equal(report.status_counts.APPROVED, 1);
-  assert.equal(report.status_counts.REJECTED, 1);
+  assert.equal(report.status_counts.REJECTED, 2);
   assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 0);
 });
 
@@ -117,7 +117,7 @@ test("includes tag verification summary", () => {
   assert.deepEqual(report.tag_verification, {
     verified_count: 1,
     unverified_count: 0,
-    unknown_count: 12,
+    unknown_count: 13,
     unverified_records: [],
   });
 });

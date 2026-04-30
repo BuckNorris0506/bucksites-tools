@@ -1,0 +1,42 @@
+{
+  "report_name": "buckparts_amazon_next_blocked_batch_outcome_v1",
+  "generated_at": "2026-04-30",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "outcome_summary": {
+    "plus_one_live_cta_from_batch_work": true,
+    "plus_one_source": "DA29-00019A committed live Amazon multipack row"
+  },
+  "token_outcomes": [
+    {
+      "token": "ADQ36006101",
+      "status": "ALREADY_LIVE_SUBTYPE_CORRECT",
+      "recommendation": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00003G",
+      "status": "ALREADY_LIVE_SUBTYPE_CORRECT",
+      "recommendation": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00020A",
+      "status": "ALREADY_LIVE_SUBTYPE_CORRECT",
+      "recommendation": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "ADQ74793502",
+      "status": "HOLD_REVIEW_COMPATIBLE_ONLY",
+      "recommendation": "HOLD_REVIEW_COMPATIBLE_ONLY"
+    }
+  ],
+  "command_surface_persistent_state": {
+    "system_health_status": "WARNING",
+    "reason": "BLOCKED_* exceeds LIVE_*"
+  },
+  "notes": [
+    "Evidence only. No DB mutation performed by this record.",
+    "No runtime code changes.",
+    "No revenue improvement claim."
+  ]
+}

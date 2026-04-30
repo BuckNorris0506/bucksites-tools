@@ -34,6 +34,23 @@
     "tagValue": null
   },
   {
+    "id": "flexoffers",
+    "network": "FlexOffers",
+    "retailer": null,
+    "programUrl": null,
+    "status": "REJECTED",
+    "submittedAt": "2026-04-30T00:00:00.000Z",
+    "lastStatusAt": "2026-04-30T00:00:00.000Z",
+    "decisionAt": "2026-04-30T00:00:00.000Z",
+    "rejectionReason": "FlexOffers declined publisher application.",
+    "nextAction": "Do not rely on FlexOffers lane. Continue Amazon-first conversion and direct retailer applications after stronger traffic/proof.",
+    "nextActionDueAt": null,
+    "notes": "Rejected by FlexOffers on 2026-04-30. Preserve rejection truth; no specific feedback recorded.",
+    "tagVerified": null,
+    "tagVerifiedAt": null,
+    "tagValue": null
+  },
+  {
     "id": "cj",
     "network": "CJ",
     "retailer": null,
