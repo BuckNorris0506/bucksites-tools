@@ -1,6 +1,11 @@
 export const CANONICAL_RETAILER_KEYS = [
   "amazon",
   "appliancepartspros",
+  "repairclinic",
+  "partselect",
+  "filtersfast",
+  "discountfilters",
+  "flexoffers-pending",
   "ge-appliance-parts",
   "home-depot",
   "lowes",
@@ -29,6 +34,21 @@ const RETAILER_NAME_TO_KEY = new Map<string, CanonicalRetailerKey>([
   ["appliancepartspros", "appliancepartspros"],
   ["appliancepartspros reseller", "appliancepartspros"],
   ["appliance parts pros", "appliancepartspros"],
+
+  ["repairclinic", "repairclinic"],
+  ["repair clinic", "repairclinic"],
+
+  ["partselect", "partselect"],
+  ["part select", "partselect"],
+
+  ["filtersfast", "filtersfast"],
+  ["filters fast", "filtersfast"],
+
+  ["discountfilters", "discountfilters"],
+  ["discount filters", "discountfilters"],
+
+  ["flexoffers pending", "flexoffers-pending"],
+  ["flexoffers", "flexoffers-pending"],
 
   ["ge", "ge-appliance-parts"],
   ["ge appliances", "ge-appliance-parts"],
