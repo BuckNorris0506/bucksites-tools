@@ -8,7 +8,7 @@ const MANUAL_EVIDENCE_FILE =
 const STAGING_OUTPUT_FILE =
   "data/evidence/amazon-false-negative-rescue-staging.2026-04-29.json" as const;
 
-type RescueAction = "NOOP_ALREADY_PRESENT_DIRECT_BUYABLE" | "STAGE_INSERT_CANDIDATE";
+type RescueAction = "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT" | "STAGE_INSERT_CANDIDATE";
 
 type QueueCandidate = {
   token: string;
@@ -18,6 +18,13 @@ type QueueCandidate = {
   evidence_file: typeof MANUAL_EVIDENCE_FILE;
   current_db_presence: "PRESENT" | "ABSENT" | "UNKNOWN";
   rescue_action: RescueAction;
+  false_negative_type:
+    | "EXACT_URL_PRESENT"
+    | "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE"
+    | "ABSENT_FROM_DB"
+    | "PRESENT_BUT_BLOCKED"
+    | "UNKNOWN";
+  alternate_manual_amazon_pdp: boolean;
   browser_truth_classification_candidate: "direct_buyable";
   confidence: "exact";
   cta_status_candidate: "live";
@@ -60,10 +67,10 @@ function candidateFromFinding(
 ): QueueCandidate {
   let rescueAction: RescueAction = "STAGE_INSERT_CANDIDATE";
   if (
-    finding.current_state_if_present?.includes("browser_truth_classification=direct_buyable") &&
-    finding.db_presence === "PRESENT"
+    finding.false_negative_type === "EXACT_URL_PRESENT" ||
+    finding.false_negative_type === "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE"
   ) {
-    rescueAction = "NOOP_ALREADY_PRESENT_DIRECT_BUYABLE";
+    rescueAction = "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT";
   }
 
   return {
@@ -74,6 +81,8 @@ function candidateFromFinding(
     evidence_file: MANUAL_EVIDENCE_FILE,
     current_db_presence: finding.db_presence,
     rescue_action: rescueAction,
+    false_negative_type: finding.false_negative_type,
+    alternate_manual_amazon_pdp: finding.alternate_manual_amazon_pdp,
     browser_truth_classification_candidate: "direct_buyable",
     confidence: "exact",
     cta_status_candidate: "live",
@@ -92,7 +101,7 @@ export async function buildAmazonFalseNegativeRescueStagingReport(
   const candidates = audit.findings.map(candidateFromFinding);
   const staged = candidates.filter((candidate) => candidate.rescue_action === "STAGE_INSERT_CANDIDATE");
   const noop = candidates.filter(
-    (candidate) => candidate.rescue_action === "NOOP_ALREADY_PRESENT_DIRECT_BUYABLE",
+    (candidate) => candidate.rescue_action === "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT",
   );
 
   const knownUnknowns = [

@@ -1,19 +1,43 @@
 {
   "report_name": "buckparts_amazon_false_negative_rescue_staging_v1",
-  "generated_at": "2026-04-30T04:43:15.250Z",
+  "generated_at": "2026-04-30T12:33:09.870Z",
   "read_only": true,
   "data_mutation": false,
-  "staged_count": 2,
-  "noop_count": 1,
-  "staged_candidates": [
+  "staged_count": 0,
+  "noop_count": 3,
+  "staged_candidates": [],
+  "noop_candidates": [
+    {
+      "token": "EP-20BB",
+      "canonical_dp_url": "https://www.amazon.com/dp/B00310Y9KI",
+      "asin": "B00310Y9KI",
+      "source": "manual_user_provided_url",
+      "evidence_file": "data/evidence/amazon-manual-whole-house-evidence.2026-04-29.json",
+      "current_db_presence": "PRESENT",
+      "rescue_action": "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT",
+      "false_negative_type": "EXACT_URL_PRESENT",
+      "alternate_manual_amazon_pdp": false,
+      "browser_truth_classification_candidate": "direct_buyable",
+      "confidence": "exact",
+      "cta_status_candidate": "live",
+      "mutation_status": "NOT_APPLIED",
+      "required_before_apply": [
+        "verify filter_id/slug mapping",
+        "verify no duplicate Amazon row",
+        "verify Amazon tag status",
+        "run full buy-link gate"
+      ]
+    },
     {
       "token": "RFC-BBSA",
       "canonical_dp_url": "https://www.amazon.com/dp/B000BQN6MM",
       "asin": "B000BQN6MM",
       "source": "manual_user_provided_url",
       "evidence_file": "data/evidence/amazon-manual-whole-house-evidence.2026-04-29.json",
-      "current_db_presence": "ABSENT",
-      "rescue_action": "STAGE_INSERT_CANDIDATE",
+      "current_db_presence": "PRESENT",
+      "rescue_action": "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT",
+      "false_negative_type": "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE",
+      "alternate_manual_amazon_pdp": true,
       "browser_truth_classification_candidate": "direct_buyable",
       "confidence": "exact",
       "cta_status_candidate": "live",
@@ -31,29 +55,10 @@
       "asin": "B000W0TTJQ",
       "source": "manual_user_provided_url",
       "evidence_file": "data/evidence/amazon-manual-whole-house-evidence.2026-04-29.json",
-      "current_db_presence": "ABSENT",
-      "rescue_action": "STAGE_INSERT_CANDIDATE",
-      "browser_truth_classification_candidate": "direct_buyable",
-      "confidence": "exact",
-      "cta_status_candidate": "live",
-      "mutation_status": "NOT_APPLIED",
-      "required_before_apply": [
-        "verify filter_id/slug mapping",
-        "verify no duplicate Amazon row",
-        "verify Amazon tag status",
-        "run full buy-link gate"
-      ]
-    }
-  ],
-  "noop_candidates": [
-    {
-      "token": "EP-20BB",
-      "canonical_dp_url": "https://www.amazon.com/dp/B00310Y9KI",
-      "asin": "B00310Y9KI",
-      "source": "manual_user_provided_url",
-      "evidence_file": "data/evidence/amazon-manual-whole-house-evidence.2026-04-29.json",
       "current_db_presence": "PRESENT",
-      "rescue_action": "NOOP_ALREADY_PRESENT_DIRECT_BUYABLE",
+      "rescue_action": "NOOP_ALREADY_HAS_APPROVED_AMAZON_SLOT",
+      "false_negative_type": "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE",
+      "alternate_manual_amazon_pdp": true,
       "browser_truth_classification_candidate": "direct_buyable",
       "confidence": "exact",
       "cta_status_candidate": "live",

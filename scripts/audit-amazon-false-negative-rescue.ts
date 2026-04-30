@@ -38,6 +38,7 @@ const MANUAL_PROOF_URLS: ManualProof[] = [
 type RetailerRow = {
   table: string;
   id: string | null;
+  whole_house_water_part_id?: string | null;
   retailer_key: string | null;
   affiliate_url: string | null;
   browser_truth_classification: string | null;
@@ -45,11 +46,18 @@ type RetailerRow = {
   retailer_name?: string | null;
 };
 
+type PartRow = {
+  id: string;
+  slug: string | null;
+  oem_part_number: string | null;
+};
+
 type DbPresence = "PRESENT" | "ABSENT" | "UNKNOWN";
 type FalseNegativeType =
+  | "EXACT_URL_PRESENT"
+  | "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE"
   | "ABSENT_FROM_DB"
   | "PRESENT_BUT_BLOCKED"
-  | "EVIDENCE_PIPELINE_MISSED"
   | "UNKNOWN";
 
 type Finding = {
@@ -57,6 +65,8 @@ type Finding = {
   canonical_dp_url: string;
   asin: string;
   db_presence: DbPresence;
+  matched_part_id: string | null;
+  alternate_manual_amazon_pdp: boolean;
   current_state_if_present: string | null;
   false_negative_type: FalseNegativeType;
   recommended_fix: string;
@@ -80,6 +90,7 @@ type AuditReport = {
 type BuildOptions = {
   now?: () => Date;
   fetchRetailerRows?: () => Promise<RetailerRow[]>;
+  fetchWholeHouseParts?: () => Promise<PartRow[]>;
   fetchTitleByCanonicalUrl?: (url: string) => Promise<string | null>;
 };
 
@@ -104,9 +115,19 @@ function assessExactTokenEvidence(args: {
   return compactToken(args.title).includes(tokenCompact) ? "PASS" : "FAIL";
 }
 
+function normalizeToken(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function matchesPartToken(part: PartRow, token: string): boolean {
+  const t = normalizeToken(token);
+  return normalizeToken(part.slug ?? "") === t || normalizeToken(part.oem_part_number ?? "") === t;
+}
+
 function classifyFinding(args: {
   proof: ManualProof;
   canonicalDpUrl: string;
+  matchedPartId: string | null;
   dbRows: RetailerRow[] | null;
   title: string | null;
 }): Finding {
@@ -123,39 +144,46 @@ function classifyFinding(args: {
       canonical_dp_url: args.canonicalDpUrl,
       asin,
       db_presence: "UNKNOWN",
+      matched_part_id: args.matchedPartId,
+      alternate_manual_amazon_pdp: false,
       current_state_if_present: null,
       false_negative_type: "UNKNOWN",
       recommended_fix: "Restore retailer-link read access and rerun audit before any rescue action.",
     };
   }
 
-  if (args.dbRows.length === 0) {
-    return {
-      token: args.proof.token,
-      canonical_dp_url: args.canonicalDpUrl,
-      asin,
-      db_presence: "ABSENT",
-      current_state_if_present: null,
-      false_negative_type: "ABSENT_FROM_DB",
-      recommended_fix:
-        "Backfill this canonical Amazon PDP into staging/evidence queue, then run normal review before any retailer_links mutation.",
-    };
-  }
-
-  const row = args.dbRows[0]!;
-  const gateFailure = buyLinkGateFailureKind({
-    retailer_key: row.retailer_key,
-    affiliate_url: row.affiliate_url ?? "",
-    browser_truth_classification: row.browser_truth_classification,
-  });
-  const blocked = gateFailure !== null;
-
-  if (blocked) {
+  const rowsByCanonical = args.dbRows.filter(
+    (row) => row.affiliate_url != null && canonicalAmazonDpUrl(row.affiliate_url) === args.canonicalDpUrl,
+  );
+  if (rowsByCanonical.length > 0) {
+    const row = rowsByCanonical[0]!;
+    const gateFailure = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
+    if (gateFailure === null) {
+      return {
+        token: args.proof.token,
+        canonical_dp_url: args.canonicalDpUrl,
+        asin,
+        db_presence: "PRESENT",
+        matched_part_id: args.matchedPartId,
+        alternate_manual_amazon_pdp: false,
+        current_state_if_present:
+          `table=${row.table}; retailer_key=${row.retailer_key ?? "UNKNOWN"}; ` +
+          `browser_truth_classification=${row.browser_truth_classification ?? "NULL"}; gate_failure=NONE; exact_token_evidence=${titleEvidence}`,
+        false_negative_type: "EXACT_URL_PRESENT",
+        recommended_fix: "No rescue mutation needed: exact canonical Amazon PDP already present and buy-gate eligible.",
+      };
+    }
     return {
       token: args.proof.token,
       canonical_dp_url: args.canonicalDpUrl,
       asin,
       db_presence: "PRESENT",
+      matched_part_id: args.matchedPartId,
+      alternate_manual_amazon_pdp: false,
       current_state_if_present:
         `table=${row.table}; retailer_key=${row.retailer_key ?? "UNKNOWN"}; ` +
         `browser_truth_classification=${row.browser_truth_classification ?? "NULL"}; gate_failure=${gateFailure}; exact_token_evidence=${titleEvidence}`,
@@ -165,28 +193,111 @@ function classifyFinding(args: {
     };
   }
 
+  const samePartRows =
+    args.matchedPartId == null
+      ? []
+      : args.dbRows.filter((row) => row.whole_house_water_part_id === args.matchedPartId);
+  const samePartDirectBuyable = samePartRows.find((row) => {
+    const gateFailure = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
+    return gateFailure === null;
+  });
+  if (samePartDirectBuyable) {
+    return {
+      token: args.proof.token,
+      canonical_dp_url: args.canonicalDpUrl,
+      asin,
+      db_presence: "PRESENT",
+      matched_part_id: args.matchedPartId,
+      alternate_manual_amazon_pdp: true,
+      current_state_if_present:
+        `table=${samePartDirectBuyable.table}; retailer_key=${samePartDirectBuyable.retailer_key ?? "UNKNOWN"}; ` +
+        `existing_affiliate_url=${samePartDirectBuyable.affiliate_url ?? "NULL"}; ` +
+        `browser_truth_classification=${samePartDirectBuyable.browser_truth_classification ?? "NULL"}; gate_failure=NONE; exact_token_evidence=${titleEvidence}`,
+      false_negative_type: "SAME_PART_AMAZON_SLOT_PRESENT_DIRECT_BUYABLE",
+      recommended_fix:
+        "No rescue mutation needed: this part already has an approved direct-buyable Amazon slot. Track manual URL as alternate evidence only.",
+    };
+  }
+
+  if (samePartRows.length > 0) {
+    const row = samePartRows[0]!;
+    const gateFailure = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: row.affiliate_url ?? "",
+      browser_truth_classification: row.browser_truth_classification,
+    });
+    return {
+      token: args.proof.token,
+      canonical_dp_url: args.canonicalDpUrl,
+      asin,
+      db_presence: "PRESENT",
+      matched_part_id: args.matchedPartId,
+      alternate_manual_amazon_pdp: true,
+      current_state_if_present:
+        `table=${row.table}; retailer_key=${row.retailer_key ?? "UNKNOWN"}; ` +
+        `existing_affiliate_url=${row.affiliate_url ?? "NULL"}; ` +
+        `browser_truth_classification=${row.browser_truth_classification ?? "NULL"}; gate_failure=${gateFailure ?? "NONE"}; exact_token_evidence=${titleEvidence}`,
+      false_negative_type: "PRESENT_BUT_BLOCKED",
+      recommended_fix:
+        "Same part has an Amazon slot but it fails buy-path gating. Repair existing slot; do not add parallel insert row.",
+    };
+  }
+
+  if (args.dbRows.length === 0) {
+    return {
+      token: args.proof.token,
+      canonical_dp_url: args.canonicalDpUrl,
+      asin,
+      db_presence: "ABSENT",
+      matched_part_id: args.matchedPartId,
+      alternate_manual_amazon_pdp: false,
+      current_state_if_present: null,
+      false_negative_type: "ABSENT_FROM_DB",
+      recommended_fix:
+        "No approved Amazon slot found for the matched part. Stage as insert candidate only after mapping and gate checks.",
+    };
+  }
+
   return {
     token: args.proof.token,
     canonical_dp_url: args.canonicalDpUrl,
     asin,
-    db_presence: "PRESENT",
-    current_state_if_present:
-      `table=${row.table}; retailer_key=${row.retailer_key ?? "UNKNOWN"}; ` +
-      `browser_truth_classification=${row.browser_truth_classification ?? "NULL"}; gate_failure=NONE; exact_token_evidence=${titleEvidence}`,
-    false_negative_type: "EVIDENCE_PIPELINE_MISSED",
+    db_presence: "ABSENT",
+    matched_part_id: args.matchedPartId,
+    alternate_manual_amazon_pdp: false,
+    current_state_if_present: null,
+    false_negative_type: "ABSENT_FROM_DB",
     recommended_fix:
-      "Add deterministic whole-house Amazon rescue queue so valid existing PDP rows are surfaced before manual operator discovery.",
+      "No approved Amazon slot found for the matched part. Stage as insert candidate only after mapping and gate checks.",
   };
+}
+
+async function fetchWholeHousePartsViaSupabase(): Promise<PartRow[]> {
+  loadEnv();
+  const supabase = getSupabaseAdmin();
+  const pageSize = 1000;
+  const rows: PartRow[] = [];
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("whole_house_water_parts")
+      .select("id,slug,oem_part_number")
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    const chunk = (data ?? []) as PartRow[];
+    rows.push(...chunk);
+    if (chunk.length < pageSize) break;
+  }
+  return rows;
 }
 
 async function fetchRetailerRowsViaSupabase(): Promise<RetailerRow[]> {
   loadEnv();
   const supabase = getSupabaseAdmin();
-  const tables: Array<{ table: string; approvedOnly: boolean }> = [
-    { table: "retailer_links", approvedOnly: false },
-    { table: "air_purifier_retailer_links", approvedOnly: true },
-    { table: "whole_house_water_retailer_links", approvedOnly: true },
-  ];
+  const tables: Array<{ table: string; approvedOnly: boolean }> = [{ table: "whole_house_water_retailer_links", approvedOnly: true }];
 
   const rows: RetailerRow[] = [];
   for (const source of tables) {
@@ -194,13 +305,14 @@ async function fetchRetailerRowsViaSupabase(): Promise<RetailerRow[]> {
     for (let from = 0; ; from += pageSize) {
       let query = supabase
         .from(source.table)
-        .select("id,retailer_key,affiliate_url,browser_truth_classification,status,retailer_name")
+        .select("id,whole_house_water_part_id,retailer_key,affiliate_url,browser_truth_classification,status,retailer_name")
         .range(from, from + pageSize - 1);
       if (source.approvedOnly) query = query.eq("status", "approved");
       const { data, error } = await query;
       if (error) throw error;
       const chunk = (data ?? []) as Array<{
         id: string | null;
+        whole_house_water_part_id?: string | null;
         retailer_key: string | null;
         affiliate_url: string | null;
         browser_truth_classification: string | null;
@@ -211,6 +323,7 @@ async function fetchRetailerRowsViaSupabase(): Promise<RetailerRow[]> {
         rows.push({
           table: source.table,
           id: row.id,
+          whole_house_water_part_id: row.whole_house_water_part_id ?? null,
           retailer_key: row.retailer_key,
           affiliate_url: row.affiliate_url,
           browser_truth_classification: row.browser_truth_classification,
@@ -229,15 +342,23 @@ export async function buildAmazonFalseNegativeRescueAudit(
 ): Promise<AuditReport> {
   const now = options.now ?? (() => new Date());
   const fetchRetailerRows = options.fetchRetailerRows ?? fetchRetailerRowsViaSupabase;
+  const fetchWholeHouseParts = options.fetchWholeHouseParts ?? fetchWholeHousePartsViaSupabase;
   const fetchTitleByCanonicalUrl = options.fetchTitleByCanonicalUrl ?? (async () => null);
 
   let allRows: RetailerRow[] | null = null;
+  let allParts: PartRow[] | null = null;
   const knownUnknowns: string[] = [];
   try {
     allRows = await fetchRetailerRows();
   } catch {
     allRows = null;
     knownUnknowns.push("Retailer-link tables unavailable; DB presence is UNKNOWN.");
+  }
+  try {
+    allParts = await fetchWholeHouseParts();
+  } catch {
+    allParts = null;
+    knownUnknowns.push("whole_house_water_parts unavailable; token-to-part mapping is UNKNOWN.");
   }
 
   const findings: Finding[] = [];
@@ -257,18 +378,19 @@ export async function buildAmazonFalseNegativeRescueAudit(
       continue;
     }
     const title = await fetchTitleByCanonicalUrl(canonical);
+    const matchedPartId =
+      allParts == null
+        ? null
+        : allParts.filter((part) => matchesPartToken(part, proof.token)).map((part) => part.id)[0] ?? null;
     const dbRows =
       allRows === null
         ? null
-        : allRows.filter(
-            (row) =>
-              row.affiliate_url != null &&
-              canonicalAmazonDpUrl(row.affiliate_url) === canonical,
-          );
+        : allRows.filter((row) => (row.retailer_key ?? "").trim().toLowerCase() === "amazon");
     findings.push(
       classifyFinding({
         proof,
         canonicalDpUrl: canonical,
+        matchedPartId,
         dbRows,
         title,
       }),
@@ -278,8 +400,7 @@ export async function buildAmazonFalseNegativeRescueAudit(
   const hasFalseNegative = findings.some(
     (item) =>
       item.false_negative_type === "ABSENT_FROM_DB" ||
-      item.false_negative_type === "PRESENT_BUT_BLOCKED" ||
-      item.false_negative_type === "EVIDENCE_PIPELINE_MISSED",
+      item.false_negative_type === "PRESENT_BUT_BLOCKED",
   );
   const causeSet = new Set<
     "discovery" | "evidence_classification" | "db_insertion" | "gating" | "unknown"
@@ -291,16 +412,13 @@ export async function buildAmazonFalseNegativeRescueAudit(
     } else if (item.false_negative_type === "PRESENT_BUT_BLOCKED") {
       causeSet.add("evidence_classification");
       causeSet.add("gating");
-    } else if (item.false_negative_type === "EVIDENCE_PIPELINE_MISSED") {
-      causeSet.add("discovery");
-      causeSet.add("evidence_classification");
     } else if (item.false_negative_type === "UNKNOWN") {
       causeSet.add("unknown");
     }
   }
 
   const requiredSystemChange = hasFalseNegative
-    ? "Add deterministic Amazon PDP rescue ingestion for whole-house tokens: canonical /dp/<ASIN> matching + exact-token/title evidence scoring + pre-mutation staging queue."
+    ? "Fix Amazon false-negative definition to operate at part+amazon-slot level: detect existing approved direct_buyable slot rows (including alternate manual ASIN/PDP URLs) before labeling ABSENT_FROM_DB; do not rely on raw canonical URL equality alone."
     : "No critical false-negative path detected; keep current read-only monitoring.";
 
   return {
