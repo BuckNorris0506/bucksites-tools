@@ -57,6 +57,7 @@
     "buckparts:report:launch-readiness": "tsx scripts/report-homekeep-launch-readiness.ts",
     "buckparts:audit": "tsx scripts/audit-buckparts-system-contracts.ts",
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
+    "buckparts:command-center": "tsx scripts/report-buckparts-command-center.ts",
     "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",

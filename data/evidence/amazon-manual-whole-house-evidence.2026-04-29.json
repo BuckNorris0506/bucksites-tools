@@ -1,0 +1,52 @@
+{
+  "report_name": "buckparts_amazon_manual_whole_house_evidence_v1",
+  "generated_at": "2026-04-29",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "whole_house_water",
+  "evidence_entries": [
+    {
+      "token": "EP-20BB",
+      "canonical_dp_url": "https://www.amazon.com/dp/B00310Y9KI",
+      "asin": "B00310Y9KI",
+      "exact_token_visible": true,
+      "product_page": true,
+      "buyability_signal": "Add to Cart visible from manual/user-provided Amazon PDP evidence",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "decision": "PASS_CANDIDATE",
+      "evidence_source": "manual_user_provided_url",
+      "checked_at": "2026-04-29"
+    },
+    {
+      "token": "RFC-BBSA",
+      "canonical_dp_url": "https://www.amazon.com/dp/B000BQN6MM",
+      "asin": "B000BQN6MM",
+      "exact_token_visible": true,
+      "product_page": true,
+      "buyability_signal": "Add to Cart visible from manual/user-provided Amazon PDP evidence",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "decision": "PASS_CANDIDATE",
+      "evidence_source": "manual_user_provided_url",
+      "checked_at": "2026-04-29"
+    },
+    {
+      "token": "AP810",
+      "canonical_dp_url": "https://www.amazon.com/dp/B000W0TTJQ",
+      "asin": "B000W0TTJQ",
+      "exact_token_visible": true,
+      "product_page": true,
+      "buyability_signal": "Add to Cart visible from manual/user-provided Amazon PDP evidence",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "decision": "PASS_CANDIDATE",
+      "evidence_source": "manual_user_provided_url",
+      "checked_at": "2026-04-29"
+    }
+  ],
+  "notes": [
+    "Read-only evidence backfill only.",
+    "No DB mutation performed.",
+    "No retailer_links inserted.",
+    "No live CTA changes performed.",
+    "No conversion or revenue claims recorded."
+  ]
+}
