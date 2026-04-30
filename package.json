@@ -56,6 +56,7 @@
     "buckparts:stage:amazon-false-negative-rescue": "tsx scripts/stage-amazon-false-negative-rescue.ts",
     "buckparts:preflight:amazon-false-negative-rescue": "tsx scripts/preflight-amazon-false-negative-rescue.ts",
     "buckparts:preflight:amazon-multipack-batch": "tsx scripts/preflight-amazon-multipack-conversion-batch.ts",
+    "buckparts:preflight:buyable-subtype-schema": "tsx scripts/preflight-buyable-subtype-production-schema.ts",
     "buckparts:amazon-multipack-duplicate-slots": "tsx scripts/report-amazon-multipack-duplicate-slots.ts",
     "buckparts:amazon-rescue-existing-whw-rows": "tsx scripts/report-amazon-rescue-existing-whw-rows.ts",
     "buckparts:report:affiliate-clicks": "tsx scripts/report-homekeep-affiliate-clicks.ts",
