@@ -159,10 +159,10 @@ test("approved count is counted", async () => {
 test("affiliate tracker includes tag verification summary", async () => {
   const report = await buildBuckpartsCommandSurfaceReport();
   assert.deepEqual(report.affiliate_tracker.tag_verification, {
-    verified_count: 0,
-    unverified_count: 1,
+    verified_count: 1,
+    unverified_count: 0,
     unknown_count: 12,
-    unverified_records: ["amazon-associates"],
+    unverified_records: [],
   });
 });
 

@@ -115,9 +115,9 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
 test("includes tag verification summary", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.deepEqual(report.tag_verification, {
-    verified_count: 0,
-    unverified_count: 1,
+    verified_count: 1,
+    unverified_count: 0,
     unknown_count: 12,
-    unverified_records: ["amazon-associates"],
+    unverified_records: [],
   });
 });

@@ -113,9 +113,9 @@
     "rejectionReason": null,
     "nextAction": "Verify Amazon Associates tag buckparts20-20 in dashboard or tracked click report.",
     "nextActionDueAt": "2026-04-29T00:00:00.000Z",
-    "notes": "User reported Amazon Associates approval. Exact tag verification remains UNKNOWN.",
-    "tagVerified": false,
-    "tagVerifiedAt": null,
+    "notes": "Operator verified Amazon Associates tag buckparts20-20 in Amazon Associates dashboard on 2026-04-30.",
+    "tagVerified": true,
+    "tagVerifiedAt": "2026-04-30T00:00:00.000Z",
     "tagValue": "buckparts20-20"
   },
   {
