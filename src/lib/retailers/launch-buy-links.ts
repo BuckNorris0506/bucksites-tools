@@ -104,6 +104,38 @@ export function isExplicitBuyableClassification(
   return classification?.trim() === "direct_buyable";
 }
 
+export const BUYABLE_SUBTYPES = {
+  SINGLE_UNIT_DIRECT_BUYABLE: "SINGLE_UNIT_DIRECT_BUYABLE",
+  MULTIPACK_DIRECT_BUYABLE: "MULTIPACK_DIRECT_BUYABLE",
+  COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE: "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+  BLOCKED_UNSAFE: "BLOCKED_UNSAFE",
+} as const;
+
+export type BuyableSubtype = (typeof BUYABLE_SUBTYPES)[keyof typeof BUYABLE_SUBTYPES];
+
+export function normalizeBuyableSubtype(
+  subtype: string | null | undefined,
+): BuyableSubtype | null {
+  const trimmed = subtype?.trim();
+  if (!trimmed) return null;
+  const values = Object.values(BUYABLE_SUBTYPES) as readonly string[];
+  return values.includes(trimmed) ? (trimmed as BuyableSubtype) : null;
+}
+
+/**
+ * Gate stays strict: direct_buyable is still required.
+ * Optional subtype can add extra blocking (`BLOCKED_UNSAFE`) but never force-pass.
+ */
+export function passesDirectBuyableGate(args: {
+  browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
+}): boolean {
+  if (!isExplicitBuyableClassification(args.browser_truth_classification)) return false;
+  const subtype = normalizeBuyableSubtype(args.browser_truth_buyable_subtype);
+  if (subtype === BUYABLE_SUBTYPES.BLOCKED_UNSAFE) return false;
+  return true;
+}
+
 function getSearchParamCaseInsensitive(u: URL, name: string): string | null {
   const n = name.toLowerCase();
   for (const [k, v] of Array.from(u.searchParams.entries())) {
@@ -248,6 +280,7 @@ export function buyLinkGateFailureKind<
     retailer_key?: string | null;
     affiliate_url: string;
     browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
   },
 >(link: T): BuyLinkGateFailureKind | null {
   if (isSearchPlaceholderBuyLink(link.retailer_key, link.affiliate_url)) {
@@ -261,7 +294,12 @@ export function buyLinkGateFailureKind<
   }
   const classification = link.browser_truth_classification?.trim();
   if (!classification) return "missing_browser_truth";
-  if (!isExplicitBuyableClassification(classification)) {
+  if (
+    !passesDirectBuyableGate({
+      browser_truth_classification: classification,
+      browser_truth_buyable_subtype: link.browser_truth_buyable_subtype,
+    })
+  ) {
     return "unsafe_browser_truth";
   }
   return null;
@@ -281,6 +319,7 @@ export function summarizeBuyPathGateSuppression<
     retailer_key?: string | null;
     affiliate_url: string;
     browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
   },
 >(raw: T[]): BuyPathGateSuppressionSummary {
   let hadSearchPlaceholderRows = false;
@@ -311,6 +350,7 @@ export function filterRealBuyRetailerLinks<
     retailer_key?: string | null;
     affiliate_url: string;
     browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
   },
 >(links: T[]): T[] {
   return links.filter((l) => buyLinkGateFailureKind(l) === null);

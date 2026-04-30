@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  BUYABLE_SUBTYPES,
   buyLinkGateFailureKind,
   buyPathSortContextForFilter,
   filterRealBuyRetailerLinks,
@@ -9,6 +10,7 @@ import {
   isExplicitBuyableClassification,
   isKnownBrokenUrl,
   isKnownIndirectDiscoveryUrl,
+  passesDirectBuyableGate,
   isSearchEngineDiscoveryUrl,
   isSearchPlaceholderBuyLink,
   selectBestVerifiedBuyLink,
@@ -226,6 +228,61 @@ describe("isExplicitBuyableClassification", () => {
     assert.equal(isExplicitBuyableClassification("likely_valid"), false);
     assert.equal(isExplicitBuyableClassification("likely_not_found"), false);
     assert.equal(isExplicitBuyableClassification(null), false);
+  });
+});
+
+describe("buyable subtype foundation (strict direct_buyable gate)", () => {
+  it("direct_buyable without subtype still passes exactly as before", () => {
+    assert.equal(
+      passesDirectBuyableGate({
+        browser_truth_classification: "direct_buyable",
+      }),
+      true,
+    );
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+      }),
+      null,
+    );
+  });
+
+  it("MULTIPACK_DIRECT_BUYABLE passes only with direct_buyable classification", () => {
+    assert.equal(
+      passesDirectBuyableGate({
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+      }),
+      true,
+    );
+    assert.equal(
+      passesDirectBuyableGate({
+        browser_truth_classification: "likely_valid",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+      }),
+      false,
+    );
+  });
+
+  it("BLOCKED_UNSAFE fails even when classification says direct_buyable", () => {
+    assert.equal(
+      passesDirectBuyableGate({
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
+      }),
+      false,
+    );
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
+      }),
+      "unsafe_browser_truth",
+    );
   });
 });
 

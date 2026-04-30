@@ -19,6 +19,7 @@ export type RetailerLinkState =
 export type RetailerLinkStateInput = {
   gateFailureKind?: string | null;
   browserTruthClassification?: string | null;
+  browserTruthBuyableSubtype?: string | null;
   candidateState?: string | null;
   reviewStatus?: string | null;
   operatorReason?: string | null;
@@ -48,6 +49,10 @@ export function mapSignalsToRetailerLinkState(
   }
 
   if (input.gateFailureKind === "unsafe_browser_truth") {
+    return RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE;
+  }
+
+  if (input.browserTruthBuyableSubtype?.trim() === "BLOCKED_UNSAFE") {
     return RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE;
   }
 

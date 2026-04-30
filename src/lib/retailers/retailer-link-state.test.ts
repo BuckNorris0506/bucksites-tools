@@ -97,6 +97,16 @@ test("direct_buyable maps live", () => {
   );
 });
 
+test("BLOCKED_UNSAFE buyable subtype maps blocked unsafe even with direct_buyable class", () => {
+  assert.equal(
+    mapSignalsToRetailerLinkState({
+      browserTruthClassification: "direct_buyable",
+      browserTruthBuyableSubtype: "BLOCKED_UNSAFE",
+    }),
+    RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE,
+  );
+});
+
 test("likely_valid maps likely non-buyable", () => {
   assert.equal(
     mapSignalsToRetailerLinkState({ verifierClass: "likely_valid" }),
@@ -160,6 +170,16 @@ test("no candidate maps pending review", () => {
 test("fallback maps pending review", () => {
   assert.equal(
     mapSignalsToRetailerLinkState({}),
+    RETAILER_LINK_STATES.CANDIDATE_PENDING_REVIEW,
+  );
+});
+
+test("missing browser truth does not inflate to live state even when subtype is present", () => {
+  assert.equal(
+    mapSignalsToRetailerLinkState({
+      browserTruthClassification: null,
+      browserTruthBuyableSubtype: "MULTIPACK_DIRECT_BUYABLE",
+    }),
     RETAILER_LINK_STATES.CANDIDATE_PENDING_REVIEW,
   );
 });
