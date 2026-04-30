@@ -30,6 +30,7 @@
 - **Wrong filter/part id:** Section `0` does not confirm the expected mapping for `DA29-00019A`/`7f84c6ad-b8ba-4b7e-98b6-c4f5c1d6cd7d`.
 - **Inserted row count not 1:** Guarded insert affects `0` or `>1` rows.
 - **Full gate fails after insert:** `buyLinkGateFailureKind`/live CTA gate does not treat inserted row as safe direct-buyable.
+- **Required NOT NULL columns missing:** If insert fails on required non-null fields (for example missing `retailer_slug`), stop and fix plan before any commit attempt.
 
 If any hard stop occurs: do not continue and do not commit.
 

@@ -53,6 +53,7 @@ ORDER BY id;
 INSERT INTO public.retailer_links (
   filter_id,
   retailer_name,
+  retailer_slug,
   affiliate_url,
   destination_url,
   is_primary,
@@ -65,6 +66,7 @@ INSERT INTO public.retailer_links (
 SELECT
   '7f84c6ad-b8ba-4b7e-98b6-c4f5c1d6cd7d'::uuid,
   'Amazon',
+  'amazon',
   'https://www.amazon.com/dp/B019HPTP3G',
   'https://www.amazon.com/dp/B019HPTP3G',
   false,
