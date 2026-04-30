@@ -20,9 +20,9 @@ test("counts statuses correctly", () => {
   assert.equal(report.status_counts.DRAFTING, 7);
   assert.equal(report.status_counts.NOT_STARTED, 1);
   assert.equal(report.status_counts.SUBMITTED, 1);
-  assert.equal(report.status_counts.IN_REVIEW, 3);
+  assert.equal(report.status_counts.IN_REVIEW, 2);
   assert.equal(report.status_counts.APPROVED, 1);
-  assert.equal(report.status_counts.REJECTED, 0);
+  assert.equal(report.status_counts.REJECTED, 1);
   assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 0);
 });
 
