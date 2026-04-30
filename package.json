@@ -53,6 +53,7 @@
     "buckparts:cleanup:demo-wedges": "tsx scripts/remove-demo-wedge-brands.ts",
     "buckparts:audit:traffic-monetization": "tsx scripts/audit-homekeep-traffic-monetization-readiness.ts",
     "buckparts:audit:amazon-false-negatives": "tsx scripts/audit-amazon-false-negative-rescue.ts",
+    "buckparts:stage:amazon-false-negative-rescue": "tsx scripts/stage-amazon-false-negative-rescue.ts",
     "buckparts:report:affiliate-clicks": "tsx scripts/report-homekeep-affiliate-clicks.ts",
     "buckparts:report:business-scorecard": "tsx scripts/report-homekeep-business-scorecard.ts",
     "buckparts:report:launch-readiness": "tsx scripts/report-homekeep-launch-readiness.ts",

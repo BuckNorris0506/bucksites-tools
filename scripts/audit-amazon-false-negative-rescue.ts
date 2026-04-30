@@ -2,6 +2,8 @@ import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import * as linksModuleNs from "@/lib/retailers/launch-buy-links";
 import * as enrichmentModuleNs from "./lib/discovery-candidate-enrichment";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 const linksModule = (linksModuleNs as { default?: unknown }).default ?? linksModuleNs;
 const enrichmentModule =
@@ -323,7 +325,10 @@ export async function main(): Promise<void> {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 
-main().catch((error) => {
-  console.error("[audit-amazon-false-negative-rescue] failed", error);
-  process.exit(1);
-});
+const THIS_FILE = fileURLToPath(import.meta.url);
+if (process.argv[1] && path.resolve(process.argv[1]) === THIS_FILE) {
+  main().catch((error) => {
+    console.error("[audit-amazon-false-negative-rescue] failed", error);
+    process.exit(1);
+  });
+}
