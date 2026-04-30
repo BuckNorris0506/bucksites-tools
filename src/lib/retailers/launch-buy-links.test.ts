@@ -6,6 +6,8 @@ import {
   buyLinkGateFailureKind,
   buyPathSortContextForFilter,
   filterRealBuyRetailerLinks,
+  MULTIPACK_FALLBACK_COPY,
+  shouldShowMultipackFallbackCopy,
   isCompatibleReplacementFilterPdp,
   isExplicitBuyableClassification,
   isKnownBrokenUrl,
@@ -447,6 +449,93 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
 });
 
 describe("best-verified winner arbitration", () => {
+  it("single-unit ranks before multipack when both are verified", () => {
+    const winner = selectBestVerifiedBuyLink([
+      {
+        id: "mp",
+        retailer_name: "Multipack PDP",
+        affiliate_url: "https://www.amazon.com/dp/B000AAAAAA",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+      },
+      {
+        id: "su",
+        retailer_name: "Single PDP",
+        affiliate_url: "https://www.amazon.com/dp/B000BBBBBB",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+      },
+    ]);
+    assert.equal(winner?.id, "su");
+  });
+
+  it("multipack may be primary fallback when no single-unit subtype exists", () => {
+    const winner = selectBestVerifiedBuyLink([
+      {
+        id: "mp",
+        retailer_name: "Multipack PDP",
+        affiliate_url: "https://www.amazon.com/dp/B000AAAAAA",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+      },
+      {
+        id: "compat",
+        retailer_name: "Compatible PDP",
+        affiliate_url: "https://www.example.com/product/compatible-pack",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+      },
+    ]);
+    assert.equal(winner?.id, "mp");
+  });
+
+  it("compatible replacement does not outrank exact single/multipack subtypes", () => {
+    const sorted = sortBestVerifiedBuyLinks([
+      {
+        id: "compat",
+        retailer_name: "Compatible PDP",
+        affiliate_url: "https://www.example.com/product/compatible-pack",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+      },
+      {
+        id: "mp",
+        retailer_name: "Multipack PDP",
+        affiliate_url: "https://www.example.com/product/multipack",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+      },
+      {
+        id: "su",
+        retailer_name: "Single PDP",
+        affiliate_url: "https://www.example.com/product/single",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+      },
+    ]);
+    assert.deepEqual(sorted.map((r) => r.id), ["su", "mp", "compat"]);
+  });
+
+  it("rows without subtype preserve prior ordering behavior", () => {
+    const sorted = sortBestVerifiedBuyLinks([
+      {
+        id: "b",
+        retailer_name: "Store B",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T09:00:00.000Z",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        id: "a",
+        retailer_name: "Store A",
+        affiliate_url: "https://shop.example.com/product/wf3cb",
+        browser_truth_checked_at: "2026-04-20T01:00:00.000Z",
+        browser_truth_classification: "direct_buyable",
+      },
+    ]);
+    assert.deepEqual(sorted.map((r) => r.id), ["b", "a"]);
+  });
+
   it("prefers exact product-like URL over is_primary/position", () => {
     const winner = selectBestVerifiedBuyLink([
       {
@@ -665,6 +754,31 @@ describe("best-verified winner arbitration", () => {
       { exactOemCatalogPart: true, expectedOemPartNumber: "MWF" },
     );
     assert.equal(winner?.id, "amazon");
+  });
+});
+
+describe("multipack fallback copy helper", () => {
+  it("appears only when no single-unit subtype and at least one multipack subtype exists", () => {
+    assert.equal(
+      shouldShowMultipackFallbackCopy([
+        { browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE },
+      ]),
+      true,
+    );
+    assert.equal(
+      shouldShowMultipackFallbackCopy([
+        { browser_truth_buyable_subtype: BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE },
+        { browser_truth_buyable_subtype: BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE },
+      ]),
+      false,
+    );
+    assert.equal(
+      shouldShowMultipackFallbackCopy([
+        { browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE },
+      ]),
+      false,
+    );
+    assert.equal(MULTIPACK_FALLBACK_COPY.length > 0, true);
   });
 });
 

@@ -1,4 +1,8 @@
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  MULTIPACK_FALLBACK_COPY,
+  shouldShowMultipackFallbackCopy,
+} from "@/lib/retailers/launch-buy-links";
 
 export type BuyLinkRow = {
   id: string;
@@ -9,6 +13,7 @@ export type BuyLinkRow = {
   retailer_key?: string | null;
   /** Present on DB-backed rows; required for Phase 1 buy-path gating in TieredBuyLinks. */
   browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
 };
 
 /**
@@ -35,23 +40,29 @@ export function BuyLinks({
   }
 
   const base = goBase.replace(/\/$/, "");
+  const showMultipackFallback = shouldShowMultipackFallbackCopy(realLinks);
 
   return (
-    <ul className="flex flex-col gap-2">
-      {realLinks.map((link) => (
-        <li key={link.id}>
-          <a
-            href={`${base}/${link.id}`}
-            rel="nofollow sponsored"
-            className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
-          >
-            {link.retailer_name?.trim() || "Buy online"}
-            <span className="ml-2 text-neutral-400" aria-hidden>
-              →
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
+    <div className="space-y-2">
+      {showMultipackFallback ? (
+        <p className="text-sm text-neutral-700 dark:text-neutral-300">{MULTIPACK_FALLBACK_COPY}</p>
+      ) : null}
+      <ul className="flex flex-col gap-2">
+        {realLinks.map((link) => (
+          <li key={link.id}>
+            <a
+              href={`${base}/${link.id}`}
+              rel="nofollow sponsored"
+              className="inline-flex items-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:bg-neutral-800"
+            >
+              {link.retailer_name?.trim() || "Buy online"}
+              <span className="ml-2 text-neutral-400" aria-hidden>
+                →
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

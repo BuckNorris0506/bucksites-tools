@@ -112,6 +112,8 @@ export const BUYABLE_SUBTYPES = {
 } as const;
 
 export type BuyableSubtype = (typeof BUYABLE_SUBTYPES)[keyof typeof BUYABLE_SUBTYPES];
+export const MULTIPACK_FALLBACK_COPY =
+  "Single-filter listing not found. Verified multipack options are available.";
 
 export function normalizeBuyableSubtype(
   subtype: string | null | undefined,
@@ -363,7 +365,44 @@ type WinnerSelectableBuyLink = {
   browser_truth_checked_at?: string | null;
   retailer_key?: string | null;
   browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
 };
+
+function buyableSubtypePriority(
+  subtype: string | null | undefined,
+): number | null {
+  const normalized = normalizeBuyableSubtype(subtype);
+  if (normalized === BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE) return 3;
+  if (normalized === BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE) return 2;
+  if (normalized === BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE) return 1;
+  return null;
+}
+
+export function hasSingleUnitDirectBuyable(
+  links: Array<{ browser_truth_buyable_subtype?: string | null }>,
+): boolean {
+  return links.some(
+    (link) =>
+      normalizeBuyableSubtype(link.browser_truth_buyable_subtype) ===
+      BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+  );
+}
+
+export function hasMultipackDirectBuyable(
+  links: Array<{ browser_truth_buyable_subtype?: string | null }>,
+): boolean {
+  return links.some(
+    (link) =>
+      normalizeBuyableSubtype(link.browser_truth_buyable_subtype) ===
+      BUYABLE_SUBTYPES.MULTIPACK_DIRECT_BUYABLE,
+  );
+}
+
+export function shouldShowMultipackFallbackCopy(
+  links: Array<{ browser_truth_buyable_subtype?: string | null }>,
+): boolean {
+  return !hasSingleUnitDirectBuyable(links) && hasMultipackDirectBuyable(links);
+}
 
 /** Optional context from the money-page PDP (never per-filter slug special cases in the sorter). */
 export type BuyPathSortContext = {
@@ -479,6 +518,12 @@ export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(
     const boostB = amazonExactOemPrimaryBoost(b, sortContext);
     if (boostA !== boostB) {
       return boostB - boostA;
+    }
+
+    const subtypePriorityA = buyableSubtypePriority(a.browser_truth_buyable_subtype);
+    const subtypePriorityB = buyableSubtypePriority(b.browser_truth_buyable_subtype);
+    if (subtypePriorityA != null && subtypePriorityB != null && subtypePriorityA !== subtypePriorityB) {
+      return subtypePriorityB - subtypePriorityA;
     }
 
     const specificityDelta =

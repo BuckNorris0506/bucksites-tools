@@ -3,6 +3,8 @@ import {
   buyLinkGateFailureKind,
   filterRealBuyRetailerLinks,
   isOemCatalogSlotKey,
+  MULTIPACK_FALLBACK_COPY,
+  shouldShowMultipackFallbackCopy,
   sortBestVerifiedBuyLinks,
   type BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
@@ -57,11 +59,15 @@ export function TieredBuyLinks({
   const alternates = sorted.slice(1, 1 + MAX_SECONDARY);
   const hiddenCount = Math.max(0, sorted.length - 1 - MAX_SECONDARY);
   const oemCatalogFootnote = firstSuppressedOemCatalogFootnoteLink(links);
+  const showMultipackFallbackCopy = shouldShowMultipackFallbackCopy(sorted);
 
   const primaryName = primary.retailer_name?.trim() || "Recommended store";
 
   return (
     <div className="space-y-3">
+      {showMultipackFallbackCopy ? (
+        <p className="text-sm text-neutral-700 dark:text-neutral-300">{MULTIPACK_FALLBACK_COPY}</p>
+      ) : null}
       <div>
         <a
           href={`${base}/${primary.id}`}
