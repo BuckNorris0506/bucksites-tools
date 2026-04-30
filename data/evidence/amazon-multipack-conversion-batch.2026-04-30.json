@@ -1,0 +1,50 @@
+{
+  "report_name": "buckparts_amazon_multipack_conversion_batch_v1",
+  "generated_at": "2026-04-30",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "staged_candidates": [
+    {
+      "token": "ADQ36006101",
+      "canonical_dp_url": "https://www.amazon.com/dp/B00YD2IK1C",
+      "asin": "B00YD2IK1C",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "confidence": "exact",
+      "mutation_status": "NOT_APPLIED"
+    },
+    {
+      "token": "DA29-00003G",
+      "canonical_dp_url": "https://www.amazon.com/dp/B00W0TO8WU",
+      "asin": "B00W0TO8WU",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "confidence": "exact",
+      "mutation_status": "NOT_APPLIED"
+    },
+    {
+      "token": "DA29-00019A",
+      "canonical_dp_url": "https://www.amazon.com/dp/B019HPTP3G",
+      "asin": "B019HPTP3G",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "confidence": "exact",
+      "mutation_status": "NOT_APPLIED"
+    },
+    {
+      "token": "DA29-00020A",
+      "canonical_dp_url": "https://www.amazon.com/dp/B085C8P86W",
+      "asin": "B085C8P86W",
+      "buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "browser_truth_classification_candidate": "direct_buyable",
+      "confidence": "exact",
+      "mutation_status": "NOT_APPLIED"
+    }
+  ],
+  "notes": [
+    "Read-only staging evidence only.",
+    "No DB mutation performed.",
+    "No retailer_links inserted or updated."
+  ]
+}
