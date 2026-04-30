@@ -1,0 +1,38 @@
+{
+  "report_name": "buckparts_amazon_multipack_subtype_outcome_v1",
+  "generated_at": "2026-04-30",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "outcomes": [
+    {
+      "token": "ADQ36006101",
+      "link_id": "13db0ab4-7bee-4bfc-8194-7729f98d0893",
+      "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "recommendation_after_update": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00003G",
+      "link_id": "e27d19d0-d2d9-40ca-b584-f4b462700f69",
+      "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "recommendation_after_update": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    },
+    {
+      "token": "DA29-00020A",
+      "link_id": "e2cb724e-e87f-4b0c-b6b9-defe74cf0312",
+      "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+      "recommendation_after_update": "NOOP_EXISTING_SLOT_ALREADY_SAFE"
+    }
+  ],
+  "follow_up": {
+    "da29_00019a_status": "CLEAR_AND_READY_FOR_SEPARATE_SQL_PLANNING",
+    "safe_cta_links_change": "NO_INCREASE_FROM_SUBTYPE_ONLY_UPDATE",
+    "command_surface_status": "WARNING",
+    "command_surface_reason": "BLOCKED_* exceeds LIVE_*"
+  },
+  "notes": [
+    "Evidence only; no DB mutation performed by this record.",
+    "No runtime code changes.",
+    "No revenue improvement claim is made from this subtype-only outcome."
+  ]
+}
