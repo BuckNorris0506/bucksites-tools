@@ -27,6 +27,11 @@ const TARGETS = [
   },
 ] as const;
 
+/** Keep in sync with exclusion lists in OEM / Amazon-first queue reports. */
+export const FRIGIDAIRE_DEAD_OEM_AFFILIATE_URLS: readonly string[] = TARGETS.map(
+  (target) => target.dead_search_url,
+);
+
 type Target = (typeof TARGETS)[number];
 
 type RetailerLinkRow = {

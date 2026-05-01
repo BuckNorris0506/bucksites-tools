@@ -74,6 +74,7 @@
     "buckparts:frigidaire-dead-oem-link-ids": "tsx scripts/report-frigidaire-dead-oem-link-ids.ts",
     "buckparts:frigidaire-next-candidates": "tsx scripts/report-frigidaire-next-monetizable-candidates.ts",
     "buckparts:oem-next-money-cohort": "tsx scripts/report-oem-catalog-next-money-cohort.ts",
+    "buckparts:amazon-first-blocked-queue": "tsx scripts/report-amazon-first-blocked-conversion-queue.ts",
     "buckparts:repairclinic-air-blocked-details": "tsx scripts/report-repairclinic-air-purifier-blocked-details.ts",
     "buckparts:repairclinic-fridge-blocked-details": "tsx scripts/report-repairclinic-refrigerator-blocked-details.ts",
     "test:whw-search-nav": "node --import tsx --test src/lib/data/whole-house-water-search-nav.test.ts",
