@@ -32,6 +32,7 @@
     "buckparts:operator:fridge-non-amazon": "tsx scripts/run-fridge-non-amazon-operator.ts",
     "search:gaps:rank": "tsx scripts/search-gaps-rank.ts",
     "search:gaps:classify": "tsx scripts/search-gaps-classify.ts",
+    "buckparts:report:search-miss-audit": "tsx scripts/report-search-miss-audit.ts",
     "search:gaps:candidates": "tsx scripts/search-gap-candidates-generate.ts",
     "search:gaps:apply": "tsx scripts/search-gap-candidates-apply.ts",
     "search:gaps:promote:fridge": "tsx scripts/promote-staged-refrigerator.ts",
