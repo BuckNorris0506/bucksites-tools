@@ -73,6 +73,13 @@ type CommandCenterReport = {
     top_5_tokens: string[];
     recommended_next_action: string;
   };
+  execution_guidance: {
+    next_move_mode: "READ_ONLY" | "MUTATING";
+    next_move_command: string;
+    mutating_blocked: boolean;
+    mutating_block_reasons: string[];
+    staleness_or_dirty_risk: string[];
+  };
   next_best_action: string;
   why_this_action: string;
   operator_can_be_away_status:
@@ -400,6 +407,67 @@ export async function buildBuckpartsCommandCenterReport(
       : null,
   ].filter((value): value is string => typeof value === "string");
 
+  const mutatingBlockedReasons: string[] = [];
+  if (commandSurface.system_health.status === "CRITICAL") {
+    mutatingBlockedReasons.push("command_surface system_health is CRITICAL");
+  }
+  if (amazonFirstSummary.runtime_status === "UNKNOWN") {
+    mutatingBlockedReasons.push("amazon_first_blocked_queue_summary runtime_status is UNKNOWN");
+  }
+  if (oemNextMoney.total_remaining_rows === "UNKNOWN") {
+    mutatingBlockedReasons.push("oem_catalog_next_money total_remaining_rows is UNKNOWN");
+  }
+  if (blockedQueue.total_blocked_links === "UNKNOWN") {
+    mutatingBlockedReasons.push("blocked_link_summary total_blocked_links is UNKNOWN");
+  }
+  if (affiliateTracker.records_approved.length === 0) {
+    mutatingBlockedReasons.push("affiliate_readiness_summary approved_count is 0");
+  }
+  if (flexoffersReadiness === null) {
+    mutatingBlockedReasons.push(
+      "flexoffers_readiness_refrigerator_water report missing (data/reports/flexoffers-readiness-refrigerator-water.json)",
+    );
+  }
+  const mutatingBlocked = mutatingBlockedReasons.length > 0;
+
+  const stalenessOrDirtyRisk: string[] = [];
+  if (commandSurface.trend.overall_trend === "UNKNOWN") {
+    stalenessOrDirtyRisk.push("trend is UNKNOWN; snapshot comparison is not fully deterministic");
+  }
+  if (
+    commandSurface.known_unknowns.some((item) =>
+      item.includes("learning_outcomes runtime table status is UNKNOWN_NOT_QUERIED"),
+    )
+  ) {
+    stalenessOrDirtyRisk.push("learning_outcomes known_unknowns includes UNKNOWN_NOT_QUERIED note");
+  }
+  if (affiliateTracker.known_unknowns.length > 0) {
+    stalenessOrDirtyRisk.push(
+      `affiliate tracker has ${affiliateTracker.known_unknowns.length} known_unknown note(s)`,
+    );
+  }
+  if (evidenceFiles.length === 0) {
+    stalenessOrDirtyRisk.push("data/evidence has no JSON files for recent outcomes");
+  }
+
+  const nextMoveMode: CommandCenterReport["execution_guidance"]["next_move_mode"] =
+    /\b(insert|apply|promote|commit|write|update db|mutation)\b/i.test(nextBestAction)
+      ? "MUTATING"
+      : "READ_ONLY";
+
+  const nextMoveCommand =
+    nextMoveMode === "READ_ONLY"
+      ? preferAmazonFirstConversion
+        ? "npm run buckparts:amazon-first-blocked-queue"
+        : affiliateApprovalPending
+          ? "npm run buckparts:affiliate-tracker && npm run buckparts:command-surface && npm run buckparts:command-center"
+          : !topMoneyQueue[0].exhausted
+            ? "npm run buckparts:oem-next-money-cohort"
+            : !topMoneyQueue[1].exhausted
+              ? "npm run buckparts:frigidaire-next-candidates"
+              : "npm run buckparts:command-center"
+      : "UNKNOWN";
+
   return {
     report_name: "buckparts_command_center_v1",
     generated_at: now().toISOString(),
@@ -439,6 +507,13 @@ export async function buildBuckpartsCommandCenterReport(
       recommended_first_action: blockedQueue.recommended_first_action,
     },
     amazon_first_blocked_queue_summary: amazonFirstSummary,
+    execution_guidance: {
+      next_move_mode: nextMoveMode,
+      next_move_command: nextMoveCommand,
+      mutating_blocked: mutatingBlocked,
+      mutating_block_reasons: mutatingBlockedReasons,
+      staleness_or_dirty_risk: stalenessOrDirtyRisk,
+    },
     next_best_action: nextBestAction,
     why_this_action: whyThisAction,
     operator_can_be_away_status: operatorAwayStatus,

@@ -35,6 +35,7 @@
 - Do not invent repo facts.
 - Use Proven / Inferred / Unknown for non-trivial claims.
 - Optimize for efficiency, money, trust, and conversion.
+- For BuckParts build/debug replies, keep responses short: short summary, short why, and the next prompt only unless Jared explicitly asks for more detail.
 
 ---
 

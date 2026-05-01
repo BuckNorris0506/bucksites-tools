@@ -93,6 +93,7 @@ function baseProviders() {
       ({
         system_health: { status: "WARNING", reasons: ["warning"] },
         recommended_next_step: "Resolve warning-level command-surface issues before expanding.",
+        trend: { overall_trend: "UNKNOWN" },
         known_unknowns: [],
       }) as never,
     affiliateTracker: () =>
@@ -199,6 +200,11 @@ test("NBA prefers Amazon-first OEM rescue when Amazon verified, needs search, no
   assert.match(report.next_best_action, /Amazon-first OEM blocked-search rescue/i);
   assert.match(report.next_best_action, /TOK1/);
   assert.equal(/Rerun affiliate tracker \+ command surface/i.test(report.next_best_action), false);
+  assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+  assert.equal(
+    report.execution_guidance.next_move_command,
+    "npm run buckparts:amazon-first-blocked-queue",
+  );
 });
 
 test("does not choose Amazon-first NBA when queue is UNKNOWN", async () => {
@@ -212,6 +218,44 @@ test("does not choose Amazon-first NBA when queue is UNKNOWN", async () => {
   });
   assert.equal(report.amazon_first_blocked_queue_summary.runtime_status, "UNKNOWN");
   assert.equal(/Amazon-first OEM blocked-search rescue/i.test(report.next_best_action), false);
+});
+
+test("execution_guidance block exists with required fields", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueOkMock({ needs: 1, tokens: ["T1"] });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(typeof report.execution_guidance.next_move_command, "string");
+  assert.equal(
+    report.execution_guidance.next_move_mode === "READ_ONLY" ||
+      report.execution_guidance.next_move_mode === "MUTATING",
+    true,
+  );
+  assert.equal(typeof report.execution_guidance.mutating_blocked, "boolean");
+  assert.equal(Array.isArray(report.execution_guidance.mutating_block_reasons), true);
+  assert.equal(Array.isArray(report.execution_guidance.staleness_or_dirty_risk), true);
+});
+
+test("execution_guidance marks mutating blocked when queue is UNKNOWN/missing evidence inputs", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueUnknownMock();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.equal(
+    report.execution_guidance.mutating_block_reasons.some((r) =>
+      r.includes("amazon_first_blocked_queue_summary runtime_status is UNKNOWN"),
+    ),
+    true,
+  );
 });
 
 test("includes recent evidence/outcome files", async () => {
