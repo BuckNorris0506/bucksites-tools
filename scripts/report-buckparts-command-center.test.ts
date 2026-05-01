@@ -258,6 +258,80 @@ test("execution_guidance marks mutating blocked when queue is UNKNOWN/missing ev
   );
 });
 
+test("execution_guidance blocks mutation when command surface is CRITICAL", async () => {
+  const providers = baseProviders();
+  providers.commandSurface = async () =>
+    ({
+      system_health: { status: "CRITICAL", reasons: ["critical"] },
+      recommended_next_step: "Resolve critical command-surface blockers before expanding.",
+      trend: { overall_trend: "UNKNOWN" },
+      known_unknowns: [],
+    }) as never;
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.equal(
+    report.execution_guidance.mutating_block_reasons.includes(
+      "command_surface system_health is CRITICAL",
+    ),
+    true,
+  );
+});
+
+test("execution_guidance blocks mutation when approved_count is zero", async () => {
+  const providers = baseProviders();
+  providers.affiliateTracker = () =>
+    ({
+      status_counts: {
+        NOT_STARTED: 1,
+        DRAFTING: 0,
+        SUBMITTED: 0,
+        IN_REVIEW: 0,
+        APPROVED: 0,
+        REJECTED: 0,
+        REAPPLY_REQUIRED: 0,
+        PAUSED_OR_INACTIVE: 0,
+      },
+      records_approved: [],
+      known_unknowns: [],
+    }) as never;
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.equal(
+    report.execution_guidance.mutating_block_reasons.includes(
+      "affiliate_readiness_summary approved_count is 0",
+    ),
+    true,
+  );
+});
+
+test("execution_guidance safely represents missing flexoffers readiness file", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueUnknownMock();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.equal(
+    report.execution_guidance.mutating_block_reasons.some((reason) =>
+      reason.includes("flexoffers_readiness_refrigerator_water report missing"),
+    ),
+    true,
+  );
+});
+
 test("includes recent evidence/outcome files", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
