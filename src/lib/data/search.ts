@@ -9,6 +9,7 @@ import {
   type CatalogId,
 } from "@/lib/catalog/constants";
 import { HOMEKEEP_GLOBAL_SEARCH_CATALOG } from "@/lib/catalog/identity";
+import { fetchAirPurifierModelRowsWithFallback } from "@/lib/search/air-purifier-model-fallback";
 import { logSearchTelemetry } from "@/lib/search/telemetry";
 import { normalizeSearchCompact, trimSearchInput } from "@/lib/search/normalize";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
@@ -224,8 +225,7 @@ export async function searchCatalog(
     fridgeAliases,
     filtersDirect,
     filterAliases,
-    apModels,
-    apModelAliases,
+    apModelRows,
     apFilters,
     apFilterAliases,
     vacModels,
@@ -249,11 +249,9 @@ export async function searchCatalog(
     supabase.rpc("search_fridge_aliases_flexible", { q: fridgeQ, limit_count: LIMIT }),
     supabase.rpc("search_filters_flexible", { q, limit_count: LIMIT }),
     supabase.rpc("search_filter_aliases_flexible", { q, limit_count: LIMIT }),
-    supabase.rpc("search_air_purifier_models_flexible", { q, limit_count: LIMIT }),
-    supabase.rpc("search_air_purifier_model_aliases_flexible", {
-      q,
-      limit_count: LIMIT,
-    }),
+    fetchAirPurifierModelRowsWithFallback(q, LIMIT, async (name, args) =>
+      supabase.rpc(name, args),
+    ),
     supabase.rpc("search_air_purifier_filters_flexible", {
       q,
       limit_count: LIMIT,
@@ -318,6 +316,7 @@ export async function searchCatalog(
       limit_count: LIMIT,
     }),
   ]);
+  const { modelsDirect: apModels, modelAliases: apModelAliases } = apModelRows;
 
   const rpcErrors: { name: string; err: (typeof fridgesDirect)["error"] }[] = [];
   const pushErr = (name: string, err: (typeof fridgesDirect)["error"]) => {

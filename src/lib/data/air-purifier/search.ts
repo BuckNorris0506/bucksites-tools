@@ -1,6 +1,7 @@
 import { CATALOG_AIR_PURIFIER_FILTERS } from "@/lib/catalog/constants";
 import { wedgeCatalogForCatalogId } from "@/lib/catalog/identity";
 import { loadAirPurifierUsefulFilterSlugs } from "@/lib/data/air-purifier-filter-usefulness";
+import { fetchAirPurifierModelRowsWithFallback } from "@/lib/search/air-purifier-model-fallback";
 import { normalizeSearchCompact, trimSearchInput } from "@/lib/search/normalize";
 import { logSearchTelemetry } from "@/lib/search/telemetry";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
@@ -42,16 +43,11 @@ export async function searchAirPurifierCatalog(
 
   const supabase = getSupabaseServerClient();
 
-  const [modelsDirect, modelAliases, filtersDirect, filterAliases] =
+  const [modelRows, filtersDirect, filterAliases] =
     await Promise.all([
-      supabase.rpc("search_air_purifier_models_flexible", {
-        q,
-        limit_count: LIMIT,
-      }),
-      supabase.rpc("search_air_purifier_model_aliases_flexible", {
-        q,
-        limit_count: LIMIT,
-      }),
+      fetchAirPurifierModelRowsWithFallback(q, LIMIT, async (name, args) =>
+        supabase.rpc(name, args),
+      ),
       supabase.rpc("search_air_purifier_filters_flexible", {
         q,
         limit_count: LIMIT,
@@ -61,6 +57,8 @@ export async function searchAirPurifierCatalog(
         limit_count: LIMIT,
       }),
     ]);
+
+  const { modelsDirect, modelAliases } = modelRows;
 
   if (modelsDirect.error) throw modelsDirect.error;
   if (modelAliases.error) throw modelAliases.error;
