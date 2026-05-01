@@ -64,6 +64,29 @@ type CommandCenterReport = {
     top_blocked_retailer_key: string | "UNKNOWN";
     recommended_first_action: string;
   };
+  search_and_click_intelligence_summary: {
+    runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    window_days: { short: 7; long: 30 };
+    search_events: {
+      last_7d: number | "UNKNOWN";
+      last_30d: number | "UNKNOWN";
+      zero_result_last_7d: number | "UNKNOWN";
+      zero_result_last_30d: number | "UNKNOWN";
+      zero_result_rate_last_7d: number | "UNKNOWN";
+      zero_result_rate_last_30d: number | "UNKNOWN";
+    };
+    search_gaps_backlog: {
+      open: number | "UNKNOWN";
+      reviewing: number | "UNKNOWN";
+      queued: number | "UNKNOWN";
+      total_actionable: number | "UNKNOWN";
+    };
+    click_events: {
+      last_7d: number | "UNKNOWN";
+      last_30d: number | "UNKNOWN";
+    };
+    known_unknowns: string[];
+  };
   amazon_first_blocked_queue_summary: {
     runtime_status: "OK" | "UNKNOWN";
     source_report: string;
@@ -264,6 +287,38 @@ export async function buildBuckpartsCommandCenterReport(
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
+  const fallbackSearchAndClickSummary: CommandCenterReport["search_and_click_intelligence_summary"] = {
+    runtime_status: "UNKNOWN_NOT_QUERIED",
+    window_days: { short: 7, long: 30 },
+    search_events: {
+      last_7d: "UNKNOWN",
+      last_30d: "UNKNOWN",
+      zero_result_last_7d: "UNKNOWN",
+      zero_result_last_30d: "UNKNOWN",
+      zero_result_rate_last_7d: "UNKNOWN",
+      zero_result_rate_last_30d: "UNKNOWN",
+    },
+    search_gaps_backlog: {
+      open: "UNKNOWN",
+      reviewing: "UNKNOWN",
+      queued: "UNKNOWN",
+      total_actionable: "UNKNOWN",
+    },
+    click_events: {
+      last_7d: "UNKNOWN",
+      last_30d: "UNKNOWN",
+    },
+    known_unknowns: [
+      "search_and_click_intelligence_summary unavailable from command_surface provider.",
+    ],
+  };
+  const searchAndClickSummary =
+    commandSurface &&
+    typeof commandSurface === "object" &&
+    "search_and_click_intelligence_summary" in commandSurface
+      ? (commandSurface as { search_and_click_intelligence_summary: CommandCenterReport["search_and_click_intelligence_summary"] })
+          .search_and_click_intelligence_summary
+      : fallbackSearchAndClickSummary;
 
   const evidenceDirAbs = path.resolve(rootDir, "data/evidence");
   const evidenceFiles = listEvidenceSummaries({
@@ -402,6 +457,9 @@ export async function buildBuckpartsCommandCenterReport(
     ...frigidaireNextCandidates.known_unknowns.map((item) => `Frigidaire next candidates: ${item}`),
     ...frigidaireDeadOem.known_unknowns.map((item) => `Frigidaire dead OEM: ${item}`),
     ...amazonFirstBlocked.known_unknowns.map((item) => `Amazon-first blocked queue: ${item}`),
+    ...searchAndClickSummary.known_unknowns.map(
+      (item) => `Search/click intelligence: ${item}`,
+    ),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
       : null,
@@ -506,6 +564,7 @@ export async function buildBuckpartsCommandCenterReport(
           : (blockedQueue.top_blocked_retailer_keys[0]?.retailer_key ?? "UNKNOWN"),
       recommended_first_action: blockedQueue.recommended_first_action,
     },
+    search_and_click_intelligence_summary: searchAndClickSummary,
     amazon_first_blocked_queue_summary: amazonFirstSummary,
     execution_guidance: {
       next_move_mode: nextMoveMode,

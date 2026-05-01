@@ -33,6 +33,7 @@ test("all required top-level keys exist", async () => {
     "cta_coverage_metrics",
     "retailer_link_state_metrics",
     "blocked_retailer_link_remediation",
+    "search_and_click_intelligence_summary",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -1326,4 +1327,61 @@ test("trend detects previous snapshot after write", async () => {
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
+});
+
+test("search_and_click_intelligence_summary returns OK metrics when fetch succeeds", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    skipCtaCoverageQuery: true,
+    fetchSearchAndClickIntelligenceSummary: async () => ({
+      window_days: { short: 7, long: 30 },
+      search_events: {
+        last_7d: 100,
+        last_30d: 250,
+        zero_result_last_7d: 15,
+        zero_result_last_30d: 40,
+        zero_result_rate_last_7d: 0.15,
+        zero_result_rate_last_30d: 0.16,
+      },
+      search_gaps_backlog: {
+        open: 10,
+        reviewing: 4,
+        queued: 2,
+        total_actionable: 16,
+      },
+      click_events: {
+        last_7d: 30,
+        last_30d: 90,
+      },
+    }),
+  });
+  assert.equal(report.search_and_click_intelligence_summary.runtime_status, "OK");
+  assert.equal(report.search_and_click_intelligence_summary.search_events.last_7d, 100);
+  assert.equal(report.search_and_click_intelligence_summary.search_gaps_backlog.total_actionable, 16);
+  assert.equal(report.search_and_click_intelligence_summary.click_events.last_30d, 90);
+  assert.deepEqual(report.search_and_click_intelligence_summary.known_unknowns, []);
+});
+
+test("search_and_click_intelligence_summary returns UNKNOWN_DB_UNAVAILABLE on fetch failure", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    skipCtaCoverageQuery: true,
+    fetchSearchAndClickIntelligenceSummary: async () => {
+      throw new Error("db unavailable");
+    },
+  });
+  assert.equal(
+    report.search_and_click_intelligence_summary.runtime_status,
+    "UNKNOWN_DB_UNAVAILABLE",
+  );
+  assert.equal(report.search_and_click_intelligence_summary.search_events.last_7d, "UNKNOWN");
+  assert.equal(
+    report.search_and_click_intelligence_summary.search_gaps_backlog.total_actionable,
+    "UNKNOWN",
+  );
+  assert.equal(report.search_and_click_intelligence_summary.click_events.last_30d, "UNKNOWN");
+  assert.equal(
+    report.search_and_click_intelligence_summary.known_unknowns.length > 0,
+    true,
+  );
 });

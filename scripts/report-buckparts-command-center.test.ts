@@ -157,6 +157,52 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(report.data_mutation, false);
 });
 
+test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
+  const providers = baseProviders();
+  providers.commandSurface = async () =>
+    ({
+      system_health: { status: "WARNING", reasons: ["warning"] },
+      recommended_next_step: "Resolve warning-level command-surface issues before expanding.",
+      trend: { overall_trend: "UNKNOWN" },
+      known_unknowns: [],
+      search_and_click_intelligence_summary: {
+        runtime_status: "OK",
+        window_days: { short: 7, long: 30 },
+        search_events: {
+          last_7d: 12,
+          last_30d: 50,
+          zero_result_last_7d: 3,
+          zero_result_last_30d: 7,
+          zero_result_rate_last_7d: 0.25,
+          zero_result_rate_last_30d: 0.14,
+        },
+        search_gaps_backlog: {
+          open: 4,
+          reviewing: 2,
+          queued: 1,
+          total_actionable: 7,
+        },
+        click_events: {
+          last_7d: 20,
+          last_30d: 77,
+        },
+        known_unknowns: [],
+      },
+    }) as never;
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+
+  assert.equal(report.search_and_click_intelligence_summary.runtime_status, "OK");
+  assert.equal(report.search_and_click_intelligence_summary.search_events.last_7d, 12);
+  assert.equal(report.search_and_click_intelligence_summary.search_gaps_backlog.total_actionable, 7);
+  assert.equal(report.search_and_click_intelligence_summary.click_events.last_30d, 77);
+});
+
 test("includes amazon_first_blocked_queue_summary with runtime OK when queue resolves", async () => {
   const providers = baseProviders();
   providers.amazonFirstBlockedQueue = amazonQueueOkMock({

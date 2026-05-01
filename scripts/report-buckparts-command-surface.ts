@@ -17,6 +17,7 @@ import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-sta
 
 type BoolMap = Record<string, boolean>;
 type UnknownableNumber = number | "UNKNOWN";
+type SearchAndClickRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type LearningOutcomesMetricsRow = {
   outcome: string | null;
   cta_status: string | null;
@@ -113,6 +114,29 @@ export type CommandSurfaceReport = {
     top_blocked_retailer_keys: Array<{ retailer_key: string; count: number }> | "UNKNOWN";
     recommended_next_action: string;
   };
+  search_and_click_intelligence_summary: {
+    runtime_status: SearchAndClickRuntimeStatus;
+    window_days: { short: 7; long: 30 };
+    search_events: {
+      last_7d: UnknownableNumber;
+      last_30d: UnknownableNumber;
+      zero_result_last_7d: UnknownableNumber;
+      zero_result_last_30d: UnknownableNumber;
+      zero_result_rate_last_7d: number | "UNKNOWN";
+      zero_result_rate_last_30d: number | "UNKNOWN";
+    };
+    search_gaps_backlog: {
+      open: UnknownableNumber;
+      reviewing: UnknownableNumber;
+      queued: UnknownableNumber;
+      total_actionable: UnknownableNumber;
+    };
+    click_events: {
+      last_7d: UnknownableNumber;
+      last_30d: UnknownableNumber;
+    };
+    known_unknowns: string[];
+  };
   state_system_metrics: {
     source: "local_contracts_and_available_local_data";
     runtime_status: "OK" | "PARTIAL" | "UNKNOWN_NO_DATA";
@@ -196,6 +220,10 @@ type BuildOptions = {
   skipLearningOutcomesQuery?: boolean;
   fetchCtaCoverageRows?: () => Promise<CtaCoverageRow[]>;
   skipCtaCoverageQuery?: boolean;
+  fetchSearchAndClickIntelligenceSummary?: () => Promise<
+    Omit<CommandSurfaceReport["search_and_click_intelligence_summary"], "runtime_status" | "known_unknowns">
+  >;
+  skipSearchAndClickIntelligenceQuery?: boolean;
 };
 
 type RunOptions = BuildOptions & {
@@ -390,6 +418,124 @@ function unknownCtaCoverageMetrics(
     blocked_or_unsafe_links: "UNKNOWN",
     missing_browser_truth_links: "UNKNOWN",
     retailer_counts: "UNKNOWN",
+  };
+}
+
+function unknownSearchAndClickIntelligenceSummary(
+  runtime_status: Exclude<SearchAndClickRuntimeStatus, "OK">,
+  knownUnknowns: string[],
+): CommandSurfaceReport["search_and_click_intelligence_summary"] {
+  return {
+    runtime_status,
+    window_days: { short: 7, long: 30 },
+    search_events: {
+      last_7d: "UNKNOWN",
+      last_30d: "UNKNOWN",
+      zero_result_last_7d: "UNKNOWN",
+      zero_result_last_30d: "UNKNOWN",
+      zero_result_rate_last_7d: "UNKNOWN",
+      zero_result_rate_last_30d: "UNKNOWN",
+    },
+    search_gaps_backlog: {
+      open: "UNKNOWN",
+      reviewing: "UNKNOWN",
+      queued: "UNKNOWN",
+      total_actionable: "UNKNOWN",
+    },
+    click_events: {
+      last_7d: "UNKNOWN",
+      last_30d: "UNKNOWN",
+    },
+    known_unknowns: knownUnknowns,
+  };
+}
+
+function safeRate(numerator: number, denominator: number): number {
+  if (denominator <= 0) return 0;
+  return numerator / denominator;
+}
+
+async function readSearchAndClickIntelligenceSummaryViaSupabase(): Promise<
+  Omit<CommandSurfaceReport["search_and_click_intelligence_summary"], "runtime_status" | "known_unknowns">
+> {
+  loadEnv();
+  const supabase = getSupabaseAdmin();
+  const nowMs = Date.now();
+  const last7 = new Date(nowMs - 7 * 86400000).toISOString();
+  const last30 = new Date(nowMs - 30 * 86400000).toISOString();
+
+  const [
+    search7,
+    search30,
+    searchZero7,
+    searchZero30,
+    click7,
+    click30,
+    gapsOpen,
+    gapsReviewing,
+    gapsQueued,
+  ] = await Promise.all([
+    supabase.from("search_events").select("id", { count: "exact", head: true }).gte("created_at", last7),
+    supabase.from("search_events").select("id", { count: "exact", head: true }).gte("created_at", last30),
+    supabase
+      .from("search_events")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", last7)
+      .eq("results_count", 0),
+    supabase
+      .from("search_events")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", last30)
+      .eq("results_count", 0),
+    supabase.from("click_events").select("id", { count: "exact", head: true }).gte("created_at", last7),
+    supabase.from("click_events").select("id", { count: "exact", head: true }).gte("created_at", last30),
+    supabase.from("search_gaps").select("id", { count: "exact", head: true }).eq("status", "open"),
+    supabase.from("search_gaps").select("id", { count: "exact", head: true }).eq("status", "reviewing"),
+    supabase.from("search_gaps").select("id", { count: "exact", head: true }).eq("status", "queued"),
+  ]);
+
+  for (const result of [
+    search7,
+    search30,
+    searchZero7,
+    searchZero30,
+    click7,
+    click30,
+    gapsOpen,
+    gapsReviewing,
+    gapsQueued,
+  ]) {
+    if (result.error) throw result.error;
+  }
+
+  const last7Search = search7.count ?? 0;
+  const last30Search = search30.count ?? 0;
+  const zero7 = searchZero7.count ?? 0;
+  const zero30 = searchZero30.count ?? 0;
+  const gapsOpenCount = gapsOpen.count ?? 0;
+  const gapsReviewingCount = gapsReviewing.count ?? 0;
+  const gapsQueuedCount = gapsQueued.count ?? 0;
+
+  return {
+    window_days: { short: 7, long: 30 },
+    search_events: {
+      last_7d: last7Search,
+      last_30d: last30Search,
+      zero_result_last_7d: zero7,
+      zero_result_last_30d: zero30,
+      zero_result_rate_last_7d: safeRate(zero7, last7Search),
+      zero_result_rate_last_30d: safeRate(zero30, last30Search),
+    },
+    search_gaps_backlog: {
+      open: gapsOpenCount,
+      reviewing: gapsReviewingCount,
+      queued: gapsQueuedCount,
+      total_actionable: gapsOpenCount + gapsReviewingCount + gapsQueuedCount,
+    },
+    click_events: {
+      last_7d: click7.count ?? 0,
+      last_30d: click30.count ?? 0,
+    },
   };
 }
 
@@ -1096,6 +1242,32 @@ export async function buildBuckpartsCommandSurfaceReport(
       blockedRetailerLinkRemediation = unknownBlockedRetailerLinkRemediation();
     }
   }
+  let searchAndClickIntelligenceSummary: CommandSurfaceReport["search_and_click_intelligence_summary"] =
+    unknownSearchAndClickIntelligenceSummary("UNKNOWN_NOT_QUERIED", [
+      "search_and_click_intelligence_summary runtime query intentionally skipped.",
+    ]);
+  const shouldQuerySearchAndClickIntelligence =
+    options.skipSearchAndClickIntelligenceQuery !== true;
+  if (shouldQuerySearchAndClickIntelligence) {
+    const fetchSummary =
+      options.fetchSearchAndClickIntelligenceSummary ??
+      readSearchAndClickIntelligenceSummaryViaSupabase;
+    try {
+      const summary = await fetchSummary();
+      searchAndClickIntelligenceSummary = {
+        runtime_status: "OK",
+        ...summary,
+        known_unknowns: [],
+      };
+    } catch {
+      searchAndClickIntelligenceSummary = unknownSearchAndClickIntelligenceSummary(
+        "UNKNOWN_DB_UNAVAILABLE",
+        [
+          "search_and_click_intelligence_summary runtime query failed for search_events/search_gaps/click_events.",
+        ],
+      );
+    }
+  }
   const stateSystemMetrics = buildStateSystemMetrics({
     checks,
     abs,
@@ -1155,6 +1327,10 @@ export async function buildBuckpartsCommandSurfaceReport(
     retailerLinkStateMetrics.runtime_status !== "OK"
       ? "retailer_link_state_metrics UNKNOWN: insufficient CTA inputs for state mapping."
       : null,
+    searchAndClickIntelligenceSummary.runtime_status !== "OK"
+      ? `search_and_click_intelligence_summary ${searchAndClickIntelligenceSummary.runtime_status}: runtime metrics unavailable.`
+      : null,
+    ...searchAndClickIntelligenceSummary.known_unknowns,
     !stateSystemMetrics.page_state.computable
       ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
       : null,
@@ -1229,6 +1405,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     cta_coverage_metrics: ctaCoverageMetrics,
     retailer_link_state_metrics: retailerLinkStateMetrics,
     blocked_retailer_link_remediation: blockedRetailerLinkRemediation,
+    search_and_click_intelligence_summary: searchAndClickIntelligenceSummary,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
