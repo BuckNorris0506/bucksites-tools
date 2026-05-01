@@ -79,9 +79,24 @@ const LIMIT = 25;
  * matching often misses because compact form is one long token (e.g. samsungrf30…filter).
  * Strip to the model-like token so fridge model RPCs get a clean query.
  */
-function fridgeFlexibleSearchInput(trimmedQuery: string): string {
+export function fridgeFlexibleSearchInput(trimmedQuery: string): string {
   const hasFilterWord = /\b(filter|water\s*filter|cartridge|replacement)\b/i.test(trimmedQuery);
-  if (!hasFilterWord) return trimmedQuery;
+  if (!hasFilterWord) {
+    // Handle "brand + compact model-prefix" searches (e.g. "ge cfe28t").
+    const tokens = trimmedQuery
+      .trim()
+      .split(/\s+/)
+      .map((token) => token.replace(/[^A-Za-z0-9-]/g, ""))
+      .filter((token) => token.length > 0);
+    if (tokens.length >= 2) {
+      const modelish = tokens.filter(
+        (token) =>
+          token.length >= 5 && /[A-Za-z]/.test(token) && /\d/.test(token),
+      );
+      if (modelish.length === 1) return modelish[0]!;
+    }
+    return trimmedQuery;
+  }
 
   const upper = trimmedQuery.toUpperCase();
   const tokens = upper.match(/\b[A-Z0-9][A-Z0-9-]{5,}\b/g) ?? [];
