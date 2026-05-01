@@ -5,6 +5,23 @@ import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-ce
 
 const BASE_TRACKER = JSON.stringify([
   {
+    id: "amazon-associates",
+    network: "Amazon Associates",
+    retailer: "Amazon",
+    programUrl: null,
+    status: "APPROVED",
+    submittedAt: null,
+    lastStatusAt: null,
+    decisionAt: null,
+    rejectionReason: null,
+    nextAction: "Verify tag",
+    nextActionDueAt: null,
+    notes: null,
+    tagVerified: true,
+    tagVerifiedAt: null,
+    tagValue: "buckparts20-20",
+  },
+  {
     id: "repairclinic",
     network: "UNKNOWN",
     retailer: "RepairClinic",
@@ -23,6 +40,53 @@ const BASE_TRACKER = JSON.stringify([
   },
 ]);
 
+function amazonQueueOkMock(overrides: Partial<{ needs: number; tokens: string[] }> = {}) {
+  const needs = overrides.needs ?? 0;
+  const tokens = overrides.tokens ?? [];
+  const top = tokens.map((token, i) => ({
+    link_id: `id-${i}`,
+    filter_id: `f-${i}`,
+    filter_slug: token.toLowerCase(),
+    retailer_key: "oem-catalog",
+    blocked_url: `https://example.com/search?q=${token}`,
+    token,
+    domain: "example.com",
+    domain_blocked_count: 1,
+    current_live_amazon_slot_status: null,
+    recommended_search_query: token,
+    recommended_next_action: "SEARCH_AMAZON_EXACT_TOKEN" as const,
+  }));
+  return async () =>
+    ({
+      report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
+      generated_at: "2026-05-01T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      selection_table: "retailer_links",
+      total_pool_rows: needs + top.length,
+      already_live_noop_count: 0,
+      needs_amazon_search_count: needs,
+      top_candidates: top,
+      known_unknowns: [],
+    }) as never;
+}
+
+function amazonQueueUnknownMock() {
+  return async () =>
+    ({
+      report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
+      generated_at: "2026-05-01T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      selection_table: "retailer_links",
+      total_pool_rows: "UNKNOWN",
+      already_live_noop_count: "UNKNOWN",
+      needs_amazon_search_count: "UNKNOWN",
+      top_candidates: "UNKNOWN",
+      known_unknowns: ["retailer_links/filters dataset unavailable"],
+    }) as never;
+}
+
 function baseProviders() {
   return {
     commandSurface: async () =>
@@ -38,12 +102,12 @@ function baseProviders() {
           DRAFTING: 1,
           SUBMITTED: 0,
           IN_REVIEW: 0,
-          APPROVED: 0,
+          APPROVED: 1,
           REJECTED: 0,
           REAPPLY_REQUIRED: 0,
           PAUSED_OR_INACTIVE: 0,
         },
-        records_approved: [],
+        records_approved: ["amazon-associates"],
         known_unknowns: [],
       }) as never,
     blockedLinkQueue: async () =>
@@ -77,6 +141,7 @@ function baseProviders() {
         recommended_next_action: "Start with candidates already containing direct_buyable non-OEM links.",
         known_unknowns: [],
       }) as never,
+    amazonFirstBlockedQueue: amazonQueueOkMock({ needs: 0, tokens: [] }),
   };
 }
 
@@ -89,6 +154,64 @@ test("command center is read_only true and data_mutation false", async () => {
   });
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
+});
+
+test("includes amazon_first_blocked_queue_summary with runtime OK when queue resolves", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueOkMock({
+    needs: 3,
+    tokens: ["AAA", "BBB", "CCC", "DDD", "EEE", "FFF"],
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.amazon_first_blocked_queue_summary.runtime_status, "OK");
+  assert.equal(report.amazon_first_blocked_queue_summary.needs_amazon_search_count, 3);
+  assert.equal(report.amazon_first_blocked_queue_summary.top_candidate_count, 6);
+  assert.deepEqual(report.amazon_first_blocked_queue_summary.top_5_tokens, [
+    "AAA",
+    "BBB",
+    "CCC",
+    "DDD",
+    "EEE",
+  ]);
+  assert.equal(
+    report.amazon_first_blocked_queue_summary.recommended_next_action.includes("SEARCH_AMAZON_EXACT_TOKEN"),
+    true,
+  );
+});
+
+test("NBA prefers Amazon-first OEM rescue when Amazon verified, needs search, no other APPROVED affiliate", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueOkMock({
+    needs: 2,
+    tokens: ["TOK1", "TOK2"],
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.match(report.next_best_action, /Amazon-first OEM blocked-search rescue/i);
+  assert.match(report.next_best_action, /TOK1/);
+  assert.equal(/Rerun affiliate tracker \+ command surface/i.test(report.next_best_action), false);
+});
+
+test("does not choose Amazon-first NBA when queue is UNKNOWN", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueUnknownMock();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.amazon_first_blocked_queue_summary.runtime_status, "UNKNOWN");
+  assert.equal(/Amazon-first OEM blocked-search rescue/i.test(report.next_best_action), false);
 });
 
 test("includes recent evidence/outcome files", async () => {
@@ -154,4 +277,44 @@ test("emits one concrete next_best_action", async () => {
   });
   assert.equal(typeof report.next_best_action, "string");
   assert.equal(report.next_best_action.trim().length > 0, true);
+});
+
+test("skips Amazon-first NBA when another non-Amazon affiliate is APPROVED", async () => {
+  const tracker = JSON.stringify([
+    {
+      id: "amazon-associates",
+      status: "APPROVED",
+      tagVerified: true,
+    },
+    {
+      id: "cj",
+      status: "APPROVED",
+      tagVerified: null,
+    },
+  ]);
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = amazonQueueOkMock({ needs: 5, tokens: ["X"] });
+  providers.affiliateTracker = () =>
+    ({
+      status_counts: {
+        NOT_STARTED: 0,
+        DRAFTING: 0,
+        SUBMITTED: 0,
+        IN_REVIEW: 0,
+        APPROVED: 2,
+        REJECTED: 0,
+        REAPPLY_REQUIRED: 0,
+        PAUSED_OR_INACTIVE: 0,
+      },
+      records_approved: ["amazon-associates", "cj"],
+      known_unknowns: [],
+    }) as never;
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => tracker,
+  });
+  assert.equal(/Amazon-first OEM blocked-search rescue/i.test(report.next_best_action), false);
 });

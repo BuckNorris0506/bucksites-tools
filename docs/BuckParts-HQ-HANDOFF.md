@@ -2,7 +2,7 @@
 
 **How to use:** Paste this whole file into a new ChatGPT / Cursor chat when picking up BuckParts work.
 
-**Evidence timestamp:** Repo + live read-only reports below were validated by running `npm run buckparts:command-center` and `npm run buckparts:command-surface` (same wall-clock generation `2026-05-01T02:21:37.xxxZ`). Re-run those commands before trusting numbers in production.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. Last handoff refresh for digest text: `2026-05-01` (Command Center v2 includes `amazon_first_blocked_queue_summary`).
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -20,7 +20,7 @@
 
 ## 2) Current objective
 
-**From command center digest (not a separate product OKR doc):** advance **affiliate approvals** and keep reporting queues current until at least one **non-Amazon** network is `APPROVED`, because `affiliate_approval_pending: true` drives the NBA string below.
+**From command center digest (not a separate product OKR doc):** when **only Amazon Associates** is `APPROVED` (verified tag) and the **Amazon-first blocked queue** reports `needs_amazon_search_count > 0`, the digest’s `next_best_action` **prefers** OEM blocked-search → Amazon PDP rescue (`scripts/report-buckparts-command-center.ts`). Otherwise the digest may still prioritize **affiliate approvals** / other money lanes when that condition is not met.
 
 **Explicit product OKR outside repo:** UNKNOWN.
 
@@ -145,10 +145,12 @@
 
 ## 11) Next best action
 
-**From last `buckparts:command-center` output:**
+**From last `buckparts:command-center` output (live env; re-run to refresh):**
 
-- **`next_best_action`:** “Rerun affiliate tracker + command surface and keep FlexOffers readiness queue current until at least one non-Amazon network lane reaches APPROVED.”
-- **`why_this_action`:** “Affiliate approvals are still pending, so retailer-specific evidence work that cannot monetize now is deprioritized by policy.”
+- **`next_best_action`:** “Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (ADQ75795101, DA29-00012B, DA97-08006B, DA97-15217D, DA97-17376A).”
+- **`why_this_action`:** “Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.”
+
+**Also read:** `amazon_first_blocked_queue_summary` in the same JSON (`needs_amazon_search_count`, `already_live_noop_count`, `top_5_tokens`). If `runtime_status` is `UNKNOWN`, the digest falls back to the older affiliate-queue / money-lane NBA logic.
 
 ---
 

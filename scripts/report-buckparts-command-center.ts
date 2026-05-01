@@ -7,6 +7,10 @@ import { buildBuckpartsCommandSurfaceReport } from "./report-buckparts-command-s
 import { buildFrigidaireDeadOemLinkIdsReport } from "./report-frigidaire-dead-oem-link-ids";
 import { buildFrigidaireNextMonetizableCandidatesReport } from "./report-frigidaire-next-monetizable-candidates";
 import { buildOemCatalogNextMoneyCohortReport } from "./report-oem-catalog-next-money-cohort";
+import {
+  buildAmazonFirstBlockedConversionQueueReport,
+  type AmazonFirstBlockedConversionQueueReport,
+} from "./report-amazon-first-blocked-conversion-queue";
 
 type FlexoffersReadinessReport = {
   report_name: string;
@@ -60,6 +64,15 @@ type CommandCenterReport = {
     top_blocked_retailer_key: string | "UNKNOWN";
     recommended_first_action: string;
   };
+  amazon_first_blocked_queue_summary: {
+    runtime_status: "OK" | "UNKNOWN";
+    source_report: string;
+    top_candidate_count: number | "UNKNOWN";
+    needs_amazon_search_count: number | "UNKNOWN";
+    already_live_noop_count: number | "UNKNOWN";
+    top_5_tokens: string[];
+    recommended_next_action: string;
+  };
   next_best_action: string;
   why_this_action: string;
   operator_can_be_away_status:
@@ -82,6 +95,7 @@ type BuildOptions = {
     oemNextMoneyCohort?: typeof buildOemCatalogNextMoneyCohortReport;
     frigidaireDeadOem?: typeof buildFrigidaireDeadOemLinkIdsReport;
     frigidaireNextCandidates?: typeof buildFrigidaireNextMonetizableCandidatesReport;
+    amazonFirstBlockedQueue?: typeof buildAmazonFirstBlockedConversionQueueReport;
   };
 };
 
@@ -126,6 +140,82 @@ function getFlexoffersReadiness(args: {
   return parsed as FlexoffersReadinessReport;
 }
 
+function trackerRowsFromText(text: string): unknown[] {
+  const parsed = safeJsonParse(text);
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+function amazonAssociatesTagVerified(rows: unknown[]): boolean {
+  const amazon = rows.find(
+    (item) =>
+      item &&
+      typeof item === "object" &&
+      (item as { id?: string }).id === "amazon-associates",
+  ) as { status?: string; tagVerified?: boolean | null } | undefined;
+  return (
+    typeof amazon?.status === "string" &&
+    amazon.status.trim().toUpperCase() === "APPROVED" &&
+    amazon.tagVerified === true
+  );
+}
+
+function hasNonAmazonApprovedAffiliate(rows: unknown[]): boolean {
+  for (const item of rows) {
+    if (!item || typeof item !== "object") continue;
+    const r = item as { id?: string; status?: string };
+    if (r.id === "amazon-associates") continue;
+    if (typeof r.status === "string" && r.status.trim().toUpperCase() === "APPROVED") return true;
+  }
+  return false;
+}
+
+function buildAmazonFirstBlockedQueueSummary(
+  report: AmazonFirstBlockedConversionQueueReport,
+): CommandCenterReport["amazon_first_blocked_queue_summary"] {
+  const unknown: CommandCenterReport["amazon_first_blocked_queue_summary"] = {
+    runtime_status: "UNKNOWN",
+    source_report: report.report_name,
+    top_candidate_count: "UNKNOWN",
+    needs_amazon_search_count: "UNKNOWN",
+    already_live_noop_count: "UNKNOWN",
+    top_5_tokens: [],
+    recommended_next_action:
+      "Amazon-first queue unavailable; restore Supabase read access and rerun buckparts:amazon-first-blocked-queue.",
+  };
+
+  if (
+    report.total_pool_rows === "UNKNOWN" ||
+    report.top_candidates === "UNKNOWN" ||
+    report.needs_amazon_search_count === "UNKNOWN"
+  ) {
+    return unknown;
+  }
+
+  const topList = report.top_candidates;
+  const top5 = topList
+    .slice(0, 5)
+    .map((row) => (typeof row.token === "string" ? row.token : String(row.token)))
+    .filter((t) => t !== "UNKNOWN");
+
+  const firstSearch = topList.find((row) => row.recommended_next_action === "SEARCH_AMAZON_EXACT_TOKEN");
+  const recommended =
+    firstSearch != null
+      ? `SEARCH_AMAZON_EXACT_TOKEN starting with ${firstSearch.recommended_search_query || firstSearch.token} (then work down the top cohort).`
+      : topList.length === 0 && report.needs_amazon_search_count > 0
+        ? "Pool has SEARCH work but top cohort is empty after filters; rerun queue report or inspect HOLD/UNKNOWN rows."
+        : "Review top cohort actions (may be HOLD_AFFILIATE_NOT_READY or UNKNOWN_REVIEW_REQUIRED).";
+
+  return {
+    runtime_status: "OK",
+    source_report: report.report_name,
+    top_candidate_count: topList.length,
+    needs_amazon_search_count: report.needs_amazon_search_count,
+    already_live_noop_count: report.already_live_noop_count,
+    top_5_tokens: top5,
+    recommended_next_action: recommended,
+  };
+}
+
 export async function buildBuckpartsCommandCenterReport(
   options: BuildOptions = {},
 ): Promise<CommandCenterReport> {
@@ -143,6 +233,10 @@ export async function buildBuckpartsCommandCenterReport(
   const frigidaireDeadBuilder = providers.frigidaireDeadOem ?? buildFrigidaireDeadOemLinkIdsReport;
   const frigidaireNextBuilder =
     providers.frigidaireNextCandidates ?? buildFrigidaireNextMonetizableCandidatesReport;
+  const amazonFirstBuilder = providers.amazonFirstBlockedQueue ?? buildAmazonFirstBlockedConversionQueueReport;
+
+  const trackerText = readTextFile(path.resolve(rootDir, "data/affiliate/affiliate-application-tracker.json"));
+  const trackerRows = trackerRowsFromText(trackerText);
 
   const [
     commandSurface,
@@ -151,6 +245,7 @@ export async function buildBuckpartsCommandCenterReport(
     oemNextMoney,
     frigidaireDeadOem,
     frigidaireNextCandidates,
+    amazonFirstBlocked,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -158,7 +253,10 @@ export async function buildBuckpartsCommandCenterReport(
     oemNextBuilder(),
     frigidaireDeadBuilder(),
     frigidaireNextBuilder(),
+    amazonFirstBuilder(),
   ]);
+
+  const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
 
   const evidenceDirAbs = path.resolve(rootDir, "data/evidence");
   const evidenceFiles = listEvidenceSummaries({
@@ -180,19 +278,14 @@ export async function buildBuckpartsCommandCenterReport(
       pendingNetworkOrPrograms.push(`${status}:${count}`);
     }
   }
-  const repairclinicRecord = safeJsonParse(
-    readTextFile(path.resolve(rootDir, "data/affiliate/affiliate-application-tracker.json")),
-  );
   let repairclinicStatus: string | "UNKNOWN" = "UNKNOWN";
-  if (Array.isArray(repairclinicRecord)) {
-    const record = repairclinicRecord.find(
-      (item) =>
-        item &&
-        typeof item === "object" &&
-        (item as { id?: string }).id === "repairclinic",
-    ) as { status?: string } | undefined;
-    if (record?.status) repairclinicStatus = record.status;
-  }
+  const record = trackerRows.find(
+    (item) =>
+      item &&
+      typeof item === "object" &&
+      (item as { id?: string }).id === "repairclinic",
+  ) as { status?: string } | undefined;
+  if (record?.status) repairclinicStatus = record.status;
 
   const affiliateApprovalPending = pendingNetworkOrPrograms.length > 0;
   const frigidaireLaneExhausted =
@@ -237,9 +330,29 @@ export async function buildBuckpartsCommandCenterReport(
     },
   ];
 
+  const amazonReady = amazonAssociatesTagVerified(trackerRows);
+  const nonAmazonApproved = hasNonAmazonApprovedAffiliate(trackerRows);
+  const needsAmazonSearchCount =
+    amazonFirstSummary.needs_amazon_search_count !== "UNKNOWN"
+      ? amazonFirstSummary.needs_amazon_search_count
+      : 0;
+  const preferAmazonFirstConversion =
+    amazonFirstSummary.runtime_status === "OK" &&
+    amazonReady &&
+    needsAmazonSearchCount > 0 &&
+    !nonAmazonApproved;
+
   let nextBestAction = "";
   let whyThisAction = "";
-  if (affiliateApprovalPending) {
+  if (preferAmazonFirstConversion) {
+    const tokenHint =
+      amazonFirstSummary.top_5_tokens.length > 0
+        ? amazonFirstSummary.top_5_tokens.join(", ")
+        : "see buckparts:amazon-first-blocked-queue";
+    nextBestAction = `Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (${tokenHint}).`;
+    whyThisAction =
+      "Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.";
+  } else if (affiliateApprovalPending) {
     nextBestAction =
       "Rerun affiliate tracker + command surface and keep FlexOffers readiness queue current until at least one non-Amazon network lane reaches APPROVED.";
     whyThisAction =
@@ -281,6 +394,7 @@ export async function buildBuckpartsCommandCenterReport(
     ...oemNextMoney.known_unknowns.map((item) => `OEM next money: ${item}`),
     ...frigidaireNextCandidates.known_unknowns.map((item) => `Frigidaire next candidates: ${item}`),
     ...frigidaireDeadOem.known_unknowns.map((item) => `Frigidaire dead OEM: ${item}`),
+    ...amazonFirstBlocked.known_unknowns.map((item) => `Amazon-first blocked queue: ${item}`),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
       : null,
@@ -324,6 +438,7 @@ export async function buildBuckpartsCommandCenterReport(
           : (blockedQueue.top_blocked_retailer_keys[0]?.retailer_key ?? "UNKNOWN"),
       recommended_first_action: blockedQueue.recommended_first_action,
     },
+    amazon_first_blocked_queue_summary: amazonFirstSummary,
     next_best_action: nextBestAction,
     why_this_action: whyThisAction,
     operator_can_be_away_status: operatorAwayStatus,
