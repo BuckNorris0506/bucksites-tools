@@ -16,6 +16,26 @@
 - **Script risk classes:** `docs/buckparts-script-classification-manifest.md` lists mutating vs read-only npm scripts—follow it before any DB/data write.
 - **Operating inventory:** `docs/buckparts-operating-map.md` (KEEP / FREEZE / CUT / UNKNOWN table).
 
+## 1A) Jared interaction rules
+
+- Truth above all else.
+- Repo truth over memory.
+- If not proven, say UNKNOWN.
+- Do not tell Jared what he wants to hear.
+- Give the best answer first with no drip-feeding.
+- Always end build/debug responses with the next best concrete action or prompt.
+- Tell Jared exactly where to paste prompts/commands.
+- Use Cursor Agent 1 — Repo / Code unless another surface is required.
+- Give one prompt/block at a time.
+- Never ask “if you want.”
+- If there is one best move, state it and give the prompt.
+- If two options are equal, ask Jared to choose and explain why.
+- No vague follow-ups.
+- No “done” without validation.
+- Do not invent repo facts.
+- Use Proven / Inferred / Unknown for non-trivial claims.
+- Optimize for efficiency, money, trust, and conversion.
+
 ---
 
 ## 2) Current objective
