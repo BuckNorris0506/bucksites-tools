@@ -19,6 +19,7 @@ type BoolMap = Record<string, boolean>;
 type UnknownableNumber = number | "UNKNOWN";
 type SearchAndClickRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type MoneyFunnelRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+type RescueVelocityRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type LearningOutcomesMetricsRow = {
   outcome: string | null;
   cta_status: string | null;
@@ -151,6 +152,25 @@ export type CommandSurfaceReport = {
     derived_rates_30d: {
       zero_result_rate: number | "UNKNOWN";
       clicks_per_search_event: number | "UNKNOWN";
+    };
+    known_unknowns: string[];
+  };
+  rescue_velocity_summary: {
+    runtime_status: RescueVelocityRuntimeStatus;
+    window_days: { short: 7; long: 30 };
+    current_backlog: {
+      blocked_or_unsafe_links: UnknownableNumber;
+      blocked_search_or_discovery: UnknownableNumber;
+      search_gap_actionable_total: UnknownableNumber;
+    };
+    resolved_signals: {
+      safe_cta_links_total: UnknownableNumber;
+      direct_buyable_links_total: UnknownableNumber;
+      learning_outcomes_total: UnknownableNumber;
+    };
+    derived_rates: {
+      safe_cta_share_of_known_links: number | "UNKNOWN";
+      blocked_to_safe_ratio: number | "UNKNOWN";
     };
     known_unknowns: string[];
   };
@@ -543,6 +563,136 @@ function buildMoneyFunnelSummary(args: {
     derived_rates_30d: {
       zero_result_rate: safeRate(searchZero, searchEvents),
       clicks_per_search_event: safeRate(clicks, searchEvents),
+    },
+    known_unknowns: [],
+  };
+}
+
+function unknownRescueVelocitySummary(
+  runtime_status: Exclude<RescueVelocityRuntimeStatus, "OK">,
+  knownUnknowns: string[],
+): CommandSurfaceReport["rescue_velocity_summary"] {
+  return {
+    runtime_status,
+    window_days: { short: 7, long: 30 },
+    current_backlog: {
+      blocked_or_unsafe_links: "UNKNOWN",
+      blocked_search_or_discovery: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+    },
+    resolved_signals: {
+      safe_cta_links_total: "UNKNOWN",
+      direct_buyable_links_total: "UNKNOWN",
+      learning_outcomes_total: "UNKNOWN",
+    },
+    derived_rates: {
+      safe_cta_share_of_known_links: "UNKNOWN",
+      blocked_to_safe_ratio: "UNKNOWN",
+    },
+    known_unknowns: knownUnknowns,
+  };
+}
+
+function toRescueVelocityUnknownStatus(
+  status: string,
+): Exclude<RescueVelocityRuntimeStatus, "OK"> {
+  if (status === "UNKNOWN_DB_UNAVAILABLE") return "UNKNOWN_DB_UNAVAILABLE";
+  return "UNKNOWN_NOT_QUERIED";
+}
+
+function buildRescueVelocitySummary(args: {
+  ctaCoverageMetrics: CommandSurfaceReport["cta_coverage_metrics"];
+  retailerLinkStateMetrics: CommandSurfaceReport["retailer_link_state_metrics"];
+  moneyFunnelSummary: CommandSurfaceReport["money_funnel_summary"];
+  searchAndClickSummary: CommandSurfaceReport["search_and_click_intelligence_summary"];
+  learningOutcomesMetrics: CommandSurfaceReport["learning_outcomes_metrics"];
+}): CommandSurfaceReport["rescue_velocity_summary"] {
+  const cta = args.ctaCoverageMetrics;
+  const state = args.retailerLinkStateMetrics;
+  const funnel = args.moneyFunnelSummary;
+  const search = args.searchAndClickSummary;
+  const learning = args.learningOutcomesMetrics;
+
+  if (cta.runtime_status !== "OK") {
+    return unknownRescueVelocitySummary(toRescueVelocityUnknownStatus(cta.runtime_status), [
+      "rescue_velocity_summary blocked: cta_coverage_metrics runtime is not OK.",
+    ]);
+  }
+  if (state.runtime_status !== "OK") {
+    return unknownRescueVelocitySummary("UNKNOWN_NOT_QUERIED", [
+      "rescue_velocity_summary blocked: retailer_link_state_metrics runtime is UNKNOWN.",
+    ]);
+  }
+  if (funnel.runtime_status !== "OK") {
+    return unknownRescueVelocitySummary(
+      toRescueVelocityUnknownStatus(funnel.runtime_status),
+      ["rescue_velocity_summary blocked: money_funnel_summary runtime is not OK."],
+    );
+  }
+  if (search.runtime_status !== "OK") {
+    return unknownRescueVelocitySummary(
+      toRescueVelocityUnknownStatus(search.runtime_status),
+      [
+        "rescue_velocity_summary blocked: search_and_click_intelligence_summary runtime is not OK.",
+      ],
+    );
+  }
+  if (learning.runtime_status !== "OK") {
+    return unknownRescueVelocitySummary(
+      toRescueVelocityUnknownStatus(learning.runtime_status),
+      ["rescue_velocity_summary blocked: learning_outcomes_metrics runtime is not OK."],
+    );
+  }
+
+  const blockedOrUnsafe = cta.blocked_or_unsafe_links;
+  const safeCta = cta.safe_cta_links;
+  const directBuyable = cta.direct_buyable_links;
+  const totalLinks = cta.total_retailer_links;
+  const blockedSearch =
+    state.distribution !== "UNKNOWN"
+      ? (state.distribution.BLOCKED_SEARCH_OR_DISCOVERY ?? 0)
+      : "UNKNOWN";
+  const searchGapActionable = search.search_gaps_backlog.total_actionable;
+  const learningPass = learning.outcome_counts.pass;
+  const learningFail = learning.outcome_counts.fail;
+  const learningBlocked = learning.outcome_counts.blocked;
+  const learningUnknown = learning.outcome_counts.unknown;
+
+  if (
+    typeof blockedOrUnsafe !== "number" ||
+    typeof safeCta !== "number" ||
+    typeof directBuyable !== "number" ||
+    typeof totalLinks !== "number" ||
+    typeof blockedSearch !== "number" ||
+    typeof searchGapActionable !== "number" ||
+    typeof learningPass !== "number" ||
+    typeof learningFail !== "number" ||
+    typeof learningBlocked !== "number" ||
+    typeof learningUnknown !== "number"
+  ) {
+    return unknownRescueVelocitySummary("UNKNOWN_DB_UNAVAILABLE", [
+      "rescue_velocity_summary expected numeric inputs but received UNKNOWN values.",
+    ]);
+  }
+
+  const learningTotal = learningPass + learningFail + learningBlocked + learningUnknown;
+
+  return {
+    runtime_status: "OK",
+    window_days: { short: 7, long: 30 },
+    current_backlog: {
+      blocked_or_unsafe_links: blockedOrUnsafe,
+      blocked_search_or_discovery: blockedSearch,
+      search_gap_actionable_total: searchGapActionable,
+    },
+    resolved_signals: {
+      safe_cta_links_total: safeCta,
+      direct_buyable_links_total: directBuyable,
+      learning_outcomes_total: learningTotal,
+    },
+    derived_rates: {
+      safe_cta_share_of_known_links: safeRate(safeCta, totalLinks),
+      blocked_to_safe_ratio: safeRate(blockedOrUnsafe, safeCta),
     },
     known_unknowns: [],
   };
@@ -1365,6 +1515,13 @@ export async function buildBuckpartsCommandSurfaceReport(
     searchAndClickSummary: searchAndClickIntelligenceSummary,
     ctaCoverageMetrics,
   });
+  const rescueVelocitySummary = buildRescueVelocitySummary({
+    ctaCoverageMetrics,
+    retailerLinkStateMetrics,
+    moneyFunnelSummary,
+    searchAndClickSummary: searchAndClickIntelligenceSummary,
+    learningOutcomesMetrics,
+  });
   const stateSystemMetrics = buildStateSystemMetrics({
     checks,
     abs,
@@ -1432,6 +1589,10 @@ export async function buildBuckpartsCommandSurfaceReport(
       ? `money_funnel_summary ${moneyFunnelSummary.runtime_status}: runtime metrics unavailable.`
       : null,
     ...moneyFunnelSummary.known_unknowns,
+    rescueVelocitySummary.runtime_status !== "OK"
+      ? `rescue_velocity_summary ${rescueVelocitySummary.runtime_status}: runtime metrics unavailable.`
+      : null,
+    ...rescueVelocitySummary.known_unknowns,
     !stateSystemMetrics.page_state.computable
       ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
       : null,
@@ -1508,6 +1669,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     blocked_retailer_link_remediation: blockedRetailerLinkRemediation,
     search_and_click_intelligence_summary: searchAndClickIntelligenceSummary,
     money_funnel_summary: moneyFunnelSummary,
+    rescue_velocity_summary: rescueVelocitySummary,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,

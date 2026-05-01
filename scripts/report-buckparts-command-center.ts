@@ -103,6 +103,25 @@ type CommandCenterReport = {
     };
     known_unknowns: string[];
   };
+  rescue_velocity_summary: {
+    runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    window_days: { short: 7; long: 30 };
+    current_backlog: {
+      blocked_or_unsafe_links: number | "UNKNOWN";
+      blocked_search_or_discovery: number | "UNKNOWN";
+      search_gap_actionable_total: number | "UNKNOWN";
+    };
+    resolved_signals: {
+      safe_cta_links_total: number | "UNKNOWN";
+      direct_buyable_links_total: number | "UNKNOWN";
+      learning_outcomes_total: number | "UNKNOWN";
+    };
+    derived_rates: {
+      safe_cta_share_of_known_links: number | "UNKNOWN";
+      blocked_to_safe_ratio: number | "UNKNOWN";
+    };
+    known_unknowns: string[];
+  };
   amazon_first_blocked_queue_summary: {
     runtime_status: "OK" | "UNKNOWN";
     source_report: string;
@@ -360,6 +379,34 @@ export async function buildBuckpartsCommandCenterReport(
       ? (commandSurface as { money_funnel_summary: CommandCenterReport["money_funnel_summary"] })
           .money_funnel_summary
       : fallbackMoneyFunnelSummary;
+  const fallbackRescueVelocitySummary: CommandCenterReport["rescue_velocity_summary"] = {
+    runtime_status: "UNKNOWN_NOT_QUERIED",
+    window_days: { short: 7, long: 30 },
+    current_backlog: {
+      blocked_or_unsafe_links: "UNKNOWN",
+      blocked_search_or_discovery: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+    },
+    resolved_signals: {
+      safe_cta_links_total: "UNKNOWN",
+      direct_buyable_links_total: "UNKNOWN",
+      learning_outcomes_total: "UNKNOWN",
+    },
+    derived_rates: {
+      safe_cta_share_of_known_links: "UNKNOWN",
+      blocked_to_safe_ratio: "UNKNOWN",
+    },
+    known_unknowns: [
+      "rescue_velocity_summary unavailable from command_surface provider.",
+    ],
+  };
+  const rescueVelocitySummary =
+    commandSurface &&
+    typeof commandSurface === "object" &&
+    "rescue_velocity_summary" in commandSurface
+      ? (commandSurface as { rescue_velocity_summary: CommandCenterReport["rescue_velocity_summary"] })
+          .rescue_velocity_summary
+      : fallbackRescueVelocitySummary;
 
   const evidenceDirAbs = path.resolve(rootDir, "data/evidence");
   const evidenceFiles = listEvidenceSummaries({
@@ -502,6 +549,7 @@ export async function buildBuckpartsCommandCenterReport(
       (item) => `Search/click intelligence: ${item}`,
     ),
     ...moneyFunnelSummary.known_unknowns.map((item) => `Money funnel: ${item}`),
+    ...rescueVelocitySummary.known_unknowns.map((item) => `Rescue velocity: ${item}`),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
       : null,
@@ -608,6 +656,7 @@ export async function buildBuckpartsCommandCenterReport(
     },
     search_and_click_intelligence_summary: searchAndClickSummary,
     money_funnel_summary: moneyFunnelSummary,
+    rescue_velocity_summary: rescueVelocitySummary,
     amazon_first_blocked_queue_summary: amazonFirstSummary,
     execution_guidance: {
       next_move_mode: nextMoveMode,

@@ -242,6 +242,48 @@ test("command center surfaces money_funnel_summary from command surface", async 
   assert.equal(report.money_funnel_summary.derived_rates_30d.clicks_per_search_event, 0.3);
 });
 
+test("command center surfaces rescue_velocity_summary from command surface", async () => {
+  const providers = baseProviders();
+  providers.commandSurface = async () =>
+    ({
+      system_health: { status: "WARNING", reasons: ["warning"] },
+      recommended_next_step: "Resolve warning-level command-surface issues before expanding.",
+      trend: { overall_trend: "UNKNOWN" },
+      known_unknowns: [],
+      rescue_velocity_summary: {
+        runtime_status: "OK",
+        window_days: { short: 7, long: 30 },
+        current_backlog: {
+          blocked_or_unsafe_links: 10,
+          blocked_search_or_discovery: 8,
+          search_gap_actionable_total: 3,
+        },
+        resolved_signals: {
+          safe_cta_links_total: 5,
+          direct_buyable_links_total: 4,
+          learning_outcomes_total: 12,
+        },
+        derived_rates: {
+          safe_cta_share_of_known_links: 0.25,
+          blocked_to_safe_ratio: 2,
+        },
+        known_unknowns: [],
+      },
+    }) as never;
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+
+  assert.equal(report.rescue_velocity_summary.runtime_status, "OK");
+  assert.equal(report.rescue_velocity_summary.current_backlog.blocked_search_or_discovery, 8);
+  assert.equal(report.rescue_velocity_summary.resolved_signals.learning_outcomes_total, 12);
+  assert.equal(report.rescue_velocity_summary.derived_rates.blocked_to_safe_ratio, 2);
+});
+
 test("includes amazon_first_blocked_queue_summary with runtime OK when queue resolves", async () => {
   const providers = baseProviders();
   providers.amazonFirstBlockedQueue = amazonQueueOkMock({

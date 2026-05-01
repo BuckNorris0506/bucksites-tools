@@ -35,6 +35,7 @@ test("all required top-level keys exist", async () => {
     "blocked_retailer_link_remediation",
     "search_and_click_intelligence_summary",
     "money_funnel_summary",
+    "rescue_velocity_summary",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -1450,4 +1451,81 @@ test("money_funnel_summary returns UNKNOWN_DB_UNAVAILABLE when search/click runt
   assert.equal(report.money_funnel_summary.stages_30d.safe_cta_links_total, "UNKNOWN");
   assert.equal(report.money_funnel_summary.derived_rates_30d.zero_result_rate, "UNKNOWN");
   assert.equal(report.money_funnel_summary.known_unknowns.length > 0, true);
+});
+
+test("rescue_velocity_summary returns OK metrics when dependencies succeed", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => [
+      {
+        outcome: "pass",
+        cta_status: "live",
+        confidence: "exact",
+        date_checked: "2026-05-01T00:00:00.000Z",
+      },
+      {
+        outcome: "fail",
+        cta_status: "blocked",
+        confidence: "likely",
+        date_checked: "2026-05-01T00:00:00.000Z",
+      },
+    ],
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000000",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://example.com/search?q=foo",
+        browser_truth_classification: "not_buyable",
+      },
+    ],
+    fetchSearchAndClickIntelligenceSummary: async () => ({
+      window_days: { short: 7, long: 30 },
+      search_events: {
+        last_7d: 10,
+        last_30d: 100,
+        zero_result_last_7d: 2,
+        zero_result_last_30d: 25,
+        zero_result_rate_last_7d: 0.2,
+        zero_result_rate_last_30d: 0.25,
+      },
+      search_gaps_backlog: {
+        open: 4,
+        reviewing: 3,
+        queued: 2,
+        total_actionable: 9,
+      },
+      click_events: {
+        last_7d: 7,
+        last_30d: 30,
+      },
+    }),
+  });
+
+  assert.equal(report.rescue_velocity_summary.runtime_status, "OK");
+  assert.equal(report.rescue_velocity_summary.current_backlog.blocked_or_unsafe_links, 1);
+  assert.equal(report.rescue_velocity_summary.current_backlog.blocked_search_or_discovery, 1);
+  assert.equal(report.rescue_velocity_summary.current_backlog.search_gap_actionable_total, 9);
+  assert.equal(report.rescue_velocity_summary.resolved_signals.safe_cta_links_total, 1);
+  assert.equal(report.rescue_velocity_summary.resolved_signals.direct_buyable_links_total, 1);
+  assert.equal(report.rescue_velocity_summary.resolved_signals.learning_outcomes_total, 2);
+  assert.equal(report.rescue_velocity_summary.derived_rates.safe_cta_share_of_known_links, 0.5);
+  assert.equal(report.rescue_velocity_summary.derived_rates.blocked_to_safe_ratio, 1);
+  assert.deepEqual(report.rescue_velocity_summary.known_unknowns, []);
+});
+
+test("rescue_velocity_summary returns UNKNOWN fallback when dependencies unavailable", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    skipCtaCoverageQuery: true,
+    skipSearchAndClickIntelligenceQuery: true,
+  });
+
+  assert.equal(report.rescue_velocity_summary.runtime_status, "UNKNOWN_NOT_QUERIED");
+  assert.equal(report.rescue_velocity_summary.current_backlog.blocked_or_unsafe_links, "UNKNOWN");
+  assert.equal(report.rescue_velocity_summary.resolved_signals.safe_cta_links_total, "UNKNOWN");
+  assert.equal(report.rescue_velocity_summary.derived_rates.blocked_to_safe_ratio, "UNKNOWN");
+  assert.equal(report.rescue_velocity_summary.known_unknowns.length > 0, true);
 });
