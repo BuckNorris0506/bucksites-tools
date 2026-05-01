@@ -87,6 +87,22 @@ type CommandCenterReport = {
     };
     known_unknowns: string[];
   };
+  money_funnel_summary: {
+    runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    window_days: { short: 7; long: 30 };
+    stages_30d: {
+      search_events_total: number | "UNKNOWN";
+      search_zero_result_total: number | "UNKNOWN";
+      search_gap_actionable_total: number | "UNKNOWN";
+      click_events_total: number | "UNKNOWN";
+      safe_cta_links_total: number | "UNKNOWN";
+    };
+    derived_rates_30d: {
+      zero_result_rate: number | "UNKNOWN";
+      clicks_per_search_event: number | "UNKNOWN";
+    };
+    known_unknowns: string[];
+  };
   amazon_first_blocked_queue_summary: {
     runtime_status: "OK" | "UNKNOWN";
     source_report: string;
@@ -319,6 +335,31 @@ export async function buildBuckpartsCommandCenterReport(
       ? (commandSurface as { search_and_click_intelligence_summary: CommandCenterReport["search_and_click_intelligence_summary"] })
           .search_and_click_intelligence_summary
       : fallbackSearchAndClickSummary;
+  const fallbackMoneyFunnelSummary: CommandCenterReport["money_funnel_summary"] = {
+    runtime_status: "UNKNOWN_NOT_QUERIED",
+    window_days: { short: 7, long: 30 },
+    stages_30d: {
+      search_events_total: "UNKNOWN",
+      search_zero_result_total: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+      click_events_total: "UNKNOWN",
+      safe_cta_links_total: "UNKNOWN",
+    },
+    derived_rates_30d: {
+      zero_result_rate: "UNKNOWN",
+      clicks_per_search_event: "UNKNOWN",
+    },
+    known_unknowns: [
+      "money_funnel_summary unavailable from command_surface provider.",
+    ],
+  };
+  const moneyFunnelSummary =
+    commandSurface &&
+    typeof commandSurface === "object" &&
+    "money_funnel_summary" in commandSurface
+      ? (commandSurface as { money_funnel_summary: CommandCenterReport["money_funnel_summary"] })
+          .money_funnel_summary
+      : fallbackMoneyFunnelSummary;
 
   const evidenceDirAbs = path.resolve(rootDir, "data/evidence");
   const evidenceFiles = listEvidenceSummaries({
@@ -460,6 +501,7 @@ export async function buildBuckpartsCommandCenterReport(
     ...searchAndClickSummary.known_unknowns.map(
       (item) => `Search/click intelligence: ${item}`,
     ),
+    ...moneyFunnelSummary.known_unknowns.map((item) => `Money funnel: ${item}`),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
       : null,
@@ -565,6 +607,7 @@ export async function buildBuckpartsCommandCenterReport(
       recommended_first_action: blockedQueue.recommended_first_action,
     },
     search_and_click_intelligence_summary: searchAndClickSummary,
+    money_funnel_summary: moneyFunnelSummary,
     amazon_first_blocked_queue_summary: amazonFirstSummary,
     execution_guidance: {
       next_move_mode: nextMoveMode,

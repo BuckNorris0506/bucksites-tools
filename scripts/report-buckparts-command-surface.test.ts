@@ -34,6 +34,7 @@ test("all required top-level keys exist", async () => {
     "retailer_link_state_metrics",
     "blocked_retailer_link_remediation",
     "search_and_click_intelligence_summary",
+    "money_funnel_summary",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -1384,4 +1385,69 @@ test("search_and_click_intelligence_summary returns UNKNOWN_DB_UNAVAILABLE on fe
     report.search_and_click_intelligence_summary.known_unknowns.length > 0,
     true,
   );
+});
+
+test("money_funnel_summary returns OK metrics when dependencies succeed", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000000",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://example.com/search?q=foo",
+        browser_truth_classification: "not_buyable",
+      },
+    ],
+    fetchSearchAndClickIntelligenceSummary: async () => ({
+      window_days: { short: 7, long: 30 },
+      search_events: {
+        last_7d: 10,
+        last_30d: 100,
+        zero_result_last_7d: 2,
+        zero_result_last_30d: 25,
+        zero_result_rate_last_7d: 0.2,
+        zero_result_rate_last_30d: 0.25,
+      },
+      search_gaps_backlog: {
+        open: 4,
+        reviewing: 3,
+        queued: 2,
+        total_actionable: 9,
+      },
+      click_events: {
+        last_7d: 7,
+        last_30d: 30,
+      },
+    }),
+  });
+
+  assert.equal(report.money_funnel_summary.runtime_status, "OK");
+  assert.equal(report.money_funnel_summary.stages_30d.search_events_total, 100);
+  assert.equal(report.money_funnel_summary.stages_30d.search_zero_result_total, 25);
+  assert.equal(report.money_funnel_summary.stages_30d.search_gap_actionable_total, 9);
+  assert.equal(report.money_funnel_summary.stages_30d.click_events_total, 30);
+  assert.equal(report.money_funnel_summary.stages_30d.safe_cta_links_total, 1);
+  assert.equal(report.money_funnel_summary.derived_rates_30d.zero_result_rate, 0.25);
+  assert.equal(report.money_funnel_summary.derived_rates_30d.clicks_per_search_event, 0.3);
+  assert.deepEqual(report.money_funnel_summary.known_unknowns, []);
+});
+
+test("money_funnel_summary returns UNKNOWN_DB_UNAVAILABLE when search/click runtime fails", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [],
+    fetchSearchAndClickIntelligenceSummary: async () => {
+      throw new Error("db unavailable");
+    },
+  });
+
+  assert.equal(report.money_funnel_summary.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+  assert.equal(report.money_funnel_summary.stages_30d.search_events_total, "UNKNOWN");
+  assert.equal(report.money_funnel_summary.stages_30d.safe_cta_links_total, "UNKNOWN");
+  assert.equal(report.money_funnel_summary.derived_rates_30d.zero_result_rate, "UNKNOWN");
+  assert.equal(report.money_funnel_summary.known_unknowns.length > 0, true);
 });

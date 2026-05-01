@@ -203,6 +203,45 @@ test("command center surfaces search_and_click_intelligence_summary from command
   assert.equal(report.search_and_click_intelligence_summary.click_events.last_30d, 77);
 });
 
+test("command center surfaces money_funnel_summary from command surface", async () => {
+  const providers = baseProviders();
+  providers.commandSurface = async () =>
+    ({
+      system_health: { status: "WARNING", reasons: ["warning"] },
+      recommended_next_step: "Resolve warning-level command-surface issues before expanding.",
+      trend: { overall_trend: "UNKNOWN" },
+      known_unknowns: [],
+      money_funnel_summary: {
+        runtime_status: "OK",
+        window_days: { short: 7, long: 30 },
+        stages_30d: {
+          search_events_total: 100,
+          search_zero_result_total: 25,
+          search_gap_actionable_total: 9,
+          click_events_total: 30,
+          safe_cta_links_total: 11,
+        },
+        derived_rates_30d: {
+          zero_result_rate: 0.25,
+          clicks_per_search_event: 0.3,
+        },
+        known_unknowns: [],
+      },
+    }) as never;
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+
+  assert.equal(report.money_funnel_summary.runtime_status, "OK");
+  assert.equal(report.money_funnel_summary.stages_30d.search_events_total, 100);
+  assert.equal(report.money_funnel_summary.stages_30d.safe_cta_links_total, 11);
+  assert.equal(report.money_funnel_summary.derived_rates_30d.clicks_per_search_event, 0.3);
+});
+
 test("includes amazon_first_blocked_queue_summary with runtime OK when queue resolves", async () => {
   const providers = baseProviders();
   providers.amazonFirstBlockedQueue = amazonQueueOkMock({

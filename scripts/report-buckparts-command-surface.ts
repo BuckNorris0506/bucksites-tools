@@ -18,6 +18,7 @@ import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-sta
 type BoolMap = Record<string, boolean>;
 type UnknownableNumber = number | "UNKNOWN";
 type SearchAndClickRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+type MoneyFunnelRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type LearningOutcomesMetricsRow = {
   outcome: string | null;
   cta_status: string | null;
@@ -134,6 +135,22 @@ export type CommandSurfaceReport = {
     click_events: {
       last_7d: UnknownableNumber;
       last_30d: UnknownableNumber;
+    };
+    known_unknowns: string[];
+  };
+  money_funnel_summary: {
+    runtime_status: MoneyFunnelRuntimeStatus;
+    window_days: { short: 7; long: 30 };
+    stages_30d: {
+      search_events_total: UnknownableNumber;
+      search_zero_result_total: UnknownableNumber;
+      search_gap_actionable_total: UnknownableNumber;
+      click_events_total: UnknownableNumber;
+      safe_cta_links_total: UnknownableNumber;
+    };
+    derived_rates_30d: {
+      zero_result_rate: number | "UNKNOWN";
+      clicks_per_search_event: number | "UNKNOWN";
     };
     known_unknowns: string[];
   };
@@ -453,6 +470,82 @@ function unknownSearchAndClickIntelligenceSummary(
 function safeRate(numerator: number, denominator: number): number {
   if (denominator <= 0) return 0;
   return numerator / denominator;
+}
+
+function unknownMoneyFunnelSummary(
+  runtime_status: Exclude<MoneyFunnelRuntimeStatus, "OK">,
+  knownUnknowns: string[],
+): CommandSurfaceReport["money_funnel_summary"] {
+  return {
+    runtime_status,
+    window_days: { short: 7, long: 30 },
+    stages_30d: {
+      search_events_total: "UNKNOWN",
+      search_zero_result_total: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+      click_events_total: "UNKNOWN",
+      safe_cta_links_total: "UNKNOWN",
+    },
+    derived_rates_30d: {
+      zero_result_rate: "UNKNOWN",
+      clicks_per_search_event: "UNKNOWN",
+    },
+    known_unknowns: knownUnknowns,
+  };
+}
+
+function buildMoneyFunnelSummary(args: {
+  searchAndClickSummary: CommandSurfaceReport["search_and_click_intelligence_summary"];
+  ctaCoverageMetrics: CommandSurfaceReport["cta_coverage_metrics"];
+}): CommandSurfaceReport["money_funnel_summary"] {
+  const search = args.searchAndClickSummary;
+  const cta = args.ctaCoverageMetrics;
+
+  if (search.runtime_status !== "OK") {
+    return unknownMoneyFunnelSummary(search.runtime_status, [
+      "money_funnel_summary depends on search_and_click_intelligence_summary runtime metrics.",
+    ]);
+  }
+  if (cta.runtime_status !== "OK") {
+    return unknownMoneyFunnelSummary(cta.runtime_status, [
+      "money_funnel_summary safe_cta_links_total unavailable because cta_coverage_metrics runtime is not OK.",
+    ]);
+  }
+
+  const searchEvents = search.search_events.last_30d;
+  const searchZero = search.search_events.zero_result_last_30d;
+  const searchGapActionable = search.search_gaps_backlog.total_actionable;
+  const clicks = search.click_events.last_30d;
+  const safeCtas = cta.safe_cta_links;
+
+  if (
+    typeof searchEvents !== "number" ||
+    typeof searchZero !== "number" ||
+    typeof searchGapActionable !== "number" ||
+    typeof clicks !== "number" ||
+    typeof safeCtas !== "number"
+  ) {
+    return unknownMoneyFunnelSummary("UNKNOWN_DB_UNAVAILABLE", [
+      "money_funnel_summary expected numeric 30d stage metrics but received UNKNOWN values.",
+    ]);
+  }
+
+  return {
+    runtime_status: "OK",
+    window_days: { short: 7, long: 30 },
+    stages_30d: {
+      search_events_total: searchEvents,
+      search_zero_result_total: searchZero,
+      search_gap_actionable_total: searchGapActionable,
+      click_events_total: clicks,
+      safe_cta_links_total: safeCtas,
+    },
+    derived_rates_30d: {
+      zero_result_rate: safeRate(searchZero, searchEvents),
+      clicks_per_search_event: safeRate(clicks, searchEvents),
+    },
+    known_unknowns: [],
+  };
 }
 
 async function readSearchAndClickIntelligenceSummaryViaSupabase(): Promise<
@@ -1268,6 +1361,10 @@ export async function buildBuckpartsCommandSurfaceReport(
       );
     }
   }
+  const moneyFunnelSummary = buildMoneyFunnelSummary({
+    searchAndClickSummary: searchAndClickIntelligenceSummary,
+    ctaCoverageMetrics,
+  });
   const stateSystemMetrics = buildStateSystemMetrics({
     checks,
     abs,
@@ -1331,6 +1428,10 @@ export async function buildBuckpartsCommandSurfaceReport(
       ? `search_and_click_intelligence_summary ${searchAndClickIntelligenceSummary.runtime_status}: runtime metrics unavailable.`
       : null,
     ...searchAndClickIntelligenceSummary.known_unknowns,
+    moneyFunnelSummary.runtime_status !== "OK"
+      ? `money_funnel_summary ${moneyFunnelSummary.runtime_status}: runtime metrics unavailable.`
+      : null,
+    ...moneyFunnelSummary.known_unknowns,
     !stateSystemMetrics.page_state.computable
       ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
       : null,
@@ -1406,6 +1507,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     retailer_link_state_metrics: retailerLinkStateMetrics,
     blocked_retailer_link_remediation: blockedRetailerLinkRemediation,
     search_and_click_intelligence_summary: searchAndClickIntelligenceSummary,
+    money_funnel_summary: moneyFunnelSummary,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
