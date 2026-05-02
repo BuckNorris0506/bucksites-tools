@@ -122,6 +122,24 @@ type CommandCenterReport = {
     };
     known_unknowns: string[];
   };
+  rescue_delta_trend_summary: {
+    runtime_status: "OK" | "UNKNOWN_SNAPSHOT_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    window_days: { short: 7; long: 30 };
+    current: {
+      blocked_or_unsafe_links: number | "UNKNOWN";
+      blocked_search_or_discovery: number | "UNKNOWN";
+      safe_cta_links_total: number | "UNKNOWN";
+      search_gap_actionable_total: number | "UNKNOWN";
+    };
+    deltas: {
+      blocked_or_unsafe_links_delta: number | "UNKNOWN";
+      blocked_search_or_discovery_delta: number | "UNKNOWN";
+      safe_cta_links_delta: number | "UNKNOWN";
+      search_gap_actionable_delta: number | "UNKNOWN";
+    };
+    net_rescue_direction: "IMPROVING" | "FLAT" | "DEGRADING" | "UNKNOWN";
+    known_unknowns: string[];
+  };
   amazon_first_blocked_queue_summary: {
     runtime_status: "OK" | "UNKNOWN";
     source_report: string;
@@ -407,6 +425,33 @@ export async function buildBuckpartsCommandCenterReport(
       ? (commandSurface as { rescue_velocity_summary: CommandCenterReport["rescue_velocity_summary"] })
           .rescue_velocity_summary
       : fallbackRescueVelocitySummary;
+  const fallbackRescueDeltaTrendSummary: CommandCenterReport["rescue_delta_trend_summary"] = {
+    runtime_status: "UNKNOWN_NOT_QUERIED",
+    window_days: { short: 7, long: 30 },
+    current: {
+      blocked_or_unsafe_links: "UNKNOWN",
+      blocked_search_or_discovery: "UNKNOWN",
+      safe_cta_links_total: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+    },
+    deltas: {
+      blocked_or_unsafe_links_delta: "UNKNOWN",
+      blocked_search_or_discovery_delta: "UNKNOWN",
+      safe_cta_links_delta: "UNKNOWN",
+      search_gap_actionable_delta: "UNKNOWN",
+    },
+    net_rescue_direction: "UNKNOWN",
+    known_unknowns: [
+      "rescue_delta_trend_summary unavailable from command_surface provider.",
+    ],
+  };
+  const rescueDeltaTrendSummary =
+    commandSurface &&
+    typeof commandSurface === "object" &&
+    "rescue_delta_trend_summary" in commandSurface
+      ? (commandSurface as { rescue_delta_trend_summary: CommandCenterReport["rescue_delta_trend_summary"] })
+          .rescue_delta_trend_summary
+      : fallbackRescueDeltaTrendSummary;
 
   const evidenceDirAbs = path.resolve(rootDir, "data/evidence");
   const evidenceFiles = listEvidenceSummaries({
@@ -550,6 +595,7 @@ export async function buildBuckpartsCommandCenterReport(
     ),
     ...moneyFunnelSummary.known_unknowns.map((item) => `Money funnel: ${item}`),
     ...rescueVelocitySummary.known_unknowns.map((item) => `Rescue velocity: ${item}`),
+    ...rescueDeltaTrendSummary.known_unknowns.map((item) => `Rescue delta trend: ${item}`),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
       : null,
@@ -657,6 +703,7 @@ export async function buildBuckpartsCommandCenterReport(
     search_and_click_intelligence_summary: searchAndClickSummary,
     money_funnel_summary: moneyFunnelSummary,
     rescue_velocity_summary: rescueVelocitySummary,
+    rescue_delta_trend_summary: rescueDeltaTrendSummary,
     amazon_first_blocked_queue_summary: amazonFirstSummary,
     execution_guidance: {
       next_move_mode: nextMoveMode,

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -36,6 +36,7 @@ test("all required top-level keys exist", async () => {
     "search_and_click_intelligence_summary",
     "money_funnel_summary",
     "rescue_velocity_summary",
+    "rescue_delta_trend_summary",
     "state_system_metrics",
     "affiliate_tracker",
     "trend",
@@ -1528,4 +1529,122 @@ test("rescue_velocity_summary returns UNKNOWN fallback when dependencies unavail
   assert.equal(report.rescue_velocity_summary.resolved_signals.safe_cta_links_total, "UNKNOWN");
   assert.equal(report.rescue_velocity_summary.derived_rates.blocked_to_safe_ratio, "UNKNOWN");
   assert.equal(report.rescue_velocity_summary.known_unknowns.length > 0, true);
+});
+
+test("rescue_delta_trend_summary returns OK metrics when snapshot comparison fields exist", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-rescue-delta-"));
+  try {
+    const snapshotPath = path.join(tmpDir, "data/reports/buckparts-command-surface.json");
+    mkdirSync(path.dirname(snapshotPath), { recursive: true });
+    writeFileSync(
+      snapshotPath,
+      JSON.stringify({
+        cta_coverage_metrics: {
+          blocked_or_unsafe_links: 210,
+          safe_cta_links: 50,
+        },
+        retailer_link_state_metrics: {
+          distribution: {
+            BLOCKED_SEARCH_OR_DISCOVERY: 150,
+          },
+        },
+        search_and_click_intelligence_summary: {
+          search_gaps_backlog: {
+            total_actionable: 4,
+          },
+        },
+      }),
+      "utf8",
+    );
+
+    const report = await buildBuckpartsCommandSurfaceReport({
+      rootDir: tmpDir,
+      fetchLearningOutcomesRows: async () => [],
+      fetchCtaCoverageRows: async () => [
+        {
+          retailer_key: "amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000000000",
+          browser_truth_classification: "direct_buyable",
+        },
+        {
+          retailer_key: "oem-catalog",
+          affiliate_url: "https://example.com/search?q=foo",
+          browser_truth_classification: "not_buyable",
+        },
+      ],
+      fetchSearchAndClickIntelligenceSummary: async () => ({
+        window_days: { short: 7, long: 30 },
+        search_events: {
+          last_7d: 10,
+          last_30d: 100,
+          zero_result_last_7d: 2,
+          zero_result_last_30d: 25,
+          zero_result_rate_last_7d: 0.2,
+          zero_result_rate_last_30d: 0.25,
+        },
+        search_gaps_backlog: {
+          open: 1,
+          reviewing: 0,
+          queued: 0,
+          total_actionable: 1,
+        },
+        click_events: {
+          last_7d: 7,
+          last_30d: 30,
+        },
+      }),
+    });
+
+    assert.equal(report.rescue_delta_trend_summary.runtime_status, "OK");
+    assert.equal(report.rescue_delta_trend_summary.current.blocked_or_unsafe_links, 1);
+    assert.equal(report.rescue_delta_trend_summary.current.blocked_search_or_discovery, 1);
+    assert.equal(report.rescue_delta_trend_summary.current.safe_cta_links_total, 1);
+    assert.equal(report.rescue_delta_trend_summary.current.search_gap_actionable_total, 1);
+    assert.equal(report.rescue_delta_trend_summary.deltas.blocked_or_unsafe_links_delta, -209);
+    assert.equal(report.rescue_delta_trend_summary.deltas.blocked_search_or_discovery_delta, -149);
+    assert.equal(report.rescue_delta_trend_summary.deltas.safe_cta_links_delta, -49);
+    assert.equal(report.rescue_delta_trend_summary.deltas.search_gap_actionable_delta, -3);
+    assert.equal(report.rescue_delta_trend_summary.net_rescue_direction, "UNKNOWN");
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("rescue_delta_trend_summary returns UNKNOWN_SNAPSHOT_UNAVAILABLE when snapshot missing", async () => {
+  const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-cs-rescue-delta-missing-"));
+  try {
+    const report = await buildBuckpartsCommandSurfaceReport({
+      rootDir: tmpDir,
+      fetchLearningOutcomesRows: async () => [],
+      fetchCtaCoverageRows: async () => [],
+      fetchSearchAndClickIntelligenceSummary: async () => ({
+        window_days: { short: 7, long: 30 },
+        search_events: {
+          last_7d: 0,
+          last_30d: 0,
+          zero_result_last_7d: 0,
+          zero_result_last_30d: 0,
+          zero_result_rate_last_7d: 0,
+          zero_result_rate_last_30d: 0,
+        },
+        search_gaps_backlog: {
+          open: 0,
+          reviewing: 0,
+          queued: 0,
+          total_actionable: 0,
+        },
+        click_events: {
+          last_7d: 0,
+          last_30d: 0,
+        },
+      }),
+    });
+
+    assert.equal(report.rescue_delta_trend_summary.runtime_status, "UNKNOWN_SNAPSHOT_UNAVAILABLE");
+    assert.equal(report.rescue_delta_trend_summary.current.blocked_or_unsafe_links, "UNKNOWN");
+    assert.equal(report.rescue_delta_trend_summary.deltas.safe_cta_links_delta, "UNKNOWN");
+    assert.equal(report.rescue_delta_trend_summary.net_rescue_direction, "UNKNOWN");
+  } finally {
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 });

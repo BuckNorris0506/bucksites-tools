@@ -20,6 +20,10 @@ type UnknownableNumber = number | "UNKNOWN";
 type SearchAndClickRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type MoneyFunnelRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
 type RescueVelocityRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+type RescueDeltaTrendRuntimeStatus =
+  | "OK"
+  | "UNKNOWN_SNAPSHOT_UNAVAILABLE"
+  | "UNKNOWN_NOT_QUERIED";
 type LearningOutcomesMetricsRow = {
   outcome: string | null;
   cta_status: string | null;
@@ -172,6 +176,24 @@ export type CommandSurfaceReport = {
       safe_cta_share_of_known_links: number | "UNKNOWN";
       blocked_to_safe_ratio: number | "UNKNOWN";
     };
+    known_unknowns: string[];
+  };
+  rescue_delta_trend_summary: {
+    runtime_status: RescueDeltaTrendRuntimeStatus;
+    window_days: { short: 7; long: 30 };
+    current: {
+      blocked_or_unsafe_links: UnknownableNumber;
+      blocked_search_or_discovery: UnknownableNumber;
+      safe_cta_links_total: UnknownableNumber;
+      search_gap_actionable_total: UnknownableNumber;
+    };
+    deltas: {
+      blocked_or_unsafe_links_delta: UnknownableNumber;
+      blocked_search_or_discovery_delta: UnknownableNumber;
+      safe_cta_links_delta: UnknownableNumber;
+      search_gap_actionable_delta: UnknownableNumber;
+    };
+    net_rescue_direction: "IMPROVING" | "FLAT" | "DEGRADING" | "UNKNOWN";
     known_unknowns: string[];
   };
   state_system_metrics: {
@@ -694,6 +716,155 @@ function buildRescueVelocitySummary(args: {
       safe_cta_share_of_known_links: safeRate(safeCta, totalLinks),
       blocked_to_safe_ratio: safeRate(blockedOrUnsafe, safeCta),
     },
+    known_unknowns: [],
+  };
+}
+
+function unknownRescueDeltaTrendSummary(
+  runtime_status: Exclude<RescueDeltaTrendRuntimeStatus, "OK">,
+  knownUnknowns: string[],
+): CommandSurfaceReport["rescue_delta_trend_summary"] {
+  return {
+    runtime_status,
+    window_days: { short: 7, long: 30 },
+    current: {
+      blocked_or_unsafe_links: "UNKNOWN",
+      blocked_search_or_discovery: "UNKNOWN",
+      safe_cta_links_total: "UNKNOWN",
+      search_gap_actionable_total: "UNKNOWN",
+    },
+    deltas: {
+      blocked_or_unsafe_links_delta: "UNKNOWN",
+      blocked_search_or_discovery_delta: "UNKNOWN",
+      safe_cta_links_delta: "UNKNOWN",
+      search_gap_actionable_delta: "UNKNOWN",
+    },
+    net_rescue_direction: "UNKNOWN",
+    known_unknowns: knownUnknowns,
+  };
+}
+
+function buildRescueDeltaTrendSummary(args: {
+  previousSnapshotRaw: string | null;
+  ctaCoverageMetrics: CommandSurfaceReport["cta_coverage_metrics"];
+  retailerLinkStateMetrics: CommandSurfaceReport["retailer_link_state_metrics"];
+  searchAndClickSummary: CommandSurfaceReport["search_and_click_intelligence_summary"];
+}): CommandSurfaceReport["rescue_delta_trend_summary"] {
+  const cta = args.ctaCoverageMetrics;
+  const state = args.retailerLinkStateMetrics;
+  const search = args.searchAndClickSummary;
+
+  if (cta.runtime_status !== "OK") {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_NOT_QUERIED", [
+      "rescue_delta_trend_summary blocked: cta_coverage_metrics runtime is not OK.",
+    ]);
+  }
+  if (state.runtime_status !== "OK") {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_NOT_QUERIED", [
+      "rescue_delta_trend_summary blocked: retailer_link_state_metrics runtime is UNKNOWN.",
+    ]);
+  }
+  if (search.runtime_status !== "OK") {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_NOT_QUERIED", [
+      "rescue_delta_trend_summary blocked: search_and_click_intelligence_summary runtime is not OK.",
+    ]);
+  }
+  if (args.previousSnapshotRaw === null) {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_SNAPSHOT_UNAVAILABLE", [
+      "rescue_delta_trend_summary previous snapshot not found.",
+    ]);
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(args.previousSnapshotRaw);
+  } catch {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_SNAPSHOT_UNAVAILABLE", [
+      "rescue_delta_trend_summary previous snapshot is malformed JSON.",
+    ]);
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_SNAPSHOT_UNAVAILABLE", [
+      "rescue_delta_trend_summary previous snapshot has invalid shape.",
+    ]);
+  }
+
+  const prev = parsed as Record<string, unknown>;
+  const prevBlockedUnsafe = (prev.cta_coverage_metrics as Record<string, unknown> | undefined)
+    ?.blocked_or_unsafe_links;
+  const prevSafe = (prev.cta_coverage_metrics as Record<string, unknown> | undefined)
+    ?.safe_cta_links;
+  const prevBlockedSearch = (
+    (prev.retailer_link_state_metrics as Record<string, unknown> | undefined)
+      ?.distribution as Record<string, unknown> | undefined
+  )?.BLOCKED_SEARCH_OR_DISCOVERY;
+  const prevSearchGap = (
+    (prev.search_and_click_intelligence_summary as Record<string, unknown> | undefined)
+      ?.search_gaps_backlog as Record<string, unknown> | undefined
+  )?.total_actionable;
+
+  const currentBlockedUnsafe = cta.blocked_or_unsafe_links;
+  const currentSafe = cta.safe_cta_links;
+  const currentBlockedSearch =
+    state.distribution !== "UNKNOWN"
+      ? (state.distribution.BLOCKED_SEARCH_OR_DISCOVERY ?? 0)
+      : "UNKNOWN";
+  const currentSearchGap = search.search_gaps_backlog.total_actionable;
+
+  if (
+    typeof prevBlockedUnsafe !== "number" ||
+    typeof prevSafe !== "number" ||
+    typeof prevBlockedSearch !== "number" ||
+    typeof prevSearchGap !== "number" ||
+    typeof currentBlockedUnsafe !== "number" ||
+    typeof currentSafe !== "number" ||
+    typeof currentBlockedSearch !== "number" ||
+    typeof currentSearchGap !== "number"
+  ) {
+    return unknownRescueDeltaTrendSummary("UNKNOWN_SNAPSHOT_UNAVAILABLE", [
+      "rescue_delta_trend_summary snapshot missing deterministic comparison fields.",
+    ]);
+  }
+
+  const deltas = {
+    blocked_or_unsafe_links_delta: currentBlockedUnsafe - prevBlockedUnsafe,
+    blocked_search_or_discovery_delta: currentBlockedSearch - prevBlockedSearch,
+    safe_cta_links_delta: currentSafe - prevSafe,
+    search_gap_actionable_delta: currentSearchGap - prevSearchGap,
+  };
+
+  let improvingSignals = 0;
+  let degradingSignals = 0;
+  if (deltas.blocked_or_unsafe_links_delta < 0) improvingSignals += 1;
+  if (deltas.blocked_or_unsafe_links_delta > 0) degradingSignals += 1;
+  if (deltas.blocked_search_or_discovery_delta < 0) improvingSignals += 1;
+  if (deltas.blocked_search_or_discovery_delta > 0) degradingSignals += 1;
+  if (deltas.safe_cta_links_delta > 0) improvingSignals += 1;
+  if (deltas.safe_cta_links_delta < 0) degradingSignals += 1;
+  if (deltas.search_gap_actionable_delta < 0) improvingSignals += 1;
+  if (deltas.search_gap_actionable_delta > 0) degradingSignals += 1;
+
+  const allFlat = Object.values(deltas).every((value) => value === 0);
+  const netDirection: CommandSurfaceReport["rescue_delta_trend_summary"]["net_rescue_direction"] =
+    allFlat
+      ? "FLAT"
+      : improvingSignals > 0 && degradingSignals === 0
+        ? "IMPROVING"
+        : degradingSignals > 0 && improvingSignals === 0
+          ? "DEGRADING"
+          : "UNKNOWN";
+
+  return {
+    runtime_status: "OK",
+    window_days: { short: 7, long: 30 },
+    current: {
+      blocked_or_unsafe_links: currentBlockedUnsafe,
+      blocked_search_or_discovery: currentBlockedSearch,
+      safe_cta_links_total: currentSafe,
+      search_gap_actionable_total: currentSearchGap,
+    },
+    deltas,
+    net_rescue_direction: netDirection,
     known_unknowns: [],
   };
 }
@@ -1535,6 +1706,12 @@ export async function buildBuckpartsCommandSurfaceReport(
       previousSnapshotRaw = "{";
     }
   }
+  const rescueDeltaTrendSummary = buildRescueDeltaTrendSummary({
+    previousSnapshotRaw,
+    ctaCoverageMetrics,
+    retailerLinkStateMetrics,
+    searchAndClickSummary: searchAndClickIntelligenceSummary,
+  });
   const trend = computeTrend({
     previousSnapshotRaw,
     currentLearningRuntimeStatus: learningOutcomesMetrics.runtime_status,
@@ -1593,6 +1770,10 @@ export async function buildBuckpartsCommandSurfaceReport(
       ? `rescue_velocity_summary ${rescueVelocitySummary.runtime_status}: runtime metrics unavailable.`
       : null,
     ...rescueVelocitySummary.known_unknowns,
+    rescueDeltaTrendSummary.runtime_status !== "OK"
+      ? `rescue_delta_trend_summary ${rescueDeltaTrendSummary.runtime_status}: runtime metrics unavailable.`
+      : null,
+    ...rescueDeltaTrendSummary.known_unknowns,
     !stateSystemMetrics.page_state.computable
       ? `state_system_metrics.page_state non-computable: ${stateSystemMetrics.page_state.reason}`
       : null,
@@ -1670,6 +1851,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     search_and_click_intelligence_summary: searchAndClickIntelligenceSummary,
     money_funnel_summary: moneyFunnelSummary,
     rescue_velocity_summary: rescueVelocitySummary,
+    rescue_delta_trend_summary: rescueDeltaTrendSummary,
     state_system_metrics: stateSystemMetrics,
     affiliate_tracker: affiliateTracker,
     trend,
