@@ -26,12 +26,15 @@ type Props = { searchParams: { q?: string } };
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const query = searchParams.q?.trim() ?? "";
   if (!query) {
-    return { title: "Search refrigerator, air purifier & whole-house filters" };
+    return {
+      title: `Search filters · ${SITE_DISPLAY_NAME}`,
+      description: `Look up refrigerator water filters, room air purifier cartridges, and whole-house water cartridges by model or OEM part number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
+    };
   }
   return {
-    title: `Search: ${query}`,
-    description: `Replacement filters across ${SITE_DISPLAY_NAME} launch catalogs for “${query}” (refrigerator water, room air purifiers, whole-house water).`,
-    robots: query ? undefined : { index: false },
+    title: `Search “${query}” · ${SITE_DISPLAY_NAME}`,
+    description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters, air purifier cartridges, and whole-house water cartridges. Open a result to verify the part against your unit and old filter.`,
+    robots: undefined,
   };
 }
 
@@ -238,11 +241,12 @@ export default async function SearchPage({ searchParams }: Props) {
     <div className="space-y-10">
       <div className="space-y-4">
         <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl">
-          Search launch catalogs
+          Search replacement filters
         </h1>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          One search across refrigerator water filters, room air purifier cartridges, and
-          whole-house water cartridges. Results are grouped by catalog.
+          One box, three lanes: fridge water filters, room air purifier cartridges, and whole-house
+          water cartridges. We group what we find so you can spot your lane—then open a result and
+          line it up with the numbers on your unit or old part.
         </p>
         <SearchForm initialQuery={query} />
       </div>
@@ -319,10 +323,59 @@ export default async function SearchPage({ searchParams }: Props) {
           })}
 
           {totalHits === 0 && (
-            <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-              No matches for “{query}”. Try a model number from the appliance or an OEM part
-              number from the old cartridge.
-            </p>
+            <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-4 dark:border-neutral-800 dark:bg-neutral-900/40">
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                No hits for “{query}”—that happens when the spelling or format does not line up
+                with what we have on file.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                Here are a few calm next steps that usually help:
+              </p>
+              <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                <li>
+                  Grab the <strong className="font-medium">model number</strong> from the
+                  nameplate or sticker on the appliance, the air purifier, or the whole-house housing,
+                  or from the owner’s manual.
+                </li>
+                <li>
+                  Read the <strong className="font-medium">OEM / part number</strong> printed on the
+                  filter body, end cap, or foil label on the cartridge you are replacing.
+                </li>
+                <li>
+                  Try a <strong className="font-medium">shorter</strong> chunk of the code, or the
+                  same digits <strong className="font-medium">without spaces or dashes</strong>.
+                </li>
+                <li>
+                  Search using <strong className="font-medium">exactly what is printed</strong> on
+                  the old part—even if it looks like an odd mix of letters and numbers.
+                </li>
+              </ul>
+              <p className="mt-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+                Prefer to browse instead?{" "}
+                <Link href="/catalog" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
+                  Categories
+                </Link>
+                {" · "}
+                <Link href="/" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
+                  Home
+                </Link>
+                {" · "}
+                <Link
+                  href="/air-purifier"
+                  className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
+                >
+                  Air purifier filters
+                </Link>
+                {" · "}
+                <Link
+                  href="/whole-house-water"
+                  className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
+                >
+                  Whole-house water
+                </Link>
+                .
+              </p>
+            </div>
           )}
         </div>
       )}
