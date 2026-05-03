@@ -11,6 +11,10 @@ import {
   buildAmazonFirstBlockedConversionQueueReport,
   type AmazonFirstBlockedConversionQueueReport,
 } from "./report-amazon-first-blocked-conversion-queue";
+import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
+import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
+import type { CommandCenterV2Report } from "./lib/buckparts-command-center-v2-types";
+import { rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 
 type FlexoffersReadinessReport = {
   report_name: string;
@@ -146,6 +150,10 @@ type CommandCenterReport = {
     top_candidate_count: number | "UNKNOWN";
     needs_amazon_search_count: number | "UNKNOWN";
     already_live_noop_count: number | "UNKNOWN";
+    /** Committed UNKNOWN evidence cohort; ordinary `needs_amazon_search_count` excludes these. */
+    unknown_evidence_deferred_count: number;
+    /** Up to five tokens from `unknown_evidence_deferred` for quick scanning. */
+    deferred_unknown_top_tokens: string[];
     top_5_tokens: string[];
     recommended_next_action: string;
   };
@@ -163,6 +171,8 @@ type CommandCenterReport = {
     | "READY_FOR_ASYNC_REVIEW"
     | "READY_FOR_AUTONOMOUS_READ_ONLY";
   known_unknowns: string[];
+  /** Owner/operator decision surface (lanes, token controls, evidence rollup). Read-only. */
+  command_center_v2: CommandCenterV2Report;
 };
 
 type BuildOptions = {
@@ -261,6 +271,8 @@ function buildAmazonFirstBlockedQueueSummary(
     top_candidate_count: "UNKNOWN",
     needs_amazon_search_count: "UNKNOWN",
     already_live_noop_count: "UNKNOWN",
+    unknown_evidence_deferred_count: 0,
+    deferred_unknown_top_tokens: [],
     top_5_tokens: [],
     recommended_next_action:
       "Amazon-first queue unavailable; restore Supabase read access and rerun buckparts:amazon-first-blocked-queue.",
@@ -280,13 +292,27 @@ function buildAmazonFirstBlockedQueueSummary(
     .map((row) => (typeof row.token === "string" ? row.token : String(row.token)))
     .filter((t) => t !== "UNKNOWN");
 
+  const unknownEvidenceDeferredCount =
+    typeof report.unknown_evidence_deferred_count === "number" ? report.unknown_evidence_deferred_count : 0;
+  const deferredRows = Array.isArray(report.unknown_evidence_deferred) ? report.unknown_evidence_deferred : [];
+  const deferredTopTokens = deferredRows
+    .slice(0, 5)
+    .map((row) => (typeof row.token === "string" ? row.token : String(row.token)))
+    .filter((t) => t !== "UNKNOWN");
+
   const firstSearch = topList.find((row) => row.recommended_next_action === "SEARCH_AMAZON_EXACT_TOKEN");
-  const recommended =
+  let recommended =
     firstSearch != null
       ? `SEARCH_AMAZON_EXACT_TOKEN starting with ${firstSearch.recommended_search_query || firstSearch.token} (then work down the top cohort).`
       : topList.length === 0 && report.needs_amazon_search_count > 0
         ? "Pool has SEARCH work but top cohort is empty after filters; rerun queue report or inspect HOLD/UNKNOWN rows."
         : "Review top cohort actions (may be HOLD_AFFILIATE_NOT_READY or UNKNOWN_REVIEW_REQUIRED).";
+
+  if (unknownEvidenceDeferredCount > 0) {
+    const dHint =
+      deferredTopTokens.length > 0 ? deferredTopTokens.join(", ") : "see queue unknown_evidence_deferred";
+    recommended += ` Separately: ${unknownEvidenceDeferredCount} row(s) have committed UNKNOWN evidence — not ordinary fresh exact-token search targets (HUMAN_BROWSER_VERIFICATION_REQUIRED); example tokens: ${dHint}.`;
+  }
 
   return {
     runtime_status: "OK",
@@ -294,6 +320,8 @@ function buildAmazonFirstBlockedQueueSummary(
     top_candidate_count: topList.length,
     needs_amazon_search_count: report.needs_amazon_search_count,
     already_live_noop_count: report.already_live_noop_count,
+    unknown_evidence_deferred_count: unknownEvidenceDeferredCount,
+    deferred_unknown_top_tokens: deferredTopTokens,
     top_5_tokens: top5,
     recommended_next_action: recommended,
   };
@@ -460,6 +488,17 @@ export async function buildBuckpartsCommandCenterReport(
     readDir,
     readTextFile,
   });
+  const tokenControlsAbs = path.resolve(rootDir, "data/ops/amazon-rescue-token-controls.json");
+  const { entries: tokenRegistryEntries, load_error: tokenRegistryLoadError } = loadAmazonRescueTokenControls({
+    absolutePath: tokenControlsAbs,
+    fileExists,
+    readTextFile,
+  });
+  const evidenceRollupForV2 = rollupEvidenceDirectory({
+    evidenceDirAbs,
+    fileExists,
+    readDir,
+  });
   const flexoffersReadiness = getFlexoffersReadiness({
     reportAbsPath: path.resolve(rootDir, "data/reports/flexoffers-readiness-refrigerator-water.json"),
     fileExists,
@@ -547,6 +586,15 @@ export async function buildBuckpartsCommandCenterReport(
     nextBestAction = `Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (${tokenHint}).`;
     whyThisAction =
       "Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.";
+    if (amazonFirstSummary.unknown_evidence_deferred_count > 0) {
+      const dTok =
+        amazonFirstSummary.deferred_unknown_top_tokens.length > 0
+          ? amazonFirstSummary.deferred_unknown_top_tokens.join(", ")
+          : "see buckparts:amazon-first-blocked-queue unknown_evidence_deferred";
+      nextBestAction += ` Do not treat ${amazonFirstSummary.unknown_evidence_deferred_count} deferred token(s) as the same priority cohort until HUMAN_BROWSER_VERIFICATION_REQUIRED is satisfied (${dTok}).`;
+      whyThisAction +=
+        " Committed UNKNOWN evidence files demote those filters out of the ordinary exact-token search headline cohort.";
+    }
   } else if (affiliateApprovalPending) {
     nextBestAction =
       "Rerun affiliate tracker + command surface and keep FlexOffers readiness queue current until at least one non-Amazon network lane reaches APPROVED.";
@@ -598,6 +646,9 @@ export async function buildBuckpartsCommandCenterReport(
     ...rescueDeltaTrendSummary.known_unknowns.map((item) => `Rescue delta trend: ${item}`),
     flexoffersReadiness === null
       ? "FlexOffers readiness report missing: data/reports/flexoffers-readiness-refrigerator-water.json"
+      : null,
+    tokenRegistryLoadError != null
+      ? `Amazon rescue token controls: ${tokenRegistryLoadError}`
       : null,
   ].filter((value): value is string => typeof value === "string");
 
@@ -662,6 +713,19 @@ export async function buildBuckpartsCommandCenterReport(
               : "npm run buckparts:command-center"
       : "UNKNOWN";
 
+  const command_center_v2 = buildCommandCenterV2Report({
+    now,
+    registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
+    registryEntries: tokenRegistryEntries,
+    registryLoadError: tokenRegistryLoadError,
+    evidenceRollup: evidenceRollupForV2,
+    amazonFirstBlocked,
+    commandSurfaceHealthStatus: commandSurface.system_health.status,
+    commandSurfaceReasons: commandSurface.system_health.reasons,
+    affiliateApprovalPending,
+    affiliateApprovedCount: affiliateTracker.records_approved.length,
+  });
+
   return {
     report_name: "buckparts_command_center_v1",
     generated_at: now().toISOString(),
@@ -716,6 +780,7 @@ export async function buildBuckpartsCommandCenterReport(
     why_this_action: whyThisAction,
     operator_can_be_away_status: operatorAwayStatus,
     known_unknowns: knownUnknowns,
+    command_center_v2,
   };
 }
 

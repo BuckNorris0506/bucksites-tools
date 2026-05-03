@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -31,6 +31,7 @@ const LIVE_AMAZON_STATES: ReadonlySet<RetailerLinkState> = new Set([
 
 export type AmazonFirstRecommendedNextAction =
   | "SEARCH_AMAZON_EXACT_TOKEN"
+  | "HUMAN_BROWSER_VERIFICATION_REQUIRED"
   | "NOOP_ALREADY_HAS_LIVE_AMAZON"
   | "HOLD_AFFILIATE_NOT_READY"
   | "UNKNOWN_REVIEW_REQUIRED";
@@ -65,6 +66,9 @@ export type AmazonFirstBlockedConversionCandidate = BaseCandidate & {
   current_live_amazon_slot_status: string | null;
   recommended_search_query: string;
   recommended_next_action: AmazonFirstRecommendedNextAction;
+  evidence_unknown_committed?: true;
+  evidence_unknown_file?: string;
+  evidence_unknown_reason?: string;
 };
 
 export type AmazonFirstBlockedConversionQueueReport = {
@@ -76,7 +80,11 @@ export type AmazonFirstBlockedConversionQueueReport = {
   total_pool_rows: number | "UNKNOWN";
   already_live_noop_count: number | "UNKNOWN";
   needs_amazon_search_count: number | "UNKNOWN";
+  /** Rows with committed UNKNOWN evidence: still unresolved, not ordinary fresh exact-token search cohort. */
+  unknown_evidence_deferred_count?: number;
   top_candidates: AmazonFirstBlockedConversionCandidate[] | "UNKNOWN";
+  /** Full deferred cohort (not capped); may extend beyond `top_candidates` slice. */
+  unknown_evidence_deferred?: AmazonFirstBlockedConversionCandidate[];
   known_unknowns: string[];
 };
 
@@ -86,11 +94,23 @@ type TrackerRecord = {
   tagVerified?: boolean | null;
 };
 
+export type CommittedUnknownEvidenceMatch = {
+  file: string;
+  reason: string;
+};
+
+export type CommittedUnknownEvidenceIndex = {
+  byToken: Map<string, CommittedUnknownEvidenceMatch>;
+  byFilterId: Map<string, CommittedUnknownEvidenceMatch>;
+};
+
 type BuildInput = {
   links: RawRetailerLinkRow[];
   filters: FilterRow[];
   now: () => Date;
   amazonAffiliateReady: boolean;
+  /** When omitted, loads `data/evidence/*unknown-outcome*.json` from cwd (sync). */
+  committedUnknownIndex?: CommittedUnknownEvidenceIndex;
 };
 
 type BuildOptions = {
@@ -246,7 +266,64 @@ function actionSortPriority(action: AmazonFirstRecommendedNextAction): number {
   if (action === "SEARCH_AMAZON_EXACT_TOKEN") return 0;
   if (action === "UNKNOWN_REVIEW_REQUIRED") return 1;
   if (action === "HOLD_AFFILIATE_NOT_READY") return 2;
+  if (action === "HUMAN_BROWSER_VERIFICATION_REQUIRED") return 3;
   return 99;
+}
+
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Load committed UNKNOWN outcome evidence files (basename contains `unknown-outcome`, case-insensitive).
+ * Matches rows later by `filter_id` and/or uppercased `token` when verdict is UNKNOWN and mutation_ready is false.
+ */
+export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): CommittedUnknownEvidenceIndex {
+  const byToken = new Map<string, CommittedUnknownEvidenceMatch>();
+  const byFilterId = new Map<string, CommittedUnknownEvidenceMatch>();
+  if (!existsSync(evidenceDirAbs)) return { byToken, byFilterId };
+  let names: string[];
+  try {
+    names = readdirSync(evidenceDirAbs);
+  } catch {
+    return { byToken, byFilterId };
+  }
+  for (const name of names) {
+    if (!name.endsWith(".json")) continue;
+    if (!name.toLowerCase().includes("unknown-outcome")) continue;
+    const abs = path.join(evidenceDirAbs, name);
+    let raw: string;
+    try {
+      raw = readFileSync(abs, "utf8");
+    } catch {
+      continue;
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      continue;
+    }
+    if (!isJsonObject(parsed)) continue;
+    if (parsed.verdict !== "UNKNOWN") continue;
+    if (parsed.mutation_ready !== false) continue;
+    const reason =
+      typeof parsed.reason === "string" && parsed.reason.trim().length > 0
+        ? parsed.reason.trim()
+        : typeof parsed.do_not_publish_reason === "string" && parsed.do_not_publish_reason.trim().length > 0
+          ? parsed.do_not_publish_reason.trim()
+          : "";
+    const meta: CommittedUnknownEvidenceMatch = { file: name, reason };
+    const tokenRaw = parsed.token;
+    if (typeof tokenRaw === "string" && tokenRaw.trim().length > 0) {
+      byToken.set(tokenRaw.trim().toUpperCase(), meta);
+    }
+    const filterIdRaw = parsed.filter_id;
+    if (typeof filterIdRaw === "string" && filterIdRaw.trim().length > 0) {
+      byFilterId.set(filterIdRaw.trim(), meta);
+    }
+  }
+  return { byToken, byFilterId };
 }
 
 function readAmazonAffiliateReadyFromTrackerJson(text: string): boolean {
@@ -266,6 +343,10 @@ function readAmazonAffiliateReadyFromTrackerJson(text: string): boolean {
 export function buildAmazonFirstBlockedConversionQueueReportFromData(
   input: BuildInput,
 ): AmazonFirstBlockedConversionQueueReport {
+  const unknownIndex =
+    input.committedUnknownIndex ??
+    loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
+
   const filterById = new Map<string, FilterRow>();
   for (const f of input.filters) {
     if (f.id) filterById.set(f.id, f);
@@ -320,12 +401,26 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
       filterId: row.filter_id,
       linksByFilterId,
     });
-    const action = resolveRecommendedNextAction({
+    let action = resolveRecommendedNextAction({
       token: row.token,
       noop,
       amazonAffiliateReady: input.amazonAffiliateReady,
     });
-    return {
+    let evidence_unknown_committed: true | undefined;
+    let evidence_unknown_file: string | undefined;
+    let evidence_unknown_reason: string | undefined;
+    if (action === "SEARCH_AMAZON_EXACT_TOKEN") {
+      const byFilter = unknownIndex.byFilterId.get(row.filter_id);
+      const byTok = row.token !== "UNKNOWN" ? unknownIndex.byToken.get(row.token) : undefined;
+      const ev = byFilter ?? byTok;
+      if (ev) {
+        action = "HUMAN_BROWSER_VERIFICATION_REQUIRED";
+        evidence_unknown_committed = true;
+        evidence_unknown_file = ev.file;
+        if (ev.reason.length > 0) evidence_unknown_reason = ev.reason;
+      }
+    }
+    const candidate: AmazonFirstBlockedConversionCandidate = {
       ...row,
       domain_blocked_count: domainCounts.get(row.domain) ?? 0,
       current_live_amazon_slot_status: amazonSlotStatusSummary({
@@ -335,6 +430,12 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
       recommended_search_query: recommendedSearchQuery(filter, row.token),
       recommended_next_action: action,
     };
+    if (evidence_unknown_committed) {
+      candidate.evidence_unknown_committed = true;
+      candidate.evidence_unknown_file = evidence_unknown_file;
+      if (evidence_unknown_reason) candidate.evidence_unknown_reason = evidence_unknown_reason;
+    }
+    return candidate;
   });
 
   const already_live_noop_count = enriched.filter(
@@ -342,6 +443,9 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
   ).length;
   const needs_amazon_search_count = enriched.filter(
     (r) => r.recommended_next_action === "SEARCH_AMAZON_EXACT_TOKEN",
+  ).length;
+  const unknown_evidence_deferred_count = enriched.filter(
+    (r) => r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED",
   ).length;
 
   const actionable = enriched.filter(
@@ -356,6 +460,10 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     );
   });
 
+  const unknown_evidence_deferred = actionable.filter(
+    (r) => r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+  );
+
   return {
     report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
     generated_at: input.now().toISOString(),
@@ -365,7 +473,9 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     total_pool_rows: enriched.length,
     already_live_noop_count,
     needs_amazon_search_count,
+    unknown_evidence_deferred_count,
     top_candidates: actionable.slice(0, TOP_LIMIT),
+    unknown_evidence_deferred,
     known_unknowns: [],
   };
 }

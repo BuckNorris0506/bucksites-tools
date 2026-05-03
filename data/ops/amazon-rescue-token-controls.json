@@ -1,0 +1,108 @@
+{
+  "schema_version": "1",
+  "registry_name": "buckparts_amazon_rescue_token_controls_v1",
+  "description": "Repo-tracked operator/agent boundaries for Amazon rescue work. Evidence files remain source of truth for outcomes; this registry encodes pacing and do-not-touch intent.",
+  "entries": [
+    {
+      "token": "ADQ75795101",
+      "status": "FROZEN_OPERATOR_HOLD",
+      "reason": "Amazon-first cohort head; operator pacing — no committed LIVE_OUTCOME_RECORDED artifact for this token in repo.",
+      "next_action": "OWNER_RELEASES_OR_REPOINTS_QUEUE_PRIORITY",
+      "can_agent_advance": false,
+      "notes": "UNKNOWN if LIVE outcome is later proven and recorded under data/evidence."
+    },
+    {
+      "token": "DA97-08006B",
+      "status": "FROZEN_OPERATOR_HOLD",
+      "reason": "Amazon-first cohort; operator pacing — no committed LIVE_OUTCOME_RECORDED artifact for this token in repo.",
+      "next_action": "OWNER_RELEASES_OR_REPOINTS_QUEUE_PRIORITY",
+      "can_agent_advance": false
+    },
+    {
+      "token": "DA97-17376A",
+      "status": "FROZEN_OPERATOR_HOLD",
+      "reason": "Amazon-first cohort; operator pacing — no committed LIVE_OUTCOME_RECORDED artifact for this token in repo.",
+      "next_action": "OWNER_RELEASES_OR_REPOINTS_QUEUE_PRIORITY",
+      "can_agent_advance": false
+    },
+    {
+      "token": "DA97-19467C",
+      "status": "FROZEN_OPERATOR_HOLD",
+      "reason": "Amazon-first cohort; operator pacing — no committed LIVE_OUTCOME_RECORDED artifact for this token in repo.",
+      "next_action": "OWNER_RELEASES_OR_REPOINTS_QUEUE_PRIORITY",
+      "can_agent_advance": false
+    },
+    {
+      "token": "DA29-00012B",
+      "status": "OPERATOR_DECISION_REQUIRED",
+      "reason": "No matching LIVE_OUTCOME filename for this exact token in repo; treat as operator-owned until evidence exists.",
+      "next_action": "OWNER_RECORDS_OUTCOME_OR_EXPLICITLY_CLEARS",
+      "can_agent_advance": false,
+      "notes": "UNKNOWN if a different DA29 variant outcome should apply; do not infer from chat."
+    },
+    {
+      "token": "DA97-15217D",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-da97-15217d-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "LT1000P",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-lt1000p-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "LT1000PC",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-lt1000pc-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "LT600P",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-lt600p-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "LT700P",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-lt700p-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "LT800P",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-lt800p-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "MDJ64844601",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Committed live outcome evidence on record.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-mdj64844601-live-outcome.2026-05-03.json"
+    },
+    {
+      "token": "4396508",
+      "status": "UNKNOWN_EVIDENCE_RECORDED",
+      "reason": "Committed UNKNOWN outcome — joint exact-token + buyability proof not established on one PDP.",
+      "next_action": "HUMAN_BROWSER_VERIFICATION_OR_NEW_EVIDENCE_FILE",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-4396508-unknown-outcome.2026-05-03.json"
+    }
+  ]
+}
