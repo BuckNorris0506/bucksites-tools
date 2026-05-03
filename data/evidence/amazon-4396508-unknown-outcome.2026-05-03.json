@@ -1,0 +1,50 @@
+{
+  "report_name": "buckparts_amazon_4396508_unknown_outcome_v1",
+  "generated_at": "2026-05-03T23:45:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "4396508",
+  "filter_slug": "4396508",
+  "filter_id": "063a6122-c85f-4332-92c0-0d8e53dc5d4c",
+  "source_queue_generated_at": "2026-05-03T22:34:07.543Z",
+  "command_center_generated_at": "2026-05-03T22:34:15.819Z",
+  "queue_position": 5,
+  "recommended_next_action": "SEARCH_AMAZON_EXACT_TOKEN",
+  "current_live_amazon_slot_status": null,
+  "amazon_slot_exists": "UNKNOWN",
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "reason": "no single inspected Amazon /dp was proven to satisfy exact-token seller-controlled identity plus buyability for 4396508 in one defensible PDP",
+  "prior_candidate_urls": [
+    "https://www.amazon.com/EveryDrop-Whirlpool-EDR5RXD1-Refrigerator-Filter/dp/B00U264W0Q",
+    "https://www.amazon.com/Arrowpure-Refrigerator-Replacement-W10186668-4396508/dp/B01N94FNZE",
+    "https://www.amazon.com/dp/B00UXG4WR4",
+    "https://www.amazon.com/Waterdrop-Certified-Replacement-Refrigerator-Compatible/dp/B01C9X8OLM"
+  ],
+  "candidate_notes": [
+    "B00U264W0Q: OEM / EveryDrop by Whirlpool looked strong for official labeling, but literal 4396508 in seller-controlled primary PDP identity was not proven from captured text; buyability was also not proven in that capture.",
+    "B01N94FNZE: Arrowpure aftermarket candidate had stronger 4396508 token evidence, but primary buyability was not proven in the captured PDP.",
+    "B00UXG4WR4 and B01C9X8OLM: interstitial / not usable proof in prior captured environment."
+  ],
+  "product_attribution": "UNKNOWN",
+  "revenue_claim": "none",
+  "next_safe_action": "human US-browser PDP verification or continue exact-token automated search before any insert plan",
+  "do_not_publish_reason": "exact-token identity + buyability not jointly proven on one PDP",
+  "post_pulse_command_surface": {
+    "safe_cta_links": 59,
+    "direct_buyable_links": 59,
+    "retailer_counts_amazon": 56,
+    "system_health_status": "WARNING"
+  },
+  "post_pulse_audit": {
+    "status": "PASS",
+    "blocking": false,
+    "failures": []
+  },
+  "notes": [
+    "Evidence only. No DB writes and no insert plan implied by this file.",
+    "current_live_amazon_slot_status null is consistent with buckparts_amazon_first_blocked_conversion_queue_v1 top_candidates row for this token at source_queue_generated_at.",
+    "amazon_slot_exists left UNKNOWN: no live DB slot proof was executed in this authoring pass."
+  ]
+}
