@@ -1,0 +1,112 @@
+{
+  "report_name": "buckparts_amazon_lt1000pc_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "LT1000PC",
+  "filter_slug": "lt1000pc",
+  "filter_id": "1e0fdf15-3698-498b-88ed-741b6ac76b59",
+  "final_amazon_cta_state_proven": true,
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 34,
+    "already_live_noop_count": 11,
+    "lt1000pc_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 55,
+    "direct_buyable_links": 55,
+    "total_retailer_links": 256,
+    "blocked_or_unsafe_links": 201,
+    "retailer_counts_amazon": 52,
+    "live_direct_buyable": 55,
+    "system_health_status": "WARNING"
+  },
+  "rescue_delta_trend_summary": {
+    "safe_cta_links_delta": 3,
+    "net_rescue_direction": "IMPROVING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "0a1e3c22-518d-476e-ba95-91955984e2ec",
+    "filter_id": "1e0fdf15-3698-498b-88ed-741b6ac76b59",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+    "destination_url": "https://www.amazon.com/dp/B07H9LHMR2",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": null,
+    "browser_truth_notes": "Aftermarket Waterdrop compatible replacement for LT1000PC (ASIN B07H9LHMR2); PDP cross-refs LT1000PC/LT1000P/ADQ747935 family. Not LG OEM."
+  },
+  "amazon_associates_operator_snapshot": {
+    "source": "operator_screenshot",
+    "date_range": "Apr 03 2026 - May 02 2026",
+    "tracking_id": "All",
+    "clicks": 54,
+    "ordered_items": 1,
+    "conversion_rate": "1.85%",
+    "ordered_revenue_usd": 15.99,
+    "shipped_items": 0,
+    "total_revenue_usd": 0,
+    "total_earnings_usd": 0,
+    "interpretation": "First ordered-item signal; paid commission not confirmed because shipped items and earnings are zero.",
+    "product_attribution": "UNKNOWN",
+    "product_attribution_reason": "Linked Product table showed no data / no ASIN-level attribution proven from screenshot.",
+    "revenue_status": "ORDERED_NOT_SHIPPED_NOT_COMMISSIONED"
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 55,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Per-link contribution to aggregate safe_cta_links is not co-proven; after value is post-commit command_surface read. Aggregate snapshot delta (+3) is recorded under rescue_delta_trend_summary."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 256,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is post-commit command_surface read."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 55,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value only is post-commit command_surface read."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": 55,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit LIVE_DIRECT_BUYABLE count not co-attached; after value only is post-commit command_surface read."
+    },
+    "retailer_counts_amazon": {
+      "before": "UNKNOWN",
+      "after": 52,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit retailer_counts.amazon not co-attached; after value only is post-commit command_surface read."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached; after value only is post-commit command_surface read."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "Amazon PDP is aftermarket / compatible Waterdrop replacement (ASIN B07H9LHMR2); not LG OEM.",
+    "No paid commission claim: Associates snapshot shows ordered_revenue_usd with shipped_items 0 and total_earnings_usd 0.",
+    "No product attribution claim to LT1000PC or B07H9LHMR2 from Associates snapshot (see amazon_associates_operator_snapshot.product_attribution).",
+    "No runtime code changes implied by this record.",
+    "No single-token causal claim for aggregate rescue_delta_trend_summary.safe_cta_links_delta.",
+    "LT1000PC does not appear in amazon-first-blocked-queue top_candidates for the post-commit read (see amazon_first_blocked_queue.lt1000pc_absent_from_top_candidates).",
+    "amazon_associates_operator_snapshot is operator-reported UI text, not API-backed repo data."
+  ]
+}
