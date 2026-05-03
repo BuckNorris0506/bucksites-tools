@@ -1,6 +1,10 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 import type {
   VacuumFilterRow,
   VacuumModelListRow,
@@ -14,6 +18,7 @@ export type VacuumFilterDetail = VacuumFilterRow & {
 export type VacuumFilterWithModels = VacuumFilterDetail & {
   models: VacuumModelListRow[];
   retailer_links: VacuumRetailerLink[];
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
 };
 
 export async function getVacuumFilterBySlug(
@@ -79,7 +84,7 @@ export async function getVacuumFilterBySlug(
   const { data: links, error: lErr } = await supabase
     .from("vacuum_retailer_links")
     .select(
-      "id, vacuum_filter_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, vacuum_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("vacuum_filter_id", filterRow.id)
     .eq("status", "approved")
@@ -88,9 +93,12 @@ export async function getVacuumFilterBySlug(
 
   if (lErr) throw lErr;
 
+  const rawRetailerLinks = (links ?? []) as VacuumRetailerLink[];
+
   return {
     ...filterRow,
     models,
-    retailer_links: filterRealBuyRetailerLinks((links ?? []) as VacuumRetailerLink[]),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
   };
 }

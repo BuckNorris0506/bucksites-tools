@@ -48,6 +48,7 @@ export default async function AirPurifierFilterPage({ params }: Props) {
         models={filter.models}
         modelBasePath="/air-purifier/model"
         retailerLinks={filter.retailer_links}
+        gateSuppressionSummary={filter.buy_path_gate_suppression}
         goBase="/air-purifier/go"
         searchHref="/air-purifier/search"
         fitConfirmation={FILTER_PAGE_FIT_CONFIRMATION_AIR_PURIFIER}

@@ -1,6 +1,10 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 import type {
   HumidifierFilterRow,
   HumidifierModelListRow,
@@ -14,6 +18,7 @@ export type HumidifierFilterDetail = HumidifierFilterRow & {
 export type HumidifierFilterWithModels = HumidifierFilterDetail & {
   models: HumidifierModelListRow[];
   retailer_links: HumidifierRetailerLink[];
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
 };
 
 export async function getHumidifierFilterBySlug(
@@ -79,7 +84,7 @@ export async function getHumidifierFilterBySlug(
   const { data: links, error: lErr } = await supabase
     .from("humidifier_retailer_links")
     .select(
-      "id, humidifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, humidifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("humidifier_filter_id", filterRow.id)
     .eq("status", "approved")
@@ -88,9 +93,12 @@ export async function getHumidifierFilterBySlug(
 
   if (lErr) throw lErr;
 
+  const rawRetailerLinks = (links ?? []) as HumidifierRetailerLink[];
+
   return {
     ...filterRow,
     models,
-    retailer_links: filterRealBuyRetailerLinks((links ?? []) as HumidifierRetailerLink[]),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
   };
 }

@@ -33,6 +33,7 @@ export default async function ApplianceAirFilterPage({ params }: Props) {
       models={part.models}
       modelBasePath="/appliance-air/model"
       retailerLinks={part.retailer_links}
+      gateSuppressionSummary={part.buy_path_gate_suppression}
       goBase="/appliance-air/go"
       searchHref="/appliance-air/search"
       fitConfirmation={FILTER_PAGE_FIT_CONFIRMATION}

@@ -35,6 +35,7 @@ export default async function VacuumFilterPage({ params }: Props) {
       models={filter.models}
       modelBasePath="/vacuum/model"
       retailerLinks={filter.retailer_links}
+      gateSuppressionSummary={filter.buy_path_gate_suppression}
       goBase="/vacuum/go"
       searchHref="/vacuum/search"
       fitConfirmation={FILTER_PAGE_FIT_CONFIRMATION}

@@ -1,6 +1,10 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 import type {
   ApplianceAirModelListRow,
   ApplianceAirPartRow,
@@ -14,6 +18,7 @@ export type ApplianceAirPartDetail = ApplianceAirPartRow & {
 export type ApplianceAirPartWithModels = ApplianceAirPartDetail & {
   models: ApplianceAirModelListRow[];
   retailer_links: ApplianceAirRetailerLink[];
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
 };
 
 export async function getApplianceAirPartBySlug(
@@ -79,7 +84,7 @@ export async function getApplianceAirPartBySlug(
   const { data: links, error: lErr } = await supabase
     .from("appliance_air_retailer_links")
     .select(
-      "id, appliance_air_part_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, appliance_air_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("appliance_air_part_id", partRow.id)
     .eq("status", "approved")
@@ -88,9 +93,12 @@ export async function getApplianceAirPartBySlug(
 
   if (lErr) throw lErr;
 
+  const rawRetailerLinks = (links ?? []) as ApplianceAirRetailerLink[];
+
   return {
     ...partRow,
     models,
-    retailer_links: filterRealBuyRetailerLinks((links ?? []) as ApplianceAirRetailerLink[]),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
   };
 }

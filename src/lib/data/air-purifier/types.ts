@@ -25,6 +25,7 @@ export type AirPurifierRetailerLink = {
   is_primary: boolean | null;
   retailer_key: string;
   browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
   browser_truth_notes?: string | null;
   browser_truth_checked_at?: string | null;
 };

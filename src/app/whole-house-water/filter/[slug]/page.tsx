@@ -38,6 +38,7 @@ export default async function WholeHouseWaterFilterPage({ params }: Props) {
       models={part.models}
       modelBasePath="/whole-house-water/model"
       retailerLinks={part.retailer_links}
+      gateSuppressionSummary={part.buy_path_gate_suppression}
       goBase="/whole-house-water/go"
       searchHref="/whole-house-water/search"
       fitConfirmation={FILTER_PAGE_FIT_CONFIRMATION_WHOLE_HOUSE}

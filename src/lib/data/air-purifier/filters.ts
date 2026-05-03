@@ -6,7 +6,11 @@ import type {
   AirPurifierModelListRow,
   AirPurifierRetailerLink,
 } from "./types";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 
 export type AirPurifierFilterDetail = AirPurifierFilterRow & {
   brand: Pick<Brand, "slug" | "name">;
@@ -15,6 +19,8 @@ export type AirPurifierFilterDetail = AirPurifierFilterRow & {
 export type AirPurifierFilterWithModels = AirPurifierFilterDetail & {
   models: AirPurifierModelListRow[];
   retailer_links: AirPurifierRetailerLink[];
+  /** Why on-file retailer rows are not eligible for live buy CTAs (parallel to `filterRealBuyRetailerLinks`). */
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
   /** Search aliases from air_purifier_filter_aliases (excludes redundant OEM echo). */
   also_known_as: string[];
 };
@@ -82,7 +88,7 @@ export async function getAirPurifierFilterBySlug(
   const { data: links, error: lErr } = await supabase
     .from("air_purifier_retailer_links")
     .select(
-      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("air_purifier_filter_id", filterRow.id)
     .eq("status", "approved")
@@ -100,12 +106,13 @@ export async function getAirPurifierFilterBySlug(
   const rawAliases = (aliasRows ?? []).map((r) => (r as { alias: string }).alias);
   const also_known_as = uniqueFilterAliasesForPdp(rawAliases, filterRow.oem_part_number);
 
+  const rawRetailerLinks = (links ?? []) as AirPurifierRetailerLink[];
+
   return {
     ...filterRow,
     models,
-    retailer_links: filterRealBuyRetailerLinks(
-      (links ?? []) as AirPurifierRetailerLink[],
-    ),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
     also_known_as,
   };
 }

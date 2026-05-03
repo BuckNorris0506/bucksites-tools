@@ -35,6 +35,7 @@ export default async function HumidifierFilterPage({ params }: Props) {
       models={filter.models}
       modelBasePath="/humidifier/model"
       retailerLinks={filter.retailer_links}
+      gateSuppressionSummary={filter.buy_path_gate_suppression}
       goBase="/humidifier/go"
       searchHref="/humidifier/search"
       fitConfirmation={FILTER_PAGE_FIT_CONFIRMATION}

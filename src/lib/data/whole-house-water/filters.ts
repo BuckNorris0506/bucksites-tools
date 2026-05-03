@@ -6,7 +6,11 @@ import type {
   WholeHouseWaterPartRow,
   WholeHouseWaterRetailerLink,
 } from "./types";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 
 export type WholeHouseWaterPartDetail = WholeHouseWaterPartRow & {
   brand: Pick<Brand, "slug" | "name">;
@@ -15,6 +19,8 @@ export type WholeHouseWaterPartDetail = WholeHouseWaterPartRow & {
 export type WholeHouseWaterPartWithModels = WholeHouseWaterPartDetail & {
   models: WholeHouseWaterModelListRow[];
   retailer_links: WholeHouseWaterRetailerLink[];
+  /** Why on-file retailer rows are not eligible for live buy CTAs (parallel to `filterRealBuyRetailerLinks`). */
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
 };
 
 const PART_HEAD_SELECT =
@@ -108,7 +114,7 @@ export async function getWholeHouseWaterPartBySlug(
   const { data: links, error: lErr } = await supabase
     .from("whole_house_water_retailer_links")
     .select(
-      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("whole_house_water_part_id", partRow.id)
     .eq("status", "approved")
@@ -117,11 +123,12 @@ export async function getWholeHouseWaterPartBySlug(
 
   if (lErr) throw lErr;
 
+  const rawRetailerLinks = (links ?? []) as WholeHouseWaterRetailerLink[];
+
   return {
     ...partRow,
     models,
-    retailer_links: filterRealBuyRetailerLinks(
-      (links ?? []) as WholeHouseWaterRetailerLink[],
-    ),
+    retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
   };
 }
