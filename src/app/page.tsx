@@ -4,20 +4,20 @@ import { SearchForm } from "@/components/SearchForm";
 import { listBrowseFilters } from "@/lib/catalog/browse";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
+const homeMetaTitle = `Replacement filters lookup · ${SITE_DISPLAY_NAME}`;
+const homeMetaDescription = `Search by model number or OEM part number on ${SITE_DISPLAY_NAME}, compare what we list against our reference, then open verified store links when we have them available.`;
+
 export const metadata: Metadata = {
-  title: "Replacement filters & parts lookup",
-  description:
-    "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+  title: homeMetaTitle,
+  description: homeMetaDescription,
   openGraph: {
-    title: "Replacement filters & parts lookup",
-    description:
-      "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+    title: homeMetaTitle,
+    description: homeMetaDescription,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Replacement filters & parts lookup",
-    description:
-      "Find the right replacement filter before you buy. Search by model number or part number, then compare verified store options when available.",
+    title: homeMetaTitle,
+    description: homeMetaDescription,
   },
 };
 
@@ -39,7 +39,8 @@ export default async function HomePage() {
             Find the right replacement filter before you buy
           </h1>
           <p className="max-w-3xl text-pretty text-lg leading-relaxed text-neutral-700 dark:text-neutral-300 sm:text-xl">
-            Stop guessing which filter fits your model.
+            If you can read the nameplate on the appliance or the OEM print on the cartridge you are
+            replacing, you have what you need to line it up with our reference before you shop.
           </p>
           <p className="text-base font-medium text-neutral-700 dark:text-neutral-300">
             Free to use · No account needed · Compare store options when available
@@ -67,6 +68,9 @@ export default async function HomePage() {
       </section>
 
       <section className="rounded-lg border border-neutral-200 bg-neutral-50 px-5 py-4 dark:border-neutral-800 dark:bg-neutral-900/40 sm:px-6">
+        <p className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">
+          A few things we take seriously around here:
+        </p>
         <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
           <li>We only show links we can verify to your exact filter code</li>
           <li>Check your current filter before buying</li>
@@ -77,8 +81,11 @@ export default async function HomePage() {
       {popularFilters.length > 0 && (
         <section className="space-y-5">
           <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-            Popular replacement filters
+            Fridge-water starting points
           </h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            A short list from our refrigerator-water browse data—not a bestseller chart.
+          </p>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {popularFilters.map((f) => (
               <li key={f.slug} className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950">
