@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SearchForm } from "@/components/SearchForm";
 import { listBrowseFilters } from "@/lib/catalog/browse";
@@ -71,10 +72,34 @@ export default async function HomePage() {
         <p className="mb-3 text-sm font-medium text-neutral-800 dark:text-neutral-200">
           A few things we take seriously around here:
         </p>
-        <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          <li>We only show links we can verify to your exact filter code</li>
-          <li>Check your current filter before buying</li>
-          <li>Compare store options when available</li>
+        <ul className="m-0 flex list-none flex-col gap-0 p-0 text-sm font-medium text-neutral-700 dark:text-neutral-300 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-0 sm:gap-y-2">
+          <li className="min-w-0 border-t border-neutral-200 py-3 first:border-t-0 first:pt-0 dark:border-neutral-700 sm:max-w-[min(100%,22rem)] sm:border-t-0 sm:py-0">
+            We only show links we can verify to your exact filter code
+          </li>
+          <li aria-hidden="true" className="hidden shrink-0 select-none sm:flex sm:items-center sm:px-3">
+            <Image
+              src="/buckparts-logo-black-transparent.png"
+              alt=""
+              width={22}
+              height={22}
+              className="h-3.5 w-auto opacity-[0.38] dark:invert dark:opacity-50"
+            />
+          </li>
+          <li className="min-w-0 border-t border-neutral-200 py-3 dark:border-neutral-700 sm:max-w-[min(100%,22rem)] sm:border-t-0 sm:py-0">
+            Check your current filter before buying
+          </li>
+          <li aria-hidden="true" className="hidden shrink-0 select-none sm:flex sm:items-center sm:px-3">
+            <Image
+              src="/buckparts-logo-black-transparent.png"
+              alt=""
+              width={22}
+              height={22}
+              className="h-3.5 w-auto opacity-[0.38] dark:invert dark:opacity-50"
+            />
+          </li>
+          <li className="min-w-0 border-t border-neutral-200 py-3 dark:border-neutral-700 sm:max-w-[min(100%,22rem)] sm:border-t-0 sm:py-0">
+            Compare store options when available
+          </li>
         </ul>
       </section>
 
