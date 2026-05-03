@@ -1,0 +1,99 @@
+{
+  "report_name": "buckparts_amazon_lt600p_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "LT600P",
+  "filter_slug": "lt600p",
+  "filter_id": "f6ba1f25-c983-4ff5-b47b-7334845b0d92",
+  "final_amazon_cta_state_proven": true,
+  "insert_outcome": "ALREADY_INSERTED_BEFORE_THIS_GUARDED_RUN",
+  "insert_outcome_reason": "Read-only DB confirmation returns exactly one approved amazon row for this filter_id with id matching operator claim; a subsequent guarded INSERT ... WHERE NOT EXISTS would return inserted_row_count 0 while amazon_row_count remains 1.",
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 33,
+    "already_live_noop_count": 12,
+    "lt600p_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 56,
+    "direct_buyable_links": 56,
+    "total_retailer_links": 257,
+    "blocked_or_unsafe_links": 201,
+    "retailer_counts_amazon": 53,
+    "live_direct_buyable": 56,
+    "system_health_status": "WARNING"
+  },
+  "rescue_delta_trend_summary": {
+    "safe_cta_links_delta": 4,
+    "net_rescue_direction": "IMPROVING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "4b240a57-970a-42f5-a23d-ca99fbc40ad2",
+    "filter_id": "f6ba1f25-c983-4ff5-b47b-7334845b0d92",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z",
+    "destination_url": "https://www.amazon.com/dp/B07VGD8Z5Z",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+    "browser_truth_notes": "Aftermarket PUREPLUS compatible 3-pack replacement for LT600P (ASIN B07VGD8Z5Z); PDP cross-refs LT600P/5231JA2006 family. Not LG OEM.",
+    "browser_truth_checked_at": "2026-05-03T16:26:11.002299+00:00"
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 56,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Per-link contribution to aggregate safe_cta_links is not co-proven; after value is post-commit command_surface read. Aggregate snapshot delta (+4) is recorded under rescue_delta_trend_summary."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 257,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is post-commit command_surface read."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 56,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value only is post-commit command_surface read."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": 56,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit LIVE_DIRECT_BUYABLE count not co-attached; after value only is post-commit command_surface read."
+    },
+    "retailer_counts_amazon": {
+      "before": "UNKNOWN",
+      "after": 53,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit retailer_counts.amazon not co-attached; after value only is post-commit command_surface read."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached; after value only is post-commit command_surface read."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "Amazon PDP is aftermarket / compatible PUREPLUS 3-pack replacement (ASIN B07VGD8Z5Z); not LG OEM.",
+    "committed_live_row.browser_truth_notes in DB may differ slightly from this canonical evidence string; link_id and classification/subtype were verified read-only against public.retailer_links in this session.",
+    "No Amazon Associates revenue or commission claims in this export (no operator snapshot attached for LT600P).",
+    "No runtime code changes implied by this record.",
+    "No single-token causal claim for aggregate rescue_delta_trend_summary.safe_cta_links_delta.",
+    "LT600P does not appear in amazon-first-blocked-queue top_candidates for the post-commit read (see amazon_first_blocked_queue.lt600p_absent_from_top_candidates).",
+    "insert_outcome ALREADY_INSERTED_BEFORE_THIS_GUARDED_RUN reflects operator-reported guarded INSERT row count 0 with post-verify amazon_row_count 1, consistent with read-only confirmation of an existing row (see insert_outcome_reason)."
+  ]
+}
