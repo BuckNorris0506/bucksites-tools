@@ -1,0 +1,94 @@
+{
+  "report_name": "buckparts_amazon_lt1000p_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "LT1000P",
+  "filter_slug": "lt1000p",
+  "filter_id": "351b197d-ecac-428e-aa99-39cfad397692",
+  "final_amazon_cta_state_proven": true,
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 35,
+    "already_live_noop_count": 10,
+    "lt1000p_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 54,
+    "direct_buyable_links": 54,
+    "total_retailer_links": 255,
+    "blocked_or_unsafe_links": 201,
+    "retailer_counts_amazon": 51,
+    "live_direct_buyable": 54,
+    "system_health_status": "WARNING"
+  },
+  "rescue_delta_trend_summary": {
+    "safe_cta_links_delta": 2,
+    "net_rescue_direction": "IMPROVING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "c5303885-6ea2-43da-87bb-846a311edba1",
+    "filter_id": "351b197d-ecac-428e-aa99-39cfad397692",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+    "destination_url": "https://www.amazon.com/dp/B07H9LHMR2",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": null,
+    "browser_truth_notes": "Aftermarket Waterdrop compatible replacement for LT1000P (ASIN B07H9LHMR2); not LG OEM."
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 54,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Per-link contribution to aggregate safe_cta_links is not co-proven; after value is post-commit command_surface read. Aggregate snapshot delta (+2) is recorded under rescue_delta_trend_summary."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 255,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is post-commit command_surface read."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 54,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value only is post-commit command_surface read."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": 54,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit LIVE_DIRECT_BUYABLE count not co-attached; after value only is post-commit command_surface read."
+    },
+    "retailer_counts_amazon": {
+      "before": "UNKNOWN",
+      "after": 51,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit retailer_counts.amazon not co-attached; after value only is post-commit command_surface read."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached; after value only is post-commit command_surface read."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "Amazon PDP is aftermarket / compatible Waterdrop replacement (ASIN B07H9LHMR2); not LG OEM.",
+    "No runtime code changes implied by this record.",
+    "No revenue improvement claim.",
+    "LT1000P does not appear in amazon-first-blocked-queue top_candidates for the post-commit read (see amazon_first_blocked_queue.lt1000p_absent_from_top_candidates).",
+    "rescue_delta_trend_summary.safe_cta_links_delta reflects snapshot-vs-snapshot trend from command_surface, not a single-row causal proof."
+  ]
+}
