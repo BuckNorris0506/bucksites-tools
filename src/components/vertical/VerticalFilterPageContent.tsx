@@ -1,10 +1,18 @@
 import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
+import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { Prose } from "@/components/Prose";
-import { TieredBuyLinks } from "@/components/TieredBuyLinks";
-import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import {
+  buyPathSortContextForFilter,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
+import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
+
+const DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE =
+  "BuckParts does not have enough proof to show a buy button for this replacement part yet. Verify the OEM number against the old part or your manual first.";
 
 export type VerticalFilterModelRow = {
   id: string;
@@ -37,6 +45,10 @@ type Props = {
   alsoKnownAs?: string[];
   /** Optional PDP slug for buy-path ordering (Amazon primary when exact-OEM catalog part). */
   filterSlug?: string;
+  /** When the wedge filter loader exposes raw retailer rows + `summarizeBuyPathGateSuppression`, pass it here; otherwise omit. */
+  gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
+  /** Override default copy when `trust.buyer_path_state === "suppress_buy"`. */
+  buySuppressMessage?: string;
 };
 
 export function VerticalFilterPageContent({
@@ -57,11 +69,21 @@ export function VerticalFilterPageContent({
   expandedSearchFooter = false,
   alsoKnownAs,
   filterSlug,
+  gateSuppressionSummary,
+  buySuppressMessage,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
   const buyPathSortContext = buyPathSortContextForFilter(filterSlug ?? oemPartNumber, name, oemPartNumber);
   const interval = intervalLabel(replacementIntervalMonths);
   const count = models.length;
+  const trustSummary = buildPartPageTrust({
+    modelsCount: count,
+    retailerLinks,
+    oemPartNumber,
+    alsoKnownAs,
+    notes,
+    buyPathSortContext,
+  });
 
   return (
     <article className="space-y-10">
@@ -100,15 +122,24 @@ export function VerticalFilterPageContent({
           </p>
         ) : null}
 
+        <PartTruthPanel
+          trust={trustSummary}
+          compatibleModelCount={count}
+          hasNotes={Boolean(notes)}
+        />
+
         <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
           <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
             Where to buy
           </p>
           <div className="mt-3">
-            <TieredBuyLinks
+            <TrustAwareBuySection
+              trust={trustSummary}
               links={retailerLinks}
               goBase={goBase}
               primaryCtaLabel="Buy this part at"
+              suppressMessage={buySuppressMessage ?? DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE}
+              gateSuppressionSummary={gateSuppressionSummary ?? undefined}
               buyPathSortContext={buyPathSortContext}
             />
           </div>
