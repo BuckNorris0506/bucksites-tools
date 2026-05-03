@@ -1,0 +1,78 @@
+{
+  "report_name": "buckparts_amazon_da97_15217d_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "DA97-15217D",
+  "filter_slug": "da97-15217d",
+  "final_amazon_cta_state_proven": true,
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 36,
+    "already_live_noop_count": 9,
+    "da97_15217d_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 53,
+    "direct_buyable_links": 53,
+    "total_retailer_links": 254,
+    "blocked_or_unsafe_links": 201,
+    "system_health_status": "WARNING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "3ae440ae-2324-4580-802b-5f50116f4da2",
+    "filter_id": "5487ef82-2010-44d4-bb18-bf71e6ae35ba",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ",
+    "destination_url": "https://www.amazon.com/dp/B07BHZWSCQ",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": null
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 53,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit command_surface safe_cta_links not co-attached to this evidence export; after value only is operator-verified for this file."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 254,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is operator-verified for this file."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 53,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit command_surface direct_buyable_links not co-attached to this evidence export; after value only is operator-verified for this file."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": "UNKNOWN",
+      "delta": "UNKNOWN",
+      "unknown_reason": "live_direct_buyable not reported in the proven-facts list for this export."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached to this evidence export; after value only is operator-verified for this file."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "No runtime code changes implied by this record.",
+    "No revenue improvement claim.",
+    "DA97-15217D does not appear in amazon-first-blocked-queue top_candidates for the post-commit read (see amazon_first_blocked_queue.da97_15217d_absent_from_top_candidates)."
+  ]
+}
