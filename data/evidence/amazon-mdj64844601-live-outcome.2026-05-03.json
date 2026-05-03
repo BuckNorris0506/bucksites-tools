@@ -1,0 +1,104 @@
+{
+  "report_name": "buckparts_amazon_mdj64844601_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "MDJ64844601",
+  "filter_slug": "mdj64844601",
+  "filter_id": "c6d36a37-f69a-486e-8c11-209a653a1b3b",
+  "final_amazon_cta_state_proven": true,
+  "insert_outcome": "INSERT_RETURNED_ONE_ROW_AND_COMMITTED",
+  "insert_outcome_reason": "Operator-reported manual execution of docs/amazon-mdj64844601-insert-plan.sql with COMMIT; read-only confirmation in this session returns exactly one approved amazon row for filter_id c6d36a37-f69a-486e-8c11-209a653a1b3b with id b289be90-b9c3-44c3-9c26-3a554c545a47.",
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 30,
+    "already_live_noop_count": 15,
+    "mdj64844601_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 59,
+    "direct_buyable_links": 59,
+    "total_retailer_links": 260,
+    "blocked_or_unsafe_links": 201,
+    "retailer_counts_amazon": 56,
+    "live_direct_buyable": 59,
+    "system_health_status": "WARNING"
+  },
+  "rescue_delta_trend_summary": {
+    "safe_cta_links_delta": 7,
+    "net_rescue_direction": "IMPROVING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "b289be90-b9c3-44c3-9c26-3a554c545a47",
+    "filter_id": "c6d36a37-f69a-486e-8c11-209a653a1b3b",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1",
+    "destination_url": "https://www.amazon.com/dp/B08HDD1PK1",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    "browser_truth_notes": "Manual exact-token + buyability evidence 2026-05-03: MDJ64844601 appears on Amazon PDP B08HDD1PK1; listing is aftermarket / compatible PURELINE replacement, not LG OEM; buy path present with stock/pricing evidence.",
+    "browser_truth_checked_at": "2026-05-03T18:46:48.914854+00:00"
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 59,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Per-link contribution to aggregate safe_cta_links is not co-proven; after value is buckparts:command-surface read in this session. Aggregate snapshot delta (+7) is recorded under rescue_delta_trend_summary."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 260,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is post-commit command_surface read in this session."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 59,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": 59,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit LIVE_DIRECT_BUYABLE count not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "retailer_counts_amazon": {
+      "before": "UNKNOWN",
+      "after": 56,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit retailer_counts.amazon not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached; after value only is post-commit command_surface read in this session."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "Amazon PDP ASIN B08HDD1PK1 is aftermarket / compatible PURELINE replacement (not LG OEM) per read-only browser_truth_notes on public.retailer_links.",
+    "committed_live_row fields mirror read-only SELECT against public.retailer_links in this session (same session as file creation).",
+    "No revenue, commission, or fee claims in this export.",
+    "No Amazon Associates product-attribution or tag-performance claims in this export.",
+    "No runtime code changes implied by this record.",
+    "No single-token causal claim for aggregate rescue_delta_trend_summary.safe_cta_links_delta.",
+    "MDJ64844601 does not appear in amazon-first-blocked-queue top_candidates for the co-run buckparts:amazon-first-blocked-queue read in this session (see amazon_first_blocked_queue.mdj64844601_absent_from_top_candidates).",
+    "insert_outcome INSERT_RETURNED_ONE_ROW_AND_COMMITTED reflects operator-reported successful guarded INSERT + COMMIT; this file does not independently replay SQL.",
+    "amazon_first_blocked_queue.needs_amazon_search_count and already_live_noop_count co-sourced from buckparts:amazon-first-blocked-queue in this session.",
+    "post_commit_command_surface and rescue_delta_trend_summary co-sourced from buckparts:command-surface in this session.",
+    "post_commit_audit co-sourced from buckparts:audit in this session.",
+    "This task does not advance ADQ75795101 or any other token."
+  ]
+}
