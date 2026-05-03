@@ -1,7 +1,11 @@
 import type { Brand } from "@/lib/types/database";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 import type { AirPurifierFilterRow, AirPurifierRetailerLink } from "./types";
 
 export type AirPurifierModelDetail = {
@@ -20,6 +24,8 @@ export type AirPurifierModelWithFilters = AirPurifierModelDetail & {
     retailer_links: AirPurifierRetailerLink[];
     is_recommended_fit: boolean;
   })[];
+  /** Gate summary for the primary (sort-first) filter’s raw retailer rows; absent when no filters. */
+  primary_buy_path_gate_suppression?: BuyPathGateSuppressionSummary;
 };
 
 export async function getAirPurifierModelBySlug(
@@ -79,7 +85,7 @@ export async function getAirPurifierModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("air_purifier_retailer_links")
     .select(
-      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, air_purifier_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .in("air_purifier_filter_id", filterIds)
     .eq("status", "approved")
@@ -101,10 +107,17 @@ export async function getAirPurifierModelBySlug(
     is_recommended_fit: recommendedByFilterId.get(f.id) === true,
   }));
 
-  sortModelFiltersByCompatRecommendation(filterList, recommendedByFilterId);
+  const sortedFilters = sortModelFiltersByCompatRecommendation(
+    filterList,
+    recommendedByFilterId,
+  );
+  const primaryId = sortedFilters[0]?.id;
+  const primaryRawLinks = primaryId ? (byFilter.get(primaryId) ?? []) : [];
 
   return {
     ...modelRow,
-    filters: filterList,
+    filters: sortedFilters,
+    primary_buy_path_gate_suppression:
+      sortedFilters.length > 0 ? summarizeBuyPathGateSuppression(primaryRawLinks) : undefined,
   };
 }

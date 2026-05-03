@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { VerticalModelPageContent } from "@/components/vertical/VerticalModelPageContent";
+import {
+  VerticalModelPageContent,
+  type VerticalModelPrimaryTrustBuy,
+} from "@/components/vertical/VerticalModelPageContent";
 import {
   AIR_PURIFIER_MODEL_PAGE_INTRO,
   MODEL_PAGE_FIT_CONFIRMATION_AIR_PURIFIER,
 } from "@/lib/copy/vertical-fit";
 import { getAirPurifierModelBySlug } from "@/lib/data/air-purifier/models";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildModelPageTrust } from "@/lib/trust/part-trust";
 
 export const dynamic = "force-dynamic";
+
+const AIR_PURIFIER_MODEL_PRIMARY_BUY_SUPPRESS =
+  "BuckParts does not have enough proof to show a buy button for this replacement filter yet. Verify the OEM number on your current cartridge or your owner’s manual first.";
 
 type Props = { params: { slug: string } };
 
@@ -27,6 +35,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AirPurifierModelPage({ params }: Props) {
   const model = await getAirPurifierModelBySlug(params.slug);
   if (!model) notFound();
+
+  let primaryTrustBuy: VerticalModelPrimaryTrustBuy | undefined;
+  if (model.filters.length > 0) {
+    const primary = model.filters[0]!;
+    const buyPathSortContext = buyPathSortContextForFilter(
+      primary.slug,
+      primary.name,
+      primary.oem_part_number,
+    );
+    const trust = buildModelPageTrust({
+      totalFits: model.filters.length,
+      hasRecommendedFit: model.filters.some((f) => f.is_recommended_fit),
+      primaryIsRecommended: primary.is_recommended_fit,
+      retailerLinks: primary.retailer_links,
+      oemPartNumber: primary.oem_part_number,
+      modelNumber: model.model_number,
+      buyPathSortContext,
+    });
+    primaryTrustBuy = {
+      trust,
+      mappedPartOptionsCount: model.filters.length,
+      hasPrimaryPartNotes: Boolean(primary.notes),
+      retailerLinks: primary.retailer_links,
+      gateSuppressionSummary: model.primary_buy_path_gate_suppression,
+      buySuppressMessage: AIR_PURIFIER_MODEL_PRIMARY_BUY_SUPPRESS,
+    };
+  }
 
   return (
     <VerticalModelPageContent
@@ -55,6 +90,7 @@ export default async function AirPurifierModelPage({ params }: Props) {
           <span>{model.brand.name}</span>
         </p>
       }
+      primaryTrustBuy={primaryTrustBuy}
     />
   );
 }

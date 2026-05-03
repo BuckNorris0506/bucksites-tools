@@ -1,8 +1,14 @@
 import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { ModelTruthPanel } from "@/components/trust/ModelTruthPanel";
+import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { Prose } from "@/components/Prose";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
-import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import {
+  buyPathSortContextForFilter,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
+import type { PartTrustSummary } from "@/lib/trust/part-trust";
 import {
   intervalLabel,
   sharedFilterIntervalLabel,
@@ -17,6 +23,16 @@ export type VerticalModelFilterRow = {
   replacement_interval_months: number | null;
   notes: string | null;
   retailer_links: BuyLinkRow[];
+};
+
+/** When set (e.g. air purifier model PDP), primary row uses model trust chrome + `TrustAwareBuySection` instead of bare `TieredBuyLinks`. */
+export type VerticalModelPrimaryTrustBuy = {
+  trust: PartTrustSummary;
+  mappedPartOptionsCount: number;
+  hasPrimaryPartNotes: boolean;
+  retailerLinks: BuyLinkRow[];
+  gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
+  buySuppressMessage: string;
 };
 
 type Props = {
@@ -35,6 +51,7 @@ type Props = {
   utilityIntro?: string;
   notesSectionTitle?: string;
   expandedSearchFooter?: boolean;
+  primaryTrustBuy?: VerticalModelPrimaryTrustBuy | null;
 };
 
 export function VerticalModelPageContent({
@@ -52,6 +69,7 @@ export function VerticalModelPageContent({
   utilityIntro,
   notesSectionTitle = "Extra notes",
   expandedSearchFooter = false,
+  primaryTrustBuy,
 }: Props) {
   const path = filterBasePath.replace(/\/$/, "");
   const primary = filters[0];
@@ -113,18 +131,43 @@ export function VerticalModelPageContent({
                 </p>
               )}
 
-              <div className="mt-5">
-                <TieredBuyLinks
-                  links={primary.retailer_links}
-                  goBase={goBase}
-                  primaryCtaLabel="Buy replacement at"
-                  buyPathSortContext={buyPathSortContextForFilter(
-                    primary.slug,
-                    primary.name,
-                    primary.oem_part_number,
-                  )}
-                />
-              </div>
+              {primaryTrustBuy ? (
+                <>
+                  <ModelTruthPanel
+                    trust={primaryTrustBuy.trust}
+                    mappedPartOptionsCount={primaryTrustBuy.mappedPartOptionsCount}
+                    hasPrimaryPartNotes={primaryTrustBuy.hasPrimaryPartNotes}
+                  />
+                  <div className="mt-5">
+                    <TrustAwareBuySection
+                      trust={primaryTrustBuy.trust}
+                      links={primaryTrustBuy.retailerLinks}
+                      goBase={goBase}
+                      primaryCtaLabel="Buy replacement at"
+                      suppressMessage={primaryTrustBuy.buySuppressMessage}
+                      gateSuppressionSummary={primaryTrustBuy.gateSuppressionSummary ?? undefined}
+                      buyPathSortContext={buyPathSortContextForFilter(
+                        primary.slug,
+                        primary.name,
+                        primary.oem_part_number,
+                      )}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="mt-5">
+                  <TieredBuyLinks
+                    links={primary.retailer_links}
+                    goBase={goBase}
+                    primaryCtaLabel="Buy replacement at"
+                    buyPathSortContext={buyPathSortContextForFilter(
+                      primary.slug,
+                      primary.name,
+                      primary.oem_part_number,
+                    )}
+                  />
+                </div>
+              )}
 
               <p className="mt-4 text-sm">
                 <Link
