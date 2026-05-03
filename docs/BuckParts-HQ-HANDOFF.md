@@ -187,7 +187,7 @@
 - **Command surface / center health:** `WARNING` — blocked retailer-link states exceed live (`computeSystemHealth` in `scripts/report-buckparts-command-surface.ts`).
 - **Affiliate breadth:** Only one `APPROVED` program in tracker-driven summary; many lanes drafting / review / not started; **RepairClinic** not approval-ready (`DRAFTING`)—NBA explicitly deprioritizes RepairClinic-dependent work until status advances (`report-buckparts-command-center.ts` guard).
 - **Awin / FlexOffers:** `REJECTED` in tracker—treat as closed lanes unless tracker is updated.
-- **Evidence:** `data/evidence/amazon-false-negative-rescue-staging.2026-04-29.json` sometimes shows **`generated_at`-only** drift after report runs—restore if noise (`git restore …`) before commits; substantive edits are **INTENTIONAL** only.
+- **Evidence:** `data/evidence/amazon-false-negative-rescue-staging.2026-04-29.json` is only rewritten when you run `npm run buckparts:stage:amazon-false-negative-rescue` (CLI entry); importing `scripts/stage-amazon-false-negative-rescue.ts` from tests no longer triggers a write. Substantive edits from that stage command are **INTENTIONAL** only.
 
 ---
 

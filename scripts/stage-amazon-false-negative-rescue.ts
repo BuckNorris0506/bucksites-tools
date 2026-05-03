@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { buildAmazonFalseNegativeRescueAudit } from "./audit-amazon-false-negative-rescue";
 
@@ -130,7 +131,8 @@ export async function runAmazonFalseNegativeRescueStaging(
   options: RunOptions = {},
 ): Promise<AmazonFalseNegativeRescueStagingReport> {
   const rootDir = options.rootDir ?? process.cwd();
-  const writeQueueFile = options.writeQueueFile ?? true;
+  /** Default false: importing this module must not rewrite committed evidence; CLI passes true. */
+  const writeQueueFile = options.writeQueueFile ?? false;
   const report = await buildAmazonFalseNegativeRescueStagingReport(options);
   if (!writeQueueFile) return report;
 
@@ -143,11 +145,14 @@ export async function runAmazonFalseNegativeRescueStaging(
 }
 
 export async function main(): Promise<void> {
-  const report = await runAmazonFalseNegativeRescueStaging();
+  const report = await runAmazonFalseNegativeRescueStaging({ writeQueueFile: true });
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 
-main().catch((error) => {
-  console.error("[stage-amazon-false-negative-rescue] failed", error);
-  process.exit(1);
-});
+const THIS_FILE = fileURLToPath(import.meta.url);
+if (process.argv[1] && path.resolve(process.argv[1]) === THIS_FILE) {
+  main().catch((error) => {
+    console.error("[stage-amazon-false-negative-rescue] failed", error);
+    process.exit(1);
+  });
+}
