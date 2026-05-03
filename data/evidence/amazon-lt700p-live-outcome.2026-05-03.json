@@ -1,0 +1,102 @@
+{
+  "report_name": "buckparts_amazon_lt700p_live_outcome_v1",
+  "generated_at": "2026-05-03",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "LT700P",
+  "filter_slug": "lt700p",
+  "filter_id": "bc6bd3ec-42f5-4526-a246-fb60a274396e",
+  "final_amazon_cta_state_proven": true,
+  "insert_outcome": "INSERT_RETURNED_ONE_ROW_AND_COMMITTED",
+  "insert_outcome_reason": "Operator-reported manual execution of docs/amazon-lt700p-insert-plan.sql with COMMIT; read-only confirmation in this session returns exactly one approved amazon row for filter_id bc6bd3ec-42f5-4526-a246-fb60a274396e with id a468799b-64c4-44e9-a16f-c87be931345a.",
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 32,
+    "already_live_noop_count": 13,
+    "lt700p_absent_from_top_candidates": true
+  },
+  "post_commit_command_surface": {
+    "safe_cta_links": 57,
+    "direct_buyable_links": 57,
+    "total_retailer_links": 258,
+    "blocked_or_unsafe_links": 201,
+    "retailer_counts_amazon": 54,
+    "live_direct_buyable": 57,
+    "system_health_status": "WARNING"
+  },
+  "rescue_delta_trend_summary": {
+    "safe_cta_links_delta": 5,
+    "net_rescue_direction": "IMPROVING"
+  },
+  "post_commit_audit": {
+    "status": "PASS",
+    "blocking": false
+  },
+  "committed_live_row": {
+    "link_id": "a468799b-64c4-44e9-a16f-c87be931345a",
+    "filter_id": "bc6bd3ec-42f5-4526-a246-fb60a274396e",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B0042ACZU2",
+    "destination_url": "https://www.amazon.com/dp/B0042ACZU2",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": null,
+    "browser_truth_notes": "Manual exact-token + buyability evidence 2026-05-03: LT700P appears on Amazon PDP B0042ACZU2; listing is OEM / genuine LG LT700P, not aftermarket; buy path present with in-stock/pricing evidence.",
+    "browser_truth_checked_at": "2026-05-03T16:58:21.205252+00:00"
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 57,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Per-link contribution to aggregate safe_cta_links is not co-proven; after value is buckparts:command-surface read in this session (2026-05-03). Aggregate snapshot delta (+5) is recorded under rescue_delta_trend_summary."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 258,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached to this evidence export; after value only is post-commit command_surface read in this session."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 57,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "live_direct_buyable": {
+      "before": "UNKNOWN",
+      "after": 57,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit LIVE_DIRECT_BUYABLE count not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "retailer_counts_amazon": {
+      "before": "UNKNOWN",
+      "after": 54,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit retailer_counts.amazon not co-attached; after value only is post-commit command_surface read in this session."
+    },
+    "blocked_or_unsafe_links": {
+      "before": "UNKNOWN",
+      "after": 201,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit blocked_or_unsafe_links not co-attached; after value only is post-commit command_surface read in this session."
+    }
+  },
+  "notes": [
+    "Evidence only. DB mutation was performed manually by operator before this file; this JSON does not execute writes.",
+    "Amazon PDP ASIN B0042ACZU2 is OEM / genuine LG LT700P per operator classification and read-only browser_truth_notes on public.retailer_links.",
+    "committed_live_row fields mirror read-only SELECT against public.retailer_links in this session (same session as file creation).",
+    "No Amazon Associates revenue or commission claims in this export (no operator snapshot attached for LT700P).",
+    "No runtime code changes implied by this record.",
+    "No single-token causal claim for aggregate rescue_delta_trend_summary.safe_cta_links_delta.",
+    "LT700P does not appear in amazon-first-blocked-queue top_candidates for the co-run buckparts:amazon-first-blocked-queue read (see amazon_first_blocked_queue.lt700p_absent_from_top_candidates).",
+    "insert_outcome INSERT_RETURNED_ONE_ROW_AND_COMMITTED reflects operator-reported successful guarded INSERT + COMMIT; this file does not independently replay SQL.",
+    "amazon_first_blocked_queue.needs_amazon_search_count and already_live_noop_count co-sourced from buckparts:amazon-first-blocked-queue in this session.",
+    "post_commit_command_surface and rescue_delta_trend_summary co-sourced from buckparts:command-surface in this session.",
+    "post_commit_audit co-sourced from buckparts:audit in this session."
+  ]
+}
