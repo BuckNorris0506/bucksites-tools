@@ -2,7 +2,11 @@ import type { Brand } from "@/lib/types/database";
 import { normalizeSearchCompact } from "@/lib/search/normalize";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { sortModelFiltersByCompatRecommendation } from "@/lib/vertical/sort-model-filters";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 import type { WholeHouseWaterPartRow, WholeHouseWaterRetailerLink } from "./types";
 
 export type WholeHouseWaterModelDetail = {
@@ -21,6 +25,8 @@ export type WholeHouseWaterModelWithParts = WholeHouseWaterModelDetail & {
     retailer_links: WholeHouseWaterRetailerLink[];
     is_recommended_fit: boolean;
   })[];
+  /** Gate summary for the primary (sort-first) part’s raw retailer rows; absent when no parts. */
+  primary_buy_path_gate_suppression?: BuyPathGateSuppressionSummary;
 };
 
 const MODEL_HEAD_SELECT = `
@@ -107,7 +113,7 @@ export async function getWholeHouseWaterModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("whole_house_water_retailer_links")
     .select(
-      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, whole_house_water_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .in("whole_house_water_part_id", partIds)
     .eq("status", "approved")
@@ -129,10 +135,14 @@ export async function getWholeHouseWaterModelBySlug(
     is_recommended_fit: recommendedByPartId.get(f.id) === true,
   }));
 
-  sortModelFiltersByCompatRecommendation(partList, recommendedByPartId);
+  const sortedParts = sortModelFiltersByCompatRecommendation(partList, recommendedByPartId);
+  const primaryId = sortedParts[0]?.id;
+  const primaryRawLinks = primaryId ? (byPart.get(primaryId) ?? []) : [];
 
   return {
     ...modelRow,
-    filters: partList,
+    filters: sortedParts,
+    primary_buy_path_gate_suppression:
+      sortedParts.length > 0 ? summarizeBuyPathGateSuppression(primaryRawLinks) : undefined,
   };
 }
