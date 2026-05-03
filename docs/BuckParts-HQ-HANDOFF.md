@@ -2,7 +2,7 @@
 
 **How to use:** Paste this whole file into a new ChatGPT / Cursor chat when picking up BuckParts work.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. Last handoff refresh for digest text: `2026-05-01` (Command Center v2 includes `amazon_first_blocked_queue_summary`).
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. Last handoff refresh for digest text: **`2026-05-03`**: `origin/main` includes through **`9229144`** (whole-house water model trust/buy parity). After that push, **`npm test`** and **`npm run build`** completed successfully; **`npm run buckparts:command-surface`** and **`npm run buckparts:command-center`** completed with exit code **0** (JSON still reports `system_health* : WARNING` because blocked/unsafe retailer links exceed live/safe links). Command Center **`execution_guidance.next_move_mode`** is **`READ_ONLY`**. Command Center JSON now includes **`search_and_click_intelligence_summary`**, **`money_funnel_summary`**, **`rescue_velocity_summary`**, and **`rescue_delta_trend_summary`** (see §14 for `rescue_delta_trend_summary` snapshot discipline—after a snapshot refresh + follow-up surface read, the block can return **`runtime_status: OK`** with numeric `current` / `deltas` / `net_rescue_direction`, often **`FLAT`** when nothing moved).
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -69,7 +69,7 @@
 
 | Lane | Exhausted | Candidate count | Source report name |
 |------|-----------|-----------------|---------------------|
-| `oem_catalog_next_money` | false | 134 | `buckparts_oem_catalog_next_money_cohort_v1` |
+| `oem_catalog_next_money` | false | 133 | `buckparts_oem_catalog_next_money_cohort_v1` |
 | `flexoffers_readiness_refrigerator_water` | false | 10 | `buckparts_flexoffers_readiness_refrigerator_water_v1` |
 | `frigidaire_next_monetizable` | true | 0 | `buckparts_frigidaire_next_monetizable_candidates_v1` |
 
@@ -86,11 +86,14 @@
 | `system_health_summary.status` | `WARNING` |
 | `system_health_summary.reasons` | `retailer_link_state_metrics BLOCKED_* exceeds LIVE_*` |
 | `system_health_summary.recommended_next_step` | Resolve warning-level command-surface issues before expanding. |
-| `blocked_link_summary.total_blocked_links` | 202 |
+| `blocked_link_summary.total_blocked_links` | 201 |
 | `blocked_link_summary.top_blocked_state` | `BLOCKED_SEARCH_OR_DISCOVERY` |
 | `blocked_link_summary.top_blocked_retailer_key` | `oem-catalog` |
+| `execution_guidance.next_move_mode` | `READ_ONLY` |
 | `operator_can_be_away_status` | `READY_FOR_AUTONOMOUS_READ_ONLY` |
 | `known_unknowns` | See §16 (duplicates command surface + affiliate tracker lines). |
+
+**Digest sections present (non-exhaustive):** `affiliate_readiness_summary`, `top_money_queue`, `recent_learning_outcomes`, `blocked_link_summary`, **`search_and_click_intelligence_summary`**, **`money_funnel_summary`**, **`rescue_velocity_summary`**, **`rescue_delta_trend_summary`**, `amazon_first_blocked_queue_summary`, `execution_guidance`, plus narrative fields (`next_best_action`, `why_this_action`, …).
 
 **Frigidaire dead OEM:** `all_resolved: true`, `unresolved_count: 0` (from same command-center run).
 
@@ -121,16 +124,16 @@
 
 **From `npm run buckparts:command-surface` → `cta_coverage_metrics` (253 retailer link rows sampled across wedges in that run):**
 
-- `direct_buyable_links`: **51**
-- `safe_cta_links`: **51**
-- `blocked_or_unsafe_links`: **202**
-- `missing_browser_truth_links`: **62**
+- `direct_buyable_links`: **52**
+- `safe_cta_links`: **52**
+- `blocked_or_unsafe_links`: **201**
+- `missing_browser_truth_links`: **61**
 
 **`retailer_link_state_metrics.distribution` (same run):**
 
-- `LIVE_DIRECT_BUYABLE`: 51  
+- `LIVE_DIRECT_BUYABLE`: 52  
 - `BLOCKED_BROWSER_TRUTH_UNSAFE`: 61  
-- `BLOCKED_SEARCH_OR_DISCOVERY`: 140  
+- `BLOCKED_SEARCH_OR_DISCOVERY`: 139  
 - `BLOCKED_BROWSER_TRUTH_MISSING`: 1  
 
 **Revenue / commission dollars:** not computed in evidenced read-only reports (`report-homekeep-business-scorecard.ts` states it is not a revenue report)—**UNKNOWN** here.
@@ -147,18 +150,35 @@
 
 ## 9) Recent completed work
 
-**From `git log -8 --oneline` at handoff authoring:**
+**Trust / vertical UX (shared components, now on multiple wedges):**
 
-1. `fda01cb` — feat: add Amazon-first blocked conversion queue  
-2. `f58a22e` — chore: record FlexOffers rejection and Amazon CTA outcome  
-3. `93603c0` — fix: add retailer slug to DA29-00019A insert plan  
-4. `f15d4ec` — docs: add DA29-00019A multipack insert plan  
-5. `fb23520` — chore: record Amazon multipack subtype outcome  
-6. `91c41b5` — chore: record Awin rejection truth  
-7. `5695ed3` — docs: add Amazon multipack subtype update plan  
-8. `a1cf6c3` — feat: add buyable subtype production preflight  
+- **`PartTruthPanel`** extracted (`cb3806b` and related refactors).
+- **Vertical filter pages** use the truth panel and **`TrustAwareBuySection`** (`be11e07`).
+- **Vertical filter pages** include **gate suppression summaries** (`d7b4ae6`).
+- **Air purifier model pages** use the **trust-aware buy** block (`a0fa4c6`); model truth copy is explicit via provider (`bde23a3`).
+- **Whole-house water model pages** use the same **trust-aware buy** pattern (`9229144`).
 
-**Docs added in workspace (may be uncommitted):** `docs/buckparts-command-center-final-blueprint.md` (design blueprint)—confirm with `git status`.
+**Search / intelligence:**
+
+- **Read-only search-miss audit** exists (`ea84b3f`); **refrigerator brand + model-prefix query normalization** landed (`a49e62e`) to reduce false misses.
+
+**Still not rolled out (as of `9229144` on `origin/main`):**
+
+- **Fridge** model-page trust parity (there is **no** `src/app/fridge/model/[slug]/` route in-repo; water-filter flows use other paths).
+- **Vacuum / humidifier / appliance-air** model pages (`src/app/*/model/[slug]/page.tsx`) do **not** yet pass `primaryTrustBuy` or wrap `ModelTruthPanelCopyProvider` (only **air purifier** and **whole-house water** model routes do).
+- **Full GA4/GSC parsed metrics** in HQ JSON (surface uses available exports + DB slices; not a complete analytics product in-repo).
+- **Affiliate earnings / commission reporting** (tracker + CTA metrics; no evidenced revenue pipeline in read-only reports).
+
+**Strategic questions (for Jared / HQ, not answered here):**
+
+- **Customer trust** and **mobile polish** vs velocity.
+- **Safe CTA coverage growth** vs blocked-link backlog shape.
+- **Remaining model-page trust parity** ordering (fridge vs other verticals).
+- **Affiliate / revenue signal integration** when more programs are `APPROVED`.
+
+**Older reference commits (Amazon-first queue era):** `fda01cb` Amazon-first blocked conversion queue; multipack / buyable-subtype / rescue cohort work continues in `git log` before the trust-panel series above.
+
+**Docs in repo:** `docs/buckparts-command-center-final-blueprint.md` (blueprint)—confirm tracking with `git status` if you edit locally.
 
 ---
 
@@ -167,7 +187,7 @@
 - **Command surface / center health:** `WARNING` — blocked retailer-link states exceed live (`computeSystemHealth` in `scripts/report-buckparts-command-surface.ts`).
 - **Affiliate breadth:** Only one `APPROVED` program in tracker-driven summary; many lanes drafting / review / not started; **RepairClinic** not approval-ready (`DRAFTING`)—NBA explicitly deprioritizes RepairClinic-dependent work until status advances (`report-buckparts-command-center.ts` guard).
 - **Awin / FlexOffers:** `REJECTED` in tracker—treat as closed lanes unless tracker is updated.
-- **Evidence:** `data/evidence/amazon-false-negative-rescue-staging.2026-04-29.json` was dirty in `git status` at handoff prep—**UNKNOWN** if intentional; reconcile before commits.
+- **Evidence:** `data/evidence/amazon-false-negative-rescue-staging.2026-04-29.json` sometimes shows **`generated_at`-only** drift after report runs—restore if noise (`git restore …`) before commits; substantive edits are **INTENTIONAL** only.
 
 ---
 
@@ -175,7 +195,7 @@
 
 **From last `buckparts:command-center` output (live env; re-run to refresh):**
 
-- **`next_best_action`:** “Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (ADQ75795101, DA29-00012B, DA97-08006B, DA97-15217D, DA97-17376A).”
+- **`next_best_action`:** “Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (ADQ75795101, DA97-08006B, DA97-15217D, DA97-17376A, DA97-19467C).”
 - **`why_this_action`:** “Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.”
 
 **Also read:** `amazon_first_blocked_queue_summary` in the same JSON (`needs_amazon_search_count`, `already_live_noop_count`, `top_5_tokens`). If `runtime_status` is `UNKNOWN`, the digest falls back to the older affiliate-queue / money-lane NBA logic.
@@ -260,11 +280,11 @@ npm run build
 - **Affiliate conversion revenue ingestion:** no evidenced automated pipeline in repo survey for this handoff—UNKNOWN.
 - **Operator calendar / on-call:** UNKNOWN.
 - **`READY_FOR_ASYNC_REVIEW` in command center type:** enum exists in `CommandCenterReport`; current TypeScript path only sets `NOT_READY` or `READY_FOR_AUTONOMOUS_READ_ONLY` in `report-buckparts-command-center.ts`—behavior for async review UNKNOWN.
-- **Git working tree cleanliness:** run `git status --short` before work; handoff prep saw modified staging evidence JSON (§10).
+- **Git working tree cleanliness:** run `git status --short` before work; treat evidence JSON timestamp-only diffs as noise unless you intentionally re-ran a mutating staging flow (§10).
 
 ---
 
-## Appendix — Command center `known_unknowns` (last run, verbatim)
+## Appendix — Command center `known_unknowns` (2026-05-03 post-push run, verbatim)
 
 Use for debugging overlap with command surface:
 
@@ -273,8 +293,7 @@ Use for debugging overlap with command surface:
 3. `state_system_metrics.no_buy_reason non-computable: …`  
 4. `state_system_metrics.wrong_purchase_risk non-computable: …`  
 5. `state_system_metrics.replacement_safety non-computable: …`  
-6. `trend deltas UNKNOWN: At least one comparison field is UNKNOWN.`  
-7. `Affiliate tracker: walmart: notes include UNKNOWN` (duplicated twice in output)
+6. `Affiliate tracker: walmart: notes include UNKNOWN` (duplicated twice in output)
 
 ---
 
