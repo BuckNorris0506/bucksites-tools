@@ -111,6 +111,14 @@
       "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
       "can_agent_advance": false,
       "evidence_file": "amazon-4396710-live-outcome.2026-05-04.json"
+    },
+    {
+      "token": "4396841",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link 0ec8d954-9596-472f-8c74-815870226bce live; ASIN B087PDLZL9 aftermarket compatible Waterdrop 3-pack; intentional shared PDP with 4396710 (title proves both tokens).",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-4396841-live-outcome.2026-05-04.json"
     }
   ]
 }
