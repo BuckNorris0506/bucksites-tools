@@ -1,0 +1,49 @@
+{
+  "report_name": "buckparts_amazon_edr1rxd1_oem_pdp_evidence_v1",
+  "generated_at": "2026-05-04T18:10:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "EDR1RXD1",
+  "filter_slug": "UNKNOWN",
+  "filter_id": null,
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "reason": "Browser evidence passed, but read-only DB precheck could not resolve filters.slug=EDR1RXD1; insert safety cannot be proven without a target filter_id.",
+  "exact_token_proof": "Seller-controlled PDP title includes literal EDR1RXD1.",
+  "buyability_proof": "In Stock, Add to Cart, and Buy Now were visible in browser evidence.",
+  "product_attribution": "oem_official",
+  "asin": "B00UXG4WR8",
+  "canonical_url": "https://www.amazon.com/dp/B00UXG4WR8",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+  "required_next_action": "OWNER_MAPS_TOKEN_TO_FILTER_SLUG_THEN_RE_RUN_PRECHECKS",
+  "do_not_publish_reason": "no matching public.filters.slug row proven in live DB",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Browser PDP proof exists, but BuckParts has no matching live filters.slug for this token at precheck time, so this is catalog-mapping backlog evidence, not a retailer_links insert plan."
+  ],
+  "db_precheck_summary": {
+    "filter_found": false,
+    "amazon_row_count": 0,
+    "approved_amazon_row_count": 0,
+    "live_direct_buyable_amazon_row_count": 0,
+    "asin_match_any_url_count": 0
+  },
+  "browser_evidence": {
+    "token_searched": "EDR1RXD1",
+    "amazon_pdp_url_full": "https://www.amazon.com/Homall-everydrop-Refrigerator-EDR1RXD1-Single-Pack/dp/B00UXG4WR8?crid=9YO4MUZVQO0A&dib=eyJ2IjoiMSJ9.oh243L6T2VEED_pl6lrCWklTmeG5SHXnUpZX_R8VxlQz-Su26zalZkG4aMxLw7ABYV6HS7pnzi68lbc_GcNVeEvyo8IyE8dScEZfryriJgg.Am2n4TQfOoKvzqXqCpPQNyWJBs2qkuo69OL6bUg3Jiw&dib_tag=se&keywords=EDR1RXD1&qid=1777915366&s=home-garden&sprefix=edr1rxd1%2Caps%2C191&sr=1-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&linkCode=ll2&tag=buckparts20-20&linkId=38538381be374d7a30889cf8fc02044a&language=en_US&ref_=as_li_ss_tl",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B00UXG4WR8",
+    "asin": "B00UXG4WR8",
+    "seller_title_visible": "everydrop by Whirlpool Ice and Water Refrigerator Filter 1, EDR1RXD1, Single-Pack",
+    "token_visible_in_pdp_title": true,
+    "brand_store": "EveryDrop by Whirlpool",
+    "sold_by": "Amazon",
+    "fulfilled_by": "Amazon",
+    "oem_or_aftermarket": "OEM / official EveryDrop by Whirlpool",
+    "pack_count": 1,
+    "buy_path_visible": "In Stock, Add to Cart, Buy Now",
+    "price_visible_usd": 57.0,
+    "browser_verdict": "PASS_OEM_DIRECT_BUYABLE"
+  }
+}

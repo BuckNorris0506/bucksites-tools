@@ -1,0 +1,49 @@
+{
+  "report_name": "buckparts_amazon_ukf8001_aftermarket_pdp_evidence_v1",
+  "generated_at": "2026-05-04T18:10:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "UKF8001",
+  "filter_slug": "UNKNOWN",
+  "filter_id": null,
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "reason": "Browser evidence passed, but read-only DB precheck could not resolve filters.slug=UKF8001; insert safety cannot be proven without a target filter_id.",
+  "exact_token_proof": "Seller-controlled PDP title includes literal UKF8001.",
+  "buyability_proof": "In Stock, Add to Cart, and Buy Now were visible in browser evidence.",
+  "product_attribution": "aftermarket_compatible",
+  "asin": "B07C8C2VBH",
+  "canonical_url": "https://www.amazon.com/dp/B07C8C2VBH",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B07C8C2VBH?tag=buckparts20-20",
+  "required_next_action": "OWNER_MAPS_TOKEN_TO_FILTER_SLUG_THEN_RE_RUN_PRECHECKS",
+  "do_not_publish_reason": "no matching public.filters.slug row proven in live DB",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Browser PDP proof exists, but BuckParts has no matching live filters.slug for this token at precheck time, so this is catalog-mapping backlog evidence, not a retailer_links insert plan."
+  ],
+  "db_precheck_summary": {
+    "filter_found": false,
+    "amazon_row_count": 0,
+    "approved_amazon_row_count": 0,
+    "live_direct_buyable_amazon_row_count": 0,
+    "asin_match_any_url_count": 0
+  },
+  "browser_evidence": {
+    "token_searched": "UKF8001",
+    "amazon_pdp_url_full": "https://www.amazon.com/AmazonBasics-Replacement-Maytag-UKF8001-Refrigerator/dp/B07C8C2VBH?crid=3Q8UQ3EXXPGLW&dib=eyJ2IjoiMSJ9.snyjZUwW3nyWuIEK52Ex3nyy9cNSpNF-Yi2MbJ-8g_1Cln1rigvVgjhNfUQnESrRklj8ZPXbsO3F2rGU8cL51LkZob_9Az1PAHNWE4CDlZhpQpePNUWoNzt3l9MrgD52xYvg-k1YJiCinNIcG1jViOWf2rjKBxdVvhKB7NjDkEWg-nzUhdRR3UYN3oFHpKt8_oREMnQgDVuLgaMTfQATbb875S7J2sM3nAl6AMwNmTM.9FVDEuP4BLbRaaDZsZNhUjyRMsuOdaMfxNi4VRXRJXo&dib_tag=se&keywords=UKF8001&qid=1777915639&sprefix=ukf8001%2Caps%2C226&sr=8-11&th=1&linkCode=ll2&tag=buckparts20-20&linkId=0e9b23feb4a8022836c5003fb6e1835f&language=en_US&ref_=as_li_ss_tl",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B07C8C2VBH",
+    "asin": "B07C8C2VBH",
+    "seller_title_visible": "Replacement Maytag UKF8001 Refrigerator Water Filter Cartridge, Easy Install, NSF Certified, No Leaks",
+    "token_visible_in_pdp_title": true,
+    "brand_store": "Amazon Basics",
+    "sold_by": "Amazon",
+    "fulfilled_by": "Amazon",
+    "oem_or_aftermarket": "aftermarket compatible / Amazon Basics replacement",
+    "pack_count": 1,
+    "buy_path_visible": "In Stock, Add to Cart, Buy Now",
+    "price_visible_usd": 17.84,
+    "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "report_name": "buckparts_amazon_edr3rxd1_aftermarket_pdp_evidence_v1",
+  "generated_at": "2026-05-04T18:10:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "EDR3RXD1",
+  "filter_slug": "UNKNOWN",
+  "filter_id": null,
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "reason": "Browser evidence passed, but read-only DB precheck could not resolve filters.slug=EDR3RXD1; insert safety cannot be proven without a target filter_id.",
+  "exact_token_proof": "Seller-controlled PDP title includes literal EDR3RXD1.",
+  "buyability_proof": "Add to Cart and regular price buying option were visible; Buy Now was not independently confirmed in supplied screenshot.",
+  "product_attribution": "aftermarket_compatible",
+  "asin": "B087PDLZL9",
+  "canonical_url": "https://www.amazon.com/dp/B087PDLZL9",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+  "required_next_action": "OWNER_MAPS_TOKEN_TO_FILTER_SLUG_THEN_RE_RUN_PRECHECKS",
+  "do_not_publish_reason": "no matching public.filters.slug row proven in live DB",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Browser PDP proof exists, but BuckParts has no matching live filters.slug for this token at precheck time, so this is catalog-mapping backlog evidence, not a retailer_links insert plan."
+  ],
+  "db_precheck_summary": {
+    "filter_found": false,
+    "amazon_row_count": 0,
+    "approved_amazon_row_count": 0,
+    "live_direct_buyable_amazon_row_count": 0,
+    "asin_match_any_url_count": 2,
+    "asin_match_note": "ASIN already appears on live amazon rows for filter_ids 9e71e36c-32b1-42ae-bae1-b5384aaf48b1 (4396710) and c3fcdb45-1a17-4927-8c52-93ce60383016 (4396841)."
+  },
+  "browser_evidence": {
+    "token_searched": "EDR3RXD1",
+    "amazon_pdp_url_full": "https://www.amazon.com/Waterdrop-WD-F08-Refrigerator-Water-Filter/dp/B087PDLZL9?crid=2DTQJHC3LMAOK&dib=eyJ2IjoiMSJ9.rOSdQVELvB8i7Wwmg7qRpe9dgz66q0YqEFvEh73LEgQcIpHPxFwAzm1MmR5NbVhIE0fWKRNO05T99m1MXhhQleL_8FIZ8W7G52DNVhST1gw.T-auqFLL37-WT9_rJJaSWD4qYxuTmIilzehSsPe7rnE&dib_tag=se&keywords=EDR3RXD1&qid=1777915523&s=home-garden&sprefix=edr3rxd1%2Caps%2C177&sr=1-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&linkCode=ll2&tag=buckparts20-20&linkId=be0c641ce5af5e5628dcd9b196f34304&language=en_US&ref_=as_li_ss_tl",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B087PDLZL9",
+    "asin": "B087PDLZL9",
+    "seller_title_visible": "EDR3RXD1 Replacement for Everydrop® Filter 3, 4396841, 4396710, Kenmore® 46-9083, 46-9030, WD-F08 Refrigerator Water Filter, 3 Filters",
+    "token_visible_in_pdp_title": true,
+    "brand_store": "Waterdrop",
+    "sold_by": "Lifetech Filter",
+    "fulfilled_by": "Amazon",
+    "oem_or_aftermarket": "aftermarket compatible",
+    "pack_count": 3,
+    "buy_path_visible": "Add to Cart visible; regular price buying option visible; Buy Now UNKNOWN in captured screenshot",
+    "price_visible_usd": 27.99,
+    "deal_price_visible_usd": 26.59,
+    "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE"
+  }
+}
