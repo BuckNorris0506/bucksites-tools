@@ -393,18 +393,18 @@ function buildLearningOutcomesMetricsFromRows(
   rows: LearningOutcomesMetricsRow[],
   nowDate: Date,
 ): CommandSurfaceReport["learning_outcomes_metrics"] {
-  const outcomeCounts: CommandSurfaceReport["learning_outcomes_metrics"]["outcome_counts"] = {
+  const outcomeCounts: { pass: number; fail: number; blocked: number; unknown: number } = {
     pass: 0,
     fail: 0,
     blocked: 0,
     unknown: 0,
   };
-  const ctaStatusCounts: CommandSurfaceReport["learning_outcomes_metrics"]["cta_status_counts"] = {
+  const ctaStatusCounts: { live: number; not_live: number; blocked: number } = {
     live: 0,
     not_live: 0,
     blocked: 0,
   };
-  const confidenceCounts: CommandSurfaceReport["learning_outcomes_metrics"]["confidence_counts"] = {
+  const confidenceCounts: { exact: number; likely: number; uncertain: number } = {
     exact: 0,
     likely: 0,
     uncertain: 0,
@@ -1193,7 +1193,7 @@ function buildStateSystemMetrics(args: {
   abs: Record<string, string>;
   readTextFile: (absolutePath: string) => string;
 }): CommandSurfaceReport["state_system_metrics"] {
-  let pageState = unknownStateDistribution(
+  let pageState: CommandSurfaceReport["state_system_metrics"]["page_state"] = unknownStateDistribution(
     "No local sitemap/page dataset is available to compute PageState distribution.",
   );
   let derivedPageStates: string[] | null = null;
@@ -1222,7 +1222,8 @@ function buildStateSystemMetrics(args: {
     }
   }
 
-  let publishabilityState = unknownStateDistribution(
+  let publishabilityState: CommandSurfaceReport["state_system_metrics"]["publishability_state"] =
+    unknownStateDistribution(
     "No local publishability input dataset is available to compute PublishabilityState distribution.",
   );
   if (derivedPageStates && derivedPageStates.length > 0) {

@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 import { buildBuckpartsAffiliateTrackerReport } from "./report-buckparts-affiliate-tracker";
 import { buildBuckpartsBlockedLinkMoneyQueueReport } from "./report-buckparts-blocked-link-money-queue";
@@ -789,7 +790,10 @@ export async function main(): Promise<void> {
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 }
 
-main().catch((error) => {
-  console.error("[report-buckparts-command-center] failed", error);
-  process.exit(1);
-});
+const entryHref = pathToFileURL(path.resolve(process.argv[1] ?? "")).href;
+if (import.meta.url === entryHref) {
+  main().catch((error) => {
+    console.error("[report-buckparts-command-center] failed", error);
+    process.exit(1);
+  });
+}

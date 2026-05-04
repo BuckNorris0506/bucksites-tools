@@ -9,7 +9,7 @@ import type {
 export type { CommandCenterV2Report } from "./buckparts-command-center-v2-types";
 
 function uniqueSorted(tokens: string[]): string[] {
-  return [...new Set(tokens.map((t) => t.trim().toUpperCase()).filter(Boolean))].sort((a, b) =>
+  return Array.from(new Set(tokens.map((t) => t.trim().toUpperCase()).filter(Boolean))).sort((a, b) =>
     a.localeCompare(b),
   );
 }
