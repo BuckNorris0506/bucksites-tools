@@ -5,15 +5,32 @@ import type {
   ResetInstruction,
   RetailerLink,
 } from "@/lib/types/database";
+import { uniqueFilterAliasesForPdp } from "@/lib/data/filter-alias-helpers";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
-import { filterRealBuyRetailerLinks } from "@/lib/retailers/launch-buy-links";
+import {
+  filterRealBuyRetailerLinks,
+  summarizeBuyPathGateSuppression,
+  type BuyPathGateSuppressionSummary,
+} from "@/lib/retailers/launch-buy-links";
 
 export type FridgeDetail = FridgeModel & {
   brand: Pick<Brand, "id" | "slug" | "name">;
 };
 
+/** One mapped filter on a fridge model PDP — trust fields align with `getFilterBySlug` / `/filter/[slug]`. */
+export type FridgeMappedFilterRow = Filter & {
+  retailer_links: RetailerLink[];
+  also_known_as: string[];
+  buy_path_gate_suppression: BuyPathGateSuppressionSummary;
+  /**
+   * Distinct fridge models in the repo mapped to this filter (same count as `fridge_models.length` on `/filter/[slug]`).
+   * Passed to `buildPartPageTrust({ modelsCount })` on the fridge model hub so part-trust evidence matches the filter PDP.
+   */
+  compatible_fridge_model_count: number;
+};
+
 export type FridgeWithFilters = FridgeDetail & {
-  filters: (Filter & { retailer_links: RetailerLink[] })[];
+  filters: FridgeMappedFilterRow[];
   reset_instructions: Pick<
     ResetInstruction,
     "id" | "title" | "body_markdown"
@@ -74,14 +91,23 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
 
   if (fErr) throw fErr;
 
-  const { data: links, error: lErr } = await supabase
-    .from("retailer_links")
-    .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at")
-    .in("filter_id", filterIds)
-    .order("is_primary", { ascending: false })
-    .order("retailer_name", { ascending: true });
+  const [{ data: links, error: lErr }, { data: compatRows, error: cErr }, { data: aliasRows, error: aErr }] =
+    await Promise.all([
+      supabase
+        .from("retailer_links")
+        .select(
+          "id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+        )
+        .in("filter_id", filterIds)
+        .order("is_primary", { ascending: false })
+        .order("retailer_name", { ascending: true }),
+      supabase.from("compatibility_mappings").select("filter_id, fridge_model_id").in("filter_id", filterIds),
+      supabase.from("filter_aliases").select("filter_id, alias").in("filter_id", filterIds),
+    ]);
 
   if (lErr) throw lErr;
+  if (cErr) throw cErr;
+  if (aErr) throw aErr;
 
   const byFilter = new Map<string, RetailerLink[]>();
   for (const link of (links ?? []) as RetailerLink[]) {
@@ -90,10 +116,39 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
     byFilter.set(link.filter_id, list);
   }
 
-  const filterList = ((filters ?? []) as Filter[]).map((f) => ({
-    ...f,
-    retailer_links: filterRealBuyRetailerLinks(byFilter.get(f.id) ?? []),
-  }));
+  const distinctFridgesPerFilter = new Map<string, Set<string>>();
+  for (const row of compatRows ?? []) {
+    const fid = (row as { filter_id: string }).filter_id;
+    const mid = (row as { fridge_model_id: string }).fridge_model_id;
+    let set = distinctFridgesPerFilter.get(fid);
+    if (!set) {
+      set = new Set();
+      distinctFridgesPerFilter.set(fid, set);
+    }
+    set.add(mid);
+  }
+
+  const aliasesByFilter = new Map<string, string[]>();
+  for (const row of aliasRows ?? []) {
+    const fid = (row as { filter_id: string }).filter_id;
+    const alias = (row as { alias: string }).alias;
+    const list = aliasesByFilter.get(fid) ?? [];
+    list.push(alias);
+    aliasesByFilter.set(fid, list);
+  }
+
+  const filterList: FridgeMappedFilterRow[] = ((filters ?? []) as Filter[]).map((f) => {
+    const raw = byFilter.get(f.id) ?? [];
+    const rawAliases = aliasesByFilter.get(f.id) ?? [];
+    const also_known_as = uniqueFilterAliasesForPdp(rawAliases, f.oem_part_number ?? "");
+    return {
+      ...f,
+      retailer_links: filterRealBuyRetailerLinks(raw),
+      buy_path_gate_suppression: summarizeBuyPathGateSuppression(raw),
+      also_known_as,
+      compatible_fridge_model_count: distinctFridgesPerFilter.get(f.id)?.size ?? 0,
+    };
+  });
 
   filterList.sort((a, b) =>
     (a.oem_part_number ?? "").localeCompare(b.oem_part_number ?? ""),

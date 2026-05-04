@@ -110,7 +110,7 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
     assert.ok(!src.includes("@/lib/data/fridges"), "filter hub page must not load fridge models here");
   });
 
-  it("fridge model hub uses fridge data + default BuyLinks /go", () => {
+  it("fridge model hub uses fridge data + trust-aware buy chrome + legacy /go", () => {
     const rel = "src/app/fridge/[slug]/page.tsx";
     const src = readPage(rel);
     assert.match(
@@ -118,12 +118,14 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
       /from\s+["']@\/lib\/data\/fridges["']/,
       "fridge model page must import @/lib/data/fridges",
     );
-    assert.ok(src.includes("<BuyLinks"), "expected BuyLinks for per-filter CTAs");
+    assert.ok(src.includes("<TrustAwareBuySection"), "expected TrustAwareBuySection for per-filter CTAs");
+    assert.ok(src.includes("<PartTruthPanel"), "expected PartTruthPanel for per-filter trust");
+    assert.ok(src.includes('goBase="/go"'), "fridge model hub must use legacy /go hop");
     assert.ok(
       !src.includes('goBase="/air-purifier/go"') &&
         !src.includes('goBase="/vacuum/go"') &&
         !src.includes('goBase="/humidifier/go"'),
-      "fridge BuyLinks must not be wired to a vertical wedge /go",
+      "fridge buy UI must not be wired to a vertical wedge /go",
     );
     assertNoForeignVerticalDataModules(src, "");
     assert.ok(!src.includes("@/lib/data/filters"), "fridge model page must not import filter hub module");

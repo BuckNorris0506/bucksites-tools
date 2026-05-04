@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BuyLinks } from "@/components/BuyLinks";
+import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
+import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { Prose } from "@/components/Prose";
+import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: { slug: string } };
+
+/** Same suppress copy as `/filter/[slug]` TrustAwareBuySection — keep refrigerator-water part hub parity. */
+const FRIDGE_MODEL_FILTER_BUY_SUPPRESS =
+  "BuckParts does not have enough proof to show a buy button for this refrigerator filter yet. Verify the OEM number against the old part or your manual first.";
 
 function intervalLabel(months: number | null | undefined): string | null {
   if (months == null || months <= 0) return null;
@@ -97,6 +105,23 @@ export default async function FridgePage({ params }: Props) {
           <ul className="space-y-6">
             {fridge.filters.map((f) => {
               const fInterval = intervalLabel(f.replacement_interval_months);
+              const buyPathSortContext = buyPathSortContextForFilter(
+                f.slug,
+                f.name,
+                f.oem_part_number,
+              );
+              /**
+               * `modelsCount` = distinct fridge models repo-mapped to this filter (see `compatible_fridge_model_count`),
+               * not “only this PDP’s fridge”. Matches `/filter/[slug]` so `buildPartPageTrust` evidence lines stay aligned.
+               */
+              const trustSummary = buildPartPageTrust({
+                modelsCount: f.compatible_fridge_model_count,
+                retailerLinks: f.retailer_links,
+                oemPartNumber: f.oem_part_number,
+                alsoKnownAs: f.also_known_as,
+                notes: f.notes,
+                buyPathSortContext,
+              });
               return (
                 <li
                   key={f.id}
@@ -123,11 +148,29 @@ export default async function FridgePage({ params }: Props) {
                   <div className="mt-2">
                     <Prose>{f.notes}</Prose>
                   </div>
+                  <p className="mt-3 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm leading-relaxed text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
+                    {FILTER_PAGE_FIT_CONFIRMATION}
+                  </p>
                   <div className="mt-4">
+                    <PartTruthPanel
+                      trust={trustSummary}
+                      compatibleModelCount={f.compatible_fridge_model_count}
+                      hasNotes={Boolean(f.notes)}
+                    />
+                  </div>
+                  <div className="mt-4 border-t border-neutral-100 pt-4 dark:border-neutral-800">
                     <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
-                      Buy
+                      Where to buy
                     </p>
-                    <BuyLinks links={f.retailer_links} />
+                    <TrustAwareBuySection
+                      trust={trustSummary}
+                      links={f.retailer_links}
+                      goBase="/go"
+                      primaryCtaLabel="Buy this part at"
+                      suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
+                      gateSuppressionSummary={f.buy_path_gate_suppression}
+                      buyPathSortContext={buyPathSortContext}
+                    />
                   </div>
                 </li>
               );
