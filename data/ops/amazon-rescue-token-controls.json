@@ -127,6 +127,14 @@
       "next_action": "HUMAN_BROWSER_VERIFICATION_OR_NEW_EVIDENCE_FILE",
       "can_agent_advance": false,
       "evidence_file": "amazon-4396842-unknown-outcome.2026-05-04.json"
+    },
+    {
+      "token": "46-9002",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link 17510d54-85a3-4e43-a671-272a9df274b6 live; ASIN B01IDH3IPU aftermarket compatible Waterdrop 3-pack per committed evidence.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-46-9002-live-outcome.2026-05-04.json"
     }
   ]
 }
