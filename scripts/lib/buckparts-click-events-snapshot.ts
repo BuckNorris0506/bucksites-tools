@@ -4,7 +4,11 @@
  */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { ClickVisibilitySnapshot } from "./buckparts-command-center-v2-types";
+import type {
+  ClickFreshnessStatus,
+  ClickUserAgentCategory,
+  ClickVisibilitySnapshot,
+} from "./buckparts-command-center-v2-types";
 
 const PAGE = 2000;
 const MAX_ROWS_FOR_TOP_LISTS = 8000;
@@ -22,6 +26,11 @@ export type ClickEventAggRow = {
   appliance_air_retailer_link_id: string | null;
 };
 
+export type ClickEventReadRow = ClickEventAggRow & {
+  created_at: string;
+  user_agent: string | null;
+};
+
 const SELECT_AGG_COLUMNS = [
   "filter_id",
   "retailer_slug",
@@ -33,6 +42,138 @@ const SELECT_AGG_COLUMNS = [
   "whole_house_water_retailer_link_id",
   "appliance_air_retailer_link_id",
 ].join(", ");
+
+const SELECT_READ_COLUMNS = `${SELECT_AGG_COLUMNS},created_at,user_agent`;
+
+/**
+ * Conservative outbound-click UA bucket. `HUMAN_LIKELY` is not proof of purchase intent.
+ * Order: internal audit → known bots/crawlers → scripted HTTP clients → browser-like heuristic → unknown.
+ */
+export function classifyClickUserAgent(userAgent: string | null | undefined): ClickUserAgentCategory {
+  const ua = typeof userAgent === "string" ? userAgent.trim() : "";
+  if (ua.length === 0) return "UNKNOWN";
+
+  if (ua.includes("BuckPartsAudit")) return "INTERNAL_AUDIT";
+
+  const lower = ua.toLowerCase();
+
+  if (
+    lower.includes("claudebot") ||
+    lower.includes("anthropic.com") ||
+    lower.includes("meta-externalagent") ||
+    lower.includes("mj12bot") ||
+    lower.includes("googlebot") ||
+    lower.includes("bingbot") ||
+    lower.includes("petalbot") ||
+    lower.includes("ahrefsbot") ||
+    lower.includes("semrushbot") ||
+    lower.includes("facebookexternalhit") ||
+    lower.includes("slackbot") ||
+    lower.includes("discordbot") ||
+    lower.includes("twitterbot") ||
+    lower.includes("linkedinbot")
+  ) {
+    return "KNOWN_BOT";
+  }
+
+  const s = lower.trim();
+  if (s === "node" || s.startsWith("node ") || lower.startsWith("curl/")) return "SCRIPTED_CLIENT";
+
+  const browserLike =
+    lower.includes("mozilla/") ||
+    lower.includes("applewebkit") ||
+    lower.includes("chrome/") ||
+    lower.includes("safari/") ||
+    lower.includes("firefox/") ||
+    lower.includes("edg/");
+
+  if (browserLike) return "HUMAN_LIKELY";
+
+  return "UNKNOWN";
+}
+
+export function computeClickQualityFromRows(
+  rows: ClickEventReadRow[],
+  args: { last7Iso: string; raw7: number; raw30: number },
+): Pick<
+  ClickVisibilitySnapshot,
+  | "human_likely_last_7_days_clicks"
+  | "human_likely_last_30_days_clicks"
+  | "excluded_last_30_days_clicks"
+  | "excluded_by_category_30d"
+  | "top_user_agent_families_30d"
+  | "newest_click_at"
+  | "oldest_click_at_in_30d_window"
+  | "click_freshness_status"
+  | "click_freshness_reason"
+> {
+  let human7 = 0;
+  let human30 = 0;
+  const excludedCat: Partial<Record<Exclude<ClickUserAgentCategory, "HUMAN_LIKELY">, number>> = {};
+  const bump = (c: Exclude<ClickUserAgentCategory, "HUMAN_LIKELY">) => {
+    excludedCat[c] = (excludedCat[c] ?? 0) + 1;
+  };
+
+  const uaKey = new Map<string, { clicks: number; category: ClickUserAgentCategory }>();
+
+  let newest = "";
+  let oldest = "";
+
+  for (const r of rows) {
+    const ts = r.created_at;
+    if (!newest || ts > newest) newest = ts;
+    if (!oldest || ts < oldest) oldest = ts;
+
+    const cat = classifyClickUserAgent(r.user_agent);
+    if (cat === "HUMAN_LIKELY") {
+      human30 += 1;
+      if (ts >= args.last7Iso) human7 += 1;
+    } else {
+      bump(cat);
+    }
+
+    const key = (r.user_agent ?? "(null)").slice(0, 140);
+    const prev = uaKey.get(key);
+    if (prev) prev.clicks += 1;
+    else uaKey.set(key, { clicks: 1, category: cat });
+  }
+
+  const excluded30 = rows.length - human30;
+
+  let click_freshness_status: ClickFreshnessStatus;
+  let click_freshness_reason: string;
+  if (args.raw30 === 0) {
+    click_freshness_status = "NO_RECENT_EVENTS";
+    click_freshness_reason = "No click_events rows in the rolling 30d window.";
+  } else if (newest.length > 0 && newest >= args.last7Iso) {
+    click_freshness_status = "OK";
+    click_freshness_reason = "At least one click_event has created_at within the rolling 7d window.";
+  } else if (newest.length > 0) {
+    click_freshness_status = "STALE";
+    click_freshness_reason =
+      "click_events exist in the 30d window but none in the rolling 7d window (newest click is older than 7d).";
+  } else {
+    click_freshness_status = "UNKNOWN";
+    click_freshness_reason = "Could not determine newest click timestamp from fetched rows.";
+  }
+
+  const top_user_agent_families_30d = Array.from(uaKey.entries())
+    .map(([user_agent, v]) => ({ user_agent, clicks: v.clicks, category: v.category }))
+    .sort((a, b) => b.clicks - a.clicks || a.user_agent.localeCompare(b.user_agent))
+    .slice(0, 20);
+
+  return {
+    human_likely_last_7_days_clicks: human7,
+    human_likely_last_30_days_clicks: human30,
+    excluded_last_30_days_clicks: excluded30,
+    excluded_by_category_30d: excludedCat,
+    top_user_agent_families_30d,
+    newest_click_at: newest || "UNKNOWN",
+    oldest_click_at_in_30d_window: oldest || "UNKNOWN",
+    click_freshness_status,
+    click_freshness_reason,
+  };
+}
 
 export function isFridgeWaterClickRow(row: ClickEventAggRow): boolean {
   return (
@@ -129,6 +270,40 @@ function emptyWedge(): ClickVisibilitySnapshot["clicks_by_wedge_30d"] {
   };
 }
 
+function unknownQualityBlock(): Pick<
+  ClickVisibilitySnapshot,
+  | "raw_last_7_days_clicks"
+  | "raw_last_30_days_clicks"
+  | "human_likely_last_7_days_clicks"
+  | "human_likely_last_30_days_clicks"
+  | "excluded_last_30_days_clicks"
+  | "excluded_by_category_30d"
+  | "newest_click_at"
+  | "oldest_click_at_in_30d_window"
+  | "click_freshness_status"
+  | "click_freshness_reason"
+> {
+  const u = "UNKNOWN" as const;
+  return {
+    raw_last_7_days_clicks: u,
+    raw_last_30_days_clicks: u,
+    human_likely_last_7_days_clicks: u,
+    human_likely_last_30_days_clicks: u,
+    excluded_last_30_days_clicks: u,
+    excluded_by_category_30d: "UNKNOWN",
+    newest_click_at: u,
+    oldest_click_at_in_30d_window: u,
+    click_freshness_status: "UNKNOWN",
+    click_freshness_reason: "click_events quality metrics unavailable for this snapshot.",
+  };
+}
+
+const COMMISSION_NOT_CONNECTED =
+  "No in-repo commission, order, or payout API is attached. Raw click_events counts are not revenue and do not imply buyer intent.";
+
+const CLICK_QUALITY_NOTES =
+  "Human-likely counts use a conservative user_agent heuristic (browser-like strings excluding known bots, internal BuckPartsAudit, and curl/node); they are not verified human shoppers.";
+
 /** When `SUPABASE_SERVICE_ROLE_KEY` is missing or any click query throws (same contract as other import scripts). */
 export function unavailableClickSnapshot(errors: string[]): ClickVisibilitySnapshot {
   return unknownSnapshot("UNKNOWN_DB_UNAVAILABLE", errors);
@@ -144,10 +319,11 @@ function unknownSnapshot(
     window_days: { short: 7, long: 30 },
     last_7_days_clicks: "UNKNOWN",
     last_30_days_clicks: "UNKNOWN",
+    ...unknownQualityBlock(),
     clicks_by_wedge_30d: emptyWedge(),
     commission_or_revenue: "NOT_CONNECTED",
-    commission_or_revenue_notes:
-      "No in-repo commission or payout feed is wired; this snapshot is outbound click visibility only.",
+    commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+    click_quality_notes: CLICK_QUALITY_NOTES,
     aggregation_notes: notes.length > 0 ? notes : undefined,
   };
 }
@@ -162,6 +338,28 @@ async function headCount(
     .gte("created_at", sinceIso);
   if (error) return { count: 0, error: new Error(error.message) };
   return { count: count ?? 0, error: null };
+}
+
+async function fetchAllClickRowsIn30d(
+  supabase: SupabaseClient,
+  last30Iso: string,
+): Promise<{ rows: ClickEventReadRow[]; error: Error | null }> {
+  const rows: ClickEventReadRow[] = [];
+  let from = 0;
+  for (;;) {
+    const { data, error } = await supabase
+      .from("click_events")
+      .select(SELECT_READ_COLUMNS)
+      .gte("created_at", last30Iso)
+      .order("created_at", { ascending: true })
+      .range(from, from + PAGE - 1);
+    if (error) return { rows, error: new Error(error.message) };
+    const chunk = (data ?? []) as unknown as ClickEventReadRow[];
+    if (chunk.length === 0) break;
+    rows.push(...chunk);
+    from += chunk.length;
+  }
+  return { rows, error: null };
 }
 
 export async function queryBuckpartsClickEventsSnapshot(
@@ -179,6 +377,9 @@ export async function queryBuckpartsClickEventsSnapshot(
       c30.error?.message ?? "",
     ].filter(Boolean));
   }
+
+  const raw7 = c7.count;
+  const raw30 = c30.count;
 
   const [
     rv,
@@ -234,12 +435,15 @@ export async function queryBuckpartsClickEventsSnapshot(
       runtime_status: "UNKNOWN_SCHEMA",
       generated_at: new Date(nowMs).toISOString(),
       window_days: { short: 7, long: 30 },
-      last_7_days_clicks: c7.count,
-      last_30_days_clicks: c30.count,
+      ...unknownQualityBlock(),
+      last_7_days_clicks: raw7,
+      last_30_days_clicks: raw30,
+      raw_last_7_days_clicks: raw7,
+      raw_last_30_days_clicks: raw30,
       clicks_by_wedge_30d: emptyWedge(),
       commission_or_revenue: "NOT_CONNECTED",
-      commission_or_revenue_notes:
-        "No in-repo commission or payout feed is wired; wedge breakdown failed (column or RLS mismatch).",
+      commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+      click_quality_notes: CLICK_QUALITY_NOTES,
       aggregation_notes: wedgeErrors.map((e) => e.message),
     };
   }
@@ -260,43 +464,41 @@ export async function queryBuckpartsClickEventsSnapshot(
     wedgeCounts.vacuum +
     wedgeCounts.humidifier +
     wedgeCounts.appliance_air;
-  const other_or_legacy = Math.max(0, c30.count - sumWedges);
+  const other_or_legacy = Math.max(0, raw30 - sumWedges);
 
-  const aggRows: ClickEventAggRow[] = [];
-  let from = 0;
-  while (aggRows.length < MAX_ROWS_FOR_TOP_LISTS) {
-    const take = Math.min(PAGE, MAX_ROWS_FOR_TOP_LISTS - aggRows.length);
-    const { data, error } = await supabase
-      .from("click_events")
-      .select(SELECT_AGG_COLUMNS)
-      .gte("created_at", last30)
-      .order("created_at", { ascending: true })
-      .range(from, from + take - 1);
-    if (error) {
-      return {
-        runtime_status: "UNKNOWN_SCHEMA",
-        generated_at: new Date(nowMs).toISOString(),
-        window_days: { short: 7, long: 30 },
-        last_7_days_clicks: c7.count,
-        last_30_days_clicks: c30.count,
-        clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
-        commission_or_revenue: "NOT_CONNECTED",
-        commission_or_revenue_notes:
-          "No in-repo commission or payout feed is wired; top-list scan failed against click_events projection.",
-        aggregation_notes: [error.message],
-      };
-    }
-    const chunk = (data ?? []) as unknown as ClickEventAggRow[];
-    aggRows.push(...chunk);
-    if (chunk.length === 0) break;
-    from += chunk.length;
+  const { rows: allRows, error: fetchErr } = await fetchAllClickRowsIn30d(supabase, last30);
+  if (fetchErr) {
+    return {
+      runtime_status: "UNKNOWN_SCHEMA",
+      generated_at: new Date(nowMs).toISOString(),
+      window_days: { short: 7, long: 30 },
+      ...unknownQualityBlock(),
+      last_7_days_clicks: raw7,
+      last_30_days_clicks: raw30,
+      raw_last_7_days_clicks: raw7,
+      raw_last_30_days_clicks: raw30,
+      clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
+      commission_or_revenue: "NOT_CONNECTED",
+      commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+      click_quality_notes: CLICK_QUALITY_NOTES,
+      aggregation_notes: [fetchErr.message],
+    };
   }
 
-  const tops = aggregateClickRowsForTopLists(aggRows);
+  const quality = computeClickQualityFromRows(allRows, { last7Iso: last7, raw7, raw30 });
+
+  const rowsForTopLists = allRows.length > MAX_ROWS_FOR_TOP_LISTS ? allRows.slice(0, MAX_ROWS_FOR_TOP_LISTS) : allRows;
+  const tops = aggregateClickRowsForTopLists(rowsForTopLists);
+
   const notes: string[] = [];
-  if (c30.count > aggRows.length) {
+  if (raw30 > allRows.length) {
     notes.push(
-      `Top retailer/page/link lists computed from first ${aggRows.length} rows in the 30d window (oldest-first scan); total window clicks=${c30.count}.`,
+      `Fetched ${allRows.length} click_events rows in the 30d window but head count reported raw_last_30_days_clicks=${raw30}; quality metrics may be incomplete.`,
+    );
+  }
+  if (raw30 > MAX_ROWS_FOR_TOP_LISTS) {
+    notes.push(
+      `Top retailer/page/link lists use only the first ${MAX_ROWS_FOR_TOP_LISTS} rows (oldest-first); total window clicks=${raw30}.`,
     );
   }
 
@@ -304,13 +506,24 @@ export async function queryBuckpartsClickEventsSnapshot(
     runtime_status: "OK",
     generated_at: new Date(nowMs).toISOString(),
     window_days: { short: 7, long: 30 },
-    last_7_days_clicks: c7.count,
-    last_30_days_clicks: c30.count,
+    last_7_days_clicks: raw7,
+    last_30_days_clicks: raw30,
+    raw_last_7_days_clicks: raw7,
+    raw_last_30_days_clicks: raw30,
+    human_likely_last_7_days_clicks: quality.human_likely_last_7_days_clicks,
+    human_likely_last_30_days_clicks: quality.human_likely_last_30_days_clicks,
+    excluded_last_30_days_clicks: quality.excluded_last_30_days_clicks,
+    excluded_by_category_30d: quality.excluded_by_category_30d,
+    top_user_agent_families_30d: quality.top_user_agent_families_30d,
+    newest_click_at: quality.newest_click_at,
+    oldest_click_at_in_30d_window: quality.oldest_click_at_in_30d_window,
+    click_freshness_status: quality.click_freshness_status,
+    click_freshness_reason: quality.click_freshness_reason,
+    click_quality_notes: CLICK_QUALITY_NOTES,
     clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
     ...tops,
     commission_or_revenue: "NOT_CONNECTED",
-    commission_or_revenue_notes:
-      "No in-repo commission, order, or payout API is attached; treat outbound clicks as operational visibility only.",
+    commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
     aggregation_notes: notes.length > 0 ? notes : undefined,
   };
 }
@@ -322,6 +535,21 @@ export function clickSnapshotForTests(overrides: Partial<ClickVisibilitySnapshot
     window_days: { short: 7, long: 30 },
     last_7_days_clicks: 1,
     last_30_days_clicks: 10,
+    raw_last_7_days_clicks: 1,
+    raw_last_30_days_clicks: 10,
+    human_likely_last_7_days_clicks: 1,
+    human_likely_last_30_days_clicks: 3,
+    excluded_last_30_days_clicks: 7,
+    excluded_by_category_30d: { KNOWN_BOT: 5, INTERNAL_AUDIT: 2 },
+    top_user_agent_families_30d: [
+      { user_agent: "Mozilla/5.0 (bot)", clicks: 5, category: "KNOWN_BOT" },
+      { user_agent: "Mozilla/5.0 BuckPartsAudit/1.0", clicks: 2, category: "INTERNAL_AUDIT" },
+    ],
+    newest_click_at: "2026-05-01T12:00:00.000Z",
+    oldest_click_at_in_30d_window: "2026-04-25T00:00:00.000Z",
+    click_freshness_status: "OK",
+    click_freshness_reason: "Fixture: newest within 7d window.",
+    click_quality_notes: CLICK_QUALITY_NOTES,
     clicks_by_wedge_30d: {
       refrigerator_water: 8,
       air_purifier: 1,
@@ -335,7 +563,7 @@ export function clickSnapshotForTests(overrides: Partial<ClickVisibilitySnapshot
     top_page_attribution_30d: [{ page_type: "refrigerator_filter", page_slug: "lt1000p", clicks: 5 }],
     top_wedge_link_ids_30d: [{ wedge: "air_purifier", link_id: "00000000-0000-4000-8000-000000000001", clicks: 1 }],
     commission_or_revenue: "NOT_CONNECTED",
-    commission_or_revenue_notes: "test fixture",
+    commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
   };
   return { ...base, ...overrides };
 }

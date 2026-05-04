@@ -21,16 +21,34 @@ function buildRevenueSnapshotLane(click: ClickVisibilitySnapshot): RevenueSnapsh
     click.commission_or_revenue === "NOT_CONNECTED"
       ? click.commission_or_revenue_notes
       : "Commission / revenue not modeled in-repo.";
+  const qualityHint =
+    typeof click.human_likely_last_30_days_clicks === "number" &&
+    typeof click.raw_last_30_days_clicks === "number"
+      ? ` Raw last_30_days_clicks=${click.raw_last_30_days_clicks}; human_likely_last_30_days_clicks=${click.human_likely_last_30_days_clicks} (conservative UA filter, not buyer proof). Freshness: ${click.click_freshness_status}.`
+      : "";
 
   if (click.runtime_status === "OK") {
     return {
       status: "OK",
-      count: typeof click.last_30_days_clicks === "number" ? click.last_30_days_clicks : undefined,
-      top_items: click.top_retailer_slugs_30d?.slice(0, 5).map((r) => `${r.retailer_slug}:${r.clicks}`),
+      count:
+        typeof click.human_likely_last_30_days_clicks === "number"
+          ? click.human_likely_last_30_days_clicks
+          : typeof click.last_30_days_clicks === "number"
+            ? click.last_30_days_clicks
+            : undefined,
+      top_items: (() => {
+        if (click.excluded_by_category_30d === "UNKNOWN" || !click.excluded_by_category_30d) return undefined;
+        const ex = Object.entries(click.excluded_by_category_30d)
+          .filter(([, n]) => typeof n === "number" && n > 0)
+          .sort((a, b) => (b[1] as number) - (a[1] as number))
+          .slice(0, 5)
+          .map(([k, n]) => `${k}:${n}`);
+        return ex.length > 0 ? ex : undefined;
+      })(),
       blocker: null,
       next_agent_action:
-        "click_events read-only snapshot is attached under revenue_snapshot.click_visibility; no retailer_links mutations originate from this lane.",
-      next_owner_action: baseNotes,
+        "click_events read-only snapshot is attached under revenue_snapshot.click_visibility; raw counts include bots/crawlers/internal audit traffic—use human_likely_* and excluded_* for a conservative quality view. No retailer_links mutations originate from this lane.",
+      next_owner_action: `${baseNotes}${qualityHint} ${click.click_quality_notes ?? ""}`.trim(),
       click_visibility: click,
     };
   }

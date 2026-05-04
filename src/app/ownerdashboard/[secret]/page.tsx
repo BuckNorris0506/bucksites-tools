@@ -307,27 +307,134 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           ) : null}
           {v2.revenue_snapshot.click_visibility ? (
             <div className="space-y-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+                Raw counts are all <code className="font-mono text-[11px]">click_events</code> rows in the window (includes
+                bots, crawlers, and internal audit). Human-likely uses a conservative{" "}
+                <code className="font-mono text-[11px]">user_agent</code> filter — not proof of shoppers.
+              </p>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <FieldBlock
-                  label="Last 7d clicks"
+                  label="Raw last 7d"
                   value={
                     <span className="font-mono">
-                      {v2.revenue_snapshot.click_visibility.last_7_days_clicks === "UNKNOWN"
+                      {v2.revenue_snapshot.click_visibility.raw_last_7_days_clicks === "UNKNOWN"
                         ? "UNKNOWN"
-                        : v2.revenue_snapshot.click_visibility.last_7_days_clicks}
+                        : v2.revenue_snapshot.click_visibility.raw_last_7_days_clicks}
                     </span>
                   }
                 />
                 <FieldBlock
-                  label="Last 30d clicks"
+                  label="Raw last 30d"
                   value={
                     <span className="font-mono">
-                      {v2.revenue_snapshot.click_visibility.last_30_days_clicks === "UNKNOWN"
+                      {v2.revenue_snapshot.click_visibility.raw_last_30_days_clicks === "UNKNOWN"
                         ? "UNKNOWN"
-                        : v2.revenue_snapshot.click_visibility.last_30_days_clicks}
+                        : v2.revenue_snapshot.click_visibility.raw_last_30_days_clicks}
                     </span>
                   }
                 />
+                <FieldBlock
+                  label="Human-likely last 7d"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.human_likely_last_7_days_clicks === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.human_likely_last_7_days_clicks}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Human-likely last 30d"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.human_likely_last_30_days_clicks === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.human_likely_last_30_days_clicks}
+                    </span>
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <FieldBlock
+                  label="Excluded last 30d (non–human-likely)"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.excluded_last_30_days_clicks === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.excluded_last_30_days_clicks}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Freshness"
+                  value={
+                    <span className="font-mono text-xs">
+                      {v2.revenue_snapshot.click_visibility.click_freshness_status}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Newest click (UTC)"
+                  value={
+                    <span className="break-all font-mono text-xs">
+                      {v2.revenue_snapshot.click_visibility.newest_click_at}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Oldest in 30d window (UTC)"
+                  value={
+                    <span className="break-all font-mono text-xs">
+                      {v2.revenue_snapshot.click_visibility.oldest_click_at_in_30d_window}
+                    </span>
+                  }
+                />
+              </div>
+              <FieldBlock label="Freshness reason" value={v2.revenue_snapshot.click_visibility.click_freshness_reason} />
+              {v2.revenue_snapshot.click_visibility.excluded_by_category_30d !== "UNKNOWN" &&
+              v2.revenue_snapshot.click_visibility.excluded_by_category_30d ? (
+                <div>
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Excluded clicks by category · 30d
+                  </p>
+                  <ul className="space-y-1 text-xs text-slate-800 dark:text-slate-200">
+                    {Object.entries(v2.revenue_snapshot.click_visibility.excluded_by_category_30d)
+                      .filter(([, n]) => typeof n === "number" && n > 0)
+                      .sort((a, b) => (b[1] as number) - (a[1] as number))
+                      .map(([k, n]) => (
+                        <li key={k} className="flex justify-between gap-2 font-mono">
+                          <span>{k}</span>
+                          <span>{n as number}</span>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ) : null}
+              {v2.revenue_snapshot.click_visibility.top_user_agent_families_30d &&
+              v2.revenue_snapshot.click_visibility.top_user_agent_families_30d.length > 0 ? (
+                <div>
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Top user_agent strings · 30d
+                  </p>
+                  <ul className="space-y-2 text-xs text-slate-800 dark:text-slate-200">
+                    {v2.revenue_snapshot.click_visibility.top_user_agent_families_30d.slice(0, 10).map((u) => (
+                      <li key={u.user_agent} className="rounded border border-slate-100 p-2 dark:border-slate-800">
+                        <div className="flex justify-between gap-2 font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                          <span>{u.category}</span>
+                          <span>{u.clicks}</span>
+                        </div>
+                        <p className="mt-1 break-all font-mono text-[11px] leading-snug">{u.user_agent}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {v2.revenue_snapshot.click_visibility.click_quality_notes ? (
+                <p className="text-xs italic text-slate-600 dark:text-slate-400">
+                  {v2.revenue_snapshot.click_visibility.click_quality_notes}
+                </p>
+              ) : null}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <FieldBlock
                   label="Commission / revenue"
                   value={
@@ -337,7 +444,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
                   }
                 />
                 <FieldBlock
-                  label="Wedge · fridge 30d"
+                  label="Wedge · fridge 30d (raw)"
                   value={
                     <span className="font-mono">
                       {v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.refrigerator_water === "UNKNOWN"

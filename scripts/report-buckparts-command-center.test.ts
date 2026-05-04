@@ -785,8 +785,10 @@ test("command_center_v2 revenue_snapshot includes click_visibility when click sn
   });
   const rs = report.command_center_v2.revenue_snapshot;
   assert.equal(rs.status, "OK");
+  assert.equal(rs.count, 3);
   assert.equal(rs.click_visibility?.runtime_status, "OK");
   assert.equal(rs.click_visibility?.last_30_days_clicks, 10);
+  assert.equal(rs.click_visibility?.human_likely_last_30_days_clicks, 3);
   assert.equal(rs.click_visibility?.commission_or_revenue, "NOT_CONNECTED");
 });
 

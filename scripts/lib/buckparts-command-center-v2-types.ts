@@ -67,12 +67,41 @@ export type ClickWedgeBreakdown30d = {
   other_or_legacy: number | "UNKNOWN";
 };
 
+/** Conservative UA bucket for click-quality (not buyer proof). */
+export type ClickUserAgentCategory =
+  | "INTERNAL_AUDIT"
+  | "KNOWN_BOT"
+  | "SCRIPTED_CLIENT"
+  | "UNKNOWN"
+  | "HUMAN_LIKELY";
+
+export type ClickFreshnessStatus = "OK" | "STALE" | "NO_RECENT_EVENTS" | "UNKNOWN";
+
 export type ClickVisibilitySnapshot = {
   runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_SCHEMA";
   generated_at: string;
   window_days: { short: 7; long: 30 };
+  /** Raw `click_events` counts (same as head-count queries on `created_at`). */
   last_7_days_clicks: number | "UNKNOWN";
   last_30_days_clicks: number | "UNKNOWN";
+  /** Explicit raw aliases (same values as `last_*` when runtime is OK). */
+  raw_last_7_days_clicks: number | "UNKNOWN";
+  raw_last_30_days_clicks: number | "UNKNOWN";
+  /** Rows classified `HUMAN_LIKELY` (conservative browser-like UA, not bot/audit/script). */
+  human_likely_last_7_days_clicks: number | "UNKNOWN";
+  human_likely_last_30_days_clicks: number | "UNKNOWN";
+  /** All non–`HUMAN_LIKELY` rows in the 30d window (includes `UNKNOWN` missing UA). */
+  excluded_last_30_days_clicks: number | "UNKNOWN";
+  /** Counts in the 30d window for each non–human-likely bucket (excludes `HUMAN_LIKELY`). */
+  excluded_by_category_30d: Partial<Record<Exclude<ClickUserAgentCategory, "HUMAN_LIKELY">, number>> | "UNKNOWN";
+  /** Top normalized user-agent strings in the 30d window (raw attribution). */
+  top_user_agent_families_30d?: Array<{ user_agent: string; clicks: number; category: ClickUserAgentCategory }>;
+  newest_click_at: string | "UNKNOWN";
+  oldest_click_at_in_30d_window: string | "UNKNOWN";
+  click_freshness_status: ClickFreshnessStatus;
+  click_freshness_reason: string;
+  /** Raw outbound clicks are not revenue; human-likely is a conservative filter, not buyer intent proof. */
+  click_quality_notes?: string;
   clicks_by_wedge_30d: ClickWedgeBreakdown30d;
   top_retailer_slugs_30d?: Array<{ retailer_slug: string; clicks: number }>;
   top_page_attribution_30d?: Array<{ page_type: string | null; page_slug: string | null; clicks: number }>;

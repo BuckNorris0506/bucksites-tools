@@ -59,7 +59,7 @@
 - **Core app:** Next.js routes under `src/app/**` with trust/part/retail stack in `src/lib/**` (see operating map).
 - **Data plane:** Supabase Postgres (migrations under `supabase/migrations/`; full snapshot in `supabase/schema.sql`—**whether every migration is applied in a given environment is UNKNOWN**).
 - **Ops plane:** Read-only JSON reports via `tsx` scripts (`npm run buckparts:*`); optional local GSC exports under `data/gsc/`; evidence JSON under `data/evidence/`; affiliate state in `data/affiliate/affiliate-application-tracker.json` (human-edited truth).
-- **No dashboard UI in repo** for command center (operating map: UNKNOWN for dashboard app).
+- **Private owner dashboard (not public):** `src/app/ownerdashboard/[secret]/` renders read-only Command Center aggregates (including click visibility under `command_center_v2`); see §5A. There is **no** separate public “command center app” route beyond scripts + this private page.
 
 ---
 
@@ -96,6 +96,17 @@
 **Digest sections present (non-exhaustive):** `affiliate_readiness_summary`, `top_money_queue`, `recent_learning_outcomes`, `blocked_link_summary`, **`search_and_click_intelligence_summary`**, **`money_funnel_summary`**, **`rescue_velocity_summary`**, **`rescue_delta_trend_summary`**, `amazon_first_blocked_queue_summary`, `execution_guidance`, plus narrative fields (`next_best_action`, `why_this_action`, …).
 
 **Frigidaire dead OEM:** `all_resolved: true`, `unresolved_count: 0` (from same command-center run).
+
+### 5A) Command Center / click visibility (read-only)
+
+- **Where it lives:** Owner dashboard (private route above) and Command Center v2 JSON under `command_center_v2.revenue_snapshot.click_visibility` (`scripts/lib/buckparts-click-events-snapshot.ts` + types in `scripts/lib/buckparts-command-center-v2-types.ts`). All reads are **read-only**; no `retailer_links` mutations from this path.
+- **Semantics:** The snapshot **separates raw `click_events` counts** from **`human_likely_*` counts** (conservative `user_agent` heuristic: browser-like strings, excluding known bots, internal `BuckPartsAudit`, and `curl` / `node`-style clients). Known bot / internal audit / scripted / unclassified traffic is bucketed in **`excluded_*`** / **`excluded_by_category_30d`**.
+- **Last evidenced pulse (re-run `npm run buckparts:command-center` to refresh):** **`raw_last_30_days_clicks`: 1843**, **`human_likely_last_30_days_clicks`: 208**, **`excluded_last_30_days_clicks`: 1635** (same run that produced those three numbers).
+- **Freshness:** **`click_freshness_status`: `STALE`** — in that read, **no `click_events` row had `created_at` newer than `2026-04-21` UTC** within the rolling windows used by the snapshot; rolling **7d raw and human-likely counts were 0** because nothing fell inside the last seven days.
+- **Revenue:** **`commission_or_revenue` remains `NOT_CONNECTED`**. Raw clicks are **not** revenue; human-likely counts are **not** proof of shoppers or orders.
+- **How to interpret for business:** Prefer **`human_likely_*` plus `click_freshness_*`**, not raw totals, when reasoning about outbound interest. When freshness is `STALE` or `NO_RECENT_EVENTS`, treat click volume as **historical / degraded signal** until new events exist.
+- **Performance guardrail:** Do **not** introduce SQL view/RPC “optimization” for this unless the **bounded** 30d row scan becomes slow or flaky in production; the design intentionally avoids schema/view changes for this lane.
+- **Netlify / Supabase:** Production dashboard click visibility needs **`SUPABASE_SERVICE_ROLE_KEY` server-side** (same contract as other read-only admin paths). **Never** expose it as `NEXT_PUBLIC_*`.
 
 ---
 
