@@ -1,0 +1,50 @@
+{
+  "report_name": "buckparts_amazon_4396842_unknown_outcome_v1",
+  "generated_at": "2026-05-04T14:10:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "4396842",
+  "filter_slug": "4396842",
+  "source_queue_generated_at": "2026-05-04T14:03:33.516Z",
+  "command_center_snapshot_note": "post_pulse_command_center reflects command_center_v2 excerpt at evidence authoring time (before registry row for 4396842 was added).",
+  "browser_search_result": "no exact-token 4396842 PDP found",
+  "amazon_slot_exists": "UNKNOWN",
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "reason": "Amazon search did not produce a defensible exact-token 4396842 PDP; available result evidence only supported 4396841, which is already handled separately. No seller-controlled 4396842 PDP identity plus buyability proof; no buyable 4396842 PDP proof.",
+  "prior_candidate_urls": [],
+  "candidate_notes": [
+    "Visible/proven listing context aligned with 4396841 (see amazon-4396841-live-outcome.2026-05-04.json); literal 4396842 in seller-controlled primary PDP identity was not established in captured Amazon evidence.",
+    "Do not infer 4396842 insert from 4396841 PDP without new exact-token proof."
+  ],
+  "product_attribution": "UNKNOWN",
+  "revenue_claim": "NOT_CONNECTED",
+  "recommended_next_action": "HUMAN_BROWSER_VERIFICATION_OR_NEW_EVIDENCE_FILE",
+  "next_safe_action": "human US-browser PDP verification or a superseding evidence JSON with joint exact-token 4396842 identity + buyability on one PDP before any insert plan",
+  "do_not_publish_reason": "exact-token 4396842 identity + buyability not jointly proven on one Amazon PDP; UNKNOWN_NOT_MUTATION_READY",
+  "post_pulse_command_center": {
+    "next_allowed_agent_token": "4396842",
+    "fresh_search_top_tokens": ["4396842", "46-9002", "8171413", "EDR1RXD1", "EDR2RXD1", "EDR3RXD1"],
+    "human_browser_required_tokens": ["4396508"],
+    "amazon_rescue_status": "ATTENTION"
+  },
+  "post_pulse_amazon_queue": {
+    "report_name": "buckparts_amazon_first_blocked_conversion_queue_v1",
+    "generated_at": "2026-05-04T14:03:33.516Z",
+    "needs_amazon_search_count": 27,
+    "already_live_noop_count": 17,
+    "unknown_evidence_deferred_count": 1,
+    "top_candidate_tokens_head": ["ADQ75795101", "DA97-08006B", "DA97-17376A", "DA97-19467C", "4396842"]
+  },
+  "post_pulse_audit": {
+    "audit_name": "buckparts_system_contract_audit_v1",
+    "status": "PASS",
+    "blocking": false,
+    "failures": []
+  },
+  "notes": [
+    "Evidence only. No DB writes, no retailer_links mutations, and no insert plan implied by this file.",
+    "Operator browser verdict: FAIL / UNKNOWN_NOT_MUTATION_READY for token 4396842."
+  ]
+}

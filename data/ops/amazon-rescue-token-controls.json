@@ -119,6 +119,14 @@
       "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
       "can_agent_advance": false,
       "evidence_file": "amazon-4396841-live-outcome.2026-05-04.json"
+    },
+    {
+      "token": "4396842",
+      "status": "UNKNOWN_EVIDENCE_RECORDED",
+      "reason": "Amazon search failed to prove exact-token 4396842 PDP; visible/proven listing evidence only supported 4396841.",
+      "next_action": "HUMAN_BROWSER_VERIFICATION_OR_NEW_EVIDENCE_FILE",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-4396842-unknown-outcome.2026-05-04.json"
     }
   ]
 }
