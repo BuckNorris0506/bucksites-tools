@@ -1,0 +1,175 @@
+{
+  "report_name": "buckparts_amazon_8171413_live_outcome_v1",
+  "generated_at": "2026-05-04T22:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "8171413",
+  "filter_slug": "8171413",
+  "filter_id": "5d281057-32b3-4f4d-aade-f0355d995389",
+  "verdict": "LIVE_OUTCOME_RECORDED",
+  "mutation_ready": false,
+  "mutation_ready_basis": {
+    "precheck_filter_id": "5d281057-32b3-4f4d-aade-f0355d995389",
+    "precheck_amazon_retailer_links_count": 0,
+    "precheck_approved_amazon_retailer_links_count": 0,
+    "precheck_live_direct_buyable_amazon_count": 0,
+    "precheck_notes": "Pre-insert read-only state captured in amazon-8171413-aftermarket-pdp-evidence.2026-05-04.json (superseded); superseded by committed_live_row verification."
+  },
+  "final_amazon_cta_state_proven": true,
+  "insert_outcome": "COMMITTED_VERIFIED_READ_ONLY",
+  "insert_outcome_reason": "Operator insert completed; read-only postcheck on public.retailer_links id a891c852-2bd3-4b0c-9948-7226469c638a returns one approved amazon row with affiliate_url https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20 matching evidence ASIN B01CA0V1VE.",
+  "exact_token_proof": "Seller-controlled PDP title includes literal 8171413 (Waterdrop aftermarket compatible listing for Whirlpool 8171413 / 8171414 / EDR8D1 / Kenmore 46-9002 family).",
+  "buyability_proof": "In Stock, Add to Cart, and Buy Now were visible in browser evidence prior to commit.",
+  "product_attribution": "aftermarket_compatible",
+  "sold_by": "Lifetech Filter",
+  "fulfilled_by": "Amazon",
+  "pack_count": 1,
+  "asin": "B01CA0V1VE",
+  "canonical_url": "https://www.amazon.com/dp/B01CA0V1VE",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+  "browser_evidence": {
+    "token_searched": "8171413",
+    "amazon_pdp_url_full": "https://www.amazon.com/Waterdrop-Replacement-Refrigerator-Compatible-Whirlpool/dp/B01CA0V1VE?crid=3L2BFDZMLUJ53&dib=eyJ2IjoiMSJ9.4u_OggvP2Wvc8kKJO_Ho4Iwuh0Tk_BbeljYMhTwMe25ZGZAGmozjbXEhOuz1PZM4tAo2Qjnbpxg8PhjEcqzem0DvtJ_G78X40NtcB0qpSGFZHUMRqbJMoqT6I9aMJu14LACZW9G9g8RzfHuQB7WMrfBNX9gd3PJ_Od99ME7GJnBMBH53duoqIjNns0uwnpnl9SLuPQCPbPZXFUY3RlmeX9oWiMTkD4IbCzukfwkZVbw6Z4JygAXh__Gbao-qS4t74eza22ythQKZHJArhR9N06ZuVWm9lIpzZ9qTO4YQ0Ec.fz3-PD0wOcawrPW_Fsa2GHM-yIXRIf3TX2ZuFkIY8ok&dib_tag=se&keywords=8171413&qid=1777915425&s=home-garden&sprefix=8171413%2Caps%2C166&sr=1-2-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&linkCode=ll2&tag=buckparts20-20&linkId=6c5c14ab698e94635185c7f93ad7ed42&language=en_US&ref_=as_li_ss_tl",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B01CA0V1VE",
+    "asin": "B01CA0V1VE",
+    "seller_title_visible": "Waterdrop Plus 8171413 Refrigerator Water Filter, Replacement for Whirlpool® 8171413, 8171414, EDR8D1, Kenmore® 46-9002, NSF/ANSI 401&53&42 Certified, Reduce PFAS (Packaging May Vary)",
+    "token_visible_in_pdp_title": true,
+    "brand_store": "Waterdrop",
+    "sold_by": "Lifetech Filter",
+    "fulfilled_by": "Amazon",
+    "oem_or_aftermarket": "aftermarket compatible",
+    "pack_count": 1,
+    "buy_path_visible": "In Stock, Add to Cart, Buy Now",
+    "price_visible_usd": 18.99,
+    "prime_or_delivery_visible": true,
+    "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE"
+  },
+  "committed_live_row": {
+    "link_id": "a891c852-2bd3-4b0c-9948-7226469c638a",
+    "filter_id": "5d281057-32b3-4f4d-aade-f0355d995389",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+    "destination_url": "https://www.amazon.com/dp/B01CA0V1VE",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "SINGLE_OR_MULTIUNIT_DIRECT_BUYABLE",
+    "browser_truth_notes": "Aftermarket Waterdrop compatible replacement for Whirlpool 8171413 / 8171414 / EDR8D1 / Kenmore 46-9002 family (ASIN B01CA0V1VE); PDP title includes 8171413; not OEM. Evidence amazon-8171413-aftermarket-pdp-evidence.2026-05-04.json.",
+    "browser_truth_checked_at": "2026-05-04T21:55:01.775261+00:00",
+    "created_at": "2026-05-04T21:55:01.775261+00:00"
+  },
+  "post_insert_go_smoke_result": {
+    "go_url": "https://buckparts.com/go/a891c852-2bd3-4b0c-9948-7226469c638a",
+    "click_events_row_verified_read_only": {
+      "id": "44bd2b0e-c420-41fa-af1d-e433c1bceab9",
+      "created_at": "2026-05-04T21:56:16.778879+00:00",
+      "filter_id": "5d281057-32b3-4f4d-aade-f0355d995389",
+      "retailer_slug": "amazon",
+      "page_slug": "8171413",
+      "target_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20"
+    },
+    "notes": "Legacy fridge /go logging keys click_events by filter_id + retailer_slug + page_slug; row matches filter 8171413 and ASIN outbound."
+  },
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 24,
+    "already_live_noop_count": 19,
+    "unknown_evidence_deferred_count": 2,
+    "token_8171413_absent_from_top_candidates": true
+  },
+  "post_insert_amazon_queue": {
+    "generated_at": "2026-05-04T21:57:04.738Z",
+    "needs_amazon_search_count": 24,
+    "already_live_noop_count": 19,
+    "unknown_evidence_deferred_count": 2,
+    "top_candidate_tokens_head": [
+      "ADQ75795101",
+      "DA97-08006B",
+      "DA97-17376A",
+      "DA97-19467C",
+      "EDR1RXD1",
+      "EDR2RXD1",
+      "EDR3RXD1",
+      "EDR4RXD1",
+      "UKF8001",
+      "W10413645A"
+    ],
+    "token_8171413_absent": true
+  },
+  "post_insert_command_center": {
+    "command_center_generated_at": "2026-05-04T21:57:04.727Z",
+    "next_allowed_agent_token": "EDR1RXD1",
+    "fresh_search_top_tokens": [
+      "EDR1RXD1",
+      "EDR2RXD1",
+      "EDR3RXD1",
+      "EDR4RXD1",
+      "UKF8001",
+      "W10413645A"
+    ],
+    "token_8171413_absent_from_fresh_search_top_tokens": true,
+    "click_visibility": {
+      "newest_click_at": "2026-05-04T21:56:16.778879+00:00",
+      "raw_last_7_days_clicks": 8,
+      "raw_last_30_days_clicks": 1851,
+      "human_likely_last_7_days_clicks": 8,
+      "human_likely_last_30_days_clicks": 216,
+      "click_freshness_status": "OK",
+      "commission_or_revenue": "NOT_CONNECTED"
+    }
+  },
+  "post_insert_command_surface": {
+    "command_surface_generated_at": "2026-05-04T21:57:06.231Z",
+    "safe_cta_links": 63,
+    "direct_buyable_links": 63,
+    "blocked_or_unsafe_links": 201,
+    "total_retailer_links": 264,
+    "retailer_counts_amazon": 60,
+    "retailer_link_state_distribution": {
+      "LIVE_DIRECT_BUYABLE": 63,
+      "BLOCKED_BROWSER_TRUTH_UNSAFE": 61,
+      "BLOCKED_SEARCH_OR_DISCOVERY": 139,
+      "BLOCKED_BROWSER_TRUTH_MISSING": 1
+    },
+    "system_health_status": "WARNING"
+  },
+  "post_insert_audit": {
+    "status": "PASS",
+    "blocking": false,
+    "failures": []
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 63,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit safe_cta_links not co-attached to this evidence export; after value is post-insert command_surface read."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 63,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value is post-insert command_surface read."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 264,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached; after value is post-insert command_surface read."
+    }
+  },
+  "required_next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. DB insert was performed manually by operator outside this JSON; this file records read-only verification snapshots only.",
+    "Aftermarket compatible (Waterdrop) listing; not OEM / not EveryDrop® OEM identity proof.",
+    "8171413 does not appear in amazon-first-blocked-queue top_candidates head for the post-insert read (see amazon_first_blocked_queue.token_8171413_absent_from_top_candidates).",
+    "committed_live_row.browser_truth_notes still references the pre-insert evidence filename as stored in DB at verification time; canonical committed narrative is this live-outcome file.",
+    "No Amazon Associates revenue or commission claims in this export.",
+    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime."
+  ]
+}

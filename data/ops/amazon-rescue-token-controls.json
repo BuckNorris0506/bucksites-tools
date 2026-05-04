@@ -135,6 +135,14 @@
       "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
       "can_agent_advance": false,
       "evidence_file": "amazon-46-9002-live-outcome.2026-05-04.json"
+    },
+    {
+      "token": "8171413",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link a891c852-2bd3-4b0c-9948-7226469c638a live; ASIN B01CA0V1VE Waterdrop aftermarket compatible listing per committed evidence.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-8171413-live-outcome.2026-05-04.json"
     }
   ]
 }
