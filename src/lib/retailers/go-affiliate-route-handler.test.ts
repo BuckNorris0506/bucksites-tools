@@ -49,7 +49,42 @@ describe("goFallbackRedirect", () => {
   });
 });
 
+/** Keys the Supabase `click_events` table must accept for PostgREST inserts from /go (fridge wedge shape). */
+const FRIDGE_CLICK_EVENTS_INSERT_KEYS = [
+  "filter_id",
+  "retailer_slug",
+  "page_type",
+  "page_slug",
+  "target_url",
+  "user_agent",
+  "referrer",
+] as const;
+
 describe("buildGoClickEventInsertRow", () => {
+  it("emits the click_events insert contract keys required for PostgREST (target_url must exist on table)", () => {
+    const go = nextResponseRedirectAffiliateIfSafe(
+      "amazon",
+      "https://www.amazon.com/dp/B00CONTRACT",
+      "direct_buyable",
+    );
+    assert.ok(go);
+    const row = buildGoClickEventInsertRow(
+      go,
+      {
+        filter_id: "d8d2fdea-90c0-42e2-a63a-53002a0e5d42",
+        retailer_slug: "oem-test",
+        page_type: "refrigerator_filter",
+        page_slug: "lt1000p",
+      },
+      requestAt("https://buckparts.com/go/x", { "user-agent": "Mozilla/5.0 (contract)", referer: "https://buckparts.com/" }),
+    );
+    for (const k of FRIDGE_CLICK_EVENTS_INSERT_KEYS) {
+      assert.ok(Object.prototype.hasOwnProperty.call(row, k), `missing contract key: ${k}`);
+    }
+    assert.equal(typeof row.target_url, "string");
+    assert.ok(row.target_url.length > 0, "target_url must be non-empty for logged outbound");
+  });
+
   it("sets target_url to go.outboundUrl (canonical), not raw affiliate from wedge keys", () => {
     const go = nextResponseRedirectAffiliateIfSafe(
       "amazon",
