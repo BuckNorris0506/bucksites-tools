@@ -1,9 +1,11 @@
 import type { AmazonFirstBlockedConversionQueueReport } from "../report-amazon-first-blocked-conversion-queue";
 import type {
   AmazonRescueTokenControlEntry,
+  ClickVisibilitySnapshot,
   CommandCenterV2Report,
   DecisionLane,
   EvidenceRollup,
+  RevenueSnapshotLane,
 } from "./buckparts-command-center-v2-types";
 
 export type { CommandCenterV2Report } from "./buckparts-command-center-v2-types";
@@ -12,6 +14,48 @@ function uniqueSorted(tokens: string[]): string[] {
   return Array.from(new Set(tokens.map((t) => t.trim().toUpperCase()).filter(Boolean))).sort((a, b) =>
     a.localeCompare(b),
   );
+}
+
+function buildRevenueSnapshotLane(click: ClickVisibilitySnapshot): RevenueSnapshotLane {
+  const baseNotes =
+    click.commission_or_revenue === "NOT_CONNECTED"
+      ? click.commission_or_revenue_notes
+      : "Commission / revenue not modeled in-repo.";
+
+  if (click.runtime_status === "OK") {
+    return {
+      status: "OK",
+      count: typeof click.last_30_days_clicks === "number" ? click.last_30_days_clicks : undefined,
+      top_items: click.top_retailer_slugs_30d?.slice(0, 5).map((r) => `${r.retailer_slug}:${r.clicks}`),
+      blocker: null,
+      next_agent_action:
+        "click_events read-only snapshot is attached under revenue_snapshot.click_visibility; no retailer_links mutations originate from this lane.",
+      next_owner_action: baseNotes,
+      click_visibility: click,
+    };
+  }
+
+  if (click.runtime_status === "UNKNOWN_SCHEMA") {
+    return {
+      status: "ATTENTION",
+      count: typeof click.last_30_days_clicks === "number" ? click.last_30_days_clicks : undefined,
+      top_items: click.aggregation_notes?.slice(0, 3),
+      blocker: "click_events_projection_or_schema_mismatch",
+      next_agent_action:
+        "Compare live click_events columns to scripts/lib/buckparts-click-events-snapshot.ts SELECT list and migrations; keep reads read-only.",
+      next_owner_action: baseNotes,
+      click_visibility: click,
+    };
+  }
+
+  return {
+    status: "ATTENTION",
+    blocker: "click_events_unavailable_or_admin_env_missing",
+    next_agent_action:
+      "Restore the same Supabase URL + SUPABASE_SERVICE_ROLE_KEY contract used by buckparts:command-surface for read-only click counts.",
+    next_owner_action: baseNotes,
+    click_visibility: click,
+  };
 }
 
 export function buildCommandCenterV2Report(input: {
@@ -25,6 +69,7 @@ export function buildCommandCenterV2Report(input: {
   commandSurfaceReasons: string[];
   affiliateApprovalPending: boolean;
   affiliateApprovedCount: number;
+  clickVisibility: ClickVisibilitySnapshot;
 }): CommandCenterV2Report {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
@@ -177,12 +222,7 @@ export function buildCommandCenterV2Report(input: {
     next_owner_action: "Wire deploy/live-site checks when CI or Netlify contract exists in repo.",
   };
 
-  const revenueLane: DecisionLane = {
-    status: "PLACEHOLDER",
-    blocker: "not_implemented_in_repo_yet",
-    next_agent_action: "No revenue snapshot SQL in this read-only report path.",
-    next_owner_action: "Attach revenue snapshot source when operator defines safe read-only contract.",
-  };
+  const revenueLane = buildRevenueSnapshotLane(input.clickVisibility);
 
   const ownerParts: string[] = [];
   if (human_browser_required_tokens.length > 0) {

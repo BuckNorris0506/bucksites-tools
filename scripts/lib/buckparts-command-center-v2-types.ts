@@ -56,6 +56,37 @@ export type EvidenceRollup = {
   recent_evidence_filenames: string[];
 };
 
+/** Outbound click visibility from `public.click_events` (read-only aggregates; not revenue). */
+export type ClickWedgeBreakdown30d = {
+  refrigerator_water: number | "UNKNOWN";
+  air_purifier: number | "UNKNOWN";
+  whole_house_water: number | "UNKNOWN";
+  vacuum: number | "UNKNOWN";
+  humidifier: number | "UNKNOWN";
+  appliance_air: number | "UNKNOWN";
+  other_or_legacy: number | "UNKNOWN";
+};
+
+export type ClickVisibilitySnapshot = {
+  runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_SCHEMA";
+  generated_at: string;
+  window_days: { short: 7; long: 30 };
+  last_7_days_clicks: number | "UNKNOWN";
+  last_30_days_clicks: number | "UNKNOWN";
+  clicks_by_wedge_30d: ClickWedgeBreakdown30d;
+  top_retailer_slugs_30d?: Array<{ retailer_slug: string; clicks: number }>;
+  top_page_attribution_30d?: Array<{ page_type: string | null; page_slug: string | null; clicks: number }>;
+  top_wedge_link_ids_30d?: Array<{ wedge: string; link_id: string; clicks: number }>;
+  commission_or_revenue: "NOT_CONNECTED";
+  commission_or_revenue_notes: string;
+  aggregation_notes?: string[];
+};
+
+/** v2 revenue card: operational click visibility; commission remains `NOT_CONNECTED` in-repo. */
+export type RevenueSnapshotLane = DecisionLane & {
+  click_visibility?: ClickVisibilitySnapshot;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -67,7 +98,7 @@ export type CommandCenterV2Report = {
   coverage_health: DecisionLane;
   recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup };
   deploy_live_site_status: DecisionLane;
-  revenue_snapshot: DecisionLane;
+  revenue_snapshot: RevenueSnapshotLane;
   /** First token safe for autonomous fresh exact-token search work per registry + queue (null if none). */
   next_allowed_agent_token: string | null;
   /** Highest-priority owner-facing step synthesized from lanes (not chat memory). */

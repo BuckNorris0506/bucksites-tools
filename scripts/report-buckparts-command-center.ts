@@ -190,6 +190,7 @@ type BuildOptions = {
     frigidaireDeadOem?: typeof buildFrigidaireDeadOemLinkIdsReport;
     frigidaireNextCandidates?: typeof buildFrigidaireNextMonetizableCandidatesReport;
     amazonFirstBlockedQueue?: typeof buildAmazonFirstBlockedConversionQueueReport;
+    clickEventsSnapshot?: () => Promise<import("./lib/buckparts-command-center-v2-types").ClickVisibilitySnapshot>;
   };
 };
 
@@ -350,6 +351,22 @@ export async function buildBuckpartsCommandCenterReport(
   const trackerText = readTextFile(path.resolve(rootDir, "data/affiliate/affiliate-application-tracker.json"));
   const trackerRows = trackerRowsFromText(trackerText);
 
+  const clickEventsSnapshotRunner =
+    options.providers?.clickEventsSnapshot ??
+    (async () => {
+      try {
+        const { loadEnv } = await import("./lib/load-env");
+        const { getSupabaseAdmin } = await import("./lib/supabase-admin");
+        const { queryBuckpartsClickEventsSnapshot } = await import("./lib/buckparts-click-events-snapshot");
+        loadEnv();
+        const supabase = getSupabaseAdmin();
+        return await queryBuckpartsClickEventsSnapshot(supabase, now().getTime());
+      } catch (e) {
+        const { unavailableClickSnapshot } = await import("./lib/buckparts-click-events-snapshot");
+        return unavailableClickSnapshot([e instanceof Error ? e.message : "UNKNOWN"]);
+      }
+    });
+
   const [
     commandSurface,
     affiliateTracker,
@@ -358,6 +375,7 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireDeadOem,
     frigidaireNextCandidates,
     amazonFirstBlocked,
+    clickVisibility,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -366,6 +384,7 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireDeadBuilder(),
     frigidaireNextBuilder(),
     amazonFirstBuilder(),
+    clickEventsSnapshotRunner(),
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
@@ -725,6 +744,7 @@ export async function buildBuckpartsCommandCenterReport(
     commandSurfaceReasons: commandSurface.system_health.reasons,
     affiliateApprovalPending,
     affiliateApprovedCount: affiliateTracker.records_approved.length,
+    clickVisibility,
   });
 
   return {

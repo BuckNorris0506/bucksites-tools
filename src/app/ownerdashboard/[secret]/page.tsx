@@ -289,13 +289,151 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.amazon_rescue.next_agent_action}</p>
         </LaneCard>
 
-        <LaneCard title="9 · Revenue snapshot" subtitle="Placeholder — not implemented in repo">
+        <LaneCard
+          title="9 · Revenue / outbound clicks"
+          subtitle="click_events read-only snapshot (commission not connected in-repo)"
+        >
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.revenue_snapshot.status} />
+            {v2.revenue_snapshot.click_visibility ? (
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                Clicks snapshot {v2.revenue_snapshot.click_visibility.generated_at} ·{" "}
+                {v2.revenue_snapshot.click_visibility.runtime_status}
+              </span>
+            ) : null}
           </div>
           {v2.revenue_snapshot.blocker ? (
             <p className="text-xs text-slate-600 dark:text-slate-400">{v2.revenue_snapshot.blocker}</p>
           ) : null}
+          {v2.revenue_snapshot.click_visibility ? (
+            <div className="space-y-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <FieldBlock
+                  label="Last 7d clicks"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.last_7_days_clicks === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.last_7_days_clicks}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Last 30d clicks"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.last_30_days_clicks === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.last_30_days_clicks}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Commission / revenue"
+                  value={
+                    <span className="font-mono uppercase">
+                      {v2.revenue_snapshot.click_visibility.commission_or_revenue}
+                    </span>
+                  }
+                />
+                <FieldBlock
+                  label="Wedge · fridge 30d"
+                  value={
+                    <span className="font-mono">
+                      {v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.refrigerator_water === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.refrigerator_water}
+                    </span>
+                  }
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {(
+                  [
+                    ["AP", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.air_purifier],
+                    ["WHW", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.whole_house_water],
+                    ["Vacuum", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.vacuum],
+                    ["Humidifier", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.humidifier],
+                    ["Appliance air", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.appliance_air],
+                    ["Other / legacy", v2.revenue_snapshot.click_visibility.clicks_by_wedge_30d.other_or_legacy],
+                  ] as const
+                ).map(([label, n]) => (
+                  <div
+                    key={label}
+                    className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-900/60"
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                      {label} · 30d
+                    </p>
+                    <p className="mt-1 font-mono text-sm text-slate-900 dark:text-slate-50">
+                      {n === "UNKNOWN" ? "UNKNOWN" : n}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              {v2.revenue_snapshot.click_visibility.top_retailer_slugs_30d &&
+              v2.revenue_snapshot.click_visibility.top_retailer_slugs_30d.length > 0 ? (
+                <div>
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Top retailer_slug (fridge wedge) · 30d
+                  </p>
+                  <ul className="space-y-1 text-xs text-slate-800 dark:text-slate-200">
+                    {v2.revenue_snapshot.click_visibility.top_retailer_slugs_30d.map((r) => (
+                      <li key={r.retailer_slug} className="flex justify-between gap-2 font-mono">
+                        <span className="truncate">{r.retailer_slug}</span>
+                        <span>{r.clicks}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {v2.revenue_snapshot.click_visibility.top_page_attribution_30d &&
+              v2.revenue_snapshot.click_visibility.top_page_attribution_30d.length > 0 ? (
+                <div>
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Top page_type / page_slug (fridge) · 30d
+                  </p>
+                  <ul className="space-y-1 text-xs text-slate-800 dark:text-slate-200">
+                    {v2.revenue_snapshot.click_visibility.top_page_attribution_30d.map((p, i) => (
+                      <li key={`${p.page_type}-${p.page_slug}-${i}`} className="flex justify-between gap-2 font-mono">
+                        <span className="truncate">
+                          {(p.page_type ?? "null")} / {(p.page_slug ?? "null")}
+                        </span>
+                        <span>{p.clicks}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {v2.revenue_snapshot.click_visibility.top_wedge_link_ids_30d &&
+              v2.revenue_snapshot.click_visibility.top_wedge_link_ids_30d.length > 0 ? (
+                <div>
+                  <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    Top wedge link ids · 30d
+                  </p>
+                  <ul className="space-y-1 text-xs text-slate-800 dark:text-slate-200">
+                    {v2.revenue_snapshot.click_visibility.top_wedge_link_ids_30d.map((l) => (
+                      <li key={`${l.wedge}-${l.link_id}`} className="flex justify-between gap-2 font-mono">
+                        <span className="truncate">
+                          {l.wedge} · {l.link_id}
+                        </span>
+                        <span>{l.clicks}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {v2.revenue_snapshot.click_visibility.aggregation_notes &&
+              v2.revenue_snapshot.click_visibility.aggregation_notes.length > 0 ? (
+                <ul className="list-inside list-disc text-xs text-amber-900 dark:text-amber-200">
+                  {v2.revenue_snapshot.click_visibility.aggregation_notes.map((n) => (
+                    <li key={n}>{n}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+          <FieldBlock label="Next agent action" value={v2.revenue_snapshot.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.revenue_snapshot.next_owner_action} />
         </LaneCard>
 

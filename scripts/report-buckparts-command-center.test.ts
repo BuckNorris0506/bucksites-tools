@@ -228,6 +228,10 @@ function baseProviders() {
         known_unknowns: [],
       }) as never,
     amazonFirstBlockedQueue: amazonQueueOkMock({ needs: 0, tokens: [] }),
+    clickEventsSnapshot: async () => {
+      const { clickSnapshotForTests } = await import("./lib/buckparts-click-events-snapshot");
+      return clickSnapshotForTests();
+    },
   };
 }
 
@@ -770,6 +774,39 @@ test("command_center_v2 recent_evidence includes evidence_rollup counts when evi
   assert.equal(rollup.unknown_outcome_count, 1);
   assert.equal(rollup.unclassified_json_count, 1);
   assert.ok(rollup.recent_evidence_filenames.length >= 1);
+});
+
+test("command_center_v2 revenue_snapshot includes click_visibility when click snapshot is OK", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const rs = report.command_center_v2.revenue_snapshot;
+  assert.equal(rs.status, "OK");
+  assert.equal(rs.click_visibility?.runtime_status, "OK");
+  assert.equal(rs.click_visibility?.last_30_days_clicks, 10);
+  assert.equal(rs.click_visibility?.commission_or_revenue, "NOT_CONNECTED");
+});
+
+test("command_center_v2 revenue_snapshot is ATTENTION when click snapshot is unavailable", async () => {
+  const providers = baseProviders();
+  providers.clickEventsSnapshot = async () => {
+    const { unavailableClickSnapshot } = await import("./lib/buckparts-click-events-snapshot");
+    return unavailableClickSnapshot(["Missing SUPABASE_SERVICE_ROLE_KEY"]);
+  };
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.command_center_v2.revenue_snapshot.status, "ATTENTION");
+  assert.equal(
+    report.command_center_v2.revenue_snapshot.click_visibility?.runtime_status,
+    "UNKNOWN_DB_UNAVAILABLE",
+  );
 });
 
 test("command_center_v2 surfaces next_owner_action and next_agent_action on lanes", async () => {
