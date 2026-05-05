@@ -71,6 +71,15 @@ describe("refrigerator-manual-evidence-loader", () => {
     assert.ok(out.sources.some((s) => s.source_host === "www.lg.com"));
   });
 
+  it("loads the fixture for lg-lfxs28968s with Tier 1 LG sources", async () => {
+    const out = await loadRefrigeratorManualEvidenceForModel("lg-lfxs28968s");
+    assert.ok(out);
+    assert.equal(out.fridge_model_slug, "lg-lfxs28968s");
+    assert.equal(out.source_tier, 1);
+    assert.ok(out.sources.length >= 5);
+    assert.ok(out.sources.some((s) => s.source_host === "www.lg.com"));
+  });
+
   it("returns null for a fridge model without manual evidence fixture", async () => {
     const out = await loadRefrigeratorManualEvidenceForModel("lg-lrfxs3106s");
     assert.equal(out, null);

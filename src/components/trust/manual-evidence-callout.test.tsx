@@ -100,4 +100,17 @@ describe("ManualEvidenceCallout", () => {
     assert.ok(!html.toLowerCase().includes("removes all contaminants"));
     assert.ok(!html.toLowerCase().includes("guaranteed fit"));
   });
+
+  it("renders lfxs28968s fixture with Tier 1 source bundle and no owner-manual claim", async () => {
+    const fixture = await loadFixtureRecord("lg-lfxs28968s");
+    const html = renderFromRecord(fixture);
+    assert.ok(html.includes("Sources"));
+    assert.ok(html.includes("Highest source tier"));
+    assert.ok(html.includes("LG LFXS28968S product page (Water Filter LT1000P)"));
+    assert.ok(html.includes("LG Refrigerator - How to Install Your Refrigerator Water Filter"));
+    assert.ok(!html.toLowerCase().includes("official owner manual"));
+    assert.ok(!html.toLowerCase().includes("copied image"));
+    assert.ok(!html.toLowerCase().includes("removes all contaminants"));
+    assert.ok(!html.toLowerCase().includes("guaranteed fit"));
+  });
 });

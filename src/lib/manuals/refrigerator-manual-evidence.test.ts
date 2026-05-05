@@ -129,6 +129,18 @@ describe("refrigerator-manual-evidence", () => {
     )}`);
   });
 
+  it("fixture for lg-lfxs28968s validates as public-ready multi-source Tier 1 bundle", async () => {
+    const raw = await readFile(
+      "data/manual-evidence/refrigerator/lg-lfxs28968s.json",
+      "utf8",
+    );
+    const record = JSON.parse(raw) as RefrigeratorManualEvidenceRecord;
+    const r = validateRefrigeratorManualEvidencePublicReady(record);
+    assert.equal(r.ok, true, `expected fixture to be public-ready, got errors: ${r.errors.join(
+      "; ",
+    )}`);
+  });
+
   it("accepts multi-source Tier 1 when displayed text is supported by Tier 1 replacement/reset roles", () => {
     const r = validateRefrigeratorManualEvidencePublicReady({
       ...baseValid,
