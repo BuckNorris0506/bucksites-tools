@@ -41,11 +41,11 @@ export default async function HomePage() {
             <div className="order-1 space-y-9 lg:order-none lg:col-span-7 lg:space-y-10">
               <div className="space-y-5 lg:space-y-6">
                 <h1 className="text-balance text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.875rem] lg:leading-[1.06] xl:text-[3.05rem] xl:leading-[1.06] dark:text-slate-50">
-                  Find the right replacement filter before you buy
+                  Find the right refrigerator water filter before you buy
                 </h1>
                 <p className="max-w-2xl text-pretty text-lg leading-relaxed text-slate-600 sm:text-xl lg:max-w-none dark:text-slate-400">
-                  If you can read the nameplate on the appliance or the OEM print on the cartridge you are
-                  replacing, you have what you need to line it up with our reference before you shop.
+                  If you can read the model number on the fridge nameplate and the OEM print on the cartridge
+                  you are replacing, you have what you need to line it up with our reference before you shop.
                 </p>
                 <p className="text-base font-medium leading-snug text-slate-700 dark:text-slate-300">
                   Free to use · No account needed · Compare store options when available
@@ -108,34 +108,14 @@ export default async function HomePage() {
 
             <div className="order-3 text-sm leading-relaxed text-slate-600 sm:text-base lg:col-span-7 dark:text-slate-400">
               <span className="mb-2 block font-medium text-slate-700 sm:mb-0 sm:mr-2 sm:inline dark:text-slate-300">
-                Browse by category:
-              </span>
-              <span className="inline-flex flex-wrap items-baseline gap-x-2 gap-y-2 sm:gap-x-2.5">
-                <Link
-                  href="/catalog"
-                  className="font-semibold text-blue-950 underline decoration-blue-950/30 decoration-2 underline-offset-[3px] transition-colors hover:text-blue-900 hover:decoration-blue-950/55 dark:text-blue-300 dark:decoration-blue-400/40 dark:hover:text-blue-200 dark:hover:decoration-blue-300/55"
-                >
-                  Refrigerator water filters
-                </Link>
-                <span className="select-none text-slate-300 dark:text-slate-600" aria-hidden>
-                  ·
-                </span>
-                <Link
-                  href="/air-purifier"
-                  className="font-semibold text-blue-950 underline decoration-blue-950/30 decoration-2 underline-offset-[3px] transition-colors hover:text-blue-900 hover:decoration-blue-950/55 dark:text-blue-300 dark:decoration-blue-400/40 dark:hover:text-blue-200 dark:hover:decoration-blue-300/55"
-                >
-                  Air purifier filters
-                </Link>
-                <span className="select-none text-slate-300 dark:text-slate-600" aria-hidden>
-                  ·
-                </span>
-                <Link
-                  href="/whole-house-water"
-                  className="font-semibold text-blue-950 underline decoration-blue-950/30 decoration-2 underline-offset-[3px] transition-colors hover:text-blue-900 hover:decoration-blue-950/55 dark:text-blue-300 dark:decoration-blue-400/40 dark:hover:text-blue-200 dark:hover:decoration-blue-300/55"
-                >
-                  Whole{"\u2011"}house water filters
-                </Link>
-              </span>
+                Browse refrigerator water filters:
+              </span>{" "}
+              <Link
+                href="/catalog"
+                className="font-semibold text-blue-950 underline decoration-blue-950/30 decoration-2 underline-offset-[3px] transition-colors hover:text-blue-900 hover:decoration-blue-950/55 dark:text-blue-300 dark:decoration-blue-400/40 dark:hover:text-blue-200 dark:hover:decoration-blue-300/55"
+              >
+                Open the catalog hub
+              </Link>
             </div>
           </div>
         </section>

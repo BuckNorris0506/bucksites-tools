@@ -1,15 +1,18 @@
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import type { CatalogBrowseCategory } from "@/lib/catalog/browse";
-
-/** Catalog hub (/catalog) lists only launch wedges — not vacuum / humidifier / appliance-air. */
-const CATALOG_HUB_LAUNCH_ONLY = new Set<CatalogBrowseCategory>([
-  "refrigerator_water",
-  "air_purifier",
-  "whole_house_water",
-]);
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
+
+/**
+ * Categories eligible for /catalog hub cards — LIVE public-discovery wedges only
+ * (aligned with `VERTICAL_LAUNCH_STATES` / `getSitemapLaunchVerticals()`).
+ */
+export const CATALOG_HUB_LAUNCH_CATEGORIES: readonly CatalogBrowseCategory[] = [
+  "refrigerator_water",
+];
+
+const CATALOG_HUB_LAUNCH_ONLY = new Set<CatalogBrowseCategory>(CATALOG_HUB_LAUNCH_CATEGORIES);
 
 const TABLES: Record<
   CatalogBrowseCategory,

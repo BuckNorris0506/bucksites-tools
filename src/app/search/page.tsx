@@ -28,12 +28,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (!query) {
     return {
       title: `Search filters · ${SITE_DISPLAY_NAME}`,
-      description: `Look up refrigerator water filters, room air purifier cartridges, and whole-house water cartridges by model or OEM part number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
+      description: `Look up refrigerator water filters by fridge model or OEM cartridge number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
     };
   }
   return {
     title: `Search “${query}” · ${SITE_DISPLAY_NAME}`,
-    description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters, air purifier cartridges, and whole-house water cartridges. Open a result to verify the part against your unit and old filter.`,
+    description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters first; other maintained reference lanes may appear when they match. Open a result to verify the part against your unit and old filter.`,
     robots: undefined,
   };
 }
@@ -244,9 +244,10 @@ export default async function SearchPage({ searchParams }: Props) {
           Search replacement filters
         </h1>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          One box, three lanes: fridge water filters, room air purifier cartridges, and whole-house
-          water cartridges. We group what we find so you can spot your lane—then open a result and
-          line it up with the numbers on your unit or old part.
+          Start with your <strong className="font-medium text-neutral-800 dark:text-neutral-200">fridge model</strong>{" "}
+          or <strong className="font-medium text-neutral-800 dark:text-neutral-200">OEM filter number</strong> from
+          the nameplate and old cartridge. We lead with refrigerator water filters; if another reference lane
+          matches your query, it will show in its own section below.
         </p>
         <SearchForm initialQuery={query} />
       </div>
@@ -333,13 +334,13 @@ export default async function SearchPage({ searchParams }: Props) {
               </p>
               <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
                 <li>
-                  Grab the <strong className="font-medium">model number</strong> from the
-                  nameplate or sticker on the appliance, the air purifier, or the whole-house housing,
-                  or from the owner’s manual.
+                  Grab the <strong className="font-medium">refrigerator model number</strong> from the
+                  nameplate or sticker inside the fridge (often on a side wall or ceiling), or from
+                  the owner’s manual.
                 </li>
                 <li>
                   Read the <strong className="font-medium">OEM / part number</strong> printed on the
-                  filter body, end cap, or foil label on the cartridge you are replacing.
+                  water filter body, end cap, or foil label on the cartridge you are replacing.
                 </li>
                 <li>
                   Try a <strong className="font-medium">shorter</strong> chunk of the code, or the
@@ -353,25 +354,11 @@ export default async function SearchPage({ searchParams }: Props) {
               <p className="mt-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
                 Prefer to browse instead?{" "}
                 <Link href="/catalog" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
-                  Categories
+                  Refrigerator water catalog
                 </Link>
                 {" · "}
                 <Link href="/" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
                   Home
-                </Link>
-                {" · "}
-                <Link
-                  href="/air-purifier"
-                  className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
-                >
-                  Air purifier filters
-                </Link>
-                {" · "}
-                <Link
-                  href="/whole-house-water"
-                  className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
-                >
-                  Whole-house water
                 </Link>
                 .
               </p>

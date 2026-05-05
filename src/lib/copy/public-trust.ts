@@ -5,9 +5,9 @@
 
 import type { OemOrCompatible } from "@/lib/trust/part-trust";
 
-/** Homepage meta — homeowner-first; links framed by buy-link checks, not vague “verified”. */
+/** Homepage meta — homeowner-first; refrigerator water focus; buy-link checks, not vague “verified”. */
 export function homePageMetaDescription(siteDisplayName: string): string {
-  return `Search by model number or OEM part number on ${siteDisplayName}, compare what we list against our reference, then follow store links that pass BuckParts buy-link checks when we have them available.`;
+  return `Look up refrigerator water filters by fridge model or OEM cartridge on ${siteDisplayName}, compare what we list against our reference, then follow store links that pass BuckParts buy-link checks when we have them available.`;
 }
 
 /** About page meta description (aligned with homepage trust framing). */

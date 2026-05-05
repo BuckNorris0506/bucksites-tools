@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Catalog",
   description:
-    "Browse refrigerator water filters, room air purifiers, and whole-house water categories with active listings.",
+    "Browse refrigerator water filter models and OEM cartridges with active listings. Search is still the fastest path when you know a model or part number.",
 };
 
 export default async function CatalogPage() {
@@ -22,18 +22,18 @@ export default async function CatalogPage() {
     <div className="space-y-10">
       <header className="space-y-3">
         <h1 className="text-balance text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl">
-          Browse by category
+          Refrigerator water filters
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Open a category that currently has models or parts listed. Search is still the fastest
-          path when you know a model or OEM number.
+          This hub highlights refrigerator water filters with active listings. Search is still the
+          fastest path when you know a fridge model or OEM cartridge number.
         </p>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           <Link
             href="/search"
             className="text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
           >
-            Search launch catalogs
+            Search refrigerator and related reference
           </Link>
         </p>
       </header>
