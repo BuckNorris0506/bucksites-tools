@@ -143,6 +143,30 @@
       "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
       "can_agent_advance": false,
       "evidence_file": "amazon-8171413-live-outcome.2026-05-04.json"
+    },
+    {
+      "token": "EDR1RXD1",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link 32288a9b-4ff3-4424-86fa-99f716308ef5 live; ASIN B00UXG4WR8 OEM EveryDrop by Whirlpool single-pack per committed live outcome evidence.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-edr1rxd1-live-outcome.2026-05-05.json"
+    },
+    {
+      "token": "EDR2RXD1",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link 6f81b4ce-a3b0-4c09-b0d9-965aca5bfc17 live; ASIN B00VBP8QPO OEM EveryDrop by Whirlpool single-pack per committed live outcome evidence.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-edr2rxd1-live-outcome.2026-05-05.json"
+    },
+    {
+      "token": "UKF8001",
+      "status": "LIVE_OUTCOME_RECORDED",
+      "reason": "Approved Amazon retailer_link b1cc3087-935a-4890-8dfe-af6586c65997 live; ASIN B07C8C2VBH Amazon Basics compatible replacement per committed live outcome evidence.",
+      "next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+      "can_agent_advance": false,
+      "evidence_file": "amazon-ukf8001-live-outcome.2026-05-05.json"
     }
   ]
 }

@@ -1,0 +1,176 @@
+{
+  "report_name": "buckparts_amazon_edr1rxd1_live_outcome_v1",
+  "generated_at": "2026-05-05T01:20:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "EDR1RXD1",
+  "filter_slug": "edr1rxd1",
+  "filter_id": "81d1c570-24cc-4008-80db-ce21d05a0607",
+  "verdict": "LIVE_OUTCOME_RECORDED",
+  "mutation_ready": false,
+  "mutation_ready_basis": {
+    "precheck_filter_id": "81d1c570-24cc-4008-80db-ce21d05a0607",
+    "precheck_amazon_retailer_links_count": 0,
+    "precheck_approved_amazon_retailer_links_count": 0,
+    "precheck_live_direct_buyable_amazon_count": 0,
+    "precheck_notes": "Pre-insert backlog evidence in data/evidence/amazon-edr1rxd1-oem-pdp-evidence.2026-05-04.json (superseded); superseded by this live-outcome file after operator insert + read-only verification."
+  },
+  "final_amazon_cta_state_proven": true,
+  "insert_outcome": "COMMITTED_VERIFIED_READ_ONLY",
+  "insert_outcome_reason": "Operator insert completed; read-only postcheck on public.retailer_links id 32288a9b-4ff3-4424-86fa-99f716308ef5 matches expected amazon row, URLs, and browser_truth fields.",
+  "exact_token_proof": "Seller-controlled PDP title includes literal EDR1RXD1 (see superseded browser evidence export).",
+  "buyability_proof": "In Stock, Add to Cart, and Buy Now were visible in browser evidence prior to commit.",
+  "product_attribution": "oem_official",
+  "asin": "B00UXG4WR8",
+  "canonical_url": "https://www.amazon.com/dp/B00UXG4WR8",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+  "browser_evidence": {
+    "token_searched": "EDR1RXD1",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B00UXG4WR8",
+    "asin": "B00UXG4WR8",
+    "oem_or_aftermarket": "OEM / official EveryDrop by Whirlpool",
+    "browser_verdict": "PASS_OEM_DIRECT_BUYABLE"
+  },
+  "committed_live_row": {
+    "link_id": "32288a9b-4ff3-4424-86fa-99f716308ef5",
+    "filter_id": "81d1c570-24cc-4008-80db-ce21d05a0607",
+    "retailer_key": "amazon",
+    "retailer_slug": "amazon",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+    "destination_url": "https://www.amazon.com/dp/B00UXG4WR8",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE",
+    "browser_truth_notes": "OEM EveryDrop by Whirlpool single-pack for EDR1RXD1 (ASIN B00UXG4WR8); PDP title includes EDR1RXD1; evidence amazon-edr1rxd1-oem-pdp-evidence.2026-05-04.json (superseded). Live outcome: amazon-edr1rxd1-live-outcome.2026-05-05.json.",
+    "browser_truth_checked_at": "2026-05-05T01:12:08.975242+00:00",
+    "created_at": "2026-05-05T01:12:08.975242+00:00"
+  },
+  "post_insert_go_smoke_result": {
+    "go_url": "https://buckparts.com/go/32288a9b-4ff3-4424-86fa-99f716308ef5",
+    "click_events_row_verified_read_only": {
+      "id": "84682b5a-a34d-4a9c-8a1a-2a3b97a803a8",
+      "created_at": "2026-05-05T01:14:38.148564+00:00",
+      "retailer_link_id": null,
+      "filter_id": "81d1c570-24cc-4008-80db-ce21d05a0607",
+      "retailer_slug": "amazon",
+      "page_slug": "edr1rxd1",
+      "page_type": "refrigerator_filter",
+      "target_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20"
+    },
+    "notes": "Legacy fridge wedge click_events may omit retailer_link_id; row matched filter_id + retailer_slug amazon + target_url ASIN outbound after /go smoke."
+  },
+  "amazon_first_blocked_queue": {
+    "needs_amazon_search_count": 21,
+    "already_live_noop_count": 22,
+    "unknown_evidence_deferred_count": 2,
+    "token_EDR1RXD1_absent_from_top_candidates": true
+  },
+  "post_insert_amazon_queue": {
+    "generated_at": "2026-05-05T01:19:01.082Z",
+    "needs_amazon_search_count": 21,
+    "already_live_noop_count": 22,
+    "unknown_evidence_deferred_count": 2,
+    "top_candidate_tokens_head": [
+      "ADQ75795101",
+      "DA97-08006B",
+      "DA97-17376A",
+      "DA97-19467C",
+      "EDR3RXD1",
+      "EDR4RXD1",
+      "W10413645A",
+      "4396508",
+      "4396842",
+      "GSWF"
+    ],
+    "token_EDR1RXD1_absent_from_top_candidates": true
+  },
+  "post_insert_command_center": {
+    "command_center_generated_at": "2026-05-05T01:18:48.025Z",
+    "next_allowed_agent_token": "EDR3RXD1",
+    "fresh_search_top_tokens": [
+      "EDR3RXD1",
+      "EDR4RXD1",
+      "GSWF",
+      "W10413645A"
+    ],
+    "live_outcome_recorded_tokens": [
+      "4396710",
+      "4396841",
+      "46-9002",
+      "8171413",
+      "DA97-15217D",
+      "EDR1RXD1",
+      "EDR2RXD1",
+      "LT1000P",
+      "LT1000PC",
+      "LT600P",
+      "LT700P",
+      "LT800P",
+      "MDJ64844601",
+      "UKF8001"
+    ],
+    "token_EDR1RXD1_absent_from_fresh_search_top_tokens": true,
+    "click_visibility": {
+      "newest_click_at": "2026-05-05T01:14:38.148564+00:00",
+      "raw_last_7_days_clicks": 11,
+      "raw_last_30_days_clicks": 1854,
+      "human_likely_last_7_days_clicks": 11,
+      "human_likely_last_30_days_clicks": 219,
+      "click_freshness_status": "OK",
+      "commission_or_revenue": "NOT_CONNECTED"
+    }
+  },
+  "post_insert_command_surface": {
+    "command_surface_generated_at": "2026-05-05T01:19:01.959Z",
+    "safe_cta_links": 66,
+    "direct_buyable_links": 66,
+    "blocked_or_unsafe_links": 201,
+    "total_retailer_links": 267,
+    "retailer_counts_amazon": 63,
+    "retailer_link_state_distribution": {
+      "LIVE_DIRECT_BUYABLE": 66,
+      "BLOCKED_BROWSER_TRUTH_UNSAFE": 61,
+      "BLOCKED_SEARCH_OR_DISCOVERY": 139,
+      "BLOCKED_BROWSER_TRUTH_MISSING": 1
+    },
+    "system_health_status": "WARNING"
+  },
+  "post_insert_audit": {
+    "status": "PASS",
+    "blocking": false,
+    "failures": []
+  },
+  "metrics_delta_after_commit": {
+    "safe_cta_links": {
+      "before": "UNKNOWN",
+      "after": 66,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit safe_cta_links not co-attached to this evidence export; after value is post-insert command_surface read."
+    },
+    "direct_buyable_links": {
+      "before": "UNKNOWN",
+      "after": 66,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit direct_buyable_links not co-attached; after value is post-insert command_surface read."
+    },
+    "total_retailer_links": {
+      "before": "UNKNOWN",
+      "after": 267,
+      "delta": "UNKNOWN",
+      "unknown_reason": "Pre-commit total_retailer_links not co-attached; after value is post-insert command_surface read."
+    }
+  },
+  "required_next_action": "NO_AUTOMATED_AMAZON_RESCUE_FOR_THIS_TOKEN",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. DB insert was performed manually by operator outside this JSON; this file records read-only verification snapshots only.",
+    "Supersedes backlog file data/evidence/amazon-edr1rxd1-oem-pdp-evidence.2026-05-04.json (see superseded_by on that file).",
+    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime.",
+    "EDR1RXD1 does not appear in amazon-first-blocked-queue top_candidates head for the post-insert read (see amazon_first_blocked_queue.token_EDR1RXD1_absent_from_top_candidates)."
+  ]
+}

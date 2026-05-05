@@ -21,7 +21,8 @@
   "revenue_claim": "none",
   "commission_or_revenue": "NOT_CONNECTED",
   "notes": [
-    "Browser PDP proof exists, but BuckParts has no matching live filters.slug for this token at precheck time, so this is catalog-mapping backlog evidence, not a retailer_links insert plan."
+    "Browser PDP proof exists, but BuckParts has no matching live filters.slug for this token at precheck time, so this is catalog-mapping backlog evidence, not a retailer_links insert plan.",
+    "Superseded by committed live outcome: data/evidence/amazon-ukf8001-live-outcome.2026-05-05.json. Do not use this file as the active outcome; keep for audit trail only."
   ],
   "db_precheck_summary": {
     "filter_found": false,
@@ -45,5 +46,7 @@
     "buy_path_visible": "In Stock, Add to Cart, Buy Now",
     "price_visible_usd": 17.84,
     "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE"
-  }
+  },
+  "superseded_by_live_outcome_file": "data/evidence/amazon-ukf8001-live-outcome.2026-05-05.json",
+  "superseded_at": "2026-05-05T01:20:00.000Z"
 }
