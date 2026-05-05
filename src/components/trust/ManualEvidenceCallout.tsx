@@ -7,22 +7,28 @@ export function ManualEvidenceCallout({
 }: {
   evidence: PublicRefrigeratorManualEvidence;
 }) {
+  const hasMultiSource = evidence.sources.length > 1;
   return (
     <section className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/40">
       <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
         Model-specific manual evidence
       </h2>
       <p className="mt-1 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
-        Source:{" "}
-        <Link
-          href={evidence.source_url}
-          className="underline underline-offset-2"
-          rel="nofollow noopener noreferrer"
-          target="_blank"
-        >
-          {evidence.source_title}
-        </Link>
-        . {evidence.source_tier_label}.
+        {hasMultiSource ? "Sources" : "Source"}:{" "}
+        {evidence.sources.map((source, idx) => (
+          <span key={`${source.source_url}-${idx}`}>
+            {idx > 0 ? "; " : null}
+            <Link
+              href={source.source_url}
+              className="underline underline-offset-2"
+              rel="nofollow noopener noreferrer"
+              target="_blank"
+            >
+              {source.source_title}
+            </Link>
+          </span>
+        ))}
+        . Highest source tier: {evidence.source_tier_label}.
       </p>
       {evidence.filter_location_text ? (
         <div className="mt-3">

@@ -12,10 +12,11 @@ import type { RefrigeratorManualEvidenceRecord } from "@/lib/manuals/refrigerato
 
 const validRecord: RefrigeratorManualEvidenceRecord = {
   fridge_model_slug: "lg-lfxs26973s",
-  source_type: "third_party_manual_index",
-  source_url: "https://www.manualslib.fr/manual/361273/Lg-Lfxs26973-Serie.html?page=47#manual",
-  source_title: "LG LFXS26973 Series Owner's Manual (page 47, water filter replacement)",
-  source_host: "manualslib.fr",
+  source_type: "manufacturer_support",
+  source_url:
+    "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+  source_title: "LG Refrigerator - How to Install Your Refrigerator Water Filter",
+  source_host: "www.lg.com",
   evidence_date: "2026-05-05",
   filter_location_text: "Lower or remove the top-left shelf, then open the filter cover.",
   replacement_steps_summary: "Pull down, rotate counterclockwise, replace, rotate clockwise, close cover.",
@@ -25,6 +26,26 @@ const validRecord: RefrigeratorManualEvidenceRecord = {
   operator_reviewed: true,
   notes: "test fixture",
   copied_image_allowed: false,
+  sources: [
+    {
+      source_type: "manufacturer_support",
+      source_url:
+        "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+      source_title: "LG support article",
+      source_host: "www.lg.com",
+      evidence_role: "replacement_process_guidance",
+      source_tier: 1,
+    },
+    {
+      source_type: "manufacturer_support",
+      source_url:
+        "https://www.lg.com/us/support/products/documents/LFXS26973-Spec-Sheet.pdf",
+      source_title: "LG spec sheet",
+      source_host: "www.lg.com",
+      evidence_role: "filter_specification",
+      source_tier: 1,
+    },
+  ],
 };
 
 function renderFromRecord(record: Partial<RefrigeratorManualEvidenceRecord>): string {
@@ -41,11 +62,13 @@ describe("ManualEvidenceCallout", () => {
   it("renders for a public-ready record", () => {
     const html = renderFromRecord(validRecord);
     assert.ok(html.includes("Model-specific manual evidence"));
+    assert.ok(html.includes("Sources:"));
     assert.ok(html.includes("Where to look for this model"));
     assert.ok(html.includes("Replacement summary from source"));
     assert.ok(html.includes("Cautions from source"));
-    assert.ok(html.includes("Tier 3"));
-    assert.ok(html.includes("manualslib.fr"));
+    assert.ok(html.includes("Tier 1"));
+    assert.ok(html.includes("LG support article"));
+    assert.ok(!html.toLowerCase().includes("official owner manual"));
   });
 
   it("does not render for an invalid record", () => {

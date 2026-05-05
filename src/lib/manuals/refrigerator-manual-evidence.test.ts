@@ -103,4 +103,57 @@ describe("refrigerator-manual-evidence", () => {
     });
     assert.equal(r.ok, true);
   });
+
+  it("accepts multi-source Tier 1 when displayed text is supported by Tier 1 replacement/reset roles", () => {
+    const r = validateRefrigeratorManualEvidencePublicReady({
+      ...baseValid,
+      source_type: "manufacturer_support",
+      source_url: "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+      source_title: "LG water filter install article",
+      source_host: "www.lg.com",
+      sources: [
+        {
+          source_type: "manufacturer_support",
+          source_url:
+            "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+          source_title: "LG water filter install article",
+          source_host: "www.lg.com",
+          evidence_role: "replacement_process_guidance",
+          source_tier: 1,
+        },
+        {
+          source_type: "manufacturer_support",
+          source_url:
+            "https://www.lg.com/us/support/help-library/lg-refrigerator-french-door-control-overview--1366835051244",
+          source_title: "LG control overview",
+          source_host: "www.lg.com",
+          evidence_role: "control_overview_reset_guidance",
+          source_tier: 1,
+        },
+      ],
+    });
+    assert.equal(r.ok, true);
+  });
+
+  it("rejects multi-source when Tier 1 support does not cover displayed location/steps text", () => {
+    const r = validateRefrigeratorManualEvidencePublicReady({
+      ...baseValid,
+      source_type: "official_parts_site",
+      source_url: "https://example.com/parts",
+      source_title: "Parts page",
+      source_host: "example.com",
+      sources: [
+        {
+          source_type: "official_parts_site",
+          source_url: "https://example.com/parts",
+          source_title: "Parts page",
+          source_host: "example.com",
+          evidence_role: "filter_specification",
+          source_tier: 2,
+        },
+      ],
+    });
+    assert.equal(r.ok, false);
+    assert.ok(r.errors.some((e) => e.includes("Tier 1 replacement/video")));
+  });
 });

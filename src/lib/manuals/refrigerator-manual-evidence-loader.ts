@@ -6,12 +6,14 @@ import {
   manualSourcePublicTier,
   type ManualSourcePublicTier,
   type RefrigeratorManualEvidenceRecord,
+  type RefrigeratorManualEvidenceSource,
   validateRefrigeratorManualEvidencePublicReady,
 } from "@/lib/manuals/refrigerator-manual-evidence";
 
 export type PublicRefrigeratorManualEvidence = RefrigeratorManualEvidenceRecord & {
-  source_tier: ManualSourcePublicTier;
-  source_tier_label: string;
+  source_tier: ManualSourcePublicTier; // highest source tier in the bundle
+  source_tier_label: string; // label for highest source tier
+  sources: RefrigeratorManualEvidenceSource[];
 };
 
 function manualEvidenceDirPath(): string {
@@ -27,11 +29,25 @@ export function toPublicRefrigeratorManualEvidence(
 ): PublicRefrigeratorManualEvidence | null {
   const readiness = validateRefrigeratorManualEvidencePublicReady(record);
   if (!readiness.ok) return null;
-  const sourceType = record.source_type;
-  if (!sourceType) return null;
-  const sourceTier = manualSourcePublicTier(sourceType);
+  const sources: RefrigeratorManualEvidenceSource[] =
+    Array.isArray(record.sources) && record.sources.length > 0
+      ? record.sources
+      : [
+          {
+            source_type: record.source_type!,
+            source_url: record.source_url!,
+            source_title: record.source_title!,
+            source_host: record.source_host!,
+            evidence_role: "replacement_process_guidance",
+            source_tier: manualSourcePublicTier(record.source_type!),
+          },
+        ];
+  const sourceTier = Math.min(
+    ...sources.map((s) => manualSourcePublicTier(s.source_type)),
+  ) as ManualSourcePublicTier;
   return {
     ...(record as RefrigeratorManualEvidenceRecord),
+    sources,
     source_tier: sourceTier,
     source_tier_label: MANUAL_SOURCE_TIER_LABELS[sourceTier],
   };

@@ -1,16 +1,66 @@
 {
   "fridge_model_slug": "lg-lfxs26973s",
-  "source_type": "third_party_manual_index",
-  "source_url": "https://www.manualslib.fr/manual/361273/Lg-Lfxs26973-Serie.html?page=47#manual",
-  "source_title": "LG LFXS26973 Series Owner's Manual (page 47, water filter replacement)",
-  "source_host": "manualslib.fr",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+  "source_title": "LG Refrigerator - How to Install Your Refrigerator Water Filter",
+  "source_host": "www.lg.com",
   "evidence_date": "2026-05-05",
-  "filter_location_text": "The manual says to lower or remove the top-left shelf so the water filter can rotate down, and to open the water-filter cover by pinching the sides.",
-  "replacement_steps_summary": "Open the filter cover, pull the old filter down, turn counterclockwise, remove it, insert the new filter with tabs horizontal, turn clockwise to lock, then close the cover until it clicks.",
-  "cautions": "The manual notes a small amount of water may drain during replacement, and recommends flushing about 2.5 gallons in short on/off cycles after installing a new filter.",
+  "filter_location_text": "LG support guidance says the filter housing is in the back-left area of the refrigerator interior. Remove obstacles such as the top-left shelf when needed so the housing can move fully.",
+  "replacement_steps_summary": "LG support guidance describes opening the filter housing, pulling the filter down to remove it, then inserting and seating the replacement filter before closing the housing.",
+  "cautions": "LG support guidance notes a small amount of water can drain during replacement and recommends flushing about 2.5 gallons after installation. LG control guidance says to hold the Water Filter button for 3 seconds to reset the indicator.",
   "confidence": "medium",
   "extracted_by": "cursor-agent-1-source-discovery-2026-05-05",
   "operator_reviewed": true,
-  "notes": "Tier 3 source: third-party manual index. Upgrade to Tier 1 when an official LG manual/support URL with equivalent text is available.",
-  "copied_image_allowed": false
+  "notes": "Tier 1 bundle based on official LG support/help resources. ManualsLib retained as lower-tier reference only.",
+  "copied_image_allowed": false,
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/product/lg-LFXS26973S.ASTCNA0",
+      "source_title": "LG LFXS26973S.ASTCNA0 product support page",
+      "source_host": "www.lg.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+      "source_title": "LG Refrigerator - How to Install Your Refrigerator Water Filter",
+      "source_host": "www.lg.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/video-tutorials/how-to-replace-the-lg-refrigerator-water-filter--20152227262351",
+      "source_title": "LG video tutorial - How to Replace the LG Refrigerator Water Filter",
+      "source_host": "www.lg.com",
+      "evidence_role": "video_tutorial",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-french-door-control-overview--1366835051244",
+      "source_title": "LG Refrigerator - French Door Control Overview",
+      "source_host": "www.lg.com",
+      "evidence_role": "control_overview_reset_guidance",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/products/documents/LFXS26973-Spec-Sheet.pdf",
+      "source_title": "LG LFXS26973 spec sheet (Water Filter LT1000P)",
+      "source_host": "www.lg.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "third_party_manual_index",
+      "source_url": "https://www.manualslib.fr/manual/361273/Lg-Lfxs26973-Serie.html?page=47#manual",
+      "source_title": "ManualsLib mirror page for LFXS26973 water filter section",
+      "source_host": "manualslib.fr",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 3
+    }
+  ]
 }
