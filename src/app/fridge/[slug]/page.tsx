@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
-import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import { Prose } from "@/components/Prose";
 import { getFridgeBySlug } from "@/lib/data/fridges";
+import { getFridgeModelReviewOverride } from "@/lib/fridge/fridge-model-review-overrides";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
-import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
-import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: { slug: string } };
-
-/** Softer suppress copy aligned with `/filter/[slug]` — avoids alarming homeowners when gates apply. */
-const FRIDGE_MODEL_FILTER_BUY_SUPPRESS =
-  "Compare your old filter or manual first — we're not showing a store button on this page yet.";
 
 function intervalLabel(months: number | null | undefined): string | null {
   if (months == null || months <= 0) return null;
@@ -63,7 +58,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FridgePage({ params }: Props) {
   const fridge = await getFridgeBySlug(params.slug);
   if (!fridge) notFound();
-  const manualEvidence = await loadRefrigeratorManualEvidenceForModel(params.slug);
+  const reviewOverride = getFridgeModelReviewOverride(params.slug);
+  const manualEvidence = reviewOverride
+    ? null
+    : await loadRefrigeratorManualEvidenceForModel(params.slug);
 
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
   const intervalHint =
@@ -76,7 +74,7 @@ export default async function FridgePage({ params }: Props) {
         brandName={fridge.brand.name}
         brandSlug={fridge.brand.slug}
         modelNumber={fridge.model_number}
-        mappedFilterCount={fridge.filters.length}
+        mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}
         replacementIntervalHint={intervalHint}
       />
 
@@ -97,77 +95,10 @@ export default async function FridgePage({ params }: Props) {
         </Link>
       </p>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Compatible filters
-        </h2>
-        {fridge.filters.length === 0 ? (
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            No compatible filters mapped yet in the database.
-          </p>
-        ) : (
-          <ul className="space-y-6">
-            {fridge.filters.map((f) => {
-              const fInterval = intervalLabel(f.replacement_interval_months);
-              const buyPathSortContext = buyPathSortContextForFilter(
-                f.slug,
-                f.name,
-                f.oem_part_number,
-              );
-              const trustSummary = buildPartPageTrust({
-                modelsCount: f.compatible_fridge_model_count,
-                retailerLinks: f.retailer_links,
-                oemPartNumber: f.oem_part_number,
-                alsoKnownAs: f.also_known_as,
-                notes: f.notes,
-                buyPathSortContext,
-              });
-              return (
-                <li
-                  key={f.id}
-                  className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
-                >
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <Link
-                      href={`/filter/${f.slug}`}
-                      className="font-mono text-base font-medium text-neutral-900 dark:text-neutral-100"
-                    >
-                      {f.oem_part_number}
-                    </Link>
-                    {f.name && (
-                      <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                        {f.name}
-                      </span>
-                    )}
-                  </div>
-                  {fInterval && (
-                    <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
-                      Replacement interval: {fInterval}
-                    </p>
-                  )}
-                  <div className="mt-2">
-                    <Prose>{f.notes}</Prose>
-                  </div>
-                  <div className="mt-4 border-t border-neutral-100 pt-4 dark:border-neutral-800">
-                    <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500">
-                      Where to buy
-                    </p>
-                    <TrustAwareBuySection
-                      trust={trustSummary}
-                      links={f.retailer_links}
-                      goBase="/go"
-                      primaryCtaLabel="Buy this part at"
-                      suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
-                      gateSuppressionSummary={f.buy_path_gate_suppression}
-                      buyPathSortContext={buyPathSortContext}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <FridgeModelFilterSection
+        filters={fridge.filters}
+        quarantineMessage={reviewOverride?.public_message ?? null}
+      />
 
       {fridge.reset_instructions.length > 0 && (
         <section className="space-y-3">

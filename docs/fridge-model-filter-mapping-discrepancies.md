@@ -59,6 +59,7 @@
 - Do not create manual evidence for `lg-lrfxs3106s` until this mapping discrepancy is reconciled.
 - Do not promote model-specific buy guidance for `lg-lrfxs3106s` until mapping is reconciled.
 - Do not change repo or DB mappings in this task.
+- Option C quarantine implementation status: active on `/fridge/lg-lrfxs3106s` (generic homeowner guidance shown, store buttons suppressed pending reconciliation).
 
 ### Final Owner Adjudication Packet
 
