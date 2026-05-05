@@ -157,6 +157,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const { report } = loaded;
   const v2: CommandCenterV2Report = report.command_center_v2;
   const health = report.system_health_summary;
+  const quarantine = report.owner_quarantined_fridge_models;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -552,6 +553,66 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
             <p className="text-xs text-slate-600 dark:text-slate-400">{v2.deploy_live_site_status.blocker}</p>
           ) : null}
           <FieldBlock label="Next owner action" value={v2.deploy_live_site_status.next_owner_action} />
+        </LaneCard>
+
+        <LaneCard title="11 · Quarantined fridge models" subtitle="Owner-only review queue (read-only)">
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill status={quarantine.models.length > 0 ? "ATTENTION" : "OK"} />
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              data_mutation: {String(quarantine.data_mutation)}
+            </span>
+          </div>
+          {quarantine.models.length === 0 ? (
+            <p className="text-xs text-slate-600 dark:text-slate-400">No quarantined fridge models.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+              <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+                <thead className="bg-slate-50 dark:bg-slate-900/60">
+                  <tr>
+                    {[
+                      "slug",
+                      "reason",
+                      "public_status",
+                      "mapped_filters",
+                      "safe_ctas",
+                      "owner_action_required",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {quarantine.models.map((m) => (
+                    <tr key={m.fridge_model_slug} className="bg-white dark:bg-slate-950">
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
+                        {m.fridge_model_slug}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.reason}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.public_status}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.mapped_filter_count}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.safe_cta_count}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                        {String(m.owner_action_required)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <FieldBlock
+            label="Evidence doc"
+            value={
+              quarantine.models.length > 0
+                ? quarantine.models.map((m) => m.internal_evidence_doc).join(", ")
+                : "UNKNOWN"
+            }
+          />
         </LaneCard>
 
         <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">

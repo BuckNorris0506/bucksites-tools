@@ -20,6 +20,10 @@ const REVIEW_OVERRIDES: Record<string, FridgeModelReviewOverride> = {
   },
 };
 
+export function listFridgeModelReviewOverrides(): FridgeModelReviewOverride[] {
+  return Object.values(REVIEW_OVERRIDES);
+}
+
 export function getFridgeModelReviewOverride(
   fridgeModelSlug: string,
 ): FridgeModelReviewOverride | null {
