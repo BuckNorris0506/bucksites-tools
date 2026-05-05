@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
 
 import {
@@ -102,6 +103,18 @@ describe("refrigerator-manual-evidence", () => {
       replacement_steps_summary: "Follow housing instructions.",
     });
     assert.equal(r.ok, true);
+  });
+
+  it("fixture for lg-lfxs26973s validates as public-ready multi-source Tier 1 bundle", async () => {
+    const raw = await readFile(
+      "data/manual-evidence/refrigerator/lg-lfxs26973s.json",
+      "utf8",
+    );
+    const record = JSON.parse(raw) as RefrigeratorManualEvidenceRecord;
+    const r = validateRefrigeratorManualEvidencePublicReady(record);
+    assert.equal(r.ok, true, `expected fixture to be public-ready, got errors: ${r.errors.join(
+      "; ",
+    )}`);
   });
 
   it("accepts multi-source Tier 1 when displayed text is supported by Tier 1 replacement/reset roles", () => {

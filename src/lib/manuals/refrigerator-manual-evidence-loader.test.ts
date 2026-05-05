@@ -59,10 +59,11 @@ describe("refrigerator-manual-evidence-loader", () => {
     assert.equal(out.fridge_model_slug, "lg-lfxs26973s");
     assert.equal(out.source_tier, 1);
     assert.ok(out.sources.some((s) => s.source_host === "www.lg.com"));
+    assert.ok(out.sources.some((s) => s.source_host === "manualslib.fr"));
   });
 
-  it("returns null for missing fixture", async () => {
-    const out = await loadRefrigeratorManualEvidenceForModel("no-such-model");
+  it("returns null for a fridge model without manual evidence fixture", async () => {
+    const out = await loadRefrigeratorManualEvidenceForModel("lg-lrfxs3106s");
     assert.equal(out, null);
   });
 });
