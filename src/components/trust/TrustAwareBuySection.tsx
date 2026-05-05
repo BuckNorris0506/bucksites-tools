@@ -1,5 +1,11 @@
+import React from "react";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import {
+  buyPathGateHintMissingBrowserTruth,
+  buyPathGateHintSearchPlaceholder,
+  buyPathGateHintUnsafeBrowserTruth,
+} from "@/lib/copy/public-trust";
 import type {
   BuyPathGateSuppressionSummary,
   BuyPathSortContext,
@@ -17,17 +23,13 @@ function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSup
   }
   const bullets: string[] = [];
   if (hadSearchPlaceholderRows) {
-    bullets.push(
-      "Some on-file retailer targets are manufacturer search or other discovery URLs, not verified checkout deep links — those stay hidden.",
-    );
+    bullets.push(buyPathGateHintSearchPlaceholder());
   }
   if (hadMissingBrowserTruthRows) {
-    bullets.push(
-      "Some on-file retailer targets have not completed live-link verification yet.",
-    );
+    bullets.push(buyPathGateHintMissingBrowserTruth());
   }
   if (hadUnsafeBrowserTruthRows) {
-    bullets.push("Some on-file retailer targets failed live safety checks for now.");
+    bullets.push(buyPathGateHintUnsafeBrowserTruth());
   }
   return (
     <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-amber-900/95 dark:text-amber-100/95">

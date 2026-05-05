@@ -106,6 +106,10 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
       "fridge filter page must import @/lib/data/filters",
     );
     assert.ok(src.includes('goBase="/go"'), "fridge filter TieredBuyLinks must use goBase=\"/go\"");
+    assert.ok(
+      src.includes("<VisualReplacementMatchCard"),
+      "expected VisualReplacementMatchCard on refrigerator filter PDP",
+    );
     assertNoForeignVerticalDataModules(src, "");
     assert.ok(!src.includes("@/lib/data/fridges"), "filter hub page must not load fridge models here");
   });
@@ -119,7 +123,10 @@ describe("money-page CTA composition (wedge data vs /go hop)", () => {
       "fridge model page must import @/lib/data/fridges",
     );
     assert.ok(src.includes("<TrustAwareBuySection"), "expected TrustAwareBuySection for per-filter CTAs");
-    assert.ok(src.includes("<PartTruthPanel"), "expected PartTruthPanel for per-filter trust");
+    assert.ok(
+      src.includes("<VisualReplacementMatchCard"),
+      "expected VisualReplacementMatchCard for refrigerator model hub recognition",
+    );
     assert.ok(src.includes('goBase="/go"'), "fridge model hub must use legacy /go hop");
     assert.ok(
       !src.includes('goBase="/air-purifier/go"') &&

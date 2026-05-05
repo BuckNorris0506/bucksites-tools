@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import { Prose } from "@/components/Prose";
-import { FILTER_PAGE_FIT_CONFIRMATION } from "@/lib/copy/vertical-fit";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
@@ -15,9 +14,9 @@ export const dynamic = "force-dynamic";
 
 type Props = { params: { slug: string } };
 
-/** Same suppress copy as `/filter/[slug]` TrustAwareBuySection — keep refrigerator-water part hub parity. */
+/** Softer suppress copy aligned with `/filter/[slug]` — avoids alarming homeowners when gates apply. */
 const FRIDGE_MODEL_FILTER_BUY_SUPPRESS =
-  "BuckParts does not have enough proof to show a buy button for this refrigerator filter yet. Verify the OEM number against the old part or your manual first.";
+  "Compare your old filter or manual first — we're not showing a store button on this page yet.";
 
 function intervalLabel(months: number | null | undefined): string | null {
   if (months == null || months <= 0) return null;
@@ -64,34 +63,34 @@ export default async function FridgePage({ params }: Props) {
   if (!fridge) notFound();
 
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
+  const intervalHint =
+    fridgeInterval != null ? `Suggested replacement timing: ${fridgeInterval}` : undefined;
 
   return (
     <article className="space-y-8">
-      <header className="space-y-2">
-        <p className="text-sm text-neutral-500">
-          <Link
-            href={`/brand/${fridge.brand.slug}`}
-            className="hover:text-neutral-700 dark:hover:text-neutral-300"
-          >
-            {fridge.brand.name}
-          </Link>
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-          {fridge.model_number}
-        </h1>
-        {fridgeInterval && (
-          <p className="text-sm text-neutral-700 dark:text-neutral-300">
-            Suggested replacement: {fridgeInterval}
-          </p>
-        )}
-        <Prose>{fridge.notes}</Prose>
+      <VisualReplacementMatchCard
+        variant="fridge_model"
+        brandName={fridge.brand.name}
+        brandSlug={fridge.brand.slug}
+        modelNumber={fridge.model_number}
+        mappedFilterCount={fridge.filters.length}
+        replacementIntervalHint={intervalHint}
+      />
+
+      {fridge.notes ? (
+        <div className="max-w-prose text-sm">
+          <Prose>{fridge.notes}</Prose>
+        </div>
+      ) : null}
+
+      <p className="text-sm">
         <Link
           href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
-          className="inline-block text-sm font-medium text-neutral-900 underline dark:text-neutral-100"
+          className="font-medium text-neutral-900 underline dark:text-neutral-100"
         >
           Reset water filter indicator →
         </Link>
-      </header>
+      </p>
 
       <section className="space-y-4">
         <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
@@ -110,10 +109,6 @@ export default async function FridgePage({ params }: Props) {
                 f.name,
                 f.oem_part_number,
               );
-              /**
-               * `modelsCount` = distinct fridge models repo-mapped to this filter (see `compatible_fridge_model_count`),
-               * not “only this PDP’s fridge”. Matches `/filter/[slug]` so `buildPartPageTrust` evidence lines stay aligned.
-               */
               const trustSummary = buildPartPageTrust({
                 modelsCount: f.compatible_fridge_model_count,
                 retailerLinks: f.retailer_links,
@@ -147,16 +142,6 @@ export default async function FridgePage({ params }: Props) {
                   )}
                   <div className="mt-2">
                     <Prose>{f.notes}</Prose>
-                  </div>
-                  <p className="mt-3 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm leading-relaxed text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
-                    {FILTER_PAGE_FIT_CONFIRMATION}
-                  </p>
-                  <div className="mt-4">
-                    <PartTruthPanel
-                      trust={trustSummary}
-                      compatibleModelCount={f.compatible_fridge_model_count}
-                      hasNotes={Boolean(f.notes)}
-                    />
                   </div>
                   <div className="mt-4 border-t border-neutral-100 pt-4 dark:border-neutral-800">
                     <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500">

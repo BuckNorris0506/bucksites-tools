@@ -14,6 +14,8 @@ export type BuyLinkRow = {
   /** Present on DB-backed rows; required for Phase 1 buy-path gating in TieredBuyLinks. */
   browser_truth_classification?: string | null;
   browser_truth_buyable_subtype?: string | null;
+  /** When set on the primary gated row, TieredBuyLinks may show a buy-link check date footnote. */
+  browser_truth_checked_at?: string | null;
 };
 
 /**

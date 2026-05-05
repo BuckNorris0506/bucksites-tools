@@ -1,4 +1,6 @@
+import React from "react";
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { primaryStoreLinkBuyCheckFootnote } from "@/lib/copy/public-trust";
 import {
   buyLinkGateFailureKind,
   filterRealBuyRetailerLinks,
@@ -38,7 +40,7 @@ export function TieredBuyLinks({
   goBase?: string;
   /** Screen-reader + button prefix; store name is appended. */
   primaryCtaLabel?: string;
-  /** When set (e.g. from `buyPathSortContextForFilter`), Amazon may rank first among ties after gating. */
+  /** When set (e.g. from `buyPathSortContextForFilter`), exact-OEM context can affect tie-break among gated links. */
   buyPathSortContext?: BuyPathSortContext;
 }) {
   const base = goBase.replace(/\/$/, "");
@@ -62,6 +64,10 @@ export function TieredBuyLinks({
   const showMultipackFallbackCopy = shouldShowMultipackFallbackCopy(sorted);
 
   const primaryName = primary.retailer_name?.trim() || "Recommended store";
+  const primaryCheckNote =
+    primary.browser_truth_checked_at != null && String(primary.browser_truth_checked_at).trim() !== ""
+      ? primaryStoreLinkBuyCheckFootnote(String(primary.browser_truth_checked_at))
+      : null;
 
   return (
     <div className="space-y-3">
@@ -80,6 +86,11 @@ export function TieredBuyLinks({
             →
           </span>
         </a>
+        {primaryCheckNote ? (
+          <p className="mt-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+            {primaryCheckNote}
+          </p>
+        ) : null}
       </div>
 
       {alternates.length > 0 && (
@@ -118,7 +129,8 @@ export function TieredBuyLinks({
             Manufacturer catalog lookup
           </p>
           <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            Not a verified checkout deep link — opens the OEM site directly (not a BuckParts /go hop).
+            Not a BuckParts buy-link–checked checkout deep link — opens the OEM site directly (not a
+            BuckParts /go hop).
           </p>
           <a
             href={oemCatalogFootnote.affiliate_url}

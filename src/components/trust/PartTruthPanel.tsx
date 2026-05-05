@@ -1,3 +1,8 @@
+import React from "react";
+import {
+  buyPathStoreLinksBullet,
+  partIdentityPillLabel,
+} from "@/lib/copy/public-trust";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function IconBullet() {
@@ -41,9 +46,15 @@ export function PartTruthPanel({
           {fitConfidenceLabel(trust.match_confidence)}
         </span>
         <span className="inline-flex rounded-full bg-neutral-900 px-2.5 py-1 text-xs font-semibold text-white dark:bg-neutral-100 dark:text-neutral-900">
-          OEM part
+          {partIdentityPillLabel(trust.oem_or_compatible)}
         </span>
       </div>
+
+      {trust.replacement_reasoning_summary.trim() ? (
+        <p className="mt-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+          {trust.replacement_reasoning_summary}
+        </p>
+      ) : null}
 
       <div className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900/50">
         <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
@@ -64,9 +75,7 @@ export function PartTruthPanel({
           <li className="flex items-start gap-2">
             <IconBullet />
             <span>
-              {trust.buyer_path_state === "suppress_buy"
-                ? "Retail links not verified yet"
-                : "Retail links passed buy-link checks"}
+              {buyPathStoreLinksBullet(trust.buyer_path_state === "suppress_buy")}
             </span>
           </li>
         </ul>

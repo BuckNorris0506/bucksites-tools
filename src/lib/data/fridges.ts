@@ -19,6 +19,7 @@ export type FridgeDetail = FridgeModel & {
 
 /** One mapped filter on a fridge model PDP — trust fields align with `getFilterBySlug` / `/filter/[slug]`. */
 export type FridgeMappedFilterRow = Filter & {
+  retailer_links_raw_count: number;
   retailer_links: RetailerLink[];
   also_known_as: string[];
   buy_path_gate_suppression: BuyPathGateSuppressionSummary;
@@ -143,6 +144,7 @@ export async function getFridgeBySlug(slug: string): Promise<FridgeWithFilters |
     const also_known_as = uniqueFilterAliasesForPdp(rawAliases, f.oem_part_number ?? "");
     return {
       ...f,
+      retailer_links_raw_count: raw.length,
       retailer_links: filterRealBuyRetailerLinks(raw),
       buy_path_gate_suppression: summarizeBuyPathGateSuppression(raw),
       also_known_as,

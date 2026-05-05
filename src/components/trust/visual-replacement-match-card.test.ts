@@ -1,0 +1,127 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+
+import {
+  deriveFridgeFilterStorePlainStatus,
+  VisualReplacementMatchCard,
+} from "@/components/trust/VisualReplacementMatchCard";
+
+function forbidHomeownerJargon(html: string) {
+  const banned = [
+    /\bPDP\b/i,
+    /\bbrowser truth\b/i,
+    /\bdirect_buyable\b/i,
+    /\bcanonical\s+slug\b/i,
+    /\btoken\b/i,
+  ];
+  for (const rx of banned) {
+    assert.ok(!rx.test(html), `unexpected jargon matching ${rx}: ${html.slice(0, 240)}`);
+  }
+}
+
+function forbidUnsupportedHealthOrGuarantee(html: string) {
+  const banned = [
+    /removes\s+all\s+contaminants/i,
+    /\bguaranteed\s+fit\b/i,
+    /\b100%\s*(pure|safe)\b/i,
+    /\bcures\b/i,
+    /\bprevents\s+cancer\b/i,
+  ];
+  for (const rx of banned) {
+    assert.ok(!rx.test(html), `unsupported claim matching ${rx}`);
+  }
+}
+
+describe("VisualReplacementMatchCard", () => {
+  it("fridge_filter renders aliases and checklist without jargon", () => {
+    const html = renderToStaticMarkup(
+      createElement(VisualReplacementMatchCard, {
+        variant: "fridge_filter",
+        brandName: "Example Appliance Co.",
+        brandSlug: "example",
+        oemPartNumber: "EDR1RXD1",
+        productName: "Example cartridge name",
+        aliases: ["FILTER-A", "FILTER-B"],
+        intervalLabel: "About every 6 months",
+        compatibleModelCount: 12,
+        storePlainStatus: "options_after_checks",
+      }),
+    );
+    assert.ok(html.includes("We found this filter"));
+    assert.ok(html.includes("EDR1RXD1"));
+    assert.ok(html.includes("FILTER-A"));
+    assert.ok(html.includes("Where to look"));
+    assert.ok(html.includes("How replacement usually works"));
+    assert.ok(html.includes("Why replacement matters"));
+    assert.ok(html.includes("What to compare before buying"));
+    assert.ok(html.includes("Compare the OEM or part number"));
+    assert.ok(
+      html.includes("owner’s manual is the best guide") ||
+        html.includes("owner's manual is the best guide"),
+    );
+    assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
+    assert.ok(html.includes("near the lower grille"));
+    assert.ok(html.includes("Do not force it."));
+    assert.ok(!html.includes("Match the number on your current filter"));
+    forbidHomeownerJargon(html);
+    forbidUnsupportedHealthOrGuarantee(html);
+  });
+
+  it("fridge_model renders brand and compare-before-order copy without jargon", () => {
+    const html = renderToStaticMarkup(
+      createElement(VisualReplacementMatchCard, {
+        variant: "fridge_model",
+        brandName: "Example Appliance Co.",
+        brandSlug: "example",
+        modelNumber: "WRS325SDHZ",
+        mappedFilterCount: 2,
+        replacementIntervalHint: "Suggested replacement timing: About every 6 months",
+      }),
+    );
+    assert.ok(html.includes("We found this refrigerator model"));
+    assert.ok(html.includes("WRS325SDHZ"));
+    assert.ok(html.includes("compatible filters"));
+    assert.ok(html.includes("Where to look"));
+    assert.ok(html.includes("How replacement usually works"));
+    assert.ok(html.includes("Why replacement matters"));
+    assert.ok(html.includes("What to compare before buying"));
+    assert.ok(
+      html.includes("owner’s manual is the best guide") ||
+        html.includes("owner's manual is the best guide"),
+    );
+    assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
+    assert.ok(html.includes("Do not force it."));
+    assert.ok(!html.includes("Match the number on your current filter"));
+    forbidHomeownerJargon(html);
+    forbidUnsupportedHealthOrGuarantee(html);
+  });
+
+  it("deriveFridgeFilterStorePlainStatus matches gated/raw/button visibility", () => {
+    assert.equal(
+      deriveFridgeFilterStorePlainStatus({
+        gatedLinkCount: 2,
+        rawLinkCount: 3,
+        buyerPathShowsStoreButtons: true,
+      }),
+      "options_after_checks",
+    );
+    assert.equal(
+      deriveFridgeFilterStorePlainStatus({
+        gatedLinkCount: 0,
+        rawLinkCount: 2,
+        buyerPathShowsStoreButtons: false,
+      }),
+      "buttons_hidden_pending_checks",
+    );
+    assert.equal(
+      deriveFridgeFilterStorePlainStatus({
+        gatedLinkCount: 0,
+        rawLinkCount: 0,
+        buyerPathShowsStoreButtons: false,
+      }),
+      "none_yet",
+    );
+  });
+});

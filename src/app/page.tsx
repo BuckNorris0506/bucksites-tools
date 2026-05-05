@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SearchForm } from "@/components/SearchForm";
 import { listBrowseFilters } from "@/lib/catalog/browse";
+import { homePageMetaDescription } from "@/lib/copy/public-trust";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 const homeMetaTitle = `Replacement filters lookup · ${SITE_DISPLAY_NAME}`;
-const homeMetaDescription = `Search by model number or OEM part number on ${SITE_DISPLAY_NAME}, compare what we list against our reference, then open verified store links when we have them available.`;
+const homeMetaDescription = homePageMetaDescription(SITE_DISPLAY_NAME);
 
 export const metadata: Metadata = {
   title: homeMetaTitle,

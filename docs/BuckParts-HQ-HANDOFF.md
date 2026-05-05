@@ -46,6 +46,32 @@
 
 ---
 
+## 1C) Fridge flagship product doctrine
+
+**Proven in repo (policy + implementation direction):** refrigerator water is the **flagship wedge**. **Do not deploy** until the fridge homeowner experience is **pristine**. Other verticals must **not** be promoted publicly at **equal priority** until they match the **fridge trust standard** (see also `docs/fridge-flagship-wedge-exposure.md` — exposure audit; broad hide/noindex is a **future**, explicitly approved change).
+
+**Positioning:** BuckParts is **not** a parts catalog page or an affiliate site. It is a **trusted replacement-part decision engine** for homeowners.
+
+**Job to be done:** Help me **finish this replacement** without **buying the wrong part** or **damaging my appliance**.
+
+**Fridge flagship pages must answer (evidence-gated where model-specific):**
+
+1. What did BuckParts find?
+2. Where should I look for the filter? *(generic guidance + defer to owner’s manual unless **manual evidence** supports model-specific location)*
+3. How does replacement usually work? *(generic unless evidence-backed)*
+4. Why does replacement matter?
+5. What number should I compare? *(OEM / part / model — via checklist and match copy, not operator jargon)*
+6. What is safe to buy, if anything? *(store links **secondary**; only when buy-link gates pass — BuckParts must stay useful with **zero** buy links)*
+7. What source supports model-specific instructions, when available? *(future: **manual evidence** as trust moat; no manufacturer photos or copied manual diagrams)*
+
+**Trust rules:**
+
+- **Manual evidence** (contract: `src/lib/manuals/refrigerator-manual-evidence.ts`) is the path to **model-specific** install/location claims. Until a record is **public-ready** per the validator, pages show **only** clearly **generic** help that **defers** to the owner’s manual.
+- **Store links are secondary**; **evidence and homeowner guidance are primary**.
+- **Amazon / affiliate links must never define the product** (identity and fit come from BuckParts truth and homeowner-visible copy, not the merchant PDP).
+
+---
+
 ## 2) Current objective
 
 **From command center digest (not a separate product OKR doc):** when **only Amazon Associates** is `APPROVED` (verified tag) and the **Amazon-first blocked queue** reports `needs_amazon_search_count > 0`, the digest’s `next_best_action` **prefers** OEM blocked-search → Amazon PDP rescue (`scripts/report-buckparts-command-center.ts`). Otherwise the digest may still prioritize **affiliate approvals** / other money lanes when that condition is not met.

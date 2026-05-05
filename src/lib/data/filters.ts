@@ -21,6 +21,8 @@ export type FridgeModelListRow = Pick<
 
 export type FilterWithFridges = FilterDetail & {
   fridge_models: FridgeModelListRow[];
+  /** Count of on-file retailer rows before buy-path gating (for homeowner-facing store-status copy). */
+  retailer_links_raw_count: number;
   retailer_links: RetailerLink[];
   /** Why on-file retailer rows are not eligible for live buy CTAs (parallel to `filterRealBuyRetailerLinks`). */
   buy_path_gate_suppression: BuyPathGateSuppressionSummary;
@@ -109,6 +111,7 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
   return {
     ...filterRow,
     fridge_models: fridges,
+    retailer_links_raw_count: rawRetailerLinks.length,
     retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
     buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
     also_known_as,

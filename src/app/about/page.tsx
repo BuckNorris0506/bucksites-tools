@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ABOUT_PAGE_META_DESCRIPTION } from "@/lib/copy/public-trust";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "What BuckParts does: replacement filter lookup, fit guidance, and verified outbound links.",
+  description: ABOUT_PAGE_META_DESCRIPTION,
 };
 
 const contactEmail = "support@buckparts.com";
