@@ -6,7 +6,11 @@ import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
-import { getSitemapLaunchVerticals } from "@/lib/catalog/vertical-launch-state";
+import {
+  getSitemapLaunchVerticals,
+  isVerticalLive,
+  type VerticalSlug,
+} from "@/lib/catalog/vertical-launch-state";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const PAGE = 1000;
@@ -156,13 +160,27 @@ function liveStaticPaths(now: Date): SitemapUrl[] {
   return staticPaths;
 }
 
+/** Wedges that emit brand/model/part discovery URLs in the sitemap (when LIVE). */
+const WEDGES_WITH_DYNAMIC_SITEMAP_URLS = [
+  "refrigerator",
+  "air-purifier",
+  "whole-house-water",
+] as const satisfies readonly VerticalSlug[];
+
+function getSitemapDynamicUrlVerticals(): VerticalSlug[] {
+  return WEDGES_WITH_DYNAMIC_SITEMAP_URLS.filter((v) => isVerticalLive(v));
+}
+
 export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
   const now = new Date();
   const staticPaths = liveStaticPaths(now);
 
+  const liveAp = isVerticalLive("air-purifier");
+  const liveWh = isVerticalLive("whole-house-water");
+
   const usefulFridge = await loadRefrigeratorUsefulFilterIds();
-  const usefulAp = await loadAirPurifierUsefulFilterIds();
-  const usefulWh = await loadWholeHouseWaterUsefulFilterIds();
+  const usefulAp = liveAp ? await loadAirPurifierUsefulFilterIds() : new Set<string>();
+  const usefulWh = liveWh ? await loadWholeHouseWaterUsefulFilterIds() : new Set<string>();
 
   const [
     fridgeModelSlugs,
@@ -174,10 +192,10 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
   ] = await Promise.all([
     allSlugsFromTable("fridge_models"),
     filterSlugsByIds("filters", usefulFridge),
-    allSlugsFromTable("air_purifier_models"),
-    filterSlugsByIds("air_purifier_filters", usefulAp),
-    allSlugsFromTable("whole_house_water_models"),
-    filterSlugsByIds("whole_house_water_parts", usefulWh),
+    liveAp ? allSlugsFromTable("air_purifier_models") : Promise.resolve<string[]>([]),
+    liveAp ? filterSlugsByIds("air_purifier_filters", usefulAp) : Promise.resolve<string[]>([]),
+    liveWh ? allSlugsFromTable("whole_house_water_models") : Promise.resolve<string[]>([]),
+    liveWh ? filterSlugsByIds("whole_house_water_parts", usefulWh) : Promise.resolve<string[]>([]),
   ]);
 
   const fridgeBrandIds = new Set<string>();
@@ -186,21 +204,27 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
   fridgeFilterBrandIds.forEach((id) => fridgeBrandIds.add(id));
   const fridgeBrandSlugs = await brandSlugsForIds(fridgeBrandIds);
 
-  const apBrandIds = new Set<string>();
-  (await distinctBrandIdsFromTable("air_purifier_models")).forEach((id) => apBrandIds.add(id));
-  (await brandIdsForFilterTable("air_purifier_filters", usefulAp)).forEach((id) =>
-    apBrandIds.add(id),
-  );
-  const apBrandSlugs = await brandSlugsForIds(apBrandIds);
+  let apBrandSlugs: string[] = [];
+  if (liveAp) {
+    const apBrandIds = new Set<string>();
+    (await distinctBrandIdsFromTable("air_purifier_models")).forEach((id) => apBrandIds.add(id));
+    (await brandIdsForFilterTable("air_purifier_filters", usefulAp)).forEach((id) =>
+      apBrandIds.add(id),
+    );
+    apBrandSlugs = await brandSlugsForIds(apBrandIds);
+  }
 
-  const whBrandIds = new Set<string>();
-  (await distinctBrandIdsFromTable("whole_house_water_models")).forEach((id) =>
-    whBrandIds.add(id),
-  );
-  (await brandIdsForFilterTable("whole_house_water_parts", usefulWh)).forEach((id) =>
-    whBrandIds.add(id),
-  );
-  const whBrandSlugs = await brandSlugsForIds(whBrandIds);
+  let whBrandSlugs: string[] = [];
+  if (liveWh) {
+    const whBrandIds = new Set<string>();
+    (await distinctBrandIdsFromTable("whole_house_water_models")).forEach((id) =>
+      whBrandIds.add(id),
+    );
+    (await brandIdsForFilterTable("whole_house_water_parts", usefulWh)).forEach((id) =>
+      whBrandIds.add(id),
+    );
+    whBrandSlugs = await brandSlugsForIds(whBrandIds);
+  }
 
   const dynamic: SitemapUrl[] = [];
 
@@ -229,54 +253,58 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
     });
   }
 
-  for (const slug of apBrandSlugs) {
-    dynamic.push({
-      url: abs(`/air-purifier/brand/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.65,
-    });
-  }
-  for (const slug of apModelSlugs) {
-    dynamic.push({
-      url: abs(`/air-purifier/model/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    });
-  }
-  for (const slug of apFilterSlugs) {
-    dynamic.push({
-      url: abs(`/air-purifier/filter/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    });
+  if (liveAp) {
+    for (const slug of apBrandSlugs) {
+      dynamic.push({
+        url: abs(`/air-purifier/brand/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.65,
+      });
+    }
+    for (const slug of apModelSlugs) {
+      dynamic.push({
+        url: abs(`/air-purifier/model/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
+    for (const slug of apFilterSlugs) {
+      dynamic.push({
+        url: abs(`/air-purifier/filter/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
   }
 
-  for (const slug of whBrandSlugs) {
-    dynamic.push({
-      url: abs(`/whole-house-water/brand/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.65,
-    });
-  }
-  for (const slug of whModelSlugs) {
-    dynamic.push({
-      url: abs(`/whole-house-water/model/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    });
-  }
-  for (const slug of whPartSlugs) {
-    dynamic.push({
-      url: abs(`/whole-house-water/filter/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.6,
-    });
+  if (liveWh) {
+    for (const slug of whBrandSlugs) {
+      dynamic.push({
+        url: abs(`/whole-house-water/brand/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.65,
+      });
+    }
+    for (const slug of whModelSlugs) {
+      dynamic.push({
+        url: abs(`/whole-house-water/model/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
+    for (const slug of whPartSlugs) {
+      dynamic.push({
+        url: abs(`/whole-house-water/filter/${slug}`),
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
   }
 
   return [...staticPaths, ...dynamic];
@@ -284,4 +312,5 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
 
 export const __test_only__ = {
   liveStaticPaths,
+  getSitemapDynamicUrlVerticals,
 };

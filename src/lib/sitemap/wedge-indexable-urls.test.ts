@@ -13,6 +13,8 @@ test("static sitemap paths do not include unfinished noindex wedges", () => {
     assert.equal(urls.some((url) => url.includes("/vacuum")), false);
     assert.equal(urls.some((url) => url.includes("/humidifier")), false);
     assert.equal(urls.some((url) => url.includes("/appliance-air")), false);
+    assert.equal(urls.some((url) => url.includes("/air-purifier")), false);
+    assert.equal(urls.some((url) => url.includes("/whole-house-water")), false);
   } finally {
     if (previousSiteUrl === undefined) {
       delete process.env.NEXT_PUBLIC_SITE_URL;
@@ -20,5 +22,10 @@ test("static sitemap paths do not include unfinished noindex wedges", () => {
       process.env.NEXT_PUBLIC_SITE_URL = previousSiteUrl;
     }
   }
+});
+
+test("dynamic sitemap URL emission includes only LIVE operational wedges", () => {
+  const verticals = __test_only__.getSitemapDynamicUrlVerticals();
+  assert.deepEqual(verticals.sort(), ["refrigerator"]);
 });
 

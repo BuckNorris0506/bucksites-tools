@@ -10,9 +10,9 @@
 | Homepage playbook | Generic “verify” wording | N/A | N/A |
 | `VERTICAL_LAUNCH_STATES` | `LIVE` | `NOINDEX_UNPROVEN` | `NOINDEX_UNPROVEN` |
 | Sitemap static hubs | `/catalog`, `/search` | Not in LIVE static scope | Not in LIVE static scope |
-| Sitemap PDPs | Useful-filter gated | Useful-filter gated | Useful-filter gated |
+| Sitemap dynamic discovery URLs | Useful-filter gated (`/brand`, `/fridge`, `/filter`) | Omitted when wedge not LIVE | Omitted when wedge not LIVE |
 
-Vacuum, humidifier, appliance-air are `NOINDEX_UNPROVEN` and omitted from static sitemap paths (see `wedge-indexable-urls.test.ts`).
+Vacuum, humidifier, appliance-air are `NOINDEX_UNPROVEN` and omitted from static sitemap paths. Air purifier and whole-house water are omitted from **dynamic** sitemap URLs while not `LIVE` (see `wedge-indexable-urls.test.ts`).
 
 ## Hiding / deprioritizing (not implemented here)
 
@@ -22,6 +22,5 @@ Vacuum, humidifier, appliance-air are `NOINDEX_UNPROVEN` and omitted from static
 
 ## TODO for a future pass
 
-1. Align `wedge-indexable-urls.ts` dynamic AP/whole-house URL emission with LIVE-gated fridge-first policy.
-2. Update homepage and About copy so non-fridge wedges are not co-equal CTAs until parity.
-3. Add integration tests for sitemap + homepage link policy when implementation lands.
+1. Update homepage and About copy so non-fridge wedges are not co-equal CTAs until parity.
+2. Add integration tests for sitemap + homepage link policy when implementation lands.
