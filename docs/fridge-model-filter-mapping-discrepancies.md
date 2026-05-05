@@ -20,6 +20,7 @@
 | Official LG spec-sheet claim | Builder spec sheet shows `Water Filter LT1000P` and `Replacement Water Filter LT1000P` | `PROVEN_OFFICIAL_LG` | https://www.lg.com/us/business/download/resources/CT00021979/LRFXS3106S_LG_Pro_Builder_Spec_Sheet[20240531_231917].pdf |
 | LG support-page model-variant evidence | LRFXS3106S.ASTCNA0 support page exists and proves model context | `PROVEN_OFFICIAL_LG` | https://www.lg.com/us/support/product/lg-LRFXS3106S.ASTCNA0 |
 | LG support-page explicit filter mapping | No explicit `LT1000P` statement observed on support landing page itself in this pass | `UNKNOWN` | same support page above |
+| Official LG owner manual PDF (discoverable + extractable) | No official LG owner-manual PDF with extractable LRFXS3106S filter mapping text was proven in this pass | `UNKNOWN` | official LG support/manual discovery pass (US + CA support surfaces) |
 
 ### Sources used
 
@@ -29,6 +30,7 @@
 - Official LG product page: https://www.lg.com/us/refrigerators/lg-lrfxs3106s-french-door-refrigerator
 - Official LG builder spec sheet: https://www.lg.com/us/business/download/resources/CT00021979/LRFXS3106S_LG_Pro_Builder_Spec_Sheet[20240531_231917].pdf
 - Official LG model support page: https://www.lg.com/us/support/product/lg-LRFXS3106S.ASTCNA0
+- Official LG Canada model support page (manual surface checked): https://www.lg.com/ca_en/support/product-support/cs-LRFXS3106S.ASTCNA0/
 
 ### Conflict Assessment
 
