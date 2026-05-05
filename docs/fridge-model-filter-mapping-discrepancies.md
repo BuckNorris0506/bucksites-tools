@@ -59,3 +59,71 @@
 - Do not create manual evidence for `lg-lrfxs3106s` until this mapping discrepancy is reconciled.
 - Do not promote model-specific buy guidance for `lg-lrfxs3106s` until mapping is reconciled.
 - Do not change repo or DB mappings in this task.
+
+### Final Owner Adjudication Packet
+
+#### Decision Rubric
+
+- Evidence precedence (highest to lowest):
+  1. official owner manual for exact model/variant
+  2. official manufacturer product/spec page for exact model/variant
+  3. official manufacturer support article applicable to model family/filter family
+  4. repo/imported catalog data
+  5. retailer/marketplace claims
+  6. third-party manual index
+- Confidence thresholds:
+  - update mapping only when official exact-model evidence outweighs repo mapping and no contrary owner-manual evidence exists
+  - quarantine when official and repo sources conflict and owner decision is pending
+  - never use retailer links to decide compatibility
+- Public-safety rule:
+  - no model-specific manual callout while conflict is unresolved
+  - no strong model-specific buy guidance while conflict is unresolved
+
+#### Owner Decision Options (Adjudication)
+
+- Option A: update repo compatibility mapping to LT1000P family under a controlled patch.
+- Option B: keep current repo mapping but explicitly mark official conflict unresolved.
+- Option C: quarantine page from strong fit/buy guidance until an exact owner manual resolves the conflict.
+- Option D: create a conflict/exception queue item for later manual research.
+
+#### Execution Checklist (Do Not Execute in This Packet)
+
+##### If Owner Chooses Option A (Update Mapping)
+
+- Scope and inspect:
+  - `data/compatibility_mappings.csv` rows for `lg-lrfxs3106s`
+  - `data/filters.csv` rows for `lt600p`, `lt800p`, `lt1000p` family
+  - any mapping loaders/read-model paths used by fridge pages
+- Validate in CI/local:
+  - `npm test`
+  - `npm run build`
+  - `npm run buckparts:audit`
+- Verify live/prod behavior after deploy approval:
+  - model page resolves to reconciled filter family
+  - safe CTA count change is expected and documented
+  - no weakened trust/buy-link gates
+- Rollback plan:
+  - revert mapping patch commit
+  - rerun `npm run buckparts:audit`
+  - confirm model returns to pre-change mapping/CTA state
+- Impact note:
+  - safe CTA count may change from current `2`; document before/after counts.
+
+##### If Owner Chooses Option C (Quarantine)
+
+- Expected public behavior:
+  - no model-specific manual fixture/callout
+  - generic guidance only
+  - no strong fit/buy wording for the model
+- Guardrails:
+  - keep mapping unchanged until adjudication is complete
+  - keep `OWNER_REVIEW_REQUIRED` visible in internal discrepancy tracking
+- Operational marker:
+  - maintain this model in conflict/exception backlog tracking.
+
+##### If Owner Chooses Option B (Keep As-Is)
+
+- Required note/guardrails:
+  - explicitly retain conflict unresolved status in this doc
+  - keep no-fixture/no-strong-buy-guidance rule
+  - set periodic owner review cadence to revisit if new official evidence appears.
