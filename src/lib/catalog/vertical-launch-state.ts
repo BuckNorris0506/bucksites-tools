@@ -24,3 +24,22 @@ export function getSitemapLaunchVerticals(): VerticalSlug[] {
   );
 }
 
+/**
+ * Verticals for which `collectHomekeepWedgeSitemapUrls` emits brand/model/part discovery URLs
+ * when `isVerticalLive(vertical)` (see `src/lib/sitemap/wedge-indexable-urls.ts`).
+ */
+export const VERTICAL_SLUGS_WITH_HOMEKEEP_SITEMAP_DISCOVERY: readonly VerticalSlug[] = [
+  "refrigerator",
+  "air-purifier",
+  "whole-house-water",
+];
+
+/** Route segments with `src/app/<slug>/layout.tsx` noindex policy (excludes fridge `/fridge` tree). */
+export const VERTICAL_SLUGS_WITH_APP_SEGMENT_LAYOUT: readonly VerticalSlug[] = [
+  "air-purifier",
+  "whole-house-water",
+  "vacuum",
+  "humidifier",
+  "appliance-air",
+];
+

@@ -6,6 +6,10 @@ import {
   attachOwnerQuarantinedFridgeModelsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
 } from "@/lib/owner-dashboard/load-command-center-report";
+import {
+  attachOwnerVerticalLaunchPolicyReport,
+  buildOwnerVerticalLaunchPolicyReport,
+} from "@/lib/owner-dashboard/owner-vertical-launch-policy";
 
 describe("owner quarantined fridge summary", () => {
   it("includes lg-lrfxs3106s in owner quarantine summary with required contract fields", async () => {
@@ -59,6 +63,17 @@ describe("owner quarantined fridge summary", () => {
     assert.ok("owner_quarantined_fridge_models" in report);
     assert.equal(report.owner_quarantined_fridge_models.data_mutation, false);
     assert.ok(report.owner_quarantined_fridge_models.models.length >= 1);
+  });
+
+  it("attach chain can add vertical launch policy lane with data_mutation false", () => {
+    const policy = buildOwnerVerticalLaunchPolicyReport();
+    const report = attachOwnerVerticalLaunchPolicyReport(
+      attachOwnerQuarantinedFridgeModelsReport({ report_name: "x" }, []),
+      policy,
+    );
+    assert.ok("owner_vertical_launch_policy" in report);
+    assert.equal(report.owner_vertical_launch_policy.data_mutation, false);
+    assert.ok(report.owner_vertical_launch_policy.rows.some((r) => r.vertical_slug === "refrigerator"));
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {

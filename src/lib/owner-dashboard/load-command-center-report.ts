@@ -8,6 +8,11 @@ import {
   listFridgeModelReviewOverrides,
   type FridgeModelReviewOverride,
 } from "@/lib/fridge/fridge-model-review-overrides";
+import {
+  attachOwnerVerticalLaunchPolicyReport,
+  buildOwnerVerticalLaunchPolicyReport,
+  type OwnerVerticalLaunchPolicyReport,
+} from "@/lib/owner-dashboard/owner-vertical-launch-policy";
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -91,6 +96,7 @@ export type OwnerCommandCenterLoadResult =
       ok: true;
       report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>> & {
         owner_quarantined_fridge_models: OwnerQuarantinedFridgeModelsReport;
+        owner_vertical_launch_policy: OwnerVerticalLaunchPolicyReport;
       };
     }
   | { ok: false; message: string };
@@ -99,7 +105,9 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
   try {
     const report = await buildBuckpartsCommandCenterReport({ rootDir });
     const quarantined = await buildOwnerQuarantinedFridgeModelsSummary();
-    return { ok: true, report: attachOwnerQuarantinedFridgeModelsReport(report, quarantined) };
+    const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
+    const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
+    return { ok: true, report: attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy) };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "UNKNOWN";
     return { ok: false, message: msg };

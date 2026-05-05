@@ -9,6 +9,7 @@ import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water
 import {
   getSitemapLaunchVerticals,
   isVerticalLive,
+  VERTICAL_SLUGS_WITH_HOMEKEEP_SITEMAP_DISCOVERY,
   type VerticalSlug,
 } from "@/lib/catalog/vertical-launch-state";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
@@ -160,15 +161,8 @@ function liveStaticPaths(now: Date): SitemapUrl[] {
   return staticPaths;
 }
 
-/** Wedges that emit brand/model/part discovery URLs in the sitemap (when LIVE). */
-const WEDGES_WITH_DYNAMIC_SITEMAP_URLS = [
-  "refrigerator",
-  "air-purifier",
-  "whole-house-water",
-] as const satisfies readonly VerticalSlug[];
-
 function getSitemapDynamicUrlVerticals(): VerticalSlug[] {
-  return WEDGES_WITH_DYNAMIC_SITEMAP_URLS.filter((v) => isVerticalLive(v));
+  return VERTICAL_SLUGS_WITH_HOMEKEEP_SITEMAP_DISCOVERY.filter((v) => isVerticalLive(v));
 }
 
 export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {

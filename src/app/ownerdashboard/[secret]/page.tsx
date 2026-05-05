@@ -158,6 +158,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const v2: CommandCenterV2Report = report.command_center_v2;
   const health = report.system_health_summary;
   const quarantine = report.owner_quarantined_fridge_models;
+  const launchPolicy = report.owner_vertical_launch_policy;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -613,6 +614,83 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
                 : "UNKNOWN"
             }
           />
+        </LaneCard>
+
+        <LaneCard
+          title="12 · Vertical launch / crawler / promo policy"
+          subtitle="Derived from launch-state, sitemap, layout robots, and catalog/homepage constants (read-only)"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill status="OK" />
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              data_mutation: {String(launchPolicy.data_mutation)}
+            </span>
+          </div>
+          <FieldBlock
+            label="generated_from"
+            value={
+              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
+                {launchPolicy.generated_from.map((s) => (
+                  <li key={s} className="font-mono">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+          <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-900/60">
+                <tr>
+                  {[
+                    "vertical",
+                    "wedge",
+                    "launch",
+                    "live",
+                    "sitemap_disc",
+                    "layout_noindex",
+                    "catalog_hub",
+                    "home_promo",
+                    "note",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {launchPolicy.rows.map((r) => (
+                  <tr key={r.vertical_slug} className="bg-white dark:bg-slate-950">
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
+                      {r.vertical_slug}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.wedge_catalog}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.launch_state}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{String(r.is_live)}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.sitemap_discovery_urls_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.layout_noindex_follow_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.catalog_hub_promo_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.homepage_browse_promo_expected)}
+                    </td>
+                    <td className="max-w-[14rem] px-3 py-2 text-[11px] leading-snug text-slate-700 dark:text-slate-300">
+                      {r.owner_note ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </LaneCard>
 
         <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">
