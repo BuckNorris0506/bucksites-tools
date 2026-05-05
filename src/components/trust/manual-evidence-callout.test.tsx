@@ -58,6 +58,14 @@ function renderFromRecord(record: Partial<RefrigeratorManualEvidenceRecord>): st
   );
 }
 
+async function loadFixtureRecord(
+  fixtureName: string,
+): Promise<RefrigeratorManualEvidenceRecord> {
+  const fs = await import("node:fs/promises");
+  const raw = await fs.readFile(`data/manual-evidence/refrigerator/${fixtureName}.json`, "utf8");
+  return JSON.parse(raw) as RefrigeratorManualEvidenceRecord;
+}
+
 describe("ManualEvidenceCallout", () => {
   it("renders for a public-ready record", () => {
     const html = renderFromRecord(validRecord);
@@ -78,5 +86,18 @@ describe("ManualEvidenceCallout", () => {
       operator_reviewed: false,
     });
     assert.equal(html, "");
+  });
+
+  it("renders lrfvs3006s fixture with Tier 1 source bundle and safe language", async () => {
+    const fixture = await loadFixtureRecord("lg-lrfvs3006s");
+    const html = renderFromRecord(fixture);
+    assert.ok(html.includes("Sources"));
+    assert.ok(html.includes("Highest source tier"));
+    assert.ok(html.includes("LG Refrigerator - How to Install Your Refrigerator Water Filter"));
+    assert.ok(html.includes("LG LRFVS3006 Builder Spec Sheet"));
+    assert.ok(!html.toLowerCase().includes("official owner manual"));
+    assert.ok(!html.toLowerCase().includes("copied image"));
+    assert.ok(!html.toLowerCase().includes("removes all contaminants"));
+    assert.ok(!html.toLowerCase().includes("guaranteed fit"));
   });
 });
