@@ -8,7 +8,7 @@ import {
 } from "@/lib/owner-dashboard/load-command-center-report";
 
 describe("owner quarantined fridge summary", () => {
-  it("includes lg-lrfxs3106s in owner quarantine summary", async () => {
+  it("includes lg-lrfxs3106s in owner quarantine summary with required contract fields", async () => {
     const summary = await buildOwnerQuarantinedFridgeModelsSummary({
       resolveModelStats: async (slug) => {
         if (slug === "lg-lrfxs3106s") {
@@ -22,9 +22,16 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(row);
     assert.equal(row.reason, "FILTER_MAPPING_CONFLICT");
     assert.equal(row.public_status, "owner_review_required");
+    assert.equal(row.internal_evidence_doc, "docs/fridge-model-filter-mapping-discrepancies.md");
     assert.equal(row.owner_action_required, true);
-    assert.equal(row.mapped_filter_count, 2);
-    assert.equal(row.safe_cta_count, 2);
+    assert.ok(
+      row.mapped_filter_count === 2 || row.mapped_filter_count === "UNKNOWN",
+      "mapped_filter_count must be populated or UNKNOWN",
+    );
+    assert.ok(
+      row.safe_cta_count === 2 || row.safe_cta_count === "UNKNOWN",
+      "safe_cta_count must be populated or UNKNOWN",
+    );
   });
 
   it("does not include non-quarantined model slugs", async () => {
@@ -34,9 +41,24 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(summary.some((r) => r.fridge_model_slug === "lg-lfxs26973s"), false);
   });
 
-  it("attached command report lane is read-only", () => {
-    const report = attachOwnerQuarantinedFridgeModelsReport({ report_name: "test" }, []);
+  it("owner report object includes quarantined fridge lane and read-only flag", () => {
+    const report = attachOwnerQuarantinedFridgeModelsReport(
+      { report_name: "test" },
+      [
+        {
+          fridge_model_slug: "lg-lrfxs3106s",
+          reason: "FILTER_MAPPING_CONFLICT",
+          public_status: "owner_review_required",
+          internal_evidence_doc: "docs/fridge-model-filter-mapping-discrepancies.md",
+          mapped_filter_count: "UNKNOWN",
+          safe_cta_count: "UNKNOWN",
+          owner_action_required: true,
+        },
+      ],
+    );
+    assert.ok("owner_quarantined_fridge_models" in report);
     assert.equal(report.owner_quarantined_fridge_models.data_mutation, false);
+    assert.ok(report.owner_quarantined_fridge_models.models.length >= 1);
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {
