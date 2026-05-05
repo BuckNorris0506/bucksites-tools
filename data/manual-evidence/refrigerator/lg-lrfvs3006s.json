@@ -1,0 +1,58 @@
+{
+  "fridge_model_slug": "lg-lrfvs3006s",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+  "source_title": "LG Refrigerator - How to Install Your Refrigerator Water Filter",
+  "source_host": "www.lg.com",
+  "evidence_date": "2026-05-05",
+  "filter_location_text": "LG support guidance for French-door models describes the filter housing in the upper back-left interior area and notes that obstacles such as the top-left shelf may need to be moved for full access.",
+  "replacement_steps_summary": "LG support guidance describes opening the filter housing, removing the old filter, inserting and seating the replacement filter, and closing the housing before returning the refrigerator to normal use.",
+  "cautions": "LG support guidance notes a small amount of water may drain during replacement, recommends flushing about 2.5 gallons after installation, and says to hold the Water Filter button for about 3 seconds to reset the indicator.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-1-tier1-plan-2026-05-05",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 manufacturer-support bundle for LRFVS3006S using official LG support/product/spec/help sources. This record intentionally avoids owner-manual claims and keeps wording conservative to manufacturer support guidance.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/product/lg-LRFVS3006S.ASTCNA0",
+      "source_title": "LG LRFVS3006S.ASTCNA0 product support page",
+      "source_host": "www.lg.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-how-to-install-your-refrigerator-water-filter--1397851693438",
+      "source_title": "LG Refrigerator - How to Install Your Refrigerator Water Filter",
+      "source_host": "www.lg.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/video-tutorials/how-to-replace-the-lg-refrigerator-water-filter--20152227262351",
+      "source_title": "How to Replace the LG Refrigerator Water Filter",
+      "source_host": "www.lg.com",
+      "evidence_role": "video_tutorial",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-french-door-control-overview--1366835051244",
+      "source_title": "LG Refrigerator – French Door Control Overview",
+      "source_host": "www.lg.com",
+      "evidence_role": "control_overview_reset_guidance",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.lg.com/us/business/download/resources/CT00021979/LRFVS3006_%20LG%20Builder%20Spec%20Sheet[20220107_132548].pdf",
+      "source_title": "LG LRFVS3006 Builder Spec Sheet",
+      "source_host": "www.lg.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    }
+  ]
+}
