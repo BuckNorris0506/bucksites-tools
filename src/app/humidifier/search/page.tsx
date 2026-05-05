@@ -19,7 +19,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: `Humidifier search: ${query}`,
     description: `Results for humidifier models and filters matching “${query}”.`,
-    robots: query ? undefined : { index: false },
   };
 }
 

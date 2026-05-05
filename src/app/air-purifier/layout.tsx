@@ -3,7 +3,6 @@ import { NON_LIVE_WEDGE_ROBOTS } from "@/lib/catalog/non-live-wedge-robots";
 
 export const metadata: Metadata = NON_LIVE_WEDGE_ROBOTS;
 
-export default function HumidifierLayout({ children }: { children: React.ReactNode }) {
+export default function AirPurifierLayout({ children }: { children: React.ReactNode }) {
   return children;
 }
-

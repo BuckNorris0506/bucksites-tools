@@ -19,7 +19,6 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: `Air purifier search: ${query}`,
     description: `Results for air purifier models and filters matching “${query}”.`,
-    robots: query ? undefined : { index: false },
   };
 }
 
