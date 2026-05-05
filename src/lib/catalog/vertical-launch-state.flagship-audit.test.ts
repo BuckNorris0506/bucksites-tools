@@ -3,19 +3,15 @@ import { describe, it } from "node:test";
 
 import { getSitemapLaunchVerticals } from "@/lib/catalog/vertical-launch-state";
 
-/**
- * Baseline before “fridge-first” deprioritization of other LIVE wedges.
- * When air purifier / whole-house are demoted from sitemap + homepage, update this test and
- * `docs/fridge-flagship-wedge-exposure.md`.
- */
-describe("fridge flagship — wedge exposure baseline", () => {
-  it("documents LIVE verticals included in sitemap launch set today", () => {
+describe("fridge flagship — live launch wedge", () => {
+  it("keeps refrigerator as the only LIVE sitemap launch wedge", () => {
     const live = new Set(getSitemapLaunchVerticals());
     assert.ok(live.has("refrigerator"), "refrigerator must remain LIVE for flagship");
-    assert.ok(live.has("air-purifier"), "baseline: air-purifier currently LIVE (deprioritize later)");
-    assert.ok(
+    assert.equal(live.has("air-purifier"), false, "air-purifier should not be LIVE in fridge-only phase");
+    assert.equal(
       live.has("whole-house-water"),
-      "baseline: whole-house-water currently LIVE (deprioritize later)",
+      false,
+      "whole-house-water should not be LIVE in fridge-only phase",
     );
   });
 });

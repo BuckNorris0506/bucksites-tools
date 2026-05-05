@@ -1,7 +1,7 @@
 export const VERTICAL_LAUNCH_STATES = {
   refrigerator: "LIVE",
-  "air-purifier": "LIVE",
-  "whole-house-water": "LIVE",
+  "air-purifier": "NOINDEX_UNPROVEN",
+  "whole-house-water": "NOINDEX_UNPROVEN",
   vacuum: "NOINDEX_UNPROVEN",
   humidifier: "NOINDEX_UNPROVEN",
   "appliance-air": "NOINDEX_UNPROVEN",

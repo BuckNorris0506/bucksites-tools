@@ -2,14 +2,14 @@
 
 **Decision:** Refrigerator water is the flagship wedge. Air purifier and whole-house water should **not** be promoted at equal priority until they match the fridge trust standard.
 
-## Current exposure (as of this audit)
+## Current exposure (after fridge-only LIVE launch-state patch)
 
 | Surface | Fridge | Air purifier | Whole-house water |
 |---------|--------|--------------|-------------------|
 | Homepage browse links | Yes (`/catalog`, fridge cards) | Yes (`/air-purifier`) | Yes (`/whole-house-water`) |
 | Homepage playbook | Generic “verify” wording | N/A | N/A |
-| `VERTICAL_LAUNCH_STATES` | `LIVE` | `LIVE` | `LIVE` |
-| Sitemap static hubs | `/catalog`, `/search` | `/air-purifier`, search | `/whole-house-water`, search |
+| `VERTICAL_LAUNCH_STATES` | `LIVE` | `NOINDEX_UNPROVEN` | `NOINDEX_UNPROVEN` |
+| Sitemap static hubs | `/catalog`, `/search` | Not in LIVE static scope | Not in LIVE static scope |
 | Sitemap PDPs | Useful-filter gated | Useful-filter gated | Useful-filter gated |
 
 Vacuum, humidifier, appliance-air are `NOINDEX_UNPROVEN` and omitted from static sitemap paths (see `wedge-indexable-urls.test.ts`).
@@ -22,6 +22,6 @@ Vacuum, humidifier, appliance-air are `NOINDEX_UNPROVEN` and omitted from static
 
 ## TODO for a future pass
 
-1. Align `vertical-launch-state.ts` and `wedge-indexable-urls.ts` with “fridge-first” promotion policy.
+1. Align `wedge-indexable-urls.ts` dynamic AP/whole-house URL emission with LIVE-gated fridge-first policy.
 2. Update homepage and About copy so non-fridge wedges are not co-equal CTAs until parity.
 3. Add integration tests for sitemap + homepage link policy when implementation lands.

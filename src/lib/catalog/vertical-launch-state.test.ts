@@ -14,12 +14,12 @@ test("unfinished verticals are NOINDEX_UNPROVEN", () => {
 
 test("live verticals are LIVE", () => {
   assert.equal(getVerticalLaunchState("refrigerator"), "LIVE");
-  assert.equal(getVerticalLaunchState("air-purifier"), "LIVE");
-  assert.equal(getVerticalLaunchState("whole-house-water"), "LIVE");
+  assert.equal(getVerticalLaunchState("air-purifier"), "NOINDEX_UNPROVEN");
+  assert.equal(getVerticalLaunchState("whole-house-water"), "NOINDEX_UNPROVEN");
 });
 
 test("sitemap launch scope includes only LIVE verticals", () => {
   const live = getSitemapLaunchVerticals();
-  assert.deepEqual(live.sort(), ["air-purifier", "refrigerator", "whole-house-water"]);
+  assert.deepEqual(live.sort(), ["refrigerator"]);
 });
 
