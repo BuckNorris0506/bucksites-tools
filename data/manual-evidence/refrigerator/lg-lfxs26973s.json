@@ -1,0 +1,16 @@
+{
+  "fridge_model_slug": "lg-lfxs26973s",
+  "source_type": "third_party_manual_index",
+  "source_url": "https://www.manualslib.fr/manual/361273/Lg-Lfxs26973-Serie.html?page=47#manual",
+  "source_title": "LG LFXS26973 Series Owner's Manual (page 47, water filter replacement)",
+  "source_host": "manualslib.fr",
+  "evidence_date": "2026-05-05",
+  "filter_location_text": "The manual says to lower or remove the top-left shelf so the water filter can rotate down, and to open the water-filter cover by pinching the sides.",
+  "replacement_steps_summary": "Open the filter cover, pull the old filter down, turn counterclockwise, remove it, insert the new filter with tabs horizontal, turn clockwise to lock, then close the cover until it clicks.",
+  "cautions": "The manual notes a small amount of water may drain during replacement, and recommends flushing about 2.5 gallons in short on/off cycles after installing a new filter.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-1-source-discovery-2026-05-05",
+  "operator_reviewed": true,
+  "notes": "Tier 3 source: third-party manual index. Upgrade to Tier 1 when an official LG manual/support URL with equivalent text is available.",
+  "copied_image_allowed": false
+}

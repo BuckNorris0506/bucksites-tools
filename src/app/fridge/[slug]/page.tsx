@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import { Prose } from "@/components/Prose";
 import { getFridgeBySlug } from "@/lib/data/fridges";
+import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
@@ -61,6 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FridgePage({ params }: Props) {
   const fridge = await getFridgeBySlug(params.slug);
   if (!fridge) notFound();
+  const manualEvidence = await loadRefrigeratorManualEvidenceForModel(params.slug);
 
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
   const intervalHint =
@@ -76,6 +79,8 @@ export default async function FridgePage({ params }: Props) {
         mappedFilterCount={fridge.filters.length}
         replacementIntervalHint={intervalHint}
       />
+
+      {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
 
       {fridge.notes ? (
         <div className="max-w-prose text-sm">
