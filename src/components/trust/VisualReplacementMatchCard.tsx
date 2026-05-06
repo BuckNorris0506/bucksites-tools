@@ -45,22 +45,41 @@ export type VisualReplacementMatchCardProps =
       replacementIntervalHint?: string | null;
     };
 
-/** Neutral marker for unknown form-factor models. */
-function NeutralApplianceMark({ className }: { className?: string }) {
+/** BuckParts-owned refrigerator water filter cartridge (no product photography). */
+function RefrigeratorWaterFilterCartridgeGlyph({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 180 220"
+      viewBox="0 0 140 220"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <rect x="27" y="10" width="126" height="198" rx="18" fill="currentColor" />
-      <rect x="33" y="16" width="114" height="186" rx="14" fill="white" />
-      <circle cx="90" cy="106" r="24" fill="currentColor" opacity="0.12" />
-      <path d="M90 90V122" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-      <path d="M74 106H106" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-      <rect x="66" y="182" width="48" height="6" rx="3" fill="currentColor" opacity="0.28" />
+      <defs>
+        <linearGradient id="cart-body" x1="36" y1="28" x2="104" y2="198" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F4F6FA" />
+          <stop offset="0.45" stopColor="#E2E8F0" />
+          <stop offset="1" stopColor="#C8D0DC" />
+        </linearGradient>
+        <linearGradient id="cart-cap" x1="40" y1="22" x2="100" y2="56" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" />
+          <stop offset="1" stopColor="#E8EDF4" />
+        </linearGradient>
+        <linearGradient id="cart-rib" x1="44" y1="92" x2="96" y2="108" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#B8C4D4" stopOpacity="0.35" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="70" cy="206" rx="44" ry="10" fill="currentColor" opacity="0.1" />
+      <rect x="38" y="64" width="64" height="128" rx="22" fill="url(#cart-body)" />
+      <rect x="38" y="64" width="64" height="128" rx="22" stroke="currentColor" strokeOpacity="0.22" strokeWidth="2" />
+      <path d="M42 118h56" stroke="url(#cart-rib)" strokeWidth="10" strokeLinecap="round" />
+      <path d="M42 148h56" stroke="currentColor" strokeOpacity="0.08" strokeWidth="6" strokeLinecap="round" />
+      <rect x="44" y="24" width="52" height="48" rx="16" fill="url(#cart-cap)" />
+      <rect x="44" y="24" width="52" height="48" rx="16" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1.5" />
+      <ellipse cx="70" cy="36" rx="18" ry="8" fill="white" fillOpacity="0.65" />
+      <rect x="62" y="40" width="16" height="10" rx="4" fill="currentColor" fillOpacity="0.2" />
+      <path d="M52 78h36" stroke="white" strokeOpacity="0.5" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -171,12 +190,12 @@ function FridgeHomeownerHelpCollapsible() {
 
 function storeStatusSentence(status: VisualMatchStorePlainStatus): string {
   if (status === "options_after_checks") {
-    return "Store options here are shown only when they pass BuckParts checks.";
+    return "When store buttons appear below, we’ve finished our listing review for this part.";
   }
   if (status === "buttons_hidden_pending_checks") {
-    return "We're not showing store buttons yet — those listings still need to pass BuckParts checks.";
+    return "We’re not showing store buttons yet while we finish reviewing listings for this part.";
   }
-  return "No store option here yet.";
+  return "We’re not showing a store button on this page yet.";
 }
 
 /**
@@ -284,66 +303,93 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
     storePlainStatus,
   } = props;
 
+  const stepItems = [
+    "Compare this number to the one printed on your old filter.",
+    "If it matches, use this page.",
+    "If you’re not sure, check your owner’s manual or a refrigerator model page below.",
+  ];
+
   return (
     <section
-      className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/35 via-white to-stone-50/20 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 sm:p-8"
+      className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/45 via-white to-stone-50/25 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 sm:p-8"
       aria-label="Your filter match"
     >
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-        <div className="flex shrink-0 justify-center lg:block">
-          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50">
-            <NeutralApplianceMark className="mx-auto h-auto w-[96px] text-blue-950/90 lg:w-[112px]" />
-            <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-              Replacement filter
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+        <div className="flex shrink-0 justify-center sm:block">
+          <div
+            className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-stone-200/50"
+            data-filter-visual="refrigerator-water-cartridge-owned-svg"
+          >
+            <RefrigeratorWaterFilterCartridgeGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 sm:w-[100px]" />
+            <p className="mt-3 text-center text-[11px] font-semibold uppercase tracking-wide text-stone-500">
+              Water filter cartridge
             </p>
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 space-y-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-              We found this filter
-            </p>
-            <h1 className="mt-2 font-mono text-3xl font-semibold tracking-tight text-neutral-900 sm:text-[2rem]">
+        <div className="min-w-0 flex-1 space-y-5">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-stone-600">We found this filter</p>
+            <h1 className="text-3xl font-bold tracking-tight text-stone-900 tabular-nums sm:text-[2rem]">
               {oemPartNumber}
             </h1>
-            <p className="mt-2 text-sm text-neutral-700">
+            <p className="text-base text-stone-700">
               <Link
                 href={`/brand/${brandSlug}`}
-                className="font-medium text-neutral-900 underline-offset-2 hover:underline"
+                className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60"
               >
                 {brandName}
               </Link>
-              <span className="text-neutral-500"> · refrigerator water filter</span>
+              <span className="text-stone-600"> · refrigerator water filter</span>
             </p>
             {productName ? (
-              <p className="mt-2 text-sm text-neutral-600">{productName}</p>
+              <p className="text-sm leading-relaxed text-stone-600">{productName}</p>
             ) : null}
             {intervalLabel ? (
-              <p className="mt-2 text-sm text-neutral-600">{intervalLabel}</p>
+              <p className="text-sm leading-relaxed text-stone-600">{intervalLabel}</p>
             ) : null}
           </div>
 
           {aliases.length > 0 ? (
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">
+            <div className="rounded-2xl bg-white/90 px-4 py-3.5 shadow-sm ring-1 ring-stone-200/40">
+              <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
                 Also printed as
               </p>
-              <p className="mt-1 font-mono text-sm font-medium text-neutral-900">
+              <p className="mt-1.5 text-sm font-semibold tabular-nums tracking-wide text-stone-900">
                 {aliases.join(" · ")}
               </p>
             </div>
           ) : null}
 
+          <div>
+            <p className="text-sm font-semibold text-stone-800">Next steps</p>
+            <ul className="mt-3 list-none space-y-2.5 p-0">
+              {stepItems.map((text, i) => (
+                <li
+                  key={i}
+                  className="flex gap-3.5 rounded-2xl bg-white/95 px-4 py-3.5 shadow-sm ring-1 ring-stone-200/40"
+                >
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-900"
+                    aria-hidden
+                  >
+                    {i + 1}
+                  </span>
+                  <p className="m-0 pt-1 text-sm font-medium leading-snug text-stone-800">{text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <FridgeHomeownerHelpCollapsible />
 
-          <p className="text-sm leading-relaxed text-neutral-700">
+          <p className="text-sm leading-relaxed text-stone-700">
             {compatibleModelCount === 0
-              ? "We're still attaching refrigerator models to this filter."
-              : `If your fridge model appears below (${compatibleModelCount} listed), you're on the right track.`}
+              ? "We’re still listing refrigerator models that use this filter."
+              : `If your refrigerator is in the list below (${compatibleModelCount} listed), you’re in the right place.`}
           </p>
 
-          <p className="text-sm font-medium leading-relaxed text-neutral-800">
+          <p className="text-sm font-medium leading-relaxed text-stone-800">
             {storeStatusSentence(storePlainStatus)}
           </p>
         </div>

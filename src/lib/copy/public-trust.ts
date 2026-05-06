@@ -5,14 +5,14 @@
 
 import type { OemOrCompatible } from "@/lib/trust/part-trust";
 
-/** Homepage meta — homeowner-first; refrigerator water focus; buy-link checks, not vague “verified”. */
+/** Homepage meta — homeowner-first; refrigerator water focus; reviewed links, not vague “verified”. */
 export function homePageMetaDescription(siteDisplayName: string): string {
-  return `Look up refrigerator water filters by fridge model or OEM cartridge on ${siteDisplayName}, compare what we list against our reference, then follow store links that pass BuckParts buy-link checks when we have them available.`;
+  return `Look up refrigerator water filters by fridge model or part number on ${siteDisplayName}, compare what we list with your old filter, and use reviewed store links when we have them available.`;
 }
 
 /** About page meta description (aligned with homepage trust framing). */
 export const ABOUT_PAGE_META_DESCRIPTION =
-  "What BuckParts does: replacement filter lookup, fit guidance, and store links that pass BuckParts buy-link checks when we list them.";
+  "What BuckParts does: replacement filter lookup, fit guidance, and reviewed store links when we list them.";
 
 /** Compare-before-buy checklist — reuse on panels or future standalone blocks. */
 export const COMPARE_BEFORE_BUY_CHECKLIST_LINES = [
@@ -32,21 +32,21 @@ export function partIdentityPillLabel(oemOrCompatible: OemOrCompatible): string 
 /** Third bullet under “Why this fits” / link gate outcome. */
 export function buyPathStoreLinksBullet(buyerPathIsSuppress: boolean): string {
   return buyerPathIsSuppress
-    ? "Store links are not shown until they pass BuckParts buy-link checks"
-    : "Store links shown here passed BuckParts buy-link checks";
+    ? "Store buttons stay hidden until we finish reviewing listings for this part."
+    : "Store buttons here are shown after our listing review for this part.";
 }
 
 /** Gate hints when inventory exists but rows fail gating (TrustAwareBuySection). */
 export function buyPathGateHintSearchPlaceholder(): string {
-  return "Some on-file retailer targets are manufacturer search or other discovery URLs, not BuckParts buy-link–checked checkout deep links — those stay hidden.";
+  return "Some listings we have on file are not product pages we can safely link to yet, so those stay hidden.";
 }
 
 export function buyPathGateHintMissingBrowserTruth(): string {
-  return "Some on-file retailer targets have not completed BuckParts buy-link checks yet.";
+  return "Some listings are still being reviewed before we show a store button.";
 }
 
 export function buyPathGateHintUnsafeBrowserTruth(): string {
-  return "Some on-file retailer targets failed BuckParts buy-link safety checks for now.";
+  return "Some listings did not pass our safety review for now, so those stay hidden.";
 }
 
 /** ISO 8601 datetime → `YYYY-MM-DD` (UTC) for footnotes; invalid → null (caller omits). */
@@ -63,5 +63,5 @@ export function formatBuyLinkCheckedYyyyMmDd(isoDateTime: string): string | null
 export function primaryStoreLinkBuyCheckFootnote(isoDateTime: string): string | null {
   const d = formatBuyLinkCheckedYyyyMmDd(isoDateTime);
   if (!d) return null;
-  return `This store link passed BuckParts buy-link checks on ${d}. Listing details may have changed since then.`;
+  return `We reviewed this store listing on ${d}. Listing details may have changed since then.`;
 }

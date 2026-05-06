@@ -1,0 +1,122 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+
+import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
+import type { PartTrustSummary } from "@/lib/trust/part-trust";
+
+const bannedInPublicFilterHtml = [
+  /OEM-style/i,
+  /manufacturer search/i,
+  /discovery URL/i,
+  /buy-link/i,
+  /retailer target/i,
+  /checkout deep/i,
+];
+
+function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
+  return {
+    match_confidence: "high",
+    match_basis: "compatibility_mapping",
+    oem_or_compatible: "oem",
+    compatible_risk_level: "low",
+    evidence_notes: [],
+    requires_manual_verification: false,
+    approved_retailer_links: 0,
+    preferred_winner_link: null,
+    replacement_reasoning_summary: "",
+    buyer_path_state: "suppress_buy",
+    ...over,
+  };
+}
+
+describe("refrigerator filter PDP homeowner trust copy", () => {
+  it("hero renders next steps, cartridge visual, and no internal jargon", () => {
+    const html = renderToStaticMarkup(
+      createElement(VisualReplacementMatchCard, {
+        variant: "fridge_filter",
+        brandName: "LG",
+        brandSlug: "lg",
+        oemPartNumber: "LT1000P",
+        productName: "Example cartridge",
+        aliases: ["ALT-1"],
+        intervalLabel: "About every 6 months",
+        compatibleModelCount: 3,
+        storePlainStatus: "options_after_checks",
+      }),
+    );
+    assert.ok(html.includes("We found this filter"));
+    assert.ok(html.includes("Next steps"));
+    assert.ok(html.includes("Compare this number to the one printed on your old filter."));
+    assert.ok(html.includes("If it matches, use this page."));
+    assert.ok(html.includes("If you’re not sure, check your owner’s manual or a refrigerator model page below."));
+    assert.ok(html.includes('data-filter-visual="refrigerator-water-cartridge-owned-svg"'));
+    assert.ok(html.includes("Water filter cartridge"));
+    for (const rx of bannedInPublicFilterHtml) {
+      assert.ok(!rx.test(html), `unexpected jargon matching ${rx}`);
+    }
+  });
+
+  it("suppress path shows plain homeowner copy, gate hints, and no /go links", () => {
+    const html = renderToStaticMarkup(
+      createElement(TrustAwareBuySection, {
+        trust: baseTrust({ buyer_path_state: "suppress_buy" }),
+        links: [
+          {
+            id: "link-1",
+            retailer_name: "Example",
+            affiliate_url: "https://www.example.com/p/1",
+            retailer_key: "amazon",
+            browser_truth_classification: "direct_buyable",
+            browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
+          },
+        ],
+        goBase: "/go",
+        primaryCtaLabel: "Buy at",
+        suppressMessage:
+          "We’re not showing a store button for this filter yet. Compare your old filter or manual first.",
+        gateSuppressionSummary: {
+          hadSearchPlaceholderRows: true,
+          hadIndirectDiscoveryRows: false,
+          hadBrokenDestinationRows: false,
+          hadMissingBrowserTruthRows: true,
+          hadUnsafeBrowserTruthRows: true,
+        },
+      }),
+    );
+    assert.ok(!html.includes('href="/go/'));
+    assert.ok(html.includes("not showing a store button"));
+    for (const rx of bannedInPublicFilterHtml) {
+      assert.ok(!rx.test(html), `unexpected jargon matching ${rx}`);
+    }
+  });
+
+  it("buyable path still renders primary /go link through TieredBuyLinks", () => {
+    const html = renderToStaticMarkup(
+      createElement(TrustAwareBuySection, {
+        trust: baseTrust({
+          buyer_path_state: "show_confident_buy",
+          approved_retailer_links: 1,
+        }),
+        links: [
+          {
+            id: "go-primary",
+            retailer_name: "Example Store",
+            affiliate_url: "https://www.amazon.com/dp/B0TESTEXAM",
+            retailer_key: "amazon",
+            browser_truth_classification: "direct_buyable",
+            browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
+            browser_truth_checked_at: "2026-05-04T15:00:00.000Z",
+          },
+        ],
+        goBase: "/go",
+        primaryCtaLabel: "Buy at",
+        suppressMessage: "n/a",
+      }),
+    );
+    assert.ok(html.includes('href="/go/go-primary"'));
+    assert.ok(html.includes("2026-05-04"));
+  });
+});

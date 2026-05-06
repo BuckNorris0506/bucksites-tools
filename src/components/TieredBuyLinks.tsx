@@ -50,8 +50,7 @@ export function TieredBuyLinks({
   if (!realLinks.length) {
     return (
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
-        No store checkout links listed here yet. Use the OEM part number above to shop at a
-        retailer you trust—we don’t show web search as a buy button.
+        No store links on this page yet. Use the part number above at a retailer you trust.
       </p>
     );
   }
@@ -126,18 +125,18 @@ export function TieredBuyLinks({
       {oemCatalogFootnote ? (
         <div className="border-t border-neutral-200 pt-3 dark:border-neutral-800">
           <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-            Manufacturer catalog lookup
+            Brand parts reference
           </p>
           <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            Not a BuckParts buy-link–checked checkout deep link — opens the OEM site directly (not a
-            BuckParts /go hop).
+            Opens the manufacturer site for reference. This is not the same as a reviewed store
+            product button above—use it to double-check fit if you need to.
           </p>
           <a
             href={oemCatalogFootnote.affiliate_url}
             rel="nofollow noopener noreferrer"
             className="mt-2 inline-flex text-sm font-medium text-neutral-700 underline-offset-2 hover:underline dark:text-neutral-200"
           >
-            {oemCatalogFootnote.retailer_name?.trim() || "OEM / manufacturer catalog (keyword lookup)"}
+            {oemCatalogFootnote.retailer_name?.trim() || "Manufacturer parts search page"}
             <span className="ml-1 text-neutral-400" aria-hidden>
               ↗
             </span>

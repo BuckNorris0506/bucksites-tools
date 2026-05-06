@@ -22,6 +22,10 @@ function forbidHomeownerJargon(html: string) {
     /\bdirect_buyable\b/i,
     /\bcanonical\s+slug\b/i,
     /\btoken\b/i,
+    /\bOEM-style\b/i,
+    /\bbuy-link\b/i,
+    /discovery URL/i,
+    /retailer target/i,
   ];
   for (const rx of banned) {
     assert.ok(!rx.test(html), `unexpected jargon matching ${rx}: ${html.slice(0, 240)}`);
@@ -59,6 +63,9 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("We found this filter"));
     assert.ok(html.includes("EDR1RXD1"));
     assert.ok(html.includes("FILTER-A"));
+    assert.ok(html.includes("Next steps"));
+    assert.ok(html.includes("Compare this number to the one printed on your old filter."));
+    assert.ok(html.includes('data-filter-visual="refrigerator-water-cartridge-owned-svg"'));
     assert.ok(html.includes("Need help finding the filter?"));
     assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
@@ -73,7 +80,9 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
     assert.ok(html.includes("near the lower grille"));
     assert.ok(html.includes("Do not force it."));
-    assert.ok(!html.includes("Match the number on your current filter"));
+    const idxNext = html.indexOf("Next steps");
+    const idxLong = html.indexOf("How replacement usually works");
+    assert.ok(idxNext >= 0 && idxLong > idxNext, "long homeowner help should follow next steps");
     forbidHomeownerJargon(html);
     forbidUnsupportedHealthOrGuarantee(html);
   });

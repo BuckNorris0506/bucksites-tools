@@ -83,7 +83,8 @@ describe("trust UI (server render)", () => {
       }),
     );
     assert.ok(html.includes("2026-05-04"));
-    assert.ok(html.includes("passed BuckParts buy-link checks"));
+    assert.ok(html.includes("reviewed this store listing"));
+    assert.ok(!html.includes("buy-link"));
   });
 });
 

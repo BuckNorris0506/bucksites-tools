@@ -14,12 +14,14 @@ import {
 describe("public-trust copy", () => {
   it("home meta avoids loose ‘verified store links’ wording", () => {
     const d = homePageMetaDescription("BuckParts");
-    assert.match(d, /pass BuckParts buy-link checks/i);
+    assert.match(d, /reviewed store links/i);
+    assert.ok(!/buy-link/i.test(d));
     assert.ok(!/verified store links/i.test(d));
   });
 
-  it("about meta uses buy-link-check framing", () => {
-    assert.match(ABOUT_PAGE_META_DESCRIPTION, /pass BuckParts buy-link checks/i);
+  it("about meta uses reviewed-store framing", () => {
+    assert.match(ABOUT_PAGE_META_DESCRIPTION, /reviewed store links/i);
+    assert.ok(!/buy-link/i.test(ABOUT_PAGE_META_DESCRIPTION));
     assert.ok(!/verified outbound/i.test(ABOUT_PAGE_META_DESCRIPTION));
   });
 
@@ -30,8 +32,10 @@ describe("public-trust copy", () => {
   });
 
   it("buyPathStoreLinksBullet reflects suppress vs show", () => {
-    assert.match(buyPathStoreLinksBullet(true), /not shown until they pass BuckParts buy-link checks/i);
-    assert.match(buyPathStoreLinksBullet(false), /passed BuckParts buy-link checks/i);
+    assert.match(buyPathStoreLinksBullet(true), /Store buttons stay hidden/i);
+    assert.match(buyPathStoreLinksBullet(false), /listing review/i);
+    assert.ok(!/buy-link/i.test(buyPathStoreLinksBullet(true)));
+    assert.ok(!/buy-link/i.test(buyPathStoreLinksBullet(false)));
   });
 
   it("formatBuyLinkCheckedYyyyMmDd returns UTC date or null", () => {
@@ -43,6 +47,7 @@ describe("public-trust copy", () => {
     const f = primaryStoreLinkBuyCheckFootnote("2026-05-04T21:55:01.775Z");
     assert.ok(f?.includes("2026-05-04"));
     assert.ok(f?.toLowerCase().includes("may have changed"));
+    assert.ok(f && !/buy-link/i.test(f));
   });
 
   it("compare checklist is non-empty homeowner guidance", () => {

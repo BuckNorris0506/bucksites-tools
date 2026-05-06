@@ -13,6 +13,7 @@ import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
+import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -22,7 +23,7 @@ export const dynamic = "force-dynamic";
 type Props = { params: { slug: string } };
 
 const FRIDGE_FILTER_BUY_SUPPRESS =
-  "Compare your old filter or manual first — we're not showing a store button on this page yet.";
+  "We’re not showing a store button for this filter yet. Compare your old filter or manual first.";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filter = await getFilterBySlug(params.slug);
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${filter.oem_part_number} refrigerator filter`;
   return {
     title,
-    description: `OEM part ${filter.oem_part_number}. Compatible refrigerators and replacement interval.`,
+    description: `Part ${filter.oem_part_number} refrigerator water filter — compatible models and replacement timing.`,
     openGraph: { title: `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}` },
     robots: getRobotsFromPageState(pageState),
   };
@@ -73,77 +74,73 @@ export default async function FilterPage({ params }: Props) {
     buyerPathShowsStoreButtons: trustSummary.buyer_path_state !== "suppress_buy",
   });
 
+  const publicNotes = publicFacingRefrigeratorFilterNotes(filter.notes);
+
   return (
-    <article className="space-y-10">
-      <FridgeWinnerFamilyRail currentSlug={filter.slug} />
+    <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
+      <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
+        <FridgeWinnerFamilyRail currentSlug={filter.slug} />
 
-      <VisualReplacementMatchCard
-        variant="fridge_filter"
-        brandName={filter.brand.name}
-        brandSlug={filter.brand.slug}
-        oemPartNumber={filter.oem_part_number}
-        productName={filter.name}
-        aliases={filter.also_known_as}
-        intervalLabel={interval ?? undefined}
-        compatibleModelCount={filter.fridge_models.length}
-        storePlainStatus={storePlainStatus}
-      />
+        <VisualReplacementMatchCard
+          variant="fridge_filter"
+          brandName={filter.brand.name}
+          brandSlug={filter.brand.slug}
+          oemPartNumber={filter.oem_part_number}
+          productName={filter.name}
+          aliases={filter.also_known_as}
+          intervalLabel={interval ?? undefined}
+          compatibleModelCount={filter.fridge_models.length}
+          storePlainStatus={storePlainStatus}
+        />
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-7">
-        {filter.notes ? (
-          <div className="max-w-prose">
-            <Prose>{filter.notes}</Prose>
-          </div>
-        ) : null}
+        <div className="overflow-hidden rounded-3xl bg-white/95 p-6 shadow-sm ring-1 ring-stone-200/45 sm:p-7">
+          {publicNotes ? (
+            <div className="max-w-prose text-sm text-stone-700">
+              <Prose>{publicNotes}</Prose>
+            </div>
+          ) : null}
 
-        <div
-          className={
-            filter.notes ? "mt-7 border-t border-neutral-100 pt-6 dark:border-neutral-800" : ""
-          }
-        >
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-            Where to buy
-          </p>
-          <div className="mt-3">
-            <TrustAwareBuySection
-              trust={trustSummary}
-              links={filter.retailer_links}
-              goBase="/go"
-              primaryCtaLabel="Buy this part at"
-              suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
-              gateSuppressionSummary={filter.buy_path_gate_suppression}
-              buyPathSortContext={buyPathSortContext}
-            />
+          <div className={publicNotes ? "mt-7 border-t border-stone-200/55 pt-7" : ""}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
+              Where to buy
+            </p>
+            <div className="mt-3">
+              <TrustAwareBuySection
+                trust={trustSummary}
+                links={filter.retailer_links}
+                goBase="/go"
+                primaryCtaLabel="Buy this part at"
+                suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
+                gateSuppressionSummary={filter.buy_path_gate_suppression}
+                buyPathSortContext={buyPathSortContext}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-          Compatible refrigerator models ({filter.fridge_models.length})
-        </h2>
-        {filter.fridge_models.length === 0 ? (
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            No models are listed yet.
-          </p>
-        ) : (
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
-            {filter.fridge_models.map((m) => (
-              <li key={m.id}>
-                <Link
-                  href={`/fridge/${m.slug}`}
-                  className="block px-4 py-2.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900"
-                >
-                  <span className="font-medium text-neutral-900 dark:text-neutral-100">
-                    {m.model_number}
-                  </span>
-                  <span className="ml-2 text-neutral-500">{m.brand.name}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </article>
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold text-stone-900">
+            Compatible refrigerator models ({filter.fridge_models.length})
+          </h2>
+          {filter.fridge_models.length === 0 ? (
+            <p className="text-sm text-stone-600">No models are listed yet.</p>
+          ) : (
+            <ul className="divide-y divide-stone-200/80 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200/45">
+              {filter.fridge_models.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/fridge/${m.slug}`}
+                    className="block px-4 py-3.5 text-sm transition hover:bg-stone-50/90"
+                  >
+                    <span className="font-semibold text-stone-900">{m.model_number}</span>
+                    <span className="ml-2 text-stone-600">{m.brand.name}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </article>
+    </section>
   );
 }

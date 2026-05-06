@@ -32,7 +32,7 @@ function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSup
     bullets.push(buyPathGateHintUnsafeBrowserTruth());
   }
   return (
-    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-amber-900/95 dark:text-amber-100/95">
+    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-amber-950/90">
       {bullets.map((t, i) => (
         <li key={i}>{t}</li>
       ))}
@@ -60,7 +60,7 @@ export function TrustAwareBuySection({
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (
-      <div className="text-sm leading-relaxed text-amber-900 dark:text-amber-100">
+      <div className="text-sm leading-relaxed text-amber-950/95">
         <p>{suppressMessage}</p>
         {gateSuppressionSummary ? (
           <BuyPathSuppressionInventoryHints summary={gateSuppressionSummary} />
@@ -72,8 +72,8 @@ export function TrustAwareBuySection({
   return (
     <div className="space-y-3">
       {trust.buyer_path_state === "show_caution_buy" && (
-        <p className="text-sm leading-relaxed text-amber-900 dark:text-amber-100">
-          Verify the exact OEM part number before using these buy links.
+        <p className="text-sm leading-relaxed text-amber-950/95">
+          Verify the exact part number before using these store links.
         </p>
       )}
       <TieredBuyLinks
