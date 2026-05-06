@@ -7,6 +7,7 @@ describe("fridge model page chip wiring", () => {
   it("passes connected filters into hero card and gates chips under review override", () => {
     const src = readFileSync(join(process.cwd(), "src/app/fridge/[slug]/page.tsx"), "utf8");
     assert.ok(src.includes("connectedFilters={reviewOverride ? [] : fridge.filters}"));
+    assert.ok(src.includes("formFactor={formFactorEvidence?.form_factor ?? \"unknown\"}"));
     assert.ok(!src.includes("<FridgeModelConnectedFilterChips"));
   });
 

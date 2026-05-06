@@ -1,0 +1,12 @@
+{
+  "fridge_model_slug": "lg-lfxs26973s",
+  "form_factor": "french_door_bottom_freezer",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.lg.com/us/support/help-library/lg-refrigerator-french-door-control-overview--1366835051244",
+  "source_title": "LG Refrigerator - French Door Control Overview",
+  "confidence": "medium",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "evidence_date": "2026-05-06",
+  "notes": "Form factor evidence from official LG support content naming French-door controls for this model family."
+}

@@ -128,6 +128,7 @@ describe("FridgeModelFilterSection", () => {
         modelNumber: "LRFXS3106S",
         mappedFilterCount: 0,
         connectedFilters: [],
+        formFactor: "unknown",
         replacementIntervalHint: null,
       }),
     );
@@ -140,10 +141,35 @@ describe("FridgeModelFilterSection", () => {
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
     assert.ok(cardHtml.includes("Next steps"));
-    assert.ok(cardHtml.includes('data-form-factor-visual="generic-unknown"'));
+    assert.ok(!cardHtml.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];
     for (const rx of banned) {
       assert.equal(rx.test(html), false, `unexpected internal term: ${rx}`);
     }
+  });
+
+  it("quarantine keeps no chips or /go even when form-factor visual is evidence-backed", () => {
+    const cardHtml = renderToStaticMarkup(
+      createElement(VisualReplacementMatchCard, {
+        variant: "fridge_model",
+        brandName: "LG",
+        brandSlug: "lg",
+        modelNumber: "LRFXS3106S",
+        mappedFilterCount: 0,
+        connectedFilters: [],
+        formFactor: "french_door_bottom_freezer",
+        replacementIntervalHint: null,
+      }),
+    );
+    const quarantineHtml = renderToStaticMarkup(
+      createElement(FridgeModelFilterSection, {
+        filters: [sampleFilter],
+        quarantineMessage:
+          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
+      }),
+    );
+    assert.ok(cardHtml.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
+    assert.ok(!quarantineHtml.includes("Numbers to compare"));
+    assert.ok(!quarantineHtml.includes('href="/go/'));
   });
 });

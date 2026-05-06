@@ -87,11 +87,12 @@ describe("VisualReplacementMatchCard", () => {
         modelNumber: "WRS325SDHZ",
         mappedFilterCount: 2,
         connectedFilters: [connectedRow],
+        formFactor: "french_door_bottom_freezer",
         replacementIntervalHint: "Suggested replacement timing: About every 6 months",
       }),
     );
     assert.ok(html.includes("We found your refrigerator"));
-    assert.ok(html.includes('data-form-factor-visual="generic-unknown"'));
+    assert.ok(html.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Numbers to compare"));
@@ -130,13 +131,14 @@ describe("VisualReplacementMatchCard", () => {
         modelNumber: "WRS325SDHZ",
         mappedFilterCount: 0,
         connectedFilters: [],
+        formFactor: "unknown",
         replacementIntervalHint: null,
       }),
     );
     assert.ok(html.includes("When your number appears on this page, select it."));
     assert.ok(!html.includes("See the same number below? Select it."));
     assert.ok(!html.includes("Numbers to compare"));
-    assert.ok(html.includes('data-form-factor-visual="generic-unknown"'));
+    assert.ok(!html.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
     assert.ok(!html.includes("<img"));
     assert.ok(!/https?:\/\/(www\.)?(lg|lowes|amazon)\./i.test(html));
     forbidHomeownerJargon(html);

@@ -6,6 +6,7 @@ import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout"
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import { Prose } from "@/components/Prose";
 import { getFridgeBySlug } from "@/lib/data/fridges";
+import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
 import { getFridgeModelReviewOverride } from "@/lib/fridge/fridge-model-review-overrides";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { classifyPageState } from "@/lib/page-state/page-state";
@@ -62,6 +63,7 @@ export default async function FridgePage({ params }: Props) {
   const manualEvidence = reviewOverride
     ? null
     : await loadRefrigeratorManualEvidenceForModel(params.slug);
+  const formFactorEvidence = await loadFridgeFormFactorEvidenceForModel(params.slug);
 
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
   const intervalHint =
@@ -77,6 +79,7 @@ export default async function FridgePage({ params }: Props) {
           modelNumber={fridge.model_number}
           mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}
           connectedFilters={reviewOverride ? [] : fridge.filters}
+          formFactor={formFactorEvidence?.form_factor ?? "unknown"}
           replacementIntervalHint={intervalHint}
         />
 

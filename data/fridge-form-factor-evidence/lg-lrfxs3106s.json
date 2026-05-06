@@ -1,0 +1,12 @@
+{
+  "fridge_model_slug": "lg-lrfxs3106s",
+  "form_factor": "french_door_bottom_freezer",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.lg.com/us/refrigerators/lg-lrfxs3106s-french-door-refrigerator",
+  "source_title": "LG LRFXS3106S product page (French door refrigerator)",
+  "confidence": "high",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "evidence_date": "2026-05-06",
+  "notes": "Official LG product page identifies this model as French door refrigerator; filter mapping remains separately quarantined."
+}

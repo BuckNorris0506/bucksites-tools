@@ -14,6 +14,7 @@ import {
 import { COMPARE_BEFORE_BUY_CHECKLIST_LINES } from "@/lib/copy/public-trust";
 import { FridgeModelConnectedFilterChips } from "@/components/fridge/FridgeModelConnectedFilterChips";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
+import type { FridgeFormFactor } from "@/lib/fridge/fridge-form-factor-evidence";
 
 /** Plain homeowner-facing store status — no gate internals. */
 export type VisualMatchStorePlainStatus =
@@ -40,15 +41,12 @@ export type VisualReplacementMatchCardProps =
       modelNumber: string;
       mappedFilterCount: number;
       connectedFilters: FridgeMappedFilterRow[];
+      formFactor: FridgeFormFactor;
       replacementIntervalHint?: string | null;
     };
 
-/**
- * Generic appliance glyph only.
- * Deliberately avoids door-layout details (French door / top freezer / side-by-side)
- * unless that shape is explicitly proven in repo-owned data.
- */
-function FridgeGlyph({ className }: { className?: string }) {
+/** Neutral marker for unknown form-factor models. */
+function NeutralApplianceMark({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 180 220"
@@ -63,6 +61,30 @@ function FridgeGlyph({ className }: { className?: string }) {
       <path d="M90 90V122" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
       <path d="M74 106H106" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
       <rect x="66" y="182" width="48" height="6" rx="3" fill="currentColor" opacity="0.28" />
+    </svg>
+  );
+}
+
+/** BuckParts-owned French-door + bottom-freezer visual (no manufacturer artwork). */
+function FrenchDoorBottomFreezerGlyph({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 190 230"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <ellipse cx="95" cy="210" rx="55" ry="8" fill="currentColor" opacity="0.14" />
+      <rect x="29" y="14" width="132" height="196" rx="20" fill="currentColor" />
+      <rect x="35" y="20" width="120" height="184" rx="16" fill="white" />
+      <rect x="35" y="20" width="58" height="122" rx="14" fill="currentColor" opacity="0.06" />
+      <rect x="97" y="20" width="58" height="122" rx="14" fill="currentColor" opacity="0.06" />
+      <rect x="93" y="20" width="4" height="122" rx="2" fill="currentColor" opacity="0.35" />
+      <rect x="35" y="142" width="120" height="62" rx="12" fill="currentColor" opacity="0.1" />
+      <rect x="52" y="76" width="4" height="34" rx="2" fill="currentColor" opacity="0.45" />
+      <rect x="134" y="76" width="4" height="34" rx="2" fill="currentColor" opacity="0.45" />
+      <rect x="82" y="157" width="26" height="4" rx="2" fill="currentColor" opacity="0.5" />
     </svg>
   );
 }
@@ -138,6 +160,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       modelNumber,
       mappedFilterCount,
       connectedFilters,
+      formFactor,
       replacementIntervalHint,
     } = props;
 
@@ -149,20 +172,23 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       "Not sure? Check your owner’s manual first.",
     ];
 
+    const formFactorVisual =
+      formFactor === "french_door_bottom_freezer" ? (
+        <div
+          className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
+          data-form-factor-visual="french_door_bottom_freezer-owned-svg"
+        >
+          <FrenchDoorBottomFreezerGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 sm:w-[104px]" />
+        </div>
+      ) : null;
+
     return (
       <section
         className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/45 via-white to-stone-50/25 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 sm:p-8"
         aria-label="Your refrigerator match"
       >
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
-          <div className="flex shrink-0 justify-center sm:block">
-            <div
-              className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
-              data-form-factor-visual="generic-unknown"
-            >
-              <FridgeGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 sm:w-[104px]" />
-            </div>
-          </div>
+          {formFactorVisual ? <div className="flex shrink-0 justify-center sm:block">{formFactorVisual}</div> : null}
           <div className="min-w-0 flex-1 space-y-5">
             <div className="space-y-2">
               <p className="text-sm font-medium text-stone-600">
@@ -235,11 +261,8 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <div className="flex shrink-0 justify-center lg:block">
-          <div
-            className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
-            data-form-factor-visual="generic-unknown"
-          >
-            <FridgeGlyph className="mx-auto h-auto w-[96px] text-blue-950/90 lg:w-[112px]" />
+          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50">
+            <NeutralApplianceMark className="mx-auto h-auto w-[96px] text-blue-950/90 lg:w-[112px]" />
             <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
               Replacement filter
             </p>

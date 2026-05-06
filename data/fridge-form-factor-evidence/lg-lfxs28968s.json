@@ -1,0 +1,12 @@
+{
+  "fridge_model_slug": "lg-lfxs28968s",
+  "form_factor": "french_door_bottom_freezer",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.lg.com/us/refrigerators/lg-lfxs28968s-french-3-door-refrigerator",
+  "source_title": "LG LFXS28968S product page (French 3-door refrigerator)",
+  "confidence": "high",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "evidence_date": "2026-05-06",
+  "notes": "Official LG product page explicitly states French 3-door configuration."
+}
