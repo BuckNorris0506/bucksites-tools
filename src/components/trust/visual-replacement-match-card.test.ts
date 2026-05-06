@@ -85,9 +85,9 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("We found this refrigerator model"));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
-    assert.ok(html.includes("Find the number printed on your current filter"));
-    assert.ok(html.includes("If it matches a number below, open that filter"));
-    assert.ok(html.includes("If you are not sure, check your owner’s manual first"));
+    assert.ok(html.includes("Find the number on your old filter."));
+    assert.ok(html.includes("See the same number below? Select it."));
+    assert.ok(html.includes("Not sure? Check your owner’s manual first."));
     assert.ok(html.includes("More help: where to look"));
     assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
@@ -118,8 +118,8 @@ describe("VisualReplacementMatchCard", () => {
         replacementIntervalHint: null,
       }),
     );
-    assert.ok(html.includes("When matching numbers are listed below, open the one that matches yours."));
-    assert.ok(!html.includes("If it matches a number below, open that filter."));
+    assert.ok(html.includes("When your number appears on this page, select it."));
+    assert.ok(!html.includes("See the same number below? Select it."));
     forbidHomeownerJargon(html);
   });
 

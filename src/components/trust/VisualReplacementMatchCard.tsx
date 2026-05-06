@@ -174,13 +174,13 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
                 Next steps
               </p>
               <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm font-medium leading-snug text-neutral-900 dark:text-neutral-100">
-                <li>Find the number printed on your current filter.</li>
+                <li>Find the number on your old filter.</li>
                 <li>
                   {mappedFilterCount > 0
-                    ? "If it matches a number below, open that filter."
-                    : "When matching numbers are listed below, open the one that matches yours."}
+                    ? "See the same number below? Select it."
+                    : "When your number appears on this page, select it."}
                 </li>
-                <li>If you are not sure, check your owner’s manual first.</li>
+                <li>Not sure? Check your owner’s manual first.</li>
               </ol>
             </div>
 

@@ -17,8 +17,9 @@ describe("FridgeModelConnectedFilterChips", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelConnectedFilterChips, { filters: [row] }),
     );
-    assert.ok(html.includes("Numbers connected to this fridge"));
-    assert.ok(html.includes("Not ranked"));
+    assert.ok(html.includes("Numbers to compare"));
+    assert.ok(html.includes("Not sorted as best to worst."));
+    assert.ok(html.includes("Do not guess. Match the number printed on your old filter."));
     assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes('href="/filter/lt1000p"'));
     assert.equal(/\bOption\b/i.test(html), false);

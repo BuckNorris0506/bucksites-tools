@@ -62,7 +62,7 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(!html.includes('href="/go/'));
     assert.ok(!html.includes("Full detail for each number"));
     assert.ok(!html.includes("Open a verified listing"));
-    assert.ok(!html.includes("Numbers connected to this fridge"));
+    assert.ok(!html.includes("Numbers to compare"));
   });
 
   it("non-quarantined section uses short intro and anti-ranking language", () => {

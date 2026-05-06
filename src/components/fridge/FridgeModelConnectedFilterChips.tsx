@@ -3,19 +3,17 @@ import Link from "next/link";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 
 /**
- * Compact, scannable OEM numbers for the fridge model hub. Not ranked; order matches repo sort only.
+ * Compact, scannable OEM numbers for the fridge model hub — compare only; list order is not a ranking.
  */
 export function FridgeModelConnectedFilterChips({ filters }: { filters: FridgeMappedFilterRow[] }) {
   if (filters.length === 0) return null;
 
   return (
-    <section aria-label="Filter numbers connected to this refrigerator" className="space-y-2">
+    <section aria-label="Filter numbers to compare for this refrigerator" className="space-y-2">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-        Numbers connected to this fridge
+        Numbers to compare
       </p>
-      <p className="text-xs text-neutral-600 dark:text-neutral-400">
-        Not ranked and not interchangeable by default—match what you already have.
-      </p>
+      <p className="text-xs text-neutral-600 dark:text-neutral-400">Not sorted as best to worst.</p>
       <div className="flex flex-wrap gap-2">
         {filters.map((f) => (
           <Link
@@ -27,8 +25,8 @@ export function FridgeModelConnectedFilterChips({ filters }: { filters: FridgeMa
           </Link>
         ))}
       </div>
-      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        Order matches our data storage, not a recommendation.
+      <p className="text-xs text-neutral-600 dark:text-neutral-400">
+        Do not guess. Match the number printed on your old filter.
       </p>
     </section>
   );
