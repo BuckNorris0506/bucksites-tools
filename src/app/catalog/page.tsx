@@ -33,7 +33,7 @@ export default async function CatalogPage() {
             href="/search"
             className="text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
           >
-            Search refrigerator and related reference
+            Search refrigerator model or OEM number
           </Link>
         </p>
       </header>

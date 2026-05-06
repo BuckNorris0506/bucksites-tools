@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
+import { Prose } from "@/components/Prose";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
-import { Prose } from "@/components/Prose";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
 import { getFridgeModelReviewOverride } from "@/lib/fridge/fridge-model-review-overrides";
@@ -84,12 +84,6 @@ export default async function FridgePage({ params }: Props) {
         />
 
         {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
-
-        {!reviewOverride && fridge.notes ? (
-          <div className="max-w-prose text-sm">
-            <Prose>{fridge.notes}</Prose>
-          </div>
-        ) : null}
 
         <p className="text-base">
           <Link
