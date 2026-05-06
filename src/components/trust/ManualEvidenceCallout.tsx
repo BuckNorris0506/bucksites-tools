@@ -30,10 +30,10 @@ export function ManualEvidenceCallout({
   const hasMultiSource = evidence.sources.length > 1;
 
   return (
-    <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50/80 via-white to-stone-50/35 p-6 shadow-sm ring-1 ring-emerald-200/45 dark:from-emerald-950/25 dark:via-neutral-900 dark:to-neutral-900 dark:ring-emerald-800/35 sm:p-7">
+    <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50/80 via-white to-stone-50/35 p-6 shadow-sm ring-1 ring-emerald-200/45 dark:from-slate-950/90 dark:via-slate-900/88 dark:to-emerald-950/20 dark:ring-emerald-700/30 sm:p-7">
       <div className="flex flex-wrap items-start gap-4">
         <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-emerald-200/50 dark:bg-neutral-800/70 dark:ring-emerald-700/40"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-emerald-200/50 dark:bg-slate-900/70 dark:ring-emerald-700/40"
           aria-hidden
         >
           <CheckBadgeIcon className="h-7 w-7" />
@@ -47,7 +47,7 @@ export function ManualEvidenceCallout({
           </div>
           <p className="flex flex-wrap items-center gap-x-2 gap-y-2 text-sm text-stone-700 dark:text-stone-200">
             <span className="text-stone-600 dark:text-stone-400">Source strength in our files:</span>
-            <span className="inline-flex rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-stone-800 shadow-sm ring-1 ring-stone-200/60 dark:bg-neutral-800/90 dark:text-stone-100 dark:ring-stone-600/50">
+            <span className="inline-flex rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-stone-800 shadow-sm ring-1 ring-stone-200/60 dark:bg-slate-900/85 dark:text-stone-100 dark:ring-slate-500/35">
               {evidence.source_tier_label}
             </span>
             {primary ? (
@@ -69,7 +69,7 @@ export function ManualEvidenceCallout({
         </div>
       </div>
 
-      <details className="mt-5 rounded-2xl bg-white/85 px-4 py-4 ring-1 ring-stone-200/40 dark:bg-neutral-800/40 dark:ring-stone-600/30">
+      <details className="mt-5 rounded-2xl bg-white/85 px-4 py-4 ring-1 ring-stone-200/40 dark:bg-slate-900/45 dark:ring-slate-500/30">
         <summary className="cursor-pointer select-none text-sm font-medium text-stone-800 dark:text-stone-100">
           Source list and full notes
         </summary>

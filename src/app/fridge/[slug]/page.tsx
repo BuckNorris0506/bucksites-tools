@@ -109,7 +109,7 @@ export default async function FridgePage({ params }: Props) {
           {fridge.reset_instructions.map((r) => (
             <div
               key={r.id}
-              className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45 dark:bg-neutral-800/35 dark:ring-stone-700/35"
+              className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45 dark:bg-slate-900/45 dark:ring-slate-500/30"
             >
               {r.title && (
                 <h3 className="font-semibold text-stone-900 dark:text-stone-100">{r.title}</h3>

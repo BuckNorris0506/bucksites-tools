@@ -30,7 +30,7 @@ export function FridgeModelFilterSection({
     return (
       <section className="space-y-5">
         <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Filter guidance</h2>
-        <div className="rounded-3xl border border-amber-200/65 bg-gradient-to-b from-amber-50/90 to-amber-50/50 p-6 text-[15px] leading-relaxed text-amber-950 shadow-sm dark:border-amber-900/35 dark:from-amber-950/30 dark:to-amber-950/15 dark:text-amber-50/95">
+        <div className="rounded-3xl border border-amber-200/65 bg-gradient-to-b from-amber-50/90 to-amber-50/50 p-6 text-[15px] leading-relaxed text-amber-950 shadow-sm dark:border-amber-700/35 dark:from-slate-900/90 dark:to-amber-950/20 dark:text-amber-100/95">
           {quarantineMessage}
         </div>
       </section>
@@ -77,7 +77,7 @@ export function FridgeModelFilterSection({
             return (
               <li
                 key={f.id}
-                className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200/45 dark:bg-neutral-900/35 dark:ring-stone-700/35 sm:p-7"
+                className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200/45 dark:bg-slate-900/45 dark:ring-slate-500/30 sm:p-7"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1 space-y-4">

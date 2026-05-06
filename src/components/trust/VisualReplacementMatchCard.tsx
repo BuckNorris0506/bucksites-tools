@@ -102,11 +102,11 @@ function FridgeHomeownerHelpSectionsInner() {
 
 function FridgeHomeownerHelpCollapsible() {
   return (
-    <details className="rounded-2xl bg-stone-50/60 px-4 py-3.5 ring-1 ring-stone-200/30 dark:bg-neutral-800/25 dark:ring-stone-600/20">
+    <details className="rounded-2xl bg-stone-50/60 px-4 py-3.5 ring-1 ring-stone-200/30 dark:bg-slate-900/40 dark:ring-slate-500/25">
       <summary className="cursor-pointer select-none text-sm font-medium text-stone-700 dark:text-stone-200">
         Need help finding the filter?
       </summary>
-      <div className="mt-3 border-t border-stone-200/60 pt-3.5 dark:border-stone-600/35">
+      <div className="mt-3 border-t border-stone-200/60 pt-3.5 dark:border-slate-500/30">
         <FridgeHomeownerHelpSectionsInner />
       </div>
     </details>
@@ -147,12 +147,12 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
 
     return (
       <section
-        className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/45 via-white to-stone-50/25 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900/98 dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] dark:ring-stone-700/45 sm:p-8"
+        className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/45 via-white to-stone-50/25 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-slate-950/95 dark:via-slate-900/92 dark:to-slate-900/85 dark:shadow-[0_2px_8px_rgba(2,6,23,0.18)] dark:ring-slate-500/35 sm:p-8"
         aria-label="Your refrigerator match"
       >
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
           <div className="flex shrink-0 justify-center sm:block">
-            <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-neutral-800/60 dark:ring-stone-600/35">
+            <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-slate-900/65 dark:ring-slate-500/35">
               <FridgeGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 dark:text-blue-200/90 sm:w-[104px]" />
             </div>
           </div>
@@ -183,10 +183,10 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
                 {stepItems.map((text, i) => (
                   <li
                     key={i}
-                    className="flex gap-3.5 rounded-2xl bg-white/95 px-4 py-3.5 shadow-sm ring-1 ring-stone-200/40 dark:bg-neutral-800/45 dark:ring-stone-600/25"
+                  className="flex gap-3.5 rounded-2xl bg-white/95 px-4 py-3.5 shadow-sm ring-1 ring-stone-200/40 dark:bg-slate-900/55 dark:ring-slate-500/28"
                   >
                     <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-950 dark:bg-amber-900/45 dark:text-amber-100"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-900 dark:bg-blue-900/45 dark:text-blue-100"
                       aria-hidden
                     >
                       {i + 1}
@@ -223,12 +223,12 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
 
   return (
     <section
-      className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/35 via-white to-stone-50/20 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900/98 dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] dark:ring-stone-700/45 sm:p-8"
+      className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/35 via-white to-stone-50/20 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-slate-950/95 dark:via-slate-900/92 dark:to-slate-900/85 dark:shadow-[0_2px_8px_rgba(2,6,23,0.18)] dark:ring-slate-500/35 sm:p-8"
       aria-label="Your filter match"
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <div className="flex shrink-0 justify-center lg:block">
-          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-neutral-800/60 dark:ring-stone-600/35">
+          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-slate-900/65 dark:ring-slate-500/35">
             <FridgeGlyph className="mx-auto h-auto w-[96px] text-blue-950/90 dark:text-blue-200/90 lg:w-[112px]" />
             <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
               Replacement filter
