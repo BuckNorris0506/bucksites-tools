@@ -49,7 +49,7 @@ const sampleFilter2 = {
 } as unknown as FridgeMappedFilterRow;
 
 describe("FridgeModelFilterSection", () => {
-  it("quarantine notice renders with no /go links and no filter options list", () => {
+  it("quarantine notice renders with no /go links and no filter list section", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter],
@@ -60,25 +60,39 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(html.includes("Filter guidance"));
     assert.ok(html.includes("not showing store buttons yet"));
     assert.ok(!html.includes('href="/go/'));
-    assert.ok(!html.includes("Filter options for this refrigerator"));
+    assert.ok(!html.includes("Filter numbers connected to this refrigerator"));
     assert.ok(!html.includes("Open a verified listing"));
+    assert.ok(!html.includes("Number to compare"));
   });
 
-  it("non-quarantined section renders homeowner-first copy, part numbers, aliases, and gated /go links", () => {
+  it("non-quarantined section avoids ranked Option wording and shows anti-ranking copy", () => {
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelFilterSection, {
+        filters: [sampleFilter, sampleFilter2],
+      }),
+    );
+    assert.ok(html.includes("Filter numbers connected to this refrigerator"));
+    assert.ok(html.includes("Do not pick by order"));
+    assert.ok(html.includes("not a ranking"));
+    assert.ok(html.includes("try #1"));
+    assert.ok(html.includes("Number to compare"));
+    assert.equal(/\bOption\s*1\b/i.test(html), false);
+    assert.equal(/\bOption\s*2\b/i.test(html), false);
+    assert.ok(html.includes("Open filter details"));
+  });
+
+  it("mapped OEM numbers, aliases, Open filter details, and gated /go links still render", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter],
       }),
     );
-    assert.ok(html.includes("Filter options for this refrigerator"));
-    assert.ok(html.includes("printed on the cartridge"));
-    assert.ok(html.includes("not claiming every option is interchangeable"));
     assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes("Also listed as:"));
     assert.ok(html.includes("ADQ74793501"));
     assert.ok(html.includes("Compare this number to the text on your existing cartridge"));
     assert.ok(html.includes("Open a verified listing"));
-    assert.ok(html.includes('href="/go/'));
+    assert.ok(html.includes('href="/go/link-1"'));
     assert.ok(html.includes('href="/filter/lt1000p"'));
   });
 
@@ -92,18 +106,16 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(!html.includes('href="https://www.example.com/product/lt1000p"'));
   });
 
-  it("multiple mapped filters show option numbering without changing relative order in markup", () => {
+  it("multiple mapped filters preserve OEM sort order in markup without option labels", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter, sampleFilter2],
       }),
     );
-    const i1 = html.indexOf("Option 1");
-    const i2 = html.indexOf("Option 2");
     const lt1000 = html.indexOf("LT1000P");
     const lt800 = html.indexOf("LT800P");
-    assert.ok(i1 >= 0 && i2 >= 0 && i1 < i2);
     assert.ok(lt1000 >= 0 && lt800 >= 0 && lt1000 < lt800);
+    assert.equal(/\bOption\b/i.test(html), false);
   });
 
   it("copy avoids unsupported guarantees and internal jargon", () => {

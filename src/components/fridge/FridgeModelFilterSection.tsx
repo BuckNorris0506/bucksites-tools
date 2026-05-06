@@ -41,21 +41,30 @@ export function FridgeModelFilterSection({
     <section className="space-y-5">
       <div className="space-y-3">
         <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Filter options for this refrigerator
+          Filter numbers connected to this refrigerator
         </h2>
         <div className="max-w-prose space-y-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+          <p className="font-medium text-neutral-900 dark:text-neutral-100">
+            Do not pick by order. Start by matching the number printed on your current filter or your owner’s manual.
+          </p>
+          <p>
+            The list below is only how we store matches in our reference—it is{" "}
+            <strong className="font-medium text-neutral-900 dark:text-neutral-100">not a ranking</strong>, not “try #1
+            first,” and not guidance to rotate through lines if something does not fit.
+          </p>
           <p>
             Start with the <strong className="font-medium text-neutral-900 dark:text-neutral-100">OEM or part number</strong>{" "}
             printed on the cartridge you are removing—usually on the body, end cap, or a foil label.
           </p>
           <p>
-            You may see more than one listing here because manufacturers and retailers sometimes use{" "}
-            <strong className="font-medium text-neutral-900 dark:text-neutral-100">different model names</strong> for the
-            same underlying cartridge, or because a compatible-style listing uses a different label. Treat each line as a
-            separate number to compare; we are not claiming every option is interchangeable.
+            You may see more than one line because manufacturers and retailers sometimes use{" "}
+            <strong className="font-medium text-neutral-900 dark:text-neutral-100">different labels</strong> for related
+            cartridges, or because separate compatible listings exist in our data. Treat each line as its own number to
+            verify; we are not claiming these numbers are interchangeable.
           </p>
           <p className="text-neutral-600 dark:text-neutral-400">
-            Open the filter detail page when you want the full fit notes and retailer list for that specific part number.
+            Use <strong className="font-medium text-neutral-800 dark:text-neutral-200">Open filter details</strong> for fit
+            notes and context before using any store link.
           </p>
         </div>
       </div>
@@ -66,9 +75,10 @@ export function FridgeModelFilterSection({
           old filter, try search or check back after catalog updates.
         </p>
       ) : (
-        <ol className="m-0 list-none space-y-6 p-0">
-          {filters.map((f, index) => {
+        <ul className="m-0 list-none space-y-6 p-0">
+          {filters.map((f) => {
             const fInterval = intervalLabel(f.replacement_interval_months);
+            const filterHref = `/filter/${f.slug}`;
             const buyPathSortContext = buyPathSortContextForFilter(
               f.slug,
               f.name,
@@ -91,16 +101,24 @@ export function FridgeModelFilterSection({
                 className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-5 dark:border-neutral-800 dark:bg-neutral-900/35"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1 space-y-2">
+                  <div className="min-w-0 flex-1 space-y-3">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                      Option {index + 1} · part number
+                      Number to compare
                     </p>
                     <Link
-                      href={`/filter/${f.slug}`}
+                      href={filterHref}
                       className="block font-mono text-2xl font-semibold tracking-tight text-neutral-900 underline decoration-neutral-400 decoration-2 underline-offset-2 hover:decoration-neutral-600 dark:text-neutral-50 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
                     >
                       {f.oem_part_number}
                     </Link>
+                    <div>
+                      <Link
+                        href={filterHref}
+                        className="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-neutral-900 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm transition-colors hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:border-neutral-100 dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-900 dark:focus:ring-offset-neutral-950"
+                      >
+                        Open filter details<span aria-hidden> →</span>
+                      </Link>
+                    </div>
                     {f.name?.trim() ? (
                       <p className="text-sm text-neutral-700 dark:text-neutral-300">{f.name.trim()}</p>
                     ) : null}
@@ -129,7 +147,7 @@ export function FridgeModelFilterSection({
 
                 <div className="mt-5 border-t border-neutral-200 pt-4 dark:border-neutral-700">
                   <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                    Verified store links (only after the number matches what you need)
+                    Store links (secondary—only after this number matches what you need)
                   </p>
                   <div className="mt-3">
                     <TrustAwareBuySection
@@ -146,7 +164,7 @@ export function FridgeModelFilterSection({
               </li>
             );
           })}
-        </ol>
+        </ul>
       )}
     </section>
   );
