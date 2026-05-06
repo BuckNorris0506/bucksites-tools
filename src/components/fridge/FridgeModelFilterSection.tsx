@@ -29,8 +29,8 @@ export function FridgeModelFilterSection({
   if (quarantineMessage) {
     return (
       <section className="space-y-5">
-        <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Filter guidance</h2>
-        <div className="rounded-3xl border border-amber-200/65 bg-gradient-to-b from-amber-50/90 to-amber-50/50 p-6 text-[15px] leading-relaxed text-amber-950 shadow-sm dark:border-amber-700/35 dark:from-slate-900/90 dark:to-amber-950/20 dark:text-amber-100/95">
+        <h2 className="text-xl font-semibold text-stone-900">Filter guidance</h2>
+        <div className="rounded-3xl border border-amber-200/65 bg-gradient-to-b from-amber-50/90 to-amber-50/50 p-6 text-[15px] leading-relaxed text-amber-950 shadow-sm">
           {quarantineMessage}
         </div>
       </section>
@@ -40,16 +40,16 @@ export function FridgeModelFilterSection({
   return (
     <section className="space-y-8">
       <div className="space-y-3">
-        <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Full detail for each number</h2>
-        <p className="max-w-prose text-base leading-relaxed text-stone-600 dark:text-stone-400">
+        <h2 className="text-xl font-semibold text-stone-900">Full detail for each number</h2>
+        <p className="max-w-prose text-base leading-relaxed text-stone-600">
           Same numbers as the chips above—here with notes and store links.{" "}
-          <strong className="font-medium text-stone-800 dark:text-stone-200">Not a ranked list.</strong> Open filter
+          <strong className="font-medium text-stone-800">Not a ranked list.</strong> Open filter
           details before using any store link.
         </p>
       </div>
 
       {filters.length === 0 ? (
-        <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
+        <p className="text-sm leading-relaxed text-stone-600">
           We do not have mapped filter numbers for this model in our reference yet. If you have the OEM number from your
           old filter, try search or check back after catalog updates.
         </p>
@@ -77,43 +77,43 @@ export function FridgeModelFilterSection({
             return (
               <li
                 key={f.id}
-                className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200/45 dark:bg-slate-900/45 dark:ring-slate-500/30 sm:p-7"
+                className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200/45 sm:p-7"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1 space-y-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
                       Number to compare
                     </p>
                     <Link
                       href={filterHref}
-                      className="block text-2xl font-bold tabular-nums tracking-tight text-stone-900 underline decoration-stone-300 decoration-2 underline-offset-[0.2em] transition hover:decoration-blue-950/50 dark:text-stone-50 dark:decoration-stone-600 dark:hover:decoration-blue-300/50"
+                      className="block text-2xl font-bold tabular-nums tracking-tight text-stone-900 underline decoration-stone-300 decoration-2 underline-offset-[0.2em] transition hover:decoration-blue-950/50"
                     >
                       {f.oem_part_number}
                     </Link>
                     <div>
                       <Link
                         href={filterHref}
-                        className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white dark:focus-visible:ring-stone-400 dark:focus-visible:ring-offset-neutral-950"
+                        className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
                       >
                         Open filter details<span aria-hidden> →</span>
                       </Link>
                     </div>
                     {f.name?.trim() ? (
-                      <p className="text-sm text-stone-700 dark:text-stone-300">{f.name.trim()}</p>
+                      <p className="text-sm text-stone-700">{f.name.trim()}</p>
                     ) : null}
                     {aliases.length > 0 ? (
-                      <p className="text-sm text-stone-600 dark:text-stone-400">
-                        <span className="font-medium text-stone-800 dark:text-stone-200">Also listed as:</span>{" "}
-                        <span className="font-semibold tabular-nums text-stone-800 dark:text-stone-200">
+                      <p className="text-sm text-stone-600">
+                        <span className="font-medium text-stone-800">Also listed as:</span>{" "}
+                        <span className="font-semibold tabular-nums text-stone-800">
                           {aliases.join(" · ")}
                         </span>
                       </p>
                     ) : null}
-                    <p className="text-sm font-medium text-stone-800 dark:text-stone-200">
+                    <p className="text-sm font-medium text-stone-800">
                       Compare this number to the text on your existing cartridge before you buy.
                     </p>
                     {fInterval ? (
-                      <p className="text-xs text-stone-600 dark:text-stone-400">
+                      <p className="text-xs text-stone-600">
                         Typical replacement timing on file: {fInterval}
                       </p>
                     ) : null}
@@ -121,13 +121,13 @@ export function FridgeModelFilterSection({
                 </div>
 
                 {notesHtml ? (
-                  <div className="mt-5 border-t border-stone-200/70 pt-5 text-sm dark:border-stone-700/70">
+                  <div className="mt-5 border-t border-stone-200/70 pt-5 text-sm">
                     <Prose>{notesHtml}</Prose>
                   </div>
                 ) : null}
 
-                <div className="mt-6 rounded-2xl bg-stone-50/95 p-5 ring-1 ring-stone-200/35 dark:bg-neutral-800/30 dark:ring-stone-700/25">
-                  <p className="text-xs font-medium text-stone-600 dark:text-stone-400">
+                <div className="mt-6 rounded-2xl bg-stone-50/95 p-5 ring-1 ring-stone-200/35">
+                  <p className="text-xs font-medium text-stone-600">
                     Store links (secondary—only after this number matches what you need)
                   </p>
                   <div className="mt-4">
