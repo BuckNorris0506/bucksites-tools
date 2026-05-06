@@ -60,40 +60,27 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(html.includes("Filter guidance"));
     assert.ok(html.includes("not showing store buttons yet"));
     assert.ok(!html.includes('href="/go/'));
-    assert.ok(!html.includes("Filter numbers connected to this refrigerator"));
+    assert.ok(!html.includes("Full detail for each number"));
     assert.ok(!html.includes("Open a verified listing"));
-    assert.ok(!html.includes("Number to compare"));
+    assert.ok(!html.includes("Numbers connected to this fridge"));
   });
 
-  it("non-quarantined section avoids ranked Option wording and shows anti-ranking copy", () => {
+  it("non-quarantined section uses short intro and anti-ranking language", () => {
     const html = renderToStaticMarkup(
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter, sampleFilter2],
       }),
     );
-    assert.ok(html.includes("Filter numbers connected to this refrigerator"));
-    assert.ok(html.includes("Do not pick by order"));
-    assert.ok(html.includes("not a ranking"));
-    assert.ok(html.includes("try #1"));
-    assert.ok(html.includes("Number to compare"));
+    assert.ok(html.includes("Full detail for each number"));
+    assert.ok(html.includes("chips above"));
+    assert.ok(html.includes("Not ranked"));
     assert.equal(/\bOption\s*1\b/i.test(html), false);
     assert.equal(/\bOption\s*2\b/i.test(html), false);
-    assert.ok(html.includes("Open filter details"));
-  });
-
-  it("mapped OEM numbers, aliases, Open filter details, and gated /go links still render", () => {
-    const html = renderToStaticMarkup(
-      createElement(FridgeModelFilterSection, {
-        filters: [sampleFilter],
-      }),
-    );
     assert.ok(html.includes("LT1000P"));
-    assert.ok(html.includes("Also listed as:"));
-    assert.ok(html.includes("ADQ74793501"));
-    assert.ok(html.includes("Compare this number to the text on your existing cartridge"));
+    assert.ok(html.includes("Open filter details"));
     assert.ok(html.includes("Open a verified listing"));
-    assert.ok(html.includes('href="/go/link-1"'));
-    assert.ok(html.includes('href="/filter/lt1000p"'));
+    assert.ok(html.includes('href="/go/'));
+    assert.ok(!html.includes("Do not pick by order"));
   });
 
   it("store navigation uses /go hop, not raw affiliate URLs in primary anchors", () => {
@@ -151,9 +138,7 @@ describe("FridgeModelFilterSection", () => {
       }),
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
-    assert.ok(cardHtml.includes("Where to look"));
-    assert.ok(cardHtml.includes("How replacement usually works"));
-    assert.ok(cardHtml.includes("What to compare before buying"));
+    assert.ok(cardHtml.includes("Next steps"));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];
     for (const rx of banned) {
       assert.equal(rx.test(html), false, `unexpected internal term: ${rx}`);

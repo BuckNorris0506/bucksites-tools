@@ -59,9 +59,9 @@ function FridgeGlyph({ className }: { className?: string }) {
   );
 }
 
-function FridgeHomeownerHelpSections() {
+function FridgeHomeownerHelpSectionsInner() {
   return (
-    <div className="space-y-4 rounded-xl border border-neutral-200 bg-white px-4 py-4 dark:border-neutral-700 dark:bg-neutral-900/50">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
           {FRIDGE_HOMEOWNER_SECTION_WHERE_TO_LOOK}
@@ -100,6 +100,19 @@ function FridgeHomeownerHelpSections() {
         </ul>
       </div>
     </div>
+  );
+}
+
+function FridgeHomeownerHelpCollapsible() {
+  return (
+    <details className="rounded-xl border border-neutral-200 bg-white px-3 py-3 dark:border-neutral-700 dark:bg-neutral-900/40">
+      <summary className="cursor-pointer select-none text-sm font-medium text-neutral-800 dark:text-neutral-200">
+        More help: where to look, how replacement works, and what to compare
+      </summary>
+      <div className="mt-4 border-t border-neutral-200 pt-4 dark:border-neutral-700">
+        <FridgeHomeownerHelpSectionsInner />
+      </div>
+    </details>
   );
 }
 
@@ -155,13 +168,23 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
             {replacementIntervalHint ? (
               <p className="text-sm text-neutral-600 dark:text-neutral-400">{replacementIntervalHint}</p>
             ) : null}
-            <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
-              {mappedFilterCount === 0
-                ? "We're still mapping compatible filters for this model."
-                : `We match ${mappedFilterCount} compatible filter${mappedFilterCount === 1 ? "" : "s"} below.`}{" "}
-              Compare the number printed on your current filter before ordering.
-            </p>
-            <FridgeHomeownerHelpSections />
+
+            <div className="rounded-lg border border-neutral-200 bg-white/80 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900/60">
+              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                Next steps
+              </p>
+              <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm font-medium leading-snug text-neutral-900 dark:text-neutral-100">
+                <li>Find the number printed on your current filter.</li>
+                <li>
+                  {mappedFilterCount > 0
+                    ? "If it matches a number below, open that filter."
+                    : "When matching numbers are listed below, open the one that matches yours."}
+                </li>
+                <li>If you are not sure, check your owner’s manual first.</li>
+              </ol>
+            </div>
+
+            <FridgeHomeownerHelpCollapsible />
           </div>
         </div>
       </section>
@@ -230,7 +253,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
             </div>
           ) : null}
 
-          <FridgeHomeownerHelpSections />
+          <FridgeHomeownerHelpCollapsible />
 
           <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
             {compatibleModelCount === 0

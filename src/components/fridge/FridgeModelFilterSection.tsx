@@ -39,34 +39,15 @@ export function FridgeModelFilterSection({
 
   return (
     <section className="space-y-5">
-      <div className="space-y-3">
+      <div className="space-y-2">
         <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Filter numbers connected to this refrigerator
+          Full detail for each number
         </h2>
-        <div className="max-w-prose space-y-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
-          <p className="font-medium text-neutral-900 dark:text-neutral-100">
-            Do not pick by order. Start by matching the number printed on your current filter or your owner’s manual.
-          </p>
-          <p>
-            The list below is only how we store matches in our reference—it is{" "}
-            <strong className="font-medium text-neutral-900 dark:text-neutral-100">not a ranking</strong>, not “try #1
-            first,” and not guidance to rotate through lines if something does not fit.
-          </p>
-          <p>
-            Start with the <strong className="font-medium text-neutral-900 dark:text-neutral-100">OEM or part number</strong>{" "}
-            printed on the cartridge you are removing—usually on the body, end cap, or a foil label.
-          </p>
-          <p>
-            You may see more than one line because manufacturers and retailers sometimes use{" "}
-            <strong className="font-medium text-neutral-900 dark:text-neutral-100">different labels</strong> for related
-            cartridges, or because separate compatible listings exist in our data. Treat each line as its own number to
-            verify; we are not claiming these numbers are interchangeable.
-          </p>
-          <p className="text-neutral-600 dark:text-neutral-400">
-            Use <strong className="font-medium text-neutral-800 dark:text-neutral-200">Open filter details</strong> for fit
-            notes and context before using any store link.
-          </p>
-        </div>
+        <p className="max-w-prose text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+          Same numbers as the chips above—here with notes and store links.{" "}
+          <strong className="font-medium text-neutral-800 dark:text-neutral-200">Not ranked.</strong> Open filter details
+          before using any store link.
+        </p>
       </div>
 
       {filters.length === 0 ? (

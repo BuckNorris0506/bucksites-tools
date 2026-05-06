@@ -52,6 +52,8 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("We found this filter"));
     assert.ok(html.includes("EDR1RXD1"));
     assert.ok(html.includes("FILTER-A"));
+    assert.ok(html.includes("More help: where to look"));
+    assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
     assert.ok(html.includes("How replacement usually works"));
     assert.ok(html.includes("Why replacement matters"));
@@ -69,7 +71,7 @@ describe("VisualReplacementMatchCard", () => {
     forbidUnsupportedHealthOrGuarantee(html);
   });
 
-  it("fridge_model renders brand and compare-before-order copy without jargon", () => {
+  it("fridge_model renders next steps and collapsible long help without jargon", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_model",
@@ -82,7 +84,12 @@ describe("VisualReplacementMatchCard", () => {
     );
     assert.ok(html.includes("We found this refrigerator model"));
     assert.ok(html.includes("WRS325SDHZ"));
-    assert.ok(html.includes("compatible filters"));
+    assert.ok(html.includes("Next steps"));
+    assert.ok(html.includes("Find the number printed on your current filter"));
+    assert.ok(html.includes("If it matches a number below, open that filter"));
+    assert.ok(html.includes("If you are not sure, check your owner’s manual first"));
+    assert.ok(html.includes("More help: where to look"));
+    assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
     assert.ok(html.includes("How replacement usually works"));
     assert.ok(html.includes("Why replacement matters"));
@@ -93,9 +100,27 @@ describe("VisualReplacementMatchCard", () => {
     );
     assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
     assert.ok(html.includes("Do not force it."));
-    assert.ok(!html.includes("Match the number on your current filter"));
+    const idxNext = html.indexOf("Next steps");
+    const idxLong = html.indexOf("How replacement usually works");
+    assert.ok(idxNext >= 0 && idxLong > idxNext, "long homeowner help should follow next steps");
     forbidHomeownerJargon(html);
     forbidUnsupportedHealthOrGuarantee(html);
+  });
+
+  it("fridge_model with no mapped filters uses neutral second-step copy", () => {
+    const html = renderToStaticMarkup(
+      createElement(VisualReplacementMatchCard, {
+        variant: "fridge_model",
+        brandName: "Example Appliance Co.",
+        brandSlug: "example",
+        modelNumber: "WRS325SDHZ",
+        mappedFilterCount: 0,
+        replacementIntervalHint: null,
+      }),
+    );
+    assert.ok(html.includes("When matching numbers are listed below, open the one that matches yours."));
+    assert.ok(!html.includes("If it matches a number below, open that filter."));
+    forbidHomeownerJargon(html);
   });
 
   it("deriveFridgeFilterStorePlainStatus matches gated/raw/button visibility", () => {

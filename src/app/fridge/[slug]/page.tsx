@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FridgeModelConnectedFilterChips } from "@/components/fridge/FridgeModelConnectedFilterChips";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
@@ -77,6 +78,10 @@ export default async function FridgePage({ params }: Props) {
         mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}
         replacementIntervalHint={intervalHint}
       />
+
+      {!reviewOverride && fridge.filters.length > 0 ? (
+        <FridgeModelConnectedFilterChips filters={fridge.filters} />
+      ) : null}
 
       {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
 
