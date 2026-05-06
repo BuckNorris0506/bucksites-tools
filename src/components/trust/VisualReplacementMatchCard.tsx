@@ -69,22 +69,52 @@ function NeutralApplianceMark({ className }: { className?: string }) {
 function FrenchDoorBottomFreezerGlyph({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 190 230"
+      viewBox="0 0 220 290"
       className={className}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <ellipse cx="95" cy="210" rx="55" ry="8" fill="currentColor" opacity="0.14" />
-      <rect x="29" y="14" width="132" height="196" rx="20" fill="currentColor" />
-      <rect x="35" y="20" width="120" height="184" rx="16" fill="white" />
-      <rect x="35" y="20" width="58" height="122" rx="14" fill="currentColor" opacity="0.06" />
-      <rect x="97" y="20" width="58" height="122" rx="14" fill="currentColor" opacity="0.06" />
-      <rect x="93" y="20" width="4" height="122" rx="2" fill="currentColor" opacity="0.35" />
-      <rect x="35" y="142" width="120" height="62" rx="12" fill="currentColor" opacity="0.1" />
-      <rect x="52" y="76" width="4" height="34" rx="2" fill="currentColor" opacity="0.45" />
-      <rect x="134" y="76" width="4" height="34" rx="2" fill="currentColor" opacity="0.45" />
-      <rect x="82" y="157" width="26" height="4" rx="2" fill="currentColor" opacity="0.5" />
+      <defs>
+        <linearGradient id="fridge-shell" x1="44" y1="34" x2="176" y2="246" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F8FAFC" />
+          <stop offset="0.48" stopColor="#E5EAF1" />
+          <stop offset="1" stopColor="#CDD5E0" />
+        </linearGradient>
+        <linearGradient id="fridge-door-left" x1="56" y1="46" x2="106" y2="186" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" />
+          <stop offset="1" stopColor="#E6EBF2" />
+        </linearGradient>
+        <linearGradient id="fridge-door-right" x1="114" y1="46" x2="164" y2="186" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FCFDFF" />
+          <stop offset="1" stopColor="#E3E9F1" />
+        </linearGradient>
+        <linearGradient id="fridge-drawer" x1="56" y1="188" x2="164" y2="248" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F3F6FB" />
+          <stop offset="1" stopColor="#DCE3ED" />
+        </linearGradient>
+      </defs>
+
+      <ellipse cx="110" cy="266" rx="68" ry="12" fill="currentColor" opacity="0.12" />
+      <ellipse cx="110" cy="264" rx="52" ry="9" fill="currentColor" opacity="0.08" />
+
+      <rect x="44" y="30" width="132" height="228" rx="28" fill="url(#fridge-shell)" />
+      <rect x="44" y="30" width="132" height="228" rx="28" stroke="currentColor" strokeOpacity="0.3" strokeWidth="2" />
+
+      <rect x="56" y="44" width="50" height="144" rx="18" fill="url(#fridge-door-left)" />
+      <rect x="114" y="44" width="50" height="144" rx="18" fill="url(#fridge-door-right)" />
+      <rect x="108" y="44" width="4" height="144" rx="2" fill="currentColor" opacity="0.24" />
+
+      <rect x="56" y="188" width="108" height="58" rx="16" fill="url(#fridge-drawer)" />
+      <rect x="56" y="188" width="108" height="58" rx="16" stroke="currentColor" strokeOpacity="0.14" />
+      <rect x="90" y="204" width="40" height="5" rx="2.5" fill="currentColor" opacity="0.34" />
+
+      <rect x="72" y="98" width="4" height="38" rx="2" fill="currentColor" opacity="0.34" />
+      <rect x="144" y="98" width="4" height="38" rx="2" fill="currentColor" opacity="0.34" />
+
+      <path d="M58 52h18" stroke="white" strokeOpacity="0.72" strokeWidth="2" strokeLinecap="round" />
+      <path d="M116 52h18" stroke="white" strokeOpacity="0.68" strokeWidth="2" strokeLinecap="round" />
+      <path d="M58 196h24" stroke="white" strokeOpacity="0.55" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -175,10 +205,10 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
     const formFactorVisual =
       formFactor === "french_door_bottom_freezer" ? (
         <div
-          className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
+          className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-stone-200/50"
           data-form-factor-visual="french_door_bottom_freezer-owned-svg"
         >
-          <FrenchDoorBottomFreezerGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 sm:w-[104px]" />
+          <FrenchDoorBottomFreezerGlyph className="mx-auto h-auto w-[120px] text-blue-950/90 sm:w-[138px]" />
         </div>
       ) : null;
 
