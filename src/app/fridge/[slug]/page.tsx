@@ -68,57 +68,57 @@ export default async function FridgePage({ params }: Props) {
     fridgeInterval != null ? `Suggested replacement timing: ${fridgeInterval}` : undefined;
 
   return (
-    <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
-      <VisualReplacementMatchCard
-        variant="fridge_model"
-        brandName={fridge.brand.name}
-        brandSlug={fridge.brand.slug}
-        modelNumber={fridge.model_number}
-        mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}
-        connectedFilters={reviewOverride ? [] : fridge.filters}
-        replacementIntervalHint={intervalHint}
-      />
+    <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
+      <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
+        <VisualReplacementMatchCard
+          variant="fridge_model"
+          brandName={fridge.brand.name}
+          brandSlug={fridge.brand.slug}
+          modelNumber={fridge.model_number}
+          mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}
+          connectedFilters={reviewOverride ? [] : fridge.filters}
+          replacementIntervalHint={intervalHint}
+        />
 
-      {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
+        {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
 
-      {fridge.notes ? (
-        <div className="max-w-prose text-sm">
-          <Prose>{fridge.notes}</Prose>
-        </div>
-      ) : null}
+        {!reviewOverride && fridge.notes ? (
+          <div className="max-w-prose text-sm">
+            <Prose>{fridge.notes}</Prose>
+          </div>
+        ) : null}
 
-      <p className="text-base">
-        <Link
-          href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
-          className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60 dark:text-blue-300 dark:decoration-blue-400/30 dark:hover:decoration-blue-300/70"
-        >
-          Reset water filter indicator →
-        </Link>
-      </p>
+        <p className="text-base">
+          <Link
+            href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
+            className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60"
+          >
+            Reset water filter indicator →
+          </Link>
+        </p>
 
-      <FridgeModelFilterSection
-        filters={fridge.filters}
-        quarantineMessage={reviewOverride?.public_message ?? null}
-      />
+        <FridgeModelFilterSection
+          filters={fridge.filters}
+          quarantineMessage={reviewOverride?.public_message ?? null}
+        />
 
-      {fridge.reset_instructions.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">
-            {fridge.brand.name} reset instructions
-          </h2>
-          {fridge.reset_instructions.map((r) => (
-            <div
-              key={r.id}
-              className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45 dark:bg-slate-900/45 dark:ring-slate-500/30"
-            >
-              {r.title && (
-                <h3 className="font-semibold text-stone-900 dark:text-stone-100">{r.title}</h3>
-              )}
-              <Prose>{r.body_markdown}</Prose>
-            </div>
-          ))}
-        </section>
-      )}
-    </article>
+        {fridge.reset_instructions.length > 0 && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold text-stone-900">
+              {fridge.brand.name} reset instructions
+            </h2>
+            {fridge.reset_instructions.map((r) => (
+              <div
+                key={r.id}
+                className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45"
+              >
+                {r.title && <h3 className="font-semibold text-stone-900">{r.title}</h3>}
+                <Prose>{r.body_markdown}</Prose>
+              </div>
+            ))}
+          </section>
+        )}
+      </article>
+    </section>
   );
 }
