@@ -60,40 +60,34 @@ function FridgeGlyph({ className }: { className?: string }) {
 }
 
 function FridgeHomeownerHelpSectionsInner() {
+  const sectionLabel =
+    "text-xs font-semibold uppercase tracking-wide text-stone-600 dark:text-stone-400";
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          {FRIDGE_HOMEOWNER_SECTION_WHERE_TO_LOOK}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <h2 className={sectionLabel}>{FRIDGE_HOMEOWNER_SECTION_WHERE_TO_LOOK}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
           {FRIDGE_HOMEOWNER_WHERE_TO_LOOK_BODY}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <p className="mt-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
           {FRIDGE_HOMEOWNER_WHERE_TO_LOOK_MANUAL}
         </p>
       </div>
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          {FRIDGE_HOMEOWNER_SECTION_HOW_REPLACEMENT_WORKS}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <h2 className={sectionLabel}>{FRIDGE_HOMEOWNER_SECTION_HOW_REPLACEMENT_WORKS}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
           {FRIDGE_HOMEOWNER_HOW_REPLACEMENT_USUALLY_WORKS}
         </p>
       </div>
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          {FRIDGE_HOMEOWNER_SECTION_WHY_REPLACEMENT_MATTERS}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <h2 className={sectionLabel}>{FRIDGE_HOMEOWNER_SECTION_WHY_REPLACEMENT_MATTERS}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
           {FRIDGE_HOMEOWNER_WHY_REPLACEMENT_MATTERS}
         </p>
       </div>
       <div>
-        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          {FRIDGE_HOMEOWNER_SECTION_WHAT_TO_COMPARE}
-        </h2>
-        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <h2 className={sectionLabel}>{FRIDGE_HOMEOWNER_SECTION_WHAT_TO_COMPARE}</h2>
+        <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-stone-700 dark:text-stone-300">
           {COMPARE_BEFORE_BUY_CHECKLIST_LINES.map((line) => (
             <li key={line}>{line}</li>
           ))}
@@ -105,11 +99,11 @@ function FridgeHomeownerHelpSectionsInner() {
 
 function FridgeHomeownerHelpCollapsible() {
   return (
-    <details className="rounded-xl border border-neutral-200 bg-white px-3 py-3 dark:border-neutral-700 dark:bg-neutral-900/40">
-      <summary className="cursor-pointer select-none text-sm font-medium text-neutral-800 dark:text-neutral-200">
+    <details className="rounded-2xl bg-stone-50/90 px-4 py-4 ring-1 ring-stone-200/45 dark:bg-neutral-800/35 dark:ring-stone-600/30">
+      <summary className="cursor-pointer select-none text-sm font-medium text-stone-800 dark:text-stone-100">
         More help: where to look, how replacement works, and what to compare
       </summary>
-      <div className="mt-4 border-t border-neutral-200 pt-4 dark:border-neutral-700">
+      <div className="mt-4 border-t border-stone-200/70 pt-4 dark:border-stone-600/40">
         <FridgeHomeownerHelpSectionsInner />
       </div>
     </details>
@@ -139,49 +133,66 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       replacementIntervalHint,
     } = props;
 
+    const stepItems = [
+      "Find the number on your old filter.",
+      mappedFilterCount > 0
+        ? "See the same number below? Select it."
+        : "When your number appears on this page, select it.",
+      "Not sure? Check your owner’s manual first.",
+    ];
+
     return (
       <section
-        className="rounded-2xl border border-neutral-200 bg-gradient-to-b from-neutral-50 to-white p-5 shadow-sm dark:border-neutral-800 dark:from-neutral-950 dark:to-neutral-950 sm:p-6"
+        className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/45 via-white to-stone-50/25 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900/98 dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] dark:ring-stone-700/45 sm:p-8"
         aria-label="Your refrigerator match"
       >
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
           <div className="flex shrink-0 justify-center sm:block">
-            <div className="rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-900">
-              <FridgeGlyph className="mx-auto h-auto w-[88px] text-neutral-900 dark:text-neutral-100 sm:w-[104px]" />
+            <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-neutral-800/60 dark:ring-stone-600/35">
+              <FridgeGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 dark:text-blue-200/90 sm:w-[104px]" />
             </div>
           </div>
-          <div className="min-w-0 flex-1 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-              We found this refrigerator model
-            </p>
-            <h1 className="font-mono text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-[1.65rem]">
-              {modelNumber}
-            </h1>
-            <p className="text-sm text-neutral-700 dark:text-neutral-300">
-              <Link
-                href={`/brand/${brandSlug}`}
-                className="font-medium text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100"
-              >
-                {brandName}
-              </Link>
-            </p>
-            {replacementIntervalHint ? (
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">{replacementIntervalHint}</p>
-            ) : null}
-
-            <div className="rounded-lg border border-neutral-200 bg-white/80 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900/60">
-              <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                Next steps
+          <div className="min-w-0 flex-1 space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-stone-600 dark:text-stone-300">
+                We found your refrigerator
               </p>
-              <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm font-medium leading-snug text-neutral-900 dark:text-neutral-100">
-                <li>Find the number on your old filter.</li>
-                <li>
-                  {mappedFilterCount > 0
-                    ? "See the same number below? Select it."
-                    : "When your number appears on this page, select it."}
-                </li>
-                <li>Not sure? Check your owner’s manual first.</li>
-              </ol>
+              <h1 className="text-3xl font-bold tracking-tight text-stone-900 tabular-nums dark:text-stone-50 sm:text-[2rem]">
+                {modelNumber}
+              </h1>
+              <p className="text-base text-stone-700 dark:text-stone-300">
+                <Link
+                  href={`/brand/${brandSlug}`}
+                  className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60 dark:text-blue-300 dark:decoration-blue-400/30 dark:hover:decoration-blue-300/70"
+                >
+                  {brandName}
+                </Link>
+              </p>
+              {replacementIntervalHint ? (
+                <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">{replacementIntervalHint}</p>
+              ) : null}
+            </div>
+
+            <div>
+              <p className="text-sm font-semibold text-stone-800 dark:text-stone-100">Next steps</p>
+              <ul className="mt-3 list-none space-y-2.5 p-0">
+                {stepItems.map((text, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3.5 rounded-2xl bg-white/95 px-4 py-3.5 shadow-sm ring-1 ring-stone-200/40 dark:bg-neutral-800/45 dark:ring-stone-600/25"
+                  >
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-sm font-bold text-amber-950 dark:bg-amber-900/45 dark:text-amber-100"
+                      aria-hidden
+                    >
+                      {i + 1}
+                    </span>
+                    <p className="m-0 pt-1 text-sm font-medium leading-snug text-stone-800 dark:text-stone-100">
+                      {text}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <FridgeHomeownerHelpCollapsible />
@@ -204,13 +215,13 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
 
   return (
     <section
-      className="rounded-2xl border border-neutral-200 bg-gradient-to-b from-neutral-50 to-white p-5 shadow-sm dark:border-neutral-800 dark:from-neutral-950 dark:to-neutral-950 sm:p-6"
+      className="overflow-hidden rounded-3xl bg-gradient-to-b from-amber-50/35 via-white to-stone-50/20 p-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] ring-1 ring-stone-200/55 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900/98 dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] dark:ring-stone-700/45 sm:p-8"
       aria-label="Your filter match"
     >
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <div className="flex shrink-0 justify-center lg:block">
-          <div className="rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-900">
-            <FridgeGlyph className="mx-auto h-auto w-[96px] text-neutral-900 dark:text-neutral-100 lg:w-[112px]" />
+          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50 dark:bg-neutral-800/60 dark:ring-stone-600/35">
+            <FridgeGlyph className="mx-auto h-auto w-[96px] text-blue-950/90 dark:text-blue-200/90 lg:w-[112px]" />
             <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
               Replacement filter
             </p>

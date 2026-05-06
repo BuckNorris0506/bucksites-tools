@@ -69,7 +69,7 @@ export default async function FridgePage({ params }: Props) {
     fridgeInterval != null ? `Suggested replacement timing: ${fridgeInterval}` : undefined;
 
   return (
-    <article className="space-y-8">
+    <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
       <VisualReplacementMatchCard
         variant="fridge_model"
         brandName={fridge.brand.name}
@@ -91,10 +91,10 @@ export default async function FridgePage({ params }: Props) {
         </div>
       ) : null}
 
-      <p className="text-sm">
+      <p className="text-base">
         <Link
           href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
-          className="font-medium text-neutral-900 underline dark:text-neutral-100"
+          className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60 dark:text-blue-300 dark:decoration-blue-400/30 dark:hover:decoration-blue-300/70"
         >
           Reset water filter indicator →
         </Link>
@@ -106,19 +106,17 @@ export default async function FridgePage({ params }: Props) {
       />
 
       {fridge.reset_instructions.length > 0 && (
-        <section className="space-y-3">
-          <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">
             {fridge.brand.name} reset instructions
           </h2>
           {fridge.reset_instructions.map((r) => (
             <div
               key={r.id}
-              className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50"
+              className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45 dark:bg-neutral-800/35 dark:ring-stone-700/35"
             >
               {r.title && (
-                <h3 className="font-medium text-neutral-900 dark:text-neutral-100">
-                  {r.title}
-                </h3>
+                <h3 className="font-semibold text-stone-900 dark:text-stone-100">{r.title}</h3>
               )}
               <Prose>{r.body_markdown}</Prose>
             </div>

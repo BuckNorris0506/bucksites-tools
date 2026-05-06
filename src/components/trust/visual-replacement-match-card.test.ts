@@ -82,7 +82,7 @@ describe("VisualReplacementMatchCard", () => {
         replacementIntervalHint: "Suggested replacement timing: About every 6 months",
       }),
     );
-    assert.ok(html.includes("We found this refrigerator model"));
+    assert.ok(html.includes("We found your refrigerator"));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Find the number on your old filter."));

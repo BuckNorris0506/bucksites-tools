@@ -28,9 +28,9 @@ export function FridgeModelFilterSection({
 }) {
   if (quarantineMessage) {
     return (
-      <section className="space-y-4">
-        <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">Filter guidance</h2>
-        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100">
+      <section className="space-y-5">
+        <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Filter guidance</h2>
+        <div className="rounded-3xl border border-amber-200/65 bg-gradient-to-b from-amber-50/90 to-amber-50/50 p-6 text-[15px] leading-relaxed text-amber-950 shadow-sm dark:border-amber-900/35 dark:from-amber-950/30 dark:to-amber-950/15 dark:text-amber-50/95">
           {quarantineMessage}
         </div>
       </section>
@@ -38,25 +38,23 @@ export function FridgeModelFilterSection({
   }
 
   return (
-    <section className="space-y-5">
-      <div className="space-y-2">
-        <h2 className="text-lg font-medium text-neutral-900 dark:text-neutral-100">
-          Full detail for each number
-        </h2>
-        <p className="max-w-prose text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+    <section className="space-y-8">
+      <div className="space-y-3">
+        <h2 className="text-xl font-semibold text-stone-900 dark:text-stone-50">Full detail for each number</h2>
+        <p className="max-w-prose text-base leading-relaxed text-stone-600 dark:text-stone-400">
           Same numbers as the chips above—here with notes and store links.{" "}
-          <strong className="font-medium text-neutral-800 dark:text-neutral-200">Not ranked.</strong> Open filter details
-          before using any store link.
+          <strong className="font-medium text-stone-800 dark:text-stone-200">Not a ranked list.</strong> Open filter
+          details before using any store link.
         </p>
       </div>
 
       {filters.length === 0 ? (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400">
           We do not have mapped filter numbers for this model in our reference yet. If you have the OEM number from your
           old filter, try search or check back after catalog updates.
         </p>
       ) : (
-        <ul className="m-0 list-none space-y-6 p-0">
+        <ul className="m-0 list-none space-y-8 p-0">
           {filters.map((f) => {
             const fInterval = intervalLabel(f.replacement_interval_months);
             const filterHref = `/filter/${f.slug}`;
@@ -79,41 +77,43 @@ export function FridgeModelFilterSection({
             return (
               <li
                 key={f.id}
-                className="rounded-xl border border-neutral-200 bg-neutral-50/60 p-5 dark:border-neutral-800 dark:bg-neutral-900/35"
+                className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-stone-200/45 dark:bg-neutral-900/35 dark:ring-stone-700/35 sm:p-7"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1 space-y-3">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                  <div className="min-w-0 flex-1 space-y-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">
                       Number to compare
                     </p>
                     <Link
                       href={filterHref}
-                      className="block font-mono text-2xl font-semibold tracking-tight text-neutral-900 underline decoration-neutral-400 decoration-2 underline-offset-2 hover:decoration-neutral-600 dark:text-neutral-50 dark:decoration-neutral-600 dark:hover:decoration-neutral-400"
+                      className="block text-2xl font-bold tabular-nums tracking-tight text-stone-900 underline decoration-stone-300 decoration-2 underline-offset-[0.2em] transition hover:decoration-blue-950/50 dark:text-stone-50 dark:decoration-stone-600 dark:hover:decoration-blue-300/50"
                     >
                       {f.oem_part_number}
                     </Link>
                     <div>
                       <Link
                         href={filterHref}
-                        className="inline-flex min-h-11 items-center justify-center rounded-lg border-2 border-neutral-900 bg-white px-4 py-2 text-sm font-semibold text-neutral-900 shadow-sm transition-colors hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:border-neutral-100 dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-900 dark:focus:ring-offset-neutral-950"
+                        className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-white dark:focus-visible:ring-stone-400 dark:focus-visible:ring-offset-neutral-950"
                       >
                         Open filter details<span aria-hidden> →</span>
                       </Link>
                     </div>
                     {f.name?.trim() ? (
-                      <p className="text-sm text-neutral-700 dark:text-neutral-300">{f.name.trim()}</p>
+                      <p className="text-sm text-stone-700 dark:text-stone-300">{f.name.trim()}</p>
                     ) : null}
                     {aliases.length > 0 ? (
-                      <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                        <span className="font-medium text-neutral-800 dark:text-neutral-200">Also listed as:</span>{" "}
-                        <span className="font-mono text-neutral-800 dark:text-neutral-200">{aliases.join(" · ")}</span>
+                      <p className="text-sm text-stone-600 dark:text-stone-400">
+                        <span className="font-medium text-stone-800 dark:text-stone-200">Also listed as:</span>{" "}
+                        <span className="font-semibold tabular-nums text-stone-800 dark:text-stone-200">
+                          {aliases.join(" · ")}
+                        </span>
                       </p>
                     ) : null}
-                    <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    <p className="text-sm font-medium text-stone-800 dark:text-stone-200">
                       Compare this number to the text on your existing cartridge before you buy.
                     </p>
                     {fInterval ? (
-                      <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                      <p className="text-xs text-stone-600 dark:text-stone-400">
                         Typical replacement timing on file: {fInterval}
                       </p>
                     ) : null}
@@ -121,16 +121,16 @@ export function FridgeModelFilterSection({
                 </div>
 
                 {notesHtml ? (
-                  <div className="mt-4 border-t border-neutral-200/80 pt-4 text-sm dark:border-neutral-700/80">
+                  <div className="mt-5 border-t border-stone-200/70 pt-5 text-sm dark:border-stone-700/70">
                     <Prose>{notesHtml}</Prose>
                   </div>
                 ) : null}
 
-                <div className="mt-5 border-t border-neutral-200 pt-4 dark:border-neutral-700">
-                  <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                <div className="mt-6 rounded-2xl bg-stone-50/95 p-5 ring-1 ring-stone-200/35 dark:bg-neutral-800/30 dark:ring-stone-700/25">
+                  <p className="text-xs font-medium text-stone-600 dark:text-stone-400">
                     Store links (secondary—only after this number matches what you need)
                   </p>
-                  <div className="mt-3">
+                  <div className="mt-4">
                     <TrustAwareBuySection
                       trust={trustSummary}
                       links={f.retailer_links}

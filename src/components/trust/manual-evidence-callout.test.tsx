@@ -71,6 +71,7 @@ describe("ManualEvidenceCallout", () => {
     const html = renderFromRecord(validRecord);
     assert.ok(html.includes("Source-backed help found"));
     assert.ok(html.includes("View primary source"));
+    assert.ok(html.includes("Source strength in our files:"));
     assert.ok(html.includes("Source list and full notes"));
     assert.ok(html.includes("Sources"));
     assert.ok(html.includes("Where to look for this model"));
@@ -97,7 +98,7 @@ describe("ManualEvidenceCallout", () => {
     const fixture = await loadFixtureRecord("lg-lrfvs3006s");
     const html = renderFromRecord(fixture);
     assert.ok(html.includes("Sources"));
-    assert.ok(html.includes("Highest tier:"));
+    assert.ok(html.includes("Source strength in our files:"));
     assert.ok(html.includes("LG Refrigerator - How to Install Your Refrigerator Water Filter"));
     assert.ok(html.includes("LG LRFVS3006 Builder Spec Sheet"));
     assert.ok(!html.toLowerCase().includes("official owner manual"));
@@ -110,7 +111,7 @@ describe("ManualEvidenceCallout", () => {
     const fixture = await loadFixtureRecord("lg-lfxs28968s");
     const html = renderFromRecord(fixture);
     assert.ok(html.includes("Sources"));
-    assert.ok(html.includes("Highest tier:"));
+    assert.ok(html.includes("Source strength in our files:"));
     assert.ok(html.includes("LG LFXS28968S product page (Water Filter LT1000P)"));
     assert.ok(html.includes("LG Refrigerator - How to Install Your Refrigerator Water Filter"));
     assert.ok(!html.toLowerCase().includes("official owner manual"));
