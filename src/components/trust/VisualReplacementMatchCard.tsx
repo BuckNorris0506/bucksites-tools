@@ -43,6 +43,11 @@ export type VisualReplacementMatchCardProps =
       replacementIntervalHint?: string | null;
     };
 
+/**
+ * Generic appliance glyph only.
+ * Deliberately avoids door-layout details (French door / top freezer / side-by-side)
+ * unless that shape is explicitly proven in repo-owned data.
+ */
 function FridgeGlyph({ className }: { className?: string }) {
   return (
     <svg
@@ -52,12 +57,12 @@ function FridgeGlyph({ className }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
     >
-      <rect x="25" y="8" width="130" height="204" rx="10" fill="currentColor" />
-      <rect x="31" y="14" width="118" height="192" rx="8" fill="white" />
-      <rect x="31" y="92" width="118" height="2" fill="currentColor" />
-      <rect x="119" y="48" width="5" height="28" rx="2.5" fill="currentColor" />
-      <rect x="119" y="119" width="5" height="52" rx="2.5" fill="currentColor" />
-      <circle cx="90" cy="204" r="4" fill="currentColor" />
+      <rect x="27" y="10" width="126" height="198" rx="18" fill="currentColor" />
+      <rect x="33" y="16" width="114" height="186" rx="14" fill="white" />
+      <circle cx="90" cy="106" r="24" fill="currentColor" opacity="0.12" />
+      <path d="M90 90V122" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+      <path d="M74 106H106" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+      <rect x="66" y="182" width="48" height="6" rx="3" fill="currentColor" opacity="0.28" />
     </svg>
   );
 }
@@ -151,7 +156,10 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       >
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
           <div className="flex shrink-0 justify-center sm:block">
-            <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50">
+            <div
+              className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
+              data-form-factor-visual="generic-unknown"
+            >
               <FridgeGlyph className="mx-auto h-auto w-[88px] text-blue-950/90 sm:w-[104px]" />
             </div>
           </div>
@@ -227,7 +235,10 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <div className="flex shrink-0 justify-center lg:block">
-          <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50">
+          <div
+            className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-stone-200/50"
+            data-form-factor-visual="generic-unknown"
+          >
             <FridgeGlyph className="mx-auto h-auto w-[96px] text-blue-950/90 lg:w-[112px]" />
             <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
               Replacement filter

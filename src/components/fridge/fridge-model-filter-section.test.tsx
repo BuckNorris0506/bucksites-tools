@@ -140,6 +140,7 @@ describe("FridgeModelFilterSection", () => {
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
     assert.ok(cardHtml.includes("Next steps"));
+    assert.ok(cardHtml.includes('data-form-factor-visual="generic-unknown"'));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];
     for (const rx of banned) {
       assert.equal(rx.test(html), false, `unexpected internal term: ${rx}`);

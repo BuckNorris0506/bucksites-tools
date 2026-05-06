@@ -91,6 +91,7 @@ describe("VisualReplacementMatchCard", () => {
       }),
     );
     assert.ok(html.includes("We found your refrigerator"));
+    assert.ok(html.includes('data-form-factor-visual="generic-unknown"'));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Numbers to compare"));
@@ -110,6 +111,9 @@ describe("VisualReplacementMatchCard", () => {
     );
     assert.ok(html.includes("Many refrigerator water filters are inside the fridge"));
     assert.ok(html.includes("Do not force it."));
+    assert.equal(/\bFrench Door\b/i.test(html), false);
+    assert.equal(/\btop freezer\b/i.test(html), false);
+    assert.equal(/\bside-by-side\b/i.test(html), false);
     const idxNext = html.indexOf("Next steps");
     const idxLong = html.indexOf("How replacement usually works");
     assert.ok(idxNext >= 0 && idxLong > idxNext, "long homeowner help should follow next steps");
@@ -132,6 +136,9 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("When your number appears on this page, select it."));
     assert.ok(!html.includes("See the same number below? Select it."));
     assert.ok(!html.includes("Numbers to compare"));
+    assert.ok(html.includes('data-form-factor-visual="generic-unknown"'));
+    assert.ok(!html.includes("<img"));
+    assert.ok(!/https?:\/\/(www\.)?(lg|lowes|amazon)\./i.test(html));
     forbidHomeownerJargon(html);
   });
 
