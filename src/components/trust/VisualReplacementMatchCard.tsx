@@ -12,6 +12,8 @@ import {
   FRIDGE_HOMEOWNER_WHY_REPLACEMENT_MATTERS,
 } from "@/lib/copy/fridge-homeowner-help";
 import { COMPARE_BEFORE_BUY_CHECKLIST_LINES } from "@/lib/copy/public-trust";
+import { FridgeModelConnectedFilterChips } from "@/components/fridge/FridgeModelConnectedFilterChips";
+import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 
 /** Plain homeowner-facing store status — no gate internals. */
 export type VisualMatchStorePlainStatus =
@@ -37,6 +39,7 @@ export type VisualReplacementMatchCardProps =
       brandSlug: string;
       modelNumber: string;
       mappedFilterCount: number;
+      connectedFilters: FridgeMappedFilterRow[];
       replacementIntervalHint?: string | null;
     };
 
@@ -99,11 +102,11 @@ function FridgeHomeownerHelpSectionsInner() {
 
 function FridgeHomeownerHelpCollapsible() {
   return (
-    <details className="rounded-2xl bg-stone-50/90 px-4 py-4 ring-1 ring-stone-200/45 dark:bg-neutral-800/35 dark:ring-stone-600/30">
-      <summary className="cursor-pointer select-none text-sm font-medium text-stone-800 dark:text-stone-100">
-        More help: where to look, how replacement works, and what to compare
+    <details className="rounded-2xl bg-stone-50/60 px-4 py-3.5 ring-1 ring-stone-200/30 dark:bg-neutral-800/25 dark:ring-stone-600/20">
+      <summary className="cursor-pointer select-none text-sm font-medium text-stone-700 dark:text-stone-200">
+        Need help finding the filter?
       </summary>
-      <div className="mt-4 border-t border-stone-200/70 pt-4 dark:border-stone-600/40">
+      <div className="mt-3 border-t border-stone-200/60 pt-3.5 dark:border-stone-600/35">
         <FridgeHomeownerHelpSectionsInner />
       </div>
     </details>
@@ -130,6 +133,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       brandSlug,
       modelNumber,
       mappedFilterCount,
+      connectedFilters,
       replacementIntervalHint,
     } = props;
 
@@ -194,6 +198,10 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
                 ))}
               </ul>
             </div>
+
+            {connectedFilters.length > 0 ? (
+              <FridgeModelConnectedFilterChips filters={connectedFilters} />
+            ) : null}
 
             <FridgeHomeownerHelpCollapsible />
           </div>

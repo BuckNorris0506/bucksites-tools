@@ -7,6 +7,13 @@ import {
   deriveFridgeFilterStorePlainStatus,
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
+import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
+
+const connectedRow = {
+  id: "f1",
+  slug: "lt1000p",
+  oem_part_number: "LT1000P",
+} as unknown as FridgeMappedFilterRow;
 
 function forbidHomeownerJargon(html: string) {
   const banned = [
@@ -52,7 +59,7 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("We found this filter"));
     assert.ok(html.includes("EDR1RXD1"));
     assert.ok(html.includes("FILTER-A"));
-    assert.ok(html.includes("More help: where to look"));
+    assert.ok(html.includes("Need help finding the filter?"));
     assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
     assert.ok(html.includes("How replacement usually works"));
@@ -79,16 +86,19 @@ describe("VisualReplacementMatchCard", () => {
         brandSlug: "example",
         modelNumber: "WRS325SDHZ",
         mappedFilterCount: 2,
+        connectedFilters: [connectedRow],
         replacementIntervalHint: "Suggested replacement timing: About every 6 months",
       }),
     );
     assert.ok(html.includes("We found your refrigerator"));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
+    assert.ok(html.includes("Numbers to compare"));
+    assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes("Find the number on your old filter."));
     assert.ok(html.includes("See the same number below? Select it."));
     assert.ok(html.includes("Not sure? Check your owner’s manual first."));
-    assert.ok(html.includes("More help: where to look"));
+    assert.ok(html.includes("Need help finding the filter?"));
     assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
     assert.ok(html.includes("How replacement usually works"));
@@ -115,11 +125,13 @@ describe("VisualReplacementMatchCard", () => {
         brandSlug: "example",
         modelNumber: "WRS325SDHZ",
         mappedFilterCount: 0,
+        connectedFilters: [],
         replacementIntervalHint: null,
       }),
     );
     assert.ok(html.includes("When your number appears on this page, select it."));
     assert.ok(!html.includes("See the same number below? Select it."));
+    assert.ok(!html.includes("Numbers to compare"));
     forbidHomeownerJargon(html);
   });
 

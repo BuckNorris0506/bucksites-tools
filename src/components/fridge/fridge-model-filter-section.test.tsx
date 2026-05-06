@@ -127,6 +127,7 @@ describe("FridgeModelFilterSection", () => {
         brandSlug: "lg",
         modelNumber: "LRFXS3106S",
         mappedFilterCount: 0,
+        connectedFilters: [],
         replacementIntervalHint: null,
       }),
     );
