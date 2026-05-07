@@ -50,7 +50,7 @@ export function TieredBuyLinks({
   if (!realLinks.length) {
     return (
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
-        No store links on this page yet. Use the part number above at a retailer you trust.
+        No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.
       </p>
     );
   }
@@ -115,8 +115,7 @@ export function TieredBuyLinks({
           </ul>
           {hiddenCount > 0 && (
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              +{hiddenCount} more store link{hiddenCount !== 1 ? "s" : ""} not shown — same part
-              page.
+              +{hiddenCount} more buying option{hiddenCount !== 1 ? "s" : ""} not shown.
             </p>
           )}
         </div>
@@ -128,8 +127,8 @@ export function TieredBuyLinks({
             Brand parts reference
           </p>
           <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-            Opens the manufacturer site for reference. This is not the same as a reviewed store
-            product button above—use it to double-check fit if you need to.
+            Opens the manufacturer site for reference. This is not the same as a buying option
+            above—use it to double-check fit if you need to.
           </p>
           <a
             href={oemCatalogFootnote.affiliate_url}

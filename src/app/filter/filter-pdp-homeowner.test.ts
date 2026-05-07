@@ -14,6 +14,16 @@ const bannedInPublicFilterHtml = [
   /buy-link/i,
   /retailer target/i,
   /checkout deep/i,
+  /fully vetted/i,
+  /guaranteed/i,
+  /safe to buy/i,
+  /completely trust/i,
+  /finished our listing review/i,
+  /pass BuckParts checks/i,
+  /store links/i,
+  /store buttons/i,
+  /checkout deep link/i,
+  /retailer targets/i,
 ];
 
 function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
@@ -52,6 +62,11 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     assert.ok(html.includes("Compare this number to the one printed on your old filter."));
     assert.ok(html.includes("If it matches, use this page."));
     assert.ok(html.includes("If you’re not sure, check your owner’s manual or a refrigerator model page below."));
+    assert.ok(
+      html.includes(
+        "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.",
+      ),
+    );
     assert.ok(!html.includes("data-filter-visual="));
     assert.ok(!html.includes("<svg"));
     for (const rx of bannedInPublicFilterHtml) {
@@ -76,7 +91,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
         goBase: "/go",
         primaryCtaLabel: "Buy at",
         suppressMessage:
-          "We’re not showing a store button for this filter yet. Compare your old filter or manual first.",
+          "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.",
         gateSuppressionSummary: {
           hadSearchPlaceholderRows: true,
           hadIndirectDiscoveryRows: false,
@@ -87,7 +102,11 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
       }),
     );
     assert.ok(!html.includes('href="/go/'));
-    assert.ok(html.includes("not showing a store button"));
+    assert.ok(
+      html.includes(
+        "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.",
+      ),
+    );
     for (const rx of bannedInPublicFilterHtml) {
       assert.ok(!rx.test(html), `unexpected jargon matching ${rx}`);
     }

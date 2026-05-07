@@ -32,8 +32,8 @@ export function partIdentityPillLabel(oemOrCompatible: OemOrCompatible): string 
 /** Third bullet under “Why this fits” / link gate outcome. */
 export function buyPathStoreLinksBullet(buyerPathIsSuppress: boolean): string {
   return buyerPathIsSuppress
-    ? "Store buttons stay hidden until we finish reviewing listings for this part."
-    : "Store buttons here are shown after our listing review for this part.";
+    ? "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number."
+    : "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.";
 }
 
 /** Gate hints when inventory exists but rows fail gating (TrustAwareBuySection). */
@@ -42,7 +42,7 @@ export function buyPathGateHintSearchPlaceholder(): string {
 }
 
 export function buyPathGateHintMissingBrowserTruth(): string {
-  return "Some listings are still being reviewed before we show a store button.";
+  return "Some listings are still being reviewed before we show a buying option.";
 }
 
 export function buyPathGateHintUnsafeBrowserTruth(): string {
@@ -63,5 +63,5 @@ export function formatBuyLinkCheckedYyyyMmDd(isoDateTime: string): string | null
 export function primaryStoreLinkBuyCheckFootnote(isoDateTime: string): string | null {
   const d = formatBuyLinkCheckedYyyyMmDd(isoDateTime);
   if (!d) return null;
-  return `We reviewed this store listing on ${d}. Listing details may have changed since then.`;
+  return `Shown after BuckParts checks the product page against this filter number (${d}).`;
 }

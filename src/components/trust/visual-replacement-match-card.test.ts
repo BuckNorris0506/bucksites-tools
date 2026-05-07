@@ -24,6 +24,12 @@ function forbidHomeownerJargon(html: string) {
     /\btoken\b/i,
     /\bOEM-style\b/i,
     /\bbuy-link\b/i,
+    /checkout deep link/i,
+    /retailer targets/i,
+    /store links/i,
+    /store buttons/i,
+    /finished our listing review/i,
+    /pass BuckParts checks/i,
     /discovery URL/i,
     /retailer target/i,
   ];
@@ -39,6 +45,10 @@ function forbidUnsupportedHealthOrGuarantee(html: string) {
     /\b100%\s*(pure|safe)\b/i,
     /\bcures\b/i,
     /\bprevents\s+cancer\b/i,
+    /\bfully vetted\b/i,
+    /\bguaranteed\b/i,
+    /\bsafe to buy\b/i,
+    /\bcompletely trust\b/i,
   ];
   for (const rx of banned) {
     assert.ok(!rx.test(html), `unsupported claim matching ${rx}`);
@@ -65,6 +75,11 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("FILTER-A"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Compare this number to the one printed on your old filter."));
+    assert.ok(
+      html.includes(
+        "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.",
+      ),
+    );
     assert.ok(!html.includes("data-filter-visual="));
     assert.ok(!html.includes("<svg"));
     assert.ok(html.includes("Need help finding the filter?"));

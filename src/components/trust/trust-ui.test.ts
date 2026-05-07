@@ -65,7 +65,7 @@ describe("trust UI (server render)", () => {
     assert.ok(html.includes("Buy suppressed for test."));
   });
 
-  it("TieredBuyLinks shows buy-link check footnote when browser_truth_checked_at is set", () => {
+  it("TieredBuyLinks shows buying-option trust footnote when browser_truth_checked_at is set", () => {
     const html = renderToStaticMarkup(
       createElement(TieredBuyLinks, {
         links: [
@@ -83,8 +83,12 @@ describe("trust UI (server render)", () => {
       }),
     );
     assert.ok(html.includes("2026-05-04"));
-    assert.ok(html.includes("reviewed this store listing"));
+    assert.ok(
+      html.includes("Shown after BuckParts checks the product page against this filter number"),
+    );
     assert.ok(!html.includes("buy-link"));
+    assert.ok(!html.includes("store links"));
+    assert.ok(!html.includes("store buttons"));
   });
 });
 

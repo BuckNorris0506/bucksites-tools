@@ -73,7 +73,7 @@ export function TrustAwareBuySection({
     <div className="space-y-3">
       {trust.buyer_path_state === "show_caution_buy" && (
         <p className="text-sm leading-relaxed text-amber-950/95">
-          Verify the exact part number before using these store links.
+          Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.
         </p>
       )}
       <TieredBuyLinks

@@ -117,12 +117,12 @@ function FridgeHomeownerHelpCollapsible({
 
 function storeStatusSentence(status: VisualMatchStorePlainStatus): string {
   if (status === "options_after_checks") {
-    return "When store buttons appear below, we’ve finished our listing review for this part.";
+    return "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.";
   }
   if (status === "buttons_hidden_pending_checks") {
-    return "We’re not showing store buttons yet while we finish reviewing listings for this part.";
+    return "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
   }
-  return "We’re not showing a store button on this page yet.";
+  return "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
 }
 
 /**

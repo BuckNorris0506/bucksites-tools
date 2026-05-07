@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic";
 type Props = { params: { slug: string } };
 
 const FRIDGE_FILTER_BUY_SUPPRESS =
-  "We’re not showing a store button for this filter yet. Compare your old filter or manual first.";
+  "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filter = await getFilterBySlug(params.slug);
@@ -124,9 +124,7 @@ export default async function FilterPage({ params }: Props) {
           ) : null}
 
           <div className={publicNotes ? "mt-7 border-t border-stone-200/55 pt-7" : ""}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">
-              Where to buy
-            </p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Buying options</p>
             <div className="mt-3">
               <TrustAwareBuySection
                 trust={trustSummary}
