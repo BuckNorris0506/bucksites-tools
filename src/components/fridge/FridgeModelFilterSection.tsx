@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { FridgeTrustFunnelLink } from "@/components/analytics/FridgeTrustFunnelLink";
 import { Prose } from "@/components/Prose";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
+import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
@@ -22,9 +24,11 @@ function filterNotesHtml(notes: string | null | undefined): string | null {
 export function FridgeModelFilterSection({
   filters,
   quarantineMessage,
+  telemetryBase,
 }: {
   filters: FridgeMappedFilterRow[];
   quarantineMessage?: string | null;
+  telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
 }) {
   if (quarantineMessage) {
     return (
@@ -91,12 +95,23 @@ export function FridgeModelFilterSection({
                       {f.oem_part_number}
                     </Link>
                     <div>
-                      <Link
+                      <FridgeTrustFunnelLink
                         href={filterHref}
                         className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-950 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+                        payload={{
+                          event_name: "fridge_filter_detail_click_from_model",
+                          page_type: telemetryBase?.page_type ?? "fridge_model",
+                          page_slug: telemetryBase?.page_slug ?? "unknown",
+                          model_slug: telemetryBase?.model_slug ?? null,
+                          filter_slug: f.slug,
+                          trust_state: telemetryBase?.trust_state ?? "normal",
+                          source_tier_present: telemetryBase?.source_tier_present ?? false,
+                          has_safe_cta: telemetryBase?.has_safe_cta ?? false,
+                          is_quarantined: telemetryBase?.is_quarantined ?? false,
+                        }}
                       >
                         Open filter details<span aria-hidden> →</span>
-                      </Link>
+                      </FridgeTrustFunnelLink>
                     </div>
                     {f.name?.trim() ? (
                       <p className="text-sm text-stone-700">{f.name.trim()}</p>

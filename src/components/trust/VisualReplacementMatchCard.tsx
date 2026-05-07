@@ -12,7 +12,9 @@ import {
   FRIDGE_HOMEOWNER_WHY_REPLACEMENT_MATTERS,
 } from "@/lib/copy/fridge-homeowner-help";
 import { COMPARE_BEFORE_BUY_CHECKLIST_LINES } from "@/lib/copy/public-trust";
+import { FridgeTrustFunnelDetails } from "@/components/analytics/FridgeTrustFunnelDetails";
 import { FridgeModelConnectedFilterChips } from "@/components/fridge/FridgeModelConnectedFilterChips";
+import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 import type { FridgeFormFactor } from "@/lib/fridge/fridge-form-factor-evidence";
 
@@ -33,6 +35,7 @@ export type VisualReplacementMatchCardProps =
       intervalLabel?: string | null;
       compatibleModelCount: number;
       storePlainStatus: VisualMatchStorePlainStatus;
+      telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
     }
   | {
       variant: "fridge_model";
@@ -43,6 +46,7 @@ export type VisualReplacementMatchCardProps =
       connectedFilters: FridgeMappedFilterRow[];
       formFactor: FridgeFormFactor;
       replacementIntervalHint?: string | null;
+      telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
     };
 
 /** BuckParts-owned refrigerator water filter cartridge (no product photography). */
@@ -175,16 +179,32 @@ function FridgeHomeownerHelpSectionsInner() {
   );
 }
 
-function FridgeHomeownerHelpCollapsible() {
+function FridgeHomeownerHelpCollapsible({
+  telemetryBase,
+}: {
+  telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
+}) {
   return (
-    <details className="rounded-2xl bg-stone-50/60 px-4 py-3.5 ring-1 ring-stone-200/30">
-      <summary className="cursor-pointer select-none text-sm font-medium text-stone-700">
-        Need help finding the filter?
-      </summary>
+    <FridgeTrustFunnelDetails
+      className="rounded-2xl bg-stone-50/60 px-4 py-3.5 ring-1 ring-stone-200/30"
+      summaryClassName="cursor-pointer select-none text-sm font-medium text-stone-700"
+      summaryText="Need help finding the filter?"
+      payload={{
+        event_name: "fridge_help_opened",
+        page_type: telemetryBase?.page_type ?? "fridge_model",
+        page_slug: telemetryBase?.page_slug ?? "unknown",
+        model_slug: telemetryBase?.model_slug ?? null,
+        filter_slug: null,
+        trust_state: telemetryBase?.trust_state ?? "normal",
+        source_tier_present: telemetryBase?.source_tier_present ?? false,
+        has_safe_cta: telemetryBase?.has_safe_cta ?? false,
+        is_quarantined: telemetryBase?.is_quarantined ?? false,
+      }}
+    >
       <div className="mt-3 border-t border-stone-200/60 pt-3.5">
         <FridgeHomeownerHelpSectionsInner />
       </div>
-    </details>
+    </FridgeTrustFunnelDetails>
   );
 }
 
@@ -211,6 +231,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
       connectedFilters,
       formFactor,
       replacementIntervalHint,
+      telemetryBase,
     } = props;
 
     const stepItems = [
@@ -282,10 +303,13 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
             </div>
 
             {connectedFilters.length > 0 ? (
-              <FridgeModelConnectedFilterChips filters={connectedFilters} />
+              <FridgeModelConnectedFilterChips
+                filters={connectedFilters}
+                telemetryBase={telemetryBase}
+              />
             ) : null}
 
-            <FridgeHomeownerHelpCollapsible />
+            <FridgeHomeownerHelpCollapsible telemetryBase={telemetryBase} />
           </div>
         </div>
       </section>
@@ -301,6 +325,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
     intervalLabel,
     compatibleModelCount,
     storePlainStatus,
+    telemetryBase,
   } = props;
 
   const stepItems = [
@@ -381,7 +406,7 @@ export function VisualReplacementMatchCard(props: VisualReplacementMatchCardProp
             </ul>
           </div>
 
-          <FridgeHomeownerHelpCollapsible />
+          <FridgeHomeownerHelpCollapsible telemetryBase={telemetryBase} />
 
           <p className="text-sm leading-relaxed text-stone-700">
             {compatibleModelCount === 0

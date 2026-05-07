@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import {
   deriveFridgeFilterStorePlainStatus,
@@ -75,10 +76,29 @@ export default async function FilterPage({ params }: Props) {
   });
 
   const publicNotes = publicFacingRefrigeratorFilterNotes(filter.notes);
+  const filterTrustState =
+    trustSummary.buyer_path_state === "suppress_buy" ? "suppress_buy" : "show_buy";
+  const filterTelemetryBase = {
+    page_type: "fridge_filter" as const,
+    page_slug: filter.slug,
+    model_slug: null,
+    trust_state: filterTrustState as "suppress_buy" | "show_buy",
+    source_tier_present: false,
+    has_safe_cta: trustSummary.buyer_path_state !== "suppress_buy",
+    is_quarantined: false,
+  };
 
   return (
     <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
       <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
+        <FridgeTrustFunnelViewTracker
+          onceKey={`fridge_filter_view:${filter.slug}`}
+          payload={{
+            event_name: "fridge_filter_view",
+            ...filterTelemetryBase,
+            filter_slug: filter.slug,
+          }}
+        />
         <FridgeWinnerFamilyRail currentSlug={filter.slug} />
 
         <VisualReplacementMatchCard
@@ -91,6 +111,9 @@ export default async function FilterPage({ params }: Props) {
           intervalLabel={interval ?? undefined}
           compatibleModelCount={filter.fridge_models.length}
           storePlainStatus={storePlainStatus}
+          telemetryBase={{
+            ...filterTelemetryBase,
+          }}
         />
 
         <div className="overflow-hidden rounded-3xl bg-white/95 p-6 shadow-sm ring-1 ring-stone-200/45 sm:p-7">

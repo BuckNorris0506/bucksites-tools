@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { FridgeTrustFunnelDetails } from "@/components/analytics/FridgeTrustFunnelDetails";
+import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
 import type { PublicRefrigeratorManualEvidence } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 
 function CheckBadgeIcon({ className }: { className?: string }) {
@@ -23,8 +25,10 @@ function CheckBadgeIcon({ className }: { className?: string }) {
 
 export function ManualEvidenceCallout({
   evidence,
+  telemetryBase,
 }: {
   evidence: PublicRefrigeratorManualEvidence;
+  telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
 }) {
   const primary = evidence.sources[0];
   const hasMultiSource = evidence.sources.length > 1;
@@ -69,10 +73,22 @@ export function ManualEvidenceCallout({
         </div>
       </div>
 
-      <details className="mt-5 rounded-2xl bg-white/85 px-4 py-4 ring-1 ring-stone-200/40">
-        <summary className="cursor-pointer select-none text-sm font-medium text-stone-800">
-          Source list and full notes
-        </summary>
+      <FridgeTrustFunnelDetails
+        className="mt-5 rounded-2xl bg-white/85 px-4 py-4 ring-1 ring-stone-200/40"
+        summaryClassName="cursor-pointer select-none text-sm font-medium text-stone-800"
+        summaryText="Source list and full notes"
+        payload={{
+          event_name: "fridge_help_opened",
+          page_type: telemetryBase?.page_type ?? "fridge_model",
+          page_slug: telemetryBase?.page_slug ?? "unknown",
+          model_slug: telemetryBase?.model_slug ?? null,
+          filter_slug: null,
+          trust_state: telemetryBase?.trust_state ?? "normal",
+          source_tier_present: true,
+          has_safe_cta: telemetryBase?.has_safe_cta ?? false,
+          is_quarantined: telemetryBase?.is_quarantined ?? false,
+        }}
+      >
         <div className="mt-4 space-y-4 border-t border-stone-200/70 pt-4 text-sm">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-stone-600">
@@ -122,7 +138,7 @@ export function ManualEvidenceCallout({
             </div>
           ) : null}
         </div>
-      </details>
+      </FridgeTrustFunnelDetails>
     </section>
   );
 }

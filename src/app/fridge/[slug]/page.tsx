@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
+import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { Prose } from "@/components/Prose";
 import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
@@ -68,10 +69,28 @@ export default async function FridgePage({ params }: Props) {
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
   const intervalHint =
     fridgeInterval != null ? `Suggested replacement timing: ${fridgeInterval}` : undefined;
+  const hasSafeCta = !reviewOverride && fridge.filters.some((f) => f.retailer_links.length > 0);
+  const modelTelemetryBase = {
+    page_type: "fridge_model" as const,
+    page_slug: params.slug,
+    model_slug: params.slug,
+    trust_state: reviewOverride ? "quarantined" as const : "normal" as const,
+    source_tier_present: Boolean(manualEvidence),
+    has_safe_cta: hasSafeCta,
+    is_quarantined: Boolean(reviewOverride),
+  };
 
   return (
     <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
       <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
+        <FridgeTrustFunnelViewTracker
+          onceKey={`fridge_model_view:${params.slug}`}
+          payload={{
+            event_name: "fridge_model_view",
+            ...modelTelemetryBase,
+            filter_slug: null,
+          }}
+        />
         <VisualReplacementMatchCard
           variant="fridge_model"
           brandName={fridge.brand.name}
@@ -81,9 +100,19 @@ export default async function FridgePage({ params }: Props) {
           connectedFilters={reviewOverride ? [] : fridge.filters}
           formFactor={formFactorEvidence?.form_factor ?? "unknown"}
           replacementIntervalHint={intervalHint}
+          telemetryBase={{
+            ...modelTelemetryBase,
+          }}
         />
 
-        {manualEvidence ? <ManualEvidenceCallout evidence={manualEvidence} /> : null}
+        {manualEvidence ? (
+          <ManualEvidenceCallout
+            evidence={manualEvidence}
+            telemetryBase={{
+              ...modelTelemetryBase,
+            }}
+          />
+        ) : null}
 
         <p className="text-base">
           <Link
@@ -97,6 +126,9 @@ export default async function FridgePage({ params }: Props) {
         <FridgeModelFilterSection
           filters={fridge.filters}
           quarantineMessage={reviewOverride?.public_message ?? null}
+          telemetryBase={{
+            ...modelTelemetryBase,
+          }}
         />
 
         {fridge.reset_instructions.length > 0 && (
