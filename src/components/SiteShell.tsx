@@ -101,8 +101,8 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             </Link>
           </nav>
           <p className="max-w-2xl text-center">
-            Check your part number first. We only show store links we can match to your exact filter
-            code.
+            Check your part number first. Buying options appear only when we can match the product
+            page to the filter number.
           </p>
         </div>
       </footer>

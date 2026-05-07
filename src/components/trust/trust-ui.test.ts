@@ -115,4 +115,15 @@ describe("public merchant-priority copy guard", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
     assert.ok(!/verified store links/i.test(src));
   });
+
+  it("global shell footer avoids store links/buttons wording", () => {
+    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    assert.ok(!/store links/i.test(src));
+    assert.ok(!/store buttons/i.test(src));
+    assert.ok(
+      /Buying options appear only when we can match the product\s+page to the filter number\./m.test(
+        src,
+      ),
+    );
+  });
 });
