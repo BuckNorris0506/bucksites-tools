@@ -1,5 +1,8 @@
 # BuckParts Operating Map (Step 1 Source of Truth)
 
+Canonical truth index: `docs/BuckParts-TRUTH-MAP.md`.  
+This operating map is classification inventory/context; it is not the canonical runtime-policy map.
+
 Scope: repo-truth inventory from `/Users/jaredbuckman/bucksites-tools` only.  
 Classification legend: `KEEP`, `FREEZE`, `CUT`, `UNKNOWN`.
 

@@ -2,6 +2,8 @@
 
 **How to use:** Paste this whole file into a new ChatGPT / Cursor chat when picking up BuckParts work.
 
+**Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
+
 **Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. Last handoff refresh for digest text: **`2026-05-03`**: `origin/main` includes through **`9229144`** (whole-house water model trust/buy parity). After that push, **`npm test`** and **`npm run build`** completed successfully; **`npm run buckparts:command-surface`** and **`npm run buckparts:command-center`** completed with exit code **0** (JSON still reports `system_health* : WARNING` because blocked/unsafe retailer links exceed live/safe links). Command Center **`execution_guidance.next_move_mode`** is **`READ_ONLY`**. Command Center JSON now includes **`search_and_click_intelligence_summary`**, **`money_funnel_summary`**, **`rescue_velocity_summary`**, and **`rescue_delta_trend_summary`** (see §14 for `rescue_delta_trend_summary` snapshot discipline—after a snapshot refresh + follow-up surface read, the block can return **`runtime_status: OK`** with numeric `current` / `deltas` / `net_rescue_direction`, often **`FLAT`** when nothing moved).
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.

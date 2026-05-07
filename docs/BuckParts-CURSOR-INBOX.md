@@ -4,6 +4,8 @@
 
 Reduce Jared acting as the manual middleman between HQ chat and Cursor **without** pretending HQ and Cursor are fully automated or share live state. This file is a **repo-local, auditable checkpoint**: one place to park the current task, constraints, and the last agent reply so the next participant can continue from git history and explicit text.
 
+**Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` defines the primary source-of-truth file map. This inbox is relay protocol/context, not a replacement for canonical truth sources.
+
 ## Hard rules
 
 1. **Repo truth and command output beat inbox text.** If this file disagrees with a cited repo path, a named npm script’s stdout, or test output, **the repo/command output wins** and the inbox must be corrected or marked stale.
