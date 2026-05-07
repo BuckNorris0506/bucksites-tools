@@ -33,7 +33,7 @@ function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
 }
 
 describe("refrigerator filter PDP homeowner trust copy", () => {
-  it("hero renders next steps, cartridge visual, and no internal jargon", () => {
+  it("hero renders next steps, no clipart visual block, and no internal jargon", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_filter",
@@ -52,8 +52,8 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     assert.ok(html.includes("Compare this number to the one printed on your old filter."));
     assert.ok(html.includes("If it matches, use this page."));
     assert.ok(html.includes("If you’re not sure, check your owner’s manual or a refrigerator model page below."));
-    assert.ok(html.includes('data-filter-visual="refrigerator-water-cartridge-owned-svg"'));
-    assert.ok(html.includes("Water filter cartridge"));
+    assert.ok(!html.includes("data-filter-visual="));
+    assert.ok(!html.includes("<svg"));
     for (const rx of bannedInPublicFilterHtml) {
       assert.ok(!rx.test(html), `unexpected jargon matching ${rx}`);
     }

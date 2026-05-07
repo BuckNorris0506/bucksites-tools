@@ -46,7 +46,7 @@ function forbidUnsupportedHealthOrGuarantee(html: string) {
 }
 
 describe("VisualReplacementMatchCard", () => {
-  it("fridge_filter renders aliases and checklist without jargon", () => {
+  it("fridge_filter renders aliases and checklist without clipart visuals or jargon", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_filter",
@@ -65,7 +65,8 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("FILTER-A"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Compare this number to the one printed on your old filter."));
-    assert.ok(html.includes('data-filter-visual="refrigerator-water-cartridge-owned-svg"'));
+    assert.ok(!html.includes("data-filter-visual="));
+    assert.ok(!html.includes("<svg"));
     assert.ok(html.includes("Need help finding the filter?"));
     assert.ok(html.includes("<details"));
     assert.ok(html.includes("Where to look"));
@@ -87,7 +88,7 @@ describe("VisualReplacementMatchCard", () => {
     forbidUnsupportedHealthOrGuarantee(html);
   });
 
-  it("fridge_model renders next steps and collapsible long help without jargon", () => {
+  it("fridge_model renders next steps and collapsible long help without clipart visuals or jargon", () => {
     const html = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_model",
@@ -101,7 +102,8 @@ describe("VisualReplacementMatchCard", () => {
       }),
     );
     assert.ok(html.includes("We found your refrigerator"));
-    assert.ok(html.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
+    assert.ok(!html.includes("data-form-factor-visual="));
+    assert.ok(!html.includes("<svg"));
     assert.ok(html.includes("WRS325SDHZ"));
     assert.ok(html.includes("Next steps"));
     assert.ok(html.includes("Numbers to compare"));
@@ -147,7 +149,8 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("When your number appears on this page, select it."));
     assert.ok(!html.includes("See the same number below? Select it."));
     assert.ok(!html.includes("Numbers to compare"));
-    assert.ok(!html.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
+    assert.ok(!html.includes("data-form-factor-visual="));
+    assert.ok(!html.includes("<svg"));
     assert.ok(!html.includes("<img"));
     assert.ok(!/https?:\/\/(www\.)?(lg|lowes|amazon)\./i.test(html));
     forbidHomeownerJargon(html);

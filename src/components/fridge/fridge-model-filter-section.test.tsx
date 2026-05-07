@@ -141,14 +141,15 @@ describe("FridgeModelFilterSection", () => {
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
     assert.ok(cardHtml.includes("Next steps"));
-    assert.ok(!cardHtml.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
+    assert.ok(!cardHtml.includes("data-form-factor-visual="));
+    assert.ok(!cardHtml.includes("<svg"));
     const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i, /\btoken\b/i];
     for (const rx of banned) {
       assert.equal(rx.test(html), false, `unexpected internal term: ${rx}`);
     }
   });
 
-  it("quarantine keeps no chips or /go even when form-factor visual is evidence-backed", () => {
+  it("quarantine keeps no chips or /go even when form-factor evidence is present", () => {
     const cardHtml = renderToStaticMarkup(
       createElement(VisualReplacementMatchCard, {
         variant: "fridge_model",
@@ -168,7 +169,8 @@ describe("FridgeModelFilterSection", () => {
           "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
       }),
     );
-    assert.ok(cardHtml.includes('data-form-factor-visual="french_door_bottom_freezer-owned-svg"'));
+    assert.ok(!cardHtml.includes("data-form-factor-visual="));
+    assert.ok(!cardHtml.includes("<svg"));
     assert.ok(!quarantineHtml.includes("Numbers to compare"));
     assert.ok(!quarantineHtml.includes('href="/go/'));
   });
