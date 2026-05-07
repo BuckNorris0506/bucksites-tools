@@ -159,6 +159,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const health = report.system_health_summary;
   const quarantine = report.owner_quarantined_fridge_models;
   const launchPolicy = report.owner_vertical_launch_policy;
+  const neurons = report.owner_command_center_neurons;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -691,6 +692,67 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
               </tbody>
             </table>
           </div>
+        </LaneCard>
+
+        <LaneCard
+          title="13 · Command Center neurons"
+          subtitle="Owner-only signal wiring status (bright/dim/dark) without claiming unavailable ingest"
+        >
+          <FieldBlock
+            label="generated_from"
+            value={
+              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
+                {neurons.generated_from.map((s) => (
+                  <li key={s} className="font-mono">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+          {neurons.neurons.map((n) => (
+            <div key={n.neuron_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{n.title}</p>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                  {n.connection_level}
+                </span>
+                <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {n.status}
+                </span>
+              </div>
+              <FieldBlock label="Freshness method" value={n.freshness_method} />
+              <FieldBlock
+                label="Proven facts"
+                value={
+                  n.proven_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {n.proven_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock
+                label="UNKNOWN facts"
+                value={
+                  n.unknown_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {n.unknown_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock label="Next owner action" value={n.next_owner_action} />
+            </div>
+          ))}
         </LaneCard>
 
         <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">

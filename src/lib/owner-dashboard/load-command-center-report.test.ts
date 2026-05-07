@@ -3,7 +3,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
+  attachOwnerCommandCenterNeuronsReport,
   attachOwnerQuarantinedFridgeModelsReport,
+  buildOwnerCommandCenterNeuronsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
 } from "@/lib/owner-dashboard/load-command-center-report";
 import {
@@ -74,6 +76,43 @@ describe("owner quarantined fridge summary", () => {
     assert.ok("owner_vertical_launch_policy" in report);
     assert.equal(report.owner_vertical_launch_policy.data_mutation, false);
     assert.ok(report.owner_vertical_launch_policy.rows.some((r) => r.vertical_slug === "refrigerator"));
+  });
+
+  it("builds command-center neurons with proven trust emitters and unknown ingest", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        distribution: { READY: 12, NEEDS_WORK: 3 },
+        reason: "Computed from command-surface sitemap pass.",
+      },
+      gscPresence: {
+        sitemap_xml: true,
+        coverage_zip: false,
+        performance_zip: false,
+      },
+    });
+    assert.equal(neurons.data_mutation, false);
+    assert.equal(neurons.neurons.length, 3);
+    const trust = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
+    assert.ok(trust);
+    assert.equal(trust.connection_level, "DIM");
+    assert.ok(
+      trust.unknown_facts.some((f) => f.includes("Dashboard aggregate ingest")),
+      "trust funnel neuron must not claim dashboard ingest is connected",
+    );
+  });
+
+  it("attach chain can add command-center neurons lane with data_mutation false", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    const report = attachOwnerCommandCenterNeuronsReport({ report_name: "x" }, neurons);
+    assert.ok("owner_command_center_neurons" in report);
+    assert.equal(report.owner_command_center_neurons.data_mutation, false);
+    assert.equal(report.owner_command_center_neurons.neurons.length, 3);
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {

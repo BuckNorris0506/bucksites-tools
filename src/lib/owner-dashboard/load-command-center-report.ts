@@ -2,7 +2,10 @@
  * Server-only entry to build the BuckParts Command Center report (includes v2).
  * Lives under src so Next can bundle Node runtime code; delegates to scripts/.
  */
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { buildBuckpartsCommandCenterReport } from "../../../scripts/report-buckparts-command-center";
+import { buildBuckpartsCommandSurfaceReport } from "../../../scripts/report-buckparts-command-surface";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import {
   listFridgeModelReviewOverrides,
@@ -31,6 +34,27 @@ export type OwnerQuarantinedFridgeModelSummary = Pick<
 export type OwnerQuarantinedFridgeModelsReport = {
   data_mutation: false;
   models: OwnerQuarantinedFridgeModelSummary[];
+};
+
+export type OwnerNeuronConnectionLevel = "BRIGHT" | "DIM" | "DARK";
+
+type OwnerNeuronStatus = "PROVEN" | "UNKNOWN";
+
+export type OwnerDashboardNeuron = {
+  neuron_key: "page_state_distribution" | "trust_funnel_measurement" | "gsc_search_discovery";
+  title: string;
+  connection_level: OwnerNeuronConnectionLevel;
+  freshness_method: string;
+  proven_facts: string[];
+  unknown_facts: string[];
+  next_owner_action: string;
+  status: OwnerNeuronStatus;
+};
+
+export type OwnerCommandCenterNeuronsReport = {
+  data_mutation: false;
+  generated_from: string[];
+  neurons: OwnerDashboardNeuron[];
 };
 
 export async function buildOwnerQuarantinedFridgeModelsSummary(args?: {
@@ -91,12 +115,156 @@ export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
   };
 }
 
+export function buildOwnerCommandCenterNeuronsReport(args: {
+  rootDir: string;
+  pageState:
+    | {
+        computable: boolean;
+        distribution: Record<string, number> | "UNKNOWN";
+        reason: string;
+      }
+    | null;
+  gscPresence: {
+    sitemap_xml: boolean;
+    coverage_zip: boolean;
+    performance_zip: boolean;
+  } | null;
+}): OwnerCommandCenterNeuronsReport {
+  const trustEmitterFiles = [
+    "src/lib/analytics/fridge-trust-funnel.ts",
+    "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
+    "src/components/analytics/FridgeTrustFunnelLink.tsx",
+    "src/components/analytics/FridgeTrustFunnelDetails.tsx",
+  ] as const;
+  const missingEmitterFiles = trustEmitterFiles.filter(
+    (relPath) => !existsSync(path.resolve(args.rootDir, relPath)),
+  );
+  const allEmittersPresent = missingEmitterFiles.length === 0;
+
+  const pageStateProvenFacts: string[] = [];
+  const pageStateUnknownFacts: string[] = [];
+  let pageStateConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
+  let pageStateStatus: OwnerNeuronStatus = "UNKNOWN";
+  if (args.pageState?.computable && args.pageState.distribution !== "UNKNOWN") {
+    pageStateStatus = "PROVEN";
+    pageStateConnectionLevel = "DIM";
+    pageStateProvenFacts.push(
+      `state_system_metrics.page_state is computable in command-surface (${JSON.stringify(args.pageState.distribution)}).`,
+    );
+    pageStateProvenFacts.push(`Computation note: ${args.pageState.reason}`);
+    pageStateUnknownFacts.push(
+      "Distribution is sitemap-derived and does not prove full runtime CTA/trust-demand page-state coverage.",
+    );
+  } else {
+    pageStateUnknownFacts.push(
+      args.pageState?.reason ??
+        "state_system_metrics.page_state is UNKNOWN or unavailable from command-surface in this load path.",
+    );
+  }
+
+  const trustFunnelProvenFacts: string[] = [];
+  const trustFunnelUnknownFacts: string[] = [];
+  let trustFunnelConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
+  let trustFunnelStatus: OwnerNeuronStatus = "UNKNOWN";
+  if (allEmittersPresent) {
+    trustFunnelStatus = "PROVEN";
+    trustFunnelConnectionLevel = "DIM";
+    trustFunnelProvenFacts.push(
+      "GA4 trust-funnel event emitter files are present in repo (helper + view/link/details components).",
+    );
+  } else {
+    trustFunnelUnknownFacts.push(
+      `Missing trust-funnel emitter files: ${missingEmitterFiles.join(", ") || "UNKNOWN"}.`,
+    );
+  }
+  trustFunnelUnknownFacts.push(
+    "Sampled browser firing proof is not represented in this dashboard lane and remains UNKNOWN unless captured in report artifacts.",
+  );
+  trustFunnelUnknownFacts.push(
+    "Dashboard aggregate ingest for GA4 trust-funnel events is not connected in current command-center report outputs.",
+  );
+
+  const gscProvenFacts: string[] = [];
+  const gscUnknownFacts: string[] = [];
+  let gscConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
+  let gscStatus: OwnerNeuronStatus = "UNKNOWN";
+  if (args.gscPresence) {
+    gscStatus = "PROVEN";
+    gscConnectionLevel = "DIM";
+    gscProvenFacts.push(
+      `Command-surface GSC file-presence checks: sitemap_xml=${String(args.gscPresence.sitemap_xml)}, coverage_zip=${String(args.gscPresence.coverage_zip)}, performance_zip=${String(args.gscPresence.performance_zip)}.`,
+    );
+  } else {
+    gscUnknownFacts.push("GSC presence signals are unavailable from command-surface in this load path.");
+  }
+  gscUnknownFacts.push(
+    "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.",
+  );
+
+  return {
+    data_mutation: false,
+    generated_from: [
+      "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
+      "src/lib/analytics/fridge-trust-funnel.ts",
+      "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
+      "src/components/analytics/FridgeTrustFunnelLink.tsx",
+      "src/components/analytics/FridgeTrustFunnelDetails.tsx",
+    ],
+    neurons: [
+      {
+        neuron_key: "page_state_distribution",
+        title: "Page-state distribution",
+        connection_level: pageStateConnectionLevel,
+        freshness_method: "Built at owner-dashboard request time from command-surface output.",
+        proven_facts: pageStateProvenFacts,
+        unknown_facts: pageStateUnknownFacts,
+        next_owner_action:
+          "Decide whether to accept sitemap-derived partial visibility or wire richer page-state inputs into command-center summaries.",
+        status: pageStateStatus,
+      },
+      {
+        neuron_key: "trust_funnel_measurement",
+        title: "Trust-funnel measurement",
+        connection_level: trustFunnelConnectionLevel,
+        freshness_method: "Repo file-presence check at owner-dashboard request time.",
+        proven_facts: trustFunnelProvenFacts,
+        unknown_facts: trustFunnelUnknownFacts,
+        next_owner_action:
+          "Connect a GA4 aggregate pull (or weekly export import) into command-center reporting before treating trust-funnel outcomes as bright.",
+        status: trustFunnelStatus,
+      },
+      {
+        neuron_key: "gsc_search_discovery",
+        title: "GSC search discovery",
+        connection_level: gscConnectionLevel,
+        freshness_method: "Command-surface local file-presence checks at owner-dashboard request time.",
+        proven_facts: gscProvenFacts,
+        unknown_facts: gscUnknownFacts,
+        next_owner_action:
+          "Connect a GSC export parser or enforce a weekly manual upload-and-parse workflow for impressions/clicks visibility.",
+        status: gscStatus,
+      },
+    ],
+  };
+}
+
+export function attachOwnerCommandCenterNeuronsReport<T extends object>(
+  report: T,
+  neurons: OwnerCommandCenterNeuronsReport,
+): T & { owner_command_center_neurons: OwnerCommandCenterNeuronsReport } {
+  return {
+    ...report,
+    owner_command_center_neurons: neurons,
+  };
+}
+
 export type OwnerCommandCenterLoadResult =
   | {
       ok: true;
       report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>> & {
         owner_quarantined_fridge_models: OwnerQuarantinedFridgeModelsReport;
         owner_vertical_launch_policy: OwnerVerticalLaunchPolicyReport;
+        owner_command_center_neurons: OwnerCommandCenterNeuronsReport;
       };
     }
   | { ok: false; message: string };
@@ -104,10 +272,17 @@ export type OwnerCommandCenterLoadResult =
 export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): Promise<OwnerCommandCenterLoadResult> {
   try {
     const report = await buildBuckpartsCommandCenterReport({ rootDir });
+    const commandSurface = await buildBuckpartsCommandSurfaceReport({ rootDir });
     const quarantined = await buildOwnerQuarantinedFridgeModelsSummary();
     const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir,
+      pageState: commandSurface.state_system_metrics.page_state,
+      gscPresence: commandSurface.gsc_exports_present,
+    });
     const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
-    return { ok: true, report: attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy) };
+    const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
+    return { ok: true, report: attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons) };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "UNKNOWN";
     return { ok: false, message: msg };
