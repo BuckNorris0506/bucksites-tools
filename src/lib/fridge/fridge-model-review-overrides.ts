@@ -15,7 +15,7 @@ const REVIEW_OVERRIDES: Record<string, FridgeModelReviewOverride> = {
     reason: "FILTER_MAPPING_CONFLICT",
     public_status: "owner_review_required",
     public_message:
-      "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
+      "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so no buying options appear yet.",
     internal_evidence_doc: "docs/fridge-model-filter-mapping-discrepancies.md",
   },
 };

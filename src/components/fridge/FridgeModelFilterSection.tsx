@@ -4,11 +4,12 @@ import { Prose } from "@/components/Prose";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
+import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 const FRIDGE_MODEL_FILTER_BUY_SUPPRESS =
-  "Compare your old filter or manual first — we're not showing a store button on this page yet.";
+  "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
 
 function intervalLabel(months: number | null | undefined): string | null {
   if (months == null || months <= 0) return null;
@@ -17,8 +18,7 @@ function intervalLabel(months: number | null | undefined): string | null {
 }
 
 function filterNotesHtml(notes: string | null | undefined): string | null {
-  const t = (notes ?? "").trim();
-  return t.length > 0 ? t : null;
+  return publicFacingRefrigeratorFilterNotes(notes);
 }
 
 export function FridgeModelFilterSection({
@@ -46,9 +46,9 @@ export function FridgeModelFilterSection({
       <div className="space-y-3">
         <h2 className="text-xl font-semibold text-stone-900">Full detail for each number</h2>
         <p className="max-w-prose text-base leading-relaxed text-stone-600">
-          Same numbers as the chips above—here with notes and store links.{" "}
+          Same numbers as the chips above—here with notes and buying options.{" "}
           <strong className="font-medium text-stone-800">Not a ranked list.</strong> Open filter
-          details before using any store link.
+          details before using any buying option.
         </p>
       </div>
 
@@ -143,7 +143,7 @@ export function FridgeModelFilterSection({
 
                 <div className="mt-6 rounded-2xl bg-stone-50/95 p-5 ring-1 ring-stone-200/35">
                   <p className="text-xs font-medium text-stone-600">
-                    Store links (secondary—only after this number matches what you need)
+                    Buying options (secondary—only after this number matches what you need)
                   </p>
                   <div className="mt-4">
                     <TrustAwareBuySection

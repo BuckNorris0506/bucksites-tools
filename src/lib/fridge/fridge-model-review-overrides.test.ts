@@ -13,8 +13,8 @@ describe("fridge-model-review-overrides", () => {
     assert.equal(override.reason, "FILTER_MAPPING_CONFLICT");
     assert.equal(override.public_status, "owner_review_required");
     assert.ok(
-      override.public_message.includes("not showing store buttons yet"),
-      "public message should explain suppressed store buttons",
+      override.public_message.includes("no buying options appear yet"),
+      "public message should explain suppressed buying options",
     );
     assert.equal(
       override.internal_evidence_doc,

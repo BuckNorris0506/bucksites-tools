@@ -54,11 +54,11 @@ describe("FridgeModelFilterSection", () => {
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter],
         quarantineMessage:
-          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
+          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so no buying options appear yet.",
       }),
     );
     assert.ok(html.includes("Filter guidance"));
-    assert.ok(html.includes("not showing store buttons yet"));
+    assert.ok(html.includes("no buying options appear yet"));
     assert.ok(!html.includes('href="/go/'));
     assert.ok(!html.includes("Full detail for each number"));
     assert.ok(!html.includes("Open a verified listing"));
@@ -79,6 +79,7 @@ describe("FridgeModelFilterSection", () => {
     assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes("Open filter details"));
     assert.ok(html.includes("Open a verified listing"));
+    assert.ok(html.includes("Buying options (secondary"));
     assert.ok(html.includes('href="/go/'));
     assert.ok(!html.includes("Do not pick by order"));
   });
@@ -113,10 +114,44 @@ describe("FridgeModelFilterSection", () => {
     );
     assert.equal(/\bguaranteed\b/i.test(html), false);
     assert.equal(/\b100%\b/.test(html), false);
-    const banned = [/\bPDP\b/i, /\bbrowser truth\b/i, /\bdirect_buyable\b/i, /\bcanonical slug\b/i];
+    const banned = [
+      /\bPDP\b/i,
+      /\bbrowser truth\b/i,
+      /\bdirect_buyable\b/i,
+      /\bcanonical slug\b/i,
+      /Published OEM-style/i,
+      /store links/i,
+      /store buttons/i,
+      /buy-link/i,
+      /checkout deep link/i,
+      /retailer targets/i,
+      /finished our listing review/i,
+      /pass BuckParts checks/i,
+      /fully vetted/i,
+      /guaranteed/i,
+      /safe to buy/i,
+    ];
     for (const rx of banned) {
       assert.equal(rx.test(html), false, `unexpected internal term: ${rx}`);
     }
+  });
+
+  it("sanitizes nested filter notes for homeowner-safe rendering", () => {
+    const html = renderToStaticMarkup(
+      createElement(FridgeModelFilterSection, {
+        filters: [
+          {
+            ...sampleFilter,
+            notes:
+              "Published OEM-style part number; confirm year/trim with LG/Samsung/GE/Whirlpool/Frigidaire fit charts.",
+          } as unknown as FridgeMappedFilterRow,
+        ],
+      }),
+    );
+    assert.ok(!html.includes("Published OEM-style part number"));
+    assert.ok(
+      html.includes("Compare the number printed on your cartridge or housing to the number on this page."),
+    );
   });
 
   it("quarantine + generic homeowner card copy avoids internal jargon", () => {
@@ -136,7 +171,7 @@ describe("FridgeModelFilterSection", () => {
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter],
         quarantineMessage:
-          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
+          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so no buying options appear yet.",
       }),
     );
     const html = `${cardHtml}\n${quarantineHtml}`;
@@ -166,7 +201,7 @@ describe("FridgeModelFilterSection", () => {
       createElement(FridgeModelFilterSection, {
         filters: [sampleFilter],
         quarantineMessage:
-          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so we're not showing store buttons yet.",
+          "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so no buying options appear yet.",
       }),
     );
     assert.ok(!cardHtml.includes("data-form-factor-visual="));
