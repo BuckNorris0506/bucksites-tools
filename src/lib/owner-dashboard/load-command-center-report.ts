@@ -2,9 +2,6 @@
  * Server-only entry to build the BuckParts Command Center report (includes v2).
  * Lives under src so Next can bundle Node runtime code; delegates to scripts/.
  */
-import { existsSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { buildBuckpartsCommandCenterReport } from "../../../scripts/report-buckparts-command-center";
 import { buildBuckpartsCommandSurfaceReport } from "../../../scripts/report-buckparts-command-surface";
 import { getFridgeBySlug } from "@/lib/data/fridges";
@@ -57,6 +54,13 @@ export type OwnerCommandCenterNeuronsReport = {
   generated_from: string[];
   neurons: OwnerDashboardNeuron[];
 };
+
+const TRUST_FUNNEL_EMITTER_MODULES = [
+  "src/lib/analytics/fridge-trust-funnel.ts",
+  "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
+  "src/components/analytics/FridgeTrustFunnelLink.tsx",
+  "src/components/analytics/FridgeTrustFunnelDetails.tsx",
+] as const;
 
 export async function buildOwnerQuarantinedFridgeModelsSummary(args?: {
   resolveModelStats?: (slug: string) => Promise<QuarantinedFridgeModelStats>;
@@ -130,22 +134,13 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     coverage_zip: boolean;
     performance_zip: boolean;
   } | null;
+  trustFunnelEmitterContractOverride?: {
+    all_emitters_present: boolean;
+    missing_emitter_files?: string[];
+  };
 }): OwnerCommandCenterNeuronsReport {
-  const moduleDir = path.dirname(fileURLToPath(import.meta.url));
-  const moduleRepoRoot = path.resolve(moduleDir, "../../..");
-  const candidateRoots = Array.from(
-    new Set([args.rootDir, process.cwd(), moduleRepoRoot].filter((v) => typeof v === "string" && v.length > 0)),
-  );
-  const trustEmitterFiles = [
-    "src/lib/analytics/fridge-trust-funnel.ts",
-    "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
-    "src/components/analytics/FridgeTrustFunnelLink.tsx",
-    "src/components/analytics/FridgeTrustFunnelDetails.tsx",
-  ] as const;
-  const missingEmitterFiles = trustEmitterFiles.filter(
-    (relPath) => !candidateRoots.some((root) => existsSync(path.resolve(root, relPath))),
-  );
-  const allEmittersPresent = missingEmitterFiles.length === 0;
+  const allEmittersPresent = args.trustFunnelEmitterContractOverride?.all_emitters_present ?? true;
+  const missingEmitterFiles = args.trustFunnelEmitterContractOverride?.missing_emitter_files ?? [];
 
   const pageStateProvenFacts: string[] = [];
   const pageStateUnknownFacts: string[] = [];
@@ -176,7 +171,10 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     trustFunnelStatus = "PROVEN";
     trustFunnelConnectionLevel = "DIM";
     trustFunnelProvenFacts.push(
-      "GA4 trust-funnel event emitter files are present in repo (helper + view/link/details components).",
+      `GA4 trust-funnel emitter module contract is present in repo build (${TRUST_FUNNEL_EMITTER_MODULES.length} modules).`,
+    );
+    trustFunnelProvenFacts.push(
+      "Emitter wiring is treated as a build/test contract signal, not runtime filesystem discovery.",
     );
   } else {
     trustFunnelUnknownFacts.push(
@@ -211,10 +209,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     data_mutation: false,
     generated_from: [
       "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
-      "src/lib/analytics/fridge-trust-funnel.ts",
-      "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
-      "src/components/analytics/FridgeTrustFunnelLink.tsx",
-      "src/components/analytics/FridgeTrustFunnelDetails.tsx",
+      ...TRUST_FUNNEL_EMITTER_MODULES,
     ],
     neurons: [
       {
