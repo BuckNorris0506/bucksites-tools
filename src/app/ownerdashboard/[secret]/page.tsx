@@ -161,6 +161,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const launchPolicy = report.owner_vertical_launch_policy;
   const neurons = report.owner_command_center_neurons;
   const integritySentinel = report.owner_integrity_sentinel;
+  const searchDemand = report.owner_search_demand_and_gaps.search_demand_and_gaps;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -811,6 +812,61 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
               />
             </div>
           ))}
+        </LaneCard>
+
+        <LaneCard
+          title="15 · Search Demand & gaps"
+          subtitle="Owner-only internal BuckParts search demand neuron (not GSC demand)"
+        >
+          <FieldBlock label="neuron_key" value={searchDemand.neuron_key} />
+          <FieldBlock label="connection_level" value={searchDemand.connection_level} />
+          <FieldBlock label="source_class" value={searchDemand.source_class} />
+          <FieldBlock label="freshness_method" value={searchDemand.freshness_method} />
+          <FieldBlock label="runtime_status" value={searchDemand.runtime_status} />
+          <FieldBlock
+            label="window_days"
+            value={
+              searchDemand.window_days === "UNKNOWN"
+                ? "UNKNOWN"
+                : `short=${searchDemand.window_days.short}, long=${searchDemand.window_days.long}`
+            }
+          />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <FieldBlock label="search_events_last_7d" value={String(searchDemand.search_events_last_7d)} />
+            <FieldBlock label="search_events_last_30d" value={String(searchDemand.search_events_last_30d)} />
+            <FieldBlock label="zero_result_last_7d" value={String(searchDemand.zero_result_last_7d)} />
+            <FieldBlock label="zero_result_last_30d" value={String(searchDemand.zero_result_last_30d)} />
+            <FieldBlock label="actionable_search_gaps" value={String(searchDemand.actionable_search_gaps)} />
+          </div>
+          <FieldBlock
+            label="proven_facts"
+            value={
+              searchDemand.proven_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {searchDemand.proven_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock
+            label="unknown_facts"
+            value={
+              searchDemand.unknown_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {searchDemand.unknown_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock label="next_owner_action" value={searchDemand.next_owner_action} />
         </LaneCard>
 
         <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">

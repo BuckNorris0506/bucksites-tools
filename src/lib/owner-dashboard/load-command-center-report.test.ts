@@ -5,9 +5,11 @@ import { describe, it } from "node:test";
 import {
   attachOwnerCommandCenterNeuronsReport,
   attachOwnerIntegritySentinelReport,
+  attachOwnerSearchDemandAndGapsReport,
   attachOwnerQuarantinedFridgeModelsReport,
   buildOwnerCommandCenterNeuronsReport,
   buildOwnerIntegritySentinelReport,
+  buildOwnerSearchDemandAndGapsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
 } from "@/lib/owner-dashboard/load-command-center-report";
 import {
@@ -466,6 +468,139 @@ describe("owner quarantined fridge summary", () => {
     assert.ok("owner_integrity_sentinel" in report);
     assert.equal(report.owner_integrity_sentinel.data_mutation, false);
     assert.equal(report.owner_integrity_sentinel.providers.length, 5);
+  });
+
+  it("search demand runtime_status non-OK yields dark/unknown-safe action", () => {
+    const lane = buildOwnerSearchDemandAndGapsReport({
+      report: {
+        search_and_click_intelligence_summary: {
+          runtime_status: "UNKNOWN_DB_UNAVAILABLE",
+          window_days: { short: 7, long: 30 },
+          search_events: {
+            last_7d: "UNKNOWN",
+            last_30d: "UNKNOWN",
+            zero_result_last_7d: "UNKNOWN",
+            zero_result_last_30d: "UNKNOWN",
+            zero_result_rate_last_7d: "UNKNOWN",
+            zero_result_rate_last_30d: "UNKNOWN",
+          },
+          search_gaps_backlog: {
+            open: "UNKNOWN",
+            reviewing: "UNKNOWN",
+            queued: "UNKNOWN",
+            total_actionable: "UNKNOWN",
+          },
+          click_events: { last_7d: "UNKNOWN", last_30d: "UNKNOWN" },
+          known_unknowns: [],
+        },
+      } as never,
+    }).search_demand_and_gaps;
+    assert.equal(lane.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+    assert.equal(lane.connection_level, "DARK");
+    assert.ok(lane.next_owner_action.includes("Restore command-surface search runtime availability"));
+  });
+
+  it("search demand missing metrics appear in unknown_facts", () => {
+    const lane = buildOwnerSearchDemandAndGapsReport({
+      report: {
+        search_and_click_intelligence_summary: {
+          runtime_status: "OK",
+          window_days: { short: 7, long: 30 },
+          search_events: {
+            last_7d: 10,
+            last_30d: "UNKNOWN",
+            zero_result_last_7d: 1,
+            zero_result_last_30d: "UNKNOWN",
+            zero_result_rate_last_7d: 0.1,
+            zero_result_rate_last_30d: "UNKNOWN",
+          },
+          search_gaps_backlog: {
+            open: 1,
+            reviewing: 0,
+            queued: 0,
+            total_actionable: "UNKNOWN",
+          },
+          click_events: { last_7d: 4, last_30d: 12 },
+          known_unknowns: [],
+        },
+      } as never,
+    }).search_demand_and_gaps;
+    assert.ok(lane.unknown_facts.some((f) => f.includes("search_events_last_30d is UNKNOWN")));
+    assert.ok(lane.unknown_facts.some((f) => f.includes("zero_result_last_30d is UNKNOWN")));
+    assert.ok(lane.unknown_facts.some((f) => f.includes("actionable_search_gaps is UNKNOWN")));
+  });
+
+  it("search demand available metrics and actionable gap count render in report", () => {
+    const lane = buildOwnerSearchDemandAndGapsReport({
+      report: {
+        search_and_click_intelligence_summary: {
+          runtime_status: "OK",
+          window_days: { short: 7, long: 30 },
+          search_events: {
+            last_7d: 7,
+            last_30d: 70,
+            zero_result_last_7d: 3,
+            zero_result_last_30d: 25,
+            zero_result_rate_last_7d: 0.4,
+            zero_result_rate_last_30d: 0.35,
+          },
+          search_gaps_backlog: {
+            open: 1,
+            reviewing: 0,
+            queued: 0,
+            total_actionable: 1,
+          },
+          click_events: { last_7d: 10, last_30d: 100 },
+          known_unknowns: [],
+        },
+      } as never,
+    }).search_demand_and_gaps;
+    assert.equal(lane.search_events_last_7d, 7);
+    assert.equal(lane.search_events_last_30d, 70);
+    assert.equal(lane.zero_result_last_7d, 3);
+    assert.equal(lane.zero_result_last_30d, 25);
+    assert.equal(lane.actionable_search_gaps, 1);
+    assert.ok(lane.proven_facts.some((f) => f.includes("search_events_last_7d=7")));
+  });
+
+  it("owner dashboard renders search_demand_and_gaps section", () => {
+    const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes("Search Demand & gaps"));
+    assert.ok(src.includes('label="neuron_key"'));
+    assert.ok(src.includes('label="search_events_last_7d"'));
+    assert.ok(src.includes('label="zero_result_last_30d"'));
+    assert.ok(src.includes('label="actionable_search_gaps"'));
+  });
+
+  it("attach chain can add search demand and gaps lane with data_mutation false", () => {
+    const lane = buildOwnerSearchDemandAndGapsReport({
+      report: {
+        search_and_click_intelligence_summary: {
+          runtime_status: "OK",
+          window_days: { short: 7, long: 30 },
+          search_events: {
+            last_7d: 1,
+            last_30d: 2,
+            zero_result_last_7d: 0,
+            zero_result_last_30d: 1,
+            zero_result_rate_last_7d: 0,
+            zero_result_rate_last_30d: 0.5,
+          },
+          search_gaps_backlog: {
+            open: 0,
+            reviewing: 0,
+            queued: 0,
+            total_actionable: 0,
+          },
+          click_events: { last_7d: 1, last_30d: 2 },
+          known_unknowns: [],
+        },
+      } as never,
+    });
+    const report = attachOwnerSearchDemandAndGapsReport({ report_name: "x" }, lane);
+    assert.ok("owner_search_demand_and_gaps" in report);
+    assert.equal(report.owner_search_demand_and_gaps.data_mutation, false);
+    assert.equal(report.owner_search_demand_and_gaps.search_demand_and_gaps.neuron_key, "search_demand_and_gaps");
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {
