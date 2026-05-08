@@ -247,6 +247,10 @@ export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
   };
 }
 
+/** Legacy copy when `owner_gsc_external_demand` is not passed into neuron reconciliation (tests only). */
+const STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH =
+  "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.";
+
 export function buildOwnerCommandCenterNeuronsReport(args: {
   rootDir: string;
   pageState:
@@ -261,6 +265,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     coverage_zip: boolean;
     performance_zip: boolean;
   } | null;
+  /** When set (owner load path), reconciles `gsc_search_discovery` with lane 16 ingest truth. */
+  gscExternalDemand?: OwnerGscExternalDemandNeuron | null;
   trustFunnelEmitterContractOverride?: {
     all_emitters_present: boolean;
     missing_emitter_files?: string[];
@@ -382,23 +388,74 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   const gscUnknownFacts: string[] = [];
   let gscConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
   let gscStatus: OwnerNeuronStatus = "UNKNOWN";
+  let gscFreshnessMethod =
+    "Command-surface local file-presence checks at owner-dashboard request time.";
+  let gscNextOwnerAction =
+    "Connect a GSC export parser or enforce a weekly manual upload-and-parse workflow for impressions/clicks visibility.";
+
+  const ext = args.gscExternalDemand ?? null;
+  const gscTotalsNumeric =
+    !!ext &&
+    typeof ext.total_impressions === "number" &&
+    typeof ext.total_clicks === "number";
+
   if (args.gscPresence) {
-    gscStatus = "PROVEN";
-    gscConnectionLevel = "DIM";
     gscProvenFacts.push(
-      `Command-surface GSC file-presence checks: sitemap_xml=${String(args.gscPresence.sitemap_xml)}, coverage_zip=${String(args.gscPresence.coverage_zip)}, performance_zip=${String(args.gscPresence.performance_zip)}.`,
+      `Command-surface GSC export file-presence: sitemap_xml=${String(args.gscPresence.sitemap_xml)}, coverage_zip=${String(args.gscPresence.coverage_zip)}, performance_zip=${String(args.gscPresence.performance_zip)}.`,
     );
-  } else {
+  } else if (!ext) {
     gscUnknownFacts.push("GSC presence signals are unavailable from command-surface in this load path.");
   }
-  gscUnknownFacts.push(
-    "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.",
-  );
+
+  if (ext) {
+    gscFreshnessMethod = ext.freshness_method;
+    gscNextOwnerAction = ext.next_owner_action;
+    for (const f of ext.proven_facts) {
+      if (!gscProvenFacts.includes(f)) gscProvenFacts.push(f);
+    }
+    for (const u of ext.unknown_facts) {
+      if (!gscUnknownFacts.includes(u)) gscUnknownFacts.push(u);
+    }
+
+    const mappedLevel: OwnerNeuronConnectionLevel =
+      ext.connection_level === "UNKNOWN" ? "DARK" : ext.connection_level;
+
+    if (ext.connection_level === "BRIGHT" && gscTotalsNumeric) {
+      gscConnectionLevel = "BRIGHT";
+      gscStatus = "PROVEN";
+      gscProvenFacts.unshift(
+        `GSC search-demand totals are proven via owner_gsc_external_demand (total_impressions=${ext.total_impressions}, total_clicks=${ext.total_clicks}; artifact_source=${ext.artifact_source}, export_file_used=${String(ext.export_file_used)}).`,
+      );
+    } else {
+      let effectiveLevel = mappedLevel;
+      if (ext.connection_level === "BRIGHT" && !gscTotalsNumeric) {
+        effectiveLevel = "DIM";
+      }
+      gscConnectionLevel = effectiveLevel;
+      gscStatus = gscTotalsNumeric ? "PROVEN" : "UNKNOWN";
+    }
+
+    gscUnknownFacts.push(
+      "Owner-dashboard request path does not call Google Search Console live APIs; metrics reflect durable Supabase artifact, local JSON artifact, or manual export ingest freshness.",
+    );
+    if (ext.export_date !== "UNKNOWN") {
+      gscUnknownFacts.push(
+        `Export/window dating hint: export_date=${ext.export_date} (compare to API artifact date_range when applicable).`,
+      );
+    }
+  } else {
+    if (args.gscPresence) {
+      gscStatus = "PROVEN";
+      gscConnectionLevel = "DIM";
+    }
+    gscUnknownFacts.push(STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH);
+  }
 
   return {
     data_mutation: false,
     generated_from: [
       "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
+      ...(ext ? ["src/lib/owner-dashboard/gsc-external-demand.ts (reconciles gsc_search_discovery)"] : []),
       ...TRUST_FUNNEL_EMITTER_MODULES,
     ],
     neurons: [
@@ -431,11 +488,10 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         neuron_key: "gsc_search_discovery",
         title: "GSC search discovery",
         connection_level: gscConnectionLevel,
-        freshness_method: "Command-surface local file-presence checks at owner-dashboard request time.",
+        freshness_method: gscFreshnessMethod,
         proven_facts: gscProvenFacts,
         unknown_facts: gscUnknownFacts,
-        next_owner_action:
-          "Connect a GSC export parser or enforce a weekly manual upload-and-parse workflow for impressions/clicks visibility.",
+        next_owner_action: gscNextOwnerAction,
         status: gscStatus,
       },
     ],
@@ -949,16 +1005,17 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     const quarantined = await buildOwnerQuarantinedFridgeModelsSummary();
     const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
     const ga4TrustFunnelAggregate = await loadGa4TrustFunnelAggregateArtifact({ rootDir });
+    const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
     const neurons = buildOwnerCommandCenterNeuronsReport({
       rootDir,
       pageState: commandSurface.state_system_metrics.page_state,
       gscPresence: commandSurface.gsc_exports_present,
+      gscExternalDemand: gscExternalDemand.gsc_external_demand,
       trustFunnelAggregateArtifact: ga4TrustFunnelAggregate.artifact,
       trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
-    const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
     const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
     const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
     const withNeurons = attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons);

@@ -17,7 +17,11 @@ import {
 import {
   buildOwnerGscExternalDemandNeuron,
   parseGscPerformanceCsv,
+  type OwnerGscExternalDemandNeuron,
 } from "@/lib/owner-dashboard/gsc-external-demand";
+
+const STALE_GSC_AGGREGATES_PHRASE_SNIPPET =
+  "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs";
 import {
   attachOwnerVerticalLaunchPolicyReport,
   buildOwnerVerticalLaunchPolicyReport,
@@ -240,6 +244,97 @@ describe("owner quarantined fridge summary", () => {
     assert.ok("owner_command_center_neurons" in report);
     assert.equal(report.owner_command_center_neurons.data_mutation, false);
     assert.equal(report.owner_command_center_neurons.neurons.length, 3);
+  });
+
+  it("gsc_search_discovery reconciles BRIGHT/PROVEN when owner_gsc_external_demand is BRIGHT with numeric totals", () => {
+    const bright: OwnerGscExternalDemandNeuron = {
+      neuron_key: "gsc_external_demand",
+      connection_level: "BRIGHT",
+      source_class: "ARTIFACT",
+      artifact_source: "SUPABASE",
+      fetched_at: "2026-05-08T20:00:00.000Z",
+      status: "OK",
+      freshness_method: "Reads durable Supabase artifact.",
+      export_file_used: "supabase.owner_report_artifacts[gsc_search_analytics]",
+      export_date: "2026-05-06",
+      total_impressions: 1000,
+      total_clicks: 40,
+      average_ctr: 0.04,
+      average_position: 12,
+      top_queries_by_impressions: [],
+      top_queries_by_clicks: [],
+      top_pages_by_impressions: [],
+      top_pages_by_clicks: [],
+      high_impression_low_click_opportunities: [],
+      proven_facts: ["GSC artifact row OK."],
+      unknown_facts: [],
+      next_owner_action: "Keep refreshing artifact.",
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      gscExternalDemand: bright,
+    });
+    const gsc = neurons.neurons.find((n) => n.neuron_key === "gsc_search_discovery");
+    assert.ok(gsc);
+    assert.equal(gsc.connection_level, "BRIGHT");
+    assert.equal(gsc.status, "PROVEN");
+    assert.ok(gsc.proven_facts.some((f) => f.includes("owner_gsc_external_demand")));
+    assert.equal(gsc.unknown_facts.some((f) => f.includes(STALE_GSC_AGGREGATES_PHRASE_SNIPPET)), false);
+    assert.equal(gsc.next_owner_action, "Keep refreshing artifact.");
+    assert.ok(neurons.generated_from.some((s) => s.includes("gsc-external-demand.ts")));
+  });
+
+  it("gsc_search_discovery keeps legacy stale aggregates note when gscExternalDemand is omitted", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: { sitemap_xml: true, coverage_zip: false, performance_zip: false },
+    });
+    const gsc = neurons.neurons.find((n) => n.neuron_key === "gsc_search_discovery");
+    assert.ok(gsc);
+    assert.ok(gsc.unknown_facts.some((f) => f.includes(STALE_GSC_AGGREGATES_PHRASE_SNIPPET)));
+    assert.equal(gsc.connection_level, "DIM");
+  });
+
+  it("gsc_search_discovery stays DIM without stale aggregates phrase when external demand is DIM without totals", () => {
+    const dim: OwnerGscExternalDemandNeuron = {
+      neuron_key: "gsc_external_demand",
+      connection_level: "DIM",
+      source_class: "MANUAL",
+      artifact_source: "MANUAL_EXPORT",
+      fetched_at: "2026-05-08T12:00:00.000Z",
+      status: "UNKNOWN",
+      freshness_method: "Performance export parsed but rows lack complete clicks/impressions values.",
+      export_file_used: "data/gsc/x.csv",
+      export_date: "UNKNOWN",
+      total_impressions: "UNKNOWN",
+      total_clicks: "UNKNOWN",
+      average_ctr: "UNKNOWN",
+      average_position: "UNKNOWN",
+      top_queries_by_impressions: "UNKNOWN",
+      top_queries_by_clicks: "UNKNOWN",
+      top_pages_by_impressions: "UNKNOWN",
+      top_pages_by_clicks: "UNKNOWN",
+      high_impression_low_click_opportunities: "UNKNOWN",
+      proven_facts: ["Parsed 3 rows from performance export."],
+      unknown_facts: ["No rows contain both clicks and impressions values."],
+      next_owner_action:
+        "Regenerate export with complete numeric clicks/impressions columns and re-run owner dashboard.",
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      gscExternalDemand: dim,
+    });
+    const gsc = neurons.neurons.find((n) => n.neuron_key === "gsc_search_discovery");
+    assert.ok(gsc);
+    assert.equal(gsc.connection_level, "DIM");
+    assert.equal(gsc.status, "UNKNOWN");
+    assert.equal(gsc.unknown_facts.some((f) => f.includes(STALE_GSC_AGGREGATES_PHRASE_SNIPPET)), false);
+    assert.ok(gsc.next_owner_action.includes("Regenerate export"));
   });
 
   it("fallback_active true triggers CAUTION_INCOMPLETE_INPUTS", () => {
