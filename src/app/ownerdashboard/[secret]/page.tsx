@@ -760,18 +760,17 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           title="14 · Integrity Sentinel"
           subtitle="Watcher-of-watcher: validates source health, freshness, fallback, UNKNOWN honesty, and action confidence"
         >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-              {integritySentinel.overall_status}
-            </span>
-            <span className="text-xs text-slate-600 dark:text-slate-300">
-              action_confidence: {integritySentinel.action_confidence}
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              data_mutation: {String(integritySentinel.data_mutation)}
-            </span>
-          </div>
-          <FieldBlock label="Owner note" value={integritySentinel.owner_note} />
+          <FieldBlock
+            label="overall_status"
+            value={
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {integritySentinel.overall_status}
+              </span>
+            }
+          />
+          <FieldBlock label="action_confidence" value={integritySentinel.action_confidence} />
+          <FieldBlock label="owner_note" value={integritySentinel.owner_note} />
+          <FieldBlock label="data_mutation" value={String(integritySentinel.data_mutation)} />
           {integritySentinel.providers.map((p) => (
             <div key={p.provider_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
               <p className="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">{p.provider_key}</p>

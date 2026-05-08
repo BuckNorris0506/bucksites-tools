@@ -384,6 +384,9 @@ describe("owner quarantined fridge summary", () => {
   it("rendered owner-dashboard output includes Integrity Sentinel and sentinel contract includes all five provider names", () => {
     const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
     assert.ok(src.includes("14 · Integrity Sentinel"));
+    assert.ok(src.includes('label="overall_status"'));
+    assert.ok(src.includes('label="action_confidence"'));
+    assert.ok(src.includes('label="owner_note"'));
     const sentinel = buildOwnerIntegritySentinelReport({
       report: {
         generated_at: "2026-01-01T00:00:00.000Z",
