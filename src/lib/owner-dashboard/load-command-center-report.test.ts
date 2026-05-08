@@ -4,14 +4,20 @@ import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
   attachOwnerCommandCenterNeuronsReport,
+  attachOwnerGscExternalDemandReport,
   attachOwnerIntegritySentinelReport,
   attachOwnerSearchDemandAndGapsReport,
   attachOwnerQuarantinedFridgeModelsReport,
   buildOwnerCommandCenterNeuronsReport,
+  buildOwnerGscExternalDemandReport,
   buildOwnerIntegritySentinelReport,
   buildOwnerSearchDemandAndGapsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
 } from "@/lib/owner-dashboard/load-command-center-report";
+import {
+  buildOwnerGscExternalDemandNeuron,
+  parseGscPerformanceCsv,
+} from "@/lib/owner-dashboard/gsc-external-demand";
 import {
   attachOwnerVerticalLaunchPolicyReport,
   buildOwnerVerticalLaunchPolicyReport,
@@ -601,6 +607,80 @@ describe("owner quarantined fridge summary", () => {
     assert.ok("owner_search_demand_and_gaps" in report);
     assert.equal(report.owner_search_demand_and_gaps.data_mutation, false);
     assert.equal(report.owner_search_demand_and_gaps.search_demand_and_gaps.neuron_key, "search_demand_and_gaps");
+  });
+
+  it("gsc parser handles performance CSV shape with query/page/clicks/impressions", () => {
+    const parsed = parseGscPerformanceCsv(`Query,Page,Clicks,Impressions,CTR\nwater filter,/filter/adq36006101,12,1200,1.0%\n`);
+    assert.equal(parsed.ok, true);
+    assert.equal(parsed.rows.length, 1);
+    assert.equal(parsed.rows[0].query, "water filter");
+    assert.equal(parsed.rows[0].page, "/filter/adq36006101");
+    assert.equal(parsed.rows[0].clicks, 12);
+    assert.equal(parsed.rows[0].impressions, 1200);
+  });
+
+  it("gsc missing export yields DARK with unknown_facts", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        listFiles: () => [".gitkeep"],
+      },
+    });
+    assert.equal(lane.connection_level, "DARK");
+    assert.equal(lane.total_impressions, "UNKNOWN");
+    assert.ok(lane.unknown_facts.some((f) => f.includes("No GSC performance export file")));
+  });
+
+  it("gsc unparseable export yields UNKNOWN with unknown_facts", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+        readTextFile: () => "not,a,supported,header\nx,y,z\n",
+        getMtimeIso: () => "2026-05-08T00:00:00.000Z",
+      },
+    });
+    assert.equal(lane.connection_level, "UNKNOWN");
+    assert.equal(lane.source_class, "ARTIFACT");
+    assert.ok(lane.unknown_facts.some((f) => f.includes("CSV headers unsupported")));
+  });
+
+  it("gsc parsed impressions/clicks are surfaced for owner dashboard lane", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+        readTextFile: () =>
+          [
+            "Query,Page,Clicks,Impressions",
+            "lt1000p,/filter/lt1000p,30,1000",
+            "adq36006101,/filter/adq36006101,10,900",
+          ].join("\n"),
+        getMtimeIso: () => "2026-05-08T00:00:00.000Z",
+      },
+    });
+    assert.equal(lane.connection_level, "BRIGHT");
+    assert.equal(lane.total_impressions, 1900);
+    assert.equal(lane.total_clicks, 40);
+    assert.ok(lane.top_queries_by_impressions !== "UNKNOWN");
+    assert.ok(lane.top_pages_by_clicks !== "UNKNOWN");
+  });
+
+  it("owner dashboard renders gsc_external_demand lane fields", () => {
+    const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes("16 · GSC external demand"));
+    assert.ok(src.includes('label="total_impressions"'));
+    assert.ok(src.includes('label="total_clicks"'));
+    assert.ok(src.includes('label="top_queries_by_impressions"'));
+    assert.ok(src.includes('label="high_impression_low_click_opportunities"'));
+  });
+
+  it("attach chain can add gsc external demand report with data_mutation false", () => {
+    const lane = buildOwnerGscExternalDemandReport({ rootDir: process.cwd() });
+    const report = attachOwnerGscExternalDemandReport({ report_name: "x" }, lane);
+    assert.ok("owner_gsc_external_demand" in report);
+    assert.equal(report.owner_gsc_external_demand.data_mutation, false);
+    assert.equal(report.owner_gsc_external_demand.gsc_external_demand.neuron_key, "gsc_external_demand");
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {

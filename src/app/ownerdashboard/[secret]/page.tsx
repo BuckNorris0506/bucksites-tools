@@ -162,6 +162,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const neurons = report.owner_command_center_neurons;
   const integritySentinel = report.owner_integrity_sentinel;
   const searchDemand = report.owner_search_demand_and_gaps.search_demand_and_gaps;
+  const gscExternalDemand = report.owner_gsc_external_demand.gsc_external_demand;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -867,6 +868,132 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
             }
           />
           <FieldBlock label="next_owner_action" value={searchDemand.next_owner_action} />
+        </LaneCard>
+
+        <LaneCard
+          title="16 · GSC external demand"
+          subtitle="Owner-only external demand neuron parsed from local GSC performance exports"
+        >
+          <FieldBlock label="neuron_key" value={gscExternalDemand.neuron_key} />
+          <FieldBlock label="connection_level" value={gscExternalDemand.connection_level} />
+          <FieldBlock label="source_class" value={gscExternalDemand.source_class} />
+          <FieldBlock label="freshness_method" value={gscExternalDemand.freshness_method} />
+          <FieldBlock label="export_file_used" value={gscExternalDemand.export_file_used} />
+          <FieldBlock label="export_date" value={gscExternalDemand.export_date} />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <FieldBlock label="total_impressions" value={String(gscExternalDemand.total_impressions)} />
+            <FieldBlock label="total_clicks" value={String(gscExternalDemand.total_clicks)} />
+            <FieldBlock label="average_ctr" value={String(gscExternalDemand.average_ctr)} />
+          </div>
+          <FieldBlock
+            label="top_queries_by_impressions"
+            value={
+              gscExternalDemand.top_queries_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_queries_by_impressions.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_queries_by_clicks"
+            value={
+              gscExternalDemand.top_queries_by_clicks === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_queries_by_clicks.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · clicks={q.clicks} · impressions={q.impressions} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_pages_by_impressions"
+            value={
+              gscExternalDemand.top_pages_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_pages_by_impressions.map((p) => (
+                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
+                      {p.key} · impressions={p.impressions} · clicks={p.clicks} · ctr={String(p.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_pages_by_clicks"
+            value={
+              gscExternalDemand.top_pages_by_clicks === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_pages_by_clicks.map((p) => (
+                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
+                      {p.key} · clicks={p.clicks} · impressions={p.impressions} · ctr={String(p.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="high_impression_low_click_opportunities"
+            value={
+              gscExternalDemand.high_impression_low_click_opportunities === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.high_impression_low_click_opportunities.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="proven_facts"
+            value={
+              gscExternalDemand.proven_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.proven_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock
+            label="unknown_facts"
+            value={
+              gscExternalDemand.unknown_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.unknown_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock label="next_owner_action" value={gscExternalDemand.next_owner_action} />
         </LaneCard>
 
         <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">

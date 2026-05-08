@@ -14,6 +14,10 @@ import {
   buildOwnerVerticalLaunchPolicyReport,
   type OwnerVerticalLaunchPolicyReport,
 } from "@/lib/owner-dashboard/owner-vertical-launch-policy";
+import {
+  buildOwnerGscExternalDemandNeuron,
+  type OwnerGscExternalDemandNeuron,
+} from "@/lib/owner-dashboard/gsc-external-demand";
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -113,6 +117,12 @@ export type OwnerSearchDemandAndGapsReport = {
   data_mutation: false;
   generated_from: string[];
   search_demand_and_gaps: OwnerSearchDemandAndGapsNeuron;
+};
+
+export type OwnerGscExternalDemandReport = {
+  data_mutation: false;
+  generated_from: string[];
+  gsc_external_demand: OwnerGscExternalDemandNeuron;
 };
 
 const TRUST_FUNNEL_EMITTER_MODULES = [
@@ -767,6 +777,26 @@ export function attachOwnerSearchDemandAndGapsReport<T extends object>(
   };
 }
 
+export function buildOwnerGscExternalDemandReport(args: {
+  rootDir: string;
+}): OwnerGscExternalDemandReport {
+  return {
+    data_mutation: false,
+    generated_from: ["data/gsc/* Performance export artifacts", "src/lib/owner-dashboard/gsc-external-demand.ts"],
+    gsc_external_demand: buildOwnerGscExternalDemandNeuron({ rootDir: args.rootDir }),
+  };
+}
+
+export function attachOwnerGscExternalDemandReport<T extends object>(
+  report: T,
+  owner_gsc_external_demand: OwnerGscExternalDemandReport,
+): T & { owner_gsc_external_demand: OwnerGscExternalDemandReport } {
+  return {
+    ...report,
+    owner_gsc_external_demand,
+  };
+}
+
 export type OwnerCommandCenterLoadResult =
   | {
       ok: true;
@@ -776,6 +806,7 @@ export type OwnerCommandCenterLoadResult =
         owner_command_center_neurons: OwnerCommandCenterNeuronsReport;
         owner_integrity_sentinel: OwnerIntegritySentinelReport;
         owner_search_demand_and_gaps: OwnerSearchDemandAndGapsReport;
+        owner_gsc_external_demand: OwnerGscExternalDemandReport;
       };
     }
   | { ok: false; message: string };
@@ -793,11 +824,13 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
+    const gscExternalDemand = buildOwnerGscExternalDemandReport({ rootDir });
     const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
     const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
     const withNeurons = attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons);
     const withSentinel = attachOwnerIntegritySentinelReport(withNeurons, sentinel);
-    return { ok: true, report: attachOwnerSearchDemandAndGapsReport(withSentinel, searchDemandAndGaps) };
+    const withSearchDemand = attachOwnerSearchDemandAndGapsReport(withSentinel, searchDemandAndGaps);
+    return { ok: true, report: attachOwnerGscExternalDemandReport(withSearchDemand, gscExternalDemand) };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "UNKNOWN";
     return { ok: false, message: msg };
