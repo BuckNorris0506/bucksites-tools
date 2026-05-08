@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import { chromium } from "playwright";
 import { canonicalAmazonDpUrl } from "./lib/discovery-candidate-enrichment";
 import {
   diagnoseHqiiAmazonEnrichment,
@@ -51,6 +50,24 @@ type OutputRow = {
   canary_ready_for_write_lane: boolean;
 };
 
+type BrowserLike = {
+  newContext: (options: {
+    userAgent: string;
+    viewport: { width: number; height: number };
+  }) => Promise<BrowserContextLike>;
+  close: () => Promise<void>;
+};
+
+type BrowserContextLike = {
+  newPage: () => Promise<BrowserPageLike>;
+  close: () => Promise<void>;
+};
+
+type BrowserPageLike = {
+  goto: (url: string, options: { waitUntil: "domcontentloaded"; timeout: number }) => Promise<unknown>;
+  evaluate: <T>(fn: () => T) => Promise<T>;
+};
+
 const CANARIES: Canary[] = [
   {
     slug: "pentek-wp25bb20p",
@@ -98,7 +115,7 @@ function extractAlternateDpUrls(searchHtml: string, maxUrls: number): string[] {
   return out;
 }
 
-async function fetchBodyWithFallback(browser: Awaited<ReturnType<typeof chromium.launch>>, url: string): Promise<string> {
+async function fetchBodyWithFallback(browser: BrowserLike, url: string): Promise<string> {
   let html = "";
   try {
     const res = await fetch(url, { redirect: "follow" });
@@ -167,7 +184,7 @@ function loadInputOverrides(path: string | null): Map<string, string[]> {
 }
 
 async function runCanary(
-  browser: Awaited<ReturnType<typeof chromium.launch>>,
+  browser: BrowserLike,
   canary: Canary,
   whwCatalogTokensBySlug: Map<string, string[]>,
   overrideCandidateUrls: string[] | null,
@@ -235,9 +252,25 @@ export function buildOutputRows(runId: string, results: CanaryResult[]): OutputR
   );
 }
 
+async function loadChromiumLauncher(): Promise<{ launch: (args: { headless: boolean }) => Promise<BrowserLike> }> {
+  try {
+    const loaded = await import("playwright");
+    const maybeChromium = (loaded as { chromium?: { launch?: (args: { headless: boolean }) => Promise<BrowserLike> } }).chromium;
+    if (!maybeChromium || typeof maybeChromium.launch !== "function") {
+      throw new Error("playwright module loaded but chromium launcher is unavailable.");
+    }
+    return maybeChromium;
+  } catch {
+    throw new Error(
+      "Playwright is required only for this frozen diagnostic script. Install it with `npm install -D playwright` before running scripts/diagnose-amazon-evidence-canaries.ts.",
+    );
+  }
+}
+
 async function main() {
   const args = parseArgs();
   const overridesByCanary = loadInputOverrides(args.inputPath);
+  const chromium = await loadChromiumLauncher();
   const browser = await chromium.launch({ headless: true });
   try {
     const whwCatalogTokensBySlug = loadCatalogTokensBySlugForWholeHouseWater();
