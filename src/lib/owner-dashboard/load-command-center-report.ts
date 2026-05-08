@@ -4,6 +4,8 @@
  */
 import { buildBuckpartsCommandCenterReport } from "../../../scripts/report-buckparts-command-center";
 import { buildBuckpartsCommandSurfaceReport } from "../../../scripts/report-buckparts-command-surface";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import {
   listFridgeModelReviewOverrides,
@@ -18,6 +20,16 @@ import {
   buildOwnerGscExternalDemandNeuron,
   type OwnerGscExternalDemandNeuron,
 } from "@/lib/owner-dashboard/gsc-external-demand";
+import {
+  OWNER_REPORT_ARTIFACT_KEY_GA4_TRUST_FUNNEL,
+  readOwnerArtifactFromSupabase,
+} from "@/lib/owner-dashboard/gsc-durable-artifact-store";
+import {
+  parseGa4TrustFunnelArtifact,
+  type Ga4TrustFunnelArtifact,
+  type Ga4TrustFunnelEventTotals,
+  type Ga4TrustFunnelRates,
+} from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -51,6 +63,19 @@ export type OwnerDashboardNeuron = {
   unknown_facts: string[];
   next_owner_action: string;
   status: OwnerNeuronStatus;
+  trust_funnel_aggregate?:
+    | {
+        artifact_source: "SUPABASE" | "LOCAL_ARTIFACT" | "EMITTER_CONTRACT_ONLY" | "NONE";
+        fetched_at: string | "UNKNOWN";
+        status: "OK" | "UNKNOWN_CONFIG" | "UNKNOWN_API_ERROR" | "UNKNOWN";
+        event_totals: Ga4TrustFunnelEventTotals | "UNKNOWN";
+        rates: Ga4TrustFunnelRates | "UNKNOWN";
+        dimension_breakdowns: {
+          top_model_slugs: "UNKNOWN";
+          top_filter_slugs: "UNKNOWN";
+          quarantined_vs_normal: "UNKNOWN";
+        };
+      };
 };
 
 export type OwnerCommandCenterNeuronsReport = {
@@ -240,6 +265,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     all_emitters_present: boolean;
     missing_emitter_files?: string[];
   };
+  trustFunnelAggregateArtifact?: {
+    source: "SUPABASE" | "LOCAL_ARTIFACT";
+    artifact: Ga4TrustFunnelArtifact;
+  } | null;
+  trustFunnelAggregateIssue?: string | null;
 }): OwnerCommandCenterNeuronsReport {
   const allEmittersPresent = args.trustFunnelEmitterContractOverride?.all_emitters_present ?? true;
   const missingEmitterFiles = args.trustFunnelEmitterContractOverride?.missing_emitter_files ?? [];
@@ -267,11 +297,50 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
 
   const trustFunnelProvenFacts: string[] = [];
   const trustFunnelUnknownFacts: string[] = [];
+  let trustFunnelAggregate:
+    | OwnerDashboardNeuron["trust_funnel_aggregate"]
+    | undefined;
   let trustFunnelConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
   let trustFunnelStatus: OwnerNeuronStatus = "UNKNOWN";
-  if (allEmittersPresent) {
+  const aggregate = args.trustFunnelAggregateArtifact;
+  if (aggregate?.artifact?.status === "OK") {
+    trustFunnelConnectionLevel = "BRIGHT";
     trustFunnelStatus = "PROVEN";
-    trustFunnelConnectionLevel = "DIM";
+    trustFunnelProvenFacts.push(
+      `GA4 trust-funnel aggregate artifact loaded from ${aggregate.source}.`,
+    );
+    trustFunnelAggregate = {
+      artifact_source: aggregate.source,
+      fetched_at: aggregate.artifact.fetched_at,
+      status: aggregate.artifact.status,
+      event_totals: aggregate.artifact.event_totals,
+      rates: aggregate.artifact.rates,
+      dimension_breakdowns: aggregate.artifact.dimension_breakdowns,
+    };
+    trustFunnelUnknownFacts.push(...aggregate.artifact.unknown_facts);
+  } else if (aggregate?.artifact) {
+    trustFunnelAggregate = {
+      artifact_source: aggregate.source,
+      fetched_at: aggregate.artifact.fetched_at,
+      status: aggregate.artifact.status,
+      event_totals: "UNKNOWN",
+      rates: "UNKNOWN",
+      dimension_breakdowns: {
+        top_model_slugs: "UNKNOWN",
+        top_filter_slugs: "UNKNOWN",
+        quarantined_vs_normal: "UNKNOWN",
+      },
+    };
+    trustFunnelUnknownFacts.push(
+      `GA4 trust-funnel aggregate artifact status is ${aggregate.artifact.status}.`,
+      ...aggregate.artifact.unknown_facts,
+    );
+  }
+  if (allEmittersPresent) {
+    if (!aggregate) {
+      trustFunnelStatus = "PROVEN";
+      trustFunnelConnectionLevel = "DIM";
+    }
     trustFunnelProvenFacts.push(
       `GA4 trust-funnel emitter module contract is present in repo build (${TRUST_FUNNEL_EMITTER_MODULES.length} modules).`,
     );
@@ -283,12 +352,31 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       `Missing trust-funnel emitter files: ${missingEmitterFiles.join(", ") || "UNKNOWN"}.`,
     );
   }
+  if (!trustFunnelAggregate) {
+    trustFunnelAggregate = {
+      artifact_source: allEmittersPresent ? "EMITTER_CONTRACT_ONLY" : "NONE",
+      fetched_at: "UNKNOWN",
+      status: "UNKNOWN",
+      event_totals: "UNKNOWN",
+      rates: "UNKNOWN",
+      dimension_breakdowns: {
+        top_model_slugs: "UNKNOWN",
+        top_filter_slugs: "UNKNOWN",
+        quarantined_vs_normal: "UNKNOWN",
+      },
+    };
+  }
+  if (args.trustFunnelAggregateIssue) {
+    trustFunnelUnknownFacts.push(args.trustFunnelAggregateIssue);
+  }
   trustFunnelUnknownFacts.push(
     "Sampled browser firing proof is not represented in this dashboard lane and remains UNKNOWN unless captured in report artifacts.",
   );
-  trustFunnelUnknownFacts.push(
-    "Dashboard aggregate ingest for GA4 trust-funnel events is not connected in current command-center report outputs.",
-  );
+  if (trustFunnelAggregate.artifact_source === "EMITTER_CONTRACT_ONLY" || trustFunnelAggregate.artifact_source === "NONE") {
+    trustFunnelUnknownFacts.push(
+      "Dashboard aggregate ingest for GA4 trust-funnel events is not connected in current command-center report outputs.",
+    );
+  }
 
   const gscProvenFacts: string[] = [];
   const gscUnknownFacts: string[] = [];
@@ -333,8 +421,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         proven_facts: trustFunnelProvenFacts,
         unknown_facts: trustFunnelUnknownFacts,
         next_owner_action:
-          "Connect a GA4 aggregate pull (or weekly export import) into command-center reporting before treating trust-funnel outcomes as bright.",
+          trustFunnelAggregate.artifact_source === "SUPABASE" || trustFunnelAggregate.artifact_source === "LOCAL_ARTIFACT"
+            ? "Maintain scheduled GA4 trust-funnel artifact refresh and validate dimension setup before relying on slug/trust-state breakdowns."
+            : "Connect a GA4 aggregate pull (or weekly export import) into command-center reporting before treating trust-funnel outcomes as bright.",
         status: trustFunnelStatus,
+        trust_funnel_aggregate: trustFunnelAggregate,
       },
       {
         neuron_key: "gsc_search_discovery",
@@ -802,6 +893,41 @@ export function attachOwnerGscExternalDemandReport<T extends object>(
   };
 }
 
+async function loadGa4TrustFunnelAggregateArtifact(args: {
+  rootDir: string;
+}): Promise<{
+  artifact: { source: "SUPABASE" | "LOCAL_ARTIFACT"; artifact: Ga4TrustFunnelArtifact } | null;
+  issue: string | null;
+}> {
+  const supabaseRead = await readOwnerArtifactFromSupabase<Ga4TrustFunnelArtifact>({
+    artifact_key: OWNER_REPORT_ARTIFACT_KEY_GA4_TRUST_FUNNEL,
+  });
+  if (supabaseRead.ok) {
+    return { artifact: { source: "SUPABASE", artifact: supabaseRead.artifact }, issue: null };
+  }
+  let issue: string | null = null;
+  if (supabaseRead.reason !== "NOT_FOUND") {
+    issue = `GA4 durable artifact read issue: ${supabaseRead.details.join(" ")}`;
+  }
+
+  const localPath = path.resolve(args.rootDir, "data/reports/buckparts-ga4-trust-funnel.json");
+  if (!existsSync(localPath)) {
+    return { artifact: null, issue };
+  }
+  try {
+    const parsed = parseGa4TrustFunnelArtifact(readFileSync(localPath, "utf8"));
+    if (parsed.ok) {
+      return {
+        artifact: { source: "LOCAL_ARTIFACT", artifact: parsed.artifact },
+        issue: issue ?? (supabaseRead.reason === "NOT_FOUND" ? "GA4 durable artifact not found; local artifact fallback used." : null),
+      };
+    }
+    return { artifact: null, issue: `Local GA4 trust-funnel artifact parse failed: ${parsed.reason}` };
+  } catch {
+    return { artifact: null, issue: "Local GA4 trust-funnel artifact exists but could not be read." };
+  }
+}
+
 export type OwnerCommandCenterLoadResult =
   | {
       ok: true;
@@ -822,10 +948,13 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     const commandSurface = await buildBuckpartsCommandSurfaceReport({ rootDir });
     const quarantined = await buildOwnerQuarantinedFridgeModelsSummary();
     const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
+    const ga4TrustFunnelAggregate = await loadGa4TrustFunnelAggregateArtifact({ rootDir });
     const neurons = buildOwnerCommandCenterNeuronsReport({
       rootDir,
       pageState: commandSurface.state_system_metrics.page_state,
       gscPresence: commandSurface.gsc_exports_present,
+      trustFunnelAggregateArtifact: ga4TrustFunnelAggregate.artifact,
+      trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });

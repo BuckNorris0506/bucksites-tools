@@ -725,6 +725,33 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
                 </span>
               </div>
               <FieldBlock label="Freshness method" value={n.freshness_method} />
+              {n.neuron_key === "trust_funnel_measurement" && n.trust_funnel_aggregate ? (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <FieldBlock label="artifact_source" value={n.trust_funnel_aggregate.artifact_source} />
+                  <FieldBlock label="status" value={n.trust_funnel_aggregate.status} />
+                  <FieldBlock label="fetched_at" value={n.trust_funnel_aggregate.fetched_at} />
+                  <FieldBlock
+                    label="event_totals"
+                    value={
+                      n.trust_funnel_aggregate.event_totals === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : `model_views=${n.trust_funnel_aggregate.event_totals.fridge_model_view}, chip_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_chip_click}, detail_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_detail_click_from_model}, filter_views=${n.trust_funnel_aggregate.event_totals.fridge_filter_view}, help_opens=${n.trust_funnel_aggregate.event_totals.fridge_help_opened}`
+                    }
+                  />
+                  <FieldBlock
+                    label="rates"
+                    value={
+                      n.trust_funnel_aggregate.rates === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : `chip/model=${String(n.trust_funnel_aggregate.rates.chip_clicks_per_model_view)}, filter/chip=${String(n.trust_funnel_aggregate.rates.filter_views_per_chip_click)}, help/filter=${String(n.trust_funnel_aggregate.rates.help_opens_per_filter_view)}`
+                    }
+                  />
+                  <FieldBlock
+                    label="dimension_breakdowns"
+                    value={`top_model_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_model_slugs}, top_filter_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_filter_slugs}, quarantined_vs_normal=${n.trust_funnel_aggregate.dimension_breakdowns.quarantined_vs_normal}`}
+                  />
+                </div>
+              ) : null}
               <FieldBlock
                 label="Proven facts"
                 value={

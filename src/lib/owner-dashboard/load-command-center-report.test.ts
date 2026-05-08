@@ -119,16 +119,84 @@ describe("owner quarantined fridge summary", () => {
     );
   });
 
-  it("trust-funnel neuron no longer depends on runtime existsSync checks", () => {
+  it("trust-funnel emitter contract no longer depends on per-emitter runtime existsSync checks", () => {
     const src = readFileSync(
       join(process.cwd(), "src/lib/owner-dashboard/load-command-center-report.ts"),
       "utf8",
     );
     assert.equal(
-      src.includes("existsSync("),
+      src.includes("TRUST_FUNNEL_EMITTER_MODULES.some("),
       false,
-      "trust-funnel production-safe contract should avoid runtime filesystem existence checks",
+      "trust-funnel production-safe emitter contract should avoid per-emitter runtime filesystem discovery",
     );
+  });
+
+  it("trust-funnel neuron prefers durable aggregate artifact when provided", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      trustFunnelAggregateArtifact: {
+        source: "SUPABASE",
+        artifact: {
+          status: "OK",
+          fetched_at: "2026-05-08T20:00:00.000Z",
+          property_id: "123456",
+          date_range: { start_date: "2026-04-01", end_date: "2026-04-30" },
+          event_totals: {
+            fridge_model_view: 10,
+            fridge_filter_chip_click: 5,
+            fridge_filter_detail_click_from_model: 3,
+            fridge_filter_view: 4,
+            fridge_help_opened: 1,
+          },
+          rates: {
+            chip_clicks_per_model_view: 0.5,
+            filter_views_per_chip_click: 0.8,
+            help_opens_per_filter_view: 0.25,
+          },
+          dimension_breakdowns: {
+            top_model_slugs: "UNKNOWN",
+            top_filter_slugs: "UNKNOWN",
+            quarantined_vs_normal: "UNKNOWN",
+          },
+          proven_facts: ["durable artifact"],
+          unknown_facts: [],
+          provenance: {
+            source: "google_analytics_data_api",
+            scope: "https://www.googleapis.com/auth/analytics.readonly",
+            writer: "scripts/fetch-buckparts-ga4-trust-funnel-artifact.ts",
+          },
+        },
+      },
+    });
+    const trust = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
+    assert.ok(trust);
+    assert.equal(trust.connection_level, "BRIGHT");
+    assert.equal(trust.trust_funnel_aggregate?.artifact_source, "SUPABASE");
+    assert.equal(trust.trust_funnel_aggregate?.status, "OK");
+    assert.equal(trust.trust_funnel_aggregate?.event_totals === "UNKNOWN", false);
+  });
+
+  it("trust-funnel emitter-contract fallback remains when durable aggregate missing", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    const trust = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
+    assert.ok(trust);
+    assert.equal(trust.connection_level, "DIM");
+    assert.equal(trust.trust_funnel_aggregate?.artifact_source, "EMITTER_CONTRACT_ONLY");
+    assert.equal(trust.trust_funnel_aggregate?.event_totals, "UNKNOWN");
+  });
+
+  it("owner-dashboard trust-funnel lane still has no live GA4 API call in request path", () => {
+    const src = readFileSync(
+      join(process.cwd(), "src/lib/owner-dashboard/load-command-center-report.ts"),
+      "utf8",
+    );
+    assert.equal(src.includes("analyticsdata.googleapis.com"), false);
   });
 
   it("simulated missing-contract case still reports missing emitters honestly", () => {
