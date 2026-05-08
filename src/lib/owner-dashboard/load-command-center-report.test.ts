@@ -418,6 +418,96 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(commandSurfaceProvider.action_safety, "CAUTION_INCOMPLETE_INPUTS");
   });
 
+  it("evidence_rollup_token_controls unknown_facts include catalog and brand honesty when evidence_inventory is present", () => {
+    const evidence_inventory = {
+      contract: "evidence_inventory_v1" as const,
+      proven_facts: ["inv-root"],
+      unknown_facts: ["inv-root-unknown"],
+      data_evidence: {
+        directory_relative_path: "data/evidence" as const,
+        total_json_files: 1,
+        filename_outcome_buckets: {
+          live_outcome_by_filename_substring: 1,
+          unknown_outcome_by_filename_substring: 0,
+          fail_hold_outcome_by_filename_substring: 0,
+          other_json_not_matching_filename_patterns: 0,
+        },
+        recent_filenames: ["x.json"],
+        recent_ordering: "lexicographic_by_filename" as const,
+        proven_facts: [],
+        unknown_facts: [],
+        body_mapping: {
+          parsed_ok_count: 1,
+          parse_error_count: 0,
+          mapped_count: 1,
+          unmapped_count: 0,
+          by_scope: {},
+          by_filter_slug: {},
+          by_token: {},
+        },
+      },
+      refrigerator_manual_evidence: {
+        inventory_contract: "refrigerator_manual_evidence_files_v1" as const,
+        directory_relative_path: "data/manual-evidence/refrigerator" as const,
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+      fridge_form_factor_evidence: {
+        inventory_contract: "fridge_form_factor_evidence_files_v1" as const,
+        directory_relative_path: "data/fridge-form-factor-evidence" as const,
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+    };
+    const sentinel = buildOwnerIntegritySentinelReport({
+      report: {
+        generated_at: "2026-01-01T00:00:00.000Z",
+        system_health_summary: { status: "OK", reasons: [], recommended_next_step: "x" },
+        search_and_click_intelligence_summary: { runtime_status: "OK" },
+        money_funnel_summary: { runtime_status: "OK" },
+        rescue_velocity_summary: { runtime_status: "OK" },
+        rescue_delta_trend_summary: { runtime_status: "OK" },
+        affiliate_readiness_summary: { approved_count: 1, pending_count: 0, repairclinic_status: "DRAFTING" },
+        amazon_first_blocked_queue_summary: {
+          runtime_status: "OK",
+          source_report: "x",
+          top_candidate_count: 1,
+        },
+        command_center_v2: {
+          revenue_snapshot: {
+            status: "OK",
+            click_visibility: {
+              runtime_status: "OK",
+              click_freshness_status: "OK",
+              click_freshness_reason: "Fresh",
+            },
+          },
+          recent_evidence: {
+            evidence_rollup: { live_outcome_count: 0, unknown_outcome_count: 0 },
+            evidence_inventory: evidence_inventory,
+          },
+          amazon_rescue: { registry_path: "x", registry_load_error: null },
+        },
+      } as never,
+      commandSurface: {
+        generated_at: "2026-01-01T00:00:00.000Z",
+        known_unknowns: [],
+      } as never,
+    });
+    const evidence = sentinel.providers.find((p) => p.provider_key === "evidence_rollup_token_controls");
+    assert.ok(evidence);
+    assert.ok(evidence.proven_facts.some((f) => f.includes("evidence_inventory_v1")));
+    assert.ok(evidence.unknown_facts.some((f) => f.includes("No catalog-wide")));
+    assert.ok(evidence.unknown_facts.some((f) => f.includes("Brand coverage remains UNKNOWN")));
+    assert.ok(evidence.unknown_facts.some((f) => f.includes("lexicographic")));
+  });
+
   it("artifact/manual source without freshness triggers CAUTION_INCOMPLETE_INPUTS", () => {
     const sentinel = buildOwnerIntegritySentinelReport({
       report: {

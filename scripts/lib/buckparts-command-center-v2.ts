@@ -4,6 +4,7 @@ import type {
   ClickVisibilitySnapshot,
   CommandCenterV2Report,
   DecisionLane,
+  EvidenceInventoryV1,
   EvidenceRollup,
   RevenueSnapshotLane,
 } from "./buckparts-command-center-v2-types";
@@ -82,6 +83,7 @@ export function buildCommandCenterV2Report(input: {
   registryEntries: AmazonRescueTokenControlEntry[];
   registryLoadError: string | null;
   evidenceRollup: EvidenceRollup;
+  evidenceInventory: EvidenceInventoryV1;
   amazonFirstBlocked: AmazonFirstBlockedConversionQueueReport;
   commandSurfaceHealthStatus: string;
   commandSurfaceReasons: string[];
@@ -219,7 +221,7 @@ export function buildCommandCenterV2Report(input: {
     next_owner_action: "Decide whether WARNING/CRITICAL items block monetization expansion for the current sprint.",
   };
 
-  const recentLane: DecisionLane & { evidence_rollup: EvidenceRollup } = {
+  const recentLane: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 } = {
     status: "OK",
     count:
       input.evidenceRollup.live_outcome_count +
@@ -228,9 +230,12 @@ export function buildCommandCenterV2Report(input: {
       input.evidenceRollup.unclassified_json_count,
     top_items: input.evidenceRollup.recent_evidence_filenames.slice(0, 10),
     blocker: null,
-    next_agent_action: "Classify new evidence JSON by filename conventions; avoid over-claiming from unknown shapes.",
-    next_owner_action: "Archive superseded evidence with clear filenames; keep UNKNOWN vs LIVE distinction strict.",
+    next_agent_action:
+      "Use evidence_inventory_v1 for honest file/body mapping; filename buckets alone are not verdicts — parse JSON when rollups are needed.",
+    next_owner_action:
+      "Treat recent_evidence_filenames order as lexicographic-by-filename unless evidence_inventory freshness rules are extended.",
     evidence_rollup: input.evidenceRollup,
+    evidence_inventory: input.evidenceInventory,
   };
 
   const deployLane: DecisionLane = {

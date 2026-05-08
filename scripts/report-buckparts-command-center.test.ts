@@ -774,6 +774,20 @@ test("command_center_v2 recent_evidence includes evidence_rollup counts when evi
   assert.equal(rollup.unknown_outcome_count, 1);
   assert.equal(rollup.unclassified_json_count, 1);
   assert.ok(rollup.recent_evidence_filenames.length >= 1);
+  const inv = report.command_center_v2.recent_evidence.evidence_inventory;
+  assert.equal(inv.contract, "evidence_inventory_v1");
+  assert.equal(inv.data_evidence.recent_ordering, "lexicographic_by_filename");
+  assert.equal(inv.data_evidence.total_json_files, 3);
+  assert.equal(
+    inv.data_evidence.filename_outcome_buckets.live_outcome_by_filename_substring,
+    rollup.live_outcome_count,
+  );
+  assert.equal(
+    inv.data_evidence.filename_outcome_buckets.unknown_outcome_by_filename_substring,
+    rollup.unknown_outcome_count,
+  );
+  assert.ok(inv.refrigerator_manual_evidence.inventory_contract === "refrigerator_manual_evidence_files_v1");
+  assert.ok(inv.fridge_form_factor_evidence.inventory_contract === "fridge_form_factor_evidence_files_v1");
 });
 
 test("command_center_v2 revenue_snapshot includes click_visibility when click snapshot is OK", async () => {

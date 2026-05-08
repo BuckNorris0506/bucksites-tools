@@ -56,6 +56,66 @@ export type EvidenceRollup = {
   recent_evidence_filenames: string[];
 };
 
+/** Read-only inventory over local evidence artifacts — not catalog-wide model coverage. */
+export type EvidenceDataEvidenceBodyMappingV1 = {
+  parsed_ok_count: number;
+  parse_error_count: number;
+  /** JSON object parsed and at least one rollup key (`scope`, `token`, `filter_slug`) is a non-empty string. */
+  mapped_count: number;
+  /** Parsed JSON object but no non-empty `scope` / `token` / `filter_slug` for rollup (may still carry other safe keys). */
+  unmapped_count: number;
+  by_scope: Record<string, number>;
+  by_filter_slug: Record<string, number>;
+  by_token: Record<string, number>;
+};
+
+export type EvidenceDataEvidenceInventorySliceV1 = {
+  directory_relative_path: "data/evidence";
+  total_json_files: number;
+  /** Substrings in filenames only — not JSON `verdict` / outcome fields. */
+  filename_outcome_buckets: {
+    live_outcome_by_filename_substring: number;
+    unknown_outcome_by_filename_substring: number;
+    fail_hold_outcome_by_filename_substring: number;
+    other_json_not_matching_filename_patterns: number;
+  };
+  recent_filenames: string[];
+  recent_ordering: "lexicographic_by_filename";
+  proven_facts: string[];
+  unknown_facts: string[];
+  body_mapping: EvidenceDataEvidenceBodyMappingV1;
+};
+
+export type RefrigeratorManualEvidenceInventorySliceV1 = {
+  inventory_contract: "refrigerator_manual_evidence_files_v1";
+  directory_relative_path: "data/manual-evidence/refrigerator";
+  valid_record_count: number;
+  invalid_or_unreadable_count: number;
+  /** Slugs from records passing `validateRefrigeratorManualEvidencePublicReady` only. */
+  validated_model_slugs: string[];
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
+export type FridgeFormFactorEvidenceInventorySliceV1 = {
+  inventory_contract: "fridge_form_factor_evidence_files_v1";
+  directory_relative_path: "data/fridge-form-factor-evidence";
+  valid_record_count: number;
+  invalid_or_unreadable_count: number;
+  validated_model_slugs: string[];
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
+export type EvidenceInventoryV1 = {
+  contract: "evidence_inventory_v1";
+  proven_facts: string[];
+  unknown_facts: string[];
+  data_evidence: EvidenceDataEvidenceInventorySliceV1;
+  refrigerator_manual_evidence: RefrigeratorManualEvidenceInventorySliceV1;
+  fridge_form_factor_evidence: FridgeFormFactorEvidenceInventorySliceV1;
+};
+
 /** Outbound click visibility from `public.click_events` (read-only aggregates; not revenue). */
 export type ClickWedgeBreakdown30d = {
   refrigerator_water: number | "UNKNOWN";
@@ -125,7 +185,7 @@ export type CommandCenterV2Report = {
   unknown_or_human_review: DecisionLane;
   affiliate_readiness: DecisionLane;
   coverage_health: DecisionLane;
-  recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup };
+  recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 };
   deploy_live_site_status: DecisionLane;
   revenue_snapshot: RevenueSnapshotLane;
   /** First token safe for autonomous fresh exact-token search work per registry + queue (null if none). */

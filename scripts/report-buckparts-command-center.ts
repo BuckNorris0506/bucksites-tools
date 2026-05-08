@@ -15,7 +15,7 @@ import {
 import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
 import type { CommandCenterV2Report } from "./lib/buckparts-command-center-v2-types";
-import { rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
+import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 
 type FlexoffersReadinessReport = {
   report_name: string;
@@ -519,6 +519,12 @@ export async function buildBuckpartsCommandCenterReport(
     fileExists,
     readDir,
   });
+  const evidenceInventoryForV2 = buildEvidenceInventoryV1({
+    rootDir,
+    fileExists,
+    readDir,
+    readTextFile,
+  });
   const flexoffersReadiness = getFlexoffersReadiness({
     reportAbsPath: path.resolve(rootDir, "data/reports/flexoffers-readiness-refrigerator-water.json"),
     fileExists,
@@ -739,6 +745,7 @@ export async function buildBuckpartsCommandCenterReport(
     registryEntries: tokenRegistryEntries,
     registryLoadError: tokenRegistryLoadError,
     evidenceRollup: evidenceRollupForV2,
+    evidenceInventory: evidenceInventoryForV2,
     amazonFirstBlocked,
     commandSurfaceHealthStatus: commandSurface.system_health.status,
     commandSurfaceReasons: commandSurface.system_health.reasons,

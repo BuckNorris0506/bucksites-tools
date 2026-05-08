@@ -773,6 +773,35 @@ export function buildOwnerIntegritySentinelReport(args: {
       `evidence live_count: ${report.command_center_v2.recent_evidence.evidence_rollup.live_outcome_count}.`,
       `registry_path: ${report.command_center_v2.amazon_rescue.registry_path}.`,
     ];
+    const inv = report.command_center_v2.recent_evidence.evidence_inventory;
+    if (inv?.contract === "evidence_inventory_v1") {
+      const bm = inv.data_evidence.body_mapping;
+      provenFacts.push(
+        `evidence_inventory_v1 data/evidence: total_json_files=${inv.data_evidence.total_json_files}; body parsed_ok=${bm.parsed_ok_count}, parse_errors=${bm.parse_error_count}, mapped_for_scope_token_filter_slug=${bm.mapped_count}, unmapped_no_rollups_keys=${bm.unmapped_count}.`,
+      );
+      provenFacts.push(
+        `Separate inventories — manual valid records=${inv.refrigerator_manual_evidence.valid_record_count}, form_factor valid records=${inv.fridge_form_factor_evidence.valid_record_count} (not merged with Amazon/token evidence files).`,
+      );
+      unknownFacts.push(
+        "Filename substring buckets in evidence_rollup are not JSON verdicts or insert outcomes; use evidence_inventory body_mapping rollups for scope/token/filter_slug only when keys exist.",
+      );
+      unknownFacts.push(
+        "No catalog-wide fridge model or brand coverage is proven from evidence file counts; validated manual/form-factor slug lists are not joined to `fridge_models` or brand tables.",
+      );
+      unknownFacts.push(
+        "Brand coverage remains UNKNOWN — slugs are not interpreted as brand identifiers.",
+      );
+      unknownFacts.push(
+        "Recent evidence filenames stay lexicographic-by-filename unless a future contract sorts by parsed `generated_at` or file mtime.",
+      );
+      for (const f of inv.unknown_facts) {
+        if (!unknownFacts.includes(f)) unknownFacts.push(f);
+      }
+    } else {
+      unknownFacts.push(
+        "command_center_v2.recent_evidence.evidence_inventory is missing — structured evidence inventory facts are UNKNOWN for this report snapshot.",
+      );
+    }
     const fallbackActive = report.command_center_v2.amazon_rescue.registry_load_error != null;
     if (fallbackActive) {
       unknownFacts.push(
@@ -780,8 +809,11 @@ export function buildOwnerIntegritySentinelReport(args: {
       );
     }
     const freshnessSignalPresent = false;
+    const inventoryContractOk = inv?.contract === "evidence_inventory_v1";
     const hasUnknownCondition =
-      fallbackActive || report.command_center_v2.recent_evidence.evidence_rollup.unknown_outcome_count > 0;
+      fallbackActive ||
+      report.command_center_v2.recent_evidence.evidence_rollup.unknown_outcome_count > 0 ||
+      !inventoryContractOk;
     if (report.command_center_v2.recent_evidence.evidence_rollup.unknown_outcome_count > 0) {
       unknownFacts.push(
         `evidence rollup includes UNKNOWN outcomes (${report.command_center_v2.recent_evidence.evidence_rollup.unknown_outcome_count}).`,
