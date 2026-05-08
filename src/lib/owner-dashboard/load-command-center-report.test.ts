@@ -27,6 +27,48 @@ import {
   buildOwnerVerticalLaunchPolicyReport,
 } from "@/lib/owner-dashboard/owner-vertical-launch-policy";
 
+describe("page_state_distribution neuron", () => {
+  it("is BRIGHT for sitemap artifact inventory contract but UNKNOWN semantic PageState status", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        contract: "sitemap_artifact_inventory_v1",
+        artifact_relative_path: "data/gsc/sitemap.xml",
+        url_count: 2,
+        distribution: { VERTICAL_POLICY_LIVE_refrigerator: 2 },
+        reason: "fixture inventory note",
+      },
+      gscPresence: null,
+    });
+    const ps = neurons.neurons.find((n) => n.neuron_key === "page_state_distribution");
+    assert.ok(ps);
+    assert.equal(ps.connection_level, "BRIGHT");
+    assert.equal(ps.status, "UNKNOWN");
+    assert.ok(ps.proven_facts.some((f) => f.includes("Sitemap artifact inventory contract")));
+    assert.ok(ps.unknown_facts.some((f) => f.includes("Per-page CTA availability")));
+    assert.ok(ps.unknown_facts.some((f) => f.includes("Buy-gate")));
+    assert.ok(ps.unknown_facts.some((f) => f.includes("Quarantine")));
+    assert.ok(ps.unknown_facts.some((f) => f.toLowerCase().includes("demand")));
+  });
+
+  it("treats numeric page_state without inventory contract as DIM with UNKNOWN semantic status", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        distribution: { READY: 12, NEEDS_WORK: 3 },
+        reason: "legacy snapshot shape without contract",
+      },
+      gscPresence: null,
+    });
+    const ps = neurons.neurons.find((n) => n.neuron_key === "page_state_distribution");
+    assert.ok(ps);
+    assert.equal(ps.connection_level, "DIM");
+    assert.equal(ps.status, "UNKNOWN");
+  });
+});
+
 describe("owner quarantined fridge summary", () => {
   it("includes lg-lrfxs3106s in owner quarantine summary with required contract fields", async () => {
     const summary = await buildOwnerQuarantinedFridgeModelsSummary({

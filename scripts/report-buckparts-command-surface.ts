@@ -10,8 +10,11 @@ import {
   type AffiliateApplicationStatus,
   isValidAffiliateApplicationRecord,
 } from "@/lib/affiliates/affiliate-application-status";
-import { classifyPageState } from "@/lib/page-state/page-state";
-import { classifyPublishabilityState } from "@/lib/page-state/publishability-state";
+import type { VerticalSlug } from "@/lib/catalog/vertical-launch-state";
+import {
+  getVerticalLaunchState,
+  VERTICAL_SLUGS_WITH_APP_SEGMENT_LAYOUT,
+} from "@/lib/catalog/vertical-launch-state";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
@@ -203,6 +206,10 @@ export type CommandSurfaceReport = {
       computable: boolean;
       distribution: Record<string, number> | "UNKNOWN";
       reason: string;
+      /** Set when `distribution` is inventory/policy buckets from local GSC sitemap artifact — not semantic PageState. */
+      contract?: "sitemap_artifact_inventory_v1";
+      artifact_relative_path?: string;
+      url_count?: number;
     };
     publishability_state: {
       computable: boolean;
@@ -1160,6 +1167,15 @@ function unknownStateDistribution(reason: string) {
   };
 }
 
+/** Matches `resolvePaths().rel.sitemap_xml` — local GSC export artifact, not live `/sitemap.xml`. */
+const SITEMAP_ARTIFACT_RELATIVE_PATH = "data/gsc/sitemap.xml";
+
+const FRIDGE_WEDGE_ROOT_SEGMENTS = new Set<string>(["fridge", "filter", "brand"]);
+
+const APP_LAYOUT_VERTICAL_FIRST_SEGMENTS: ReadonlySet<string> = new Set(
+  VERTICAL_SLUGS_WITH_APP_SEGMENT_LAYOUT as readonly string[],
+);
+
 function extractSitemapUrls(sitemapText: string): string[] {
   const matches = sitemapText.match(/<loc>(https?:\/\/[^<]+)<\/loc>/g) ?? [];
   return matches
@@ -1167,25 +1183,53 @@ function extractSitemapUrls(sitemapText: string): string[] {
     .filter((url) => url.length > 0);
 }
 
-function computePageStateDistributionFromSitemap(
+function inventoryBucketForSitemapLoc(url: string): string {
+  let pathname: string;
+  try {
+    pathname = new URL(url.trim()).pathname || "/";
+  } catch {
+    return "INVENTORY_URL_UNPARSEABLE";
+  }
+  const normalized =
+    pathname.endsWith("/") && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  const segments = normalized.split("/").filter(Boolean);
+  const head = segments[0];
+
+  if (!head) {
+    return "INVENTORY_NON_VERTICAL_ROUTE";
+  }
+
+  if (FRIDGE_WEDGE_ROOT_SEGMENTS.has(head)) {
+    const launch = getVerticalLaunchState("refrigerator");
+    return `VERTICAL_POLICY_${launch}_refrigerator`;
+  }
+
+  if (APP_LAYOUT_VERTICAL_FIRST_SEGMENTS.has(head)) {
+    const vertical = head as VerticalSlug;
+    const launch = getVerticalLaunchState(vertical);
+    const slugUnderscore = vertical.replace(/-/g, "_");
+    return `VERTICAL_POLICY_${launch}_${slugUnderscore}`;
+  }
+
+  return "INVENTORY_NON_VERTICAL_ROUTE";
+}
+
+/**
+ * Inventory counts from `data/gsc/sitemap.xml` plus repo vertical-launch policy projection by URL path prefix.
+ * Explicitly not semantic PageState (no CTA/trust/demand inputs).
+ */
+function computeSitemapArtifactInventoryDistribution(
   sitemapText: string,
-): { distribution: Record<string, number>; pageStates: string[]; urlCount: number } | null {
+): { distribution: Record<string, number>; urlCount: number } | null {
   const urls = extractSitemapUrls(sitemapText);
   if (urls.length === 0) return null;
 
   const distribution: Record<string, number> = {};
-  const pageStates: string[] = [];
-  for (const _url of urls) {
-    const state = classifyPageState({
-      isIndexable: true,
-      validCtaCount: null,
-      buyerPathState: null,
-      hasDemandSignal: null,
-    });
-    pageStates.push(state);
-    distribution[state] = (distribution[state] ?? 0) + 1;
+  for (const url of urls) {
+    const bucket = inventoryBucketForSitemapLoc(url);
+    distribution[bucket] = (distribution[bucket] ?? 0) + 1;
   }
-  return { distribution, pageStates, urlCount: urls.length };
+  return { distribution, urlCount: urls.length };
 }
 
 function buildStateSystemMetrics(args: {
@@ -1194,57 +1238,40 @@ function buildStateSystemMetrics(args: {
   readTextFile: (absolutePath: string) => string;
 }): CommandSurfaceReport["state_system_metrics"] {
   let pageState: CommandSurfaceReport["state_system_metrics"]["page_state"] = unknownStateDistribution(
-    "No local sitemap/page dataset is available to compute PageState distribution.",
+    "No local GSC sitemap artifact is available to compute sitemap inventory (`data/gsc/sitemap.xml`).",
   );
-  let derivedPageStates: string[] | null = null;
   if (args.checks.sitemap_xml) {
     try {
       const sitemapText = args.readTextFile(args.abs.sitemap_xml);
-      const computed = computePageStateDistributionFromSitemap(sitemapText);
+      const computed = computeSitemapArtifactInventoryDistribution(sitemapText);
       if (computed) {
-        derivedPageStates = computed.pageStates;
         pageState = {
           computable: true,
+          contract: "sitemap_artifact_inventory_v1",
+          artifact_relative_path: SITEMAP_ARTIFACT_RELATIVE_PATH,
+          url_count: computed.urlCount,
           distribution: computed.distribution,
           reason:
-            `Computed from local sitemap URLs only (${computed.urlCount} URLs). ` +
-            "Coverage excludes non-sitemap pages and lacks CTA/trust-demand signals, so only partial PageState coverage is represented.",
+            `Sitemap artifact inventory (${computed.urlCount} <loc> URLs from ${SITEMAP_ARTIFACT_RELATIVE_PATH}). ` +
+            "Buckets are INVENTORY_* (non-vertical or parse failures) and VERTICAL_POLICY_* projections from `src/lib/catalog/vertical-launch-state.ts` first-path segments only; " +
+            "not semantic PageState, not PublishabilityState, not live Google index truth, and not runtime CTA/trust/demand.",
         };
       } else {
         pageState = unknownStateDistribution(
-          "Local sitemap.xml is present but contains no parseable <loc> URLs for PageState computation.",
+          "Local GSC sitemap artifact is present but contains no parseable <loc> URLs for inventory.",
         );
       }
     } catch {
       pageState = unknownStateDistribution(
-        "Local sitemap.xml could not be parsed for PageState computation.",
+        "Local GSC sitemap artifact could not be read or parsed for inventory.",
       );
     }
   }
 
-  let publishabilityState: CommandSurfaceReport["state_system_metrics"]["publishability_state"] =
+  const publishabilityState: CommandSurfaceReport["state_system_metrics"]["publishability_state"] =
     unknownStateDistribution(
-    "No local publishability input dataset is available to compute PublishabilityState distribution.",
-  );
-  if (derivedPageStates && derivedPageStates.length > 0) {
-    const distribution: Record<string, number> = {};
-    for (const pageStateValue of derivedPageStates) {
-      const publishability = classifyPublishabilityState({
-        pageState: pageStateValue as Parameters<typeof classifyPublishabilityState>[0]["pageState"],
-        isInfoPage: true,
-        hasQualityIssue: null,
-        isBlockedOrRetired: null,
-      });
-      distribution[publishability] = (distribution[publishability] ?? 0) + 1;
-    }
-    publishabilityState = {
-      computable: true,
-      distribution,
-      reason:
-        "Derived from locally computed sitemap-only PageState records. " +
-        "Coverage excludes CTA/trust/replacement quality signals not present in sitemap parsing.",
-    };
-  }
+      "Semantic PublishabilityState distribution is not computed without joined CTA/trust/quality inputs (sitemap artifact inventory does not imply publishability).",
+    );
   const retailerLinkState = unknownStateDistribution(
     "Local retailer files do not contain full gate/browser/operator inputs required for canonical RetailerLinkState mapping.",
   );

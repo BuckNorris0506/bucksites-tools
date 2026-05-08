@@ -258,6 +258,9 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         computable: boolean;
         distribution: Record<string, number> | "UNKNOWN";
         reason: string;
+        contract?: "sitemap_artifact_inventory_v1";
+        artifact_relative_path?: string;
+        url_count?: number;
       }
     | null;
   gscPresence: {
@@ -284,20 +287,50 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   const pageStateUnknownFacts: string[] = [];
   let pageStateConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
   let pageStateStatus: OwnerNeuronStatus = "UNKNOWN";
-  if (args.pageState?.computable && args.pageState.distribution !== "UNKNOWN") {
-    pageStateStatus = "PROVEN";
-    pageStateConnectionLevel = "DIM";
+
+  const semanticPageStateUnknownFacts = [
+    "Semantic PageState/PublishabilityState (buy-ready vs info-only, READY-style cohorts, quarantine integration, demand/noindex exclusions) is UNKNOWN in this neuron unless CTA, buy-gate/trust, quarantine, and demand signals are explicitly joined—this lane does not prove those facts.",
+    "Per-page CTA availability is not represented unless proven via joined retailer/link truth.",
+    "Buy-gate and trust-suppressed buy paths are not represented unless proven via runtime trust inputs.",
+    "Quarantine or mapping-conflict integration is not represented in page-state counts (see dedicated owner lanes when present).",
+    "Search-demand / hasDemand-style signals are not represented here.",
+  ];
+
+  const inventoryContract = args.pageState?.contract === "sitemap_artifact_inventory_v1";
+  const hasNumericDistribution =
+    args.pageState?.computable === true && args.pageState.distribution !== "UNKNOWN";
+
+  if (inventoryContract && hasNumericDistribution && args.pageState) {
+    const ps = args.pageState;
+    pageStateConnectionLevel = "BRIGHT";
+    pageStateStatus = "UNKNOWN";
+    const path =
+      ps.artifact_relative_path ?? "data/gsc/sitemap.xml (default artifact path when omitted)";
+    const n = ps.url_count;
     pageStateProvenFacts.push(
-      `state_system_metrics.page_state is computable in command-surface (${JSON.stringify(args.pageState.distribution)}).`,
+      `Sitemap artifact inventory contract: ${typeof n === "number" ? `${n} URLs` : "URL count omitted"} parsed from local artifact ${path}.`,
     );
-    pageStateProvenFacts.push(`Computation note: ${args.pageState.reason}`);
+    pageStateProvenFacts.push(
+      `Vertical-policy rollup uses repo config only (first URL path segment → VERTICAL_POLICY_* buckets): ${JSON.stringify(ps.distribution)}.`,
+    );
+    pageStateProvenFacts.push(`Inventory note: ${ps.reason}`);
     pageStateUnknownFacts.push(
-      "Distribution is sitemap-derived and does not prove full runtime CTA/trust-demand page-state coverage.",
+      "VERTICAL_POLICY_* buckets are route-prefix projections from `vertical-launch-state` — not proof of live Google indexing or on-page robots metadata.",
+      ...semanticPageStateUnknownFacts,
     );
+  } else if (hasNumericDistribution) {
+    pageStateConnectionLevel = "DIM";
+    pageStateStatus = "UNKNOWN";
+    pageStateProvenFacts.push(
+      `Command-surface reported a numeric page_state distribution without the sitemap artifact inventory contract (${JSON.stringify(args.pageState?.distribution)}).`,
+    );
+    pageStateProvenFacts.push(`Computation note: ${args.pageState?.reason ?? "UNKNOWN"}.`);
+    pageStateUnknownFacts.push(...semanticPageStateUnknownFacts);
   } else {
     pageStateUnknownFacts.push(
       args.pageState?.reason ??
         "state_system_metrics.page_state is UNKNOWN or unavailable from command-surface in this load path.",
+      ...semanticPageStateUnknownFacts,
     );
   }
 
@@ -467,7 +500,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         proven_facts: pageStateProvenFacts,
         unknown_facts: pageStateUnknownFacts,
         next_owner_action:
-          "Decide whether to accept sitemap-derived partial visibility or wire richer page-state inputs into command-center summaries.",
+          "Treat inventory/policy buckets as artifact truth only; wire joined CTA/trust/quarantine/demand inputs if you need semantic PageState or PublishabilityState counts.",
         status: pageStateStatus,
       },
       {

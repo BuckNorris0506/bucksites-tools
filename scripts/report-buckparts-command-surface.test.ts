@@ -199,7 +199,7 @@ test("command surface includes state_system_metrics", async () => {
   );
 });
 
-test("page_state distribution is included", async () => {
+test("page_state uses sitemap artifact inventory contract (not semantic PageState)", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fileExists: (absolutePath) =>
       absolutePath.endsWith("data/gsc/sitemap.xml")
@@ -218,13 +218,18 @@ test("page_state distribution is included", async () => {
     skipLearningOutcomesQuery: true,
   });
   assert.equal(report.state_system_metrics.page_state.computable, true);
+  assert.equal(report.state_system_metrics.page_state.contract, "sitemap_artifact_inventory_v1");
+  assert.equal(report.state_system_metrics.page_state.url_count, 2);
+  assert.equal(report.state_system_metrics.page_state.artifact_relative_path, "data/gsc/sitemap.xml");
   assert.equal(
     typeof report.state_system_metrics.page_state.distribution === "object",
     true,
   );
+  const dist = report.state_system_metrics.page_state.distribution;
+  assert.equal(typeof dist === "object" && dist !== null && "INDEXABLE_INFO_ONLY" in dist, false);
 });
 
-test("publishability_state distribution is included", async () => {
+test("publishability_state stays UNKNOWN without semantic joins", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fileExists: (absolutePath) =>
       absolutePath.endsWith("data/gsc/sitemap.xml")
@@ -242,14 +247,14 @@ test("publishability_state distribution is included", async () => {
     },
     skipLearningOutcomesQuery: true,
   });
-  assert.equal(report.state_system_metrics.publishability_state.computable, true);
-  assert.equal(
-    typeof report.state_system_metrics.publishability_state.distribution === "object",
-    true,
+  assert.equal(report.state_system_metrics.publishability_state.computable, false);
+  assert.equal(report.state_system_metrics.publishability_state.distribution, "UNKNOWN");
+  assert.ok(
+    report.state_system_metrics.publishability_state.reason.includes("Semantic PublishabilityState"),
   );
 });
 
-test("distribution is derived only from computed PageState records", async () => {
+test("sitemap inventory totals match loc count and vertical-policy buckets are honest", async () => {
   const report = await buildBuckpartsCommandSurfaceReport({
     fileExists: (absolutePath) =>
       absolutePath.endsWith("data/gsc/sitemap.xml")
@@ -262,6 +267,7 @@ test("distribution is derived only from computed PageState records", async () =>
   <url><loc>https://buckparts.com/filter/a</loc></url>
   <url><loc>https://buckparts.com/fridge/b</loc></url>
   <url><loc>https://buckparts.com/brand/c</loc></url>
+  <url><loc>https://buckparts.com/air-purifier/model/x</loc></url>
 </urlset>`;
       }
       return readFileSync(absolutePath, "utf8");
@@ -272,18 +278,24 @@ test("distribution is derived only from computed PageState records", async () =>
   const pageDist = report.state_system_metrics.page_state.distribution;
   const pubDist = report.state_system_metrics.publishability_state.distribution;
   assert.equal(typeof pageDist === "object", true);
-  assert.equal(typeof pubDist === "object", true);
+  assert.equal(pubDist, "UNKNOWN");
 
   const pageTotal =
     typeof pageDist === "object"
       ? Object.values(pageDist).reduce((sum, value) => sum + value, 0)
       : 0;
-  const pubTotal =
-    typeof pubDist === "object"
-      ? Object.values(pubDist).reduce((sum, value) => sum + value, 0)
-      : 0;
-  assert.equal(pageTotal, 3);
-  assert.equal(pubTotal, pageTotal);
+  assert.equal(pageTotal, 4);
+  assert.equal(typeof pageDist === "object" && pageDist !== null && "INDEXABLE_INFO_ONLY" in pageDist, false);
+  assert.equal(
+    typeof pageDist === "object" && pageDist !== null ? pageDist.VERTICAL_POLICY_LIVE_refrigerator : 0,
+    3,
+  );
+  assert.equal(
+    typeof pageDist === "object" && pageDist !== null
+      ? pageDist.VERTICAL_POLICY_NOINDEX_UNPROVEN_air_purifier
+      : 0,
+    1,
+  );
 });
 
 test("DB unavailable returns UNKNOWN_DB_UNAVAILABLE and UNKNOWN counts", async () => {
