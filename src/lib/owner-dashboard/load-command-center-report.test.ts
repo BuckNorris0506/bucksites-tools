@@ -97,9 +97,35 @@ describe("owner quarantined fridge summary", () => {
     const trust = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
     assert.ok(trust);
     assert.equal(trust.connection_level, "DIM");
+    assert.equal(
+      trust.unknown_facts.some((f) => f.includes("Missing trust-funnel emitter files")),
+      false,
+      "trust funnel neuron should not report missing emitters when files exist",
+    );
     assert.ok(
       trust.unknown_facts.some((f) => f.includes("Dashboard aggregate ingest")),
       "trust funnel neuron must not claim dashboard ingest is connected",
+    );
+  });
+
+  it("trust-funnel emitter presence remains PROVEN when provided rootDir is wrong", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: "/tmp/not-the-repo-root",
+      pageState: null,
+      gscPresence: null,
+    });
+    const trust = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
+    assert.ok(trust);
+    assert.equal(trust.status, "PROVEN");
+    assert.equal(trust.connection_level, "DIM");
+    assert.equal(
+      trust.unknown_facts.some((f) => f.includes("Missing trust-funnel emitter files")),
+      false,
+      "fallback roots should prevent false missing-emitter reports",
+    );
+    assert.ok(
+      trust.unknown_facts.some((f) => f.includes("Dashboard aggregate ingest")),
+      "aggregate ingest must remain UNKNOWN/not connected",
     );
   });
 

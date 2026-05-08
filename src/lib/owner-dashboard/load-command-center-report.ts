@@ -4,6 +4,7 @@
  */
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { buildBuckpartsCommandCenterReport } from "../../../scripts/report-buckparts-command-center";
 import { buildBuckpartsCommandSurfaceReport } from "../../../scripts/report-buckparts-command-surface";
 import { getFridgeBySlug } from "@/lib/data/fridges";
@@ -130,6 +131,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     performance_zip: boolean;
   } | null;
 }): OwnerCommandCenterNeuronsReport {
+  const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+  const moduleRepoRoot = path.resolve(moduleDir, "../../..");
+  const candidateRoots = Array.from(
+    new Set([args.rootDir, process.cwd(), moduleRepoRoot].filter((v) => typeof v === "string" && v.length > 0)),
+  );
   const trustEmitterFiles = [
     "src/lib/analytics/fridge-trust-funnel.ts",
     "src/components/analytics/FridgeTrustFunnelViewTracker.tsx",
@@ -137,7 +143,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     "src/components/analytics/FridgeTrustFunnelDetails.tsx",
   ] as const;
   const missingEmitterFiles = trustEmitterFiles.filter(
-    (relPath) => !existsSync(path.resolve(args.rootDir, relPath)),
+    (relPath) => !candidateRoots.some((root) => existsSync(path.resolve(root, relPath))),
   );
   const allEmittersPresent = missingEmitterFiles.length === 0;
 
