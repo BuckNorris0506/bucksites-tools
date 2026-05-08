@@ -872,11 +872,14 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
 
         <LaneCard
           title="16 · GSC external demand"
-          subtitle="Owner-only external demand neuron parsed from local GSC performance exports"
+          subtitle="Owner-only external demand neuron from durable artifact with local/manual fallbacks"
         >
           <FieldBlock label="neuron_key" value={gscExternalDemand.neuron_key} />
           <FieldBlock label="connection_level" value={gscExternalDemand.connection_level} />
           <FieldBlock label="source_class" value={gscExternalDemand.source_class} />
+          <FieldBlock label="artifact_source" value={gscExternalDemand.artifact_source} />
+          <FieldBlock label="status" value={gscExternalDemand.status} />
+          <FieldBlock label="fetched_at" value={gscExternalDemand.fetched_at} />
           <FieldBlock label="freshness_method" value={gscExternalDemand.freshness_method} />
           <FieldBlock label="export_file_used" value={gscExternalDemand.export_file_used} />
           <FieldBlock label="export_date" value={gscExternalDemand.export_date} />
@@ -884,6 +887,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
             <FieldBlock label="total_impressions" value={String(gscExternalDemand.total_impressions)} />
             <FieldBlock label="total_clicks" value={String(gscExternalDemand.total_clicks)} />
             <FieldBlock label="average_ctr" value={String(gscExternalDemand.average_ctr)} />
+            <FieldBlock label="average_position" value={String(gscExternalDemand.average_position)} />
           </div>
           <FieldBlock
             label="top_queries_by_impressions"

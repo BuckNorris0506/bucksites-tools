@@ -777,17 +777,18 @@ export function attachOwnerSearchDemandAndGapsReport<T extends object>(
   };
 }
 
-export function buildOwnerGscExternalDemandReport(args: {
+export async function buildOwnerGscExternalDemandReport(args: {
   rootDir: string;
-}): OwnerGscExternalDemandReport {
+}): Promise<OwnerGscExternalDemandReport> {
   return {
     data_mutation: false,
     generated_from: [
+      "supabase.owner_report_artifacts (gsc_search_analytics)",
       "data/reports/buckparts-gsc-search-analytics.json",
       "data/gsc/* Performance export artifacts",
       "src/lib/owner-dashboard/gsc-external-demand.ts",
     ],
-    gsc_external_demand: buildOwnerGscExternalDemandNeuron({ rootDir: args.rootDir }),
+    gsc_external_demand: await buildOwnerGscExternalDemandNeuron({ rootDir: args.rootDir }),
   };
 }
 
@@ -828,7 +829,7 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
-    const gscExternalDemand = buildOwnerGscExternalDemandReport({ rootDir });
+    const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
     const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
     const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
     const withNeurons = attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons);

@@ -46,7 +46,13 @@ If service-account key creation is blocked by policy, configure OAuth refresh-to
 
 - Command: `npm run buckparts:gsc:fetch`
 - Script: `scripts/fetch-buckparts-gsc-artifact.ts`
-- Output artifact: `data/reports/buckparts-gsc-search-analytics.json`
+- Durable output: Supabase table `public.owner_report_artifacts`, key `gsc_search_analytics`
+- Local debug output: `data/reports/buckparts-gsc-search-analytics.json`
+
+The scheduled fetch writes both outputs:
+
+1. Supabase durable artifact row (shared across runtimes)
+2. Local JSON artifact file (debug/local fallback)
 
 The artifact includes:
 
@@ -61,11 +67,61 @@ The artifact includes:
 
 `gsc_external_demand` reads in this order:
 
-1. `data/reports/buckparts-gsc-search-analytics.json` (scheduled API artifact)
-2. `data/gsc/*Performance-on-Search*.csv|zip` manual export parser
-3. `DARK`/`UNKNOWN` honest fallback when neither source is usable
+1. `public.owner_report_artifacts` key `gsc_search_analytics` (durable scheduled artifact)
+2. `data/reports/buckparts-gsc-search-analytics.json` (local scheduled artifact fallback)
+3. `data/gsc/*Performance-on-Search*.csv|zip` manual export parser
+4. `DARK`/`UNKNOWN` honest fallback when no source is usable
 
-Owner dashboard continues to read generated artifact files only. It does not call Search Console API directly at request time.
+Owner dashboard never calls Search Console API directly at request time.
+
+## Required Supabase artifact table
+
+Apply migration:
+
+- `supabase/migrations/20260508135000_owner_report_artifacts_gsc.sql`
+
+Table:
+
+- `artifact_key text primary key` (narrowed to `gsc_search_analytics`)
+- `status text not null`
+- `fetched_at timestamptz`
+- `payload jsonb not null`
+- `source text not null`
+- `updated_at timestamptz default now()`
+
+Access model:
+
+- Service-role/server-only access (owner dashboard and scripts).
+- No public route usage.
+
+## Why filesystem is not trusted for production durability
+
+- Production runs on Netlify.
+- Runtime filesystem persistence/shareability across instances is not proven.
+- Durable reporting artifacts must live in shared persistent storage.
+- Supabase is already the existing BuckParts backend and is the durable source of truth for lane 16.
+
+## Scheduler runbook
+
+1. Configure production env vars:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `GSC_PROPERTY_SITE_URL`
+   - Either OAuth refresh-token vars or service-account vars
+2. Run schedule command:
+   - `npm run buckparts:gsc:fetch`
+3. Verify durable row exists:
+   - `select artifact_key, status, fetched_at, updated_at from public.owner_report_artifacts where artifact_key = 'gsc_search_analytics';`
+4. Verify owner dashboard lane 16:
+   - `artifact_source=SUPABASE`
+   - `status`, `fetched_at`, totals/top lists populated or explicitly `UNKNOWN`
+
+## Failure states
+
+- Missing Supabase config: durable write/read returns UNKNOWN-safe details, lane falls back to local/manual sources.
+- Durable row missing: lane falls back to local artifact, then manual export.
+- Durable payload malformed: lane marks UNKNOWN for durable source and falls back.
+- GSC auth/API failure in scheduler: artifact status becomes `UNKNOWN_CONFIG` or `UNKNOWN_API_ERROR`; lane surfaces status honestly.
 
 ## Security notes
 

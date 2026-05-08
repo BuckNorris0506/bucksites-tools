@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { loadEnv } from "./lib/load-env";
 import { createSearchConsoleClientFromEnv } from "./lib/gsc-search-console-api";
 import type { GscArtifactTopEntry, GscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 type SearchConsoleApiRow = {
   keys?: string[];
@@ -247,13 +248,26 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
   }
 }
 
-export async function runGscFetchJob(rootDir = process.cwd()): Promise<{ output_path: string; artifact: GscSearchAnalyticsArtifact }> {
+export async function runGscFetchJob(rootDir = process.cwd()): Promise<{
+  output_path: string;
+  artifact: GscSearchAnalyticsArtifact;
+  durable_write:
+    | { status: "OK"; sink: "SUPABASE"; details: string[] }
+    | { status: "UNKNOWN_SUPABASE_WRITE"; details: string[] };
+}> {
   loadEnv(rootDir);
   const artifact = await buildGscSearchAnalyticsArtifact();
   const outputPath = path.resolve(rootDir, "data/reports/buckparts-gsc-search-analytics.json");
   mkdirSync(path.dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
-  return { output_path: outputPath, artifact };
+  const durableWrite = await writeGscArtifactToSupabase(artifact);
+  return {
+    output_path: outputPath,
+    artifact,
+    durable_write: durableWrite.ok
+      ? { status: "OK", sink: durableWrite.sink, details: durableWrite.details }
+      : { status: "UNKNOWN_SUPABASE_WRITE", details: durableWrite.details },
+  };
 }
 
 export async function main(): Promise<void> {
@@ -265,6 +279,7 @@ export async function main(): Promise<void> {
         status: result.artifact.status,
         fetched_at: result.artifact.fetched_at,
         property: result.artifact.property,
+        durable_write: result.durable_write,
       },
       null,
       2,

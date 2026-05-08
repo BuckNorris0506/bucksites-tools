@@ -619,10 +619,11 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(parsed.rows[0].impressions, 1200);
   });
 
-  it("gsc missing export yields DARK with unknown_facts", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc missing export yields DARK with unknown_facts", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        readSupabaseArtifact: async () => ({ ok: false, reason: "NOT_FOUND", details: [] }),
         fileExists: () => false,
         listFiles: () => [".gitkeep"],
       },
@@ -632,24 +633,26 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(lane.unknown_facts.some((f) => f.includes("No GSC performance export file")));
   });
 
-  it("gsc unparseable export yields UNKNOWN with unknown_facts", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc unparseable export yields UNKNOWN with unknown_facts", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        readSupabaseArtifact: async () => ({ ok: false, reason: "NOT_FOUND", details: [] }),
         listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
         readTextFile: () => "not,a,supported,header\nx,y,z\n",
         getMtimeIso: () => "2026-05-08T00:00:00.000Z",
       },
     });
     assert.equal(lane.connection_level, "UNKNOWN");
-    assert.equal(lane.source_class, "ARTIFACT");
+    assert.equal(lane.source_class, "MANUAL");
     assert.ok(lane.unknown_facts.some((f) => f.includes("CSV headers unsupported")));
   });
 
-  it("gsc malformed api artifact falls back to manual export parser", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc malformed api artifact falls back to manual export parser", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        readSupabaseArtifact: async () => ({ ok: false, reason: "NOT_FOUND", details: [] }),
         fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
         readTextFile: (absPath) => {
           if (absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json")) {
@@ -670,10 +673,11 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(lane.unknown_facts.some((fact) => fact.includes("artifact")));
   });
 
-  it("gsc malformed api artifact with no manual fallback returns UNKNOWN safely", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc malformed api artifact with no manual fallback returns UNKNOWN safely", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        readSupabaseArtifact: async () => ({ ok: false, reason: "NOT_FOUND", details: [] }),
         fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
         readTextFile: () => "{bad-json",
         listFiles: () => [".gitkeep"],
@@ -684,16 +688,14 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(lane.unknown_facts.some((fact) => fact.includes("artifact")));
   });
 
-  it("gsc valid api artifact is preferred over manual exports", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc valid supabase durable artifact is preferred over local/manual sources", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
-        fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
-        readTextFile: (absPath) => {
-          if (!absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json")) {
-            return "";
-          }
-          return JSON.stringify({
+        readSupabaseArtifact: async () => ({
+          ok: true,
+          fetchedAt: "2026-05-08T14:00:00.000Z",
+          artifactText: JSON.stringify({
             status: "OK",
             fetched_at: "2026-05-08T14:00:00.000Z",
             property: "sc-domain:buckparts.com",
@@ -714,21 +716,63 @@ describe("owner quarantined fridge summary", () => {
               scope: "https://www.googleapis.com/auth/webmasters.readonly",
               writer: "scripts/fetch-buckparts-gsc-artifact.ts",
             },
-          });
-        },
+          }),
+        }),
         listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+        fileExists: () => false,
       },
     });
     assert.equal(lane.connection_level, "BRIGHT");
-    assert.equal(lane.export_file_used, "data/reports/buckparts-gsc-search-analytics.json");
+    assert.equal(lane.artifact_source, "SUPABASE");
+    assert.equal(lane.export_file_used, "supabase.owner_report_artifacts[gsc_search_analytics]");
     assert.equal(lane.total_impressions, 2000);
     assert.equal(lane.total_clicks, 100);
   });
 
-  it("gsc parsed impressions/clicks are surfaced for owner dashboard lane", () => {
-    const lane = buildOwnerGscExternalDemandNeuron({
+  it("gsc db missing falls back to local api artifact", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        readSupabaseArtifact: async () => ({ ok: false, reason: "NOT_FOUND", details: ["no row"] }),
+        fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
+        readTextFile: (absPath) =>
+          absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json")
+            ? JSON.stringify({
+                status: "OK",
+                fetched_at: "2026-05-08T14:00:00.000Z",
+                property: "sc-domain:buckparts.com",
+                date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+                total_clicks: 100,
+                total_impressions: 2000,
+                average_ctr: 0.05,
+                average_position: 12.3,
+                top_queries_by_clicks: [{ key: "mwf", clicks: 50, impressions: 500, ctr: 0.1 }],
+                top_queries_by_impressions: [{ key: "mwf", clicks: 50, impressions: 500, ctr: 0.1 }],
+                top_pages_by_clicks: [{ key: "/filter/mwf", clicks: 60, impressions: 700, ctr: 0.085 }],
+                top_pages_by_impressions: [{ key: "/filter/mwf", clicks: 60, impressions: 700, ctr: 0.085 }],
+                high_impression_low_click_opportunities: "UNKNOWN",
+                proven_facts: ["artifact present"],
+                unknown_facts: [],
+                provenance: {
+                  source: "google_search_console_api",
+                  scope: "https://www.googleapis.com/auth/webmasters.readonly",
+                  writer: "scripts/fetch-buckparts-gsc-artifact.ts",
+                },
+              })
+            : "",
+        listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+      },
+    });
+    assert.equal(lane.connection_level, "BRIGHT");
+    assert.equal(lane.artifact_source, "LOCAL_ARTIFACT");
+    assert.equal(lane.total_impressions, 2000);
+  });
+
+  it("gsc db malformed falls back to manual parser", async () => {
+    const lane = await buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        readSupabaseArtifact: async () => ({ ok: true, fetchedAt: "2026-05-08T00:00:00.000Z", artifactText: "{bad-json" }),
         listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
         readTextFile: () =>
           [
@@ -740,6 +784,7 @@ describe("owner quarantined fridge summary", () => {
       },
     });
     assert.equal(lane.connection_level, "BRIGHT");
+    assert.equal(lane.artifact_source, "MANUAL_EXPORT");
     assert.equal(lane.total_impressions, 1900);
     assert.equal(lane.total_clicks, 40);
     assert.ok(lane.top_queries_by_impressions !== "UNKNOWN");
@@ -755,8 +800,8 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(src.includes('label="high_impression_low_click_opportunities"'));
   });
 
-  it("attach chain can add gsc external demand report with data_mutation false", () => {
-    const lane = buildOwnerGscExternalDemandReport({ rootDir: process.cwd() });
+  it("attach chain can add gsc external demand report with data_mutation false", async () => {
+    const lane = await buildOwnerGscExternalDemandReport({ rootDir: process.cwd() });
     const report = attachOwnerGscExternalDemandReport({ report_name: "x" }, lane);
     assert.ok("owner_gsc_external_demand" in report);
     assert.equal(report.owner_gsc_external_demand.data_mutation, false);

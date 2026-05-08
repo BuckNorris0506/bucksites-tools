@@ -2,9 +2,12 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { parseGscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import { readGscArtifactFromSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 export type OwnerGscConnectionLevel = "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
 export type OwnerGscSourceClass = "ARTIFACT" | "MANUAL" | "UNKNOWN";
+export type OwnerGscArtifactSource = "SUPABASE" | "LOCAL_ARTIFACT" | "MANUAL_EXPORT" | "NONE";
+export type OwnerGscLaneStatus = "OK" | "UNKNOWN_CONFIG" | "UNKNOWN_API_ERROR" | "UNKNOWN";
 
 export type OwnerGscDemandRow = {
   query: string | null;
@@ -24,12 +27,16 @@ export type OwnerGscExternalDemandNeuron = {
   neuron_key: "gsc_external_demand";
   connection_level: OwnerGscConnectionLevel;
   source_class: OwnerGscSourceClass;
+  artifact_source: OwnerGscArtifactSource;
+  fetched_at: string | "UNKNOWN";
+  status: OwnerGscLaneStatus;
   freshness_method: string;
   export_file_used: string | "UNKNOWN";
   export_date: string | "UNKNOWN";
   total_impressions: number | "UNKNOWN";
   total_clicks: number | "UNKNOWN";
   average_ctr: number | "UNKNOWN";
+  average_position: number | "UNKNOWN";
   top_queries_by_impressions: OwnerGscTopEntry[] | "UNKNOWN";
   top_queries_by_clicks: OwnerGscTopEntry[] | "UNKNOWN";
   top_pages_by_impressions: OwnerGscTopEntry[] | "UNKNOWN";
@@ -47,6 +54,10 @@ type Deps = {
   getMtimeIso: (absPath: string) => string;
   unzipListEntries: (absPath: string) => string[];
   unzipReadEntry: (absPath: string, entry: string) => string;
+  readSupabaseArtifact: () => Promise<
+    | { ok: true; artifactText: string; fetchedAt: string }
+    | { ok: false; reason: "MISSING_CONFIG" | "NOT_FOUND" | "READ_ERROR"; details: string[] }
+  >;
 };
 
 function parseCsvLine(line: string): string[] {
@@ -168,6 +179,17 @@ function defaultDeps(): Deps {
         .filter(Boolean),
     unzipReadEntry: (absPath, entry) =>
       execFileSync("unzip", ["-p", absPath, entry], { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 }),
+    readSupabaseArtifact: async () => {
+      const read = await readGscArtifactFromSupabase();
+      if (!read.ok) {
+        return { ok: false, reason: read.reason, details: read.details };
+      }
+      return {
+        ok: true,
+        artifactText: JSON.stringify(read.artifact),
+        fetchedAt: read.artifact.fetched_at,
+      };
+    },
   };
 }
 
@@ -176,16 +198,64 @@ function parseDateFromFilename(file: string): string | "UNKNOWN" {
   return m?.[1] ?? "UNKNOWN";
 }
 
-export function buildOwnerGscExternalDemandNeuron(args: {
+export async function buildOwnerGscExternalDemandNeuron(args: {
   rootDir: string;
   deps?: Partial<Deps>;
-}): OwnerGscExternalDemandNeuron {
+}): Promise<OwnerGscExternalDemandNeuron> {
   const deps = { ...defaultDeps(), ...(args.deps ?? {}) };
   const apiArtifactPath = path.resolve(args.rootDir, "data/reports/buckparts-gsc-search-analytics.json");
   const gscDir = path.resolve(args.rootDir, "data/gsc");
   const provenFacts: string[] = [];
   const unknownFacts: string[] = [];
+  let durableStoreIssue: string | null = null;
   let apiArtifactIssue: string | null = null;
+
+  const supabaseArtifact = await deps.readSupabaseArtifact();
+  if (supabaseArtifact.ok) {
+    const parsed = parseGscSearchAnalyticsArtifact(supabaseArtifact.artifactText);
+    if (parsed.ok && parsed.artifact.status === "OK") {
+      const artifact = parsed.artifact;
+      return {
+        neuron_key: "gsc_external_demand",
+        connection_level: "BRIGHT",
+        source_class: "ARTIFACT",
+        artifact_source: "SUPABASE",
+        fetched_at: artifact.fetched_at,
+        status: artifact.status,
+        freshness_method: "Reads durable Supabase artifact first; no live GSC API call in owner-dashboard runtime.",
+        export_file_used: "supabase.owner_report_artifacts[gsc_search_analytics]",
+        export_date: artifact.date_range === "UNKNOWN" ? "UNKNOWN" : artifact.date_range.end_date,
+        total_impressions: artifact.total_impressions,
+        total_clicks: artifact.total_clicks,
+        average_ctr: artifact.average_ctr,
+        average_position: artifact.average_position,
+        top_queries_by_impressions: artifact.top_queries_by_impressions,
+        top_queries_by_clicks: artifact.top_queries_by_clicks,
+        top_pages_by_impressions: artifact.top_pages_by_impressions,
+        top_pages_by_clicks: artifact.top_pages_by_clicks,
+        high_impression_low_click_opportunities: artifact.high_impression_low_click_opportunities,
+        proven_facts: [
+          ...artifact.proven_facts,
+          `Durable artifact fetched_at=${artifact.fetched_at}.`,
+        ],
+        unknown_facts: artifact.unknown_facts,
+        next_owner_action:
+          artifact.high_impression_low_click_opportunities !== "UNKNOWN" &&
+          artifact.high_impression_low_click_opportunities.length > 0
+            ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
+            : "Maintain scheduled GSC artifact refresh and use top query/page demand signals to prioritize content work.",
+      };
+    }
+    if (parsed.ok && parsed.artifact.status !== "OK") {
+      durableStoreIssue = `Supabase durable artifact status is ${parsed.artifact.status}.`;
+    } else if (!parsed.ok) {
+      durableStoreIssue = `Supabase durable artifact parse failed: ${parsed.reason}`;
+    }
+  } else if (supabaseArtifact.reason === "READ_ERROR") {
+    durableStoreIssue = `Supabase durable artifact read failed: ${supabaseArtifact.details.join(" ")}`;
+  } else if (supabaseArtifact.reason === "MISSING_CONFIG") {
+    durableStoreIssue = "Supabase durable artifact config is missing in this runtime.";
+  }
 
   if (deps.fileExists(apiArtifactPath)) {
     try {
@@ -196,12 +266,16 @@ export function buildOwnerGscExternalDemandNeuron(args: {
           neuron_key: "gsc_external_demand",
           connection_level: "BRIGHT",
           source_class: "ARTIFACT",
+          artifact_source: "LOCAL_ARTIFACT",
+          fetched_at: artifact.fetched_at,
+          status: artifact.status,
           freshness_method: "Reads scheduled GSC API artifact first; no live API call in owner-dashboard runtime.",
           export_file_used: "data/reports/buckparts-gsc-search-analytics.json",
           export_date: artifact.date_range === "UNKNOWN" ? "UNKNOWN" : artifact.date_range.end_date,
           total_impressions: artifact.total_impressions,
           total_clicks: artifact.total_clicks,
           average_ctr: artifact.average_ctr,
+          average_position: artifact.average_position,
           top_queries_by_impressions: artifact.top_queries_by_impressions,
           top_queries_by_clicks: artifact.top_queries_by_clicks,
           top_pages_by_impressions: artifact.top_pages_by_impressions,
@@ -210,6 +284,7 @@ export function buildOwnerGscExternalDemandNeuron(args: {
           proven_facts: [
             ...artifact.proven_facts,
             `Artifact fetched_at=${artifact.fetched_at}.`,
+            ...(durableStoreIssue ? [`Supabase durable artifact unavailable: ${durableStoreIssue}`] : []),
           ],
           unknown_facts: artifact.unknown_facts,
           next_owner_action:
@@ -243,16 +318,21 @@ export function buildOwnerGscExternalDemandNeuron(args: {
   if (performanceCandidates.length === 0) {
     return {
       neuron_key: "gsc_external_demand",
-      connection_level: apiArtifactIssue ? "UNKNOWN" : "DARK",
+      connection_level: apiArtifactIssue || durableStoreIssue ? "UNKNOWN" : "DARK",
       source_class: "UNKNOWN",
-      freshness_method: apiArtifactIssue
-        ? "Scheduled GSC API artifact is unusable and no local manual export fallback is available."
-        : "No local GSC performance export file found under data/gsc.",
+      artifact_source: "NONE",
+      fetched_at: "UNKNOWN",
+      status: "UNKNOWN",
+      freshness_method:
+        apiArtifactIssue || durableStoreIssue
+          ? "Durable/local artifacts are unusable and no local manual export fallback is available."
+          : "No local GSC performance export file found under data/gsc.",
       export_file_used: "UNKNOWN",
       export_date: "UNKNOWN",
       total_impressions: "UNKNOWN",
       total_clicks: "UNKNOWN",
       average_ctr: "UNKNOWN",
+      average_position: "UNKNOWN",
       top_queries_by_impressions: "UNKNOWN",
       top_queries_by_clicks: "UNKNOWN",
       top_pages_by_impressions: "UNKNOWN",
@@ -260,11 +340,12 @@ export function buildOwnerGscExternalDemandNeuron(args: {
       high_impression_low_click_opportunities: "UNKNOWN",
       proven_facts: [],
       unknown_facts: [
+        ...(durableStoreIssue ? [durableStoreIssue] : []),
         ...(apiArtifactIssue ? [apiArtifactIssue] : []),
         "No GSC performance export file is available locally.",
       ],
-      next_owner_action: apiArtifactIssue
-        ? "Fix scheduled GSC API artifact generation or place a valid manual GSC performance export under data/gsc."
+      next_owner_action: apiArtifactIssue || durableStoreIssue
+        ? "Fix durable/local scheduled GSC artifact generation or place a valid manual GSC performance export under data/gsc."
         : "Export a fresh GSC Performance report to data/gsc before using external demand for prioritization.",
     };
   }
@@ -294,13 +375,17 @@ export function buildOwnerGscExternalDemandNeuron(args: {
     return {
       neuron_key: "gsc_external_demand",
       connection_level: "UNKNOWN",
-      source_class: "ARTIFACT",
+      source_class: "MANUAL",
+      artifact_source: "MANUAL_EXPORT",
+      fetched_at: "UNKNOWN",
+      status: "UNKNOWN",
       freshness_method: "Local artifact exists but could not be parsed.",
       export_file_used: `data/gsc/${file}`,
       export_date: parseDateFromFilename(file),
       total_impressions: "UNKNOWN",
       total_clicks: "UNKNOWN",
       average_ctr: "UNKNOWN",
+      average_position: "UNKNOWN",
       top_queries_by_impressions: "UNKNOWN",
       top_queries_by_clicks: "UNKNOWN",
       top_pages_by_impressions: "UNKNOWN",
@@ -317,13 +402,17 @@ export function buildOwnerGscExternalDemandNeuron(args: {
     return {
       neuron_key: "gsc_external_demand",
       connection_level: "UNKNOWN",
-      source_class: "ARTIFACT",
+      source_class: "MANUAL",
+      artifact_source: "MANUAL_EXPORT",
+      fetched_at: "UNKNOWN",
+      status: "UNKNOWN",
       freshness_method: "Local artifact exists but schema/headers are unsupported for this parser.",
       export_file_used: `data/gsc/${file}`,
       export_date: parseDateFromFilename(file),
       total_impressions: "UNKNOWN",
       total_clicks: "UNKNOWN",
       average_ctr: "UNKNOWN",
+      average_position: "UNKNOWN",
       top_queries_by_impressions: "UNKNOWN",
       top_queries_by_clicks: "UNKNOWN",
       top_pages_by_impressions: "UNKNOWN",
@@ -340,13 +429,17 @@ export function buildOwnerGscExternalDemandNeuron(args: {
     return {
       neuron_key: "gsc_external_demand",
       connection_level: "DIM",
-      source_class: "ARTIFACT",
+      source_class: "MANUAL",
+      artifact_source: "MANUAL_EXPORT",
+      fetched_at: deps.getMtimeIso(abs),
+      status: "UNKNOWN",
       freshness_method: "Performance export parsed but rows lack complete clicks/impressions values.",
       export_file_used: `data/gsc/${file}`,
       export_date: parseDateFromFilename(file),
       total_impressions: "UNKNOWN",
       total_clicks: "UNKNOWN",
       average_ctr: "UNKNOWN",
+      average_position: "UNKNOWN",
       top_queries_by_impressions: "UNKNOWN",
       top_queries_by_clicks: "UNKNOWN",
       top_pages_by_impressions: "UNKNOWN",
@@ -380,20 +473,24 @@ export function buildOwnerGscExternalDemandNeuron(args: {
   return {
     neuron_key: "gsc_external_demand",
     connection_level: "BRIGHT",
-    source_class: "ARTIFACT",
-    freshness_method: "Parsed local GSC performance export artifact at owner-dashboard request time.",
+    source_class: "MANUAL",
+    artifact_source: "MANUAL_EXPORT",
+    fetched_at: deps.getMtimeIso(abs),
+    status: "OK",
+    freshness_method: "Parsed local GSC performance export artifact at owner-dashboard request time (manual fallback).",
     export_file_used: `data/gsc/${file}`,
     export_date: parseDateFromFilename(file),
     total_impressions: totalImpressions,
     total_clicks: totalClicks,
     average_ctr: averageCtr,
+    average_position: "UNKNOWN",
     top_queries_by_impressions: topQueriesByImpressions.length > 0 ? topQueriesByImpressions : "UNKNOWN",
     top_queries_by_clicks: topQueriesByClicks.length > 0 ? topQueriesByClicks : "UNKNOWN",
     top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
     top_pages_by_clicks: topPagesByClicks.length > 0 ? topPagesByClicks : "UNKNOWN",
     high_impression_low_click_opportunities: opportunities.length > 0 ? opportunities : "UNKNOWN",
     proven_facts: provenFacts,
-    unknown_facts: unknownFacts,
+    unknown_facts: [...(durableStoreIssue ? [durableStoreIssue] : []), ...unknownFacts],
     next_owner_action:
       opportunities.length > 0
         ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
