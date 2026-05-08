@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { parseGscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
 
 export type OwnerGscConnectionLevel = "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
 export type OwnerGscSourceClass = "ARTIFACT" | "MANUAL" | "UNKNOWN";
@@ -42,6 +43,7 @@ export type OwnerGscExternalDemandNeuron = {
 type Deps = {
   listFiles: (dir: string) => string[];
   readTextFile: (absPath: string) => string;
+  fileExists: (absPath: string) => boolean;
   getMtimeIso: (absPath: string) => string;
   unzipListEntries: (absPath: string) => string[];
   unzipReadEntry: (absPath: string, entry: string) => string;
@@ -157,6 +159,7 @@ function defaultDeps(): Deps {
   return {
     listFiles: (dir) => readdirSync(dir),
     readTextFile: (absPath) => readFileSync(absPath, "utf8"),
+    fileExists: (absPath) => existsSync(absPath),
     getMtimeIso: (absPath) => statSync(absPath).mtime.toISOString(),
     unzipListEntries: (absPath) =>
       execFileSync("unzip", ["-Z1", absPath], { encoding: "utf8" })
@@ -178,9 +181,53 @@ export function buildOwnerGscExternalDemandNeuron(args: {
   deps?: Partial<Deps>;
 }): OwnerGscExternalDemandNeuron {
   const deps = { ...defaultDeps(), ...(args.deps ?? {}) };
+  const apiArtifactPath = path.resolve(args.rootDir, "data/reports/buckparts-gsc-search-analytics.json");
   const gscDir = path.resolve(args.rootDir, "data/gsc");
   const provenFacts: string[] = [];
   const unknownFacts: string[] = [];
+  let apiArtifactIssue: string | null = null;
+
+  if (deps.fileExists(apiArtifactPath)) {
+    try {
+      const parsedArtifact = parseGscSearchAnalyticsArtifact(deps.readTextFile(apiArtifactPath));
+      if (parsedArtifact.ok && parsedArtifact.artifact.status === "OK") {
+        const artifact = parsedArtifact.artifact;
+        return {
+          neuron_key: "gsc_external_demand",
+          connection_level: "BRIGHT",
+          source_class: "ARTIFACT",
+          freshness_method: "Reads scheduled GSC API artifact first; no live API call in owner-dashboard runtime.",
+          export_file_used: "data/reports/buckparts-gsc-search-analytics.json",
+          export_date: artifact.date_range === "UNKNOWN" ? "UNKNOWN" : artifact.date_range.end_date,
+          total_impressions: artifact.total_impressions,
+          total_clicks: artifact.total_clicks,
+          average_ctr: artifact.average_ctr,
+          top_queries_by_impressions: artifact.top_queries_by_impressions,
+          top_queries_by_clicks: artifact.top_queries_by_clicks,
+          top_pages_by_impressions: artifact.top_pages_by_impressions,
+          top_pages_by_clicks: artifact.top_pages_by_clicks,
+          high_impression_low_click_opportunities: artifact.high_impression_low_click_opportunities,
+          proven_facts: [
+            ...artifact.proven_facts,
+            `Artifact fetched_at=${artifact.fetched_at}.`,
+          ],
+          unknown_facts: artifact.unknown_facts,
+          next_owner_action:
+            artifact.high_impression_low_click_opportunities !== "UNKNOWN" &&
+            artifact.high_impression_low_click_opportunities.length > 0
+              ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
+              : "Maintain scheduled GSC API artifact refresh and use top query/page demand signals to prioritize content work.",
+        };
+      }
+      if (parsedArtifact.ok && parsedArtifact.artifact.status !== "OK") {
+        apiArtifactIssue = `Scheduled GSC API artifact status is ${parsedArtifact.artifact.status}.`;
+      } else if (!parsedArtifact.ok) {
+        apiArtifactIssue = `Scheduled GSC API artifact parse failed: ${parsedArtifact.reason}`;
+      }
+    } catch {
+      apiArtifactIssue = "Scheduled GSC API artifact exists but could not be read.";
+    }
+  }
 
   let gscFiles: string[] = [];
   try {
@@ -196,9 +243,11 @@ export function buildOwnerGscExternalDemandNeuron(args: {
   if (performanceCandidates.length === 0) {
     return {
       neuron_key: "gsc_external_demand",
-      connection_level: "DARK",
+      connection_level: apiArtifactIssue ? "UNKNOWN" : "DARK",
       source_class: "UNKNOWN",
-      freshness_method: "No local GSC performance export file found under data/gsc.",
+      freshness_method: apiArtifactIssue
+        ? "Scheduled GSC API artifact is unusable and no local manual export fallback is available."
+        : "No local GSC performance export file found under data/gsc.",
       export_file_used: "UNKNOWN",
       export_date: "UNKNOWN",
       total_impressions: "UNKNOWN",
@@ -210,8 +259,13 @@ export function buildOwnerGscExternalDemandNeuron(args: {
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
       proven_facts: [],
-      unknown_facts: ["No GSC performance export file is available locally."],
-      next_owner_action: "Export a fresh GSC Performance report to data/gsc before using external demand for prioritization.",
+      unknown_facts: [
+        ...(apiArtifactIssue ? [apiArtifactIssue] : []),
+        "No GSC performance export file is available locally.",
+      ],
+      next_owner_action: apiArtifactIssue
+        ? "Fix scheduled GSC API artifact generation or place a valid manual GSC performance export under data/gsc."
+        : "Export a fresh GSC Performance report to data/gsc before using external demand for prioritization.",
     };
   }
 
@@ -318,6 +372,10 @@ export function buildOwnerGscExternalDemandNeuron(args: {
   provenFacts.push(`Parsed ${completeRows.length} complete rows from ${file}.`);
   provenFacts.push(`File modified at ${deps.getMtimeIso(abs)}.`);
   provenFacts.push(`total_impressions=${totalImpressions}, total_clicks=${totalClicks}.`);
+  if (apiArtifactIssue) {
+    unknownFacts.push(apiArtifactIssue);
+    provenFacts.push("Manual export parser fallback was used after API artifact was unavailable/invalid.");
+  }
 
   return {
     neuron_key: "gsc_external_demand",

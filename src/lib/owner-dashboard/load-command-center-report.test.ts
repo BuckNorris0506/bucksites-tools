@@ -623,6 +623,7 @@ describe("owner quarantined fridge summary", () => {
     const lane = buildOwnerGscExternalDemandNeuron({
       rootDir: process.cwd(),
       deps: {
+        fileExists: () => false,
         listFiles: () => [".gitkeep"],
       },
     });
@@ -643,6 +644,85 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(lane.connection_level, "UNKNOWN");
     assert.equal(lane.source_class, "ARTIFACT");
     assert.ok(lane.unknown_facts.some((f) => f.includes("CSV headers unsupported")));
+  });
+
+  it("gsc malformed api artifact falls back to manual export parser", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
+        readTextFile: (absPath) => {
+          if (absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json")) {
+            return "{bad-json";
+          }
+          return [
+            "Query,Page,Clicks,Impressions",
+            "lt1000p,/filter/lt1000p,30,1000",
+            "adq36006101,/filter/adq36006101,10,900",
+          ].join("\n");
+        },
+        listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+        getMtimeIso: () => "2026-05-08T00:00:00.000Z",
+      },
+    });
+    assert.equal(lane.connection_level, "BRIGHT");
+    assert.equal(lane.total_impressions, 1900);
+    assert.ok(lane.unknown_facts.some((fact) => fact.includes("artifact")));
+  });
+
+  it("gsc malformed api artifact with no manual fallback returns UNKNOWN safely", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
+        readTextFile: () => "{bad-json",
+        listFiles: () => [".gitkeep"],
+      },
+    });
+    assert.equal(lane.connection_level, "UNKNOWN");
+    assert.equal(lane.total_impressions, "UNKNOWN");
+    assert.ok(lane.unknown_facts.some((fact) => fact.includes("artifact")));
+  });
+
+  it("gsc valid api artifact is preferred over manual exports", () => {
+    const lane = buildOwnerGscExternalDemandNeuron({
+      rootDir: process.cwd(),
+      deps: {
+        fileExists: (absPath) => absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json"),
+        readTextFile: (absPath) => {
+          if (!absPath.endsWith("data/reports/buckparts-gsc-search-analytics.json")) {
+            return "";
+          }
+          return JSON.stringify({
+            status: "OK",
+            fetched_at: "2026-05-08T14:00:00.000Z",
+            property: "sc-domain:buckparts.com",
+            date_range: { start_date: "2026-04-05", end_date: "2026-05-04" },
+            total_clicks: 100,
+            total_impressions: 2000,
+            average_ctr: 0.05,
+            average_position: 12.3,
+            top_queries_by_clicks: [{ key: "mwf", clicks: 50, impressions: 500, ctr: 0.1 }],
+            top_queries_by_impressions: [{ key: "mwf", clicks: 50, impressions: 500, ctr: 0.1 }],
+            top_pages_by_clicks: [{ key: "/filter/mwf", clicks: 60, impressions: 700, ctr: 0.085 }],
+            top_pages_by_impressions: [{ key: "/filter/mwf", clicks: 60, impressions: 700, ctr: 0.085 }],
+            high_impression_low_click_opportunities: "UNKNOWN",
+            proven_facts: ["artifact present"],
+            unknown_facts: [],
+            provenance: {
+              source: "google_search_console_api",
+              scope: "https://www.googleapis.com/auth/webmasters.readonly",
+              writer: "scripts/fetch-buckparts-gsc-artifact.ts",
+            },
+          });
+        },
+        listFiles: () => ["buckparts.com-Performance-on-Search-2026-04-28.csv"],
+      },
+    });
+    assert.equal(lane.connection_level, "BRIGHT");
+    assert.equal(lane.export_file_used, "data/reports/buckparts-gsc-search-analytics.json");
+    assert.equal(lane.total_impressions, 2000);
+    assert.equal(lane.total_clicks, 100);
   });
 
   it("gsc parsed impressions/clicks are surfaced for owner dashboard lane", () => {

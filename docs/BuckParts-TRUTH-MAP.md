@@ -62,9 +62,13 @@ Use this file as the primary owner/Cursor navigation map for BuckParts truth sou
 - **Owner dashboard/reporting**
   - `src/app/ownerdashboard/[secret]/page.tsx`
   - `src/lib/owner-dashboard/load-command-center-report.ts`
+  - `src/lib/owner-dashboard/gsc-external-demand.ts`
+  - `src/lib/owner-dashboard/gsc-api-artifact.ts`
   - `scripts/report-buckparts-command-center.ts`
   - `scripts/lib/buckparts-command-center-v2.ts`
   - `scripts/lib/buckparts-click-events-snapshot.ts`
+  - `scripts/fetch-buckparts-gsc-artifact.ts`
+  - setup/runbook: `docs/buckparts-gsc-api-artifact-ingestion.md`
 - **HQ/handoff/process docs (context, not canonical runtime truth)**
   - `docs/BuckParts-HQ-HANDOFF.md`
   - `docs/BuckParts-CURSOR-INBOX.md`

@@ -782,7 +782,11 @@ export function buildOwnerGscExternalDemandReport(args: {
 }): OwnerGscExternalDemandReport {
   return {
     data_mutation: false,
-    generated_from: ["data/gsc/* Performance export artifacts", "src/lib/owner-dashboard/gsc-external-demand.ts"],
+    generated_from: [
+      "data/reports/buckparts-gsc-search-analytics.json",
+      "data/gsc/* Performance export artifacts",
+      "src/lib/owner-dashboard/gsc-external-demand.ts",
+    ],
     gsc_external_demand: buildOwnerGscExternalDemandNeuron({ rootDir: args.rootDir }),
   };
 }
