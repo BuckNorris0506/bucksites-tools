@@ -876,6 +876,22 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(report.owner_gsc_external_demand.gsc_external_demand.neuron_key, "gsc_external_demand");
   });
 
+  it("owner dashboard compression renders three executive sections and drilldown details groups", () => {
+    const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes('title="Stop-the-line"'));
+    assert.ok(src.includes('title="Demand"'));
+    assert.ok(src.includes('title="Throughput & monetization"'));
+    assert.ok(src.includes("Operational drilldowns (collapsed by default)"));
+    assert.ok(src.includes("function DrilldownGroup"));
+    assert.ok(src.includes("<details"));
+    assert.ok(src.includes('href="#demand-drilldown"'));
+    assert.ok(src.includes("Open demand drilldown"));
+    assert.ok(src.includes("Click visibility snapshot: UNKNOWN (missing)."));
+    assert.ok(src.includes("no automatic stop-the-line escalation"));
+    assert.ok(src.includes("Integrity action confidence:"));
+    assert.ok(src.includes("System status"));
+  });
+
   it("public fridge page behavior wiring remains unchanged", () => {
     const src = readFileSync(join(process.cwd(), "src/app/fridge/[slug]/page.tsx"), "utf8");
     assert.ok(src.includes("const reviewOverride = getFridgeModelReviewOverride(params.slug);"));

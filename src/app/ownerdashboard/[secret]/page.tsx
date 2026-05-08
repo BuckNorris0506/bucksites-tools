@@ -107,6 +107,94 @@ function FieldBlock({ label, value }: { label: string; value: ReactNode }) {
   );
 }
 
+function ExecutiveSection({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="overflow-hidden rounded-lg border-2 border-blue-950/20 bg-white shadow-md dark:border-blue-900/50 dark:bg-slate-950">
+      <div className="border-b border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/80">
+        <h2 className="text-lg font-semibold tracking-tight text-blue-950 dark:text-white">{title}</h2>
+        {subtitle ? (
+          <p className="mt-1 text-xs leading-snug text-slate-600 dark:text-slate-400">{subtitle}</p>
+        ) : null}
+      </div>
+      <div className="space-y-4 px-4 py-4 text-sm text-slate-800 dark:text-slate-200 sm:px-5 sm:py-5">{children}</div>
+    </section>
+  );
+}
+
+function DrilldownGroup({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
+  return (
+    <details
+      id={id}
+      className="group rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950"
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 text-sm font-semibold text-slate-900 outline-none marker:hidden dark:text-slate-100 [&::-webkit-details-marker]:hidden">
+        <span className="mr-2 inline-block translate-y-px text-slate-400 transition-transform group-open:rotate-90">
+          ▸
+        </span>
+        {title}
+      </summary>
+      <div className="space-y-6 border-t border-slate-200 px-4 py-4 dark:border-slate-700">{children}</div>
+    </details>
+  );
+}
+
+function buildStopTheLineItems(args: {
+  health: { status: string; reasons: string[]; recommended_next_step: string };
+  integritySentinel: { overall_status: string; action_confidence: string; owner_note: string };
+  quarantineModelCount: number;
+  v2NextOwnerAction: string;
+}): string[] {
+  const out: string[] = [];
+  const os = args.integritySentinel.overall_status;
+  if (os === "FAIL") {
+    out.push(`Integrity Sentinel: FAIL — ${args.integritySentinel.owner_note.trim() || "UNKNOWN"}`);
+  } else if (os === "WARN") {
+    out.push(`Integrity Sentinel: WARN — ${args.integritySentinel.owner_note.trim() || "UNKNOWN"}`);
+  }
+  const hs = args.health.status;
+  if (hs === "BLOCKED" || hs === "CRITICAL") {
+    const r = args.health.reasons[0]?.trim();
+    out.push(r ? `System health ${hs}: ${r}` : `System health status: ${hs}`);
+  } else if (hs === "ATTENTION") {
+    const r = args.health.reasons[0]?.trim();
+    if (r) out.push(`System health ATTENTION: ${r}`);
+    else if (args.health.recommended_next_step.trim()) {
+      out.push(`System health ATTENTION — recommended next step: ${args.health.recommended_next_step.trim()}`);
+    }
+  }
+  if (args.quarantineModelCount > 0) {
+    out.push(
+      `${args.quarantineModelCount} quarantined fridge model(s) — owner review required (see Evidence & coverage drilldown).`,
+    );
+  }
+  const ac = args.integritySentinel.action_confidence;
+  if (ac === "CAUTION_INCOMPLETE_INPUTS" || ac === "UNKNOWN") {
+    out.push(`Integrity action confidence: ${ac} — treat automation hints cautiously.`);
+  }
+  const synth = args.v2NextOwnerAction.trim();
+  if (synth) out.push(`Synthesized next owner action (v2): ${synth}`);
+  const rec = args.health.recommended_next_step.trim();
+  if (rec && !out.some((x) => x.includes(rec))) out.push(`Recommended next step (v1 digest): ${rec}`);
+  const seen = new Set<string>();
+  const uniq: string[] = [];
+  for (const line of out) {
+    const key = line.slice(0, 160);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    uniq.push(line);
+    if (uniq.length >= 3) break;
+  }
+  return uniq;
+}
+
 function OwnerDashboardSetupNeeded() {
   return (
     <div className="min-h-[50vh] bg-slate-100 px-4 py-16 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -164,6 +252,14 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const searchDemand = report.owner_search_demand_and_gaps.search_demand_and_gaps;
   const gscExternalDemand = report.owner_gsc_external_demand.gsc_external_demand;
 
+  const trustNeuron = neurons.neurons.find((n) => n.neuron_key === "trust_funnel_measurement");
+  const stopLineItems = buildStopTheLineItems({
+    health,
+    integritySentinel,
+    quarantineModelCount: quarantine.models.length,
+    v2NextOwnerAction: v2.next_owner_action,
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -177,10 +273,217 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <p className="mt-3 text-xs text-white/70">
             Generated {report.generated_at} · v2 {v2.generated_at} · {report.report_name}
           </p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-xs text-white/95">
+            <span>
+              <span className="font-semibold text-white">System status</span>: {health?.status ?? "UNKNOWN"}
+            </span>
+            <span>
+              <span className="font-semibold text-white">Integrity Sentinel</span>:{" "}
+              {integritySentinel?.overall_status ?? "UNKNOWN"}
+            </span>
+            <span>
+              <span className="font-semibold text-white">Action confidence</span>:{" "}
+              {integritySentinel?.action_confidence ?? "UNKNOWN"}
+            </span>
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
+        <ExecutiveSection
+          title="Stop-the-line"
+          subtitle="Highest-priority signals from system health, Integrity Sentinel, quarantine queue, and synthesized v2 owner action (max 3 items)."
+        >
+          <ul className="list-inside list-disc space-y-2 text-sm text-slate-800 dark:text-slate-200">
+            {(stopLineItems.length > 0
+              ? stopLineItems
+              : ["No elevated stop-the-line signals in this snapshot beyond routine monitoring."]
+            ).map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+        </ExecutiveSection>
+
+        <ExecutiveSection
+          title="Demand"
+          subtitle="Internal BuckParts search demand plus external GSC demand (top 5 queries/pages truncated)."
+        >
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FieldBlock label="Internal · connection_level" value={searchDemand.connection_level} />
+            <FieldBlock label="Internal · runtime_status" value={searchDemand.runtime_status} />
+            <FieldBlock label="Internal · search_events_last_7d" value={String(searchDemand.search_events_last_7d)} />
+            <FieldBlock label="Internal · search_events_last_30d" value={String(searchDemand.search_events_last_30d)} />
+            <FieldBlock label="Internal · zero_result_last_7d" value={String(searchDemand.zero_result_last_7d)} />
+            <FieldBlock label="Internal · zero_result_last_30d" value={String(searchDemand.zero_result_last_30d)} />
+            <FieldBlock label="Internal · actionable_search_gaps" value={String(searchDemand.actionable_search_gaps)} />
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FieldBlock label="External · total_impressions" value={String(gscExternalDemand.total_impressions)} />
+            <FieldBlock label="External · total_clicks" value={String(gscExternalDemand.total_clicks)} />
+            <FieldBlock label="External · average_ctr" value={String(gscExternalDemand.average_ctr)} />
+            <FieldBlock label="External · average_position" value={String(gscExternalDemand.average_position)} />
+          </div>
+          <FieldBlock
+            label="External · top queries (by impressions, max 5)"
+            value={
+              gscExternalDemand.top_queries_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_queries_by_impressions.slice(0, 5).map((q) => (
+                    <li key={`exec-q-${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="External · top pages (by impressions, max 5)"
+            value={
+              gscExternalDemand.top_pages_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_pages_by_impressions.slice(0, 5).map((p) => (
+                    <li key={`exec-p-${p.key}-${p.impressions}-${p.clicks}`}>
+                      {p.key} · impressions={p.impressions} · clicks={p.clicks} · ctr={String(p.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="External · high-impression / low-click opportunities"
+            value={
+              gscExternalDemand.high_impression_low_click_opportunities === "UNKNOWN"
+                ? "UNKNOWN"
+                : gscExternalDemand.high_impression_low_click_opportunities.length === 0
+                  ? "None flagged in current artifact."
+                  : (
+                      <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                        {gscExternalDemand.high_impression_low_click_opportunities.slice(0, 5).map((q) => (
+                          <li key={`exec-o-${q.key}-${q.impressions}-${q.clicks}`}>
+                            {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                          </li>
+                        ))}
+                      </ul>
+                    )
+            }
+          />
+          <p className="text-xs text-slate-600 dark:text-slate-400">
+            <a
+              href="#demand-drilldown"
+              className="font-semibold text-blue-800 underline underline-offset-2 dark:text-blue-300"
+            >
+              Open demand drilldown
+            </a>{" "}
+            for full Search Demand & gaps and GSC external demand tables.
+          </p>
+        </ExecutiveSection>
+
+        <ExecutiveSection
+          title="Throughput & monetization"
+          subtitle="/go click visibility (read-only aggregates) and GA4 trust-funnel artifact summary. Dollar commission/revenue remains UNKNOWN in-repo."
+        >
+          <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            GA4 event totals can read{" "}
+            <span className="font-semibold text-slate-800 dark:text-slate-200">zero</span> from low traffic, reporting
+            lag, filters, or sparse events — that alone does{" "}
+            <span className="font-semibold">not</span> prove a tracking failure (no automatic stop-the-line escalation
+            from zeros alone).
+          </p>
+          {v2.revenue_snapshot.click_visibility ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <FieldBlock
+                label="Raw clicks · 7d"
+                value={
+                  v2.revenue_snapshot.click_visibility.raw_last_7_days_clicks === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : String(v2.revenue_snapshot.click_visibility.raw_last_7_days_clicks)
+                }
+              />
+              <FieldBlock
+                label="Raw clicks · 30d"
+                value={
+                  v2.revenue_snapshot.click_visibility.raw_last_30_days_clicks === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : String(v2.revenue_snapshot.click_visibility.raw_last_30_days_clicks)
+                }
+              />
+              <FieldBlock
+                label="Human-likely · 7d"
+                value={
+                  v2.revenue_snapshot.click_visibility.human_likely_last_7_days_clicks === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : String(v2.revenue_snapshot.click_visibility.human_likely_last_7_days_clicks)
+                }
+              />
+              <FieldBlock
+                label="Human-likely · 30d"
+                value={
+                  v2.revenue_snapshot.click_visibility.human_likely_last_30_days_clicks === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : String(v2.revenue_snapshot.click_visibility.human_likely_last_30_days_clicks)
+                }
+              />
+              <FieldBlock label="Click freshness" value={v2.revenue_snapshot.click_visibility.click_freshness_status} />
+              <FieldBlock label="Snapshot runtime" value={v2.revenue_snapshot.click_visibility.runtime_status} />
+            </div>
+          ) : (
+            <p className="text-xs text-slate-600 dark:text-slate-400">Click visibility snapshot: UNKNOWN (missing).</p>
+          )}
+          <FieldBlock
+            label="Commission / revenue (in-repo)"
+            value={
+              v2.revenue_snapshot.click_visibility?.commission_or_revenue === "NOT_CONNECTED"
+                ? "NOT_CONNECTED — UNKNOWN dollar revenue from this dashboard (do not infer valuation from clicks)."
+                : String(v2.revenue_snapshot.click_visibility?.commission_or_revenue ?? "UNKNOWN")
+            }
+          />
+          {trustNeuron?.trust_funnel_aggregate ? (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <FieldBlock label="GA4 artifact_source" value={trustNeuron.trust_funnel_aggregate.artifact_source} />
+              <FieldBlock label="GA4 artifact status" value={trustNeuron.trust_funnel_aggregate.status} />
+              <FieldBlock label="GA4 fetched_at" value={trustNeuron.trust_funnel_aggregate.fetched_at} />
+              <FieldBlock
+                label="GA4 event_totals"
+                value={
+                  trustNeuron.trust_funnel_aggregate.event_totals === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : `model_views=${trustNeuron.trust_funnel_aggregate.event_totals.fridge_model_view}, chip_clicks=${trustNeuron.trust_funnel_aggregate.event_totals.fridge_filter_chip_click}, detail_clicks=${trustNeuron.trust_funnel_aggregate.event_totals.fridge_filter_detail_click_from_model}, filter_views=${trustNeuron.trust_funnel_aggregate.event_totals.fridge_filter_view}, help_opens=${trustNeuron.trust_funnel_aggregate.event_totals.fridge_help_opened}`
+                }
+              />
+              <FieldBlock
+                label="GA4 rates"
+                value={
+                  trustNeuron.trust_funnel_aggregate.rates === "UNKNOWN"
+                    ? "UNKNOWN"
+                    : `chip/model=${String(trustNeuron.trust_funnel_aggregate.rates.chip_clicks_per_model_view)}, filter/chip=${String(trustNeuron.trust_funnel_aggregate.rates.filter_views_per_chip_click)}, help/filter=${String(trustNeuron.trust_funnel_aggregate.rates.help_opens_per_filter_view)}`
+                }
+              />
+              <FieldBlock
+                label="GA4 dimension_breakdowns (stage 1)"
+                value={`top_model_slugs=${trustNeuron.trust_funnel_aggregate.dimension_breakdowns.top_model_slugs}, top_filter_slugs=${trustNeuron.trust_funnel_aggregate.dimension_breakdowns.top_filter_slugs}, quarantined_vs_normal=${trustNeuron.trust_funnel_aggregate.dimension_breakdowns.quarantined_vs_normal}`}
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              GA4 trust-funnel aggregate: UNKNOWN (not present on trust neuron in this snapshot).
+            </p>
+          )}
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Full click breakdowns and neuron prose live under monitor / drilldown sections below.
+          </p>
+        </ExecutiveSection>
+
+        <div className="space-y-3 border-t border-slate-300 pt-8 dark:border-slate-600">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            Operational drilldowns (collapsed by default)
+          </p>
+        <DrilldownGroup title="System summary & synthesized actions (lanes 1, 7)">
         <LaneCard title="1 · Status / top summary" subtitle="System health from command center v1 digest">
           <div className="flex flex-wrap items-center gap-2">
             <StatusPill status={health.status} />
@@ -195,7 +498,11 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           ) : null}
           <FieldBlock label="Recommended next step (v1 summary)" value={health.recommended_next_step} />
         </LaneCard>
-
+        <LaneCard title="7 · Next owner action (synthesized)" subtitle="Highest-priority owner step from v2">
+          <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.next_owner_action}</p>
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Amazon & review ops (lanes 2, 3, 8)">
         <LaneCard title="2 · Amazon rescue" subtitle="Registry + queue–aware cohorts">
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.amazon_rescue.status} />
@@ -226,7 +533,6 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.amazon_rescue.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.amazon_rescue.next_owner_action} />
         </LaneCard>
-
         <LaneCard title="3 · Unknown / human review" subtitle="UNKNOWN evidence and deferred cohort">
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.unknown_or_human_review.status} />
@@ -241,7 +547,11 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.unknown_or_human_review.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.unknown_or_human_review.next_owner_action} />
         </LaneCard>
-
+        <LaneCard title="8 · Next agent action (Amazon lane)" subtitle="Same as Amazon rescue agent guidance">
+          <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.amazon_rescue.next_agent_action}</p>
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Evidence & coverage (lanes 4, 5, 6, 11)">
         <LaneCard title="4 · Coverage health" subtitle="Command surface signals">
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.coverage_health.status} />
@@ -253,7 +563,6 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.coverage_health.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.coverage_health.next_owner_action} />
         </LaneCard>
-
         <LaneCard title="5 · Affiliate readiness" subtitle="From tracker-derived lane">
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.affiliate_readiness.status} />
@@ -262,7 +571,6 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.affiliate_readiness.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.affiliate_readiness.next_owner_action} />
         </LaneCard>
-
         <LaneCard title="6 · Recent evidence rollup" subtitle="Filename-level counts (conservative)">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(
@@ -286,19 +594,481 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.recent_evidence.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.recent_evidence.next_owner_action} />
         </LaneCard>
-
-        <LaneCard title="7 · Next owner action (synthesized)" subtitle="Highest-priority owner step from v2">
-          <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.next_owner_action}</p>
+        <LaneCard title="11 · Quarantined fridge models" subtitle="Owner-only review queue (read-only)">
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill status={quarantine.models.length > 0 ? "ATTENTION" : "OK"} />
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              data_mutation: {String(quarantine.data_mutation)}
+            </span>
+          </div>
+          {quarantine.models.length === 0 ? (
+            <p className="text-xs text-slate-600 dark:text-slate-400">No quarantined fridge models.</p>
+          ) : (
+            <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+              <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+                <thead className="bg-slate-50 dark:bg-slate-900/60">
+                  <tr>
+                    {[
+                      "slug",
+                      "reason",
+                      "public_status",
+                      "mapped_filters",
+                      "safe_ctas",
+                      "owner_action_required",
+                    ].map((h) => (
+                      <th
+                        key={h}
+                        className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {quarantine.models.map((m) => (
+                    <tr key={m.fridge_model_slug} className="bg-white dark:bg-slate-950">
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
+                        {m.fridge_model_slug}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.reason}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.public_status}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.mapped_filter_count}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.safe_cta_count}</td>
+                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                        {String(m.owner_action_required)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <FieldBlock
+            label="Evidence doc"
+            value={
+              quarantine.models.length > 0
+                ? quarantine.models.map((m) => m.internal_evidence_doc).join(", ")
+                : "UNKNOWN"
+            }
+          />
         </LaneCard>
-
-        <LaneCard title="8 · Next agent action (Amazon lane)" subtitle="Same as Amazon rescue agent guidance">
-          <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.amazon_rescue.next_agent_action}</p>
-        </LaneCard>
-
+        </DrilldownGroup>
+        <DrilldownGroup title="SEO & launch hygiene (lane 12)">
         <LaneCard
-          title="9 · Revenue / outbound clicks"
-          subtitle="click_events read-only snapshot (commission not connected in-repo)"
+          title="12 · Vertical launch / crawler / promo policy"
+          subtitle="Derived from launch-state, sitemap, layout robots, and catalog/homepage constants (read-only)"
         >
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill status="OK" />
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              data_mutation: {String(launchPolicy.data_mutation)}
+            </span>
+          </div>
+          <FieldBlock
+            label="generated_from"
+            value={
+              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
+                {launchPolicy.generated_from.map((s) => (
+                  <li key={s} className="font-mono">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+          <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-900/60">
+                <tr>
+                  {[
+                    "vertical",
+                    "wedge",
+                    "launch",
+                    "live",
+                    "sitemap_disc",
+                    "layout_noindex",
+                    "catalog_hub",
+                    "home_promo",
+                    "note",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {launchPolicy.rows.map((r) => (
+                  <tr key={r.vertical_slug} className="bg-white dark:bg-slate-950">
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
+                      {r.vertical_slug}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.wedge_catalog}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.launch_state}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{String(r.is_live)}</td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.sitemap_discovery_urls_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.layout_noindex_follow_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.catalog_hub_promo_expected)}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
+                      {String(r.homepage_browse_promo_expected)}
+                    </td>
+                    <td className="max-w-[14rem] px-3 py-2 text-[11px] leading-snug text-slate-700 dark:text-slate-300">
+                      {r.owner_note ?? "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Command Center neurons · full detail (lane 13)">
+        <LaneCard
+          title="13 · Command Center neurons"
+          subtitle="Owner-only signal wiring status (bright/dim/dark) without claiming unavailable ingest"
+        >
+          <FieldBlock
+            label="generated_from"
+            value={
+              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
+                {neurons.generated_from.map((s) => (
+                  <li key={s} className="font-mono">
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            }
+          />
+          {neurons.neurons.map((n) => (
+            <div key={n.neuron_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{n.title}</p>
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                  {n.connection_level}
+                </span>
+                <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  {n.status}
+                </span>
+              </div>
+              <FieldBlock label="Freshness method" value={n.freshness_method} />
+              {n.neuron_key === "trust_funnel_measurement" && n.trust_funnel_aggregate ? (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <FieldBlock label="artifact_source" value={n.trust_funnel_aggregate.artifact_source} />
+                  <FieldBlock label="status" value={n.trust_funnel_aggregate.status} />
+                  <FieldBlock label="fetched_at" value={n.trust_funnel_aggregate.fetched_at} />
+                  <FieldBlock
+                    label="event_totals"
+                    value={
+                      n.trust_funnel_aggregate.event_totals === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : `model_views=${n.trust_funnel_aggregate.event_totals.fridge_model_view}, chip_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_chip_click}, detail_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_detail_click_from_model}, filter_views=${n.trust_funnel_aggregate.event_totals.fridge_filter_view}, help_opens=${n.trust_funnel_aggregate.event_totals.fridge_help_opened}`
+                    }
+                  />
+                  <FieldBlock
+                    label="rates"
+                    value={
+                      n.trust_funnel_aggregate.rates === "UNKNOWN"
+                        ? "UNKNOWN"
+                        : `chip/model=${String(n.trust_funnel_aggregate.rates.chip_clicks_per_model_view)}, filter/chip=${String(n.trust_funnel_aggregate.rates.filter_views_per_chip_click)}, help/filter=${String(n.trust_funnel_aggregate.rates.help_opens_per_filter_view)}`
+                    }
+                  />
+                  <FieldBlock
+                    label="dimension_breakdowns"
+                    value={`top_model_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_model_slugs}, top_filter_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_filter_slugs}, quarantined_vs_normal=${n.trust_funnel_aggregate.dimension_breakdowns.quarantined_vs_normal}`}
+                  />
+                </div>
+              ) : null}
+              <FieldBlock
+                label="Proven facts"
+                value={
+                  n.proven_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {n.proven_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock
+                label="UNKNOWN facts"
+                value={
+                  n.unknown_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {n.unknown_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock label="Next owner action" value={n.next_owner_action} />
+            </div>
+          ))}
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Integrity Sentinel · full detail (lane 14)">
+        <LaneCard
+          title="14 · Integrity Sentinel"
+          subtitle="Watcher-of-watcher: validates source health, freshness, fallback, UNKNOWN honesty, and action confidence"
+        >
+          <FieldBlock
+            label="overall_status"
+            value={
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {integritySentinel.overall_status}
+              </span>
+            }
+          />
+          <FieldBlock label="action_confidence" value={integritySentinel.action_confidence} />
+          <FieldBlock label="owner_note" value={integritySentinel.owner_note} />
+          <FieldBlock label="data_mutation" value={String(integritySentinel.data_mutation)} />
+          {integritySentinel.providers.map((p) => (
+            <div key={p.provider_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
+              <p className="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">{p.provider_key}</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <FieldBlock label="source_class" value={p.source_class} />
+                <FieldBlock label="freshness_signal_present" value={String(p.freshness_signal_present)} />
+                <FieldBlock label="fallback_active" value={String(p.fallback_active)} />
+                <FieldBlock label="unknown_honesty" value={p.unknown_honesty} />
+                <FieldBlock label="action_safety" value={p.action_safety} />
+              </div>
+              <FieldBlock
+                label="proven_facts"
+                value={
+                  p.proven_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {p.proven_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock
+                label="unknown_facts"
+                value={
+                  p.unknown_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {p.unknown_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+            </div>
+          ))}
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup id="demand-drilldown" title="Demand drilldown (lanes 15, 16)">
+        <LaneCard
+          title="15 · Search Demand & gaps"
+          subtitle="Owner-only internal BuckParts search demand neuron (not GSC demand)"
+        >
+          <FieldBlock label="neuron_key" value={searchDemand.neuron_key} />
+          <FieldBlock label="connection_level" value={searchDemand.connection_level} />
+          <FieldBlock label="source_class" value={searchDemand.source_class} />
+          <FieldBlock label="freshness_method" value={searchDemand.freshness_method} />
+          <FieldBlock label="runtime_status" value={searchDemand.runtime_status} />
+          <FieldBlock
+            label="window_days"
+            value={
+              searchDemand.window_days === "UNKNOWN"
+                ? "UNKNOWN"
+                : `short=${searchDemand.window_days.short}, long=${searchDemand.window_days.long}`
+            }
+          />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <FieldBlock label="search_events_last_7d" value={String(searchDemand.search_events_last_7d)} />
+            <FieldBlock label="search_events_last_30d" value={String(searchDemand.search_events_last_30d)} />
+            <FieldBlock label="zero_result_last_7d" value={String(searchDemand.zero_result_last_7d)} />
+            <FieldBlock label="zero_result_last_30d" value={String(searchDemand.zero_result_last_30d)} />
+            <FieldBlock label="actionable_search_gaps" value={String(searchDemand.actionable_search_gaps)} />
+          </div>
+          <FieldBlock
+            label="proven_facts"
+            value={
+              searchDemand.proven_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {searchDemand.proven_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock
+            label="unknown_facts"
+            value={
+              searchDemand.unknown_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {searchDemand.unknown_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock label="next_owner_action" value={searchDemand.next_owner_action} />
+        </LaneCard>
+        <LaneCard
+          title="16 · GSC external demand"
+          subtitle="Owner-only external demand neuron from durable artifact with local/manual fallbacks"
+        >
+          <FieldBlock label="neuron_key" value={gscExternalDemand.neuron_key} />
+          <FieldBlock label="connection_level" value={gscExternalDemand.connection_level} />
+          <FieldBlock label="source_class" value={gscExternalDemand.source_class} />
+          <FieldBlock label="artifact_source" value={gscExternalDemand.artifact_source} />
+          <FieldBlock label="status" value={gscExternalDemand.status} />
+          <FieldBlock label="fetched_at" value={gscExternalDemand.fetched_at} />
+          <FieldBlock label="freshness_method" value={gscExternalDemand.freshness_method} />
+          <FieldBlock label="export_file_used" value={gscExternalDemand.export_file_used} />
+          <FieldBlock label="export_date" value={gscExternalDemand.export_date} />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <FieldBlock label="total_impressions" value={String(gscExternalDemand.total_impressions)} />
+            <FieldBlock label="total_clicks" value={String(gscExternalDemand.total_clicks)} />
+            <FieldBlock label="average_ctr" value={String(gscExternalDemand.average_ctr)} />
+            <FieldBlock label="average_position" value={String(gscExternalDemand.average_position)} />
+          </div>
+          <FieldBlock
+            label="top_queries_by_impressions"
+            value={
+              gscExternalDemand.top_queries_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_queries_by_impressions.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_queries_by_clicks"
+            value={
+              gscExternalDemand.top_queries_by_clicks === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_queries_by_clicks.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · clicks={q.clicks} · impressions={q.impressions} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_pages_by_impressions"
+            value={
+              gscExternalDemand.top_pages_by_impressions === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_pages_by_impressions.map((p) => (
+                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
+                      {p.key} · impressions={p.impressions} · clicks={p.clicks} · ctr={String(p.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="top_pages_by_clicks"
+            value={
+              gscExternalDemand.top_pages_by_clicks === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.top_pages_by_clicks.map((p) => (
+                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
+                      {p.key} · clicks={p.clicks} · impressions={p.impressions} · ctr={String(p.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="high_impression_low_click_opportunities"
+            value={
+              gscExternalDemand.high_impression_low_click_opportunities === "UNKNOWN" ? (
+                "UNKNOWN"
+              ) : (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.high_impression_low_click_opportunities.map((q) => (
+                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
+                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
+                    </li>
+                  ))}
+                </ul>
+              )
+            }
+          />
+          <FieldBlock
+            label="proven_facts"
+            value={
+              gscExternalDemand.proven_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.proven_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock
+            label="unknown_facts"
+            value={
+              gscExternalDemand.unknown_facts.length > 0 ? (
+                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                  {gscExternalDemand.unknown_facts.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+              ) : (
+                "none"
+              )
+            }
+          />
+          <FieldBlock label="next_owner_action" value={gscExternalDemand.next_owner_action} />
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Monitor drilldown · revenue / outbound clicks (lane 9)">
+          <LaneCard
+            title="9 · Revenue / outbound clicks"
+            subtitle="click_events read-only snapshot (commission not connected in-repo)"
+          >
           <div className="flex flex-wrap gap-2">
             <StatusPill status={v2.revenue_snapshot.status} />
             {v2.revenue_snapshot.click_visibility ? (
@@ -549,492 +1319,27 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
           <FieldBlock label="Next agent action" value={v2.revenue_snapshot.next_agent_action} />
           <FieldBlock label="Next owner action" value={v2.revenue_snapshot.next_owner_action} />
         </LaneCard>
-
-        <LaneCard title="10 · Deploy / live-site status" subtitle="Placeholder — not implemented in repo">
-          <div className="flex flex-wrap gap-2">
-            <StatusPill status={v2.deploy_live_site_status.status} />
-          </div>
-          {v2.deploy_live_site_status.blocker ? (
-            <p className="text-xs text-slate-600 dark:text-slate-400">{v2.deploy_live_site_status.blocker}</p>
-          ) : null}
-          <FieldBlock label="Next owner action" value={v2.deploy_live_site_status.next_owner_action} />
-        </LaneCard>
-
-        <LaneCard title="11 · Quarantined fridge models" subtitle="Owner-only review queue (read-only)">
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusPill status={quarantine.models.length > 0 ? "ATTENTION" : "OK"} />
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              data_mutation: {String(quarantine.data_mutation)}
-            </span>
-          </div>
-          {quarantine.models.length === 0 ? (
-            <p className="text-xs text-slate-600 dark:text-slate-400">No quarantined fridge models.</p>
-          ) : (
-            <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
-              <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
-                <thead className="bg-slate-50 dark:bg-slate-900/60">
-                  <tr>
-                    {[
-                      "slug",
-                      "reason",
-                      "public_status",
-                      "mapped_filters",
-                      "safe_ctas",
-                      "owner_action_required",
-                    ].map((h) => (
-                      <th
-                        key={h}
-                        className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {quarantine.models.map((m) => (
-                    <tr key={m.fridge_model_slug} className="bg-white dark:bg-slate-950">
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
-                        {m.fridge_model_slug}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.reason}</td>
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.public_status}</td>
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.mapped_filter_count}</td>
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{m.safe_cta_count}</td>
-                      <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
-                        {String(m.owner_action_required)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        </DrilldownGroup>
+        <DrilldownGroup title="Debug · deploy placeholder & raw JSON (lane 10)">
+          <LaneCard title="10 · Deploy / live-site status" subtitle="Placeholder — not implemented in repo">
+            <div className="flex flex-wrap gap-2">
+              <StatusPill status={v2.deploy_live_site_status.status} />
             </div>
-          )}
-          <FieldBlock
-            label="Evidence doc"
-            value={
-              quarantine.models.length > 0
-                ? quarantine.models.map((m) => m.internal_evidence_doc).join(", ")
-                : "UNKNOWN"
-            }
-          />
-        </LaneCard>
-
-        <LaneCard
-          title="12 · Vertical launch / crawler / promo policy"
-          subtitle="Derived from launch-state, sitemap, layout robots, and catalog/homepage constants (read-only)"
-        >
-          <div className="flex flex-wrap items-center gap-2">
-            <StatusPill status="OK" />
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              data_mutation: {String(launchPolicy.data_mutation)}
-            </span>
-          </div>
-          <FieldBlock
-            label="generated_from"
-            value={
-              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
-                {launchPolicy.generated_from.map((s) => (
-                  <li key={s} className="font-mono">
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            }
-          />
-          <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
-              <thead className="bg-slate-50 dark:bg-slate-900/60">
-                <tr>
-                  {[
-                    "vertical",
-                    "wedge",
-                    "launch",
-                    "live",
-                    "sitemap_disc",
-                    "layout_noindex",
-                    "catalog_hub",
-                    "home_promo",
-                    "note",
-                  ].map((h) => (
-                    <th
-                      key={h}
-                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {launchPolicy.rows.map((r) => (
-                  <tr key={r.vertical_slug} className="bg-white dark:bg-slate-950">
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px] text-slate-900 dark:text-slate-100">
-                      {r.vertical_slug}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.wedge_catalog}</td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.launch_state}</td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{String(r.is_live)}</td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
-                      {String(r.sitemap_discovery_urls_expected)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
-                      {String(r.layout_noindex_follow_expected)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
-                      {String(r.catalog_hub_promo_expected)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">
-                      {String(r.homepage_browse_promo_expected)}
-                    </td>
-                    <td className="max-w-[14rem] px-3 py-2 text-[11px] leading-snug text-slate-700 dark:text-slate-300">
-                      {r.owner_note ?? "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </LaneCard>
-
-        <LaneCard
-          title="13 · Command Center neurons"
-          subtitle="Owner-only signal wiring status (bright/dim/dark) without claiming unavailable ingest"
-        >
-          <FieldBlock
-            label="generated_from"
-            value={
-              <ul className="list-inside list-disc space-y-0.5 text-xs text-slate-700 dark:text-slate-300">
-                {neurons.generated_from.map((s) => (
-                  <li key={s} className="font-mono">
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            }
-          />
-          {neurons.neurons.map((n) => (
-            <div key={n.neuron_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{n.title}</p>
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                  {n.connection_level}
-                </span>
-                <span className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  {n.status}
-                </span>
-              </div>
-              <FieldBlock label="Freshness method" value={n.freshness_method} />
-              {n.neuron_key === "trust_funnel_measurement" && n.trust_funnel_aggregate ? (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <FieldBlock label="artifact_source" value={n.trust_funnel_aggregate.artifact_source} />
-                  <FieldBlock label="status" value={n.trust_funnel_aggregate.status} />
-                  <FieldBlock label="fetched_at" value={n.trust_funnel_aggregate.fetched_at} />
-                  <FieldBlock
-                    label="event_totals"
-                    value={
-                      n.trust_funnel_aggregate.event_totals === "UNKNOWN"
-                        ? "UNKNOWN"
-                        : `model_views=${n.trust_funnel_aggregate.event_totals.fridge_model_view}, chip_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_chip_click}, detail_clicks=${n.trust_funnel_aggregate.event_totals.fridge_filter_detail_click_from_model}, filter_views=${n.trust_funnel_aggregate.event_totals.fridge_filter_view}, help_opens=${n.trust_funnel_aggregate.event_totals.fridge_help_opened}`
-                    }
-                  />
-                  <FieldBlock
-                    label="rates"
-                    value={
-                      n.trust_funnel_aggregate.rates === "UNKNOWN"
-                        ? "UNKNOWN"
-                        : `chip/model=${String(n.trust_funnel_aggregate.rates.chip_clicks_per_model_view)}, filter/chip=${String(n.trust_funnel_aggregate.rates.filter_views_per_chip_click)}, help/filter=${String(n.trust_funnel_aggregate.rates.help_opens_per_filter_view)}`
-                    }
-                  />
-                  <FieldBlock
-                    label="dimension_breakdowns"
-                    value={`top_model_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_model_slugs}, top_filter_slugs=${n.trust_funnel_aggregate.dimension_breakdowns.top_filter_slugs}, quarantined_vs_normal=${n.trust_funnel_aggregate.dimension_breakdowns.quarantined_vs_normal}`}
-                  />
-                </div>
-              ) : null}
-              <FieldBlock
-                label="Proven facts"
-                value={
-                  n.proven_facts.length > 0 ? (
-                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                      {n.proven_facts.map((f) => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "none"
-                  )
-                }
-              />
-              <FieldBlock
-                label="UNKNOWN facts"
-                value={
-                  n.unknown_facts.length > 0 ? (
-                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                      {n.unknown_facts.map((f) => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "none"
-                  )
-                }
-              />
-              <FieldBlock label="Next owner action" value={n.next_owner_action} />
-            </div>
-          ))}
-        </LaneCard>
-
-        <LaneCard
-          title="14 · Integrity Sentinel"
-          subtitle="Watcher-of-watcher: validates source health, freshness, fallback, UNKNOWN honesty, and action confidence"
-        >
-          <FieldBlock
-            label="overall_status"
-            value={
-              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-                {integritySentinel.overall_status}
-              </span>
-            }
-          />
-          <FieldBlock label="action_confidence" value={integritySentinel.action_confidence} />
-          <FieldBlock label="owner_note" value={integritySentinel.owner_note} />
-          <FieldBlock label="data_mutation" value={String(integritySentinel.data_mutation)} />
-          {integritySentinel.providers.map((p) => (
-            <div key={p.provider_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
-              <p className="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">{p.provider_key}</p>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <FieldBlock label="source_class" value={p.source_class} />
-                <FieldBlock label="freshness_signal_present" value={String(p.freshness_signal_present)} />
-                <FieldBlock label="fallback_active" value={String(p.fallback_active)} />
-                <FieldBlock label="unknown_honesty" value={p.unknown_honesty} />
-                <FieldBlock label="action_safety" value={p.action_safety} />
-              </div>
-              <FieldBlock
-                label="proven_facts"
-                value={
-                  p.proven_facts.length > 0 ? (
-                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                      {p.proven_facts.map((f) => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "none"
-                  )
-                }
-              />
-              <FieldBlock
-                label="unknown_facts"
-                value={
-                  p.unknown_facts.length > 0 ? (
-                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                      {p.unknown_facts.map((f) => (
-                        <li key={f}>{f}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "none"
-                  )
-                }
-              />
-            </div>
-          ))}
-        </LaneCard>
-
-        <LaneCard
-          title="15 · Search Demand & gaps"
-          subtitle="Owner-only internal BuckParts search demand neuron (not GSC demand)"
-        >
-          <FieldBlock label="neuron_key" value={searchDemand.neuron_key} />
-          <FieldBlock label="connection_level" value={searchDemand.connection_level} />
-          <FieldBlock label="source_class" value={searchDemand.source_class} />
-          <FieldBlock label="freshness_method" value={searchDemand.freshness_method} />
-          <FieldBlock label="runtime_status" value={searchDemand.runtime_status} />
-          <FieldBlock
-            label="window_days"
-            value={
-              searchDemand.window_days === "UNKNOWN"
-                ? "UNKNOWN"
-                : `short=${searchDemand.window_days.short}, long=${searchDemand.window_days.long}`
-            }
-          />
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <FieldBlock label="search_events_last_7d" value={String(searchDemand.search_events_last_7d)} />
-            <FieldBlock label="search_events_last_30d" value={String(searchDemand.search_events_last_30d)} />
-            <FieldBlock label="zero_result_last_7d" value={String(searchDemand.zero_result_last_7d)} />
-            <FieldBlock label="zero_result_last_30d" value={String(searchDemand.zero_result_last_30d)} />
-            <FieldBlock label="actionable_search_gaps" value={String(searchDemand.actionable_search_gaps)} />
-          </div>
-          <FieldBlock
-            label="proven_facts"
-            value={
-              searchDemand.proven_facts.length > 0 ? (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {searchDemand.proven_facts.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-              ) : (
-                "none"
-              )
-            }
-          />
-          <FieldBlock
-            label="unknown_facts"
-            value={
-              searchDemand.unknown_facts.length > 0 ? (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {searchDemand.unknown_facts.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-              ) : (
-                "none"
-              )
-            }
-          />
-          <FieldBlock label="next_owner_action" value={searchDemand.next_owner_action} />
-        </LaneCard>
-
-        <LaneCard
-          title="16 · GSC external demand"
-          subtitle="Owner-only external demand neuron from durable artifact with local/manual fallbacks"
-        >
-          <FieldBlock label="neuron_key" value={gscExternalDemand.neuron_key} />
-          <FieldBlock label="connection_level" value={gscExternalDemand.connection_level} />
-          <FieldBlock label="source_class" value={gscExternalDemand.source_class} />
-          <FieldBlock label="artifact_source" value={gscExternalDemand.artifact_source} />
-          <FieldBlock label="status" value={gscExternalDemand.status} />
-          <FieldBlock label="fetched_at" value={gscExternalDemand.fetched_at} />
-          <FieldBlock label="freshness_method" value={gscExternalDemand.freshness_method} />
-          <FieldBlock label="export_file_used" value={gscExternalDemand.export_file_used} />
-          <FieldBlock label="export_date" value={gscExternalDemand.export_date} />
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <FieldBlock label="total_impressions" value={String(gscExternalDemand.total_impressions)} />
-            <FieldBlock label="total_clicks" value={String(gscExternalDemand.total_clicks)} />
-            <FieldBlock label="average_ctr" value={String(gscExternalDemand.average_ctr)} />
-            <FieldBlock label="average_position" value={String(gscExternalDemand.average_position)} />
-          </div>
-          <FieldBlock
-            label="top_queries_by_impressions"
-            value={
-              gscExternalDemand.top_queries_by_impressions === "UNKNOWN" ? (
-                "UNKNOWN"
-              ) : (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.top_queries_by_impressions.map((q) => (
-                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
-                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          />
-          <FieldBlock
-            label="top_queries_by_clicks"
-            value={
-              gscExternalDemand.top_queries_by_clicks === "UNKNOWN" ? (
-                "UNKNOWN"
-              ) : (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.top_queries_by_clicks.map((q) => (
-                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
-                      {q.key} · clicks={q.clicks} · impressions={q.impressions} · ctr={String(q.ctr)}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          />
-          <FieldBlock
-            label="top_pages_by_impressions"
-            value={
-              gscExternalDemand.top_pages_by_impressions === "UNKNOWN" ? (
-                "UNKNOWN"
-              ) : (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.top_pages_by_impressions.map((p) => (
-                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
-                      {p.key} · impressions={p.impressions} · clicks={p.clicks} · ctr={String(p.ctr)}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          />
-          <FieldBlock
-            label="top_pages_by_clicks"
-            value={
-              gscExternalDemand.top_pages_by_clicks === "UNKNOWN" ? (
-                "UNKNOWN"
-              ) : (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.top_pages_by_clicks.map((p) => (
-                    <li key={`${p.key}-${p.impressions}-${p.clicks}`}>
-                      {p.key} · clicks={p.clicks} · impressions={p.impressions} · ctr={String(p.ctr)}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          />
-          <FieldBlock
-            label="high_impression_low_click_opportunities"
-            value={
-              gscExternalDemand.high_impression_low_click_opportunities === "UNKNOWN" ? (
-                "UNKNOWN"
-              ) : (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.high_impression_low_click_opportunities.map((q) => (
-                    <li key={`${q.key}-${q.impressions}-${q.clicks}`}>
-                      {q.key} · impressions={q.impressions} · clicks={q.clicks} · ctr={String(q.ctr)}
-                    </li>
-                  ))}
-                </ul>
-              )
-            }
-          />
-          <FieldBlock
-            label="proven_facts"
-            value={
-              gscExternalDemand.proven_facts.length > 0 ? (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.proven_facts.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-              ) : (
-                "none"
-              )
-            }
-          />
-          <FieldBlock
-            label="unknown_facts"
-            value={
-              gscExternalDemand.unknown_facts.length > 0 ? (
-                <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
-                  {gscExternalDemand.unknown_facts.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-              ) : (
-                "none"
-              )
-            }
-          />
-          <FieldBlock label="next_owner_action" value={gscExternalDemand.next_owner_action} />
-        </LaneCard>
-
-        <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">
-          <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-slate-800 dark:text-slate-200">
-            Raw JSON · command_center_v2 (debug)
-          </summary>
-          <pre className="max-h-[480px] overflow-auto border-t border-slate-200 p-4 text-[11px] leading-snug text-slate-800 dark:border-slate-700 dark:text-slate-200">
-            {JSON.stringify(v2, null, 2)}
-          </pre>
-        </details>
+            {v2.deploy_live_site_status.blocker ? (
+              <p className="text-xs text-slate-600 dark:text-slate-400">{v2.deploy_live_site_status.blocker}</p>
+            ) : null}
+            <FieldBlock label="Next owner action" value={v2.deploy_live_site_status.next_owner_action} />
+          </LaneCard>
+          <details className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">
+            <summary className="cursor-pointer select-none px-4 py-3 text-sm font-medium text-slate-800 dark:text-slate-200">
+              Raw JSON · command_center_v2 (debug)
+            </summary>
+            <pre className="max-h-[480px] overflow-auto border-t border-slate-200 p-4 text-[11px] leading-snug text-slate-800 dark:border-slate-700 dark:text-slate-200">
+              {JSON.stringify(v2, null, 2)}
+            </pre>
+          </details>
+        </DrilldownGroup>
+        </div>
       </main>
     </div>
   );
