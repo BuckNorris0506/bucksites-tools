@@ -160,6 +160,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const quarantine = report.owner_quarantined_fridge_models;
   const launchPolicy = report.owner_vertical_launch_policy;
   const neurons = report.owner_command_center_neurons;
+  const integritySentinel = report.owner_integrity_sentinel;
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -751,6 +752,64 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
                 }
               />
               <FieldBlock label="Next owner action" value={n.next_owner_action} />
+            </div>
+          ))}
+        </LaneCard>
+
+        <LaneCard
+          title="14 · Integrity Sentinel"
+          subtitle="Watcher-of-watcher: validates source health, freshness, fallback, UNKNOWN honesty, and action confidence"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+              {integritySentinel.overall_status}
+            </span>
+            <span className="text-xs text-slate-600 dark:text-slate-300">
+              action_confidence: {integritySentinel.action_confidence}
+            </span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              data_mutation: {String(integritySentinel.data_mutation)}
+            </span>
+          </div>
+          <FieldBlock label="Owner note" value={integritySentinel.owner_note} />
+          {integritySentinel.providers.map((p) => (
+            <div key={p.provider_key} className="space-y-2 rounded-md border border-slate-200 p-3 dark:border-slate-700">
+              <p className="font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">{p.provider_key}</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <FieldBlock label="source_class" value={p.source_class} />
+                <FieldBlock label="freshness_signal_present" value={String(p.freshness_signal_present)} />
+                <FieldBlock label="fallback_active" value={String(p.fallback_active)} />
+                <FieldBlock label="unknown_honesty" value={p.unknown_honesty} />
+                <FieldBlock label="action_safety" value={p.action_safety} />
+              </div>
+              <FieldBlock
+                label="proven_facts"
+                value={
+                  p.proven_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {p.proven_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
+              <FieldBlock
+                label="unknown_facts"
+                value={
+                  p.unknown_facts.length > 0 ? (
+                    <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                      {p.unknown_facts.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    "none"
+                  )
+                }
+              />
             </div>
           ))}
         </LaneCard>
