@@ -11,7 +11,7 @@ export type GscClientResult =
       ok: true;
       property: string;
       getAccessToken: () => Promise<string>;
-      auth_mode: "env_json" | "key_file";
+      auth_mode: "oauth_refresh_token" | "env_json" | "key_file";
     }
   | {
       ok: false;
@@ -93,12 +93,46 @@ async function fetchAccessToken(serviceAccount: ServiceAccount): Promise<string>
   return parsed.access_token;
 }
 
+type OAuthRefreshTokenConfig = {
+  client_id: string;
+  client_secret: string;
+  refresh_token: string;
+};
+
+async function fetchAccessTokenFromRefreshToken(args: {
+  oauth: OAuthRefreshTokenConfig;
+  fetchImpl: typeof fetch;
+}): Promise<string> {
+  const body = new URLSearchParams({
+    client_id: args.oauth.client_id,
+    client_secret: args.oauth.client_secret,
+    refresh_token: args.oauth.refresh_token,
+    grant_type: "refresh_token",
+    scope: READONLY_SCOPE,
+  });
+  const response = await args.fetchImpl(OAUTH_TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch OAuth access token.");
+  }
+  const parsed = (await response.json()) as { access_token?: string };
+  if (typeof parsed.access_token !== "string" || parsed.access_token.length === 0) {
+    throw new Error("OAuth access token missing from response.");
+  }
+  return parsed.access_token;
+}
+
 export function createSearchConsoleClientFromEnv(args?: {
   env?: EnvSource;
   readKeyFile?: (absPath: string) => string;
+  fetchImpl?: typeof fetch;
 }): GscClientResult {
   const env = args?.env ?? process.env;
   const readKeyFile = args?.readKeyFile ?? ((absPath: string) => readFileSync(absPath, "utf8"));
+  const fetchImpl = args?.fetchImpl ?? fetch;
   const property = env.GSC_PROPERTY_SITE_URL?.trim() ?? "";
   if (!property) {
     return {
@@ -106,6 +140,46 @@ export function createSearchConsoleClientFromEnv(args?: {
       status: "UNKNOWN_CONFIG",
       reason: "GSC_PROPERTY_SITE_URL is not set.",
       log_safe_details: ["Set GSC_PROPERTY_SITE_URL to a Search Console property URL."],
+    };
+  }
+
+  const oauthClientId = env.GSC_OAUTH_CLIENT_ID?.trim() ?? "";
+  const oauthClientSecret = env.GSC_OAUTH_CLIENT_SECRET?.trim() ?? "";
+  const oauthRefreshToken = env.GSC_OAUTH_REFRESH_TOKEN?.trim() ?? "";
+  const oauthPresence = {
+    GSC_OAUTH_CLIENT_ID: oauthClientId.length > 0,
+    GSC_OAUTH_CLIENT_SECRET: oauthClientSecret.length > 0,
+    GSC_OAUTH_REFRESH_TOKEN: oauthRefreshToken.length > 0,
+  };
+  const oauthPresentCount = Object.values(oauthPresence).filter(Boolean).length;
+  if (oauthPresentCount === 3) {
+    return {
+      ok: true,
+      property,
+      getAccessToken: () =>
+        fetchAccessTokenFromRefreshToken({
+          oauth: {
+            client_id: oauthClientId,
+            client_secret: oauthClientSecret,
+            refresh_token: oauthRefreshToken,
+          },
+          fetchImpl,
+        }),
+      auth_mode: "oauth_refresh_token",
+    };
+  }
+  if (oauthPresentCount > 0) {
+    const missing = Object.entries(oauthPresence)
+      .filter(([, present]) => !present)
+      .map(([name]) => name);
+    return {
+      ok: false,
+      status: "UNKNOWN_CONFIG",
+      reason: "OAuth refresh-token configuration is partial.",
+      log_safe_details: [
+        `Missing required OAuth env vars: ${missing.join(", ")}`,
+        "Provide all OAuth vars or remove partial OAuth vars to use service-account auth modes.",
+      ],
     };
   }
 
