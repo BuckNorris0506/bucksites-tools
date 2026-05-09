@@ -13,11 +13,71 @@ export type GitResolveResult = {
   origin_main_commit: string | "UNKNOWN";
 };
 
+export type LiveSiteTargetSelection = {
+  primary_target_base_url: string | "UNKNOWN";
+  target_source: LiveSiteMonitorV1["target_source"];
+  custom_domain_base_url: string | "UNKNOWN";
+  custom_domain_checked: boolean;
+  netlify_fallback_base_url: string | "UNKNOWN";
+  netlify_domain_checked: boolean | "UNKNOWN";
+};
+
 export function trimSiteBaseUrl(raw: string | undefined): string | null {
   if (typeof raw !== "string") return null;
   const t = raw.trim();
   if (t.length === 0) return null;
   return t.replace(/\/+$/, "");
+}
+
+function isBuckpartsCustomDomain(base: string | "UNKNOWN"): boolean {
+  if (base === "UNKNOWN") return false;
+  try {
+    return new URL(base).hostname.toLowerCase() === "buckparts.com";
+  } catch {
+    return false;
+  }
+}
+
+function isNetlifyDomain(base: string | "UNKNOWN"): boolean {
+  if (base === "UNKNOWN") return false;
+  try {
+    return new URL(base).hostname.toLowerCase().endsWith(".netlify.app");
+  } catch {
+    return false;
+  }
+}
+
+export function resolveLiveSiteSmokeTargets(env: NodeJS.ProcessEnv): LiveSiteTargetSelection {
+  const explicit = trimSiteBaseUrl(env.LIVE_SITE_SMOKE_TARGET_URL);
+  const business = trimSiteBaseUrl(env.BUCKPARTS_PUBLIC_SITE_URL);
+  const legacy = trimSiteBaseUrl(env.NEXT_PUBLIC_SITE_URL);
+  const primary = explicit ?? business ?? legacy;
+  const target_source: LiveSiteTargetSelection["target_source"] = explicit
+    ? "LIVE_SITE_SMOKE_TARGET_URL"
+    : business
+      ? "BUCKPARTS_PUBLIC_SITE_URL"
+      : legacy
+        ? "NEXT_PUBLIC_SITE_URL"
+        : "UNKNOWN";
+  const custom = isBuckpartsCustomDomain(primary ?? "UNKNOWN")
+    ? primary!
+    : isBuckpartsCustomDomain(business ?? "UNKNOWN")
+      ? business!
+      : "UNKNOWN";
+  const netlify = isNetlifyDomain(primary ?? "UNKNOWN")
+    ? primary!
+    : isNetlifyDomain(legacy ?? "UNKNOWN")
+      ? legacy!
+      : "UNKNOWN";
+
+  return {
+    primary_target_base_url: primary ?? "UNKNOWN",
+    target_source,
+    custom_domain_base_url: custom,
+    custom_domain_checked: primary != null && isBuckpartsCustomDomain(primary),
+    netlify_fallback_base_url: netlify,
+    netlify_domain_checked: primary != null && isNetlifyDomain(primary) ? true : netlify === "UNKNOWN" ? "UNKNOWN" : false,
+  };
 }
 
 export function computeDeploySyncStatus(args: {
@@ -124,11 +184,13 @@ export async function buildLiveSiteMonitorArtifact(args: {
   source: string;
   execSync: (cmd: string, o: { cwd: string; encoding: "utf8" }) => string;
 }): Promise<LiveSiteMonitorV1> {
-  const base = trimSiteBaseUrl(args.env.NEXT_PUBLIC_SITE_URL);
+  const target = resolveLiveSiteSmokeTargets(args.env);
+  const base = target.primary_target_base_url === "UNKNOWN" ? null : target.primary_target_base_url;
   const unknownFactsBase = [
     "Live-site smoke uses outbound GET only — it does not trigger Netlify deploys or call Netlify APIs.",
     "deployed_commit is never inferred from local HEAD; set LIVE_SITE_DEPLOY_COMMIT only when operator-proven.",
     "Route markers are minimal HTML substring checks — false negatives remain possible.",
+    "Only the primary live-site smoke target is probed in this read-only check; secondary domain health remains UNKNOWN unless it is selected as primary.",
   ];
   const provenFacts: string[] = [];
 
@@ -137,6 +199,12 @@ export async function buildLiveSiteMonitorArtifact(args: {
       contract: LIVE_SITE_MONITOR_CONTRACT,
       checked_at: args.nowIso,
       source: args.source,
+      primary_target_base_url: "UNKNOWN",
+      target_source: target.target_source,
+      custom_domain_base_url: target.custom_domain_base_url,
+      custom_domain_checked: false,
+      netlify_fallback_base_url: target.netlify_fallback_base_url,
+      netlify_domain_checked: target.netlify_domain_checked,
       target_base_url: "UNKNOWN",
       runtime_status: "UNKNOWN_CONFIG",
       routes: [],
@@ -144,15 +212,17 @@ export async function buildLiveSiteMonitorArtifact(args: {
       origin_main_commit: "UNKNOWN",
       deployed_commit: "UNKNOWN",
       deploy_sync_status: "UNKNOWN_DEPLOY_COMMIT",
-      proven_facts: ["NEXT_PUBLIC_SITE_URL is missing or empty after trim — smoke checks were not run."],
+      proven_facts: ["No live-site smoke target env var is configured after trim — smoke checks were not run."],
       unknown_facts: [
         ...unknownFactsBase,
-        "UNKNOWN_CONFIG: set NEXT_PUBLIC_SITE_URL to the production origin (no trailing slash) before running smoke.",
+        "UNKNOWN_CONFIG: set LIVE_SITE_SMOKE_TARGET_URL=https://buckparts.com for the primary production custom-domain check; legacy fallback NEXT_PUBLIC_SITE_URL is still supported.",
       ],
     };
   }
 
   provenFacts.push(`Target base URL: ${base}.`);
+  provenFacts.push(`Target source: ${target.target_source}.`);
+  provenFacts.push(`custom_domain_checked=${String(target.custom_domain_checked)}; netlify_domain_checked=${String(target.netlify_domain_checked)}.`);
   provenFacts.push(`Allowlisted paths: ${LIVE_SITE_SMOKE_ALLOWLISTED_PATHS.join(", ")}.`);
 
   const routes: LiveSiteSmokeRouteResultV1[] = [];
@@ -192,6 +262,12 @@ export async function buildLiveSiteMonitorArtifact(args: {
   provenFacts.push(`deploy_sync_status=${deploy_sync_status}.`);
 
   const unknown_facts = [...unknownFactsBase];
+  if (!target.custom_domain_checked) {
+    unknown_facts.push("BuckParts.com custom-domain route health is UNKNOWN unless LIVE_SITE_SMOKE_TARGET_URL or BUCKPARTS_PUBLIC_SITE_URL points to https://buckparts.com.");
+  }
+  if (target.netlify_domain_checked !== true) {
+    unknown_facts.push("Netlify fallback domain route health is UNKNOWN in this run unless the Netlify URL is selected as the primary target.");
+  }
   if (deployed_commit === "UNKNOWN") {
     unknown_facts.push("Deploy sync cannot be proven against production without LIVE_SITE_DEPLOY_COMMIT or other proven deploy SHA source.");
   }
@@ -208,6 +284,12 @@ export async function buildLiveSiteMonitorArtifact(args: {
     contract: LIVE_SITE_MONITOR_CONTRACT,
     checked_at: args.nowIso,
     source: args.source,
+    primary_target_base_url: base,
+    target_source: target.target_source,
+    custom_domain_base_url: target.custom_domain_base_url,
+    custom_domain_checked: target.custom_domain_checked,
+    netlify_fallback_base_url: target.netlify_fallback_base_url,
+    netlify_domain_checked: target.netlify_domain_checked,
     target_base_url: base,
     runtime_status,
     routes,

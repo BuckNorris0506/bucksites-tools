@@ -194,6 +194,14 @@ export type LiveSiteMonitorV1 = {
   contract: "live_site_monitor_v1";
   checked_at: string;
   source: string;
+  /** Primary checked target. Prefer LIVE_SITE_SMOKE_TARGET_URL / BUCKPARTS_PUBLIC_SITE_URL; legacy fallback is NEXT_PUBLIC_SITE_URL. */
+  primary_target_base_url: string;
+  target_source: "LIVE_SITE_SMOKE_TARGET_URL" | "BUCKPARTS_PUBLIC_SITE_URL" | "NEXT_PUBLIC_SITE_URL" | "UNKNOWN";
+  custom_domain_base_url: string | "UNKNOWN";
+  custom_domain_checked: boolean;
+  netlify_fallback_base_url: string | "UNKNOWN";
+  netlify_domain_checked: boolean | "UNKNOWN";
+  /** Backward-compatible alias for primary_target_base_url. */
   target_base_url: string;
   runtime_status: "OK" | "UNKNOWN_CONFIG" | "ATTENTION";
   routes: LiveSiteSmokeRouteResultV1[];

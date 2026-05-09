@@ -86,6 +86,9 @@ export type BuckpartsDailyOperatorReport = {
   };
   site_health: {
     live_site_smoke: LiveSiteMonitorV1 | null;
+    primary_target_base_url: string | "UNKNOWN";
+    custom_domain_checked: boolean | "UNKNOWN";
+    netlify_domain_checked: boolean | "UNKNOWN";
     deploy_sync_status: LiveSiteMonitorV1["deploy_sync_status"] | "UNKNOWN";
     route_health_status: RuntimeStatus;
   };
@@ -454,6 +457,9 @@ export async function buildBuckpartsDailyOperatorReport(
     },
     site_health: {
       live_site_smoke: liveSite,
+      primary_target_base_url: liveSite?.primary_target_base_url ?? liveSite?.target_base_url ?? "UNKNOWN",
+      custom_domain_checked: liveSite?.custom_domain_checked ?? "UNKNOWN",
+      netlify_domain_checked: liveSite?.netlify_domain_checked ?? "UNKNOWN",
       deploy_sync_status: liveSite?.deploy_sync_status ?? "UNKNOWN",
       route_health_status: liveStatus,
     },
@@ -528,8 +534,9 @@ function routeSummary(mon: LiveSiteMonitorV1 | null): string {
 }
 
 function siteTargetWarning(report: BuckpartsDailyOperatorReport, canonicalProductionUrl: string): string | null {
-  const target = report.site_health.live_site_smoke?.target_base_url;
-  if (!target || target === "UNKNOWN" || target === canonicalProductionUrl) return null;
+  const target = report.site_health.primary_target_base_url;
+  if (report.site_health.custom_domain_checked === true) return null;
+  if (!target || target === "UNKNOWN") return `Production custom domain check (${canonicalProductionUrl}) is UNKNOWN.`;
   return `Live-site smoke target is ${target}; production custom domain check (${canonicalProductionUrl}) is UNKNOWN.`;
 }
 
@@ -572,7 +579,8 @@ export function formatBuckpartsDailyOperatorHumanReport(
     "",
     "SITE HEALTH",
     `- Routes: ${routeSummary(report.site_health.live_site_smoke)}; status ${report.site_health.route_health_status}.`,
-    `- Smoke target: ${report.site_health.live_site_smoke?.target_base_url ?? "UNKNOWN"}.`,
+    `- Primary target: ${report.site_health.primary_target_base_url}.`,
+    `- Custom domain checked: ${String(report.site_health.custom_domain_checked)}; Netlify domain checked: ${String(report.site_health.netlify_domain_checked)}.`,
     `- Deploy sync: ${deploySync}.`,
     "",
     "NEXT ACTION",

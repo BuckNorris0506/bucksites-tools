@@ -291,6 +291,12 @@ function liveSite(overrides: Partial<LiveSiteMonitorV1> = {}): LiveSiteMonitorV1
     contract: "live_site_monitor_v1",
     checked_at: fixedNow().toISOString(),
     source: "scripts/live-site-smoke-check.ts",
+    primary_target_base_url: "https://example.com",
+    target_source: "NEXT_PUBLIC_SITE_URL",
+    custom_domain_base_url: "UNKNOWN",
+    custom_domain_checked: false,
+    netlify_fallback_base_url: "UNKNOWN",
+    netlify_domain_checked: "UNKNOWN",
     target_base_url: "https://example.com",
     runtime_status: "OK",
     routes: [
@@ -411,7 +417,17 @@ test("Daily Operator command/report shape is stable", async () => {
 test("default Daily Operator output is owner-readable with main section headings", async () => {
   const report = await buildBuckpartsDailyOperatorReport({
     now: fixedNow,
-    providers: providers({ liveSiteSmokeCheck: async () => liveSite({ target_base_url: "https://buckparts.netlify.app" }) }),
+    providers: providers({
+      liveSiteSmokeCheck: async () =>
+        liveSite({
+          primary_target_base_url: "https://buckparts.netlify.app",
+          target_base_url: "https://buckparts.netlify.app",
+          target_source: "NEXT_PUBLIC_SITE_URL",
+          netlify_fallback_base_url: "https://buckparts.netlify.app",
+          netlify_domain_checked: true,
+          custom_domain_checked: false,
+        }),
+    }),
   });
   const output = renderBuckpartsDailyOperatorOutput(report);
   assert.ok(output.startsWith("BUCKPARTS DAILY OPERATOR\n"));
@@ -427,6 +443,30 @@ test("default Daily Operator output is owner-readable with main section headings
   }
   assert.ok(output.includes("Live-site smoke target is https://buckparts.netlify.app"));
   assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
+});
+
+test("Daily Operator reports custom domain checked when configured", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      liveSiteSmokeCheck: async () =>
+        liveSite({
+          primary_target_base_url: "https://buckparts.com",
+          target_base_url: "https://buckparts.com",
+          target_source: "LIVE_SITE_SMOKE_TARGET_URL",
+          custom_domain_base_url: "https://buckparts.com",
+          custom_domain_checked: true,
+          netlify_fallback_base_url: "https://buckparts.netlify.app",
+          netlify_domain_checked: false,
+        }),
+    }),
+  });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.equal(report.site_health.primary_target_base_url, "https://buckparts.com");
+  assert.equal(report.site_health.custom_domain_checked, true);
+  assert.ok(output.includes("Primary target: https://buckparts.com."));
+  assert.ok(output.includes("Custom domain checked: true; Netlify domain checked: false."));
+  assert.equal(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"), false);
 });
 
 test("--json Daily Operator output is parseable JSON contract", async () => {

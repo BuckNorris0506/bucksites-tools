@@ -30,7 +30,9 @@ Production-oriented Next.js 14 (App Router) app backed by Supabase. Users search
    |----------|---------|
    | `NEXT_PUBLIC_SUPABASE_URL` | Project URL (Settings → API) |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `anon` `public` key (safe in the browser with RLS) |
-   | `NEXT_PUBLIC_SITE_URL` | Canonical origin, e.g. `https://your-site.netlify.app` (no trailing slash) |
+   | `NEXT_PUBLIC_SITE_URL` | Canonical origin for app metadata (no trailing slash). Legacy fallback for smoke checks. |
+   | `LIVE_SITE_SMOKE_TARGET_URL` | Read-only Daily Operator / live-site smoke target. Use `https://buckparts.com` for production custom-domain route health. |
+   | `BUCKPARTS_PUBLIC_SITE_URL` | Optional business-domain alias for smoke checks; `LIVE_SITE_SMOKE_TARGET_URL` wins when both are set. |
    | `SUPABASE_SERVICE_ROLE_KEY` | **Scripts only** — CSV import (`npm run seed:import`). Never use in the Next.js app or client |
 
 4. **Dev server**
@@ -84,6 +86,7 @@ Import order is fixed: **brands → filters → fridge_models → compatibility_
   - Valid real `/go/{linkId}` -> `302` to expected retailer
   - Invalid `/go/{uuid}` -> `302` fallback behavior
 - UNKNOWN: exact live Netlify production deploy SHA was not proven in this lane.
+- Daily Operator live-site smoke checks the primary target from `LIVE_SITE_SMOKE_TARGET_URL`, then `BUCKPARTS_PUBLIC_SITE_URL`, then legacy `NEXT_PUBLIC_SITE_URL`. Route health never proves deploy commit sync.
 
 ## Project layout
 

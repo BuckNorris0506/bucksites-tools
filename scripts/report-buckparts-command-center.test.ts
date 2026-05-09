@@ -844,6 +844,12 @@ test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes 
     contract: "live_site_monitor_v1",
     checked_at: "2026-05-09T00:00:00.000Z",
     source: "test",
+    primary_target_base_url: "https://example.com",
+    target_source: "NEXT_PUBLIC_SITE_URL",
+    custom_domain_base_url: "UNKNOWN",
+    custom_domain_checked: false,
+    netlify_fallback_base_url: "UNKNOWN",
+    netlify_domain_checked: "UNKNOWN",
     target_base_url: "https://example.com",
     runtime_status: "OK",
     routes: [

@@ -10,6 +10,7 @@ import {
   computeDeploySyncStatus,
   LIVE_SITE_MONITOR_CONTRACT,
   probeLiveSiteRoute,
+  resolveLiveSiteSmokeTargets,
 } from "./live-site-smoke";
 
 test("computeDeploySyncStatus UNKNOWN when deployed missing", () => {
@@ -55,6 +56,29 @@ test("buildLiveSiteMonitorArtifact UNKNOWN_CONFIG when NEXT_PUBLIC_SITE_URL miss
   assert.equal(art.runtime_status, "UNKNOWN_CONFIG");
   assert.equal(art.routes.length, 0);
   assert.equal(art.deploy_sync_status, "UNKNOWN_DEPLOY_COMMIT");
+});
+
+test("resolveLiveSiteSmokeTargets prefers custom live-site target env", () => {
+  const target = resolveLiveSiteSmokeTargets({
+    LIVE_SITE_SMOKE_TARGET_URL: "https://buckparts.com/",
+    NEXT_PUBLIC_SITE_URL: "https://buckparts.netlify.app",
+  });
+  assert.equal(target.primary_target_base_url, "https://buckparts.com");
+  assert.equal(target.target_source, "LIVE_SITE_SMOKE_TARGET_URL");
+  assert.equal(target.custom_domain_checked, true);
+  assert.equal(target.netlify_fallback_base_url, "https://buckparts.netlify.app");
+  assert.equal(target.netlify_domain_checked, false);
+});
+
+test("resolveLiveSiteSmokeTargets falls back honestly to NEXT_PUBLIC_SITE_URL", () => {
+  const target = resolveLiveSiteSmokeTargets({
+    NEXT_PUBLIC_SITE_URL: "https://buckparts.netlify.app/",
+  });
+  assert.equal(target.primary_target_base_url, "https://buckparts.netlify.app");
+  assert.equal(target.target_source, "NEXT_PUBLIC_SITE_URL");
+  assert.equal(target.custom_domain_checked, false);
+  assert.equal(target.netlify_fallback_base_url, "https://buckparts.netlify.app");
+  assert.equal(target.netlify_domain_checked, true);
 });
 
 test("runLiveSiteSmokeCheck UNKNOWN_CONFIG when NEXT_PUBLIC_SITE_URL missing", async () => {
@@ -126,6 +150,7 @@ test("buildLiveSiteMonitorArtifact probes routes and never infers deployed from 
     cwd: process.cwd(),
     fetchFn,
     env: {
+      LIVE_SITE_SMOKE_TARGET_URL: "https://buckparts.com",
       NEXT_PUBLIC_SITE_URL: "https://example.com/",
       LIVE_SITE_DEPLOY_COMMIT: "originsha",
     },
@@ -138,14 +163,18 @@ test("buildLiveSiteMonitorArtifact probes routes and never infers deployed from 
     },
   });
   assert.equal(art.runtime_status, "OK");
-  assert.equal(art.target_base_url, "https://example.com");
+  assert.equal(art.primary_target_base_url, "https://buckparts.com");
+  assert.equal(art.target_base_url, "https://buckparts.com");
+  assert.equal(art.target_source, "LIVE_SITE_SMOKE_TARGET_URL");
+  assert.equal(art.custom_domain_checked, true);
+  assert.equal(art.netlify_domain_checked, "UNKNOWN");
   assert.equal(art.routes.length, 3);
   assert.ok(art.routes.every((r) => r.ok));
   assert.equal(art.deployed_commit, "originsha");
   assert.equal(art.local_head_commit, "localonly");
   assert.equal(art.origin_main_commit, "originsha");
   assert.equal(art.deploy_sync_status, "MATCHES_ORIGIN_MAIN");
-  assert.ok(calls.every((u) => u.startsWith("https://example.com")));
+  assert.ok(calls.every((u) => u.startsWith("https://buckparts.com")));
 });
 
 test("runLiveSiteSmokeCheck does not infer deployed commit from local HEAD", async () => {
