@@ -6,10 +6,75 @@ import type {
   DecisionLane,
   EvidenceInventoryV1,
   EvidenceRollup,
+  LiveSiteMonitorV1,
   RevenueSnapshotLane,
 } from "./buckparts-command-center-v2-types";
 
 export type { CommandCenterV2Report } from "./buckparts-command-center-v2-types";
+
+function buildDeployLiveSiteStatus(
+  mon: LiveSiteMonitorV1 | null,
+): DecisionLane & { live_site_monitor: LiveSiteMonitorV1 | null } {
+  if (!mon) {
+    return {
+      status: "PLACEHOLDER",
+      blocker: "no_live_site_smoke_artifact",
+      next_agent_action:
+        "Run `npm run buckparts:live-site-smoke` to emit data/reports/buckparts-live-site-smoke.json (optional Supabase `live_site_smoke_v1` row) — read-only GET probes only; no Netlify deploy or API.",
+      next_owner_action:
+        "Wire a scheduled or manual smoke runner; production URL must come from NEXT_PUBLIC_SITE_URL on the runner.",
+      live_site_monitor: null,
+    };
+  }
+
+  if (mon.runtime_status === "UNKNOWN_CONFIG") {
+    return {
+      status: "ATTENTION",
+      blocker: "live_site_monitor_unknown_config",
+      count: 0,
+      top_items: ["NEXT_PUBLIC_SITE_URL missing"],
+      next_agent_action:
+        "Set NEXT_PUBLIC_SITE_URL to the production origin (no trailing slash), then rerun `npm run buckparts:live-site-smoke`.",
+      next_owner_action: mon.unknown_facts[0] ?? "Fix smoke configuration before trusting route health.",
+      live_site_monitor: mon,
+    };
+  }
+
+  const networkOr5xx = mon.routes.some(
+    (r) =>
+      !r.ok &&
+      (r.status_code === "UNKNOWN" || (typeof r.status_code === "number" && r.status_code >= 500)),
+  );
+  const allHttpOk = mon.routes.length > 0 && mon.routes.every((r) => r.ok);
+  const status: DecisionLane["status"] = networkOr5xx
+    ? "BLOCKED"
+    : !allHttpOk || mon.runtime_status === "ATTENTION"
+      ? "ATTENTION"
+      : "OK";
+
+  const failedPaths = mon.routes.filter((r) => !r.ok).map((r) => `${r.path}:${String(r.status_code)}`);
+  const routeSummary = mon.routes.map((r) => `${r.path}:${String(r.status_code)}`);
+  return {
+    status,
+    count: mon.routes.length,
+    top_items: failedPaths.length > 0 ? failedPaths.slice(0, 5) : routeSummary.slice(0, 5),
+    blocker:
+      status === "OK"
+        ? null
+        : networkOr5xx
+          ? "live_site_probe_network_or_5xx"
+          : "live_site_probe_http_not_ok",
+    next_agent_action:
+      "Live-site lane is driven by live_site_monitor_v1 artifact only — refresh smoke JSON; never trigger Netlify deploys from this path.",
+    next_owner_action:
+      mon.deploy_sync_status === "UNKNOWN_DEPLOY_COMMIT"
+        ? "Route health may be OK while deploy commit sync remains UNKNOWN until LIVE_SITE_DEPLOY_COMMIT is set with a proven production SHA."
+        : mon.deploy_sync_status === "DEPLOYED_COMMIT_DIFFERS"
+          ? "deployed_commit differs from origin/main — reconcile operator-injected SHA with git before assuming drift."
+          : "deployed_commit matches origin/main per operator-injected LIVE_SITE_DEPLOY_COMMIT — still not a Netlify API proof.",
+    live_site_monitor: mon,
+  };
+}
 
 function uniqueSorted(tokens: string[]): string[] {
   return Array.from(new Set(tokens.map((t) => t.trim().toUpperCase()).filter(Boolean))).sort((a, b) =>
@@ -90,6 +155,7 @@ export function buildCommandCenterV2Report(input: {
   affiliateApprovalPending: boolean;
   affiliateApprovedCount: number;
   clickVisibility: ClickVisibilitySnapshot;
+  liveSiteMonitor: LiveSiteMonitorV1 | null;
 }): CommandCenterV2Report {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
@@ -238,12 +304,7 @@ export function buildCommandCenterV2Report(input: {
     evidence_inventory: input.evidenceInventory,
   };
 
-  const deployLane: DecisionLane = {
-    status: "PLACEHOLDER",
-    blocker: "not_implemented_in_repo_yet",
-    next_agent_action: "No deploy automation in this read-only report path.",
-    next_owner_action: "Wire deploy/live-site checks when CI or Netlify contract exists in repo.",
-  };
+  const deployLane = buildDeployLiveSiteStatus(input.liveSiteMonitor);
 
   const revenueLane = buildRevenueSnapshotLane(input.clickVisibility);
 

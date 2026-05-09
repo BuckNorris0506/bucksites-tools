@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import type { LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 
 const BASE_TRACKER = JSON.stringify([
@@ -823,6 +824,50 @@ test("command_center_v2 revenue_snapshot is ATTENTION when click snapshot is una
     report.command_center_v2.revenue_snapshot.click_visibility?.runtime_status,
     "UNKNOWN_DB_UNAVAILABLE",
   );
+});
+
+test("command_center_v2 deploy lane stays PLACEHOLDER when liveSiteMonitor is null", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const d = report.command_center_v2.deploy_live_site_status;
+  assert.equal(d.status, "PLACEHOLDER");
+  assert.equal(d.live_site_monitor, null);
+});
+
+test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes ok", async () => {
+  const mon: LiveSiteMonitorV1 = {
+    contract: "live_site_monitor_v1",
+    checked_at: "2026-05-09T00:00:00.000Z",
+    source: "test",
+    target_base_url: "https://example.com",
+    runtime_status: "OK",
+    routes: [
+      { path: "/", status_code: 200, ok: true, latency_ms: 1, marker_found: true },
+      { path: "/filter/adq36006101", status_code: 200, ok: true, latency_ms: 1, marker_found: true },
+      { path: "/fridge/lg-lfxs26973s", status_code: 200, ok: true, latency_ms: 1, marker_found: true },
+    ],
+    local_head_commit: "aaa",
+    origin_main_commit: "UNKNOWN",
+    deployed_commit: "UNKNOWN",
+    deploy_sync_status: "UNKNOWN_DEPLOY_COMMIT",
+    proven_facts: ["fixture"],
+    unknown_facts: ["fixture unknown"],
+  };
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: mon,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const d = report.command_center_v2.deploy_live_site_status;
+  assert.equal(d.status, "OK");
+  assert.equal(d.live_site_monitor?.deploy_sync_status, "UNKNOWN_DEPLOY_COMMIT");
 });
 
 test("command_center_v2 surfaces next_owner_action and next_agent_action on lanes", async () => {

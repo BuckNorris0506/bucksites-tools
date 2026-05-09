@@ -14,7 +14,8 @@ import {
 } from "./report-amazon-first-blocked-conversion-queue";
 import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
-import type { CommandCenterV2Report } from "./lib/buckparts-command-center-v2-types";
+import type { CommandCenterV2Report, LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
+import { loadLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
 import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 
 type FlexoffersReadinessReport = {
@@ -182,6 +183,8 @@ type BuildOptions = {
   fileExists?: (absolutePath: string) => boolean;
   readTextFile?: (absolutePath: string) => string;
   readDir?: (absolutePath: string) => string[];
+  /** When set, skips disk/Supabase live-site monitor load (tests). */
+  liveSiteMonitor?: LiveSiteMonitorV1 | null;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -376,6 +379,7 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireNextCandidates,
     amazonFirstBlocked,
     clickVisibility,
+    liveSiteMonitor,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -385,6 +389,9 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireNextBuilder(),
     amazonFirstBuilder(),
     clickEventsSnapshotRunner(),
+    options.liveSiteMonitor !== undefined
+      ? Promise.resolve(options.liveSiteMonitor)
+      : loadLiveSiteMonitorForCommandCenter({ rootDir, fileExists, readTextFile }),
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
@@ -752,6 +759,7 @@ export async function buildBuckpartsCommandCenterReport(
     affiliateApprovalPending,
     affiliateApprovedCount: affiliateTracker.records_approved.length,
     clickVisibility,
+    liveSiteMonitor,
   });
 
   return {

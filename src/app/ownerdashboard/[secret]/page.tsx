@@ -1321,12 +1321,22 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         </LaneCard>
         </DrilldownGroup>
         <DrilldownGroup title="Debug · deploy placeholder & raw JSON (lane 10)">
-          <LaneCard title="10 · Deploy / live-site status" subtitle="Placeholder — not implemented in repo">
+          <LaneCard title="10 · Deploy / live-site status" subtitle="live_site_monitor_v1 when artifact exists">
             <div className="flex flex-wrap gap-2">
               <StatusPill status={v2.deploy_live_site_status.status} />
             </div>
             {v2.deploy_live_site_status.blocker ? (
               <p className="text-xs text-slate-600 dark:text-slate-400">{v2.deploy_live_site_status.blocker}</p>
+            ) : null}
+            {v2.deploy_live_site_status.live_site_monitor ? (
+              <>
+                <FieldBlock label="Smoke checked_at" value={v2.deploy_live_site_status.live_site_monitor.checked_at} />
+                <FieldBlock label="target_base_url" value={v2.deploy_live_site_status.live_site_monitor.target_base_url} />
+                <FieldBlock
+                  label="deploy_sync_status"
+                  value={v2.deploy_live_site_status.live_site_monitor.deploy_sync_status}
+                />
+              </>
             ) : null}
             <FieldBlock label="Next owner action" value={v2.deploy_live_site_status.next_owner_action} />
           </LaneCard>

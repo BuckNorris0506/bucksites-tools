@@ -176,6 +176,35 @@ export type RevenueSnapshotLane = DecisionLane & {
   click_visibility?: ClickVisibilitySnapshot;
 };
 
+export type LiveSiteSmokeRouteResultV1 = {
+  path: string;
+  status_code: number | "UNKNOWN";
+  ok: boolean;
+  latency_ms: number | "UNKNOWN";
+  marker_found: boolean | "UNKNOWN";
+};
+
+export type LiveSiteMonitorDeploySyncStatusV1 =
+  | "MATCHES_ORIGIN_MAIN"
+  | "DEPLOYED_COMMIT_DIFFERS"
+  | "UNKNOWN_DEPLOY_COMMIT";
+
+/** Produced by `npm run buckparts:live-site-smoke` — HTTP smoke only; no Netlify API. */
+export type LiveSiteMonitorV1 = {
+  contract: "live_site_monitor_v1";
+  checked_at: string;
+  source: string;
+  target_base_url: string;
+  runtime_status: "OK" | "UNKNOWN_CONFIG" | "ATTENTION";
+  routes: LiveSiteSmokeRouteResultV1[];
+  local_head_commit: string | "UNKNOWN";
+  origin_main_commit: string | "UNKNOWN";
+  deployed_commit: string | "UNKNOWN";
+  deploy_sync_status: LiveSiteMonitorDeploySyncStatusV1;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -186,7 +215,7 @@ export type CommandCenterV2Report = {
   affiliate_readiness: DecisionLane;
   coverage_health: DecisionLane;
   recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 };
-  deploy_live_site_status: DecisionLane;
+  deploy_live_site_status: DecisionLane & { live_site_monitor: LiveSiteMonitorV1 | null };
   revenue_snapshot: RevenueSnapshotLane;
   /** First token safe for autonomous fresh exact-token search work per registry + queue (null if none). */
   next_allowed_agent_token: string | null;
