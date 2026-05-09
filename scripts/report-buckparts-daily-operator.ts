@@ -8,7 +8,7 @@ import { buildBuckpartsCommandSurfaceReport, type CommandSurfaceReport } from ".
 import { runLiveSiteSmokeCheck } from "./live-site-smoke-check";
 import type { LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
 import {
-  buildOwnerGscExternalDemandReport,
+  buildOwnerGscExternalDemandNeuron,
   type OwnerGscExternalDemandNeuron,
 } from "@/lib/owner-dashboard/gsc-external-demand";
 import {
@@ -60,6 +60,8 @@ export type BuckpartsDailyOperatorReport = {
       connection_level: OwnerGscExternalDemandNeuron["connection_level"] | "UNKNOWN";
       total_impressions: UnknownableNumber;
       total_clicks: UnknownableNumber;
+      average_ctr: UnknownableNumber;
+      average_position: UnknownableNumber;
       high_impression_low_click_opportunities: OwnerGscExternalDemandNeuron["high_impression_low_click_opportunities"];
     };
     internal_search_demand_gaps: CommandCenterReport["search_and_click_intelligence_summary"];
@@ -111,6 +113,10 @@ export type BuckpartsDailyOperatorReport = {
   what_not_to_touch: string[];
   proven_facts: string[];
   unknown_facts: string[];
+};
+
+type HumanOutputOptions = {
+  canonicalProductionUrl?: string;
 };
 
 const EXCLUDED_SIGNALS: ExcludedSignal[] = [
@@ -267,7 +273,7 @@ export async function buildBuckpartsDailyOperatorReport(
     safeProvider(
       "gsc_external_demand",
       providers.gscExternalDemand ??
-        (async () => (await buildOwnerGscExternalDemandReport({ rootDir })).gsc_external_demand),
+        (() => buildOwnerGscExternalDemandNeuron({ rootDir })),
     ),
     safeProvider(
       "ga4_trust_funnel",
@@ -404,6 +410,8 @@ export async function buildBuckpartsDailyOperatorReport(
         connection_level: gsc?.connection_level ?? "UNKNOWN",
         total_impressions: gsc?.total_impressions ?? "UNKNOWN",
         total_clicks: gsc?.total_clicks ?? "UNKNOWN",
+        average_ctr: gsc?.average_ctr ?? "UNKNOWN",
+        average_position: gsc?.average_position ?? "UNKNOWN",
         high_impression_low_click_opportunities: gsc?.high_impression_low_click_opportunities ?? "UNKNOWN",
       },
       internal_search_demand_gaps:
@@ -485,9 +493,117 @@ export async function buildBuckpartsDailyOperatorReport(
   };
 }
 
+function fmt(value: unknown): string {
+  if (value === null || value === undefined) return "UNKNOWN";
+  if (typeof value === "number") return Number.isInteger(value) ? String(value) : value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+  if (typeof value === "string") return value;
+  return "UNKNOWN";
+}
+
+function pct(value: unknown): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "UNKNOWN";
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+function bulletLines(items: string[], fallback: string, max = 3): string[] {
+  const trimmed = items.map((item) => item.trim()).filter(Boolean).slice(0, max);
+  const out = trimmed.length > 0 ? trimmed : [fallback];
+  return out.map((item) => `- ${item}`);
+}
+
+function summarizeGa4Events(events: BuckpartsDailyOperatorReport["throughput_clicks_money"]["ga4_trust_funnel"]["event_totals"]): string {
+  if (events === "UNKNOWN") return "event totals UNKNOWN";
+  return [
+    `model views ${events.fridge_model_view}`,
+    `chip clicks ${events.fridge_filter_chip_click}`,
+    `filter views ${events.fridge_filter_view}`,
+    `help opens ${events.fridge_help_opened}`,
+  ].join(", ");
+}
+
+function routeSummary(mon: LiveSiteMonitorV1 | null): string {
+  if (!mon || mon.routes.length === 0) return "UNKNOWN";
+  const ok = mon.routes.filter((r) => r.ok).length;
+  return `${ok}/${mon.routes.length} routes OK`;
+}
+
+function siteTargetWarning(report: BuckpartsDailyOperatorReport, canonicalProductionUrl: string): string | null {
+  const target = report.site_health.live_site_smoke?.target_base_url;
+  if (!target || target === "UNKNOWN" || target === canonicalProductionUrl) return null;
+  return `Live-site smoke target is ${target}; production custom domain check (${canonicalProductionUrl}) is UNKNOWN.`;
+}
+
+export function formatBuckpartsDailyOperatorHumanReport(
+  report: BuckpartsDailyOperatorReport,
+  options: HumanOutputOptions = {},
+): string {
+  const canonicalProductionUrl = options.canonicalProductionUrl ?? "https://buckparts.com";
+  const stopTheLine = [...report.business_warning.issues];
+  const targetWarning = siteTargetWarning(report, canonicalProductionUrl);
+  if (targetWarning) stopTheLine.push(targetWarning);
+
+  const gsc = report.demand_opportunities.gsc_external_demand;
+  const internal = report.demand_opportunities.internal_search_demand_gaps;
+  const clickVisibility = report.throughput_clicks_money.click_visibility;
+  const human7 = clickVisibility?.human_likely_last_7_days_clicks ?? "UNKNOWN";
+  const human30 = clickVisibility?.human_likely_last_30_days_clicks ?? "UNKNOWN";
+  const ga4 = report.throughput_clicks_money.ga4_trust_funnel;
+  const deploySync = report.site_health.deploy_sync_status === "MATCHES_ORIGIN_MAIN"
+    ? "MATCHES_ORIGIN_MAIN"
+    : `${report.site_health.deploy_sync_status} (not inferred from local HEAD)`;
+  const excluded = report.decision_authority_policy.excluded_signals.map((s) => s.signal);
+
+  const lines = [
+    "BUCKPARTS DAILY OPERATOR",
+    `Status: ${report.runtime_status}`,
+    "",
+    "STOP-THE-LINE",
+    ...bulletLines(stopTheLine, "None."),
+    "",
+    "DEMAND",
+    `- GSC: impressions ${fmt(gsc.total_impressions)}, clicks ${fmt(gsc.total_clicks)}, CTR ${gsc.average_ctr === "UNKNOWN" ? pct(gsc.total_impressions !== "UNKNOWN" && gsc.total_clicks !== "UNKNOWN" && gsc.total_impressions > 0 ? gsc.total_clicks / gsc.total_impressions : "UNKNOWN") : pct(gsc.average_ctr)}, position ${fmt(gsc.average_position)}.`,
+    `- Internal search: ${fmt(internal.search_events.last_7d)} searches 7d / ${fmt(internal.search_events.last_30d)} searches 30d; zero-result ${fmt(internal.search_events.zero_result_last_7d)} 7d / ${fmt(internal.search_events.zero_result_last_30d)} 30d; actionable gaps ${fmt(internal.search_gaps_backlog.total_actionable)}.`,
+    "",
+    "TRAFFIC / CLICKS / MONEY",
+    `- /go clicks: ${fmt(report.throughput_clicks_money.go_clicks.last_7d)} last 7d / ${fmt(report.throughput_clicks_money.go_clicks.last_30d)} last 30d.`,
+    `- Human-likely clicks: ${fmt(human7)} last 7d / ${fmt(human30)} last 30d.`,
+    `- GA4 funnel: ${ga4.status} from ${ga4.source}; ${summarizeGa4Events(ga4.event_totals)}. Zero counts are not failure by themselves.`,
+    `- Revenue/conversions: ${report.throughput_clicks_money.revenue_conversions.status}; ${report.throughput_clicks_money.revenue_conversions.reason}`,
+    "",
+    "SITE HEALTH",
+    `- Routes: ${routeSummary(report.site_health.live_site_smoke)}; status ${report.site_health.route_health_status}.`,
+    `- Smoke target: ${report.site_health.live_site_smoke?.target_base_url ?? "UNKNOWN"}.`,
+    `- Deploy sync: ${deploySync}.`,
+    "",
+    "NEXT ACTION",
+    `- Owner: ${report.next_owner_action}`,
+    `- Agent: ${report.next_agent_action}`,
+    "",
+    "DO NOT TOUCH",
+    ...bulletLines(
+      [
+        ...excluded,
+        "DB writes/deploy/git push/local artifact writes unless explicitly approved",
+      ],
+      "No excluded signals configured.",
+      12,
+    ),
+  ];
+
+  return `${lines.join("\n")}\n`;
+}
+
+export function renderBuckpartsDailyOperatorOutput(
+  report: BuckpartsDailyOperatorReport,
+  options: { json?: boolean } = {},
+): string {
+  if (options.json) return `${JSON.stringify(report, null, 2)}\n`;
+  return formatBuckpartsDailyOperatorHumanReport(report);
+}
+
 export async function main(): Promise<void> {
   const report = await buildBuckpartsDailyOperatorReport();
-  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  process.stdout.write(renderBuckpartsDailyOperatorOutput(report, { json: process.argv.includes("--json") }));
 }
 
 const entryHref = pathToFileURL(path.resolve(process.argv[1] ?? "")).href;

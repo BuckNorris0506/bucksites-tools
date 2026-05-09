@@ -4,7 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { buildBuckpartsDailyOperatorReport } from "./report-buckparts-daily-operator";
+import {
+  buildBuckpartsDailyOperatorReport,
+  renderBuckpartsDailyOperatorOutput,
+} from "./report-buckparts-daily-operator";
 import type { CommandSurfaceReport } from "./report-buckparts-command-surface";
 import type { OwnerGscExternalDemandNeuron } from "@/lib/owner-dashboard/gsc-external-demand";
 import type { Ga4TrustFunnelArtifact } from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
@@ -202,6 +205,7 @@ function commandCenter() {
           human_likely_last_30_days_clicks: 3,
           excluded_last_30_days_clicks: 2,
           excluded_by_category_30d: { INTERNAL_AUDIT: 1, KNOWN_BOT: 1 },
+          top_user_agent_families_30d: [{ user_agent: "RawAgent/1.0", clicks: 2, category: "HUMAN_LIKELY" }],
           newest_click_at: fixedNow().toISOString(),
           oldest_click_at_in_30d_window: fixedNow().toISOString(),
           click_freshness_status: "OK",
@@ -404,6 +408,40 @@ test("Daily Operator command/report shape is stable", async () => {
   }
 });
 
+test("default Daily Operator output is owner-readable with main section headings", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({ liveSiteSmokeCheck: async () => liveSite({ target_base_url: "https://buckparts.netlify.app" }) }),
+  });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.ok(output.startsWith("BUCKPARTS DAILY OPERATOR\n"));
+  for (const heading of [
+    "STOP-THE-LINE",
+    "DEMAND",
+    "TRAFFIC / CLICKS / MONEY",
+    "SITE HEALTH",
+    "NEXT ACTION",
+    "DO NOT TOUCH",
+  ]) {
+    assert.ok(output.includes(`\n${heading}\n`));
+  }
+  assert.ok(output.includes("Live-site smoke target is https://buckparts.netlify.app"));
+  assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
+});
+
+test("--json Daily Operator output is parseable JSON contract", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const parsed = JSON.parse(renderBuckpartsDailyOperatorOutput(report, { json: true }));
+  assert.equal(parsed.contract, "buckparts_daily_operator_v1");
+  assert.equal(parsed.throughput_clicks_money.click_visibility.top_user_agent_families_30d[0].user_agent, "RawAgent/1.0");
+});
+
+test("Daily Operator GSC reader uses exported lane-16 neuron builder", () => {
+  const source = readFileSync(path.resolve(process.cwd(), "scripts/report-buckparts-daily-operator.ts"), "utf8");
+  assert.equal(source.includes("buildOwnerGscExternalDemandReport"), false);
+  assert.equal(source.includes("buildOwnerGscExternalDemandNeuron"), true);
+});
+
 test("Daily Operator does not call writer scripts or write artifacts", async () => {
   const tmpDir = mkdtempSync(path.join(os.tmpdir(), "buckparts-daily-"));
   try {
@@ -421,6 +459,14 @@ test("Daily Operator does not call writer scripts or write artifacts", async () 
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
   }
+});
+
+test("human output does not include raw top_user_agent_families details", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.equal(output.includes("top_user_agent_families_30d"), false);
+  assert.equal(output.includes("RawAgent/1.0"), false);
+  assert.ok(output.includes("Human-likely clicks: 1 last 7d / 3 last 30d."));
 });
 
 test("Daily Operator includes read-only live-site smoke result and does not infer deployed commit from HEAD", async () => {
@@ -443,6 +489,13 @@ test("Daily Operator marks revenue/conversions UNKNOWN and excludes valuation fr
   assert.equal(report.throughput_clicks_money.revenue_conversions.revenue, "UNKNOWN");
   assert.ok(report.decision_authority_policy.excluded_signals.some((s) => s.signal === "valuation monitor"));
   assert.ok(!report.decision_authority_policy.decision_authoritative_signals.some((s) => /valuation/i.test(s.signal)));
+});
+
+test("human output keeps revenue/conversions UNKNOWN and GA4 zero counts non-failure", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.ok(output.includes("Revenue/conversions: UNKNOWN_NOT_CONNECTED"));
+  assert.ok(output.includes("Zero counts are not failure by themselves."));
 });
 
 test("Daily Operator does not treat GA4 zero counts as failure by itself", async () => {
