@@ -10,6 +10,113 @@ import {
   runCommandSurfaceReport,
 } from "./report-buckparts-command-surface";
 
+type BuildCommandSurfaceOptions = NonNullable<
+  Parameters<typeof buildBuckpartsCommandSurfaceReport>[0]
+>;
+
+const approvedAffiliateTracker = [
+  {
+    id: "approved-program",
+    network: "Impact",
+    retailer: "Example Retailer",
+    programUrl: null,
+    status: "APPROVED",
+    submittedAt: null,
+    lastStatusAt: null,
+    decisionAt: null,
+    rejectionReason: null,
+    nextAction: "Monitor conversion quality",
+    nextActionDueAt: null,
+    notes: null,
+    tagVerified: true,
+    tagVerifiedAt: "2026-04-28T00:00:00.000Z",
+    tagValue: "buckparts20-20",
+  },
+];
+
+const reapplyRequiredAffiliateTracker = [
+  {
+    ...approvedAffiliateTracker[0],
+    id: "reapply-required-program",
+    status: "REAPPLY_REQUIRED",
+    decisionAt: "2026-04-28T00:00:00.000Z",
+    rejectionReason: "Needs updated application details.",
+    nextAction: "Reapply with corrected details",
+  },
+];
+
+function assertSystemHealthStatus(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandSurfaceReport>>,
+  expected: "OK" | "WARNING" | "CRITICAL",
+): void {
+  assert.equal(
+    report.system_health.status,
+    expected,
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
+  );
+}
+
+function deterministicCommandSurfaceOptions(
+  overrides: BuildCommandSurfaceOptions = {},
+): BuildCommandSurfaceOptions {
+  return {
+    fileExists: (absolutePath) =>
+      absolutePath.endsWith("data/gsc/sitemap.xml") ||
+      absolutePath.endsWith("buckparts.com-Coverage-2026-04-28.zip") ||
+      absolutePath.endsWith("buckparts.com-Performance-on-Search-2026-04-28.zip")
+        ? true
+        : absolutePath.endsWith("data/reports/buckparts-command-surface.json")
+          ? false
+          : existsSync(absolutePath),
+    readTextFile: (absolutePath) => {
+      if (absolutePath.endsWith("data/affiliate/affiliate-application-tracker.json")) {
+        return JSON.stringify(approvedAffiliateTracker);
+      }
+      return readFileSync(absolutePath, "utf8");
+    },
+    fetchLearningOutcomesRows: async () => [],
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000001",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "google-search",
+        affiliate_url: "https://www.google.com/search?q=filter",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/1",
+        browser_truth_classification: null,
+      },
+    ],
+    fetchSearchAndClickIntelligenceSummary: async () => ({
+      window_days: { short: 7, long: 30 },
+      search_events: {
+        last_7d: 10,
+        last_30d: 25,
+        zero_result_last_7d: 1,
+        zero_result_last_30d: 4,
+        zero_result_rate_last_7d: 0.1,
+        zero_result_rate_last_30d: 0.16,
+      },
+      search_gaps_backlog: {
+        open: 2,
+        reviewing: 1,
+        queued: 0,
+        total_actionable: 3,
+      },
+      click_events: {
+        last_7d: 5,
+        last_30d: 12,
+      },
+    }),
+    ...overrides,
+  };
+}
+
 test("report is read_only true and data_mutation false", async () => {
   const report = await buildBuckpartsCommandSurfaceReport();
   assert.equal(report.read_only, true);
@@ -106,10 +213,14 @@ test("UNKNOWN_NOT_QUERIED only appears when query intentionally skipped", async 
 });
 
 test("recommended_next_step matches Step 13", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
+  const report = await buildBuckpartsCommandSurfaceReport(
+    deterministicCommandSurfaceOptions(),
+  );
+  assertSystemHealthStatus(report, "WARNING");
   assert.equal(
     report.recommended_next_step,
     "Resolve warning-level command-surface issues before expanding.",
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
   );
 });
 
@@ -171,10 +282,26 @@ test("affiliate tracker includes tag verification summary", async () => {
 });
 
 test("recommended next step changes when action required", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
+  const report = await buildBuckpartsCommandSurfaceReport(
+    deterministicCommandSurfaceOptions({
+      readTextFile: (absolutePath) => {
+        if (absolutePath.endsWith("data/affiliate/affiliate-application-tracker.json")) {
+          return JSON.stringify(reapplyRequiredAffiliateTracker);
+        }
+        return readFileSync(absolutePath, "utf8");
+      },
+    }),
+  );
+  assertSystemHealthStatus(report, "CRITICAL");
+  assert.equal(
+    report.system_health.reasons.includes("affiliate_tracker.health.status is ACTION_REQUIRED"),
+    true,
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
+  );
   assert.equal(
     report.recommended_next_step,
-    "Resolve warning-level command-surface issues before expanding.",
+    "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
   );
 });
 
@@ -1270,11 +1397,23 @@ test("system_health WARNING when BLOCKED_* exceeds LIVE_*", () => {
 });
 
 test("recommended next step changes for CRITICAL", async () => {
-  const report = await buildBuckpartsCommandSurfaceReport();
-  assert.equal(report.system_health.status, "WARNING");
+  const report = await buildBuckpartsCommandSurfaceReport(
+    deterministicCommandSurfaceOptions({
+      fetchLearningOutcomesRows: async () => {
+        throw new Error("db unavailable for deterministic critical next-step test");
+      },
+    }),
+  );
+  assertSystemHealthStatus(report, "CRITICAL");
+  assert.equal(
+    report.system_health.reasons.includes("learning_outcomes_metrics.runtime_status is UNKNOWN"),
+    true,
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
+  );
   assert.equal(
     report.recommended_next_step,
-    "Resolve warning-level command-surface issues before expanding.",
+    "Resolve critical command-surface blockers before adding pages, wedges, or affiliate volume.",
+    `system_health.reasons=${JSON.stringify(report.system_health.reasons)}`,
   );
 });
 
