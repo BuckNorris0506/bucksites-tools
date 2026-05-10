@@ -410,6 +410,7 @@ test("Daily Operator command/report shape is stable", async () => {
     "proven_facts",
     "unknown_facts",
     "decision_authority_policy",
+    "recommendation_authority",
   ]) {
     assert.ok(key in report);
   }
@@ -438,6 +439,7 @@ test("default Daily Operator output is owner-readable with main section headings
     "TRAFFIC / CLICKS / MONEY",
     "SITE HEALTH",
     "TOP-OF-GAME CHECKLIST",
+    "RECOMMENDATION AUTHORITY",
     "NEXT ACTION",
     "DO NOT TOUCH",
   ]) {
@@ -445,6 +447,69 @@ test("default Daily Operator output is owner-readable with main section headings
   }
   assert.ok(output.includes("Live-site smoke target is https://buckparts.netlify.app"));
   assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
+  assert.ok(output.includes("- Owner: WITHHELD — recommendation source is not authority-scoped."));
+  assert.ok(output.includes("- Agent: WITHHELD — recommendation source is not authority-scoped."));
+});
+
+test("Daily Operator withholds unscoped Command Center next actions", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  assert.equal(report.recommendation_authority.owner_action.source, "command_center_v2.next_owner_action");
+  assert.equal(report.recommendation_authority.owner_action.allowed_as_recommendation, false);
+  assert.equal(report.recommendation_authority.owner_action.authority_level, "UNKNOWN");
+  assert.equal(report.next_owner_action, "WITHHELD — recommendation source is not authority-scoped.");
+  assert.equal(report.recommendation_authority.agent_action.source, "command_center.execution_guidance.next_move_command");
+  assert.equal(report.recommendation_authority.agent_action.allowed_as_recommendation, false);
+  assert.equal(report.next_agent_action, "WITHHELD — recommendation source is not authority-scoped.");
+  assert.ok(report.blocked_jobs.some((j) => j.job_or_signal === "command_center_v2.next_owner_action"));
+  assert.ok(report.blocked_jobs.some((j) => j.job_or_signal === "command_center.execution_guidance.next_move_command"));
+});
+
+test("Daily Operator keeps DARK/UNKNOWN excluded signals out of positive recommendation authority", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const authorityJson = JSON.stringify(report.recommendation_authority);
+  for (const excluded of [
+    "affiliate revenue/conversions",
+    "valuation monitor",
+    "GA4 custom-dimension breakdowns",
+    "semantic page-state",
+    "catalog-wide evidence coverage",
+    "deployed commit sync",
+  ]) {
+    assert.ok(report.decision_authority_policy.excluded_signals.some((s) => s.signal.includes(excluded)));
+    assert.equal(authorityJson.includes(excluded), false);
+  }
+  assert.equal(report.throughput_clicks_money.revenue_conversions.status, "UNKNOWN_NOT_CONNECTED");
+  assert.equal(report.site_health.deploy_sync_status, "UNKNOWN_DEPLOY_COMMIT");
+  assert.ok(report.blocked_jobs.some((j) => j.job_or_signal === "deploy_sync_status"));
+});
+
+test("Daily Operator records scoped PARTIAL GSC authority without overriding unscoped Command Center action", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const gscAction = report.recommendation_authority.evaluated_actions.find(
+    (a) => a.source === "gsc_external_demand.next_owner_action",
+  );
+  assert.ok(gscAction);
+  assert.equal(gscAction.authority_level, "SCOPED_PARTIAL");
+  assert.equal(gscAction.allowed_as_recommendation, true);
+  assert.ok(gscAction.authority_scope.includes("Demand opportunity"));
+  assert.equal(report.next_owner_action, "WITHHELD — recommendation source is not authority-scoped.");
+});
+
+test("Daily Operator surfaces blocker actions without treating UNKNOWN as positive recommendations", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      commandSurface: async () =>
+        commandSurface({
+          system_health: { status: "CRITICAL", reasons: ["fixture critical"] },
+        }),
+    }),
+  });
+  assert.equal(report.runtime_status, "BLOCKED");
+  assert.equal(report.recommendation_authority.owner_action.action_type, "BLOCKER");
+  assert.equal(report.recommendation_authority.owner_action.allowed_as_recommendation, true);
+  assert.ok(report.next_owner_action.includes("Resolve stop-the-line"));
+  assert.ok(report.business_warning.issues.some((issue) => issue.includes("fixture critical")));
 });
 
 test("Daily Operator surfaces concise Top-of-Game Checklist statuses", async () => {

@@ -23,6 +23,8 @@ import {
 type UnknownableNumber = number | "UNKNOWN";
 type RuntimeStatus = "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
 type TopOfGameStatus = "BRIGHT" | "PARTIAL" | "DARK" | "UNKNOWN" | "NOT_NEEDED_YET";
+type RecommendationActionType = "OWNER_ACTION" | "AGENT_ACTION" | "BLOCKER" | "WARNING";
+type RecommendationAuthorityLevel = "BRIGHT" | "SCOPED_PARTIAL" | "DARK" | "UNKNOWN";
 type CommandCenterReport = Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>;
 
 type Ga4TrustFunnelRead =
@@ -44,6 +46,16 @@ type DailyOperatorOptions = {
 
 type ExcludedSignal = {
   signal: string;
+  reason: string;
+};
+
+type RecommendationAuthorityRecord = {
+  source: string;
+  proposed_action: string;
+  action_type: RecommendationActionType;
+  authority_level: RecommendationAuthorityLevel;
+  authority_scope: string;
+  allowed_as_recommendation: boolean;
   reason: string;
 };
 
@@ -109,6 +121,11 @@ export type BuckpartsDailyOperatorReport = {
   decision_authority_policy: {
     decision_authoritative_signals: Array<{ signal: string; scope: string; reason: string }>;
     excluded_signals: ExcludedSignal[];
+  };
+  recommendation_authority: {
+    owner_action: RecommendationAuthorityRecord;
+    agent_action: RecommendationAuthorityRecord;
+    evaluated_actions: RecommendationAuthorityRecord[];
   };
   next_owner_action: string;
   next_agent_action: string;
@@ -305,6 +322,135 @@ function buildTopOfGameChecklistStatus(input: {
   };
 }
 
+function withheldRecommendation(): string {
+  return "WITHHELD — recommendation source is not authority-scoped.";
+}
+
+function unscopedImportedAction(args: {
+  source: string;
+  proposed_action: string | null | undefined;
+  action_type: "OWNER_ACTION" | "AGENT_ACTION";
+}): RecommendationAuthorityRecord {
+  return {
+    source: args.source,
+    proposed_action: args.proposed_action?.trim() || "UNKNOWN",
+    action_type: args.action_type,
+    authority_level: "UNKNOWN",
+    authority_scope: "UNKNOWN — imported Command Center action has no explicit BRIGHT/scoped PARTIAL authority metadata.",
+    allowed_as_recommendation: false,
+    reason:
+      "Top-of-Game Checklist requires recommendations to come from BRIGHT or explicitly scoped PARTIAL proof; this imported action is withheld until classified.",
+  };
+}
+
+function blockerAuthority(args: {
+  source: string;
+  proposed_action: string;
+  authority_scope: string;
+  reason: string;
+}): RecommendationAuthorityRecord {
+  return {
+    source: args.source,
+    proposed_action: args.proposed_action,
+    action_type: "BLOCKER",
+    authority_level: "SCOPED_PARTIAL",
+    authority_scope: args.authority_scope,
+    allowed_as_recommendation: true,
+    reason: args.reason,
+  };
+}
+
+function gscDemandAuthority(gsc: OwnerGscExternalDemandNeuron | null): RecommendationAuthorityRecord | null {
+  const hasMetrics = gsc?.status === "OK" && typeof gsc.total_impressions === "number" && typeof gsc.total_clicks === "number";
+  if (!hasMetrics || !gsc?.next_owner_action) return null;
+  return {
+    source: "gsc_external_demand.next_owner_action",
+    proposed_action: gsc.next_owner_action,
+    action_type: "OWNER_ACTION",
+    authority_level: "SCOPED_PARTIAL",
+    authority_scope: "Demand opportunity recommendations only when GSC external-demand metrics are present.",
+    allowed_as_recommendation: true,
+    reason: "GSC external demand is scoped as decision-authoritative for search-demand totals and opportunities only.",
+  };
+}
+
+function buildRecommendationAuthority(args: {
+  stopLineIssues: string[];
+  commandCenter: CommandCenterReport | null;
+  gsc: OwnerGscExternalDemandNeuron | null;
+}): {
+  owner_action: RecommendationAuthorityRecord;
+  agent_action: RecommendationAuthorityRecord;
+  evaluated_actions: RecommendationAuthorityRecord[];
+  next_owner_action: string;
+  next_agent_action: string;
+} {
+  const evaluated: RecommendationAuthorityRecord[] = [];
+
+  if (args.stopLineIssues.length > 0) {
+    const owner = blockerAuthority({
+      source: "daily_operator.stop_line",
+      proposed_action: "Resolve stop-the-line command-surface or live-site blockers before using Daily Operator recommendations.",
+      authority_scope: "Stop-line blocker handling only; not a positive growth or monetization recommendation.",
+      reason: "DARK/UNKNOWN signals may produce blockers or warnings under the checklist authority rule.",
+    });
+    const agent = blockerAuthority({
+      source: "daily_operator.stop_line",
+      proposed_action:
+        "Run read-only diagnostics for the blocking lane; do not mutate retailer_links, /go, analytics emitters, token controls, or deploy state.",
+      authority_scope: "Read-only blocker diagnosis only; no mutation authority.",
+      reason: "Stop-line diagnostics are blocker handling, not positive recommendation authority.",
+    });
+    evaluated.push(owner, agent);
+    return {
+      owner_action: owner,
+      agent_action: agent,
+      evaluated_actions: evaluated,
+      next_owner_action: owner.proposed_action,
+      next_agent_action: agent.proposed_action,
+    };
+  }
+
+  const importedOwner = args.commandCenter
+    ? unscopedImportedAction({
+        source: "command_center_v2.next_owner_action",
+        proposed_action: args.commandCenter.command_center_v2.next_owner_action,
+        action_type: "OWNER_ACTION",
+      })
+    : null;
+  const importedAgent = args.commandCenter
+    ? unscopedImportedAction({
+        source: "command_center.execution_guidance.next_move_command",
+        proposed_action: args.commandCenter.execution_guidance.next_move_command,
+        action_type: "AGENT_ACTION",
+      })
+    : null;
+  if (importedOwner) evaluated.push(importedOwner);
+  if (importedAgent) evaluated.push(importedAgent);
+
+  const gscOwner = gscDemandAuthority(args.gsc);
+  if (gscOwner) evaluated.push(gscOwner);
+
+  const fallbackOwner = importedOwner ?? gscOwner ?? unscopedImportedAction({
+    source: "daily_operator.missing_owner_action_source",
+    proposed_action: "Restore missing read-only inputs before using Daily Operator recommendations.",
+    action_type: "OWNER_ACTION",
+  });
+  const fallbackAgent = importedAgent ?? unscopedImportedAction({
+    source: "daily_operator.missing_agent_action_source",
+    proposed_action: "npm run buckparts:daily",
+    action_type: "AGENT_ACTION",
+  });
+
+  return {
+    owner_action: fallbackOwner,
+    agent_action: fallbackAgent,
+    evaluated_actions: evaluated.length > 0 ? evaluated : [fallbackOwner, fallbackAgent],
+    next_owner_action: fallbackOwner.allowed_as_recommendation ? fallbackOwner.proposed_action : withheldRecommendation(),
+    next_agent_action: fallbackAgent.allowed_as_recommendation ? fallbackAgent.proposed_action : withheldRecommendation(),
+  };
+}
+
 function hasKnownUnknown(haystack: string[], needle: string): boolean {
   return haystack.some((item) => item.toLowerCase().includes(needle.toLowerCase()));
 }
@@ -394,6 +540,17 @@ export async function buildBuckpartsDailyOperatorReport(
     });
   }
 
+  const recommendationAuthority = buildRecommendationAuthority({ stopLineIssues, commandCenter, gsc });
+  for (const action of recommendationAuthority.evaluated_actions) {
+    if (!action.allowed_as_recommendation) {
+      blocked_jobs.push({
+        job_or_signal: action.source,
+        status: "UNKNOWN",
+        reason: action.reason,
+      });
+    }
+  }
+
   const runtime_status: RuntimeStatus =
     stopLineIssues.length > 0
       ? "BLOCKED"
@@ -402,19 +559,6 @@ export async function buildBuckpartsDailyOperatorReport(
         : commandCenter && commandSurface && liveSite && gsc && ga4
           ? "OK"
           : "UNKNOWN";
-
-  const ownerAction =
-    stopLineIssues.length > 0
-      ? "Resolve stop-the-line command-surface or live-site blockers before using Daily Operator recommendations."
-      : commandCenter?.command_center_v2.next_owner_action ??
-        gsc?.next_owner_action ??
-        "Restore missing read-only inputs before using Daily Operator recommendations.";
-
-  const agentAction =
-    stopLineIssues.length > 0
-      ? "Run read-only diagnostics for the blocking lane; do not mutate retailer_links, /go, analytics emitters, token controls, or deploy state."
-      : commandCenter?.execution_guidance.next_move_command ??
-        "npm run buckparts:daily";
 
   const provenFacts = [
     "Daily Operator v1 invokes read-only report builders/check helpers only; it does not write local artifacts or Supabase rows.",
@@ -518,8 +662,13 @@ export async function buildBuckpartsDailyOperatorReport(
       decision_authoritative_signals: DECISION_AUTHORITATIVE_SIGNALS,
       excluded_signals: EXCLUDED_SIGNALS,
     },
-    next_owner_action: ownerAction,
-    next_agent_action: agentAction,
+    recommendation_authority: {
+      owner_action: recommendationAuthority.owner_action,
+      agent_action: recommendationAuthority.agent_action,
+      evaluated_actions: recommendationAuthority.evaluated_actions,
+    },
+    next_owner_action: recommendationAuthority.next_owner_action,
+    next_agent_action: recommendationAuthority.next_agent_action,
     validation_status: {
       read_only: true,
       data_mutation: false,
@@ -601,6 +750,13 @@ function checklistStatusLines(status: BuckpartsDailyOperatorReport["top_of_game_
   ];
 }
 
+function recommendationAuthorityLines(authority: BuckpartsDailyOperatorReport["recommendation_authority"]): string[] {
+  return [
+    `- Owner action authority: ${authority.owner_action.allowed_as_recommendation ? authority.owner_action.authority_level : "WITHHELD"} (${authority.owner_action.source}).`,
+    `- Agent action authority: ${authority.agent_action.allowed_as_recommendation ? authority.agent_action.authority_level : "WITHHELD"} (${authority.agent_action.source}).`,
+  ];
+}
+
 export function formatBuckpartsDailyOperatorHumanReport(
   report: BuckpartsDailyOperatorReport,
   options: HumanOutputOptions = {},
@@ -646,6 +802,9 @@ export function formatBuckpartsDailyOperatorHumanReport(
     "",
     "TOP-OF-GAME CHECKLIST",
     ...checklistStatusLines(report.top_of_game_checklist_status),
+    "",
+    "RECOMMENDATION AUTHORITY",
+    ...recommendationAuthorityLines(report.recommendation_authority),
     "",
     "NEXT ACTION",
     `- Owner: ${report.next_owner_action}`,
