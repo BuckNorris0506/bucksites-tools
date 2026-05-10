@@ -22,6 +22,7 @@ import {
 
 type UnknownableNumber = number | "UNKNOWN";
 type RuntimeStatus = "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
+type TopOfGameStatus = "BRIGHT" | "PARTIAL" | "DARK" | "UNKNOWN" | "NOT_NEEDED_YET";
 type CommandCenterReport = Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>;
 
 type Ga4TrustFunnelRead =
@@ -91,6 +92,16 @@ export type BuckpartsDailyOperatorReport = {
     netlify_domain_checked: boolean | "UNKNOWN";
     deploy_sync_status: LiveSiteMonitorV1["deploy_sync_status"] | "UNKNOWN";
     route_health_status: RuntimeStatus;
+  };
+  top_of_game_checklist_status: {
+    fit_correctness: TopOfGameStatus;
+    buyer_path_safety: TopOfGameStatus;
+    evidence_provenance: TopOfGameStatus;
+    demand_capture: TopOfGameStatus;
+    analytics_measurement: TopOfGameStatus;
+    revenue_truth: TopOfGameStatus;
+    operations_automation: TopOfGameStatus;
+    founder_dependency_reduction: TopOfGameStatus;
   };
   stale_or_missing_artifacts: string[];
   blocked_jobs: Array<{ job_or_signal: string; status: "BLOCKED" | "UNKNOWN"; reason: string }>;
@@ -256,6 +267,42 @@ function routeHealthStatus(mon: LiveSiteMonitorV1 | null): RuntimeStatus {
   }
   if (mon.runtime_status === "ATTENTION" || mon.routes.some((r) => !r.ok)) return "ATTENTION";
   return "OK";
+}
+
+function buildTopOfGameChecklistStatus(input: {
+  commandCenter: CommandCenterReport | null;
+  commandSurface: CommandSurfaceReport | null;
+  liveSite: LiveSiteMonitorV1 | null;
+  gsc: OwnerGscExternalDemandNeuron | null;
+  ga4: Ga4TrustFunnelRead | null;
+}): BuckpartsDailyOperatorReport["top_of_game_checklist_status"] {
+  const searchOk = input.commandCenter?.search_and_click_intelligence_summary.runtime_status === "OK";
+  const gscOk =
+    input.gsc?.status === "OK" &&
+    typeof input.gsc.total_impressions === "number" &&
+    typeof input.gsc.total_clicks === "number";
+  const pageInventoryOk =
+    input.commandSurface?.state_system_metrics.page_state.computable === true &&
+    input.commandSurface.state_system_metrics.page_state.contract === "sitemap_artifact_inventory_v1";
+  const ctaOk =
+    input.commandSurface?.cta_coverage_metrics.runtime_status === "OK" &&
+    input.commandSurface.retailer_link_state_metrics.runtime_status === "OK";
+  const evidenceInventoryOk =
+    input.commandCenter?.command_center_v2.recent_evidence.evidence_inventory.contract === "evidence_inventory_v1";
+  const ga4Ok = input.ga4?.status === "OK";
+  const liveSiteKnown = input.liveSite != null && input.liveSite.runtime_status !== "UNKNOWN_CONFIG";
+  const readOnlyKnown = input.liveSite != null || input.commandCenter != null || input.commandSurface != null;
+
+  return {
+    fit_correctness: pageInventoryOk ? "PARTIAL" : input.commandSurface ? "UNKNOWN" : "UNKNOWN",
+    buyer_path_safety: ctaOk ? "PARTIAL" : input.commandSurface ? "UNKNOWN" : "UNKNOWN",
+    evidence_provenance: evidenceInventoryOk ? "PARTIAL" : input.commandCenter ? "UNKNOWN" : "UNKNOWN",
+    demand_capture: gscOk && searchOk ? "BRIGHT" : input.gsc || input.commandCenter ? "PARTIAL" : "UNKNOWN",
+    analytics_measurement: ga4Ok ? "PARTIAL" : input.ga4 ? "UNKNOWN" : "UNKNOWN",
+    revenue_truth: "DARK",
+    operations_automation: liveSiteKnown && readOnlyKnown ? "PARTIAL" : "UNKNOWN",
+    founder_dependency_reduction: readOnlyKnown ? "PARTIAL" : "UNKNOWN",
+  };
 }
 
 function hasKnownUnknown(haystack: string[], needle: string): boolean {
@@ -463,6 +510,7 @@ export async function buildBuckpartsDailyOperatorReport(
       deploy_sync_status: liveSite?.deploy_sync_status ?? "UNKNOWN",
       route_health_status: liveStatus,
     },
+    top_of_game_checklist_status: buildTopOfGameChecklistStatus({ commandCenter, commandSurface, liveSite, gsc, ga4 }),
     stale_or_missing_artifacts: Array.from(new Set(staleOrMissingArtifacts)),
     blocked_jobs,
     non_authoritative_signals: EXCLUDED_SIGNALS,
@@ -540,6 +588,19 @@ function siteTargetWarning(report: BuckpartsDailyOperatorReport, canonicalProduc
   return `Live-site smoke target is ${target}; production custom domain check (${canonicalProductionUrl}) is UNKNOWN.`;
 }
 
+function checklistStatusLines(status: BuckpartsDailyOperatorReport["top_of_game_checklist_status"]): string[] {
+  return [
+    `- Fit correctness: ${status.fit_correctness}`,
+    `- Buyer-path safety: ${status.buyer_path_safety}`,
+    `- Evidence/provenance: ${status.evidence_provenance}`,
+    `- Demand capture: ${status.demand_capture}`,
+    `- Analytics/measurement: ${status.analytics_measurement}`,
+    `- Revenue truth: ${status.revenue_truth}`,
+    `- Operations/automation: ${status.operations_automation}`,
+    `- Founder-dependency reduction: ${status.founder_dependency_reduction}`,
+  ];
+}
+
 export function formatBuckpartsDailyOperatorHumanReport(
   report: BuckpartsDailyOperatorReport,
   options: HumanOutputOptions = {},
@@ -582,6 +643,9 @@ export function formatBuckpartsDailyOperatorHumanReport(
     `- Primary target: ${report.site_health.primary_target_base_url}.`,
     `- Custom domain checked: ${String(report.site_health.custom_domain_checked)}; Netlify domain checked: ${String(report.site_health.netlify_domain_checked)}.`,
     `- Deploy sync: ${deploySync}.`,
+    "",
+    "TOP-OF-GAME CHECKLIST",
+    ...checklistStatusLines(report.top_of_game_checklist_status),
     "",
     "NEXT ACTION",
     `- Owner: ${report.next_owner_action}`,

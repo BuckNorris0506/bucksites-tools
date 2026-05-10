@@ -399,6 +399,7 @@ test("Daily Operator command/report shape is stable", async () => {
     "demand_opportunities",
     "throughput_clicks_money",
     "site_health",
+    "top_of_game_checklist_status",
     "stale_or_missing_artifacts",
     "blocked_jobs",
     "non_authoritative_signals",
@@ -436,6 +437,7 @@ test("default Daily Operator output is owner-readable with main section headings
     "DEMAND",
     "TRAFFIC / CLICKS / MONEY",
     "SITE HEALTH",
+    "TOP-OF-GAME CHECKLIST",
     "NEXT ACTION",
     "DO NOT TOUCH",
   ]) {
@@ -443,6 +445,24 @@ test("default Daily Operator output is owner-readable with main section headings
   }
   assert.ok(output.includes("Live-site smoke target is https://buckparts.netlify.app"));
   assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
+});
+
+test("Daily Operator surfaces concise Top-of-Game Checklist statuses", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.deepEqual(report.top_of_game_checklist_status, {
+    fit_correctness: "PARTIAL",
+    buyer_path_safety: "PARTIAL",
+    evidence_provenance: "PARTIAL",
+    demand_capture: "BRIGHT",
+    analytics_measurement: "PARTIAL",
+    revenue_truth: "DARK",
+    operations_automation: "PARTIAL",
+    founder_dependency_reduction: "PARTIAL",
+  });
+  assert.ok(output.includes("\nTOP-OF-GAME CHECKLIST\n"));
+  assert.ok(output.includes("- Fit correctness: PARTIAL"));
+  assert.ok(output.includes("- Revenue truth: DARK"));
 });
 
 test("Daily Operator reports custom domain checked when configured", async () => {
@@ -525,10 +545,14 @@ test("Daily Operator includes read-only live-site smoke result and does not infe
 
 test("Daily Operator marks revenue/conversions UNKNOWN and excludes valuation from authority", async () => {
   const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  const output = renderBuckpartsDailyOperatorOutput(report);
   assert.equal(report.throughput_clicks_money.revenue_conversions.status, "UNKNOWN_NOT_CONNECTED");
   assert.equal(report.throughput_clicks_money.revenue_conversions.revenue, "UNKNOWN");
+  assert.equal(report.top_of_game_checklist_status.revenue_truth, "DARK");
   assert.ok(report.decision_authority_policy.excluded_signals.some((s) => s.signal === "valuation monitor"));
   assert.ok(!report.decision_authority_policy.decision_authoritative_signals.some((s) => /valuation/i.test(s.signal)));
+  assert.equal(JSON.stringify(report.top_of_game_checklist_status).includes("valuation"), false);
+  assert.equal(output.includes("Valuation"), false);
 });
 
 test("human output keeps revenue/conversions UNKNOWN and GA4 zero counts non-failure", async () => {
