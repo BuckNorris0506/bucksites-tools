@@ -4,6 +4,18 @@ BuckParts is judged by whether it helps homeowners safely identify the right rep
 
 This checklist is a repo-backed operating standard. If repo code, command output, or named artifacts conflict with this file, repo truth wins. If proof is not available from the cited source, the current proof is `UNKNOWN`.
 
+## Top-of-Game Definition
+
+BuckParts is top-of-game when the product and operating loop consistently improve these outcomes:
+
+- Homeowner trust: public pages explain what BuckParts found, what is uncertain, and what the homeowner should compare before buying.
+- Fit correctness: model, filter, replacement, and compatibility claims are backed by repo-traceable evidence and do not overstate confidence.
+- Verified buyer paths: buying options appear only when the route can support a safe buyer path, and suppressed paths explain why.
+- Demand capture: external and internal demand signals identify what homeowners are asking for without treating demand as proof of revenue.
+- Revenue truth: clicks, traffic, and engagement are never described as revenue, conversion, profit, or valuation unless a real revenue/conversion source is connected and reconciled.
+- Operational reliability: monitoring, tests, audits, and Daily Operator outputs preserve `UNKNOWN` truth and expose blockers before automation acts.
+- Founder-dependency reduction: repeated decisions become repo-backed contracts, reports, commands, tests, or docs instead of chat-memory instructions.
+
 ## Status Model
 
 - `BRIGHT`: Proven by repo-backed source and safe to use for decisions inside the stated scope.
@@ -16,7 +28,27 @@ This checklist is a repo-backed operating standard. If repo code, command output
 
 A system only matters if it improves fit correctness, buyer safety, demand capture, conversion/revenue truth, operational reliability, or founder-dependency reduction.
 
-## Checklist
+## Decision Authority Rule
+
+A checklist item cannot influence Daily Operator, Command Center, automation, or owner recommendations unless its proof source is `BRIGHT` or explicitly scoped `PARTIAL`.
+
+`PARTIAL` authority must name the exact safe scope. Example: `/go` click visibility may inform click behavior, but not revenue; page-state inventory may inform sitemap/policy inventory, but not semantic CTA/trust state.
+
+`DARK` and `UNKNOWN` items must be excluded from decision authority. They may create blockers, warnings, research tasks, or validation gaps, but they must not justify recommendations, valuation, automation, page expansion, buyer-path expansion, or revenue claims.
+
+## Pre-Work Gate
+
+Before any new feature, system, page, automation, research workstream, dashboard, report, or monetization effort starts, answer these five questions in the plan or task prompt:
+
+- Which checklist category does this improve?
+- What proof source will validate it?
+- What could it break?
+- What must not be inferred?
+- What is the smallest correct durable implementation?
+
+If any answer is `UNKNOWN`, the work may proceed only as investigation or read-only validation. It must not ship as decision authority until proof is added.
+
+## Current Status Snapshot
 
 | Category | Standard | Why it matters | Current status | Current proof source | Missing proof | Next action | Validation required |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -35,6 +67,108 @@ A system only matters if it improves fit correctness, buyer safety, demand captu
 | Legal/compliance/trust language | Public language should avoid overclaims and use approved trust terms. | Overclaiming certainty creates legal and trust risk. | `PARTIAL` | `docs/BuckParts-UNIVERSAL-PAGE-TRUST-CONTRACT.md` lists banned phrases and approved language, and says several pages need copy alignment. | Current full-site proof that banned phrases are absent. | Keep all trust and buyer-path copy aligned to approved language. | Phrase guard and manual review for public routes and metadata. |
 | SEO/indexing | Indexing should reflect page-state and vertical policy, not ambition. | Search traffic should land on pages that can safely help the homeowner. | `PARTIAL` | `docs/BuckParts-TRUTH-MAP.md` lists vertical launch/noindex/sitemap policy; `docs/BuckParts-UNIVERSAL-PAGE-TRUST-CONTRACT.md` describes indexing expectations by page type. | Fresh sitemap/robots proof for every public route. | Keep unproven verticals noindex until trust and buyer-path proof are ready. | Sitemap and robots audit mapped to page-state and vertical launch policy. |
 
+## Stop Conditions
+
+### Internal Systems Work
+
+Stop internal systems work when it does not improve fit correctness, buyer safety, demand capture, conversion/revenue truth, operational reliability, or founder-dependency reduction.
+
+Stop when the system creates another dashboard/report without changing a decision, validation path, or owner action.
+
+Stop when the system turns a `PARTIAL`, `DARK`, or `UNKNOWN` signal into a recommendation without explicitly scoping or excluding it.
+
+### New Page Creation
+
+Stop new page creation when the page cannot answer the applicable universal trust questions.
+
+Stop when the page would expose buying options without safe buyer-path proof.
+
+Stop when the page would imply catalog-wide evidence, compatibility, or confidence that has not been proven.
+
+Stop when the page relies on search demand alone without fit correctness and buyer-path safety.
+
+### Automation Expansion
+
+Stop automation expansion unless every decision-driving signal is `BRIGHT` or explicitly scoped `PARTIAL`, and every `DARK`/`UNKNOWN` signal is excluded from authority.
+
+Stop if the automation would write to DB, mutate retailer links, change `/go`, deploy, push, or change public UI without explicit owner approval.
+
+Stop if automation would act on revenue, valuation, semantic page-state, GA4 dimensions, catalog-wide evidence coverage, or deployed commit sync while those signals remain excluded.
+
+### Monetization/Revenue Claims
+
+Stop monetization claims when revenue/conversions are not connected to a real feed.
+
+Stop any claim that clicks, human-likely clicks, GA4 funnel events, GSC demand, or traffic imply revenue, profit, buyer intent, or conversion.
+
+Stop buyer-path expansion if verified product-page safety is not proven.
+
+### Valuation Talk
+
+Stop valuation talk until real revenue/profit exists and is reconciled.
+
+Traffic, clicks, impressions, search demand, and GA4 events must not be converted into valuation.
+
+### Research Bot Recommendations
+
+Stop research-bot recommendations when they are not mapped to a checklist category.
+
+Stop when findings are general market ideas without a proof source, missing proof statement, validation method, and smallest durable implementation.
+
+Stop when research would bypass safe CTA policy, infer revenue, infer valuation, infer deployed commit sync, or infer catalog-wide coverage from filenames.
+
+## Research Bot Operating Contract
+
+The Research Bot is an input generator, not decision authority. It can propose checklist gaps; it cannot declare `BRIGHT`, ship pages, expand automation, create revenue claims, or override repo truth.
+
+### Accepted Research Types
+
+- Homeowner language for identifying replacement parts, model numbers, filter numbers, uncertainty, and wrong-purchase avoidance.
+- Competitor and retailer patterns that clarify fit confidence without overclaiming.
+- Search-demand patterns that can become fit-correctness or buyer-safety gaps.
+- Evidence expectations: what homeowners need to trust manuals, model mappings, and replacement guidance.
+- Compliance-sensitive language around affiliate links, uncertainty, guarantees, and safe purchasing.
+- Public-page trust patterns that can be converted into tests, copy contracts, or route audits.
+- Operational reliability patterns for read-only monitoring, alerting, and owner-readable workflows.
+
+### Rejected Research Types
+
+- Valuation, revenue projections, or conversion claims without real revenue/conversion data.
+- Buyer-path expansion that bypasses safe CTA policy.
+- Catalog-wide evidence coverage claims without catalog/evidence joins.
+- GA4 custom-dimension conclusions before custom dimensions are proven.
+- Deploy health or deploy sync from local git state.
+- Roadmap priorities based only on chat memory.
+- Generic feature ideas that do not improve a checklist category.
+- Competitor mimicry that weakens homeowner trust or creates overclaiming risk.
+- SEO expansion that ignores page-state, noindex, evidence, or buyer-path policy.
+
+### Required Output Format
+
+Each research finding must use this format:
+
+- Checklist category:
+- Homeowner problem:
+- Evidence observed:
+- Repo proof needed:
+- Missing proof:
+- Risk if acted on too early:
+- Smallest durable implementation:
+- Validation required:
+- Decision-authority status: `UNKNOWN` until repo proof upgrades it.
+
+### Accepted Checklist Gap
+
+A research finding becomes an accepted checklist gap only when it maps to fit correctness, buyer safety, demand capture, conversion/revenue truth, operational reliability, or founder-dependency reduction.
+
+An accepted gap must name the proof source it needs, the inference it forbids, the next action, and the validation required. Until then, it remains `UNKNOWN` and cannot influence Daily Operator, Command Center, automation, monetization, valuation, or page expansion.
+
+### Rejected as Distraction
+
+Reject research as distraction when it cannot identify a checklist category, proof source, missing proof, and validation path.
+
+Reject research that only creates more dashboard work, broad market analysis, valuation talk, unproven revenue claims, or automation over partial data.
+
 ## What This Checklist Prevents
 
 - Dashboards without decisions.
@@ -43,34 +177,23 @@ A system only matters if it improves fit correctness, buyer safety, demand captu
 - Clicks treated as revenue.
 - Automation over partial data.
 - Chat-memory roadmap drift.
+- Public pages that imply fit confidence without proof.
+- Research that creates motion without owner action.
+- Deploys that improve internal surfaces while bypassing validation.
 
-## Research Bot Requirements
+## Checklist Maintenance Cadence
 
-### What It Should Research
-
-- Homeowner language for identifying replacement parts, model numbers, filter numbers, uncertainty, and wrong-purchase avoidance.
-- Competitor and retailer patterns that clarify fit confidence without overclaiming.
-- Search-demand patterns that can become fit-correctness or buyer-safety gaps.
-- Evidence expectations: what homeowners need to trust manuals, model mappings, and replacement guidance.
-- Compliance-sensitive language around affiliate links, uncertainty, guarantees, and safe purchasing.
-
-### What It Should Not Research
-
-- Valuation, revenue projections, or conversion claims without real revenue/conversion data.
-- Buyer-path expansion that bypasses safe CTA policy.
-- Catalog-wide evidence coverage claims without catalog/evidence joins.
-- GA4 custom-dimension conclusions before custom dimensions are proven.
-- Deploy health or deploy sync from local git state.
-- Roadmap priorities based only on chat memory.
-
-### How Findings Become Checklist Gaps
-
-Research findings become checklist gaps only when they can be mapped to one of these fields: fit correctness, buyer safety, demand capture, conversion/revenue truth, operational reliability, or founder-dependency reduction. Each accepted gap needs a proof source, missing proof statement, next action, and validation command or audit before it can influence automation.
-
-## Use Cadence
-
-- Daily: Use the Daily Operator to check stop-the-line issues, demand, clicks/money, site health, next action, and excluded signals.
+- Daily: Use the Daily Operator to check stop-the-line issues, demand, clicks/money, site health, Top-of-Game Checklist statuses, next action, and excluded signals.
 - Weekly: Review this checklist for `PARTIAL`, `DARK`, and `UNKNOWN` items that block durable owner decisions.
-- Before deploy: Confirm affected page-state, trust-language, buyer-path, monitoring, and validation requirements are satisfied.
-- Before adding pages: Confirm the page type can answer the universal trust questions or is explicitly scoped as `NOT_NEEDED_YET`.
-- Before adding automation: Confirm every decision-driving signal is `BRIGHT`, or explicitly excluded from decision authority with an owner-readable reason.
+- Pre-deploy check: Confirm affected page-state, trust-language, buyer-path, monitoring, migration, and validation requirements are satisfied. Deploy only when the changed surface has passed named validation.
+- Pre-page expansion check: Confirm the page type can answer the universal trust questions or is explicitly scoped as `NOT_NEEDED_YET`.
+- Pre-automation check: Confirm every decision-driving signal is `BRIGHT` or explicitly scoped `PARTIAL`, and every `DARK`/`UNKNOWN` signal is excluded from authority with owner-readable wording.
+- Monthly top-of-game audit: Reclassify each category using repo proof only, identify fake-bright risks, retire stale checklist items, and choose the smallest next system improvement.
+
+## Next System After Checklist
+
+After this checklist hardening, the next system is not more checklist work.
+
+The next system is Daily Operator / Command Center alignment to checklist authority: recommendations should reflect which checklist categories are `BRIGHT`, explicitly scoped `PARTIAL`, excluded, or blocked.
+
+The Research Bot comes later, after Daily Operator / Command Center alignment can safely receive research findings as checklist gaps without treating them as authority.
