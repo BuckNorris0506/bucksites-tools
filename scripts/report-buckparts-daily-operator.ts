@@ -6,7 +6,10 @@ import { pathToFileURL } from "node:url";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 import { buildBuckpartsCommandSurfaceReport, type CommandSurfaceReport } from "./report-buckparts-command-surface";
 import { runLiveSiteSmokeCheck } from "./live-site-smoke-check";
-import type { LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
+import type {
+  LiveSiteMonitorV1,
+  RecommendationAuthorityRecord,
+} from "./lib/buckparts-command-center-v2-types";
 import {
   buildOwnerGscExternalDemandNeuron,
   type OwnerGscExternalDemandNeuron,
@@ -23,8 +26,6 @@ import {
 type UnknownableNumber = number | "UNKNOWN";
 type RuntimeStatus = "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
 type TopOfGameStatus = "BRIGHT" | "PARTIAL" | "DARK" | "UNKNOWN" | "NOT_NEEDED_YET";
-type RecommendationActionType = "OWNER_ACTION" | "AGENT_ACTION" | "BLOCKER" | "WARNING";
-type RecommendationAuthorityLevel = "BRIGHT" | "SCOPED_PARTIAL" | "DARK" | "UNKNOWN";
 type CommandCenterReport = Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>;
 
 type Ga4TrustFunnelRead =
@@ -46,16 +47,6 @@ type DailyOperatorOptions = {
 
 type ExcludedSignal = {
   signal: string;
-  reason: string;
-};
-
-type RecommendationAuthorityRecord = {
-  source: string;
-  proposed_action: string;
-  action_type: RecommendationActionType;
-  authority_level: RecommendationAuthorityLevel;
-  authority_scope: string;
-  allowed_as_recommendation: boolean;
   reason: string;
 };
 
@@ -374,6 +365,30 @@ function gscDemandAuthority(gsc: OwnerGscExternalDemandNeuron | null): Recommend
   };
 }
 
+function recommendationPriority(action: RecommendationAuthorityRecord): number {
+  if (action.action_type === "BLOCKER") return 10;
+  if (/live[-_ ]site|site health/i.test(action.source)) return 20;
+  if (/gsc|search|demand|gap/i.test(action.source)) return 30;
+  if (/affiliate/i.test(action.source)) return 40;
+  if (action.action_type === "AGENT_ACTION") return 50;
+  return 90;
+}
+
+function chooseAllowedAction(
+  actions: RecommendationAuthorityRecord[],
+  kind: "owner" | "agent",
+): RecommendationAuthorityRecord | null {
+  const allowed = actions
+    .filter((action) => action.allowed_as_recommendation)
+    .filter((action) =>
+      kind === "agent"
+        ? action.action_type === "AGENT_ACTION"
+        : action.action_type === "OWNER_ACTION" || action.action_type === "BLOCKER" || action.action_type === "WARNING",
+    )
+    .sort((a, b) => recommendationPriority(a) - recommendationPriority(b));
+  return allowed[0] ?? null;
+}
+
 function buildRecommendationAuthority(args: {
   stopLineIssues: string[];
   commandCenter: CommandCenterReport | null;
@@ -411,14 +426,17 @@ function buildRecommendationAuthority(args: {
     };
   }
 
-  const importedOwner = args.commandCenter
+  const scopedCommandCenterActions = args.commandCenter?.command_center_v2.recommendation_authority?.evaluated_actions ?? [];
+  evaluated.push(...scopedCommandCenterActions);
+
+  const importedOwner = args.commandCenter && scopedCommandCenterActions.length === 0
     ? unscopedImportedAction({
         source: "command_center_v2.next_owner_action",
         proposed_action: args.commandCenter.command_center_v2.next_owner_action,
         action_type: "OWNER_ACTION",
       })
     : null;
-  const importedAgent = args.commandCenter
+  const importedAgent = args.commandCenter && scopedCommandCenterActions.length === 0
     ? unscopedImportedAction({
         source: "command_center.execution_guidance.next_move_command",
         proposed_action: args.commandCenter.execution_guidance.next_move_command,
@@ -431,12 +449,15 @@ function buildRecommendationAuthority(args: {
   const gscOwner = gscDemandAuthority(args.gsc);
   if (gscOwner) evaluated.push(gscOwner);
 
-  const fallbackOwner = importedOwner ?? gscOwner ?? unscopedImportedAction({
+  const selectedOwner = chooseAllowedAction(evaluated, "owner");
+  const selectedAgent = chooseAllowedAction(evaluated, "agent");
+
+  const fallbackOwner = selectedOwner ?? importedOwner ?? gscOwner ?? unscopedImportedAction({
     source: "daily_operator.missing_owner_action_source",
     proposed_action: "Restore missing read-only inputs before using Daily Operator recommendations.",
     action_type: "OWNER_ACTION",
   });
-  const fallbackAgent = importedAgent ?? unscopedImportedAction({
+  const fallbackAgent = selectedAgent ?? importedAgent ?? unscopedImportedAction({
     source: "daily_operator.missing_agent_action_source",
     proposed_action: "npm run buckparts:daily",
     action_type: "AGENT_ACTION",

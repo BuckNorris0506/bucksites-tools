@@ -25,6 +25,18 @@ export type AmazonRescueTokenControlsFile = {
 };
 
 export type DecisionLaneStatus = "OK" | "ATTENTION" | "BLOCKED" | "PLACEHOLDER" | "UNKNOWN";
+export type RecommendationActionType = "OWNER_ACTION" | "AGENT_ACTION" | "BLOCKER" | "WARNING";
+export type RecommendationAuthorityLevel = "BRIGHT" | "SCOPED_PARTIAL" | "DARK" | "UNKNOWN";
+
+export type RecommendationAuthorityRecord = {
+  source: string;
+  proposed_action: string;
+  action_type: RecommendationActionType;
+  authority_level: RecommendationAuthorityLevel;
+  authority_scope: string;
+  allowed_as_recommendation: boolean;
+  reason: string;
+};
 
 export type DecisionLane = {
   status: DecisionLaneStatus;
@@ -225,6 +237,9 @@ export type CommandCenterV2Report = {
   recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 };
   deploy_live_site_status: DecisionLane & { live_site_monitor: LiveSiteMonitorV1 | null };
   revenue_snapshot: RevenueSnapshotLane;
+  recommendation_authority: {
+    evaluated_actions: RecommendationAuthorityRecord[];
+  };
   /** First token safe for autonomous fresh exact-token search work per registry + queue (null if none). */
   next_allowed_agent_token: string | null;
   /** Highest-priority owner-facing step synthesized from lanes (not chat memory). */

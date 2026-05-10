@@ -447,16 +447,20 @@ test("default Daily Operator output is owner-readable with main section headings
   }
   assert.ok(output.includes("Live-site smoke target is https://buckparts.netlify.app"));
   assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
-  assert.ok(output.includes("- Owner: WITHHELD — recommendation source is not authority-scoped."));
+  assert.ok(output.includes("- Owner: Use GSC demand opportunities."));
   assert.ok(output.includes("- Agent: WITHHELD — recommendation source is not authority-scoped."));
 });
 
-test("Daily Operator withholds unscoped Command Center next actions", async () => {
+test("Daily Operator withholds unscoped Command Center records while allowing scoped demand authority", async () => {
   const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
-  assert.equal(report.recommendation_authority.owner_action.source, "command_center_v2.next_owner_action");
-  assert.equal(report.recommendation_authority.owner_action.allowed_as_recommendation, false);
-  assert.equal(report.recommendation_authority.owner_action.authority_level, "UNKNOWN");
-  assert.equal(report.next_owner_action, "WITHHELD — recommendation source is not authority-scoped.");
+  const unscopedOwner = report.recommendation_authority.evaluated_actions.find(
+    (action) => action.source === "command_center_v2.next_owner_action",
+  );
+  assert.ok(unscopedOwner);
+  assert.equal(unscopedOwner.allowed_as_recommendation, false);
+  assert.equal(unscopedOwner.authority_level, "UNKNOWN");
+  assert.equal(report.recommendation_authority.owner_action.source, "gsc_external_demand.next_owner_action");
+  assert.equal(report.next_owner_action, "Use GSC demand opportunities.");
   assert.equal(report.recommendation_authority.agent_action.source, "command_center.execution_guidance.next_move_command");
   assert.equal(report.recommendation_authority.agent_action.allowed_as_recommendation, false);
   assert.equal(report.next_agent_action, "WITHHELD — recommendation source is not authority-scoped.");
@@ -483,16 +487,172 @@ test("Daily Operator keeps DARK/UNKNOWN excluded signals out of positive recomme
   assert.ok(report.blocked_jobs.some((j) => j.job_or_signal === "deploy_sync_status"));
 });
 
-test("Daily Operator records scoped PARTIAL GSC authority without overriding unscoped Command Center action", async () => {
+test("Daily Operator records scoped PARTIAL GSC authority and withholds unscoped Command Center action", async () => {
   const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
   const gscAction = report.recommendation_authority.evaluated_actions.find(
     (a) => a.source === "gsc_external_demand.next_owner_action",
+  );
+  const unscopedOwner = report.recommendation_authority.evaluated_actions.find(
+    (a) => a.source === "command_center_v2.next_owner_action",
   );
   assert.ok(gscAction);
   assert.equal(gscAction.authority_level, "SCOPED_PARTIAL");
   assert.equal(gscAction.allowed_as_recommendation, true);
   assert.ok(gscAction.authority_scope.includes("Demand opportunity"));
+  assert.ok(unscopedOwner);
+  assert.equal(unscopedOwner.allowed_as_recommendation, false);
+  assert.equal(report.next_owner_action, "Use GSC demand opportunities.");
+});
+
+test("Daily Operator allows scoped Command Center UNKNOWN human-browser blocker only as review action", async () => {
+  const base = commandCenter();
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      gscExternalDemand: async () => null,
+      commandCenter: async () => ({
+        ...base,
+        command_center_v2: {
+          ...base.command_center_v2,
+          recommendation_authority: {
+            evaluated_actions: [
+              {
+                source: "command_center_v2.unknown_or_human_review",
+                proposed_action: "Resolve UNKNOWN / human-browser cohort before expanding agent Amazon rescue.",
+                action_type: "BLOCKER",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Owner review blocker for UNKNOWN evidence only.",
+                allowed_as_recommendation: true,
+                reason: "UNKNOWN evidence may block expansion but not justify growth.",
+              },
+            ],
+          },
+        },
+      }),
+    }),
+  });
+  assert.equal(report.next_owner_action, "Resolve UNKNOWN / human-browser cohort before expanding agent Amazon rescue.");
+  assert.equal(report.recommendation_authority.owner_action.action_type, "BLOCKER");
+  assert.equal(report.recommendation_authority.owner_action.allowed_as_recommendation, true);
+  assert.equal(report.next_agent_action, "WITHHELD — recommendation source is not authority-scoped.");
+});
+
+test("Daily Operator allows affiliate readiness only as owner setup/status action", async () => {
+  const base = commandCenter();
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      gscExternalDemand: async () => null,
+      commandCenter: async () => ({
+        ...base,
+        command_center_v2: {
+          ...base.command_center_v2,
+          recommendation_authority: {
+            evaluated_actions: [
+              {
+                source: "command_center_v2.affiliate_readiness",
+                proposed_action: "Unblock affiliate_readiness for non-Amazon monetization when programs leave pending states.",
+                action_type: "OWNER_ACTION",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Owner setup/status action only; not revenue or valuation.",
+                allowed_as_recommendation: true,
+                reason: "Affiliate readiness may guide setup while revenue remains excluded.",
+              },
+            ],
+          },
+        },
+      }),
+    }),
+  });
+  assert.equal(report.next_owner_action, "Unblock affiliate_readiness for non-Amazon monetization when programs leave pending states.");
+  assert.equal(report.recommendation_authority.owner_action.source, "command_center_v2.affiliate_readiness");
+  assert.equal(report.recommendation_authority.owner_action.proposed_action.includes("revenue"), false);
+  assert.equal(report.recommendation_authority.owner_action.proposed_action.includes("valuation"), false);
+});
+
+test("Daily Operator allows scoped Amazon rescue queue command as operational queue review", async () => {
+  const base = commandCenter();
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      gscExternalDemand: async () => null,
+      commandCenter: async () => ({
+        ...base,
+        command_center_v2: {
+          ...base.command_center_v2,
+          recommendation_authority: {
+            evaluated_actions: [
+              {
+                source: "command_center_v2.amazon_rescue.next_allowed_agent_token",
+                proposed_action: "Run read-only amazon-first queue + exact-token PDP verification for ABC123 and cohort; do not mutate retailer_links without owner-approved insert plan.",
+                action_type: "AGENT_ACTION",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Read-only operational queue review only; not revenue or valuation.",
+                allowed_as_recommendation: true,
+                reason: "Registry-cleared queue review is scoped operational work.",
+              },
+            ],
+          },
+        },
+      }),
+    }),
+  });
   assert.equal(report.next_owner_action, "WITHHELD — recommendation source is not authority-scoped.");
+  assert.equal(report.next_agent_action.includes("Run read-only amazon-first queue"), true);
+  assert.equal(report.recommendation_authority.agent_action.allowed_as_recommendation, true);
+  assert.equal(report.recommendation_authority.agent_action.source, "command_center_v2.amazon_rescue.next_allowed_agent_token");
+});
+
+test("Daily Operator emits one primary owner action and one primary agent action when multiple scoped records exist", async () => {
+  const base = commandCenter();
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      commandCenter: async () => ({
+        ...base,
+        command_center_v2: {
+          ...base.command_center_v2,
+          recommendation_authority: {
+            evaluated_actions: [
+              {
+                source: "command_center_v2.affiliate_readiness",
+                proposed_action: "Unblock affiliate_readiness for non-Amazon monetization when programs leave pending states.",
+                action_type: "OWNER_ACTION",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Owner setup/status action only.",
+                allowed_as_recommendation: true,
+                reason: "Setup status only.",
+              },
+              {
+                source: "command_center_v2.unknown_or_human_review",
+                proposed_action: "Resolve UNKNOWN / human-browser cohort before expanding agent Amazon rescue.",
+                action_type: "BLOCKER",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Owner review blocker only.",
+                allowed_as_recommendation: true,
+                reason: "UNKNOWN evidence blocker.",
+              },
+              {
+                source: "command_center_v2.amazon_rescue.next_allowed_agent_token",
+                proposed_action: "Run read-only amazon-first queue + exact-token PDP verification for ABC123 and cohort; do not mutate retailer_links without owner-approved insert plan.",
+                action_type: "AGENT_ACTION",
+                authority_level: "SCOPED_PARTIAL",
+                authority_scope: "Read-only operational queue review only.",
+                allowed_as_recommendation: true,
+                reason: "Scoped queue review.",
+              },
+            ],
+          },
+        },
+      }),
+    }),
+  });
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.equal(report.next_owner_action, "Resolve UNKNOWN / human-browser cohort before expanding agent Amazon rescue.");
+  assert.equal(report.next_agent_action.includes("Run read-only amazon-first queue"), true);
+  assert.equal((output.match(/^- Owner:/gm) ?? []).length, 1);
+  assert.equal((output.match(/^- Agent:/gm) ?? []).length, 1);
+  assert.equal(report.recommendation_authority.evaluated_actions.length >= 3, true);
 });
 
 test("Daily Operator surfaces blocker actions without treating UNKNOWN as positive recommendations", async () => {

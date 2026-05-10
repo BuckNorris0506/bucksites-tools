@@ -720,6 +720,18 @@ test("command_center_v2 loads token controls and excludes registry tokens from f
   assert.ok(v2.amazon_rescue.frozen_operator_hold_tokens.includes("ADQ75795101"));
   assert.ok(v2.amazon_rescue.do_not_touch?.includes("ADQ75795101"));
   assert.ok(v2.amazon_rescue.do_not_touch?.includes("LT1000P"));
+  const authoritySources = v2.recommendation_authority.evaluated_actions.map((action) => action.source);
+  assert.ok(authoritySources.includes("command_center_v2.amazon_rescue.frozen_operator_hold_tokens"));
+  assert.ok(authoritySources.includes("command_center_v2.amazon_rescue.next_allowed_agent_token"));
+  assert.ok(authoritySources.includes("command_center_v2.affiliate_readiness"));
+  assert.ok(
+    v2.recommendation_authority.evaluated_actions.every(
+      (action) =>
+        action.authority_level === "SCOPED_PARTIAL" &&
+        action.allowed_as_recommendation === true &&
+        action.authority_scope.length > 0,
+    ),
+  );
 });
 
 test("4396508 is human_browser_required / unknown lane, not fresh_search_top_tokens", async () => {
@@ -738,6 +750,12 @@ test("4396508 is human_browser_required / unknown lane, not fresh_search_top_tok
   assert.equal(ar.fresh_search_top_tokens.includes("4396508"), false);
   assert.ok(ar.human_browser_required_tokens.includes("4396508"));
   assert.ok(report.command_center_v2.unknown_or_human_review.top_items?.includes("4396508"));
+  const humanBrowserAction = report.command_center_v2.recommendation_authority.evaluated_actions.find(
+    (action) => action.source === "command_center_v2.unknown_or_human_review",
+  );
+  assert.ok(humanBrowserAction);
+  assert.equal(humanBrowserAction.action_type, "BLOCKER");
+  assert.ok(humanBrowserAction.authority_scope.includes("UNKNOWN evidence"));
 });
 
 test("queue unknown_evidence_deferred merges into human_browser_required_tokens", async () => {

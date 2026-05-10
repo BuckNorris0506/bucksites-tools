@@ -7,6 +7,7 @@ import type {
   EvidenceInventoryV1,
   EvidenceRollup,
   LiveSiteMonitorV1,
+  RecommendationAuthorityRecord,
   RevenueSnapshotLane,
 } from "./buckparts-command-center-v2-types";
 
@@ -80,6 +81,10 @@ function uniqueSorted(tokens: string[]): string[] {
   return Array.from(new Set(tokens.map((t) => t.trim().toUpperCase()).filter(Boolean))).sort((a, b) =>
     a.localeCompare(b),
   );
+}
+
+function recommendationAuthority(input: RecommendationAuthorityRecord): RecommendationAuthorityRecord {
+  return input;
 }
 
 function buildRevenueSnapshotLane(click: ClickVisibilitySnapshot): RevenueSnapshotLane {
@@ -309,19 +314,69 @@ export function buildCommandCenterV2Report(input: {
   const revenueLane = buildRevenueSnapshotLane(input.clickVisibility);
 
   const ownerParts: string[] = [];
+  const recommendationAuthorityRecords: RecommendationAuthorityRecord[] = [];
   if (human_browser_required_tokens.length > 0) {
-    ownerParts.push(
-      "Resolve UNKNOWN / human-browser cohort (see unknown_or_human_review) before expanding agent Amazon rescue.",
-    );
+    const action = "Resolve UNKNOWN / human-browser cohort (see unknown_or_human_review) before expanding agent Amazon rescue.";
+    ownerParts.push(action);
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.unknown_or_human_review",
+      proposed_action: action,
+      action_type: "BLOCKER",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Owner review blocker for UNKNOWN evidence cohort only; not a growth, revenue, or autonomous rescue recommendation.",
+      allowed_as_recommendation: true,
+      reason: "UNKNOWN evidence may block expansion and require owner/human-browser review under the Top-of-Game authority rule.",
+    }));
   }
   if (frozenTokens.length > 0) {
-    ownerParts.push("Review frozen_operator_hold tokens in amazon_rescue lane and registry before releasing overlapping agent work.");
+    const action = "Review frozen_operator_hold tokens in amazon_rescue lane and registry before releasing overlapping agent work.";
+    ownerParts.push(action);
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.amazon_rescue.frozen_operator_hold_tokens",
+      proposed_action: action,
+      action_type: "BLOCKER",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Owner review blocker for token-control overlap only; not permission for autonomous agent expansion.",
+      allowed_as_recommendation: true,
+      reason: "Frozen operator holds are explicit do-not-touch controls that may block overlapping work until owner review.",
+    }));
   }
   if (input.affiliateApprovalPending) {
-    ownerParts.push("Unblock affiliate_readiness for non-Amazon monetization when programs leave pending states.");
+    const action = "Unblock affiliate_readiness for non-Amazon monetization when programs leave pending states.";
+    ownerParts.push(action);
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.affiliate_readiness",
+      proposed_action: action,
+      action_type: "OWNER_ACTION",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Owner setup/status action for affiliate program readiness only; not a revenue, conversion, or valuation claim.",
+      allowed_as_recommendation: true,
+      reason: "Affiliate readiness may guide owner setup work when pending/blocked status is proven, while revenue remains excluded.",
+    }));
   }
   if (coverageStatus === "BLOCKED") {
-    ownerParts.push("Address coverage_health CRITICAL before any mutating rescue.");
+    const action = "Address coverage_health CRITICAL before any mutating rescue.";
+    ownerParts.push(action);
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.coverage_health",
+      proposed_action: action,
+      action_type: "BLOCKER",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Command-surface critical blocker handling only; no mutation authority.",
+      allowed_as_recommendation: true,
+      reason: "CRITICAL command-surface health can block downstream work until read-only diagnostics resolve it.",
+    }));
+  }
+  if (next_allowed_agent_token != null) {
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.amazon_rescue.next_allowed_agent_token",
+      proposed_action: `Run read-only amazon-first queue + exact-token PDP verification for ${next_allowed_agent_token} and cohort; do not mutate retailer_links without owner-approved insert plan.`,
+      action_type: "AGENT_ACTION",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Read-only operational queue review for registry-cleared fresh exact-token verification; not based on revenue, valuation, or monetization claims.",
+      allowed_as_recommendation: true,
+      reason: "The action is limited to read-only Amazon-first queue review for a registry-cleared token and preserves mutation prohibitions.",
+    }));
   }
 
   const next_owner_action =
@@ -341,6 +396,9 @@ export function buildCommandCenterV2Report(input: {
     recent_evidence: recentLane,
     deploy_live_site_status: deployLane,
     revenue_snapshot: revenueLane,
+    recommendation_authority: {
+      evaluated_actions: recommendationAuthorityRecords,
+    },
     next_allowed_agent_token,
     next_owner_action,
   };
