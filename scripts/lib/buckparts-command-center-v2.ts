@@ -173,8 +173,19 @@ export function buildCommandCenterV2Report(input: {
   const liveTokens = input.registryEntries
     .filter((e) => e.status === "LIVE_OUTCOME_RECORDED")
     .map((e) => e.token);
+  const ownerReviewExactPdpTokens: string[] = [];
+  if (input.amazonFirstBlocked.top_candidates !== "UNKNOWN" && Array.isArray(input.amazonFirstBlocked.top_candidates)) {
+    for (const row of input.amazonFirstBlocked.top_candidates) {
+      if (row.recommended_next_action === "OWNER_REVIEW_EXACT_PDP_PROVEN" && typeof row.token === "string") {
+        ownerReviewExactPdpTokens.push(row.token);
+      }
+    }
+  }
+  const ownerReviewExactPdpSet = new Set(ownerReviewExactPdpTokens.map((token) => token.toUpperCase()));
+
   const unknownRecordedTokens = input.registryEntries
     .filter((e) => e.status === "UNKNOWN_EVIDENCE_RECORDED")
+    .filter((e) => !ownerReviewExactPdpSet.has(e.token.toUpperCase()))
     .map((e) => e.token);
   const operatorDecisionTokens = input.registryEntries
     .filter((e) => e.status === "OPERATOR_DECISION_REQUIRED")

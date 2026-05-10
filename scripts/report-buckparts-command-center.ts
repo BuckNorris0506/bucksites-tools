@@ -316,7 +316,7 @@ function buildAmazonFirstBlockedQueueSummary(
   if (unknownEvidenceDeferredCount > 0) {
     const dHint =
       deferredTopTokens.length > 0 ? deferredTopTokens.join(", ") : "see queue unknown_evidence_deferred";
-    recommended += ` Separately: ${unknownEvidenceDeferredCount} row(s) have committed UNKNOWN evidence — not ordinary fresh exact-token search targets (HUMAN_BROWSER_VERIFICATION_REQUIRED); example tokens: ${dHint}.`;
+    recommended += ` Separately: ${unknownEvidenceDeferredCount} row(s) have committed review evidence — not ordinary fresh exact-token search targets (HUMAN_BROWSER_VERIFICATION_REQUIRED or NO_SAFE_PDP_FOUND); example tokens: ${dHint}.`;
   }
 
   return {

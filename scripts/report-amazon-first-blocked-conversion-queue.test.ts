@@ -206,10 +206,75 @@ test("committed UNKNOWN evidence demotes SEARCH row to HUMAN_BROWSER_VERIFICATIO
   }
 });
 
+test("superseding owner-review evidence resolves exact PDP proof without promoting mutation", () => {
+  const evidenceIndex = {
+    byToken: new Map<string, { file: string; reason: string; verdict?: string }>(),
+    byFilterId: new Map([
+      [
+        "filter-owner-proven",
+        {
+          file: "amazon-x-owner-review-pdp-evidence.2026-01-01.json",
+          reason: "owner proved exact token PDP",
+          verdict: "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+        },
+      ],
+      [
+        "filter-no-safe",
+        {
+          file: "amazon-y-owner-review-no-safe-pdp.2026-01-01.json",
+          reason: "owner found no safe PDP",
+          verdict: "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH",
+        },
+      ],
+    ]),
+  };
+  const report = buildAmazonFirstBlockedConversionQueueReportFromData({
+    links: [
+      {
+        id: "owner-proven",
+        filter_id: "filter-owner-proven",
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://www.repairclinic.com/Search?SearchTerm=PROVEN1",
+        browser_truth_classification: null,
+        is_primary: false,
+      },
+      {
+        id: "no-safe",
+        filter_id: "filter-no-safe",
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://www.repairclinic.com/Search?SearchTerm=NOSAFE1",
+        browser_truth_classification: null,
+        is_primary: false,
+      },
+    ],
+    filters: [
+      { id: "filter-owner-proven", slug: "owner-proven", oem_part_number: "PROVEN1" },
+      { id: "filter-no-safe", slug: "no-safe", oem_part_number: "NOSAFE1" },
+    ],
+    now: () => new Date("2026-05-01T00:00:00.000Z"),
+    amazonAffiliateReady: true,
+    committedUnknownIndex: evidenceIndex,
+  });
+  assert.equal(report.needs_amazon_search_count, 0);
+  assert.equal(report.unknown_evidence_deferred_count, 1);
+  assert.ok(Array.isArray(report.top_candidates));
+  assert.ok(Array.isArray(report.unknown_evidence_deferred));
+  if (Array.isArray(report.top_candidates) && Array.isArray(report.unknown_evidence_deferred)) {
+    const ownerProven = report.top_candidates.find((row) => row.link_id === "owner-proven");
+    const noSafe = report.top_candidates.find((row) => row.link_id === "no-safe");
+    assert.equal(ownerProven?.recommended_next_action, "OWNER_REVIEW_EXACT_PDP_PROVEN");
+    assert.equal(ownerProven?.evidence_review_verdict, "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT");
+    assert.equal(noSafe?.recommended_next_action, "NO_SAFE_PDP_FOUND");
+    assert.equal(noSafe?.evidence_review_verdict, "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH");
+    assert.deepEqual(report.unknown_evidence_deferred.map((row) => row.link_id), ["no-safe"]);
+  }
+});
+
 test("loadCommittedUnknownEvidenceIndex picks up committed amazon unknown outcome files", () => {
   const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
   const meta =
-    idx.byToken.get("4396508") ?? idx.byFilterId.get("063a6122-c85f-4332-92c0-0d8e53dc5d4c");
-  assert.ok(meta, "expected data/evidence/amazon-4396508-unknown-outcome fixture");
-  assert.match(meta.file, /4396508.*unknown-outcome/i);
+    idx.byToken.get("4396842") ?? idx.byFilterId.get("93205a06-d416-4aeb-8c5c-ba583f30deca");
+  assert.ok(meta, "expected data/evidence/amazon-4396842 owner-review fixture");
+  assert.match(meta.file, /4396842.*owner-review/i);
+  assert.equal(meta.verdict, "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH");
 });

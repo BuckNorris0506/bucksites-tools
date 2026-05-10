@@ -1,0 +1,76 @@
+{
+  "report_name": "buckparts_amazon_4396508_owner_review_pdp_evidence_v1",
+  "generated_at": "2026-05-10T21:21:37Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "token": "4396508",
+  "supersedes": "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json",
+  "prior_verdict": "UNKNOWN",
+  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+  "mutation_ready": false,
+  "mutation_ready_basis": "false until owner-approved insert plan and runtime trust gates are checked; this file records evidence only and does not mutate retailer_links",
+  "filter_slug": "4396508",
+  "filter_id": "063a6122-c85f-4332-92c0-0d8e53dc5d4c",
+  "canonical_url": "https://www.amazon.com/dp/B00NXPKBQ2",
+  "asin": "B00NXPKBQ2",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+  "product_attribution": "aftermarket_compatible",
+  "pack_count": 1,
+  "owner_browser_finding": {
+    "source": "owner_browser_screenshot_observation",
+    "screenshot_file_committed": false,
+    "original_owner_url_sanitized": true,
+    "canonical_url_used_for_evidence": "https://www.amazon.com/dp/B00NXPKBQ2",
+    "seller_title_visible": "EcoAqua 4396508 Refrigerator Water Filter, Replacement for Everydrop Filter 5, EDR5RXD1, Whirlpool WF-NLC240V, 4396510, NLC240V, PNL240V, 4396508p, 4396547, 4392857, LC400V, 1-Pack",
+    "exact_token_visible_in_title": true,
+    "buy_box_visible": true,
+    "price_visible": true,
+    "in_stock_visible": true,
+    "add_to_cart_visible": true,
+    "buy_now_visible": true,
+    "other_variants_seen": ["2-pack", "3-pack"],
+    "primary_reviewed_variant": "single-pack"
+  },
+  "exact_token_proof": "Owner browser screenshot showed seller-controlled product title with literal 4396508 on canonical Amazon PDP https://www.amazon.com/dp/B00NXPKBQ2.",
+  "buyability_proof": "Owner browser screenshot showed buy box, price, In Stock, Add to Cart, and Buy Now visible on the single-pack PDP.",
+  "asin_collision_reuse_check": {
+    "repo_text_search_for_asin": {
+      "command": "rg -n \"B00NXPKBQ2|4396508 Refrigerator Water Filter|EcoAqua 4396508\" data src scripts --glob '!node_modules' --glob '!*.env*'",
+      "matching_lines": 0
+    },
+    "read_only_refrigerator_token_precheck": {
+      "command": "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens 4396508,4396842",
+      "token": "4396508",
+      "existing_amazon_row_count": 0,
+      "approved_amazon_row_count": 0,
+      "live_direct_buyable_amazon_row_count": 0,
+      "asin_collision_evidence_file_count": 0,
+      "insert_plan_hint": "INSERT_PLAN_POSSIBLE (subject to affiliate readiness + buy-link gate + owner approval)"
+    },
+    "read_only_live_row_query": {
+      "selection_table": "retailer_links",
+      "asin": "B00NXPKBQ2",
+      "matching_retailer_link_count": 0
+    },
+    "proven_result": "No B00NXPKBQ2 reuse found in repo text search, precheck evidence collision index, or read-only retailer_links URL query.",
+    "unknowns": [
+      "This file does not prove runtime browser_truth classification for a future retailer_links row.",
+      "This file does not prove owner approval to insert or promote a CTA."
+    ]
+  },
+  "allowed_final_classifications": [
+    "EXACT_PDP_PROVEN",
+    "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    "NO_SAFE_PDP_FOUND",
+    "UNKNOWN"
+  ],
+  "required_next_action": "OWNER_APPROVES_INSERT_PLAN_AND_RERUNS_PRECHECKS_BEFORE_ANY_RETAILER_LINK_MUTATION",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. No DB writes, no retailer_links mutations, no CTA promotion, no token-control edits, and no compatibility mapping changes are implied by this file.",
+    "Single-pack PDP is the primary reviewed PDP; 2-pack and 3-pack variants are not proven safe by this evidence file.",
+    "Supersedes prior UNKNOWN evidence for the narrow owner-browser finding, but mutation remains blocked until owner-approved insert planning and runtime trust gates."
+  ]
+}

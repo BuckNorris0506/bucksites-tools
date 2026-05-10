@@ -1,0 +1,54 @@
+{
+  "report_name": "buckparts_amazon_4396842_owner_review_no_safe_pdp_v1",
+  "generated_at": "2026-05-10T21:21:37Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "token": "4396842",
+  "supersedes": "data/evidence/amazon-4396842-unknown-outcome.2026-05-04.json",
+  "prior_verdict": "UNKNOWN",
+  "verdict": "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH",
+  "mutation_ready": false,
+  "mutation_ready_basis": "false because owner browser search did not find a defensible exact-token 4396842 PDP",
+  "filter_slug": "4396842",
+  "filter_id": "93205a06-d416-4aeb-8c5c-ba583f30deca",
+  "canonical_url": null,
+  "asin": null,
+  "affiliate_url_candidate": null,
+  "product_attribution": "UNKNOWN",
+  "owner_browser_finding": {
+    "source": "owner_browser_search_observation",
+    "screenshot_file_committed": false,
+    "search_result": "Owner could not find a defensible 4396842 PDP on Amazon.",
+    "many_4396841_results_seen": true,
+    "do_not_reuse_4396841_proof_for_4396842": true
+  },
+  "exact_token_proof": "NOT_PROVEN",
+  "buyability_proof": "NOT_PROVEN",
+  "reason": "Owner browser search did not find a defensible exact-token 4396842 PDP; 4396841 evidence cannot prove 4396842.",
+  "do_not_publish_reason": "No seller-controlled exact-token 4396842 PDP identity plus buyability proof exists in this owner review evidence.",
+  "read_only_refrigerator_token_precheck": {
+    "command": "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens 4396508,4396842",
+    "token": "4396842",
+    "existing_amazon_row_count": 0,
+    "approved_amazon_row_count": 0,
+    "live_direct_buyable_amazon_row_count": 0,
+    "asin_collision_evidence_file_count": 0,
+    "insert_plan_hint": "INSERT_PLAN_POSSIBLE (subject to affiliate readiness + buy-link gate + owner approval)",
+    "note": "Precheck row resolution does not override missing exact-token PDP proof."
+  },
+  "allowed_final_classifications": [
+    "EXACT_PDP_PROVEN",
+    "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    "NO_SAFE_PDP_FOUND",
+    "UNKNOWN"
+  ],
+  "required_next_action": "KEEP_4396842_OUT_OF_AMAZON_RESCUE_PROMOTION_UNLESS_NEW_EXACT_TOKEN_PDP_EVIDENCE_APPEARS",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. No DB writes, no retailer_links mutations, no CTA promotion, no token-control edits, and no compatibility mapping changes are implied by this file.",
+    "4396841 evidence is explicitly not transferable to 4396842.",
+    "This file classifies the owner-browser review outcome, not an insert plan."
+  ]
+}

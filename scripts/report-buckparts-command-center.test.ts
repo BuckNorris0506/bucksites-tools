@@ -758,6 +758,49 @@ test("4396508 is human_browser_required / unknown lane, not fresh_search_top_tok
   assert.ok(humanBrowserAction.authority_scope.includes("UNKNOWN evidence"));
 });
 
+test("owner-review exact PDP evidence removes registry UNKNOWN token from human-browser lane", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = async () =>
+    ({
+      report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
+      generated_at: "2026-05-01T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      selection_table: "retailer_links",
+      total_pool_rows: 1,
+      already_live_noop_count: 0,
+      needs_amazon_search_count: 0,
+      unknown_evidence_deferred_count: 0,
+      unknown_evidence_deferred: [],
+      top_candidates: [
+        {
+          link_id: "id-0",
+          filter_id: "f-0",
+          filter_slug: "4396508",
+          retailer_key: "oem-catalog",
+          blocked_url: "https://example.com/search?q=4396508",
+          token: "4396508",
+          domain: "example.com",
+          domain_blocked_count: 1,
+          current_live_amazon_slot_status: null,
+          recommended_search_query: "4396508",
+          recommended_next_action: "OWNER_REVIEW_EXACT_PDP_PROVEN",
+          evidence_review_file: "amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+          evidence_review_verdict: "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+        },
+      ],
+      known_unknowns: [],
+    }) as never;
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: fileExistsTokenControlsOnly,
+    readDir: () => [],
+    readTextFile: readTextFileTrackerOrControls,
+  });
+  assert.equal(report.command_center_v2.amazon_rescue.human_browser_required_tokens.includes("4396508"), false);
+  assert.equal(report.command_center_v2.unknown_or_human_review.top_items?.includes("4396508"), false);
+});
+
 test("queue unknown_evidence_deferred merges into human_browser_required_tokens", async () => {
   const providers = baseProviders();
   providers.amazonFirstBlockedQueue = amazonQueueWithDeferredMock({

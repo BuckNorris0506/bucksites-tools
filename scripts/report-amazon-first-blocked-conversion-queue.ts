@@ -32,6 +32,8 @@ const LIVE_AMAZON_STATES: ReadonlySet<RetailerLinkState> = new Set([
 export type AmazonFirstRecommendedNextAction =
   | "SEARCH_AMAZON_EXACT_TOKEN"
   | "HUMAN_BROWSER_VERIFICATION_REQUIRED"
+  | "NO_SAFE_PDP_FOUND"
+  | "OWNER_REVIEW_EXACT_PDP_PROVEN"
   | "NOOP_ALREADY_HAS_LIVE_AMAZON"
   | "HOLD_AFFILIATE_NOT_READY"
   | "UNKNOWN_REVIEW_REQUIRED";
@@ -69,6 +71,9 @@ export type AmazonFirstBlockedConversionCandidate = BaseCandidate & {
   evidence_unknown_committed?: true;
   evidence_unknown_file?: string;
   evidence_unknown_reason?: string;
+  evidence_review_file?: string;
+  evidence_review_verdict?: string;
+  evidence_review_reason?: string;
 };
 
 export type AmazonFirstBlockedConversionQueueReport = {
@@ -97,6 +102,7 @@ type TrackerRecord = {
 export type CommittedUnknownEvidenceMatch = {
   file: string;
   reason: string;
+  verdict?: string;
 };
 
 export type CommittedUnknownEvidenceIndex = {
@@ -266,7 +272,9 @@ function actionSortPriority(action: AmazonFirstRecommendedNextAction): number {
   if (action === "SEARCH_AMAZON_EXACT_TOKEN") return 0;
   if (action === "UNKNOWN_REVIEW_REQUIRED") return 1;
   if (action === "HOLD_AFFILIATE_NOT_READY") return 2;
+  if (action === "NO_SAFE_PDP_FOUND") return 3;
   if (action === "HUMAN_BROWSER_VERIFICATION_REQUIRED") return 3;
+  if (action === "OWNER_REVIEW_EXACT_PDP_PROVEN") return 4;
   return 99;
 }
 
@@ -274,9 +282,32 @@ function isJsonObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
 
+function shouldIndexEvidenceReview(parsed: Record<string, unknown>, name: string): boolean {
+  const lower = name.toLowerCase();
+  if (lower.includes("unknown-outcome")) {
+    return parsed.verdict === "UNKNOWN" && parsed.mutation_ready === false;
+  }
+  if (lower.includes("owner-review")) {
+    return (
+      (parsed.verdict === "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT" ||
+        parsed.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH") &&
+      parsed.mutation_ready === false
+    );
+  }
+  return false;
+}
+
+function evidenceSortRank(name: string): number {
+  const lower = name.toLowerCase();
+  if (lower.includes("owner-review")) return 2;
+  if (lower.includes("unknown-outcome")) return 1;
+  return 0;
+}
+
 /**
- * Load committed UNKNOWN outcome evidence files (basename contains `unknown-outcome`, case-insensitive).
- * Matches rows later by `filter_id` and/or uppercased `token` when verdict is UNKNOWN and mutation_ready is false.
+ * Load committed evidence that blocks or resolves Amazon exact-token queue rows.
+ * UNKNOWN outcome files defer rows to human/browser review; superseding owner-review files can either
+ * prove exact PDP evidence without mutation authority, or keep a token blocked as no-safe-PDP-found.
  */
 export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): CommittedUnknownEvidenceIndex {
   const byToken = new Map<string, CommittedUnknownEvidenceMatch>();
@@ -290,7 +321,7 @@ export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): Commi
   }
   for (const name of names) {
     if (!name.endsWith(".json")) continue;
-    if (!name.toLowerCase().includes("unknown-outcome")) continue;
+    if (!name.toLowerCase().includes("unknown-outcome") && !name.toLowerCase().includes("owner-review")) continue;
     const abs = path.join(evidenceDirAbs, name);
     let raw: string;
     try {
@@ -305,22 +336,26 @@ export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): Commi
       continue;
     }
     if (!isJsonObject(parsed)) continue;
-    if (parsed.verdict !== "UNKNOWN") continue;
-    if (parsed.mutation_ready !== false) continue;
+    if (!shouldIndexEvidenceReview(parsed, name)) continue;
     const reason =
       typeof parsed.reason === "string" && parsed.reason.trim().length > 0
         ? parsed.reason.trim()
         : typeof parsed.do_not_publish_reason === "string" && parsed.do_not_publish_reason.trim().length > 0
           ? parsed.do_not_publish_reason.trim()
           : "";
-    const meta: CommittedUnknownEvidenceMatch = { file: name, reason };
+    const verdict = typeof parsed.verdict === "string" ? parsed.verdict : undefined;
+    const meta: CommittedUnknownEvidenceMatch = { file: name, reason, verdict };
     const tokenRaw = parsed.token;
     if (typeof tokenRaw === "string" && tokenRaw.trim().length > 0) {
-      byToken.set(tokenRaw.trim().toUpperCase(), meta);
+      const key = tokenRaw.trim().toUpperCase();
+      const existing = byToken.get(key);
+      if (!existing || evidenceSortRank(name) >= evidenceSortRank(existing.file)) byToken.set(key, meta);
     }
     const filterIdRaw = parsed.filter_id;
     if (typeof filterIdRaw === "string" && filterIdRaw.trim().length > 0) {
-      byFilterId.set(filterIdRaw.trim(), meta);
+      const key = filterIdRaw.trim();
+      const existing = byFilterId.get(key);
+      if (!existing || evidenceSortRank(name) >= evidenceSortRank(existing.file)) byFilterId.set(key, meta);
     }
   }
   return { byToken, byFilterId };
@@ -409,15 +444,30 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     let evidence_unknown_committed: true | undefined;
     let evidence_unknown_file: string | undefined;
     let evidence_unknown_reason: string | undefined;
+    let evidence_review_file: string | undefined;
+    let evidence_review_verdict: string | undefined;
+    let evidence_review_reason: string | undefined;
     if (action === "SEARCH_AMAZON_EXACT_TOKEN") {
       const byFilter = unknownIndex.byFilterId.get(row.filter_id);
       const byTok = row.token !== "UNKNOWN" ? unknownIndex.byToken.get(row.token) : undefined;
       const ev = byFilter ?? byTok;
       if (ev) {
-        action = "HUMAN_BROWSER_VERIFICATION_REQUIRED";
-        evidence_unknown_committed = true;
-        evidence_unknown_file = ev.file;
-        if (ev.reason.length > 0) evidence_unknown_reason = ev.reason;
+        if (ev.verdict === "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT") {
+          action = "OWNER_REVIEW_EXACT_PDP_PROVEN";
+          evidence_review_file = ev.file;
+          evidence_review_verdict = ev.verdict;
+          if (ev.reason.length > 0) evidence_review_reason = ev.reason;
+        } else if (ev.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH") {
+          action = "NO_SAFE_PDP_FOUND";
+          evidence_review_file = ev.file;
+          evidence_review_verdict = ev.verdict;
+          if (ev.reason.length > 0) evidence_review_reason = ev.reason;
+        } else {
+          action = "HUMAN_BROWSER_VERIFICATION_REQUIRED";
+          evidence_unknown_committed = true;
+          evidence_unknown_file = ev.file;
+          if (ev.reason.length > 0) evidence_unknown_reason = ev.reason;
+        }
       }
     }
     const candidate: AmazonFirstBlockedConversionCandidate = {
@@ -435,6 +485,11 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
       candidate.evidence_unknown_file = evidence_unknown_file;
       if (evidence_unknown_reason) candidate.evidence_unknown_reason = evidence_unknown_reason;
     }
+    if (evidence_review_file) {
+      candidate.evidence_review_file = evidence_review_file;
+      candidate.evidence_review_verdict = evidence_review_verdict;
+      if (evidence_review_reason) candidate.evidence_review_reason = evidence_review_reason;
+    }
     return candidate;
   });
 
@@ -445,7 +500,9 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     (r) => r.recommended_next_action === "SEARCH_AMAZON_EXACT_TOKEN",
   ).length;
   const unknown_evidence_deferred_count = enriched.filter(
-    (r) => r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    (r) =>
+      r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED" ||
+      r.recommended_next_action === "NO_SAFE_PDP_FOUND",
   ).length;
 
   const actionable = enriched.filter(
@@ -461,7 +518,9 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
   });
 
   const unknown_evidence_deferred = actionable.filter(
-    (r) => r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    (r) =>
+      r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED" ||
+      r.recommended_next_action === "NO_SAFE_PDP_FOUND",
   );
 
   return {
