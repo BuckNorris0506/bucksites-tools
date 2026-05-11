@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: `${filter.oem_part_number} humidifier filter`,
-    description: `OEM ${filter.oem_part_number}. Compatible humidifier models.`,
+    description: `Part number ${filter.oem_part_number}. Compatible humidifier models.`,
   };
 }
 

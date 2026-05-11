@@ -54,7 +54,7 @@ export function FridgeModelFilterSection({
 
       {filters.length === 0 ? (
         <p className="text-sm leading-relaxed text-stone-600">
-          We do not have mapped filter numbers for this model in our reference yet. If you have the OEM number from your
+          We do not have mapped filter numbers for this model in our reference yet. If you have the filter number from your
           old filter, try search or check back after catalog updates.
         </p>
       ) : (

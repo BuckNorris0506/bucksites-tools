@@ -109,7 +109,7 @@ export function VerticalModelPageContent({
         {filters.length === 0 ? (
           <p className="mt-6 text-sm text-neutral-600 dark:text-neutral-400">
             We don’t have a replacement filter listed for this model yet. Try another spelling in
-            search, or check the sticker on the unit and your manual for the OEM part number.
+            search, or check the sticker on the unit and your manual for the original part number.
           </p>
         ) : (
           <>

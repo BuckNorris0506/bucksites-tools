@@ -12,7 +12,7 @@ import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 
 const DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE =
-  "BuckParts does not have enough proof to show a buy button for this replacement part yet. Verify the OEM number against the old part or your manual first.";
+  "BuckParts does not have enough proof to show a buy button for this replacement part yet. Verify the part number against the old part or your manual first.";
 
 export type VerticalFilterModelRow = {
   id: string;
@@ -152,7 +152,7 @@ export function VerticalFilterPageContent({
         </h2>
         {count === 0 ? (
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            We don’t have model links for this part yet. Your unit may still use it—compare the OEM
+            We don’t have model links for this part yet. Your unit may still use it—compare the part
             number and physical fit with what you removed or your manual.
           </p>
         ) : (

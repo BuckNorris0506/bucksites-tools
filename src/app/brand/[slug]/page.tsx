@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: `${brand.name} water filters`,
-    description: `Refrigerator models and OEM water filters for ${brand.name}.`,
+    description: `Refrigerator models and water filter numbers for ${brand.name}.`,
     openGraph: { title: `${brand.name} · ${SITE_DISPLAY_NAME}` },
   };
 }

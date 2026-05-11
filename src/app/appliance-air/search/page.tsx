@@ -16,7 +16,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (!query) return { title: "Search appliance air filters" };
   return {
     title: `Appliance air search: ${query}`,
-    description: `Models and OEM air filter parts matching “${query}”.`,
+    description: `Models and air filter part numbers matching “${query}”.`,
   };
 }
 
@@ -123,7 +123,7 @@ export default async function ApplianceAirSearchPage({ searchParams }: Props) {
                       href={`/appliance-air/filter/${hit.slug}`}
                       className="block rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950"
                     >
-                      <ResultBadge>Part SKU</ResultBadge>
+                      <ResultBadge>Part number</ResultBadge>
                       <p className="mt-2 font-mono font-semibold">{hit.oem_part_number}</p>
                       {hit.name && <p className="text-sm text-neutral-600">{hit.name}</p>}
                       <p className="mt-1 text-sm text-neutral-600">{hit.brand_name}</p>

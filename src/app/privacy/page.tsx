@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         </h2>
         <p>
           BuckParts is an independent lookup site. We are{" "}
-          <strong>not</strong> the manufacturer, OEM, or seller of the parts
+          <strong>not</strong> the manufacturer, original maker, or seller of the parts
           linked from our pages.
         </p>
       </section>

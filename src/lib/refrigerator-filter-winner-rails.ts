@@ -10,7 +10,7 @@ export type FridgeWinnerRail = { title: string; peers: FridgeWinnerRailPeer[] };
 const CLUSTERS: { title: string; members: [string, string][] }[] = [
   {
     title:
-      "Frigidaire PureSource / side-by-side cartridges — compare the OEM # on your old filter:",
+      "Frigidaire PureSource / side-by-side cartridges — compare the filter number on your old filter:",
     members: [
       ["wf2cb", "WF2CB"],
       ["wfcb", "WFCB"],
@@ -25,7 +25,7 @@ const CLUSTERS: { title: string; members: [string, string][] }[] = [
     ],
   },
   {
-    title: "Related Frigidaire OEM numbers:",
+    title: "Related Frigidaire filter numbers:",
     members: [
       ["frig-242086201", "242086201"],
       ["frig-242294502", "242294502"],

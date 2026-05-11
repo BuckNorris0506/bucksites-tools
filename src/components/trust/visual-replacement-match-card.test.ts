@@ -18,6 +18,11 @@ const connectedRow = {
 function forbidHomeownerJargon(html: string) {
   const banned = [
     /\bPDP\b/i,
+    /\bOEM\b/i,
+    /\bCTA\b/i,
+    /\bSERP\b/i,
+    /\bSKU\b/i,
+    /\baffiliate-ready\b/i,
     /\bbrowser truth\b/i,
     /\bdirect_buyable\b/i,
     /\bcanonical\s+slug\b/i,
@@ -88,7 +93,7 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("How replacement usually works"));
     assert.ok(html.includes("Why replacement matters"));
     assert.ok(html.includes("What to compare before buying"));
-    assert.ok(html.includes("Compare the OEM or part number"));
+    assert.ok(html.includes("Compare the part number"));
     assert.ok(
       html.includes("owner’s manual is the best guide") ||
         html.includes("owner's manual is the best guide"),

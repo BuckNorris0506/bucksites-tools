@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "Appliance air filters",
   description:
-    "Find range hood, microwave, and refrigerator vent air filters by model or OEM part number.",
+    "Find range hood, microwave, and refrigerator vent air filters by model or part number.",
 };
 
 export default async function ApplianceAirHomePage() {
@@ -40,7 +40,7 @@ export default async function ApplianceAirHomePage() {
           Appliance air filters
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Lookup OEM grease and charcoal filters for range hoods, over-the-range microwaves, and
+          Look up grease and charcoal filter numbers for range hoods, over-the-range microwaves, and
           similar appliances.
         </p>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">

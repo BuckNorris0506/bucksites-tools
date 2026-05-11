@@ -35,7 +35,7 @@ export function BuyLinks({
   if (!realLinks.length) {
     return (
       <p className="text-sm text-neutral-500 dark:text-neutral-400">
-        No store checkout links listed here yet. Use the OEM number to shop at a retailer you
+        No store checkout links listed here yet. Use the part number to shop at a retailer you
         trust.
       </p>
     );

@@ -8,6 +8,16 @@ import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacement
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 const bannedInPublicFilterHtml = [
+  /\bOEM\b/i,
+  /\bCTA\b/i,
+  /\bPDP\b/i,
+  /\bSERP\b/i,
+  /\bSKU\b/i,
+  /\bcanonical\b/i,
+  /\baffiliate-ready\b/i,
+  /\btoken\b/i,
+  /\bdirect_buyable\b/i,
+  /\bcompatibility mapping\b/i,
   /OEM-style/i,
   /manufacturer search/i,
   /discovery URL/i,

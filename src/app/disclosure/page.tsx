@@ -57,10 +57,10 @@ export default function DisclosurePage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          We are not the seller or OEM
+          We are not the seller or original maker
         </h2>
         <p>
-          BuckParts is <strong>not</strong> the manufacturer, OEM, or seller.
+          BuckParts is <strong>not</strong> the manufacturer, original maker, or seller.
           Brand names on the site identify compatible products for lookup; they
           belong to their owners. Always compare the part number with your old
           part or your appliance manual before you buy.

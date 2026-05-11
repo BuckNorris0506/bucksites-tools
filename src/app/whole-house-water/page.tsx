@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "Whole-house water filter cartridges",
   description:
-    "Match sediment, carbon, and combo cartridges to your whole-home system or housing model. OEM numbers, compatible models, and buying links—free homeowner lookup.",
+    "Match sediment, carbon, and combo cartridges to your whole-home system or housing model. Part numbers, compatible models, and buying links—free homeowner lookup.",
 };
 
 export default async function WholeHouseWaterHomePage() {
@@ -41,12 +41,12 @@ export default async function WholeHouseWaterHomePage() {
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
           Point-of-entry and big blue–style housings need the right length, diameter, and micron
-          rating—not just a similar-looking cartridge. Search by system model or the OEM number on
+          rating—not just a similar-looking cartridge. Search by system model or the part number on
           the filter you’re replacing; we list what our data ties together so you can verify against
           your installed hardware.
         </p>
         <ul className="max-w-2xl list-inside list-disc space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
-          <li>Model page: cartridges matched to your system or housing SKU.</li>
+          <li>Model page: cartridges matched to your system or housing product number.</li>
           <li>Cartridge page: which systems use that part number.</li>
           <li>Double-check dimensions and rating with what’s in the sump.</li>
         </ul>

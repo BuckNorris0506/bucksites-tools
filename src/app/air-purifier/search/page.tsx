@@ -150,9 +150,9 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
                       href={`/air-purifier/filter/${hit.slug}`}
                       className="block rounded-lg border border-neutral-200 bg-white p-4 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80"
                     >
-                      <ResultBadge>Filter SKU</ResultBadge>
+                      <ResultBadge>Filter number</ResultBadge>
                       <p className="mt-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                        OEM part number
+                        Part number
                       </p>
                       <p className="font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
                         {hit.oem_part_number}
@@ -182,7 +182,7 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
 
           {models.length === 0 && filters.length === 0 && (
             <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-              No matches for “{query}”. Try the model number on the unit or an OEM
+              No matches for “{query}”. Try the model number on the unit or a
               filter number from your current cartridge.
             </p>
           )}

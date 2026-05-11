@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!part) return { title: "Part not found" };
   return {
     title: `${part.oem_part_number} appliance air filter`,
-    description: `OEM ${part.oem_part_number}. Compatible appliance models.`,
+    description: `Part number ${part.oem_part_number}. Compatible appliance models.`,
   };
 }
 

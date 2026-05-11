@@ -26,7 +26,7 @@ describe("public-trust copy", () => {
   });
 
   it("partIdentityPillLabel maps oem / compatible / unknown", () => {
-    assert.equal(partIdentityPillLabel("oem"), "OEM part");
+    assert.equal(partIdentityPillLabel("oem"), "Original part");
     assert.equal(partIdentityPillLabel("compatible"), "Compatible replacement");
     assert.equal(partIdentityPillLabel("unknown"), "Part identity");
   });
@@ -59,5 +59,6 @@ describe("public-trust copy", () => {
 
   it("compare checklist is non-empty homeowner guidance", () => {
     assert.ok(COMPARE_BEFORE_BUY_CHECKLIST_LINES.length >= 2);
+    assert.ok(COMPARE_BEFORE_BUY_CHECKLIST_LINES.every((line) => !/\bOEM\b/i.test(line)));
   });
 });

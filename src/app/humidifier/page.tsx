@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "Humidifier filters",
   description:
-    "Find replacement humidifier wicks and filters by model or OEM part number. Free lookup.",
+    "Find replacement humidifier wicks and filters by model or part number. Free lookup.",
 };
 
 export default async function HumidifierHomePage() {
@@ -40,7 +40,7 @@ export default async function HumidifierHomePage() {
           Humidifier replacement filters
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Search by humidifier model or OEM cartridge number to confirm fit before you buy.
+          Search by humidifier model or cartridge number to confirm fit before you buy.
         </p>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           Free to use · No account

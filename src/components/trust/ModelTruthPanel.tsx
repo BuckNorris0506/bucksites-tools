@@ -35,7 +35,7 @@ export const AIR_PURIFIER_MODEL_TRUTH_COPY: ModelTruthPanelCopy = {
   },
   provenanceLine: "Replacement filter fit for this model is based on our reference data.",
   manualVerificationLine:
-    "Do not buy yet until you verify your air purifier model number or the OEM number on the filter you removed against your unit label or owner’s manual.",
+    "Do not buy yet until you verify your air purifier model number or the part number on the filter you removed against your unit label or owner’s manual.",
 };
 
 /** Whole-house water model PDP — cartridges matched to a system / housing model. */
@@ -46,7 +46,7 @@ export const WHOLE_HOUSE_WATER_MODEL_TRUTH_COPY: ModelTruthPanelCopy = {
   provenanceLine:
     "Replacement cartridge fit for this system model is based on our reference data.",
   manualVerificationLine:
-    "Do not buy yet until you verify your system or housing model number and the OEM cartridge number against the part you are removing, your housing specs, or your owner’s manual.",
+    "Do not buy yet until you verify your system or housing model number and the cartridge number against the part you are removing, your housing specs, or your owner’s manual.",
 };
 
 function IconBullet() {

@@ -20,7 +20,7 @@ import { buildModelPageTrust } from "@/lib/trust/part-trust";
 export const dynamic = "force-dynamic";
 
 const WHOLE_HOUSE_WATER_MODEL_PRIMARY_BUY_SUPPRESS =
-  "BuckParts does not have enough proof to show a buy button for this replacement cartridge yet. Verify the OEM number and dimensions against the cartridge you are removing or your housing specs first.";
+  "BuckParts does not have enough proof to show a buy button for this replacement cartridge yet. Verify the cartridge number and dimensions against the cartridge you are removing or your housing specs first.";
 
 type Props = { params: { slug: string } };
 
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!model) return { title: "Model not found" };
   return {
     title: `${model.model_number} whole-house water filters`,
-    description: `Replacement cartridges for ${model.brand.name} whole-house system ${model.model_number}. Match OEM numbers and housing specs before you buy.`,
+    description: `Replacement cartridges for ${model.brand.name} whole-house system ${model.model_number}. Match part numbers and housing specs before you buy.`,
   };
 }
 

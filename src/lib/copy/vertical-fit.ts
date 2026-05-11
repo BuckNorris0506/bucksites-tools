@@ -3,9 +3,9 @@
 export const MODEL_PAGE_FIT_CONFIRMATION =
   "These part numbers are matched to this model in our reference data. Always compare with your old filter or manual before ordering.";
 
-/** Air purifier model pages — room units and OEM-style cartridges. */
+/** Air purifier model pages — room units and filter cartridges. */
 export const MODEL_PAGE_FIT_CONFIRMATION_AIR_PURIFIER =
-  "These filter part numbers are matched to this air purifier model in our reference. Compare the OEM number with the label on your current filter or your owner’s manual before you buy.";
+  "These filter part numbers are matched to this air purifier model in our reference. Compare the part number with the label on your current filter or your owner’s manual before you buy.";
 
 /** Whole-house water model pages — housings and system SKUs. */
 export const MODEL_PAGE_FIT_CONFIRMATION_WHOLE_HOUSE =
@@ -16,7 +16,7 @@ export const FILTER_PAGE_FIT_CONFIRMATION =
 
 /** Air purifier filter (cartridge) pages. */
 export const FILTER_PAGE_FIT_CONFIRMATION_AIR_PURIFIER =
-  "This filter’s OEM number is linked to the purifier models below in our reference. If yours is listed, open buying options when you’re ready—always match the number on your current cartridge.";
+  "This filter number is linked to the purifier models below in our reference. If yours is listed, open buying options when you’re ready—always match the number on your current cartridge.";
 
 export const FILTER_PAGE_FIT_CONFIRMATION_WHOLE_HOUSE =
   "This cartridge number is linked to the whole-house systems below in our reference. Confirm your model or housing appears here, then compare dimensions and rating with what you have installed.";

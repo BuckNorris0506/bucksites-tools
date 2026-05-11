@@ -88,7 +88,7 @@ export function PartTruthPanel({
       {trust.requires_manual_verification && (
         <p className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-900 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-100">
           Do not buy yet until you verify the model number or the part you removed against your
-          manual, unit label, or the OEM number on the old part.
+          manual, unit label, or the part number on the old part.
         </p>
       )}
     </>

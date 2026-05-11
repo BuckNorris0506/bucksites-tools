@@ -149,7 +149,7 @@ export default async function WholeHouseWaterSearchPage({ searchParams }: Props)
                       : catalogFilterPath(CATALOG_WHOLE_HOUSE_WATER_FILTERS, hit.slug);
                   const inner = (
                     <>
-                      <ResultBadge>Part SKU</ResultBadge>
+                      <ResultBadge>Part number</ResultBadge>
                       <p className="mt-2 font-mono font-semibold">{hit.oem_part_number}</p>
                       {hit.name && <p className="text-sm text-neutral-600">{hit.name}</p>}
                       <p className="mt-1 text-sm text-neutral-600">{hit.brand_name}</p>

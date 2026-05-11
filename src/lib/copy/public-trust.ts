@@ -16,17 +16,17 @@ export const ABOUT_PAGE_META_DESCRIPTION =
 
 /** Compare-before-buy checklist — reuse on panels or future standalone blocks. */
 export const COMPARE_BEFORE_BUY_CHECKLIST_LINES = [
-  "Compare the OEM or part number printed on the cartridge or frame you are removing.",
+  "Compare the part number printed on the cartridge or frame you are removing.",
   "Compare your appliance model number or housing/model sticker against what this page lists.",
   "When in doubt, check your owner’s manual before ordering.",
 ] as const;
 
 /** Pill label from trust classification — no extra product claims beyond `PartTrustSummary`. */
 export function partIdentityPillLabel(oemOrCompatible: OemOrCompatible): string {
-  if (oemOrCompatible === "oem") return "OEM part";
+  if (oemOrCompatible === "oem") return "Original part";
   if (oemOrCompatible === "compatible") return "Compatible replacement";
   if (oemOrCompatible === "unknown") return "Part identity";
-  return "OEM or compatible part";
+  return "Original or compatible part";
 }
 
 /** Third bullet under “Why this fits” / link gate outcome. */
@@ -57,7 +57,7 @@ export function formatBuyLinkCheckedYyyyMmDd(isoDateTime: string): string | null
 }
 
 /**
- * Primary `/go` CTA footnote when `browser_truth_checked_at` exists on the displayed primary row.
+ * Primary `/go` buying-option footnote when `browser_truth_checked_at` exists on the displayed primary row.
  * Does not claim current price/stock.
  */
 export function primaryStoreLinkBuyCheckFootnote(isoDateTime: string): string | null {

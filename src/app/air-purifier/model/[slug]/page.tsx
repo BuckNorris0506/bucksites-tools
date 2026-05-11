@@ -20,7 +20,7 @@ import { buildModelPageTrust } from "@/lib/trust/part-trust";
 export const dynamic = "force-dynamic";
 
 const AIR_PURIFIER_MODEL_PRIMARY_BUY_SUPPRESS =
-  "BuckParts does not have enough proof to show a buy button for this replacement filter yet. Verify the OEM number on your current cartridge or your owner’s manual first.";
+  "BuckParts does not have enough proof to show a buy button for this replacement filter yet. Verify the part number on your current cartridge or your owner’s manual first.";
 
 type Props = { params: { slug: string } };
 
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
   return {
     title: `${model.model_number} air purifier filters`,
-    description: `Replacement filter numbers for ${model.brand.name} air purifier model ${model.model_number}. Confirm OEM fit, see alternates if listed, compare buying options.`,
+    description: `Replacement filter numbers for ${model.brand.name} air purifier model ${model.model_number}. Confirm fit, see alternates if listed, compare buying options.`,
     openGraph: { title: `${model.model_number} · ${model.brand.name}` },
   };
 }

@@ -44,8 +44,8 @@ export default async function HomePage() {
                   Find the right refrigerator water filter before you buy
                 </h1>
                 <p className="max-w-2xl text-pretty text-lg leading-relaxed text-slate-600 sm:text-xl lg:max-w-none dark:text-slate-400">
-                  If you can read the model number on the fridge nameplate and the OEM print on the cartridge
-                  you are replacing, you have what you need to line it up with our reference before you shop.
+                  If you can read the model number on the fridge nameplate and the filter number printed on the
+                  cartridge you are replacing, you have what you need to line it up with our reference before you shop.
                 </p>
                 <p className="text-base font-medium leading-snug text-slate-700 dark:text-slate-300">
                   Free to use · No account needed · Compare store options when available
@@ -76,7 +76,7 @@ export default async function HomePage() {
                   <dl className="mt-5 divide-y divide-slate-200 text-[13px] dark:divide-slate-700">
                     <div className="flex items-baseline justify-between gap-3 bg-slate-50 px-3 py-2.5 first:rounded-t-sm dark:bg-slate-900/50">
                       <dt className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Model
+                        Refrigerator model
                       </dt>
                       <dd className="text-right font-mono font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         WRS325SDHZ
@@ -84,7 +84,7 @@ export default async function HomePage() {
                     </div>
                     <div className="flex items-baseline justify-between gap-3 bg-white px-3 py-2.5 dark:bg-slate-950">
                       <dt className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        OEM / filter
+                        Filter number
                       </dt>
                       <dd className="text-right font-mono font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         4396508
@@ -92,7 +92,7 @@ export default async function HomePage() {
                     </div>
                     <div className="flex items-baseline justify-between gap-3 bg-slate-50 px-3 py-2.5 last:rounded-b-sm dark:bg-slate-900/50">
                       <dt className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Old cartridge
+                        Old filter label
                       </dt>
                       <dd className="text-right font-mono font-semibold tabular-nums text-slate-900 dark:text-slate-100">
                         EDR5RXD1

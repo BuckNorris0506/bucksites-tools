@@ -81,7 +81,7 @@ const CATALOG_CARD_DEFS_ALL: CatalogCardDef[] = [
     category: "refrigerator_water",
     href: "/",
     title: "Refrigerator water filters",
-    description: "Fridge models and OEM cartridges by brand and part number.",
+    description: "Fridge models and filter numbers by brand and part number.",
   },
   {
     category: "air_purifier",

@@ -84,13 +84,13 @@ export function mapSignalsToNoBuyReason(input: NoBuyReasonInput): NoBuyReason {
 
 const NO_BUY_REASON_MESSAGES: Record<NoBuyReason, string> = {
   [NO_BUY_REASONS.NO_COMPATIBILITY_PROOF]:
-    "We don’t have enough fit evidence for this part-model match yet. Please verify the OEM part number from your old part or manual.",
+    "We don’t have enough fit evidence for this part-model match yet. Please verify the part number from your old part or manual.",
   [NO_BUY_REASONS.AMBIGUOUS_COMPATIBILITY]:
     "More than one part may fit this model. Compare your current part number before buying.",
   [NO_BUY_REASONS.NO_VERIFIED_CHECKOUT_LINK]:
-    "We don’t have a verified checkout link for this part yet. Use the OEM number to search a trusted retailer.",
+    "We don’t have a verified checkout link for this part yet. Use the part number to search a trusted retailer.",
   [NO_BUY_REASONS.LINK_UNDER_REVIEW]:
-    "Store links are being reviewed for this part. Check back soon, or verify directly with the OEM part number.",
+    "Store links are being reviewed for this part. Check back soon, or verify directly with the part number.",
   [NO_BUY_REASONS.LINK_FAILED_SAFETY_CHECK]:
     "We hid current store links because they did not meet our safety checks.",
   [NO_BUY_REASONS.LINK_IS_SEARCH_OR_DISCOVERY]:
@@ -104,7 +104,7 @@ const NO_BUY_REASON_MESSAGES: Record<NoBuyReason, string> = {
   [NO_BUY_REASONS.BUYABILITY_NOT_CONFIRMED]:
     "We could not confirm checkout-ready availability for this listing.",
   [NO_BUY_REASONS.REPLACEMENT_NOT_SAFE_YET]:
-    "A possible replacement is identified, but it is not buy-safe yet. Verify with your manual or OEM support.",
+    "A possible replacement is identified, but it is not buy-safe yet. Verify with your manual or manufacturer support.",
   [NO_BUY_REASONS.UNKNOWN]:
     "We don’t have enough evidence to show a buy option for this page yet.",
 };

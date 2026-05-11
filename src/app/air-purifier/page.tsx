@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: "Air purifier replacement filters",
   description:
-    "Look up room air purifier cartridges by unit model or OEM filter number. See which models a part fits, typical change timing when available, and store links—free, no account.",
+    "Look up room air purifier cartridges by unit model or filter number. See which models a part fits, typical change timing when available, and store links—free, no account.",
 };
 
 export default async function AirPurifierHomePage() {
@@ -40,14 +40,14 @@ export default async function AirPurifierHomePage() {
           Air purifier replacement filters
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Room air purifiers use different cartridge shapes and OEM numbers. Search by the model on
+          Room air purifiers use different cartridge shapes and filter numbers. Search by the model on
           the nameplate or the part number on the filter you’re tossing—we show matches from our
           reference so you can line them up with what you have before you shop.
         </p>
         <ul className="max-w-2xl list-inside list-disc space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
           <li>Model page: “What filter does this purifier take?”</li>
           <li>Filter page: “Which units use this cartridge?”</li>
-          <li>Always compare the OEM number with your old filter or manual.</li>
+          <li>Always compare the part number with your old filter or manual.</li>
         </ul>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           Free reference · No account · Not a retailer

@@ -28,7 +28,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (!query) {
     return {
       title: `Search filters · ${SITE_DISPLAY_NAME}`,
-      description: `Look up refrigerator water filters by fridge model or OEM cartridge number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
+      description: `Look up refrigerator water filters by fridge model or filter number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
     };
   }
   return {
@@ -245,7 +245,7 @@ export default async function SearchPage({ searchParams }: Props) {
         </h1>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Start with your <strong className="font-medium text-neutral-800 dark:text-neutral-200">fridge model</strong>{" "}
-          or <strong className="font-medium text-neutral-800 dark:text-neutral-200">OEM filter number</strong> from
+          or <strong className="font-medium text-neutral-800 dark:text-neutral-200">filter number</strong> from
           the nameplate and old cartridge. We lead with refrigerator water filters; if another reference lane
           matches your query, it will show in its own section below.
         </p>
@@ -339,7 +339,7 @@ export default async function SearchPage({ searchParams }: Props) {
                   the owner’s manual.
                 </li>
                 <li>
-                  Read the <strong className="font-medium">OEM / part number</strong> printed on the
+                  Read the <strong className="font-medium">filter or part number</strong> printed on the
                   water filter body, end cap, or foil label on the cartridge you are replacing.
                 </li>
                 <li>

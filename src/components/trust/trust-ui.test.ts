@@ -114,6 +114,32 @@ describe("public merchant-priority copy guard", () => {
   it("homepage source does not use standalone verified store links phrase", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
     assert.ok(!/verified store links/i.test(src));
+    assert.ok(!/\bOEM\b/i.test(src));
+  });
+
+  it("public homeowner copy avoids internal acronym labels", () => {
+    const paths = [
+      "src/app/page.tsx",
+      "src/app/search/page.tsx",
+      "src/app/catalog/page.tsx",
+      "src/app/air-purifier/page.tsx",
+      "src/app/air-purifier/search/page.tsx",
+      "src/app/humidifier/page.tsx",
+      "src/app/humidifier/search/page.tsx",
+      "src/app/vacuum/page.tsx",
+      "src/app/vacuum/search/page.tsx",
+      "src/app/whole-house-water/page.tsx",
+      "src/app/whole-house-water/search/page.tsx",
+      "src/app/appliance-air/page.tsx",
+      "src/app/appliance-air/search/page.tsx",
+      "src/lib/copy/public-trust.ts",
+      "src/lib/copy/vertical-fit.ts",
+    ];
+    const banned = /\b(OEM|SKU|CTA|PDP|SERP|direct_buyable|affiliate-ready|compatibility mapping)\b/;
+    for (const p of paths) {
+      const src = readFileSync(rooted(p), "utf8");
+      assert.ok(!banned.test(src), `${p}: public copy still contains internal acronym/business term`);
+    }
   });
 
   it("global shell footer avoids store links/buttons wording", () => {

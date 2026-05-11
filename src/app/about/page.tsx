@@ -53,7 +53,7 @@ export default function AboutPage() {
           <strong>Always verify the part number before you buy.</strong>
         </p>
         <p>
-          BuckParts is <strong>not</strong> the manufacturer or OEM. Brand names
+          BuckParts is <strong>not</strong> the manufacturer or original maker. Brand names
           are used so you can find the correct part for your appliance.
         </p>
       </section>

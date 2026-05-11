@@ -82,10 +82,10 @@ export default function TermsPage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">
-          Not the manufacturer or OEM
+          Not the manufacturer or original maker
         </h2>
         <p>
-          BuckParts is an independent site. We are not the manufacturer or OEM.
+          BuckParts is an independent site. We are not the manufacturer or original maker.
           Brand names on the site are used to identify compatible products for
           lookup.
         </p>
