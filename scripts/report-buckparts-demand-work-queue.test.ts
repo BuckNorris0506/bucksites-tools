@@ -254,6 +254,12 @@ test("concrete internal search gap detail produces INTERNAL_ZERO_RESULT_GAP_REVI
           last_seen_at: fixedNow().toISOString(),
         },
       ],
+      currentSearchValidation: async () => ({
+        status: "NO_CURRENT_HITS",
+        stale_gap_candidate: false,
+        current_hits_count: 0,
+        current_hit_examples: [],
+      }),
     },
   });
 
@@ -265,10 +271,62 @@ test("concrete internal search gap detail produces INTERNAL_ZERO_RESULT_GAP_REVI
   assert.equal(item.source, "search_gaps read-only detail query");
   assert.ok(item.proof.includes("query=GSWF filter"));
   assert.ok(item.proof.includes("zero_result_count=3"));
+  assert.ok(item.proof.includes("current_search_validation=NO_CURRENT_HITS"));
+  assert.equal(item.current_search_validation?.stale_gap_candidate, false);
   assert.ok(item.excluded_assumptions.some((assumption) => /not revenue/i.test(assumption)));
   assert.ok(
     !report.blocked_or_unknown_inputs.some((input) => input.input === "internal_search_gap_details"),
   );
+});
+
+test("levoit-lap style gap with current hits becomes stale/resolved-candidate", async () => {
+  const report = await buildBuckpartsDemandWorkQueueReport({
+    now: fixedNow,
+    providers: {
+      dailyOperator: async () => daily(),
+      internalSearchGapDetails: async () => [
+        {
+          id: 23,
+          catalog: "all_catalogs",
+          normalized_query: "levoitlap",
+          sample_raw_query: "levoit lap",
+          search_count: 3,
+          zero_result_count: 3,
+          status: "open",
+          likely_entity_type: "alias",
+          last_seen_at: fixedNow().toISOString(),
+        },
+      ],
+      currentSearchValidation: async () => ({
+        status: "OK",
+        stale_gap_candidate: true,
+        current_hits_count: 32,
+        current_hit_examples: [
+          {
+            catalog: "air_purifier_filters",
+            kind: "model",
+            slug: "levoit-lap-v102s-aasr",
+            label: "LAP-V102S-AASR",
+            public_path: "/air-purifier/model/levoit-lap-v102s-aasr",
+          },
+        ],
+      }),
+    },
+  });
+
+  const item = report.items.find((candidate) => candidate.id === "internal-gap-23-levoit-lap");
+  assert.ok(item);
+  assert.equal(item.type, "INTERNAL_ZERO_RESULT_GAP_REVIEW");
+  assert.equal(item.current_search_validation?.status, "OK");
+  assert.equal(item.current_search_validation?.stale_gap_candidate, true);
+  assert.equal(item.current_search_validation?.current_hits_count, 32);
+  assert.ok(item.proof.includes("stale_gap_candidate=true"));
+  assert.ok(item.proof.includes("current_hits_count=32"));
+  assert.ok(
+    item.proof.some((proof) => proof.includes("current_hit=model:LAP-V102S-AASR:/air-purifier/model/levoit-lap-v102s-aasr")),
+  );
+  assert.match(item.recommended_action, /Owner should review current search results/);
+  assert.doesNotMatch(item.recommended_action, /mutat|write|upsert/i);
 });
 
 test("excluded signals cannot produce queue items", async () => {

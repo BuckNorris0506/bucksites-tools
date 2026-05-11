@@ -7,6 +7,7 @@ import {
 } from "./report-buckparts-daily-operator";
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import { searchCatalog, type SearchHit } from "@/lib/data/search";
 
 type RuntimeStatus = "OK" | "ATTENTION" | "UNKNOWN";
 type AuthorityLevel = "BRIGHT" | "SCOPED_PARTIAL";
@@ -32,6 +33,7 @@ export type DemandWorkQueueItem = {
   owner_or_agent: OwnerOrAgent;
   excluded_assumptions: string[];
   validation_required: string[];
+  current_search_validation?: CurrentSearchValidation;
 };
 
 export type DemandWorkQueueBlockedInput = {
@@ -71,12 +73,41 @@ type InternalSearchGapDetail = {
   last_seen_at?: string | null;
 };
 
+type CurrentSearchHitExample = {
+  catalog: string;
+  kind: string;
+  slug: string;
+  label: string;
+  public_path: string;
+};
+
+type CurrentSearchValidation =
+  | {
+      status: "OK";
+      stale_gap_candidate: true;
+      current_hits_count: number;
+      current_hit_examples: CurrentSearchHitExample[];
+    }
+  | {
+      status: "NO_CURRENT_HITS";
+      stale_gap_candidate: false;
+      current_hits_count: 0;
+      current_hit_examples: [];
+    }
+  | {
+      status: "UNKNOWN";
+      stale_gap_candidate: false;
+      current_hits_count: "UNKNOWN";
+      current_hit_examples: [];
+    };
+
 type DemandWorkQueueOptions = {
   rootDir?: string;
   now?: () => Date;
   providers?: {
     dailyOperator?: () => Promise<BuckpartsDailyOperatorReport>;
     internalSearchGapDetails?: () => Promise<InternalSearchGapDetail[] | "UNKNOWN">;
+    currentSearchValidation?: (query: string) => Promise<CurrentSearchValidation>;
     publicLanguageIssues?: () => Promise<PublicLanguageIssue[]>;
   };
 };
@@ -147,6 +178,29 @@ function rankCandidates(candidates: CandidateItem[]): DemandWorkQueueItem[] {
     }));
 }
 
+function publicPathForHit(hit: SearchHit): string {
+  if (hit.catalog === "refrigerator_water_filters") {
+    return hit.kind === "fridge" ? `/fridge/${hit.slug}` : `/filter/${hit.slug}`;
+  }
+  const vertical = hit.catalog.replace(/_filters$/, "").replace(/_/g, "-");
+  return hit.kind === "model" ? `/${vertical}/model/${hit.slug}` : `/${vertical}/filter/${hit.slug}`;
+}
+
+function searchHitLabel(hit: SearchHit): string {
+  if (hit.kind === "filter") return hit.oem_part_number;
+  return hit.model_number;
+}
+
+function toCurrentSearchHitExample(hit: SearchHit): CurrentSearchHitExample {
+  return {
+    catalog: hit.catalog,
+    kind: hit.kind,
+    slug: hit.slug,
+    label: searchHitLabel(hit),
+    public_path: publicPathForHit(hit),
+  };
+}
+
 function addGscItems(args: {
   daily: BuckpartsDailyOperatorReport;
   candidates: CandidateItem[];
@@ -206,6 +260,7 @@ function addGscItems(args: {
 function addInternalSearchItems(args: {
   daily: BuckpartsDailyOperatorReport;
   gapDetails: InternalSearchGapDetail[] | "UNKNOWN";
+  currentSearchValidations: Map<string, CurrentSearchValidation>;
   candidates: CandidateItem[];
   blocked: DemandWorkQueueBlockedInput[];
 }) {
@@ -246,6 +301,28 @@ function addInternalSearchItems(args: {
       const normalized = String(gap.normalized_query || "UNKNOWN");
       const zeroResultCount = isNumber(gap.zero_result_count) ? gap.zero_result_count : 0;
       const searchCount = isNumber(gap.search_count) ? gap.search_count : 0;
+      const currentSearchValidation = args.currentSearchValidations.get(query) ?? {
+        status: "UNKNOWN" as const,
+        stale_gap_candidate: false as const,
+        current_hits_count: "UNKNOWN" as const,
+        current_hit_examples: [],
+      };
+      const proof = [
+        `gap_id=${gap.id}`,
+        `status=${gap.status ?? "UNKNOWN"}`,
+        `catalog=${gap.catalog ?? "UNKNOWN"}`,
+        `query=${query}`,
+        `normalized_query=${normalized}`,
+        `search_count=${fmt(gap.search_count)}`,
+        `zero_result_count=${fmt(gap.zero_result_count)}`,
+        `likely_entity_type=${gap.likely_entity_type ?? "UNKNOWN"}`,
+        `current_search_validation=${currentSearchValidation.status}`,
+        `stale_gap_candidate=${currentSearchValidation.stale_gap_candidate}`,
+        `current_hits_count=${fmt(currentSearchValidation.current_hits_count)}`,
+      ];
+      for (const example of currentSearchValidation.current_hit_examples.slice(0, 3)) {
+        proof.push(`current_hit=${example.kind}:${example.label}:${example.public_path}`);
+      }
       args.candidates.push({
         id: `internal-gap-${slugifyId(String(gap.id))}-${slugifyId(query)}`,
         type: "INTERNAL_ZERO_RESULT_GAP_REVIEW",
@@ -254,18 +331,13 @@ function addInternalSearchItems(args: {
         authority_level: "BRIGHT",
         source: "search_gaps read-only detail query",
         scope: "Internal search gap query review only; not revenue, buyer intent, or catalog coverage proof.",
-        proof: [
-          `gap_id=${gap.id}`,
-          `status=${gap.status ?? "UNKNOWN"}`,
-          `catalog=${gap.catalog ?? "UNKNOWN"}`,
-          `query=${query}`,
-          `normalized_query=${normalized}`,
-          `search_count=${fmt(gap.search_count)}`,
-          `zero_result_count=${fmt(gap.zero_result_count)}`,
-          `likely_entity_type=${gap.likely_entity_type ?? "UNKNOWN"}`,
-        ],
-        why_it_matters: "A concrete zero-result search gap shows homeowner demand that search did not satisfy.",
-        recommended_action: "Review the proven query and decide whether it needs an alias, model/filter page, compatibility evidence, or a closed gap status.",
+        proof,
+        why_it_matters: currentSearchValidation.stale_gap_candidate
+          ? "This historical zero-result search gap now has current public search hits, so it may be stale."
+          : "A concrete zero-result search gap shows homeowner demand that search did not satisfy.",
+        recommended_action: currentSearchValidation.stale_gap_candidate
+          ? "Owner should review current search results and close or reclassify the search_gaps row if the result set is acceptable."
+          : "Review the proven query and decide whether it needs an alias, model/filter page, compatibility evidence, or a closed gap status.",
         owner_or_agent: "AGENT",
         excluded_assumptions: [
           "Search gaps are not revenue.",
@@ -273,6 +345,7 @@ function addInternalSearchItems(args: {
           "Search gaps do not prove catalog-wide coverage.",
         ],
         validation_required: BASE_VALIDATION,
+        current_search_validation: currentSearchValidation,
       });
     }
     return;
@@ -286,6 +359,35 @@ function addInternalSearchItems(args: {
       reason: "Zero-result search counts are available, but concrete zero-result query details are not exposed in the inspected summary path.",
       summary_available: `zero_result_30d=${zero30}`,
     });
+  }
+}
+
+async function validateCurrentSearch(query: string): Promise<CurrentSearchValidation> {
+  try {
+    loadEnv();
+    const hits = await searchCatalog(query, { skipTelemetry: true });
+    const examples = hits.slice(0, 5).map(toCurrentSearchHitExample);
+    if (examples.length === 0) {
+      return {
+        status: "NO_CURRENT_HITS",
+        stale_gap_candidate: false,
+        current_hits_count: 0,
+        current_hit_examples: [],
+      };
+    }
+    return {
+      status: "OK",
+      stale_gap_candidate: true,
+      current_hits_count: hits.length,
+      current_hit_examples: examples,
+    };
+  } catch {
+    return {
+      status: "UNKNOWN",
+      stale_gap_candidate: false,
+      current_hits_count: "UNKNOWN",
+      current_hit_examples: [],
+    };
   }
 }
 
@@ -424,11 +526,19 @@ export async function buildBuckpartsDemandWorkQueueReport(
   const now = options.now ?? (() => new Date());
   const daily = await (options.providers?.dailyOperator?.() ?? buildBuckpartsDailyOperatorReport({ rootDir, now }));
   const gapDetails = await (options.providers?.internalSearchGapDetails?.() ?? loadInternalSearchGapDetails());
+  const currentSearchValidationProvider = options.providers?.currentSearchValidation ?? validateCurrentSearch;
+  const currentSearchValidations = new Map<string, CurrentSearchValidation>();
+  if (gapDetails !== "UNKNOWN") {
+    for (const gap of gapDetails.slice(0, 10)) {
+      const query = String(gap.sample_raw_query || gap.normalized_query || gap.id || "UNKNOWN");
+      currentSearchValidations.set(query, await currentSearchValidationProvider(query));
+    }
+  }
 
   const candidates: CandidateItem[] = [];
   const blocked_or_unknown_inputs: DemandWorkQueueBlockedInput[] = [];
 
-  addInternalSearchItems({ daily, gapDetails, candidates, blocked: blocked_or_unknown_inputs });
+  addInternalSearchItems({ daily, gapDetails, currentSearchValidations, candidates, blocked: blocked_or_unknown_inputs });
   addGscItems({ daily, candidates, blocked: blocked_or_unknown_inputs });
   addClickItems({ daily, candidates, blocked: blocked_or_unknown_inputs });
   addCtaBlockedInput({ daily, blocked: blocked_or_unknown_inputs });
