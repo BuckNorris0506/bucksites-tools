@@ -9,9 +9,9 @@ import {
 } from "@/lib/catalog/browse";
 
 export const metadata: Metadata = {
-  title: "Air purifier replacement filters",
+  title: "Air purifier filter replacement",
   description:
-    "Look up room air purifier cartridges by unit model or filter number. See which models a part fits, typical change timing when available, and store links—free, no account.",
+    "Find air purifier filter replacement options by unit model or filter number. Compare the part number with your current filter or manual before buying.",
 };
 
 export default async function AirPurifierHomePage() {
@@ -37,12 +37,12 @@ export default async function AirPurifierHomePage() {
           </Link>
         </p>
         <h1 className="text-balance text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl">
-          Air purifier replacement filters
+          Air purifier filter replacement
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Room air purifiers use different cartridge shapes and filter numbers. Search by the model on
-          the nameplate or the part number on the filter you’re tossing—we show matches from our
-          reference so you can line them up with what you have before you shop.
+          Room air purifiers use different replacement filter shapes and filter numbers. Search by
+          the model on the nameplate or the part number on the filter you’re replacing—we show
+          matches from our reference so you can line them up with what you have before you shop.
         </p>
         <ul className="max-w-2xl list-inside list-disc space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
           <li>Model page: “What filter does this purifier take?”</li>

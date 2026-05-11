@@ -24,8 +24,8 @@ export default function AboutPage() {
           BuckParts helps you find the <strong>right replacement filter</strong>{" "}
           before you spend money. You can search by model number or part number,
           browse categories like refrigerator water filters, air purifier
-          filters, and whole-house water filters, and open vetted store links
-          when we have enough confidence to show them.
+          filters, and whole-house water filters, and open buying options when
+          we have enough confidence to show checked retailer product pages.
         </p>
       </section>
 

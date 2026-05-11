@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Affiliate Disclosure",
   description:
-    "How BuckParts earns commissions from retailer links and how we handle recommendations.",
+    "How BuckParts earns commissions from retailer product pages and how we handle recommendations.",
 };
 
 export default function DisclosurePage() {
@@ -35,10 +35,10 @@ export default function DisclosurePage() {
           Why links use <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">/go/…</code>
         </h2>
         <p>
-          Many store links on BuckParts go through our{" "}
+          Many buying options on BuckParts go through our{" "}
           <code className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">/go/…</code>{" "}
           redirect first. That records the click in a normal affiliate way,
-          then sends your browser to the retailer’s product or store page. The
+          then sends your browser to the retailer’s product page. The
           retailer—not BuckParts—runs checkout, shipping, returns, and taxes.
         </p>
       </section>
@@ -48,10 +48,11 @@ export default function DisclosurePage() {
           Editorial approach
         </h2>
         <p>
-          We aim to show store links only when our checks say they match your{" "}
-          <strong>exact part or filter code</strong> (verification-first). We
-          do not guarantee we list every possible store, the best price, or
-          current stock—retailers change that constantly.
+          We aim to show buying options only when our checks say the retailer
+          product page matches your <strong>exact part or filter code</strong>
+          (verification-first). We do not guarantee we list every possible
+          retailer, the best price, or current stock—retailers change that
+          constantly.
         </p>
       </section>
 

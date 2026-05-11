@@ -117,6 +117,26 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/\bOEM\b/i.test(src));
   });
 
+  it("public legal and about pages avoid store-link business wording", () => {
+    const paths = [
+      "src/app/about/page.tsx",
+      "src/app/disclosure/page.tsx",
+      "src/app/privacy/page.tsx",
+      "src/app/terms/page.tsx",
+    ];
+    const banned = /\b(vetted store links|verified store links|store links|verify links)\b/i;
+    for (const p of paths) {
+      const src = readFileSync(rooted(p), "utf8");
+      assert.ok(!banned.test(src), `${p}: public copy still contains store-link business wording`);
+    }
+
+    const disclosure = readFileSync(rooted("src/app/disclosure/page.tsx"), "utf8");
+    assert.ok(/commission or referral fee/i.test(disclosure));
+    assert.ok(/retailer—not BuckParts—runs checkout/i.test(disclosure));
+    assert.ok(/buying options/i.test(disclosure));
+    assert.ok(/retailer product page/i.test(disclosure));
+  });
+
   it("public homeowner copy avoids internal acronym labels", () => {
     const paths = [
       "src/app/page.tsx",
@@ -140,6 +160,17 @@ describe("public merchant-priority copy guard", () => {
       const src = readFileSync(rooted(p), "utf8");
       assert.ok(!banned.test(src), `${p}: public copy still contains internal acronym/business term`);
     }
+  });
+
+  it("air purifier category copy matches filter replacement demand and keeps fit-safety guidance", () => {
+    const src = readFileSync(rooted("src/app/air-purifier/page.tsx"), "utf8");
+    assert.ok(/Air purifier filter replacement/i.test(src));
+    assert.ok(/Find air purifier filter replacement options/i.test(src));
+    assert.ok(/unit model or filter number/i.test(src));
+    assert.ok(/Compare the part number with your current filter or manual before buying/i.test(src));
+    assert.ok(/Always compare the part number with your old filter or manual/i.test(src));
+    assert.ok(!/\b(OEM|SKU|CTA|PDP|SERP|token|canonical|direct_buyable|affiliate-ready|compatibility mapping)\b/.test(src));
+    assert.ok(!/\bguaranteed fit\b|\bofficial manufacturer endorsement\b|\bcomplete catalog coverage\b/i.test(src));
   });
 
   it("global shell footer avoids store links/buttons wording", () => {
