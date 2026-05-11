@@ -158,6 +158,9 @@ function insertPlanHint(args: {
   if (args.asinReusePolicyClassification === "NO_SAFE_PDP_FOUND") {
     return "BLOCKED (NO_SAFE_PDP_FOUND; mutation_ready=false)";
   }
+  if (args.asinReusePolicyClassification === "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE") {
+    return "OWNER_REVIEW (owner-approved shared-ASIN insert-plan eligible; mutation_ready=false)";
+  }
   if (args.asinReusePolicyClassification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") {
     return "OWNER_REVIEW (ASIN reuse/collision policy review required; mutation_ready=false)";
   }
@@ -172,6 +175,7 @@ function insertPlanHint(args: {
 }
 
 function policyRank(policy: AmazonAsinReusePolicyResult): number {
+  if (policy.classification === "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE") return 55;
   if (policy.classification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") return 50;
   if (policy.classification === "EXACT_PDP_PROVEN_NO_COLLISION") return 40;
   if (policy.classification === "NO_SAFE_PDP_FOUND") return 35;

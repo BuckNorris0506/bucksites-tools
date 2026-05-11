@@ -38,6 +38,7 @@ export type AmazonFirstRecommendedNextAction =
   | "HUMAN_BROWSER_VERIFICATION_REQUIRED"
   | "NO_SAFE_PDP_FOUND"
   | "OWNER_REVIEW_EXACT_PDP_PROVEN"
+  | "SHARED_ASIN_INSERT_PLAN_ELIGIBLE"
   | "ASIN_COLLISION_REVIEW_REQUIRED"
   | "NOOP_ALREADY_HAS_LIVE_AMAZON"
   | "HOLD_AFFILIATE_NOT_READY"
@@ -283,6 +284,7 @@ function actionSortPriority(action: AmazonFirstRecommendedNextAction): number {
   if (action === "ASIN_COLLISION_REVIEW_REQUIRED") return 3;
   if (action === "NO_SAFE_PDP_FOUND") return 3;
   if (action === "HUMAN_BROWSER_VERIFICATION_REQUIRED") return 3;
+  if (action === "SHARED_ASIN_INSERT_PLAN_ELIGIBLE") return 4;
   if (action === "OWNER_REVIEW_EXACT_PDP_PROVEN") return 4;
   return 99;
 }
@@ -583,9 +585,18 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
           evidence_review_file = ev.file;
           evidence_review_verdict = ev.verdict;
           if (ev.reason.length > 0) evidence_review_reason = ev.reason;
+        } else if (ev.asinReusePolicyClassification === "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE") {
+          action = "SHARED_ASIN_INSERT_PLAN_ELIGIBLE";
+          evidence_review_file = ev.file;
+          evidence_review_verdict = ev.asinReusePolicyClassification;
+          if (ev.reason.length > 0) evidence_review_reason = ev.reason;
+        } else if (ev.asinReusePolicyClassification === "EXACT_PDP_PROVEN_NO_COLLISION" && liveAsinReuseCount > 0) {
+          action = "SHARED_ASIN_INSERT_PLAN_ELIGIBLE";
+          evidence_review_file = ev.file;
+          evidence_review_verdict = "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE";
+          if (ev.reason.length > 0) evidence_review_reason = ev.reason;
         } else if (
-          ev.asinReusePolicyClassification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED" ||
-          (ev.asinReusePolicyClassification === "EXACT_PDP_PROVEN_NO_COLLISION" && liveAsinReuseCount > 0)
+          ev.asinReusePolicyClassification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED"
         ) {
           action = "ASIN_COLLISION_REVIEW_REQUIRED";
           evidence_review_file = ev.file;
@@ -622,7 +633,10 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     if (evidence_review_file) {
       candidate.evidence_review_file = evidence_review_file;
       candidate.evidence_review_verdict = evidence_review_verdict;
-      if (evidence_review_verdict === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") {
+      if (
+        evidence_review_verdict === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED" ||
+        evidence_review_verdict === "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE"
+      ) {
         candidate.asin_reuse_policy_classification = evidence_review_verdict;
       }
       if (evidence_review_reason) candidate.evidence_review_reason = evidence_review_reason;

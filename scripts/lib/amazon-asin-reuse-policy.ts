@@ -1,4 +1,5 @@
 export type AmazonAsinReusePolicyClassification =
+  | "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE"
   | "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED"
   | "EXACT_PDP_PROVEN_NO_COLLISION"
   | "HUMAN_BROWSER_VERIFICATION_REQUIRED"
@@ -6,6 +7,7 @@ export type AmazonAsinReusePolicyClassification =
   | "UNKNOWN";
 
 export type AmazonAsinReusePolicyStatus =
+  | "OWNER_APPROVED_INSERT_PLAN_ELIGIBLE"
   | "OWNER_POLICY_REVIEW_REQUIRED"
   | "OWNER_REVIEW_ELIGIBLE"
   | "BLOCKED"
@@ -104,6 +106,16 @@ export function classifyAmazonAsinReusePolicy(
   }
 
   if (collisions > 0) {
+    if (proofComplete) {
+      return {
+        classification: "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE",
+        policy_status: "OWNER_APPROVED_INSERT_PLAN_ELIGIBLE",
+        mutation_ready: false,
+        reason: `${input.token} has complete Option A shared-ASIN proof for ASIN ${input.asin}; owner-approved insert-plan review is eligible, but retailer_links mutation remains unauthorized.`,
+        requirements: [...AMAZON_ASIN_REUSE_POLICY_REQUIREMENTS],
+      };
+    }
+
     if (isTrue(input.exactTokenProof) && isTrue(input.sellerControlledTargetTokenProof)) {
       return {
         classification: "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED",
@@ -153,4 +165,3 @@ export function classifyAmazonAsinReusePolicy(
     requirements: [...AMAZON_ASIN_REUSE_POLICY_REQUIREMENTS],
   };
 }
-

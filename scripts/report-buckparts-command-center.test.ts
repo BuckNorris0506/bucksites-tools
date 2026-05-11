@@ -869,6 +869,55 @@ test("ASIN collision review is an owner policy blocker, not a fresh agent token"
   assert.match(action.authority_scope, /not permission to mutate retailer_links/);
 });
 
+test("shared-ASIN insert-plan eligible queue rows are not unresolved policy blockers", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = async () =>
+    ({
+      report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
+      generated_at: "2026-05-01T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      selection_table: "retailer_links",
+      total_pool_rows: 1,
+      already_live_noop_count: 0,
+      needs_amazon_search_count: 0,
+      unknown_evidence_deferred_count: 0,
+      unknown_evidence_deferred: [],
+      top_candidates: [
+        {
+          link_id: "shared",
+          filter_id: "filter-edr3",
+          filter_slug: "edr3rxd1",
+          retailer_key: "oem-catalog",
+          blocked_url: "https://example.com/search?q=EDR3RXD1",
+          token: "EDR3RXD1",
+          domain: "example.com",
+          domain_blocked_count: 1,
+          current_live_amazon_slot_status: null,
+          recommended_search_query: "EDR3RXD1",
+          recommended_next_action: "SHARED_ASIN_INSERT_PLAN_ELIGIBLE",
+          asin_reuse_policy_classification: "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE",
+        },
+      ],
+      known_unknowns: [],
+    }) as never;
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: fileExistsTokenControlsOnly,
+    readDir: () => [],
+    readTextFile: readTextFileTrackerOrControls,
+  });
+
+  const rescue = report.command_center_v2.amazon_rescue;
+  assert.equal(rescue.human_browser_required_tokens.includes("EDR3RXD1"), false);
+  assert.equal(rescue.asin_collision_policy_review_tokens.includes("EDR3RXD1"), false);
+  assert.equal(rescue.fresh_search_top_tokens.includes("EDR3RXD1"), false);
+  const blocker = report.command_center_v2.recommendation_authority.evaluated_actions.find(
+    (record) => record.source === "command_center_v2.amazon_rescue.asin_collision_policy_review",
+  );
+  assert.equal(blocker, undefined);
+});
+
 test("command_center_v2 recent_evidence includes evidence_rollup counts when evidence dir exists", async () => {
   const providers = baseProviders();
   const report = await buildBuckpartsCommandCenterReport({

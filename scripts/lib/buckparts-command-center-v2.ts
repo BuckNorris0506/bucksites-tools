@@ -176,7 +176,11 @@ export function buildCommandCenterV2Report(input: {
   const ownerReviewExactPdpTokens: string[] = [];
   if (input.amazonFirstBlocked.top_candidates !== "UNKNOWN" && Array.isArray(input.amazonFirstBlocked.top_candidates)) {
     for (const row of input.amazonFirstBlocked.top_candidates) {
-      if (row.recommended_next_action === "OWNER_REVIEW_EXACT_PDP_PROVEN" && typeof row.token === "string") {
+      if (
+        (row.recommended_next_action === "OWNER_REVIEW_EXACT_PDP_PROVEN" ||
+          row.recommended_next_action === "SHARED_ASIN_INSERT_PLAN_ELIGIBLE") &&
+        typeof row.token === "string"
+      ) {
         ownerReviewExactPdpTokens.push(row.token);
       }
     }

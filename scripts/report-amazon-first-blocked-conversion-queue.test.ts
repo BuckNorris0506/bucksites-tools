@@ -313,7 +313,7 @@ test("ASIN collision evidence blocks fresh search as owner policy review", () =>
   }
 });
 
-test("live Amazon ASIN reuse blocks fresh search even when evidence-file collision is zero", () => {
+test("live Amazon ASIN reuse becomes shared-ASIN insert-plan eligible when proof is complete", () => {
   const evidenceIndex = {
     byToken: new Map<string, { file: string; reason: string; verdict?: string; asin?: string; asinReusePolicyClassification?: "EXACT_PDP_PROVEN_NO_COLLISION" }>([
       [
@@ -357,12 +357,12 @@ test("live Amazon ASIN reuse blocks fresh search even when evidence-file collisi
   });
 
   assert.equal(report.needs_amazon_search_count, 0);
-  assert.equal(report.unknown_evidence_deferred_count, 1);
+  assert.equal(report.unknown_evidence_deferred_count, 0);
   assert.ok(Array.isArray(report.top_candidates));
   if (Array.isArray(report.top_candidates)) {
     const candidate = report.top_candidates.find((row) => row.link_id === "blocked-edr4");
-    assert.equal(candidate?.recommended_next_action, "ASIN_COLLISION_REVIEW_REQUIRED");
-    assert.equal(candidate?.asin_reuse_policy_classification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+    assert.equal(candidate?.recommended_next_action, "SHARED_ASIN_INSERT_PLAN_ELIGIBLE");
+    assert.equal(candidate?.asin_reuse_policy_classification, "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
   }
 });
 
@@ -375,13 +375,13 @@ test("loadCommittedUnknownEvidenceIndex picks up committed amazon unknown outcom
   assert.equal(meta.verdict, "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH");
 });
 
-test("loadCommittedUnknownEvidenceIndex picks up ASIN collision policy evidence", () => {
+test("loadCommittedUnknownEvidenceIndex picks up shared ASIN insert-plan eligibility evidence", () => {
   const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
   const meta = idx.byToken.get("EDR3RXD1");
-  assert.ok(meta, "expected EDR3RXD1 ASIN collision evidence fixture");
+  assert.ok(meta, "expected EDR3RXD1 shared-ASIN evidence fixture");
   assert.match(meta.file, /edr3rxd1.*pdp-evidence/i);
   assert.equal(meta.asin, "B087PDLZL9");
-  assert.equal(meta.asinReusePolicyClassification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+  assert.equal(meta.asinReusePolicyClassification, "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
 });
 
 test("loadCommittedUnknownEvidenceIndex keeps exact PDP ASIN metadata for live-reuse reclassification", () => {

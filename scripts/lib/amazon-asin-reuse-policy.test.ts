@@ -3,7 +3,7 @@ import test from "node:test";
 
 import { classifyAmazonAsinReusePolicy } from "./amazon-asin-reuse-policy";
 
-test("ASIN collision with exact-token proof requires owner policy review and is not mutation-ready", () => {
+test("Option A complete shared-ASIN proof is insert-plan eligible and not mutation-ready", () => {
   const result = classifyAmazonAsinReusePolicy({
     token: "EDR3RXD1",
     asin: "B087PDLZL9",
@@ -16,8 +16,8 @@ test("ASIN collision with exact-token proof requires owner policy review and is 
     asinCollisionEvidenceFileCount: 2,
   });
 
-  assert.equal(result.classification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
-  assert.equal(result.policy_status, "OWNER_POLICY_REVIEW_REQUIRED");
+  assert.equal(result.classification, "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
+  assert.equal(result.policy_status, "OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
   assert.equal(result.mutation_ready, false);
 });
 
@@ -57,7 +57,7 @@ test("non-colliding exact PDP evidence is owner-review eligible but still not au
   assert.equal(result.mutation_ready, false);
 });
 
-test("live retailer_links ASIN reuse triggers collision review even when evidence-file collision count is zero", () => {
+test("live retailer_links ASIN reuse is insert-plan eligible under Option A when proof is complete", () => {
   const result = classifyAmazonAsinReusePolicy({
     token: "EDR4RXD1",
     asin: "B00UB38V2A",
@@ -65,6 +65,25 @@ test("live retailer_links ASIN reuse triggers collision review even when evidenc
     exactTokenProof: true,
     sellerControlledTargetTokenProof: true,
     replacementOrCompatibleRelationshipProof: true,
+    buyabilityProof: true,
+    attributionCanBeLabeled: true,
+    asinCollisionEvidenceFileCount: 0,
+    liveAsinReuseCount: 1,
+  });
+
+  assert.equal(result.classification, "SHARED_ASIN_REUSE_OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
+  assert.equal(result.policy_status, "OWNER_APPROVED_INSERT_PLAN_ELIGIBLE");
+  assert.equal(result.mutation_ready, false);
+});
+
+test("shared-ASIN reuse remains collision review when Option A proof is incomplete", () => {
+  const result = classifyAmazonAsinReusePolicy({
+    token: "PARTIAL1",
+    asin: "B012345678",
+    noSafePdpFound: false,
+    exactTokenProof: true,
+    sellerControlledTargetTokenProof: true,
+    replacementOrCompatibleRelationshipProof: "UNKNOWN",
     buyabilityProof: true,
     attributionCanBeLabeled: true,
     asinCollisionEvidenceFileCount: 0,
