@@ -236,6 +236,44 @@ test("priority order is deterministic", async () => {
   assert.equal(report.items[0].id, "gsc-higher");
 });
 
+test("concrete GSC opportunity rows produce GSC_IMPRESSION_LOW_CLICK_REVIEW", async () => {
+  const report = await buildBuckpartsDemandWorkQueueReport({
+    now: fixedNow,
+    providers: {
+      dailyOperator: async () =>
+        daily({
+          demand_opportunities: {
+            ...daily().demand_opportunities,
+            gsc_external_demand: {
+              ...daily().demand_opportunities.gsc_external_demand,
+              average_position: 17.89,
+              artifact_source: "SUPABASE",
+              export_file_used: "supabase.owner_report_artifacts[gsc_search_analytics]",
+              high_impression_low_click_opportunities: [
+                { key: "water filter x", impressions: 120, clicks: 1, ctr: 0.0083333333 },
+              ],
+            },
+          },
+        }),
+      internalSearchGapDetails: async () => "UNKNOWN",
+    },
+  });
+
+  const item = report.items.find((candidate) => candidate.type === "GSC_IMPRESSION_LOW_CLICK_REVIEW");
+  assert.ok(item);
+  assert.equal(item.id, "gsc-water-filter-x");
+  assert.equal(item.source, "gsc_external_demand.high_impression_low_click_opportunities");
+  assert.ok(item.proof.includes("key=water filter x"));
+  assert.ok(item.proof.includes("impressions=120"));
+  assert.ok(item.proof.includes("clicks=1"));
+  assert.ok(item.proof.includes("average_position=17.89"));
+  assert.ok(item.proof.includes("artifact_source=SUPABASE"));
+  assert.ok(item.proof.includes("export_file_used=supabase.owner_report_artifacts[gsc_search_analytics]"));
+  assert.match(item.why_it_matters, /not proof that the page failed/i);
+  assert.match(item.recommended_action, /review title\/snippet/i);
+  assert.doesNotMatch(item.proof.join("\n"), /\brevenue\b|\bconversion|\bvaluation\b/i);
+});
+
 test("concrete internal search gap detail produces INTERNAL_ZERO_RESULT_GAP_REVIEW", async () => {
   const report = await buildBuckpartsDemandWorkQueueReport({
     now: fixedNow,

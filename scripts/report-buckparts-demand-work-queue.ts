@@ -165,6 +165,12 @@ function isNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
+function optionalString(record: unknown, key: string): string | null {
+  if (typeof record !== "object" || record === null) return null;
+  const value = (record as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : null;
+}
+
 function rankCandidates(candidates: CandidateItem[]): DemandWorkQueueItem[] {
   return candidates
     .sort((a, b) =>
@@ -220,37 +226,47 @@ function addGscItems(args: {
 
   const opportunities = gsc.high_impression_low_click_opportunities;
   if (opportunities === "UNKNOWN") {
+    const artifactSource = optionalString(gsc, "artifact_source") ?? "UNKNOWN";
+    const exportFileUsed = optionalString(gsc, "export_file_used") ?? "UNKNOWN";
     args.blocked.push({
       input: "gsc_high_impression_low_click_opportunities",
       status: "DETAIL_MISSING",
-      reason: "GSC totals are BRIGHT, but item-level high-impression/low-click opportunities are UNKNOWN.",
-      summary_available: `impressions=${gsc.total_impressions}; clicks=${gsc.total_clicks}; ctr=${fmt(gsc.average_ctr)}; position=${fmt(gsc.average_position)}`,
+      reason: "GSC totals are BRIGHT, but durable/local/manual artifact field high_impression_low_click_opportunities is UNKNOWN, so no concrete query/page opportunity rows are available to rank.",
+      summary_available: `artifact_source=${artifactSource}; export_file_used=${exportFileUsed}; required_field=high_impression_low_click_opportunities[]; impressions=${gsc.total_impressions}; clicks=${gsc.total_clicks}; ctr=${fmt(gsc.average_ctr)}; position=${fmt(gsc.average_position)}`,
     });
     return;
   }
 
   for (const opp of opportunities) {
+    const ctr = opp.ctr === "UNKNOWN" && opp.impressions > 0 ? opp.clicks / opp.impressions : opp.ctr;
+    const artifactSource = optionalString(gsc, "artifact_source") ?? "UNKNOWN";
+    const exportFileUsed = optionalString(gsc, "export_file_used") ?? "UNKNOWN";
+    const proof = [
+      `key=${opp.key}`,
+      `impressions=${opp.impressions}`,
+      `clicks=${opp.clicks}`,
+      `ctr=${fmt(ctr)}`,
+      `average_position=${fmt(gsc.average_position)}`,
+      `artifact_source=${artifactSource}`,
+      `export_file_used=${exportFileUsed}`,
+    ];
     args.candidates.push({
       id: `gsc-${slugifyId(opp.key)}`,
       type: "GSC_IMPRESSION_LOW_CLICK_REVIEW",
       priority_bucket: 3,
-      magnitude: opp.impressions,
+      magnitude: opp.impressions * (1 - (typeof ctr === "number" ? Math.min(ctr, 1) : 0)),
       authority_level: "BRIGHT",
       source: "gsc_external_demand.high_impression_low_click_opportunities",
       scope: "Search-demand query/page opportunity only; not revenue or conversion proof.",
-      proof: [
-        `key=${opp.key}`,
-        `impressions=${opp.impressions}`,
-        `clicks=${opp.clicks}`,
-        `ctr=${fmt(opp.ctr)}`,
-      ],
-      why_it_matters: "A high-impression/low-click query or page can show demand that is not earning visits yet.",
-      recommended_action: "Review title/snippet and landing-page relevance for the proven query/page; keep changes read-only until separately approved.",
+      proof,
+      why_it_matters: "A high-impression/low-click query or page can show demand that may need review; low CTR alone is not proof that the page failed.",
+      recommended_action: "Review title/snippet and landing-page relevance for this proven GSC query/page; do not infer revenue, conversion, or page failure from CTR alone.",
       owner_or_agent: "AGENT",
       excluded_assumptions: [
         "Does not prove revenue.",
         "Does not prove conversion.",
         "Does not prove page quality beyond search-demand metrics.",
+        "Low CTR is review-needed context, not proof of page failure.",
       ],
       validation_required: BASE_VALIDATION,
     });
