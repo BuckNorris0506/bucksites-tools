@@ -68,6 +68,7 @@
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
     "buckparts:command-center": "tsx scripts/report-buckparts-command-center.ts",
     "buckparts:daily": "tsx scripts/report-buckparts-daily-operator.ts",
+    "buckparts:demand-work-queue": "tsx scripts/report-buckparts-demand-work-queue.ts",
     "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
     "buckparts:gsc:fetch": "tsx scripts/fetch-buckparts-gsc-artifact.ts",
     "buckparts:ga4:fetch": "tsx scripts/fetch-buckparts-ga4-trust-funnel-artifact.ts",
