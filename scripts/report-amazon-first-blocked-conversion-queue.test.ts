@@ -270,6 +270,49 @@ test("superseding owner-review evidence resolves exact PDP proof without promoti
   }
 });
 
+test("ASIN collision evidence blocks fresh search as owner policy review", () => {
+  const evidenceIndex = {
+    byToken: new Map<string, { file: string; reason: string; verdict?: string; asinReusePolicyClassification?: "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED" }>([
+      [
+        "EDR3RXD1",
+        {
+          file: "amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json",
+          reason: "exact token proof exists but ASIN is reused by other tokens",
+          asinReusePolicyClassification: "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED",
+        },
+      ],
+    ]),
+    byFilterId: new Map<string, { file: string; reason: string; verdict?: string }>(),
+  };
+  const report = buildAmazonFirstBlockedConversionQueueReportFromData({
+    links: [
+      {
+        id: "collision-review",
+        filter_id: "filter-edr3",
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://www.repairclinic.com/Search?SearchTerm=EDR3RXD1",
+        browser_truth_classification: null,
+        is_primary: false,
+      },
+    ],
+    filters: [{ id: "filter-edr3", slug: "edr3rxd1", oem_part_number: "EDR3RXD1" }],
+    now: () => new Date("2026-05-01T00:00:00.000Z"),
+    amazonAffiliateReady: true,
+    committedUnknownIndex: evidenceIndex,
+  });
+
+  assert.equal(report.needs_amazon_search_count, 0);
+  assert.equal(report.unknown_evidence_deferred_count, 1);
+  assert.ok(Array.isArray(report.top_candidates));
+  assert.ok(Array.isArray(report.unknown_evidence_deferred));
+  if (Array.isArray(report.top_candidates) && Array.isArray(report.unknown_evidence_deferred)) {
+    const candidate = report.top_candidates.find((row) => row.link_id === "collision-review");
+    assert.equal(candidate?.recommended_next_action, "ASIN_COLLISION_REVIEW_REQUIRED");
+    assert.equal(candidate?.asin_reuse_policy_classification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+    assert.deepEqual(report.unknown_evidence_deferred.map((row) => row.link_id), ["collision-review"]);
+  }
+});
+
 test("loadCommittedUnknownEvidenceIndex picks up committed amazon unknown outcome files", () => {
   const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
   const meta =
@@ -277,4 +320,12 @@ test("loadCommittedUnknownEvidenceIndex picks up committed amazon unknown outcom
   assert.ok(meta, "expected data/evidence/amazon-4396842 owner-review fixture");
   assert.match(meta.file, /4396842.*owner-review/i);
   assert.equal(meta.verdict, "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH");
+});
+
+test("loadCommittedUnknownEvidenceIndex picks up ASIN collision policy evidence", () => {
+  const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
+  const meta = idx.byToken.get("EDR3RXD1");
+  assert.ok(meta, "expected EDR3RXD1 ASIN collision evidence fixture");
+  assert.match(meta.file, /edr3rxd1.*pdp-evidence/i);
+  assert.equal(meta.asinReusePolicyClassification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
 });

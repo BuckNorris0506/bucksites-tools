@@ -816,6 +816,59 @@ test("queue unknown_evidence_deferred merges into human_browser_required_tokens"
   assert.ok(report.command_center_v2.amazon_rescue.human_browser_required_tokens.includes("DEFERRED-TOK"));
 });
 
+test("ASIN collision review is an owner policy blocker, not a fresh agent token", async () => {
+  const providers = baseProviders();
+  providers.amazonFirstBlockedQueue = async () =>
+    ({
+      report_name: "buckparts_amazon_first_blocked_conversion_queue_v1",
+      generated_at: "2026-05-01T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      selection_table: "retailer_links",
+      total_pool_rows: 1,
+      already_live_noop_count: 0,
+      needs_amazon_search_count: 0,
+      unknown_evidence_deferred_count: 1,
+      unknown_evidence_deferred: [
+        {
+          link_id: "collision",
+          filter_id: "filter-edr3",
+          filter_slug: "edr3rxd1",
+          retailer_key: "oem-catalog",
+          blocked_url: "https://example.com/search?q=EDR3RXD1",
+          token: "EDR3RXD1",
+          domain: "example.com",
+          domain_blocked_count: 1,
+          current_live_amazon_slot_status: null,
+          recommended_search_query: "EDR3RXD1",
+          recommended_next_action: "ASIN_COLLISION_REVIEW_REQUIRED",
+          asin_reuse_policy_classification: "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED",
+        },
+      ],
+      top_candidates: [],
+      known_unknowns: [],
+    }) as never;
+  const report = await buildBuckpartsCommandCenterReport({
+    providers,
+    fileExists: fileExistsTokenControlsOnly,
+    readDir: () => [],
+    readTextFile: readTextFileTrackerOrControls,
+  });
+
+  const rescue = report.command_center_v2.amazon_rescue;
+  assert.ok(rescue.human_browser_required_tokens.includes("EDR3RXD1"));
+  assert.ok(rescue.asin_collision_policy_review_tokens.includes("EDR3RXD1"));
+  assert.equal(rescue.fresh_search_top_tokens.includes("EDR3RXD1"), false);
+  assert.notEqual(report.command_center_v2.next_allowed_agent_token, "EDR3RXD1");
+  const action = report.command_center_v2.recommendation_authority.evaluated_actions.find(
+    (record) => record.source === "command_center_v2.amazon_rescue.asin_collision_policy_review",
+  );
+  assert.ok(action);
+  assert.equal(action.action_type, "BLOCKER");
+  assert.equal(action.allowed_as_recommendation, true);
+  assert.match(action.authority_scope, /not permission to mutate retailer_links/);
+});
+
 test("command_center_v2 recent_evidence includes evidence_rollup counts when evidence dir exists", async () => {
   const providers = baseProviders();
   const report = await buildBuckpartsCommandCenterReport({

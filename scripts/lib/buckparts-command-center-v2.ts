@@ -192,12 +192,20 @@ export function buildCommandCenterV2Report(input: {
     .map((e) => e.token);
 
   const deferredFromQueue: string[] = [];
+  const asinCollisionPolicyReviewTokens: string[] = [];
   if (
     input.amazonFirstBlocked.top_candidates !== "UNKNOWN" &&
     Array.isArray(input.amazonFirstBlocked.unknown_evidence_deferred)
   ) {
     for (const row of input.amazonFirstBlocked.unknown_evidence_deferred) {
       if (typeof row.token === "string" && row.token !== "UNKNOWN") deferredFromQueue.push(row.token);
+      if (
+        row.recommended_next_action === "ASIN_COLLISION_REVIEW_REQUIRED" &&
+        typeof row.token === "string" &&
+        row.token !== "UNKNOWN"
+      ) {
+        asinCollisionPolicyReviewTokens.push(row.token);
+      }
     }
   }
 
@@ -259,6 +267,7 @@ export function buildCommandCenterV2Report(input: {
     registry_entry_count: input.registryEntries.length,
     fresh_search_top_tokens,
     human_browser_required_tokens,
+    asin_collision_policy_review_tokens: uniqueSorted(asinCollisionPolicyReviewTokens),
     frozen_operator_hold_tokens: uniqueSorted(frozenTokens),
     live_outcome_recorded_tokens: uniqueSorted(liveTokens),
     operator_decision_required_tokens: uniqueSorted(operatorDecisionTokens),
@@ -326,6 +335,19 @@ export function buildCommandCenterV2Report(input: {
 
   const ownerParts: string[] = [];
   const recommendationAuthorityRecords: RecommendationAuthorityRecord[] = [];
+  if (asinCollisionPolicyReviewTokens.length > 0) {
+    const action = "Resolve ASIN reuse/collision policy review tokens before any retailer_links mutation or Amazon rescue promotion.";
+    ownerParts.push(action);
+    recommendationAuthorityRecords.push(recommendationAuthority({
+      source: "command_center_v2.amazon_rescue.asin_collision_policy_review",
+      proposed_action: action,
+      action_type: "BLOCKER",
+      authority_level: "SCOPED_PARTIAL",
+      authority_scope: "Owner policy blocker for reused Amazon ASIN evidence only; not permission to mutate retailer_links or claim revenue.",
+      allowed_as_recommendation: true,
+      reason: "Exact-token proof on a reused ASIN is not enough for mutation readiness until owner ASIN reuse policy review resolves compatibility/labeling risk.",
+    }));
+  }
   if (human_browser_required_tokens.length > 0) {
     const action = "Resolve UNKNOWN / human-browser cohort (see unknown_or_human_review) before expanding agent Amazon rescue.";
     ownerParts.push(action);

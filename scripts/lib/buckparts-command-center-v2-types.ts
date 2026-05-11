@@ -54,6 +54,7 @@ export type AmazonRescueLane = DecisionLane & {
   registry_entry_count: number;
   fresh_search_top_tokens: string[];
   human_browser_required_tokens: string[];
+  asin_collision_policy_review_tokens: string[];
   frozen_operator_hold_tokens: string[];
   live_outcome_recorded_tokens: string[];
   operator_decision_required_tokens: string[];

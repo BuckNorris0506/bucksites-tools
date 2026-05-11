@@ -15,6 +15,12 @@ import {
   RETAILER_LINK_STATES,
 } from "@/lib/retailers/retailer-link-state";
 import { resolveRefrigeratorFilterRowFromQueueToken } from "@/lib/data/resolve-refrigerator-filter-from-queue-token";
+import {
+  classifyAmazonAsinReusePolicy,
+  type AmazonAsinReusePolicyClassification,
+  type AmazonAsinReusePolicyResult,
+  type AmazonAsinReusePolicyStatus,
+} from "./lib/amazon-asin-reuse-policy";
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 const DEFAULT_TOKENS = ["EDR1RXD1", "EDR2RXD1", "EDR3RXD1", "EDR4RXD1", "UKF8001"] as const;
@@ -33,6 +39,60 @@ function normalizeRetailerKey(key: string | null): string {
 
 function isJsonObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function stringProof(value: unknown): boolean | "UNKNOWN" {
+  if (typeof value !== "string") return "UNKNOWN";
+  const normalized = value.trim().toUpperCase();
+  if (normalized.length === 0 || normalized === "UNKNOWN") return "UNKNOWN";
+  if (normalized === "NOT_PROVEN" || normalized === "FALSE") return false;
+  return true;
+}
+
+function boolProof(value: unknown): boolean | "UNKNOWN" {
+  return typeof value === "boolean" ? value : "UNKNOWN";
+}
+
+function evidenceBoolProof(parsed: Record<string, unknown>, keys: string[]): boolean | "UNKNOWN" {
+  for (const key of keys) {
+    if (Object.prototype.hasOwnProperty.call(parsed, key)) return boolProof(parsed[key]);
+  }
+  return "UNKNOWN";
+}
+
+function evidenceNestedBoolProof(
+  parsed: Record<string, unknown>,
+  objectKey: string,
+  keys: string[],
+): boolean | "UNKNOWN" {
+  const nested = parsed[objectKey];
+  if (!isJsonObject(nested)) return "UNKNOWN";
+  return evidenceBoolProof(nested, keys);
+}
+
+function evidenceAttributionCanBeLabeled(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  const attribution = typeof parsed.product_attribution === "string" ? parsed.product_attribution.trim() : "";
+  if (attribution.length > 0 && attribution.toUpperCase() !== "UNKNOWN") return true;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  return stringProof(browserEvidence.oem_or_aftermarket);
+}
+
+function evidenceRelationshipProof(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  if (evidenceAttributionCanBeLabeled(parsed) === true) return true;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  return stringProof(browserEvidence.seller_title_visible);
+}
+
+function evidenceBuyabilityProof(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  const direct = stringProof(parsed.buyability_proof);
+  if (direct !== "UNKNOWN") return direct;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  const buyPath = stringProof(browserEvidence.buy_path_visible);
+  if (buyPath !== "UNKNOWN") return buyPath;
+  return stringProof(browserEvidence.browser_verdict);
 }
 
 function loadEvidenceAsinIndex(evidenceDir: string): Map<string, string[]> {
@@ -77,13 +137,33 @@ function insertPlanHint(args: {
   resolved: boolean;
   liveDirectBuyableAmazon: number;
   asinEvidenceFilesOtherThanSelf: number;
+  asinReusePolicyClassification?: AmazonAsinReusePolicyClassification | "UNKNOWN";
+  asinReusePolicyStatus?: AmazonAsinReusePolicyStatus | "UNKNOWN";
 }): string {
   if (!args.resolved) return "OWNER_REVIEW (no filter_id)";
   if (args.liveDirectBuyableAmazon > 0) return "SKIP (already has LIVE_DIRECT_BUYABLE Amazon row)";
+  if (args.asinReusePolicyClassification === "NO_SAFE_PDP_FOUND") {
+    return "BLOCKED (NO_SAFE_PDP_FOUND; mutation_ready=false)";
+  }
+  if (args.asinReusePolicyClassification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") {
+    return "OWNER_REVIEW (ASIN reuse/collision policy review required; mutation_ready=false)";
+  }
+  if (args.asinReusePolicyClassification === "EXACT_PDP_PROVEN_NO_COLLISION") {
+    return "OWNER_REVIEW (exact PDP proof present; mutation still requires owner-approved insert plan + runtime gates)";
+  }
+  if (args.asinReusePolicyStatus === "BLOCKED") return "BLOCKED (ASIN reuse policy proof incomplete)";
   if (args.asinEvidenceFilesOtherThanSelf > 0) {
     return "OWNER_REVIEW (ASIN appears in other evidence files — policy / duplicate slot risk)";
   }
   return "INSERT_PLAN_POSSIBLE (subject to affiliate readiness + buy-link gate + owner approval)";
+}
+
+function policyRank(policy: AmazonAsinReusePolicyResult): number {
+  if (policy.classification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") return 50;
+  if (policy.classification === "EXACT_PDP_PROVEN_NO_COLLISION") return 40;
+  if (policy.classification === "NO_SAFE_PDP_FOUND") return 35;
+  if (policy.classification === "HUMAN_BROWSER_VERIFICATION_REQUIRED") return 20;
+  return 0;
 }
 
 export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...DEFAULT_TOKENS]): Promise<unknown> {
@@ -111,6 +191,10 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
           liveDirectBuyableAmazon: 0,
           asinEvidenceFilesOtherThanSelf: 0,
         }),
+        asin_reuse_policy_classification: "UNKNOWN",
+        asin_reuse_policy_status: "UNKNOWN",
+        asin_reuse_policy_reason: "filter resolution failed; ASIN reuse policy cannot be evaluated",
+        asin_reuse_policy_mutation_ready: false,
       });
       continue;
     }
@@ -149,6 +233,9 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
         )
       : [];
     let asinCollision = 0;
+    let bestPolicy: AmazonAsinReusePolicyResult | null = null;
+    let bestPolicyEvidenceFile: string | null = null;
+    let bestPolicyAsin: string | null = null;
     for (const evName of selfEvidenceFiles) {
       const abs = path.join(evidenceDir, evName);
       let parsed: unknown;
@@ -159,9 +246,36 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
       }
       if (!isJsonObject(parsed)) continue;
       const asin = typeof parsed.asin === "string" ? parsed.asin.trim().toUpperCase() : "";
-      if (!/^[A-Z0-9]{10}$/.test(asin)) continue;
-      const files = asinIndex.get(asin) ?? [];
-      asinCollision = Math.max(asinCollision, Math.max(0, files.length - 1));
+      const validAsin = /^[A-Z0-9]{10}$/.test(asin);
+      const files = validAsin ? asinIndex.get(asin) ?? [] : [];
+      const evidenceCollision = validAsin ? Math.max(0, files.length - 1) : 0;
+      asinCollision = Math.max(asinCollision, evidenceCollision);
+
+      const ownerBrowserFinding = parsed.owner_browser_finding;
+      const exactTokenProof =
+        evidenceNestedBoolProof(parsed, "browser_evidence", ["token_visible_in_pdp_title"]) === true ||
+        (isJsonObject(ownerBrowserFinding) && ownerBrowserFinding.exact_token_visible_in_title === true) ||
+        stringProof(parsed.exact_token_proof) === true;
+      const sellerControlledTargetTokenProof =
+        evidenceNestedBoolProof(parsed, "browser_evidence", ["token_visible_in_pdp_title"]) === true ||
+        (isJsonObject(ownerBrowserFinding) && ownerBrowserFinding.exact_token_visible_in_title === true);
+      const noSafePdpFound = parsed.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH";
+      const policy = classifyAmazonAsinReusePolicy({
+        token,
+        asin: validAsin ? asin : null,
+        noSafePdpFound,
+        exactTokenProof,
+        sellerControlledTargetTokenProof,
+        replacementOrCompatibleRelationshipProof: evidenceRelationshipProof(parsed),
+        buyabilityProof: evidenceBuyabilityProof(parsed),
+        attributionCanBeLabeled: evidenceAttributionCanBeLabeled(parsed),
+        asinCollisionEvidenceFileCount: evidenceCollision,
+      });
+      if (!bestPolicy || policyRank(policy) > policyRank(bestPolicy)) {
+        bestPolicy = policy;
+        bestPolicyEvidenceFile = evName;
+        bestPolicyAsin = validAsin ? asin : null;
+      }
     }
 
     rows.push({
@@ -174,10 +288,18 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
       approved_amazon_row_count: approved,
       live_direct_buyable_amazon_row_count: liveDirect,
       asin_collision_evidence_file_count: asinCollision,
+      asin_reuse_policy_classification: bestPolicy?.classification ?? "UNKNOWN",
+      asin_reuse_policy_status: bestPolicy?.policy_status ?? "UNKNOWN",
+      asin_reuse_policy_reason: bestPolicy?.reason ?? "No Amazon evidence file with policy-classifiable ASIN proof was found.",
+      asin_reuse_policy_mutation_ready: false,
+      asin_reuse_policy_evidence_file: bestPolicyEvidenceFile,
+      asin_reuse_policy_asin: bestPolicyAsin,
       insert_plan_hint: insertPlanHint({
         resolved: true,
         liveDirectBuyableAmazon: liveDirect,
         asinEvidenceFilesOtherThanSelf: asinCollision,
+        asinReusePolicyClassification: bestPolicy?.classification ?? "UNKNOWN",
+        asinReusePolicyStatus: bestPolicy?.policy_status ?? "UNKNOWN",
       }),
     });
   }

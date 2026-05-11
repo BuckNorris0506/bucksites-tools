@@ -11,6 +11,10 @@ import {
   RETAILER_LINK_STATES,
   type RetailerLinkState,
 } from "@/lib/retailers/retailer-link-state";
+import {
+  classifyAmazonAsinReusePolicy,
+  type AmazonAsinReusePolicyClassification,
+} from "./lib/amazon-asin-reuse-policy";
 
 const OEM_KEYS = new Set(["oem-catalog", "oem-parts-catalog"]);
 
@@ -34,6 +38,7 @@ export type AmazonFirstRecommendedNextAction =
   | "HUMAN_BROWSER_VERIFICATION_REQUIRED"
   | "NO_SAFE_PDP_FOUND"
   | "OWNER_REVIEW_EXACT_PDP_PROVEN"
+  | "ASIN_COLLISION_REVIEW_REQUIRED"
   | "NOOP_ALREADY_HAS_LIVE_AMAZON"
   | "HOLD_AFFILIATE_NOT_READY"
   | "UNKNOWN_REVIEW_REQUIRED";
@@ -73,6 +78,7 @@ export type AmazonFirstBlockedConversionCandidate = BaseCandidate & {
   evidence_unknown_reason?: string;
   evidence_review_file?: string;
   evidence_review_verdict?: string;
+  asin_reuse_policy_classification?: AmazonAsinReusePolicyClassification;
   evidence_review_reason?: string;
 };
 
@@ -103,6 +109,7 @@ export type CommittedUnknownEvidenceMatch = {
   file: string;
   reason: string;
   verdict?: string;
+  asinReusePolicyClassification?: AmazonAsinReusePolicyClassification;
 };
 
 export type CommittedUnknownEvidenceIndex = {
@@ -272,6 +279,7 @@ function actionSortPriority(action: AmazonFirstRecommendedNextAction): number {
   if (action === "SEARCH_AMAZON_EXACT_TOKEN") return 0;
   if (action === "UNKNOWN_REVIEW_REQUIRED") return 1;
   if (action === "HOLD_AFFILIATE_NOT_READY") return 2;
+  if (action === "ASIN_COLLISION_REVIEW_REQUIRED") return 3;
   if (action === "NO_SAFE_PDP_FOUND") return 3;
   if (action === "HUMAN_BROWSER_VERIFICATION_REQUIRED") return 3;
   if (action === "OWNER_REVIEW_EXACT_PDP_PROVEN") return 4;
@@ -280,6 +288,78 @@ function actionSortPriority(action: AmazonFirstRecommendedNextAction): number {
 
 function isJsonObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function stringProof(value: unknown): boolean | "UNKNOWN" {
+  if (typeof value !== "string") return "UNKNOWN";
+  const normalized = value.trim().toUpperCase();
+  if (normalized.length === 0 || normalized === "UNKNOWN") return "UNKNOWN";
+  if (normalized === "NOT_PROVEN" || normalized === "FALSE") return false;
+  return true;
+}
+
+function evidenceAttributionCanBeLabeled(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  const attribution = typeof parsed.product_attribution === "string" ? parsed.product_attribution.trim() : "";
+  if (attribution.length > 0 && attribution.toUpperCase() !== "UNKNOWN") return true;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  return stringProof(browserEvidence.oem_or_aftermarket);
+}
+
+function evidenceRelationshipProof(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  if (evidenceAttributionCanBeLabeled(parsed) === true) return true;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  return stringProof(browserEvidence.seller_title_visible);
+}
+
+function evidenceBuyabilityProof(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  const direct = stringProof(parsed.buyability_proof);
+  if (direct !== "UNKNOWN") return direct;
+  const browserEvidence = parsed.browser_evidence;
+  if (!isJsonObject(browserEvidence)) return "UNKNOWN";
+  const buyPath = stringProof(browserEvidence.buy_path_visible);
+  if (buyPath !== "UNKNOWN") return buyPath;
+  return stringProof(browserEvidence.browser_verdict);
+}
+
+function evidenceSellerControlledTargetTokenProof(parsed: Record<string, unknown>): boolean | "UNKNOWN" {
+  const ownerBrowserFinding = parsed.owner_browser_finding;
+  if (isJsonObject(ownerBrowserFinding) && ownerBrowserFinding.exact_token_visible_in_title === true) return true;
+  const browserEvidence = parsed.browser_evidence;
+  if (isJsonObject(browserEvidence) && browserEvidence.token_visible_in_pdp_title === true) return true;
+  return "UNKNOWN";
+}
+
+function evidenceCollisionCount(parsed: Record<string, unknown>): number | "UNKNOWN" {
+  const dbPrecheck = parsed.db_precheck_summary;
+  if (isJsonObject(dbPrecheck) && typeof dbPrecheck.asin_match_any_url_count === "number") {
+    return dbPrecheck.asin_match_any_url_count;
+  }
+  const ownerCheck = parsed.asin_collision_reuse_check;
+  if (isJsonObject(ownerCheck)) {
+    const precheck = ownerCheck.read_only_refrigerator_token_precheck;
+    if (isJsonObject(precheck) && typeof precheck.asin_collision_evidence_file_count === "number") {
+      return precheck.asin_collision_evidence_file_count;
+    }
+  }
+  return "UNKNOWN";
+}
+
+function classifyEvidenceAsinReusePolicy(parsed: Record<string, unknown>): AmazonAsinReusePolicyClassification {
+  const asin = typeof parsed.asin === "string" ? parsed.asin.trim().toUpperCase() : null;
+  const sellerProof = evidenceSellerControlledTargetTokenProof(parsed);
+  return classifyAmazonAsinReusePolicy({
+    token: typeof parsed.token === "string" ? parsed.token : "UNKNOWN",
+    asin: asin && /^[A-Z0-9]{10}$/.test(asin) ? asin : null,
+    noSafePdpFound: parsed.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH",
+    exactTokenProof: stringProof(parsed.exact_token_proof) === true || sellerProof === true,
+    sellerControlledTargetTokenProof: sellerProof,
+    replacementOrCompatibleRelationshipProof: evidenceRelationshipProof(parsed),
+    buyabilityProof: evidenceBuyabilityProof(parsed),
+    attributionCanBeLabeled: evidenceAttributionCanBeLabeled(parsed),
+    asinCollisionEvidenceFileCount: evidenceCollisionCount(parsed),
+  }).classification;
 }
 
 function shouldIndexEvidenceReview(parsed: Record<string, unknown>, name: string): boolean {
@@ -292,6 +372,12 @@ function shouldIndexEvidenceReview(parsed: Record<string, unknown>, name: string
       (parsed.verdict === "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT" ||
         parsed.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH") &&
       parsed.mutation_ready === false
+    );
+  }
+  if (lower.includes("pdp-evidence")) {
+    return (
+      parsed.mutation_ready === false &&
+      classifyEvidenceAsinReusePolicy(parsed) === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED"
     );
   }
   return false;
@@ -321,7 +407,14 @@ export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): Commi
   }
   for (const name of names) {
     if (!name.endsWith(".json")) continue;
-    if (!name.toLowerCase().includes("unknown-outcome") && !name.toLowerCase().includes("owner-review")) continue;
+    const lower = name.toLowerCase();
+    if (
+      !lower.includes("unknown-outcome") &&
+      !lower.includes("owner-review") &&
+      !lower.includes("pdp-evidence")
+    ) {
+      continue;
+    }
     const abs = path.join(evidenceDirAbs, name);
     let raw: string;
     try {
@@ -344,7 +437,9 @@ export function loadCommittedUnknownEvidenceIndex(evidenceDirAbs: string): Commi
           ? parsed.do_not_publish_reason.trim()
           : "";
     const verdict = typeof parsed.verdict === "string" ? parsed.verdict : undefined;
-    const meta: CommittedUnknownEvidenceMatch = { file: name, reason, verdict };
+    const asinReusePolicyClassification =
+      name.toLowerCase().includes("pdp-evidence") ? classifyEvidenceAsinReusePolicy(parsed) : undefined;
+    const meta: CommittedUnknownEvidenceMatch = { file: name, reason, verdict, asinReusePolicyClassification };
     const tokenRaw = parsed.token;
     if (typeof tokenRaw === "string" && tokenRaw.trim().length > 0) {
       const key = tokenRaw.trim().toUpperCase();
@@ -457,6 +552,11 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
           evidence_review_file = ev.file;
           evidence_review_verdict = ev.verdict;
           if (ev.reason.length > 0) evidence_review_reason = ev.reason;
+        } else if (ev.asinReusePolicyClassification === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") {
+          action = "ASIN_COLLISION_REVIEW_REQUIRED";
+          evidence_review_file = ev.file;
+          evidence_review_verdict = ev.asinReusePolicyClassification;
+          if (ev.reason.length > 0) evidence_review_reason = ev.reason;
         } else if (ev.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH") {
           action = "NO_SAFE_PDP_FOUND";
           evidence_review_file = ev.file;
@@ -488,6 +588,9 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
     if (evidence_review_file) {
       candidate.evidence_review_file = evidence_review_file;
       candidate.evidence_review_verdict = evidence_review_verdict;
+      if (evidence_review_verdict === "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED") {
+        candidate.asin_reuse_policy_classification = evidence_review_verdict;
+      }
       if (evidence_review_reason) candidate.evidence_review_reason = evidence_review_reason;
     }
     return candidate;
@@ -502,7 +605,8 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
   const unknown_evidence_deferred_count = enriched.filter(
     (r) =>
       r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED" ||
-      r.recommended_next_action === "NO_SAFE_PDP_FOUND",
+      r.recommended_next_action === "NO_SAFE_PDP_FOUND" ||
+      r.recommended_next_action === "ASIN_COLLISION_REVIEW_REQUIRED",
   ).length;
 
   const actionable = enriched.filter(
@@ -520,7 +624,8 @@ export function buildAmazonFirstBlockedConversionQueueReportFromData(
   const unknown_evidence_deferred = actionable.filter(
     (r) =>
       r.recommended_next_action === "HUMAN_BROWSER_VERIFICATION_REQUIRED" ||
-      r.recommended_next_action === "NO_SAFE_PDP_FOUND",
+      r.recommended_next_action === "NO_SAFE_PDP_FOUND" ||
+      r.recommended_next_action === "ASIN_COLLISION_REVIEW_REQUIRED",
   );
 
   return {
