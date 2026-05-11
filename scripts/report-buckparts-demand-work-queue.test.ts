@@ -175,7 +175,10 @@ function recommendationRecord(source: string) {
 async function buildReport(report: BuckpartsDailyOperatorReport): Promise<BuckpartsDemandWorkQueueReport> {
   return buildBuckpartsDemandWorkQueueReport({
     now: fixedNow,
-    providers: { dailyOperator: async () => report },
+    providers: {
+      dailyOperator: async () => report,
+      internalSearchGapDetails: async () => "UNKNOWN",
+    },
   });
 }
 
@@ -207,6 +210,7 @@ test("priority order is deterministic", async () => {
             },
           },
         }),
+      internalSearchGapDetails: async () => "UNKNOWN",
       publicLanguageIssues: async () => [
         {
           page: "/filter/gswf",
@@ -230,6 +234,41 @@ test("priority order is deterministic", async () => {
   );
   assert.deepEqual(report.items.map((item) => item.priority_rank), [1, 2, 3, 4, 5]);
   assert.equal(report.items[0].id, "gsc-higher");
+});
+
+test("concrete internal search gap detail produces INTERNAL_ZERO_RESULT_GAP_REVIEW", async () => {
+  const report = await buildBuckpartsDemandWorkQueueReport({
+    now: fixedNow,
+    providers: {
+      dailyOperator: async () => daily(),
+      internalSearchGapDetails: async () => [
+        {
+          id: 42,
+          catalog: "refrigerator_water",
+          normalized_query: "gswf filter",
+          sample_raw_query: "GSWF filter",
+          search_count: 4,
+          zero_result_count: 3,
+          status: "open",
+          likely_entity_type: "filter_part",
+          last_seen_at: fixedNow().toISOString(),
+        },
+      ],
+    },
+  });
+
+  const item = report.items.find((candidate) => candidate.type === "INTERNAL_ZERO_RESULT_GAP_REVIEW");
+  assert.ok(item);
+  assert.equal(item.id, "internal-gap-42-gswf-filter");
+  assert.equal(item.priority_rank, 1);
+  assert.equal(item.authority_level, "BRIGHT");
+  assert.equal(item.source, "search_gaps read-only detail query");
+  assert.ok(item.proof.includes("query=GSWF filter"));
+  assert.ok(item.proof.includes("zero_result_count=3"));
+  assert.ok(item.excluded_assumptions.some((assumption) => /not revenue/i.test(assumption)));
+  assert.ok(
+    !report.blocked_or_unknown_inputs.some((input) => input.input === "internal_search_gap_details"),
+  );
 });
 
 test("excluded signals cannot produce queue items", async () => {

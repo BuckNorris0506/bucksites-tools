@@ -5,6 +5,8 @@ import {
   buildBuckpartsDailyOperatorReport,
   type BuckpartsDailyOperatorReport,
 } from "./report-buckparts-daily-operator";
+import { loadEnv } from "./lib/load-env";
+import { getSupabaseAdmin } from "./lib/supabase-admin";
 
 type RuntimeStatus = "OK" | "ATTENTION" | "UNKNOWN";
 type AuthorityLevel = "BRIGHT" | "SCOPED_PARTIAL";
@@ -57,11 +59,24 @@ type PublicLanguageIssue = {
   proof: string;
 };
 
+type InternalSearchGapDetail = {
+  id: number | string;
+  catalog?: string | null;
+  normalized_query?: string | null;
+  sample_raw_query?: string | null;
+  search_count?: number | null;
+  zero_result_count?: number | null;
+  status?: string | null;
+  likely_entity_type?: string | null;
+  last_seen_at?: string | null;
+};
+
 type DemandWorkQueueOptions = {
   rootDir?: string;
   now?: () => Date;
   providers?: {
     dailyOperator?: () => Promise<BuckpartsDailyOperatorReport>;
+    internalSearchGapDetails?: () => Promise<InternalSearchGapDetail[] | "UNKNOWN">;
     publicLanguageIssues?: () => Promise<PublicLanguageIssue[]>;
   };
 };
@@ -190,6 +205,7 @@ function addGscItems(args: {
 
 function addInternalSearchItems(args: {
   daily: BuckpartsDailyOperatorReport;
+  gapDetails: InternalSearchGapDetail[] | "UNKNOWN";
   candidates: CandidateItem[];
   blocked: DemandWorkQueueBlockedInput[];
 }) {
@@ -205,12 +221,61 @@ function addInternalSearchItems(args: {
 
   const actionable = internal.search_gaps_backlog.total_actionable;
   if (isNumber(actionable) && actionable > 0) {
-    args.blocked.push({
-      input: "internal_search_gap_details",
-      status: "DETAIL_MISSING",
-      reason: "Search gap counts are available, but concrete gap query/page details are not exposed in the inspected Daily Operator/Command Surface summary path.",
-      summary_available: `searches_30d=${fmt(internal.search_events.last_30d)}; zero_result_30d=${fmt(internal.search_events.zero_result_last_30d)}; actionable_gaps=${actionable}`,
-    });
+    if (args.gapDetails === "UNKNOWN") {
+      args.blocked.push({
+        input: "internal_search_gap_details",
+        status: "DETAIL_MISSING",
+        reason: "Search gap counts are available, but concrete search_gaps rows were not readable through the read-only detail loader.",
+        summary_available: `summary_path=Daily Operator/Command Surface counts; detail_source=search_gaps select(id,catalog,normalized_query,sample_raw_query,search_count,zero_result_count,status,likely_entity_type,last_seen_at); searches_30d=${fmt(internal.search_events.last_30d)}; zero_result_30d=${fmt(internal.search_events.zero_result_last_30d)}; actionable_gaps=${actionable}`,
+      });
+      return;
+    }
+
+    if (args.gapDetails.length === 0) {
+      args.blocked.push({
+        input: "internal_search_gap_details",
+        status: "DETAIL_MISSING",
+        reason: "Search gap counts are available, but the read-only detail query returned no actionable search_gaps rows.",
+        summary_available: `summary_path=Daily Operator/Command Surface counts; detail_source=search_gaps statuses open/reviewing/queued; searches_30d=${fmt(internal.search_events.last_30d)}; zero_result_30d=${fmt(internal.search_events.zero_result_last_30d)}; actionable_gaps=${actionable}`,
+      });
+      return;
+    }
+
+    for (const gap of args.gapDetails.slice(0, 10)) {
+      const query = String(gap.sample_raw_query || gap.normalized_query || gap.id || "UNKNOWN");
+      const normalized = String(gap.normalized_query || "UNKNOWN");
+      const zeroResultCount = isNumber(gap.zero_result_count) ? gap.zero_result_count : 0;
+      const searchCount = isNumber(gap.search_count) ? gap.search_count : 0;
+      args.candidates.push({
+        id: `internal-gap-${slugifyId(String(gap.id))}-${slugifyId(query)}`,
+        type: "INTERNAL_ZERO_RESULT_GAP_REVIEW",
+        priority_bucket: 2,
+        magnitude: zeroResultCount || searchCount,
+        authority_level: "BRIGHT",
+        source: "search_gaps read-only detail query",
+        scope: "Internal search gap query review only; not revenue, buyer intent, or catalog coverage proof.",
+        proof: [
+          `gap_id=${gap.id}`,
+          `status=${gap.status ?? "UNKNOWN"}`,
+          `catalog=${gap.catalog ?? "UNKNOWN"}`,
+          `query=${query}`,
+          `normalized_query=${normalized}`,
+          `search_count=${fmt(gap.search_count)}`,
+          `zero_result_count=${fmt(gap.zero_result_count)}`,
+          `likely_entity_type=${gap.likely_entity_type ?? "UNKNOWN"}`,
+        ],
+        why_it_matters: "A concrete zero-result search gap shows homeowner demand that search did not satisfy.",
+        recommended_action: "Review the proven query and decide whether it needs an alias, model/filter page, compatibility evidence, or a closed gap status.",
+        owner_or_agent: "AGENT",
+        excluded_assumptions: [
+          "Search gaps are not revenue.",
+          "Search gaps are not verified buyer intent.",
+          "Search gaps do not prove catalog-wide coverage.",
+        ],
+        validation_required: BASE_VALIDATION,
+      });
+    }
+    return;
   }
 
   const zero30 = internal.search_events.zero_result_last_30d;
@@ -221,6 +286,25 @@ function addInternalSearchItems(args: {
       reason: "Zero-result search counts are available, but concrete zero-result query details are not exposed in the inspected summary path.",
       summary_available: `zero_result_30d=${zero30}`,
     });
+  }
+}
+
+async function loadInternalSearchGapDetails(): Promise<InternalSearchGapDetail[] | "UNKNOWN"> {
+  try {
+    loadEnv();
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from("search_gaps")
+      .select("id, catalog, normalized_query, sample_raw_query, search_count, zero_result_count, status, likely_entity_type, last_seen_at")
+      .in("status", ["open", "reviewing", "queued"])
+      .order("zero_result_count", { ascending: false })
+      .order("search_count", { ascending: false })
+      .order("last_seen_at", { ascending: false })
+      .limit(10);
+    if (error) return "UNKNOWN";
+    return (data ?? []) as InternalSearchGapDetail[];
+  } catch {
+    return "UNKNOWN";
   }
 }
 
@@ -339,11 +423,12 @@ export async function buildBuckpartsDemandWorkQueueReport(
   const rootDir = options.rootDir ?? process.cwd();
   const now = options.now ?? (() => new Date());
   const daily = await (options.providers?.dailyOperator?.() ?? buildBuckpartsDailyOperatorReport({ rootDir, now }));
+  const gapDetails = await (options.providers?.internalSearchGapDetails?.() ?? loadInternalSearchGapDetails());
 
   const candidates: CandidateItem[] = [];
   const blocked_or_unknown_inputs: DemandWorkQueueBlockedInput[] = [];
 
-  addInternalSearchItems({ daily, candidates, blocked: blocked_or_unknown_inputs });
+  addInternalSearchItems({ daily, gapDetails, candidates, blocked: blocked_or_unknown_inputs });
   addGscItems({ daily, candidates, blocked: blocked_or_unknown_inputs });
   addClickItems({ daily, candidates, blocked: blocked_or_unknown_inputs });
   addCtaBlockedInput({ daily, blocked: blocked_or_unknown_inputs });
