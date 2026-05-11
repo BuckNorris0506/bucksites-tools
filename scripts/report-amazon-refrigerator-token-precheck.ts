@@ -27,10 +27,23 @@ const DEFAULT_TOKENS = ["EDR1RXD1", "EDR2RXD1", "EDR3RXD1", "EDR4RXD1", "UKF8001
 
 type LinkRow = {
   id: string;
+  filter_id?: string | null;
   retailer_key: string | null;
   affiliate_url: string;
   browser_truth_classification: string | null;
   browser_truth_buyable_subtype?: string | null;
+  status?: string | null;
+  is_primary?: boolean | null;
+};
+
+type LiveAsinReuseFact = {
+  id: string;
+  filter_id: string | null;
+  retailer_key: string | null;
+  browser_truth_classification: string | null;
+  browser_truth_buyable_subtype?: string | null;
+  status?: string | null;
+  is_primary?: boolean | null;
 };
 
 function normalizeRetailerKey(key: string | null): string {
@@ -166,6 +179,60 @@ function policyRank(policy: AmazonAsinReusePolicyResult): number {
   return 0;
 }
 
+async function loadLiveAsinReuseFacts(args: {
+  supabase: ReturnType<typeof getSupabaseAdmin>;
+  asin: string;
+  selfFilterId: string;
+}): Promise<{
+  liveAsinReuseCount: number;
+  approvedDirectBuyableReuseCount: number;
+  otherRows: LiveAsinReuseFact[];
+}> {
+  const { data, error } = await args.supabase
+    .from("retailer_links")
+    .select(
+      "id,filter_id,retailer_key,affiliate_url,browser_truth_classification,browser_truth_buyable_subtype,status,is_primary",
+    )
+    .ilike("affiliate_url", `%${args.asin}%`);
+  if (error) throw error;
+
+  const otherRows = ((data ?? []) as LinkRow[])
+    .filter((row) => row.filter_id !== args.selfFilterId)
+    .filter((row) => normalizeRetailerKey(row.retailer_key) === "amazon")
+    .map((row) => ({
+      id: row.id,
+      filter_id: row.filter_id ?? null,
+      retailer_key: row.retailer_key,
+      browser_truth_classification: row.browser_truth_classification,
+      browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
+      status: row.status ?? null,
+      is_primary: row.is_primary ?? null,
+    }));
+
+  let approvedDirectBuyableReuseCount = 0;
+  for (const row of otherRows) {
+    const gate = buyLinkGateFailureKind({
+      retailer_key: row.retailer_key,
+      affiliate_url: `https://www.amazon.com/dp/${args.asin}`,
+      browser_truth_classification: row.browser_truth_classification,
+      browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
+    });
+    const state = mapSignalsToRetailerLinkState({
+      browserTruthClassification: row.browser_truth_classification,
+      gateFailureKind: gate,
+    });
+    if (gate === null && state === RETAILER_LINK_STATES.LIVE_DIRECT_BUYABLE) {
+      approvedDirectBuyableReuseCount += 1;
+    }
+  }
+
+  return {
+    liveAsinReuseCount: otherRows.length,
+    approvedDirectBuyableReuseCount,
+    otherRows,
+  };
+}
+
 export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...DEFAULT_TOKENS]): Promise<unknown> {
   loadEnv();
   const supabase = getSupabaseAdmin();
@@ -236,6 +303,9 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
     let bestPolicy: AmazonAsinReusePolicyResult | null = null;
     let bestPolicyEvidenceFile: string | null = null;
     let bestPolicyAsin: string | null = null;
+    let bestLiveAsinReuseCount = 0;
+    let bestLiveAsinApprovedDirectBuyableReuseCount = 0;
+    let bestLiveAsinReuseRows: LiveAsinReuseFact[] = [];
     for (const evName of selfEvidenceFiles) {
       const abs = path.join(evidenceDir, evName);
       let parsed: unknown;
@@ -260,6 +330,14 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
         evidenceNestedBoolProof(parsed, "browser_evidence", ["token_visible_in_pdp_title"]) === true ||
         (isJsonObject(ownerBrowserFinding) && ownerBrowserFinding.exact_token_visible_in_title === true);
       const noSafePdpFound = parsed.verdict === "NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH";
+      const liveReuse = validAsin
+        ? await loadLiveAsinReuseFacts({
+            supabase,
+            asin,
+            selfFilterId: resolved.row.id,
+          })
+        : { liveAsinReuseCount: 0, approvedDirectBuyableReuseCount: 0, otherRows: [] };
+
       const policy = classifyAmazonAsinReusePolicy({
         token,
         asin: validAsin ? asin : null,
@@ -270,11 +348,15 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
         buyabilityProof: evidenceBuyabilityProof(parsed),
         attributionCanBeLabeled: evidenceAttributionCanBeLabeled(parsed),
         asinCollisionEvidenceFileCount: evidenceCollision,
+        liveAsinReuseCount: liveReuse.liveAsinReuseCount,
       });
       if (!bestPolicy || policyRank(policy) > policyRank(bestPolicy)) {
         bestPolicy = policy;
         bestPolicyEvidenceFile = evName;
         bestPolicyAsin = validAsin ? asin : null;
+        bestLiveAsinReuseCount = liveReuse.liveAsinReuseCount;
+        bestLiveAsinApprovedDirectBuyableReuseCount = liveReuse.approvedDirectBuyableReuseCount;
+        bestLiveAsinReuseRows = liveReuse.otherRows;
       }
     }
 
@@ -288,6 +370,9 @@ export async function runAmazonRefrigeratorTokenPrecheck(tokens: string[] = [...
       approved_amazon_row_count: approved,
       live_direct_buyable_amazon_row_count: liveDirect,
       asin_collision_evidence_file_count: asinCollision,
+      live_asin_reuse_other_filter_count: bestLiveAsinReuseCount,
+      live_asin_reuse_approved_direct_buyable_other_filter_count: bestLiveAsinApprovedDirectBuyableReuseCount,
+      live_asin_reuse_other_filter_rows: bestLiveAsinReuseRows,
       asin_reuse_policy_classification: bestPolicy?.classification ?? "UNKNOWN",
       asin_reuse_policy_status: bestPolicy?.policy_status ?? "UNKNOWN",
       asin_reuse_policy_reason: bestPolicy?.reason ?? "No Amazon evidence file with policy-classifiable ASIN proof was found.",

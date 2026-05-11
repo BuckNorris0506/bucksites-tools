@@ -313,6 +313,59 @@ test("ASIN collision evidence blocks fresh search as owner policy review", () =>
   }
 });
 
+test("live Amazon ASIN reuse blocks fresh search even when evidence-file collision is zero", () => {
+  const evidenceIndex = {
+    byToken: new Map<string, { file: string; reason: string; verdict?: string; asin?: string; asinReusePolicyClassification?: "EXACT_PDP_PROVEN_NO_COLLISION" }>([
+      [
+        "EDR4RXD1",
+        {
+          file: "amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json",
+          reason: "exact token proof exists; live ASIN reuse must be checked",
+          asin: "B00UB38V2A",
+          asinReusePolicyClassification: "EXACT_PDP_PROVEN_NO_COLLISION",
+        },
+      ],
+    ]),
+    byFilterId: new Map<string, { file: string; reason: string; verdict?: string }>(),
+  };
+  const report = buildAmazonFirstBlockedConversionQueueReportFromData({
+    links: [
+      {
+        id: "blocked-edr4",
+        filter_id: "filter-edr4",
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://www.whirlpoolparts.com/catalog.jsp?searchKeyword=EDR4RXD1",
+        browser_truth_classification: null,
+        is_primary: false,
+      },
+      {
+        id: "live-other-asin",
+        filter_id: "filter-4396395",
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00UB38V2A?tag=buckparts20-20",
+        browser_truth_classification: "direct_buyable",
+        is_primary: false,
+      },
+    ],
+    filters: [
+      { id: "filter-edr4", slug: "edr4rxd1", oem_part_number: "EDR4RXD1" },
+      { id: "filter-4396395", slug: "4396395", oem_part_number: "4396395" },
+    ],
+    now: () => new Date("2026-05-01T00:00:00.000Z"),
+    amazonAffiliateReady: true,
+    committedUnknownIndex: evidenceIndex,
+  });
+
+  assert.equal(report.needs_amazon_search_count, 0);
+  assert.equal(report.unknown_evidence_deferred_count, 1);
+  assert.ok(Array.isArray(report.top_candidates));
+  if (Array.isArray(report.top_candidates)) {
+    const candidate = report.top_candidates.find((row) => row.link_id === "blocked-edr4");
+    assert.equal(candidate?.recommended_next_action, "ASIN_COLLISION_REVIEW_REQUIRED");
+    assert.equal(candidate?.asin_reuse_policy_classification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+  }
+});
+
 test("loadCommittedUnknownEvidenceIndex picks up committed amazon unknown outcome files", () => {
   const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
   const meta =
@@ -327,5 +380,14 @@ test("loadCommittedUnknownEvidenceIndex picks up ASIN collision policy evidence"
   const meta = idx.byToken.get("EDR3RXD1");
   assert.ok(meta, "expected EDR3RXD1 ASIN collision evidence fixture");
   assert.match(meta.file, /edr3rxd1.*pdp-evidence/i);
+  assert.equal(meta.asin, "B087PDLZL9");
   assert.equal(meta.asinReusePolicyClassification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+});
+
+test("loadCommittedUnknownEvidenceIndex keeps exact PDP ASIN metadata for live-reuse reclassification", () => {
+  const idx = loadCommittedUnknownEvidenceIndex(path.resolve(process.cwd(), "data/evidence"));
+  const meta = idx.byToken.get("EDR4RXD1");
+  assert.ok(meta, "expected EDR4RXD1 PDP evidence fixture");
+  assert.match(meta.file, /edr4rxd1.*pdp-evidence/i);
+  assert.equal(meta.asin, "B00UB38V2A");
 });

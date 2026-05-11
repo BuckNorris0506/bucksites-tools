@@ -57,6 +57,25 @@ test("non-colliding exact PDP evidence is owner-review eligible but still not au
   assert.equal(result.mutation_ready, false);
 });
 
+test("live retailer_links ASIN reuse triggers collision review even when evidence-file collision count is zero", () => {
+  const result = classifyAmazonAsinReusePolicy({
+    token: "EDR4RXD1",
+    asin: "B00UB38V2A",
+    noSafePdpFound: false,
+    exactTokenProof: true,
+    sellerControlledTargetTokenProof: true,
+    replacementOrCompatibleRelationshipProof: true,
+    buyabilityProof: true,
+    attributionCanBeLabeled: true,
+    asinCollisionEvidenceFileCount: 0,
+    liveAsinReuseCount: 1,
+  });
+
+  assert.equal(result.classification, "EXACT_PDP_PROVEN_BUT_COLLISION_REVIEW_REQUIRED");
+  assert.equal(result.policy_status, "OWNER_POLICY_REVIEW_REQUIRED");
+  assert.equal(result.mutation_ready, false);
+});
+
 test("no-safe-PDP evidence remains blocked and not mutation-ready", () => {
   const result = classifyAmazonAsinReusePolicy({
     token: "4396842",
@@ -74,4 +93,3 @@ test("no-safe-PDP evidence remains blocked and not mutation-ready", () => {
   assert.equal(result.policy_status, "BLOCKED");
   assert.equal(result.mutation_ready, false);
 });
-
