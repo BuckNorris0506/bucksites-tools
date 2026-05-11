@@ -66,6 +66,8 @@ export type BuckpartsDailyOperatorReport = {
       total_clicks: UnknownableNumber;
       average_ctr: UnknownableNumber;
       average_position: UnknownableNumber;
+      artifact_source: OwnerGscExternalDemandNeuron["artifact_source"] | "UNKNOWN";
+      export_file_used: OwnerGscExternalDemandNeuron["export_file_used"] | "UNKNOWN";
       high_impression_low_click_opportunities: OwnerGscExternalDemandNeuron["high_impression_low_click_opportunities"];
     };
     internal_search_demand_gaps: CommandCenterReport["search_and_click_intelligence_summary"];
@@ -627,6 +629,8 @@ export async function buildBuckpartsDailyOperatorReport(
         total_clicks: gsc?.total_clicks ?? "UNKNOWN",
         average_ctr: gsc?.average_ctr ?? "UNKNOWN",
         average_position: gsc?.average_position ?? "UNKNOWN",
+        artifact_source: gsc?.artifact_source ?? "UNKNOWN",
+        export_file_used: gsc?.export_file_used ?? "UNKNOWN",
         high_impression_low_click_opportunities: gsc?.high_impression_low_click_opportunities ?? "UNKNOWN",
       },
       internal_search_demand_gaps:

@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { buildGscSearchAnalyticsArtifact } from "./fetch-buckparts-gsc-artifact";
+import {
+  buildGscSearchAnalyticsArtifact,
+  buildHighImpressionLowClickOpportunities,
+} from "./fetch-buckparts-gsc-artifact";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 test("missing gsc env returns UNKNOWN_CONFIG artifact and no fake metrics", async () => {
@@ -77,4 +80,65 @@ test("supabase durable write missing env returns log-safe UNKNOWN", async () => 
     assert.equal(write.reason, "MISSING_CONFIG");
     assert.ok(write.details.some((d) => d.includes("configured=false")));
   }
+});
+
+test("concrete GSC rows produce high_impression_low_click_opportunities", () => {
+  const opportunities = buildHighImpressionLowClickOpportunities({
+    totalImpressions: 200,
+    queryRows: [
+      {
+        key: "air purifier filter replacement",
+        impressions: 14,
+        clicks: 0,
+        ctr: 0,
+        average_position: 18,
+      },
+      {
+        key: "already clicking",
+        impressions: 30,
+        clicks: 4,
+        ctr: 4 / 30,
+        average_position: 4,
+      },
+      {
+        key: "too small",
+        impressions: 4,
+        clicks: 0,
+        ctr: 0,
+        average_position: 20,
+      },
+    ],
+  });
+
+  assert.notEqual(opportunities, "UNKNOWN");
+  if (opportunities !== "UNKNOWN") {
+    assert.deepEqual(opportunities.map((entry) => entry.key), ["air purifier filter replacement"]);
+    assert.equal(opportunities[0]?.average_position, 18);
+  }
+});
+
+test("aggregate totals alone do not create fake GSC opportunities", () => {
+  const opportunities = buildHighImpressionLowClickOpportunities({
+    totalImpressions: 200,
+    queryRows: [],
+  });
+
+  assert.equal(opportunities, "UNKNOWN");
+});
+
+test("malformed or incomplete GSC row data keeps opportunities UNKNOWN", () => {
+  const opportunities = buildHighImpressionLowClickOpportunities({
+    totalImpressions: 200,
+    queryRows: [
+      {
+        key: "below threshold",
+        impressions: 2,
+        clicks: 0,
+        ctr: 0,
+        average_position: "UNKNOWN",
+      },
+    ],
+  });
+
+  assert.equal(opportunities, "UNKNOWN");
 });

@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { parseGscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import type { GscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
 import { readGscArtifactFromSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 export type OwnerGscConnectionLevel = "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
@@ -21,6 +22,7 @@ export type OwnerGscTopEntry = {
   impressions: number;
   clicks: number;
   ctr: number | "UNKNOWN";
+  average_position?: number | "UNKNOWN";
 };
 
 export type OwnerGscExternalDemandNeuron = {
@@ -166,6 +168,39 @@ function toTopEntries(
     .slice(0, 10);
 }
 
+function opportunityMinimumImpressions(totalImpressions: number): number {
+  return Math.max(10, Math.ceil(totalImpressions * 0.05));
+}
+
+function buildHighImpressionLowClickOpportunities(args: {
+  topQueriesByImpressions: OwnerGscTopEntry[];
+  totalImpressions: number;
+}): OwnerGscTopEntry[] | "UNKNOWN" {
+  if (args.topQueriesByImpressions.length === 0 || args.totalImpressions <= 0) return "UNKNOWN";
+  const minImpressions = opportunityMinimumImpressions(args.totalImpressions);
+  const rows = args.topQueriesByImpressions
+    .filter((entry) => entry.impressions >= minImpressions)
+    .filter((entry) => entry.clicks <= 1)
+    .filter((entry) => entry.ctr === "UNKNOWN" || entry.ctr <= 0.02)
+    .slice(0, 10);
+  return rows.length > 0 ? rows : "UNKNOWN";
+}
+
+function artifactHighImpressionLowClickOpportunities(
+  artifact: GscSearchAnalyticsArtifact,
+): OwnerGscTopEntry[] | "UNKNOWN" {
+  if (artifact.high_impression_low_click_opportunities !== "UNKNOWN") {
+    return artifact.high_impression_low_click_opportunities;
+  }
+  if (artifact.top_queries_by_impressions === "UNKNOWN" || typeof artifact.total_impressions !== "number") {
+    return "UNKNOWN";
+  }
+  return buildHighImpressionLowClickOpportunities({
+    topQueriesByImpressions: artifact.top_queries_by_impressions,
+    totalImpressions: artifact.total_impressions,
+  });
+}
+
 function defaultDeps(): Deps {
   return {
     listFiles: (dir) => readdirSync(dir),
@@ -215,6 +250,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
     const parsed = parseGscSearchAnalyticsArtifact(supabaseArtifact.artifactText);
     if (parsed.ok && parsed.artifact.status === "OK") {
       const artifact = parsed.artifact;
+      const opportunities = artifactHighImpressionLowClickOpportunities(artifact);
       return {
         neuron_key: "gsc_external_demand",
         connection_level: "BRIGHT",
@@ -233,15 +269,15 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
         top_queries_by_clicks: artifact.top_queries_by_clicks,
         top_pages_by_impressions: artifact.top_pages_by_impressions,
         top_pages_by_clicks: artifact.top_pages_by_clicks,
-        high_impression_low_click_opportunities: artifact.high_impression_low_click_opportunities,
+        high_impression_low_click_opportunities: opportunities,
         proven_facts: [
           ...artifact.proven_facts,
           `Durable artifact fetched_at=${artifact.fetched_at}.`,
         ],
         unknown_facts: artifact.unknown_facts,
         next_owner_action:
-          artifact.high_impression_low_click_opportunities !== "UNKNOWN" &&
-          artifact.high_impression_low_click_opportunities.length > 0
+          opportunities !== "UNKNOWN" &&
+          opportunities.length > 0
             ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
             : "Maintain scheduled GSC artifact refresh and use top query/page demand signals to prioritize content work.",
       };
@@ -262,6 +298,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
       const parsedArtifact = parseGscSearchAnalyticsArtifact(deps.readTextFile(apiArtifactPath));
       if (parsedArtifact.ok && parsedArtifact.artifact.status === "OK") {
         const artifact = parsedArtifact.artifact;
+        const opportunities = artifactHighImpressionLowClickOpportunities(artifact);
         return {
           neuron_key: "gsc_external_demand",
           connection_level: "BRIGHT",
@@ -280,7 +317,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
           top_queries_by_clicks: artifact.top_queries_by_clicks,
           top_pages_by_impressions: artifact.top_pages_by_impressions,
           top_pages_by_clicks: artifact.top_pages_by_clicks,
-          high_impression_low_click_opportunities: artifact.high_impression_low_click_opportunities,
+          high_impression_low_click_opportunities: opportunities,
           proven_facts: [
             ...artifact.proven_facts,
             `Artifact fetched_at=${artifact.fetched_at}.`,
@@ -288,8 +325,8 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
           ],
           unknown_facts: artifact.unknown_facts,
           next_owner_action:
-            artifact.high_impression_low_click_opportunities !== "UNKNOWN" &&
-            artifact.high_impression_low_click_opportunities.length > 0
+            opportunities !== "UNKNOWN" &&
+            opportunities.length > 0
               ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
               : "Maintain scheduled GSC API artifact refresh and use top query/page demand signals to prioritize content work.",
         };
@@ -458,9 +495,10 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
   const topQueriesByClicks = toTopEntries(completeRows, (r) => r.query, "clicks");
   const topPagesByImpressions = toTopEntries(completeRows, (r) => r.page, "impressions");
   const topPagesByClicks = toTopEntries(completeRows, (r) => r.page, "clicks");
-  const opportunities = topQueriesByImpressions
-    .filter((q) => q.impressions >= 100 && q.clicks <= 1)
-    .slice(0, 10);
+  const opportunities = buildHighImpressionLowClickOpportunities({
+    topQueriesByImpressions,
+    totalImpressions,
+  });
 
   provenFacts.push(`Parsed ${completeRows.length} complete rows from ${file}.`);
   provenFacts.push(`File modified at ${deps.getMtimeIso(abs)}.`);
@@ -488,11 +526,11 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
     top_queries_by_clicks: topQueriesByClicks.length > 0 ? topQueriesByClicks : "UNKNOWN",
     top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
     top_pages_by_clicks: topPagesByClicks.length > 0 ? topPagesByClicks : "UNKNOWN",
-    high_impression_low_click_opportunities: opportunities.length > 0 ? opportunities : "UNKNOWN",
+    high_impression_low_click_opportunities: opportunities,
     proven_facts: provenFacts,
     unknown_facts: [...(durableStoreIssue ? [durableStoreIssue] : []), ...unknownFacts],
     next_owner_action:
-      opportunities.length > 0
+      opportunities !== "UNKNOWN" && opportunities.length > 0
         ? "Prioritize high-impression/low-click query opportunities for title/snippet and landing-page relevance work."
         : "Use top query/page demand signals to prioritize content expansion and maintain fresh GSC exports weekly.",
   };

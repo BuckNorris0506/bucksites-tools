@@ -25,6 +25,8 @@ function daily(overrides: Partial<BuckpartsDailyOperatorReport> = {}): Buckparts
         total_clicks: 3,
         average_ctr: 0.015,
         average_position: 17.89,
+        artifact_source: "UNKNOWN",
+        export_file_used: "UNKNOWN",
         high_impression_low_click_opportunities: "UNKNOWN",
       },
       internal_search_demand_gaps: {

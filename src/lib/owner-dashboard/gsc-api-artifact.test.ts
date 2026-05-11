@@ -19,7 +19,9 @@ describe("gsc api artifact parser", () => {
         top_queries_by_impressions: [{ key: "mwf", clicks: 50, impressions: 500, ctr: 0.1 }],
         top_pages_by_clicks: [{ key: "/filter/mwf", clicks: 40, impressions: 400, ctr: 0.1 }],
         top_pages_by_impressions: [{ key: "/filter/mwf", clicks: 40, impressions: 400, ctr: 0.1 }],
-        high_impression_low_click_opportunities: "UNKNOWN",
+        high_impression_low_click_opportunities: [
+          { key: "low click", clicks: 1, impressions: 120, ctr: 1 / 120, average_position: 18 },
+        ],
         proven_facts: ["ok"],
         unknown_facts: [],
         provenance: {
@@ -30,5 +32,12 @@ describe("gsc api artifact parser", () => {
       }),
     );
     assert.equal(parsed.ok, true);
+    if (parsed.ok) {
+      const opportunities = parsed.artifact.high_impression_low_click_opportunities;
+      assert.notEqual(opportunities, "UNKNOWN");
+      if (opportunities !== "UNKNOWN") {
+        assert.equal(opportunities[0]?.average_position, 18);
+      }
+    }
   });
 });

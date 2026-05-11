@@ -50,6 +50,7 @@ type SearchAnalyticsRow = {
   clicks: number;
   impressions: number;
   ctr: number | "UNKNOWN";
+  average_position: number | "UNKNOWN";
 };
 
 function asFiniteNumber(value: unknown): number {
@@ -94,6 +95,7 @@ async function queryDimension(args: {
         impressions,
         clicks,
         ctr: impressions > 0 ? clicks / impressions : ("UNKNOWN" as const),
+        average_position: typeof row.position === "number" && Number.isFinite(row.position) ? row.position : "UNKNOWN",
       };
     })
     .filter((row): row is SearchAnalyticsRow => row !== null);
@@ -105,6 +107,30 @@ function toTopEntries(rows: SearchAnalyticsRow[], sortBy: "clicks" | "impression
       sortBy === "clicks" ? b.clicks - a.clicks || b.impressions - a.impressions : b.impressions - a.impressions || b.clicks - a.clicks,
     )
     .slice(0, 10);
+}
+
+function opportunityMinimumImpressions(totalImpressions: number): number {
+  return Math.max(10, Math.ceil(totalImpressions * 0.05));
+}
+
+export function buildHighImpressionLowClickOpportunities(args: {
+  queryRows: SearchAnalyticsRow[];
+  totalImpressions: number;
+}): GscArtifactTopEntry[] | "UNKNOWN" {
+  if (args.queryRows.length === 0 || args.totalImpressions <= 0) return "UNKNOWN";
+  const minImpressions = opportunityMinimumImpressions(args.totalImpressions);
+  const rows = args.queryRows
+    .filter((entry) => entry.impressions >= minImpressions)
+    .filter((entry) => entry.clicks <= 1)
+    .filter((entry) => entry.ctr === "UNKNOWN" || entry.ctr <= 0.02)
+    .sort((a, b) =>
+      b.impressions - a.impressions ||
+      a.clicks - b.clicks ||
+      (typeof b.average_position === "number" ? b.average_position : Number.NEGATIVE_INFINITY) -
+        (typeof a.average_position === "number" ? a.average_position : Number.NEGATIVE_INFINITY),
+    )
+    .slice(0, 10);
+  return rows.length > 0 ? rows : "UNKNOWN";
 }
 
 async function queryTotals(args: {
@@ -204,9 +230,10 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
     const topQueriesByImpressions = toTopEntries(queryRows, "impressions");
     const topPagesByClicks = toTopEntries(pageRows, "clicks");
     const topPagesByImpressions = toTopEntries(pageRows, "impressions");
-    const opportunities = topQueriesByImpressions
-      .filter((entry) => entry.impressions >= 100 && entry.clicks <= 1)
-      .slice(0, 10);
+    const opportunities = buildHighImpressionLowClickOpportunities({
+      queryRows,
+      totalImpressions: totals.total_impressions,
+    });
     return {
       status: "OK",
       fetched_at: new Date().toISOString(),
@@ -220,7 +247,7 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
       top_queries_by_impressions: topQueriesByImpressions.length > 0 ? topQueriesByImpressions : "UNKNOWN",
       top_pages_by_clicks: topPagesByClicks.length > 0 ? topPagesByClicks : "UNKNOWN",
       top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
-      high_impression_low_click_opportunities: opportunities.length > 0 ? opportunities : "UNKNOWN",
+      high_impression_low_click_opportunities: opportunities,
       proven_facts: [
         `Fetched Search Analytics via readonly API auth_mode=${client.auth_mode}.`,
         `Property=${client.property}.`,

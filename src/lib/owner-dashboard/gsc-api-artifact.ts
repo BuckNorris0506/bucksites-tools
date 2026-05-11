@@ -10,6 +10,7 @@ export type GscArtifactTopEntry = {
   impressions: number;
   clicks: number;
   ctr: number | "UNKNOWN";
+  average_position?: number | "UNKNOWN";
 };
 
 export type GscSearchAnalyticsArtifact = {
@@ -45,6 +46,13 @@ function isTopEntry(value: unknown): value is GscArtifactTopEntry {
   if (typeof value.impressions !== "number" || !Number.isFinite(value.impressions)) return false;
   if (typeof value.clicks !== "number" || !Number.isFinite(value.clicks)) return false;
   if (value.ctr !== "UNKNOWN" && (typeof value.ctr !== "number" || !Number.isFinite(value.ctr))) return false;
+  if (
+    "average_position" in value &&
+    value.average_position !== "UNKNOWN" &&
+    (typeof value.average_position !== "number" || !Number.isFinite(value.average_position))
+  ) {
+    return false;
+  }
   return true;
 }
 
