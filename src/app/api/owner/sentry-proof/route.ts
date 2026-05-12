@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { captureMonitoringMessage } from "@/lib/monitoring/error-monitoring";
+import { captureMonitoringMessageAsync } from "@/lib/monitoring/error-monitoring";
 
 const OWNER_PROOF_HEADER = "x-buckparts-owner-proof";
 const PROOF_ROUTE = "/api/owner/sentry-proof";
@@ -19,7 +19,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const provided = request.headers.get(OWNER_PROOF_HEADER)?.trim();
   if (!provided || provided !== expected) return notFound();
 
-  captureMonitoringMessage("buckparts_sentry_proof_v1", {
+  const capture = await captureMonitoringMessageAsync("buckparts_sentry_proof_v1", {
     area: "sentry_proof",
     level: "info",
     metadata: {
@@ -30,5 +30,11 @@ export async function GET(request: Request): Promise<NextResponse> {
     },
   });
 
-  return NextResponse.json({ ok: true, message: "sentry proof capture attempted" });
+  return NextResponse.json({
+    ok: true,
+    message: "sentry proof capture attempted",
+    monitoring_configured: capture.monitoring_configured,
+    capture_attempted: true,
+    client_source: capture.client_source,
+  });
 }

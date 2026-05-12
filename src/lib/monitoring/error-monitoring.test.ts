@@ -3,8 +3,10 @@ import test from "node:test";
 
 import {
   captureMonitoringException,
+  captureMonitoringMessageAsync,
   captureMonitoringMessage,
   isMonitoringConfigured,
+  setMonitoringClientLoaderForTests,
   setMonitoringClientForTests,
   toSafeMonitoringMetadata,
 } from "@/lib/monitoring/error-monitoring";
@@ -78,5 +80,69 @@ test("capture helper sends only sanitized metadata when configured", () => {
     });
   } finally {
     restore();
+  }
+});
+
+test("async capture reports dynamic_import client source when no test/global client exists", async () => {
+  const previousGlobal = globalThis.__buckpartsMonitoringClient;
+  delete globalThis.__buckpartsMonitoringClient;
+  const seen: unknown[] = [];
+  const restore = setMonitoringClientLoaderForTests(async () => ({
+    captureException: () => {},
+    captureMessage: (_message, context) => {
+      seen.push(context);
+    },
+  }));
+  try {
+    const result = await captureMonitoringMessageAsync("proof", {
+      area: "test",
+      env: { SENTRY_DSN: "https://example.invalid/1" },
+      metadata: { target_url: "https://www.amazon.com/dp/B00TEST?tag=secret" },
+    });
+
+    assert.deepEqual(result, {
+      monitoring_configured: true,
+      capture_attempted: true,
+      client_source: "dynamic_import",
+    });
+    assert.deepEqual(seen, [
+      {
+        level: "warning",
+        tags: { area: "test" },
+        extra: { target_url: "https://www.amazon.com/dp/B00TEST" },
+      },
+    ]);
+  } finally {
+    restore();
+    globalThis.__buckpartsMonitoringClient = previousGlobal;
+  }
+});
+
+test("async capture reports global client source before dynamic import", async () => {
+  const previousGlobal = globalThis.__buckpartsMonitoringClient;
+  let dynamicImportCalls = 0;
+  const seen: unknown[] = [];
+  globalThis.__buckpartsMonitoringClient = {
+    captureException: () => {},
+    captureMessage: (_message, context) => {
+      seen.push(context);
+    },
+  };
+  const restore = setMonitoringClientLoaderForTests(async () => {
+    dynamicImportCalls += 1;
+    return null;
+  });
+  try {
+    const result = await captureMonitoringMessageAsync("proof", {
+      area: "test",
+      env: { SENTRY_DSN: "https://example.invalid/1" },
+    });
+
+    assert.equal(result.client_source, "global");
+    assert.equal(dynamicImportCalls, 0);
+    assert.equal(seen.length, 1);
+  } finally {
+    restore();
+    globalThis.__buckpartsMonitoringClient = previousGlobal;
   }
 });

@@ -83,7 +83,13 @@ test("Sentry proof route captures sanitized monitoring message for valid token",
         const res = await GET(requestWithToken(TOKEN));
         assert.equal(res.status, 200);
         const body = await res.json();
-        assert.deepEqual(body, { ok: true, message: "sentry proof capture attempted" });
+        assert.deepEqual(body, {
+          ok: true,
+          message: "sentry proof capture attempted",
+          monitoring_configured: true,
+          capture_attempted: true,
+          client_source: "test",
+        });
         assert.equal(JSON.stringify(body).includes(TOKEN), false);
       },
     );
@@ -119,6 +125,7 @@ test("Sentry proof route does not include token in successful response", async (
       const text = await res.text();
       assert.equal(res.status, 200);
       assert.equal(text.includes(TOKEN), false);
+      assert.equal(text.includes("SENTRY_DSN"), false);
     },
   );
 });
