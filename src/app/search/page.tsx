@@ -249,6 +249,11 @@ export default async function SearchPage({ searchParams }: Props) {
           the nameplate and old cartridge. We lead with refrigerator water filters; if another reference lane
           matches your query, it will show in its own section below.
         </p>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
+          Search can return models, filter numbers, alternates, or pages to compare. Open a
+          result to check what BuckParts found, then compare the part number with your old filter
+          or manual. Buying options appear only when the destination looks safe enough to show.
+        </div>
         <SearchForm initialQuery={query} />
       </div>
 
@@ -304,7 +309,7 @@ export default async function SearchPage({ searchParams }: Props) {
                 {filters.length > 0 && (
                   <div className="space-y-3">
                     <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
-                      Parts & filter SKUs
+                      Parts & filter numbers
                     </h3>
                     <ul className="space-y-2">
                       {filters.map((hit) => (

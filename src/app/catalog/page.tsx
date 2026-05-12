@@ -28,6 +28,12 @@ export default async function CatalogPage() {
           This hub highlights refrigerator water filters with active listings. Search is still the
           fastest path when you know a fridge model or filter number.
         </p>
+        <div className="max-w-2xl rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
+          BuckParts may show models, filter numbers, alternates, or pages to compare. Use the
+          model number on your refrigerator or the filter number printed on the old part, then
+          compare it with your manual before buying. Buying options appear only when the
+          destination looks safe enough to show.
+        </div>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
           <Link
             href="/search"

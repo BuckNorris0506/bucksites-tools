@@ -173,6 +173,46 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/\bguaranteed fit\b|\bofficial manufacturer endorsement\b|\bcomplete catalog coverage\b/i.test(src));
   });
 
+  it("catalog, brand, and search pages include homeowner trust framing without internal terms", () => {
+    const checks = [
+      {
+        path: "src/app/catalog/page.tsx",
+        required: [
+          /models, filter numbers, alternates, or pages to compare/i,
+          /model number on your refrigerator/i,
+          /filter number printed on the old part/i,
+          /Buying options appear only when the\s+destination looks safe enough to show/i,
+        ],
+      },
+      {
+        path: "src/app/brand/[slug]/page.tsx",
+        required: [
+          /model number on your appliance/i,
+          /filter number printed on the old part/i,
+          /listed items are not a\s+fit guarantee/i,
+          /If a page has no buying option yet/i,
+        ],
+      },
+      {
+        path: "src/app/search/page.tsx",
+        required: [
+          /models, filter numbers, alternates, or pages to compare/i,
+          /check what BuckParts found/i,
+          /compare the part number with your old filter\s+or manual/i,
+          /Parts & filter numbers/i,
+        ],
+      },
+    ];
+    const banned = /\b(OEM|SKU|CTA|PDP|SERP|token|canonical|direct_buyable|store links|compatibility mapping)\b/i;
+    for (const check of checks) {
+      const src = readFileSync(rooted(check.path), "utf8");
+      for (const required of check.required) {
+        assert.ok(required.test(src), `${check.path}: missing ${required}`);
+      }
+      assert.ok(!banned.test(src), `${check.path}: public trust framing contains internal/business wording`);
+    }
+  });
+
   it("global shell footer avoids store links/buttons wording", () => {
     const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
     assert.ok(!/store links/i.test(src));

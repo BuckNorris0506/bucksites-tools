@@ -40,6 +40,12 @@ export default async function BrandPage({ params }: Props) {
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Models and filters for this brand.
         </p>
+        <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
+          Use the model number on your appliance or the filter number printed on the old part.
+          BuckParts may show matches, alternates, or pages to compare, but listed items are not a
+          fit guarantee. If a page has no buying option yet, compare the part number and manual
+          before you keep shopping.
+        </div>
         <Link
           href={`/help/reset-water-filter-light/${brand.slug}`}
           className="inline-block text-sm text-neutral-700 underline dark:text-neutral-300"
