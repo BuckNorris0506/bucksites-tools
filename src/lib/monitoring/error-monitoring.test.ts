@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -15,6 +15,9 @@ import {
 
 const MONITORING_HELPER_SOURCE = join(process.cwd(), "src/lib/monitoring/error-monitoring.ts");
 const NEXT_CONFIG_SOURCE = join(process.cwd(), "next.config.mjs");
+const ROOT_INSTRUMENTATION_SOURCE = join(process.cwd(), "instrumentation.ts");
+const SRC_INSTRUMENTATION_SOURCE = join(process.cwd(), "src/instrumentation.ts");
+const GLOBAL_ERROR_SOURCE = join(process.cwd(), "src/app/global-error.tsx");
 
 test("monitoring is disabled when Sentry env is absent", () => {
   assert.equal(isMonitoringConfigured({}), false);
@@ -98,6 +101,31 @@ test("Next config enables instrumentation hook for server monitoring registratio
   assert.match(src, /instrumentationHook:\s*true/);
   assert.match(src, /import\s+\{\s*withSentryConfig\s*\}\s+from\s+"@sentry\/nextjs"/);
   assert.match(src, /export\s+default\s+withSentryConfig\(nextConfig,\s*\{\s*silent:\s*!process\.env\.CI\s*\}\)/);
+});
+
+test("Sentry instrumentation uses src location for src app layout", () => {
+  assert.equal(existsSync(ROOT_INSTRUMENTATION_SOURCE), false);
+  assert.equal(existsSync(SRC_INSTRUMENTATION_SOURCE), true);
+
+  const src = readFileSync(SRC_INSTRUMENTATION_SOURCE, "utf8");
+  assert.match(src, /import\s+\*\s+as\s+Sentry\s+from\s+"@sentry\/nextjs"/);
+  assert.match(src, /await\s+import\("\.\.\/sentry\.server\.config"\)/);
+  assert.match(src, /export\s+const\s+onRequestError\s*=\s*Sentry\.captureRequestError/);
+});
+
+test("App Router global error handler follows safe Sentry pattern", () => {
+  assert.equal(existsSync(GLOBAL_ERROR_SOURCE), true);
+
+  const src = readFileSync(GLOBAL_ERROR_SOURCE, "utf8");
+  assert.match(src, /"use client"/);
+  assert.match(src, /import\s+\*\s+as\s+Sentry\s+from\s+"@sentry\/nextjs"/);
+  assert.match(src, /import\s+NextError\s+from\s+"next\/error"/);
+  assert.match(src, /Sentry\.captureException\(error\)/);
+  assert.match(src, /<NextError\s+statusCode=\{0\}\s*\/>/);
+  assert.doesNotMatch(src, /https:\/\/[^"'\s]+@[^"'\s]+\.ingest\.[^"'\s]+/);
+  assert.doesNotMatch(src, /dsn\s*:/i);
+  assert.doesNotMatch(src, /sendDefaultPii\s*:\s*true/);
+  assert.doesNotMatch(src, /tracesSampleRate\s*:\s*1/);
 });
 
 test("async capture reports dynamic_import client source when no test/global client exists", async () => {
