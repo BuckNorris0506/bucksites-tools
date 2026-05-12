@@ -165,10 +165,14 @@ describe("public merchant-priority copy guard", () => {
   it("air purifier category copy matches filter replacement demand and keeps fit-safety guidance", () => {
     const src = readFileSync(rooted("src/app/air-purifier/page.tsx"), "utf8");
     assert.ok(/Air purifier filter replacement/i.test(src));
-    assert.ok(/Find air purifier filter replacement options/i.test(src));
-    assert.ok(/unit model or filter number/i.test(src));
-    assert.ok(/Compare the part number with your current filter or manual before buying/i.test(src));
-    assert.ok(/Always compare the part number with your old filter or manual/i.test(src));
+    assert.ok(/Find the right air purifier filter replacement/i.test(src));
+    assert.ok(/air purifier model number or the filter number/i.test(src));
+    assert.ok(/BuckParts helps you compare possible matches before you buy/i.test(src));
+    assert.ok(/If we have checked a retailer product page for that filter/i.test(src));
+    assert.ok(/If no buying option appears yet/i.test(src));
+    assert.ok(/Before buying, compare the part number with your old filter or manual/i.test(src));
+    assert.ok(/BuckParts is not the seller/i.test(src));
+    assert.ok(!/\breference\b/i.test(src));
     assert.ok(!/\b(OEM|SKU|CTA|PDP|SERP|token|canonical|direct_buyable|affiliate-ready|compatibility mapping)\b/.test(src));
     assert.ok(!/\bguaranteed fit\b|\bofficial manufacturer endorsement\b|\bcomplete catalog coverage\b/i.test(src));
   });

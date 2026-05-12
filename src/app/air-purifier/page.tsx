@@ -9,9 +9,9 @@ import {
 } from "@/lib/catalog/browse";
 
 export const metadata: Metadata = {
-  title: "Air purifier filter replacement",
+  title: "Air purifier filter replacement | BuckParts",
   description:
-    "Find air purifier filter replacement options by unit model or filter number. Compare the part number with your current filter or manual before buying.",
+    "Find the air purifier replacement filter for your unit. Search by model number or filter number, then compare the part number with your old filter or manual before buying.",
 };
 
 export default async function AirPurifierHomePage() {
@@ -37,20 +37,20 @@ export default async function AirPurifierHomePage() {
           </Link>
         </p>
         <h1 className="text-balance text-3xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl">
-          Air purifier filter replacement
+          Find the right air purifier filter replacement
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
-          Room air purifiers use different replacement filter shapes and filter numbers. Search by
-          the model on the nameplate or the part number on the filter you’re replacing—we show
-          matches from our reference so you can line them up with what you have before you shop.
+          Search by the air purifier model number or the filter number printed on the part you’re
+          replacing. BuckParts helps you compare possible matches before you buy.
         </p>
         <ul className="max-w-2xl list-inside list-disc space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
-          <li>Model page: “What filter does this purifier take?”</li>
-          <li>Filter page: “Which units use this cartridge?”</li>
-          <li>Always compare the part number with your old filter or manual.</li>
+          <li>Use the model number on your air purifier or the filter number on the old filter.</li>
+          <li>If we have checked a retailer product page for that filter, we’ll show it as a buying option.</li>
+          <li>If no buying option appears yet, use the part number or manual to keep comparing.</li>
+          <li>Before buying, compare the part number with your old filter or manual.</li>
         </ul>
         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-          Free reference · No account · Not a retailer
+          Free lookup · No account · BuckParts is not the seller
         </p>
         <SearchForm actionPath="/air-purifier/search" />
       </section>
