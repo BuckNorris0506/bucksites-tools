@@ -1,3 +1,5 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
 /** @type {import('next').NextConfig} */
 const isDevelopment = process.env.NODE_ENV === "development";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -11,4 +13,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, { silent: !process.env.CI });

@@ -96,6 +96,8 @@ test("route-facing monitoring helper does not import Sentry package", () => {
 test("Next config enables instrumentation hook for server monitoring registration", () => {
   const src = readFileSync(NEXT_CONFIG_SOURCE, "utf8");
   assert.match(src, /instrumentationHook:\s*true/);
+  assert.match(src, /import\s+\{\s*withSentryConfig\s*\}\s+from\s+"@sentry\/nextjs"/);
+  assert.match(src, /export\s+default\s+withSentryConfig\(nextConfig,\s*\{\s*silent:\s*!process\.env\.CI\s*\}\)/);
 });
 
 test("async capture reports dynamic_import client source when no test/global client exists", async () => {
