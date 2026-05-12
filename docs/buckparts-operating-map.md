@@ -19,7 +19,7 @@ Classification legend: `KEEP`, `FREEZE`, `CUT`, `UNKNOWN`.
 | Legal/trust pages | `src/app/privacy/page.tsx`, `src/app/disclosure/page.tsx`, `src/app/about/page.tsx`, `src/app/terms/page.tsx` | Privacy/disclosure/about/terms pages. | yes/no/no/yes/no | Permanent | KEEP | Trust/compliance surface. |
 | Help content system | `src/app/help/page.tsx`, `src/app/help/[slug]/page.tsx`, `src/app/help/reset-water-filter-light/[brandSlug]/page.tsx`, `content/help/*.md` | Help article routing and content docs. | yes/yes/yes/no/no | Permanent | KEEP | Published support content. |
 | Netlify deploy config | `netlify.toml`, `package.json` (`build`) | Defines production build/deploy runtime. | no/no/no/no/yes | Permanent | KEEP | Active hosting config. |
-| GitHub workflow automation | `.github/**` | No workflow files found in repo. | no/no/no/no/yes | UNKNOWN | UNKNOWN | Not present in repo; external automation cannot be proven. |
+| GitHub workflow automation | `.github/workflows/buckparts-daily-operator.yml` | Runs the read-only Daily Operator on manual dispatch and daily schedule; writes only GitHub job summary. | no/no/no/no/yes | Permanent | KEEP | In-repo scheduled owner report workflow; no deploy, push, build, audit, or mutation command. |
 | Dashboard UI app | _(none found)_ | No dashboard frontend app artifact found. | no/no/no/no/yes | UNKNOWN | UNKNOWN | Reporting exists as scripts, not dashboard UI. |
 
 ## 2) Queue/workflow systems
@@ -135,7 +135,7 @@ Full `scripts/*.ts` inventory found at report time (54 files total).
 | Gap | Repo evidence | Impact | Classification |
 |---|---|---|---|
 | No single canonical operations map in repo | No pre-existing file mapping wedge -> queue -> scripts -> reports before this document. | ops efficiency | UNKNOWN |
-| No in-repo workflow automation config | `.github/**` not found. | ops efficiency | UNKNOWN |
+| Workflow runtime env completeness not proven | `.github/workflows/buckparts-daily-operator.yml` exists, but GitHub Actions secrets/env are not proven by repo files. | ops completeness | UNKNOWN |
 | No unified dashboard artifact | No dashboard app/config path found; reporting is script-based. | ops efficiency | UNKNOWN |
 | Queue-of-record not explicitly declared in one canonical place | Both older and newer candidate queue artifacts exist. | ops efficiency, affiliate approval clarity | UNKNOWN |
 
@@ -152,4 +152,3 @@ Full `scripts/*.ts` inventory found at report time (54 files total).
 
 ### UNKNOWN
 - Items where active use/production ownership is not provable from repo alone (missing workflow automation artifacts, no dashboard UI artifact, unwired scripts with unclear current orchestration, and unresolved queue-of-record declaration).
-

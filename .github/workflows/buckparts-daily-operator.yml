@@ -1,0 +1,40 @@
+name: BuckParts Daily Operator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 13 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  daily-operator:
+    name: Run read-only Daily Operator
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run BuckParts Daily Operator
+        run: |
+          daily_output="$(npm run buckparts:daily)"
+          printf '%s\n' "$daily_output"
+          {
+            echo "## BuckParts Daily Operator"
+            echo
+            echo '```text'
+            printf '%s\n' "$daily_output"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
