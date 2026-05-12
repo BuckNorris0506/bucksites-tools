@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { captureMonitoringException } from "@/lib/monitoring/error-monitoring";
 import type { GoAffiliateRedirectResult } from "@/lib/retailers/go-redirect-gate";
 
 export {
@@ -51,8 +52,28 @@ export async function logClickEventForGoRoute(
     const { error: insErr } = await supabase.from("click_events").insert(row);
     if (insErr) {
       console.error(`${logPrefix} click_events insert failed:`, insErr.message);
+      captureMonitoringException(insErr, {
+        area: "go_click_events_insert",
+        metadata: {
+          log_prefix: logPrefix,
+          target_url: go.outboundUrl,
+          page_type: row.page_type,
+          page_slug: row.page_slug,
+          retailer_slug: row.retailer_slug,
+        },
+      });
     }
   } catch (e) {
     console.error(`${logPrefix} click_events insert exception:`, e);
+    captureMonitoringException(e, {
+      area: "go_click_events_insert_exception",
+      metadata: {
+        log_prefix: logPrefix,
+        target_url: go.outboundUrl,
+        page_type: wedgeKeys.page_type,
+        page_slug: wedgeKeys.page_slug,
+        retailer_slug: wedgeKeys.retailer_slug,
+      },
+    });
   }
 }

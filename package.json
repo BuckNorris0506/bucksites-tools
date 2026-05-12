@@ -92,6 +92,7 @@
     "search:gaps:apply-part-choice:fridge": "tsx scripts/apply-staged-compat-part-choice-refrigerator.ts"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.52.0",
     "@supabase/supabase-js": "^2.102.1",
     "next": "14.2.35",
     "react": "^18",

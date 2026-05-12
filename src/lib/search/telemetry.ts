@@ -1,4 +1,5 @@
 import type { HomekeepSearchIntelligenceCatalog } from "@/lib/catalog/identity";
+import { captureMonitoringException } from "@/lib/monitoring/error-monitoring";
 import { normalizeSearchCompact, trimSearchInput } from "@/lib/search/normalize";
 import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 
@@ -54,9 +55,8 @@ export async function logSearchTelemetry(params: {
   const normalized = normalizeSearchCompact(raw);
   if (!normalized) return;
 
-  const supabase = getSupabaseServerClient();
-
   try {
+    const supabase = getSupabaseServerClient();
     const { error: eventError } = await supabase.from("search_events").insert({
       raw_query: raw,
       normalized_query: normalized,
@@ -66,6 +66,14 @@ export async function logSearchTelemetry(params: {
     if (eventError) throw eventError;
   } catch (error) {
     console.error("[search-telemetry] event insert failed", error);
+    captureMonitoringException(error, {
+      area: "search_telemetry_event_insert",
+      metadata: {
+        catalog: params.catalog,
+        normalized_query: normalized,
+        results_count: Math.max(0, params.resultsCount),
+      },
+    });
     return;
   }
 
@@ -73,6 +81,7 @@ export async function logSearchTelemetry(params: {
 
   const likely = inferLikelyEntityType(raw);
   try {
+    const supabase = getSupabaseServerClient();
     const { error: gapError } = await supabase.rpc("upsert_search_gap", {
       p_catalog: params.catalog,
       p_raw_query: raw,
@@ -83,5 +92,13 @@ export async function logSearchTelemetry(params: {
     if (gapError) throw gapError;
   } catch (error) {
     console.error("[search-telemetry] gap upsert failed", error);
+    captureMonitoringException(error, {
+      area: "search_telemetry_gap_upsert",
+      metadata: {
+        catalog: params.catalog,
+        normalized_query: normalized,
+        likely_entity_type: likely,
+      },
+    });
   }
 }

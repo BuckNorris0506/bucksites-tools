@@ -6,8 +6,10 @@ import {
   GO_LINK_UUID_RE,
   buildGoClickEventInsertRow,
   goFallbackRedirect,
+  logClickEventForGoRoute,
   nextResponseRedirectAffiliateIfSafe,
 } from "@/lib/retailers/go-affiliate-route-handler";
+import { setMonitoringClientForTests } from "@/lib/monitoring/error-monitoring";
 import {
   AMAZON_AFFILIATE_TAG,
   applyAmazonAffiliateRedirectUrl,
@@ -139,6 +141,68 @@ describe("buildGoClickEventInsertRow", () => {
       `https://www.amazon.com/dp/B00TRIM?tag=${AMAZON_AFFILIATE_TAG}`,
     );
     assert.equal(go.response.headers.get("location"), row.target_url);
+  });
+});
+
+describe("logClickEventForGoRoute monitoring", () => {
+  it("captures insert exceptions without changing the redirect result", async () => {
+    const previousDsn = process.env.SENTRY_DSN;
+    const previousUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const previousAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    process.env.SENTRY_DSN = "https://example.invalid/1";
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    const contexts: unknown[] = [];
+    const restore = setMonitoringClientForTests({
+      captureException: (_error, context) => {
+        contexts.push(context);
+      },
+      captureMessage: () => {},
+    });
+    try {
+      const go = nextResponseRedirectAffiliateIfSafe(
+        "amazon",
+        "https://www.amazon.com/dp/B00SAFELOG?tag=raw-tag",
+        "direct_buyable",
+      );
+      assert.ok(go);
+
+      await assert.doesNotReject(() =>
+        logClickEventForGoRoute(
+          requestAt("https://buckparts.com/go/x"),
+          go,
+          {
+            filter_id: "filter-1",
+            retailer_slug: "amazon",
+            page_type: "refrigerator_filter",
+            page_slug: "lt1000p",
+          },
+          "[go/test]",
+        ),
+      );
+
+      assert.equal(go.response.headers.get("location"), go.outboundUrl);
+      assert.equal(contexts.length, 1);
+      assert.deepEqual(contexts[0], {
+        tags: { area: "go_click_events_insert_exception" },
+        extra: {
+          log_prefix: "[go/test]",
+          target_url: "https://www.amazon.com/dp/B00SAFELOG",
+          page_type: "refrigerator_filter",
+          page_slug: "lt1000p",
+          retailer_slug: "amazon",
+        },
+      });
+    } finally {
+      restore();
+      if (previousDsn == null) delete process.env.SENTRY_DSN;
+      else process.env.SENTRY_DSN = previousDsn;
+      if (previousUrl == null) delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      else process.env.NEXT_PUBLIC_SUPABASE_URL = previousUrl;
+      if (previousAnon == null) delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      else process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousAnon;
+    }
   });
 });
 
