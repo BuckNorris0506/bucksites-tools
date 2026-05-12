@@ -13,6 +13,13 @@ jobs:
     name: Run read-only Daily Operator
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      LIVE_SITE_SMOKE_TARGET_URL: https://buckparts.com
+      NEXT_PUBLIC_SITE_URL: https://buckparts.com
 
     steps:
       - name: Checkout
