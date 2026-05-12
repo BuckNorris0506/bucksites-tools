@@ -1467,9 +1467,6 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
   if (input.learning_outcomes_metrics.runtime_status.startsWith("UNKNOWN")) {
     criticalReasons.push("learning_outcomes_metrics.runtime_status is UNKNOWN");
   }
-  if (input.state_system_metrics.runtime_status === "UNKNOWN_NO_DATA") {
-    criticalReasons.push("state_system_metrics.runtime_status is UNKNOWN_NO_DATA");
-  }
   if (input.cta_coverage_metrics.runtime_status.startsWith("UNKNOWN")) {
     criticalReasons.push("cta_coverage_metrics.runtime_status is UNKNOWN");
   }
@@ -1483,6 +1480,9 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
 
   if (input.trend.overall_trend === "DEGRADING") {
     warningReasons.push("trend.overall_trend is DEGRADING");
+  }
+  if (input.state_system_metrics.runtime_status === "UNKNOWN_NO_DATA") {
+    warningReasons.push("state_system_metrics.runtime_status is UNKNOWN_NO_DATA");
   }
   if (input.gsc_exports_present.sitemap_xml === false) {
     warningReasons.push("gsc_exports_present.sitemap_xml is false");

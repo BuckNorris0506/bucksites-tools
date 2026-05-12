@@ -487,6 +487,58 @@ test("Daily Operator keeps DARK/UNKNOWN excluded signals out of positive recomme
   assert.ok(report.blocked_jobs.some((j) => j.job_or_signal === "deploy_sync_status"));
 });
 
+test("Daily Operator treats missing state-system inventory as non-authoritative warning, not stop-line blocker", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      commandSurface: async () =>
+        commandSurface({
+          state_system_metrics: {
+            source: "local_contracts_and_available_local_data",
+            runtime_status: "UNKNOWN_NO_DATA",
+            page_state: {
+              computable: false,
+              distribution: "UNKNOWN",
+              reason: "No local GSC sitemap artifact is available to compute sitemap inventory (`data/gsc/sitemap.xml`).",
+            },
+            publishability_state: { computable: false, distribution: "UNKNOWN", reason: "semantic joins absent" },
+            retailer_link_state: { computable: false, distribution: "UNKNOWN", reason: "not joined" },
+            no_buy_reason: { computable: false, distribution: "UNKNOWN", reason: "not joined" },
+            wrong_purchase_risk: { computable: false, distribution: "UNKNOWN", reason: "not joined" },
+            replacement_safety: {
+              computable: false,
+              safe_count: "UNKNOWN",
+              unsafe_count: "UNKNOWN",
+              reason: "not joined",
+            },
+          },
+          system_health: {
+            status: "WARNING",
+            reasons: ["state_system_metrics.runtime_status is UNKNOWN_NO_DATA"],
+          },
+          known_unknowns: [
+            "state_system_metrics.page_state non-computable: No local GSC sitemap artifact is available to compute sitemap inventory (`data/gsc/sitemap.xml`).",
+          ],
+        }),
+    }),
+  });
+
+  assert.notEqual(report.runtime_status, "BLOCKED");
+  assert.equal(report.business_warning.status, "CLEAR");
+  assert.equal(report.top_of_game_checklist_status.fit_correctness, "UNKNOWN");
+  assert.ok(
+    report.unknown_facts.some((fact) =>
+      fact.includes("state_system_metrics.page_state non-computable"),
+    ),
+  );
+  assert.equal(
+    report.recommendation_authority.evaluated_actions.some((action) =>
+      /page[_ -]?state/i.test(action.source),
+    ),
+    false,
+  );
+});
+
 test("Daily Operator records scoped PARTIAL GSC authority and withholds unscoped Command Center action", async () => {
   const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
   const gscAction = report.recommendation_authority.evaluated_actions.find(

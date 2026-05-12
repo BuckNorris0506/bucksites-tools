@@ -1204,7 +1204,7 @@ test("unknown learning outcomes makes CRITICAL", () => {
   assert.equal(health.status, "CRITICAL");
 });
 
-test("unknown state systems makes CRITICAL", () => {
+test("unknown state systems makes WARNING, not stop-line CRITICAL", () => {
   const health = computeSystemHealth({
     affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
@@ -1218,7 +1218,8 @@ test("unknown state systems makes CRITICAL", () => {
       performance_zip: true,
     },
   });
-  assert.equal(health.status, "CRITICAL");
+  assert.equal(health.status, "WARNING");
+  assert.ok(health.reasons.includes("state_system_metrics.runtime_status is UNKNOWN_NO_DATA"));
 });
 
 test("missing GSC export makes WARNING when no criticals", () => {
