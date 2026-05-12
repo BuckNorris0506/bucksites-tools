@@ -115,17 +115,25 @@ test("Sentry proof route captures sanitized monitoring message for valid token",
 });
 
 test("Sentry proof route does not include token in successful response", async () => {
-  await withEnv(
-    {
-      BUCKPARTS_OWNER_PROOF_TOKEN: TOKEN,
-      SENTRY_DSN: "https://example.invalid/1",
-    },
-    async () => {
-      const res = await GET(requestWithToken(TOKEN));
-      const text = await res.text();
-      assert.equal(res.status, 200);
-      assert.equal(text.includes(TOKEN), false);
-      assert.equal(text.includes("SENTRY_DSN"), false);
-    },
-  );
+  const restore = setMonitoringClientForTests({
+    captureException: () => {},
+    captureMessage: () => {},
+  });
+  try {
+    await withEnv(
+      {
+        BUCKPARTS_OWNER_PROOF_TOKEN: TOKEN,
+        SENTRY_DSN: "https://example.invalid/1",
+      },
+      async () => {
+        const res = await GET(requestWithToken(TOKEN));
+        const text = await res.text();
+        assert.equal(res.status, 200);
+        assert.equal(text.includes(TOKEN), false);
+        assert.equal(text.includes("SENTRY_DSN"), false);
+      },
+    );
+  } finally {
+    restore();
+  }
 });

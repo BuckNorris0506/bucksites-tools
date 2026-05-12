@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import test from "node:test";
 
 import {
@@ -10,6 +12,9 @@ import {
   setMonitoringClientForTests,
   toSafeMonitoringMetadata,
 } from "@/lib/monitoring/error-monitoring";
+
+const MONITORING_HELPER_SOURCE = join(process.cwd(), "src/lib/monitoring/error-monitoring.ts");
+const NEXT_CONFIG_SOURCE = join(process.cwd(), "next.config.mjs");
 
 test("monitoring is disabled when Sentry env is absent", () => {
   assert.equal(isMonitoringConfigured({}), false);
@@ -83,6 +88,16 @@ test("capture helper sends only sanitized metadata when configured", () => {
   }
 });
 
+test("route-facing monitoring helper does not import Sentry package", () => {
+  const src = readFileSync(MONITORING_HELPER_SOURCE, "utf8");
+  assert.equal(src.includes("@sentry/nextjs"), false);
+});
+
+test("Next config enables instrumentation hook for server monitoring registration", () => {
+  const src = readFileSync(NEXT_CONFIG_SOURCE, "utf8");
+  assert.match(src, /instrumentationHook:\s*true/);
+});
+
 test("async capture reports dynamic_import client source when no test/global client exists", async () => {
   const previousGlobal = globalThis.__buckpartsMonitoringClient;
   delete globalThis.__buckpartsMonitoringClient;
@@ -114,6 +129,25 @@ test("async capture reports dynamic_import client source when no test/global cli
     ]);
   } finally {
     restore();
+    globalThis.__buckpartsMonitoringClient = previousGlobal;
+  }
+});
+
+test("async capture reports none when configured but no monitoring client is registered", async () => {
+  const previousGlobal = globalThis.__buckpartsMonitoringClient;
+  delete globalThis.__buckpartsMonitoringClient;
+  try {
+    const result = await captureMonitoringMessageAsync("proof", {
+      area: "test",
+      env: { SENTRY_DSN: "https://example.invalid/1" },
+    });
+
+    assert.deepEqual(result, {
+      monitoring_configured: true,
+      capture_attempted: true,
+      client_source: "none",
+    });
+  } finally {
     globalThis.__buckpartsMonitoringClient = previousGlobal;
   }
 });

@@ -5,6 +5,10 @@ if (!isDevelopment && (!siteUrl || siteUrl.toLowerCase().includes("localhost")))
   throw new Error("NEXT_PUBLIC_SITE_URL must be set to production URL");
 }
 
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    instrumentationHook: true,
+  },
+};
 
 export default nextConfig;

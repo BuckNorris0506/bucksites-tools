@@ -1,6 +1,7 @@
-type MonitoringClient = {
+export type MonitoringClient = {
   captureException: (error: unknown, context?: { tags?: Record<string, string>; extra?: Record<string, unknown> }) => void;
   captureMessage: (message: string, context?: { level?: "info" | "warning" | "error"; tags?: Record<string, string>; extra?: Record<string, unknown> }) => void;
+  flush?: (timeout?: number) => Promise<boolean>;
 };
 
 export type MonitoringClientSource = "test" | "global" | "dynamic_import" | "none";
@@ -73,14 +74,7 @@ export function captureMonitoringException(
 
 async function loadDynamicMonitoringClient(): Promise<MonitoringClient | null> {
   if (monitoringClientLoaderForTests) return monitoringClientLoaderForTests();
-  try {
-    const dynamicImport = new Function("specifier", "return import(specifier)") as (
-      specifier: string,
-    ) => Promise<MonitoringClient>;
-    return await dynamicImport("@sentry/nextjs");
-  } catch {
-    return null;
-  }
+  return null;
 }
 
 function resolveStaticMonitoringClient(): { client: MonitoringClient; source: MonitoringClientSource } | null {
@@ -111,6 +105,7 @@ export async function captureMonitoringExceptionAsync(
 
   try {
     client?.captureException(error, sentryContext);
+    await client?.flush?.(2000);
   } catch {
     // Monitoring must never change product behavior.
   }
@@ -146,6 +141,7 @@ export async function captureMonitoringMessageAsync(
 
   try {
     client?.captureMessage(message, sentryContext);
+    await client?.flush?.(2000);
   } catch {
     // Monitoring must never change product behavior.
   }
