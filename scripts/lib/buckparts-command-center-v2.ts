@@ -8,6 +8,7 @@ import {
   buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
   buildLearningOutcomesWriterReadyBatchReviewV1,
 } from "./learning-outcomes-insert-plan-v1";
+import { buildPublicTrustUnificationBackendContractV1 } from "./public-trust-unification-backend-contract-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import type {
   AmazonRescueTokenControlEntry,
@@ -163,6 +164,8 @@ function buildRevenueSnapshotLane(click: ClickVisibilitySnapshot): RevenueSnapsh
 
 export function buildCommandCenterV2Report(input: {
   now: () => Date;
+  rootDir: string;
+  fileExists: (absolutePath: string) => boolean;
   registryPath: string;
   registryEntries: AmazonRescueTokenControlEntry[];
   registryLoadError: string | null;
@@ -457,6 +460,11 @@ export function buildCommandCenterV2Report(input: {
     input.learningOutcomesConfidenceApprovals,
   );
 
+  const public_trust_unification_backend_contract_v1 = buildPublicTrustUnificationBackendContractV1({
+    rootDir: input.rootDir,
+    fileExists: input.fileExists,
+  });
+
   const recommendation_authority = {
     evaluated_actions: recommendationAuthorityRecords,
   };
@@ -475,6 +483,7 @@ export function buildCommandCenterV2Report(input: {
     coverageHealth: coverageLane,
     amazonRescue,
     approvalsLoaded: input.learningOutcomesConfidenceApprovals,
+    publicTrustContract: public_trust_unification_backend_contract_v1,
   });
 
   return {
@@ -496,6 +505,7 @@ export function buildCommandCenterV2Report(input: {
     learning_outcomes_writer_ready_batch_review_v1,
     learning_outcomes_owner_confidence_assignment_plan_v1,
     learning_outcomes_confidence_approval_registry_v1,
+    public_trust_unification_backend_contract_v1,
     recommendation_authority,
     next_allowed_agent_token,
     next_owner_action,

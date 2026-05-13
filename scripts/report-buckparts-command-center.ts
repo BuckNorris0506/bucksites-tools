@@ -801,6 +801,8 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2 = buildCommandCenterV2Report({
     now,
+    rootDir,
+    fileExists,
     registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
     registryEntries: tokenRegistryEntries,
     registryLoadError: tokenRegistryLoadError,

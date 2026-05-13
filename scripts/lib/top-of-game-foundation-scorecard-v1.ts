@@ -12,6 +12,7 @@ import type {
   LearningOutcomesReadModelV1,
   LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
+  PublicTrustUnificationBackendContractV1,
   RevenueSnapshotLane,
   TopOfGameFoundationScorecardRuntimeV1,
   TopOfGameFoundationScorecardV1,
@@ -75,6 +76,7 @@ export type BuildTopOfGameFoundationScorecardV1Input = {
   coverageHealth: DecisionLane;
   amazonRescue: AmazonRescueLane;
   approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
+  publicTrustContract: PublicTrustUnificationBackendContractV1;
 };
 
 /**
@@ -101,6 +103,15 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
 
   if (runtime_status === "UNKNOWN_INPUT") {
     unknown_facts.push("evidence_to_learning_outcomes_candidate_import_v1 contract mismatch — foundation lanes that depend on evidence import are not scored as PROVEN.");
+  }
+
+  const pub = input.publicTrustContract;
+  if (pub.contract === "public_trust_unification_backend_contract_v1") {
+    proven_facts.push(
+      `public_trust_unification_backend_contract_v1 is attached with coverage_status=${pub.coverage_status}, page_contracts_evaluated_count=${pub.page_contracts_evaluated_count}, proven_signal_count=${pub.proven_signal_count}.`,
+    );
+  } else {
+    unknown_facts.push("public_trust_unification_backend_contract_v1 missing or wrong contract discriminator on Command Center v2 input.");
   }
 
   const lanes: FoundationScorecardLaneV1[] = [];
@@ -438,19 +449,51 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
     ),
   );
 
-  lanes.push(
-    lane(
+  let pubStatus: FoundationScorecardLaneStatusV1;
+  let pubBasis: string[] = [];
+  let pubUnknowns: string[] = [];
+  let pubNext = "";
+  if (pub.contract !== "public_trust_unification_backend_contract_v1") {
+    pubStatus = "UNKNOWN";
+    pubUnknowns = ["public_trust_unification_backend_contract_v1 block missing or wrong contract field."];
+    pubNext = "Rebuild Command Center v2 so the public trust contract builder runs and attaches the v1 block.";
+  } else if (pub.runtime_status === "BLOCKED") {
+    pubStatus = "BLOCKED";
+    pubBasis = [`public_trust_unification_backend_contract_v1.runtime_status is BLOCKED — file existence checks failed.`];
+    pubUnknowns = pub.unknown_facts.slice(0, 4);
+    pubNext = "Fix rootDir/fileExists failures so the trust contract can complete read-only path checks.";
+  } else if (pub.coverage_status === "PROVEN") {
+    pubStatus = "PROVEN";
+    pubBasis = [
+      `public_trust_unification_backend_contract_v1.coverage_status is PROVEN (proven_signal_count=${pub.proven_signal_count}, required_signals=${pub.required_signals.length}).`,
+    ];
+    pubNext = "Keep trust-module paths stable; re-run Command Center after refactors that move part-trust, public-trust, buy shell, or go route files.";
+  } else if (pub.coverage_status === "PARTIAL") {
+    pubStatus = "PARTIAL";
+    pubBasis = [
+      `coverage_status is PARTIAL (proven_signal_count=${pub.proven_signal_count}, missing_signal_count=${pub.missing_signal_count}).`,
+    ];
+    pubUnknowns = pub.unknown_facts.slice(0, 4);
+    pubNext = "Restore missing trust-module files or repo root until public_trust_unification_backend_contract_v1.coverage_status is PROVEN.";
+  } else {
+    pubStatus = "UNKNOWN";
+    pubBasis = [`coverage_status is ${pub.coverage_status} — required trust signal path groups are not all present.`];
+    pubUnknowns = pub.unknown_facts.slice(0, 4);
+    pubNext = "Investigate checkout layout or rootDir until all required trust signal files exist.";
+  }
+
+  lanes.push({
+    ...lane(
       "public_trust_unification_backend_contract",
-      "Public trust unification (backend contract — not built in v1 scorecard sources)",
+      "Public trust unification (read-only backend contract v1)",
       w.public_trust_unification_backend_contract,
-      "UNKNOWN",
-      [],
-      [
-        "No Command Center v2 field proves public page trust unification backend contract — lane intentionally UNKNOWN until a separate proven artifact exists.",
-      ],
-      "Define and ship a read-only backend contract for public trust signals before marking this lane PROVEN.",
+      pubStatus,
+      pubBasis,
+      pubUnknowns,
+      pubNext,
     ),
-  );
+    score_contribution: pubStatus === "PROVEN" ? w.public_trust_unification_backend_contract : 0,
+  });
 
   const foundation_maturity_score_100 = lanes.reduce((s, l) => s + l.score_contribution, 0);
   const current_goal_score_100 = foundation_maturity_score_100;

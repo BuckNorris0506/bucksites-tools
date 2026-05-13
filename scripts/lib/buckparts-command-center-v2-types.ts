@@ -497,6 +497,39 @@ export type LearningOutcomesConfidenceApprovalsLoadedV1 = {
   unknown_facts: string[];
 };
 
+export type PublicTrustUnificationBackendContractRuntimeV1 = "OK" | "UNKNOWN_INPUT" | "BLOCKED";
+
+export type PublicTrustCoverageStatusV1 = "PROVEN" | "PARTIAL" | "UNKNOWN" | "BLOCKED";
+
+export type PublicTrustEvaluatedSurfaceV1 = {
+  surface_id: string;
+  what_was_found: string;
+  confidence_state: "PROVEN" | "PARTIAL" | "UNKNOWN";
+  evidence_basis: string;
+  compare_before_buying_guidance: string;
+  safe_buy_cta_state: string;
+  uncertainty_or_no_buy_fallback: string;
+  next_action: string;
+  provenance_source_fields_available: string;
+};
+
+/** Read-only repo file-presence contract for public trust signal wiring — not live PDP or commission proof. */
+export type PublicTrustUnificationBackendContractV1 = {
+  contract: "public_trust_unification_backend_contract_v1";
+  runtime_status: PublicTrustUnificationBackendContractRuntimeV1;
+  page_contracts_evaluated_count: number;
+  proven_signal_count: number;
+  missing_signal_count: number;
+  coverage_status: PublicTrustCoverageStatusV1;
+  required_signals: string[];
+  evaluated_surfaces: PublicTrustEvaluatedSurfaceV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: false;
+  data_mutation: false;
+  read_only: true;
+};
+
 export type FoundationScorecardLaneStatusV1 = "PROVEN" | "PARTIAL" | "BLOCKED" | "UNKNOWN";
 
 export type FoundationScorecardLaneV1 = {
@@ -555,6 +588,8 @@ export type CommandCenterV2Report = {
   learning_outcomes_owner_confidence_assignment_plan_v1: LearningOutcomesOwnerConfidenceAssignmentPlanV1;
   /** Read-only view of owner-approved confidence registry file + match counts vs evidence candidates. */
   learning_outcomes_confidence_approval_registry_v1: LearningOutcomesConfidenceApprovalRegistryV1;
+  /** Read-only file-presence map for trust / buy-shell modules — not live page or revenue proof. */
+  public_trust_unification_backend_contract_v1: PublicTrustUnificationBackendContractV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

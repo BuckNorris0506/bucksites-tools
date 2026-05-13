@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -27,8 +28,13 @@ import type {
   LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
+  PublicTrustUnificationBackendContractV1,
   TopOfGameFoundationScorecardV1,
 } from "./lib/buckparts-command-center-v2-types";
+import {
+  buildPublicTrustUnificationBackendContractV1,
+  PUBLIC_TRUST_UNIFICATION_REQUIRED_SIGNALS_V1,
+} from "./lib/public-trust-unification-backend-contract-v1";
 import {
   buildBuckpartsCommandCenterReport,
   stripEvidenceUncappedCandidatesForStdout,
@@ -287,6 +293,12 @@ test("command center is read_only true and data_mutation false", async () => {
     "evidence_to_learning_outcomes_candidate_import_v1",
   );
   assert.equal(report.command_center_v2.learning_outcomes_insert_plan_v1.contract, "learning_outcomes_insert_plan_v1");
+  const pt = report.command_center_v2.public_trust_unification_backend_contract_v1;
+  assert.equal(pt.contract, "public_trust_unification_backend_contract_v1");
+  assert.equal(pt.read_only, true);
+  assert.equal(pt.data_mutation, false);
+  assert.equal(pt.owner_approval_required, false);
+  assertPublicTrustContractNoBannedClaims(pt);
   const tog = report.command_center_v2.top_of_game_foundation_scorecard_v1;
   assert.equal(tog.contract, "top_of_game_foundation_scorecard_v1");
   assert.equal(tog.read_only, true);
@@ -1495,6 +1507,14 @@ function assertFoundationScorecardNoBannedClaims(block: TopOfGameFoundationScore
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertPublicTrustContractNoBannedClaims(block: PublicTrustUnificationBackendContractV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -2271,7 +2291,7 @@ test("command_center_v2 top_of_game revenue_truth_connection is not PROVEN when 
   assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
 });
 
-test("command_center_v2 top_of_game foundation score does not reach 100 with public_trust lane UNKNOWN", async () => {
+test("command_center_v2 top_of_game public_trust lane is not PROVEN when trust module paths are absent (fileExists false)", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
     demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
@@ -2281,10 +2301,72 @@ test("command_center_v2 top_of_game foundation score does not reach 100 with pub
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  const pt = report.command_center_v2.public_trust_unification_backend_contract_v1;
+  assert.equal(pt.coverage_status, "UNKNOWN");
+  assert.equal(pt.proven_signal_count, 0);
+  assert.equal(pt.required_signals.length, PUBLIC_TRUST_UNIFICATION_REQUIRED_SIGNALS_V1.length);
+  assert.notEqual(pt.coverage_status, "PROVEN");
   const sc = report.command_center_v2.top_of_game_foundation_scorecard_v1;
-  assert.equal(sc.lanes.find((l) => l.lane_id === "public_trust_unification_backend_contract")?.status, "UNKNOWN");
+  const lane = sc.lanes.find((l) => l.lane_id === "public_trust_unification_backend_contract");
+  assert.ok(lane);
+  assert.notEqual(lane.status, "PROVEN");
+  assert.equal(lane.score_contribution, 0);
   assert.equal(sc.foundation_maturity_score_100 < 100, true);
   assert.equal(sc.goal_reached, false);
+  assertPublicTrustContractNoBannedClaims(pt);
+  assertFoundationScorecardNoBannedClaims(sc);
+});
+
+test("public_trust_unification_backend_contract_v1 is PROVEN against this repo checkout (file existence)", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const c = buildPublicTrustUnificationBackendContractV1({ rootDir, fileExists: fs.existsSync });
+  assert.equal(c.coverage_status, "PROVEN");
+  assert.equal(c.proven_signal_count, PUBLIC_TRUST_UNIFICATION_REQUIRED_SIGNALS_V1.length);
+  assert.equal(c.missing_signal_count, 0);
+  assert.deepEqual([...c.required_signals].sort(), [...PUBLIC_TRUST_UNIFICATION_REQUIRED_SIGNALS_V1].sort());
+  assertPublicTrustContractNoBannedClaims(c);
+});
+
+test("public_trust_unification_backend_contract_v1 is PARTIAL when one required module is hidden", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const c = buildPublicTrustUnificationBackendContractV1({
+    rootDir,
+    fileExists: (abs) => (abs.endsWith("part-trust.ts") ? false : fs.existsSync(abs)),
+  });
+  assert.equal(c.coverage_status, "PARTIAL");
+  assert.ok(c.proven_signal_count > 0 && c.proven_signal_count < c.required_signals.length);
+  assertPublicTrustContractNoBannedClaims(c);
+});
+
+test("command_center_v2 public_trust lane adds 8 vs masked trust paths when repo checkout is complete", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const common = {
+    rootDir,
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  };
+  const absent = await buildBuckpartsCommandCenterReport({
+    ...common,
+    fileExists: () => false,
+  });
+  const present = await buildBuckpartsCommandCenterReport(common);
+  assert.equal(present.command_center_v2.public_trust_unification_backend_contract_v1.coverage_status, "PROVEN");
+  const delta =
+    present.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100 -
+    absent.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100;
+  assert.equal(delta, 8);
+  const lane = present.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "public_trust_unification_backend_contract",
+  );
+  assert.ok(lane);
+  assert.equal(lane.status, "PROVEN");
+  assert.equal(lane.score_contribution, TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1.public_trust_unification_backend_contract);
+  assertFoundationScorecardNoBannedClaims(present.command_center_v2.top_of_game_foundation_scorecard_v1);
+  assertPublicTrustContractNoBannedClaims(present.command_center_v2.public_trust_unification_backend_contract_v1);
 });
 
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {
