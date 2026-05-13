@@ -20,28 +20,28 @@ export async function GET(
   const { linkId } = await params;
 
   if (!GO_LINK_UUID_RE.test(linkId)) {
-    return goFallbackRedirect(request, "/");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   let row: Awaited<ReturnType<typeof getRetailerLinkById>> = null;
   try {
     row = await getRetailerLinkById(linkId);
   } catch {
-    return goFallbackRedirect(request, "/");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   const target = row?.affiliate_url ?? null;
   if (!row || !target) {
-    return goFallbackRedirect(request, "/");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
-    const go = nextResponseRedirectAffiliateIfSafe(
+  const go = nextResponseRedirectAffiliateIfSafe(
     row.retailer_key,
     target,
     row.browser_truth_classification ?? undefined,
   );
   if (!go) {
-    return goFallbackRedirect(request, "/");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   await logClickEventForGoRoute(

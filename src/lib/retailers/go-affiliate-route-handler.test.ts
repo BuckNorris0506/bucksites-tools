@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { describe, it } from "node:test";
 import { NextRequest } from "next/server";
 
@@ -203,6 +205,31 @@ describe("logClickEventForGoRoute monitoring", () => {
       if (previousAnon == null) delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       else process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = previousAnon;
     }
+  });
+});
+
+describe("fridge /go unsafe fallback", () => {
+  it("redirects to /go-unavailable instead of home when id, row, or gate blocks outbound", () => {
+    const abs = path.join(process.cwd(), "src/app/go/[linkId]/route.ts");
+    const src = fs.readFileSync(abs, "utf8");
+    assert.ok(
+      !src.includes('goFallbackRedirect(request, "/")'),
+      "fridge wedge go must not silently fall back to homepage",
+    );
+    const fallbacks = src.match(/goFallbackRedirect\(\s*request\s*,\s*"([^"]+)"\s*\)/g) ?? [];
+    assert.equal(fallbacks.length, 4, "expected four goFallbackRedirect calls");
+    assert.ok(
+      fallbacks.every((line) => line.includes('"/go-unavailable"')),
+      `all fridge go fallbacks must target /go-unavailable: ${fallbacks.join(" | ")}`,
+    );
+  });
+
+  it("serves go-unavailable page with search and home links", () => {
+    const abs = path.join(process.cwd(), "src/app/go-unavailable/page.tsx");
+    const src = fs.readFileSync(abs, "utf8");
+    assert.ok(src.includes('href="/search"'));
+    assert.ok(src.includes('href="/"'));
+    assert.ok(src.includes("BuckParts could not safely open that store listing"));
   });
 });
 
