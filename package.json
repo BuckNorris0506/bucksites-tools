@@ -67,6 +67,8 @@
     "buckparts:audit": "tsx scripts/audit-buckparts-system-contracts.ts",
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
     "buckparts:command-center": "tsx scripts/report-buckparts-command-center.ts",
+    "buckparts:learning-outcomes-approved-insert:dry-run": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts",
+    "buckparts:learning-outcomes-approved-insert:mutate": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts --mutate-approved-learning-outcome",
     "buckparts:daily": "tsx scripts/report-buckparts-daily-operator.ts",
     "buckparts:demand-work-queue": "tsx scripts/report-buckparts-demand-work-queue.ts",
     "buckparts:command-surface:snapshot": "tsx scripts/report-buckparts-command-surface.ts --write-snapshot",
