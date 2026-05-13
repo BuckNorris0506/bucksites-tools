@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
 import type { LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 
@@ -247,6 +248,7 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(report.data_mutation, false);
   assert.equal(report.command_center_v2.read_only, true);
   assert.equal(report.command_center_v2.data_mutation, false);
+  assert.equal(report.command_center_v2.demand_to_coverage_engine_v1.contract, "demand_to_coverage_engine_v1");
 });
 
 test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
@@ -1055,4 +1057,98 @@ test("command_center_v2 surfaces next_owner_action and next_agent_action on lane
   assert.equal(typeof v2.amazon_rescue.next_owner_action, "string");
   assert.equal(typeof v2.deploy_live_site_status.next_owner_action, "string");
   assert.equal(typeof v2.revenue_snapshot.next_owner_action, "string");
+});
+
+function searchGapRowFixture(overrides: Record<string, unknown> = {}): unknown {
+  return {
+    id: 101,
+    catalog: "refrigerator",
+    normalized_query: "lt1000p-filter",
+    sample_raw_query: "LT1000P filter",
+    search_count: 4,
+    zero_result_count: 3,
+    last_seen_at: "2026-05-01T12:00:00.000Z",
+    status: "open",
+    likely_entity_type: "model",
+    created_at: "2026-05-01T00:00:00.000Z",
+    updated_at: "2026-05-01T12:00:00.000Z",
+    ...overrides,
+  };
+}
+
+function assertDemandEngineNoBuyClaims(
+  engine: import("./lib/buckparts-command-center-v2-types").DemandToCoverageEngineV1,
+) {
+  const blob = JSON.stringify(engine);
+  assert.ok(!blob.includes("BUY_READY"));
+  for (const row of engine.rows) {
+    assert.equal(row.coverage_state, "UNKNOWN");
+    assert.notEqual(row.coverage_state, "SCOPED_PARTIAL");
+  }
+}
+
+test("command_center_v2 demand_to_coverage_engine_v1 attaches bounded search_gaps rows read-only", async () => {
+  const engine = buildDemandToCoverageEngineV1FromRows(
+    [
+      searchGapRowFixture({ likely_entity_type: "compatibility_mapping" }),
+      searchGapRowFixture({ id: 102, likely_entity_type: "unknown", normalized_query: "other" }),
+    ],
+    "OK",
+    [],
+  );
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => engine,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const d = report.command_center_v2.demand_to_coverage_engine_v1;
+  assert.equal(d.contract, "demand_to_coverage_engine_v1");
+  assert.equal(d.runtime_status, "OK");
+  assert.equal(d.rows.length, 2);
+  assert.equal(d.rows[0].demand.catalog, "refrigerator");
+  assert.equal(d.rows[0].evidence_gap_kind, "ZERO_RESULT_GAP");
+  assert.equal(d.rows[0].recommended_verification, "VERIFY_COMPATIBILITY_EVIDENCE");
+  assert.equal(d.rows[1].evidence_gap_kind, "ENTITY_TYPE_UNKNOWN");
+  assert.equal(d.rows[1].recommended_verification, "RESEARCH_CANDIDATE_ENTITY");
+  assert.ok(d.rows[0].authority.some((a) => a.action_type === "AGENT_ACTION"));
+  assert.ok(d.rows[0].authority.some((a) => a.action_type === "OWNER_ACTION"));
+  assertDemandEngineNoBuyClaims(d);
+});
+
+test("command_center_v2 demand_to_coverage_engine_v1 tolerates empty rows and invalid gap payloads", async () => {
+  const engine = buildDemandToCoverageEngineV1FromRows(
+    [{ not_a_column: true }, searchGapRowFixture({ zero_result_count: 0, likely_entity_type: "model" })],
+    "OK",
+    [],
+  );
+  assert.equal(engine.rows.length, 1);
+  assert.equal(engine.rows[0].evidence_gap_kind, "VERIFICATION_REQUIRED");
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => engine,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assertDemandEngineNoBuyClaims(report.command_center_v2.demand_to_coverage_engine_v1);
+});
+
+test("command_center_v2 demand_to_coverage_engine_v1 surfaces UNKNOWN_DB_UNAVAILABLE without throwing", async () => {
+  const engine = buildDemandToCoverageEngineV1FromRows([], "UNKNOWN_DB_UNAVAILABLE", [
+    "Missing NEXT_PUBLIC_SUPABASE_URL (or SUPABASE_URL) for import scripts.",
+  ]);
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => engine,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const d = report.command_center_v2.demand_to_coverage_engine_v1;
+  assert.equal(d.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+  assert.equal(d.rows.length, 0);
+  assert.ok(d.unknown_facts.some((s) => /supabase/i.test(s)));
+  assertDemandEngineNoBuyClaims(d);
 });

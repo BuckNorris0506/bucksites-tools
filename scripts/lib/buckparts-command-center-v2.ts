@@ -4,6 +4,7 @@ import type {
   ClickVisibilitySnapshot,
   CommandCenterV2Report,
   DecisionLane,
+  DemandToCoverageEngineV1,
   EvidenceInventoryV1,
   EvidenceRollup,
   LiveSiteMonitorV1,
@@ -161,6 +162,7 @@ export function buildCommandCenterV2Report(input: {
   affiliateApprovedCount: number;
   clickVisibility: ClickVisibilitySnapshot;
   liveSiteMonitor: LiveSiteMonitorV1 | null;
+  demandToCoverageEngine: DemandToCoverageEngineV1;
 }): CommandCenterV2Report {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
@@ -433,6 +435,7 @@ export function buildCommandCenterV2Report(input: {
     recent_evidence: recentLane,
     deploy_live_site_status: deployLane,
     revenue_snapshot: revenueLane,
+    demand_to_coverage_engine_v1: input.demandToCoverageEngine,
     recommendation_authority: {
       evaluated_actions: recommendationAuthorityRecords,
     },

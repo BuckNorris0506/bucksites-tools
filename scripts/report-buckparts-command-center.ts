@@ -14,7 +14,11 @@ import {
 } from "./report-amazon-first-blocked-conversion-queue";
 import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
-import type { CommandCenterV2Report, LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
+import type {
+  CommandCenterV2Report,
+  DemandToCoverageEngineV1,
+  LiveSiteMonitorV1,
+} from "./lib/buckparts-command-center-v2-types";
 import { loadLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
 import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 
@@ -185,6 +189,8 @@ type BuildOptions = {
   readDir?: (absolutePath: string) => string[];
   /** When set, skips disk/Supabase live-site monitor load (tests). */
   liveSiteMonitor?: LiveSiteMonitorV1 | null;
+  /** When set, skips live `search_gaps` read (tests). */
+  demandToCoverageEngineLoader?: () => Promise<DemandToCoverageEngineV1>;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -370,6 +376,13 @@ export async function buildBuckpartsCommandCenterReport(
       }
     });
 
+  const demandToCoverageLoader =
+    options.demandToCoverageEngineLoader ??
+    (async () => {
+      const { fetchDemandToCoverageEngineV1FromSupabase } = await import("./lib/demand-to-coverage-engine-v1");
+      return fetchDemandToCoverageEngineV1FromSupabase();
+    });
+
   const [
     commandSurface,
     affiliateTracker,
@@ -380,6 +393,7 @@ export async function buildBuckpartsCommandCenterReport(
     amazonFirstBlocked,
     clickVisibility,
     liveSiteMonitor,
+    demandToCoverageEngine,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -392,6 +406,7 @@ export async function buildBuckpartsCommandCenterReport(
     options.liveSiteMonitor !== undefined
       ? Promise.resolve(options.liveSiteMonitor)
       : loadLiveSiteMonitorForCommandCenter({ rootDir, fileExists, readTextFile }),
+    demandToCoverageLoader(),
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
@@ -760,6 +775,7 @@ export async function buildBuckpartsCommandCenterReport(
     affiliateApprovedCount: affiliateTracker.records_approved.length,
     clickVisibility,
     liveSiteMonitor,
+    demandToCoverageEngine,
   });
 
   return {

@@ -226,6 +226,59 @@ export type LiveSiteMonitorV1 = {
   unknown_facts: string[];
 };
 
+/** Read-only Demand→Coverage slice over `public.search_gaps` (Command Center v2). */
+export type DemandToCoverageRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_QUERY_ERROR";
+
+/** v1 does not prove catalog coverage; `SCOPED_PARTIAL` reserved for future narrow existence proofs only. */
+export type DemandToCoverageCoverageState = "UNKNOWN" | "SCOPED_PARTIAL";
+
+export type DemandToCoverageEvidenceGapKind =
+  | "ZERO_RESULT_GAP"
+  | "ENTITY_TYPE_UNKNOWN"
+  | "COVERAGE_UNKNOWN"
+  | "VERIFICATION_REQUIRED"
+  | "UNKNOWN";
+
+export type DemandToCoverageVerificationRecommendation =
+  | "RESEARCH_CANDIDATE_ENTITY"
+  | "VERIFY_COMPATIBILITY_EVIDENCE"
+  | "CHECK_RETAILER_EVIDENCE"
+  | "OWNER_REVIEW_REQUIRED"
+  | "UNKNOWN";
+
+/** Proven demand fields from `search_gaps` DDL (migration `20260410170000_search_intelligence.sql`). */
+export type DemandToCoverageSearchGapDemandV1 = {
+  search_gap_id: string;
+  catalog: string;
+  normalized_query: string;
+  sample_raw_query: string;
+  search_count: number;
+  zero_result_count: number;
+  last_seen_at: string;
+  status: string;
+  likely_entity_type: string;
+};
+
+export type DemandToCoverageBoundedRowV1 = {
+  demand: DemandToCoverageSearchGapDemandV1;
+  /** Catalog-wide coverage is not proven from this slice; v1 defaults conservative. */
+  coverage_state: DemandToCoverageCoverageState;
+  evidence_gap_kind: DemandToCoverageEvidenceGapKind;
+  recommended_verification: DemandToCoverageVerificationRecommendation;
+  unknown_facts: string[];
+  /** Agent-safe read-only paths vs owner gates for mutations / public surface. */
+  authority: RecommendationAuthorityRecord[];
+};
+
+export type DemandToCoverageEngineV1 = {
+  contract: "demand_to_coverage_engine_v1";
+  runtime_status: DemandToCoverageRuntimeStatus;
+  bounded_row_cap: 20;
+  rows: DemandToCoverageBoundedRowV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -238,6 +291,8 @@ export type CommandCenterV2Report = {
   recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 };
   deploy_live_site_status: DecisionLane & { live_site_monitor: LiveSiteMonitorV1 | null };
   revenue_snapshot: RevenueSnapshotLane;
+  /** Bounded read-only view of search demand gaps — not fit/buy proof. */
+  demand_to_coverage_engine_v1: DemandToCoverageEngineV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };
