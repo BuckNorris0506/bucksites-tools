@@ -18,11 +18,16 @@ import type {
   CommandCenterV2Report,
   DemandToCoverageEngineV1,
   EvidenceToLearningOutcomesCandidateImportV1,
+  LearningOutcomesConfidenceApprovalsLoadedV1,
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
 } from "./lib/buckparts-command-center-v2-types";
 import { loadLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
 import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
+import {
+  createConfidenceApprovalLookup,
+  loadLearningOutcomesConfidenceApprovalsRegistry,
+} from "./lib/learning-outcomes-confidence-approvals-registry-v1";
 
 type FlexoffersReadinessReport = {
   report_name: string;
@@ -197,6 +202,8 @@ type BuildOptions = {
   learningOutcomesReadModelLoader?: () => Promise<LearningOutcomesReadModelV1>;
   /** When set, skips disk scan for evidence→learning_outcomes candidate import (tests). */
   evidenceToLearningOutcomesCandidateImportLoader?: () => Promise<EvidenceToLearningOutcomesCandidateImportV1>;
+  /** When set, skips disk load of confidence approvals registry (tests). */
+  learningOutcomesConfidenceApprovalsLoader?: () => LearningOutcomesConfidenceApprovalsLoadedV1;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -787,6 +794,11 @@ export async function buildBuckpartsCommandCenterReport(
               : "npm run buckparts:command-center"
       : "UNKNOWN";
 
+  const learningOutcomesConfidenceApprovals =
+    options.learningOutcomesConfidenceApprovalsLoader?.() ??
+    loadLearningOutcomesConfidenceApprovalsRegistry({ rootDir, fileExists, readTextFile });
+  const confidenceApprovalLookup = createConfidenceApprovalLookup(learningOutcomesConfidenceApprovals.valid_approvals);
+
   const command_center_v2 = buildCommandCenterV2Report({
     now,
     registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
@@ -804,6 +816,8 @@ export async function buildBuckpartsCommandCenterReport(
     demandToCoverageEngine,
     learningOutcomesReadModel,
     evidenceToLearningOutcomesCandidateImport,
+    learningOutcomesConfidenceApprovals,
+    confidenceApprovalLookup,
   });
 
   return {

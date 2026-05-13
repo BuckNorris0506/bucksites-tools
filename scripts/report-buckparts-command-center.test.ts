@@ -9,10 +9,17 @@ import {
   buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
   buildLearningOutcomesWriterReadyBatchReviewV1,
 } from "./lib/learning-outcomes-insert-plan-v1";
+import {
+  buildLearningOutcomesConfidenceApprovalRegistryV1,
+  createConfidenceApprovalLookup,
+  loadLearningOutcomesConfidenceApprovalsRegistry,
+} from "./lib/learning-outcomes-confidence-approvals-registry-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
+  LearningOutcomesConfidenceApprovalRegistryV1,
+  LearningOutcomesConfidenceApprovalsLoadedV1,
   LearningOutcomesInsertPlanV1,
   LearningOutcomesReadModelV1,
   LearningOutcomesOwnerConfidenceAssignmentPlanV1,
@@ -1462,6 +1469,14 @@ function assertConfidenceAssignmentPlanNoBannedClaims(block: LearningOutcomesOwn
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertConfidenceRegistryBlockNoBannedClaims(block: LearningOutcomesConfidenceApprovalRegistryV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -1908,5 +1923,251 @@ test("command_center_v2 surfaces learning_outcomes_owner_confidence_assignment_p
   assert.equal(plan.data_mutation, false);
   assert.equal(plan.owner_approval_required, true);
   assert.equal(plan.rows.length, 1);
+  assertConfidenceAssignmentPlanNoBannedClaims(plan);
+});
+
+function registryKeyedLiveOutcomeCand(args: {
+  source_file: string;
+  slug: string;
+}): EvidenceToLoImportCandidateV1 {
+  return {
+    source_file: args.source_file,
+    proposed_learning_outcome: {
+      slug: args.slug,
+      part_number: args.slug.toUpperCase(),
+      model_number: null,
+      candidate_url: "https://www.amazon.com/dp/B00REGKEY099",
+      retailer: "amazon",
+      outcome: "pass",
+      reason: "Registry-keyed live outcome fixture.",
+      reason_detail: null,
+      confidence: null,
+      cta_status: "live",
+      index_status: null,
+      date_checked: "2026-05-10T12:00:00.000Z",
+      next_action: null,
+      evidence_jsonb_stub: { registry_keyed: true },
+    },
+    mapping_basis: [],
+    missing_or_unknown_fields: ["confidence"],
+    owner_approval_required: true,
+  };
+}
+
+test("learning_outcomes_confidence_approvals_registry loader ignores invalid confidence rows", () => {
+  const loaded = loadLearningOutcomesConfidenceApprovalsRegistry({
+    rootDir: "/tmp",
+    fileExists: () => true,
+    readTextFile: () =>
+      JSON.stringify({
+        contract: "learning_outcomes_confidence_approvals_v1",
+        owner_approved: true,
+        data_mutation: false,
+        approvals: [
+          {
+            source_file: "data/evidence/amazon-good-live-outcome.json",
+            slug: "goodslug",
+            confidence: "exact",
+            approved_by_owner: true,
+            approval_reason: "Valid row.",
+          },
+          {
+            source_file: "data/evidence/amazon-bad-live-outcome.json",
+            slug: "badslug",
+            confidence: "invalid_literal",
+            approved_by_owner: true,
+            approval_reason: "Bad confidence literal.",
+          },
+        ],
+      }),
+  });
+  assert.equal(loaded.runtime_status, "OK");
+  assert.equal(loaded.valid_approvals.length, 1);
+  assert.equal(loaded.valid_approvals[0].slug, "goodslug");
+  assert.equal(loaded.invalid_entries.length, 1);
+  assert.ok(loaded.invalid_entries[0].reasons.some((r) => /exact\|likely\|uncertain/i.test(r)));
+});
+
+test("owner confidence registry applies merged confidence only when source_file and slug align", () => {
+  const sfApproved = "data/evidence/registry-key-alpha-live-outcome.json";
+  const sfOther = "data/evidence/registry-key-beta-live-outcome.json";
+  const slug = "regkey01";
+  const lookup = createConfidenceApprovalLookup([
+    {
+      source_file: sfApproved,
+      slug,
+      confidence: "exact",
+      approved_by_owner: true,
+      approval_reason: "Scoped approval.",
+    },
+  ]);
+  const imp = baseEvidenceImportForPlan({
+    candidates: [
+      registryKeyedLiveOutcomeCand({ source_file: sfApproved, slug }),
+      registryKeyedLiveOutcomeCand({ source_file: sfOther, slug }),
+    ],
+  });
+  const plan = buildLearningOutcomesInsertPlanV1(imp, lookup);
+  assert.equal(plan.writer_ready_count, 1);
+  assert.equal(plan.owner_review_required_count, 1);
+  const w = plan.proposed_first_batch.find((r) => r.disposition === "writer_ready");
+  assert.ok(w);
+  assert.equal(w.source_file, sfApproved);
+  assert.ok(
+    w.reasons.some((x) => /learning-outcomes-confidence-approvals\.json/i.test(x)),
+    "writer_ready row should cite owner registry when confidence merged",
+  );
+  assertInsertPlanNoBannedClaims(plan);
+});
+
+test("registry-approved confidence makes matching live Amazon candidate writer_ready and appears in writer-ready batch review", () => {
+  const sf = "data/evidence/registry-writer-live-outcome.json";
+  const slug = "wrreg01";
+  const lookup = createConfidenceApprovalLookup([
+    {
+      source_file: sf,
+      slug,
+      confidence: "likely",
+      approved_by_owner: true,
+      approval_reason: "Fixture owner approval.",
+    },
+  ]);
+  const imp = baseEvidenceImportForPlan({
+    candidates: [registryKeyedLiveOutcomeCand({ source_file: sf, slug })],
+  });
+  const plan = buildLearningOutcomesInsertPlanV1(imp, lookup);
+  assert.equal(plan.writer_ready_count, 1);
+  assert.equal(plan.proposed_first_batch[0].proposed_learning_outcome.confidence, "likely");
+  const review = buildLearningOutcomesWriterReadyBatchReviewV1(imp, lookup);
+  assert.equal(review.source_writer_ready_count, 1);
+  assert.equal(review.rows[0].proposed_insert_payload.confidence, "likely");
+  assert.equal(review.rows[0].proposed_insert_payload.slug, slug);
+  assertWriterReadyBatchReviewNoBannedClaims(review);
+});
+
+test("learning_outcomes_confidence_approval_registry_v1 counts unapplied approvals when no candidate matches", () => {
+  const imp = baseEvidenceImportForPlan({
+    candidates: [registryKeyedLiveOutcomeCand({ source_file: "data/evidence/orphan-live-outcome.json", slug: "orphan" })],
+  });
+  const loaded: LearningOutcomesConfidenceApprovalsLoadedV1 = {
+    registry_relative_path: "data/ops/learning-outcomes-confidence-approvals.json",
+    runtime_status: "OK",
+    valid_approvals: [
+      {
+        source_file: "data/evidence/not-present-file-live-outcome.json",
+        slug: "ghost",
+        confidence: "exact",
+        approved_by_owner: true,
+        approval_reason: "No matching candidate in this import.",
+      },
+    ],
+    invalid_entries: [],
+    proven_facts: [],
+    unknown_facts: [],
+  };
+  const reg = buildLearningOutcomesConfidenceApprovalRegistryV1(imp, loaded);
+  assert.equal(reg.contract, "learning_outcomes_confidence_approval_registry_v1");
+  assert.equal(reg.data_mutation, false);
+  assert.equal(reg.owner_approval_required, true);
+  assert.equal(reg.valid_approval_count, 1);
+  assert.equal(reg.invalid_approval_count, 0);
+  assert.equal(reg.applied_approval_count, 0);
+  assert.equal(reg.unapplied_approval_count, 1);
+  assertConfidenceRegistryBlockNoBannedClaims(reg);
+});
+
+test("empty owner confidence registry does not infer confidence for candidates", () => {
+  const imp = baseEvidenceImportForPlan({
+    candidates: [registryKeyedLiveOutcomeCand({ source_file: "data/evidence/no-registry-live-outcome.json", slug: "noregl" })],
+  });
+  const emptyLookup = createConfidenceApprovalLookup([]);
+  const plan = buildLearningOutcomesInsertPlanV1(imp, emptyLookup);
+  assert.equal(plan.writer_ready_count, 0);
+  assert.equal(plan.owner_review_required_count, 1);
+  assert.equal(plan.proposed_first_batch[0].proposed_learning_outcome.confidence, null);
+  assert.ok(
+    !plan.proven_facts.some((f) => /registry merged confidence/i.test(f)),
+    "must not claim registry merge when lookup is empty",
+  );
+  assertInsertPlanNoBannedClaims(plan);
+});
+
+test("command_center_v2 learning_outcomes_confidence_approval_registry_v1 is read_only with accurate counts", async () => {
+  const sf = "data/evidence/cc-reg-live-outcome.json";
+  const slug = "ccreg99";
+  const imp = baseEvidenceImportForPlan({
+    candidates: [registryKeyedLiveOutcomeCand({ source_file: sf, slug })],
+  });
+  const loaded: LearningOutcomesConfidenceApprovalsLoadedV1 = {
+    registry_relative_path: "data/ops/learning-outcomes-confidence-approvals.json",
+    runtime_status: "OK",
+    valid_approvals: [
+      {
+        source_file: sf,
+        slug,
+        confidence: "uncertain",
+        approved_by_owner: true,
+        approval_reason: "CC fixture.",
+      },
+      {
+        source_file: "data/evidence/unused-in-import-live-outcome.json",
+        slug: "lonely",
+        confidence: "exact",
+        approved_by_owner: true,
+        approval_reason: "Unmatched approval row.",
+      },
+    ],
+    invalid_entries: [{ index: 2, reasons: ["approvals[2].confidence must be exact|likely|uncertain."] }],
+    proven_facts: [],
+    unknown_facts: [],
+  };
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    learningOutcomesConfidenceApprovalsLoader: () => loaded,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const reg = report.command_center_v2.learning_outcomes_confidence_approval_registry_v1;
+  assert.equal(reg.contract, "learning_outcomes_confidence_approval_registry_v1");
+  assert.equal(reg.runtime_status, "OK");
+  assert.equal(reg.registry_path, "data/ops/learning-outcomes-confidence-approvals.json");
+  assert.equal(reg.data_mutation, false);
+  assert.equal(reg.owner_approval_required, true);
+  assert.equal(reg.valid_approval_count, 2);
+  assert.equal(reg.invalid_approval_count, 1);
+  assert.equal(reg.applied_approval_count, 1);
+  assert.equal(reg.unapplied_approval_count, 1);
+  assert.ok(Array.isArray(reg.proven_facts));
+  assert.ok(Array.isArray(reg.unknown_facts));
+  assertConfidenceRegistryBlockNoBannedClaims(reg);
+
+  const insertPlan = report.command_center_v2.learning_outcomes_insert_plan_v1;
+  assert.equal(insertPlan.writer_ready_count, 1);
+  assert.equal(insertPlan.data_mutation, false);
+  assert.equal(insertPlan.owner_approval_required, true);
+  assertInsertPlanNoBannedClaims(insertPlan);
+
+  const assignPlan = report.command_center_v2.learning_outcomes_owner_confidence_assignment_plan_v1;
+  assert.equal(assignPlan.assignment_candidate_count, 0);
+  assert.equal(assignPlan.data_mutation, false);
+  assertConfidenceAssignmentPlanNoBannedClaims(assignPlan);
+
+  const wrBatch = report.command_center_v2.learning_outcomes_writer_ready_batch_review_v1;
+  assert.equal(wrBatch.source_writer_ready_count, 1);
+  assert.equal(wrBatch.rows[0].proposed_insert_payload.confidence, "uncertain");
+  assertWriterReadyBatchReviewNoBannedClaims(wrBatch);
+});
+
+test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {
+  const imp = baseEvidenceImportForPlan({
+    candidates: [confidenceAssignmentEligibleCand(0)],
+  });
+  const plan = buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(imp, createConfidenceApprovalLookup([]));
+  assert.equal(plan.rows.length, 1);
+  assert.equal(plan.rows[0].matching_owner_confidence_registry_entry, false);
   assertConfidenceAssignmentPlanNoBannedClaims(plan);
 });

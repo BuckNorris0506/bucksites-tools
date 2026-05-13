@@ -1,0 +1,14 @@
+{
+  "contract": "learning_outcomes_confidence_approvals_v1",
+  "owner_approved": true,
+  "data_mutation": false,
+  "approvals": [
+    {
+      "source_file": "data/evidence/amazon-4396710-live-outcome.2026-05-04.json",
+      "slug": "4396710",
+      "confidence": "exact",
+      "approved_by_owner": true,
+      "approval_reason": "Owner-approved first-batch confidence assignment for existing live outcome evidence only."
+    }
+  ]
+}

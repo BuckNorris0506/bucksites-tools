@@ -8,6 +8,10 @@ import type {
 } from "./buckparts-command-center-v2-types";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import { validateLearningOutcomeInput } from "./learning-outcomes-writer";
+import {
+  createConfidenceApprovalLookup,
+  type ConfidenceApprovalLookup,
+} from "./learning-outcomes-confidence-approvals-registry-v1";
 
 const FIRST_BATCH_CAP = 10;
 const OWNER_OR_BLOCKED_CAP = 20;
@@ -88,15 +92,21 @@ function validateWriterOrError(p: ProposedLearningOutcomeRowV1): { ok: true } | 
   }
 }
 
-function classifyCandidate(c: EvidenceToLoImportCandidateV1): ClassifiedRow {
-  const p = c.proposed_learning_outcome;
-  const prefer = matchesLiveAmazonPrefer(c);
+function classifyCandidate(c: EvidenceToLoImportCandidateV1, confidenceLookup: ConfidenceApprovalLookup): ClassifiedRow {
+  const { proposed: p, registry_applied: registry_applied } = confidenceLookup.mergeCandidate(c);
+  const cForPrefer: EvidenceToLoImportCandidateV1 = { ...c, proposed_learning_outcome: p };
+  const prefer = matchesLiveAmazonPrefer(cForPrefer);
   const vr = validateWriterOrError(p);
   const reasons: string[] = [];
   const actions: string[] = [];
 
   if (vr.ok) {
     reasons.push("Passes validateLearningOutcomeInput from learning-outcomes-writer.ts (read-only gate for writer-ready).");
+    if (registry_applied) {
+      reasons.push(
+        "Confidence literal applied from data/ops/learning-outcomes-confidence-approvals.json for matching source_file + slug or token — owner-approved registry row only; not inferred from evidence JSON.",
+      );
+    }
     if (prefer) {
       reasons.push("Matches live Amazon + live-outcome filename preference (ordering hint only; not purchase or shelf-fit claims).");
     }
@@ -145,8 +155,10 @@ function rowKey(c: ClassifiedRow): string {
 
 export function buildLearningOutcomesInsertPlanV1(
   evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+  confidenceLookup: ConfidenceApprovalLookup | null = null,
 ): LearningOutcomesInsertPlanV1 {
   const unknown_facts: string[] = [];
+  const l = confidenceLookup ?? createConfidenceApprovalLookup([]);
   if (evidenceImport.contract !== "evidence_to_learning_outcomes_candidate_import_v1") {
     return {
       contract: "learning_outcomes_insert_plan_v1",
@@ -169,7 +181,7 @@ export function buildLearningOutcomesInsertPlanV1(
 
   const fullCandidates =
     evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
-  const classified = fullCandidates.map(classifyCandidate);
+  const classified = fullCandidates.map((c) => classifyCandidate(c, l));
   const writer_ready_count = classified.filter((r) => r.disposition === "writer_ready").length;
   const owner_review_required_count = classified.filter((r) => r.disposition === "owner_review_required").length;
   const blocked_count = classified.filter((r) => r.disposition === "blocked_from_writer_batch").length;
@@ -226,6 +238,11 @@ export function buildLearningOutcomesInsertPlanV1(
     "Preference for live Amazon + live-outcome filename does not assert buy readiness, shelf-compatibility claims, revenue, or shopper-facing publish approval.",
     "Disposition counts and batch ordering use candidates_evaluated_uncapped_v1 when provided (full internal set); proposed_first_batch and blocked_or_needs_owner_review remain capped arrays.",
   ];
+  if (l.validApprovalKeys.size > 0) {
+    proven_facts.push(
+      "Owner registry data/ops/learning-outcomes-confidence-approvals.json may supply explicit confidence only for matching source_file + slug or token rows — merged read-only before validation; never inferred from evidence bodies.",
+    );
+  }
 
   return {
     contract: "learning_outcomes_insert_plan_v1",
@@ -256,6 +273,7 @@ function writerReadyValidationBasis(classifiedRow: ClassifiedRow): string[] {
  */
 export function buildLearningOutcomesWriterReadyBatchReviewV1(
   evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+  confidenceLookup: ConfidenceApprovalLookup | null = null,
 ): LearningOutcomesWriterReadyBatchReviewV1 {
   if (evidenceImport.contract !== "evidence_to_learning_outcomes_candidate_import_v1") {
     return {
@@ -274,9 +292,10 @@ export function buildLearningOutcomesWriterReadyBatchReviewV1(
   const runtime_status: "OK" | "UNKNOWN_INPUT" =
     evidenceImport.runtime_status === "OK" ? "OK" : "UNKNOWN_INPUT";
 
+  const l = confidenceLookup ?? createConfidenceApprovalLookup([]);
   const fullCandidates =
     evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
-  const classified = fullCandidates.map(classifyCandidate);
+  const classified = fullCandidates.map((c) => classifyCandidate(c, l));
   const writerReady = classified.filter((r) => r.disposition === "writer_ready");
   const source_writer_ready_count = writerReady.length;
 
@@ -335,6 +354,7 @@ export function buildLearningOutcomesWriterReadyBatchReviewV1(
 
 export function buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
   evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+  confidenceLookup: ConfidenceApprovalLookup | null = null,
 ): LearningOutcomesOwnerConfidenceAssignmentPlanV1 {
   if (evidenceImport.contract !== "evidence_to_learning_outcomes_candidate_import_v1") {
     return {
@@ -355,9 +375,10 @@ export function buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
   const runtime_status: "OK" | "UNKNOWN_INPUT" =
     evidenceImport.runtime_status === "OK" ? "OK" : "UNKNOWN_INPUT";
 
+  const l = confidenceLookup ?? createConfidenceApprovalLookup([]);
   const fullCandidates =
     evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
-  const classified = fullCandidates.map(classifyCandidate);
+  const classified = fullCandidates.map((c) => classifyCandidate(c, l));
 
   const eligible = classified.filter(
     (r) =>
@@ -376,20 +397,27 @@ export function buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
     );
   }
 
-  const rows = eligible.slice(0, CONFIDENCE_ASSIGNMENT_CAP).map((r) => ({
-    source_file: r.source_file,
-    proposed_learning_outcome: r.proposed,
-    missing_field: "confidence" as const,
-    allowed_confidence_values: ["exact", "likely", "uncertain"] as const,
-    recommended_owner_question: `Choose explicit confidence (exact, likely, or uncertain) for slug "${r.proposed.slug}" from ${r.source_file} using operator judgment — this plan does not assign or infer a value from evidence JSON.`,
-    blocked_until_owner_sets_confidence: true as const,
-    owner_approval_required: true as const,
-  }));
+  const rows = eligible.slice(0, CONFIDENCE_ASSIGNMENT_CAP).map((r) => {
+    const orig = fullCandidates.find(
+      (x) => x.source_file === r.source_file && x.proposed_learning_outcome.slug === r.proposed.slug,
+    );
+    return {
+      source_file: r.source_file,
+      proposed_learning_outcome: r.proposed,
+      missing_field: "confidence" as const,
+      allowed_confidence_values: ["exact", "likely", "uncertain"] as const,
+      recommended_owner_question: `Choose explicit confidence (exact, likely, or uncertain) for slug "${r.proposed.slug}" from ${r.source_file} using operator judgment — this plan does not assign or infer a value from evidence JSON.`,
+      blocked_until_owner_sets_confidence: true as const,
+      owner_approval_required: true as const,
+      matching_owner_confidence_registry_entry: orig ? l.hasRegistryEntryForCandidate(orig) : false,
+    };
+  });
 
   const proven_facts: string[] = [
     "learning_outcomes_owner_confidence_assignment_plan_v1 lists live-outcome Amazon pass rows classified owner_review_required solely because confidence is null and validateLearningOutcomeInput succeeds when any allowed literal is supplied internally — no literal is chosen or persisted here.",
     "Rows match insert-plan preference (live Amazon CTA, https candidate_url, live-outcome filename); staged multipack unknown/not_live paths are excluded by those gates.",
     "No Supabase calls; confidence is never auto-filled from evidence JSON in this block.",
+    "matching_owner_confidence_registry_entry is true when the confidence registry lists this source_file + slug/token pair even if confidence is still null on the candidate (for example path normalization mismatch).",
   ];
 
   return {

@@ -1,5 +1,9 @@
 import type { AmazonFirstBlockedConversionQueueReport } from "../report-amazon-first-blocked-conversion-queue";
 import {
+  buildLearningOutcomesConfidenceApprovalRegistryV1,
+  type ConfidenceApprovalLookup,
+} from "./learning-outcomes-confidence-approvals-registry-v1";
+import {
   buildLearningOutcomesInsertPlanV1,
   buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
   buildLearningOutcomesWriterReadyBatchReviewV1,
@@ -13,6 +17,7 @@ import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceInventoryV1,
   EvidenceRollup,
+  LearningOutcomesConfidenceApprovalsLoadedV1,
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
   RecommendationAuthorityRecord,
@@ -172,6 +177,8 @@ export function buildCommandCenterV2Report(input: {
   demandToCoverageEngine: DemandToCoverageEngineV1;
   learningOutcomesReadModel: LearningOutcomesReadModelV1;
   evidenceToLearningOutcomesCandidateImport: EvidenceToLearningOutcomesCandidateImportV1;
+  learningOutcomesConfidenceApprovals: LearningOutcomesConfidenceApprovalsLoadedV1;
+  confidenceApprovalLookup: ConfidenceApprovalLookup;
 }): CommandCenterV2Report {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
@@ -449,12 +456,19 @@ export function buildCommandCenterV2Report(input: {
     evidence_to_learning_outcomes_candidate_import_v1: input.evidenceToLearningOutcomesCandidateImport,
     learning_outcomes_insert_plan_v1: buildLearningOutcomesInsertPlanV1(
       input.evidenceToLearningOutcomesCandidateImport,
+      input.confidenceApprovalLookup,
     ),
     learning_outcomes_writer_ready_batch_review_v1: buildLearningOutcomesWriterReadyBatchReviewV1(
       input.evidenceToLearningOutcomesCandidateImport,
+      input.confidenceApprovalLookup,
     ),
     learning_outcomes_owner_confidence_assignment_plan_v1: buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
       input.evidenceToLearningOutcomesCandidateImport,
+      input.confidenceApprovalLookup,
+    ),
+    learning_outcomes_confidence_approval_registry_v1: buildLearningOutcomesConfidenceApprovalRegistryV1(
+      input.evidenceToLearningOutcomesCandidateImport,
+      input.learningOutcomesConfidenceApprovals,
     ),
     recommendation_authority: {
       evaluated_actions: recommendationAuthorityRecords,

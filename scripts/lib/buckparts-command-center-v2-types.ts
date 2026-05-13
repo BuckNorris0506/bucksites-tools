@@ -449,6 +449,8 @@ export type LearningOutcomesOwnerConfidenceAssignmentPlanRowV1 = {
   recommended_owner_question: string;
   blocked_until_owner_sets_confidence: true;
   owner_approval_required: true;
+  /** True when a valid registry row targets this source_file + slug/token even if confidence is still null on the candidate (e.g. path mismatch). */
+  matching_owner_confidence_registry_entry: boolean;
 };
 
 export type LearningOutcomesOwnerConfidenceAssignmentPlanV1 = {
@@ -461,6 +463,38 @@ export type LearningOutcomesOwnerConfidenceAssignmentPlanV1 = {
   unknown_facts: string[];
   owner_approval_required: true;
   data_mutation: false;
+};
+
+export type LearningOutcomesConfidenceApprovalEntryV1 = {
+  source_file: string;
+  slug: string;
+  confidence: "exact" | "likely" | "uncertain";
+  approved_by_owner: true;
+  approval_reason: string;
+};
+
+export type LearningOutcomesConfidenceApprovalRegistryV1 = {
+  contract: "learning_outcomes_confidence_approval_registry_v1";
+  runtime_status: "OK" | "MISSING_FILE" | "INVALID_JSON" | "INVALID_SCHEMA" | "UNKNOWN_INPUT";
+  registry_path: string;
+  valid_approval_count: number;
+  invalid_approval_count: number;
+  applied_approval_count: number;
+  unapplied_approval_count: number;
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: true;
+  data_mutation: false;
+};
+
+/** Result of read-only `loadLearningOutcomesConfidenceApprovalsRegistry` (not a Command Center block). */
+export type LearningOutcomesConfidenceApprovalsLoadedV1 = {
+  registry_relative_path: string;
+  runtime_status: "OK" | "MISSING_FILE" | "INVALID_JSON" | "INVALID_SCHEMA";
+  valid_approvals: LearningOutcomesConfidenceApprovalEntryV1[];
+  invalid_entries: Array<{ index: number; reasons: string[] }>;
+  proven_facts: string[];
+  unknown_facts: string[];
 };
 
 export type CommandCenterV2Report = {
@@ -487,6 +521,8 @@ export type CommandCenterV2Report = {
   learning_outcomes_writer_ready_batch_review_v1: LearningOutcomesWriterReadyBatchReviewV1;
   /** Live-outcome Amazon rows blocked only by missing confidence — owner must choose literal; no auto-fill. */
   learning_outcomes_owner_confidence_assignment_plan_v1: LearningOutcomesOwnerConfidenceAssignmentPlanV1;
+  /** Read-only view of owner-approved confidence registry file + match counts vs evidence candidates. */
+  learning_outcomes_confidence_approval_registry_v1: LearningOutcomesConfidenceApprovalRegistryV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };
