@@ -279,6 +279,63 @@ export type DemandToCoverageEngineV1 = {
   unknown_facts: string[];
 };
 
+export type LearningOutcomesReadModelRuntimeStatus = "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_QUERY_ERROR";
+
+export type LearningOutcomesByOutcomeV1 = {
+  pass: number;
+  fail: number;
+  blocked: number;
+  unknown: number;
+};
+
+export type LearningOutcomesByConfidenceV1 = {
+  exact: number;
+  likely: number;
+  uncertain: number;
+  /** Rows where `confidence` is null (allowed by DDL). */
+  unset: number;
+};
+
+export type LearningOutcomesByCtaStatusV1 = {
+  live: number;
+  not_live: number;
+  blocked: number;
+  /** Rows where `cta_status` is null (allowed by DDL). */
+  unset: number;
+};
+
+/** Latest rows: proven columns only; excludes evidence JSON, URLs, free-text reason fields, clicks, conversions. */
+export type LearningOutcomesLatestRowV1 = {
+  id: string;
+  slug: string;
+  outcome: string;
+  confidence: string | null;
+  cta_status: string | null;
+  date_checked: string;
+  created_at: string;
+  retailer: string | null;
+  index_status: string | null;
+  part_number: string | null;
+  model_number: string | null;
+};
+
+export type LearningOutcomesReadModelV1 = {
+  contract: "learning_outcomes_read_model_v1";
+  runtime_status: LearningOutcomesReadModelRuntimeStatus;
+  /** Head count on `public.learning_outcomes`; UNKNOWN when query fails. */
+  total_outcomes: number | "UNKNOWN";
+  /** Count of rows with `date_checked` in the last `recent_window_days` days (operator window). */
+  recent_outcomes: number | "UNKNOWN";
+  recent_window_days: 30;
+  by_outcome: LearningOutcomesByOutcomeV1 | "UNKNOWN";
+  by_confidence: LearningOutcomesByConfidenceV1 | "UNKNOWN";
+  by_cta_status: LearningOutcomesByCtaStatusV1 | "UNKNOWN";
+  /** Newest by `date_checked` desc, capped (no large payloads). */
+  latest_outcomes: LearningOutcomesLatestRowV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -293,6 +350,8 @@ export type CommandCenterV2Report = {
   revenue_snapshot: RevenueSnapshotLane;
   /** Bounded read-only view of search demand gaps — not fit/buy proof. */
   demand_to_coverage_engine_v1: DemandToCoverageEngineV1;
+  /** Read-only visibility into `public.learning_outcomes` aggregates — not fit, buy, or revenue proof. */
+  learning_outcomes_read_model_v1: LearningOutcomesReadModelV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

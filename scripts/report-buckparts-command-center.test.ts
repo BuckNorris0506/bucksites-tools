@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
-import type { LiveSiteMonitorV1 } from "./lib/buckparts-command-center-v2-types";
+import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
+import type { LiveSiteMonitorV1, LearningOutcomesReadModelV1 } from "./lib/buckparts-command-center-v2-types";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 
 const BASE_TRACKER = JSON.stringify([
@@ -249,6 +250,10 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(report.command_center_v2.read_only, true);
   assert.equal(report.command_center_v2.data_mutation, false);
   assert.equal(report.command_center_v2.demand_to_coverage_engine_v1.contract, "demand_to_coverage_engine_v1");
+  assert.equal(
+    report.command_center_v2.learning_outcomes_read_model_v1.contract,
+    "learning_outcomes_read_model_v1",
+  );
 });
 
 test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
@@ -1151,4 +1156,112 @@ test("command_center_v2 demand_to_coverage_engine_v1 surfaces UNKNOWN_DB_UNAVAIL
   assert.equal(d.rows.length, 0);
   assert.ok(d.unknown_facts.some((s) => /supabase/i.test(s)));
   assertDemandEngineNoBuyClaims(d);
+});
+
+function learningOutcomesReadModelOkFixture(): LearningOutcomesReadModelV1 {
+  return {
+    contract: "learning_outcomes_read_model_v1",
+    runtime_status: "OK",
+    total_outcomes: 5,
+    recent_outcomes: 2,
+    recent_window_days: 30,
+    by_outcome: { pass: 2, fail: 1, blocked: 1, unknown: 1 },
+    by_confidence: { exact: 3, likely: 1, uncertain: 0, unset: 1 },
+    by_cta_status: { live: 2, not_live: 2, blocked: 0, unset: 1 },
+    latest_outcomes: [
+      {
+        id: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        slug: "fixture-slug",
+        outcome: "pass",
+        confidence: "exact",
+        cta_status: "live",
+        date_checked: "2026-05-10T00:00:00.000Z",
+        created_at: "2026-05-09T00:00:00.000Z",
+        retailer: "amazon",
+        index_status: null,
+        part_number: "PN-1",
+        model_number: null,
+      },
+    ],
+    proven_facts: ["Fixture: row counts and buckets are synthetic for Command Center test wiring only."],
+    unknown_facts: [],
+  };
+}
+
+function assertLearningReadModelNoFitBuyRevenueClaims(lo: LearningOutcomesReadModelV1) {
+  const blob = JSON.stringify(lo);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
+test("command_center_v2 learning_outcomes_read_model_v1 surfaces counts and latest rows read-only", async () => {
+  const lo = learningOutcomesReadModelOkFixture();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => lo,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const m = report.command_center_v2.learning_outcomes_read_model_v1;
+  assert.equal(m.contract, "learning_outcomes_read_model_v1");
+  assert.equal(m.runtime_status, "OK");
+  assert.equal(m.total_outcomes, 5);
+  assert.equal(m.recent_outcomes, 2);
+  assert.equal(m.recent_window_days, 30);
+  assert.deepEqual(m.by_outcome, { pass: 2, fail: 1, blocked: 1, unknown: 1 });
+  assert.equal(m.latest_outcomes.length, 1);
+  assert.equal(m.latest_outcomes[0].slug, "fixture-slug");
+  assertLearningReadModelNoFitBuyRevenueClaims(m);
+});
+
+test("command_center_v2 learning_outcomes_read_model_v1 empty table shape", async () => {
+  const lo: LearningOutcomesReadModelV1 = {
+    contract: "learning_outcomes_read_model_v1",
+    runtime_status: "OK",
+    total_outcomes: 0,
+    recent_outcomes: 0,
+    recent_window_days: 30,
+    by_outcome: { pass: 0, fail: 0, blocked: 0, unknown: 0 },
+    by_confidence: { exact: 0, likely: 0, uncertain: 0, unset: 0 },
+    by_cta_status: { live: 0, not_live: 0, blocked: 0, unset: 0 },
+    latest_outcomes: [],
+    proven_facts: ["Fixture: zero rows."],
+    unknown_facts: [],
+  };
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => lo,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const m = report.command_center_v2.learning_outcomes_read_model_v1;
+  assert.equal(m.total_outcomes, 0);
+  assert.deepEqual(m.by_outcome, { pass: 0, fail: 0, blocked: 0, unknown: 0 });
+  assertLearningReadModelNoFitBuyRevenueClaims(m);
+});
+
+test("command_center_v2 learning_outcomes_read_model_v1 degraded when DB unavailable", async () => {
+  const lo = degradedLearningOutcomesReadModelV1("UNKNOWN_DB_UNAVAILABLE", [
+    "Missing NEXT_PUBLIC_SUPABASE_URL (or SUPABASE_URL) for import scripts.",
+  ]);
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => lo,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const m = report.command_center_v2.learning_outcomes_read_model_v1;
+  assert.equal(m.runtime_status, "UNKNOWN_DB_UNAVAILABLE");
+  assert.equal(m.total_outcomes, "UNKNOWN");
+  assert.equal(m.latest_outcomes.length, 0);
+  assert.ok(m.unknown_facts.some((s) => /supabase/i.test(s)));
+  assertLearningReadModelNoFitBuyRevenueClaims(m);
 });

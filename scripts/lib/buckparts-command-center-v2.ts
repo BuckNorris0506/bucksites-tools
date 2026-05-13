@@ -7,6 +7,7 @@ import type {
   DemandToCoverageEngineV1,
   EvidenceInventoryV1,
   EvidenceRollup,
+  LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
   RecommendationAuthorityRecord,
   RevenueSnapshotLane,
@@ -163,6 +164,7 @@ export function buildCommandCenterV2Report(input: {
   clickVisibility: ClickVisibilitySnapshot;
   liveSiteMonitor: LiveSiteMonitorV1 | null;
   demandToCoverageEngine: DemandToCoverageEngineV1;
+  learningOutcomesReadModel: LearningOutcomesReadModelV1;
 }): CommandCenterV2Report {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
@@ -436,6 +438,7 @@ export function buildCommandCenterV2Report(input: {
     deploy_live_site_status: deployLane,
     revenue_snapshot: revenueLane,
     demand_to_coverage_engine_v1: input.demandToCoverageEngine,
+    learning_outcomes_read_model_v1: input.learningOutcomesReadModel,
     recommendation_authority: {
       evaluated_actions: recommendationAuthorityRecords,
     },

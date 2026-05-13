@@ -17,6 +17,7 @@ import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
 import type {
   CommandCenterV2Report,
   DemandToCoverageEngineV1,
+  LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
 } from "./lib/buckparts-command-center-v2-types";
 import { loadLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
@@ -191,6 +192,8 @@ type BuildOptions = {
   liveSiteMonitor?: LiveSiteMonitorV1 | null;
   /** When set, skips live `search_gaps` read (tests). */
   demandToCoverageEngineLoader?: () => Promise<DemandToCoverageEngineV1>;
+  /** When set, skips live `learning_outcomes` read (tests). */
+  learningOutcomesReadModelLoader?: () => Promise<LearningOutcomesReadModelV1>;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -383,6 +386,13 @@ export async function buildBuckpartsCommandCenterReport(
       return fetchDemandToCoverageEngineV1FromSupabase();
     });
 
+  const learningOutcomesReadModelLoader =
+    options.learningOutcomesReadModelLoader ??
+    (async () => {
+      const { fetchLearningOutcomesReadModelV1FromSupabase } = await import("./lib/learning-outcomes-read-model-v1");
+      return fetchLearningOutcomesReadModelV1FromSupabase({ now });
+    });
+
   const [
     commandSurface,
     affiliateTracker,
@@ -394,6 +404,7 @@ export async function buildBuckpartsCommandCenterReport(
     clickVisibility,
     liveSiteMonitor,
     demandToCoverageEngine,
+    learningOutcomesReadModel,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -407,6 +418,7 @@ export async function buildBuckpartsCommandCenterReport(
       ? Promise.resolve(options.liveSiteMonitor)
       : loadLiveSiteMonitorForCommandCenter({ rootDir, fileExists, readTextFile }),
     demandToCoverageLoader(),
+    learningOutcomesReadModelLoader(),
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
@@ -776,6 +788,7 @@ export async function buildBuckpartsCommandCenterReport(
     clickVisibility,
     liveSiteMonitor,
     demandToCoverageEngine,
+    learningOutcomesReadModel,
   });
 
   return {
