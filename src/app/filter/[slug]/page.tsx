@@ -144,7 +144,17 @@ export default async function FilterPage({ params }: Props) {
             Compatible refrigerator models ({filter.fridge_models.length})
           </h2>
           {filter.fridge_models.length === 0 ? (
-            <p className="text-sm text-stone-600">No models are listed yet.</p>
+            <p className="text-sm leading-relaxed text-stone-600">
+              No refrigerator models are linked to this part number on file yet. If you have your fridge model or
+              another code from the old filter,{" "}
+              <Link
+                href="/search"
+                className="font-semibold text-blue-950 underline decoration-blue-950/30 underline-offset-2 hover:decoration-blue-950/55"
+              >
+                try search
+              </Link>{" "}
+              to check spelling, then compare what you see to the numbers on the cartridge before you buy.
+            </p>
           ) : (
             <ul className="divide-y divide-stone-200/80 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200/45">
               {filter.fridge_models.map((m) => (

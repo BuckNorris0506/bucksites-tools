@@ -28,12 +28,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   if (!query) {
     return {
       title: `Search filters · ${SITE_DISPLAY_NAME}`,
-      description: `Look up refrigerator water filters by fridge model or filter number on ${SITE_DISPLAY_NAME}. Compare what we match in our reference before you buy.`,
+      description: `Look up refrigerator water filters by fridge model or filter number on ${SITE_DISPLAY_NAME}. Compare what we list on file with your old filter before you buy.`,
     };
   }
   return {
     title: `Search “${query}” · ${SITE_DISPLAY_NAME}`,
-    description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters first; other maintained reference lanes may appear when they match. Open a result to verify the part against your unit and old filter.`,
+    description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters first; other categories we maintain may appear when they match. Open a result to verify the part against your unit and old filter.`,
     robots: undefined,
   };
 }
@@ -246,13 +246,14 @@ export default async function SearchPage({ searchParams }: Props) {
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Start with your <strong className="font-medium text-neutral-800 dark:text-neutral-200">fridge model</strong>{" "}
           or <strong className="font-medium text-neutral-800 dark:text-neutral-200">filter number</strong> from
-          the nameplate and old cartridge. We lead with refrigerator water filters; if another reference lane
-          matches your query, it will show in its own section below.
+          the nameplate and old cartridge. We lead with refrigerator water filters; when another category we
+          maintain matches your spelling, it appears in its own section below.
         </p>
         <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
           Search can return models, filter numbers, alternates, or pages to compare. Open a
           result to check what BuckParts found, then compare the part number with your old filter
-          or manual. Buying options appear only when the destination looks safe enough to show.
+          or manual. Store buttons only show when BuckParts has enough listing evidence for that page—so not every
+          result includes a way to buy.
         </div>
         <SearchForm initialQuery={query} />
       </div>

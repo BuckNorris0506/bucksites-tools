@@ -21,9 +21,9 @@ function IconBullet() {
 }
 
 function fitConfidenceLabel(confidence: "high" | "medium" | "unknown"): string {
-  if (confidence === "high") return "Fit confidence: strong";
-  if (confidence === "medium") return "Fit confidence: review";
-  return "Fit confidence: verify";
+  if (confidence === "high") return "Fit: numbers line up well on file";
+  if (confidence === "medium") return "Fit: compare once more on your unit";
+  return "Fit: confirm using your old part or manual";
 }
 
 /**
@@ -65,7 +65,7 @@ export function PartTruthPanel({
             <IconBullet />
             <span>
               {compatibleModelCount} compatible model
-              {compatibleModelCount === 1 ? "" : "s"} in our reference
+              {compatibleModelCount === 1 ? "" : "s"} on file for this part number
             </span>
           </li>
           <li className="flex items-start gap-2">
@@ -82,7 +82,7 @@ export function PartTruthPanel({
       </div>
 
       <p className="mt-3 text-xs font-medium text-neutral-600 dark:text-neutral-400">
-        Model compatibility shown here comes from our reference data.
+        Model lists here reflect what we have on file for this part number—not every unit ever sold.
       </p>
 
       {trust.requires_manual_verification && (

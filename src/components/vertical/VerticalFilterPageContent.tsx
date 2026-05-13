@@ -12,7 +12,7 @@ import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 
 const DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE =
-  "BuckParts does not have enough proof to show a buy button for this replacement part yet. Verify the part number against the old part or your manual first.";
+  "We are not showing a store button yet because we have not verified a retailer listing that lines up with this part number the way we need. Compare the part and model numbers to your old part or manual, then try search again if you still need a match.";
 
 export type VerticalFilterModelRow = {
   id: string;
