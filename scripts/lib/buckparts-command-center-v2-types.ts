@@ -584,7 +584,7 @@ export type TopOfGameFoundationScorecardV1 = {
   lanes: FoundationScorecardLaneV1[];
   blockers: string[];
   next_best_foundation_move: string;
-  owner_dashboard_ready: false;
+  owner_dashboard_ready: boolean;
   owner_dashboard_note: string;
   read_only: true;
   data_mutation: false;

@@ -19,6 +19,7 @@ import type {
   TopOfGameFoundationScorecardV1,
 } from "./buckparts-command-center-v2-types";
 import { computeApprovedInsertExecutorSelectionV1 } from "./learning-outcomes-approved-insert-executor-v1";
+import type { OwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-top-of-game-panel-readiness-v1";
 
 /** Lane max contributions — must sum to 100. */
 export const TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1 = {
@@ -79,7 +80,21 @@ export type BuildTopOfGameFoundationScorecardV1Input = {
   approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
   publicTrustContract: PublicTrustUnificationBackendContractV1;
   revenueLedgerContract: RevenueTruthLedgerContractV1;
+  /** Read-only repo scan of private owner dashboard source — does not execute the dashboard. */
+  ownerDashboardTopOfGamePanelProof: OwnerDashboardTopOfGamePanelProofV1;
 };
+
+function ownerDashboardNoteFromProof(dash: OwnerDashboardTopOfGamePanelProofV1, ready: boolean): string {
+  if (ready) {
+    return `Private owner dashboard source (${dash.dashboard_page_relative_path}) includes the "Top-of-Game Foundation" headline, the top_of_game_foundation_scorecard_v1 contract substring, and TopOfGameFoundationSection — panel wiring is repo-grounded at Command Center build time (read-only scan; not a live render or revenue check).`;
+  }
+  const bits: string[] = ["Top-of-Game Foundation panel wiring not repo-proven for Command Center."];
+  if (dash.runtime_status === "UNKNOWN_INPUT") bits.push("rootDir was empty or invalid.");
+  else if (dash.runtime_status === "MISSING_FILE") bits.push(`Missing file: ${dash.dashboard_page_relative_path}.`);
+  else if (dash.runtime_status === "IO_ERROR") bits.push("Could not read dashboard page.");
+  else if (dash.unknown_facts.length > 0) bits.push(...dash.unknown_facts);
+  return bits.join(" ");
+}
 
 /**
  * Read-only foundation maturity scorecard derived only from existing Command Center v2 slices.
@@ -549,6 +564,16 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
     lanes.find((l) => l.status === "UNKNOWN")?.next_proof_required ??
     "Continue read-only Command Center monitoring; no BLOCKED/UNKNOWN lanes requiring immediate foundation action were synthesized.";
 
+  const dash = input.ownerDashboardTopOfGamePanelProof;
+  const owner_dashboard_ready = dash.runtime_status === "OK" && dash.all_markers_present;
+  for (const f of dash.proven_facts) {
+    if (!proven_facts.includes(f)) proven_facts.push(f);
+  }
+  for (const u of dash.unknown_facts) {
+    if (!unknown_facts.includes(u)) unknown_facts.push(u);
+  }
+  const owner_dashboard_note = ownerDashboardNoteFromProof(dash, owner_dashboard_ready);
+
   return {
     contract: "top_of_game_foundation_scorecard_v1",
     runtime_status,
@@ -558,9 +583,8 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
     lanes,
     blockers,
     next_best_foundation_move,
-    owner_dashboard_ready: false,
-    owner_dashboard_note:
-      "Owner dashboard UI is not implemented yet — this scorecard is a read-only backend contract for future wiring only.",
+    owner_dashboard_ready,
+    owner_dashboard_note,
     read_only: true,
     data_mutation: false,
     proven_facts,

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
@@ -26,6 +26,7 @@ import {
   attachOwnerVerticalLaunchPolicyReport,
   buildOwnerVerticalLaunchPolicyReport,
 } from "@/lib/owner-dashboard/owner-vertical-launch-policy";
+import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "../../../scripts/lib/owner-dashboard-top-of-game-panel-readiness-v1";
 
 describe("page_state_distribution neuron", () => {
   it("is BRIGHT for sitemap artifact inventory contract but UNKNOWN semantic PageState status", () => {
@@ -688,6 +689,7 @@ describe("owner quarantined fridge summary", () => {
     const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
     assert.ok(src.includes("Top-of-Game Foundation"));
     assert.ok(src.includes("top_of_game_foundation_scorecard_v1"));
+    assert.ok(src.includes("TopOfGameFoundationSection"));
     assert.ok(src.includes("14 · Integrity Sentinel"));
     assert.ok(src.includes('label="overall_status"'));
     assert.ok(src.includes('label="action_confidence"'));
@@ -1119,6 +1121,16 @@ describe("owner quarantined fridge summary", () => {
     assert.ok(src.includes("no automatic stop-the-line escalation"));
     assert.ok(src.includes("Integrity action confidence:"));
     assert.ok(src.includes("System status"));
+  });
+
+  it("owner_dashboard_top_of_game_panel_proof_v1 matches this repo checkout", () => {
+    const proof = evaluateOwnerDashboardTopOfGamePanelProofV1({
+      rootDir: process.cwd(),
+      fileExists: existsSync,
+      readTextFile: (p) => readFileSync(p, "utf8"),
+    });
+    assert.equal(proof.all_markers_present, true);
+    assert.equal(proof.runtime_status, "OK");
   });
 
   it("public fridge page behavior wiring remains unchanged", () => {

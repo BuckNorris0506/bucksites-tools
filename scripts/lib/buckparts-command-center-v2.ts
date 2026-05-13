@@ -10,6 +10,7 @@ import {
 } from "./learning-outcomes-insert-plan-v1";
 import { buildPublicTrustUnificationBackendContractV1 } from "./public-trust-unification-backend-contract-v1";
 import { buildRevenueTruthLedgerContractV1 } from "./revenue-truth-ledger-contract-v1";
+import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-top-of-game-panel-readiness-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import type {
   AmazonRescueTokenControlEntry,
@@ -477,6 +478,12 @@ export function buildCommandCenterV2Report(input: {
     evaluated_actions: recommendationAuthorityRecords,
   };
 
+  const ownerDashboardTopOfGamePanelProof = evaluateOwnerDashboardTopOfGamePanelProofV1({
+    rootDir: input.rootDir,
+    fileExists: input.fileExists,
+    readTextFile: input.readTextFile,
+  });
+
   const top_of_game_foundation_scorecard_v1 = buildTopOfGameFoundationScorecardV1({
     demand: input.demandToCoverageEngine,
     evidenceImport: input.evidenceToLearningOutcomesCandidateImport,
@@ -493,6 +500,7 @@ export function buildCommandCenterV2Report(input: {
     approvalsLoaded: input.learningOutcomesConfidenceApprovals,
     publicTrustContract: public_trust_unification_backend_contract_v1,
     revenueLedgerContract: revenue_truth_ledger_contract_v1,
+    ownerDashboardTopOfGamePanelProof,
   });
 
   return {

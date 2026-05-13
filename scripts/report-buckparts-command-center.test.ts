@@ -15,6 +15,7 @@ import {
   createConfidenceApprovalLookup,
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
+import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./lib/owner-dashboard-top-of-game-panel-readiness-v1";
 import { TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1 } from "./lib/top-of-game-foundation-scorecard-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
@@ -318,6 +319,67 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(tog.lanes.reduce((s, l) => s + l.max_contribution, 0), 100);
   assert.equal(tog.goal_reached, tog.foundation_maturity_score_100 === 100 && tog.lanes.every((l) => l.status === "PROVEN"));
   assertFoundationScorecardNoBannedClaims(tog);
+});
+
+test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const p = evaluateOwnerDashboardTopOfGamePanelProofV1({
+    rootDir,
+    fileExists: fs.existsSync,
+    readTextFile: (abs) => fs.readFileSync(abs, "utf8"),
+  });
+  assert.equal(p.contract, "owner_dashboard_top_of_game_panel_proof_v1");
+  assert.equal(p.runtime_status, "OK");
+  assert.equal(p.all_markers_present, true);
+});
+
+test("owner_dashboard_top_of_game_panel_proof_v1 fails when dashboard source omits markers", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const p = evaluateOwnerDashboardTopOfGamePanelProofV1({
+    rootDir,
+    fileExists: () => true,
+    readTextFile: () => `export default function Page() { return null; }`,
+  });
+  assert.equal(p.all_markers_present, false);
+  assert.ok(p.unknown_facts.length > 0);
+});
+
+test("command_center_v2 top_of_game owner_dashboard_ready true with real fs readTextFile on this repo", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: () => [],
+    readTextFile: (p) => fs.readFileSync(p, "utf8"),
+  });
+  assert.equal(report.command_center_v2.top_of_game_foundation_scorecard_v1.owner_dashboard_ready, true);
+  assert.ok(
+    report.command_center_v2.top_of_game_foundation_scorecard_v1.owner_dashboard_note.includes(
+      "TopOfGameFoundationSection",
+    ),
+  );
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("command_center_v2 top_of_game owner_dashboard_ready false when dashboard path reads stub without markers", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const dashAbs = path.join(rootDir, "src", "app", "ownerdashboard", "[secret]", "page.tsx");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: () => [],
+    readTextFile: (p) => (p === dashAbs ? "// stub without panel markers" : fs.readFileSync(p, "utf8")),
+  });
+  assert.equal(report.command_center_v2.top_of_game_foundation_scorecard_v1.owner_dashboard_ready, false);
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
 });
 
 test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
