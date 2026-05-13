@@ -14,7 +14,10 @@ import type {
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
 } from "./lib/buckparts-command-center-v2-types";
-import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
+import {
+  buildBuckpartsCommandCenterReport,
+  stripEvidenceUncappedCandidatesForStdout,
+} from "./report-buckparts-command-center";
 
 const BASE_TRACKER = JSON.stringify([
   {
@@ -1298,6 +1301,15 @@ function evidenceImportOkFixture(): EvidenceToLearningOutcomesCandidateImportV1 
     next_action: "Owner reviews before insertLearningOutcome.",
     evidence_jsonb_stub: { import_contract: "evidence_to_learning_outcomes_candidate_import_v1", fixture: true },
   };
+  const candidates = [
+    {
+      source_file: "data/evidence/fixture.json",
+      proposed_learning_outcome: proposed,
+      mapping_basis: ["Fixture candidate; not executed against Supabase."],
+      missing_or_unknown_fields: ["Fixture marks confidence/cta as synthetic operator test data only."],
+      owner_approval_required: true,
+    },
+  ];
   return {
     contract: "evidence_to_learning_outcomes_candidate_import_v1",
     runtime_status: "OK",
@@ -1305,15 +1317,8 @@ function evidenceImportOkFixture(): EvidenceToLearningOutcomesCandidateImportV1 
     parseable_file_count: 2,
     candidate_count: 1,
     rejected_count: 0,
-    candidates: [
-      {
-        source_file: "data/evidence/fixture.json",
-        proposed_learning_outcome: proposed,
-        mapping_basis: ["Fixture candidate; not executed against Supabase."],
-        missing_or_unknown_fields: ["Fixture marks confidence/cta as synthetic operator test data only."],
-        owner_approval_required: true,
-      },
-    ],
+    candidates,
+    candidates_evaluated_uncapped_v1: candidates,
     rejected_samples: [],
     proven_facts: ["Fixture-only import plan."],
     unknown_facts: [],
@@ -1377,6 +1382,9 @@ test("evidence_to_learning_outcomes_candidate_import_v1 maps verdict and rejects
   assert.equal(impOk.scanned_file_count, 3);
   assert.equal(impOk.parseable_file_count, 2);
   assert.ok(impOk.candidate_count >= 1);
+  assert.ok(impOk.candidates_evaluated_uncapped_v1);
+  assert.equal(impOk.candidates_evaluated_uncapped_v1!.length, impOk.candidate_count);
+  assert.equal(impOk.candidates.length, Math.min(impOk.candidate_count, 20));
   const goodCand = impOk.candidates.find((c) => c.source_file.endsWith("good.json"));
   assert.ok(goodCand);
   assert.equal(goodCand!.proposed_learning_outcome.outcome, "pass");
@@ -1404,15 +1412,18 @@ test("evidence_to_learning_outcomes_candidate_import_v1 rejects object without s
 function baseEvidenceImportForPlan(args: {
   candidates: EvidenceToLoImportCandidateV1[];
   candidateCount?: number;
+  candidates_evaluated_uncapped_v1?: EvidenceToLoImportCandidateV1[];
 }): EvidenceToLearningOutcomesCandidateImportV1 {
+  const uncapped = args.candidates_evaluated_uncapped_v1 ?? args.candidates;
   return {
     contract: "evidence_to_learning_outcomes_candidate_import_v1",
     runtime_status: "OK",
     scanned_file_count: 1,
     parseable_file_count: 1,
-    candidate_count: args.candidateCount ?? args.candidates.length,
+    candidate_count: args.candidateCount ?? uncapped.length,
     rejected_count: 0,
     candidates: args.candidates,
+    candidates_evaluated_uncapped_v1: uncapped,
     rejected_samples: [],
     proven_facts: [],
     unknown_facts: [],
@@ -1427,6 +1438,31 @@ function assertInsertPlanNoBannedClaims(plan: LearningOutcomesInsertPlanV1) {
   assert.ok(!/\bfit\s+proof\b/i.test(blob));
   assert.ok(!/\brevenue\s+proof\b/i.test(blob));
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
+function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
+  return {
+    source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
+    proposed_learning_outcome: {
+      slug: `ct${i}`,
+      part_number: `CT${i}`,
+      model_number: null,
+      candidate_url: "https://www.example.com/item",
+      retailer: null,
+      outcome: "unknown",
+      reason: "Insert plan cardinality fixture row.",
+      reason_detail: null,
+      confidence: null,
+      cta_status: "not_live",
+      index_status: null,
+      date_checked: "2026-05-10T00:00:00.000Z",
+      next_action: null,
+      evidence_jsonb_stub: { count_test_index: i },
+    },
+    mapping_basis: [],
+    missing_or_unknown_fields: ["confidence"],
+    owner_approval_required: true,
+  };
 }
 
 test("learning_outcomes_insert_plan_v1 marks live-prefer rows without confidence as owner_review not writer_ready", () => {
@@ -1517,4 +1553,68 @@ test("command_center_v2 learning_outcomes_insert_plan_v1 is read_only with owner
   assert.equal(plan.data_mutation, false);
   assert.equal(plan.owner_approval_required, true);
   assertInsertPlanNoBannedClaims(plan);
+});
+
+test("learning_outcomes_insert_plan_v1 uses uncapped internal candidates when preview is shorter than candidate_count", () => {
+  const all = Array.from({ length: 25 }, (_, i) => insertPlanCountTestCandidate(i));
+  const imp = baseEvidenceImportForPlan({
+    candidates: all.slice(0, 20),
+    candidateCount: 25,
+    candidates_evaluated_uncapped_v1: all,
+  });
+  const plan = buildLearningOutcomesInsertPlanV1(imp);
+  assert.equal(plan.source_candidate_count, 25);
+  assert.equal(plan.blocked_count, 25);
+  assert.ok(!plan.unknown_facts.some((f) => /fell back to preview-only|cardinality mismatch/i.test(f)));
+  assert.ok(plan.proven_facts.some((f) => /candidates_evaluated_uncapped_v1/i.test(f)));
+  assert.ok(plan.proposed_first_batch.length <= 10);
+  assert.ok(plan.blocked_or_needs_owner_review.length <= 20);
+  assert.equal(plan.data_mutation, false);
+  assert.equal(plan.owner_approval_required, true);
+  assertInsertPlanNoBannedClaims(plan);
+});
+
+test("learning_outcomes_insert_plan_v1 warns when uncapped internal list is missing but candidate_count exceeds preview", () => {
+  const all = Array.from({ length: 25 }, (_, i) => insertPlanCountTestCandidate(i));
+  const imp: EvidenceToLearningOutcomesCandidateImportV1 = {
+    contract: "evidence_to_learning_outcomes_candidate_import_v1",
+    runtime_status: "OK",
+    scanned_file_count: 1,
+    parseable_file_count: 1,
+    candidate_count: 25,
+    rejected_count: 0,
+    candidates: all.slice(0, 20),
+    rejected_samples: [],
+    proven_facts: [],
+    unknown_facts: [],
+    owner_approval_required: true,
+    data_mutation: false,
+  };
+  const plan = buildLearningOutcomesInsertPlanV1(imp);
+  assert.equal(plan.blocked_count, 20);
+  assert.ok(plan.unknown_facts.some((f) => /fell back to preview-only rows/i.test(f)));
+});
+
+test("stripEvidenceUncappedCandidatesForStdout drops evidence import uncapped array before JSON", async () => {
+  const all = Array.from({ length: 22 }, (_, i) => insertPlanCountTestCandidate(i));
+  const imp = baseEvidenceImportForPlan({
+    candidates: all.slice(0, 20),
+    candidateCount: 22,
+    candidates_evaluated_uncapped_v1: all,
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.ok(report.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1.candidates_evaluated_uncapped_v1);
+  const stripped = stripEvidenceUncappedCandidatesForStdout(report);
+  assert.ok(
+    !("candidates_evaluated_uncapped_v1" in stripped.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1),
+  );
+  assert.equal(stripped.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1.candidates.length, 20);
 });

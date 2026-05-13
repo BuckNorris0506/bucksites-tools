@@ -864,9 +864,25 @@ export async function buildBuckpartsCommandCenterReport(
   };
 }
 
+/** Omits internal-only full candidate list from JSON stdout so artifacts stay display-capped; insert plan already evaluated in-process. */
+export function stripEvidenceUncappedCandidatesForStdout(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>> {
+  const imp = report.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1;
+  if (imp.candidates_evaluated_uncapped_v1 === undefined) return report;
+  const { candidates_evaluated_uncapped_v1: _omit, ...restImp } = imp;
+  return {
+    ...report,
+    command_center_v2: {
+      ...report.command_center_v2,
+      evidence_to_learning_outcomes_candidate_import_v1: restImp,
+    },
+  };
+}
+
 export async function main(): Promise<void> {
   const report = await buildBuckpartsCommandCenterReport();
-  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  process.stdout.write(`${JSON.stringify(stripEvidenceUncappedCandidatesForStdout(report), null, 2)}\n`);
 }
 
 const entryHref = pathToFileURL(path.resolve(process.argv[1] ?? "")).href;

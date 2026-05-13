@@ -287,6 +287,7 @@ export function buildEvidenceToLearningOutcomesCandidateImportV1(args: {
       candidate_count: 0,
       rejected_count: 1,
       candidates: [],
+      candidates_evaluated_uncapped_v1: [],
       rejected_samples: [{ source_file: EVIDENCE_REL, reject_reason: "Directory missing or unreadable." }],
       proven_facts,
       unknown_facts,
@@ -308,6 +309,7 @@ export function buildEvidenceToLearningOutcomesCandidateImportV1(args: {
       candidate_count: 0,
       rejected_count: 1,
       candidates: [],
+      candidates_evaluated_uncapped_v1: [],
       rejected_samples: [{ source_file: EVIDENCE_REL, reject_reason: `readDir failed: ${msg}` }],
       proven_facts,
       unknown_facts: [...unknown_facts, `IO: ${msg}`],
@@ -360,13 +362,18 @@ export function buildEvidenceToLearningOutcomesCandidateImportV1(args: {
   const totalCand = allCandidates.length;
   const totalRej = allRejections.length;
   if (totalCand > CANDIDATE_CAP) {
-    unknown_facts.push(`Candidate rows discovered (${totalCand}) exceed cap ${CANDIDATE_CAP}; list is truncated.`);
+    proven_facts.push(
+      `candidates preview is capped at ${CANDIDATE_CAP} rows; candidates_evaluated_uncapped_v1 holds all ${totalCand} discovered rows for insert-plan evaluation.`,
+    );
   }
   if (totalRej > REJECTED_SAMPLE_CAP) {
     unknown_facts.push(`Rejected rows (${totalRej}) exceed rejected_samples cap ${REJECTED_SAMPLE_CAP}; samples truncated.`);
   }
 
   proven_facts.push(`scanned_file_count=${names.length}, parseable_file_count=${parseable}.`);
+  proven_facts.push(
+    "candidates_evaluated_uncapped_v1 mirrors every parseable candidate before display capping (length equals candidate_count for OK runs built by this module).",
+  );
 
   return {
     contract: "evidence_to_learning_outcomes_candidate_import_v1",
@@ -376,6 +383,7 @@ export function buildEvidenceToLearningOutcomesCandidateImportV1(args: {
     candidate_count: totalCand,
     rejected_count: totalRej,
     candidates: allCandidates.slice(0, CANDIDATE_CAP),
+    candidates_evaluated_uncapped_v1: allCandidates,
     rejected_samples: allRejections.slice(0, REJECTED_SAMPLE_CAP),
     proven_facts,
     unknown_facts,

@@ -375,6 +375,12 @@ export type EvidenceToLearningOutcomesCandidateImportV1 = {
   candidate_count: number;
   rejected_count: number;
   candidates: EvidenceToLoImportCandidateV1[];
+  /**
+   * Every discovered candidate before display capping (same cardinality as candidate_count when built by
+   * buildEvidenceToLearningOutcomesCandidateImportV1). Omitted from JSON stdout in report-buckparts-command-center
+   * to keep artifacts bounded; insert plan uses this when present.
+   */
+  candidates_evaluated_uncapped_v1?: EvidenceToLoImportCandidateV1[];
   rejected_samples: EvidenceToLoRejectedSampleV1[];
   proven_facts: string[];
   unknown_facts: string[];

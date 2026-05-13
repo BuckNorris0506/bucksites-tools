@@ -147,14 +147,21 @@ export function buildLearningOutcomesInsertPlanV1(
   const runtime_status: "OK" | "UNKNOWN_INPUT" =
     evidenceImport.runtime_status === "OK" ? "OK" : "UNKNOWN_INPUT";
 
-  const classified = evidenceImport.candidates.map(classifyCandidate);
+  const fullCandidates =
+    evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
+  const classified = fullCandidates.map(classifyCandidate);
   const writer_ready_count = classified.filter((r) => r.disposition === "writer_ready").length;
   const owner_review_required_count = classified.filter((r) => r.disposition === "owner_review_required").length;
   const blocked_count = classified.filter((r) => r.disposition === "blocked_from_writer_batch").length;
 
-  if (evidenceImport.candidates.length < evidenceImport.candidate_count) {
+  if (fullCandidates.length !== evidenceImport.candidate_count) {
     unknown_facts.push(
-      `evidence import candidates array is capped (${evidenceImport.candidates.length}) below candidate_count (${evidenceImport.candidate_count}) — insert plan counts only visible candidates.`,
+      `Insert plan evaluated ${fullCandidates.length} candidate row(s) but evidence import candidate_count is ${evidenceImport.candidate_count} — cardinality mismatch; counts may diverge from scan truth.`,
+    );
+  }
+  if (!evidenceImport.candidates_evaluated_uncapped_v1 && evidenceImport.candidates.length < evidenceImport.candidate_count) {
+    unknown_facts.push(
+      `evidence import omitted candidates_evaluated_uncapped_v1 and candidates preview length (${evidenceImport.candidates.length}) is below candidate_count (${evidenceImport.candidate_count}) — insert plan fell back to preview-only rows.`,
     );
   }
 
@@ -197,6 +204,7 @@ export function buildLearningOutcomesInsertPlanV1(
     "No Supabase calls, no insertLearningOutcome execution, no SQL generation.",
     "writer_ready means validateLearningOutcomeInput succeeds on a payload built only from proposed_learning_outcome (confidence and cta_status must be non-null literals).",
     "Preference for live Amazon + live-outcome filename does not assert buy readiness, shelf-compatibility claims, revenue, or shopper-facing publish approval.",
+    "Disposition counts and batch ordering use candidates_evaluated_uncapped_v1 when provided (full internal set); proposed_first_batch and blocked_or_needs_owner_review remain capped arrays.",
   ];
 
   return {
