@@ -4,7 +4,10 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
-import type { CommandCenterV2Report } from "../../../../scripts/lib/buckparts-command-center-v2-types";
+import type {
+  CommandCenterV2Report,
+  TopOfGameFoundationScorecardV1,
+} from "../../../../scripts/lib/buckparts-command-center-v2-types";
 import { loadCommandCenterReportForOwner } from "@/lib/owner-dashboard/load-command-center-report";
 
 export const dynamic = "force-dynamic";
@@ -59,6 +62,25 @@ function StatusPill({ status }: { status: string }) {
       : status === "ATTENTION"
         ? "bg-amber-900/20 text-amber-900 ring-amber-700/40 dark:text-amber-200"
         : status === "BLOCKED" || status === "CRITICAL"
+          ? "bg-red-900/25 text-red-950 ring-red-800/40 dark:text-red-200"
+          : "bg-slate-200 text-slate-800 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-200";
+  return (
+    <span
+      className={`inline-flex max-w-full items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ring-1 ring-inset ${tone}`}
+    >
+      {status}
+    </span>
+  );
+}
+
+/** Foundation lane status (distinct from operational OK/ATTENTION pills). */
+function FoundationLaneStatusPill({ status }: { status: string }) {
+  const tone =
+    status === "PROVEN"
+      ? "bg-emerald-900/15 text-emerald-800 ring-emerald-700/30 dark:text-emerald-300"
+      : status === "PARTIAL"
+        ? "bg-amber-900/20 text-amber-900 ring-amber-700/40 dark:text-amber-200"
+        : status === "BLOCKED"
           ? "bg-red-900/25 text-red-950 ring-red-800/40 dark:text-red-200"
           : "bg-slate-200 text-slate-800 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-200";
   return (
@@ -126,6 +148,102 @@ function ExecutiveSection({
       </div>
       <div className="space-y-4 px-4 py-4 text-sm text-slate-800 dark:text-slate-200 sm:px-5 sm:py-5">{children}</div>
     </section>
+  );
+}
+
+function TopOfGameFoundationSection({ tog }: { tog: TopOfGameFoundationScorecardV1 }) {
+  const score = tog.foundation_maturity_score_100;
+  const scoreLabel = `${score} / 100`;
+  return (
+    <ExecutiveSection
+      title="Top-of-Game Foundation"
+      subtitle="Read-only Command Center v2 contract (top_of_game_foundation_scorecard_v1). Lane scores summarize backend readiness — not PDP compatibility proof, not public publish approval, and not dollar payouts from click_events."
+    >
+      <div className="flex flex-wrap items-center gap-3">
+        <div>
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Maturity score</p>
+          <p className="mt-0.5 font-mono text-2xl font-semibold text-slate-900 dark:text-slate-50">{scoreLabel}</p>
+        </div>
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-900/60">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Goal</p>
+          <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            {tog.goal_reached ? "GOAL REACHED" : "GOAL NOT REACHED"}
+          </p>
+        </div>
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 dark:border-slate-700 dark:bg-slate-900/60">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            Dashboard readiness (scorecard flag)
+          </p>
+          <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            {tog.owner_dashboard_ready ? "Dashboard wiring: ready" : "Dashboard wiring: in progress"}
+          </p>
+        </div>
+      </div>
+      <FieldBlock
+        label="Scorecard note"
+        value={<span className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">{tog.owner_dashboard_note}</span>}
+      />
+      <FieldBlock label="Runtime" value={tog.runtime_status} />
+      <FieldBlock
+        label="Foundation lanes"
+        value={
+          <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-900/60">
+                <tr>
+                  {["Lane", "Status", "Score", "Next proof"].map((h) => (
+                    <th
+                      key={h}
+                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {tog.lanes.map((lane) => (
+                  <tr key={lane.lane_id} className="bg-white dark:bg-slate-950">
+                    <td className="max-w-[14rem] px-3 py-2 align-top text-slate-900 dark:text-slate-100">
+                      <p className="text-[13px] font-medium leading-snug">{lane.label}</p>
+                      <p className="mt-0.5 font-mono text-[11px] text-slate-500 dark:text-slate-400">{lane.lane_id}</p>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 align-top">
+                      <FoundationLaneStatusPill status={lane.status} />
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-2 align-top font-mono text-[12px] text-slate-900 dark:text-slate-100">
+                      {lane.score_contribution} / {lane.max_contribution}
+                    </td>
+                    <td className="max-w-[22rem] px-3 py-2 align-top text-[11px] leading-snug text-slate-700 dark:text-slate-300">
+                      {lane.next_proof_required}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        }
+      />
+      <FieldBlock
+        label="Foundation blockers"
+        value={
+          tog.blockers.length === 0 ? (
+            <span className="text-sm text-slate-700 dark:text-slate-300">No foundation blockers.</span>
+          ) : (
+            <ul className="list-inside list-disc space-y-1 text-xs text-slate-800 dark:text-slate-200">
+              {tog.blockers.map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          )
+        }
+      />
+      <FieldBlock label="Next best foundation move" value={tog.next_best_foundation_move} />
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Revenue / commission on this page still follows click_visibility + ledger contracts — high lane scores do not mean
+        shoppers or verified affiliate payouts.
+      </p>
+    </ExecutiveSection>
   );
 }
 
@@ -303,6 +421,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
             ))}
           </ul>
         </ExecutiveSection>
+
+        <TopOfGameFoundationSection tog={v2.top_of_game_foundation_scorecard_v1} />
 
         <ExecutiveSection
           title="Demand"

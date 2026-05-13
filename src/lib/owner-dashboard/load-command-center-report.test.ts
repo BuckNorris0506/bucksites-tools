@@ -686,6 +686,8 @@ describe("owner quarantined fridge summary", () => {
 
   it("rendered owner-dashboard output includes Integrity Sentinel and sentinel contract includes all five provider names", () => {
     const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes("Top-of-Game Foundation"));
+    assert.ok(src.includes("top_of_game_foundation_scorecard_v1"));
     assert.ok(src.includes("14 · Integrity Sentinel"));
     assert.ok(src.includes('label="overall_status"'));
     assert.ok(src.includes('label="action_confidence"'));
