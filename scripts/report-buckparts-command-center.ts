@@ -17,6 +17,7 @@ import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
 import type {
   CommandCenterV2Report,
   DemandToCoverageEngineV1,
+  EvidenceToLearningOutcomesCandidateImportV1,
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
 } from "./lib/buckparts-command-center-v2-types";
@@ -194,6 +195,8 @@ type BuildOptions = {
   demandToCoverageEngineLoader?: () => Promise<DemandToCoverageEngineV1>;
   /** When set, skips live `learning_outcomes` read (tests). */
   learningOutcomesReadModelLoader?: () => Promise<LearningOutcomesReadModelV1>;
+  /** When set, skips disk scan for evidence→learning_outcomes candidate import (tests). */
+  evidenceToLearningOutcomesCandidateImportLoader?: () => Promise<EvidenceToLearningOutcomesCandidateImportV1>;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -393,6 +396,15 @@ export async function buildBuckpartsCommandCenterReport(
       return fetchLearningOutcomesReadModelV1FromSupabase({ now });
     });
 
+  const evidenceToLoCandidateLoader =
+    options.evidenceToLearningOutcomesCandidateImportLoader ??
+    (async () => {
+      const { buildEvidenceToLearningOutcomesCandidateImportV1 } = await import(
+        "./lib/evidence-to-learning-outcomes-candidate-import-v1"
+      );
+      return buildEvidenceToLearningOutcomesCandidateImportV1({ rootDir, fileExists, readDir, readTextFile, now });
+    });
+
   const [
     commandSurface,
     affiliateTracker,
@@ -405,6 +417,7 @@ export async function buildBuckpartsCommandCenterReport(
     liveSiteMonitor,
     demandToCoverageEngine,
     learningOutcomesReadModel,
+    evidenceToLearningOutcomesCandidateImport,
   ] = await Promise.all([
     commandSurfaceBuilder({ rootDir }),
     Promise.resolve(affiliateTrackerBuilder({ rootDir })),
@@ -419,6 +432,7 @@ export async function buildBuckpartsCommandCenterReport(
       : loadLiveSiteMonitorForCommandCenter({ rootDir, fileExists, readTextFile }),
     demandToCoverageLoader(),
     learningOutcomesReadModelLoader(),
+    evidenceToLoCandidateLoader(),
   ]);
 
   const amazonFirstSummary = buildAmazonFirstBlockedQueueSummary(amazonFirstBlocked);
@@ -789,6 +803,7 @@ export async function buildBuckpartsCommandCenterReport(
     liveSiteMonitor,
     demandToCoverageEngine,
     learningOutcomesReadModel,
+    evidenceToLearningOutcomesCandidateImport,
   });
 
   return {

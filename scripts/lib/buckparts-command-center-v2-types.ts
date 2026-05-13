@@ -336,6 +336,52 @@ export type LearningOutcomesReadModelV1 = {
   unknown_facts: string[];
 };
 
+/** Proposed row fields aligned with `public.learning_outcomes` DDL; evidence is a bounded stub only (not full file). */
+export type ProposedLearningOutcomeRowV1 = {
+  slug: string;
+  part_number: string | null;
+  model_number: string | null;
+  candidate_url: string | null;
+  retailer: string | null;
+  outcome: "pass" | "fail" | "blocked" | "unknown";
+  reason: string;
+  reason_detail: string | null;
+  confidence: "exact" | "likely" | "uncertain" | null;
+  cta_status: "live" | "not_live" | "blocked" | null;
+  index_status: string | null;
+  date_checked: string;
+  next_action: string | null;
+  evidence_jsonb_stub: Record<string, unknown>;
+};
+
+export type EvidenceToLoImportCandidateV1 = {
+  source_file: string;
+  proposed_learning_outcome: ProposedLearningOutcomeRowV1;
+  mapping_basis: string[];
+  missing_or_unknown_fields: string[];
+  owner_approval_required: true;
+};
+
+export type EvidenceToLoRejectedSampleV1 = {
+  source_file: string;
+  reject_reason: string;
+};
+
+export type EvidenceToLearningOutcomesCandidateImportV1 = {
+  contract: "evidence_to_learning_outcomes_candidate_import_v1";
+  runtime_status: "OK" | "UNKNOWN_IO_ERROR";
+  scanned_file_count: number;
+  parseable_file_count: number;
+  candidate_count: number;
+  rejected_count: number;
+  candidates: EvidenceToLoImportCandidateV1[];
+  rejected_samples: EvidenceToLoRejectedSampleV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: true;
+  data_mutation: false;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -352,6 +398,8 @@ export type CommandCenterV2Report = {
   demand_to_coverage_engine_v1: DemandToCoverageEngineV1;
   /** Read-only visibility into `public.learning_outcomes` aggregates — not fit, buy, or revenue proof. */
   learning_outcomes_read_model_v1: LearningOutcomesReadModelV1;
+  /** Read-only plan: map `data/evidence` JSON files to hypothetical `learning_outcomes` rows — never executed here. */
+  evidence_to_learning_outcomes_candidate_import_v1: EvidenceToLearningOutcomesCandidateImportV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

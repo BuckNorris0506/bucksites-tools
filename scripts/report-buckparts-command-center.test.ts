@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
+import path from "node:path";
 import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
+import { buildEvidenceToLearningOutcomesCandidateImportV1 } from "./lib/evidence-to-learning-outcomes-candidate-import-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
-import type { LiveSiteMonitorV1, LearningOutcomesReadModelV1 } from "./lib/buckparts-command-center-v2-types";
+import type {
+  EvidenceToLearningOutcomesCandidateImportV1,
+  LearningOutcomesReadModelV1,
+  LiveSiteMonitorV1,
+} from "./lib/buckparts-command-center-v2-types";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 
 const BASE_TRACKER = JSON.stringify([
@@ -253,6 +259,10 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(
     report.command_center_v2.learning_outcomes_read_model_v1.contract,
     "learning_outcomes_read_model_v1",
+  );
+  assert.equal(
+    report.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1.contract,
+    "evidence_to_learning_outcomes_candidate_import_v1",
   );
 });
 
@@ -1264,4 +1274,124 @@ test("command_center_v2 learning_outcomes_read_model_v1 degraded when DB unavail
   assert.equal(m.latest_outcomes.length, 0);
   assert.ok(m.unknown_facts.some((s) => /supabase/i.test(s)));
   assertLearningReadModelNoFitBuyRevenueClaims(m);
+});
+
+function evidenceImportOkFixture(): EvidenceToLearningOutcomesCandidateImportV1 {
+  const proposed = {
+    slug: "fixture-token",
+    part_number: "FIXTURE-TOKEN",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B000TEST000",
+    retailer: "amazon",
+    outcome: "unknown" as const,
+    reason: "Fixture evidence-derived row for Command Center wiring only.",
+    reason_detail: null,
+    confidence: "exact" as const,
+    cta_status: "not_live" as const,
+    index_status: null,
+    date_checked: "2026-05-10T00:00:00.000Z",
+    next_action: "Owner reviews before insertLearningOutcome.",
+    evidence_jsonb_stub: { import_contract: "evidence_to_learning_outcomes_candidate_import_v1", fixture: true },
+  };
+  return {
+    contract: "evidence_to_learning_outcomes_candidate_import_v1",
+    runtime_status: "OK",
+    scanned_file_count: 2,
+    parseable_file_count: 2,
+    candidate_count: 1,
+    rejected_count: 0,
+    candidates: [
+      {
+        source_file: "data/evidence/fixture.json",
+        proposed_learning_outcome: proposed,
+        mapping_basis: ["Fixture candidate; not executed against Supabase."],
+        missing_or_unknown_fields: ["Fixture marks confidence/cta as synthetic operator test data only."],
+        owner_approval_required: true,
+      },
+    ],
+    rejected_samples: [],
+    proven_facts: ["Fixture-only import plan."],
+    unknown_facts: [],
+    owner_approval_required: true,
+    data_mutation: false,
+  };
+}
+
+function assertEvidenceImportNoFitBuyRevenueClaims(block: EvidenceToLearningOutcomesCandidateImportV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
+test("command_center_v2 evidence_to_learning_outcomes_candidate_import_v1 surfaces fixture candidates read-only", async () => {
+  const imp = evidenceImportOkFixture();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const b = report.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1;
+  assert.equal(b.contract, "evidence_to_learning_outcomes_candidate_import_v1");
+  assert.equal(b.data_mutation, false);
+  assert.equal(b.owner_approval_required, true);
+  assert.equal(b.candidates.length, 1);
+  assert.equal(b.candidates[0].owner_approval_required, true);
+  assertEvidenceImportNoFitBuyRevenueClaims(b);
+});
+
+test("evidence_to_learning_outcomes_candidate_import_v1 maps verdict and rejects bad JSON", async () => {
+  const rootDir = "/tmp/buckparts-evidence-import-test";
+  const evidenceAbs = path.join(rootDir, "data", "evidence");
+  const impOk = buildEvidenceToLearningOutcomesCandidateImportV1({
+    rootDir,
+    fileExists: (p) => path.normalize(p) === path.normalize(evidenceAbs),
+    readDir: () => ["good.json", "bad.json", "array.json"],
+    readTextFile: (p) => {
+      if (p.endsWith("good.json")) {
+        return JSON.stringify({
+          filter_slug: "ab",
+          token: "AB",
+          verdict: "LIVE_OUTCOME_RECORDED",
+          reason: "Recorded in evidence export.",
+          generated_at: "2026-05-03T12:00:00.000Z",
+          final_amazon_cta_state_proven: true,
+        });
+      }
+      if (p.endsWith("bad.json")) return "{";
+      return JSON.stringify([{ token: "x" }]);
+    },
+    now: () => new Date("2026-06-01T00:00:00.000Z"),
+  });
+  assert.equal(impOk.runtime_status, "OK");
+  assert.equal(impOk.scanned_file_count, 3);
+  assert.equal(impOk.parseable_file_count, 2);
+  assert.ok(impOk.candidate_count >= 1);
+  const goodCand = impOk.candidates.find((c) => c.source_file.endsWith("good.json"));
+  assert.ok(goodCand);
+  assert.equal(goodCand!.proposed_learning_outcome.outcome, "pass");
+  assert.equal(goodCand!.proposed_learning_outcome.slug, "ab");
+  assert.ok(impOk.rejected_samples.some((r) => r.reject_reason.includes("JSON.parse")));
+  assert.ok(impOk.rejected_samples.some((r) => r.reject_reason.includes("array")));
+  assertEvidenceImportNoFitBuyRevenueClaims(impOk);
+});
+
+test("evidence_to_learning_outcomes_candidate_import_v1 rejects object without slug keys", async () => {
+  const rootDir = "/tmp/buckparts-evidence-import-test-2";
+  const evidenceAbs = path.join(rootDir, "data", "evidence");
+  const imp = buildEvidenceToLearningOutcomesCandidateImportV1({
+    rootDir,
+    fileExists: (p) => path.normalize(p) === path.normalize(evidenceAbs),
+    readDir: () => ["empty.json"],
+    readTextFile: () => JSON.stringify({ report_name: "x", read_only: true }),
+    now: () => new Date("2026-06-01T00:00:00.000Z"),
+  });
+  assert.equal(imp.candidate_count, 0);
+  assert.ok(imp.rejected_samples.some((r) => r.reject_reason.includes("filter_slug")));
+  assertEvidenceImportNoFitBuyRevenueClaims(imp);
 });
