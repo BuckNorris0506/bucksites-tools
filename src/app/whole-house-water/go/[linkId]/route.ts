@@ -22,12 +22,14 @@ export async function GET(
   let target: string | null = null;
   let retailerKey: string | null = null;
   let classification: string | undefined = undefined;
+  let buyableSubtype: string | null = null;
 
   try {
     const row = await getWholeHouseWaterRetailerLinkById(linkId);
     target = row?.affiliate_url ?? null;
     retailerKey = row?.retailer_key ?? null;
     classification = row?.browser_truth_classification ?? undefined;
+    buyableSubtype = row?.browser_truth_buyable_subtype ?? null;
   } catch {
     return goFallbackRedirect(request, "/whole-house-water");
   }
@@ -40,6 +42,7 @@ export async function GET(
     retailerKey,
     target,
     classification,
+    buyableSubtype,
   );
   if (!go) {
     return goFallbackRedirect(request, "/whole-house-water");

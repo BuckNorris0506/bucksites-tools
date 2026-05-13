@@ -24,40 +24,13 @@ const MONEY_PAGE_RETAILER_ROW_SOURCES = [
 const LAUNCH_IMPORT_RE =
   /from\s+["']@\/lib\/retailers\/launch-buy-links["']/;
 
-const PHASE1_BROWSER_TRUTH_REQUIRED = new Map<string, string[]>([
-  [
-    "src/lib/data/air-purifier/models.ts",
-    [
-      "browser_truth_classification",
-      "browser_truth_notes",
-      "browser_truth_checked_at",
-    ],
-  ],
-  [
-    "src/lib/data/air-purifier/filters.ts",
-    [
-      "browser_truth_classification",
-      "browser_truth_notes",
-      "browser_truth_checked_at",
-    ],
-  ],
-  [
-    "src/lib/data/whole-house-water/models.ts",
-    [
-      "browser_truth_classification",
-      "browser_truth_notes",
-      "browser_truth_checked_at",
-    ],
-  ],
-  [
-    "src/lib/data/whole-house-water/filters.ts",
-    [
-      "browser_truth_classification",
-      "browser_truth_notes",
-      "browser_truth_checked_at",
-    ],
-  ],
-]);
+/** Every money-page retailer row source must expose these fields so CTA gating matches /go. */
+const MONEY_PAGE_BROWSER_TRUTH_SELECT_FIELDS = [
+  "browser_truth_classification",
+  "browser_truth_buyable_subtype",
+  "browser_truth_notes",
+  "browser_truth_checked_at",
+] as const;
 
 /** Ban wiring DB rows straight into page `retailer_links` without the shared filter. */
 const RAW_RETAILER_LINKS_ASSIGN_RE = [
@@ -95,10 +68,10 @@ describe("money-page retailer rows use filterRealBuyRetailerLinks at data bounda
           `${rel} must not assign retailer_links from raw query rows without filterRealBuyRetailerLinks (matched ${re})`,
         );
       }
-      for (const field of PHASE1_BROWSER_TRUTH_REQUIRED.get(rel) ?? []) {
+      for (const field of MONEY_PAGE_BROWSER_TRUTH_SELECT_FIELDS) {
         assert.ok(
           src.includes(field),
-          `${rel} must select ${field} so Phase 1 live-link CTA filtering receives browser-truth fields`,
+          `${rel} must select ${field} so live-link CTA filtering receives browser-truth fields (including buyable subtype)`,
         );
       }
     });

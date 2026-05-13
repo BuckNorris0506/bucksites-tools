@@ -39,6 +39,7 @@ export async function GET(
     row.retailer_key,
     target,
     row.browser_truth_classification ?? undefined,
+    row.browser_truth_buyable_subtype ?? null,
   );
   if (!go) {
     return goFallbackRedirect(request, "/go-unavailable");

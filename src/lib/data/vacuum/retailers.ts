@@ -6,7 +6,7 @@ export async function getVacuumRetailerLinkById(linkId: string) {
   const { data, error } = await supabase
     .from("vacuum_retailer_links")
     .select(
-      "id, affiliate_url, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, affiliate_url, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("id", linkId)
     .eq("status", "approved")
@@ -18,6 +18,7 @@ export async function getVacuumRetailerLinkById(linkId: string) {
     affiliate_url: string;
     retailer_key: string;
     browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
     browser_truth_notes?: string | null;
     browser_truth_checked_at?: string | null;
   } | null;
@@ -31,6 +32,7 @@ export async function getVacuumRetailerLinkById(linkId: string) {
     affiliate_url: row.affiliate_url,
     retailer_key: row.retailer_key,
     browser_truth_classification: row.browser_truth_classification ?? null,
+    browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
     browser_truth_notes: row.browser_truth_notes ?? null,
     browser_truth_checked_at: row.browser_truth_checked_at ?? null,
   };

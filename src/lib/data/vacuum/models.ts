@@ -79,7 +79,7 @@ export async function getVacuumModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("vacuum_retailer_links")
     .select(
-      "id, vacuum_filter_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, vacuum_filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .in("vacuum_filter_id", filterIds)
     .eq("status", "approved")

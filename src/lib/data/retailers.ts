@@ -8,6 +8,7 @@ export type RetailerLinkForGoRoute = {
   retailer_key: string;
   filter_slug: string | null;
   browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
   browser_truth_notes?: string | null;
   browser_truth_checked_at?: string | null;
 };
@@ -21,7 +22,7 @@ export async function getRetailerLinkById(linkId: string): Promise<RetailerLinkF
   const { data: link, error } = await supabase
     .from("retailer_links")
     .select(
-      "id, affiliate_url, filter_id, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at",
+      "id, affiliate_url, filter_id, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .eq("id", linkId)
     .maybeSingle();
@@ -35,6 +36,7 @@ export async function getRetailerLinkById(linkId: string): Promise<RetailerLinkF
     filter_id: string;
     retailer_key: string;
     browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
     browser_truth_notes?: string | null;
     browser_truth_checked_at?: string | null;
   };
@@ -58,6 +60,7 @@ export async function getRetailerLinkById(linkId: string): Promise<RetailerLinkF
     retailer_key: row.retailer_key,
     filter_slug: (fil as { slug?: string } | null)?.slug ?? null,
     browser_truth_classification: row.browser_truth_classification ?? null,
+    browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
     browser_truth_notes: row.browser_truth_notes ?? null,
     browser_truth_checked_at: row.browser_truth_checked_at ?? null,
   };

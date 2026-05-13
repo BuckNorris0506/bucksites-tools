@@ -90,7 +90,7 @@ export async function getFilterBySlug(slug: string): Promise<FilterWithFridges |
 
   const { data: links, error: lErr } = await supabase
     .from("retailer_links")
-        .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_notes, browser_truth_checked_at")
+        .select("id, filter_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at")
     .eq("filter_id", filterRow.id)
     .order("is_primary", { ascending: false })
     .order("retailer_name", { ascending: true });

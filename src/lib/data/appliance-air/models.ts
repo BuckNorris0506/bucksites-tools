@@ -79,7 +79,7 @@ export async function getApplianceAirModelBySlug(
   const { data: links, error: lErr } = await supabase
     .from("appliance_air_retailer_links")
     .select(
-      "id, appliance_air_part_id, retailer_name, affiliate_url, is_primary, retailer_key",
+      "id, appliance_air_part_id, retailer_name, affiliate_url, is_primary, retailer_key, browser_truth_classification, browser_truth_buyable_subtype, browser_truth_notes, browser_truth_checked_at",
     )
     .in("appliance_air_part_id", partIds)
     .eq("status", "approved")

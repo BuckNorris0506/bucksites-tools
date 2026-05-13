@@ -71,6 +71,7 @@ export function isAffiliateUrlSafeForGoRedirect(
   retailerKey: string | null | undefined,
   affiliateUrl: string,
   classification?: string,
+  browserTruthBuyableSubtype?: string | null,
 ): boolean {
   const u = affiliateUrl?.trim() ?? "";
   if (!u) return false;
@@ -80,6 +81,7 @@ export function isAffiliateUrlSafeForGoRedirect(
       retailer_key: retailerKey,
       affiliate_url: u,
       browser_truth_classification: classification,
+      browser_truth_buyable_subtype: browserTruthBuyableSubtype,
     }) === null
   );
 }
@@ -100,10 +102,11 @@ export function nextResponseRedirectAffiliateIfSafe(
   retailerKey: string | null | undefined,
   affiliateUrl: string,
   classification?: string,
+  browserTruthBuyableSubtype?: string | null,
   status = 302,
 ): GoAffiliateRedirectResult | null {
   const gated = affiliateUrl?.trim() ?? "";
-  if (!isAffiliateUrlSafeForGoRedirect(retailerKey, gated, classification)) {
+  if (!isAffiliateUrlSafeForGoRedirect(retailerKey, gated, classification, browserTruthBuyableSubtype)) {
     return null;
   }
   const outboundUrl = applyAmazonAffiliateRedirectUrl(gated);

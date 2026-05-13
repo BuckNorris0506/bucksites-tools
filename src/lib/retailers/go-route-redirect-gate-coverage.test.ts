@@ -80,6 +80,22 @@ function listGoAffiliateRouteFiles(): string[] {
   return out.sort((a, b) => a.localeCompare(b));
 }
 
+function readRepoSource(rel: string): string {
+  const abs = path.join(process.cwd(), rel);
+  assert.ok(fs.existsSync(abs), `missing ${rel}`);
+  return fs.readFileSync(abs, "utf8");
+}
+
+/** `/go/[linkId]` row loaders — must select subtype so redirect gate matches CTA safety. */
+const GO_RETAILER_LINK_LOADER_FILES = [
+  "src/lib/data/retailers.ts",
+  "src/lib/data/air-purifier/retailers.ts",
+  "src/lib/data/whole-house-water/retailers.ts",
+  "src/lib/data/humidifier/retailers.ts",
+  "src/lib/data/vacuum/retailers.ts",
+  "src/lib/data/appliance-air/retailers.ts",
+] as const;
+
 describe("go/[linkId] routes use shared affiliate handler", () => {
   it("discovers at least one go route under src/app", () => {
     const routes = listGoAffiliateRouteFiles();
@@ -158,6 +174,23 @@ describe("go/[linkId] routes use shared affiliate handler", () => {
           `must not import another wedge's retailer module (${other.importFrom}); route is ${wedge}`,
         );
       }
+
+      assert.ok(
+        /row\.browser_truth_buyable_subtype|\bbuyableSubtype\b/.test(src),
+        `${rel} must pass buyable subtype into nextResponseRedirectAffiliateIfSafe (same inputs as CTA gate)`,
+      );
+    });
+  }
+});
+
+describe("go retailer link loaders select browser_truth_buyable_subtype", () => {
+  for (const rel of GO_RETAILER_LINK_LOADER_FILES) {
+    it(rel, () => {
+      const src = readRepoSource(rel);
+      assert.ok(
+        src.includes("browser_truth_buyable_subtype"),
+        `${rel} must include browser_truth_buyable_subtype in the /go row select`,
+      );
     });
   }
 });

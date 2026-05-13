@@ -213,6 +213,39 @@ describe("go-redirect-gate", () => {
       );
     });
 
+    it("blocks direct_buyable when browser_truth_buyable_subtype is BLOCKED_UNSAFE", () => {
+      assert.equal(
+        isAffiliateUrlSafeForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          "BLOCKED_UNSAFE",
+        ),
+        false,
+      );
+    });
+
+    it("allows direct_buyable when subtype is missing (classification-only safety unchanged)", () => {
+      assert.equal(
+        isAffiliateUrlSafeForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          null,
+        ),
+        true,
+      );
+      assert.equal(
+        isAffiliateUrlSafeForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          undefined,
+        ),
+        true,
+      );
+    });
+
     it("blocks non-OEM likely_valid rows until explicit buy proof exists", () => {
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
@@ -286,6 +319,29 @@ describe("go-redirect-gate", () => {
         ),
         null,
       );
+    });
+
+    it("returns null when direct_buyable + BLOCKED_UNSAFE subtype", () => {
+      assert.equal(
+        nextResponseRedirectAffiliateIfSafe(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          "BLOCKED_UNSAFE",
+        ),
+        null,
+      );
+    });
+
+    it("returns redirect when direct_buyable + null subtype (same as omitted 4th arg)", () => {
+      const r = nextResponseRedirectAffiliateIfSafe(
+        "amazon",
+        "https://www.amazon.com/dp/B00EXAMPLE",
+        "direct_buyable",
+        null,
+      );
+      assert.ok(r);
+      assert.equal(r.response.status, 302);
     });
   });
 });
