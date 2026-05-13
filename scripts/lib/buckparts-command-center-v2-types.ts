@@ -382,6 +382,36 @@ export type EvidenceToLearningOutcomesCandidateImportV1 = {
   data_mutation: false;
 };
 
+export type LearningOutcomesInsertPlanBatchRowV1 = {
+  source_file: string;
+  disposition: "writer_ready" | "owner_review_required" | "blocked_from_writer_batch";
+  proposed_learning_outcome: ProposedLearningOutcomeRowV1;
+  reasons: string[];
+  proposed_owner_actions: string[];
+};
+
+export type LearningOutcomesInsertPlanReviewOrBlockedRowV1 = {
+  source_file: string;
+  disposition: "owner_review_required" | "blocked_from_writer_batch";
+  reasons: string[];
+  proposed_owner_actions: string[];
+};
+
+export type LearningOutcomesInsertPlanV1 = {
+  contract: "learning_outcomes_insert_plan_v1";
+  runtime_status: "OK" | "UNKNOWN_INPUT";
+  source_candidate_count: number;
+  writer_ready_count: number;
+  owner_review_required_count: number;
+  blocked_count: number;
+  proposed_first_batch: LearningOutcomesInsertPlanBatchRowV1[];
+  blocked_or_needs_owner_review: LearningOutcomesInsertPlanReviewOrBlockedRowV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: true;
+  data_mutation: false;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -400,6 +430,8 @@ export type CommandCenterV2Report = {
   learning_outcomes_read_model_v1: LearningOutcomesReadModelV1;
   /** Read-only plan: map `data/evidence` JSON files to hypothetical `learning_outcomes` rows — never executed here. */
   evidence_to_learning_outcomes_candidate_import_v1: EvidenceToLearningOutcomesCandidateImportV1;
+  /** Read-only first-batch insert ordering vs insertLearningOutcome gates — no DB writes. */
+  learning_outcomes_insert_plan_v1: LearningOutcomesInsertPlanV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

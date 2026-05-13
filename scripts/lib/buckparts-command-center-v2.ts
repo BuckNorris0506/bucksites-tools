@@ -1,4 +1,5 @@
 import type { AmazonFirstBlockedConversionQueueReport } from "../report-amazon-first-blocked-conversion-queue";
+import { buildLearningOutcomesInsertPlanV1 } from "./learning-outcomes-insert-plan-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -442,6 +443,9 @@ export function buildCommandCenterV2Report(input: {
     demand_to_coverage_engine_v1: input.demandToCoverageEngine,
     learning_outcomes_read_model_v1: input.learningOutcomesReadModel,
     evidence_to_learning_outcomes_candidate_import_v1: input.evidenceToLearningOutcomesCandidateImport,
+    learning_outcomes_insert_plan_v1: buildLearningOutcomesInsertPlanV1(
+      input.evidenceToLearningOutcomesCandidateImport,
+    ),
     recommendation_authority: {
       evaluated_actions: recommendationAuthorityRecords,
     },

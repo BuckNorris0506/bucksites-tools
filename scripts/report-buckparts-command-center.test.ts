@@ -4,11 +4,15 @@ import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
 import { buildEvidenceToLearningOutcomesCandidateImportV1 } from "./lib/evidence-to-learning-outcomes-candidate-import-v1";
+import { buildLearningOutcomesInsertPlanV1 } from "./lib/learning-outcomes-insert-plan-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
+  EvidenceToLoImportCandidateV1,
+  LearningOutcomesInsertPlanV1,
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
+  ProposedLearningOutcomeRowV1,
 } from "./lib/buckparts-command-center-v2-types";
 import { buildBuckpartsCommandCenterReport } from "./report-buckparts-command-center";
 
@@ -264,6 +268,7 @@ test("command center is read_only true and data_mutation false", async () => {
     report.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1.contract,
     "evidence_to_learning_outcomes_candidate_import_v1",
   );
+  assert.equal(report.command_center_v2.learning_outcomes_insert_plan_v1.contract, "learning_outcomes_insert_plan_v1");
 });
 
 test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
@@ -1394,4 +1399,122 @@ test("evidence_to_learning_outcomes_candidate_import_v1 rejects object without s
   assert.equal(imp.candidate_count, 0);
   assert.ok(imp.rejected_samples.some((r) => r.reject_reason.includes("filter_slug")));
   assertEvidenceImportNoFitBuyRevenueClaims(imp);
+});
+
+function baseEvidenceImportForPlan(args: {
+  candidates: EvidenceToLoImportCandidateV1[];
+  candidateCount?: number;
+}): EvidenceToLearningOutcomesCandidateImportV1 {
+  return {
+    contract: "evidence_to_learning_outcomes_candidate_import_v1",
+    runtime_status: "OK",
+    scanned_file_count: 1,
+    parseable_file_count: 1,
+    candidate_count: args.candidateCount ?? args.candidates.length,
+    rejected_count: 0,
+    candidates: args.candidates,
+    rejected_samples: [],
+    proven_facts: [],
+    unknown_facts: [],
+    owner_approval_required: true,
+    data_mutation: false,
+  };
+}
+
+function assertInsertPlanNoBannedClaims(plan: LearningOutcomesInsertPlanV1) {
+  const blob = JSON.stringify(plan);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
+test("learning_outcomes_insert_plan_v1 marks live-prefer rows without confidence as owner_review not writer_ready", () => {
+  const proposed: ProposedLearningOutcomeRowV1 = {
+    slug: "z1",
+    part_number: "Z1",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B00Z1TEST99",
+    retailer: "amazon",
+    outcome: "pass",
+    reason: "Evidence export.",
+    reason_detail: null,
+    confidence: null,
+    cta_status: "live",
+    index_status: null,
+    date_checked: "2026-05-10T00:00:00.000Z",
+    next_action: "review",
+    evidence_jsonb_stub: { stub: true },
+  };
+  const imp = baseEvidenceImportForPlan({
+    candidates: [
+      {
+        source_file: "data/evidence/amazon-z1-live-outcome.json",
+        proposed_learning_outcome: proposed,
+        mapping_basis: [],
+        missing_or_unknown_fields: ["confidence"],
+        owner_approval_required: true,
+      },
+    ],
+  });
+  const plan = buildLearningOutcomesInsertPlanV1(imp);
+  assert.equal(plan.writer_ready_count, 0);
+  assert.equal(plan.owner_review_required_count, 1);
+  assert.equal(plan.proposed_first_batch[0].disposition, "owner_review_required");
+  assert.ok(
+    plan.proposed_first_batch[0].proposed_owner_actions.includes("OWNER_SET_CONFIDENCE_OR_APPROVE_NULL_POLICY"),
+  );
+  assertInsertPlanNoBannedClaims(plan);
+});
+
+test("learning_outcomes_insert_plan_v1 marks writer_ready when insertLearningOutcome validation passes", () => {
+  const proposed: ProposedLearningOutcomeRowV1 = {
+    slug: "wr1",
+    part_number: "WR1",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B00WR1TEST99",
+    retailer: "amazon",
+    outcome: "pass",
+    reason: "Recorded.",
+    reason_detail: null,
+    confidence: "exact",
+    cta_status: "live",
+    index_status: null,
+    date_checked: "2026-05-10T12:00:00.000Z",
+    next_action: null,
+    evidence_jsonb_stub: { stub: true },
+  };
+  const imp = baseEvidenceImportForPlan({
+    candidates: [
+      {
+        source_file: "data/evidence/amazon-wr1-live-outcome.json",
+        proposed_learning_outcome: proposed,
+        mapping_basis: [],
+        missing_or_unknown_fields: [],
+        owner_approval_required: true,
+      },
+    ],
+  });
+  const plan = buildLearningOutcomesInsertPlanV1(imp);
+  assert.equal(plan.writer_ready_count, 1);
+  assert.equal(plan.proposed_first_batch[0].disposition, "writer_ready");
+  assertInsertPlanNoBannedClaims(plan);
+});
+
+test("command_center_v2 learning_outcomes_insert_plan_v1 is read_only with owner_approval_required", async () => {
+  const imp = evidenceImportOkFixture();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const plan = report.command_center_v2.learning_outcomes_insert_plan_v1;
+  assert.equal(plan.contract, "learning_outcomes_insert_plan_v1");
+  assert.equal(plan.data_mutation, false);
+  assert.equal(plan.owner_approval_required, true);
+  assertInsertPlanNoBannedClaims(plan);
 });
