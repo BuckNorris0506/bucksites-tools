@@ -4,13 +4,18 @@ import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
 import { buildEvidenceToLearningOutcomesCandidateImportV1 } from "./lib/evidence-to-learning-outcomes-candidate-import-v1";
-import { buildLearningOutcomesInsertPlanV1, buildLearningOutcomesWriterReadyBatchReviewV1 } from "./lib/learning-outcomes-insert-plan-v1";
+import {
+  buildLearningOutcomesInsertPlanV1,
+  buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
+  buildLearningOutcomesWriterReadyBatchReviewV1,
+} from "./lib/learning-outcomes-insert-plan-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
   LearningOutcomesInsertPlanV1,
   LearningOutcomesReadModelV1,
+  LearningOutcomesOwnerConfidenceAssignmentPlanV1,
   LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
@@ -1449,6 +1454,14 @@ function assertWriterReadyBatchReviewNoBannedClaims(block: LearningOutcomesWrite
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertConfidenceAssignmentPlanNoBannedClaims(block: LearningOutcomesOwnerConfidenceAssignmentPlanV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -1467,6 +1480,31 @@ function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 
       date_checked: "2026-05-10T00:00:00.000Z",
       next_action: null,
       evidence_jsonb_stub: { count_test_index: i },
+    },
+    mapping_basis: [],
+    missing_or_unknown_fields: ["confidence"],
+    owner_approval_required: true,
+  };
+}
+
+function confidenceAssignmentEligibleCand(i: number): EvidenceToLoImportCandidateV1 {
+  return {
+    source_file: `data/evidence/live-outcome-assign-${String(i).padStart(2, "0")}.json`,
+    proposed_learning_outcome: {
+      slug: `ca${i}`,
+      part_number: `CA${i}`,
+      model_number: null,
+      candidate_url: "https://www.amazon.com/dp/B00CA09099",
+      retailer: "amazon",
+      outcome: "pass",
+      reason: "Eligible confidence assignment fixture.",
+      reason_detail: null,
+      confidence: null,
+      cta_status: "live",
+      index_status: null,
+      date_checked: "2026-05-10T12:00:00.000Z",
+      next_action: null,
+      evidence_jsonb_stub: { idx: i },
     },
     mapping_basis: [],
     missing_or_unknown_fields: ["confidence"],
@@ -1784,4 +1822,91 @@ test("command_center_v2 surfaces learning_outcomes_writer_ready_batch_review_v1 
   assert.equal(review.owner_approval_required, true);
   assert.equal(review.rows.length, 1);
   assertWriterReadyBatchReviewNoBannedClaims(review);
+});
+
+test("learning_outcomes_owner_confidence_assignment_plan_v1 lists live-outcome Amazon pass rows missing confidence", () => {
+  const imp = baseEvidenceImportForPlan({
+    candidates: [confidenceAssignmentEligibleCand(0)],
+  });
+  const plan = buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(imp);
+  assert.equal(plan.contract, "learning_outcomes_owner_confidence_assignment_plan_v1");
+  assert.equal(plan.source_candidate_count, 1);
+  assert.equal(plan.assignment_candidate_count, 1);
+  assert.equal(plan.rows.length, 1);
+  assert.equal(plan.rows[0].missing_field, "confidence");
+  assert.deepEqual(plan.rows[0].allowed_confidence_values, ["exact", "likely", "uncertain"]);
+  assert.equal(plan.rows[0].blocked_until_owner_sets_confidence, true);
+  assert.equal(plan.rows[0].owner_approval_required, true);
+  assert.equal(plan.rows[0].proposed_learning_outcome.confidence, null);
+  assert.equal(plan.data_mutation, false);
+  assert.equal(plan.owner_approval_required, true);
+  assertConfidenceAssignmentPlanNoBannedClaims(plan);
+});
+
+test("learning_outcomes_owner_confidence_assignment_plan_v1 excludes multipack-style writer_ready rows without live-outcome gates", () => {
+  const multipackWriterReady: EvidenceToLoImportCandidateV1 = {
+    source_file: "data/evidence/amazon-multipack-conversion-batch.2026-04-30.json",
+    proposed_learning_outcome: {
+      slug: "mp",
+      part_number: "MP",
+      model_number: null,
+      candidate_url: "https://www.amazon.com/dp/B00MP00999",
+      retailer: "amazon",
+      outcome: "unknown",
+      reason: "Multipack fixture row.",
+      reason_detail: null,
+      confidence: "exact",
+      cta_status: "not_live",
+      index_status: null,
+      date_checked: "2026-05-10T12:00:00.000Z",
+      next_action: null,
+      evidence_jsonb_stub: { multipack: true },
+    },
+    mapping_basis: [],
+    missing_or_unknown_fields: [],
+    owner_approval_required: true,
+  };
+  const imp = baseEvidenceImportForPlan({
+    candidates: [multipackWriterReady, confidenceAssignmentEligibleCand(0)],
+  });
+  const plan = buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(imp);
+  assert.equal(plan.assignment_candidate_count, 1);
+  assert.equal(plan.rows.length, 1);
+  assert.equal(plan.rows[0].proposed_learning_outcome.slug, "ca0");
+  const wr = buildLearningOutcomesWriterReadyBatchReviewV1(imp);
+  assert.equal(wr.source_writer_ready_count, 1);
+  assert.equal(wr.rows[0].proposed_insert_payload.slug, "mp");
+  assertConfidenceAssignmentPlanNoBannedClaims(plan);
+});
+
+test("learning_outcomes_owner_confidence_assignment_plan_v1 caps at 10 with unknown_fact", () => {
+  const all = Array.from({ length: 11 }, (_, i) => confidenceAssignmentEligibleCand(i));
+  const imp = baseEvidenceImportForPlan({ candidates: all, candidateCount: 11 });
+  const plan = buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(imp);
+  assert.equal(plan.assignment_candidate_count, 11);
+  assert.equal(plan.rows.length, 10);
+  assert.ok(plan.unknown_facts.some((u) => /exceed display cap/i.test(u)));
+  assert.ok(plan.rows.every((r) => r.proposed_learning_outcome.confidence === null));
+  assertConfidenceAssignmentPlanNoBannedClaims(plan);
+});
+
+test("command_center_v2 surfaces learning_outcomes_owner_confidence_assignment_plan_v1 read_only", async () => {
+  const imp = baseEvidenceImportForPlan({
+    candidates: [confidenceAssignmentEligibleCand(0)],
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const plan = report.command_center_v2.learning_outcomes_owner_confidence_assignment_plan_v1;
+  assert.equal(plan.contract, "learning_outcomes_owner_confidence_assignment_plan_v1");
+  assert.equal(plan.data_mutation, false);
+  assert.equal(plan.owner_approval_required, true);
+  assert.equal(plan.rows.length, 1);
+  assertConfidenceAssignmentPlanNoBannedClaims(plan);
 });

@@ -441,6 +441,28 @@ export type LearningOutcomesWriterReadyBatchReviewV1 = {
   data_mutation: false;
 };
 
+export type LearningOutcomesOwnerConfidenceAssignmentPlanRowV1 = {
+  source_file: string;
+  proposed_learning_outcome: ProposedLearningOutcomeRowV1;
+  missing_field: "confidence";
+  allowed_confidence_values: ["exact", "likely", "uncertain"];
+  recommended_owner_question: string;
+  blocked_until_owner_sets_confidence: true;
+  owner_approval_required: true;
+};
+
+export type LearningOutcomesOwnerConfidenceAssignmentPlanV1 = {
+  contract: "learning_outcomes_owner_confidence_assignment_plan_v1";
+  runtime_status: "OK" | "UNKNOWN_INPUT";
+  source_candidate_count: number;
+  assignment_candidate_count: number;
+  rows: LearningOutcomesOwnerConfidenceAssignmentPlanRowV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: true;
+  data_mutation: false;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -463,6 +485,8 @@ export type CommandCenterV2Report = {
   learning_outcomes_insert_plan_v1: LearningOutcomesInsertPlanV1;
   /** Writer-ready rows only: exact insert payloads for owner review — no DB writes. */
   learning_outcomes_writer_ready_batch_review_v1: LearningOutcomesWriterReadyBatchReviewV1;
+  /** Live-outcome Amazon rows blocked only by missing confidence — owner must choose literal; no auto-fill. */
+  learning_outcomes_owner_confidence_assignment_plan_v1: LearningOutcomesOwnerConfidenceAssignmentPlanV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

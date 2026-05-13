@@ -2,6 +2,7 @@ import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
   LearningOutcomesInsertPlanV1,
+  LearningOutcomesOwnerConfidenceAssignmentPlanV1,
   LearningOutcomesWriterReadyBatchReviewV1,
   ProposedLearningOutcomeRowV1,
 } from "./buckparts-command-center-v2-types";
@@ -11,6 +12,7 @@ import { validateLearningOutcomeInput } from "./learning-outcomes-writer";
 const FIRST_BATCH_CAP = 10;
 const OWNER_OR_BLOCKED_CAP = 20;
 const WRITER_READY_REVIEW_CAP = 10;
+const CONFIDENCE_ASSIGNMENT_CAP = 10;
 
 type Disposition = "writer_ready" | "owner_review_required" | "blocked_from_writer_batch";
 
@@ -49,6 +51,22 @@ function toWriterInput(p: ProposedLearningOutcomeRowV1): LearningOutcomeInsertIn
     index_status: p.index_status,
     date_checked: p.date_checked,
   };
+}
+
+/** Internal probe only: confirms other fields satisfy validateLearningOutcomeInput when any allowed literal is present — not an assignment. */
+function passesWriterValidationIfConfidenceWereLiteral(
+  p: ProposedLearningOutcomeRowV1,
+  literal: "exact" | "likely" | "uncertain",
+): boolean {
+  const probe: ProposedLearningOutcomeRowV1 = { ...p, confidence: literal };
+  const input = toWriterInput(probe);
+  if (!input) return false;
+  try {
+    validateLearningOutcomeInput(input);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function validateWriterOrError(p: ProposedLearningOutcomeRowV1): { ok: true } | { ok: false; message: string } {
@@ -307,6 +325,78 @@ export function buildLearningOutcomesWriterReadyBatchReviewV1(
     runtime_status,
     source_writer_ready_count,
     reviewed_row_count: rows.length,
+    rows,
+    proven_facts,
+    unknown_facts,
+    owner_approval_required: true,
+    data_mutation: false,
+  };
+}
+
+export function buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
+  evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+): LearningOutcomesOwnerConfidenceAssignmentPlanV1 {
+  if (evidenceImport.contract !== "evidence_to_learning_outcomes_candidate_import_v1") {
+    return {
+      contract: "learning_outcomes_owner_confidence_assignment_plan_v1",
+      runtime_status: "UNKNOWN_INPUT",
+      source_candidate_count: 0,
+      assignment_candidate_count: 0,
+      rows: [],
+      proven_facts: [
+        "Owner confidence assignment plan requires evidence_to_learning_outcomes_candidate_import_v1 input contract.",
+      ],
+      unknown_facts: ["evidence import contract mismatch — plan not built."],
+      owner_approval_required: true,
+      data_mutation: false,
+    };
+  }
+
+  const runtime_status: "OK" | "UNKNOWN_INPUT" =
+    evidenceImport.runtime_status === "OK" ? "OK" : "UNKNOWN_INPUT";
+
+  const fullCandidates =
+    evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
+  const classified = fullCandidates.map(classifyCandidate);
+
+  const eligible = classified.filter(
+    (r) =>
+      r.disposition === "owner_review_required" &&
+      r.prefer_live_amazon &&
+      r.proposed.confidence === null &&
+      passesWriterValidationIfConfidenceWereLiteral(r.proposed, "exact"),
+  );
+  eligible.sort((a, b) => a.source_file.localeCompare(b.source_file));
+
+  const assignment_candidate_count = eligible.length;
+  const unknown_facts: string[] = [];
+  if (assignment_candidate_count > CONFIDENCE_ASSIGNMENT_CAP) {
+    unknown_facts.push(
+      `Confidence assignment candidates (${assignment_candidate_count}) exceed display cap (${CONFIDENCE_ASSIGNMENT_CAP}); rows array lists the first ${CONFIDENCE_ASSIGNMENT_CAP} after source_file ordering.`,
+    );
+  }
+
+  const rows = eligible.slice(0, CONFIDENCE_ASSIGNMENT_CAP).map((r) => ({
+    source_file: r.source_file,
+    proposed_learning_outcome: r.proposed,
+    missing_field: "confidence" as const,
+    allowed_confidence_values: ["exact", "likely", "uncertain"] as const,
+    recommended_owner_question: `Choose explicit confidence (exact, likely, or uncertain) for slug "${r.proposed.slug}" from ${r.source_file} using operator judgment — this plan does not assign or infer a value from evidence JSON.`,
+    blocked_until_owner_sets_confidence: true as const,
+    owner_approval_required: true as const,
+  }));
+
+  const proven_facts: string[] = [
+    "learning_outcomes_owner_confidence_assignment_plan_v1 lists live-outcome Amazon pass rows classified owner_review_required solely because confidence is null and validateLearningOutcomeInput succeeds when any allowed literal is supplied internally — no literal is chosen or persisted here.",
+    "Rows match insert-plan preference (live Amazon CTA, https candidate_url, live-outcome filename); staged multipack unknown/not_live paths are excluded by those gates.",
+    "No Supabase calls; confidence is never auto-filled from evidence JSON in this block.",
+  ];
+
+  return {
+    contract: "learning_outcomes_owner_confidence_assignment_plan_v1",
+    runtime_status,
+    source_candidate_count: evidenceImport.candidate_count,
+    assignment_candidate_count,
     rows,
     proven_facts,
     unknown_facts,

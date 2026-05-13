@@ -1,5 +1,9 @@
 import type { AmazonFirstBlockedConversionQueueReport } from "../report-amazon-first-blocked-conversion-queue";
-import { buildLearningOutcomesInsertPlanV1, buildLearningOutcomesWriterReadyBatchReviewV1 } from "./learning-outcomes-insert-plan-v1";
+import {
+  buildLearningOutcomesInsertPlanV1,
+  buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
+  buildLearningOutcomesWriterReadyBatchReviewV1,
+} from "./learning-outcomes-insert-plan-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -447,6 +451,9 @@ export function buildCommandCenterV2Report(input: {
       input.evidenceToLearningOutcomesCandidateImport,
     ),
     learning_outcomes_writer_ready_batch_review_v1: buildLearningOutcomesWriterReadyBatchReviewV1(
+      input.evidenceToLearningOutcomesCandidateImport,
+    ),
+    learning_outcomes_owner_confidence_assignment_plan_v1: buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
       input.evidenceToLearningOutcomesCandidateImport,
     ),
     recommendation_authority: {
