@@ -497,6 +497,38 @@ export type LearningOutcomesConfidenceApprovalsLoadedV1 = {
   unknown_facts: string[];
 };
 
+export type FoundationScorecardLaneStatusV1 = "PROVEN" | "PARTIAL" | "BLOCKED" | "UNKNOWN";
+
+export type FoundationScorecardLaneV1 = {
+  lane_id: string;
+  label: string;
+  status: FoundationScorecardLaneStatusV1;
+  score_contribution: number;
+  max_contribution: number;
+  proven_basis: string[];
+  unknowns: string[];
+  next_proof_required: string;
+};
+
+export type TopOfGameFoundationScorecardRuntimeV1 = "OK" | "UNKNOWN_INPUT";
+
+export type TopOfGameFoundationScorecardV1 = {
+  contract: "top_of_game_foundation_scorecard_v1";
+  runtime_status: TopOfGameFoundationScorecardRuntimeV1;
+  foundation_maturity_score_100: number;
+  current_goal_score_100: number;
+  goal_reached: boolean;
+  lanes: FoundationScorecardLaneV1[];
+  blockers: string[];
+  next_best_foundation_move: string;
+  owner_dashboard_ready: false;
+  owner_dashboard_note: string;
+  read_only: true;
+  data_mutation: false;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -530,4 +562,6 @@ export type CommandCenterV2Report = {
   next_allowed_agent_token: string | null;
   /** Highest-priority owner-facing step synthesized from lanes (not chat memory). */
   next_owner_action: string;
+  /** Read-only foundation maturity scorecard toward 100% pre-polish — not dashboard UI. */
+  top_of_game_foundation_scorecard_v1: TopOfGameFoundationScorecardV1;
 };

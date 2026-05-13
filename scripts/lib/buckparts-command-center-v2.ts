@@ -8,6 +8,7 @@ import {
   buildLearningOutcomesOwnerConfidenceAssignmentPlanV1,
   buildLearningOutcomesWriterReadyBatchReviewV1,
 } from "./learning-outcomes-insert-plan-v1";
+import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -439,6 +440,43 @@ export function buildCommandCenterV2Report(input: {
       ? ownerParts.join(" ")
       : "No Command Center v2 owner-blocking heuristics fired; continue read-only monitoring.";
 
+  const learning_outcomes_insert_plan_v1 = buildLearningOutcomesInsertPlanV1(
+    input.evidenceToLearningOutcomesCandidateImport,
+    input.confidenceApprovalLookup,
+  );
+  const learning_outcomes_writer_ready_batch_review_v1 = buildLearningOutcomesWriterReadyBatchReviewV1(
+    input.evidenceToLearningOutcomesCandidateImport,
+    input.confidenceApprovalLookup,
+  );
+  const learning_outcomes_owner_confidence_assignment_plan_v1 = buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
+    input.evidenceToLearningOutcomesCandidateImport,
+    input.confidenceApprovalLookup,
+  );
+  const learning_outcomes_confidence_approval_registry_v1 = buildLearningOutcomesConfidenceApprovalRegistryV1(
+    input.evidenceToLearningOutcomesCandidateImport,
+    input.learningOutcomesConfidenceApprovals,
+  );
+
+  const recommendation_authority = {
+    evaluated_actions: recommendationAuthorityRecords,
+  };
+
+  const top_of_game_foundation_scorecard_v1 = buildTopOfGameFoundationScorecardV1({
+    demand: input.demandToCoverageEngine,
+    evidenceImport: input.evidenceToLearningOutcomesCandidateImport,
+    insertPlan: learning_outcomes_insert_plan_v1,
+    writerReady: learning_outcomes_writer_ready_batch_review_v1,
+    confRegistry: learning_outcomes_confidence_approval_registry_v1,
+    readModel: input.learningOutcomesReadModel,
+    deployLane,
+    revenueLane,
+    recommendationAuthority: recommendation_authority,
+    nextAllowedAgentToken: next_allowed_agent_token,
+    coverageHealth: coverageLane,
+    amazonRescue,
+    approvalsLoaded: input.learningOutcomesConfidenceApprovals,
+  });
+
   return {
     schema_version: "1",
     generated_at: input.now().toISOString(),
@@ -454,26 +492,13 @@ export function buildCommandCenterV2Report(input: {
     demand_to_coverage_engine_v1: input.demandToCoverageEngine,
     learning_outcomes_read_model_v1: input.learningOutcomesReadModel,
     evidence_to_learning_outcomes_candidate_import_v1: input.evidenceToLearningOutcomesCandidateImport,
-    learning_outcomes_insert_plan_v1: buildLearningOutcomesInsertPlanV1(
-      input.evidenceToLearningOutcomesCandidateImport,
-      input.confidenceApprovalLookup,
-    ),
-    learning_outcomes_writer_ready_batch_review_v1: buildLearningOutcomesWriterReadyBatchReviewV1(
-      input.evidenceToLearningOutcomesCandidateImport,
-      input.confidenceApprovalLookup,
-    ),
-    learning_outcomes_owner_confidence_assignment_plan_v1: buildLearningOutcomesOwnerConfidenceAssignmentPlanV1(
-      input.evidenceToLearningOutcomesCandidateImport,
-      input.confidenceApprovalLookup,
-    ),
-    learning_outcomes_confidence_approval_registry_v1: buildLearningOutcomesConfidenceApprovalRegistryV1(
-      input.evidenceToLearningOutcomesCandidateImport,
-      input.learningOutcomesConfidenceApprovals,
-    ),
-    recommendation_authority: {
-      evaluated_actions: recommendationAuthorityRecords,
-    },
+    learning_outcomes_insert_plan_v1,
+    learning_outcomes_writer_ready_batch_review_v1,
+    learning_outcomes_owner_confidence_assignment_plan_v1,
+    learning_outcomes_confidence_approval_registry_v1,
+    recommendation_authority,
     next_allowed_agent_token,
     next_owner_action,
+    top_of_game_foundation_scorecard_v1,
   };
 }

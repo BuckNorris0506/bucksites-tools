@@ -14,6 +14,7 @@ import {
   createConfidenceApprovalLookup,
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
+import { TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1 } from "./lib/top-of-game-foundation-scorecard-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
@@ -26,6 +27,7 @@ import type {
   LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
+  TopOfGameFoundationScorecardV1,
 } from "./lib/buckparts-command-center-v2-types";
 import {
   buildBuckpartsCommandCenterReport,
@@ -285,6 +287,14 @@ test("command center is read_only true and data_mutation false", async () => {
     "evidence_to_learning_outcomes_candidate_import_v1",
   );
   assert.equal(report.command_center_v2.learning_outcomes_insert_plan_v1.contract, "learning_outcomes_insert_plan_v1");
+  const tog = report.command_center_v2.top_of_game_foundation_scorecard_v1;
+  assert.equal(tog.contract, "top_of_game_foundation_scorecard_v1");
+  assert.equal(tog.read_only, true);
+  assert.equal(tog.data_mutation, false);
+  assert.equal(tog.owner_dashboard_ready, false);
+  assert.equal(tog.lanes.reduce((s, l) => s + l.max_contribution, 0), 100);
+  assert.equal(tog.goal_reached, tog.foundation_maturity_score_100 === 100 && tog.lanes.every((l) => l.status === "PROVEN"));
+  assertFoundationScorecardNoBannedClaims(tog);
 });
 
 test("command center surfaces search_and_click_intelligence_summary from command surface", async () => {
@@ -1477,6 +1487,14 @@ function assertConfidenceRegistryBlockNoBannedClaims(block: LearningOutcomesConf
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertFoundationScorecardNoBannedClaims(block: TopOfGameFoundationScorecardV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -2160,6 +2178,113 @@ test("command_center_v2 learning_outcomes_confidence_approval_registry_v1 is rea
   assert.equal(wrBatch.source_writer_ready_count, 1);
   assert.equal(wrBatch.rows[0].proposed_insert_payload.confidence, "uncertain");
   assertWriterReadyBatchReviewNoBannedClaims(wrBatch);
+});
+
+test("top_of_game_foundation_lane_weights_v1 sum to 100", () => {
+  assert.equal(Object.values(TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1).reduce((a, b) => a + b, 0), 100);
+});
+
+test("command_center_v2 top_of_game durable_learning_write_proven is BLOCKED when total_outcomes is 0", async () => {
+  const lo: LearningOutcomesReadModelV1 = {
+    ...learningOutcomesReadModelOkFixture(),
+    total_outcomes: 0,
+    latest_outcomes: [],
+  };
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => lo,
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "durable_learning_write_proven",
+  );
+  assert.ok(lane);
+  assert.equal(lane.status, "BLOCKED");
+  assert.equal(lane.score_contribution, 0);
+  assert.equal(report.command_center_v2.top_of_game_foundation_scorecard_v1.goal_reached, false);
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("command_center_v2 top_of_game durable_learning_write_proven is PROVEN when total_outcomes > 0", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "durable_learning_write_proven",
+  );
+  assert.ok(lane);
+  assert.equal(lane.status, "PROVEN");
+  assert.equal(lane.score_contribution, 10);
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("command_center_v2 top_of_game live_site_smoke_truth is BLOCKED when deploy is PLACEHOLDER", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    liveSiteMonitor: null,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.command_center_v2.deploy_live_site_status.status, "PLACEHOLDER");
+  const lane = report.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "live_site_smoke_truth",
+  );
+  assert.ok(lane);
+  assert.equal(lane.status, "BLOCKED");
+  assert.equal(lane.score_contribution, 0);
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("command_center_v2 top_of_game revenue_truth_connection is not PROVEN when commission_or_revenue is NOT_CONNECTED", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "revenue_truth_connection",
+  );
+  assert.ok(lane);
+  assert.notEqual(lane.status, "PROVEN");
+  assert.equal(
+    report.command_center_v2.revenue_snapshot.click_visibility?.commission_or_revenue,
+    "NOT_CONNECTED",
+  );
+  assertFoundationScorecardNoBannedClaims(report.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("command_center_v2 top_of_game foundation score does not reach 100 with public_trust lane UNKNOWN", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const sc = report.command_center_v2.top_of_game_foundation_scorecard_v1;
+  assert.equal(sc.lanes.find((l) => l.lane_id === "public_trust_unification_backend_contract")?.status, "UNKNOWN");
+  assert.equal(sc.foundation_maturity_score_100 < 100, true);
+  assert.equal(sc.goal_reached, false);
 });
 
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {

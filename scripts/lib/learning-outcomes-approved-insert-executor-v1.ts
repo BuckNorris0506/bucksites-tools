@@ -93,34 +93,40 @@ export type LearningOutcomesApprovedInsertExecutorDepsV1 = {
  * Owner-guarded learning_outcomes insert executor v1: at most one row, only when a writer-ready candidate
  * matches an explicit valid registry approval. Uses insertLearningOutcome only; no raw SQL.
  */
-export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
-  mode: LearningOutcomesApprovedInsertExecutorModeV1;
-  evidenceImport: EvidenceToLearningOutcomesCandidateImportV1;
-  approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
-  deps?: Partial<LearningOutcomesApprovedInsertExecutorDepsV1>;
-}): Promise<LearningOutcomesApprovedInsertExecutorV1Report> {
+export type ApprovedInsertExecutorChosenRowV1 = {
+  source_file: string;
+  slug: string;
+  payload: LearningOutcomeInsertInput;
+};
+
+export type ApprovedInsertExecutorSelectionV1 = {
+  selected_count: number;
+  chosen: ApprovedInsertExecutorChosenRowV1[];
+  skipped_reasons: string[];
+  unknown_facts: string[];
+};
+
+/**
+ * Sync selection logic shared with dry-run / scorecard (no Supabase; no insertLearningOutcome).
+ */
+export function computeApprovedInsertExecutorSelectionV1(
+  evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+  approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1,
+): ApprovedInsertExecutorSelectionV1 {
   const unknown_facts: string[] = [];
   const skipped_reasons: string[] = [];
-  const proven_facts: string[] = [
-    "learning_outcomes_approved_insert_executor_v1 selects at most one row from writer-ready batch review that also matches a valid entry in data/ops/learning-outcomes-confidence-approvals.json (candidateMatchesApproval on source_file + slug or token).",
-    "Inserts use insertLearningOutcome from scripts/lib/learning-outcomes-writer.ts only — no raw SQL in this executor.",
-    "Default mode is DRY_RUN (no insertLearningOutcome call). Mutation requires mode MUTATE_APPROVED (CLI: --mutate-approved-learning-outcome).",
-    "Multipack conversion-batch evidence paths and evidence_jsonb_stub.multipack rows are excluded from selection.",
-    "Selection enforces outcome pass, cta live, and https candidate_url in addition to writer-ready classification — not shelf fit, revenue, buy readiness, or public publish approval.",
-  ];
 
-  if (args.approvalsLoaded.runtime_status !== "OK") {
+  if (approvalsLoaded.runtime_status !== "OK") {
     unknown_facts.push(
-      `Confidence registry runtime_status is ${args.approvalsLoaded.runtime_status} — valid_approvals may be empty; selection requires registry rows that validate for matching candidates.`,
+      `Confidence registry runtime_status is ${approvalsLoaded.runtime_status} — valid_approvals may be empty; selection requires registry rows that validate for matching candidates.`,
     );
   }
 
-  const lookup = createConfidenceApprovalLookup(args.approvalsLoaded.valid_approvals);
-  const review = buildLearningOutcomesWriterReadyBatchReviewV1(args.evidenceImport, lookup);
-  const fullCandidates =
-    args.evidenceImport.candidates_evaluated_uncapped_v1 ?? args.evidenceImport.candidates;
+  const lookup = createConfidenceApprovalLookup(approvalsLoaded.valid_approvals);
+  const review = buildLearningOutcomesWriterReadyBatchReviewV1(evidenceImport, lookup);
+  const fullCandidates = evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
 
-  if (args.evidenceImport.contract === "evidence_to_learning_outcomes_candidate_import_v1") {
+  if (evidenceImport.contract === "evidence_to_learning_outcomes_candidate_import_v1") {
     if (review.source_writer_ready_count > WRITER_READY_REVIEW_CAP && review.rows.length < review.source_writer_ready_count) {
       unknown_facts.push(
         `Writer-ready review lists at most ${WRITER_READY_REVIEW_CAP} rows; ${review.source_writer_ready_count} writer_ready candidates exist — executor only considers review.rows ordering; additional rows are not evaluated in v1.`,
@@ -128,13 +134,7 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
     }
   }
 
-  type Eligible = {
-    source_file: string;
-    slug: string;
-    payload: LearningOutcomeInsertInput;
-  };
-
-  const eligibleOrdered: Eligible[] = [];
+  const eligibleOrdered: ApprovedInsertExecutorChosenRowV1[] = [];
 
   for (const row of review.rows) {
     const slug = row.proposed_insert_payload.slug;
@@ -146,7 +146,7 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
       continue;
     }
 
-    if (!hasRegistryApprovalForCandidate(cand, args.approvalsLoaded)) {
+    if (!hasRegistryApprovalForCandidate(cand, approvalsLoaded)) {
       skipped_reasons.push(`${label}: skipped — no matching valid owner confidence registry approval for this candidate.`);
       continue;
     }
@@ -169,6 +169,34 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
     const e = eligibleOrdered[i];
     skipped_reasons.push(`${e.source_file}::${e.slug}: skipped — executor v1 cap (${EXECUTOR_CAP}) after higher-priority row.`);
   }
+
+  return {
+    selected_count: chosen.length,
+    chosen,
+    skipped_reasons,
+    unknown_facts,
+  };
+}
+
+export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
+  mode: LearningOutcomesApprovedInsertExecutorModeV1;
+  evidenceImport: EvidenceToLearningOutcomesCandidateImportV1;
+  approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
+  deps?: Partial<LearningOutcomesApprovedInsertExecutorDepsV1>;
+}): Promise<LearningOutcomesApprovedInsertExecutorV1Report> {
+  const unknown_facts: string[] = [];
+  const proven_facts: string[] = [
+    "learning_outcomes_approved_insert_executor_v1 selects at most one row from writer-ready batch review that also matches a valid entry in data/ops/learning-outcomes-confidence-approvals.json (candidateMatchesApproval on source_file + slug or token).",
+    "Inserts use insertLearningOutcome from scripts/lib/learning-outcomes-writer.ts only — no raw SQL in this executor.",
+    "Default mode is DRY_RUN (no insertLearningOutcome call). Mutation requires mode MUTATE_APPROVED (CLI: --mutate-approved-learning-outcome).",
+    "Multipack conversion-batch evidence paths and evidence_jsonb_stub.multipack rows are excluded from selection.",
+    "Selection enforces outcome pass, cta live, and https candidate_url in addition to writer-ready classification — not shelf fit, revenue, buy readiness, or public publish approval.",
+  ];
+
+  const selection = computeApprovedInsertExecutorSelectionV1(args.evidenceImport, args.approvalsLoaded);
+  unknown_facts.push(...selection.unknown_facts);
+  const skipped_reasons = selection.skipped_reasons;
+  const chosen = selection.chosen;
 
   const inserted_or_planned_rows: LearningOutcomesApprovedInsertExecutorPlannedRowV1[] = chosen.map((e) => ({
     source_file: e.source_file,
