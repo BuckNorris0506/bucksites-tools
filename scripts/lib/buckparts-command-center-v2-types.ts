@@ -445,7 +445,7 @@ export type LearningOutcomesOwnerConfidenceAssignmentPlanRowV1 = {
   source_file: string;
   proposed_learning_outcome: ProposedLearningOutcomeRowV1;
   missing_field: "confidence";
-  allowed_confidence_values: ["exact", "likely", "uncertain"];
+  allowed_confidence_values: readonly ["exact", "likely", "uncertain"];
   recommended_owner_question: string;
   blocked_until_owner_sets_confidence: true;
   owner_approval_required: true;

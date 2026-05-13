@@ -213,7 +213,7 @@ export function buildPublicTrustUnificationBackendContractV1(input: {
       `Partial trust signal coverage: ${proven_signal_count} of ${required_signals.length} required signal path groups exist.`,
     );
     unknown_facts.push(
-      `Missing signal ids (path group not fully present): ${[...missingSignals].sort().join(", ") || "UNKNOWN"}.`,
+      `Missing signal ids (path group not fully present): ${Array.from(missingSignals).sort().join(", ") || "UNKNOWN"}.`,
     );
   } else {
     unknown_facts.push(
@@ -229,8 +229,8 @@ export function buildPublicTrustUnificationBackendContractV1(input: {
       if (input.fileExists(abs)) found.push(rel);
       else missing.push(rel);
     }
-    const confidence_state =
-      missing.length === 0 ? "PROVEN" : found.length === 0 ? "UNKNOWN" : ("PARTIAL" as const);
+    const confidence_state: "UNKNOWN" | "PARTIAL" | "PROVEN" =
+      missing.length === 0 ? "PROVEN" : found.length === 0 ? "UNKNOWN" : "PARTIAL";
     const what_was_found =
       found.length > 0
         ? `Present paths (${found.length}): ${found.join("; ")}` +
