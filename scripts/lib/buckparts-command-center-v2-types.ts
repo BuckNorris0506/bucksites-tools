@@ -530,6 +530,36 @@ export type PublicTrustUnificationBackendContractV1 = {
   read_only: true;
 };
 
+export type RevenueTruthLedgerContractRuntimeV1 =
+  | "OK"
+  | "MISSING_FILE"
+  | "INVALID_JSON"
+  | "INVALID_SCHEMA"
+  | "IO_ERROR"
+  | "PARTIAL_VALIDATION"
+  | "UNKNOWN_INPUT";
+
+export type RevenueTruthLedgerCoverageStatusV1 = "PROVEN" | "PARTIAL" | "UNKNOWN" | "BLOCKED";
+
+/** Read-only commission ledger input from `data/ops/revenue-ledger-v1.json` — not click-derived revenue. */
+export type RevenueTruthLedgerContractV1 = {
+  contract: "revenue_truth_ledger_contract_v1";
+  runtime_status: RevenueTruthLedgerContractRuntimeV1;
+  ledger_file_relative_path: string;
+  ledger_inner_contract: string | null;
+  coverage_status: RevenueTruthLedgerCoverageStatusV1;
+  valid_entry_count: number;
+  invalid_entry_count: number;
+  entries_evaluated_count: number;
+  total_reported_gross_usd: number | "UNKNOWN";
+  invalid_entry_samples: Array<{ index: number; reasons: string[] }>;
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: false;
+  data_mutation: false;
+  read_only: true;
+};
+
 export type FoundationScorecardLaneStatusV1 = "PROVEN" | "PARTIAL" | "BLOCKED" | "UNKNOWN";
 
 export type FoundationScorecardLaneV1 = {
@@ -590,6 +620,8 @@ export type CommandCenterV2Report = {
   learning_outcomes_confidence_approval_registry_v1: LearningOutcomesConfidenceApprovalRegistryV1;
   /** Read-only file-presence map for trust / buy-shell modules — not live page or revenue proof. */
   public_trust_unification_backend_contract_v1: PublicTrustUnificationBackendContractV1;
+  /** Read-only owner ledger JSON input contract — not click_events, not affiliate API proof. */
+  revenue_truth_ledger_contract_v1: RevenueTruthLedgerContractV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

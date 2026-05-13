@@ -13,6 +13,7 @@ import type {
   LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
   PublicTrustUnificationBackendContractV1,
+  RevenueTruthLedgerContractV1,
   RevenueSnapshotLane,
   TopOfGameFoundationScorecardRuntimeV1,
   TopOfGameFoundationScorecardV1,
@@ -77,6 +78,7 @@ export type BuildTopOfGameFoundationScorecardV1Input = {
   amazonRescue: AmazonRescueLane;
   approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
   publicTrustContract: PublicTrustUnificationBackendContractV1;
+  revenueLedgerContract: RevenueTruthLedgerContractV1;
 };
 
 /**
@@ -112,6 +114,15 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
     );
   } else {
     unknown_facts.push("public_trust_unification_backend_contract_v1 missing or wrong contract discriminator on Command Center v2 input.");
+  }
+
+  const ledger = input.revenueLedgerContract;
+  if (ledger.contract === "revenue_truth_ledger_contract_v1") {
+    proven_facts.push(
+      `revenue_truth_ledger_contract_v1 is attached with coverage_status=${ledger.coverage_status}, valid_entry_count=${ledger.valid_entry_count}, invalid_entry_count=${ledger.invalid_entry_count}.`,
+    );
+  } else {
+    unknown_facts.push("revenue_truth_ledger_contract_v1 missing or wrong contract discriminator on Command Center v2 input.");
   }
 
   const lanes: FoundationScorecardLaneV1[] = [];
@@ -349,7 +360,8 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
       "deploy_live_site_status.status is OK with live_site_monitor_v1 artifact attached (HTTP smoke JSON present).",
       `Route probes: ${dep.live_site_monitor.routes.length}.`,
     ];
-    smokeNext = "Refresh smoke artifact on cadence; HTTP OK is not deploy API or revenue proof.";
+    smokeNext =
+      "Refresh smoke artifact on cadence; HTTP OK is not deploy API verification and does not prove affiliate payouts.";
   } else if (dep.status === "PLACEHOLDER" || dep.blocker === "no_live_site_smoke_artifact") {
     smokeStatus = "BLOCKED";
     smokeBasis = [
@@ -419,18 +431,41 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
   let revBasis: string[] = [];
   let revUnknowns: string[] = [];
   let revNext = "";
-  if (click && click.runtime_status === "OK" && click.commission_or_revenue === "NOT_CONNECTED") {
-    revStatus = "PARTIAL";
+  if (
+    click &&
+    click.runtime_status === "OK" &&
+    ledger.contract === "revenue_truth_ledger_contract_v1" &&
+    ledger.coverage_status === "PROVEN"
+  ) {
+    revStatus = "PROVEN";
     revBasis = [
-      "revenue_snapshot.click_visibility runtime OK but commission_or_revenue remains NOT_CONNECTED in-repo — operational click visibility only.",
-      click.commission_or_revenue_notes ? `Notes: ${click.commission_or_revenue_notes}` : "",
-    ].filter(Boolean);
-    revUnknowns = ["Commission/revenue ledger connection is not implemented in this repo slice."];
-    revNext = "Wire commission/revenue truth only with a separate proven contract — clicks stay non-revenue here.";
-  } else if (click && click.commission_or_revenue !== "NOT_CONNECTED") {
+      "revenue_truth_ledger_contract_v1.coverage_status is PROVEN — in-repo commission ledger input JSON validates (read-only data/ops file).",
+      "revenue_snapshot.click_visibility remains operational visibility only; commission_or_revenue on click_events stays NOT_CONNECTED — outbound clicks are not ledger revenue.",
+    ];
+    revUnknowns = [];
+    revNext =
+      "Populate ledger entries only from owner-approved affiliate report imports — never from click_events aggregates.";
+  } else if (click && click.runtime_status === "OK" && click.commission_or_revenue !== "NOT_CONNECTED") {
     revStatus = "PROVEN";
     revBasis = [`click_visibility reports commission_or_revenue=${click.commission_or_revenue} (not NOT_CONNECTED).`];
-    revNext = "Validate revenue connection claims against source systems outside this scorecard.";
+    revNext = "Validate ledger and click-derived signals against source systems outside this scorecard.";
+  } else if (click && click.runtime_status === "OK" && click.commission_or_revenue === "NOT_CONNECTED") {
+    revStatus = "PARTIAL";
+    revBasis = [
+      "revenue_snapshot.click_visibility runtime OK but commission_or_revenue remains NOT_CONNECTED on click_events — operational click visibility only.",
+      click.commission_or_revenue_notes ? `Notes: ${click.commission_or_revenue_notes}` : "",
+    ].filter(Boolean);
+    if (ledger.contract === "revenue_truth_ledger_contract_v1" && ledger.coverage_status !== "PROVEN") {
+      revUnknowns = [
+        `Commission ledger input contract is not PROVEN (revenue_truth_ledger_contract_v1.coverage_status=${ledger.coverage_status}).`,
+      ];
+    } else if (ledger.contract !== "revenue_truth_ledger_contract_v1") {
+      revUnknowns = ["revenue_truth_ledger_contract_v1 block missing — cannot score full revenue lane."];
+    } else {
+      revUnknowns = [];
+    }
+    revNext =
+      "Add or repair data/ops/revenue-ledger-v1.json until revenue_truth_ledger_contract_v1 is PROVEN; clicks stay non-revenue.";
   } else {
     revStatus = "UNKNOWN";
     revBasis = ["Click visibility unavailable or schema-limited — cannot score revenue truth connection."];

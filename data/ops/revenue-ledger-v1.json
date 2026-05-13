@@ -1,0 +1,18 @@
+{
+  "contract": "revenue_ledger_v1",
+  "schema_version": "1",
+  "entries": [],
+  "notes": [
+    "This file is a read-only commission/revenue ledger input contract for Command Center v1.",
+    "click_events, CTA clicks, and outbound /go navigation counts are operational visibility only — they are not revenue and must never be imported as ledger rows from that source.",
+    "Zero entries means no owner-reported commission has been recorded yet; it does not prove business revenue — only that the ledger JSON shape is present for future affiliate report imports."
+  ],
+  "source_metadata": {
+    "intended_import_sources": [
+      "owner_csv_or_manual_entry",
+      "future_affiliate_report_export_when_available"
+    ],
+    "last_import_at": null,
+    "last_import_label": null
+  }
+}

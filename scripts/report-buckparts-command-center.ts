@@ -803,6 +803,7 @@ export async function buildBuckpartsCommandCenterReport(
     now,
     rootDir,
     fileExists,
+    readTextFile,
     registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
     registryEntries: tokenRegistryEntries,
     registryLoadError: tokenRegistryLoadError,

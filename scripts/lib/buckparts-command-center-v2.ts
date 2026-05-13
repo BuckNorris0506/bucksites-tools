@@ -9,6 +9,7 @@ import {
   buildLearningOutcomesWriterReadyBatchReviewV1,
 } from "./learning-outcomes-insert-plan-v1";
 import { buildPublicTrustUnificationBackendContractV1 } from "./public-trust-unification-backend-contract-v1";
+import { buildRevenueTruthLedgerContractV1 } from "./revenue-truth-ledger-contract-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import type {
   AmazonRescueTokenControlEntry,
@@ -166,6 +167,7 @@ export function buildCommandCenterV2Report(input: {
   now: () => Date;
   rootDir: string;
   fileExists: (absolutePath: string) => boolean;
+  readTextFile: (absolutePath: string) => string;
   registryPath: string;
   registryEntries: AmazonRescueTokenControlEntry[];
   registryLoadError: string | null;
@@ -465,6 +467,12 @@ export function buildCommandCenterV2Report(input: {
     fileExists: input.fileExists,
   });
 
+  const revenue_truth_ledger_contract_v1 = buildRevenueTruthLedgerContractV1({
+    rootDir: input.rootDir,
+    fileExists: input.fileExists,
+    readTextFile: input.readTextFile,
+  });
+
   const recommendation_authority = {
     evaluated_actions: recommendationAuthorityRecords,
   };
@@ -484,6 +492,7 @@ export function buildCommandCenterV2Report(input: {
     amazonRescue,
     approvalsLoaded: input.learningOutcomesConfidenceApprovals,
     publicTrustContract: public_trust_unification_backend_contract_v1,
+    revenueLedgerContract: revenue_truth_ledger_contract_v1,
   });
 
   return {
@@ -506,6 +515,7 @@ export function buildCommandCenterV2Report(input: {
     learning_outcomes_owner_confidence_assignment_plan_v1,
     learning_outcomes_confidence_approval_registry_v1,
     public_trust_unification_backend_contract_v1,
+    revenue_truth_ledger_contract_v1,
     recommendation_authority,
     next_allowed_agent_token,
     next_owner_action,

@@ -29,12 +29,17 @@ import type {
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
   PublicTrustUnificationBackendContractV1,
+  RevenueTruthLedgerContractV1,
   TopOfGameFoundationScorecardV1,
 } from "./lib/buckparts-command-center-v2-types";
 import {
   buildPublicTrustUnificationBackendContractV1,
   PUBLIC_TRUST_UNIFICATION_REQUIRED_SIGNALS_V1,
 } from "./lib/public-trust-unification-backend-contract-v1";
+import {
+  buildRevenueTruthLedgerContractV1,
+  REVENUE_LEDGER_FILE_RELATIVE_V1,
+} from "./lib/revenue-truth-ledger-contract-v1";
 import {
   buildBuckpartsCommandCenterReport,
   stripEvidenceUncappedCandidatesForStdout,
@@ -299,6 +304,12 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(pt.data_mutation, false);
   assert.equal(pt.owner_approval_required, false);
   assertPublicTrustContractNoBannedClaims(pt);
+  const ledger = report.command_center_v2.revenue_truth_ledger_contract_v1;
+  assert.equal(ledger.contract, "revenue_truth_ledger_contract_v1");
+  assert.equal(ledger.read_only, true);
+  assert.equal(ledger.data_mutation, false);
+  assert.equal(ledger.owner_approval_required, false);
+  assertRevenueLedgerContractNoBannedClaims(ledger);
   const tog = report.command_center_v2.top_of_game_foundation_scorecard_v1;
   assert.equal(tog.contract, "top_of_game_foundation_scorecard_v1");
   assert.equal(tog.read_only, true);
@@ -1515,6 +1526,14 @@ function assertPublicTrustContractNoBannedClaims(block: PublicTrustUnificationBa
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertRevenueLedgerContractNoBannedClaims(block: RevenueTruthLedgerContractV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -2367,6 +2386,98 @@ test("command_center_v2 public_trust lane adds 8 vs masked trust paths when repo
   assert.equal(lane.score_contribution, TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1.public_trust_unification_backend_contract);
   assertFoundationScorecardNoBannedClaims(present.command_center_v2.top_of_game_foundation_scorecard_v1);
   assertPublicTrustContractNoBannedClaims(present.command_center_v2.public_trust_unification_backend_contract_v1);
+});
+
+test("revenue_truth_ledger_contract_v1 loads committed empty ledger as PROVEN read-only", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const c = buildRevenueTruthLedgerContractV1({
+    rootDir,
+    fileExists: fs.existsSync,
+    readTextFile: (p) => fs.readFileSync(p, "utf8"),
+  });
+  assert.equal(c.contract, "revenue_truth_ledger_contract_v1");
+  assert.equal(c.ledger_file_relative_path, REVENUE_LEDGER_FILE_RELATIVE_V1);
+  assert.equal(c.ledger_inner_contract, "revenue_ledger_v1");
+  assert.equal(c.coverage_status, "PROVEN");
+  assert.equal(c.runtime_status, "OK");
+  assert.equal(c.valid_entry_count, 0);
+  assert.equal(c.invalid_entry_count, 0);
+  assert.equal(c.entries_evaluated_count, 0);
+  assert.equal(c.total_reported_gross_usd, 0);
+  assert.equal(c.read_only, true);
+  assert.equal(c.data_mutation, false);
+  assert.equal(c.owner_approval_required, false);
+  assertRevenueLedgerContractNoBannedClaims(c);
+});
+
+test("revenue_truth_ledger_contract_v1 invalid entry rows yield PARTIAL without throwing", () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const badJson = JSON.stringify({
+    contract: "revenue_ledger_v1",
+    entries: [{ id: "", recorded_at: "2026-01-01" }, { id: "e1", recorded_at: "2026-01-02", amount_usd: 12 }],
+  });
+  const c = buildRevenueTruthLedgerContractV1({
+    rootDir,
+    fileExists: () => true,
+    readTextFile: () => badJson,
+  });
+  assert.equal(c.coverage_status, "PARTIAL");
+  assert.equal(c.runtime_status, "PARTIAL_VALIDATION");
+  assert.equal(c.invalid_entry_count, 1);
+  assert.equal(c.valid_entry_count, 1);
+  assert.ok(c.invalid_entry_samples.length > 0);
+  assertRevenueLedgerContractNoBannedClaims(c);
+});
+
+test("command_center_v2 revenue_truth_connection adds 4 vs masked ledger file when click visibility is OK", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const common = {
+    rootDir,
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    readDir: () => [],
+    readTextFile: (abs: string) => fs.readFileSync(abs, "utf8"),
+  };
+  const absent = await buildBuckpartsCommandCenterReport({
+    ...common,
+    fileExists: (abs) => (abs.includes("revenue-ledger-v1.json") ? false : fs.existsSync(abs)),
+  });
+  const present = await buildBuckpartsCommandCenterReport({ ...common, fileExists: fs.existsSync });
+  assert.equal(absent.command_center_v2.revenue_truth_ledger_contract_v1.coverage_status, "UNKNOWN");
+  assert.equal(present.command_center_v2.revenue_truth_ledger_contract_v1.coverage_status, "PROVEN");
+  const revPresent = present.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "revenue_truth_connection",
+  );
+  const revAbsent = absent.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "revenue_truth_connection",
+  );
+  assert.ok(revPresent && revAbsent);
+  assert.equal(revPresent.status, "PROVEN");
+  assert.equal(revAbsent.status, "PARTIAL");
+  const delta =
+    present.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100 -
+    absent.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100;
+  assert.equal(delta, 4);
+  assertRevenueLedgerContractNoBannedClaims(present.command_center_v2.revenue_truth_ledger_contract_v1);
+  assertFoundationScorecardNoBannedClaims(present.command_center_v2.top_of_game_foundation_scorecard_v1);
+});
+
+test("top_of_game_foundation_scorecard_v1 goal_reached matches score 100 and all lanes PROVEN", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir: path.resolve(__dirname, ".."),
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    readDir: () => [],
+    readTextFile: (abs: string) => fs.readFileSync(abs, "utf8"),
+    fileExists: fs.existsSync,
+  });
+  const s = report.command_center_v2.top_of_game_foundation_scorecard_v1;
+  assert.equal(s.goal_reached, s.foundation_maturity_score_100 === 100 && s.lanes.every((l) => l.status === "PROVEN"));
+  assert.ok(s.foundation_maturity_score_100 <= 100);
 });
 
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {
