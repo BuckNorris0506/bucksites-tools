@@ -1,5 +1,7 @@
 /** Command Center v2 — owner/operator decision surface (read-only reports). */
 
+import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
+
 export type TokenControlStatus =
   | "LIVE_OUTCOME_RECORDED"
   | "UNKNOWN_EVIDENCE_RECORDED"
@@ -418,6 +420,27 @@ export type LearningOutcomesInsertPlanV1 = {
   data_mutation: false;
 };
 
+export type LearningOutcomesWriterReadyBatchReviewRowV1 = {
+  source_file: string;
+  /** Exact `LearningOutcomeInsertInput` shape for insertLearningOutcome — not executed by this report. */
+  proposed_insert_payload: LearningOutcomeInsertInput;
+  validation_basis: string[];
+  owner_approval_required: true;
+  approval_status: "PENDING_OWNER_REVIEW";
+};
+
+export type LearningOutcomesWriterReadyBatchReviewV1 = {
+  contract: "learning_outcomes_writer_ready_batch_review_v1";
+  runtime_status: "OK" | "UNKNOWN_INPUT";
+  source_writer_ready_count: number;
+  reviewed_row_count: number;
+  rows: LearningOutcomesWriterReadyBatchReviewRowV1[];
+  proven_facts: string[];
+  unknown_facts: string[];
+  owner_approval_required: true;
+  data_mutation: false;
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -438,6 +461,8 @@ export type CommandCenterV2Report = {
   evidence_to_learning_outcomes_candidate_import_v1: EvidenceToLearningOutcomesCandidateImportV1;
   /** Read-only first-batch insert ordering vs insertLearningOutcome gates — no DB writes. */
   learning_outcomes_insert_plan_v1: LearningOutcomesInsertPlanV1;
+  /** Writer-ready rows only: exact insert payloads for owner review — no DB writes. */
+  learning_outcomes_writer_ready_batch_review_v1: LearningOutcomesWriterReadyBatchReviewV1;
   recommendation_authority: {
     evaluated_actions: RecommendationAuthorityRecord[];
   };

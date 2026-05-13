@@ -2,6 +2,7 @@ import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
   LearningOutcomesInsertPlanV1,
+  LearningOutcomesWriterReadyBatchReviewV1,
   ProposedLearningOutcomeRowV1,
 } from "./buckparts-command-center-v2-types";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
@@ -9,6 +10,7 @@ import { validateLearningOutcomeInput } from "./learning-outcomes-writer";
 
 const FIRST_BATCH_CAP = 10;
 const OWNER_OR_BLOCKED_CAP = 20;
+const WRITER_READY_REVIEW_CAP = 10;
 
 type Disposition = "writer_ready" | "owner_review_required" | "blocked_from_writer_batch";
 
@@ -216,6 +218,96 @@ export function buildLearningOutcomesInsertPlanV1(
     blocked_count,
     proposed_first_batch,
     blocked_or_needs_owner_review: ownerOrBlocked,
+    proven_facts,
+    unknown_facts,
+    owner_approval_required: true,
+    data_mutation: false,
+  };
+}
+
+function writerReadyValidationBasis(classifiedRow: ClassifiedRow): string[] {
+  return [
+    ...classifiedRow.reasons,
+    "Structured validation: slug and reason are non-empty strings; outcome is pass|fail|blocked|unknown; confidence is exact|likely|uncertain; cta_status is live|not_live|blocked; nullable string fields and evidence object shape meet validateLearningOutcomeInput in scripts/lib/learning-outcomes-writer.ts (schema-only — not a listing-quality or site-publish approval).",
+  ];
+}
+
+/**
+ * Read-only: exact `insertLearningOutcome` input payloads for owner sign-off. Same writer_ready classification
+ * as learning_outcomes_insert_plan_v1; rows array capped; no Supabase.
+ */
+export function buildLearningOutcomesWriterReadyBatchReviewV1(
+  evidenceImport: EvidenceToLearningOutcomesCandidateImportV1,
+): LearningOutcomesWriterReadyBatchReviewV1 {
+  if (evidenceImport.contract !== "evidence_to_learning_outcomes_candidate_import_v1") {
+    return {
+      contract: "learning_outcomes_writer_ready_batch_review_v1",
+      runtime_status: "UNKNOWN_INPUT",
+      source_writer_ready_count: 0,
+      reviewed_row_count: 0,
+      rows: [],
+      proven_facts: ["Writer-ready review requires evidence_to_learning_outcomes_candidate_import_v1 input contract."],
+      unknown_facts: ["evidence import contract mismatch — review block not built."],
+      owner_approval_required: true,
+      data_mutation: false,
+    };
+  }
+
+  const runtime_status: "OK" | "UNKNOWN_INPUT" =
+    evidenceImport.runtime_status === "OK" ? "OK" : "UNKNOWN_INPUT";
+
+  const fullCandidates =
+    evidenceImport.candidates_evaluated_uncapped_v1 ?? evidenceImport.candidates;
+  const classified = fullCandidates.map(classifyCandidate);
+  const writerReady = classified.filter((r) => r.disposition === "writer_ready");
+  const source_writer_ready_count = writerReady.length;
+
+  writerReady.sort((a, b) => {
+    const pa = a.prefer_live_amazon ? 0 : 1;
+    const pb = b.prefer_live_amazon ? 0 : 1;
+    if (pa !== pb) return pa - pb;
+    return a.source_file.localeCompare(b.source_file);
+  });
+
+  const unknown_facts: string[] = [];
+  if (source_writer_ready_count > WRITER_READY_REVIEW_CAP) {
+    unknown_facts.push(
+      `writer_ready rows (${source_writer_ready_count}) exceed review display cap (${WRITER_READY_REVIEW_CAP}); rows array is the first ${WRITER_READY_REVIEW_CAP} after live-Amazon preference ordering.`,
+    );
+  }
+
+  const rows = writerReady.slice(0, WRITER_READY_REVIEW_CAP).flatMap((r) => {
+    const payload = toWriterInput(r.proposed);
+    if (!payload) {
+      unknown_facts.push(
+        `Internal inconsistency: ${r.source_file} marked writer_ready but proposed_learning_outcome did not serialize to a writer input — row omitted from review list.`,
+      );
+      return [];
+    }
+    return [
+      {
+        source_file: r.source_file,
+        proposed_insert_payload: payload,
+        validation_basis: writerReadyValidationBasis(r),
+        owner_approval_required: true as const,
+        approval_status: "PENDING_OWNER_REVIEW" as const,
+      },
+    ];
+  });
+
+  const proven_facts: string[] = [
+    "learning_outcomes_writer_ready_batch_review_v1 includes only candidates classified writer_ready by the same mapping as learning_outcomes_insert_plan_v1.",
+    "insertLearningOutcome is not invoked; proposed_insert_payload mirrors LearningOutcomeInsertInput for owner inspection.",
+    "Evidence field uses only the bounded evidence_jsonb_stub from evidence mapping — no raw evidence file bodies expanded here.",
+    "Validation_basis describes schema checks only — not shelf listing merit, revenue, commission, or shopper-site publish approval.",
+  ];
+
+  return {
+    contract: "learning_outcomes_writer_ready_batch_review_v1",
+    runtime_status,
+    source_writer_ready_count,
+    reviewed_row_count: rows.length,
+    rows,
     proven_facts,
     unknown_facts,
     owner_approval_required: true,

@@ -4,13 +4,14 @@ import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
 import { buildEvidenceToLearningOutcomesCandidateImportV1 } from "./lib/evidence-to-learning-outcomes-candidate-import-v1";
-import { buildLearningOutcomesInsertPlanV1 } from "./lib/learning-outcomes-insert-plan-v1";
+import { buildLearningOutcomesInsertPlanV1, buildLearningOutcomesWriterReadyBatchReviewV1 } from "./lib/learning-outcomes-insert-plan-v1";
 import { degradedLearningOutcomesReadModelV1 } from "./lib/learning-outcomes-read-model-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
   LearningOutcomesInsertPlanV1,
   LearningOutcomesReadModelV1,
+  LearningOutcomesWriterReadyBatchReviewV1,
   LiveSiteMonitorV1,
   ProposedLearningOutcomeRowV1,
 } from "./lib/buckparts-command-center-v2-types";
@@ -1440,6 +1441,14 @@ function assertInsertPlanNoBannedClaims(plan: LearningOutcomesInsertPlanV1) {
   assert.ok(!/public\s+cta\s+approval/i.test(blob));
 }
 
+function assertWriterReadyBatchReviewNoBannedClaims(block: LearningOutcomesWriterReadyBatchReviewV1) {
+  const blob = JSON.stringify(block);
+  assert.ok(!/\bbuy[-\s]?ready\b/i.test(blob));
+  assert.ok(!/\bfit\s+proof\b/i.test(blob));
+  assert.ok(!/\brevenue\s+proof\b/i.test(blob));
+  assert.ok(!/public\s+cta\s+approval/i.test(blob));
+}
+
 function insertPlanCountTestCandidate(i: number): EvidenceToLoImportCandidateV1 {
   return {
     source_file: `data/evidence/count-test-${String(i).padStart(2, "0")}.json`,
@@ -1617,4 +1626,162 @@ test("stripEvidenceUncappedCandidatesForStdout drops evidence import uncapped ar
     !("candidates_evaluated_uncapped_v1" in stripped.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1),
   );
   assert.equal(stripped.command_center_v2.evidence_to_learning_outcomes_candidate_import_v1.candidates.length, 20);
+});
+
+test("learning_outcomes_writer_ready_batch_review_v1 exposes LearningOutcomeInsertInput payloads for writer_ready rows only", () => {
+  const proposedWr: ProposedLearningOutcomeRowV1 = {
+    slug: "wr1",
+    part_number: "WR1",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B00WR1TEST99",
+    retailer: "amazon",
+    outcome: "pass",
+    reason: "Recorded.",
+    reason_detail: null,
+    confidence: "exact",
+    cta_status: "live",
+    index_status: null,
+    date_checked: "2026-05-10T12:00:00.000Z",
+    next_action: null,
+    evidence_jsonb_stub: { stub: true },
+  };
+  const proposedOr: ProposedLearningOutcomeRowV1 = {
+    slug: "z1",
+    part_number: "Z1",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B00Z1TEST99",
+    retailer: "amazon",
+    outcome: "pass",
+    reason: "Evidence export.",
+    reason_detail: null,
+    confidence: null,
+    cta_status: "live",
+    index_status: null,
+    date_checked: "2026-05-10T00:00:00.000Z",
+    next_action: "review",
+    evidence_jsonb_stub: { stub_or: true },
+  };
+  const imp = baseEvidenceImportForPlan({
+    candidates: [
+      {
+        source_file: "data/evidence/amazon-or-live-outcome.json",
+        proposed_learning_outcome: proposedOr,
+        mapping_basis: [],
+        missing_or_unknown_fields: ["confidence"],
+        owner_approval_required: true,
+      },
+      {
+        source_file: "data/evidence/amazon-wr1-live-outcome.json",
+        proposed_learning_outcome: proposedWr,
+        mapping_basis: [],
+        missing_or_unknown_fields: [],
+        owner_approval_required: true,
+      },
+    ],
+  });
+  const review = buildLearningOutcomesWriterReadyBatchReviewV1(imp);
+  assert.equal(review.contract, "learning_outcomes_writer_ready_batch_review_v1");
+  assert.equal(review.source_writer_ready_count, 1);
+  assert.equal(review.reviewed_row_count, 1);
+  assert.equal(review.rows.length, 1);
+  assert.equal(review.rows[0].source_file, "data/evidence/amazon-wr1-live-outcome.json");
+  assert.equal(review.rows[0].approval_status, "PENDING_OWNER_REVIEW");
+  assert.equal(review.rows[0].owner_approval_required, true);
+  assert.equal(review.data_mutation, false);
+  assert.equal(review.owner_approval_required, true);
+  const p = review.rows[0].proposed_insert_payload;
+  assert.equal(p.slug, "wr1");
+  assert.equal(p.confidence, "exact");
+  assert.equal(p.cta_status, "live");
+  assert.deepEqual(p.evidence, { stub: true });
+  assert.ok(Array.isArray(review.rows[0].validation_basis));
+  assert.ok(review.rows[0].validation_basis.some((s) => /validateLearningOutcomeInput/i.test(s)));
+  assertWriterReadyBatchReviewNoBannedClaims(review);
+});
+
+test("learning_outcomes_writer_ready_batch_review_v1 is empty when no writer_ready rows", () => {
+  const all = Array.from({ length: 3 }, (_, i) => insertPlanCountTestCandidate(i));
+  const imp = baseEvidenceImportForPlan({ candidates: all, candidateCount: 3 });
+  const review = buildLearningOutcomesWriterReadyBatchReviewV1(imp);
+  assert.equal(review.source_writer_ready_count, 0);
+  assert.equal(review.reviewed_row_count, 0);
+  assert.equal(review.rows.length, 0);
+  assert.equal(review.data_mutation, false);
+  assertWriterReadyBatchReviewNoBannedClaims(review);
+});
+
+test("learning_outcomes_writer_ready_batch_review_v1 caps rows at 10 with unknown_fact when more writer_ready exist", () => {
+  const all = Array.from({ length: 11 }, (_, i) => ({
+    source_file: `data/evidence/cap-wr-${String(i).padStart(2, "0")}.json`,
+    proposed_learning_outcome: {
+      slug: `cap${i}`,
+      part_number: `CAP${i}`,
+      model_number: null,
+      candidate_url: "https://www.amazon.com/dp/B00CAPTEST99",
+      retailer: "amazon",
+      outcome: "pass" as const,
+      reason: "Cap test row.",
+      reason_detail: null,
+      confidence: "exact" as const,
+      cta_status: "live" as const,
+      index_status: null,
+      date_checked: "2026-05-10T12:00:00.000Z",
+      next_action: null,
+      evidence_jsonb_stub: { cap_index: i },
+    },
+    mapping_basis: [] as string[],
+    missing_or_unknown_fields: [] as string[],
+    owner_approval_required: true as const,
+  }));
+  const imp = baseEvidenceImportForPlan({ candidates: all, candidateCount: 11 });
+  const review = buildLearningOutcomesWriterReadyBatchReviewV1(imp);
+  assert.equal(review.source_writer_ready_count, 11);
+  assert.equal(review.rows.length, 10);
+  assert.ok(review.unknown_facts.some((u) => /exceed review display cap/i.test(u)));
+  assertWriterReadyBatchReviewNoBannedClaims(review);
+});
+
+test("command_center_v2 surfaces learning_outcomes_writer_ready_batch_review_v1 read_only", async () => {
+  const proposedWr: ProposedLearningOutcomeRowV1 = {
+    slug: "wr1",
+    part_number: "WR1",
+    model_number: null,
+    candidate_url: "https://www.amazon.com/dp/B00WR1TEST99",
+    retailer: "amazon",
+    outcome: "pass",
+    reason: "Recorded.",
+    reason_detail: null,
+    confidence: "exact",
+    cta_status: "live",
+    index_status: null,
+    date_checked: "2026-05-10T12:00:00.000Z",
+    next_action: null,
+    evidence_jsonb_stub: { stub: true },
+  };
+  const imp = baseEvidenceImportForPlan({
+    candidates: [
+      {
+        source_file: "data/evidence/amazon-wr1-live-outcome.json",
+        proposed_learning_outcome: proposedWr,
+        mapping_basis: [],
+        missing_or_unknown_fields: [],
+        owner_approval_required: true,
+      },
+    ],
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => imp,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const review = report.command_center_v2.learning_outcomes_writer_ready_batch_review_v1;
+  assert.equal(review.contract, "learning_outcomes_writer_ready_batch_review_v1");
+  assert.equal(review.data_mutation, false);
+  assert.equal(review.owner_approval_required, true);
+  assert.equal(review.rows.length, 1);
+  assertWriterReadyBatchReviewNoBannedClaims(review);
 });
