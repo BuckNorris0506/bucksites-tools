@@ -6,23 +6,23 @@ const shellPad = "px-4 sm:px-6 lg:px-8";
 
 /** Primary nav: slate body, navy on hover — same language as homepage links */
 const primaryNavClass =
-  "text-[15px] font-semibold text-slate-700 transition-colors hover:text-blue-950 dark:text-slate-300 dark:hover:text-white sm:text-base";
+  "text-[15px] font-semibold text-bp-muted transition-colors hover:text-bp-trust sm:text-base";
 
 const footerLinkClass =
-  "font-medium text-blue-950 underline-offset-2 transition-colors hover:text-blue-900 hover:underline dark:text-blue-300 dark:hover:text-blue-200";
+  "font-medium text-bp-trust underline-offset-2 transition-colors hover:underline";
 
 export async function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <header className="border-b border-slate-200 border-t-[3px] border-t-blue-950 bg-white dark:border-slate-800 dark:border-t-blue-800 dark:bg-slate-950">
+    <div className="flex min-h-screen flex-col bg-bp-bg text-bp-text">
+      <header className="border-b border-bp-border border-t-[3px] border-t-bp-trust bg-bp-surface">
         <div className={`mx-auto w-full ${shellMax} ${shellPad}`}>
-          <div className="flex flex-col gap-4 py-5 lg:py-6">
+          <div className="flex flex-col gap-2.5 py-3 sm:py-3.5 lg:gap-3 lg:py-4">
             <div className="flex items-center justify-between gap-4">
-              <Link href="/" className="flex items-center gap-3">
-                <span aria-hidden className="grid h-9 w-9 place-items-center">
+              <Link href="/" className="flex items-center gap-2.5 sm:gap-3">
+                <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center sm:h-9 sm:w-9">
                   <svg
                     viewBox="0 0 48 48"
-                    className="h-9 w-9 text-blue-950 dark:text-blue-400"
+                    className="h-8 w-8 text-bp-trust sm:h-9 sm:w-9"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -39,19 +39,19 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
                     />
                   </svg>
                 </span>
-                <span className="text-xl font-semibold tracking-[0.08em] text-slate-900 dark:text-slate-50 sm:text-2xl">
+                <span className="text-lg font-semibold tracking-[0.08em] text-bp-text sm:text-xl">
                   {SITE_DISPLAY_NAME}
                 </span>
               </Link>
               <Link
                 href="/search"
-                className="inline-flex min-h-11 items-center justify-center rounded-md bg-blue-950 px-5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:bg-blue-900 dark:shadow-none dark:hover:bg-blue-800"
+                className="inline-flex min-h-10 items-center justify-center rounded-md border border-bp-trust/20 bg-bp-trust px-4 text-sm font-semibold text-white transition-colors hover:bg-bp-trust/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bp-trust sm:min-h-11 sm:px-5"
               >
                 Search
               </Link>
             </div>
 
-            <nav aria-label="Primary" className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:gap-x-8">
+            <nav aria-label="Primary" className="flex flex-wrap items-center gap-x-5 gap-y-1.5 sm:gap-x-7">
               <Link href="/search" className={primaryNavClass}>
                 Search
               </Link>
@@ -66,34 +66,34 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main
-        className={`mx-auto w-full flex-1 ${shellMax} ${shellPad} py-8 sm:py-10 lg:py-12`}
+        className={`mx-auto w-full flex-1 ${shellMax} ${shellPad} py-6 sm:py-8 lg:py-10`}
       >
         {children}
       </main>
-      <footer className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+      <footer className="border-t border-bp-border bg-bp-surface">
         <div
-          className={`mx-auto ${shellMax} ${shellPad} flex flex-col items-center gap-4 py-8 text-sm leading-relaxed text-slate-600 dark:text-slate-400`}
+          className={`mx-auto ${shellMax} ${shellPad} flex flex-col items-center gap-4 py-8 text-sm leading-relaxed text-bp-muted`}
         >
           <nav
             aria-label="Legal and trust"
-            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] text-slate-700 dark:text-slate-300"
+            className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] text-bp-text"
           >
             <Link href="/privacy" className={footerLinkClass}>
               Privacy
             </Link>
-            <span aria-hidden className="text-slate-300 dark:text-slate-600">
+            <span aria-hidden className="text-bp-border">
               ·
             </span>
             <Link href="/disclosure" className={footerLinkClass}>
               Affiliate Disclosure
             </Link>
-            <span aria-hidden className="text-slate-300 dark:text-slate-600">
+            <span aria-hidden className="text-bp-border">
               ·
             </span>
             <Link href="/about" className={footerLinkClass}>
               About
             </Link>
-            <span aria-hidden className="text-slate-300 dark:text-slate-600">
+            <span aria-hidden className="text-bp-border">
               ·
             </span>
             <Link href="/terms" className={footerLinkClass}>
