@@ -6,6 +6,13 @@ export const OWNER_REPORT_ARTIFACT_KEY_GSC = "gsc_search_analytics" as const;
 export const OWNER_REPORT_ARTIFACT_KEY_GA4_TRUST_FUNNEL = "ga4_trust_funnel" as const;
 export const OWNER_REPORT_ARTIFACT_KEY_LIVE_SITE_SMOKE = "live_site_smoke_v1" as const;
 
+/** Must match every migration that (re)defines `owner_report_artifacts_allowed_keys` (latest wins at runtime). */
+export const OWNER_REPORT_ARTIFACT_DB_ALLOWED_KEYS = [
+  OWNER_REPORT_ARTIFACT_KEY_GSC,
+  OWNER_REPORT_ARTIFACT_KEY_GA4_TRUST_FUNNEL,
+  OWNER_REPORT_ARTIFACT_KEY_LIVE_SITE_SMOKE,
+] as const;
+
 type EnvSource = Record<string, string | undefined>;
 
 type ArtifactStoreClientResult =
