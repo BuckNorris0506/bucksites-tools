@@ -4,6 +4,28 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import { NextRequest } from "next/server";
 
+const APP_ROOT = path.join(process.cwd(), "src", "app");
+const GO_ROUTE_REL_RE = /\/go\/\[linkId\]\/route\.ts$/;
+
+function* walkAppFiles(dir: string): Generator<string> {
+  if (!fs.existsSync(dir)) return;
+  for (const name of fs.readdirSync(dir)) {
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) yield* walkAppFiles(full);
+    else if (st.isFile()) yield full;
+  }
+}
+
+function listGoLinkRouteSources(): string[] {
+  const out: string[] = [];
+  for (const f of walkAppFiles(APP_ROOT)) {
+    const rel = f.replace(/\\/g, "/");
+    if (GO_ROUTE_REL_RE.test(rel)) out.push(f);
+  }
+  return out.sort((a, b) => a.localeCompare(b));
+}
+
 import {
   GO_LINK_UUID_RE,
   buildGoClickEventInsertRow,
@@ -208,21 +230,32 @@ describe("logClickEventForGoRoute monitoring", () => {
   });
 });
 
-describe("fridge /go unsafe fallback", () => {
-  it("redirects to /go-unavailable instead of home when id, row, or gate blocks outbound", () => {
-    const abs = path.join(process.cwd(), "src/app/go/[linkId]/route.ts");
-    const src = fs.readFileSync(abs, "utf8");
-    assert.ok(
-      !src.includes('goFallbackRedirect(request, "/")'),
-      "fridge wedge go must not silently fall back to homepage",
-    );
-    const fallbacks = src.match(/goFallbackRedirect\(\s*request\s*,\s*"([^"]+)"\s*\)/g) ?? [];
-    assert.equal(fallbacks.length, 4, "expected four goFallbackRedirect calls");
-    assert.ok(
-      fallbacks.every((line) => line.includes('"/go-unavailable"')),
-      `all fridge go fallbacks must target /go-unavailable: ${fallbacks.join(" | ")}`,
-    );
+describe("/go fallbacks use /go-unavailable (all wedges)", () => {
+  it("discovers at least one go/[linkId] route under src/app", () => {
+    const routes = listGoLinkRouteSources();
+    assert.ok(routes.length > 0, `expected go/[linkId]/route.ts under ${APP_ROOT}`);
   });
+
+  for (const abs of listGoLinkRouteSources()) {
+    const rel = path.relative(process.cwd(), abs).replace(/\\/g, "/");
+    it(`${rel} sends every goFallbackRedirect to /go-unavailable`, () => {
+      const src = fs.readFileSync(abs, "utf8");
+      assert.ok(
+        !src.includes('goFallbackRedirect(request, "/")'),
+        `${rel} must not silently fall back to homepage`,
+      );
+      const fallbacks = src.match(/goFallbackRedirect\(\s*request\s*,\s*"([^"]+)"\s*\)/g) ?? [];
+      assert.equal(
+        fallbacks.length,
+        4,
+        `${rel}: expected four goFallbackRedirect calls (invalid id, load error, missing target, gate)`,
+      );
+      assert.ok(
+        fallbacks.every((line) => line.includes('"/go-unavailable"')),
+        `${rel}: all go fallbacks must target /go-unavailable: ${fallbacks.join(" | ")}`,
+      );
+    });
+  }
 
   it("serves go-unavailable page with search and home links", () => {
     const abs = path.join(process.cwd(), "src/app/go-unavailable/page.tsx");

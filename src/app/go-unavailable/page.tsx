@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Store link unavailable",
   description:
-    "That BuckParts store shortcut could not be opened safely. Compare your part numbers, try search, or return home.",
+    "That BuckParts store shortcut could not be opened safely. Compare model and part details, try search, or return home.",
 };
 
 export default function GoUnavailablePage() {
@@ -18,9 +18,9 @@ export default function GoUnavailablePage() {
         expired, blocked, or no longer passes our checks.
       </p>
       <p>
-        Compare the part and model numbers on your{" "}
-        <strong className="font-medium text-neutral-800 dark:text-neutral-200">old filter</strong> or in your{" "}
-        <strong className="font-medium text-neutral-800 dark:text-neutral-200">owner&apos;s manual</strong> before
+        Compare model and part numbers on your{" "}
+        <strong className="font-medium text-neutral-800 dark:text-neutral-200">product or packaging</strong> or in
+        your <strong className="font-medium text-neutral-800 dark:text-neutral-200">owner&apos;s manual</strong> before
         you try again.
       </p>
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
@@ -28,7 +28,7 @@ export default function GoUnavailablePage() {
           href="/search"
           className="font-semibold text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
         >
-          Search filters
+          Search
         </Link>
         {" · "}
         <Link href="/" className="font-semibold text-neutral-900 underline underline-offset-2 dark:text-neutral-100">

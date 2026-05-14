@@ -120,7 +120,17 @@ describe("go/[linkId] routes use shared affiliate handler", () => {
       );
       assert.ok(
         src.includes("goFallbackRedirect("),
-        `must use goFallbackRedirect(request, wedgePath) for invalid-id / missing-row cases`,
+        `must use goFallbackRedirect(request, "/go-unavailable") for invalid-id / missing-row / gate-blocked cases`,
+      );
+      const goFallbacks =
+        src.match(/goFallbackRedirect\(\s*request\s*,\s*"([^"]+)"\s*\)/g) ?? [];
+      assert.ok(
+        goFallbacks.length >= 1,
+        `${rel} must call goFallbackRedirect on failure paths`,
+      );
+      assert.ok(
+        goFallbacks.every((line) => line.includes('"/go-unavailable"')),
+        `${rel} must send all /go failures to /go-unavailable (same as fridge wedge): ${goFallbacks.join(" | ")}`,
       );
       assert.ok(
         src.includes("nextResponseRedirectAffiliateIfSafe("),

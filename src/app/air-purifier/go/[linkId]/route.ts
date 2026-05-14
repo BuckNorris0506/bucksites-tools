@@ -16,7 +16,7 @@ export async function GET(
   const { linkId } = await params;
 
   if (!GO_LINK_UUID_RE.test(linkId)) {
-    return goFallbackRedirect(request, "/air-purifier");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   let target: string | null = null;
@@ -31,11 +31,11 @@ export async function GET(
     classification = row?.browser_truth_classification ?? undefined;
     buyableSubtype = row?.browser_truth_buyable_subtype ?? null;
   } catch {
-    return goFallbackRedirect(request, "/air-purifier");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   if (!target) {
-    return goFallbackRedirect(request, "/air-purifier");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   const go = nextResponseRedirectAffiliateIfSafe(
@@ -45,7 +45,7 @@ export async function GET(
     buyableSubtype,
   );
   if (!go) {
-    return goFallbackRedirect(request, "/air-purifier");
+    return goFallbackRedirect(request, "/go-unavailable");
   }
 
   await logClickEventForGoRoute(
