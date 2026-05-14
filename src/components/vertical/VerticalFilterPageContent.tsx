@@ -89,33 +89,33 @@ export function VerticalFilterPageContent({
     <article className="space-y-10">
       {wayfinding}
       {utilityIntro ? (
-        <p className="max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+        <p className="max-w-2xl text-sm leading-relaxed text-bp-muted">
           {utilityIntro}
         </p>
       ) : null}
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+      <div className="rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
+        <p className="text-xs font-medium uppercase tracking-wide text-bp-muted">
           Brand
         </p>
-        <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{brandName}</p>
+        <p className="text-lg font-semibold text-bp-text">{brandName}</p>
 
-        <p className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm leading-relaxed text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
+        <p className="mt-5 rounded-lg border border-bp-border bg-bp-trust-soft/40 px-3 py-2.5 text-sm leading-relaxed text-bp-text/90">
           {fitConfirmation}
         </p>
 
-        <h1 className="mt-6 font-mono text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+        <h1 className="bp-code mt-6 inline-block text-2xl font-semibold tracking-tight text-bp-text">
           {oemPartNumber}
         </h1>
         {name && (
-          <p className="mt-2 text-base text-neutral-700 dark:text-neutral-300">{name}</p>
+          <p className="mt-2 text-base text-bp-text/90">{name}</p>
         )}
         {interval && (
-          <p className="mt-3 text-sm text-neutral-700 dark:text-neutral-300">{interval}</p>
+          <p className="mt-3 text-sm text-bp-text/90">{interval}</p>
         )}
         {alsoKnownAs && alsoKnownAs.length > 0 ? (
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-            <span className="font-medium text-neutral-700 dark:text-neutral-300">
+          <p className="mt-3 text-sm text-bp-muted">
+            <span className="font-medium text-bp-text/90">
               Also known as:
             </span>{" "}
             {alsoKnownAs.join(" · ")}
@@ -128,8 +128,8 @@ export function VerticalFilterPageContent({
           hasNotes={Boolean(notes)}
         />
 
-        <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
-          <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+        <div className="mt-6 border-t border-bp-border pt-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-bp-muted">
             Where to buy
           </p>
           <div className="mt-3">
@@ -147,26 +147,26 @@ export function VerticalFilterPageContent({
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+        <h2 className="text-sm font-semibold text-bp-text">
           Fits these models ({count})
         </h2>
         {count === 0 ? (
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm text-bp-muted">
             We don’t have model links for this part yet. Your unit may still use it—compare the part
             number and physical fit with what you removed or your manual.
           </p>
         ) : (
-          <ul className="divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <ul className="divide-y divide-bp-border rounded-lg border border-bp-border">
             {models.map((m) => (
               <li key={m.id}>
                 <Link
                   href={`${mBase}/${m.slug}`}
-                  className="block px-3 py-3 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900/80"
+                  className="block px-3 py-3 text-sm hover:bg-bp-trust-soft/35"
                 >
-                  <span className="font-semibold text-neutral-900 dark:text-neutral-100">
+                  <span className="bp-code font-semibold text-bp-text">
                     {m.model_number}
                   </span>
-                  <span className="ml-2 text-neutral-500 dark:text-neutral-400">
+                  <span className="ml-2 text-bp-muted">
                     {m.brand.name}
                   </span>
                 </Link>
@@ -176,26 +176,26 @@ export function VerticalFilterPageContent({
         )}
       </section>
 
-      <section className="border-t border-neutral-200 pt-8 dark:border-neutral-800">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      <section className="border-t border-bp-border pt-8">
+        <h2 className="text-sm font-semibold text-bp-text">
           {notesSectionTitle}
         </h2>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mt-2 text-sm text-bp-muted">
           <Link
             href={searchHref}
-            className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
+            className="font-medium text-bp-trust underline underline-offset-2"
           >
             {expandedSearchFooter ? "Search again" : "Back to search"}
           </Link>
           {expandedSearchFooter ? (
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className="text-bp-muted">
               {" "}
               if you need a different model or part number.
             </span>
           ) : null}
         </p>
         {notes && (
-          <div className="mt-4 max-w-prose text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="mt-4 max-w-prose text-sm text-bp-muted">
             <Prose>{notes}</Prose>
           </div>
         )}

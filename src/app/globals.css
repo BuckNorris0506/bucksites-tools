@@ -2,22 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * BuckParts visual foundation (slice 1) — calm evidence-first surfaces.
+ * See docs/BuckParts-CUSTOMER-UX-DOCTRINE.md for product tone; CSS custom properties here are implementation-only.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Page + surfaces */
+  --bp-bg: #f6f4f0;
+  --bp-surface: #ffffff;
+  --bp-border: #e2ddd4;
+  --bp-text: #0f172a;
+  --bp-muted: #64748b;
+  /* Authority / trust accent (slate-blue) */
+  --bp-trust: #172554;
+  --bp-trust-soft: #e8eef8;
+  /* Caution / no-buy */
+  --bp-caution: #b45309;
+  --bp-caution-soft: #fff7e6;
+  /* High-confidence only */
+  --bp-success: #3f6212;
+  --bp-success-soft: #eff6e4;
+  /* Hard block / error */
+  --bp-block: #7f1d1d;
+  --bp-block-soft: #fef2f2;
+  /* Inline OEM / model number chip (monospace + frame) */
+  --bp-code-bg: #f1f0ec;
+  --bp-code-border: #d6d3cb;
+
+  --background: var(--bp-bg);
+  --foreground: var(--bp-text);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bp-bg: #0c0f14;
+    --bp-surface: #111827;
+    --bp-border: #273449;
+    --bp-text: #f1f5f9;
+    --bp-muted: #94a3b8;
+    --bp-trust: #3b82f6;
+    --bp-trust-soft: #1e293b;
+    --bp-caution: #fbbf24;
+    --bp-caution-soft: #422006;
+    --bp-success: #bef264;
+    --bp-success-soft: #1a2e05;
+    --bp-block: #fecaca;
+    --bp-block-soft: #450a0a;
+    --bp-code-bg: #1e293b;
+    --bp-code-border: #334155;
+
+    --background: var(--bp-bg);
+    --foreground: var(--bp-text);
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+@layer components {
+  /**
+   * Monospace + tabular numbers + subtle frame for OEM/model strings on small screens.
+   */
+  .bp-code {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    background-color: var(--bp-code-bg);
+    border: 1px solid var(--bp-code-border);
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.375rem;
+  }
 }
 
 @layer utilities {

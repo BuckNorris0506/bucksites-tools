@@ -18,3 +18,7 @@ BuckParts is a **calm, evidence-first replacement decision utility** for homeown
 ## Machine checks
 
 `src/lib/copy/customer-ux-doctrine.ts` exports a small version marker and paths scanned in slice-1 tests. Extend there when new public surfaces adopt the same rules.
+
+## Visual foundation (slice 1)
+
+Public UI leans on semantic CSS custom properties (`--bp-*`) in `src/app/globals.css`: warm off-white page canvas, white evidence surfaces, slate-blue trust accent, amber caution/no-buy, muted green for high-confidence badges only, restrained borders instead of heavy drop shadows. Tailwind maps these under the `bp` color namespace in `tailwind.config.ts`.

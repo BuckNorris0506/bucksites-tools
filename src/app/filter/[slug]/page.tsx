@@ -89,7 +89,7 @@ export default async function FilterPage({ params }: Props) {
   };
 
   return (
-    <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
+    <section className="-mx-4 bg-bp-bg px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
       <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
         <FridgeTrustFunnelViewTracker
           onceKey={`fridge_filter_view:${filter.slug}`}
@@ -116,15 +116,15 @@ export default async function FilterPage({ params }: Props) {
           }}
         />
 
-        <div className="overflow-hidden rounded-3xl bg-white/95 p-6 shadow-sm ring-1 ring-stone-200/45 sm:p-7">
+        <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface p-6 sm:p-7">
           {publicNotes ? (
-            <div className="max-w-prose text-sm text-stone-700">
+            <div className="max-w-prose text-sm text-bp-text/90">
               <Prose>{publicNotes}</Prose>
             </div>
           ) : null}
 
-          <div className={publicNotes ? "mt-7 border-t border-stone-200/55 pt-7" : ""}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-stone-500">Buying options</p>
+          <div className={publicNotes ? "mt-7 border-t border-bp-border pt-7" : ""}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">Buying options</p>
             <div className="mt-3">
               <TrustAwareBuySection
                 trust={trustSummary}
@@ -140,31 +140,31 @@ export default async function FilterPage({ params }: Props) {
         </div>
 
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-stone-900">
+          <h2 className="text-lg font-semibold text-bp-text">
             Compatible refrigerator models ({filter.fridge_models.length})
           </h2>
           {filter.fridge_models.length === 0 ? (
-            <p className="text-sm leading-relaxed text-stone-600">
+            <p className="text-sm leading-relaxed text-bp-muted">
               No refrigerator models are linked to this part number on file yet. If you have your fridge model or
               another code from the old filter,{" "}
               <Link
                 href="/search"
-                className="font-semibold text-blue-950 underline decoration-blue-950/30 underline-offset-2 hover:decoration-blue-950/55"
+                className="font-semibold text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55"
               >
                 try search
               </Link>{" "}
               to check spelling, then compare what you see to the numbers on the cartridge before you buy.
             </p>
           ) : (
-            <ul className="divide-y divide-stone-200/80 overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-stone-200/45">
+            <ul className="divide-y divide-bp-border overflow-hidden rounded-xl border border-bp-border bg-bp-surface">
               {filter.fridge_models.map((m) => (
                 <li key={m.id}>
                   <Link
                     href={`/fridge/${m.slug}`}
-                    className="block px-4 py-3.5 text-sm transition hover:bg-stone-50/90"
+                    className="block px-4 py-3.5 text-sm transition hover:bg-bp-trust-soft/40"
                   >
-                    <span className="font-semibold text-stone-900">{m.model_number}</span>
-                    <span className="ml-2 text-stone-600">{m.brand.name}</span>
+                    <span className="bp-code font-semibold text-bp-text">{m.model_number}</span>
+                    <span className="ml-2 text-bp-muted">{m.brand.name}</span>
                   </Link>
                 </li>
               ))}

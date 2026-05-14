@@ -39,10 +39,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 const searchResultCardClass =
-  "block rounded-lg border border-neutral-200 bg-white p-4 shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80";
+  "block rounded-lg border border-bp-border bg-bp-surface p-4 transition-colors hover:border-bp-muted/50 hover:bg-bp-trust-soft/40";
 
 const searchResultCardStaticClass =
-  "rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-950";
+  "rounded-lg border border-bp-border bg-bp-surface p-4";
 
 function globalSearchModelHref(
   catalog: CatalogId,
@@ -78,9 +78,9 @@ function CatalogHitMeta({
   kindLabel: string;
 }) {
   return (
-    <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
+    <p className="text-xs font-medium text-bp-muted">
       {catalogLabel}
-      <span className="font-normal text-neutral-400 dark:text-neutral-500"> — </span>
+      <span className="font-normal text-bp-border"> — </span>
       {kindLabel}
     </p>
   );
@@ -117,34 +117,34 @@ function ModelHitCard({
   const body = (
     <>
       <CatalogHitMeta catalogLabel={catalogLabel} kindLabel="Model or unit" />
-      <p className="mt-3 font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
+      <p className="mt-3 bp-code inline-block text-base font-semibold text-bp-text">
         {hit.model_number}
       </p>
-      <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="mt-1 text-sm text-bp-muted">
         Brand: {hit.brand_name}
       </p>
       {primaryPart && (
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-          <span className="font-medium text-neutral-700 dark:text-neutral-300">Typical replacement:</span>{" "}
-          <span className="font-mono text-neutral-800 dark:text-neutral-200">
+        <p className="mt-2 text-sm text-bp-muted">
+          <span className="font-medium text-bp-text/90">Typical replacement:</span>{" "}
+          <span className="bp-code text-sm font-medium text-bp-text">
             {primaryPart.oem_part_number}
           </span>
           {moreCount > 0 && (
-            <span className="text-neutral-500 dark:text-neutral-400"> (+{moreCount} more)</span>
+            <span className="text-bp-muted"> (+{moreCount} more)</span>
           )}
         </p>
       )}
       {href ? (
-        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-3 text-xs text-bp-muted">
           Opens the page with fit check, timing if we have it, and where to buy.
         </p>
       ) : (
-        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-3 text-xs text-bp-muted">
           Matched in search, but there is no published detail page for this link yet.
         </p>
       )}
       {hit.via === "alias" && hit.matchedAlias && (
-        <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-2 text-xs text-bp-muted">
           Matched using an alternate number: {hit.matchedAlias}
         </p>
       )}
@@ -178,24 +178,24 @@ function FilterHitCard({
   const body = (
     <>
       <CatalogHitMeta catalogLabel={catalogLabel} kindLabel="Replacement part" />
-      <p className="mt-3 font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
+      <p className="mt-3 bp-code inline-block text-base font-semibold text-bp-text">
         {hit.oem_part_number}
       </p>
       {hit.name && (
-        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{hit.name}</p>
+        <p className="mt-1 text-sm text-bp-muted">{hit.name}</p>
       )}
-      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">Brand: {hit.brand_name}</p>
+      <p className="mt-2 text-sm text-bp-muted">Brand: {hit.brand_name}</p>
       {href ? (
-        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-3 text-xs text-bp-muted">
           Opens models this part fits, notes, and buying options.
         </p>
       ) : (
-        <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-3 text-xs text-bp-muted">
           Matched in search, but there is no published detail page for this link yet.
         </p>
       )}
       {hit.via === "alias" && hit.matchedAlias && (
-        <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+        <p className="mt-2 text-xs text-bp-muted">
           Matched using an alternate number: {hit.matchedAlias}
         </p>
       )}
@@ -240,16 +240,16 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     <div className="space-y-10">
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-bp-text sm:text-3xl">
           Search replacement filters
         </h1>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Start with your <strong className="font-medium text-neutral-800 dark:text-neutral-200">fridge model</strong>{" "}
-          or <strong className="font-medium text-neutral-800 dark:text-neutral-200">filter number</strong> from
+        <p className="text-sm text-bp-muted">
+          Start with your <strong className="font-medium text-bp-text">fridge model</strong>{" "}
+          or <strong className="font-medium text-bp-text">filter number</strong> from
           the nameplate and old cartridge. We lead with refrigerator water filters; when another category we
           maintain matches your spelling, it appears in its own section below.
         </p>
-        <div className="rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
+        <div className="rounded-lg border border-bp-border bg-bp-trust-soft/50 p-4 text-sm leading-relaxed text-bp-text/90">
           Search can return models, filter numbers, alternates, or pages to compare. Open a
           result to check what BuckParts found, then compare the part number with your old filter
           or manual. Store buttons only show when BuckParts has enough listing evidence for that page—so not every
@@ -259,13 +259,13 @@ export default async function SearchPage({ searchParams }: Props) {
       </div>
 
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+        <p className="rounded-md border border-bp-block/25 bg-bp-block-soft p-3 text-sm text-bp-block">
           {error}
         </p>
       )}
 
       {query.length > 0 && query.length < 2 && (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm text-bp-muted">
           Type at least two characters to search.
         </p>
       )}
@@ -280,9 +280,9 @@ export default async function SearchPage({ searchParams }: Props) {
 
             return (
               <section key={catalog} className="space-y-6">
-                <h2 className="border-b border-neutral-200 pb-2 text-base font-semibold text-neutral-900 dark:border-neutral-800 dark:text-neutral-100">
+                <h2 className="border-b border-bp-border pb-2 text-base font-semibold text-bp-text">
                   {label}
-                  <span className="ml-2 font-normal text-sm text-neutral-500 dark:text-neutral-400">
+                  <span className="ml-2 font-normal text-sm text-bp-muted">
                     ({models.length + filters.length} result
                     {models.length + filters.length !== 1 ? "s" : ""})
                   </span>
@@ -290,7 +290,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
                 {models.length > 0 && (
                   <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    <h3 className="text-sm font-medium text-bp-text">
                       Models & units
                     </h3>
                     <ul className="space-y-2">
@@ -309,7 +309,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
                 {filters.length > 0 && (
                   <div className="space-y-3">
-                    <h3 className="text-sm font-medium text-neutral-800 dark:text-neutral-200">
+                    <h3 className="text-sm font-medium text-bp-text">
                       Parts & filter numbers
                     </h3>
                     <ul className="space-y-2">
@@ -330,15 +330,15 @@ export default async function SearchPage({ searchParams }: Props) {
           })}
 
           {totalHits === 0 && (
-            <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-4 dark:border-neutral-800 dark:bg-neutral-900/40">
-              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+            <div className="rounded-lg border border-bp-border bg-bp-trust-soft/35 px-4 py-4">
+              <p className="text-sm font-medium text-bp-text">
                 No hits for “{query}”—that happens when the spelling or format does not line up
                 with what we have on file.
               </p>
-              <p className="mt-3 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+              <p className="mt-3 text-sm leading-relaxed text-bp-text/90">
                 Here are a few calm next steps that usually help:
               </p>
-              <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+              <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-relaxed text-bp-text/90">
                 <li>
                   Grab the <strong className="font-medium">refrigerator model number</strong> from the
                   nameplate or sticker inside the fridge (often on a side wall or ceiling), or from
@@ -357,13 +357,13 @@ export default async function SearchPage({ searchParams }: Props) {
                   the old part—even if it looks like an odd mix of letters and numbers.
                 </li>
               </ul>
-              <p className="mt-4 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+              <p className="mt-4 text-sm leading-relaxed text-bp-text/90">
                 Prefer to browse instead?{" "}
-                <Link href="/catalog" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
+                <Link href="/catalog" className="font-semibold text-bp-trust underline-offset-2 hover:underline">
                   Refrigerator water catalog
                 </Link>
                 {" · "}
-                <Link href="/" className="font-semibold text-neutral-900 underline-offset-2 hover:underline dark:text-neutral-100">
+                <Link href="/" className="font-semibold text-bp-trust underline-offset-2 hover:underline">
                   Home
                 </Link>
                 .

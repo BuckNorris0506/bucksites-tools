@@ -32,7 +32,7 @@ function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSup
     bullets.push(buyPathGateHintUnsafeBrowserTruth());
   }
   return (
-    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-amber-950/90">
+    <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-bp-caution">
       {bullets.map((t, i) => (
         <li key={i}>{t}</li>
       ))}
@@ -60,7 +60,7 @@ export function TrustAwareBuySection({
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (
-      <div className="text-sm leading-relaxed text-amber-950/95">
+      <div className="rounded-lg border border-bp-caution/40 bg-bp-caution-soft px-3 py-3 text-sm leading-relaxed text-bp-caution">
         <p>{suppressMessage}</p>
         {gateSuppressionSummary ? (
           <BuyPathSuppressionInventoryHints summary={gateSuppressionSummary} />
@@ -72,7 +72,7 @@ export function TrustAwareBuySection({
   return (
     <div className="space-y-3">
       {trust.buyer_path_state === "show_caution_buy" && (
-        <p className="text-sm leading-relaxed text-amber-950/95">
+        <p className="rounded-lg border border-bp-caution/35 bg-bp-caution-soft px-3 py-2.5 text-sm leading-relaxed text-bp-caution">
           Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.
         </p>
       )}

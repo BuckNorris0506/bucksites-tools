@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function GoUnavailablePage() {
   return (
-    <article className="mx-auto max-w-2xl space-y-5 px-4 py-10 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300 sm:px-6 sm:py-12">
-      <h1 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50">
+    <article className="mx-auto max-w-2xl space-y-5 border-l-[3px] border-l-bp-caution bg-bp-surface px-4 py-10 pl-5 text-[15px] leading-relaxed text-bp-text/90 sm:px-6 sm:py-12 sm:pl-7">
+      <h1 className="text-2xl font-semibold text-bp-text">
         That store shortcut did not open
       </h1>
       <p>
@@ -19,19 +19,19 @@ export default function GoUnavailablePage() {
       </p>
       <p>
         Compare model and part numbers on your{" "}
-        <strong className="font-medium text-neutral-800 dark:text-neutral-200">product or packaging</strong> or in
-        your <strong className="font-medium text-neutral-800 dark:text-neutral-200">owner&apos;s manual</strong> before
+        <strong className="font-medium text-bp-text">product or packaging</strong> or in
+        your <strong className="font-medium text-bp-text">owner&apos;s manual</strong> before
         you try again.
       </p>
-      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="text-sm text-bp-muted">
         <Link
           href="/search"
-          className="font-semibold text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
+          className="font-semibold text-bp-trust underline underline-offset-2"
         >
           Search
         </Link>
         {" · "}
-        <Link href="/" className="font-semibold text-neutral-900 underline underline-offset-2 dark:text-neutral-100">
+        <Link href="/" className="font-semibold text-bp-trust underline underline-offset-2">
           Home
         </Link>
       </p>

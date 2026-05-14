@@ -228,11 +228,11 @@ describe("public merchant-priority copy guard", () => {
     );
   });
 
-  it("homepage playbook first bullet uses listing-evidence framing (slice-1 doctrine)", () => {
+  it("homepage includes listing-evidence store shortcut framing (slice-1 doctrine)", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
     assert.ok(
       src.includes(
-        "Store shortcuts appear only when BuckParts has listing evidence checked against your filter number",
+        "Store shortcuts appear only when listing evidence lines up with the part number",
       ),
     );
   });

@@ -49,7 +49,7 @@ export function TieredBuyLinks({
 
   if (!realLinks.length) {
     return (
-      <p className="text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="text-sm text-bp-muted">
         No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.
       </p>
     );
@@ -71,30 +71,30 @@ export function TieredBuyLinks({
   return (
     <div className="space-y-3">
       {showMultipackFallbackCopy ? (
-        <p className="text-sm text-neutral-700 dark:text-neutral-300">{MULTIPACK_FALLBACK_COPY}</p>
+        <p className="text-sm text-bp-text/90">{MULTIPACK_FALLBACK_COPY}</p>
       ) : null}
       <div>
         <a
           href={`${base}/${primary.id}`}
           rel="nofollow sponsored"
-          className="inline-flex min-h-12 w-full items-center justify-center rounded-lg bg-neutral-900 px-5 text-center text-base font-semibold text-white shadow-sm transition-colors hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white dark:focus:ring-offset-neutral-950 sm:w-auto sm:min-w-[14rem]"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-bp-trust/15 bg-bp-trust px-5 text-center text-base font-semibold text-white transition-colors hover:bg-bp-trust/90 focus:outline-none focus:ring-2 focus:ring-bp-trust/40 focus:ring-offset-2 focus:ring-offset-bp-bg sm:w-auto sm:min-w-[14rem]"
         >
           <span className="sr-only">{primaryCtaLabel} at </span>
           {primaryName}
-          <span className="ml-2 text-neutral-300 dark:text-neutral-600" aria-hidden>
+          <span className="ml-2 text-white/75" aria-hidden>
             →
           </span>
         </a>
         {primaryCheckNote ? (
-          <p className="mt-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+          <p className="mt-2 text-xs leading-relaxed text-bp-muted">
             {primaryCheckNote}
           </p>
         ) : null}
       </div>
 
       {alternates.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
-          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+        <div className="flex flex-col gap-2 border-t border-bp-border pt-3">
+          <p className="text-xs font-medium text-bp-muted">
             Other options
           </p>
           <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -103,10 +103,10 @@ export function TieredBuyLinks({
                 <a
                   href={`${base}/${link.id}`}
                   rel="nofollow sponsored"
-                  className="inline-flex w-full items-center justify-center rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-800 transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:bg-neutral-950 dark:text-neutral-100 dark:hover:bg-neutral-900 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center rounded-md border border-bp-border bg-bp-surface px-3 py-2 text-sm font-medium text-bp-text transition-colors hover:bg-bp-trust-soft/50 sm:w-auto"
                 >
                   {link.retailer_name?.trim() || "Buy online"}
-                  <span className="ml-1.5 text-neutral-400" aria-hidden>
+                  <span className="ml-1.5 text-bp-muted" aria-hidden>
                     →
                   </span>
                 </a>
@@ -114,7 +114,7 @@ export function TieredBuyLinks({
             ))}
           </ul>
           {hiddenCount > 0 && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+            <p className="text-xs text-bp-muted">
               +{hiddenCount} more buying option{hiddenCount !== 1 ? "s" : ""} not shown.
             </p>
           )}
@@ -122,21 +122,21 @@ export function TieredBuyLinks({
       )}
 
       {oemCatalogFootnote ? (
-        <div className="border-t border-neutral-200 pt-3 dark:border-neutral-800">
-          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+        <div className="border-t border-bp-border pt-3">
+          <p className="text-xs font-medium text-bp-muted">
             Brand parts reference
           </p>
-          <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+          <p className="mt-1 text-xs text-bp-muted">
             Opens the manufacturer site for reference. This is not the same as a buying option
             above—use it to double-check fit if you need to.
           </p>
           <a
             href={oemCatalogFootnote.affiliate_url}
             rel="nofollow noopener noreferrer"
-            className="mt-2 inline-flex text-sm font-medium text-neutral-700 underline-offset-2 hover:underline dark:text-neutral-200"
+            className="mt-2 inline-flex text-sm font-medium text-bp-trust underline-offset-2 hover:underline"
           >
             {oemCatalogFootnote.retailer_name?.trim() || "Manufacturer parts search page"}
-            <span className="ml-1 text-neutral-400" aria-hidden>
+            <span className="ml-1 text-bp-muted" aria-hidden>
               ↗
             </span>
           </a>

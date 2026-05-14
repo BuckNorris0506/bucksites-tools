@@ -81,7 +81,7 @@ export default async function FridgePage({ params }: Props) {
   };
 
   return (
-    <section className="-mx-4 bg-gradient-to-b from-amber-50/35 via-white to-stone-50/45 px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
+    <section className="-mx-4 bg-bp-bg px-4 py-8 sm:-mx-6 sm:px-6 sm:py-10 lg:-mx-8 lg:px-8 lg:py-12">
       <article className="mx-auto max-w-2xl space-y-10 sm:space-y-12">
         <FridgeTrustFunnelViewTracker
           onceKey={`fridge_model_view:${params.slug}`}
@@ -117,7 +117,7 @@ export default async function FridgePage({ params }: Props) {
         <p className="text-base">
           <Link
             href={`/help/reset-water-filter-light/${fridge.brand.slug}`}
-            className="font-semibold text-blue-950 underline decoration-blue-950/25 underline-offset-4 transition hover:decoration-blue-950/60"
+            className="font-semibold text-bp-trust underline decoration-bp-trust/25 underline-offset-4 transition hover:decoration-bp-trust/60"
           >
             Reset water filter indicator →
           </Link>
@@ -133,15 +133,15 @@ export default async function FridgePage({ params }: Props) {
 
         {fridge.reset_instructions.length > 0 && (
           <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-stone-900">
+            <h2 className="text-xl font-semibold text-bp-text">
               {fridge.brand.name} reset instructions
             </h2>
             {fridge.reset_instructions.map((r) => (
               <div
                 key={r.id}
-                className="rounded-2xl bg-stone-50/90 p-5 ring-1 ring-stone-200/45"
+                className="rounded-2xl border border-bp-border bg-bp-trust-soft/30 p-5"
               >
-                {r.title && <h3 className="font-semibold text-stone-900">{r.title}</h3>}
+                {r.title ? <h3 className="font-semibold text-bp-text">{r.title}</h3> : null}
                 <Prose>{r.body_markdown}</Prose>
               </div>
             ))}
