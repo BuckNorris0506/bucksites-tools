@@ -9,6 +9,11 @@ import type {
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
 import { loadCommandCenterReportForOwner } from "@/lib/owner-dashboard/load-command-center-report";
+import {
+  buildFounderControlPlaneModel,
+  type FounderControlLaneCategory,
+  type FounderControlPlaneModel,
+} from "@/lib/owner-dashboard/founder-control-plane-model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -264,6 +269,74 @@ function DrilldownGroup({ id, title, children }: { id?: string; title: string; c
   );
 }
 
+function ControlPlaneCategoryPill({ category }: { category: FounderControlLaneCategory }) {
+  const tone: Record<FounderControlLaneCategory, string> = {
+    AUTOMATIC: "bg-emerald-900/15 text-emerald-800 ring-emerald-700/30 dark:text-emerald-300",
+    MANUAL: "bg-slate-200 text-slate-900 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-100",
+    OWNER_DECISION: "bg-amber-900/25 text-amber-950 ring-amber-800/35 dark:text-amber-200",
+    AGENT_READ_ONLY: "bg-blue-900/20 text-blue-950 ring-blue-800/35 dark:text-blue-200",
+    HUMAN_BROWSER_REQUIRED: "bg-violet-900/25 text-violet-950 ring-violet-800/35 dark:text-violet-200",
+    UNKNOWN: "bg-slate-200 text-slate-800 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-200",
+  };
+  return (
+    <span
+      className={`inline-flex max-w-full shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ring-1 ring-inset ${tone[category]}`}
+    >
+      {category.replaceAll("_", " ")}
+    </span>
+  );
+}
+
+function FounderControlPlaneSection({ model }: { model: FounderControlPlaneModel }) {
+  return (
+    <ExecutiveSection
+      title="Founder Control Plane"
+      subtitle="Read-only snapshot: how work runs (automatic vs manual), who must act, and what stays unknown — derived from this Command Center load plus on-disk workflow/package.json listing."
+    >
+      <p className="rounded-md border border-blue-200 bg-blue-50/80 px-3 py-2 text-sm leading-relaxed text-blue-950 dark:border-blue-900/50 dark:bg-blue-950/40 dark:text-blue-100">
+        {model.goal_line}
+      </p>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="rounded-md border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/50">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Next best action</p>
+          <p className="mt-1 text-sm font-medium leading-snug text-slate-900 dark:text-slate-100">{model.next_best_action}</p>
+        </div>
+        <div className="rounded-md border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-700 dark:bg-slate-900/50">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Copy / paste burden</p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-300">{model.copy_paste_burden_note}</p>
+        </div>
+      </div>
+      <div>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Simplification target</p>
+        <p className="mt-1 text-xs leading-relaxed text-slate-800 dark:text-slate-200">{model.simplification_target}</p>
+      </div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {model.cards.map((card) => (
+          <div
+            key={card.category}
+            className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50/90 p-3 dark:border-slate-700 dark:bg-slate-900/60"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <ControlPlaneCategoryPill category={card.category} />
+              <span className="text-sm font-semibold text-slate-900 dark:text-slate-50">{card.title}</span>
+            </div>
+            <ul className="list-inside list-disc space-y-1.5 text-[11px] leading-snug text-slate-700 dark:text-slate-300">
+              {card.lines.map((line, i) => (
+                <li key={i} className="marker:text-slate-400">
+                  {line}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+        Notification wiring (Slack, email) for CI jobs is not shown here — treat as UNKNOWN unless configured outside this repo.
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function buildStopTheLineItems(args: {
   health: { status: string; reasons: string[]; recommended_next_step: string };
   integritySentinel: { overall_status: string; action_confidence: string; owner_note: string };
@@ -378,6 +451,28 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     v2NextOwnerAction: v2.next_owner_action,
   });
 
+  const founderControlPlane = buildFounderControlPlaneModel(process.cwd(), {
+    next_best_action: report.next_best_action,
+    known_unknowns: report.known_unknowns,
+    execution_guidance: report.execution_guidance,
+    command_center_v2: {
+      next_owner_action: v2.next_owner_action,
+      amazon_rescue: {
+        next_agent_action: v2.amazon_rescue.next_agent_action,
+        human_browser_required_tokens: v2.amazon_rescue.human_browser_required_tokens,
+        status: v2.amazon_rescue.status,
+      },
+      unknown_or_human_review: {
+        status: v2.unknown_or_human_review.status,
+        blocker: v2.unknown_or_human_review.blocker ?? null,
+      },
+      deploy_live_site_status: {
+        status: v2.deploy_live_site_status.status,
+        live_site_monitor: v2.deploy_live_site_status.live_site_monitor,
+      },
+    },
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -421,6 +516,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
             ))}
           </ul>
         </ExecutiveSection>
+
+        <FounderControlPlaneSection model={founderControlPlane} />
 
         <TopOfGameFoundationSection tog={v2.top_of_game_foundation_scorecard_v1} />
 

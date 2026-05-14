@@ -1,0 +1,60 @@
+name: BuckParts Founder Digest
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 16 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  founder-digest:
+    name: Weekly founder digest (read-only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      LIVE_SITE_SMOKE_TARGET_URL: https://buckparts.com
+      NEXT_PUBLIC_SITE_URL: https://buckparts.com
+      FOUNDER_DIGEST_SKIP_BUILD: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Production build (fails job if broken)
+        run: npm run build
+
+      - name: Run founder digest
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/buckparts-founder-digest.ts | tee founder-digest.md
+          test -s founder-digest.md
+
+      - name: Add digest to job summary
+        run: |
+          {
+            echo "## BuckParts Founder Digest"
+            echo
+            cat founder-digest.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload digest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: founder-digest
+          path: founder-digest.md
+          if-no-files-found: error
