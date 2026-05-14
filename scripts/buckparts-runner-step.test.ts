@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { NextExecutionPacketSnapshotV1 } from "./lib/buckparts-next-execution-packet";
+import { RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1 } from "./lib/buckparts-runner-safety-contract-v1";
 import { FOUNDER_EXECUTION_PACKET_CONTRACT_V1 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
 import { FOUNDER_ACTION_QUEUE_CONTRACT_V1 } from "../src/lib/owner-dashboard/founder-action-queue-v1";
 import {
@@ -148,6 +149,13 @@ test("deriveOverallStatusV1: FAIL when any command fails", () => {
   assert.equal(
     deriveOverallStatusV1({ command_center_ok: true, has_packet: false, commands: cmds }),
     "FAIL",
+  );
+});
+
+test("Runner safety: allowlist matches safety contract module (single source of truth)", () => {
+  assert.deepStrictEqual(
+    [...RUNNER_STEP_ALLOWED_NPM_SCRIPTS_V1],
+    [...RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1],
   );
 });
 

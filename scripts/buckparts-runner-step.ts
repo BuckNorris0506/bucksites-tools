@@ -1,6 +1,6 @@
 /**
  * Runner Step v1 CLI: read-only snapshot + bounded `npm run` validation; JSON on stdout.
- * Does not invoke Cursor/Codex/OpenAI. Does not use packet.validation_command for spawn (allowlist only).
+ * Does not invoke Cursor/Codex/OpenAI. Spawns only the fixed npm script allowlist — never the packet's validation text.
  */
 
 import { spawnSync } from "node:child_process";

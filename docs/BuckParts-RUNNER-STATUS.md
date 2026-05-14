@@ -6,7 +6,7 @@
 
 **Maintain:** When queue, packet, digest, or workflows change, update the tables and “Last verified” line.
 
-**Last verified against repo:** 2026-05-08 (sources read + commands below).
+**Last verified against repo:** 2026-05-08 (Runner Safety Contract v1 tests + docs pass locally).
 
 **Line budget:** Keep this file roughly **150–250** lines; extend only when facts change.
 
@@ -33,7 +33,8 @@
 | Founder Action Queue | `src/lib/owner-dashboard/founder-action-queue-v1.ts` |
 | Founder Execution Packet (eligible rows only) | `src/lib/owner-dashboard/founder-execution-packet-v1.ts` |
 | Owner dashboard / Founder Control Plane | `src/app/ownerdashboard/[secret]/page.tsx`, `src/lib/owner-dashboard/founder-control-plane-model.ts` |
-| Operator proof (git, build, read-only smoke path, CC JSON) | `npm run buckparts:operator-proof` → `scripts/buckparts-operator-proof.ts` |
+| Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
+| Runner Safety Contract v1 (allowlist + default prohibition snapshot) | `scripts/lib/buckparts-runner-safety-contract-v1.ts`, `scripts/buckparts-runner-safety-contract.test.ts` |
 | CI: build + digest + artifact + summary | `.github/workflows/buckparts-founder-digest.yml` |
 | CI: daily operator pattern | `.github/workflows/buckparts-daily-operator.yml` (**PROVEN** path exists; same class as digest) |
 | Upstream Command Center | `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` |
@@ -101,6 +102,16 @@
 
 ---
 
+## Why autonomy is currently bounded
+
+- **PROVEN:** Runner Step v1 (`npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`) runs only `npm run lint`, `npm run build`, and `npm run buckparts:operator-proof`; the allowlist is canonical in `scripts/lib/buckparts-runner-safety-contract-v1.ts` and enforced by tests under `scripts/buckparts-runner-safety-contract.test.ts` and `scripts/buckparts-runner-step.test.ts`.
+- **PROVEN:** That CLI never uses the packet’s validation text for subprocess arguments — tests assert `scripts/buckparts-runner-step.ts` contains no `validation_command` identifier (see safety contract test file).
+- **PROVEN:** Founder Execution Packets are emitted only for queue rows with `status: "agent_safe"`, `recommended_actor: "agent"`, and `mutation_authority: "read_only"` (`src/lib/owner-dashboard/founder-execution-packet-v1.ts`); default `prohibited_actions` are locked to the same lines as the safety contract module (drift tests in `founder-execution-packet-v1.test.ts`).
+- **PROVEN:** LLM-facing text still requires human paste and judgment; `layer_6_founder_only_approval` remains **NOT_PROVEN** in Runner Step JSON (`scripts/lib/buckparts-runner-step-v1.ts`).
+- **UNKNOWN:** Whether an external agent obeys `prohibited_actions` or mutates production — enforcement is policy + review, not kernel-level.
+
+---
+
 ## Honest automation boundaries
 
 **Can automate without lying (PROVEN):** Run read-only `tsx` / `npm` steps in CI or locally; capture stdout/stderr; write digest markdown to logs/artifacts; copy next packet to macOS clipboard.
@@ -164,3 +175,4 @@ netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
 | Date | Change |
 |------|--------|
 | 2026-05-08 | Collapsed `BuckParts-RUNNER-CAPABILITY-AUDIT.md` + prior status/product material into this single canonical `BuckParts-RUNNER-STATUS.md`. |
+| 2026-05-08 | Runner Safety Contract v1: canonical allowlist module, safety tests, doc section *Why autonomy is currently bounded*. |

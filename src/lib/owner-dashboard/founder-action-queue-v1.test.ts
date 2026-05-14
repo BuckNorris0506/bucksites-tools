@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import type { CommandCenterV2Report } from "../../../scripts/lib/buckparts-command-center-v2-types";
+import { RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1 } from "../../../scripts/lib/buckparts-runner-safety-contract-v1";
 import {
   FOUNDER_ACTION_QUEUE_CONTRACT_V1,
   buildFounderActionQueueForOwnerDashboard,
@@ -181,4 +182,8 @@ test("buildFounderActionQueueForOwnerDashboard wires Command Center v2 envelope 
   assert.ok(q.rows.length >= 3);
   assert.ok(q.rows.some((r) => r.id === "queue-owner-v2"));
   assertNoAgentSafeUnlessReadOnly(q.rows);
+});
+
+test("Runner safety: execution npm allowlist is fixed triple (Runner Step v1 only)", () => {
+  assert.deepStrictEqual([...RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1], ["lint", "build", "buckparts:operator-proof"]);
 });

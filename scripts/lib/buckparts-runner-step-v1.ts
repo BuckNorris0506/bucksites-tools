@@ -5,11 +5,15 @@
 
 import type { FounderExecutionPacketV1 } from "../../src/lib/owner-dashboard/founder-execution-packet-v1";
 import type { NextExecutionPacketSnapshotV1 } from "./buckparts-next-execution-packet";
+import {
+  RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1,
+  RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1,
+} from "./buckparts-runner-safety-contract-v1";
 
 export const BUCKPARTS_RUNNER_STEP_CONTRACT_V1 = "buckparts_runner_step_v1" as const;
 
-/** npm script names only — CLI must spawn `npm run <name>` and nothing else for validation. */
-export const RUNNER_STEP_ALLOWED_NPM_SCRIPTS_V1 = ["lint", "build", "buckparts:operator-proof"] as const;
+/** npm script names only — canonical list in `buckparts-runner-safety-contract-v1.ts`. */
+export const RUNNER_STEP_ALLOWED_NPM_SCRIPTS_V1 = RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1;
 
 export type RunnerStepAllowedNpmScriptV1 = (typeof RUNNER_STEP_ALLOWED_NPM_SCRIPTS_V1)[number];
 
@@ -29,14 +33,9 @@ export const RUNNER_STEP_LAYER_TRUTH_V1: RunnerStepLayerTruthV1 = {
   layer_6_founder_only_approval: "NOT_PROVEN",
 };
 
-/** Same substance as Founder Execution Packet defaults — confirmed by Runner step, not re-negotiated here. */
-export const RUNNER_STEP_PROHIBITED_ACTIONS_CONFIRMED_V1: readonly string[] = [
-  "Do not write to Supabase or run SQL that mutates database state.",
-  "Do not mutate retailer_links or other retailer catalog/link artifacts except pure read-only inspection.",
-  "Do not create, delete, or overwrite evidence JSON under data/evidence (or parallel evidence paths) unless the founder explicitly expands scope outside this packet.",
-  "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
-  "Do not run mutating npm scripts (e.g. inserts, apply, mutate flags) unless the founder explicitly instructs otherwise.",
-];
+/** Same lines as Founder Execution Packet defaults — canonical copy in `buckparts-runner-safety-contract-v1.ts`. */
+export const RUNNER_STEP_PROHIBITED_ACTIONS_CONFIRMED_V1: readonly string[] =
+  RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1;
 
 export type RunnerStepOverallStatusV1 = "PASS" | "FAIL" | "BLOCKED" | "NO_PACKET";
 
@@ -231,7 +230,7 @@ export function buildBuckpartsRunnerStepOutputV1(args: {
     );
   } else {
     notes.push(
-      "PROVEN: Validation bundle is hardcoded to lint/build/buckparts:operator-proof only — packet.validation_command is not executed by Runner Step v1 (safety).",
+      "PROVEN: Validation bundle is hardcoded to lint/build/buckparts:operator-proof only — the packet's validation text is never executed by Runner Step v1 (safety).",
     );
   }
   return {

@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import {
+  RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1,
+} from "../../../scripts/lib/buckparts-runner-safety-contract-v1";
 import type { FounderActionQueueRowV1 } from "./founder-action-queue-v1";
 import {
   FOUNDER_EXECUTION_PACKET_CONTRACT_V1,
@@ -92,6 +95,21 @@ test("copy_paste_prompt includes objective, truth contract, queue fields, valida
   assert.ok(p.validation_command.includes("npm run buckparts:operator-proof"));
   assert.ok(p.acceptance_criteria.length >= 3);
   assert.ok(p.prohibited_actions.length >= 3);
+});
+
+test("Runner safety: default prohibited_actions match safety contract snapshot (drift guard)", () => {
+  const m = buildFounderExecutionPacketsV1([agentSafeRow()], { source: "drift_guard" });
+  assert.deepStrictEqual(m.packets[0]!.prohibited_actions, [...RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1]);
+});
+
+test("Runner safety: prohibited_actions name Supabase, retailer_links, evidence path, affiliate, mutating npm", () => {
+  const m = buildFounderExecutionPacketsV1([agentSafeRow()], { source: "safety_substrings" });
+  const pa = m.packets[0]!.prohibited_actions.join("\n");
+  assert.match(pa, /Supabase/i);
+  assert.match(pa, /retailer_links/);
+  assert.match(pa, /evidence JSON/i);
+  assert.match(pa, /affiliate/i);
+  assert.match(pa, /mutating npm/i);
 });
 
 test("mutating_blocked-style queue row (owner_approval_required mutation) never yields a packet", () => {
