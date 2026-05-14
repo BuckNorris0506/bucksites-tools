@@ -76,6 +76,7 @@
     "buckparts:ga4:fetch": "tsx scripts/fetch-buckparts-ga4-trust-funnel-artifact.ts",
     "buckparts:live-site-smoke": "tsx scripts/live-site-smoke-artifact.ts",
     "buckparts:live-site-smoke:check": "tsx scripts/live-site-smoke-check.ts",
+    "buckparts:operator-proof": "tsx scripts/buckparts-operator-proof.ts",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
