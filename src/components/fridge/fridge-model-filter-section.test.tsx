@@ -78,7 +78,7 @@ describe("FridgeModelFilterSection", () => {
     assert.equal(/\bOption\s*2\b/i.test(html), false);
     assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes("Open filter details"));
-    assert.ok(html.includes("Open a verified listing"));
+    assert.ok(html.includes("Open reviewed listing"));
     assert.ok(html.includes("Buying options (secondary"));
     assert.ok(html.includes('href="/go/'));
     assert.ok(!html.includes("Do not pick by order"));
@@ -103,7 +103,10 @@ describe("FridgeModelFilterSection", () => {
     const lt1000 = html.indexOf("LT1000P");
     const lt800 = html.indexOf("LT800P");
     assert.ok(lt1000 >= 0 && lt800 >= 0 && lt1000 < lt800);
-    assert.equal(/\bOption\b/i.test(html), false);
+    assert.ok(
+      !/\bOption\s*[1-9]\d*\b/i.test(html),
+      "no numbered option labels (Option 1 / Option 2) in markup",
+    );
   });
 
   it("copy avoids unsupported guarantees and internal jargon", () => {

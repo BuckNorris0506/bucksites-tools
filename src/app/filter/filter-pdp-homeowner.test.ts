@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -147,5 +149,14 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     );
     assert.ok(html.includes('href="/go/go-primary"'));
     assert.ok(html.includes("2026-05-04"));
+  });
+
+  it("vertical filter default suppress message uses listing-evidence wording", () => {
+    const src = readFileSync(
+      join(process.cwd(), "src/components/vertical/VerticalFilterPageContent.tsx"),
+      "utf8",
+    );
+    assert.ok(/listing evidence checked against this part number/i.test(src));
+    assert.ok(!/verified a retailer listing/i.test(src));
   });
 });

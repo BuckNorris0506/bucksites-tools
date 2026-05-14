@@ -102,8 +102,8 @@ export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
     preferred_winner_link,
     replacement_reasoning_summary:
       args.modelsCount > 0
-        ? `${args.oemPartNumber} matches model mappings on this page, and buy links show only when we can verify a direct checkout page for this part number.`
-        : `${args.oemPartNumber} does not have model mappings on this page yet, so verify the part number in your manual or on your current filter before checkout.`,
+        ? `${args.oemPartNumber} matches models linked on this page. Store shortcuts show only after BuckParts has listing evidence checked against this part number.`
+        : `${args.oemPartNumber} does not have model links on this page yet. Compare the part number in your manual or on your current filter before you buy.`,
     buyer_path_state,
   };
 }
@@ -170,7 +170,7 @@ export function buildModelPageTrust(args: ModelPageTrustArgs): PartTrustSummary 
     replacement_reasoning_summary:
       buyer_path_state === "show_confident_buy"
         ? `${args.oemPartNumber} is the part shown first for model ${args.modelNumber}; match that part number before checkout.`
-        : `${args.oemPartNumber} may fit model ${args.modelNumber}, but verify the part number carefully before checkout.`,
+        : `${args.oemPartNumber} may fit model ${args.modelNumber}, but compare the part number carefully before you buy.`,
     buyer_path_state,
   };
 }

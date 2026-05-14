@@ -115,7 +115,7 @@ export function VerticalModelPageContent({
           <>
             <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                {filters.length > 1 ? "Best match first" : "Your replacement"}
+                {filters.length > 1 ? "Primary part on file" : "Your replacement"}
               </p>
               <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
                 {primary.oem_part_number}

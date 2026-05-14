@@ -5,6 +5,7 @@ import {
   ABOUT_PAGE_META_DESCRIPTION,
   buyPathStoreLinksBullet,
   COMPARE_BEFORE_BUY_CHECKLIST_LINES,
+  CUSTOMER_UX_DOCTRINE_VERSION,
   formatBuyLinkCheckedYyyyMmDd,
   homePageMetaDescription,
   partIdentityPillLabel,
@@ -12,6 +13,9 @@ import {
 } from "@/lib/copy/public-trust";
 
 describe("public-trust copy", () => {
+  it("re-exports customer UX doctrine version", () => {
+    assert.equal(CUSTOMER_UX_DOCTRINE_VERSION, 1);
+  });
   it("home meta avoids loose buying-link jargon", () => {
     const d = homePageMetaDescription("BuckParts");
     assert.match(d, /reviewed store links/i);

@@ -1,9 +1,13 @@
 /**
  * Customer-facing trust language for replacement-part pages (decision clarity first).
  * Does not replace launch-buy-links gate logic — copy only.
+ *
+ * Customer UX doctrine (human + slice-1 scan list): `docs/BuckParts-CUSTOMER-UX-DOCTRINE.md`, `customer-ux-doctrine.ts`.
  */
 
 import type { OemOrCompatible } from "@/lib/trust/part-trust";
+
+export { CUSTOMER_UX_DOCTRINE_VERSION } from "./customer-ux-doctrine";
 
 /** Homepage meta — homeowner-first; refrigerator water focus; reviewed links, not vague “verified”. */
 export function homePageMetaDescription(siteDisplayName: string): string {

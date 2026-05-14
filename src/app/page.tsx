@@ -141,7 +141,7 @@ export default async function HomePage() {
               <li className="flex gap-3 py-5 first:pt-0 lg:min-h-[4.5rem] lg:items-start lg:py-0 lg:pr-2">
                 <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-950 dark:bg-blue-400" aria-hidden />
                 <span className="min-w-0 text-sm font-medium leading-snug text-slate-800 dark:text-slate-200">
-                  We only show links we can verify to your exact filter code
+                  Store shortcuts appear only when BuckParts has listing evidence checked against your filter number
                 </span>
               </li>
               <li className="flex gap-3 py-5 lg:min-h-[4.5rem] lg:items-start lg:border-l lg:border-slate-200 lg:py-0 lg:pl-10 lg:pr-2 dark:lg:border-slate-700">

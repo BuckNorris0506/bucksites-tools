@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 import { FridgeTrustFunnelLink } from "@/components/analytics/FridgeTrustFunnelLink";
 import { Prose } from "@/components/Prose";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
@@ -150,7 +151,7 @@ export function FridgeModelFilterSection({
                       trust={trustSummary}
                       links={f.retailer_links}
                       goBase="/go"
-                      primaryCtaLabel="Open a verified listing"
+                      primaryCtaLabel="Open reviewed listing"
                       suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
                       gateSuppressionSummary={f.buy_path_gate_suppression}
                       buyPathSortContext={buyPathSortContext}

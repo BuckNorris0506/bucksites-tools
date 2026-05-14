@@ -1,4 +1,6 @@
 /** Plain text / light markdown-ish blocks from CMS; keep readable without a full MD parser. */
+import React from "react";
+
 export function Prose({ children }: { children: string | null | undefined }) {
   if (!children?.trim()) return null;
   const blocks = children.trim().split(/\n\n+/);

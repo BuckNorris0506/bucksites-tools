@@ -86,4 +86,55 @@ describe("part-trust", () => {
     assert.equal(trust.buyer_path_state, "suppress_buy");
     assert.equal(trust.requires_manual_verification, true);
   });
+
+  it("buildPartPageTrust replacement_reasoning uses listing-evidence phrasing (no verify)", () => {
+    const withModels = buildPartPageTrust({
+      modelsCount: 2,
+      retailerLinks: [
+        {
+          id: "1",
+          retailer_name: "Store",
+          affiliate_url: "https://example.com/p",
+          is_primary: true,
+          retailer_key: "amazon",
+        },
+      ],
+      oemPartNumber: "LT1000P",
+    });
+    assert.match(
+      withModels.replacement_reasoning_summary,
+      /listing evidence checked against this part number/i,
+    );
+    assert.ok(!/\bverify\b/i.test(withModels.replacement_reasoning_summary));
+
+    const noModels = buildPartPageTrust({
+      modelsCount: 0,
+      retailerLinks: [],
+      oemPartNumber: "X-123",
+    });
+    assert.match(noModels.replacement_reasoning_summary, /Compare the part number/i);
+    assert.ok(!/\bverify\b/i.test(noModels.replacement_reasoning_summary));
+  });
+
+  it("buildModelPageTrust replacement_reasoning avoids verify when buy is suppressed", () => {
+    const trust = buildModelPageTrust({
+      totalFits: 2,
+      hasRecommendedFit: false,
+      primaryIsRecommended: false,
+      retailerLinks: [
+        {
+          id: "1",
+          retailer_name: "OEM Store",
+          affiliate_url: "https://example.com/pdp",
+          is_primary: true,
+          retailer_key: "oem",
+        },
+      ],
+      oemPartNumber: "WF2CB",
+      modelNumber: "FGHS2631PF4A",
+    });
+    assert.equal(trust.buyer_path_state, "suppress_buy");
+    assert.ok(!/\bverify\b/i.test(trust.replacement_reasoning_summary));
+    assert.match(trust.replacement_reasoning_summary, /compare the part number carefully/i);
+  });
 });
