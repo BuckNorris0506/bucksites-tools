@@ -82,6 +82,7 @@
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",
     "buckparts:next-execution-packet": "tsx scripts/buckparts-next-execution-packet.ts",
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
+    "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
