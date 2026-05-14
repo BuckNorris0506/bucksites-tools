@@ -16,6 +16,10 @@ import {
   sliceCommandCenterForFounderDigest,
 } from "./lib/buckparts-founder-digest-v1";
 import {
+  buildRunnerStepVisibilityModeledV1,
+  formatRunnerStepDigestSectionMarkdownV1,
+} from "./lib/buckparts-runner-step-summary-v1";
+import {
   buildFounderActionQueueV1,
   formatFounderActionQueueForDigest,
   founderActionQueueInputFromCommandCenterJson,
@@ -106,6 +110,11 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     generated_at: new Date().toISOString(),
     source: "buckparts-founder-digest",
   });
+  const runnerVisibility = buildRunnerStepVisibilityModeledV1({
+    surface: "founder_digest",
+    command_center_ok: ccOk,
+    nextPacket: executionPackets.packets[0] ?? null,
+  });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: new Date().toISOString(),
     build,
@@ -113,6 +122,7 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     compare_note: compareNote,
     founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
+    runner_step_digest_markdown: formatRunnerStepDigestSectionMarkdownV1(runnerVisibility),
   });
   const buildFailed = build.ran && build.ok === false;
   const exitCode = buildFailed || !ccOk ? 1 : 0;

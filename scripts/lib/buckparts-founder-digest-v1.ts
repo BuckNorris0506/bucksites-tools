@@ -40,6 +40,8 @@ export type FounderDigestInputV1 = {
   founder_action_queue_digest_markdown?: string;
   /** Optional Founder Execution Packets fragment (markdown; follows Action Queue when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
+  /** Optional Runner Step visibility (markdown; modeled only — does not run `buckparts:runner-step` inside digest). */
+  runner_step_digest_markdown?: string;
 };
 
 export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): string {
@@ -105,6 +107,9 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
               ]
             : []),
         ]
+      : []),
+    ...(input.runner_step_digest_markdown
+      ? ["", input.runner_step_digest_markdown.trimEnd(), ""]
       : []),
     "## What requires Jared specifically?",
     `**command_center_v2.next_owner_action:** ${cc.next_owner_action}`,

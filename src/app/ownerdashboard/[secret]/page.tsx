@@ -8,6 +8,7 @@ import type {
   CommandCenterV2Report,
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
+import { buildRunnerStepVisibilityModeledV1 } from "../../../../scripts/lib/buckparts-runner-step-summary-v1";
 import { loadCommandCenterReportForOwner } from "@/lib/owner-dashboard/load-command-center-report";
 import {
   buildFounderControlPlaneModel,
@@ -18,7 +19,10 @@ import {
   buildFounderActionQueueForOwnerDashboard,
   type FounderActionQueueRowV1,
 } from "@/lib/owner-dashboard/founder-action-queue-v1";
-import { buildFounderExecutionPacketsV1 } from "@/lib/owner-dashboard/founder-execution-packet-v1";
+import {
+  buildFounderExecutionPacketsV1,
+  type FounderExecutionPacketV1,
+} from "@/lib/owner-dashboard/founder-execution-packet-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -460,6 +464,66 @@ function FounderExecutionPacketsSection({
   );
 }
 
+function RunnerStepVisibilitySection({
+  commandCenterOk,
+  nextPacket,
+}: {
+  commandCenterOk: boolean;
+  nextPacket: FounderExecutionPacketV1 | null;
+}) {
+  const m = buildRunnerStepVisibilityModeledV1({
+    surface: "owner_dashboard",
+    command_center_ok: commandCenterOk,
+    nextPacket,
+  });
+  return (
+    <ExecutiveSection
+      title="Runner Step (read-only v1)"
+      subtitle="Modeled from this page's Command Center snapshot. This request does not run npm run buckparts:runner-step — live CLI JSON is UNKNOWN here."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Visibility contract <span className="font-mono text-[11px]">{m.contract}</span> · live Runner Step JSON on
+        this surface: <span className="font-semibold text-slate-800 dark:text-slate-200">{m.live_runner_step_json}</span>{" "}
+        (run <code className="font-mono text-[11px]">npm run buckparts:runner-step</code> locally for PASS/FAIL JSON).
+      </p>
+      <div className="mt-3 grid grid-cols-1 gap-3 text-sm text-slate-800 dark:text-slate-200 sm:grid-cols-2">
+        <FieldBlock
+          label="Modeled next packet"
+          value={
+            m.modeled_next_packet_title
+              ? `${m.modeled_next_packet_title} (${m.modeled_next_packet_id})`
+              : "None (no agent-safe packet from this queue snapshot)."
+          }
+        />
+        <FieldBlock
+          label="Planned validation (allowlist only, not run here)"
+          value={<span className="font-mono text-[11px]">{m.planned_validation_commands.join(" · ")}</span>}
+        />
+        <FieldBlock
+          label="Prohibited-actions line count (when packet exists)"
+          value={String(m.prohibited_actions_count)}
+        />
+        <FieldBlock label="External Cursor/Codex/OpenAI runner" value="UNKNOWN (not integrated in-repo)" />
+      </div>
+      <div className="mt-4 rounded-md border border-slate-200 bg-slate-50/80 p-3 text-xs leading-relaxed text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-300">
+        <p className="font-semibold text-slate-900 dark:text-slate-100">Layer truth (design — not a live CLI result)</p>
+        <ul className="mt-2 list-inside list-disc space-y-1">
+          <li>Layer 3 repo subprocess: PROVEN only after buckparts:runner-step runs — UNKNOWN on this page.</li>
+          <li>Layer 3 external agents: UNKNOWN.</li>
+          <li>Layer 4 capture: PROVEN_FOR_REPO_COMMANDS_ONLY when CLI runs — UNKNOWN here.</li>
+          <li>Layer 5: PARTIAL · Layer 6: NOT_PROVEN.</li>
+        </ul>
+        <p className="mt-3 text-[11px] text-slate-600 dark:text-slate-400">
+          <span className="font-semibold text-slate-800 dark:text-slate-200">Next human:</span> {m.next_human_action_hint}
+        </p>
+        <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+          <span className="font-semibold text-slate-800 dark:text-slate-200">Next runner:</span> {m.next_runner_action_hint}
+        </p>
+      </div>
+    </ExecutiveSection>
+  );
+}
+
 function buildStopTheLineItems(args: {
   health: { status: string; reasons: string[]; recommended_next_step: string };
   integritySentinel: { overall_status: string; action_confidence: string; owner_note: string };
@@ -656,6 +720,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderActionQueueSection queue={founderActionQueue} />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
+
+        <RunnerStepVisibilitySection commandCenterOk={true} nextPacket={founderExecutionPackets.packets[0] ?? null} />
 
         <TopOfGameFoundationSection tog={v2.top_of_game_foundation_scorecard_v1} />
 

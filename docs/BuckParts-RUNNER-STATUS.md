@@ -34,6 +34,7 @@
 | Founder Execution Packet (eligible rows only) | `src/lib/owner-dashboard/founder-execution-packet-v1.ts` |
 | Owner dashboard / Founder Control Plane | `src/app/ownerdashboard/[secret]/page.tsx`, `src/lib/owner-dashboard/founder-control-plane-model.ts` |
 | Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
+| Runner Step visibility (founder digest + owner dashboard, modeled only) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** digest/dashboard do **not** invoke `buckparts:runner-step`; live JSON on those surfaces **UNKNOWN** (run CLI locally). |
 | Runner Safety Contract v1 (allowlist + default prohibition snapshot) | `scripts/lib/buckparts-runner-safety-contract-v1.ts`, `scripts/buckparts-runner-safety-contract.test.ts` |
 | CI: build + digest + artifact + summary | `.github/workflows/buckparts-founder-digest.yml` |
 | CI: daily operator pattern | `.github/workflows/buckparts-daily-operator.yml` (**PROVEN** path exists; same class as digest) |
@@ -175,4 +176,4 @@ netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
 | Date | Change |
 |------|--------|
 | 2026-05-08 | Collapsed `BuckParts-RUNNER-CAPABILITY-AUDIT.md` + prior status/product material into this single canonical `BuckParts-RUNNER-STATUS.md`. |
-| 2026-05-08 | Runner Safety Contract v1: canonical allowlist module, safety tests, doc section *Why autonomy is currently bounded*. |
+| 2026-05-08 | Runner Step visibility: modeled section in founder digest (`buckparts-founder-digest`) + owner dashboard; `buckparts-runner-step-summary-v1.ts`. |

@@ -9,6 +9,10 @@ import {
   buildFounderExecutionPacketsV1,
   formatFounderExecutionPacketsForDigest,
 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
+import {
+  buildRunnerStepVisibilityModeledV1,
+  formatRunnerStepDigestSectionMarkdownV1,
+} from "./lib/buckparts-runner-step-summary-v1";
 
 test("buildFounderDigestMarkdownV1 includes required sections", () => {
   const md = buildFounderDigestMarkdownV1({
@@ -45,6 +49,13 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
         },
       ]),
     ),
+    runner_step_digest_markdown: formatRunnerStepDigestSectionMarkdownV1(
+      buildRunnerStepVisibilityModeledV1({
+        surface: "founder_digest",
+        command_center_ok: true,
+        nextPacket: null,
+      }),
+    ),
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -55,6 +66,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /\| 1 \| Example \|/);
   assert.match(md, /## Founder Execution Packets \(read-only v1\)/);
   assert.match(md, /No agent-safe execution packets/);
+  assert.match(md, /## Runner Step \(read-only v1\)/);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });
