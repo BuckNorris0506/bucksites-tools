@@ -36,6 +36,8 @@ export type FounderDigestInputV1 = {
   build: FounderDigestBuildV1;
   command_center: FounderDigestCommandCenterSliceV1;
   compare_note: string;
+  /** Optional Founder Action Queue table (markdown fragment, read-only v1). */
+  founder_action_queue_digest_markdown?: string;
 };
 
 export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): string {
@@ -84,6 +86,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
     "## Command Center next action",
     `**next_best_action:** ${cc.next_best_action}`,
     "",
+    ...(input.founder_action_queue_digest_markdown
+      ? [
+          "## Founder Action Queue (read-only v1)",
+          "Same Command Center snapshot as this digest (no extra I/O). Short labels: **needs_owner** = your decision; **agent_safe** = read-only agent work only; **waiting** / **blocked** = dependencies or gates; **do_not_touch** = do not expand mutating automation this week.",
+          "",
+          input.founder_action_queue_digest_markdown.trimEnd(),
+          "",
+        ]
+      : []),
     "## What requires Jared specifically?",
     `**command_center_v2.next_owner_action:** ${cc.next_owner_action}`,
     "",

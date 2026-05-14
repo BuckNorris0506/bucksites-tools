@@ -14,6 +14,10 @@ import {
   type FounderControlLaneCategory,
   type FounderControlPlaneModel,
 } from "@/lib/owner-dashboard/founder-control-plane-model";
+import {
+  buildFounderActionQueueForOwnerDashboard,
+  type FounderActionQueueRowV1,
+} from "@/lib/owner-dashboard/founder-action-queue-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -337,6 +341,77 @@ function FounderControlPlaneSection({ model }: { model: FounderControlPlaneModel
   );
 }
 
+function founderActionQueueStatusLabel(status: FounderActionQueueRowV1["status"]): string {
+  switch (status) {
+    case "needs_owner":
+      return "Your decision";
+    case "agent_safe":
+      return "Agent · read-only";
+    case "blocked":
+      return "Blocked";
+    case "waiting":
+      return "Waiting";
+    case "do_not_touch":
+      return "Scope guard (do not expand mutating work)";
+    default:
+      return status;
+  }
+}
+
+function FounderActionQueueSection({
+  queue,
+}: {
+  queue: ReturnType<typeof buildFounderActionQueueForOwnerDashboard>;
+}) {
+  return (
+    <ExecutiveSection
+      title="Founder Action Queue"
+      subtitle="Read-only v1 — up to seven prioritized actions derived from Command Center (owner-specific items first, then read-only agent work, then blocked or waiting dependencies, scope guards last)."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Machine-readable contract <span className="font-mono text-[11px]">{queue.contract}</span> — this section does not
+        write Supabase, affiliate data, retailer links, or evidence files.
+      </p>
+      <div className="space-y-4">
+        {queue.rows.map((row, idx) => (
+          <div
+            key={`${row.id}-${idx}`}
+            className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/50"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  Priority {idx + 1}
+                </p>
+                <h3 className="mt-0.5 text-base font-semibold text-slate-900 dark:text-slate-50">{row.title}</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-slate-800 ring-1 ring-slate-300/60 dark:bg-slate-800 dark:text-slate-100 dark:ring-slate-600/60">
+                  {founderActionQueueStatusLabel(row.status)}
+                  <span className="ml-1 font-mono normal-case text-slate-500 dark:text-slate-400">({row.status})</span>
+                </span>
+                <span className="inline-flex rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-950 ring-1 ring-blue-200/70 dark:bg-blue-950/40 dark:text-blue-100 dark:ring-blue-800/50">
+                  Burden: {row.owner_burden}
+                </span>
+                <span className="inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-950 ring-1 ring-emerald-200/70 dark:bg-emerald-950/30 dark:text-emerald-100 dark:ring-emerald-800/40">
+                  Actor: {row.recommended_actor}
+                </span>
+                <span className="inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-950 ring-1 ring-amber-200/70 dark:bg-amber-950/30 dark:text-amber-100 dark:ring-amber-800/40">
+                  Mutations: {row.mutation_authority.replace(/_/g, " ")}
+                </span>
+              </div>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-slate-800 dark:text-slate-200">{row.next_action}</p>
+            <p className="mt-2 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
+              <span className="font-semibold text-slate-600 dark:text-slate-300">Evidence basis:</span> {row.evidence_basis}
+            </p>
+          </div>
+        ))}
+      </div>
+    </ExecutiveSection>
+  );
+}
+
 function buildStopTheLineItems(args: {
   health: { status: string; reasons: string[]; recommended_next_step: string };
   integritySentinel: { overall_status: string; action_confidence: string; owner_note: string };
@@ -473,6 +548,12 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     },
   });
 
+  const founderActionQueue = buildFounderActionQueueForOwnerDashboard({
+    next_best_action: report.next_best_action,
+    execution_guidance: report.execution_guidance,
+    command_center_v2: v2,
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -518,6 +599,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         </ExecutiveSection>
 
         <FounderControlPlaneSection model={founderControlPlane} />
+
+        <FounderActionQueueSection queue={founderActionQueue} />
 
         <TopOfGameFoundationSection tog={v2.top_of_game_foundation_scorecard_v1} />
 

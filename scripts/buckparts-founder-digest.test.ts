@@ -26,12 +26,15 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
       known_unknowns_sample: ["deploy commit UNKNOWN"],
     },
     compare_note: "**UNKNOWN** — no prior digest.",
+    founder_action_queue_digest_markdown: "| Priority | Title | Status | Actor | Next step |\n| --- | --- | --- | --- | --- |\n| 1 | Example | needs_owner | founder | Review |\n",
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
   assert.match(md, /## Is live smoke OK\?/);
   assert.match(md, /## Command Center next action/);
   assert.match(md, /Do the next safe thing/);
+  assert.match(md, /## Founder Action Queue \(read-only v1\)/);
+  assert.match(md, /\| 1 \| Example \|/);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });

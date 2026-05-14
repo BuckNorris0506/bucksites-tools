@@ -15,6 +15,11 @@ import {
   buildFounderDigestMarkdownV1,
   sliceCommandCenterForFounderDigest,
 } from "./lib/buckparts-founder-digest-v1";
+import {
+  buildFounderActionQueueV1,
+  formatFounderActionQueueForDigest,
+  founderActionQueueInputFromCommandCenterJson,
+} from "../src/lib/owner-dashboard/founder-action-queue-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -49,16 +54,29 @@ function runBuildForDigest(rootDir: string): FounderDigestBuildV1 {
   return { ran: true, ok: r.status === 0 };
 }
 
+const FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST = {
+  report_name: "UNKNOWN",
+  generated_at: "UNKNOWN",
+  system_health_summary: { status: "UNKNOWN" },
+  next_best_action: "UNKNOWN (Command Center build threw — see CI log)",
+  known_unknowns: [] as string[],
+  execution_guidance: { next_move_mode: "UNKNOWN", mutating_blocked: false, mutating_block_reasons: [] as string[] },
+  command_center_v2: {
+    next_owner_action: "UNKNOWN",
+    deploy_live_site_status: { status: "UNKNOWN", live_site_monitor: null },
+    amazon_rescue: {
+      next_agent_action: "",
+      next_owner_action: "",
+      human_browser_required_tokens: [] as string[],
+      status: "UNKNOWN",
+    },
+    affiliate_readiness: { status: "UNKNOWN", next_owner_action: "", next_agent_action: "" },
+    unknown_or_human_review: { status: "UNKNOWN", next_owner_action: "", blocker: null },
+  },
+} as Parameters<typeof sliceCommandCenterForFounderDigest>[0];
+
 function unknownCommandCenterSlice(): ReturnType<typeof sliceCommandCenterForFounderDigest> {
-  return sliceCommandCenterForFounderDigest({
-    report_name: "UNKNOWN",
-    generated_at: "UNKNOWN",
-    system_health_summary: { status: "UNKNOWN" },
-    next_best_action: "UNKNOWN (Command Center build threw — see CI log)",
-    known_unknowns: [],
-    execution_guidance: { next_move_mode: "UNKNOWN", mutating_blocked: false, mutating_block_reasons: [] },
-    command_center_v2: { next_owner_action: "UNKNOWN", deploy_live_site_status: { status: "UNKNOWN", live_site_monitor: null }, amazon_rescue: { next_agent_action: "" } },
-  } as Parameters<typeof sliceCommandCenterForFounderDigest>[0]);
+  return sliceCommandCenterForFounderDigest(FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST);
 }
 
 export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: string; exitCode: number }> {
@@ -66,21 +84,26 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
   const comparePath = parseCompareWithArg();
   const build = runBuildForDigest(rootDir);
   let slice: ReturnType<typeof sliceCommandCenterForFounderDigest>;
+  let ccForQueue: unknown;
   let ccOk = true;
   try {
     const rawCc = await buildBuckpartsCommandCenterReport({ rootDir });
     const cc = stripEvidenceUncappedCandidatesForStdout(rawCc) as unknown as Parameters<typeof sliceCommandCenterForFounderDigest>[0];
     slice = sliceCommandCenterForFounderDigest(cc);
+    ccForQueue = cc;
   } catch {
     ccOk = false;
     slice = unknownCommandCenterSlice();
+    ccForQueue = FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST;
   }
   const compareNote = buildCompareNote(comparePath);
+  const actionQueue = buildFounderActionQueueV1(founderActionQueueInputFromCommandCenterJson(ccForQueue));
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: new Date().toISOString(),
     build,
     command_center: slice,
     compare_note: compareNote,
+    founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
   });
   const buildFailed = build.ran && build.ok === false;
   const exitCode = buildFailed || !ccOk ? 1 : 0;
