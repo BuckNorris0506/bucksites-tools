@@ -1,0 +1,166 @@
+# BuckParts — Runner status (canonical)
+
+**Purpose:** One living document for Runner-adjacent **repo truth**: capabilities, execution surfaces, gaps, and what not to claim. Supersedes `docs/BuckParts-RUNNER-CAPABILITY-AUDIT.md` and the former product-audit doc (merged 2026-05-08).
+
+**Truth contract:** **PROVEN** = path or `package.json` script exists in-repo and/or command output captured below. **INFERRED** = follow-on from PROVEN, not a full product claim. **UNKNOWN** = not evidenced in repo or host-dependent without a local proof.
+
+**Maintain:** When queue, packet, digest, or workflows change, update the tables and “Last verified” line.
+
+**Last verified against repo:** 2026-05-08 (sources read + commands below).
+
+**Line budget:** Keep this file roughly **150–250** lines; extend only when facts change.
+
+---
+
+## Executive verdict
+
+| Topic | Verdict |
+|-------|---------|
+| **Partial Runner core** | **PROVEN** — Founder Action Queue, Founder Execution Packet, digest, CLIs, operator proof, owner dashboard control plane compose read-only founder/operator infrastructure. |
+| **Layer 3 for repo-owned scripts** | **PROVEN** — GitHub Actions: e.g. `.github/workflows/buckparts-founder-digest.yml` runs `npm ci`, `npm run build`, then `node --import tsx scripts/buckparts-founder-digest.ts`; `.github/workflows/buckparts-daily-operator.yml` runs `npm ci` then `npm run buckparts:daily`. Local `spawnSync` in `scripts/buckparts-operator-proof.ts` and clipboard in `scripts/buckparts-copy-next-execution-packet.ts`. |
+| **Layer 3 for Cursor / Codex / OpenAI agent** | **UNKNOWN / not proven** — no in-repo integration; see execution surfaces. |
+| **Copy/paste** | **PARTIAL** — `buckparts:next-execution-packet` + macOS `buckparts:copy-next-execution-packet` reduce hunting/pasting the packet; IDE/chat handoff remains human. |
+
+---
+
+## Repo-proven Runner capabilities
+
+| Capability | `package.json` / path |
+|------------|------------------------|
+| Next execution packet (stdout / `--json` / `--list`) | `npm run buckparts:next-execution-packet` → `scripts/buckparts-next-execution-packet.ts`, `scripts/lib/buckparts-next-execution-packet.ts` |
+| Clipboard copy of next packet (macOS `pbcopy`) | `npm run buckparts:copy-next-execution-packet` → `scripts/buckparts-copy-next-execution-packet.ts` |
+| Founder digest (markdown stdout) | `npm run buckparts:founder-digest` → `scripts/buckparts-founder-digest.ts`, `scripts/lib/buckparts-founder-digest-v1.ts` |
+| Founder Action Queue | `src/lib/owner-dashboard/founder-action-queue-v1.ts` |
+| Founder Execution Packet (eligible rows only) | `src/lib/owner-dashboard/founder-execution-packet-v1.ts` |
+| Owner dashboard / Founder Control Plane | `src/app/ownerdashboard/[secret]/page.tsx`, `src/lib/owner-dashboard/founder-control-plane-model.ts` |
+| Operator proof (git, build, read-only smoke path, CC JSON) | `npm run buckparts:operator-proof` → `scripts/buckparts-operator-proof.ts` |
+| CI: build + digest + artifact + summary | `.github/workflows/buckparts-founder-digest.yml` |
+| CI: daily operator pattern | `.github/workflows/buckparts-daily-operator.yml` (**PROVEN** path exists; same class as digest) |
+| Upstream Command Center | `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` |
+
+**Packet eligibility (PROVEN):** `founder-execution-packet-v1.ts` emits packets only when `status === "agent_safe"` AND `recommended_actor === "agent"` AND `mutation_authority === "read_only"`. Default validation text names `npm run lint`, `npm run build`, `npm run buckparts:operator-proof`.
+
+**CLI read-only posture (PROVEN from script comments):** next-packet and digest scripts state they do not mutate Supabase, `retailer_links`, evidence, or affiliate data; copy script is local-only, not CI-wired.
+
+---
+
+## Execution surfaces
+
+| Surface | In repo | Callable for “agent Runner loop” |
+|---------|---------|----------------------------------|
+| **Cursor** | `docs/BuckParts-CURSOR-INBOX.md`, `docs/BuckParts-HQ-HANDOFF.md` — human handoff | **UNKNOWN** — no code invoking Cursor; inbox doc says not automation/API. |
+| **Codex** | HQ handoff mentions credits; **not** wired | **UNKNOWN** |
+| **OpenAI API/CLI** | **PROVEN** no `openai` npm dependency in `package.json`; UA string checks elsewhere, not a client | **UNKNOWN** |
+| **GitHub Actions** | **PROVEN** workflows: checkout, setup-node, `npm ci`, scripts, `GITHUB_STEP_SUMMARY`, `upload-artifact` | **PROVEN** for **repo scripts** only — not Cursor/Codex inside the job. |
+| **Local terminal** | **PROVEN** `tsx`/`node`, `npm run`, `spawnSync` patterns | **PROVEN** for subprocesses **you** invoke. |
+| **`gh` CLI** | Workflows use Actions, not `gh` from app code | **UNKNOWN** on any given laptop until `command -v gh`. |
+| **Netlify** | **PROVEN** `@netlify/plugin-nextjs` in `package.json`; `netlify.toml` `command = "npm run build"` | **INFERRED** deploy/build surface, not a generic agent runner unless added. |
+| **Slack / email** | **PROVEN absent** for digest — `buckparts-founder-digest-v1.ts` + `scripts/buckparts-founder-digest-workflow.test.ts` | N/A for Runner alerts today. |
+
+---
+
+## Copy/paste status
+
+**PROVEN reduced:** Bounded `copy_paste_prompt`, digest/dashboard surfaces, `buckparts:next-execution-packet`, and macOS `buckparts:copy-next-execution-packet` make the **next** packet easier to obtain than ad-hoc assembly.
+
+**PROVEN not eliminated:** There is no in-repo path that pastes into or reads from Cursor/Codex/ChatGPT automatically. Non-macOS has no `pbcopy` path in the copy script (**PROVEN** — script gates `darwin`).
+
+---
+
+## Current Runner layer verdict
+
+- Layer 1 — Repo decides next packet: **PROVEN**
+- Layer 2 — Packet can be copied to clipboard: **PROVEN on macOS via pbcopy**
+- Layer 3 — Repo sends prompt directly to Cursor/Codex/OpenAI agent: **UNKNOWN / not proven**
+- Layer 4 — Repo captures agent output automatically: **UNKNOWN / not proven**
+- Layer 5 — Repo validates/interprets output: **PARTIAL**
+- Layer 6 — Jared only approves/judges quality: **NOT PROVEN**
+
+---
+
+## Layer map (detail)
+
+| Layer | Target | BuckParts | Evidence |
+|-------|--------|-----------|----------|
+| 1 | Decide next work packet | **PROVEN** | Queue + packet builders + `buildNextExecutionPacketSnapshotV1` |
+| 2 | Surface / copy prompt | **PROVEN** (stdout + macOS clipboard) | `buckparts:next-execution-packet`, `buckparts:copy-next-execution-packet`, digest, dashboard |
+| 3 | Send prompt to execution tool | **PARTIAL** — **PROVEN** for internal npm/tsx in CI/local; **UNKNOWN** for IDE agents | Workflows + scripts vs. no agent API |
+| 4 | Collect output | **PARTIAL** — **PROVEN** subprocess/CI logs; **UNKNOWN** for agent chat | `buckparts-operator-proof.ts`, digest workflow `tee` |
+| 5 | Validate / interpret | **PARTIAL** — exit-code checks in prompts + operator proof; no semantic parser for agent prose | `founder-execution-packet-v1.ts` |
+| 6 | Founder only judges quality | **NOT PROVEN** | Paste, git, mutations still human-gated |
+
+---
+
+## Do not claim yet
+
+- Do not claim autonomy.
+- Do not claim closed-loop Runner.
+- Do not claim Cursor/Codex/OpenAI integration.
+- Do not claim the Runner product is sellable.
+- Do not claim copy/paste hell is solved; only reduced.
+
+---
+
+## Honest automation boundaries
+
+**Can automate without lying (PROVEN):** Run read-only `tsx` / `npm` steps in CI or locally; capture stdout/stderr; write digest markdown to logs/artifacts; copy next packet to macOS clipboard.
+
+**Cannot claim yet:** Repo sends packet to Cursor and ingests reply; Codex/OpenAI CLI loop; Slack/email on digest completion; semantic pass/fail on arbitrary agent text without a schema.
+
+---
+
+## Recommended next proof
+
+Smallest honest next step is not broad autonomy. It is proving a repo-owned loop surface:
+
+- pick GitHub Actions or local subprocess as the first Runner execution surface
+- generate a work packet
+- execute repo-owned validation
+- capture logs/artifacts
+- summarize result
+- produce the next packet or blocked state
+- require human approval for mutation
+
+**Design-only options (not implemented here):** optional `workflow_dispatch` workflow running `npm run lint`, `npm run build`, `npm run buckparts:operator-proof` with summary + artifact; optional inbox/outbox dirs for the same validation bundle. Do **not** wrap only the prompt generator and call it a Runner — deliverable should be **validation evidence** and structured status, not simulated LLM output.
+
+---
+
+## Risks & mutation gates
+
+- **PROVEN:** Packets and Command Center carry `mutating_blocked` / `prohibited_actions` text; enforcement is process + human review, not kernel-level.
+- **PROVEN:** Operator-style scripts use **fixed** argv (not user-controlled shell strings) — changing that would be high risk.
+- **PROVEN:** Workflows use secrets for Supabase; logs must not echo secrets.
+- **INFERRED:** More workflows increase CI minutes and secret surface.
+
+---
+
+## What Jared still does
+
+Paste or drive external agents; interpret agent narrative; git/PR; open Actions for artifacts; approve any mutation outside read-only packets.
+
+---
+
+## Appendix — PATH snapshot (this machine only)
+
+Re-run on your laptop; results differ by install.
+
+```text
+command -v cursor   # (empty this run)
+command -v codex   # (empty)
+command -v gh      # (empty)
+command -v openai  # (empty)
+command -v netlify # /usr/local/bin/netlify
+command -v node    # /usr/local/bin/node
+command -v npm     # /usr/local/bin/npm
+node --version     # v24.13.1
+npm --version      # 11.8.0
+netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
+```
+
+---
+
+## Changelog (doc only)
+
+| Date | Change |
+|------|--------|
+| 2026-05-08 | Collapsed `BuckParts-RUNNER-CAPABILITY-AUDIT.md` + prior status/product material into this single canonical `BuckParts-RUNNER-STATUS.md`. |
