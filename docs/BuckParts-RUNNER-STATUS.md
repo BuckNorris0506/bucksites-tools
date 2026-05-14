@@ -36,7 +36,7 @@
 | Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
 | Runner Step visibility (founder digest + owner dashboard, modeled only) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** digest/dashboard do **not** invoke `buckparts:runner-step`; live JSON on those surfaces **UNKNOWN** (run CLI locally). |
 | Runner Safety Contract v1 (allowlist + default prohibition snapshot) | `scripts/lib/buckparts-runner-safety-contract-v1.ts`, `scripts/buckparts-runner-safety-contract.test.ts` |
-| CI: Runner Step v1 (manual JSON + artifact) | `.github/workflows/buckparts-runner-step.yml` — `workflow_dispatch` only; `npm ci`; `node --import tsx scripts/buckparts-runner-step.ts > buckparts-runner-step.json`; `GITHUB_STEP_SUMMARY`; artifact `buckparts-runner-step`. |
+| CI: Runner Step v1 (manual JSON + artifact) | `.github/workflows/buckparts-runner-step.yml` — `workflow_dispatch` only; `npm ci`; `node --import tsx scripts/buckparts-runner-step.ts > buckparts-runner-step.json`; `GITHUB_STEP_SUMMARY`; artifact `buckparts-runner-step`. **PROVEN:** Runner Step can now be run manually in GitHub Actions and uploaded as an artifact. |
 | CI: build + digest + artifact + summary | `.github/workflows/buckparts-founder-digest.yml` |
 | CI: daily operator pattern | `.github/workflows/buckparts-daily-operator.yml` (**PROVEN** path exists; same class as digest) |
 | Upstream Command Center | `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` |
