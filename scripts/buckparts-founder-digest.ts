@@ -20,6 +20,10 @@ import {
   formatFounderActionQueueForDigest,
   founderActionQueueInputFromCommandCenterJson,
 } from "../src/lib/owner-dashboard/founder-action-queue-v1";
+import {
+  buildFounderExecutionPacketsV1,
+  formatFounderExecutionPacketsForDigest,
+} from "../src/lib/owner-dashboard/founder-execution-packet-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -98,12 +102,17 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
   }
   const compareNote = buildCompareNote(comparePath);
   const actionQueue = buildFounderActionQueueV1(founderActionQueueInputFromCommandCenterJson(ccForQueue));
+  const executionPackets = buildFounderExecutionPacketsV1(actionQueue.rows, {
+    generated_at: new Date().toISOString(),
+    source: "buckparts-founder-digest",
+  });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: new Date().toISOString(),
     build,
     command_center: slice,
     compare_note: compareNote,
     founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
+    founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
   });
   const buildFailed = build.ran && build.ok === false;
   const exitCode = buildFailed || !ccOk ? 1 : 0;

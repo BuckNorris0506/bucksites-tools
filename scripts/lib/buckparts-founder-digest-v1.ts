@@ -38,6 +38,8 @@ export type FounderDigestInputV1 = {
   compare_note: string;
   /** Optional Founder Action Queue table (markdown fragment, read-only v1). */
   founder_action_queue_digest_markdown?: string;
+  /** Optional Founder Execution Packets fragment (markdown; follows Action Queue when queue fragment is present). */
+  founder_execution_packets_digest_markdown?: string;
 };
 
 export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): string {
@@ -93,6 +95,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
           "",
           input.founder_action_queue_digest_markdown.trimEnd(),
           "",
+          ...(input.founder_execution_packets_digest_markdown !== undefined
+            ? [
+                "## Founder Execution Packets (read-only v1)",
+                "**PROVEN:** Markdown below is from `founder_execution_packet_v1` using the same Founder Action Queue rows (pure builder; no Supabase, retailer_links, evidence, or affiliate mutations).",
+                "",
+                input.founder_execution_packets_digest_markdown.trimEnd(),
+                "",
+              ]
+            : []),
         ]
       : []),
     "## What requires Jared specifically?",

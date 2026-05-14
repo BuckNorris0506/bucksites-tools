@@ -18,6 +18,7 @@ import {
   buildFounderActionQueueForOwnerDashboard,
   type FounderActionQueueRowV1,
 } from "@/lib/owner-dashboard/founder-action-queue-v1";
+import { buildFounderExecutionPacketsV1 } from "@/lib/owner-dashboard/founder-execution-packet-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -412,6 +413,53 @@ function FounderActionQueueSection({
   );
 }
 
+function FounderExecutionPacketsSection({
+  model,
+}: {
+  model: ReturnType<typeof buildFounderExecutionPacketsV1>;
+}) {
+  return (
+    <ExecutiveSection
+      title="Founder Execution Packets"
+      subtitle="Read-only v1 — copy/paste prompts for queue rows that are already classified as agent-safe, agent-led, and read-only only (same rules as the weekly digest)."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{model.contract}</span> · read_only={String(model.read_only)} ·
+        data_mutation={String(model.data_mutation)} · skipped queue rows: {model.skipped_rows.length}
+      </p>
+      {model.packets.length === 0 ? (
+        <p className="mt-2 text-sm text-slate-800 dark:text-slate-200">
+          <span className="font-semibold text-slate-900 dark:text-slate-100">PROVEN:</span> No agent-safe execution packets
+          were produced from the Founder Action Queue above (no qualifying rows).
+        </p>
+      ) : (
+        <div className="mt-3 space-y-5">
+          {model.packets.map((p) => (
+            <div
+              key={p.id}
+              className="rounded-lg border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-900/50"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-50">{p.title}</h3>
+                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-400">
+                  Actor: {p.recommended_actor} · {p.packet_kind}
+                </span>
+              </div>
+              <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                Validation (run separately):{" "}
+                <span className="font-mono text-[10px] text-slate-700 dark:text-slate-300">{p.validation_command.replace(/\n/g, " · ")}</span>
+              </p>
+              <pre className="mt-2 max-h-72 overflow-y-auto whitespace-pre-wrap rounded-md border border-slate-200 bg-white p-3 font-mono text-[11px] leading-relaxed text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                {p.copy_paste_prompt}
+              </pre>
+            </div>
+          ))}
+        </div>
+      )}
+    </ExecutiveSection>
+  );
+}
+
 function buildStopTheLineItems(args: {
   health: { status: string; reasons: string[]; recommended_next_step: string };
   integritySentinel: { overall_status: string; action_confidence: string; owner_note: string };
@@ -554,6 +602,11 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     command_center_v2: v2,
   });
 
+  const founderExecutionPackets = buildFounderExecutionPacketsV1(founderActionQueue.rows, {
+    generated_at: report.generated_at,
+    source: "owner_dashboard",
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -601,6 +654,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderControlPlaneSection model={founderControlPlane} />
 
         <FounderActionQueueSection queue={founderActionQueue} />
+
+        <FounderExecutionPacketsSection model={founderExecutionPackets} />
 
         <TopOfGameFoundationSection tog={v2.top_of_game_foundation_scorecard_v1} />
 

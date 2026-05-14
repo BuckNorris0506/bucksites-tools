@@ -5,6 +5,10 @@ import {
   buildFounderDigestMarkdownV1,
   sliceCommandCenterForFounderDigest,
 } from "./lib/buckparts-founder-digest-v1";
+import {
+  buildFounderExecutionPacketsV1,
+  formatFounderExecutionPacketsForDigest,
+} from "../src/lib/owner-dashboard/founder-execution-packet-v1";
 
 test("buildFounderDigestMarkdownV1 includes required sections", () => {
   const md = buildFounderDigestMarkdownV1({
@@ -27,6 +31,20 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
     },
     compare_note: "**UNKNOWN** — no prior digest.",
     founder_action_queue_digest_markdown: "| Priority | Title | Status | Actor | Next step |\n| --- | --- | --- | --- | --- |\n| 1 | Example | needs_owner | founder | Review |\n",
+    founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(
+      buildFounderExecutionPacketsV1([
+        {
+          id: "q1",
+          title: "Example queue row",
+          status: "needs_owner",
+          owner_burden: "high",
+          recommended_actor: "founder",
+          mutation_authority: "read_only",
+          evidence_basis: "fixture",
+          next_action: "Owner decides",
+        },
+      ]),
+    ),
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -35,6 +53,8 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /Do the next safe thing/);
   assert.match(md, /## Founder Action Queue \(read-only v1\)/);
   assert.match(md, /\| 1 \| Example \|/);
+  assert.match(md, /## Founder Execution Packets \(read-only v1\)/);
+  assert.match(md, /No agent-safe execution packets/);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });
