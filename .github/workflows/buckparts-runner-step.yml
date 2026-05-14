@@ -1,0 +1,80 @@
+name: BuckParts Runner Step
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-step:
+    name: Runner Step v1 (read-only JSON)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      LIVE_SITE_SMOKE_TARGET_URL: https://buckparts.com
+      NEXT_PUBLIC_SITE_URL: https://buckparts.com
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Runner Step v1
+        run: |
+          set -euo pipefail
+          node --import tsx scripts/buckparts-runner-step.ts > buckparts-runner-step.json
+          test -s buckparts-runner-step.json
+
+      - name: Append Runner Step summary
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const j = JSON.parse(fs.readFileSync("buckparts-runner-step.json", "utf8"));
+          const out = process.env.GITHUB_STEP_SUMMARY;
+          const lines = [
+            "## BuckParts Runner Step v1 (CI)",
+            "",
+            `**PROVEN:** \`overall_status\` = \`${j.overall_status}\` (from \`buckparts-runner-step.json\` produced by \`node --import tsx scripts/buckparts-runner-step.ts\`).`,
+            "**UNKNOWN:** Cursor / Codex / OpenAI autonomous execution is **not** part of this workflow; only repo-owned npm allowlist commands run inside the Runner Step script.",
+            "",
+          ];
+          if (j.selected_packet && j.selected_packet.title) {
+            lines.push(
+              `**Selected packet:** ${j.selected_packet.title} (\`${j.selected_packet.id}\`).`,
+              "",
+            );
+          } else {
+            lines.push("**Selected packet:** *(none)*", "");
+          }
+          lines.push("**Layer truth (from JSON):**", "");
+          const lt = j.layer_truth || {};
+          for (const [k, v] of Object.entries(lt)) {
+            lines.push(`- \`${k}\`: \`${String(v)}\``);
+          }
+          lines.push("", "**Command statuses:**", "");
+          for (const c of j.commands || []) {
+            lines.push(`- \`${c.command}\`: **${c.status}** (exit ${JSON.stringify(c.exit_code)})`);
+          }
+          lines.push("");
+          fs.appendFileSync(out, lines.join("\n") + "\n");
+          NODE
+
+      - name: Upload Runner Step JSON artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: buckparts-runner-step
+          path: buckparts-runner-step.json
+          if-no-files-found: error
