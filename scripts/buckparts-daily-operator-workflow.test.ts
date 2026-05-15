@@ -12,12 +12,15 @@ test("BuckParts Daily Operator workflow is scheduled and read-only", () => {
   const yaml = readFileSync(workflowPath, "utf8");
 
   assert.match(yaml, /^name:\s*BuckParts Daily Operator$/m);
-  assert.match(yaml, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*"true"/);
+  assert.doesNotMatch(yaml, /uses:\s*actions\/checkout@v4\b/);
+  assert.doesNotMatch(yaml, /uses:\s*actions\/setup-node@v4\b/);
+  assert.doesNotMatch(yaml, /uses:\s*actions\/upload-artifact@v4\b/);
+  assert.match(yaml, /uses:\s*actions\/checkout@v6\b/);
+  assert.match(yaml, /uses:\s*actions\/setup-node@v6\b/);
+  assert.doesNotMatch(yaml, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24/);
   assert.match(yaml, /^\s*workflow_dispatch:\s*$/m);
   assert.match(yaml, /^\s*schedule:\s*$/m);
   assert.match(yaml, /^\s*-\s*cron:\s*"17 13 \* \* \*"$/m);
-  assert.match(yaml, /uses:\s*actions\/checkout@v4/);
-  assert.match(yaml, /uses:\s*actions\/setup-node@v4/);
   assert.match(yaml, /node-version:\s*"24"/);
   assert.match(yaml, /^\s*env:\s*$/m);
   assert.match(
