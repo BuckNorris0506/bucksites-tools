@@ -14,6 +14,10 @@ import {
   formatFounderExecutionPacketsForDigest,
 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
 import {
+  buildFounderDecisionPacketsV1,
+  formatFounderDecisionPacketsForDigestTopNV1,
+} from "../src/lib/owner-dashboard/founder-decision-packet-v1";
+import {
   buildRunnerStepVisibilityModeledV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
@@ -79,6 +83,24 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
     },
     compare_note: "**UNKNOWN** — no prior digest.",
     founder_action_queue_digest_markdown: "| Priority | Title | Status | Actor | Next step |\n| --- | --- | --- | --- | --- |\n| 1 | Example | needs_owner | founder | Review |\n",
+    founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(
+      buildFounderDecisionPacketsV1(
+        [
+          {
+            id: "q1",
+            title: "Example queue row",
+            status: "needs_owner",
+            owner_burden: "high",
+            recommended_actor: "founder",
+            mutation_authority: "read_only",
+            evidence_basis: "fixture",
+            next_action: "Owner decides",
+          },
+        ],
+        { source: "digest_test", runner: { overall_status: "NO_PACKET" } },
+      ),
+      3,
+    ),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(
       buildFounderExecutionPacketsV1([
         {
@@ -108,6 +130,8 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /Do the next safe thing/);
   assert.match(md, /## Founder Action Queue \(read-only v1\)/);
   assert.match(md, /\| 1 \| Example \|/);
+  assert.match(md, /## Founder Decision Packets \(owner-only v1\)/);
+  assert.match(md, /founder_decision_packet_v1/);
   assert.match(md, /## Founder Execution Packets \(read-only v1\)/);
   assert.match(md, /No agent-safe execution packets/);
   assert.match(md, /## Runner Step \(read-only v1\)/);

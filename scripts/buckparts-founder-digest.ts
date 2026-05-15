@@ -36,6 +36,10 @@ import {
   formatFounderExecutionPacketsForDigest,
   type FounderExecutionPacketV1,
 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
+import {
+  buildFounderDecisionPacketsV1,
+  formatFounderDecisionPacketsForDigestTopNV1,
+} from "../src/lib/owner-dashboard/founder-decision-packet-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -93,6 +97,20 @@ const FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST = {
 
 function unknownCommandCenterSlice(): ReturnType<typeof sliceCommandCenterForFounderDigest> {
   return sliceCommandCenterForFounderDigest(FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST);
+}
+
+function tryReadRunnerStepOverallStatusV1(rootDir: string): string | null {
+  const rel = process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH?.trim();
+  if (!rel) return null;
+  const abs = path.isAbsolute(rel) ? rel : path.join(rootDir, rel);
+  try {
+    const raw = readFileSync(abs, "utf8");
+    const parsed = JSON.parse(raw) as BuckpartsRunnerStepOutputV1;
+    if (parsed?.contract !== BUCKPARTS_RUNNER_STEP_CONTRACT_V1) return null;
+    return typeof parsed.overall_status === "string" ? parsed.overall_status : null;
+  } catch {
+    return null;
+  }
 }
 
 function modeledRunnerDigestMarkdownV1(args: {
@@ -162,6 +180,12 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     generated_at: new Date().toISOString(),
     source: "buckparts-founder-digest",
   });
+  const runnerOverall = tryReadRunnerStepOverallStatusV1(rootDir);
+  const decisionPackets = buildFounderDecisionPacketsV1(actionQueue.rows, {
+    generated_at: new Date().toISOString(),
+    source: "buckparts-founder-digest",
+    runner: runnerOverall ? { overall_status: runnerOverall } : null,
+  });
   const nextPacket = executionPackets.packets[0] ?? null;
   const runner_step_digest_markdown = buildRunnerStepDigestMarkdownForFounderRunV1({
     rootDir,
@@ -174,6 +198,7 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     command_center: slice,
     compare_note: compareNote,
     founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
+    founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(decisionPackets, 3),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });

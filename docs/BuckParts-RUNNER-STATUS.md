@@ -31,7 +31,7 @@
 | Clipboard copy of next packet (macOS `pbcopy`) | `npm run buckparts:copy-next-execution-packet` → `scripts/buckparts-copy-next-execution-packet.ts` |
 | Founder digest (markdown stdout) | `npm run buckparts:founder-digest` → `scripts/buckparts-founder-digest.ts`, `scripts/lib/buckparts-founder-digest-v1.ts` |
 | Founder Action Queue | `src/lib/owner-dashboard/founder-action-queue-v1.ts` |
-| Founder Execution Packet (eligible rows only) | `src/lib/owner-dashboard/founder-execution-packet-v1.ts` |
+| Founder Decision Packets (owner-only v1) | `src/lib/owner-dashboard/founder-decision-packet-v1.ts` — **PROVEN:** read-only builder from Founder Action Queue; digest + dashboard; **not** agent execution prompts. **INFERRED:** When Runner Step `overall_status` is `NO_PACKET`, owner decision text references that signal in digest CI runs. |
 | Owner dashboard / Founder Control Plane | `src/app/ownerdashboard/[secret]/page.tsx`, `src/lib/owner-dashboard/founder-control-plane-model.ts` |
 | Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
 | Runner Step visibility (founder digest + owner dashboard) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** owner dashboard remains modeled-only (`live_runner_step_json` **UNKNOWN**). **PROVEN:** weekly Founder Digest workflow sets `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner Step JSON when that file exists; local `npm run buckparts:founder-digest` without the env still uses the modeled Runner section. |
@@ -177,5 +177,6 @@ netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
 | Date | Change |
 |------|--------|
 | 2026-05-08 | Collapsed `BuckParts-RUNNER-CAPABILITY-AUDIT.md` + prior status/product material into this single canonical `BuckParts-RUNNER-STATUS.md`. |
+| 2026-05-15 | Founder `founder_decision_packet_v1` (`src/lib/owner-dashboard/founder-decision-packet-v1.ts`): digest + owner dashboard show **owner-only** decision packets for `needs_owner` / `blocked` / `waiting` queue rows; when Runner Step reports `NO_PACKET`, digest text ties that status to structured owner decisions (not agent-safe execution packets). |
 | 2026-05-15 | Weekly `.github/workflows/buckparts-founder-digest.yml` also runs Runner Step v1, uploads `buckparts-runner-step.json`, appends concise Runner summary to `GITHUB_STEP_SUMMARY`, and passes `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner JSON. |
 | 2026-05-08 | Manual GitHub Actions workflow `.github/workflows/buckparts-runner-step.yml` for Runner Step v1 JSON artifact + job summary. |

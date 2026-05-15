@@ -38,7 +38,9 @@ export type FounderDigestInputV1 = {
   compare_note: string;
   /** Optional Founder Action Queue table (markdown fragment, read-only v1). */
   founder_action_queue_digest_markdown?: string;
-  /** Optional Founder Execution Packets fragment (markdown; follows Action Queue when queue fragment is present). */
+  /** Optional Founder Decision Packets (markdown; owner-only v1; after Action Queue, before Execution Packets when queue is present). */
+  founder_decision_packets_digest_markdown?: string;
+  /** Optional Founder Execution Packets fragment (markdown; follows Decision Packets when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
   /** Optional Runner Step markdown: modeled-only, or live JSON summary when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` is set (`scripts/buckparts-founder-digest.ts`). */
   runner_step_digest_markdown?: string;
@@ -97,6 +99,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
           "",
           input.founder_action_queue_digest_markdown.trimEnd(),
           "",
+          ...(input.founder_decision_packets_digest_markdown !== undefined
+            ? [
+                "## Founder Decision Packets (owner-only v1)",
+                "**PROVEN:** Markdown below is from `founder_decision_packet_v1` (read-only builder). **Owner decisions only** — not agent execution prompts and not a grant of mutation authority.",
+                "",
+                input.founder_decision_packets_digest_markdown.trimEnd(),
+                "",
+              ]
+            : []),
           ...(input.founder_execution_packets_digest_markdown !== undefined
             ? [
                 "## Founder Execution Packets (read-only v1)",

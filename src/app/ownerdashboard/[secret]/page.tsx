@@ -23,6 +23,9 @@ import {
   buildFounderExecutionPacketsV1,
   type FounderExecutionPacketV1,
 } from "@/lib/owner-dashboard/founder-execution-packet-v1";
+import {
+  buildFounderDecisionPacketsV1,
+} from "@/lib/owner-dashboard/founder-decision-packet-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -417,6 +420,70 @@ function FounderActionQueueSection({
   );
 }
 
+function FounderDecisionPacketsSection({
+  model,
+}: {
+  model: ReturnType<typeof buildFounderDecisionPacketsV1>;
+}) {
+  const top = model.decision_packets.slice(0, 3);
+  return (
+    <ExecutiveSection
+      title="Founder Decision Packets"
+      subtitle="Owner-only v1 — structured decisions for queue rows that are not agent-safe execution candidates (needs_owner / blocked / waiting with founder or external actor, or gated agent rows). Not copy/paste prompts for autonomous agents."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{model.contract}</span> · read_only={String(model.read_only)} ·
+        data_mutation={String(model.data_mutation)} · decision packets: {model.decision_packets.length} · skipped queue
+        rows: {model.skipped_rows.length}
+      </p>
+      <p className="mt-2 text-xs font-semibold text-amber-900 dark:text-amber-200">
+        Owner-only: these packets do not grant agents mutation authority or replace Founder Execution Packets below.
+      </p>
+      {top.length === 0 ? (
+        <p className="mt-2 text-sm text-slate-800 dark:text-slate-200">
+          <span className="font-semibold text-slate-900 dark:text-slate-100">PROVEN:</span> No owner decision packets
+          for this queue snapshot (e.g. only agent_safe rows or scope guards).
+        </p>
+      ) : (
+        <div className="mt-3 space-y-5">
+          {top.map((p) => (
+            <div
+              key={p.id}
+              className="rounded-lg border border-amber-200/80 bg-amber-50/50 p-3 dark:border-amber-900/50 dark:bg-amber-950/20"
+            >
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-50">{p.title}</h3>
+                <span className="text-[11px] font-medium text-amber-950 dark:text-amber-100">
+                  Blocked until decided: {String(p.blocked_until_decided)}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-slate-700 dark:text-slate-300">
+                <span className="font-semibold text-slate-800 dark:text-slate-200">Decision needed:</span>{" "}
+                {p.decision_needed}
+              </p>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">{p.why_jared}</p>
+              <p className="mt-2 text-[11px] text-slate-500 dark:text-slate-400">
+                <span className="font-semibold text-slate-600 dark:text-slate-300">Evidence basis:</span> {p.evidence_basis}
+              </p>
+              <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
+                {p.options.map((o) => (
+                  <li key={o.id}>
+                    <span className="font-mono text-[10px]">{o.id}</span>: {o.label}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-[11px] font-semibold text-slate-700 dark:text-slate-300">Recommended next</p>
+              <pre className="mt-1 max-h-40 overflow-y-auto whitespace-pre-wrap rounded-md border border-slate-200 bg-white p-2 font-mono text-[10px] leading-relaxed text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100">
+                {p.recommended_next_prompt_or_command}
+              </pre>
+            </div>
+          ))}
+        </div>
+      )}
+    </ExecutiveSection>
+  );
+}
+
 function FounderExecutionPacketsSection({
   model,
 }: {
@@ -671,6 +738,12 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     source: "owner_dashboard",
   });
 
+  const founderDecisionPackets = buildFounderDecisionPacketsV1(founderActionQueue.rows, {
+    generated_at: report.generated_at,
+    source: "owner_dashboard",
+    runner: null,
+  });
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -718,6 +791,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderControlPlaneSection model={founderControlPlane} />
 
         <FounderActionQueueSection queue={founderActionQueue} />
+
+        <FounderDecisionPacketsSection model={founderDecisionPackets} />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 
