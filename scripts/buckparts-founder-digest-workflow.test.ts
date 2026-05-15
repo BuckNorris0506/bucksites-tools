@@ -23,7 +23,11 @@ test("BuckParts Founder Digest workflow is weekly read-only with artifact", () =
   assert.match(yaml, /node --import tsx scripts\/buckparts-runner-step\.ts > buckparts-runner-step\.json/);
   assert.match(yaml, /FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH:\s*buckparts-runner-step\.json/);
   assert.match(yaml, /Append concise Runner Step summary/);
-  assert.match(yaml, /formatConciseRunnerStepGithubStepSummaryMarkdownV1/);
+  assert.match(
+    yaml,
+    /node --import tsx scripts\/buckparts-runner-step-append-github-step-summary\.ts buckparts-runner-step\.json/,
+  );
+  assert.doesNotMatch(yaml, /<<'NODE'/);
   assert.match(yaml, /Upload Runner Step JSON artifact/);
   assert.match(yaml, /name:\s*buckparts-runner-step/);
   assert.match(yaml, /path:\s*buckparts-runner-step\.json/);

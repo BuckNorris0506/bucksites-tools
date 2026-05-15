@@ -81,7 +81,9 @@ function layerTruthLinesFromLiveCliJsonV1(lt: RunnerStepLayerTruthV1): string[] 
 }
 
 /**
- * Concise job-summary markdown for CI (matches the Runner Step workflow copy).
+ * Concise job-summary markdown for CI (matches the legacy Runner Step workflow inline copy).
+ * **PROVEN:** `scripts/buckparts-runner-step-append-github-step-summary.ts` imports this named export;
+ * GitHub workflows must call that script — not stdin heredocs — so Node/tsx resolves this module from disk.
  * Pure: caller reads JSON and passes `output`.
  */
 export function formatConciseRunnerStepGithubStepSummaryMarkdownV1(output: BuckpartsRunnerStepOutputV1): string {

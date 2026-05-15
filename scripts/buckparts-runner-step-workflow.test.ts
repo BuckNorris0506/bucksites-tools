@@ -19,7 +19,12 @@ test("BuckParts Runner Step workflow is manual dispatch only with JSON artifact"
   assert.match(yaml, /node-version:\s*"24"/);
   assert.match(yaml, /run:\s*npm ci/);
   assert.match(yaml, /node --import tsx scripts\/buckparts-runner-step\.ts > buckparts-runner-step\.json/);
-  assert.match(yaml, /GITHUB_STEP_SUMMARY/);
+  assert.match(yaml, /Append Runner Step summary/);
+  assert.match(
+    yaml,
+    /node --import tsx scripts\/buckparts-runner-step-append-github-step-summary\.ts buckparts-runner-step\.json/,
+  );
+  assert.doesNotMatch(yaml, /<<'NODE'/);
   assert.match(yaml, /name:\s*buckparts-runner-step/);
   assert.match(yaml, /path:\s*buckparts-runner-step\.json/);
   assert.match(yaml, /permissions:\s*\n\s*contents:\s*read/m);

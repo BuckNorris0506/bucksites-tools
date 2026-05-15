@@ -46,12 +46,8 @@ jobs:
 
       - name: Append concise Runner Step summary
         run: |
-          node --import tsx <<'NODE'
-          import { appendFileSync, readFileSync } from "node:fs";
-          import { formatConciseRunnerStepGithubStepSummaryMarkdownV1 } from "./scripts/lib/buckparts-runner-step-summary-v1.ts";
-          const j = JSON.parse(readFileSync("buckparts-runner-step.json", "utf8"));
-          appendFileSync(process.env.GITHUB_STEP_SUMMARY, formatConciseRunnerStepGithubStepSummaryMarkdownV1(j));
-          NODE
+          set -euo pipefail
+          node --import tsx scripts/buckparts-runner-step-append-github-step-summary.ts buckparts-runner-step.json
 
       - name: Run founder digest
         env:

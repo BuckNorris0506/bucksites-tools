@@ -40,37 +40,8 @@ jobs:
 
       - name: Append Runner Step summary
         run: |
-          node <<'NODE'
-          const fs = require("fs");
-          const j = JSON.parse(fs.readFileSync("buckparts-runner-step.json", "utf8"));
-          const out = process.env.GITHUB_STEP_SUMMARY;
-          const lines = [
-            "## BuckParts Runner Step v1 (CI)",
-            "",
-            `**PROVEN:** \`overall_status\` = \`${j.overall_status}\` (from \`buckparts-runner-step.json\` produced by \`node --import tsx scripts/buckparts-runner-step.ts\`).`,
-            "**UNKNOWN:** Cursor / Codex / OpenAI autonomous execution is **not** part of this workflow; only repo-owned npm allowlist commands run inside the Runner Step script.",
-            "",
-          ];
-          if (j.selected_packet && j.selected_packet.title) {
-            lines.push(
-              `**Selected packet:** ${j.selected_packet.title} (\`${j.selected_packet.id}\`).`,
-              "",
-            );
-          } else {
-            lines.push("**Selected packet:** *(none)*", "");
-          }
-          lines.push("**Layer truth (from JSON):**", "");
-          const lt = j.layer_truth || {};
-          for (const [k, v] of Object.entries(lt)) {
-            lines.push(`- \`${k}\`: \`${String(v)}\``);
-          }
-          lines.push("", "**Command statuses:**", "");
-          for (const c of j.commands || []) {
-            lines.push(`- \`${c.command}\`: **${c.status}** (exit ${JSON.stringify(c.exit_code)})`);
-          }
-          lines.push("");
-          fs.appendFileSync(out, lines.join("\n") + "\n");
-          NODE
+          set -euo pipefail
+          node --import tsx scripts/buckparts-runner-step-append-github-step-summary.ts buckparts-runner-step.json
 
       - name: Upload Runner Step JSON artifact
         uses: actions/upload-artifact@v7
