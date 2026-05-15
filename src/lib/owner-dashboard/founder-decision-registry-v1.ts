@@ -15,7 +15,7 @@ export const FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1 =
 
 /** Short hint for digest / dashboard headers (single source of truth). */
 export const FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1 =
-  "**PROVEN:** Record approve / reject / defer outcomes in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`; optional row files under `data/owner-decisions/` per README). **PROVEN:** Weekly digest also embeds **read model v1** counts from the same directory (stdout: `npm run buckparts:founder-decision-registry`). **INFERRED:** Counts are informational — no automation consumes registry rows to change queues, packets, or Runner.";
+  "**PROVEN:** Record approve / reject / defer outcomes in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`; optional row files under `data/owner-decisions/` per README). **PROVEN:** Weekly digest also embeds **read model v1** counts from the same directory (machine-parseable JSON stdout: `node --import tsx scripts/report-founder-decision-registry.ts`; see `docs/BuckParts-JSON-STDOUT-CONTRACT.md`). **INFERRED:** Counts are informational — no automation consumes registry rows to change queues, packets, or Runner.";
 
 export type FounderDecisionRegistryDecisionStatusV1 =
   | "approved"

@@ -93,7 +93,7 @@ export function buildFounderDecisionRegistryReadModelV1(
       "PROVEN: Read model received zero registry JSON file inputs under the supplied scan set.",
     );
     unknown_facts.push(
-      "UNKNOWN: Whether `data/owner-decisions/*.json` exists on disk until `npm run buckparts:founder-decision-registry` (or digest scan) runs.",
+      "UNKNOWN: Whether `data/owner-decisions/*.json` exists on disk until `npm run buckparts:founder-decision-registry` (or digest scan) runs. For machine-parseable JSON stdout use `node --import tsx scripts/report-founder-decision-registry.ts` per `docs/BuckParts-JSON-STDOUT-CONTRACT.md`.",
     );
   }
 

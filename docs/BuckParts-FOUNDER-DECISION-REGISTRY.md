@@ -64,7 +64,7 @@
 
 ## Read model v1 (BuckParts)
 
-**PROVEN:** `founder_decision_registry_read_model_v1` lives in `src/lib/owner-dashboard/founder-decision-registry-read-model-v1.ts` (pure aggregation; no writes). **PROVEN:** `npm run buckparts:founder-decision-registry` runs `scripts/report-founder-decision-registry.ts` and prints one JSON object to stdout. **PROVEN:** Digest and owner dashboard may embed a short markdown summary of counts only — they do **not** alter Founder Action Queue, Decision Packets, Execution Packets, Runner Step, or mutation gates.
+**PROVEN:** `founder_decision_registry_read_model_v1` lives in `src/lib/owner-dashboard/founder-decision-registry-read-model-v1.ts` (pure aggregation; no writes). **PROVEN:** `npm run buckparts:founder-decision-registry` invokes `scripts/report-founder-decision-registry.ts` (human-friendly alias). **PROVEN:** For piping to `JSON.parse`, use `node --import tsx scripts/report-founder-decision-registry.ts` per `docs/BuckParts-JSON-STDOUT-CONTRACT.md`. **PROVEN:** Digest and owner dashboard may embed a short markdown summary of counts only — they do **not** alter Founder Action Queue, Decision Packets, Execution Packets, Runner Step, or mutation gates.
 
 ---
 
