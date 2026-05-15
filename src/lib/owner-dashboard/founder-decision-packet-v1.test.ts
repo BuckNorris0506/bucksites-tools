@@ -115,6 +115,7 @@ test("digest includes Founder Decision Packets section between queue and executi
   assert.ok(idxQueue >= 0 && idxDecision > idxQueue && idxExec > idxDecision);
   assert.match(md, /owner-only v1/);
   assert.match(md, /grant agent mutation authority/i);
+  assert.match(md, /Founder Decision Registry v1/i);
 });
 
 test("decision packet wording does not grant mutation authority", () => {
@@ -122,6 +123,12 @@ test("decision packet wording does not grant mutation authority", () => {
   const prohib = m.decision_packets[0]!.prohibited_actions.join("\n");
   assert.match(prohib, /does not authorize agents/i);
   assert.match(prohib, /Supabase/i);
+});
+
+test("decision packet recommended block cites Founder Decision Registry v1 footer", () => {
+  const m = buildFounderDecisionPacketsV1([needsOwnerFounder], { source: "test" });
+  assert.match(m.decision_packets[0]!.recommended_next_prompt_or_command, /Founder Decision Registry v1/i);
+  assert.match(m.decision_packets[0]!.recommended_next_prompt_or_command, /BuckParts-FOUNDER-DECISION-REGISTRY\.md/);
 });
 
 test("do_not_touch + system row is skipped", () => {

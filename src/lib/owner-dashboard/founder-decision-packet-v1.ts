@@ -5,6 +5,7 @@
  */
 
 import type { FounderActionQueueRowV1 } from "./founder-action-queue-v1";
+import { FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1 } from "./founder-decision-registry-v1";
 import {
   RUNNER_EXPECTED_DEFAULT_PROHIBITED_ACTION_LINES_V1,
 } from "../../../scripts/lib/buckparts-runner-safety-contract-v1";
@@ -519,7 +520,12 @@ export function buildFounderDecisionPacketsV1(
         evidence_basis: row.evidence_basis,
         blocked_until_decided: blockedUntilDecided(row),
         options: shaped.options,
-        recommended_next_prompt_or_command: shaped.recommended_next_prompt_or_command,
+        recommended_next_prompt_or_command: [
+          shaped.recommended_next_prompt_or_command.trimEnd(),
+          "",
+          "---",
+          FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1,
+        ].join("\n"),
         prohibited_actions,
       });
     } else {

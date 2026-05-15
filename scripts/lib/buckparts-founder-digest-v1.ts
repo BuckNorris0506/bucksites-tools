@@ -3,6 +3,8 @@
  * Populated from `buildBuckpartsCommandCenterReport` + local build status (repo truth at call site).
  */
 
+import { FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+
 export type FounderDigestBuildV1 = {
   /** PROVEN: whether `npm run build` was executed inside the digest script. */
   ran: boolean;
@@ -103,6 +105,7 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
             ? [
                 "## Founder Decision Packets (owner-only v1)",
                 "**PROVEN:** Markdown below is from `founder_decision_packet_v1` (read-only builder). **Owner decisions only** — not agent execution prompts and not a grant of mutation authority.",
+                FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1,
                 "",
                 input.founder_decision_packets_digest_markdown.trimEnd(),
                 "",

@@ -26,6 +26,7 @@ import {
 import {
   buildFounderDecisionPacketsV1,
 } from "@/lib/owner-dashboard/founder-decision-packet-v1";
+import { FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1 } from "@/lib/owner-dashboard/founder-decision-registry-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -438,6 +439,9 @@ function FounderDecisionPacketsSection({
       </p>
       <p className="mt-2 text-xs font-semibold text-amber-900 dark:text-amber-200">
         Owner-only: these packets do not grant agents mutation authority or replace Founder Execution Packets below.
+      </p>
+      <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        {FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1}
       </p>
       {top.length === 0 ? (
         <p className="mt-2 text-sm text-slate-800 dark:text-slate-200">

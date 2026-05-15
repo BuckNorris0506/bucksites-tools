@@ -131,6 +131,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /## Founder Action Queue \(read-only v1\)/);
   assert.match(md, /\| 1 \| Example \|/);
   assert.match(md, /## Founder Decision Packets \(owner-only v1\)/);
+  assert.match(md, /Founder Decision Registry v1/);
   assert.match(md, /founder_decision_packet_v1/);
   assert.match(md, /## Founder Execution Packets \(read-only v1\)/);
   assert.match(md, /No agent-safe execution packets/);
