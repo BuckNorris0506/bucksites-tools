@@ -49,6 +49,11 @@ import {
   buildFailurePatternRegistryReadModelFromSeededV1,
   formatFailurePatternRegistryDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/failure-pattern-registry-v1";
+import {
+  buildLayerSixReadinessSummaryV1,
+  formatLayerSixReadinessDigestMarkdownV1,
+  type LayerSixReadinessRunnerContextV1,
+} from "../src/lib/owner-dashboard/layer-six-readiness-summary-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -108,7 +113,7 @@ function unknownCommandCenterSlice(): ReturnType<typeof sliceCommandCenterForFou
   return sliceCommandCenterForFounderDigest(FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST);
 }
 
-function tryReadRunnerStepOverallStatusV1(rootDir: string): string | null {
+function tryReadRunnerStepJsonV1(rootDir: string): BuckpartsRunnerStepOutputV1 | null {
   const rel = process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH?.trim();
   if (!rel) return null;
   const abs = path.isAbsolute(rel) ? rel : path.join(rootDir, rel);
@@ -116,10 +121,24 @@ function tryReadRunnerStepOverallStatusV1(rootDir: string): string | null {
     const raw = readFileSync(abs, "utf8");
     const parsed = JSON.parse(raw) as BuckpartsRunnerStepOutputV1;
     if (parsed?.contract !== BUCKPARTS_RUNNER_STEP_CONTRACT_V1) return null;
-    return typeof parsed.overall_status === "string" ? parsed.overall_status : null;
+    return parsed;
   } catch {
     return null;
   }
+}
+
+function tryReadRunnerStepOverallStatusV1(rootDir: string): string | null {
+  const parsed = tryReadRunnerStepJsonV1(rootDir);
+  return parsed && typeof parsed.overall_status === "string" ? parsed.overall_status : null;
+}
+
+function tryReadRunnerStepContextForLayerSixV1(rootDir: string): LayerSixReadinessRunnerContextV1 | null {
+  const parsed = tryReadRunnerStepJsonV1(rootDir);
+  if (!parsed) return null;
+  return {
+    overall_status: parsed.overall_status ?? null,
+    layer_truth: parsed.layer_truth ?? null,
+  };
 }
 
 function modeledRunnerDigestMarkdownV1(args: {
@@ -207,6 +226,11 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     generated_at: generatedAt,
     reference_time_iso: generatedAt,
   });
+  const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(generatedAt);
+  const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
+    generated_at: generatedAt,
+    runner: tryReadRunnerStepContextForLayerSixV1(rootDir),
+  });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: generatedAt,
     build,
@@ -216,9 +240,9 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(decisionPackets, 3),
     founder_decision_registry_read_model_digest_markdown:
       formatFounderDecisionRegistryReadModelDigestMarkdownV1(registryReadModel),
-    failure_pattern_registry_digest_markdown: formatFailurePatternRegistryDigestMarkdownV1(
-      buildFailurePatternRegistryReadModelFromSeededV1(generatedAt),
-    ),
+    failure_pattern_registry_digest_markdown:
+      formatFailurePatternRegistryDigestMarkdownV1(failurePatternReadModel),
+    layer_six_readiness_digest_markdown: formatLayerSixReadinessDigestMarkdownV1(layerSixReadiness),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });

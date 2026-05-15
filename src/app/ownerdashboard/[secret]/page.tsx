@@ -38,6 +38,11 @@ import {
   formatFailurePatternRegistryInformationalLineV1,
   type FailurePatternRegistryReadModelV1,
 } from "@/lib/owner-dashboard/failure-pattern-registry-v1";
+import {
+  LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1,
+  buildLayerSixReadinessSummaryV1,
+  type LayerSixReadinessSummaryV1,
+} from "@/lib/owner-dashboard/layer-six-readiness-summary-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -572,6 +577,34 @@ function FailurePatternRegistrySection({ model }: { model: FailurePatternRegistr
   );
 }
 
+function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSummaryV1 }) {
+  return (
+    <ExecutiveSection title="Layer 6 Readiness Summary (informational v1)" subtitle={LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1}>
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{summary.contract}</span> · read_only={String(summary.read_only)}{" "}
+        · automation_input={String(summary.automation_input)}
+      </p>
+      <p className="mt-2 text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+        readiness_status:{" "}
+        <span className="font-mono text-[10px]">{summary.readiness_status}</span>
+        <span className="ml-2 font-normal text-slate-600 dark:text-slate-400">
+          — Layer 6 remains NOT_PROVEN in-repo; this does not expand Runner autonomy.
+        </span>
+      </p>
+      <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
+        {summary.reasons.slice(0, 4).map((r, i) => (
+          <li key={i}>{r}</li>
+        ))}
+      </ul>
+      <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+        Registry source: guarded={summary.failure_pattern_registry.guarded_count}, unguarded=
+        {summary.failure_pattern_registry.unguarded_count}, recurring={summary.failure_pattern_registry.recurring_count},
+        unknown_guardrail={summary.failure_pattern_registry.unknown_guardrail_count}
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function FounderExecutionPacketsSection({
   model,
 }: {
@@ -838,6 +871,10 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   );
 
   const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(report.generated_at);
+  const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
+    generated_at: report.generated_at,
+    runner: null,
+  });
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -892,6 +929,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderDecisionRegistryReadModelSection model={registryReadModel} />
 
         <FailurePatternRegistrySection model={failurePatternReadModel} />
+
+        <LayerSixReadinessSection summary={layerSixReadiness} />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 

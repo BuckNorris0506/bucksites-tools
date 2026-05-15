@@ -26,6 +26,10 @@ import {
   formatFailurePatternRegistryDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/failure-pattern-registry-v1";
 import {
+  buildLayerSixReadinessSummaryV1,
+  formatLayerSixReadinessDigestMarkdownV1,
+} from "../src/lib/owner-dashboard/layer-six-readiness-summary-v1";
+import {
   buildRunnerStepVisibilityModeledV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
@@ -139,6 +143,11 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
     failure_pattern_registry_digest_markdown: formatFailurePatternRegistryDigestMarkdownV1(
       buildFailurePatternRegistryReadModelFromSeededV1("2026-05-14T12:00:00.000Z"),
     ),
+    layer_six_readiness_digest_markdown: formatLayerSixReadinessDigestMarkdownV1(
+      buildLayerSixReadinessSummaryV1(buildFailurePatternRegistryReadModelFromSeededV1("2026-05-14T12:00:00.000Z"), {
+        generated_at: "2026-05-14T12:00:00.000Z",
+      }),
+    ),
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -159,6 +168,12 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /## Failure Pattern Registry \(read-only v1\)/);
   assert.match(md, /failure_pattern_registry_read_model_v1/);
   assert.match(md, /Failure Pattern Registry: \d+ guarded, \d+ unguarded; informational only\./);
+  assert.match(md, /## Layer 6 Readiness Summary \(informational v1\)/);
+  assert.match(md, /layer_six_readiness_summary_v1/);
+  assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
+  const idxFp = md.indexOf("## Failure Pattern Registry (read-only v1)");
+  const idxL6 = md.indexOf("## Layer 6 Readiness Summary (informational v1)");
+  assert.ok(idxFp >= 0 && idxL6 > idxFp);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });
