@@ -40,6 +40,11 @@ import {
   buildFounderDecisionPacketsV1,
   formatFounderDecisionPacketsForDigestTopNV1,
 } from "../src/lib/owner-dashboard/founder-decision-packet-v1";
+import {
+  buildFounderDecisionRegistryReadModelV1,
+  formatFounderDecisionRegistryReadModelDigestMarkdownV1,
+} from "../src/lib/owner-dashboard/founder-decision-registry-read-model-v1";
+import { scanFounderDecisionRegistryJsonFilesV1 } from "../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -192,13 +197,21 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     command_center_ok: ccOk,
     nextPacket,
   });
+  const generatedAt = new Date().toISOString();
+  const registryFiles = scanFounderDecisionRegistryJsonFilesV1(rootDir);
+  const registryReadModel = buildFounderDecisionRegistryReadModelV1(registryFiles, {
+    generated_at: generatedAt,
+    reference_time_iso: generatedAt,
+  });
   const markdown = buildFounderDigestMarkdownV1({
-    generated_at: new Date().toISOString(),
+    generated_at: generatedAt,
     build,
     command_center: slice,
     compare_note: compareNote,
     founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
     founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(decisionPackets, 3),
+    founder_decision_registry_read_model_digest_markdown:
+      formatFounderDecisionRegistryReadModelDigestMarkdownV1(registryReadModel),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });

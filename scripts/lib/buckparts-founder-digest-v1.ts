@@ -42,6 +42,8 @@ export type FounderDigestInputV1 = {
   founder_action_queue_digest_markdown?: string;
   /** Optional Founder Decision Packets (markdown; owner-only v1; after Action Queue, before Execution Packets when queue is present). */
   founder_decision_packets_digest_markdown?: string;
+  /** Optional Founder Decision Registry read model (markdown; `data/owner-decisions/*.json` scan; counts only — not consumed by automation). */
+  founder_decision_registry_read_model_digest_markdown?: string;
   /** Optional Founder Execution Packets fragment (markdown; follows Decision Packets when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
   /** Optional Runner Step markdown: modeled-only, or live JSON summary when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` is set (`scripts/buckparts-founder-digest.ts`). */
@@ -108,6 +110,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
                 FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1,
                 "",
                 input.founder_decision_packets_digest_markdown.trimEnd(),
+                "",
+              ]
+            : []),
+          ...(input.founder_decision_registry_read_model_digest_markdown !== undefined
+            ? [
+                "## Founder Decision Registry (read model v1)",
+                "**PROVEN:** Markdown below is from `founder_decision_registry_read_model_v1` (filesystem scan of `data/owner-decisions/*.json` only). Counts are informational — **not** consumed by Runner, queues, or packets.",
+                "",
+                input.founder_decision_registry_read_model_digest_markdown.trimEnd(),
                 "",
               ]
             : []),

@@ -11,11 +11,11 @@ export const FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1 =
 
 /** Plain sentence for React owner dashboard (no markdown emphasis). */
 export const FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1 =
-  "Record approve / reject / defer in Founder Decision Registry v1 (docs/BuckParts-FOUNDER-DECISION-REGISTRY.md; optional data/owner-decisions/). No automation in this repo consumes registry files yet.";
+  "Record approve / reject / defer in Founder Decision Registry v1 (docs/BuckParts-FOUNDER-DECISION-REGISTRY.md; optional data/owner-decisions/). Digest and dashboard surface read-model counts only — BuckParts automation does not act on registry rows.";
 
 /** Short hint for digest / dashboard headers (single source of truth). */
 export const FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1 =
-  "**PROVEN:** Record approve / reject / defer outcomes in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`; optional row files under `data/owner-decisions/` per README). **INFERRED:** No automation in this repo reads or writes those files yet — treat as founder-led structured notes only.";
+  "**PROVEN:** Record approve / reject / defer outcomes in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`; optional row files under `data/owner-decisions/` per README). **PROVEN:** Weekly digest also embeds **read model v1** counts from the same directory (stdout: `npm run buckparts:founder-decision-registry`). **INFERRED:** Counts are informational — no automation consumes registry rows to change queues, packets, or Runner.";
 
 export type FounderDecisionRegistryDecisionStatusV1 =
   | "approved"

@@ -27,6 +27,11 @@ import {
   buildFounderDecisionPacketsV1,
 } from "@/lib/owner-dashboard/founder-decision-packet-v1";
 import { FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1 } from "@/lib/owner-dashboard/founder-decision-registry-v1";
+import {
+  buildFounderDecisionRegistryReadModelV1,
+  type FounderDecisionRegistryReadModelV1,
+} from "@/lib/owner-dashboard/founder-decision-registry-read-model-v1";
+import { scanFounderDecisionRegistryJsonFilesV1 } from "@/lib/owner-dashboard/founder-decision-registry-scan-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -488,6 +493,45 @@ function FounderDecisionPacketsSection({
   );
 }
 
+function FounderDecisionRegistryReadModelSection({
+  model,
+}: {
+  model: FounderDecisionRegistryReadModelV1;
+}) {
+  return (
+    <ExecutiveSection
+      title="Founder Decision Registry (read model v1)"
+      subtitle="Read-only scan of data/owner-decisions/*.json. Counts are informational only — BuckParts does not consume registry rows for queues, Decision Packets, Execution Packets, Runner Step, or mutation gates."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{model.contract}</span> · read_only={String(model.read_only)} ·
+        data_mutation={String(model.data_mutation)}
+      </p>
+      <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-3">
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">JSON documents</dt>
+        <dd>{model.total_documents}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">Row slots</dt>
+        <dd>{model.total_rows}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">Valid / invalid</dt>
+        <dd>
+          {model.valid_rows} / {model.invalid_rows}
+        </dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">Active mutation approvals</dt>
+        <dd>{model.active_mutation_approvals}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">Expired / review-due</dt>
+        <dd>{model.expired_or_review_due_rows}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">read_only_agent</dt>
+        <dd>{model.read_only_agent_rows}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">human_external</dt>
+        <dd>{model.human_external_rows}</dd>
+      </dl>
+      <p className="mt-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+        PROVEN: This section does not grant automation authority; npm run buckparts:founder-decision-registry emits the same read model JSON to stdout.
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function FounderExecutionPacketsSection({
   model,
 }: {
@@ -748,6 +792,11 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     runner: null,
   });
 
+  const registryReadModel = buildFounderDecisionRegistryReadModelV1(
+    scanFounderDecisionRegistryJsonFilesV1(process.cwd()),
+    { generated_at: report.generated_at, reference_time_iso: new Date().toISOString() },
+  );
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -797,6 +846,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderActionQueueSection queue={founderActionQueue} />
 
         <FounderDecisionPacketsSection model={founderDecisionPackets} />
+
+        <FounderDecisionRegistryReadModelSection model={registryReadModel} />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 

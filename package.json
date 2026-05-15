@@ -80,6 +80,7 @@
     "buckparts:operator-proof": "tsx scripts/buckparts-operator-proof.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",
+    "buckparts:founder-decision-registry": "tsx scripts/report-founder-decision-registry.ts",
     "buckparts:next-execution-packet": "tsx scripts/buckparts-next-execution-packet.ts",
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
     "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",

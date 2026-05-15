@@ -9,6 +9,10 @@ import {
   formatFounderDecisionPacketsForDigestTopNV1,
 } from "./founder-decision-packet-v1";
 import { buildFounderExecutionPacketsV1, formatFounderExecutionPacketsForDigest } from "./founder-execution-packet-v1";
+import {
+  buildFounderDecisionRegistryReadModelV1,
+  formatFounderDecisionRegistryReadModelDigestMarkdownV1,
+} from "./founder-decision-registry-read-model-v1";
 
 const needsOwnerFounder: FounderActionQueueRowV1 = {
   id: "queue-owner-test",
@@ -107,15 +111,22 @@ test("digest includes Founder Decision Packets section between queue and executi
     compare_note: "n",
     founder_action_queue_digest_markdown: "|q|",
     founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(decision, 3),
+    founder_decision_registry_read_model_digest_markdown: formatFounderDecisionRegistryReadModelDigestMarkdownV1(
+      buildFounderDecisionRegistryReadModelV1([], { generated_at: "t", reference_time_iso: "t" }),
+    ),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(execution),
   });
   const idxQueue = md.indexOf("## Founder Action Queue (read-only v1)");
   const idxDecision = md.indexOf("## Founder Decision Packets (owner-only v1)");
+  const idxRegistry = md.indexOf("## Founder Decision Registry (read model v1)");
   const idxExec = md.indexOf("## Founder Execution Packets (read-only v1)");
-  assert.ok(idxQueue >= 0 && idxDecision > idxQueue && idxExec > idxDecision);
+  assert.ok(
+    idxQueue >= 0 && idxDecision > idxQueue && idxRegistry > idxDecision && idxExec > idxRegistry,
+  );
   assert.match(md, /owner-only v1/);
   assert.match(md, /grant agent mutation authority/i);
   assert.match(md, /Founder Decision Registry v1/i);
+  assert.match(md, /not consumed by automation/i);
 });
 
 test("decision packet wording does not grant mutation authority", () => {

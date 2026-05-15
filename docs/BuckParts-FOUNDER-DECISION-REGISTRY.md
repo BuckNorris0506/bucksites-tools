@@ -58,7 +58,13 @@
 ## File placement (repo-consistent)
 
 - **Normative spec:** this file (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`).
-- **Optional data directory:** `data/owner-decisions/README.md` — founder-local JSON or append-only lists; not read by CI in v1.
+- **Optional data directory:** `data/owner-decisions/README.md` — founder-local JSON; `npm run buckparts:founder-decision-registry` and weekly digest scan `*.json` here read-only (see **Read model v1** below).
+
+---
+
+## Read model v1 (BuckParts)
+
+**PROVEN:** `founder_decision_registry_read_model_v1` lives in `src/lib/owner-dashboard/founder-decision-registry-read-model-v1.ts` (pure aggregation; no writes). **PROVEN:** `npm run buckparts:founder-decision-registry` runs `scripts/report-founder-decision-registry.ts` and prints one JSON object to stdout. **PROVEN:** Digest and owner dashboard may embed a short markdown summary of counts only — they do **not** alter Founder Action Queue, Decision Packets, Execution Packets, Runner Step, or mutation gates.
 
 ---
 
@@ -66,4 +72,5 @@
 
 | Date | Change |
 |------|--------|
+| 2026-05-15 | Read model v1 + `buckparts:founder-decision-registry` report script + digest/dashboard surfacing (counts only). |
 | 2026-05-15 | Initial Founder Decision Registry v1 contract + TS validator (`founder-decision-registry-v1.ts`). |
