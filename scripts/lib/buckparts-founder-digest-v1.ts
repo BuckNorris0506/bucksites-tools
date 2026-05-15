@@ -40,7 +40,7 @@ export type FounderDigestInputV1 = {
   founder_action_queue_digest_markdown?: string;
   /** Optional Founder Execution Packets fragment (markdown; follows Action Queue when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
-  /** Optional Runner Step visibility (markdown; modeled only — does not run `buckparts:runner-step` inside digest). */
+  /** Optional Runner Step markdown: modeled-only, or live JSON summary when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` is set (`scripts/buckparts-founder-digest.ts`). */
   runner_step_digest_markdown?: string;
 };
 

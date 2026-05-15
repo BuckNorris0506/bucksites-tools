@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+
 import {
   buildFounderDigestMarkdownV1,
   sliceCommandCenterForFounderDigest,
@@ -13,6 +17,46 @@ import {
   buildRunnerStepVisibilityModeledV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
+import { buildRunnerStepDigestMarkdownForFounderRunV1 } from "./buckparts-founder-digest";
+
+test("buildRunnerStepDigestMarkdownForFounderRunV1 embeds live JSON when env path is valid", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "founder-digest-runner-"));
+  const jsonPath = path.join(dir, "runner.json");
+  const out = {
+    contract: "buckparts_runner_step_v1",
+    generated_at: "t",
+    read_only: true,
+    data_mutation: false,
+    layer_truth: {
+      layer_3_repo_owned_execution: "PROVEN",
+      layer_3_external_agent_execution: "UNKNOWN",
+      layer_4_output_capture: "PROVEN_FOR_REPO_COMMANDS_ONLY",
+      layer_5_validation_interpretation: "PARTIAL",
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    },
+    selected_packet: null,
+    commands: [],
+    overall_status: "NO_PACKET" as const,
+    next_human_action: "h",
+    next_runner_action: "r",
+    prohibited_actions_confirmed: [],
+    runner_notes: [],
+  };
+  writeFileSync(jsonPath, JSON.stringify(out), "utf8");
+  process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH = jsonPath;
+  try {
+    const md = buildRunnerStepDigestMarkdownForFounderRunV1({
+      rootDir: dir,
+      command_center_ok: true,
+      nextPacket: null,
+    });
+    assert.match(md, /## Runner Step \(read-only v1 · live JSON\)/);
+    assert.match(md, /`overall_status`=`NO_PACKET`/);
+    assert.doesNotMatch(md, /did \*\*not\*\* execute `npm run buckparts:runner-step`/);
+  } finally {
+    delete process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH;
+  }
+});
 
 test("buildFounderDigestMarkdownV1 includes required sections", () => {
   const md = buildFounderDigestMarkdownV1({

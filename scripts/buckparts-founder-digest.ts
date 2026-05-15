@@ -3,6 +3,7 @@
  * Does not write Supabase, retailer_links, or evidence; optional `--compare-with` reads a prior file only.
  *
  * CI: run `npm run build` in a prior step and set `FOUNDER_DIGEST_SKIP_BUILD=1` to avoid duplicate builds.
+ * Optional `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` (repo-relative or absolute): when set to a readable Runner Step v1 JSON file, digest embeds live CLI summary markdown instead of the modeled-only Runner section.
  */
 
 import { readFileSync } from "node:fs";
@@ -13,12 +14,18 @@ import { fileURLToPath } from "node:url";
 import { buildBuckpartsCommandCenterReport, stripEvidenceUncappedCandidatesForStdout } from "./report-buckparts-command-center";
 import {
   buildFounderDigestMarkdownV1,
+  type FounderDigestBuildV1,
   sliceCommandCenterForFounderDigest,
 } from "./lib/buckparts-founder-digest-v1";
 import {
   buildRunnerStepVisibilityModeledV1,
+  formatRunnerStepCliResultMarkdownV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
+import {
+  BUCKPARTS_RUNNER_STEP_CONTRACT_V1,
+  type BuckpartsRunnerStepOutputV1,
+} from "./lib/buckparts-runner-step-v1";
 import {
   buildFounderActionQueueV1,
   formatFounderActionQueueForDigest,
@@ -27,6 +34,7 @@ import {
 import {
   buildFounderExecutionPacketsV1,
   formatFounderExecutionPacketsForDigest,
+  type FounderExecutionPacketV1,
 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
 
 function parseCompareWithArg(): string | null {
@@ -87,6 +95,50 @@ function unknownCommandCenterSlice(): ReturnType<typeof sliceCommandCenterForFou
   return sliceCommandCenterForFounderDigest(FALLBACK_COMMAND_CENTER_JSON_FOR_DIGEST);
 }
 
+function modeledRunnerDigestMarkdownV1(args: {
+  command_center_ok: boolean;
+  nextPacket: FounderExecutionPacketV1 | null;
+}): string {
+  return formatRunnerStepDigestSectionMarkdownV1(
+    buildRunnerStepVisibilityModeledV1({
+      surface: "founder_digest",
+      command_center_ok: args.command_center_ok,
+      nextPacket: args.nextPacket,
+    }),
+  );
+}
+
+/**
+ * Runner Step section for digest: live JSON when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` points at valid output; otherwise modeled-only (local runs).
+ */
+export function buildRunnerStepDigestMarkdownForFounderRunV1(args: {
+  rootDir: string;
+  command_center_ok: boolean;
+  nextPacket: FounderExecutionPacketV1 | null;
+}): string {
+  const rel = process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH?.trim();
+  const modeled = (): string =>
+    modeledRunnerDigestMarkdownV1({
+      command_center_ok: args.command_center_ok,
+      nextPacket: args.nextPacket,
+    });
+  if (!rel) {
+    return modeled();
+  }
+  const abs = path.isAbsolute(rel) ? rel : path.join(args.rootDir, rel);
+  try {
+    const raw = readFileSync(abs, "utf8");
+    const parsed = JSON.parse(raw) as BuckpartsRunnerStepOutputV1;
+    if (parsed?.contract !== BUCKPARTS_RUNNER_STEP_CONTRACT_V1) {
+      return `${modeled()}\n\n**PROVEN:** \`FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH\` was set but JSON \`contract\` was not \`${BUCKPARTS_RUNNER_STEP_CONTRACT_V1}\` — modeled section above retained.\n`;
+    }
+    return formatRunnerStepCliResultMarkdownV1(parsed);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return `${modeled()}\n\n**PROVEN:** Could not read Runner Step JSON (\`${rel}\`): ${msg}\n`;
+  }
+}
+
 export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: string; exitCode: number }> {
   const rootDir = process.cwd();
   const comparePath = parseCompareWithArg();
@@ -110,10 +162,11 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     generated_at: new Date().toISOString(),
     source: "buckparts-founder-digest",
   });
-  const runnerVisibility = buildRunnerStepVisibilityModeledV1({
-    surface: "founder_digest",
+  const nextPacket = executionPackets.packets[0] ?? null;
+  const runner_step_digest_markdown = buildRunnerStepDigestMarkdownForFounderRunV1({
+    rootDir,
     command_center_ok: ccOk,
-    nextPacket: executionPackets.packets[0] ?? null,
+    nextPacket,
   });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: new Date().toISOString(),
@@ -122,7 +175,7 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     compare_note: compareNote,
     founder_action_queue_digest_markdown: formatFounderActionQueueForDigest(actionQueue.rows),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
-    runner_step_digest_markdown: formatRunnerStepDigestSectionMarkdownV1(runnerVisibility),
+    runner_step_digest_markdown,
   });
   const buildFailed = build.ran && build.ok === false;
   const exitCode = buildFailed || !ccOk ? 1 : 0;

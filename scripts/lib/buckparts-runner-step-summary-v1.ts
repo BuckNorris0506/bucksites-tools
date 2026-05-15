@@ -69,6 +69,50 @@ function layerTruthLines(lt: RunnerStepLayerTruthV1): string[] {
   ];
 }
 
+/** Layer truth bullets when rendering a captured Runner Step JSON (not the modeled-only digest path). */
+function layerTruthLinesFromLiveCliJsonV1(lt: RunnerStepLayerTruthV1): string[] {
+  return [
+    `- **Layer 3 (repo-owned subprocess):** \`${lt.layer_3_repo_owned_execution}\` for allowlisted commands in this JSON.`,
+    `- **Layer 3 (external Cursor/Codex/OpenAI):** \`${lt.layer_3_external_agent_execution}\`.`,
+    `- **Layer 4 (output capture):** \`${lt.layer_4_output_capture}\` for those repo commands in this run.`,
+    `- **Layer 5 (validation interpretation):** \`${lt.layer_5_validation_interpretation}\`.`,
+    `- **Layer 6 (founder-only approval):** \`${lt.layer_6_founder_only_approval}\`.`,
+  ];
+}
+
+/**
+ * Concise job-summary markdown for CI (matches the Runner Step workflow copy).
+ * Pure: caller reads JSON and passes `output`.
+ */
+export function formatConciseRunnerStepGithubStepSummaryMarkdownV1(output: BuckpartsRunnerStepOutputV1): string {
+  const lines = [
+    "## BuckParts Runner Step v1 (CI)",
+    "",
+    `**PROVEN:** \`overall_status\` = \`${output.overall_status}\` (from \`buckparts-runner-step.json\` produced by \`node --import tsx scripts/buckparts-runner-step.ts\`).`,
+    "**UNKNOWN:** Cursor / Codex / OpenAI autonomous execution is **not** part of this workflow; only repo-owned npm allowlist commands run inside the Runner Step script.",
+    "",
+  ];
+  if (output.selected_packet && output.selected_packet.title) {
+    lines.push(
+      `**Selected packet:** ${output.selected_packet.title} (\`${output.selected_packet.id}\`).`,
+      "",
+    );
+  } else {
+    lines.push("**Selected packet:** *(none)*", "");
+  }
+  lines.push("**Layer truth (from JSON):**", "");
+  const lt = output.layer_truth || {};
+  for (const [k, v] of Object.entries(lt)) {
+    lines.push(`- \`${k}\`: \`${String(v)}\``);
+  }
+  lines.push("", "**Command statuses:**", "");
+  for (const c of output.commands || []) {
+    lines.push(`- \`${c.command}\`: **${c.status}** (exit ${JSON.stringify(c.exit_code)})`);
+  }
+  lines.push("");
+  return `${lines.join("\n")}\n`;
+}
+
 /** Concise markdown for founder digest (no HTML). */
 export function formatRunnerStepDigestSectionMarkdownV1(model: RunnerStepVisibilityModelV1): string {
   const packetLine =
@@ -116,11 +160,11 @@ export function formatRunnerStepCliResultMarkdownV1(output: BuckpartsRunnerStepO
   const cmds = output.commands
     .map((c) => `- \`${c.command}\` → ${c.status} (exit ${String(c.exit_code)})`)
     .join("\n");
-  const lt = layerTruthLines(output.layer_truth).join("\n");
+  const lt = layerTruthLinesFromLiveCliJsonV1(output.layer_truth).join("\n");
   return [
-    "## Runner Step (CLI JSON summary)",
+    "## Runner Step (read-only v1 · live JSON)",
     "",
-    `**PROVEN:** \`overall_status\`=\`${output.overall_status}\` from \`npm run buckparts:runner-step\` output (\`contract\`=\`${output.contract}\`).`,
+    `**PROVEN:** \`overall_status\`=\`${output.overall_status}\` from Runner Step v1 JSON (\`contract\`=\`${output.contract}\`; same entrypoint as \`npm run buckparts:runner-step\` → \`tsx scripts/buckparts-runner-step.ts\`).`,
     "**PROVEN:** Repo-owned subprocess validation above applies only to the three allowlisted commands — not arbitrary packet text.",
     "**UNKNOWN:** External IDE/agent execution remains outside this JSON.",
     "",
@@ -129,7 +173,7 @@ export function formatRunnerStepCliResultMarkdownV1(output: BuckpartsRunnerStepO
     "**Command statuses:**",
     cmds,
     "",
-    "**Layer truth (from CLI):**",
+    "**Layer truth (from CLI JSON):**",
     lt,
     "",
     `**next_human_action:** ${output.next_human_action}`,

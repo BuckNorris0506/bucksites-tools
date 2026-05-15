@@ -17,7 +17,7 @@
 | Topic | Verdict |
 |-------|---------|
 | **Partial Runner core** | **PROVEN** — Founder Action Queue, Founder Execution Packet, digest, CLIs, operator proof, owner dashboard control plane compose read-only founder/operator infrastructure. |
-| **Layer 3 for repo-owned scripts** | **PROVEN** — GitHub Actions: e.g. `.github/workflows/buckparts-founder-digest.yml` runs `npm ci`, `npm run build`, then `node --import tsx scripts/buckparts-founder-digest.ts`; `.github/workflows/buckparts-daily-operator.yml` runs `npm ci` then `npm run buckparts:daily`; `.github/workflows/buckparts-runner-step.yml` (`workflow_dispatch`) runs `npm ci` then `node --import tsx scripts/buckparts-runner-step.ts` and uploads `buckparts-runner-step.json`. Local `spawnSync` in `scripts/buckparts-operator-proof.ts` and clipboard in `scripts/buckparts-copy-next-execution-packet.ts`. |
+| **Layer 3 for repo-owned scripts** | **PROVEN** — GitHub Actions: e.g. `.github/workflows/buckparts-founder-digest.yml` runs `npm ci`, `npm run build`, then `node --import tsx scripts/buckparts-runner-step.ts` (writes `buckparts-runner-step.json`), then `node --import tsx scripts/buckparts-founder-digest.ts` with optional `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH`; `.github/workflows/buckparts-daily-operator.yml` runs `npm ci` then `npm run buckparts:daily`; `.github/workflows/buckparts-runner-step.yml` (`workflow_dispatch`) runs `npm ci` then `node --import tsx scripts/buckparts-runner-step.ts` and uploads `buckparts-runner-step.json`. Local `spawnSync` in `scripts/buckparts-operator-proof.ts` and clipboard in `scripts/buckparts-copy-next-execution-packet.ts`. |
 | **Layer 3 for Cursor / Codex / OpenAI agent** | **UNKNOWN / not proven** — no in-repo integration; see execution surfaces. |
 | **Copy/paste** | **PARTIAL** — `buckparts:next-execution-packet` + macOS `buckparts:copy-next-execution-packet` reduce hunting/pasting the packet; IDE/chat handoff remains human. |
 
@@ -34,10 +34,10 @@
 | Founder Execution Packet (eligible rows only) | `src/lib/owner-dashboard/founder-execution-packet-v1.ts` |
 | Owner dashboard / Founder Control Plane | `src/app/ownerdashboard/[secret]/page.tsx`, `src/lib/owner-dashboard/founder-control-plane-model.ts` |
 | Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
-| Runner Step visibility (founder digest + owner dashboard, modeled only) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** digest/dashboard do **not** invoke `buckparts:runner-step`; live JSON on those surfaces **UNKNOWN** (run CLI locally). |
+| Runner Step visibility (founder digest + owner dashboard) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** owner dashboard remains modeled-only (`live_runner_step_json` **UNKNOWN**). **PROVEN:** weekly Founder Digest workflow sets `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner Step JSON when that file exists; local `npm run buckparts:founder-digest` without the env still uses the modeled Runner section. |
 | Runner Safety Contract v1 (allowlist + default prohibition snapshot) | `scripts/lib/buckparts-runner-safety-contract-v1.ts`, `scripts/buckparts-runner-safety-contract.test.ts` |
 | CI: Runner Step v1 (manual JSON + artifact) | `.github/workflows/buckparts-runner-step.yml` — `workflow_dispatch` only; `npm ci`; `node --import tsx scripts/buckparts-runner-step.ts > buckparts-runner-step.json`; `GITHUB_STEP_SUMMARY`; artifact `buckparts-runner-step`. **PROVEN:** Runner Step can now be run manually in GitHub Actions and uploaded as an artifact. |
-| CI: build + digest + artifact + summary | `.github/workflows/buckparts-founder-digest.yml` |
+| CI: build + digest + Runner Step JSON + artifacts + summary | `.github/workflows/buckparts-founder-digest.yml` — **PROVEN:** uploads `founder-digest.md` and `buckparts-runner-step.json`; appends concise Runner Step block to `GITHUB_STEP_SUMMARY` before digest output. |
 | CI: daily operator pattern | `.github/workflows/buckparts-daily-operator.yml` (**PROVEN** path exists; same class as digest) |
 | Upstream Command Center | `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` |
 
@@ -177,4 +177,5 @@ netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
 | Date | Change |
 |------|--------|
 | 2026-05-08 | Collapsed `BuckParts-RUNNER-CAPABILITY-AUDIT.md` + prior status/product material into this single canonical `BuckParts-RUNNER-STATUS.md`. |
+| 2026-05-15 | Weekly `.github/workflows/buckparts-founder-digest.yml` also runs Runner Step v1, uploads `buckparts-runner-step.json`, appends concise Runner summary to `GITHUB_STEP_SUMMARY`, and passes `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner JSON. |
 | 2026-05-08 | Manual GitHub Actions workflow `.github/workflows/buckparts-runner-step.yml` for Runner Step v1 JSON artifact + job summary. |
