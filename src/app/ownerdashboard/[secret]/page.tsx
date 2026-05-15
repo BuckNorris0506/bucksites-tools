@@ -429,7 +429,7 @@ function FounderDecisionPacketsSection({
   return (
     <ExecutiveSection
       title="Founder Decision Packets"
-      subtitle="Owner-only v1 — structured decisions for queue rows that are not agent-safe execution candidates (needs_owner / blocked / waiting with founder or external actor, or gated agent rows). Not copy/paste prompts for autonomous agents."
+      subtitle="Owner-only v1 — structured decisions for queue rows that are not agent-safe execution candidates (needs_owner / blocked / waiting with founder or external actor, or gated agent rows). Copy is row-class-specific where queue ids match built-in lanes (human browser, affiliate, mutating gates, next_best_action, generic). Not copy/paste prompts for autonomous agents."
     >
       <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
         Contract <span className="font-mono text-[11px]">{model.contract}</span> · read_only={String(model.read_only)} ·
