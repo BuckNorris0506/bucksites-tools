@@ -32,6 +32,12 @@ import {
   type FounderDecisionRegistryReadModelV1,
 } from "@/lib/owner-dashboard/founder-decision-registry-read-model-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "@/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import {
+  FAILURE_PATTERN_REGISTRY_OWNER_DASHBOARD_LINE_V1,
+  buildFailurePatternRegistryReadModelFromSeededV1,
+  formatFailurePatternRegistryInformationalLineV1,
+  type FailurePatternRegistryReadModelV1,
+} from "@/lib/owner-dashboard/failure-pattern-registry-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -532,6 +538,40 @@ function FounderDecisionRegistryReadModelSection({
   );
 }
 
+function FailurePatternRegistrySection({ model }: { model: FailurePatternRegistryReadModelV1 }) {
+  const line = formatFailurePatternRegistryInformationalLineV1(model);
+  return (
+    <ExecutiveSection
+      title="Failure Pattern Registry (v1)"
+      subtitle={FAILURE_PATTERN_REGISTRY_OWNER_DASHBOARD_LINE_V1}
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{model.contract}</span> · read_only={String(model.read_only)} ·
+        data_mutation={String(model.data_mutation)} · informational_only={String(model.informational_only)}
+      </p>
+      <p className="mt-2 text-[11px] font-semibold text-slate-700 dark:text-slate-300">{line}</p>
+      <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-4">
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">guarded</dt>
+        <dd>{model.guarded_count}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">unguarded (observed)</dt>
+        <dd>{model.unguarded_count}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">recurring</dt>
+        <dd>{model.recurring_count}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">unknown_guardrail</dt>
+        <dd>{model.unknown_guardrail_count}</dd>
+      </dl>
+      <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+        {model.rows.map((r) => (
+          <li key={r.failure_id}>
+            <span className="font-mono text-[10px]">{r.failure_id}</span> · {r.title} ·{" "}
+            <span className="text-slate-500">{r.proof_status}</span>
+          </li>
+        ))}
+      </ul>
+    </ExecutiveSection>
+  );
+}
+
 function FounderExecutionPacketsSection({
   model,
 }: {
@@ -797,6 +837,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     { generated_at: report.generated_at, reference_time_iso: new Date().toISOString() },
   );
 
+  const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(report.generated_at);
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
       <header className="border-b border-slate-200 bg-blue-950 px-4 py-6 dark:border-slate-800 dark:bg-blue-950 sm:px-6">
@@ -848,6 +890,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderDecisionPacketsSection model={founderDecisionPackets} />
 
         <FounderDecisionRegistryReadModelSection model={registryReadModel} />
+
+        <FailurePatternRegistrySection model={failurePatternReadModel} />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 

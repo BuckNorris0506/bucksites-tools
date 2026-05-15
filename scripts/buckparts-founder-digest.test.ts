@@ -22,6 +22,10 @@ import {
   formatFounderDecisionRegistryReadModelDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/founder-decision-registry-read-model-v1";
 import {
+  buildFailurePatternRegistryReadModelFromSeededV1,
+  formatFailurePatternRegistryDigestMarkdownV1,
+} from "../src/lib/owner-dashboard/failure-pattern-registry-v1";
+import {
   buildRunnerStepVisibilityModeledV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
@@ -132,6 +136,9 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
         nextPacket: null,
       }),
     ),
+    failure_pattern_registry_digest_markdown: formatFailurePatternRegistryDigestMarkdownV1(
+      buildFailurePatternRegistryReadModelFromSeededV1("2026-05-14T12:00:00.000Z"),
+    ),
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -149,6 +156,9 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /## Founder Execution Packets \(read-only v1\)/);
   assert.match(md, /No agent-safe execution packets/);
   assert.match(md, /## Runner Step \(read-only v1\)/);
+  assert.match(md, /## Failure Pattern Registry \(read-only v1\)/);
+  assert.match(md, /failure_pattern_registry_read_model_v1/);
+  assert.match(md, /Failure Pattern Registry: \d+ guarded, \d+ unguarded; informational only\./);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });

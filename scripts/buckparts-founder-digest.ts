@@ -45,6 +45,10 @@ import {
   formatFounderDecisionRegistryReadModelDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/founder-decision-registry-read-model-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import {
+  buildFailurePatternRegistryReadModelFromSeededV1,
+  formatFailurePatternRegistryDigestMarkdownV1,
+} from "../src/lib/owner-dashboard/failure-pattern-registry-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -212,6 +216,9 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     founder_decision_packets_digest_markdown: formatFounderDecisionPacketsForDigestTopNV1(decisionPackets, 3),
     founder_decision_registry_read_model_digest_markdown:
       formatFounderDecisionRegistryReadModelDigestMarkdownV1(registryReadModel),
+    failure_pattern_registry_digest_markdown: formatFailurePatternRegistryDigestMarkdownV1(
+      buildFailurePatternRegistryReadModelFromSeededV1(generatedAt),
+    ),
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });

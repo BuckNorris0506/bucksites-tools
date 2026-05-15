@@ -4,6 +4,7 @@
  */
 
 import { FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+import { FAILURE_PATTERN_REGISTRY_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/failure-pattern-registry-v1";
 
 export type FounderDigestBuildV1 = {
   /** PROVEN: whether `npm run build` was executed inside the digest script. */
@@ -44,6 +45,8 @@ export type FounderDigestInputV1 = {
   founder_decision_packets_digest_markdown?: string;
   /** Optional Founder Decision Registry read model (markdown; `data/owner-decisions/*.json` scan; counts only — not consumed by automation). */
   founder_decision_registry_read_model_digest_markdown?: string;
+  /** Optional Failure Pattern Registry read model (markdown; seeded rows in `failure-pattern-registry-v1.ts`; informational only). */
+  failure_pattern_registry_digest_markdown?: string;
   /** Optional Founder Execution Packets fragment (markdown; follows Decision Packets when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
   /** Optional Runner Step markdown: modeled-only, or live JSON summary when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` is set (`scripts/buckparts-founder-digest.ts`). */
@@ -135,6 +138,16 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
       : []),
     ...(input.runner_step_digest_markdown
       ? ["", input.runner_step_digest_markdown.trimEnd(), ""]
+      : []),
+    ...(input.failure_pattern_registry_digest_markdown
+      ? [
+          "## Failure Pattern Registry (read-only v1)",
+          "**PROVEN:** Markdown below is from `failure_pattern_registry_read_model_v1` (seeded catalog in `src/lib/owner-dashboard/failure-pattern-registry-v1.ts`). **PROVEN:** Same truth contract as `docs/BuckParts-FAILURE-PATTERN-REGISTRY.md` — counts and rows are informational only; **not** consumed by Runner, Action Queue, Decision Packets, Execution Packets, or mutation gates.",
+          FAILURE_PATTERN_REGISTRY_DIGEST_HINT_V1,
+          "",
+          input.failure_pattern_registry_digest_markdown.trimEnd(),
+          "",
+        ]
       : []),
     "## What requires Jared specifically?",
     `**command_center_v2.next_owner_action:** ${cc.next_owner_action}`,
