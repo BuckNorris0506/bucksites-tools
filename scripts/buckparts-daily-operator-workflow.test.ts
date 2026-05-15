@@ -12,6 +12,7 @@ test("BuckParts Daily Operator workflow is scheduled and read-only", () => {
   const yaml = readFileSync(workflowPath, "utf8");
 
   assert.match(yaml, /^name:\s*BuckParts Daily Operator$/m);
+  assert.match(yaml, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*"true"/);
   assert.match(yaml, /^\s*workflow_dispatch:\s*$/m);
   assert.match(yaml, /^\s*schedule:\s*$/m);
   assert.match(yaml, /^\s*-\s*cron:\s*"17 13 \* \* \*"$/m);

@@ -20,6 +20,7 @@ test("BuckParts Runner Step workflow is manual dispatch only with JSON artifact"
   assert.match(yaml, /name:\s*buckparts-runner-step/);
   assert.match(yaml, /path:\s*buckparts-runner-step\.json/);
   assert.match(yaml, /permissions:\s*\n\s*contents:\s*read/m);
+  assert.match(yaml, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*"true"/);
   assert.doesNotMatch(yaml, /slack/i);
   assert.doesNotMatch(yaml, /\bgit\s+push\b/i);
 });

@@ -8,6 +8,7 @@ const workflowPath = path.resolve(process.cwd(), ".github/workflows/buckparts-fo
 test("BuckParts Founder Digest workflow is weekly read-only with artifact", () => {
   const yaml = readFileSync(workflowPath, "utf8");
   assert.match(yaml, /^name:\s*BuckParts Founder Digest$/m);
+  assert.match(yaml, /FORCE_JAVASCRIPT_ACTIONS_TO_NODE24:\s*"true"/);
   assert.match(yaml, /^\s*workflow_dispatch:\s*$/m);
   assert.match(yaml, /^\s*schedule:\s*$/m);
   assert.match(yaml, /^\s*-\s*cron:\s*"0 16 \* \* 1"$/m);
