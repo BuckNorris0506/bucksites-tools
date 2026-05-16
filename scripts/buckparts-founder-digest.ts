@@ -315,12 +315,6 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     nextPacket,
   });
   const generatedAt = new Date().toISOString();
-  const registryFiles = scanFounderDecisionRegistryJsonFilesV1(rootDir);
-  const registryReadModel = buildFounderDecisionRegistryReadModelV1(registryFiles, {
-    generated_at: generatedAt,
-    reference_time_iso: generatedAt,
-  });
-  const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(generatedAt);
   const codexProofBundle = buildCodexPacketProofDigestMarkdownForFounderRunV1({
     rootDir,
     generated_at: generatedAt,
@@ -330,11 +324,20 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     generated_at: generatedAt,
     proofReadModel: codexProofBundle.readModel,
   });
+  const registryFiles = scanFounderDecisionRegistryJsonFilesV1(rootDir);
+  const codexReviewQueueRowId = codexReviewBundle.packet?.source_queue_row_id ?? null;
+  const registryReadModel = buildFounderDecisionRegistryReadModelV1(registryFiles, {
+    generated_at: generatedAt,
+    reference_time_iso: generatedAt,
+    codex_output_review_digest_match: { source_queue_row_id: codexReviewQueueRowId },
+  });
+  const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(generatedAt);
   const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
     generated_at: generatedAt,
     runner: tryReadRunnerStepContextForLayerSixV1(rootDir),
     codex_packet_proof: codexProofBundle.readModel === null ? null : codexProofBundle.readModel,
     ...(codexReviewBundle.packet !== undefined ? { codex_output_review_packet: codexReviewBundle.packet } : {}),
+    founder_decision_registry_read_model: registryReadModel,
   });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: generatedAt,

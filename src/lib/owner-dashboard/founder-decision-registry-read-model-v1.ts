@@ -3,8 +3,13 @@
  * PROVEN: no queue / packet / Runner / gate side effects; counts and facts only.
  */
 
-import type { FounderDecisionRegistryDecisionStatusV1, FounderDecisionRegistryRowV1 } from "./founder-decision-registry-v1";
+import type {
+  CodexOutputReviewRegistryFounderOptionIdV1,
+  FounderDecisionRegistryDecisionStatusV1,
+  FounderDecisionRegistryRowV1,
+} from "./founder-decision-registry-v1";
 import {
+  isCodexOutputReviewRegistryRowV1,
   isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
@@ -33,6 +38,20 @@ export type FounderDecisionRegistryReadModelInvalidRowV1 = {
   errors: string[];
 };
 
+export type FounderDecisionRegistryCodexReviewDigestMatchV1 =
+  | { kind: "NO_DIGEST_CODEX_REVIEW_CONTEXT" }
+  | { kind: "NO_REGISTRY_ROW_FOR_QUEUE"; source_queue_row_id: string }
+  | {
+      kind: "MATCHED";
+      source_queue_row_id: string;
+      registry_source: string;
+      decision_id: string;
+      decided_at: string;
+      decision_status: FounderDecisionRegistryDecisionStatusV1;
+      allowed_next_scope: FounderDecisionRegistryRowV1["allowed_next_scope"];
+      codex_output_review_founder_option_id: CodexOutputReviewRegistryFounderOptionIdV1;
+    };
+
 export type FounderDecisionRegistryReadModelV1 = {
   contract: typeof FOUNDER_DECISION_REGISTRY_READ_MODEL_CONTRACT_V1;
   read_only: true;
@@ -47,6 +66,14 @@ export type FounderDecisionRegistryReadModelV1 = {
   expired_or_review_due_rows: number;
   read_only_agent_rows: number;
   human_external_rows: number;
+  /** Rows with `codex_output_review_context_v1` set (validated). */
+  codex_output_review_decision_rows: number;
+  approved_readonly_findings_count: number;
+  rejected_findings_count: number;
+  request_followup_readonly_count: number;
+  deferred_review_count: number;
+  /** Digest-only: when founder digest supplies Codex review `source_queue_row_id`, latest matching registry row (if any). */
+  codex_output_review_digest_match: FounderDecisionRegistryCodexReviewDigestMatchV1;
   latest_decisions: FounderDecisionRegistryReadModelLatestDecisionV1[];
   proven_facts: string[];
   unknown_facts: string[];
@@ -71,10 +98,16 @@ function rowTimeGateElapsed(row: FounderDecisionRegistryRowV1, referenceTimeIso:
 /**
  * PROVEN: pure function — caller supplies already-parsed JSON per file (or parse errors).
  * INFERRED: `active_mutation_approvals` uses the same time semantics as `isFounderRegistryRowActiveMutationApproval`.
+ * Optional `codex_output_review_digest_match` ties digest-built Codex review `source_queue_row_id` to registry rows (informational only).
  */
 export function buildFounderDecisionRegistryReadModelV1(
   files: FounderDecisionRegistryReadModelFileInputV1[],
-  options: { generated_at: string; reference_time_iso: string },
+  options: {
+    generated_at: string;
+    reference_time_iso: string;
+    /** When digest passes Codex Output Review `source_queue_row_id`, surface latest matching `codex_output_review_context_v1` row. */
+    codex_output_review_digest_match?: { source_queue_row_id: string | null } | null;
+  },
 ): FounderDecisionRegistryReadModelV1 {
   const generated_at = options.generated_at;
   const reference_time_iso = options.reference_time_iso;
@@ -165,6 +198,53 @@ export function buildFounderDecisionRegistryReadModelV1(
     }
   }
 
+  let codex_output_review_decision_rows = 0;
+  let approved_readonly_findings_count = 0;
+  let rejected_findings_count = 0;
+  let request_followup_readonly_count = 0;
+  let deferred_review_count = 0;
+
+  for (const { row } of validRecords) {
+    if (!isCodexOutputReviewRegistryRowV1(row) || !row.codex_output_review_context_v1) continue;
+    codex_output_review_decision_rows++;
+    const opt = row.codex_output_review_context_v1.founder_option_id;
+    if (opt === "approve_readonly_findings") approved_readonly_findings_count++;
+    else if (opt === "reject_findings") rejected_findings_count++;
+    else if (opt === "request_followup_readonly") request_followup_readonly_count++;
+    else if (opt === "defer_review") deferred_review_count++;
+  }
+
+  const matchOpt = options.codex_output_review_digest_match;
+  let codex_output_review_digest_match: FounderDecisionRegistryCodexReviewDigestMatchV1 = {
+    kind: "NO_DIGEST_CODEX_REVIEW_CONTEXT",
+  };
+  if (matchOpt != null && matchOpt.source_queue_row_id != null && matchOpt.source_queue_row_id.trim() !== "") {
+    const qid = matchOpt.source_queue_row_id.trim();
+    const candidates = validRecords.filter(
+      (r) => isCodexOutputReviewRegistryRowV1(r.row) && r.row.source_queue_row_id === qid,
+    );
+    if (candidates.length === 0) {
+      codex_output_review_digest_match = { kind: "NO_REGISTRY_ROW_FOR_QUEUE", source_queue_row_id: qid };
+    } else {
+      const sortedC = [...candidates].sort((a, b) => Date.parse(b.row.decided_at) - Date.parse(a.row.decided_at));
+      const top = sortedC[0]!;
+      const ctx = top.row.codex_output_review_context_v1!;
+      codex_output_review_digest_match = {
+        kind: "MATCHED",
+        source_queue_row_id: qid,
+        registry_source: top.source,
+        decision_id: top.row.decision_id,
+        decided_at: top.row.decided_at,
+        decision_status: top.row.decision_status,
+        allowed_next_scope: top.row.allowed_next_scope,
+        codex_output_review_founder_option_id: ctx.founder_option_id,
+      };
+    }
+  }
+
+  proven_facts.push(
+    `PROVEN: Codex Output Review-linked registry rows (codex_output_review_context_v1): ${codex_output_review_decision_rows} (by option — approve_readonly_findings=${approved_readonly_findings_count}, reject_findings=${rejected_findings_count}, request_followup_readonly=${request_followup_readonly_count}, defer_review=${deferred_review_count}).`,
+  );
   const sorted = [...validRecords].sort((a, b) => Date.parse(b.row.decided_at) - Date.parse(a.row.decided_at));
   const latest_decisions: FounderDecisionRegistryReadModelLatestDecisionV1[] = sorted.slice(0, 20).map((r) => ({
     decision_id: r.row.decision_id,
@@ -200,6 +280,12 @@ export function buildFounderDecisionRegistryReadModelV1(
     expired_or_review_due_rows,
     read_only_agent_rows,
     human_external_rows,
+    codex_output_review_decision_rows,
+    approved_readonly_findings_count,
+    rejected_findings_count,
+    request_followup_readonly_count,
+    deferred_review_count,
+    codex_output_review_digest_match,
     latest_decisions,
     proven_facts,
     unknown_facts,
@@ -209,12 +295,38 @@ export function buildFounderDecisionRegistryReadModelV1(
 
 /** Markdown fragment for weekly digest (read-only summary; automation non-consuming). */
 export function formatFounderDecisionRegistryReadModelDigestMarkdownV1(model: FounderDecisionRegistryReadModelV1): string {
+  const codexDigestLines = (() => {
+    const m = model.codex_output_review_digest_match;
+    if (m.kind === "NO_DIGEST_CODEX_REVIEW_CONTEXT") {
+      return [
+        "**Codex Output Review ↔ Founder Decision Registry (digest correlation):** **UNKNOWN** — digest did not supply a Codex review `source_queue_row_id` for this read-model build (e.g. `npm run buckparts:founder-decision-registry` without digest env). Counts above still include any on-disk Codex-linked rows.",
+        "**NOT PROVEN:** Recording a row authorizes Supabase writes, `retailer_links` mutation, evidence JSON writes, affiliate edits, git commits, Runner automation, or any closed-loop agent behavior — registry rows are **owner judgment only**.",
+      ];
+    }
+    if (m.kind === "NO_REGISTRY_ROW_FOR_QUEUE") {
+      return [
+        `**Codex Output Review ↔ Founder Decision Registry:** **PROVEN:** Digest Codex review targets \`source_queue_row_id\`=\`${m.source_queue_row_id}\` — **no validated registry row** with \`codex_output_review_context_v1\` was found for that queue id in \`data/owner-decisions/*.json\`.`,
+        "**NOT PROVEN:** Absence of a row implies nothing about Codex correctness — only that structured owner judgment was not recorded yet.",
+        "**NOT PROVEN:** A future matching row would still be informational only (no mutation authority, no Runner input).",
+      ];
+    }
+    return [
+      `**Codex Output Review ↔ Founder Decision Registry:** **PROVEN:** Latest matching row for digest Codex review queue \`${m.source_queue_row_id}\` (file \`${m.registry_source}\`).`,
+      `- \`decision_id\`: \`${m.decision_id}\` · \`decided_at\`: \`${m.decided_at}\``,
+      `- \`decision_status\`: \`${m.decision_status}\` · \`allowed_next_scope\`: \`${m.allowed_next_scope}\` · \`codex_output_review_founder_option_id\`: \`${m.codex_output_review_founder_option_id}\``,
+      "**PROVEN:** This match proves **read visibility** of owner judgment for Codex Output Review — **not** Layer 6 completion, **not** automation consumption, **not** mutation authority (including for `approve_readonly_findings`: still no Supabase / `retailer_links` / evidence / affiliate / commits / Runner gates).",
+    ];
+  })();
+
   const lines = [
     `**PROVEN:** Contract \`${model.contract}\` · read_only=\`${String(model.read_only)}\` · data_mutation=\`${String(model.data_mutation)}\`.`,
     `**PROVEN:** Registry JSON documents: \`${model.total_documents}\`; rows: \`${model.total_rows}\` total · \`${model.valid_rows}\` valid · \`${model.invalid_rows}\` invalid.`,
     `**PROVEN:** Active mutation-shaped approvals (**counted only**, not consumed by automation): \`${model.active_mutation_approvals}\`. Expired / review-due (time-gated) valid rows: \`${model.expired_or_review_due_rows}\`.`,
     `**PROVEN:** Scope labels — \`read_only_agent\`: \`${model.read_only_agent_rows}\`; \`human_external\`: \`${model.human_external_rows}\`.`,
+    `**PROVEN:** \`codex_output_review_context_v1\` rows: \`${model.codex_output_review_decision_rows}\` — approve_readonly=\`${model.approved_readonly_findings_count}\`, reject=\`${model.rejected_findings_count}\`, request_followup_readonly=\`${model.request_followup_readonly_count}\`, defer=\`${model.deferred_review_count}\`.`,
     "**PROVEN:** This read model does **not** instruct agents, CI, or Runner to act on registry decisions.",
+    "",
+    ...codexDigestLines,
     "",
     "**Facts (trimmed):**",
     ...model.proven_facts.slice(-6).map((f) => `- ${f}`),

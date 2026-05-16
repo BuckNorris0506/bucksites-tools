@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { FOUNDER_DECISION_REGISTRY_CONTRACT_V1 } from "./founder-decision-registry-v1";
+import {
+  FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
+  isCodexOutputReviewRegistryRowV1,
+  validateFounderDecisionRegistryRowV1,
+} from "./founder-decision-registry-v1";
 import {
   buildFounderDecisionRegistryReadModelV1,
   formatFounderDecisionRegistryReadModelDigestMarkdownV1,
@@ -31,6 +35,12 @@ test("no file inputs yields valid zero-row read model with UNKNOWN filesystem fa
   assert.equal(m.valid_rows, 0);
   assert.equal(m.invalid_rows, 0);
   assert.equal(m.active_mutation_approvals, 0);
+  assert.equal(m.codex_output_review_decision_rows, 0);
+  assert.equal(m.approved_readonly_findings_count, 0);
+  assert.equal(m.rejected_findings_count, 0);
+  assert.equal(m.request_followup_readonly_count, 0);
+  assert.equal(m.deferred_review_count, 0);
+  assert.equal(m.codex_output_review_digest_match.kind, "NO_DIGEST_CODEX_REVIEW_CONTEXT");
   assert.ok(m.unknown_facts.some((u) => /UNKNOWN.*owner-decisions/i.test(u)));
 });
 
@@ -163,4 +173,62 @@ test("JSON parse error input increments documents without row slots", () => {
   assert.equal(m.total_documents, 1);
   assert.equal(m.total_rows, 0);
   assert.ok(m.proven_facts.some((f) => /failed JSON\.parse/i.test(f)));
+});
+
+test("codex_output_review_context_v1 rows are counted and digest match surfaces latest for queue", () => {
+  const codexApprove = {
+    decision_id: "d-approve",
+    source_queue_row_id: "queue-amazon-agent",
+    source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+    decided_at: "2026-05-16T08:00:00.000Z",
+    decision_status: "approved",
+    owner_note: "OK read-only.",
+    allowed_next_scope: "read_only_agent",
+    evidence_required_before_mutation: false,
+    prohibited_actions_still_apply: ["p"],
+    codex_output_review_context_v1: {
+      review_packet_contract: "codex_output_review_packet_v1",
+      founder_option_id: "approve_readonly_findings",
+    },
+  };
+  const codexFollowUp = {
+    decision_id: "d-follow",
+    source_queue_row_id: "queue-amazon-agent",
+    source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+    decided_at: "2026-05-16T09:00:00.000Z",
+    decision_status: "needs_more_evidence",
+    owner_note: "Another pass.",
+    allowed_next_scope: "read_only_agent",
+    evidence_required_before_mutation: false,
+    prohibited_actions_still_apply: ["p"],
+    codex_output_review_context_v1: {
+      review_packet_contract: "codex_output_review_packet_v1",
+      founder_option_id: "request_followup_readonly",
+    },
+  };
+  const doc = validRowDoc([codexApprove, codexFollowUp]);
+  const files: FounderDecisionRegistryReadModelFileInputV1[] = [{ source: "data/owner-decisions/codex.json", parsed: doc }];
+  const m = buildFounderDecisionRegistryReadModelV1(files, {
+    generated_at: gen,
+    reference_time_iso: ref,
+    codex_output_review_digest_match: { source_queue_row_id: "queue-amazon-agent" },
+  });
+  assert.equal(m.codex_output_review_decision_rows, 2);
+  assert.equal(m.approved_readonly_findings_count, 1);
+  assert.equal(m.request_followup_readonly_count, 1);
+  assert.equal(m.rejected_findings_count, 0);
+  assert.equal(m.deferred_review_count, 0);
+  assert.equal(m.codex_output_review_digest_match.kind, "MATCHED");
+  if (m.codex_output_review_digest_match.kind === "MATCHED") {
+    assert.equal(m.codex_output_review_digest_match.codex_output_review_founder_option_id, "request_followup_readonly");
+    assert.equal(m.codex_output_review_digest_match.decision_id, "d-follow");
+  }
+  const rows = doc.rows as unknown[];
+  const v0 = validateFounderDecisionRegistryRowV1(rows[0]);
+  assert.equal(v0.ok, true);
+  if (v0.ok) assert.ok(isCodexOutputReviewRegistryRowV1(v0.row));
+  const md = formatFounderDecisionRegistryReadModelDigestMarkdownV1(m);
+  assert.match(md, /Latest matching row/);
+  assert.match(md, /request_followup_readonly/);
+  assert.match(md, /read visibility\*\* of owner judgment/i);
 });

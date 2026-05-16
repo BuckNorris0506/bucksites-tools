@@ -18,6 +18,8 @@ import {
   buildCodexPacketProofReadModelV1,
 } from "./codex-packet-proof-read-model-v1";
 import { buildCodexOutputReviewPacketV1 } from "./codex-output-review-packet-v1";
+import { FOUNDER_DECISION_REGISTRY_CONTRACT_V1 } from "./founder-decision-registry-v1";
+import { buildFounderDecisionRegistryReadModelV1 } from "./founder-decision-registry-read-model-v1";
 
 const minimalRow = {
   failure_id: "fixture_row",
@@ -310,6 +312,7 @@ test("digest section wording is informational only and does not alter automation
   assert.ok(digestMd.includes("codex_task_outcome_status"));
   assert.match(digestMd, /does \*\*not\*\* expand Runner autonomy/i);
   assert.match(digestMd, /automation_input/);
+  assert.match(digestMd, /founder_decision_recording_for_codex_review_v1/);
   assert.match(digestMd, new RegExp(LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1));
 });
 
@@ -319,12 +322,136 @@ test("dashboard line does not claim Cursor/Codex/OpenAI integration", () => {
   assert.doesNotMatch(LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1, /automation consumes/i);
 });
 
+test("founder_decision_recording_for_codex_review_v1 PROVEN_PRESENT when registry row matches digest queue", () => {
+  const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
+  const proof = buildCodexPacketProofReadModelV1(
+    {
+      contract: BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1,
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: "/tmp/a/f.txt",
+      jsonl_path: "/tmp/a/e.jsonl",
+      event_count: 2,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    },
+    { generated_at: "t" },
+  );
+  const review = buildCodexOutputReviewPacketV1({
+    proof,
+    generated_at: "t",
+    codex_final_message: {
+      attempted_path: "/tmp/a/f.txt",
+      text: "npm run lint exited 0.\nRESULT: OK\n",
+      load_error: null,
+    },
+  });
+  const registryDoc = {
+    contract: FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
+    read_only: true as const,
+    data_mutation: false as const,
+    rows: [
+      {
+        decision_id: "d-codex-layer6",
+        source_queue_row_id: "queue-amazon-agent",
+        source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+        decided_at: "2026-05-16T12:00:00.000Z",
+        decision_status: "approved",
+        owner_note: "Recorded read-only approval for digest fixture.",
+        allowed_next_scope: "read_only_agent",
+        evidence_required_before_mutation: false,
+        prohibited_actions_still_apply: ["No Supabase writes."],
+        codex_output_review_context_v1: {
+          review_packet_contract: "codex_output_review_packet_v1",
+          founder_option_id: "approve_readonly_findings",
+        },
+      },
+    ],
+  };
+  const rm = buildFounderDecisionRegistryReadModelV1([{ source: "fixture.json", parsed: registryDoc }], {
+    generated_at: "t",
+    reference_time_iso: "t",
+    codex_output_review_digest_match: { source_queue_row_id: "queue-amazon-agent" },
+  });
+  assert.equal(rm.codex_output_review_digest_match.kind, "MATCHED");
+  const s = buildLayerSixReadinessSummaryV1(fp, {
+    generated_at: "t",
+    codex_packet_proof: proof,
+    codex_output_review_packet: review,
+    founder_decision_registry_read_model: rm,
+  });
+  assert.equal(s.founder_decision_recording_for_codex_review_v1, "PROVEN_PRESENT");
+  assert.ok(s.proven_facts.some((f) => /founder_decision_recording_for_codex_review_v1=PROVEN_PRESENT/.test(f)));
+  assert.ok(s.unknown_facts.some((f) => /NOT PROVEN: Closed-loop or gate-driven registry consumption/i.test(f)));
+  assert.ok(s.reasons.some((r) => /Founder Decision Registry shows a recorded Codex Output Review judgment/i.test(r)));
+  const md = formatLayerSixReadinessDigestMarkdownV1(s);
+  assert.match(md, /founder_decision_recording_for_codex_review_v1: `PROVEN_PRESENT`/);
+  assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
+});
+
+test("founder_decision_recording_for_codex_review_v1 NOT_PRESENT when review queue has no registry row", () => {
+  const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
+  const proof = buildCodexPacketProofReadModelV1(
+    {
+      contract: BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1,
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: "/tmp/a/f.txt",
+      jsonl_path: "/tmp/a/e.jsonl",
+      event_count: 2,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    },
+    { generated_at: "t" },
+  );
+  const review = buildCodexOutputReviewPacketV1({
+    proof,
+    generated_at: "t",
+    codex_final_message: {
+      attempted_path: "/tmp/a/f.txt",
+      text: "npm run lint exited 0.\nRESULT: OK\n",
+      load_error: null,
+    },
+  });
+  const rm = buildFounderDecisionRegistryReadModelV1([], {
+    generated_at: "t",
+    reference_time_iso: "t",
+    codex_output_review_digest_match: { source_queue_row_id: "queue-amazon-agent" },
+  });
+  assert.equal(rm.codex_output_review_digest_match.kind, "NO_REGISTRY_ROW_FOR_QUEUE");
+  const s = buildLayerSixReadinessSummaryV1(fp, {
+    generated_at: "t",
+    codex_output_review_packet: review,
+    founder_decision_registry_read_model: rm,
+  });
+  assert.equal(s.founder_decision_recording_for_codex_review_v1, "NOT_PRESENT");
+});
+
 test("contract and flags on summary object", () => {
   const s = buildLayerSixReadinessSummaryV1(buildFailurePatternRegistryReadModelFromSeededV1("t"), {
     generated_at: "t",
   });
   assert.equal(s.contract, LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1);
   assert.equal(s.codex_output_review_surface_v1, "UNKNOWN");
+  assert.equal(s.founder_decision_recording_for_codex_review_v1, "UNKNOWN");
   assert.equal(s.read_only, true);
   assert.equal(s.data_mutation, false);
   assert.equal(s.automation_input, false);

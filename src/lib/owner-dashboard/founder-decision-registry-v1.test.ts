@@ -129,3 +129,70 @@ test("registry document rejects wrong contract id", () => {
   assert.equal(v.ok, false);
   if (!v.ok) assert.ok(v.errors.some((e) => e.includes("contract")));
 });
+
+const codexApproveRow = (): unknown => ({
+  decision_id: "decision-codex-approve-1",
+  source_queue_row_id: "queue-amazon-agent",
+  source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+  decided_at: "2026-05-16T10:00:00.000Z",
+  decision_status: "approved",
+  owner_note: "Accept read-only Codex findings for this queue row only.",
+  allowed_next_scope: "read_only_agent",
+  evidence_required_before_mutation: false,
+  prohibited_actions_still_apply: ["Do not write to Supabase."],
+  codex_output_review_context_v1: {
+    review_packet_contract: "codex_output_review_packet_v1",
+    founder_option_id: "approve_readonly_findings",
+  },
+});
+
+test("codex_output_review_context_v1 approve_readonly_findings row validates", () => {
+  const v = validateFounderDecisionRegistryRowV1(codexApproveRow());
+  assert.equal(v.ok, true);
+  if (v.ok) {
+    assert.ok(v.row.codex_output_review_context_v1);
+    assert.equal(v.row.codex_output_review_context_v1!.founder_option_id, "approve_readonly_findings");
+    assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(v.row, "2026-05-20T00:00:00.000Z"), false);
+  }
+});
+
+test("codex approve_readonly_findings rejects owner_mutation_approved scope", () => {
+  const raw = {
+    ...(codexApproveRow() as Record<string, unknown>),
+    allowed_next_scope: "owner_mutation_approved",
+    evidence_required_before_mutation: true,
+    owner_note: "Narrow mutation window documented outside this Codex packet.",
+  };
+  const v = validateFounderDecisionRegistryRowV1(raw);
+  assert.equal(v.ok, false);
+  if (!v.ok) assert.ok(v.errors.some((e) => /approve_readonly_findings requires/i.test(e)));
+});
+
+test("codex_output_review_context_v1 requires matching source_decision_packet_id", () => {
+  const raw = {
+    ...(codexApproveRow() as Record<string, unknown>),
+    source_decision_packet_id: "decision_packet_v1:queue-amazon-agent",
+  };
+  const v = validateFounderDecisionRegistryRowV1(raw);
+  assert.equal(v.ok, false);
+  if (!v.ok) assert.ok(v.errors.some((e) => /codex_output_review_packet_v1:queue-amazon-agent/.test(e)));
+});
+
+test("request_followup_readonly codex row requires needs_more_evidence + read_only_agent", () => {
+  const v = validateFounderDecisionRegistryRowV1({
+    decision_id: "d2",
+    source_queue_row_id: "queue-amazon-agent",
+    source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+    decided_at: "2026-05-16T11:00:00.000Z",
+    decision_status: "needs_more_evidence",
+    owner_note: "Run another bounded read-only Codex pass.",
+    allowed_next_scope: "read_only_agent",
+    evidence_required_before_mutation: false,
+    prohibited_actions_still_apply: ["p"],
+    codex_output_review_context_v1: {
+      review_packet_contract: "codex_output_review_packet_v1",
+      founder_option_id: "request_followup_readonly",
+    },
+  });
+  assert.equal(v.ok, true);
+});

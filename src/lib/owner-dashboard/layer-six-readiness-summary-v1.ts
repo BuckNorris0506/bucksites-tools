@@ -6,6 +6,7 @@
 import type { FailurePatternRegistryReadModelV1 } from "./failure-pattern-registry-v1";
 import type { CodexPacketProofReadModelV1 } from "./codex-packet-proof-read-model-v1";
 import type { CodexOutputReviewPacketV1 } from "./codex-output-review-packet-v1";
+import type { FounderDecisionRegistryReadModelV1 } from "./founder-decision-registry-read-model-v1";
 
 export const LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1 = "layer_six_readiness_summary_v1" as const;
 
@@ -31,6 +32,9 @@ export type LayerSixReadinessRunnerContextV1 = {
   } | null;
 };
 
+/** Digest may prove a matching Founder Decision Registry row exists for the same Codex review queue id (read visibility only). */
+export type LayerSixFounderDecisionRecordingForCodexReviewV1 = "UNKNOWN" | "NOT_PRESENT" | "PROVEN_PRESENT";
+
 export type LayerSixReadinessSummaryV1 = {
   contract: typeof LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1;
   read_only: true;
@@ -52,6 +56,12 @@ export type LayerSixReadinessSummaryV1 = {
   runner_context_present: boolean;
   /** UNKNOWN when digest/dashboard omits review packet input; digest may supply PROVEN_PRESENT when review_status is READY_FOR_FOUNDER_REVIEW. */
   codex_output_review_surface_v1: LayerSixCodexOutputReviewSurfaceV1;
+  /**
+   * When digest supplies Codex review + registry read model built with digest queue correlation:
+   * PROVEN_PRESENT iff a validated `codex_output_review_context_v1` row matches that queue id.
+   * **NOT PROVEN:** Any automation gate consumes the row — registry remains informational only.
+   */
+  founder_decision_recording_for_codex_review_v1: LayerSixFounderDecisionRecordingForCodexReviewV1;
 };
 
 function baseRequiredBeforeLayer6(): string[] {
@@ -82,6 +92,11 @@ export function buildLayerSixReadinessSummaryV1(
      * **undefined:** omit (e.g. owner dashboard — no artifact wiring in HTTP handler).
      */
     codex_output_review_packet?: CodexOutputReviewPacketV1;
+    /**
+     * Optional Founder Decision Registry read model (digest supplies with `codex_output_review_digest_match` when Codex proof path set).
+     * **undefined:** omit (dashboard default).
+     */
+    founder_decision_registry_read_model?: FounderDecisionRegistryReadModelV1;
   },
 ): LayerSixReadinessSummaryV1 {
   const generated_at = options.generated_at;
@@ -89,6 +104,7 @@ export function buildLayerSixReadinessSummaryV1(
   const runner_context_present = runner != null;
   const codexProof = options.codex_packet_proof;
   const codexReview = options.codex_output_review_packet;
+  const registryRm = options.founder_decision_registry_read_model;
 
   const codex_output_review_surface_v1: LayerSixCodexOutputReviewSurfaceV1 =
     codexReview === undefined
@@ -96,6 +112,31 @@ export function buildLayerSixReadinessSummaryV1(
       : codexReview.review_status === "READY_FOR_FOUNDER_REVIEW"
         ? "PROVEN_PRESENT"
         : "NOT_PRESENT_OR_BLOCKED";
+
+  let founder_decision_recording_for_codex_review_v1: LayerSixFounderDecisionRecordingForCodexReviewV1 = "UNKNOWN";
+  if (codexReview !== undefined) {
+    if (codex_output_review_surface_v1 === "PROVEN_PRESENT") {
+      const q = codexReview.source_queue_row_id?.trim() ?? "";
+      if (!q) {
+        founder_decision_recording_for_codex_review_v1 = "NOT_PRESENT";
+      } else if (!registryRm) {
+        founder_decision_recording_for_codex_review_v1 = "UNKNOWN";
+      } else {
+        const dm = registryRm.codex_output_review_digest_match;
+        if (dm.kind === "MATCHED" && dm.source_queue_row_id === q) {
+          founder_decision_recording_for_codex_review_v1 = "PROVEN_PRESENT";
+        } else if (dm.kind === "NO_REGISTRY_ROW_FOR_QUEUE" && dm.source_queue_row_id === q) {
+          founder_decision_recording_for_codex_review_v1 = "NOT_PRESENT";
+        } else if (dm.kind === "NO_DIGEST_CODEX_REVIEW_CONTEXT") {
+          founder_decision_recording_for_codex_review_v1 = "UNKNOWN";
+        } else {
+          founder_decision_recording_for_codex_review_v1 = "NOT_PRESENT";
+        }
+      }
+    } else {
+      founder_decision_recording_for_codex_review_v1 = "NOT_PRESENT";
+    }
+  }
 
   const fp = {
     guarded_count: failurePatterns.guarded_count,
@@ -146,6 +187,24 @@ export function buildLayerSixReadinessSummaryV1(
   if (codexReview !== undefined && codex_output_review_surface_v1 === "NOT_PRESENT_OR_BLOCKED") {
     unknown_facts.push(
       `UNKNOWN: Codex output review packet supplied but surface is NOT_PRESENT_OR_BLOCKED — review_status=${codexReview.review_status}.`,
+    );
+  }
+
+  if (founder_decision_recording_for_codex_review_v1 === "PROVEN_PRESENT") {
+    proven_facts.push(
+      "PROVEN: founder_decision_recording_for_codex_review_v1=PROVEN_PRESENT — `founder_decision_registry_read_model_v1` includes a validated `codex_output_review_context_v1` row whose `source_queue_row_id` matches the digest-built Codex Output Review packet. **NOT PROVEN:** Any automation gate consumes that row for Runner, queues, Execution Packets, or mutating workflows.",
+    );
+    unknown_facts.push(
+      "NOT PROVEN: Closed-loop or gate-driven registry consumption without widening mutation authority — no such consumer is evidenced in-repo.",
+    );
+  }
+  if (
+    founder_decision_recording_for_codex_review_v1 === "NOT_PRESENT" &&
+    codex_output_review_surface_v1 === "PROVEN_PRESENT" &&
+    codexReview?.source_queue_row_id
+  ) {
+    proven_facts.push(
+      "PROVEN: Codex output review surface is READY_FOR_FOUNDER_REVIEW but founder_decision_recording_for_codex_review_v1 is NOT_PRESENT — no matching validated `codex_output_review_context_v1` registry row for this digest correlation (or registry read model omitted digest match).",
     );
   }
 
@@ -231,6 +290,11 @@ export function buildLayerSixReadinessSummaryV1(
   reasons.push(
     "PROVEN: Layer 6 (founder-only approval / quality judgment) remains NOT_PROVEN in-repo regardless of readiness_status.",
   );
+  if (founder_decision_recording_for_codex_review_v1 === "PROVEN_PRESENT") {
+    reasons.push(
+      "PROVEN: Founder Decision Registry shows a recorded Codex Output Review judgment for the same queue row digest correlated — visibility only; still not Layer 6 complete.",
+    );
+  }
 
   return {
     contract: LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1,
@@ -247,6 +311,7 @@ export function buildLayerSixReadinessSummaryV1(
     failure_pattern_registry: fp,
     runner_context_present,
     codex_output_review_surface_v1,
+    founder_decision_recording_for_codex_review_v1,
   };
 }
 
@@ -283,6 +348,7 @@ export function formatLayerSixReadinessDigestMarkdownV1(summary: LayerSixReadine
     `- unknown_guardrail: \`${summary.failure_pattern_registry.unknown_guardrail_count}\``,
     `- runner_context_present: \`${String(summary.runner_context_present)}\``,
     `- codex_output_review_surface_v1: \`${summary.codex_output_review_surface_v1}\` (${codexReviewSurfaceNote})`,
+    `- founder_decision_recording_for_codex_review_v1: \`${summary.founder_decision_recording_for_codex_review_v1}\` — **PROVEN_PRESENT** only when digest registry scan found a validated \`codex_output_review_context_v1\` row for the same Codex review \`source_queue_row_id\`; **NOT PROVEN:** Layer 6 complete, mutation authority, Runner automation, or gate consumption.`,
     "",
     "**Facts (trimmed):**",
     ...summary.proven_facts.slice(-5).map((f) => `- ${f}`),

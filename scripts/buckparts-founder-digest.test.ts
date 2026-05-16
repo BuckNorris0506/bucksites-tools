@@ -21,6 +21,7 @@ import {
   buildFounderDecisionRegistryReadModelV1,
   formatFounderDecisionRegistryReadModelDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/founder-decision-registry-read-model-v1";
+import { FOUNDER_DECISION_REGISTRY_CONTRACT_V1 } from "../src/lib/owner-dashboard/founder-decision-registry-v1";
 import {
   buildFailurePatternRegistryReadModelFromSeededV1,
   formatFailurePatternRegistryDigestMarkdownV1,
@@ -169,6 +170,42 @@ test("buildCodexOutputReviewDigestBundleForFounderRunV1 reads final message for 
   } finally {
     delete process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH;
   }
+});
+
+test("formatFounderDecisionRegistryReadModelDigestMarkdownV1 shows Codex review decision when fixture row matches digest queue", () => {
+  const doc = {
+    contract: FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
+    read_only: true as const,
+    data_mutation: false as const,
+    rows: [
+      {
+        decision_id: "digest-fixture-codex-decision",
+        source_queue_row_id: "queue-amazon-agent",
+        source_decision_packet_id: "codex_output_review_packet_v1:queue-amazon-agent",
+        decided_at: "2026-05-16T14:00:00.000Z",
+        decision_status: "approved",
+        owner_note: "Fixture: accept read-only Codex findings for this queue row.",
+        allowed_next_scope: "read_only_agent",
+        evidence_required_before_mutation: false,
+        prohibited_actions_still_apply: ["No Supabase writes."],
+        codex_output_review_context_v1: {
+          review_packet_contract: "codex_output_review_packet_v1",
+          founder_option_id: "approve_readonly_findings",
+        },
+      },
+    ],
+  };
+  const rm = buildFounderDecisionRegistryReadModelV1([{ source: "mem.json", parsed: doc }], {
+    generated_at: "2026-05-16T14:00:00.000Z",
+    reference_time_iso: "2026-05-16T14:00:00.000Z",
+    codex_output_review_digest_match: { source_queue_row_id: "queue-amazon-agent" },
+  });
+  const md = formatFounderDecisionRegistryReadModelDigestMarkdownV1(rm);
+  assert.match(md, /Latest matching row/);
+  assert.match(md, /approve_readonly_findings/);
+  assert.match(md, /`decision_status`/);
+  assert.match(md, /read visibility\*\* of owner judgment/i);
+  assert.match(md, /mutation authority/i);
 });
 
 test("buildFounderDigestMarkdownV1 includes required sections", () => {

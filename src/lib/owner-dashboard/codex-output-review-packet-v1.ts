@@ -188,7 +188,7 @@ export const CODEX_OUTPUT_REVIEW_EXTRA_PROHIBITED_LINES_V1 = [
 ] as const;
 
 export const CODEX_OUTPUT_REVIEW_REGISTRY_NEXT_STEP_V1 =
-  "PROVEN: Record approve / reject / defer / follow-up intent under Founder Decision Registry v1 (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`, optional `data/owner-decisions/*.json`). **UNKNOWN:** Automation consuming registry rows remains out of scope until explicitly evidenced elsewhere.";
+  "PROVEN: Record approve / reject / defer / follow-up intent under Founder Decision Registry v1 (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`, optional `data/owner-decisions/*.json`) using optional `codex_output_review_context_v1` + `source_decision_packet_id` = `codex_output_review_packet_v1:${source_queue_row_id}` so digest read-model correlation can surface owner judgment — **still** not automation input, not mutation authority, not Layer 6 complete. **NOT PROVEN:** Any in-repo consumer executes the next step from registry rows alone.";
 
 export type CodexOutputReviewPacketV1 = {
   contract: typeof CODEX_OUTPUT_REVIEW_PACKET_CONTRACT_V1;

@@ -533,6 +533,14 @@ function FounderDecisionRegistryReadModelSection({
         <dd>
           {model.valid_rows} / {model.invalid_rows}
         </dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">Codex review-linked rows</dt>
+        <dd>{model.codex_output_review_decision_rows}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">approve_readonly (registry)</dt>
+        <dd>{model.approved_readonly_findings_count}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">reject / follow-up / defer</dt>
+        <dd>
+          {model.rejected_findings_count} / {model.request_followup_readonly_count} / {model.deferred_review_count}
+        </dd>
         <dt className="font-semibold text-slate-600 dark:text-slate-400">Active mutation approvals</dt>
         <dd>{model.active_mutation_approvals}</dd>
         <dt className="font-semibold text-slate-600 dark:text-slate-400">Expired / review-due</dt>
@@ -542,6 +550,9 @@ function FounderDecisionRegistryReadModelSection({
         <dt className="font-semibold text-slate-600 dark:text-slate-400">human_external</dt>
         <dd>{model.human_external_rows}</dd>
       </dl>
+      <p className="mt-3 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        PROVEN: Codex Output Review decisions may be recorded with optional <span className="font-mono text-[10px]">codex_output_review_context_v1</span> in registry JSON — counts are visibility only; they do not authorize Supabase writes, retailer_links mutation, evidence edits, affiliate changes, git commits, or Runner automation.
+      </p>
       <p className="mt-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
         PROVEN: This section does not grant automation authority; npm run buckparts:founder-decision-registry emits the same read model JSON to stdout.
       </p>
@@ -613,7 +624,8 @@ function CodexOutputReviewDashboardSection() {
         <span className="font-mono text-[11px]">final_message_path</span> file is readable at digest time.
       </p>
       <p className="mt-2 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">
-        Does not authorize mutation, Runner widening, or Layer 6 completion; approve/reject/defer options are judgment copy only until Founder Decision Registry consumption is evidenced elsewhere.
+        Does not authorize mutation, Runner widening, or Layer 6 completion; approve/reject/defer options are judgment copy only. When you record a matching row under{" "}
+        <span className="font-mono text-[10px]">data/owner-decisions/</span> using <span className="font-mono text-[10px]">codex_output_review_context_v1</span>, the Founder Decision Registry card above surfaces counts only — still not HTTP proof of Codex transport.
       </p>
     </ExecutiveSection>
   );
@@ -638,6 +650,13 @@ function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSumma
         <span className="font-mono text-[10px]">{summary.codex_output_review_surface_v1}</span>
         <span className="ml-2 font-normal text-slate-600 dark:text-slate-400">
           — UNKNOWN on this dashboard (digest-only packet wiring); PROVEN_PRESENT only when digest supplies READY_FOR_FOUNDER_REVIEW.
+        </span>
+      </p>
+      <p className="mt-2 text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+        founder_decision_recording_for_codex_review_v1:{" "}
+        <span className="font-mono text-[10px]">{summary.founder_decision_recording_for_codex_review_v1}</span>
+        <span className="ml-2 font-normal text-slate-600 dark:text-slate-400">
+          — digest can prove a matching registry row exists for the same Codex review queue id; this dashboard only scans registry files (no Codex proof JSON), so this usually stays UNKNOWN here. Does not claim Layer 6 complete or automation.
         </span>
       </p>
       <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
@@ -923,6 +942,7 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
   const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
     generated_at: report.generated_at,
     runner: null,
+    founder_decision_registry_read_model: registryReadModel,
   });
 
   return (

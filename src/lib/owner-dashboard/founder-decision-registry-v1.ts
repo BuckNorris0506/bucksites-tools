@@ -7,7 +7,7 @@ export const FOUNDER_DECISION_REGISTRY_CONTRACT_V1 = "founder_decision_registry_
 
 /** Short footer appended to each decision packet’s recommended block (registry pointer only). */
 export const FOUNDER_DECISION_REGISTRY_PACKET_FOOTER_V1 =
-  "**PROVEN:** After you decide, record structured state in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`). **INFERRED:** No repo automation consumes registry files yet — this does not change packet eligibility or Runner allowlists.";
+  "**PROVEN:** After you decide, record structured state in **Founder Decision Registry v1** (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`). **PROVEN:** Digest + `npm run buckparts:founder-decision-registry` read optional `data/owner-decisions/*.json` (including `codex_output_review_context_v1` for Codex Output Review judgments) — counts and correlation are informational only; **not** Runner/queue/packet/gate inputs.";
 
 /** Plain sentence for React owner dashboard (no markdown emphasis). */
 export const FOUNDER_DECISION_REGISTRY_OWNER_DASHBOARD_LINE_V1 =
@@ -29,6 +29,25 @@ export type FounderDecisionRegistryAllowedNextScopeV1 =
   | "human_external"
   | "owner_mutation_approved";
 
+/** Mirrors `codex_output_review_packet_v1` founder option ids — kept here to avoid circular imports. */
+export const CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1 = [
+  "approve_readonly_findings",
+  "reject_findings",
+  "request_followup_readonly",
+  "defer_review",
+] as const;
+
+export type CodexOutputReviewRegistryFounderOptionIdV1 =
+  (typeof CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1)[number];
+
+const CODEX_REVIEW_OPTIONS = new Set<string>(CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1);
+
+/** Optional linkage: founder recorded a judgment for Codex Output Review (read-only informational row). */
+export type FounderDecisionRegistryCodexOutputReviewContextV1 = {
+  review_packet_contract: "codex_output_review_packet_v1";
+  founder_option_id: CodexOutputReviewRegistryFounderOptionIdV1;
+};
+
 export type FounderDecisionRegistryRowV1 = {
   decision_id: string;
   source_queue_row_id: string;
@@ -48,6 +67,12 @@ export type FounderDecisionRegistryRowV1 = {
   evidence_required_before_mutation: boolean;
   /** Snapshot of prohibitions that still bind (e.g. copied from the decision packet). */
   prohibited_actions_still_apply: readonly string[];
+  /**
+   * When set, this row records owner judgment for `codex_output_review_packet_v1` (digest/dashboard read-only).
+   * **PROVEN in validator:** `source_decision_packet_id` must be `codex_output_review_packet_v1:${source_queue_row_id}`;
+   * `decision_status` / `allowed_next_scope` must align with `founder_option_id` (no `owner_mutation_approved` for approve-read-only).
+   */
+  codex_output_review_context_v1?: FounderDecisionRegistryCodexOutputReviewContextV1;
 };
 
 export type FounderDecisionRegistryDocumentV1 = {
@@ -75,6 +100,95 @@ const SCOPES = new Set(SCOPE_LIST);
 
 function isNonEmptyString(v: unknown): v is string {
   return typeof v === "string" && v.trim().length > 0;
+}
+
+/** PROVEN: structural predicate for read-model Codex review decision counts (validated rows only). */
+export function isCodexOutputReviewRegistryRowV1(row: FounderDecisionRegistryRowV1): boolean {
+  return row.codex_output_review_context_v1 != null;
+}
+
+function expectedCodexReviewSourceDecisionPacketId(source_queue_row_id: string): string {
+  return `codex_output_review_packet_v1:${source_queue_row_id}`;
+}
+
+function validateCodexOutputReviewContextV1(args: {
+  ctx: FounderDecisionRegistryCodexOutputReviewContextV1;
+  decision_status: FounderDecisionRegistryDecisionStatusV1;
+  allowed_next_scope: FounderDecisionRegistryAllowedNextScopeV1;
+  source_queue_row_id: string;
+  source_decision_packet_id: string;
+}): string[] {
+  const errors: string[] = [];
+  const { ctx, decision_status, allowed_next_scope, source_queue_row_id, source_decision_packet_id } = args;
+  if (ctx.review_packet_contract !== "codex_output_review_packet_v1") {
+    errors.push(
+      'codex_output_review_context_v1.review_packet_contract must be "codex_output_review_packet_v1"',
+    );
+  }
+  const expectedId = expectedCodexReviewSourceDecisionPacketId(source_queue_row_id);
+  if (source_decision_packet_id !== expectedId) {
+    errors.push(
+      `source_decision_packet_id must be "${expectedId}" when codex_output_review_context_v1 is set (got ${JSON.stringify(source_decision_packet_id)})`,
+    );
+  }
+  const opt = ctx.founder_option_id;
+  if (opt === "approve_readonly_findings") {
+    if (decision_status !== "approved" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "codex_output_review_context_v1.founder_option_id approve_readonly_findings requires decision_status approved and allowed_next_scope read_only_agent (does not grant mutation authority)",
+      );
+    }
+  } else if (opt === "reject_findings") {
+    if (decision_status !== "rejected" || allowed_next_scope !== "none") {
+      errors.push(
+        "codex_output_review_context_v1.founder_option_id reject_findings requires decision_status rejected and allowed_next_scope none",
+      );
+    }
+  } else if (opt === "request_followup_readonly") {
+    if (decision_status !== "needs_more_evidence" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "codex_output_review_context_v1.founder_option_id request_followup_readonly requires decision_status needs_more_evidence and allowed_next_scope read_only_agent",
+      );
+    }
+  } else if (opt === "defer_review") {
+    if (decision_status !== "deferred" || allowed_next_scope !== "none") {
+      errors.push(
+        "codex_output_review_context_v1.founder_option_id defer_review requires decision_status deferred and allowed_next_scope none",
+      );
+    }
+  }
+  return errors;
+}
+
+function parseCodexOutputReviewContextV1(
+  raw: unknown,
+): { ok: true; ctx?: FounderDecisionRegistryCodexOutputReviewContextV1 } | { ok: false; errors: string[] } {
+  if (raw === undefined || raw === null) {
+    return { ok: true };
+  }
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    return { ok: false, errors: ["codex_output_review_context_v1 must be an object when present"] };
+  }
+  const o = raw as Record<string, unknown>;
+  const errors: string[] = [];
+  const contract = o.review_packet_contract;
+  const opt = o.founder_option_id;
+  if (typeof contract !== "string") {
+    errors.push("codex_output_review_context_v1.review_packet_contract must be a string");
+  }
+  if (typeof opt !== "string" || !CODEX_REVIEW_OPTIONS.has(opt)) {
+    errors.push(
+      `codex_output_review_context_v1.founder_option_id must be one of: ${CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1.join(", ")}`,
+    );
+  }
+  if (errors.length > 0) return { ok: false, errors };
+  return {
+    ok: true,
+    ctx: {
+      review_packet_contract: contract as "codex_output_review_packet_v1",
+      founder_option_id: opt as CodexOutputReviewRegistryFounderOptionIdV1,
+    },
+  };
 }
 
 function parseIsoInstant(label: string, v: unknown): string | null | undefined {
@@ -143,6 +257,14 @@ export function validateFounderDecisionRegistryRowV1(
     errors.push("prohibited_actions_still_apply entries must be non-empty strings");
   }
 
+  let codexCtx: FounderDecisionRegistryCodexOutputReviewContextV1 | undefined;
+  const codexParse = parseCodexOutputReviewContextV1(o.codex_output_review_context_v1);
+  if (!codexParse.ok) {
+    errors.push(...codexParse.errors);
+  } else if (codexParse.ctx) {
+    codexCtx = codexParse.ctx;
+  }
+
   let expires_at: string | null | undefined;
   let review_after: string | null | undefined;
   try {
@@ -156,19 +278,41 @@ export function validateFounderDecisionRegistryRowV1(
     return { ok: false, errors };
   }
 
+  const decision_status = o.decision_status as FounderDecisionRegistryDecisionStatusV1;
+  const allowed_next_scope = o.allowed_next_scope as FounderDecisionRegistryAllowedNextScopeV1;
+  const source_queue_row_id = (o.source_queue_row_id as string).trim();
+  const source_decision_packet_id = (o.source_decision_packet_id as string).trim();
+
+  if (codexCtx) {
+    errors.push(
+      ...validateCodexOutputReviewContextV1({
+        ctx: codexCtx,
+        decision_status,
+        allowed_next_scope,
+        source_queue_row_id,
+        source_decision_packet_id,
+      }),
+    );
+  }
+
+  if (errors.length > 0) {
+    return { ok: false, errors };
+  }
+
   const evidence_required_before_mutation = ev as boolean;
   const row: FounderDecisionRegistryRowV1 = {
     decision_id: (o.decision_id as string).trim(),
-    source_queue_row_id: (o.source_queue_row_id as string).trim(),
-    source_decision_packet_id: (o.source_decision_packet_id as string).trim(),
+    source_queue_row_id,
+    source_decision_packet_id,
     decided_at: (o.decided_at as string).trim(),
-    decision_status: o.decision_status as FounderDecisionRegistryDecisionStatusV1,
+    decision_status,
     owner_note,
-    allowed_next_scope: o.allowed_next_scope as FounderDecisionRegistryAllowedNextScopeV1,
+    allowed_next_scope,
     expires_at,
     review_after,
     evidence_required_before_mutation,
     prohibited_actions_still_apply: prohib as string[],
+    ...(codexCtx ? { codex_output_review_context_v1: codexCtx } : {}),
   };
   return { ok: true, row };
 }
