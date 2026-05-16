@@ -6,7 +6,7 @@
 
 **Maintain:** When queue, packet, digest, or workflows change, update the tables and “Last verified” line.
 
-**Last verified against repo:** 2026-05-15 (Codex read-only smoke CLI + Runner docs refresh).
+**Last verified against repo:** 2026-05-16 (Codex next-execution-packet CLI + docs).
 
 **Line budget:** Keep this file roughly **150–250** lines; extend only when facts change.
 
@@ -18,7 +18,7 @@
 |-------|---------|
 | **Partial Runner core** | **PROVEN** — Founder Action Queue, Founder Execution Packet, digest, CLIs, operator proof, owner dashboard control plane compose read-only founder/operator infrastructure. |
 | **Layer 3 for repo-owned scripts** | **PROVEN** — GitHub Actions: e.g. `.github/workflows/buckparts-founder-digest.yml` runs `npm ci`, `npm run build`, then `node --import tsx scripts/buckparts-runner-step.ts` (writes `buckparts-runner-step.json`), then `node --import tsx scripts/buckparts-founder-digest.ts` with optional `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH`; `.github/workflows/buckparts-daily-operator.yml` runs `npm ci` then `npm run buckparts:daily`; `.github/workflows/buckparts-runner-step.yml` (`workflow_dispatch`) runs `npm ci` then `node --import tsx scripts/buckparts-runner-step.ts` and uploads `buckparts-runner-step.json`. Local `spawnSync` in `scripts/buckparts-operator-proof.ts` and clipboard in `scripts/buckparts-copy-next-execution-packet.ts`. |
-| **Layer 3 for Cursor / Codex / OpenAI agent** | **UNKNOWN / not proven** for Runner-driven integration — **PROVEN:** optional local Codex read-only smoke CLI (`npm run buckparts:codex-readonly-smoke`) invokes Codex subprocess output capture only; see execution surfaces. Cursor/OpenAI unchanged (**UNKNOWN**). |
+| **Layer 3 for Cursor / Codex / OpenAI agent** | **UNKNOWN / not proven** for Runner-driven integration — **PROVEN:** optional local Codex CLIs (`npm run buckparts:codex-readonly-smoke`, `npm run buckparts:codex-next-execution-packet`) invoke Codex subprocess output capture only when run manually; see execution surfaces. Cursor/OpenAI unchanged (**UNKNOWN**). |
 | **Copy/paste** | **PARTIAL** — `buckparts:next-execution-packet` + macOS `buckparts:copy-next-execution-packet` reduce hunting/pasting the packet; IDE/chat handoff remains human. |
 
 ---
@@ -40,6 +40,7 @@
 | Runner Step v1 (JSON validation bundle) | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts`, `scripts/lib/buckparts-runner-step-v1.ts` |
 | Runner Step via GitHub CLI (dispatch + artifact) | `npm run buckparts:runner-step:gh` → `scripts/run-buckparts-runner-step-gh.ts` — **PROVEN:** after `gh auth login`, triggers workflow `BuckParts Runner Step` on `main`, watches run, downloads artifact `buckparts-runner-step` to OS temp **only**, prints summarized JSON stdout; **PROVEN:** still **no** external Cursor/Codex/OpenAI integration (`layer_3_external_agent_execution` remains UNKNOWN from artifact truth). |
 | Codex read-only external-agent smoke (JSON stdout summary) | `npm run buckparts:codex-readonly-smoke` → `scripts/run-buckparts-codex-readonly-smoke.ts` — **PROVEN:** checks `codex --version`, `codex login status`, runs `codex exec --sandbox read-only --json` with bounded prompt (inspect `package.json` only); writes JSONL + `-o` final message under OS temp; parses JSONL `.type` stream; fails if `git status --short` is non-empty afterward. **NOT PROVEN:** Layer 6 founder approval, mutation authority, closed-loop Runner — summary JSON pins `layer_6_founder_only_approval: "NOT_PROVEN"`. **NOT wired** into Runner Step (`scripts/buckparts-runner-step.ts`). |
+| Codex + next Founder Execution Packet (JSON stdout summary) | `npm run buckparts:codex-next-execution-packet` → `scripts/run-buckparts-codex-next-execution-packet.ts` — **PROVEN:** builds snapshot via `buildNextExecutionPacketSnapshotV1` (same path as `buckparts:next-execution-packet`); if no eligible packet, stdout `overall_status: "NO_PACKET"` and exit 0; else prefixes repo `copy_paste_prompt` with read-only wrapper (no commits / no Supabase / no retailer_links / no evidence JSON / no affiliate edits) and runs `codex exec --sandbox read-only --json`; captures JSONL + final message under OS temp; fails on dirty `git status --short`. **NOT PROVEN:** founder-only approval (`layer_6_founder_only_approval: "NOT_PROVEN"`), mutation safety beyond sandbox + prompt, closed-loop Runner. **NOT wired** into Runner Step or workflows. |
 | Runner Step visibility (founder digest + owner dashboard) | `scripts/lib/buckparts-runner-step-summary-v1.ts` — **PROVEN:** owner dashboard remains modeled-only (`live_runner_step_json` **UNKNOWN**). **PROVEN:** weekly Founder Digest workflow sets `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner Step JSON when that file exists; local `npm run buckparts:founder-digest` without the env still uses the modeled Runner section. |
 | Runner Safety Contract v1 (allowlist + default prohibition snapshot) | `scripts/lib/buckparts-runner-safety-contract-v1.ts`, `scripts/buckparts-runner-safety-contract.test.ts` |
 | CI: Runner Step v1 (manual JSON + artifact) | `.github/workflows/buckparts-runner-step.yml` — `workflow_dispatch` only; `npm ci`; `node --import tsx scripts/buckparts-runner-step.ts > buckparts-runner-step.json`; `GITHUB_STEP_SUMMARY`; artifact `buckparts-runner-step`. **PROVEN:** Runner Step can now be run manually in GitHub Actions and uploaded as an artifact. |
@@ -58,7 +59,7 @@
 | Surface | In repo | Callable for “agent Runner loop” |
 |---------|---------|----------------------------------|
 | **Cursor** | `docs/BuckParts-CURSOR-INBOX.md`, `docs/BuckParts-HQ-HANDOFF.md` — human handoff | **UNKNOWN** — no code invoking Cursor; inbox doc says not automation/API. |
-| **Codex** | **PROVEN:** `npm run buckparts:codex-readonly-smoke` → `scripts/run-buckparts-codex-readonly-smoke.ts` (requires Codex CLI + successful `codex login status` on host). HQ handoff mentions credits separately. **NOT wired** into Runner Step/workflows. | **PARTIAL — bounded UNKNOWN:** proves **read-only** Codex subprocess + JSONL/final-message capture when invoked locally only; **does not** prove closed-loop autonomy, mutation approval, or Cursor/OpenAI parity. |
+| **Codex** | **PROVEN:** `npm run buckparts:codex-readonly-smoke` → `scripts/run-buckparts-codex-readonly-smoke.ts`; **PROVEN:** `npm run buckparts:codex-next-execution-packet` → `scripts/run-buckparts-codex-next-execution-packet.ts` (repo-built `copy_paste_prompt` + read-only wrapper). Both require Codex CLI + successful `codex login status` on host. HQ handoff mentions credits separately. **NOT wired** into Runner Step/workflows. | **PARTIAL — bounded UNKNOWN:** proves **read-only** Codex subprocess + JSONL/final-message capture when invoked locally only; **does not** prove founder-only approval, mutation safety beyond sandbox/prompt, closed-loop autonomy, or Cursor/OpenAI parity. |
 | **OpenAI API/CLI** | **PROVEN** no `openai` npm dependency in `package.json`; UA string checks elsewhere, not a client | **UNKNOWN** |
 | **GitHub Actions** | **PROVEN** workflows: checkout, setup-node, `npm ci`, scripts, `GITHUB_STEP_SUMMARY`, `upload-artifact` | **PROVEN** for **repo scripts** only — not Cursor/Codex inside the job. |
 | **Local terminal** | **PROVEN** `tsx`/`node`, `npm run`, `spawnSync` patterns | **PROVEN** for subprocesses **you** invoke. |
@@ -72,7 +73,7 @@
 
 **PROVEN reduced:** Bounded `copy_paste_prompt`, digest/dashboard surfaces, `buckparts:next-execution-packet`, and macOS `buckparts:copy-next-execution-packet` make the **next** packet easier to obtain than ad-hoc assembly.
 
-**PROVEN not eliminated:** There is no in-repo path that pastes into or reads from Cursor/Codex/ChatGPT automatically. Non-macOS has no `pbcopy` path in the copy script (**PROVEN** — script gates `darwin`).
+**PROVEN not eliminated:** There is no unattended integration that drives Cursor or ChatGPT automatically; optional `npm run buckparts:codex-*` Codex wrappers still require you to invoke them locally with Codex CLI auth (human-invoked subprocess). Non-macOS has no `pbcopy` path in the copy script (**PROVEN** — script gates `darwin`).
 
 ---
 
@@ -192,3 +193,4 @@ netlify --version  # netlify-cli/24.3.0 darwin-arm64 node-v24.13.1
 | 2026-05-15 | Weekly `.github/workflows/buckparts-founder-digest.yml` also runs Runner Step v1, uploads `buckparts-runner-step.json`, appends concise Runner summary to `GITHUB_STEP_SUMMARY`, and passes `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` so digest markdown embeds live Runner JSON. |
 | 2026-05-15 | **`npm run buckparts:runner-step:gh`** — **PROVEN:** terminal dispatch + artifact download for `BuckParts Runner Step`; **PROVEN:** does not prove external agent execution (Layer 6 still NOT_PROVEN). |
 | 2026-05-15 | **`npm run buckparts:codex-readonly-smoke`** → `scripts/run-buckparts-codex-readonly-smoke.ts` — **PROVEN:** bounded local Codex `exec --sandbox read-only --json` + temp JSONL/final-message capture + clean-git assertion; **NOT PROVEN:** closed-loop Runner, mutation approval, Layer 6 founder judgment (`layer_6_founder_only_approval` stays NOT_PROVEN in stdout JSON); **NOT wired** into Runner Step/workflows. |
+| 2026-05-16 | **`npm run buckparts:codex-next-execution-packet`** → `scripts/run-buckparts-codex-next-execution-packet.ts` — **PROVEN:** `buildNextExecutionPacketSnapshotV1` + read-only Codex exec for repo `copy_paste_prompt` when an agent-safe packet exists (`NO_PACKET` otherwise); **NOT PROVEN:** founder-only approval or mutation safety beyond sandbox/prompt; **NOT wired** into Runner Step/workflows. |
