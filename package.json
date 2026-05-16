@@ -85,6 +85,7 @@
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
     "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",
     "buckparts:runner-step:gh": "tsx scripts/run-buckparts-runner-step-gh.ts",
+    "buckparts:codex-readonly-smoke": "tsx scripts/run-buckparts-codex-readonly-smoke.ts",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
