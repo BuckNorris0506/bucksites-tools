@@ -42,6 +42,9 @@ import {
   CODEX_PACKET_PROOF_OWNER_DASHBOARD_LINE_V1,
 } from "@/lib/owner-dashboard/codex-packet-proof-read-model-v1";
 import {
+  CODEX_OUTPUT_REVIEW_OWNER_DASHBOARD_LINE_V1,
+} from "@/lib/owner-dashboard/codex-output-review-packet-v1";
+import {
   LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1,
   buildLayerSixReadinessSummaryV1,
   type LayerSixReadinessSummaryV1,
@@ -600,6 +603,22 @@ function CodexPacketProofDashboardSection() {
   );
 }
 
+function CodexOutputReviewDashboardSection() {
+  return (
+    <ExecutiveSection title="Codex Output Review Packet (owner-only v1)" subtitle={CODEX_OUTPUT_REVIEW_OWNER_DASHBOARD_LINE_V1}>
+      <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+        <span className="font-semibold text-slate-900 dark:text-slate-100">UNKNOWN:</span> This HTTP handler does not read Codex temp paths or founder digest proof JSON. Weekly digest may surface{" "}
+        <span className="font-mono text-[11px]">codex_output_review_packet_v1</span> when{" "}
+        <span className="font-mono text-[11px]">FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH</span> is set and the PASS proof&apos;s{" "}
+        <span className="font-mono text-[11px]">final_message_path</span> file is readable at digest time.
+      </p>
+      <p className="mt-2 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">
+        Does not authorize mutation, Runner widening, or Layer 6 completion; approve/reject/defer options are judgment copy only until Founder Decision Registry consumption is evidenced elsewhere.
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSummaryV1 }) {
   return (
     <ExecutiveSection title="Layer 6 Readiness Summary (informational v1)" subtitle={LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1}>
@@ -612,6 +631,13 @@ function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSumma
         <span className="font-mono text-[10px]">{summary.readiness_status}</span>
         <span className="ml-2 font-normal text-slate-600 dark:text-slate-400">
           — Layer 6 remains NOT_PROVEN in-repo; this does not expand Runner autonomy.
+        </span>
+      </p>
+      <p className="mt-2 text-[11px] font-semibold text-slate-800 dark:text-slate-200">
+        codex_output_review_surface_v1:{" "}
+        <span className="font-mono text-[10px]">{summary.codex_output_review_surface_v1}</span>
+        <span className="ml-2 font-normal text-slate-600 dark:text-slate-400">
+          — UNKNOWN on this dashboard (digest-only packet wiring); PROVEN_PRESENT only when digest supplies READY_FOR_FOUNDER_REVIEW.
         </span>
       </p>
       <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
@@ -956,6 +982,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <LayerSixReadinessSection summary={layerSixReadiness} />
 
         <CodexPacketProofDashboardSection />
+
+        <CodexOutputReviewDashboardSection />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 

@@ -5,12 +5,16 @@
 
 import type { FailurePatternRegistryReadModelV1 } from "./failure-pattern-registry-v1";
 import type { CodexPacketProofReadModelV1 } from "./codex-packet-proof-read-model-v1";
+import type { CodexOutputReviewPacketV1 } from "./codex-output-review-packet-v1";
 
 export const LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1 = "layer_six_readiness_summary_v1" as const;
 
+/** Digest-only wiring today (`FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH` + readable final message); dashboard stays UNKNOWN until an artifact path is modeled on HTTP. */
+export type LayerSixCodexOutputReviewSurfaceV1 = "UNKNOWN" | "PROVEN_PRESENT" | "NOT_PRESENT_OR_BLOCKED";
+
 /** Digest section header hint (single source of truth). */
 export const LAYER_SIX_READINESS_DIGEST_HINT_V1 =
-  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied, and optional Codex packet proof JSON via `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until founder-only judgment loops are evidenced; optional Codex proof improves external-agent **evidence** only when valid PASS JSON is supplied — not founder approval.";
+  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied, optional Codex packet proof JSON via `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`, and optional `codex_output_review_packet_v1` when digest builds it from proof + final-message file). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until founder-only judgment loops are evidenced; optional Codex proof improves external-agent **evidence** only when valid PASS JSON is supplied — not founder approval.";
 
 /** Plain sentence for React owner dashboard (no markdown emphasis). */
 export const LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1 =
@@ -46,6 +50,8 @@ export type LayerSixReadinessSummaryV1 = {
     unknown_guardrail_count: number;
   };
   runner_context_present: boolean;
+  /** UNKNOWN when digest/dashboard omits review packet input; digest may supply PROVEN_PRESENT when review_status is READY_FOR_FOUNDER_REVIEW. */
+  codex_output_review_surface_v1: LayerSixCodexOutputReviewSurfaceV1;
 };
 
 function baseRequiredBeforeLayer6(): string[] {
@@ -71,12 +77,25 @@ export function buildLayerSixReadinessSummaryV1(
      * **null:** digest path unset — UNKNOWN / not supplied.
      */
     codex_packet_proof?: CodexPacketProofReadModelV1 | null;
+    /**
+     * Optional Codex Output Review Packet from digest (`codex_output_review_packet_v1`).
+     * **undefined:** omit (e.g. owner dashboard — no artifact wiring in HTTP handler).
+     */
+    codex_output_review_packet?: CodexOutputReviewPacketV1;
   },
 ): LayerSixReadinessSummaryV1 {
   const generated_at = options.generated_at;
   const runner = options.runner ?? null;
   const runner_context_present = runner != null;
   const codexProof = options.codex_packet_proof;
+  const codexReview = options.codex_output_review_packet;
+
+  const codex_output_review_surface_v1: LayerSixCodexOutputReviewSurfaceV1 =
+    codexReview === undefined
+      ? "UNKNOWN"
+      : codexReview.review_status === "READY_FOR_FOUNDER_REVIEW"
+        ? "PROVEN_PRESENT"
+        : "NOT_PRESENT_OR_BLOCKED";
 
   const fp = {
     guarded_count: failurePatterns.guarded_count,
@@ -110,6 +129,18 @@ export function buildLayerSixReadinessSummaryV1(
   if (codexProof?.valid && codexProof.codex_packet_execution_proven) {
     proven_facts.push(
       "PROVEN: Valid `codex_packet_proof_read_model_v1` + PASS on `buckparts_codex_next_execution_packet_v1` records read-only Codex execution against a repo Founder Execution Packet with JSONL/final-message capture and clean git (when flags hold). **NOT PROVEN:** Layer 6 founder-only approval / judgment.",
+    );
+  }
+
+  if (codex_output_review_surface_v1 === "PROVEN_PRESENT") {
+    proven_facts.push(
+      "PROVEN: Digest-built `codex_output_review_packet_v1` reports READY_FOR_FOUNDER_REVIEW — founder-facing approve/reject/follow-up/defer copy exists for this Codex proof snapshot. **NOT PROVEN:** Layer 6 complete, mutation authority, registry row recorded, or automation consuming founder judgment.",
+    );
+  }
+
+  if (codexReview !== undefined && codex_output_review_surface_v1 === "NOT_PRESENT_OR_BLOCKED") {
+    unknown_facts.push(
+      `UNKNOWN: Codex output review packet supplied but surface is NOT_PRESENT_OR_BLOCKED — review_status=${codexReview.review_status}.`,
     );
   }
 
@@ -201,6 +232,7 @@ export function buildLayerSixReadinessSummaryV1(
     unknown_facts,
     failure_pattern_registry: fp,
     runner_context_present,
+    codex_output_review_surface_v1,
   };
 }
 
@@ -211,6 +243,13 @@ export function formatLayerSixReadinessDigestMarkdownV1(summary: LayerSixReadine
       : summary.readiness_status === "needs_review"
         ? "needs_review (founder/process review)"
         : "informational_ready (guardrails look complete in registry snapshot)";
+
+  const codexReviewSurfaceNote =
+    summary.codex_output_review_surface_v1 === "UNKNOWN"
+      ? "**UNKNOWN:** caller omitted digest-built review packet input — typical owner-dashboard default; digest runs may supply PROVEN_PRESENT."
+      : summary.codex_output_review_surface_v1 === "PROVEN_PRESENT"
+        ? "**PROVEN:** digest supplied `codex_output_review_packet_v1` with READY_FOR_FOUNDER_REVIEW."
+        : "**PROVEN:** digest supplied review packet but surface is blocked or proof-invalid (`NOT_PRESENT_OR_BLOCKED`).";
 
   const lines = [
     `**PROVEN:** Contract \`${summary.contract}\` · read_only=\`${String(summary.read_only)}\` · data_mutation=\`${String(summary.data_mutation)}\` · automation_input=\`${String(summary.automation_input)}\` · informational_only=\`${String(summary.informational_only)}\`.`,
@@ -229,6 +268,7 @@ export function formatLayerSixReadinessDigestMarkdownV1(summary: LayerSixReadine
     `- recurring: \`${summary.failure_pattern_registry.recurring_count}\``,
     `- unknown_guardrail: \`${summary.failure_pattern_registry.unknown_guardrail_count}\``,
     `- runner_context_present: \`${String(summary.runner_context_present)}\``,
+    `- codex_output_review_surface_v1: \`${summary.codex_output_review_surface_v1}\` (${codexReviewSurfaceNote})`,
     "",
     "**Facts (trimmed):**",
     ...summary.proven_facts.slice(-5).map((f) => `- ${f}`),

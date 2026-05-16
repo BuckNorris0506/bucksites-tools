@@ -36,6 +36,7 @@ import {
 import {
   buildRunnerStepDigestMarkdownForFounderRunV1,
   buildCodexPacketProofDigestMarkdownForFounderRunV1,
+  buildCodexOutputReviewDigestBundleForFounderRunV1,
 } from "./buckparts-founder-digest";
 
 test("buildRunnerStepDigestMarkdownForFounderRunV1 embeds live JSON when env path is valid", () => {
@@ -118,6 +119,56 @@ test("buildCodexPacketProofDigestMarkdownForFounderRunV1 reads PASS JSON when en
   }
 });
 
+test("buildCodexOutputReviewDigestBundleForFounderRunV1 reads final message for PASS proof", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "digest-codex-review-"));
+  const fm = path.join(dir, "final.txt");
+  writeFileSync(fm, "Codex summary body.", "utf8");
+  const jl = path.join(dir, "e.jsonl");
+  writeFileSync(jl, "{}\n", "utf8");
+  const proofPath = path.join(dir, "codex-proof.json");
+  writeFileSync(
+    proofPath,
+    JSON.stringify({
+      contract: "buckparts_codex_next_execution_packet_v1",
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: fm,
+      jsonl_path: jl,
+      event_count: 3,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    }),
+    "utf8",
+  );
+  process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH = proofPath;
+  try {
+    const { readModel } = buildCodexPacketProofDigestMarkdownForFounderRunV1({
+      rootDir: dir,
+      generated_at: "2026-05-16T12:00:00.000Z",
+    });
+    assert.ok(readModel?.valid);
+    const bundle = buildCodexOutputReviewDigestBundleForFounderRunV1({
+      rootDir: dir,
+      generated_at: "2026-05-16T12:00:00.000Z",
+      proofReadModel: readModel!,
+    });
+    assert.equal(bundle.packet?.review_status, "READY_FOR_FOUNDER_REVIEW");
+    assert.match(bundle.markdownFragment!, /Codex summary body/);
+    assert.match(bundle.markdownFragment!, /approve_readonly_findings/);
+  } finally {
+    delete process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH;
+  }
+});
+
 test("buildFounderDigestMarkdownV1 includes required sections", () => {
   const md = buildFounderDigestMarkdownV1({
     generated_at: "2026-05-14T12:00:00.000Z",
@@ -193,6 +244,8 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
       }),
     ),
     codex_packet_proof_digest_markdown: "**PROVEN:** Fixture Codex Packet Proof fragment (codex_packet_proof_read_model_v1).",
+    codex_output_review_digest_markdown:
+      "**PROVEN:** Fixture Codex Output Review fragment (codex_output_review_packet_v1; owner judgment only).",
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -218,12 +271,15 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
   assert.match(md, /## Codex Packet Proof \(informational v1\)/);
   assert.match(md, /codex_packet_proof_read_model_v1/);
+  assert.match(md, /## Codex Output Review Packet \(owner-only v1\)/);
+  assert.match(md, /codex_output_review_packet_v1/);
   const idxFp = md.indexOf("## Failure Pattern Registry (read-only v1)");
   const idxL6 = md.indexOf("## Layer 6 Readiness Summary (informational v1)");
   const idxCodex = md.indexOf("## Codex Packet Proof (informational v1)");
+  const idxCodexReview = md.indexOf("## Codex Output Review Packet (owner-only v1)");
   const idxJared = md.indexOf("## What requires Jared specifically?");
   assert.ok(idxFp >= 0 && idxL6 > idxFp);
-  assert.ok(idxCodex > idxL6 && idxJared > idxCodex);
+  assert.ok(idxCodex > idxL6 && idxCodexReview > idxCodex && idxJared > idxCodexReview);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });

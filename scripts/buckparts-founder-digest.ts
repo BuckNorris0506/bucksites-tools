@@ -4,7 +4,7 @@
  *
  * CI: run `npm run build` in a prior step and set `FOUNDER_DIGEST_SKIP_BUILD=1` to avoid duplicate builds.
  * Optional `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` (repo-relative or absolute): when set to a readable Runner Step v1 JSON file, digest embeds live CLI summary markdown instead of the modeled-only Runner section.
- * Optional `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`: when set to a readable JSON file (typically stdout saved from `npm run buckparts:codex-next-execution-packet`), digest embeds `codex_packet_proof_read_model_v1` markdown and feeds Layer 6 summary — digest never invokes Codex.
+ * Optional `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`: when set to a readable JSON file (typically stdout saved from `npm run buckparts:codex-next-execution-packet`), digest embeds `codex_packet_proof_read_model_v1` markdown, reads `final_message_path` from PASS proofs when readable (repo-relative paths resolved against cwd), builds `codex_output_review_packet_v1`, and feeds Layer 6 summary — digest never invokes Codex or Runner Step subprocesses from markdown generation.
  */
 
 import { readFileSync } from "node:fs";
@@ -61,6 +61,12 @@ import {
   formatLayerSixReadinessDigestMarkdownV1,
   type LayerSixReadinessRunnerContextV1,
 } from "../src/lib/owner-dashboard/layer-six-readiness-summary-v1";
+import {
+  buildCodexOutputReviewPacketV1,
+  formatCodexOutputReviewPacketDigestMarkdownV1,
+  type CodexFinalMessageInputV1,
+  type CodexOutputReviewPacketV1,
+} from "../src/lib/owner-dashboard/codex-output-review-packet-v1";
 
 function parseCompareWithArg(): string | null {
   const idx = process.argv.indexOf("--compare-with");
@@ -191,6 +197,57 @@ export function buildCodexPacketProofDigestMarkdownForFounderRunV1(args: {
   }
 }
 
+function loadCodexFinalMessageForDigestV1(rootDir: string, rawPath: string | null | undefined): CodexFinalMessageInputV1 {
+  const p = rawPath?.trim();
+  if (!p) {
+    return {
+      attempted_path: null,
+      text: null,
+      load_error: "PROVEN: final_message_path missing on Codex proof snapshot.",
+    };
+  }
+  const resolved = path.isAbsolute(p) ? p : path.join(rootDir, p);
+  try {
+    const text = readFileSync(resolved, "utf8");
+    return { attempted_path: resolved, text, load_error: null };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { attempted_path: resolved, text: null, load_error: msg };
+  }
+}
+
+/**
+ * Builds Codex Output Review markdown + packet when digest supplied Codex proof JSON (`FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`).
+ */
+export function buildCodexOutputReviewDigestBundleForFounderRunV1(args: {
+  rootDir: string;
+  generated_at: string;
+  proofReadModel: CodexPacketProofReadModelV1 | null;
+}): { markdownFragment: string | undefined; packet: CodexOutputReviewPacketV1 | undefined } {
+  if (args.proofReadModel === null) {
+    return { markdownFragment: undefined, packet: undefined };
+  }
+  const snap = args.proofReadModel.source_snapshot;
+  let msgInput: CodexFinalMessageInputV1 = {
+    attempted_path: null,
+    text: null,
+    load_error: null,
+  };
+  const pass = args.proofReadModel.valid && snap?.overall_status === "PASS";
+  if (pass) {
+    msgInput = loadCodexFinalMessageForDigestV1(args.rootDir, snap?.final_message_path ?? null);
+  }
+  const packet = buildCodexOutputReviewPacketV1({
+    proof: args.proofReadModel,
+    generated_at: args.generated_at,
+    codex_final_message: msgInput,
+  });
+  return {
+    markdownFragment: formatCodexOutputReviewPacketDigestMarkdownV1(packet),
+    packet,
+  };
+}
+
 /**
  * Runner Step section for digest: live JSON when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` points at valid output; otherwise modeled-only (local runs).
  */
@@ -268,10 +325,16 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     rootDir,
     generated_at: generatedAt,
   });
+  const codexReviewBundle = buildCodexOutputReviewDigestBundleForFounderRunV1({
+    rootDir,
+    generated_at: generatedAt,
+    proofReadModel: codexProofBundle.readModel,
+  });
   const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
     generated_at: generatedAt,
     runner: tryReadRunnerStepContextForLayerSixV1(rootDir),
     codex_packet_proof: codexProofBundle.readModel === null ? null : codexProofBundle.readModel,
+    ...(codexReviewBundle.packet !== undefined ? { codex_output_review_packet: codexReviewBundle.packet } : {}),
   });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: generatedAt,
@@ -286,6 +349,7 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
       formatFailurePatternRegistryDigestMarkdownV1(failurePatternReadModel),
     layer_six_readiness_digest_markdown: formatLayerSixReadinessDigestMarkdownV1(layerSixReadiness),
     codex_packet_proof_digest_markdown: codexProofBundle.markdownFragment,
+    codex_output_review_digest_markdown: codexReviewBundle.markdownFragment,
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });

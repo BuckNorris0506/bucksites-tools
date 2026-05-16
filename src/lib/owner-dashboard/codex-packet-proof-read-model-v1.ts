@@ -24,6 +24,9 @@ export type CodexPacketProofSourceSnapshotV1 = {
   external_agent_execution: string | null;
   output_capture: string | null;
   git_status_clean: boolean | null;
+  /** Present on PASS proofs (from `buckparts_codex_next_execution_packet_v1` stdout). */
+  final_message_path: string | null;
+  jsonl_path: string | null;
 };
 
 export type CodexPacketProofReadModelV1 = {
@@ -137,6 +140,8 @@ export function buildCodexPacketProofReadModelV1(input: unknown, options: { gene
     external_agent_execution: readString(o, "external_agent_execution") ?? null,
     output_capture: readString(o, "output_capture") ?? null,
     git_status_clean: readBool(o, "git_status_clean") ?? null,
+    final_message_path: readString(o, "final_message_path")?.trim() || null,
+    jsonl_path: readString(o, "jsonl_path")?.trim() || null,
   };
 
   if (overall === "FAIL") {
@@ -229,6 +234,8 @@ export function formatCodexPacketProofDigestMarkdownV1(model: CodexPacketProofRe
       `- output_capture_proven (JSONL + final message paths): \`${String(model.output_capture_proven)}\``,
       `- git_clean_after_codex: \`${String(model.git_clean_after_codex)}\``,
       `- event_count: \`${s.event_count ?? "null"}\``,
+      `- final_message_path: ${s.final_message_path ? `\`${s.final_message_path}\`` : "*null*"}`,
+      `- jsonl_path: ${s.jsonl_path ? `\`${s.jsonl_path}\`` : "*null*"}`,
       `- layer_6_founder_only_approval (read model stance): **NOT_PROVEN**`,
       "",
     );

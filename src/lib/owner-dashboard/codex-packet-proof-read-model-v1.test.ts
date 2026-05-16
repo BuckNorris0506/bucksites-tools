@@ -40,6 +40,8 @@ test("PASS fixture yields valid read model with proof flags", () => {
   assert.equal(m.git_clean_after_codex, true);
   assert.equal(m.layer_6_founder_only_approval, "NOT_PROVEN");
   assert.equal(m.source_snapshot?.overall_status, "PASS");
+  assert.equal(m.source_snapshot?.final_message_path, validPassFixture.final_message_path);
+  assert.equal(m.source_snapshot?.jsonl_path, validPassFixture.jsonl_path);
 });
 
 test("NO_PACKET fixture valid with proof flags false", () => {
