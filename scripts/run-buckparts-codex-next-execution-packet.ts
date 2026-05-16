@@ -11,6 +11,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { FounderExecutionPacketV1 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
+import { BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1 } from "../src/lib/owner-dashboard/codex-packet-proof-read-model-v1";
 import {
   buildNextExecutionPacketSnapshotV1,
   type NextExecutionPacketSnapshotV1,
@@ -22,7 +23,8 @@ import {
   summarizeCodexExecJsonlStdout,
 } from "./run-buckparts-codex-readonly-smoke.ts";
 
-export const BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_CONTRACT_V1 = "buckparts_codex_next_execution_packet_v1" as const;
+/** Canonical contract string shared with `codex_packet_proof_read_model_v1`. */
+export const BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_CONTRACT_V1 = BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1;
 
 export type BuckpartsCodexNextExecutionPacketDeps = BuckpartsCodexReadonlySmokeDeps & {
   buildSnapshot: (repoRoot: string) => Promise<NextExecutionPacketSnapshotV1>;

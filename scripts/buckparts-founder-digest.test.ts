@@ -33,7 +33,10 @@ import {
   buildRunnerStepVisibilityModeledV1,
   formatRunnerStepDigestSectionMarkdownV1,
 } from "./lib/buckparts-runner-step-summary-v1";
-import { buildRunnerStepDigestMarkdownForFounderRunV1 } from "./buckparts-founder-digest";
+import {
+  buildRunnerStepDigestMarkdownForFounderRunV1,
+  buildCodexPacketProofDigestMarkdownForFounderRunV1,
+} from "./buckparts-founder-digest";
 
 test("buildRunnerStepDigestMarkdownForFounderRunV1 embeds live JSON when env path is valid", () => {
   const dir = mkdtempSync(path.join(tmpdir(), "founder-digest-runner-"));
@@ -71,6 +74,47 @@ test("buildRunnerStepDigestMarkdownForFounderRunV1 embeds live JSON when env pat
     assert.doesNotMatch(md, /did \*\*not\*\* execute `npm run buckparts:runner-step`/);
   } finally {
     delete process.env.FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH;
+  }
+});
+
+test("buildCodexPacketProofDigestMarkdownForFounderRunV1 reads PASS JSON when env set", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "digest-codex-proof-"));
+  const proofPath = path.join(dir, "codex-proof.json");
+  writeFileSync(
+    proofPath,
+    JSON.stringify({
+      contract: "buckparts_codex_next_execution_packet_v1",
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: "/tmp/x/f.txt",
+      jsonl_path: "/tmp/x/e.jsonl",
+      event_count: 3,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    }),
+    "utf8",
+  );
+  process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH = proofPath;
+  try {
+    const { markdownFragment, readModel } = buildCodexPacketProofDigestMarkdownForFounderRunV1({
+      rootDir: dir,
+      generated_at: "2026-05-16T12:00:00.000Z",
+    });
+    assert.ok(markdownFragment);
+    assert.equal(readModel?.valid, true);
+    assert.match(markdownFragment!, /Amazon rescue/);
+    assert.match(markdownFragment!, /codex_packet_proof_read_model_v1/);
+  } finally {
+    delete process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH;
   }
 });
 
@@ -148,6 +192,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
         generated_at: "2026-05-14T12:00:00.000Z",
       }),
     ),
+    codex_packet_proof_digest_markdown: "**PROVEN:** Fixture Codex Packet Proof fragment (codex_packet_proof_read_model_v1).",
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -171,9 +216,14 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /## Layer 6 Readiness Summary \(informational v1\)/);
   assert.match(md, /layer_six_readiness_summary_v1/);
   assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
+  assert.match(md, /## Codex Packet Proof \(informational v1\)/);
+  assert.match(md, /codex_packet_proof_read_model_v1/);
   const idxFp = md.indexOf("## Failure Pattern Registry (read-only v1)");
   const idxL6 = md.indexOf("## Layer 6 Readiness Summary (informational v1)");
+  const idxCodex = md.indexOf("## Codex Packet Proof (informational v1)");
+  const idxJared = md.indexOf("## What requires Jared specifically?");
   assert.ok(idxFp >= 0 && idxL6 > idxFp);
+  assert.ok(idxCodex > idxL6 && idxJared > idxCodex);
   assert.match(md, /## Notification/);
   assert.match(md, /\*\*UNKNOWN:\*\* This repo contains no Slack/);
 });

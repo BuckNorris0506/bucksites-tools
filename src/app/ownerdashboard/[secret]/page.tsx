@@ -39,6 +39,9 @@ import {
   type FailurePatternRegistryReadModelV1,
 } from "@/lib/owner-dashboard/failure-pattern-registry-v1";
 import {
+  CODEX_PACKET_PROOF_OWNER_DASHBOARD_LINE_V1,
+} from "@/lib/owner-dashboard/codex-packet-proof-read-model-v1";
+import {
   LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1,
   buildLayerSixReadinessSummaryV1,
   type LayerSixReadinessSummaryV1,
@@ -577,6 +580,26 @@ function FailurePatternRegistrySection({ model }: { model: FailurePatternRegistr
   );
 }
 
+function CodexPacketProofDashboardSection() {
+  return (
+    <ExecutiveSection
+      title="Codex Packet Proof (informational v1)"
+      subtitle={CODEX_PACKET_PROOF_OWNER_DASHBOARD_LINE_V1}
+    >
+      <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+        <span className="font-semibold text-slate-900 dark:text-slate-100">UNKNOWN:</span> This dashboard does not load
+        Codex CLI output or filesystem artifacts yet. Weekly digest may surface proof when{' '}
+        <span className="font-mono text-[11px]">FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH</span> points at saved JSON
+        from <span className="font-mono text-[11px]">npm run buckparts:codex-next-execution-packet</span>.
+      </p>
+      <p className="mt-2 text-[11px] leading-relaxed text-slate-600 dark:text-slate-400">
+        Does not prove founder-only approval (Layer 6), closed-loop Runner, or mutation safety beyond read-only sandbox +
+        prompt boundaries.
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSummaryV1 }) {
   return (
     <ExecutiveSection title="Layer 6 Readiness Summary (informational v1)" subtitle={LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1}>
@@ -931,6 +954,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FailurePatternRegistrySection model={failurePatternReadModel} />
 
         <LayerSixReadinessSection summary={layerSixReadiness} />
+
+        <CodexPacketProofDashboardSection />
 
         <FounderExecutionPacketsSection model={founderExecutionPackets} />
 

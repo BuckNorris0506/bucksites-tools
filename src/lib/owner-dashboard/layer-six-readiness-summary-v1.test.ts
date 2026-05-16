@@ -13,6 +13,10 @@ import {
   buildLayerSixReadinessSummaryV1,
   formatLayerSixReadinessDigestMarkdownV1,
 } from "./layer-six-readiness-summary-v1";
+import {
+  BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1,
+  buildCodexPacketProofReadModelV1,
+} from "./codex-packet-proof-read-model-v1";
 
 const minimalRow = {
   failure_id: "fixture_row",
@@ -98,6 +102,44 @@ test("all guarded seeded patterns produce informational_ready but do not claim L
   assert.match(md, /does not authorize Cursor\/Codex\/OpenAI integration/i);
 });
 
+test("explicit null Codex packet proof adds UNKNOWN digest-env line", () => {
+  const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
+  const s = buildLayerSixReadinessSummaryV1(fp, { generated_at: "t", codex_packet_proof: null });
+  assert.ok(s.unknown_facts.some((f) => /FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH/.test(f)));
+});
+
+test("valid Codex PASS proof adds proven fact without claiming Layer 6", () => {
+  const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
+  const proof = buildCodexPacketProofReadModelV1(
+    {
+      contract: BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1,
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: "/tmp/a/f.txt",
+      jsonl_path: "/tmp/a/e.jsonl",
+      event_count: 2,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    },
+    { generated_at: "t" },
+  );
+  assert.equal(proof.valid, true);
+  const s = buildLayerSixReadinessSummaryV1(fp, { generated_at: "t", codex_packet_proof: proof });
+  assert.ok(s.proven_facts.some((f) => /codex_packet_proof_read_model_v1/.test(f)));
+  assert.ok(s.proven_facts.some((f) => /NOT PROVEN.*Layer 6 founder/i.test(f)));
+  const md = formatLayerSixReadinessDigestMarkdownV1(s);
+  assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
+});
+
 test("digest section wording is informational only and does not alter automation", () => {
   const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
   const summaryMd = formatLayerSixReadinessDigestMarkdownV1(
@@ -127,6 +169,7 @@ test("digest section wording is informational only and does not alter automation
   assert.match(digestMd, /## Layer 6 Readiness Summary \(informational v1\)/);
   assert.ok(digestMd.includes("failure_pattern_registry_read_model_v1"));
   assert.ok(digestMd.includes("Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN**"));
+  assert.ok(digestMd.includes("FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH"));
   assert.match(digestMd, /does \*\*not\*\* expand Runner autonomy/i);
   assert.match(digestMd, /automation_input/);
   assert.match(digestMd, new RegExp(LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1));

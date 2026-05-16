@@ -4,12 +4,13 @@
  */
 
 import type { FailurePatternRegistryReadModelV1 } from "./failure-pattern-registry-v1";
+import type { CodexPacketProofReadModelV1 } from "./codex-packet-proof-read-model-v1";
 
 export const LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1 = "layer_six_readiness_summary_v1" as const;
 
 /** Digest section header hint (single source of truth). */
 export const LAYER_SIX_READINESS_DIGEST_HINT_V1 =
-  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until external agent execution/capture and founder-only judgment loops are evidenced elsewhere.";
+  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied, and optional Codex packet proof JSON via `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until founder-only judgment loops are evidenced; optional Codex proof improves external-agent **evidence** only when valid PASS JSON is supplied — not founder approval.";
 
 /** Plain sentence for React owner dashboard (no markdown emphasis). */
 export const LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1 =
@@ -64,11 +65,18 @@ export function buildLayerSixReadinessSummaryV1(
   options: {
     generated_at: string;
     runner?: LayerSixReadinessRunnerContextV1 | null;
+    /**
+     * Optional Codex packet proof read model from digest (`FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`).
+     * **undefined:** omit UNKNOWN narrative (e.g. owner dashboard default).
+     * **null:** digest path unset — UNKNOWN / not supplied.
+     */
+    codex_packet_proof?: CodexPacketProofReadModelV1 | null;
   },
 ): LayerSixReadinessSummaryV1 {
   const generated_at = options.generated_at;
   const runner = options.runner ?? null;
   const runner_context_present = runner != null;
+  const codexProof = options.codex_packet_proof;
 
   const fp = {
     guarded_count: failurePatterns.guarded_count,
@@ -86,6 +94,30 @@ export function buildLayerSixReadinessSummaryV1(
   const unknown_facts: string[] = [
     "UNKNOWN: Whether production or founder workflows outside this repo have proven external agent execution — not inferred from guardrail counts alone.",
   ];
+
+  if (codexProof === null) {
+    unknown_facts.push(
+      "UNKNOWN: Codex packet proof JSON was not supplied to this summary builder (`FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH` unset). Optional: run `npm run buckparts:codex-next-execution-packet`, save stdout JSON, set env on digest for informational evidence.",
+    );
+  }
+
+  if (codexProof && !codexProof.valid) {
+    unknown_facts.push(
+      `UNKNOWN: Codex packet proof artifact invalid — ${codexProof.invalid_reasons.slice(0, 4).join(" | ")}`,
+    );
+  }
+
+  if (codexProof?.valid && codexProof.codex_packet_execution_proven) {
+    proven_facts.push(
+      "PROVEN: Valid `codex_packet_proof_read_model_v1` + PASS on `buckparts_codex_next_execution_packet_v1` records read-only Codex execution against a repo Founder Execution Packet with JSONL/final-message capture and clean git (when flags hold). **NOT PROVEN:** Layer 6 founder-only approval / judgment.",
+    );
+  }
+
+  if (codexProof?.valid && codexProof.source_snapshot?.overall_status === "NO_PACKET") {
+    proven_facts.push(
+      "PROVEN: Supplied Codex packet proof JSON records NO_PACKET (no agent-safe Founder Execution Packet at CLI capture time).",
+    );
+  }
 
   if (runner_context_present) {
     const lt = runner?.layer_truth;

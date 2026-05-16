@@ -5,6 +5,7 @@
 
 import { FOUNDER_DECISION_REGISTRY_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
 import { FAILURE_PATTERN_REGISTRY_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/failure-pattern-registry-v1";
+import { CODEX_PACKET_PROOF_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/codex-packet-proof-read-model-v1";
 import { LAYER_SIX_READINESS_DIGEST_HINT_V1 } from "../../src/lib/owner-dashboard/layer-six-readiness-summary-v1";
 
 export type FounderDigestBuildV1 = {
@@ -50,6 +51,8 @@ export type FounderDigestInputV1 = {
   failure_pattern_registry_digest_markdown?: string;
   /** Optional Layer 6 Readiness Summary (markdown; derived from Failure Pattern Registry read model; informational only). */
   layer_six_readiness_digest_markdown?: string;
+  /** Optional Codex Packet Proof body (markdown fragment from `codex_packet_proof_read_model_v1`; heading/hint added by formatter below). */
+  codex_packet_proof_digest_markdown?: string;
   /** Optional Founder Execution Packets fragment (markdown; follows Decision Packets when queue fragment is present). */
   founder_execution_packets_digest_markdown?: string;
   /** Optional Runner Step markdown: modeled-only, or live JSON summary when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` is set (`scripts/buckparts-founder-digest.ts`). */
@@ -158,6 +161,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
           LAYER_SIX_READINESS_DIGEST_HINT_V1,
           "",
           input.layer_six_readiness_digest_markdown.trimEnd(),
+          "",
+        ]
+      : []),
+    ...(input.codex_packet_proof_digest_markdown
+      ? [
+          "## Codex Packet Proof (informational v1)",
+          CODEX_PACKET_PROOF_DIGEST_HINT_V1,
+          "",
+          input.codex_packet_proof_digest_markdown.trimEnd(),
           "",
         ]
       : []),

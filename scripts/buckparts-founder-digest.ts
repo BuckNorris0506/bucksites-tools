@@ -4,6 +4,7 @@
  *
  * CI: run `npm run build` in a prior step and set `FOUNDER_DIGEST_SKIP_BUILD=1` to avoid duplicate builds.
  * Optional `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` (repo-relative or absolute): when set to a readable Runner Step v1 JSON file, digest embeds live CLI summary markdown instead of the modeled-only Runner section.
+ * Optional `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`: when set to a readable JSON file (typically stdout saved from `npm run buckparts:codex-next-execution-packet`), digest embeds `codex_packet_proof_read_model_v1` markdown and feeds Layer 6 summary — digest never invokes Codex.
  */
 
 import { readFileSync } from "node:fs";
@@ -49,6 +50,12 @@ import {
   buildFailurePatternRegistryReadModelFromSeededV1,
   formatFailurePatternRegistryDigestMarkdownV1,
 } from "../src/lib/owner-dashboard/failure-pattern-registry-v1";
+import {
+  buildCodexPacketProofReadModelV1,
+  buildCodexPacketProofReadModelParseFailedV1,
+  formatCodexPacketProofDigestMarkdownV1,
+  type CodexPacketProofReadModelV1,
+} from "../src/lib/owner-dashboard/codex-packet-proof-read-model-v1";
 import {
   buildLayerSixReadinessSummaryV1,
   formatLayerSixReadinessDigestMarkdownV1,
@@ -155,6 +162,36 @@ function modeledRunnerDigestMarkdownV1(args: {
 }
 
 /**
+ * Codex Packet Proof digest fragment when `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH` is set; otherwise omit section.
+ */
+export function buildCodexPacketProofDigestMarkdownForFounderRunV1(args: {
+  rootDir: string;
+  generated_at: string;
+}): { markdownFragment: string | undefined; readModel: CodexPacketProofReadModelV1 | null } {
+  const rel = process.env.FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH?.trim();
+  if (!rel) {
+    return { markdownFragment: undefined, readModel: null };
+  }
+  const abs = path.isAbsolute(rel) ? rel : path.join(args.rootDir, rel);
+  try {
+    const raw = readFileSync(abs, "utf8");
+    const parsed = JSON.parse(raw) as unknown;
+    const rm = buildCodexPacketProofReadModelV1(parsed, { generated_at: args.generated_at });
+    return {
+      markdownFragment: formatCodexPacketProofDigestMarkdownV1(rm, { env_path: rel }),
+      readModel: rm,
+    };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    const rm = buildCodexPacketProofReadModelParseFailedV1(args.generated_at, msg);
+    return {
+      markdownFragment: formatCodexPacketProofDigestMarkdownV1(rm, { env_path: rel }),
+      readModel: rm,
+    };
+  }
+}
+
+/**
  * Runner Step section for digest: live JSON when `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` points at valid output; otherwise modeled-only (local runs).
  */
 export function buildRunnerStepDigestMarkdownForFounderRunV1(args: {
@@ -227,9 +264,14 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     reference_time_iso: generatedAt,
   });
   const failurePatternReadModel = buildFailurePatternRegistryReadModelFromSeededV1(generatedAt);
+  const codexProofBundle = buildCodexPacketProofDigestMarkdownForFounderRunV1({
+    rootDir,
+    generated_at: generatedAt,
+  });
   const layerSixReadiness = buildLayerSixReadinessSummaryV1(failurePatternReadModel, {
     generated_at: generatedAt,
     runner: tryReadRunnerStepContextForLayerSixV1(rootDir),
+    codex_packet_proof: codexProofBundle.readModel === null ? null : codexProofBundle.readModel,
   });
   const markdown = buildFounderDigestMarkdownV1({
     generated_at: generatedAt,
@@ -243,6 +285,7 @@ export async function runBuckpartsFounderDigestMain(): Promise<{ markdown: strin
     failure_pattern_registry_digest_markdown:
       formatFailurePatternRegistryDigestMarkdownV1(failurePatternReadModel),
     layer_six_readiness_digest_markdown: formatLayerSixReadinessDigestMarkdownV1(layerSixReadiness),
+    codex_packet_proof_digest_markdown: codexProofBundle.markdownFragment,
     founder_execution_packets_digest_markdown: formatFounderExecutionPacketsForDigest(executionPackets),
     runner_step_digest_markdown,
   });
