@@ -183,6 +183,7 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
           "",
           "**PROVEN:** Jared may conceptually approve read-only findings, reject them, request another read-only Codex pass, or defer — record intent in Founder Decision Registry v1 when applicable.",
           "**NOT PROVEN:** Layer 6 completion, mutation authority, Runner automation input, or closed-loop autonomy.",
+          "**PROVEN:** PASS proof + readable final message evidences Codex **transport/capture** for digest — **`codex_task_outcome_status`** in the fragment separates validation/task success from capture (read-only sandboxes often block `.next/*`, temp IPC / `tsx`, or toolchain caches).",
           "",
           input.codex_output_review_digest_markdown.trimEnd(),
           "",

@@ -142,8 +142,13 @@ test("digest READY codex_output_review yields PROVEN_PRESENT surface without pro
   const review = buildCodexOutputReviewPacketV1({
     proof,
     generated_at: "t",
-    codex_final_message: { attempted_path: "/tmp/a/f.txt", text: "ok", load_error: null },
+    codex_final_message: {
+      attempted_path: "/tmp/a/f.txt",
+      text: "npm run lint exited 0.\nRESULT: OK\n",
+      load_error: null,
+    },
   });
+  assert.equal(review.codex_task_outcome_status, "TASK_SUCCESS_PROVEN");
   const s = buildLayerSixReadinessSummaryV1(fp, {
     generated_at: "t",
     codex_packet_proof: proof,
@@ -151,9 +156,54 @@ test("digest READY codex_output_review yields PROVEN_PRESENT surface without pro
   });
   assert.equal(s.codex_output_review_surface_v1, "PROVEN_PRESENT");
   assert.ok(s.proven_facts.some((f) => /codex_output_review_packet_v1/.test(f)));
+  assert.ok(!s.unknown_facts.some((f) => /UNKNOWN\/PARTIAL: codex_task_outcome_status/.test(f)));
+  assert.ok(!s.reasons.some((r) => /Codex output review classifier reports codex_task_outcome_status/.test(r)));
   const md = formatLayerSixReadinessDigestMarkdownV1(s);
   assert.match(md, /codex_output_review_surface_v1: `PROVEN_PRESENT`/);
   assert.match(md, /Layer 6 remains \*\*NOT_PROVEN\*\*/);
+});
+
+test("digest READY with TASK_PARTIAL_OR_FAILED adds readiness caveat reasons", () => {
+  const fp = buildFailurePatternRegistryReadModelFromSeededV1("t");
+  const proof = buildCodexPacketProofReadModelV1(
+    {
+      contract: BUCKPARTS_CODEX_NEXT_EXECUTION_PACKET_JSON_CONTRACT_V1,
+      overall_status: "PASS",
+      source_packet_id: "execution_packet_v1:queue-amazon-agent",
+      source_queue_row_id: "queue-amazon-agent",
+      source_packet_title: "Amazon rescue · read-only agent work",
+      codex_executed: true,
+      external_agent: "codex",
+      external_agent_execution: "PROVEN_FOR_READ_ONLY_EXECUTION_PACKET",
+      output_capture: "PROVEN_FOR_CODEX_JSONL_AND_FINAL_MESSAGE",
+      sandbox: "read-only",
+      final_message_path: "/tmp/a/f.txt",
+      jsonl_path: "/tmp/a/e.jsonl",
+      event_count: 2,
+      first_event: "thread.started",
+      last_event: "turn.completed",
+      git_status_clean: true,
+      layer_6_founder_only_approval: "NOT_PROVEN",
+    },
+    { generated_at: "t" },
+  );
+  const review = buildCodexOutputReviewPacketV1({
+    proof,
+    generated_at: "t",
+    codex_final_message: {
+      attempted_path: "/tmp/a/f.txt",
+      text: "npm run lint failed.\nEPERM\n",
+      load_error: null,
+    },
+  });
+  assert.equal(review.codex_task_outcome_status, "TASK_PARTIAL_OR_FAILED");
+  const s = buildLayerSixReadinessSummaryV1(fp, {
+    generated_at: "t",
+    codex_packet_proof: proof,
+    codex_output_review_packet: review,
+  });
+  assert.ok(s.unknown_facts.some((f) => /TASK_PARTIAL_OR_FAILED/.test(f)));
+  assert.ok(s.reasons.some((r) => /codex_task_outcome_status=TASK_PARTIAL_OR_FAILED/.test(r)));
 });
 
 test("blocked codex_output_review yields NOT_PRESENT_OR_BLOCKED surface", () => {
@@ -257,6 +307,7 @@ test("digest section wording is informational only and does not alter automation
   assert.ok(digestMd.includes("Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN**"));
   assert.ok(digestMd.includes("FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH"));
   assert.ok(digestMd.includes("codex_output_review_packet_v1"));
+  assert.ok(digestMd.includes("codex_task_outcome_status"));
   assert.match(digestMd, /does \*\*not\*\* expand Runner autonomy/i);
   assert.match(digestMd, /automation_input/);
   assert.match(digestMd, new RegExp(LAYER_SIX_READINESS_SUMMARY_CONTRACT_V1));

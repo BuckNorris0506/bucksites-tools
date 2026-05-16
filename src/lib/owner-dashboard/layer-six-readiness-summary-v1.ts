@@ -14,7 +14,7 @@ export type LayerSixCodexOutputReviewSurfaceV1 = "UNKNOWN" | "PROVEN_PRESENT" | 
 
 /** Digest section header hint (single source of truth). */
 export const LAYER_SIX_READINESS_DIGEST_HINT_V1 =
-  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied, optional Codex packet proof JSON via `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`, and optional `codex_output_review_packet_v1` when digest builds it from proof + final-message file). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until founder-only judgment loops are evidenced; optional Codex proof improves external-agent **evidence** only when valid PASS JSON is supplied — not founder approval.";
+  "**PROVEN:** Readiness is derived from `failure_pattern_registry_read_model_v1` counts only (plus optional Runner Step `layer_truth` when supplied, optional Codex packet proof JSON via `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH`, and optional `codex_output_review_packet_v1` when digest builds it from proof + final-message file). **PROVEN:** `codex_output_review_surface_v1`=PROVEN_PRESENT means judgment markdown exists — **not** that `codex_task_outcome_status` is TASK_SUCCESS_PROVEN (transport/capture ≠ validation success). **PROVEN:** This summary is informational — it does **not** expand Runner autonomy, allowlists, or mutation gates. **PROVEN:** Layer 6 (`layer_6_founder_only_approval`) remains **NOT_PROVEN** in-repo until founder-only judgment loops are evidenced; optional Codex proof improves external-agent **evidence** only when valid PASS JSON is supplied — not founder approval.";
 
 /** Plain sentence for React owner dashboard (no markdown emphasis). */
 export const LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1 =
@@ -128,14 +128,19 @@ export function buildLayerSixReadinessSummaryV1(
 
   if (codexProof?.valid && codexProof.codex_packet_execution_proven) {
     proven_facts.push(
-      "PROVEN: Valid `codex_packet_proof_read_model_v1` + PASS on `buckparts_codex_next_execution_packet_v1` records read-only Codex execution against a repo Founder Execution Packet with JSONL/final-message capture and clean git (when flags hold). **NOT PROVEN:** Layer 6 founder-only approval / judgment.",
+      "PROVEN: Valid `codex_packet_proof_read_model_v1` + PASS on `buckparts_codex_next_execution_packet_v1` records read-only Codex **transport** with JSONL/final-message **capture** and clean git (when flags hold). **NOT PROVEN:** Packet **task outcome** / validation-command success or Layer 6 founder judgment.",
     );
   }
 
-  if (codex_output_review_surface_v1 === "PROVEN_PRESENT") {
+  if (codex_output_review_surface_v1 === "PROVEN_PRESENT" && codexReview) {
     proven_facts.push(
-      "PROVEN: Digest-built `codex_output_review_packet_v1` reports READY_FOR_FOUNDER_REVIEW — founder-facing approve/reject/follow-up/defer copy exists for this Codex proof snapshot. **NOT PROVEN:** Layer 6 complete, mutation authority, registry row recorded, or automation consuming founder judgment.",
+      "PROVEN: Digest-built `codex_output_review_packet_v1` reports READY_FOR_FOUNDER_REVIEW — founder-facing judgment copy exists for this Codex proof snapshot. **NOT PROVEN:** Layer 6 complete, mutation authority, registry consumption, or successful validation — read `codex_task_outcome_status` on that packet.",
     );
+    if (codexReview.codex_task_outcome_status !== "TASK_SUCCESS_PROVEN") {
+      unknown_facts.push(
+        `UNKNOWN/PARTIAL: codex_task_outcome_status=${codexReview.codex_task_outcome_status} on digest review packet — captured Codex prose does **not** prove the Founder Execution Packet validation bundle succeeded.`,
+      );
+    }
   }
 
   if (codexReview !== undefined && codex_output_review_surface_v1 === "NOT_PRESENT_OR_BLOCKED") {
@@ -177,6 +182,15 @@ export function buildLayerSixReadinessSummaryV1(
   }
 
   const reasons: string[] = [];
+  if (
+    codex_output_review_surface_v1 === "PROVEN_PRESENT" &&
+    codexReview &&
+    codexReview.codex_task_outcome_status !== "TASK_SUCCESS_PROVEN"
+  ) {
+    reasons.push(
+      `PROVEN: Codex output review classifier reports codex_task_outcome_status=${codexReview.codex_task_outcome_status} — external-agent capture must not be read as lint/build/operator-proof success.`,
+    );
+  }
   const required_before_layer_6: string[] = [...baseRequiredBeforeLayer6()];
   let readiness_status: LayerSixReadinessStatusV1;
 
@@ -248,7 +262,7 @@ export function formatLayerSixReadinessDigestMarkdownV1(summary: LayerSixReadine
     summary.codex_output_review_surface_v1 === "UNKNOWN"
       ? "**UNKNOWN:** caller omitted digest-built review packet input — typical owner-dashboard default; digest runs may supply PROVEN_PRESENT."
       : summary.codex_output_review_surface_v1 === "PROVEN_PRESENT"
-        ? "**PROVEN:** digest supplied `codex_output_review_packet_v1` with READY_FOR_FOUNDER_REVIEW."
+        ? "**PROVEN:** digest supplied `codex_output_review_packet_v1` with READY_FOR_FOUNDER_REVIEW — verify `codex_task_outcome_status` on that artifact (transport ≠ validation success)."
         : "**PROVEN:** digest supplied review packet but surface is blocked or proof-invalid (`NOT_PRESENT_OR_BLOCKED`).";
 
   const lines = [

@@ -13,10 +13,135 @@ export const CODEX_OUTPUT_REVIEW_DIGEST_HINT_V1 =
   "**PROVEN:** Markdown below is from `codex_output_review_packet_v1` (owner judgment surface only). **NOT PROVEN:** Layer 6 complete, mutation authority, or Runner automation — approving findings here does **not** authorize writes.";
 
 export const CODEX_OUTPUT_REVIEW_OWNER_DASHBOARD_LINE_V1 =
-  "Codex output review is UNKNOWN on this dashboard until an artifact path is wired; digest may surface review when FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH is set and optional final-message file is readable. This handler does not read temp Codex paths.";
+  "Codex output review is UNKNOWN on this dashboard until an artifact path is wired; digest may score transport vs task outcome (`codex_task_outcome_status`) when FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH and final-message files are readable. This handler does not read temp Codex paths.";
 
 /** Plain-text excerpt cap for digest/registry visibility (full message remains on disk when applicable). */
 export const CODEX_OUTPUT_REVIEW_EXCERPT_MAX_CHARS_V1 = 1200;
+
+/** Heuristic classifier over Codex final-message prose — transport/capture proof is separate from task outcome proof. */
+export type CodexTaskOutcomeStatusV1 =
+  | "TASK_SUCCESS_PROVEN"
+  | "TASK_PARTIAL_OR_FAILED"
+  | "TASK_OUTCOME_UNKNOWN";
+
+export type CodexFinalMessageOutcomeClassificationV1 = {
+  codex_task_outcome_status: CodexTaskOutcomeStatusV1;
+  codex_reported_validation_failures: string[];
+  codex_reported_successes: string[];
+  codex_environment_limitations: string[];
+};
+
+function dedupeStable(lines: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const l of lines) {
+    if (seen.has(l)) continue;
+    seen.add(l);
+    out.push(l);
+  }
+  return out;
+}
+
+/**
+ * PROVEN: pure heuristic — distinguishes captured narrative hints from proven validation success.
+ * INFERRED: phrase lists are intentionally narrow; false positives/negatives remain possible (see TASK_OUTCOME_UNKNOWN).
+ */
+export function classifyCodexFinalMessageOutcomeV1(finalMessageText: string): CodexFinalMessageOutcomeClassificationV1 {
+  const raw = finalMessageText.trim();
+  if (raw.length === 0) {
+    return {
+      codex_task_outcome_status: "TASK_OUTCOME_UNKNOWN",
+      codex_reported_validation_failures: [],
+      codex_reported_successes: [],
+      codex_environment_limitations: [],
+    };
+  }
+
+  const lower = raw.toLowerCase();
+  const failures: string[] = [];
+  const envLimits: string[] = [];
+
+  const fail = (msg: string): void => {
+    failures.push(msg);
+  };
+  const env = (msg: string): void => {
+    envLimits.push(msg);
+  };
+
+  if (/\bexited\s+1\b/i.test(raw)) fail("Exit/failure wording: `exited 1`.");
+  if (lower.includes("eperm")) {
+    fail("EPERM reported in final message.");
+    env("EPERM — often temp IPC or sandbox permission denial (e.g. `tsx` under read-only).");
+  }
+  if (lower.includes(".next/cache")) {
+    fail("`.next/cache` mentioned.");
+    env("`.next/cache` not writable — typical read-only sandbox constraint (ESLint/Next cache).");
+  }
+  if (lower.includes(".next/trace")) {
+    fail("`.next/trace` mentioned.");
+    env("`.next/trace` not writable — typical read-only sandbox constraint (Next tracing).");
+  }
+  if (lower.includes("xcrun")) {
+    fail("`xcrun` mentioned.");
+    env("`xcrun` tooling may require writable temp caches (e.g. under `/tmp`).");
+  }
+  if (lower.includes("write block")) {
+    fail("`write block` mentioned.");
+    env("Write-block wording — read-only filesystem posture.");
+  }
+  if (lower.includes("permission")) {
+    fail("`permission` mentioned.");
+    env("Permission wording — may indicate sandbox or OS filesystem constraints.");
+  }
+  if (lower.includes("could not")) fail("`could not` mentioned.");
+  if (/\bfailed\b/i.test(raw) && !/\bnot\s+failed\b/i.test(raw)) {
+    fail("`failed` mentioned (simple negation `not failed` excluded).");
+  }
+
+  const failuresDedup = dedupeStable(failures);
+  const envDedup = dedupeStable(envLimits);
+
+  if (failuresDedup.length > 0) {
+    return {
+      codex_task_outcome_status: "TASK_PARTIAL_OR_FAILED",
+      codex_reported_validation_failures: failuresDedup,
+      codex_reported_successes: [],
+      codex_environment_limitations: envDedup,
+    };
+  }
+
+  let successKinds = 0;
+  const successes: string[] = [];
+  if (/\bexited\s+0\b/i.test(raw)) {
+    successKinds += 1;
+    successes.push("`exited 0` mentioned.");
+  }
+  if (/\bPASS\b/.test(raw)) {
+    successKinds += 1;
+    successes.push("`PASS` token present.");
+  }
+  if (/RESULT:\s*OK/i.test(raw)) {
+    successKinds += 1;
+    successes.push("`RESULT: OK` present.");
+  }
+  if (/no\s+repo\s+files/i.test(lower)) {
+    successKinds += 1;
+    successes.push("`no repo files` style signal.");
+  }
+  if (/\bno\s+[^\n]+\s+changed\b/i.test(raw)) {
+    successKinds += 1;
+    successes.push("`no … changed` style signal.");
+  }
+
+  const provenOk = successKinds >= 2;
+
+  return {
+    codex_task_outcome_status: provenOk ? "TASK_SUCCESS_PROVEN" : "TASK_OUTCOME_UNKNOWN",
+    codex_reported_validation_failures: [],
+    codex_reported_successes: successes,
+    codex_environment_limitations: [],
+  };
+}
 
 export type CodexOutputReviewStatusV1 =
   | "READY_FOR_FOUNDER_REVIEW"
@@ -79,6 +204,11 @@ export type CodexOutputReviewPacketV1 = {
   /** Set when filesystem read failed in digest file mode. */
   final_message_load_error: string | null;
   review_status: CodexOutputReviewStatusV1;
+  /** Heuristic over full final message — independent of proof PASS transport/capture. */
+  codex_task_outcome_status: CodexTaskOutcomeStatusV1;
+  codex_reported_validation_failures: readonly string[];
+  codex_reported_successes: readonly string[];
+  codex_environment_limitations: readonly string[];
   founder_options: readonly CodexOutputReviewFounderOptionV1[];
   prohibited_actions_still_apply: readonly string[];
   recommended_registry_next_step: string;
@@ -124,9 +254,17 @@ export function buildCodexOutputReviewPacketV1(args: {
     load_error: null,
   };
 
+  const unknownOutcome = (): CodexFinalMessageOutcomeClassificationV1 => ({
+    codex_task_outcome_status: "TASK_OUTCOME_UNKNOWN",
+    codex_reported_validation_failures: [],
+    codex_reported_successes: [],
+    codex_environment_limitations: [],
+  });
+
   let review_status: CodexOutputReviewStatusV1 = "INVALID_CODEX_PROOF";
   let codex_final_message_present = false;
   let codex_final_message_excerpt: string | null = null;
+  let outcomeClassification = unknownOutcome();
 
   if (!proof.valid || snap?.overall_status !== "PASS" || !proof.codex_packet_execution_proven) {
     review_status = "INVALID_CODEX_PROOF";
@@ -140,6 +278,7 @@ export function buildCodexOutputReviewPacketV1(args: {
       review_status = "READY_FOR_FOUNDER_REVIEW";
       codex_final_message_present = true;
       codex_final_message_excerpt = trimCodexFinalMessageExcerptV1(trimmed);
+      outcomeClassification = classifyCodexFinalMessageOutcomeV1(trimmed);
     }
   }
 
@@ -159,6 +298,10 @@ export function buildCodexOutputReviewPacketV1(args: {
     final_message_attempted_path: msgIn.attempted_path,
     final_message_load_error: msgIn.load_error,
     review_status,
+    codex_task_outcome_status: outcomeClassification.codex_task_outcome_status,
+    codex_reported_validation_failures: outcomeClassification.codex_reported_validation_failures,
+    codex_reported_successes: outcomeClassification.codex_reported_successes,
+    codex_environment_limitations: outcomeClassification.codex_environment_limitations,
     founder_options: CODEX_OUTPUT_REVIEW_FOUNDER_OPTIONS_V1,
     prohibited_actions_still_apply: buildProhibitedActionsCombinedV1(),
     recommended_registry_next_step: CODEX_OUTPUT_REVIEW_REGISTRY_NEXT_STEP_V1,
@@ -177,9 +320,65 @@ export function formatCodexOutputReviewPacketDigestMarkdownV1(packet: CodexOutpu
 
   const prohib = packet.prohibited_actions_still_apply.map((p) => `- ${p}`).join("\n");
 
+  const outcomeDigestLines: string[] =
+    packet.review_status === "READY_FOR_FOUNDER_REVIEW"
+      ? (() => {
+          const lines: string[] = [
+            "**Transport vs task validation:** PROVEN when proof JSON is PASS + final message readable — Codex ran and prose was captured. **NOT PROVEN:** Every packet validation command succeeded.",
+            `**Codex task outcome:** \`${packet.codex_task_outcome_status}\``,
+          ];
+
+          if (packet.codex_reported_validation_failures.length > 0) {
+            lines.push(
+              "",
+              "**Detected validation / failure signals (heuristic):**",
+              ...packet.codex_reported_validation_failures.map((f) => `- ${f}`),
+            );
+          }
+          if (packet.codex_environment_limitations.length > 0) {
+            lines.push(
+              "",
+              "**Detected environment / sandbox limitations (heuristic):**",
+              ...packet.codex_environment_limitations.map((e) => `- ${e}`),
+            );
+          }
+          if (packet.codex_task_outcome_status === "TASK_SUCCESS_PROVEN" && packet.codex_reported_successes.length > 0) {
+            lines.push(
+              "",
+              "**Supporting success markers (heuristic):**",
+              ...packet.codex_reported_successes.map((s) => `- ${s}`),
+            );
+          }
+          if (packet.codex_task_outcome_status === "TASK_PARTIAL_OR_FAILED") {
+            lines.push(
+              "",
+              "**Founder caution:** Do **not** approve read-only findings blindly — classifier reports **TASK_PARTIAL_OR_FAILED**. Prefer **`request_followup_readonly`** before **`approve_readonly_findings`** until validation is green outside read-only sandbox restrictions.",
+            );
+          }
+          if (packet.codex_task_outcome_status === "TASK_OUTCOME_UNKNOWN") {
+            lines.push(
+              "",
+              "**UNKNOWN task outcome:** Insufficient paired success markers for `TASK_SUCCESS_PROVEN` — treat packet validation as **unproven** from this prose alone.",
+            );
+          }
+          if (packet.codex_task_outcome_status === "TASK_SUCCESS_PROVEN") {
+            lines.push(
+              "",
+              "**INFERRED:** Multiple explicit success markers were present — still re-verify on a non-sandbox machine; heuristics can miss negated context.",
+            );
+          }
+          return lines;
+        })()
+      : [
+          "**Codex task outcome classifier:** heuristic runs only when `review_status` is READY_FOR_FOUNDER_REVIEW with readable final-message text.",
+          `**Codex task outcome (not classified):** \`${packet.codex_task_outcome_status}\``,
+        ];
+
   const lines = [
     `**PROVEN:** Contract \`${packet.contract}\` · \`review_status\`=\`${packet.review_status}\` · read_only=\`true\` · automation_input=\`false\` · founder_judgment_required=\`true\`.`,
     `**PROVEN:** \`layer_6_founder_only_approval\` remains **NOT_PROVEN** — this packet does **not** complete Layer 6 or prove closed-loop autonomy.`,
+    "",
+    ...outcomeDigestLines,
     "",
     "**Source execution packet:**",
     `- source_packet_id: \`${packet.source_packet_id ?? "null"}\``,

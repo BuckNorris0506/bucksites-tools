@@ -162,6 +162,8 @@ test("buildCodexOutputReviewDigestBundleForFounderRunV1 reads final message for 
       proofReadModel: readModel!,
     });
     assert.equal(bundle.packet?.review_status, "READY_FOR_FOUNDER_REVIEW");
+    assert.equal(bundle.packet?.codex_task_outcome_status, "TASK_OUTCOME_UNKNOWN");
+    assert.match(bundle.markdownFragment!, /\*\*Codex task outcome:\*\* `TASK_OUTCOME_UNKNOWN`/);
     assert.match(bundle.markdownFragment!, /Codex summary body/);
     assert.match(bundle.markdownFragment!, /approve_readonly_findings/);
   } finally {
@@ -245,7 +247,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
     ),
     codex_packet_proof_digest_markdown: "**PROVEN:** Fixture Codex Packet Proof fragment (codex_packet_proof_read_model_v1).",
     codex_output_review_digest_markdown:
-      "**PROVEN:** Fixture Codex Output Review fragment (codex_output_review_packet_v1; owner judgment only).",
+      "**PROVEN:** Fixture fragment.\n\n**Codex task outcome:** `TASK_PARTIAL_OR_FAILED`\n\nPrefer **request_followup_readonly**.",
   });
   assert.match(md, /^# BuckParts Founder Digest/m);
   assert.match(md, /## Is the repo \/ build healthy\?/);
@@ -273,6 +275,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
   assert.match(md, /codex_packet_proof_read_model_v1/);
   assert.match(md, /## Codex Output Review Packet \(owner-only v1\)/);
   assert.match(md, /codex_output_review_packet_v1/);
+  assert.match(md, /\*\*Codex task outcome:\*\* `TASK_PARTIAL_OR_FAILED`/);
   const idxFp = md.indexOf("## Failure Pattern Registry (read-only v1)");
   const idxL6 = md.indexOf("## Layer 6 Readiness Summary (informational v1)");
   const idxCodex = md.indexOf("## Codex Packet Proof (informational v1)");
