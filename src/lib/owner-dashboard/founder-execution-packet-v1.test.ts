@@ -76,7 +76,7 @@ test("only agent_safe + agent + read_only rows become packets; others are skippe
   assert.ok(actorSkip?.reason.includes("agent"));
 });
 
-test("copy_paste_prompt includes objective, truth contract, queue fields, validation, mutation prohibition", () => {
+test("copy_paste_prompt distinguishes sandbox inspection from external Runner/CI validation", () => {
   const m = buildFounderExecutionPacketsV1([agentSafeRow()], { source: "unit_test", generated_at: "2026-01-01" });
   const p = m.packets[0]!;
   assert.match(p.copy_paste_prompt, /## OBJECTIVE/);
@@ -85,9 +85,18 @@ test("copy_paste_prompt includes objective, truth contract, queue fields, valida
   assert.match(p.copy_paste_prompt, /Amazon rescue · read-only agent work/);
   assert.match(p.copy_paste_prompt, /Command Center v2\.amazon_rescue/);
   assert.match(p.copy_paste_prompt, /Run read-only queue audit/);
+  assert.match(p.copy_paste_prompt, /## DO NOT RUN INSIDE CODEX READ-ONLY SANDBOX/);
+  assert.match(p.copy_paste_prompt, /Do \*\*not\*\* run \*\*`npm run lint`\*\*, \*\*`npm run build`\*\*, or \*\*`npm run buckparts:operator-proof`\*\* inside a read-only Codex/);
+  assert.match(p.copy_paste_prompt, /## EXTERNAL REPO VALIDATION BUNDLE/);
+  assert.match(p.copy_paste_prompt, /NOT CODEX SANDBOX/);
+  assert.match(p.copy_paste_prompt, /## ACCEPTANCE CRITERIA \(EXTERNAL VALIDATION/);
+  assert.match(p.copy_paste_prompt, /After read-only agent inspection/);
+  assert.doesNotMatch(p.copy_paste_prompt, /Run the validation commands listed below/i);
+  assert.doesNotMatch(p.copy_paste_prompt, /## VALIDATION COMMANDS \(repo root\)/);
   assert.match(p.copy_paste_prompt, /npm run lint/);
   assert.match(p.copy_paste_prompt, /npm run build/);
   assert.match(p.copy_paste_prompt, /npm run buckparts:operator-proof/);
+  assert.match(p.copy_paste_prompt, /buckparts:runner-step/);
   assert.match(p.copy_paste_prompt, /Supabase/);
   assert.match(p.copy_paste_prompt, /retailer_links/);
   assert.ok(p.validation_command.includes("npm run lint"));

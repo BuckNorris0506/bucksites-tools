@@ -76,10 +76,10 @@ function defaultProhibitedActions(): string[] {
 
 function defaultAcceptanceCriteria(): string[] {
   return [
-    "`npm run lint` exits 0 from repo root.",
-    "`npm run build` exits 0 from repo root.",
-    "`npm run buckparts:operator-proof` exits 0 from repo root (read-only operator proof script per package.json).",
-    "All substantive work stays within the queue row next_action scope and read-only posture described in this packet.",
+    "After read-only agent inspection: **`npm run lint`** exits 0 from repo root when run **outside** Codex read-only sandbox (Runner Step, local terminal, or CI — writable `.next` / tooling caches).",
+    "After read-only agent inspection: **`npm run build`** exits 0 from repo root when run **outside** Codex read-only sandbox (same surfaces as above).",
+    "After read-only agent inspection: **`npm run buckparts:operator-proof`** exits 0 from repo root when run **outside** Codex read-only sandbox (repo-owned read-only proof bundle per `package.json`).",
+    "All substantive read-only inspection stays within the queue row `next_action` scope and posture described in this packet.",
   ];
 }
 
@@ -96,8 +96,8 @@ function buildCopyPastePrompt(args: {
 
   const allowed = [
     "Read and search the repository with editor/agent tools.",
-    "Run the validation commands listed below (lint, build, operator-proof) unless the founder has already confirmed them green in this session.",
-    "Summarize findings in structured text: what you checked, what passed/failed, what remains owner-only.",
+    "Run **read-only** report or inspection flows that do **not** require writable `.next/*` caches, npm/tsx temp IPC, or other paths blocked in a read-only sandbox.",
+    "Summarize findings in structured text: what you inspected, what you conclude at read-only scope, what remains owner-only.",
   ];
 
   const acLines = acceptance_criteria.map((c, i) => `${i + 1}. ${c}`).join("\n");
@@ -111,16 +111,20 @@ function buildCopyPastePrompt(args: {
     "## TRUTH CONTRACT",
     "- PROVEN: This prompt was produced by founder_execution_packet_v1 in the BuckParts repo (planning layer only; no I/O from the packet builder itself).",
     `- PROVEN: Packet source label: ${src}; digest/dashboard generated_at context (if any): ${when}.`,
+    "- PROVEN: **`npm run lint`**, **`npm run build`**, and **`npm run buckparts:operator-proof`** are **repo-owned validation** — run on a normal writable checkout (Runner Step `npm run buckparts:runner-step`, local shell, or GitHub Actions), **not** inside Codex read-only sandbox.",
     "- INFERRED: Your local toolchain versions and network reachability match CI unless you verify otherwise.",
-    "- UNKNOWN: Whether additional read-only `npm run buckparts:*` scripts beyond those listed under VALIDATION are required; add only when next_action clearly implies them.",
+    "- UNKNOWN: Whether additional read-only `npm run buckparts:*` scripts beyond those listed under external validation are required; add only when next_action clearly implies them.",
     "",
     "## QUEUE ROW (AUTHORITATIVE FOR THIS TASK)",
     `- Title: ${row.title}`,
     `- evidence_basis: ${row.evidence_basis}`,
     `- next_action: ${row.next_action}`,
     "",
-    "## ALLOWED ACTIONS",
+    "## ALLOWED ACTIONS (READ-ONLY AGENT / CODEX SANDBOX)",
     allowedLines,
+    "",
+    "## DO NOT RUN INSIDE CODEX READ-ONLY SANDBOX",
+    "Do **not** run **`npm run lint`**, **`npm run build`**, or **`npm run buckparts:operator-proof`** inside a read-only Codex (or equivalent) sandbox for this packet. Those flows require writable `.next/cache`, `.next/trace`, npm/tsx temp IPC, and related host paths; failures there are **environment/sandbox artifacts**, not proof that the repo is invalid.",
     "",
     "## PROHIBITED ACTIONS",
     "The queue row does NOT grant permission to mutate DB, retailer_links, affiliate URLs, or evidence files. Unless the founder explicitly overrides in chat, treat the following as hard stops:",
@@ -128,14 +132,17 @@ function buildCopyPastePrompt(args: {
     "",
     "## REQUIRED OUTPUT FORMAT",
     "1. Scope recap (one short paragraph tied to the queue row).",
-    "2. Commands run + key paths inspected.",
-    "3. Results vs each acceptance criterion (PASS/FAIL + notes).",
-    "4. Owner escalation list (empty if none): items that require founder decision or non-read-only work.",
+    "2. Read-only inspection performed (paths, scripts, or searches — **not** lint/build/operator-proof inside sandbox).",
+    "3. Explicit list: **which external validation commands** the operator should run outside Codex (`npm run lint`, `npm run build`, `npm run buckparts:operator-proof`, and any Runner Step bundle you recommend).",
+    "4. If you attempted any command that requires writes and it failed with EPERM / `.next/*` / temp IPC errors, label that as **sandbox limitation** — do not treat it as repo-wide validation failure.",
+    "5. Owner escalation list (empty if none): items that require founder decision or non-read-only work.",
     "",
-    "## VALIDATION COMMANDS (repo root)",
+    "## EXTERNAL REPO VALIDATION BUNDLE (RUNNER / LOCAL CI / FOUNDER TERMINAL — NOT CODEX SANDBOX)",
+    "The commands below are **acceptance criteria** for the real checkout after read-only agent work. Execute them **outside** this read-only sandbox (e.g. `npm run buckparts:runner-step` from `scripts/buckparts-runner-step.ts`, or the same commands in CI).",
+    "",
     validation_command,
     "",
-    "## ACCEPTANCE CRITERIA (from packet)",
+    "## ACCEPTANCE CRITERIA (EXTERNAL VALIDATION — NOT CODEX SANDBOX INSTRUCTIONS)",
     acLines,
     "",
     "## CLOSING",

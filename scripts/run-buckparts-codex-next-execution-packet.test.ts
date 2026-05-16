@@ -7,6 +7,8 @@ import path from "node:path";
 import test from "node:test";
 
 import type { FounderExecutionPacketV1 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
+import { buildFounderExecutionPacketsV1 } from "../src/lib/owner-dashboard/founder-execution-packet-v1";
+import type { FounderActionQueueRowV1 } from "../src/lib/owner-dashboard/founder-action-queue-v1";
 import type { NextExecutionPacketSnapshotV1 } from "./lib/buckparts-next-execution-packet";
 import type { BuckpartsCodexReadonlySmokeDeps } from "./run-buckparts-codex-readonly-smoke.ts";
 import {
@@ -105,12 +107,37 @@ function packetDeps(args: {
   };
 }
 
+const agentSafeRow: FounderActionQueueRowV1 = {
+  id: "queue-amazon-agent",
+  title: "Amazon rescue · read-only agent work",
+  status: "agent_safe",
+  owner_burden: "medium",
+  recommended_actor: "agent",
+  mutation_authority: "read_only",
+  evidence_basis: "fixture",
+  next_action: "Run read-only queue audit.",
+};
+
+function realPacketFromBuilder(): FounderExecutionPacketV1 {
+  const m = buildFounderExecutionPacketsV1([agentSafeRow], { source: "codex_test" });
+  assert.equal(m.packets.length, 1);
+  return m.packets[0]!;
+}
+
 test("buildCodexPromptForNextExecutionPacketV1 includes wrapper constraints and packet copy_paste_prompt", () => {
   const p = mockPacket();
   const full = buildCodexPromptForNextExecutionPacketV1(p);
   assert.ok(full.includes("Do not create git commits."), "wrapper requires no commits");
   assert.ok(full.includes(PROHIB_FROM_PACKET), "includes prohibited line echoed from packet prompt");
   assert.ok(full.includes("## OBJECTIVE"), "includes packet body");
+  assert.match(
+    full,
+    /Do \*\*not\*\* run writable validation commands inside this read-only sandbox/i,
+    "wrapper bans lint/build/operator-proof inside sandbox",
+  );
+  const real = realPacketFromBuilder();
+  const fullReal = buildCodexPromptForNextExecutionPacketV1(real);
+  assert.match(fullReal, /EXTERNAL REPO VALIDATION BUNDLE/, "real packet embeds external validation section");
 });
 
 test("buildNoPacketSummaryV1 pins Layer 6 NOT_PROVEN", () => {

@@ -91,6 +91,7 @@ test("live-style fixture classifies TASK_PARTIAL_OR_FAILED with sandbox limitati
   assert.equal(o.codex_task_outcome_status, "TASK_PARTIAL_OR_FAILED");
   assert.ok(o.codex_reported_validation_failures.length >= 3);
   assert.ok(o.codex_environment_limitations.length >= 2);
+  assert.ok(o.codex_environment_limitations.some((e) => /tsx temp IPC/i.test(e)));
   assert.equal(o.codex_reported_successes.length, 0);
 
   const proof = proofRead("t");

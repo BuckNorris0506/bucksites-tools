@@ -70,16 +70,20 @@ export function classifyCodexFinalMessageOutcomeV1(finalMessageText: string): Co
 
   if (/\bexited\s+1\b/i.test(raw)) fail("Exit/failure wording: `exited 1`.");
   if (lower.includes("eperm")) {
-    fail("EPERM reported in final message.");
+    fail("EPERM reported in final message (often sandbox/temp IPC — not proof of product logic failure).");
     env("EPERM — often temp IPC or sandbox permission denial (e.g. `tsx` under read-only).");
   }
   if (lower.includes(".next/cache")) {
-    fail("`.next/cache` mentioned.");
+    fail("`.next/cache` mentioned (lint/Next cache — typically blocked in read-only sandbox; validate outside Codex).");
     env("`.next/cache` not writable — typical read-only sandbox constraint (ESLint/Next cache).");
   }
   if (lower.includes(".next/trace")) {
-    fail("`.next/trace` mentioned.");
+    fail("`.next/trace` mentioned (Next trace — typically blocked in read-only sandbox; validate outside Codex).");
     env("`.next/trace` not writable — typical read-only sandbox constraint (Next tracing).");
+  }
+  if (lower.includes("tsx") && lower.includes("temp") && lower.includes("ipc")) {
+    fail("tsx temp IPC reported (often EPERM under read-only — delegate validation to Runner/local CI).");
+    env("tsx temp IPC — npm/tsx subprocess may require writable temp; run validation outside read-only sandbox.");
   }
   if (lower.includes("xcrun")) {
     fail("`xcrun` mentioned.");
