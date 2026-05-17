@@ -4,7 +4,7 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. Last handoff refresh for digest text: **`2026-05-03`**: `origin/main` includes through **`9229144`** (whole-house water model trust/buy parity). After that push, **`npm test`** and **`npm run build`** completed successfully; **`npm run buckparts:command-surface`** and **`npm run buckparts:command-center`** completed with exit code **0** (JSON still reports `system_health* : WARNING` because blocked/unsafe retailer links exceed live/safe links). Command Center **`execution_guidance.next_move_mode`** is **`READ_ONLY`**. Command Center JSON now includes **`search_and_click_intelligence_summary`**, **`money_funnel_summary`**, **`rescue_velocity_summary`**, and **`rescue_delta_trend_summary`** (see §14 for `rescue_delta_trend_summary` snapshot discipline—after a snapshot refresh + follow-up surface read, the block can return **`runtime_status: OK`** with numeric `current` / `deltas` / `net_rescue_direction`, often **`FLAT`** when nothing moved).
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -183,8 +183,125 @@ Operating rules:
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
 ```
+
+---
+
+## 0B) Layer 6 control-plane & Codex/Runner truth (2026-05-16)
+
+**Supersedes** any older HQ claims about Cursor/Codex automation, Runner “full loop,” or Layer 6 being complete. Canonical detail also lives in `docs/BuckParts-RUNNER-STATUS.md`, `docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`, and `docs/BuckParts-JSON-STDOUT-CONTRACT.md`.
+
+### Active lane (HQ priority order)
+
+1. **Finish Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**).
+2. **Then Batch Production Lane v1 (NOT implemented)** — intended next **business-useful** system: batch 20–50 candidate links/products/pages per run, human review before commit/deploy. **UNKNOWN** schedule and schema until built.
+
+**Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
+
+### What Layer 6 now proves (PROVEN in-repo)
+
+| Claim | Evidence |
+|--------|----------|
+| Failure-pattern guardrail snapshot | `layer_six_readiness_summary_v1` in `src/lib/owner-dashboard/layer-six-readiness-summary-v1.ts`; digest + owner dashboard surface `readiness_status` only. |
+| Codex read-only subprocess + capture | `npm run buckparts:codex-readonly-smoke` → `scripts/run-buckparts-codex-readonly-smoke.ts`; `npm run buckparts:codex-next-execution-packet` → `scripts/run-buckparts-codex-next-execution-packet.ts`. |
+| Codex packet proof read model | `codex_packet_proof_read_model_v1` / contract `buckparts_codex_next_execution_packet_v1` in `src/lib/owner-dashboard/codex-packet-proof-read-model-v1.ts`. |
+| Codex output review surface | `codex_output_review_packet_v1` in `src/lib/owner-dashboard/codex-output-review-packet-v1.ts`; digest section when `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH` set. |
+| Transport ≠ task success | `codex_task_outcome_status` (`TASK_SUCCESS_PROVEN` / `TASK_PARTIAL_OR_FAILED` / `TASK_OUTCOME_UNKNOWN`) — separate from PASS transport/capture JSON. |
+| Founder decision recording (read visibility) | `founder_decision_registry_v1` + `founder_decision_registry_read_model_v1`; optional `codex_output_review_context_v1` on rows; digest correlation via `source_queue_row_id`. |
+| Repo-owned validation bundle | `npm run buckparts:runner-step` → `scripts/buckparts-runner-step.ts` (allowlist: lint, build, operator-proof only). |
+| CI Runner Step artifact path | `.github/workflows/buckparts-runner-step.yml`; digest workflow may embed `buckparts-runner-step.json` via `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH`. |
+| JSON stdout discipline | `docs/BuckParts-JSON-STDOUT-CONTRACT.md` + `scripts/json-stdout-contract.test.ts`. |
+| Failure pattern catalog | `failure_pattern_registry_read_model_v1` / `docs/BuckParts-FAILURE-PATTERN-REGISTRY.md`. |
+
+### What Layer 6 does NOT prove (NOT_PROVEN / UNKNOWN)
+
+- **NOT PROVEN:** Layer 6 “complete,” closed-loop autonomy, or founder-only approval automated end-to-end (`layer_6_founder_only_approval` stays **`NOT_PROVEN`** in Runner Step JSON and Codex summary JSON).
+- **NOT PROVEN:** Registry rows are consumed by Runner, queues, Execution Packets, or mutation gates (`automation_input: false` on review/readiness surfaces).
+- **NOT PROVEN:** Codex is an autonomous code writer or may run **`npm run lint` / `npm run build` / `npm run buckparts:operator-proof`** inside read-only sandbox (packet + wrapper **forbid** those; failures there are sandbox/environment, not repo-invalidity).
+- **NOT PROVEN:** `approve_readonly_findings` grants Supabase writes, `retailer_links` mutation, evidence JSON writes, affiliate URL changes, or git commits.
+- **UNKNOWN:** Cursor/OpenAI API loop from repo; Codex CLI on every host (`codex login` required).
+
+### Codex role today (PROVEN wording)
+
+Codex is a **read-only worker / investigator**: bounded `codex exec --sandbox read-only`, repo-built prompts, JSONL + final-message capture, clean-git check. It is **not** a self-directed engineer that ships commits or passes full validation inside the sandbox.
+
+**External validation (Runner / local CI / founder terminal):** Founder Execution Packets include **EXTERNAL REPO VALIDATION BUNDLE** / **DO NOT RUN INSIDE CODEX SANDBOX** — `npm run lint`, `npm run build`, `npm run buckparts:operator-proof` run via **`npm run buckparts:runner-step`** or CI, **not** inside Codex read-only sandbox.
+
+### Runner truth (PROVEN)
+
+- **Runner Step v1:** `node --import tsx scripts/buckparts-runner-step.ts` (alias `npm run buckparts:runner-step` for humans only per JSON stdout contract).
+- **Allowlist:** `lint`, `build`, `buckparts:operator-proof` — `scripts/lib/buckparts-runner-safety-contract-v1.ts`.
+- **Output:** `buckparts_runner_step_v1` with `layer_truth.layer_6_founder_only_approval: "NOT_PROVEN"`.
+- **GitHub dispatch:** `npm run buckparts:runner-step:gh` → `scripts/run-buckparts-runner-step-gh.ts` (workflow `BuckParts Runner Step`).
+- **Digest:** optional live Runner JSON via `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH`.
+
+### Founder Decision Registry truth (PROVEN)
+
+- **Spec:** `docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`; validator `src/lib/owner-dashboard/founder-decision-registry-v1.ts`.
+- **Read model:** `node --import tsx scripts/report-founder-decision-registry.ts` (alias `npm run buckparts:founder-decision-registry`).
+- **Data path:** `data/owner-decisions/*.json` (see `data/owner-decisions/README.md`).
+- **Codex review rows:** optional `codex_output_review_context_v1` with `founder_option_id` aligned to `codex_output_review_packet_v1` founder options.
+
+### Current owner decision row (PROVEN on disk)
+
+**File:** `data/owner-decisions/codex-output-review-queue-amazon-agent-request-followup-readonly-2026-05-16.json`
+
+| Field | Value |
+|--------|--------|
+| `source_queue_row_id` | `queue-amazon-agent` |
+| `source_decision_packet_id` | `codex_output_review_packet_v1:queue-amazon-agent` |
+| `decision_status` | `needs_more_evidence` |
+| `allowed_next_scope` | `read_only_agent` |
+| `codex_output_review_context_v1.founder_option_id` | `request_followup_readonly` |
+| `active_mutation_approvals` (report) | `0` |
+
+**Meaning:** Jared recorded **request another bounded read-only Codex pass** — **not** `approve_readonly_findings`. Codex transport/capture may be PASS while `codex_task_outcome_status` was **`TASK_PARTIAL_OR_FAILED`** (e.g. sandbox `.next/*` / temp IPC). This row is **owner judgment only**; it does **not** authorize mutation or Runner automation.
+
+### Codex Output Review / outcome classifier (PROVEN)
+
+- Builder: `buildCodexOutputReviewPacketV1` / `classifyCodexFinalMessageOutcomeV1` in `codex-output-review-packet-v1.ts`.
+- Digest env: `FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH` → saved stdout from `npm run buckparts:codex-next-execution-packet`.
+- Layer 6 field when digest correlates registry: `founder_decision_recording_for_codex_review_v1` may be **`PROVEN_PRESENT`** when a matching `codex_output_review_context_v1` row exists — still **NOT** Layer 6 complete.
+
+### JSON stdout contract (PROVEN)
+
+Machine-parseable JSON scripts: **`node --import tsx scripts/…`** — not `npm run … | jq`. See `docs/BuckParts-JSON-STDOUT-CONTRACT.md`.
+
+### Failure Pattern Registry (PROVEN)
+
+Seeded read model `failure_pattern_registry_read_model_v1`; feeds Layer 6 readiness counts. Informational only — does not widen Runner allowlist.
+
+### Batch Production Lane v1 (next business system — NOT PROVEN)
+
+**Intent (not implemented):** produce **20–50** candidate links/products/pages per batch run; founder reviews before commit/deploy. **UNKNOWN:** file paths, scripts, and gates until a lane is designed and landed.
+
+### Layer 6 / Codex — key commands (copy from repo root)
+
+```bash
+# Registry read model (pure JSON stdout)
+node --import tsx scripts/report-founder-decision-registry.ts
+
+# Runner validation bundle (pure JSON stdout)
+node --import tsx scripts/buckparts-runner-step.ts
+
+# Codex read-only smoke + next execution packet (host must have Codex CLI + login)
+npm run buckparts:codex-readonly-smoke
+npm run buckparts:codex-next-execution-packet
+
+# Digest with optional Runner + Codex proof JSON paths
+FOUNDER_DIGEST_SKIP_BUILD=1 \
+FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH=./buckparts-runner-step.json \
+FOUNDER_DIGEST_CODEX_PACKET_PROOF_JSON_PATH=/path/to/buckparts-codex-packet-proof.json \
+node --import tsx scripts/buckparts-founder-digest.ts
+
+# Handoff freshness guard (Layer 6 section presence)
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+### Representative Layer 6 commit chain (reference only)
+
+`1a4849b` Codex read-only smoke · `7ede5ea` Codex next execution packet · `5821af1` Codex packet proof read model · `1363bd4` Codex output review packet · `b38b90a` task outcome classifier · `5b0f0fb` Codex sandbox vs external validation · `b84453f` registry Codex review consumption · `40ad6eb` first real Codex review decision row.
 
 ---
 
