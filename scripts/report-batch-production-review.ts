@@ -4,10 +4,14 @@
  * PROVEN: does not mutate Supabase, retailer_links, evidence JSON, registry files, or git state.
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1,
+  buildBatchProductionRowsFromAmazonRescueDefaultV1,
+} from "../src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1";
 import {
   BatchProductionReviewCliParseErrorV1,
   buildBatchProductionReviewReportV1,
@@ -31,6 +35,68 @@ function readStdinUtf8(): Promise<string> {
   });
 }
 
+export function resolveBatchProductionCliInputV1(args: {
+  argv: string[];
+  cwd: string;
+  readStdin: () => Promise<string>;
+}): BatchProductionReviewCliInputV1 {
+  const sourceIdx = args.argv.indexOf("--source");
+  const hasStdin = args.argv.includes("--stdin");
+  const hasInput = args.argv.includes("--input");
+
+  if (sourceIdx >= 0 && (hasStdin || hasInput)) {
+    throw new BatchProductionReviewCliParseErrorV1(
+      "--source cannot be combined with --stdin or --input",
+    );
+  }
+
+  if (sourceIdx >= 0) {
+    const source = args.argv[sourceIdx + 1];
+    if (!source) {
+      throw new BatchProductionReviewCliParseErrorV1("--source requires a source name");
+    }
+    if (source !== BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1) {
+      throw new BatchProductionReviewCliParseErrorV1(
+        `unknown --source ${source}; supported: ${BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1}`,
+      );
+    }
+    const built = buildBatchProductionRowsFromAmazonRescueDefaultV1(args.cwd, {
+      readTextFile: (p) => readFileSync(p, "utf8"),
+      listEvidenceFilenames: (dir) => {
+        try {
+          return readdirSync(dir);
+        } catch {
+          return [];
+        }
+      },
+    });
+    return { rows: built.rows };
+  }
+
+  const inputIdx = args.argv.indexOf("--input");
+  if (inputIdx >= 0) {
+    const p = args.argv[inputIdx + 1];
+    if (!p) {
+      throw new BatchProductionReviewCliParseErrorV1("--input requires a file path");
+    }
+    return parseBatchProductionReviewCliInputV1(readFileSync(path.resolve(p), "utf8"));
+  }
+
+  return parseBatchProductionReviewCliInputV1("");
+}
+
+export async function resolveBatchProductionCliInputAsyncV1(args: {
+  argv: string[];
+  cwd: string;
+  readStdin: () => Promise<string>;
+}): Promise<BatchProductionReviewCliInputV1> {
+  if (args.argv.includes("--stdin") && args.argv.indexOf("--source") < 0) {
+    const raw = await args.readStdin();
+    return parseBatchProductionReviewCliInputV1(raw);
+  }
+  return resolveBatchProductionCliInputV1(args);
+}
+
 export function runReportBatchProductionReviewV1(
   input: BatchProductionReviewCliInputV1,
 ): BatchProductionReviewReportV1 {
@@ -49,6 +115,7 @@ function printUsage(): void {
       "  node --import tsx scripts/report-batch-production-review.ts",
       "  node --import tsx scripts/report-batch-production-review.ts --input path/to/input.json",
       "  node --import tsx scripts/report-batch-production-review.ts --stdin < path/to/input.json",
+      "  node --import tsx scripts/report-batch-production-review.ts --source amazon-rescue-default",
       "",
       "Stdin JSON shapes:",
       "  - Raw array: [{ \"row_id\": \"...\", \"part_token\"?, \"candidate_url\"?, \"source_reason\"? }, ...]",
@@ -67,22 +134,13 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  let raw = "";
-  const inputIdx = args.indexOf("--input");
-  if (inputIdx >= 0) {
-    const p = args[inputIdx + 1];
-    if (!p) {
-      process.stderr.write("--input requires a file path\n");
-      process.exit(2);
-    }
-    raw = readFileSync(path.resolve(p), "utf8");
-  } else if (args.includes("--stdin")) {
-    raw = await readStdinUtf8();
-  }
-
   let parsed: BatchProductionReviewCliInputV1;
   try {
-    parsed = parseBatchProductionReviewCliInputV1(raw);
+    parsed = await resolveBatchProductionCliInputAsyncV1({
+      argv: args,
+      cwd: process.cwd(),
+      readStdin: readStdinUtf8,
+    });
   } catch (e) {
     const msg =
       e instanceof BatchProductionReviewCliParseErrorV1

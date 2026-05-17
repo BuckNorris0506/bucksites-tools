@@ -267,7 +267,8 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 |------|--------|
 | `src/lib/owner-dashboard/batch-production-lane-v1.ts` | **PROVEN** — pure `buildBatchProductionReviewReportV1` |
 | `src/lib/owner-dashboard/batch-production-lane-v1.test.ts` | **PROVEN** |
-| `scripts/report-batch-production-review.ts` | **PROVEN** — stdout JSON only by default; optional `--input` read |
+| `scripts/report-batch-production-review.ts` | **PROVEN** — stdout JSON only by default; `--source amazon-rescue-default` or `--stdin` / `--input` |
+| `src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1.ts` | **PROVEN** — read-only row builder from repo CSV + token controls + evidence listing |
 | `npm run buckparts:batch-production-review` | **PROVEN** human alias; machine JSON: `node --import tsx scripts/report-batch-production-review.ts` |
 | Digest / dashboard embed | **NOT_IMPLEMENTED** |
 | Apply / mutation script | **NOT_IMPLEMENTED** (out of scope) |
@@ -286,6 +287,9 @@ printf '%s\n' '[{"row_id":"sample-1","part_token":"W10413645A","candidate_url":"
 # Wrapper object (optional context)
 echo '{"rows":[{"row_id":"r1","token":"x","url":"https://example.com","read_only_rationale":"test"}]}' \
   | node --import tsx scripts/report-batch-production-review.ts --stdin
+
+# Repo-owned Amazon rescue default cohort (5 tokens; no hand-built JSON)
+node --import tsx scripts/report-batch-production-review.ts --source amazon-rescue-default
 ```
 
 ---
