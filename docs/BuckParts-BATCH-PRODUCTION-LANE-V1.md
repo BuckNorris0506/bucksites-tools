@@ -1,6 +1,6 @@
 # BuckParts Batch Production Lane v1
 
-**Status:** **Contract only** — **NOT PROVEN** in code (no batch runner scripts, read models, or digest surfaces yet).
+**Status:** **PROVEN** read-only report builder + CLI stdout; **NOT PROVEN** queue/digest wiring or apply lane.
 
 **Purpose:** Reduce founder copy/paste by producing **reviewable candidate batches** (links, products, pages, rescue targets) in one structured report per run, so Jared can approve, defer, or reject in bulk **before** any commit, deploy, or production mutation.
 
@@ -17,7 +17,7 @@
 | `contract` | `batch_production_lane_v1` |
 | `read_only` | `true` (V1 generator must not mutate production) |
 | `data_mutation` | `false` (no Supabase, no `retailer_links`, no production evidence JSON) |
-| `implementation_status` | `NOT_IMPLEMENTED` |
+| `implementation_status` | `PARTIAL` — library + report CLI only |
 
 Planned review artifact contract (future script output):
 
@@ -245,17 +245,32 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 
 ---
 
-## Implementation checklist (future — not started)
+## Implementation checklist
 
 | Item | Status |
 |------|--------|
-| `scripts/buckparts-batch-production-review.ts` (name TBD) | **NOT_IMPLEMENTED** |
-| `src/lib/owner-dashboard/batch-production-lane-v1.ts` | **NOT_IMPLEMENTED** |
+| `src/lib/owner-dashboard/batch-production-lane-v1.ts` | **PROVEN** — pure `buildBatchProductionReviewReportV1` |
+| `src/lib/owner-dashboard/batch-production-lane-v1.test.ts` | **PROVEN** |
+| `scripts/report-batch-production-review.ts` | **PROVEN** — stdout JSON only by default; optional `--input` read |
+| `npm run buckparts:batch-production-review` | **PROVEN** human alias; machine JSON: `node --import tsx scripts/report-batch-production-review.ts` |
 | Digest / dashboard embed | **NOT_IMPLEMENTED** |
-| Tests | **NOT_IMPLEMENTED** |
-| `package.json` script alias | **NOT_IMPLEMENTED** |
+| Apply / mutation script | **NOT_IMPLEMENTED** (out of scope) |
+| `data/batch-production/drafts/` writes | **NOT_IMPLEMENTED** (stdout-only default) |
 
-**UNKNOWN:** Exact script names until first PR.
+**Commands:**
+
+```bash
+# Empty input → NO_CANDIDATES JSON
+node --import tsx scripts/report-batch-production-review.ts
+
+# Raw row array via stdin (lowest-friction; operator aliases part_token, candidate_url, source_reason)
+printf '%s\n' '[{"row_id":"sample-1","part_token":"W10413645A","candidate_url":"https://example.com/sample","source_reason":"contract smoke only"}]' \
+  | node --import tsx scripts/report-batch-production-review.ts --stdin
+
+# Wrapper object (optional context)
+echo '{"rows":[{"row_id":"r1","token":"x","url":"https://example.com","read_only_rationale":"test"}]}' \
+  | node --import tsx scripts/report-batch-production-review.ts --stdin
+```
 
 ---
 
@@ -276,3 +291,4 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | Date | Change |
 |------|--------|
 | 2026-05-16 | Initial Batch Production Lane v1 **contract only** (review-only, 5–10 cap, Layer 6 NOT_PROVEN). |
+| 2026-05-17 | **PROVEN:** `batch-production-lane-v1.ts` + `report-batch-production-review.ts` (read-only stdout JSON; hard cap 10). |

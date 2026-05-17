@@ -195,7 +195,7 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially §0B) and docs/BuckParts-TRUTH-MAP
 ### Active lane (HQ priority order)
 
 1. **Finish Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**).
-2. **Then Batch Production Lane v1** — **contract:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` (**PROVEN** doc); **runner NOT implemented**. V1 target: **5–10** review-only candidates per report; **20–50** deferred until report quality is proven.
+2. **Then Batch Production Lane v1** — **contract:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`; **PROVEN:** read-only report builder + `node --import tsx scripts/report-batch-production-review.ts` (stdout JSON). **NOT implemented:** queue wiring, digest embed, apply lane. V1 cap **10** rows; **20–50** deferred.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
@@ -272,9 +272,9 @@ Machine-parseable JSON scripts: **`node --import tsx scripts/…`** — not `npm
 
 Seeded read model `failure_pattern_registry_read_model_v1`; feeds Layer 6 readiness counts. Informational only — does not widen Runner allowlist.
 
-### Batch Production Lane v1 (contract — NOT implemented)
+### Batch Production Lane v1 (read-only report — partial)
 
-**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` (**PROVEN**). **NOT PROVEN:** scripts, read models, or digest embed.
+**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`. **PROVEN:** `src/lib/owner-dashboard/batch-production-lane-v1.ts`, `node --import tsx scripts/report-batch-production-review.ts`. **NOT PROVEN:** digest embed, auto-queue ingestion, apply/mutation script.
 
 **V1 intent:** read-only **batch candidate review generator** — **5–10** rows per report, founder approval before any apply/commit/deploy. **Non-goals:** auto-publish, auto-commit, Supabase/`retailer_links`/evidence/affiliate mutation. **Future:** **20–50** rows only after V1 report quality is proven. **Layer 6:** remains **`NOT_PROVEN`**; batch lane does not change that.
 
