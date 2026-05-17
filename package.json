@@ -83,6 +83,7 @@
     "buckparts:founder-decision-registry": "tsx scripts/report-founder-decision-registry.ts",
     "buckparts:batch-production-review": "tsx scripts/report-batch-production-review.ts",
     "buckparts:batch-evidence-collection-plan": "tsx scripts/report-batch-evidence-collection-plan.ts",
+    "buckparts:batch-owner-screenshot-drafts": "tsx scripts/report-batch-owner-screenshot-drafts.ts",
     "buckparts:next-execution-packet": "tsx scripts/buckparts-next-execution-packet.ts",
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
     "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",
