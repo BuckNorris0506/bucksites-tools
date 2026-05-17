@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  BATCH_MISSING_EVIDENCE_AMAZON_SELF_PREFIX_V1,
+  BATCH_MISSING_EVIDENCE_UNKNOWN_BUYER_PATH_V1,
   BATCH_PRODUCTION_V1_BATCH_SIZE_CAP,
   BatchProductionReviewCliParseErrorV1,
   batchProductionReviewReportGrantsMutationAuthority,
+  buildBatchProductionMissingEvidenceV1,
   buildBatchProductionReviewReportV1,
   normalizeBatchProductionLaneCliRowV1,
   parseBatchProductionReviewCliInputV1,
+  rationaleMentionsMissingAmazonEvidenceV1,
   validateBatchProductionLaneInputRowV1,
 } from "./batch-production-lane-v1";
 
@@ -213,4 +217,86 @@ test("normalizeBatchProductionLaneCliRowV1 maps operator aliases", () => {
   assert.equal(n.token, "T");
   assert.equal(n.url, "https://a");
   assert.equal(n.read_only_rationale, "why");
+});
+
+test("unknown buyer_path_safety produces non-empty missing_evidence with PDP gaps", () => {
+  const report = buildBatchProductionReviewReportV1({
+    rows: [
+      {
+        row_id: "pilot-1",
+        token: "ADQ75795101",
+        url: "https://www.repairclinic.com/Search?SearchTerm=ADQ75795101",
+        candidate_kind: "rescue_target",
+        buyer_path_safety: "unknown",
+        read_only_rationale: "PROVEN: queue row; Amazon PDP not established.",
+      },
+    ],
+    generated_at: "t",
+  });
+  const missing = report.candidates[0]!.missing_evidence;
+  assert.ok(missing.length > 0);
+  for (const item of BATCH_MISSING_EVIDENCE_UNKNOWN_BUYER_PATH_V1) {
+    assert.ok(missing.includes(item), `expected ${item}`);
+  }
+});
+
+test("rescue_target with missing Amazon evidence in rationale includes self-prefix gap", () => {
+  const report = buildBatchProductionReviewReportV1({
+    rows: [
+      {
+        row_id: "adq75795101",
+        token: "ADQ75795101",
+        candidate_kind: "rescue_target",
+        buyer_path_safety: "unknown",
+        read_only_rationale:
+          "PROVEN: no data/evidence/amazon-adq75795101-*.json; FROZEN_OPERATOR_HOLD.",
+      },
+    ],
+    generated_at: "t",
+  });
+  assert.ok(
+    report.candidates[0]!.missing_evidence.includes(BATCH_MISSING_EVIDENCE_AMAZON_SELF_PREFIX_V1),
+  );
+  assert.ok(rationaleMentionsMissingAmazonEvidenceV1("no amazon-adq75795101-* evidence"));
+});
+
+test("safe row with complete signals does not get unknown-path missing_evidence filler", () => {
+  const report = buildBatchProductionReviewReportV1({
+    rows: [baseRow],
+    generated_at: "t",
+  });
+  assert.equal(report.candidates[0]!.buyer_path_safety, "safe");
+  assert.equal(report.candidates[0]!.classification, "ready_for_founder_review");
+  assert.deepEqual(report.candidates[0]!.missing_evidence, []);
+});
+
+test("mutation flags unchanged after missing_evidence enrichment", () => {
+  const report = buildBatchProductionReviewReportV1({
+    rows: [
+      {
+        row_id: "x",
+        candidate_kind: "rescue_target",
+        buyer_path_safety: "unknown",
+        read_only_rationale: "no amazon-w10413645a-* evidence",
+      },
+    ],
+    generated_at: "t",
+  });
+  assert.equal(report.candidates[0]!.may_mutate, false);
+  assert.equal(report.candidates[0]!.requires_owner_approval_before_mutation, true);
+  assert.ok(report.candidates[0]!.missing_evidence.length >= 3);
+  assert.equal(batchProductionReviewReportGrantsMutationAuthority(report), false);
+});
+
+test("buildBatchProductionMissingEvidenceV1 is exported for row-level checks", () => {
+  const list = buildBatchProductionMissingEvidenceV1(
+    {
+      row_id: "r",
+      candidate_kind: "rescue_target",
+      buyer_path_safety: "unknown",
+      read_only_rationale: "missing amazon evidence file",
+    },
+    "unknown",
+  );
+  assert.ok(list.length >= BATCH_MISSING_EVIDENCE_UNKNOWN_BUYER_PATH_V1.length);
 });

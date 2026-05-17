@@ -324,20 +324,67 @@ function deriveWrongPurchaseRisk(
   return parsed === "INVALID" ? "unknown" : parsed;
 }
 
-function missingEvidenceForRow(
+/** PROVEN: stable missing_evidence labels for unknown buyer path (founder review artifact). */
+export const BATCH_MISSING_EVIDENCE_UNKNOWN_BUYER_PATH_V1 = [
+  "exact-token retailer PDP proof not provided",
+  "buyability proof not provided",
+  "safe buyer path not proven",
+] as const;
+
+export const BATCH_MISSING_EVIDENCE_AMAZON_SELF_PREFIX_V1 =
+  "self-prefix Amazon evidence JSON missing";
+
+function pushUnique(missing: string[], item: string): void {
+  if (!missing.includes(item)) missing.push(item);
+}
+
+/** INFERRED: detect operator notes that Amazon self-prefix evidence is absent. */
+export function rationaleMentionsMissingAmazonEvidenceV1(
+  readOnlyRationale: string | null | undefined,
+): boolean {
+  if (!readOnlyRationale) return false;
+  const t = readOnlyRationale.toLowerCase();
+  return (
+    /no\s+amazon[\s/-]/.test(t) ||
+    /missing\s+amazon/.test(t) ||
+    /no\s+data\/evidence\/amazon/.test(t) ||
+    /amazon-[a-z0-9-]+-\*/.test(t) ||
+    /no\s+amazon-[a-z0-9-]+-/.test(t)
+  );
+}
+
+/**
+ * Build `missing_evidence[]` for a validated input row.
+ * PROVEN: unknown buyer_path_safety always lists PDP/buyability/safe-path gaps (not satisfied by read_only_rationale alone).
+ */
+export function buildBatchProductionMissingEvidenceV1(
   input: BatchProductionLaneInputRowV1,
   buyer: BatchProductionBuyerPathSafetyV1,
 ): string[] {
   const missing: string[] = [];
+
   if (!input.read_only_rationale) {
-    missing.push("read_only_rationale");
+    pushUnique(missing, "read_only_rationale");
   }
-  if (buyer === "unknown" && !input.url && !input.slug && !input.token) {
-    missing.push("buyer_path_locator (url, slug, or token)");
+
+  if (buyer === "unknown") {
+    for (const item of BATCH_MISSING_EVIDENCE_UNKNOWN_BUYER_PATH_V1) {
+      pushUnique(missing, item);
+    }
+    if (!input.url && !input.slug && !input.token) {
+      pushUnique(missing, "buyer_path_locator (url, slug, or token)");
+    }
   }
+
   if (buyer === "unsafe") {
-    missing.push("buyer_path_safety_confirmation");
+    pushUnique(missing, "buyer_path_safety_confirmation");
   }
+
+  const kind = parseCandidateKind(input.candidate_kind);
+  if (kind === "rescue_target" && rationaleMentionsMissingAmazonEvidenceV1(input.read_only_rationale)) {
+    pushUnique(missing, BATCH_MISSING_EVIDENCE_AMAZON_SELF_PREFIX_V1);
+  }
+
   return missing;
 }
 
@@ -574,7 +621,7 @@ export function buildBatchProductionReviewReportV1(
       buyer_path_safety: buyer,
       wrong_purchase_risk: risk,
       recommended_next_action,
-      missing_evidence: missingEvidenceForRow(input, buyer),
+      missing_evidence: buildBatchProductionMissingEvidenceV1(input, buyer),
       stop_reason,
       requires_owner_approval_before_mutation: true,
       may_mutate: false,

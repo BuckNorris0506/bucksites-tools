@@ -163,6 +163,22 @@ Future stdout / draft JSON should include at minimum:
 | `codex_invocation_recommended` | boolean | yes | If true, only **read-only** Codex per existing wrappers |
 | `registry_decision_hint` | string \| null | no | Informational; e.g. `needs_owner_mutation_approved_row` — **not** a recorded decision |
 
+### `missing_evidence[]` (implemented in `batch-production-lane-v1.ts`)
+
+**PROVEN:** `read_only_rationale` / operator `source_reason` alone does **not** clear buyer-path gaps.
+
+When `buyer_path_safety` is **`unknown`**, each row includes at minimum:
+
+- `exact-token retailer PDP proof not provided`
+- `buyability proof not provided`
+- `safe buyer path not proven`
+
+When `candidate_kind` is **`rescue_target`** and `read_only_rationale` mentions missing/no Amazon evidence (e.g. `no data/evidence/amazon-{slug}-*.json`), also:
+
+- `self-prefix Amazon evidence JSON missing`
+
+**PROVEN:** `buyer_path_safety: safe` with complete row signals may yield `missing_evidence: []`.
+
 ---
 
 ## Stop conditions
