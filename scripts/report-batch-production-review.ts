@@ -9,9 +9,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1,
-  buildBatchProductionRowsFromAmazonRescueDefaultV1,
-} from "../src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1";
+  buildBatchProductionRowsFromSourceV1,
+  formatBatchProductionSupportedSourcesListV1,
+} from "../src/lib/owner-dashboard/batch-production-source-v1";
 import {
   BatchProductionReviewCliParseErrorV1,
   buildBatchProductionReviewReportV1,
@@ -55,22 +55,23 @@ export function resolveBatchProductionCliInputV1(args: {
     if (!source) {
       throw new BatchProductionReviewCliParseErrorV1("--source requires a source name");
     }
-    if (source !== BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1) {
+    try {
+      const built = buildBatchProductionRowsFromSourceV1(source, args.cwd, {
+        readTextFile: (p) => readFileSync(p, "utf8"),
+        listEvidenceFilenames: (dir) => {
+          try {
+            return readdirSync(dir);
+          } catch {
+            return [];
+          }
+        },
+      });
+      return { rows: built.rows };
+    } catch (e) {
       throw new BatchProductionReviewCliParseErrorV1(
-        `unknown --source ${source}; supported: ${BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1}`,
+        e instanceof Error ? e.message : String(e),
       );
     }
-    const built = buildBatchProductionRowsFromAmazonRescueDefaultV1(args.cwd, {
-      readTextFile: (p) => readFileSync(p, "utf8"),
-      listEvidenceFilenames: (dir) => {
-        try {
-          return readdirSync(dir);
-        } catch {
-          return [];
-        }
-      },
-    });
-    return { rows: built.rows };
   }
 
   const inputIdx = args.argv.indexOf("--input");
@@ -116,6 +117,7 @@ function printUsage(): void {
       "  node --import tsx scripts/report-batch-production-review.ts --input path/to/input.json",
       "  node --import tsx scripts/report-batch-production-review.ts --stdin < path/to/input.json",
       "  node --import tsx scripts/report-batch-production-review.ts --source amazon-rescue-default",
+      `  node --import tsx scripts/report-batch-production-review.ts --source <name>  # supported: ${formatBatchProductionSupportedSourcesListV1()}`,
       "",
       "Stdin JSON shapes:",
       "  - Raw array: [{ \"row_id\": \"...\", \"part_token\"?, \"candidate_url\"?, \"source_reason\"? }, ...]",

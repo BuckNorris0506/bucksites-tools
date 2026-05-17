@@ -9,7 +9,8 @@ export type CandidateUrl = {
   snippet?: string;
 };
 
-const SEEDED_BY_SLUG: Record<string, CandidateUrl[]> = {
+/** PROVEN: repo-seeded non-Amazon PDP URLs for operator/agent browser review (see tests in fridge-non-amazon-candidate-generator.test.ts). */
+export const FRIDGE_NON_AMAZON_SEEDED_CANDIDATES_BY_SLUG_V1: Record<string, CandidateUrl[]> = {
   "da97-08006b": [
     {
       retailer: "AppliancePartsPros",
@@ -49,7 +50,7 @@ export function inferredBrandPrefixForSlug(slug: string): string | null {
 
 export function buildFridgeNonAmazonCandidates(slug: string): CandidateUrl[] {
   const key = normalizedToken(slug);
-  const seeded = SEEDED_BY_SLUG[key] ?? [];
+  const seeded = FRIDGE_NON_AMAZON_SEEDED_CANDIDATES_BY_SLUG_V1[key] ?? [];
   if (seeded.length > 0) return seeded;
 
   const brandPrefix = inferredBrandPrefixForSlug(key);
@@ -73,7 +74,7 @@ export async function buildFridgeNonAmazonCandidatesWithDiscovery(args: {
   searchImpl?: (query: string, numResults: number) => Promise<Array<{ url: string; snippet?: string; title?: string }>>;
 }): Promise<CandidateUrl[]> {
   const key = normalizedToken(args.slug);
-  const seeded = SEEDED_BY_SLUG[key] ?? [];
+  const seeded = FRIDGE_NON_AMAZON_SEEDED_CANDIDATES_BY_SLUG_V1[key] ?? [];
   if (seeded.length > 0) return seeded;
 
   const discovered = await discoverFridgeNonAmazonCandidates({

@@ -15,10 +15,9 @@ import {
   type BatchEvidenceCollectionPlanV1,
 } from "../src/lib/owner-dashboard/batch-evidence-collection-plan-v1";
 import {
-  BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1,
-  buildBatchProductionRowsFromAmazonRescueDefaultV1,
-} from "../src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1";
-import { buildBatchProductionReviewReportV1 } from "../src/lib/owner-dashboard/batch-production-lane-v1";
+  buildBatchProductionReviewFromSourceV1,
+  formatBatchProductionSupportedSourcesListV1,
+} from "../src/lib/owner-dashboard/batch-production-source-v1";
 
 export class BatchEvidenceCollectionPlanCliErrorV1 extends Error {
   constructor(message: string) {
@@ -36,11 +35,12 @@ function readStdinUtf8(): Promise<string> {
   });
 }
 
-/** PROVEN: same repo read path as batch production review amazon-rescue-default source. */
-export function buildAmazonRescueDefaultBatchReviewReportV1(
+/** PROVEN: same repo read path as batch production review --source handlers. */
+export function buildBatchProductionReviewFromSourceCliV1(
   repoRoot: string,
-): ReturnType<typeof buildBatchProductionReviewReportV1> {
-  const built = buildBatchProductionRowsFromAmazonRescueDefaultV1(repoRoot, {
+  source: string,
+): ReturnType<typeof buildBatchProductionReviewFromSourceV1> {
+  return buildBatchProductionReviewFromSourceV1(source, repoRoot, {
     readTextFile: (p) => readFileSync(p, "utf8"),
     listEvidenceFilenames: (dir) => {
       try {
@@ -50,10 +50,13 @@ export function buildAmazonRescueDefaultBatchReviewReportV1(
       }
     },
   });
-  return buildBatchProductionReviewReportV1({
-    rows: built.rows,
-    generated_at: new Date().toISOString(),
-  });
+}
+
+/** @deprecated Use buildBatchProductionReviewFromSourceCliV1 with amazon-rescue-default */
+export function buildAmazonRescueDefaultBatchReviewReportV1(
+  repoRoot: string,
+): ReturnType<typeof buildBatchProductionReviewFromSourceV1> {
+  return buildBatchProductionReviewFromSourceCliV1(repoRoot, "amazon-rescue-default");
 }
 
 export function runReportBatchEvidenceCollectionPlanV1(args: {
@@ -80,14 +83,18 @@ export function runReportBatchEvidenceCollectionPlanV1(args: {
         new BatchEvidenceCollectionPlanCliErrorV1("--source requires a source name"),
       );
     }
-    if (source !== BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1) {
+    let review;
+    try {
+      review = buildBatchProductionReviewFromSourceCliV1(args.cwd, source);
+    } catch (e) {
       return Promise.reject(
         new BatchEvidenceCollectionPlanCliErrorV1(
-          `unknown --source ${source}; supported: ${BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1}`,
+          e instanceof Error
+            ? e.message
+            : `unknown --source ${source}; supported: ${formatBatchProductionSupportedSourcesListV1()}`,
         ),
       );
     }
-    const review = buildAmazonRescueDefaultBatchReviewReportV1(args.cwd);
     return Promise.resolve(
       buildBatchEvidenceCollectionPlanV1({
         reviewReport: review,
@@ -117,7 +124,7 @@ export function runReportBatchEvidenceCollectionPlanV1(args: {
   } else {
     return Promise.reject(
       new BatchEvidenceCollectionPlanCliErrorV1(
-        "requires --source amazon-rescue-default, --stdin (batch review JSON), or --input path",
+        `requires --source (${formatBatchProductionSupportedSourcesListV1()}), --stdin (batch review JSON), or --input path`,
       ),
     );
   }

@@ -13,13 +13,13 @@ import {
   buildBatchAgentEvidenceCapturePacketV1,
   type BatchAgentEvidenceCapturePacketV1,
 } from "../src/lib/owner-dashboard/batch-agent-evidence-capture-packet-v1";
-import { buildAmazonRescueDefaultBatchReviewReportV1 } from "./report-batch-evidence-collection-plan";
+import { buildBatchProductionReviewFromSourceCliV1 } from "./report-batch-evidence-collection-plan";
 import {
   buildBatchEvidenceCollectionPlanV1,
   parseBatchProductionReviewReportForPlanV1,
 } from "../src/lib/owner-dashboard/batch-evidence-collection-plan-v1";
 import { parseBatchEvidenceCollectionPlanForTemplateV1 } from "../src/lib/owner-dashboard/batch-owner-screenshot-facts-template-v1";
-import { BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1 } from "../src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1";
+import { formatBatchProductionSupportedSourcesListV1 } from "../src/lib/owner-dashboard/batch-production-source-v1";
 
 export class BatchAgentEvidenceCapturePacketCliErrorV1 extends Error {
   constructor(message: string) {
@@ -54,12 +54,16 @@ export function runReportBatchAgentEvidenceCapturePacketV1(args: {
     if (!source) {
       throw new BatchAgentEvidenceCapturePacketCliErrorV1("--source requires a source name");
     }
-    if (source !== BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1) {
+    let review;
+    try {
+      review = buildBatchProductionReviewFromSourceCliV1(args.cwd, source);
+    } catch (e) {
       throw new BatchAgentEvidenceCapturePacketCliErrorV1(
-        `unknown --source ${source}; supported: ${BATCH_PRODUCTION_SOURCE_AMAZON_RESCUE_DEFAULT_V1}`,
+        e instanceof Error
+          ? e.message
+          : `unknown --source ${source}; supported: ${formatBatchProductionSupportedSourcesListV1()}`,
       );
     }
-    const review = buildAmazonRescueDefaultBatchReviewReportV1(args.cwd);
     plan = buildBatchEvidenceCollectionPlanV1({
       reviewReport: review,
       generated_at: new Date().toISOString(),
@@ -88,7 +92,7 @@ export function runReportBatchAgentEvidenceCapturePacketV1(args: {
     }
   } else {
     throw new BatchAgentEvidenceCapturePacketCliErrorV1(
-      "requires --source amazon-rescue-default or --plan path/to/plan.json",
+      `requires --source (${formatBatchProductionSupportedSourcesListV1()}) or --plan path/to/plan.json`,
     );
   }
 
