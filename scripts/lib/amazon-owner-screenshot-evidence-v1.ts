@@ -203,10 +203,57 @@ export function deriveOwnerVerdictFromScreenshotFactsV1(
   return "INCOMPLETE_SCREENSHOT_FACTS";
 }
 
+export type ScreenshotEvidenceRetailContextV1 = "amazon" | "non_amazon";
+
+const SCREENSHOT_COMMIT_BLOCKER_V1 =
+  "at least one screenshot_sources[].committed_to_repo should be true before durable evidence commit";
+
+const ASIN_CAPTURE_BLOCKER_V1 =
+  "10-char ASIN not captured from screenshot (precheck policy stays UNKNOWN until ASIN present)";
+
+/** Full checklist including Amazon ASIN + repo screenshot commit (production / mutation gates). */
 export function computeScreenshotEvidenceSafetyChecklistV1(facts: AmazonOwnerScreenshotFactsV1): {
   all_safety_conditions_for_review_met: boolean;
   unmet: string[];
 } {
+  const ownerReview = listOwnerReviewBlockersFromScreenshotFactsV1(facts, "amazon");
+  const production = listProductionEvidenceCommitBlockersFromScreenshotFactsV1(facts, "amazon");
+  const unmet = [...ownerReview, ...production];
+  return { all_safety_conditions_for_review_met: unmet.length === 0, unmet };
+}
+
+/** Blockers for durable evidence commit / mutation paths — not owner-review gates. */
+export function listProductionEvidenceCommitBlockersFromScreenshotFactsV1(
+  facts: AmazonOwnerScreenshotFactsV1,
+  context: ScreenshotEvidenceRetailContextV1,
+): string[] {
+  const unmet: string[] = [];
+  const anyCommitted = facts.screenshot_sources.some((s) => s.committed_to_repo);
+  if (!anyCommitted) unmet.push(SCREENSHOT_COMMIT_BLOCKER_V1);
+  if (context === "amazon" && normalizeAsin(facts.asin) === null) {
+    unmet.push(ASIN_CAPTURE_BLOCKER_V1);
+  }
+  return unmet;
+}
+
+/**
+ * Founder review readiness — agent-filled facts structurally usable for review.
+ * Non-Amazon: no ASIN; token in title OR seller-controlled identity; canonical URL + notes required.
+ * Amazon: same PDP checklist as production except screenshot commit (ASIN still required).
+ */
+export function listOwnerReviewBlockersFromScreenshotFactsV1(
+  facts: AmazonOwnerScreenshotFactsV1,
+  context: ScreenshotEvidenceRetailContextV1,
+): string[] {
+  if (context === "amazon") {
+    return listAmazonOwnerReviewBlockersFromScreenshotFactsV1(facts);
+  }
+  return listNonAmazonOwnerReviewBlockersFromScreenshotFactsV1(facts);
+}
+
+function listAmazonOwnerReviewBlockersFromScreenshotFactsV1(
+  facts: AmazonOwnerScreenshotFactsV1,
+): string[] {
   const unmet: string[] = [];
   if (facts.page_kind !== "product_detail_page") {
     unmet.push("page_kind must be product_detail_page (not search/SERP)");
@@ -221,14 +268,38 @@ export function computeScreenshotEvidenceSafetyChecklistV1(facts: AmazonOwnerScr
   if (facts.oem_or_aftermarket === "blocked_unsafe") {
     unmet.push("blocked_unsafe listings cannot pass review checklist");
   }
-  if (normalizeAsin(facts.asin) === null) {
-    unmet.push("10-char ASIN not captured from screenshot (precheck policy stays UNKNOWN until ASIN present)");
+  if (normalizeAsin(facts.asin) === null) unmet.push(ASIN_CAPTURE_BLOCKER_V1);
+  return unmet;
+}
+
+function listNonAmazonOwnerReviewBlockersFromScreenshotFactsV1(
+  facts: AmazonOwnerScreenshotFactsV1,
+): string[] {
+  const unmet: string[] = [];
+  if (facts.page_kind !== "product_detail_page") {
+    unmet.push("page_kind must be product_detail_page (not search/SERP)");
   }
-  const anyCommitted = facts.screenshot_sources.some((s) => s.committed_to_repo);
-  if (!anyCommitted) {
-    unmet.push("at least one screenshot_sources[].committed_to_repo should be true before durable evidence commit");
+  const sellerIdentity = facts.seller_controlled_pdp_identity === true;
+  const tokenProof = facts.token_visible_in_pdp_title || sellerIdentity;
+  if (!tokenProof) {
+    unmet.push(
+      "exact token must be visible in PDP title or seller_controlled_pdp_identity must be proven true",
+    );
   }
-  return { all_safety_conditions_for_review_met: unmet.length === 0, unmet };
+  if (!facts.buy_path_visible) unmet.push("buy_path_visible must be true");
+  if (facts.oem_or_aftermarket === "unknown") {
+    unmet.push("oem_or_aftermarket must be labeled oem_official or compatible_aftermarket");
+  }
+  if (facts.oem_or_aftermarket === "blocked_unsafe") {
+    unmet.push("blocked_unsafe listings cannot pass owner review");
+  }
+  if (!facts.canonical_url?.trim()) {
+    unmet.push("canonical_url required for non-Amazon owner review");
+  }
+  if (!facts.relationship_notes?.trim()) {
+    unmet.push("relationship_notes required for founder review (agent observation summary)");
+  }
+  return unmet;
 }
 
 /**

@@ -271,7 +271,7 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | `src/lib/owner-dashboard/batch-production-amazon-rescue-source-v1.ts` | **PROVEN** — read-only row builder from repo CSV + token controls + evidence listing |
 | `src/lib/owner-dashboard/batch-evidence-collection-plan-v1.ts` | **PROVEN** — `batch_evidence_collection_plan_v1` from review report (no evidence writes) |
 | `scripts/report-batch-evidence-collection-plan.ts` | **PROVEN** — `--source amazon-rescue-default` or `--stdin` review JSON |
-| `src/lib/owner-dashboard/batch-owner-screenshot-draft-packet-v1.ts` | **PROVEN** — `batch_owner_screenshot_draft_packet_v1` from plan + owner facts (no `data/evidence/` writes) |
+| `src/lib/owner-dashboard/batch-owner-screenshot-draft-packet-v1.ts` | **PROVEN** — `batch_owner_screenshot_draft_packet_v1` from plan + owner facts (no `data/evidence/` writes). **`draft_ready_for_owner_review`** = agent-filled facts usable for founder review; **`production_evidence_commit_blockers`** = ASIN (Amazon only) + repo screenshot commit — gates durable `data/evidence/` writes, not owner review. Non-Amazon PDP rows (`queue-non-amazon-pdp-agent`) do not require ASIN for owner review. |
 | `scripts/report-batch-owner-screenshot-drafts.ts` | **PROVEN** — `--plan` + `--facts` file paths; stdout JSON only |
 | `src/lib/owner-dashboard/batch-agent-evidence-capture-packet-v1.ts` | **PROVEN** — `batch_agent_evidence_capture_packet_v1` (agent fills facts; owner reviews) |
 | `scripts/report-batch-agent-evidence-capture-packet.ts` | **PROVEN** — stdout JSON only; `--source non-amazon-pdp-candidates` (primary) or `amazon-rescue-default` |

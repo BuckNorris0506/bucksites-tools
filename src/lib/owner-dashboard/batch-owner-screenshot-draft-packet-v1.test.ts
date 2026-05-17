@@ -5,11 +5,13 @@ import {
   BATCH_EVIDENCE_COLLECTION_PLAN_CONTRACT_V1,
   type BatchEvidenceCollectionPlanV1,
 } from "./batch-evidence-collection-plan-v1";
+import { BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1 } from "./batch-production-non-amazon-pdp-source-v1";
 import {
   BATCH_OWNER_FACTS_TOKEN_CONFLICT_WITH_PLAN_V1,
   BATCH_OWNER_SCREENSHOT_DRAFT_PACKET_CONTRACT_V1,
   batchOwnerScreenshotDraftGrantsProductionWrite,
   buildBatchOwnerScreenshotDraftPacketV1,
+  inferScreenshotEvidenceRetailContextV1,
   listMissingOwnerFactsForBuildV1,
   normalizeBatchOwnerScreenshotFactsRowV1,
   parseBatchOwnerScreenshotFactsInputV1,
@@ -106,7 +108,10 @@ const W10413645A_NESTED_TOKEN_CONFLICT = {
   token: "ADQ75795101",
 };
 
-function minimalPlan(rowIds: string[]): BatchEvidenceCollectionPlanV1 {
+function minimalPlan(
+  rowIds: string[],
+  options?: { source_queue_row_id?: string; tokenByRowId?: Record<string, string> },
+): BatchEvidenceCollectionPlanV1 {
   return {
     contract: BATCH_EVIDENCE_COLLECTION_PLAN_CONTRACT_V1,
     read_only: true,
@@ -121,9 +126,11 @@ function minimalPlan(rowIds: string[]): BatchEvidenceCollectionPlanV1 {
     no_evidence_write_attestation: "x",
     rows: rowIds.map((row_id) => ({
       row_id,
-      token: row_id === "w10413645a" ? "W10413645A" : "TOKEN",
+      token:
+        options?.tokenByRowId?.[row_id] ??
+        (row_id === "w10413645a" ? "W10413645A" : "TOKEN"),
       slug: row_id,
-      source_queue_row_id: "queue-amazon-agent",
+      source_queue_row_id: options?.source_queue_row_id ?? "queue-amazon-agent",
       evidence_prefix: `data/evidence/amazon-${row_id}-`,
       required_checks: [],
       screenshot_needed: true,
@@ -168,6 +175,8 @@ test("W10413645A compatible aftermarket facts produce draft but may_write_produc
   assert.equal(row.proposed_production_evidence_prefix, "data/evidence/amazon-w10413645a-");
   assert.ok(row.suggested_production_evidence_path?.startsWith("data/evidence/amazon-w10413645a-"));
   assert.ok(row.missing_owner_facts.some((m) => /ASIN/i.test(m)));
+  assert.ok(row.production_evidence_commit_blockers.some((m) => /ASIN/i.test(m)));
+  assert.ok(row.production_evidence_commit_blockers.some((m) => /committed_to_repo/i.test(m)));
   assert.equal(row.draft_ready_for_owner_review, false);
 });
 
@@ -211,6 +220,15 @@ test("normalizeBatchOwnerScreenshotFactsRowV1 flattens nested observation sectio
   assert.equal(flat.sold_by, "LIMERDU");
 });
 
+test("normalizeBatchOwnerScreenshotFactsRowV1 reads browser_evidence.canonical_url", () => {
+  const flat = normalizeBatchOwnerScreenshotFactsRowV1({
+    row_id: "da97-08006b",
+    token: "DA97-08006B",
+    browser_evidence: { canonical_url: "https://samsungparts.com/products/da97-08006b" },
+  });
+  assert.equal(flat.canonical_url, "https://samsungparts.com/products/da97-08006b");
+});
+
 test("nested W10413645A compatible aftermarket facts build draft_packet", () => {
   const factsInput = parseBatchOwnerScreenshotFactsInputV1({
     facts: [W10413645A_NESTED_FACTS],
@@ -228,7 +246,7 @@ test("nested W10413645A compatible aftermarket facts build draft_packet", () => 
   assert.equal(row.draft_packet!.mutation_ready, false);
 });
 
-test("nested facts keep ASIN and uncommitted screenshot from ready=true", () => {
+test("nested Amazon facts: ASIN blocks owner review; screenshot commit is production-only", () => {
   const packet = buildBatchOwnerScreenshotDraftPacketV1({
     plan: minimalPlan(["w10413645a"]),
     factsInput: parseBatchOwnerScreenshotFactsInputV1({ facts: [W10413645A_NESTED_FACTS] }),
@@ -236,7 +254,8 @@ test("nested facts keep ASIN and uncommitted screenshot from ready=true", () => 
   });
   const row = packet.rows[0]!;
   assert.ok(row.missing_owner_facts.some((m) => /ASIN/i.test(m)));
-  assert.ok(row.missing_owner_facts.some((m) => /committed_to_repo/i.test(m)));
+  assert.ok(!row.missing_owner_facts.some((m) => /committed_to_repo/i.test(m)));
+  assert.ok(row.production_evidence_commit_blockers.some((m) => /committed_to_repo/i.test(m)));
   assert.equal(row.draft_ready_for_owner_review, false);
 });
 
@@ -305,6 +324,77 @@ test("nested W104 with conflicting token fails closed without draft_packet", () 
   assert.ok(row.missing_owner_facts.includes(BATCH_OWNER_FACTS_TOKEN_CONFLICT_WITH_PLAN_V1));
   assert.equal(row.may_write_production_evidence, false);
   assert.equal(row.may_mutate, false);
+});
+
+const NON_AMAZON_OEM_FACTS = {
+  row_id: "da97-08006b",
+  token: "DA97-08006B",
+  filter_slug: "da97-08006b",
+  screenshot_sources: [
+    { label: "agent browser observation", path: "", committed_to_repo: false },
+  ],
+  page_kind: "product_detail_page" as const,
+  token_visible_in_pdp_title: true,
+  token_visible_elsewhere_on_page: true,
+  seller_controlled_pdp_identity: true,
+  buy_path_visible: true,
+  stock_status: "in_stock",
+  price_visible_usd: 114.95,
+  sold_by: "Samsung Parts",
+  oem_or_aftermarket: "oem_official" as const,
+  relationship_notes: "Genuine Samsung PDP; exact token in title and SKU.",
+  asin: null,
+  canonical_url: "https://samsungparts.com/products/da97-08006b",
+  seller_title_visible: "Samsung DA97-08006B Refrigerator Water Filter Head And Tubing",
+};
+
+test("non-Amazon OEM PDP without ASIN or committed screenshot is draft_ready_for_owner_review", () => {
+  const packet = buildBatchOwnerScreenshotDraftPacketV1({
+    plan: minimalPlan(["da97-08006b"], {
+      source_queue_row_id: BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1,
+      tokenByRowId: { "da97-08006b": "DA97-08006B" },
+    }),
+    factsInput: { facts: [NON_AMAZON_OEM_FACTS] },
+    generated_at: "t",
+  });
+  const row = packet.rows[0]!;
+  assert.equal(
+    inferScreenshotEvidenceRetailContextV1(
+      { source_queue_row_id: BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1 },
+      NON_AMAZON_OEM_FACTS,
+    ),
+    "non_amazon",
+  );
+  assert.ok(row.draft_packet);
+  assert.equal(row.draft_packet!.owner_verdict, "DIRECT_BUYABLE_EXACT_TOKEN_OEM");
+  assert.equal(row.draft_ready_for_owner_review, true);
+  assert.equal(row.missing_owner_facts.length, 0);
+  assert.ok(row.production_evidence_commit_blockers.some((m) => /committed_to_repo/i.test(m)));
+  assert.ok(!row.production_evidence_commit_blockers.some((m) => /ASIN/i.test(m)));
+  assert.equal(row.may_write_production_evidence, false);
+  assert.equal(row.may_mutate, false);
+  assert.equal(row.draft_packet!.mutation_ready, false);
+});
+
+test("non-Amazon search page fails closed for owner review", () => {
+  const packet = buildBatchOwnerScreenshotDraftPacketV1({
+    plan: minimalPlan(["da97-08006b"], {
+      source_queue_row_id: BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1,
+      tokenByRowId: { "da97-08006b": "DA97-08006B" },
+    }),
+    factsInput: {
+      facts: [
+        {
+          ...NON_AMAZON_OEM_FACTS,
+          page_kind: "search_results_page",
+        },
+      ],
+    },
+    generated_at: "t",
+  });
+  const row = packet.rows[0]!;
+  assert.equal(row.draft_ready_for_owner_review, false);
+  assert.ok(row.missing_owner_facts.some((m) => /page_kind/i.test(m)));
 });
 
 test("token inheritance path keeps Layer 6 NOT_PROVEN", () => {

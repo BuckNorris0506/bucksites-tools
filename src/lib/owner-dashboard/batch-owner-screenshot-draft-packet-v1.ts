@@ -6,10 +6,14 @@
 import type { AmazonOwnerScreenshotEvidenceV1 } from "../../../scripts/lib/amazon-owner-screenshot-evidence-v1";
 import {
   buildAmazonOwnerScreenshotEvidenceV1,
-  computeScreenshotEvidenceSafetyChecklistV1,
+  listOwnerReviewBlockersFromScreenshotFactsV1,
+  listProductionEvidenceCommitBlockersFromScreenshotFactsV1,
   suggestedOwnerScreenshotEvidencePathV1,
   type AmazonOwnerScreenshotFactsV1,
+  type ScreenshotEvidenceRetailContextV1,
 } from "../../../scripts/lib/amazon-owner-screenshot-evidence-v1";
+import { BATCH_AMAZON_RESCUE_DEFAULT_QUEUE_ROW_ID_V1 } from "./batch-production-amazon-rescue-source-v1";
+import { BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1 } from "./batch-production-non-amazon-pdp-source-v1";
 import {
   BATCH_EVIDENCE_COLLECTION_PLAN_CONTRACT_V1,
   type BatchEvidenceCollectionPlanRowV1,
@@ -44,7 +48,10 @@ export type BatchOwnerScreenshotDraftRowV1 = {
   /** INFERRED: suggested full path if founder later commits — not written by this builder. */
   suggested_production_evidence_path: string | null;
   draft_packet: AmazonOwnerScreenshotEvidenceV1 | null;
+  /** Owner-review blockers only (structural gaps or founder-review checklist). */
   missing_owner_facts: string[];
+  /** Production evidence commit gates (ASIN on Amazon, repo screenshot commit) — do not block owner review. */
+  production_evidence_commit_blockers: string[];
   draft_ready_for_owner_review: boolean;
   may_write_production_evidence: false;
   may_mutate: false;
@@ -173,7 +180,11 @@ export function normalizeBatchOwnerScreenshotFactsRowV1(
     : undefined;
 
   const asin = pickStringOrNull(raw.asin, browser?.asin);
-  const canonical_url = pickStringOrNull(raw.canonical_url, browser?.amazon_pdp_url_canonical);
+  const canonical_url = pickStringOrNull(
+    raw.canonical_url,
+    browser?.canonical_url,
+    browser?.amazon_pdp_url_canonical,
+  );
 
   const normalized: BatchOwnerScreenshotFactsInputRowV1 = { row_id, token };
 
@@ -333,6 +344,41 @@ function resolveOwnerFactsForPlanRow(
   );
 }
 
+const OWNER_REVIEW_FAIL_CLOSED_VERDICTS = new Set([
+  "INCOMPLETE_SCREENSHOT_FACTS",
+  "SEARCH_PAGE_ONLY",
+  "NO_SAFE_PDP_FOUND",
+  "BLOCKED_UNSAFE",
+  "TOKEN_NOT_IN_TITLE",
+  "EXACT_TOKEN_VISIBLE_NOT_BUYABLE",
+]);
+
+/** INFERRED: plan queue id is primary; canonical URL host is fallback when queue is ambiguous. */
+export function inferScreenshotEvidenceRetailContextV1(
+  planRow: Pick<BatchEvidenceCollectionPlanRowV1, "source_queue_row_id">,
+  facts?: Pick<AmazonOwnerScreenshotFactsV1, "canonical_url">,
+): ScreenshotEvidenceRetailContextV1 {
+  const queueId = planRow.source_queue_row_id?.trim();
+  if (queueId === BATCH_NON_AMAZON_PDP_QUEUE_ROW_ID_V1) return "non_amazon";
+  if (queueId === BATCH_AMAZON_RESCUE_DEFAULT_QUEUE_ROW_ID_V1) return "amazon";
+
+  const url = facts?.canonical_url?.trim().toLowerCase() ?? "";
+  if (url.includes("amazon.com") || url.includes("amazon.")) return "amazon";
+  if (url) return "non_amazon";
+
+  return "amazon";
+}
+
+export function isDraftReadyForOwnerReviewV1(args: {
+  owner_review_blockers: string[];
+  owner_verdict: AmazonOwnerScreenshotEvidenceV1["owner_verdict"] | null;
+}): boolean {
+  if (args.owner_review_blockers.length > 0) return false;
+  if (!args.owner_verdict) return false;
+  if (OWNER_REVIEW_FAIL_CLOSED_VERDICTS.has(args.owner_verdict)) return false;
+  return true;
+}
+
 export function parseBatchOwnerScreenshotFactsInputV1(raw: unknown): BatchOwnerScreenshotFactsInputV1 {
   if (!raw || typeof raw !== "object") {
     throw new Error("facts input must be { facts: [...] }");
@@ -396,6 +442,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
         suggested_production_evidence_path: suggestedPath,
         draft_packet: null,
         missing_owner_facts: ["owner_facts_row_missing"],
+        production_evidence_commit_blockers: [],
         draft_ready_for_owner_review: false,
         may_write_production_evidence: false,
         may_mutate: false,
@@ -417,6 +464,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
         suggested_production_evidence_path: suggestedPath,
         draft_packet: null,
         missing_owner_facts: [BATCH_OWNER_FACTS_TOKEN_CONFLICT_WITH_PLAN_V1],
+        production_evidence_commit_blockers: [],
         draft_ready_for_owner_review: false,
         may_write_production_evidence: false,
         may_mutate: false,
@@ -435,6 +483,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
         suggested_production_evidence_path: suggestedPath,
         draft_packet: null,
         missing_owner_facts: structuralMissing,
+        production_evidence_commit_blockers: [],
         draft_ready_for_owner_review: false,
         may_write_production_evidence: false,
         may_mutate: false,
@@ -453,6 +502,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
         suggested_production_evidence_path: suggestedPath,
         draft_packet: null,
         missing_owner_facts: ["token"],
+        production_evidence_commit_blockers: [],
         draft_ready_for_owner_review: false,
         may_write_production_evidence: false,
         may_mutate: false,
@@ -461,11 +511,17 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
     }
 
     const draft_packet = buildAmazonOwnerScreenshotEvidenceV1(merged);
-    const checklist = computeScreenshotEvidenceSafetyChecklistV1(merged);
-    const missing_owner_facts = [...checklist.unmet];
-    const draft_ready_for_owner_review =
-      missing_owner_facts.length === 0 &&
-      draft_packet.owner_verdict !== "INCOMPLETE_SCREENSHOT_FACTS";
+    const retailContext = inferScreenshotEvidenceRetailContextV1(planRow, merged);
+    const missing_owner_facts = listOwnerReviewBlockersFromScreenshotFactsV1(
+      merged,
+      retailContext,
+    );
+    const production_evidence_commit_blockers =
+      listProductionEvidenceCommitBlockersFromScreenshotFactsV1(merged, retailContext);
+    const draft_ready_for_owner_review = isDraftReadyForOwnerReviewV1({
+      owner_review_blockers: missing_owner_facts,
+      owner_verdict: draft_packet.owner_verdict,
+    });
 
     rows.push({
       row_id: planRow.row_id,
@@ -476,6 +532,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
       suggested_production_evidence_path: suggestedPath,
       draft_packet,
       missing_owner_facts,
+      production_evidence_commit_blockers,
       draft_ready_for_owner_review,
       may_write_production_evidence: false,
       may_mutate: false,
@@ -502,6 +559,7 @@ export function buildBatchOwnerScreenshotDraftPacketV1(
     ],
     unknown_facts: [
       "UNKNOWN: Whether founder will commit suggested_production_evidence_path to repo after review.",
+      "INFERRED: draft_ready_for_owner_review is founder review readiness only; production_evidence_commit_blockers (ASIN on Amazon, screenshot commit) gate durable evidence writes.",
     ],
   };
 }
