@@ -273,6 +273,8 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | `scripts/report-batch-evidence-collection-plan.ts` | **PROVEN** — `--source amazon-rescue-default` or `--stdin` review JSON |
 | `src/lib/owner-dashboard/batch-owner-screenshot-draft-packet-v1.ts` | **PROVEN** — `batch_owner_screenshot_draft_packet_v1` from plan + owner facts (no `data/evidence/` writes) |
 | `scripts/report-batch-owner-screenshot-drafts.ts` | **PROVEN** — `--plan` + `--facts` file paths; stdout JSON only |
+| `src/lib/owner-dashboard/batch-agent-evidence-capture-packet-v1.ts` | **PROVEN** — `batch_agent_evidence_capture_packet_v1` (agent fills facts; owner reviews) |
+| `scripts/report-batch-agent-evidence-capture-packet.ts` | **PROVEN** — stdout JSON only; `--source amazon-rescue-default` |
 | `npm run buckparts:batch-production-review` | **PROVEN** human alias; machine JSON: `node --import tsx scripts/report-batch-production-review.ts` |
 | Digest / dashboard embed | **NOT_IMPLEMENTED** |
 | Apply / mutation script | **NOT_IMPLEMENTED** (out of scope) |
@@ -298,9 +300,16 @@ node --import tsx scripts/report-batch-production-review.ts --source amazon-resc
 # Evidence collection plan (owner browser capture checklist per token; stdout only)
 node --import tsx scripts/report-batch-evidence-collection-plan.ts --source amazon-rescue-default
 
+# Primary path: agent evidence capture packet → agent fills lane draft facts → owner reviews draft packet
+node --import tsx scripts/report-batch-agent-evidence-capture-packet.ts --source amazon-rescue-default
+
+# Owner-filled JSON / worksheet / template file writes: fallback/debug only (not main workflow)
+node --import tsx scripts/write-batch-owner-screenshot-facts-template-draft.ts --source amazon-rescue-default
+node --import tsx scripts/write-batch-owner-screenshot-capture-worksheet.ts --source amazon-rescue-default
+
 # Owner screenshot draft packets (review-only; does not write data/evidence/)
 node --import tsx scripts/report-batch-evidence-collection-plan.ts --source amazon-rescue-default > /tmp/batch-plan.json
-node --import tsx scripts/report-batch-owner-screenshot-drafts.ts --plan /tmp/batch-plan.json --facts path/to/owner-facts.json
+node --import tsx scripts/report-batch-owner-screenshot-drafts.ts --plan /tmp/batch-plan.json --facts data/batch-production/drafts/owner-screenshot-facts-template.amazon-rescue-default.json
 ```
 
 ---

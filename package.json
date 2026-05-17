@@ -87,6 +87,7 @@
     "buckparts:batch-owner-screenshot-facts-template": "tsx scripts/report-batch-owner-screenshot-facts-template.ts",
     "buckparts:write-batch-owner-screenshot-facts-template-draft": "tsx scripts/write-batch-owner-screenshot-facts-template-draft.ts",
     "buckparts:write-batch-owner-screenshot-capture-worksheet": "tsx scripts/write-batch-owner-screenshot-capture-worksheet.ts",
+    "buckparts:batch-agent-evidence-capture-packet": "tsx scripts/report-batch-agent-evidence-capture-packet.ts",
     "buckparts:next-execution-packet": "tsx scripts/buckparts-next-execution-packet.ts",
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
     "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",
