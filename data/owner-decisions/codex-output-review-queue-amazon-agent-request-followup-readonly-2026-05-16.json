@@ -1,0 +1,30 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-05-16-codex-output-review-queue-amazon-agent-request-followup-readonly",
+      "source_queue_row_id": "queue-amazon-agent",
+      "source_decision_packet_id": "codex_output_review_packet_v1:queue-amazon-agent",
+      "decided_at": "2026-05-16T14:26:25.000Z",
+      "decision_status": "needs_more_evidence",
+      "owner_note": "Jared requests another bounded read-only Codex pass for queue-amazon-agent. Codex transport/capture was proven (PASS proof, final message captured) but codex_task_outcome_status was TASK_PARTIAL_OR_FAILED — not approve_readonly_findings. This records owner judgment only; it does not grant Supabase writes, retailer_links mutation, evidence JSON writes, affiliate changes, git commits, or Runner automation input.",
+      "allowed_next_scope": "read_only_agent",
+      "evidence_required_before_mutation": false,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate retailer_links or other retailer catalog/link artifacts except pure read-only inspection.",
+        "Do not create, delete, or overwrite evidence JSON under data/evidence (or parallel evidence paths) unless the founder explicitly expands scope outside this packet.",
+        "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
+        "Do not run mutating npm scripts (e.g. inserts, apply, mutate flags) unless the founder explicitly instructs otherwise.",
+        "Selecting any founder option above does not grant authority for Supabase writes, retailer_links mutations, evidence JSON writes, affiliate URL changes, mutating npm scripts, or git commits.",
+        "This decision row is not automation_input for Runner Step, queues, Execution Packets, or mutation gates."
+      ],
+      "codex_output_review_context_v1": {
+        "review_packet_contract": "codex_output_review_packet_v1",
+        "founder_option_id": "request_followup_readonly"
+      }
+    }
+  ]
+}
