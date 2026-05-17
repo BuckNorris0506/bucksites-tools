@@ -65,10 +65,11 @@
 
 ## Semantic rules (PROVEN in validator)
 
-1. **`read_only_agent`** — does **not** authorize mutating npm targets, Supabase, `retailer_links`, evidence JSON writes, or affiliate URL changes. It only labels that read-only agent packets may align with founder intent.
-2. **`owner_mutation_approved`** — requires non-empty `owner_note` and `evidence_required_before_mutation === true`. Time bounds: if `expires_at` or `review_after` is set and the reference time is **on or after** that instant, `isFounderRegistryRowActiveMutationApproval` is **false**.
-3. Invalid `decision_status` or `allowed_next_scope` values fail validation.
-4. **`codex_output_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (including **no** `owner_mutation_approved` pairing for `approve_readonly_findings`).
+1. **`read_only_agent`** — does **not** authorize mutating npm targets, Supabase, `retailer_links`, evidence JSON writes, or affiliate URL changes. It only labels that read-only agent packets may align with founder intent. **`evidence_required_before_mutation: false` on a `read_only_agent` row does not grant mutation authority** — that flag is only **required** to be `true` when `allowed_next_scope` is `owner_mutation_approved` (validator-enforced). Treat `read_only_agent` as **never** mutation-shaped regardless of `decision_status` or Codex review option.
+2. **`owner_mutation_approved`** — requires non-empty `owner_note` and `evidence_required_before_mutation === true` (explicit mutation-scoped evidence gate). Optional `expires_at` / `review_after` bound standing approval: if the reference time is **on or after** either instant, `isFounderRegistryRowActiveMutationApproval` is **false** (`founder-decision-registry-v1.ts`). **INFERRED:** Even a valid active row is **not** consumed by Runner, queues, or gates today — it is founder-local structured intent only until separately wired.
+3. **`approve_readonly_findings` (Codex review)** — validator requires `decision_status: approved` and `allowed_next_scope: read_only_agent`. **Must not** be treated as mutation approval, `owner_mutation_approved`, or authority for Supabase, `retailer_links`, evidence JSON, affiliate edits, commits, or Runner input. **PROVEN:** `founderRegistryRowGrantsMutatingRepoAuthority` returns **false** for these rows.
+4. Invalid `decision_status` or `allowed_next_scope` values fail validation.
+5. **`codex_output_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (including **no** `owner_mutation_approved` pairing for `approve_readonly_findings`).
 
 ---
 
@@ -89,6 +90,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-05-16 | Clarified `read_only_agent` vs `owner_mutation_approved` vs `approve_readonly_findings` (no mutation authority from read-only scope or Codex approve-read-only). |
 | 2026-05-16 | Optional `codex_output_review_context_v1` on registry rows + read-model counts + digest queue correlation + Layer 6 `founder_decision_recording_for_codex_review_v1` (visibility only; Layer 6 still NOT_PROVEN). |
 | 2026-05-15 | Read model v1 + `buckparts:founder-decision-registry` report script + digest/dashboard surfacing (counts only). |
 | 2026-05-15 | Initial Founder Decision Registry v1 contract + TS validator (`founder-decision-registry-v1.ts`). |

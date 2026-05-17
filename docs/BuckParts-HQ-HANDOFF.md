@@ -195,7 +195,7 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially §0B) and docs/BuckParts-TRUTH-MAP
 ### Active lane (HQ priority order)
 
 1. **Finish Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**).
-2. **Then Batch Production Lane v1 (NOT implemented)** — intended next **business-useful** system: batch 20–50 candidate links/products/pages per run, human review before commit/deploy. **UNKNOWN** schedule and schema until built.
+2. **Then Batch Production Lane v1** — **contract:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` (**PROVEN** doc); **runner NOT implemented**. V1 target: **5–10** review-only candidates per report; **20–50** deferred until report quality is proven.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
@@ -272,9 +272,11 @@ Machine-parseable JSON scripts: **`node --import tsx scripts/…`** — not `npm
 
 Seeded read model `failure_pattern_registry_read_model_v1`; feeds Layer 6 readiness counts. Informational only — does not widen Runner allowlist.
 
-### Batch Production Lane v1 (next business system — NOT PROVEN)
+### Batch Production Lane v1 (contract — NOT implemented)
 
-**Intent (not implemented):** produce **20–50** candidate links/products/pages per batch run; founder reviews before commit/deploy. **UNKNOWN:** file paths, scripts, and gates until a lane is designed and landed.
+**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` (**PROVEN**). **NOT PROVEN:** scripts, read models, or digest embed.
+
+**V1 intent:** read-only **batch candidate review generator** — **5–10** rows per report, founder approval before any apply/commit/deploy. **Non-goals:** auto-publish, auto-commit, Supabase/`retailer_links`/evidence/affiliate mutation. **Future:** **20–50** rows only after V1 report quality is proven. **Layer 6:** remains **`NOT_PROVEN`**; batch lane does not change that.
 
 ### Layer 6 / Codex — key commands (copy from repo root)
 

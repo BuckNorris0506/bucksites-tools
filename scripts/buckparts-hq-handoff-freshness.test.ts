@@ -28,6 +28,11 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "next business lane (planned, not implemented)",
   },
   {
+    id: "batch_lane_contract_doc",
+    needle: "BuckParts-BATCH-PRODUCTION-LANE-V1.md",
+    describe: "Batch Production Lane v1 contract doc pointer",
+  },
+  {
     id: "meta_system_warning",
     needle: "Do **not** keep expanding packets",
     describe: "meta-system expansion warning",
