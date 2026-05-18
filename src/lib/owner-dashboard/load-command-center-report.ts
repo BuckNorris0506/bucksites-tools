@@ -4,11 +4,6 @@
  */
 import { buildBuckpartsCommandCenterReport } from "../../../scripts/report-buckparts-command-center";
 import { buildBuckpartsCommandSurfaceReport } from "../../../scripts/report-buckparts-command-surface";
-import { getFridgeBySlug } from "@/lib/data/fridges";
-import {
-  listFridgeModelReviewOverrides,
-  type FridgeModelReviewOverride,
-} from "@/lib/fridge/fridge-model-review-overrides";
 import {
   attachOwnerCommandCenterNeuronsReport,
   buildOwnerCommandCenterNeuronsForReport,
@@ -31,6 +26,11 @@ import {
   buildOwnerIntegritySentinelReport,
   type OwnerIntegritySentinelReport,
 } from "@/lib/owner-dashboard/owner-integrity-sentinel-v1";
+import {
+  buildOwnerQuarantinedFridgeModelsV1,
+  type OwnerQuarantinedFridgeModelSummary,
+  type OwnerQuarantinedFridgeModelsReport,
+} from "@/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 
 export {
   attachOwnerCommandCenterNeuronsReport,
@@ -55,25 +55,15 @@ export type {
 } from "@/lib/owner-dashboard/owner-search-demand-and-gaps-build-v1";
 
 
-type QuarantinedFridgeModelStats = {
-  mapped_filter_count: number;
-  safe_cta_count: number;
-} | null;
-
-export type OwnerQuarantinedFridgeModelSummary = Pick<
-  FridgeModelReviewOverride,
-  "fridge_model_slug" | "reason" | "public_status" | "internal_evidence_doc"
-> & {
-  mapped_filter_count: number | "UNKNOWN";
-  safe_cta_count: number | "UNKNOWN";
-  owner_action_required: true;
-};
-
-export type OwnerQuarantinedFridgeModelsReport = {
-  data_mutation: false;
-  models: OwnerQuarantinedFridgeModelSummary[];
-};
-
+export type {
+  OwnerQuarantinedFridgeModelSummary,
+  OwnerQuarantinedFridgeModelsReport,
+  OwnerQuarantinedFridgeModelsV1,
+} from "@/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
+export {
+  buildOwnerQuarantinedFridgeModelsSummary,
+  buildOwnerQuarantinedFridgeModelsV1,
+} from "@/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 
 export type {
   IntegritySentinelActionSafety,
@@ -99,51 +89,6 @@ export type OwnerGscExternalDemandReport = {
   gsc_external_demand: OwnerGscExternalDemandNeuron;
 };
 
-
-export async function buildOwnerQuarantinedFridgeModelsSummary(args?: {
-  resolveModelStats?: (slug: string) => Promise<QuarantinedFridgeModelStats>;
-}): Promise<OwnerQuarantinedFridgeModelSummary[]> {
-  const resolveModelStats =
-    args?.resolveModelStats ??
-    (async (slug: string): Promise<QuarantinedFridgeModelStats> => {
-      const fridge = await getFridgeBySlug(slug);
-      if (!fridge) return null;
-      return {
-        mapped_filter_count: fridge.filters.length,
-        safe_cta_count: fridge.filters.reduce((n, f) => n + f.retailer_links.length, 0),
-      };
-    });
-
-  const overrides = listFridgeModelReviewOverrides();
-  const rows = await Promise.all(
-    overrides.map(async (o): Promise<OwnerQuarantinedFridgeModelSummary> => {
-      try {
-        const stats = await resolveModelStats(o.fridge_model_slug);
-        return {
-          fridge_model_slug: o.fridge_model_slug,
-          reason: o.reason,
-          public_status: o.public_status,
-          internal_evidence_doc: o.internal_evidence_doc,
-          mapped_filter_count: stats?.mapped_filter_count ?? "UNKNOWN",
-          safe_cta_count: stats?.safe_cta_count ?? "UNKNOWN",
-          owner_action_required: true,
-        };
-      } catch {
-        return {
-          fridge_model_slug: o.fridge_model_slug,
-          reason: o.reason,
-          public_status: o.public_status,
-          internal_evidence_doc: o.internal_evidence_doc,
-          mapped_filter_count: "UNKNOWN",
-          safe_cta_count: "UNKNOWN",
-          owner_action_required: true,
-        };
-      }
-    }),
-  );
-  rows.sort((a, b) => a.fridge_model_slug.localeCompare(b.fridge_model_slug));
-  return rows;
-}
 
 export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
   report: T,
@@ -228,7 +173,9 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
   try {
     const report = await buildBuckpartsCommandCenterReport({ rootDir });
     const commandSurface = await buildBuckpartsCommandSurfaceReport({ rootDir });
-    const quarantined = await buildOwnerQuarantinedFridgeModelsSummary();
+    const quarantinedLane =
+      report.command_center_v2.owner_quarantined_fridge_models_v1 ??
+      (await buildOwnerQuarantinedFridgeModelsV1());
     const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
     const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
@@ -258,7 +205,7 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     const sentinel =
       report.command_center_v2.owner_integrity_sentinel_v1 ??
       buildOwnerIntegritySentinelReport({ report, commandSurface });
-    const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
+    const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantinedLane.models);
     const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
     const withNeurons = attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons);
     const withSentinel = attachOwnerIntegritySentinelReport(withNeurons, sentinel);

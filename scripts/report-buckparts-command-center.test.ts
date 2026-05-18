@@ -2664,6 +2664,33 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.ok(gh!.verdict === "MISSING" || gh!.verdict === "PARTIAL");
 });
 
+test("command_center_v2.owner_quarantined_fridge_models_v1 is read-only CC-owned quarantine lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.owner_quarantined_fridge_models_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "owner_quarantined_fridge_models_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.ok(Array.isArray(lane.models));
+
+  const quarantineManifest = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "owner_quarantined_fridge_models",
+  );
+  assert.ok(quarantineManifest);
+  assert.equal(quarantineManifest!.verdict, "CONNECTED");
+  assert.equal(quarantineManifest!.dashboard_only, false);
+  assert.equal(quarantineManifest!.cc_json_path, "command_center_v2.owner_quarantined_fridge_models_v1");
+
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_quarantined_fridge_models"));
+});
+
 test("command_center_v2.owner_integrity_sentinel_v1 is read-only CC-owned truth gate", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

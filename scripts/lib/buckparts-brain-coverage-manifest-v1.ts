@@ -71,13 +71,14 @@ const CURATED_ENTRIES: EntrySeed[] = [
   },
   {
     system_id: "owner_quarantined_fridge_models",
-    npm_script_or_path: "src/lib/owner-dashboard/load-command-center-report.ts",
-    cc_json_path: null,
-    dashboard_only: true,
-    verdict: "BYPASSING",
+    npm_script_or_path: "src/lib/owner-dashboard/owner-quarantined-fridge-models-v1.ts",
+    cc_json_path: "command_center_v2.owner_quarantined_fridge_models_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
     blocks_lane_work: false,
-    validation_command: "node --import tsx -e \"import { loadCommandCenterReportForOwner } from './src/lib/owner-dashboard/load-command-center-report.ts'\"",
-    reason: "Attached only in loadCommandCenterReportForOwner; quarantine summary not on CC stdout JSON.",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.owner_quarantined_fridge_models_v1.data_mutation'",
+    reason: "Quarantined fridge model summary built during Command Center report generation (read-only).",
   },
   {
     system_id: "owner_vertical_launch_policy",

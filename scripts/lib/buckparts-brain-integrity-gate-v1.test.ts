@@ -88,7 +88,7 @@ test("buildBrainIntegrityGateV1 PROCEED when no decision-useful gaps remain", ()
   assert.equal(gate.brain_status, "PROCEED");
 });
 
-test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries excluding integrity sentinel", () => {
+test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries excluding CC-owned lanes", () => {
   const manifest = buildCommandCenterBrainCoverageManifestV1({
     rootDir: process.cwd(),
     now: () => new Date("2026-05-18T12:00:00.000Z"),
@@ -98,6 +98,8 @@ test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries
   for (const id of DASHBOARD_DECISION_BRAIN_GAP_SYSTEM_IDS) {
     assert.ok(gate.partial_entries.some((e) => e.system_id === id), `expected partial brain gap ${id}`);
   }
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_quarantined_fridge_models"));
 });
 
 test("buildBrainIntegrityGateV1 allowed_bypass uses default manifest bypass reason only", () => {

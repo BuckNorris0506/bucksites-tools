@@ -30,6 +30,7 @@ import {
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
 import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
 import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
+import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -834,12 +835,17 @@ export async function buildBuckpartsCommandCenterReport(
     ),
     buildExternalMeasurementFreshnessV1({ rootDir, deps: { now } }),
   ]);
-  const command_center_v2_without_sentinel: Omit<CommandCenterV2Report, "owner_integrity_sentinel_v1"> = {
+  const command_center_v2_core: Omit<
+    CommandCenterV2Report,
+    "owner_integrity_sentinel_v1" | "owner_quarantined_fridge_models_v1"
+  > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
     command_center_brain_coverage_manifest_v1: command_center_v2_base.command_center_brain_coverage_manifest_v1,
     brain_integrity_gate_v1: command_center_v2_base.brain_integrity_gate_v1,
   };
+
+  const owner_quarantined_fridge_models_v1 = await buildOwnerQuarantinedFridgeModelsV1();
 
   const owner_integrity_sentinel_v1 = buildOwnerIntegritySentinelV1({
     report: {
@@ -857,7 +863,7 @@ export async function buildBuckpartsCommandCenterReport(
       rescue_velocity_summary: rescueVelocitySummary,
       rescue_delta_trend_summary: rescueDeltaTrendSummary,
       amazon_first_blocked_queue_summary: amazonFirstSummary,
-      command_center_v2: command_center_v2_without_sentinel,
+      command_center_v2: command_center_v2_core,
     },
     commandSurface: {
       generated_at: commandSurface.generated_at,
@@ -866,7 +872,8 @@ export async function buildBuckpartsCommandCenterReport(
   });
 
   const command_center_v2: CommandCenterV2Report = {
-    ...command_center_v2_without_sentinel,
+    ...command_center_v2_core,
+    owner_quarantined_fridge_models_v1,
     owner_integrity_sentinel_v1,
   };
 

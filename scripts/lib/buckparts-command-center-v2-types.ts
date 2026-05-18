@@ -1,6 +1,7 @@
 /** Command Center v2 — owner/operator decision surface (read-only reports). */
 
 import type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
+import type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
 export type TokenControlStatus =
@@ -789,10 +790,18 @@ export type CommandCenterV2Report = {
   command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
   brain_integrity_gate_v1: BrainIntegrityGateV1;
   owner_integrity_sentinel_v1: OwnerIntegritySentinelV1;
+  owner_quarantined_fridge_models_v1: OwnerQuarantinedFridgeModelsV1;
 };
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
+export type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 
+export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
+  CommandCenterV2Report,
+  "owner_integrity_sentinel_v1" | "owner_quarantined_fridge_models_v1"
+>;
+
+/** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */
 export type CommandCenterV2ReportWithoutIntegritySentinelV1 = Omit<
   CommandCenterV2Report,
   "owner_integrity_sentinel_v1"
