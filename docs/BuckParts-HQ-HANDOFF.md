@@ -4,13 +4,13 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate):** refreshed through pushed HEAD **`ab3aedc`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate):** refreshed through pushed HEAD **`181bc54`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `ab3aedc`)
+## Current stopping point / chat migration state (through `181bc54`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -18,8 +18,14 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`ab3aedc`** — *Update HQ handoff for batch owner approval gate* |
-| Recent chain | `399251a` Add batch owner approval gate · `1362b65` Add batch owner review report · `2d5032c` Separate owner review readiness from production evidence gates |
+| Latest pushed HEAD | **`181bc54`** — *Add HQ rule requiring next-move prompts* |
+| Recent chain | `ab3aedc` Update HQ handoff for batch owner approval gate · `399251a` Add batch owner approval gate · `1362b65` Add batch owner review report |
+
+**Commit lineage (Layer 7 + HQ):**
+
+- **`399251a`** — Layer 7 owner approval gate implemented in-repo.
+- **`ab3aedc`** — batch lane + approval gate handoff narrative documented.
+- **`181bc54`** — HQ chat behavior rule: next move must include copy/paste prompt or command in the same message.
 
 ### Batch Production Lane v1 — status (PROVEN in-repo)
 
@@ -73,6 +79,17 @@ node --import tsx scripts/report-batch-owner-approval-checklist.ts --source non-
 | Supabase / `retailer_links` mutation from batch lane | **NOT_PROVEN** — no apply/mutation script |
 | Layer 6 founder-only production mutation approval | **NOT_PROVEN** (`layer_6_founder_only_approval` stays `NOT_PROVEN` on batch artifacts) |
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local only unless intentionally promoted |
+
+### Reporting / owner dashboard (NOT_PROVEN)
+
+Read-only inventory at this stop (no new dashboard wiring claimed):
+
+- **Owner dashboard is not yet a single report surface** — `src/app/ownerdashboard/[secret]/page.tsx` surfaces Command Center v2 + selected neurons; many `scripts/report-*.ts` outputs remain CLI-only.
+- **Batch Production Lane / Layer 7 approval is not surfaced** on the owner dashboard (`docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`: digest/dashboard embed **NOT_IMPLEMENTED**).
+- **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; dashboard `commission_or_revenue` remains **NOT_CONNECTED**.
+- **Sentry owner report panel is not proven** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized owner dashboard panel in-repo.
+- **GitHub Actions live status dashboard panel is not proven** — workflows exist under `.github/workflows/`; owner dashboard lists workflow basenames from disk only, not live run PASS/FAIL.
+- **GSC/GA4 artifact freshness is UNKNOWN** until fetch runs — `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` + Supabase `owner_report_artifacts`; repo `data/gsc/` is not a committed export source of truth.
 
 ### Operator rules (do not regress)
 

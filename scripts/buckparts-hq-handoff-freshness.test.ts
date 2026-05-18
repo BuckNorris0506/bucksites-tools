@@ -33,9 +33,14 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
-    id: "batch_head_ab3aedc",
-    needle: "ab3aedc",
+    id: "batch_head_181bc54",
+    needle: "181bc54",
     describe: "latest batch lane HEAD reference",
+  },
+  {
+    id: "reporting_not_single_surface",
+    needle: "Owner dashboard is not yet a single report surface",
+    describe: "reporting inventory NOT_PROVEN note",
   },
   {
     id: "hq_next_move_prompt_rule",
