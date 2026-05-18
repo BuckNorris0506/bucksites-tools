@@ -33,8 +33,8 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
-    id: "batch_head_1362b65",
-    needle: "1362b65",
+    id: "batch_head_399251a",
+    needle: "399251a",
     describe: "latest batch lane HEAD reference",
   },
   {
@@ -43,9 +43,24 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "batch owner Markdown review report CLI",
   },
   {
+    id: "batch_owner_approval_checklist",
+    needle: "report-batch-owner-approval-checklist.ts",
+    describe: "batch owner Markdown approval checklist CLI",
+  },
+  {
+    id: "batch_owner_approval_gate",
+    needle: "batch owner approval gate",
+    describe: "owner approval gate stopping point",
+  },
+  {
+    id: "begin_active_decision_sentinel",
+    needle: "BEGIN_ACTIVE_DECISION",
+    describe: "approval checklist active-block sentinel",
+  },
+  {
     id: "owner_review_markdown_primary",
-    needle: "Owner-facing Markdown review is the primary owner surface",
-    describe: "owner review surface doctrine",
+    needle: "Owner-facing surfaces are Markdown-first",
+    describe: "owner Markdown-first surface doctrine",
   },
   {
     id: "batch_lane_contract_doc",
