@@ -4,13 +4,13 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate):** refreshed through pushed HEAD **`78ff67d`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate + Command Center lane):** refreshed through pushed HEAD **`93dcd3d`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `78ff67d`)
+## Current stopping point / chat migration state (through `93dcd3d`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -18,15 +18,16 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`78ff67d`** — *Allow partial batch approvals for ready rows* |
-| Recent chain | `f71f61f` Clarify batch owner approval blocked-row summary · `4527c5c` Update HQ handoff to 181bc54 and reporting gaps · `181bc54` Add HQ rule requiring next-move prompts · `399251a` Add batch owner approval gate |
+| Latest pushed HEAD | **`93dcd3d`** — *Add batch production owner decisions lane to Command Center v2* |
+| Recent chain | `78ff67d` Allow partial batch approvals for ready rows · `c73fd69` Update HQ handoff for 78ff67d Layer 7 five-row E2E proof · `f71f61f` Clarify batch owner approval blocked-row summary · `399251a` Add batch owner approval gate |
 
-**Commit lineage (Layer 7 + HQ):**
+**Commit lineage (Layer 7 + HQ + Command Center):**
 
 - **`399251a`** — Layer 7 owner approval gate implemented in-repo.
 - **`181bc54`** — HQ chat behavior rule: next move must include copy/paste prompt or command in the same message.
 - **`f71f61f`** — approval checklist summary distinguishes blocked vs awaiting agent facts.
 - **`78ff67d`** — partial approval compile: expects founder decisions only for `draft_ready_for_owner_review` rows when facts exist; durable registry export for ready rows only.
+- **`93dcd3d`** — `command_center_v2.batch_production_owner_decisions_lane_v1` reads committed batch registry exports; owner dashboard displays Layer 7 batch state **through Command Center only** (no dashboard-only registry scan for this lane).
 
 ### Batch Production Lane v1 — status (PROVEN in-repo)
 
@@ -57,9 +58,21 @@ node --import tsx scripts/report-batch-owner-approval-checklist.ts --source non-
 
 **PROVEN — no mutation authority introduced:** batch approval artifacts keep `read_only: true`, `data_mutation: false`, `may_mutate: false`, `may_write_production_evidence: false`, `automation_input: false`. No Supabase writes, no `retailer_links` mutation, no `data/evidence/` writes, no affiliate URL edits, no apply/mutation executor.
 
-**PROVEN — validation before commit (`78ff67d`):** 18 targeted tests pass (`batch-owner-approval-v1`, `batch-production-lane-pipeline-v1`, `buckparts-hq-handoff-freshness`); `npm run lint` pass; `npm run build` pass.
+**PROVEN — validation before commit (`93dcd3d`):** batch lane + Command Center tests pass (`batch-production-owner-decisions-lane-v1`, `report-buckparts-command-center`); `buckparts-hq-handoff-freshness`; `npm run lint` pass; `npm run build` pass.
 
-**PROVEN — Layer 7 five-row non-Amazon E2E (facts → review → partial approval → durable registry export):**
+**PROVEN — Command Center integration (Layer 7 owner decisions):**
+
+- **Source:** committed `founder_decision_registry_v1` export at `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json` (rows with `batch_production_owner_review_context_v1`).
+- **Lane contract:** `command_center_v2.batch_production_owner_decisions_lane_v1` in `npm run buckparts:command-center` JSON (`scripts/lib/buckparts-command-center-v2.ts`, builder `src/lib/owner-dashboard/batch-production-owner-decisions-lane-v1.ts`).
+- **Owner dashboard:** `src/app/ownerdashboard/[secret]/page.tsx` reads **`report.command_center_v2.batch_production_owner_decisions_lane_v1` only** — not a separate dashboard-only file scan for this lane.
+- **Visible in Command Center (PROVEN fields when registry present):** `approved_for_planning_count: 3`; approved rows `da97-08006b`, `da97-15217d`, `rpwfe` (`allowed_next_scope: read_only_agent`, `approve_for_next_planning_only`); `excluded_not_owner_review_ready_row_ids: da29-00012b`, `adq75795101` (documented in this handoff + lane `proven_facts`); `source_row_count: 5`; `may_mutate: false`; `may_write_production_evidence: false`; `automation_input: false`; `layer_6_founder_only_production_mutation_approval: NOT_PROVEN`; `batch_size_20_status: BLOCKED`.
+- **Inspect lane (copy/paste):**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_owner_decisions_lane_v1 | {runtime_status, approved_for_planning_count, approved_rows: [.approved_rows[].row_id], excluded: .excluded_not_owner_review_ready_row_ids, may_mutate, batch_size_20_status}'
+```
+
+**PROVEN — Layer 7 five-row non-Amazon E2E (facts → review → partial approval → durable registry export → Command Center):**
 
 - **5 source rows** entered the lane via `--source non-amazon-pdp-candidates` (table above).
 - **Browser/agent-filled facts** (lane-local working copy under `data/batch-production/drafts/`; not committed as canonical truth) produced **3 owner-review-ready** rows and **2 blocked / not owner-review-ready** rows:
@@ -93,26 +106,30 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 
 | Area | Status |
 |------|--------|
-| Digest / dashboard surfacing of batch owner approval decisions | **NOT_PROVEN** — registry file exists; founder digest / owner dashboard do not yet embed Layer 7 batch approval rows |
+| Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — Layer 7 batch lane is integrated; broader feeds below are not yet fully Command Center-owned |
+| Founder Digest embedding Layer 7 batch lane | **NOT_PROVEN** — digest slices Command Center but does not yet surface `batch_production_owner_decisions_lane_v1` as a first-class section unless proven in digest builder |
 | Production evidence commit for this cohort | **NOT_PROVEN** |
 | Supabase / `retailer_links` mutation from batch lane | **NOT_PROVEN** — no apply/mutation script |
 | Affiliate URL edits from batch lane | **NOT_PROVEN** |
 | Apply / mutation executor for batch lane | **NOT_PROVEN** |
-| Batch size **20** (or larger) cohort runs | **NOT_PROVEN** — v1 cap remains **5–10** rows |
-| Layer 6 founder-only production mutation approval | **NOT_PROVEN** (`layer_6_founder_only_approval` stays `NOT_PROVEN` on batch artifacts) |
+| Batch size **20** (or larger) cohort runs | **BLOCKED** — `batch_size_20_status: BLOCKED` on batch lane; v1 cap remains **5–10** rows |
+| Layer 6 founder-only production mutation approval | **NOT_PROVEN** (`layer_6_founder_only_production_mutation_approval: NOT_PROVEN` on batch lane) |
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local working artifacts only unless intentionally promoted |
 | Blocked rows `da29-00012b`, `adq75795101` passing owner-review gates | **NOT PROVEN** — remain excluded until facts satisfy review blockers |
 
-### Reporting / owner dashboard (NOT_PROVEN)
+### Reporting / Command Center completeness (NOT_PROVEN unless stated)
 
-Read-only inventory at this stop (no new dashboard wiring claimed):
+Read-only inventory at this stop:
 
 - **Owner dashboard is not yet a single report surface** — `src/app/ownerdashboard/[secret]/page.tsx` surfaces Command Center v2 + selected neurons; many `scripts/report-*.ts` outputs remain CLI-only.
-- **Batch Production Lane / Layer 7 approval is not surfaced** on the owner dashboard (`docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`: digest/dashboard embed **NOT_IMPLEMENTED**).
-- **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; dashboard `commission_or_revenue` remains **NOT_CONNECTED**.
-- **Sentry owner report panel is not proven** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized owner dashboard panel in-repo.
-- **GitHub Actions live status dashboard panel is not proven** — workflows exist under `.github/workflows/`; owner dashboard lists workflow basenames from disk only, not live run PASS/FAIL.
-- **GSC/GA4 artifact freshness is UNKNOWN** until fetch runs — `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` + Supabase `owner_report_artifacts`; repo `data/gsc/` is not a committed export source of truth.
+- **PROVEN:** Layer 7 batch owner decisions are surfaced on the owner dashboard **via** `command_center_v2.batch_production_owner_decisions_lane_v1` (Command Center is the truth source for that lane).
+- **GitHub Actions live status is not Command Center-owned** — workflows exist under `.github/workflows/`; dashboard control plane lists workflow **basenames from disk only**, not live PASS/FAIL from GitHub API.
+- **Sentry health is not Command Center-owned** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized Command Center / dashboard panel in-repo.
+- **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED**.
+- **GSC/GA4 freshness is not fully Command Center-owned** — fetch via `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch`; dashboard neurons attach partial artifacts; freshness **UNKNOWN** until fetch runs.
+- **Runner Step live JSON is not Command Center-owned by default** — `npm run buckparts:runner-step` is CLI/CI; optional digest env `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` only.
+- **Daily Operator status is not Command Center-owned** — `npm run buckparts:daily` is a separate `buckparts_daily_operator_v1` report (builds on Command Center internally but not merged into CC JSON).
+- **Founder Digest status is not Command Center-owned** — `npm run buckparts:founder-digest` is Markdown stdout; slices Command Center but is a separate surface.
 
 ### Operator rules (do not regress)
 
@@ -125,15 +142,15 @@ Read-only inventory at this stop (no new dashboard wiring claimed):
 
 ### Next best move after chat migration (INFERRED)
 
-**Verify the durable batch registry export is visible in the founder-decision read model**, then decide whether the next implementation slice is **digest/dashboard surfacing** for Layer 7 batch rows or **blocked-row re-capture** for `da29-00012b` / `adq75795101`. **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, or apply execution.
+**Run a Command Center completeness audit** (which feeds are bright/dim/dark vs CLI-only), then pick the next integration slice: **Founder Digest** batch lane section, **GSC/GA4 freshness** in Command Center v2 lanes, or **blocked-row re-capture** for `da29-00012b` / `adq75795101`. **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
 
-**Copy/paste (repo root) — confirm 3 batch approval rows in registry read model:**
+**Copy/paste (repo root) — confirm Layer 7 batch lane in Command Center:**
 
 ```bash
-node --import tsx scripts/report-founder-decision-registry.ts | jq '[.rows[] | select(.batch_production_owner_review_context_v1 != null) | {batch_row_id: .batch_production_owner_review_context_v1.batch_row_id, founder_option_id: .batch_production_owner_review_context_v1.founder_option_id, allowed_next_scope}]'
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_owner_decisions_lane_v1 | {runtime_status, approved_for_planning_count, approved_rows: [.approved_rows[] | {row_id, token, allowed_next_scope}], excluded_not_owner_review_ready_row_ids, may_mutate, batch_size_20_status}'
 ```
 
-**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` · `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json`
+**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` · `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json` · `src/lib/owner-dashboard/batch-production-owner-decisions-lane-v1.ts`
 
 ---
 
@@ -321,7 +338,7 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0
 
 ### Active lane (HQ priority order)
 
-1. **Batch Production Lane v1 — non-Amazon review + owner approval gate** (**current stop** through **`78ff67d`**) — **PROVEN:** five-row non-Amazon loop through durable `founder_decision_registry_v1` export (`data/owner-decisions/batch-non-amazon-pdp-owner-approval.json`; 3 approved ready rows; 2 blocked excluded); partial compile for ready rows only; planning-only `read_only_agent` scope. **NOT PROVEN:** digest/dashboard embed, production evidence commit, mutation/apply, batch size 20, Layer 6 production mutation approval. See **Current stopping point** above.
+1. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (**current stop** through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** full Command Center completeness audit, Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
 2. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
 3. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
 
@@ -402,7 +419,7 @@ Seeded read model `failure_pattern_registry_read_model_v1`; feeds Layer 6 readin
 
 ### Batch Production Lane v1 (read-only — non-Amazon review usable)
 
-**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`. **PROVEN (through `78ff67d`):** production review report, evidence plan, agent capture packet, owner screenshot drafts (`draft_ready_for_owner_review` vs `production_evidence_commit_blockers`), **owner Markdown review report** (`scripts/report-batch-owner-review.ts`), **owner Markdown approval checklist + partial compile** (`scripts/report-batch-owner-approval-checklist.ts`, `scripts/report-batch-owner-approval.ts`), non-Amazon PDP source (`--source non-amazon-pdp-candidates`), **durable registry export** for 3 ready rows at `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json`. **Primary owner surfaces:** Markdown review + Markdown approval checklist. **Machine JSON:** debug/support only. **Owner approval:** planning/read-model only (`allowed_next_scope: read_only_agent`) — production mutation blocked. **NOT PROVEN:** digest/dashboard embed, apply/mutation script, production evidence commit, Supabase/`retailer_links`/affiliate mutation, batch size 20, Layer 6 founder-only production mutation approval.
+**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`. **PROVEN (through `93dcd3d`):** production review report, evidence plan, agent capture packet, owner screenshot drafts (`draft_ready_for_owner_review` vs `production_evidence_commit_blockers`), **owner Markdown review report** (`scripts/report-batch-owner-review.ts`), **owner Markdown approval checklist + partial compile** (`scripts/report-batch-owner-approval-checklist.ts`, `scripts/report-batch-owner-approval.ts`), non-Amazon PDP source (`--source non-amazon-pdp-candidates`), **durable registry export** for 3 ready rows at `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json`, **`command_center_v2.batch_production_owner_decisions_lane_v1`**, **owner dashboard display via Command Center**. **Primary owner surfaces:** Markdown review + Markdown approval checklist + Command Center v2 lane. **Machine JSON:** debug/support only. **Owner approval:** planning/read-model only (`allowed_next_scope: read_only_agent`) — production mutation blocked. **NOT PROVEN:** full Command Center operating-truth audit, Founder Digest batch lane section, apply/mutation script, production evidence commit, Supabase/`retailer_links`/affiliate mutation, batch size 20, Layer 6 founder-only production mutation approval.
 
 **V1 intent:** read-only **batch candidate review** — **5–10** rows, agent-filled facts, founder Markdown review, explicit registry decisions before any apply/commit/deploy. **Non-goals:** auto-publish, auto-commit, Supabase/`retailer_links`/evidence/affiliate mutation, Jared-authored JSON. **Do not** restart Amazon interstitial loop as main path. **Layer 6:** remains **`NOT_PROVEN`**.
 
