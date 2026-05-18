@@ -95,7 +95,11 @@ export type BatchOwnerApprovalPacketV1 = {
   generated_at: string;
   source_review_contract: typeof BATCH_OWNER_SCREENSHOT_DRAFT_PACKET_CONTRACT_V1;
   source_review_generated_at: string | null;
+  /** Rows in the source draft review packet (full cohort). */
+  source_row_count: number;
   approval_row_count: number;
+  /** Blocked / not owner-review-ready rows excluded from approval checklist (facts-backed). */
+  excluded_not_owner_review_ready_row_ids: string[];
   layer_6_founder_only_approval: "NOT_PROVEN";
   no_mutation_authority_attestation: typeof BATCH_OWNER_APPROVAL_NO_AUTHORITY_ATTESTATION_V1;
   rows: BatchOwnerApprovalPacketRowV1[];
@@ -285,6 +289,12 @@ export function buildBatchOwnerApprovalPacketV1(args: {
     founder_decision_registry_export = v.ok ? v.doc : null;
   }
 
+  const source_row_count = args.draftReview.rows.length;
+  const { blockedNotOwnerReviewReadyRows } = partitionApprovalChecklistRowsV1(args.draftReview);
+  const excluded_not_owner_review_ready_row_ids = blockedNotOwnerReviewReadyRows.map(
+    (r) => r.row_id,
+  );
+
   return {
     contract: BATCH_OWNER_APPROVAL_PACKET_CONTRACT_V1,
     read_only: true,
@@ -295,14 +305,19 @@ export function buildBatchOwnerApprovalPacketV1(args: {
     generated_at,
     source_review_contract: BATCH_OWNER_SCREENSHOT_DRAFT_PACKET_CONTRACT_V1,
     source_review_generated_at: args.draftReview.generated_at ?? null,
+    source_row_count,
     approval_row_count: packetRows.length,
+    excluded_not_owner_review_ready_row_ids,
     layer_6_founder_only_approval: "NOT_PROVEN",
     no_mutation_authority_attestation: BATCH_OWNER_APPROVAL_NO_AUTHORITY_ATTESTATION_V1,
     rows: packetRows,
     founder_decision_registry_export,
     proven_facts: [
       "PROVEN: Approval packet compiled read-only from batch_owner_screenshot_draft_packet_v1 + founder Markdown decisions.",
-      `PROVEN: approval_row_count=${packetRows.length}; registry_export_rows=${registryRows.length}.`,
+      `PROVEN: source_row_count=${source_row_count}; approval_row_count=${packetRows.length}; registry_export_rows=${registryRows.length}.`,
+      excluded_not_owner_review_ready_row_ids.length > 0
+        ? `PROVEN: excluded_not_owner_review_ready_row_ids=${excluded_not_owner_review_ready_row_ids.join(", ")}.`
+        : "PROVEN: excluded_not_owner_review_ready_row_ids=(none).",
     ],
     unknown_facts: [
       "UNKNOWN: Whether founder will copy registry_export into data/owner-decisions/ for digest visibility.",
@@ -490,7 +505,21 @@ export function parseBatchOwnerApprovalDecisionsMarkdownV1(
   return { decisions, row_results, errors };
 }
 
-/** Fail-closed compile: every draft row must have a valid active decision; no partial registry export. */
+/**
+ * Row ids that must have founder decisions at compile time.
+ * Facts-backed: owner-review-ready rows only. Planning-seed (zero ready): full draft cohort.
+ */
+export function resolveExpectedBatchOwnerApprovalDecisionRowIdsV1(
+  draftReview: BatchOwnerScreenshotDraftPacketV1,
+): string[] {
+  const readyRows = draftReview.rows.filter((r) => r.draft_ready_for_owner_review);
+  if (readyRows.length > 0) {
+    return readyRows.map((r) => r.row_id.trim().toLowerCase());
+  }
+  return draftReview.rows.map((r) => r.row_id.trim().toLowerCase());
+}
+
+/** Fail-closed compile: every approval-eligible row must have a valid active decision; no partial registry export. */
 export function compileBatchOwnerApprovalFromMarkdownV1(args: {
   draftReview: BatchOwnerScreenshotDraftPacketV1;
   decisionsMarkdown: string;
@@ -500,7 +529,8 @@ export function compileBatchOwnerApprovalFromMarkdownV1(args: {
   const parsed = parseBatchOwnerApprovalDecisionsMarkdownV1(args.decisionsMarkdown);
   const compile_errors = [...parsed.errors];
 
-  const expectedRowIds = args.draftReview.rows.map((r) => r.row_id.trim());
+  const expectedRowIds = resolveExpectedBatchOwnerApprovalDecisionRowIdsV1(args.draftReview);
+  const expectedSet = new Set(expectedRowIds);
   const parsedRowIds = new Set(parsed.row_results.map((r) => r.row_id));
 
   for (const row_id of expectedRowIds) {
@@ -511,15 +541,40 @@ export function compileBatchOwnerApprovalFromMarkdownV1(args: {
     }
   }
 
-  if (parsed.decisions.length !== expectedRowIds.length) {
+  const eligibleDecisions = parsed.decisions.filter((d) =>
+    expectedSet.has(d.row_id.trim().toLowerCase()),
+  );
+  const nonEligibleDecisions = parsed.decisions.filter(
+    (d) => !expectedSet.has(d.row_id.trim().toLowerCase()),
+  );
+
+  if (eligibleDecisions.length !== expectedRowIds.length) {
     compile_errors.push(
-      `expected ${expectedRowIds.length} valid founder decisions, got ${parsed.decisions.length}`,
+      `expected ${expectedRowIds.length} valid founder decisions, got ${eligibleDecisions.length}`,
     );
+  }
+
+  const draftByRowId = new Map(
+    args.draftReview.rows.map((r) => [r.row_id.trim().toLowerCase(), r] as const),
+  );
+  for (const input of nonEligibleDecisions) {
+    const row_id = input.row_id.trim().toLowerCase();
+    const draftRow = draftByRowId.get(row_id);
+    if (!draftRow) {
+      compile_errors.push(`${row_id}: unknown row_id in decisions (not in draft review)`);
+      continue;
+    }
+    compile_errors.push(
+      `${row_id}: decision present but row is excluded from approval checklist (draft_ready_for_owner_review is false)`,
+    );
+    for (const err of validateApprovalAgainstDraftRow(draftRow, input)) {
+      compile_errors.push(`${row_id}: ${err}`);
+    }
   }
 
   const packet = buildBatchOwnerApprovalPacketV1({
     draftReview: args.draftReview,
-    decisions: parsed.decisions,
+    decisions: eligibleDecisions,
     generated_at: args.generated_at,
     decided_at: args.decided_at,
   });

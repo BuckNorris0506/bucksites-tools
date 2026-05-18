@@ -26,6 +26,7 @@ import {
   formatBlockedRowReasonsForChecklistV1,
   parseBatchOwnerApprovalDecisionsMarkdownV1,
   partitionApprovalChecklistRowsV1,
+  resolveExpectedBatchOwnerApprovalDecisionRowIdsV1,
 } from "./batch-owner-approval-v1";
 import { BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1 } from "./batch-production-lane-pipeline-v1";
 import {
@@ -422,6 +423,111 @@ test("active defer compiles for planning-seed row", () => {
   assert.equal(compiled.packet.rows[0]!.founder_option_id, "defer");
   assert.ok(compiled.packet.founder_decision_registry_export);
   assert.equal(compiled.packet.founder_decision_registry_export!.rows.length, 5);
+});
+
+function threeReadyTwoBlockedDraftReview(): BatchOwnerScreenshotDraftPacketV1 {
+  const review = fiveRowReadyDraftReview();
+  const blockedBuyPath = {
+    ...review.rows.find((r) => r.row_id === "da29-00012b")!,
+    draft_ready_for_owner_review: false,
+    missing_owner_facts: ["buy_path_visible must be true"],
+  };
+  const blockedPdp = {
+    ...review.rows.find((r) => r.row_id === "adq75795101")!,
+    draft_ready_for_owner_review: false,
+    missing_owner_facts: ["page_kind must be product_detail_page (not search/SERP)"],
+  };
+  return {
+    ...review,
+    rows: review.rows.map((r) => {
+      if (r.row_id === "da29-00012b") return blockedBuyPath;
+      if (r.row_id === "adq75795101") return blockedPdp;
+      return r;
+    }),
+  };
+}
+
+test("facts-backed compile succeeds with 3 ready decisions and 2 blocked rows absent", () => {
+  const review = threeReadyTwoBlockedDraftReview();
+  assert.deepEqual(resolveExpectedBatchOwnerApprovalDecisionRowIdsV1(review), [
+    "da97-08006b",
+    "da97-15217d",
+    "rpwfe",
+  ]);
+
+  const md = ["da97-08006b", "da97-15217d", "rpwfe"]
+    .map(
+      (row_id) =>
+        `## ${row_id} - TOKEN\n\n${activeDecisionBlock(row_id, "approve_for_next_planning_only", "Ready row.")}\n`,
+    )
+    .join("\n---\n\n");
+
+  const { compile_errors, packet } = compileBatchOwnerApprovalFromMarkdownV1({
+    draftReview: review,
+    decisionsMarkdown: md,
+    generated_at: "2026-05-17T12:00:00.000Z",
+    decided_at: "2026-05-17T12:00:00.000Z",
+  });
+
+  assert.equal(compile_errors.length, 0, compile_errors.join("\n"));
+  assert.equal(packet.approval_row_count, 3);
+  assert.equal(packet.source_row_count, 5);
+  assert.equal(packet.may_mutate, false);
+  assert.equal(packet.may_write_production_evidence, false);
+  assert.equal(packet.automation_input, false);
+  assert.equal(packet.layer_6_founder_only_approval, "NOT_PROVEN");
+  assert.deepEqual(packet.excluded_not_owner_review_ready_row_ids, [
+    "da29-00012b",
+    "adq75795101",
+  ]);
+  assert.ok(packet.founder_decision_registry_export);
+  assert.equal(packet.founder_decision_registry_export!.rows.length, 3);
+  assert.equal(
+    compile_errors.some((e) => e.includes("da29-00012b") && e.includes("missing")),
+    false,
+  );
+});
+
+test("facts-backed compile fails closed when a ready row decision is missing", () => {
+  const review = threeReadyTwoBlockedDraftReview();
+  const md = ["da97-08006b", "da97-15217d"]
+    .map(
+      (row_id) =>
+        `## ${row_id} - TOKEN\n\n${activeDecisionBlock(row_id, "approve_for_next_planning_only")}\n`,
+    )
+    .join("\n---\n\n");
+
+  const { compile_errors, packet } = compileBatchOwnerApprovalFromMarkdownV1({
+    draftReview: review,
+    decisionsMarkdown: md,
+  });
+  assert.ok(compile_errors.length > 0);
+  assert.equal(packet.founder_decision_registry_export, null);
+  assert.match(compile_errors.join("\n"), /rpwfe: missing checklist/);
+  assert.match(compile_errors.join("\n"), /expected 3 valid founder decisions, got 2/);
+});
+
+test("approve_for_next_planning_only on blocked row fails when manually added to checklist", () => {
+  const review = threeReadyTwoBlockedDraftReview();
+  const md = [
+    ...["da97-08006b", "da97-15217d", "rpwfe"].map(
+      (row_id) =>
+        `## ${row_id} - TOKEN\n\n${activeDecisionBlock(row_id, "approve_for_next_planning_only")}\n`,
+    ),
+    `## da29-00012b - DA29\n\n${activeDecisionBlock("da29-00012b", "approve_for_next_planning_only")}\n`,
+  ].join("\n---\n\n");
+
+  const { compile_errors, packet } = compileBatchOwnerApprovalFromMarkdownV1({
+    draftReview: review,
+    decisionsMarkdown: md,
+  });
+  assert.ok(compile_errors.length > 0);
+  assert.equal(packet.founder_decision_registry_export, null);
+  assert.match(compile_errors.join("\n"), /da29-00012b:.*excluded from approval checklist/);
+  assert.match(
+    compile_errors.join("\n"),
+    /approve_for_next_planning_only requires draft_ready_for_owner_review true/,
+  );
 });
 
 test("registry row rejects owner_mutation_approved with batch context", () => {

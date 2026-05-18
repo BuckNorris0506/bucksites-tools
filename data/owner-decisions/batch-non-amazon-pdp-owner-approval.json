@@ -1,0 +1,82 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-05-18-batch-owner-review-da97-08006b-approve_for_next_planning_only",
+      "source_queue_row_id": "queue-non-amazon-pdp-agent",
+      "source_decision_packet_id": "batch_owner_review_packet_v1:da97-08006b",
+      "decided_at": "2026-05-18T14:07:45.862Z",
+      "decision_status": "approved",
+      "owner_note": "Browser-proven exact-token OEM PDP with visible buy path; approve for planning/read-model only.",
+      "allowed_next_scope": "read_only_agent",
+      "evidence_required_before_mutation": false,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate retailer_links or other retailer catalog/link artifacts.",
+        "Do not create, delete, or overwrite production evidence JSON under data/evidence/.",
+        "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
+        "Do not run batch apply/mutation scripts or mutating npm targets from this approval alone.",
+        "approve_for_next_planning_only is planning/read-model scope only — not production mutation approval.",
+        "This approval row is not automation_input for Runner Step, queues, or mutation gates."
+      ],
+      "batch_production_owner_review_context_v1": {
+        "review_packet_contract": "batch_owner_screenshot_draft_packet_v1",
+        "founder_option_id": "approve_for_next_planning_only",
+        "batch_row_id": "da97-08006b",
+        "token": "DA97-08006B"
+      }
+    },
+    {
+      "decision_id": "decision-2026-05-18-batch-owner-review-da97-15217d-approve_for_next_planning_only",
+      "source_queue_row_id": "queue-non-amazon-pdp-agent",
+      "source_decision_packet_id": "batch_owner_review_packet_v1:da97-15217d",
+      "decided_at": "2026-05-18T14:07:45.862Z",
+      "decision_status": "approved",
+      "owner_note": "Browser-proven exact-token OEM PDP with visible buy path; approve for planning/read-model only.",
+      "allowed_next_scope": "read_only_agent",
+      "evidence_required_before_mutation": false,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate retailer_links or other retailer catalog/link artifacts.",
+        "Do not create, delete, or overwrite production evidence JSON under data/evidence/.",
+        "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
+        "Do not run batch apply/mutation scripts or mutating npm targets from this approval alone.",
+        "approve_for_next_planning_only is planning/read-model scope only — not production mutation approval.",
+        "This approval row is not automation_input for Runner Step, queues, or mutation gates."
+      ],
+      "batch_production_owner_review_context_v1": {
+        "review_packet_contract": "batch_owner_screenshot_draft_packet_v1",
+        "founder_option_id": "approve_for_next_planning_only",
+        "batch_row_id": "da97-15217d",
+        "token": "DA97-15217D"
+      }
+    },
+    {
+      "decision_id": "decision-2026-05-18-batch-owner-review-rpwfe-approve_for_next_planning_only",
+      "source_queue_row_id": "queue-non-amazon-pdp-agent",
+      "source_decision_packet_id": "batch_owner_review_packet_v1:rpwfe",
+      "decided_at": "2026-05-18T14:07:45.862Z",
+      "decision_status": "approved",
+      "owner_note": "Browser-proven exact-token OEM PDP with visible buy path; approve for planning/read-model only.",
+      "allowed_next_scope": "read_only_agent",
+      "evidence_required_before_mutation": false,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate retailer_links or other retailer catalog/link artifacts.",
+        "Do not create, delete, or overwrite production evidence JSON under data/evidence/.",
+        "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
+        "Do not run batch apply/mutation scripts or mutating npm targets from this approval alone.",
+        "approve_for_next_planning_only is planning/read-model scope only — not production mutation approval.",
+        "This approval row is not automation_input for Runner Step, queues, or mutation gates."
+      ],
+      "batch_production_owner_review_context_v1": {
+        "review_packet_contract": "batch_owner_screenshot_draft_packet_v1",
+        "founder_option_id": "approve_for_next_planning_only",
+        "batch_row_id": "rpwfe",
+        "token": "RPWFE"
+      }
+    }
+  ]
+}
