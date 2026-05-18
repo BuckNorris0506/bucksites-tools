@@ -8,6 +8,7 @@ import {
   type BatchOwnerScreenshotDraftPacketV1,
   type BatchOwnerScreenshotDraftRowV1,
 } from "./batch-owner-screenshot-draft-packet-v1";
+import { BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1 } from "./batch-production-lane-pipeline-v1";
 import { parseBatchOwnerScreenshotDraftReviewV1 } from "./batch-owner-review-report-v1";
 import {
   FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
@@ -543,6 +544,44 @@ export function compileBatchOwnerApprovalFromMarkdownV1(args: {
   return { packet, compile_errors };
 }
 
+export function rowIsAwaitingAgentFactsForApprovalChecklistV1(
+  row: BatchOwnerScreenshotDraftRowV1,
+): boolean {
+  return row.missing_owner_facts.includes(BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1);
+}
+
+export type ApprovalChecklistRowPartitionV1 = {
+  readyRows: BatchOwnerScreenshotDraftRowV1[];
+  awaitingAgentFactsRows: BatchOwnerScreenshotDraftRowV1[];
+  blockedNotOwnerReviewReadyRows: BatchOwnerScreenshotDraftRowV1[];
+};
+
+/** Splits draft rows for checklist summary labels (does not change approval eligibility). */
+export function partitionApprovalChecklistRowsV1(
+  draftReview: BatchOwnerScreenshotDraftPacketV1,
+): ApprovalChecklistRowPartitionV1 {
+  const readyRows = draftReview.rows.filter((r) => r.draft_ready_for_owner_review);
+  const notReadyRows = draftReview.rows.filter((r) => !r.draft_ready_for_owner_review);
+  const awaitingAgentFactsRows = notReadyRows.filter(rowIsAwaitingAgentFactsForApprovalChecklistV1);
+  const blockedNotOwnerReviewReadyRows = notReadyRows.filter(
+    (r) => !rowIsAwaitingAgentFactsForApprovalChecklistV1(r),
+  );
+  return { readyRows, awaitingAgentFactsRows, blockedNotOwnerReviewReadyRows };
+}
+
+/** Human-readable owner-review blockers for excluded rows (not planning-seed placeholder). */
+export function formatBlockedRowReasonsForChecklistV1(
+  row: BatchOwnerScreenshotDraftRowV1,
+): string {
+  const reasons = row.missing_owner_facts.filter(
+    (m) => m !== BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1,
+  );
+  if (reasons.length === 0) {
+    return "see owner review report";
+  }
+  return reasons.join("; ");
+}
+
 function formatChecklistRowSection(draftRow: BatchOwnerScreenshotDraftRowV1): string {
   const token = draftRow.token ?? draftRow.row_id;
   const url =
@@ -591,8 +630,8 @@ export function buildBatchOwnerApprovalChecklistMarkdownV1(
   options?: BuildBatchOwnerApprovalChecklistOptionsV1,
 ): string {
   const includePlanning = options?.include_planning_cohort_rows === true;
-  const readyRows = draftReview.rows.filter((r) => r.draft_ready_for_owner_review);
-  const blockedRows = draftReview.rows.filter((r) => !r.draft_ready_for_owner_review);
+  const { readyRows, awaitingAgentFactsRows, blockedNotOwnerReviewReadyRows } =
+    partitionApprovalChecklistRowsV1(draftReview);
   const checklistRows = includePlanning ? draftReview.rows : readyRows;
 
   const compileHint = includePlanning
@@ -633,7 +672,7 @@ export function buildBatchOwnerApprovalChecklistMarkdownV1(
     "4. Compile only after every row has a real founder decision (unfilled checklists exit nonzero).",
     ...compileHint,
     "",
-    `Checklist rows: **${checklistRows.length}** · Owner-review-ready: **${readyRows.length}** · Awaiting agent facts: **${blockedRows.length}**`,
+    `Approval-ready checklist rows: **${checklistRows.length}** · Owner-review-ready: **${readyRows.length}** · Blocked / not owner-review-ready: **${blockedNotOwnerReviewReadyRows.length}** · Awaiting agent facts: **${awaitingAgentFactsRows.length}**`,
     "",
     "---",
     "",
@@ -641,20 +680,42 @@ export function buildBatchOwnerApprovalChecklistMarkdownV1(
 
   const body = checklistRows.map((row) => formatChecklistRowSection(row)).join("\n---\n\n");
 
-  const blockedSection =
-    !includePlanning && blockedRows.length > 0
-      ? [
-          "## Blocked rows (not in approval checklist)",
-          "",
-          ...blockedRows.map(
-            (r) =>
-              `- \`${r.row_id}\` — not draft_ready_for_owner_review (${r.missing_owner_facts.join("; ") || "see draft review"})`,
-          ),
-          "",
-        ].join("\n")
-      : "";
+  const excludedSections: string[] = [];
 
-  return `${header}${body}${blockedSection}`.endsWith("\n") ? `${header}${body}${blockedSection}` : `${header}${body}${blockedSection}\n`;
+  if (!includePlanning && awaitingAgentFactsRows.length > 0) {
+    excludedSections.push(
+      [
+        "## Awaiting agent facts (excluded from approval checklist)",
+        "",
+        ...awaitingAgentFactsRows.map(
+          (r) =>
+            `- \`${r.row_id}\` — agent-filled lane facts not yet supplied (planning cohort only)`,
+        ),
+        "",
+      ].join("\n"),
+    );
+  }
+
+  if (!includePlanning && blockedNotOwnerReviewReadyRows.length > 0) {
+    excludedSections.push(
+      [
+        "## Blocked / not owner-review-ready (excluded from approval checklist)",
+        "",
+        "Facts exist but these rows fail owner-review gates (not approval-eligible).",
+        "",
+        ...blockedNotOwnerReviewReadyRows.map(
+          (r) => `- \`${r.row_id}\` — ${formatBlockedRowReasonsForChecklistV1(r)}`,
+        ),
+        "",
+      ].join("\n"),
+    );
+  }
+
+  const excludedBlock =
+    excludedSections.length > 0 ? `\n---\n\n${excludedSections.join("")}` : "";
+
+  const markdown = `${header}${body}${excludedBlock}`;
+  return markdown.endsWith("\n") ? markdown : `${markdown}\n`;
 }
 
 export function parseBatchOwnerApprovalDraftReviewFromFileV1(raw: unknown): BatchOwnerScreenshotDraftPacketV1 {

@@ -23,8 +23,11 @@ import {
   buildBatchOwnerApprovalChecklistMarkdownV1,
   buildBatchOwnerApprovalPacketV1,
   compileBatchOwnerApprovalFromMarkdownV1,
+  formatBlockedRowReasonsForChecklistV1,
   parseBatchOwnerApprovalDecisionsMarkdownV1,
+  partitionApprovalChecklistRowsV1,
 } from "./batch-owner-approval-v1";
+import { BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1 } from "./batch-production-lane-pipeline-v1";
 import {
   founderRegistryRowGrantsMutatingRepoAuthority,
   validateFounderDecisionRegistryRowV1,
@@ -139,6 +142,82 @@ test("checklist markdown includes 5 owner-review-ready rows", () => {
   for (const [row_id] of NON_AMAZON_ROWS) {
     assert.match(md, new RegExp(row_id));
   }
+});
+
+test("checklist summary labels blocked rows when facts exist (not awaiting agent facts)", () => {
+  const review = fiveRowReadyDraftReview();
+  const blockedBuyPath = {
+    ...review.rows.find((r) => r.row_id === "da29-00012b")!,
+    draft_ready_for_owner_review: false,
+    missing_owner_facts: ["buy_path_visible must be true"],
+  };
+  const blockedPdp = {
+    ...review.rows.find((r) => r.row_id === "adq75795101")!,
+    draft_ready_for_owner_review: false,
+    missing_owner_facts: [
+      "page_kind must be product_detail_page (not search/SERP)",
+      "buy_path_visible must be true",
+    ],
+  };
+  const mixed = {
+    ...review,
+    rows: review.rows.map((r) => {
+      if (r.row_id === "da29-00012b") return blockedBuyPath;
+      if (r.row_id === "adq75795101") return blockedPdp;
+      return r;
+    }),
+  };
+
+  const partition = partitionApprovalChecklistRowsV1(mixed);
+  assert.equal(partition.readyRows.length, 3);
+  assert.equal(partition.awaitingAgentFactsRows.length, 0);
+  assert.equal(partition.blockedNotOwnerReviewReadyRows.length, 2);
+
+  const md = buildBatchOwnerApprovalChecklistMarkdownV1(mixed);
+  assert.match(
+    md,
+    /Approval-ready checklist rows: \*\*3\*\* · Owner-review-ready: \*\*3\*\* · Blocked \/ not owner-review-ready: \*\*2\*\* · Awaiting agent facts: \*\*0\*\*/,
+  );
+  assert.equal((md.match(/^## [a-z0-9-]+ -/gm) ?? []).length, 3);
+  assert.match(md, /## Blocked \/ not owner-review-ready \(excluded from approval checklist\)/);
+  assert.match(md, /`da29-00012b` — buy_path_visible must be true/);
+  assert.match(md, /`adq75795101` — page_kind must be product_detail_page/);
+  assert.doesNotMatch(md, /Awaiting agent facts \(excluded/);
+  assert.match(formatBlockedRowReasonsForChecklistV1(blockedBuyPath), /must be true/);
+});
+
+test("planning-seed checklist without facts reports awaiting agent facts not blocked", () => {
+  const { draftReview } = resolveBatchDraftReviewForOwnerApprovalV1({
+    source: BATCH_PRODUCTION_SOURCE_NON_AMAZON_PDP_CANDIDATES_V1,
+    repoRoot: REPO_ROOT,
+    deps: {
+      readTextFile: (p) => readFileSync(p, "utf8"),
+      listEvidenceFilenames: (dir) => {
+        try {
+          return readdirSync(dir);
+        } catch {
+          return [];
+        }
+      },
+    },
+    generated_at: "2026-05-17T12:00:00.000Z",
+  });
+
+  const partition = partitionApprovalChecklistRowsV1(draftReview);
+  assert.equal(partition.readyRows.length, 0);
+  assert.equal(partition.awaitingAgentFactsRows.length, 5);
+  assert.equal(partition.blockedNotOwnerReviewReadyRows.length, 0);
+  for (const row of draftReview.rows) {
+    assert.ok(row.missing_owner_facts.includes(BATCH_PLANNING_DRAFT_AWAITING_AGENT_FACTS_V1));
+  }
+
+  const md = buildBatchOwnerApprovalChecklistMarkdownV1(draftReview);
+  assert.match(
+    md,
+    /Approval-ready checklist rows: \*\*0\*\* · Owner-review-ready: \*\*0\*\* · Blocked \/ not owner-review-ready: \*\*0\*\* · Awaiting agent facts: \*\*5\*\*/,
+  );
+  assert.match(md, /## Awaiting agent facts \(excluded from approval checklist\)/);
+  assert.doesNotMatch(md, /## Blocked \/ not owner-review-ready/);
 });
 
 test("parse decisions markdown and compile approval packet for 5 rows", () => {

@@ -70,6 +70,8 @@ test("planning checklist markdown includes 5 cohort rows and no mutation authori
   assert.match(md, /may_mutate.*false/);
   assert.match(md, /does \*\*not\*\* authorize Supabase/);
   assert.match(md, /rejected at compile/);
+  assert.match(md, /Awaiting agent facts: \*\*5\*\*/);
+  assert.match(md, /Blocked \/ not owner-review-ready: \*\*0\*\*/);
   for (const row_id of NON_AMAZON_ROW_IDS) {
     assert.match(md, new RegExp(row_id));
   }
