@@ -33,9 +33,19 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
+    id: "cc_head_b85e90b",
+    needle: "b85e90b",
+    describe: "latest Command Center external measurement freshness HEAD reference",
+  },
+  {
+    id: "external_measurement_freshness_v1",
+    needle: "external_measurement_freshness_v1",
+    describe: "Command Center GSC/GA4 artifact freshness lane",
+  },
+  {
     id: "cc_head_84fb4b3",
     needle: "84fb4b3",
-    describe: "latest Command Center neuron map HEAD reference",
+    describe: "Command Center neuron map HEAD reference",
   },
   {
     id: "owner_command_center_neurons",

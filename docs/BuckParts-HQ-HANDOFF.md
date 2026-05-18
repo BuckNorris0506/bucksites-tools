@@ -4,15 +4,15 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files.
 
-**HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); the **Command Center neuron map** milestone at **`84fb4b3`** qualifies.
+**HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Command Center neuron map (`owner_command_center_neurons`):** refreshed through pushed HEAD **`84fb4b3`** (see **Current stopping point** below). **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Command Center external measurement freshness:** refreshed through pushed HEAD **`b85e90b`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `84fb4b3`)
+## Current stopping point / chat migration state (through `b85e90b`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -20,8 +20,8 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`84fb4b3`** — *Move Command Center neurons into Command Center JSON* |
-| Recent chain | `b38629b` Coverage health neuron · `68e2147` Affiliate readiness neuron · `499cb4f` Click visibility neuron · `38c0daa` Search demand and gaps neuron · `ea2d67f` Batch production owner decisions neuron · `93dcd3d` Add batch production owner decisions lane to Command Center v2 |
+| Latest pushed HEAD | **`b85e90b`** — *Add external measurement freshness lane to Command Center* |
+| Recent chain | `97e3a45` Update HQ handoff for Command Center neuron source-of-truth · `84fb4b3` Move Command Center neurons into Command Center JSON · `b38629b` Coverage health neuron · `93dcd3d` Add batch production owner decisions lane to Command Center v2 |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -31,6 +31,28 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 - **`78ff67d`** — partial approval compile: expects founder decisions only for `draft_ready_for_owner_review` rows when facts exist; durable registry export for ready rows only.
 - **`93dcd3d`** — `command_center_v2.batch_production_owner_decisions_lane_v1` reads committed batch registry exports; owner dashboard displays Layer 7 batch state **through Command Center only** (no dashboard-only registry scan for this lane).
 - **`84fb4b3`** — `owner_command_center_neurons` is built inside `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`); raw Command Center stdout is the neuron source; owner dashboard **displays** that field and does not create primary neuron truth when the field is present.
+- **`b85e90b`** — `command_center_v2.external_measurement_freshness_v1` is built in `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/external-measurement-freshness-v1.ts`); read-only artifact staleness for GSC + GA4 — **not** live API fetch, **not** revenue proof.
+
+### Command Center external measurement freshness (PROVEN through `b85e90b`)
+
+**Architecture (do not regress):**
+
+- **Command Center JSON** owns `command_center_v2.external_measurement_freshness_v1` (`read_only: true`, `data_mutation: false`).
+- **Does not fetch** GSC/GA4 or mutate Supabase — reuses existing artifact loaders only (`loadGa4TrustFunnelAggregateArtifact`, `buildOwnerGscExternalDemandNeuron`).
+- **Staleness rule:** rolling **7-day** window vs artifact timestamps (`export_date` / `fetched_at`); `overall_status` and per-feed `freshness_status` are **`OK` | `STALE` | `UNKNOWN`** — not live API health.
+- **Recommended refresh (copy/paste):** `npm run buckparts:gsc:fetch` and `npm run buckparts:ga4:fetch` — listed in lane `recommended_commands`; running them is operator action, not automatic from Command Center build.
+
+**PROVEN — inspect lane (re-run before trusting; live status depends on artifact ages):**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.external_measurement_freshness_v1 | {contract, read_only, data_mutation, runtime_status, overall_status, gsc: .gsc.freshness_status, ga4: .ga4.freshness_status, recommended_commands}'
+```
+
+**INFERRED example at handoff refresh (not durable — re-run jq):** `overall_status: STALE`, `gsc.freshness_status: STALE`, `ga4.freshness_status: STALE` when Supabase artifacts are older than 7d. That means **refresh artifacts**, not that Command Center is broken.
+
+**PARTIAL:** Lane reports whether committed/durable artifacts are current — it does **not** prove search demand quality, revenue, or that GSC/GA4 APIs were called during `buckparts:command-center`.
+
+**PROVEN — validation before commit (`b85e90b`):** `report-buckparts-command-center.test.ts` (lane contract, UNKNOWN missing artifacts, STALE GA4 mock); `load-command-center-report.test.ts`; `buckparts-hq-handoff-freshness`; `npm run lint`; `npm run build`.
 
 ### Command Center neuron map — source of truth (PROVEN through `84fb4b3`)
 
@@ -141,7 +163,9 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 
 | Area | Status |
 |------|--------|
-| Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — `owner_command_center_neurons` (8 keys) is Command Center-owned at `84fb4b3`; broader feeds below are not yet fully Command Center-owned |
+| Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — neurons (`84fb4b3`) + `external_measurement_freshness_v1` (`b85e90b`) are CC-owned; broader feeds below are not yet fully Command Center-owned |
+| GSC/GA4 artifact freshness on Command Center | **PROVEN lane** at `b85e90b` — `command_center_v2.external_measurement_freshness_v1`; **current artifact ages may still be STALE or UNKNOWN** until `buckparts:gsc:fetch` / `buckparts:ga4:fetch` refresh durable artifacts |
+| Live GSC/GA4 API integration in Command Center | **NOT_PROVEN** — freshness lane reads existing artifacts only; no fetch during `buckparts:command-center` |
 | `owner_command_center_neurons` on dashboard-only path when CC field present | **NOT_PROVEN** as primary path — dashboard displays CC field; fallback builder is tests/mocks only |
 | Founder Digest embedding Layer 7 batch lane | **NOT_PROVEN** — digest slices Command Center but does not yet surface `batch_production_owner_decisions_lane_v1` as a first-class section unless proven in digest builder |
 | Production evidence commit for this cohort | **NOT_PROVEN** |
@@ -158,6 +182,7 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 Read-only inventory at this stop:
 
 - **PROVEN:** Command Center JSON owns the bright/dim/dark **neuron map** at `owner_command_center_neurons` (`84fb4b3`) — eight keys; `data_mutation: false`; inspect via jq block above.
+- **PROVEN:** Command Center JSON owns **GSC/GA4 artifact freshness** at `command_center_v2.external_measurement_freshness_v1` (`b85e90b`) — `read_only: true`, `data_mutation: false`; `OK` / `STALE` / `UNKNOWN` per feed; does **not** call live APIs or prove revenue.
 - **PROVEN:** Owner dashboard displays Command Center neuron truth (`report.owner_command_center_neurons`); it does not build primary neuron truth when that field is present.
 - **INFERRED:** Owner load still attaches separate lanes (`owner_integrity_sentinel`, `owner_search_demand_and_gaps`, `owner_gsc_external_demand`, quarantine, launch policy) and may call `buildBuckpartsCommandSurfaceReport` again for sentinel — not the same as dashboard-owned neuron fabrication.
 - **Owner dashboard is not yet a single report surface** — many `scripts/report-*.ts` outputs remain CLI-only; neuron map + v2 lanes are not the full operating picture.
@@ -166,7 +191,7 @@ Read-only inventory at this stop:
 - **Sentry health is not Command Center-owned** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized Command Center / dashboard panel in-repo.
 - **Netlify deploy API proof is not Command Center-owned** — live-site lane uses smoke/monitor artifacts; v2 text treats deploy commit hints as **not** Netlify API proof unless proven elsewhere.
 - **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED** unless a future feed proves otherwise.
-- **GSC/GA4 freshness is not fully Command Center-owned** — fetch via `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch`; neurons load partial artifacts inside CC build; freshness **UNKNOWN** until fetch/artifact timestamps prove current data.
+- **GSC/GA4 freshness lane exists on Command Center** (`b85e90b`) — inspect `external_measurement_freshness_v1`; artifacts may still read **STALE** until operator runs `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` (listed in lane `recommended_commands`).
 - **Runner Step live JSON is not Command Center-owned by default** — `npm run buckparts:runner-step` is CLI/CI; optional digest env `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` only.
 - **Daily Operator status is not Command Center-owned** — `npm run buckparts:daily` is a separate `buckparts_daily_operator_v1` report (builds on Command Center internally but not merged into CC JSON).
 - **Founder Digest status is not Command Center-owned** — `npm run buckparts:founder-digest` is Markdown stdout; slices Command Center but is a separate surface.
@@ -182,7 +207,13 @@ Read-only inventory at this stop:
 
 ### Next best move after chat migration (INFERRED)
 
-Neuron source-of-truth refactor is **done** at `84fb4b3`. Next slices (pick one): **Founder Digest** batch lane + neuron-aware sections, **GSC/GA4 freshness** surfaced in Command Center v2 lanes, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, or the next **NOT_PROVEN** feed from the inventory above (GitHub Actions live status, Sentry summary, Runner Step default in CC JSON, Daily Operator merged into CC JSON). **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
+Neuron source-of-truth (`84fb4b3`) and **external measurement freshness lane** (`b85e90b`) are **done**. If jq shows **STALE**, run artifact refresh before treating GSC/GA4 as current. Next slices (pick one): **Founder Digest** batch lane + neuron-aware sections, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, or the next **NOT_PROVEN** feed from the inventory above (GitHub Actions live status, Sentry summary, Runner Step default in CC JSON, Daily Operator merged into CC JSON). **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
+
+**Copy/paste (repo root) — confirm external measurement freshness lane:**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.external_measurement_freshness_v1 | {contract, read_only, data_mutation, runtime_status, overall_status, gsc: .gsc.freshness_status, ga4: .ga4.freshness_status}'
+```
 
 **Copy/paste (repo root) — confirm Command Center neuron map:**
 
@@ -384,10 +415,11 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0
 
 ### Active lane (HQ priority order)
 
-1. **Command Center neuron map (`owner_command_center_neurons`)** (**current stop** through **`84fb4b3`**) — **PROVEN:** eight neurons on raw `buckparts:command-center` JSON; `data_mutation: false`; dashboard displays CC-owned neurons. **NOT PROVEN:** Command Center as complete operating truth; feeds in reporting inventory remain CLI-only or **NOT_CONNECTED** / **UNKNOWN**.
-2. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
-3. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
-4. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
+1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (**current stop** through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; `read_only: true`, `data_mutation: false`; GSC/GA4 **STALE/OK/UNKNOWN** from artifact timestamps only. **NOT PROVEN:** live API fetch during CC build, revenue, or complete operating truth.
+2. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on raw `buckparts:command-center` JSON; `data_mutation: false`; dashboard displays CC-owned neurons.
+3. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
+4. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
+5. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
