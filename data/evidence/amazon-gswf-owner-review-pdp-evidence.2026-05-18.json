@@ -1,0 +1,99 @@
+{
+  "report_name": "buckparts_amazon_gswf_owner_review_pdp_evidence_v1",
+  "generated_at": "2026-05-18T19:01:04.000Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "token": "GSWF",
+  "prior_verdict": "UNKNOWN",
+  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+  "mutation_ready": false,
+  "mutation_ready_basis": "false until owner-approved insert plan and runtime trust gates are checked; this file records evidence only and does not mutate retailer_links",
+  "filter_slug": "gswf",
+  "filter_id": null,
+  "canonical_url": "https://www.amazon.com/dp/B0002GTTRC",
+  "asin": "B0002GTTRC",
+  "affiliate_url_candidate": "https://www.amazon.com/dp/B0002GTTRC?tag=buckparts20-20",
+  "product_attribution": "oem_official",
+  "pack_count": 1,
+  "owner_browser_finding": {
+    "source": "owner_browser_screenshot_observation",
+    "screenshot_file_committed": false,
+    "original_owner_url_sanitized": true,
+    "canonical_url_used_for_evidence": "https://www.amazon.com/dp/B0002GTTRC",
+    "seller_title_visible": "General Electric GE GSWF Refrigerator Water Filter | Certified to Reduce Lead, Sulfur, and 50+ Other Impurities | Replace Every 6 Months for Best Results | Pack of 1",
+    "exact_token_visible_in_title": true,
+    "exact_token_visible_elsewhere_on_page": true,
+    "buy_box_visible": true,
+    "price_visible": true,
+    "price_visible_usd": 37.99,
+    "in_stock_visible": true,
+    "add_to_cart_visible": true,
+    "buy_now_visible": true,
+    "brand_visible": "GE / General Electric / GE Appliances",
+    "sold_by": "Amazon.com",
+    "fulfilled_by": "Amazon.com",
+    "page_kind": "product_detail_page",
+    "primary_reviewed_variant": "single-pack"
+  },
+  "browser_evidence": {
+    "token_searched": "GSWF",
+    "amazon_pdp_url_full": "OWNER_SUPPLIED_AFFILIATE_URL_REDACTED_IN_COMMIT",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B0002GTTRC",
+    "asin": "B0002GTTRC",
+    "seller_title_visible": "General Electric GE GSWF Refrigerator Water Filter | Certified to Reduce Lead, Sulfur, and 50+ Other Impurities | Replace Every 6 Months for Best Results | Pack of 1",
+    "token_visible_in_pdp_title": true,
+    "token_visible_elsewhere_on_page": true,
+    "brand_store": "GE / General Electric / GE Appliances",
+    "sold_by": "Amazon.com",
+    "fulfilled_by": "Amazon.com",
+    "oem_or_aftermarket": "OEM / official GE",
+    "pack_count": 1,
+    "buy_path_visible": "In Stock, Add to Cart, Buy Now",
+    "price_visible_usd": 37.99,
+    "browser_verdict": "PASS_OEM_DIRECT_BUYABLE"
+  },
+  "exact_token_proof": "Owner browser screenshot showed seller-controlled product title with literal GSWF on canonical Amazon PDP https://www.amazon.com/dp/B0002GTTRC.",
+  "buyability_proof": "Owner browser screenshot showed buy path, price $37.99, in stock, Add to Cart, and Buy Now on the single-pack PDP.",
+  "asin_collision_reuse_check": {
+    "repo_text_search_for_asin": {
+      "command": "rg -n \"B0002GTTRC\" data src scripts --glob '!node_modules' --glob '!*.env*'",
+      "matching_lines": "UNKNOWN_UNTIL_RUN"
+    },
+    "read_only_refrigerator_token_precheck": {
+      "command": "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens GSWF",
+      "token": "GSWF",
+      "existing_amazon_row_count": "UNKNOWN_UNTIL_RUN",
+      "approved_amazon_row_count": "UNKNOWN_UNTIL_RUN",
+      "live_direct_buyable_amazon_row_count": "UNKNOWN_UNTIL_RUN",
+      "asin_collision_evidence_file_count": "UNKNOWN_UNTIL_RUN",
+      "insert_plan_hint": "UNKNOWN_UNTIL_RUN"
+    },
+    "read_only_live_row_query": {
+      "selection_table": "retailer_links",
+      "asin": "B0002GTTRC",
+      "matching_retailer_link_count": "UNKNOWN_UNTIL_RUN"
+    },
+    "proven_result": "UNKNOWN_UNTIL_PRECHECK_AND_RG_RUN",
+    "unknowns": [
+      "GSWF2 slug exists in data/filters.csv; confirm B0002GTTRC is not conflated with GSWF2 housing listing.",
+      "This file does not prove runtime browser_truth classification for a future retailer_links row.",
+      "This file does not prove owner approval to insert or promote a CTA."
+    ]
+  },
+  "allowed_final_classifications": [
+    "EXACT_PDP_PROVEN",
+    "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    "NO_SAFE_PDP_FOUND",
+    "UNKNOWN"
+  ],
+  "required_next_action": "OWNER_APPROVES_INSERT_PLAN_AND_RERUNS_PRECHECKS_BEFORE_ANY_RETAILER_LINK_MUTATION",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. No DB writes, no retailer_links mutations, no CTA promotion, no token-control edits, and no compatibility mapping changes are implied by this file.",
+    "Single-pack OEM PDP reviewed; multipack/substitute variants not proven by this file.",
+    "Owner screenshot supplied in chat; screenshot_file_committed remains false until owner commits image under repo if desired.",
+    "Do not treat GSWF2 (slug gswf2) evidence as interchangeable without separate exact-token PDP proof."
+  ]
+}
