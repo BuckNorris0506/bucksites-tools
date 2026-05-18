@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import type {
+  BatchProductionOwnerDecisionsLaneV1,
   CommandCenterV2Report,
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
@@ -510,6 +511,82 @@ function FounderDecisionPacketsSection({
   );
 }
 
+function BatchProductionOwnerDecisionsLaneSection({
+  lane,
+}: {
+  lane: BatchProductionOwnerDecisionsLaneV1;
+}) {
+  const excludedText =
+    lane.excluded_not_owner_review_ready_row_ids === "UNKNOWN"
+      ? null
+      : lane.excluded_not_owner_review_ready_row_ids.length > 0
+        ? lane.excluded_not_owner_review_ready_row_ids.join(", ")
+        : null;
+
+  return (
+    <ExecutiveSection
+      title="Batch Production Lane · Layer 7 owner decisions"
+      subtitle="From Command Center v2 batch_production_owner_decisions_lane_v1 — read-only planning scope only"
+    >
+      <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">
+        Batch Production Lane v1 is proven through a 5-row read-only owner-decision loop. Three rows are approved for
+        planning/read-model work only. No production mutation authority exists.
+      </p>
+      {excludedText ? (
+        <p className="mt-2 text-xs text-slate-700 dark:text-slate-300">
+          Excluded / not owner-review-ready (Command Center):{" "}
+          <span className="font-mono text-[11px]">{excludedText}</span>
+        </p>
+      ) : null}
+      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-3">
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">runtime_status</dt>
+        <dd>{lane.runtime_status}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">approved_for_planning_count</dt>
+        <dd>{lane.approved_for_planning_count}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">source_row_count</dt>
+        <dd>{String(lane.source_row_count)}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">may_mutate</dt>
+        <dd>{String(lane.may_mutate)}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">batch_size_20_status</dt>
+        <dd>{lane.batch_size_20_status}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">layer_6 production mutation</dt>
+        <dd>{lane.layer_6_founder_only_production_mutation_approval}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">primary registry file</dt>
+        <dd className="font-mono text-[10px] break-all">{lane.primary_source_registry_file}</dd>
+      </dl>
+      {lane.approved_rows.length > 0 ? (
+        <div className="mt-3 overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+          <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+            <thead className="bg-slate-50 dark:bg-slate-900/60">
+              <tr>
+                {["row_id", "token", "founder_option_id", "allowed_next_scope"].map((h) => (
+                  <th
+                    key={h}
+                    className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              {lane.approved_rows.map((r) => (
+                <tr key={r.row_id} className="bg-white dark:bg-slate-950">
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.row_id}</td>
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.token}</td>
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.founder_option_id}</td>
+                  <td className="whitespace-nowrap px-3 py-2 font-mono text-[12px]">{r.allowed_next_scope}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+      <FieldBlock label="next_agent_action" value={lane.next_agent_action} />
+    </ExecutiveSection>
+  );
+}
+
 function FounderDecisionRegistryReadModelSection({
   model,
 }: {
@@ -991,6 +1068,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
 
         <FounderControlPlaneSection model={founderControlPlane} />
 
+        <BatchProductionOwnerDecisionsLaneSection lane={v2.batch_production_owner_decisions_lane_v1} />
+
         <FounderActionQueueSection queue={founderActionQueue} />
 
         <FounderDecisionPacketsSection model={founderDecisionPackets} />
@@ -1207,6 +1286,26 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         </LaneCard>
         <LaneCard title="7 · Next owner action (synthesized)" subtitle="Highest-priority owner step from v2">
           <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">{v2.next_owner_action}</p>
+        </LaneCard>
+        </DrilldownGroup>
+        <DrilldownGroup title="Batch Production Lane · Layer 7 (read-only)">
+        <LaneCard
+          title="Batch owner decisions (Command Center)"
+          subtitle="batch_production_owner_decisions_lane_v1 — no dashboard-only truth source"
+        >
+          <FieldBlock label="runtime_status" value={v2.batch_production_owner_decisions_lane_v1.runtime_status} />
+          <FieldBlock
+            label="approved_for_planning_count"
+            value={String(v2.batch_production_owner_decisions_lane_v1.approved_for_planning_count)}
+          />
+          <FieldBlock
+            label="excluded_not_owner_review_ready"
+            value={
+              v2.batch_production_owner_decisions_lane_v1.excluded_not_owner_review_ready_row_ids === "UNKNOWN"
+                ? "UNKNOWN"
+                : v2.batch_production_owner_decisions_lane_v1.excluded_not_owner_review_ready_row_ids.join(", ")
+            }
+          />
         </LaneCard>
         </DrilldownGroup>
         <DrilldownGroup title="Amazon & review ops (lanes 2, 3, 8)">

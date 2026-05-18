@@ -12,6 +12,7 @@ import { buildPublicTrustUnificationBackendContractV1 } from "./public-trust-uni
 import { buildRevenueTruthLedgerContractV1 } from "./revenue-truth-ledger-contract-v1";
 import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-top-of-game-panel-readiness-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
+import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -484,6 +485,11 @@ export function buildCommandCenterV2Report(input: {
     readTextFile: input.readTextFile,
   });
 
+  const batch_production_owner_decisions_lane_v1 = buildBatchProductionOwnerDecisionsLaneV1({
+    rootDir: input.rootDir,
+    generated_at: input.now().toISOString(),
+  });
+
   const top_of_game_foundation_scorecard_v1 = buildTopOfGameFoundationScorecardV1({
     demand: input.demandToCoverageEngine,
     evidenceImport: input.evidenceToLearningOutcomesCandidateImport,
@@ -528,5 +534,6 @@ export function buildCommandCenterV2Report(input: {
     next_allowed_agent_token,
     next_owner_action,
     top_of_game_foundation_scorecard_v1,
+    batch_production_owner_decisions_lane_v1,
   };
 }

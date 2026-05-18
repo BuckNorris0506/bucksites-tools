@@ -299,6 +299,11 @@ test("command center is read_only true and data_mutation false", async () => {
     "evidence_to_learning_outcomes_candidate_import_v1",
   );
   assert.equal(report.command_center_v2.learning_outcomes_insert_plan_v1.contract, "learning_outcomes_insert_plan_v1");
+  const batchLane = report.command_center_v2.batch_production_owner_decisions_lane_v1;
+  assert.equal(batchLane.contract, "batch_production_owner_decisions_lane_v1");
+  assert.equal(batchLane.may_mutate, false);
+  assert.equal(batchLane.mutation_authority, false);
+  assert.equal(batchLane.batch_size_20_status, "BLOCKED");
   const pt = report.command_center_v2.public_trust_unification_backend_contract_v1;
   assert.equal(pt.contract, "public_trust_unification_backend_contract_v1");
   assert.equal(pt.read_only, true);
@@ -2540,6 +2545,37 @@ test("top_of_game_foundation_scorecard_v1 goal_reached matches score 100 and all
   const s = report.command_center_v2.top_of_game_foundation_scorecard_v1;
   assert.equal(s.goal_reached, s.foundation_maturity_score_100 === 100 && s.lanes.every((l) => l.status === "PROVEN"));
   assert.ok(s.foundation_maturity_score_100 <= 100);
+});
+
+test("command_center_v2 batch_production_owner_decisions_lane_v1 with real registry export", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir: path.resolve(__dirname, ".."),
+    providers: baseProviders(),
+    readDir: () => [],
+    readTextFile: (abs: string) => {
+      if (abs.endsWith("affiliate-application-tracker.json")) return BASE_TRACKER;
+      if (abs.endsWith("amazon-rescue-token-controls.json")) return MINIMAL_TOKEN_CONTROLS_JSON;
+      return fs.readFileSync(abs, "utf8");
+    },
+    fileExists: (abs: string) => {
+      if (abs.endsWith("affiliate-application-tracker.json")) return true;
+      if (abs.endsWith("amazon-rescue-token-controls.json")) return true;
+      return fs.existsSync(abs);
+    },
+  });
+  const lane = report.command_center_v2.batch_production_owner_decisions_lane_v1;
+  assert.equal(lane.runtime_status, "OK");
+  assert.equal(lane.approved_for_planning_count, 3);
+  assert.equal(lane.may_mutate, false);
+  assert.equal(lane.mutation_authority, false);
+  assert.equal(lane.automation_input, false);
+  assert.equal(lane.layer_6_founder_only_production_mutation_approval, "NOT_PROVEN");
+  assert.equal(lane.batch_size_20_status, "BLOCKED");
+  assert.ok(lane.approved_rows.every((r) => r.allowed_next_scope === "read_only_agent"));
+  assert.equal(
+    lane.primary_source_registry_file,
+    "data/owner-decisions/batch-non-amazon-pdp-owner-approval.json",
+  );
 });
 
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {

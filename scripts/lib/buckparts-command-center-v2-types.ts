@@ -592,6 +592,46 @@ export type TopOfGameFoundationScorecardV1 = {
   unknown_facts: string[];
 };
 
+export type BatchProductionOwnerDecisionsLaneRuntimeStatusV1 =
+  | "OK"
+  | "UNKNOWN_REGISTRY_MISSING"
+  | "UNKNOWN_PARSE_ERROR"
+  | "UNKNOWN_NO_BATCH_ROWS";
+
+export type BatchProductionOwnerDecisionsApprovedRowV1 = {
+  row_id: string;
+  token: string;
+  decision_status: string;
+  allowed_next_scope: string;
+  founder_option_id: string;
+  source_registry_file: string;
+};
+
+/** Read-only Layer 7 batch owner approvals from committed founder_decision_registry_v1 exports. */
+export type BatchProductionOwnerDecisionsLaneV1 = {
+  contract: "batch_production_owner_decisions_lane_v1";
+  read_only: true;
+  data_mutation: false;
+  runtime_status: BatchProductionOwnerDecisionsLaneRuntimeStatusV1;
+  source_registry_files: string[];
+  primary_source_registry_file: string | "UNKNOWN";
+  approved_for_planning_count: number;
+  approved_rows: BatchProductionOwnerDecisionsApprovedRowV1[];
+  source_row_count: number | "UNKNOWN";
+  excluded_not_owner_review_ready_row_ids: string[] | "UNKNOWN";
+  mutation_authority: false;
+  may_mutate: false;
+  may_write_production_evidence: false;
+  automation_input: false;
+  layer_6_founder_only_production_mutation_approval: "NOT_PROVEN";
+  production_evidence_commit: "NOT_PROVEN";
+  batch_size_20_status: "BLOCKED";
+  owner_action_required: "none";
+  next_agent_action: string;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -631,4 +671,5 @@ export type CommandCenterV2Report = {
   next_owner_action: string;
   /** Read-only foundation maturity scorecard toward 100% pre-polish — not dashboard UI. */
   top_of_game_foundation_scorecard_v1: TopOfGameFoundationScorecardV1;
+  batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
 };
