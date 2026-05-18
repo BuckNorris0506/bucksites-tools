@@ -2645,9 +2645,118 @@ test("external_measurement_freshness_v1 reports UNKNOWN when GSC and GA4 artifac
   });
   assert.equal(lane.overall_status, "UNKNOWN");
   assert.equal(lane.runtime_status, "UNKNOWN");
-  assert.equal(lane.gsc.freshness_status, "UNKNOWN");
-  assert.equal(lane.ga4.freshness_status, "UNKNOWN");
+  assert.equal(lane.gsc.artifact_recency_status, "UNKNOWN");
+  assert.equal(lane.gsc.measurement_usability_status, "UNKNOWN");
+  assert.equal(lane.ga4.artifact_recency_status, "UNKNOWN");
+  assert.equal(lane.ga4.measurement_usability_status, "UNKNOWN");
   assert.notEqual(lane.overall_status, "OK");
+});
+
+test("external_measurement_freshness_v1 does not treat GSC UNKNOWN_API_ERROR with recent fetched_at as usable OK", async () => {
+  const lane = await buildExternalMeasurementFreshnessV1({
+    rootDir: process.cwd(),
+    deps: {
+      now: () => new Date("2026-05-16T12:00:00.000Z"),
+      loadGa4: async () => ({ artifact: null, issue: null }),
+      buildGsc: async () => ({
+        neuron_key: "gsc_external_demand",
+        connection_level: "DARK",
+        source_class: "ARTIFACT",
+        artifact_source: "SUPABASE",
+        fetched_at: "2026-05-15T12:00:00.000Z",
+        status: "UNKNOWN_API_ERROR",
+        freshness_method: "test",
+        export_file_used: "supabase.owner_report_artifacts[gsc_search_analytics]",
+        export_date: "UNKNOWN",
+        total_impressions: "UNKNOWN",
+        total_clicks: "UNKNOWN",
+        average_ctr: "UNKNOWN",
+        average_position: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_queries_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        proven_facts: [],
+        unknown_facts: [],
+        next_owner_action: "test",
+      }),
+    },
+  });
+  assert.equal(lane.gsc.artifact_recency_status, "OK");
+  assert.equal(lane.gsc.measurement_usability_status, "UNKNOWN");
+  assert.equal(lane.overall_status, "UNKNOWN");
+  assert.notEqual(lane.overall_status, "OK");
+  assert.ok(
+    lane.unknown_facts.some(
+      (f) => f.includes("UNKNOWN_API_ERROR") && f.includes("not usable"),
+    ),
+  );
+});
+
+test("external_measurement_freshness_v1 does not treat GA4 UNKNOWN_API_ERROR with recent fetched_at as usable OK", async () => {
+  const freshGa4: Ga4TrustFunnelArtifact = {
+    status: "UNKNOWN_API_ERROR",
+    fetched_at: "2026-05-15T12:00:00.000Z",
+    property_id: "UNKNOWN",
+    date_range: "UNKNOWN",
+    event_totals: "UNKNOWN",
+    rates: "UNKNOWN",
+    dimension_breakdowns: {
+      top_model_slugs: "UNKNOWN",
+      top_filter_slugs: "UNKNOWN",
+      quarantined_vs_normal: "UNKNOWN",
+    },
+    proven_facts: [],
+    unknown_facts: [],
+    provenance: {
+      source: "google_analytics_data_api",
+      scope: "https://www.googleapis.com/auth/analytics.readonly",
+      writer: "test",
+    },
+  };
+  const lane = await buildExternalMeasurementFreshnessV1({
+    rootDir: process.cwd(),
+    deps: {
+      now: () => new Date("2026-05-16T12:00:00.000Z"),
+      loadGa4: async () => ({
+        artifact: { source: "SUPABASE", artifact: freshGa4 },
+        issue: null,
+      }),
+      buildGsc: async () => ({
+        neuron_key: "gsc_external_demand",
+        connection_level: "DARK",
+        source_class: "UNKNOWN",
+        artifact_source: "NONE",
+        fetched_at: "UNKNOWN",
+        status: "UNKNOWN",
+        freshness_method: "test",
+        export_file_used: "UNKNOWN",
+        export_date: "UNKNOWN",
+        total_impressions: "UNKNOWN",
+        total_clicks: "UNKNOWN",
+        average_ctr: "UNKNOWN",
+        average_position: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_queries_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        proven_facts: [],
+        unknown_facts: [],
+        next_owner_action: "test",
+      }),
+    },
+  });
+  assert.equal(lane.ga4.artifact_recency_status, "OK");
+  assert.equal(lane.ga4.measurement_usability_status, "UNKNOWN");
+  assert.equal(lane.overall_status, "UNKNOWN");
+  assert.notEqual(lane.overall_status, "OK");
+  assert.ok(
+    lane.unknown_facts.some(
+      (f) => f.includes("UNKNOWN_API_ERROR") && f.includes("not usable"),
+    ),
+  );
 });
 
 test("external_measurement_freshness_v1 marks stale GA4 artifact timestamps as STALE", async () => {
@@ -2681,29 +2790,33 @@ test("external_measurement_freshness_v1 marks stale GA4 artifact timestamps as S
       }),
       buildGsc: async () => ({
         neuron_key: "gsc_external_demand",
-        connection_level: "DARK",
-        source_class: "UNKNOWN",
-        artifact_source: "NONE",
-        fetched_at: "UNKNOWN",
-        status: "UNKNOWN",
+        connection_level: "CONNECTED",
+        source_class: "ARTIFACT",
+        artifact_source: "SUPABASE",
+        fetched_at: "2026-05-15T12:00:00.000Z",
+        status: "OK",
         freshness_method: "test",
-        export_file_used: "UNKNOWN",
-        export_date: "UNKNOWN",
-        total_impressions: "UNKNOWN",
-        total_clicks: "UNKNOWN",
-        average_ctr: "UNKNOWN",
-        average_position: "UNKNOWN",
-        top_queries_by_impressions: "UNKNOWN",
-        top_queries_by_clicks: "UNKNOWN",
-        top_pages_by_impressions: "UNKNOWN",
-        top_pages_by_clicks: "UNKNOWN",
-        high_impression_low_click_opportunities: "UNKNOWN",
+        export_file_used: "supabase.owner_report_artifacts[gsc_search_analytics]",
+        export_date: "2026-05-15",
+        total_impressions: 1,
+        total_clicks: 1,
+        average_ctr: 1,
+        average_position: 1,
+        top_queries_by_impressions: [],
+        top_queries_by_clicks: [],
+        top_pages_by_impressions: [],
+        top_pages_by_clicks: [],
+        high_impression_low_click_opportunities: [],
         proven_facts: [],
         unknown_facts: [],
         next_owner_action: "test",
       }),
     },
   });
+  assert.equal(lane.gsc.artifact_recency_status, "OK");
+  assert.equal(lane.gsc.measurement_usability_status, "OK");
+  assert.equal(lane.ga4.artifact_recency_status, "STALE");
+  assert.equal(lane.ga4.measurement_usability_status, "OK");
   assert.equal(lane.ga4.freshness_status, "STALE");
   assert.equal(lane.overall_status, "STALE");
   assert.notEqual(lane.overall_status, "OK");

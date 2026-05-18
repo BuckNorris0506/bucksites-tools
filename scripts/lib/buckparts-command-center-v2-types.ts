@@ -609,12 +609,15 @@ export type BatchProductionOwnerDecisionsApprovedRowV1 = {
 
 export type ExternalMeasurementFreshnessStatusV1 = "OK" | "STALE" | "UNKNOWN";
 export type ExternalMeasurementFreshnessRuntimeStatusV1 = "OK" | "PARTIAL" | "UNKNOWN";
+export type ExternalMeasurementUsabilityStatusV1 = "OK" | "UNKNOWN";
 
 export type ExternalMeasurementFreshnessGscV1 = {
   runtime_status: "OK" | "UNKNOWN";
   connection_level: "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
   artifact_source: "SUPABASE" | "LOCAL_ARTIFACT" | "MANUAL_EXPORT" | "NONE";
   fetched_at_or_export_date: string | "UNKNOWN";
+  artifact_recency_status: ExternalMeasurementFreshnessStatusV1;
+  measurement_usability_status: ExternalMeasurementUsabilityStatusV1;
   freshness_status: ExternalMeasurementFreshnessStatusV1;
   top_level_note: string;
 };
@@ -623,6 +626,8 @@ export type ExternalMeasurementFreshnessGa4V1 = {
   runtime_status: "OK" | "UNKNOWN";
   artifact_source: "SUPABASE" | "LOCAL_ARTIFACT" | "NONE";
   fetched_at: string | "UNKNOWN";
+  artifact_recency_status: ExternalMeasurementFreshnessStatusV1;
+  measurement_usability_status: ExternalMeasurementUsabilityStatusV1;
   freshness_status: ExternalMeasurementFreshnessStatusV1;
   top_level_note: string;
 };
