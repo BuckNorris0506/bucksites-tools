@@ -833,9 +833,10 @@ export async function buildBuckpartsCommandCenterReport(
     ),
     buildExternalMeasurementFreshnessV1({ rootDir, deps: { now } }),
   ]);
-  const command_center_v2 = {
+  const command_center_v2: CommandCenterV2Report = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
+    command_center_brain_coverage_manifest_v1: command_center_v2_base.command_center_brain_coverage_manifest_v1,
   };
 
   const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({

@@ -13,6 +13,7 @@ import { buildRevenueTruthLedgerContractV1 } from "./revenue-truth-ledger-contra
 import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-top-of-game-panel-readiness-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
+import { buildCommandCenterBrainCoverageManifestV1 } from "./buckparts-brain-coverage-manifest-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -535,5 +536,11 @@ export function buildCommandCenterV2Report(input: {
     next_owner_action,
     top_of_game_foundation_scorecard_v1,
     batch_production_owner_decisions_lane_v1,
+    command_center_brain_coverage_manifest_v1: buildCommandCenterBrainCoverageManifestV1({
+      rootDir: input.rootDir,
+      now: input.now,
+      fileExists: input.fileExists,
+      readTextFile: input.readTextFile,
+    }),
   };
 }

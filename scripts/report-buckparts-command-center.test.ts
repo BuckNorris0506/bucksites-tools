@@ -2591,6 +2591,73 @@ const EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS = [
   "batch_production_owner_decisions",
 ] as const;
 
+function findBrainManifestEntry(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+  predicate: (row: {
+    system_id: string;
+    npm_script_or_path: string;
+    verdict: string;
+    dashboard_only: boolean;
+  }) => boolean,
+) {
+  const manifest = report.command_center_v2.command_center_brain_coverage_manifest_v1;
+  return manifest.entries.find(predicate);
+}
+
+test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only brain inventory", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const manifest = report.command_center_v2.command_center_brain_coverage_manifest_v1;
+  assert.ok(manifest);
+  assert.equal(manifest.contract, "command_center_brain_coverage_manifest_v1");
+  assert.equal(manifest.read_only, true);
+  assert.equal(manifest.data_mutation, false);
+  assert.ok(manifest.entries.length > 0);
+  assert.ok(manifest.summary_by_verdict.CONNECTED >= 1);
+  assert.ok(manifest.proven_facts.some((f) => f.includes("buckparts:")));
+
+  const ccScript = findBrainManifestEntry(
+    report,
+    (r) =>
+      r.system_id === "buckparts_command_center" ||
+      r.npm_script_or_path.includes("buckparts:command-center"),
+  );
+  assert.ok(ccScript);
+  assert.equal(ccScript!.verdict, "CONNECTED");
+
+  const daily = findBrainManifestEntry(report, (r) => r.npm_script_or_path.includes("buckparts:daily"));
+  assert.ok(daily);
+  assert.equal(daily!.verdict, "BYPASSING");
+
+  const demandQueue = findBrainManifestEntry(report, (r) =>
+    r.npm_script_or_path.includes("buckparts:demand-work-queue"),
+  );
+  assert.ok(demandQueue);
+  assert.equal(demandQueue!.verdict, "BYPASSING");
+
+  const hq = findBrainManifestEntry(report, (r) => r.system_id === "hq_handoff_doc");
+  assert.ok(hq);
+  assert.equal(hq!.verdict, "DEPRECATED");
+
+  const sentinel = findBrainManifestEntry(report, (r) => r.system_id === "owner_integrity_sentinel");
+  assert.ok(sentinel);
+  assert.equal(sentinel!.dashboard_only, true);
+  assert.ok(sentinel!.verdict === "BYPASSING" || sentinel!.verdict === "PARTIAL");
+
+  const sentry = findBrainManifestEntry(report, (r) => r.system_id === "sentry_error_monitoring");
+  assert.ok(sentry);
+  assert.equal(sentry!.verdict, "MISSING");
+
+  const gh = findBrainManifestEntry(report, (r) => r.system_id === "github_actions_live_status");
+  assert.ok(gh);
+  assert.notEqual(gh!.verdict, "CONNECTED");
+  assert.ok(gh!.verdict === "MISSING" || gh!.verdict === "PARTIAL");
+});
+
 test("command_center_v2.external_measurement_freshness_v1 is read-only CC truth", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

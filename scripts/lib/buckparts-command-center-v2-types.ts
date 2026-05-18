@@ -646,6 +646,37 @@ export type ExternalMeasurementFreshnessV1 = {
   unknown_facts: string[];
 };
 
+export type BrainCoverageVerdictV1 =
+  | "CONNECTED"
+  | "PARTIAL"
+  | "BYPASSING"
+  | "DUPLICATE"
+  | "DEPRECATED"
+  | "MISSING";
+
+export type BrainCoverageManifestEntryV1 = {
+  system_id: string;
+  npm_script_or_path: string;
+  cc_json_path: string | null;
+  dashboard_only: boolean;
+  verdict: BrainCoverageVerdictV1;
+  blocks_lane_work: boolean;
+  validation_command: string;
+  reason: string;
+};
+
+/** Read-only inventory of which operating systems feed Command Center JSON vs bypass it. */
+export type CommandCenterBrainCoverageManifestV1 = {
+  contract: "command_center_brain_coverage_manifest_v1";
+  generated_at: string;
+  read_only: true;
+  data_mutation: false;
+  entries: BrainCoverageManifestEntryV1[];
+  summary_by_verdict: Record<BrainCoverageVerdictV1, number>;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 /** Read-only Layer 7 batch owner approvals from committed founder_decision_registry_v1 exports. */
 export type BatchProductionOwnerDecisionsLaneV1 = {
   contract: "batch_production_owner_decisions_lane_v1";
@@ -712,4 +743,5 @@ export type CommandCenterV2Report = {
   top_of_game_foundation_scorecard_v1: TopOfGameFoundationScorecardV1;
   batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
+  command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
 };
