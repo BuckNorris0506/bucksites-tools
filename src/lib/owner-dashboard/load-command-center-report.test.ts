@@ -17,7 +17,9 @@ import {
   mapSearchDemandAndGapsToNeuronConnectionLevel,
   mapClickVisibilityToNeuronConnectionLevel,
   mapAffiliateReadinessToNeuronConnectionLevel,
+  mapCoverageHealthToNeuronConnectionLevel,
   type AffiliateReadinessNeuronInput,
+  type CtaCoverageHealthNeuronInput,
 } from "@/lib/owner-dashboard/load-command-center-report";
 import type { ClickVisibilitySnapshot } from "../../../scripts/lib/buckparts-command-center-v2-types";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
@@ -794,6 +796,129 @@ describe("affiliate_readiness neuron", () => {
       gscPresence: null,
     });
     assert.equal(neurons.neurons.find((n) => n.neuron_key === "affiliate_readiness"), undefined);
+  });
+});
+
+describe("coverage_health neuron", () => {
+  const okCoverage: CtaCoverageHealthNeuronInput = {
+    coverageLane: {
+      status: "OK",
+      count: 0,
+      blocker: null,
+      next_agent_action:
+        "Run buckparts:command-surface read-only; investigate metrics deltas before any DB mutation.",
+      next_owner_action: "Decide whether WARNING/CRITICAL items block monetization expansion for the current sprint.",
+    },
+    ctaCoverage: {
+      source: "supabase_retailer_links",
+      runtime_status: "OK",
+      total_retailer_links: 100,
+      direct_buyable_links: 40,
+      safe_cta_links: 55,
+      blocked_or_unsafe_links: 20,
+      missing_browser_truth_links: 5,
+      retailer_counts: { amazon: 30, repairclinic: 25 },
+    },
+    blockedRemediation: {
+      runtime_status: "OK",
+      top_blocked_states: [{ state: "dead_link", count: 8 }],
+      top_blocked_retailer_keys: [{ retailer_key: "oem", count: 5 }],
+      recommended_next_action: "Review blocked retailer links queue.",
+    },
+  };
+
+  it("appears in owner_command_center_neurons when Command Center coverage truth is passed", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: okCoverage,
+    });
+    assert.equal(neurons.data_mutation, false);
+    assert.equal(neurons.neurons.length, 4);
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(mapCoverageHealthToNeuronConnectionLevel(okCoverage), "BRIGHT");
+    assert.equal(coverage.connection_level, "BRIGHT");
+    assert.equal(coverage.status, "PROVEN");
+    assert.ok(coverage.proven_facts.some((f) => f.includes("not revenue")));
+    assert.ok(coverage.proven_facts.some((f) => f.includes("safe_cta_links")));
+    assert.ok(coverage.proven_facts.some((f) => f.includes("buyer-path")));
+    assert.ok(
+      neurons.generated_from.some((s) => s.includes("cta_coverage_metrics")),
+    );
+  });
+
+  it("maps UNKNOWN_DB_UNAVAILABLE cta coverage to DARK", () => {
+    const unavailable: CtaCoverageHealthNeuronInput = {
+      ...okCoverage,
+      ctaCoverage: {
+        ...okCoverage.ctaCoverage,
+        runtime_status: "UNKNOWN_DB_UNAVAILABLE",
+        total_retailer_links: "UNKNOWN",
+        safe_cta_links: "UNKNOWN",
+        direct_buyable_links: "UNKNOWN",
+        blocked_or_unsafe_links: "UNKNOWN",
+        missing_browser_truth_links: "UNKNOWN",
+        retailer_counts: "UNKNOWN",
+      },
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: unavailable,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(coverage.connection_level, "DARK");
+    assert.ok(
+      coverage.unknown_facts.some((f) => f.includes("UNKNOWN_DB_UNAVAILABLE") || f.includes("not fully usable")),
+    );
+  });
+
+  it("maps zero safe_cta_links to DIM when runtime is OK", () => {
+    const zeroCta: CtaCoverageHealthNeuronInput = {
+      ...okCoverage,
+      ctaCoverage: {
+        ...okCoverage.ctaCoverage,
+        safe_cta_links: 0,
+        blocked_or_unsafe_links: 80,
+      },
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: zeroCta,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(mapCoverageHealthToNeuronConnectionLevel(zeroCta), "DIM");
+    assert.equal(coverage.connection_level, "DIM");
+    assert.ok(coverage.unknown_facts.some((f) => f.includes("safe_cta_links is 0")));
+  });
+
+  it("maps missing coverage input to DARK when ctaCoverageHealth is null", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: null,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(coverage.connection_level, "DARK");
+    assert.ok(coverage.unknown_facts.some((f) => f.includes("missing")));
+  });
+
+  it("omits coverage neuron when ctaCoverageHealth arg is omitted", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    assert.equal(neurons.neurons.find((n) => n.neuron_key === "coverage_health"), undefined);
   });
 });
 

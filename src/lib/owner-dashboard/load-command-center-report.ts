@@ -49,6 +49,27 @@ export type AffiliateReadinessNeuronInput = {
   commission_or_revenue: "NOT_CONNECTED" | string;
 };
 
+/** Command Center CTA / coverage slice for neuron wiring (no duplicate Supabase retailer_links query). */
+export type CtaCoverageHealthNeuronInput = {
+  coverageLane: DecisionLane;
+  ctaCoverage: {
+    source: "supabase_retailer_links";
+    runtime_status: "OK" | "UNKNOWN_DB_UNAVAILABLE" | "UNKNOWN_NOT_QUERIED";
+    total_retailer_links: number | "UNKNOWN";
+    direct_buyable_links: number | "UNKNOWN";
+    safe_cta_links: number | "UNKNOWN";
+    blocked_or_unsafe_links: number | "UNKNOWN";
+    missing_browser_truth_links: number | "UNKNOWN";
+    retailer_counts: Record<string, number> | "UNKNOWN";
+  };
+  blockedRemediation?: {
+    runtime_status: "OK" | "UNKNOWN";
+    top_blocked_states: Array<{ state: string; count: number }> | "UNKNOWN";
+    top_blocked_retailer_keys: Array<{ retailer_key: string; count: number }> | "UNKNOWN";
+    recommended_next_action: string;
+  };
+};
+
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
   safe_cta_count: number;
@@ -80,6 +101,7 @@ export type OwnerDashboardNeuron = {
     | "search_demand_and_gaps"
     | "click_visibility"
     | "affiliate_readiness"
+    | "coverage_health"
     | "batch_production_owner_decisions";
   title: string;
   connection_level: OwnerNeuronConnectionLevel;
@@ -508,6 +530,157 @@ function buildAffiliateReadinessNeuron(
   };
 }
 
+export function mapCoverageHealthToNeuronConnectionLevel(
+  input: CtaCoverageHealthNeuronInput | null | undefined,
+): OwnerNeuronConnectionLevel {
+  if (!input) return "DARK";
+  const { coverageLane, ctaCoverage: cta } = input;
+  if (
+    cta.runtime_status === "UNKNOWN_DB_UNAVAILABLE" ||
+    cta.runtime_status === "UNKNOWN_NOT_QUERIED"
+  ) {
+    return "DARK";
+  }
+  if (
+    coverageLane.status === "BLOCKED" ||
+    coverageLane.status === "UNKNOWN" ||
+    coverageLane.status === "PLACEHOLDER"
+  ) {
+    return "DARK";
+  }
+  if (cta.runtime_status !== "OK") return "DARK";
+
+  if (
+    typeof cta.safe_cta_links !== "number" ||
+    typeof cta.total_retailer_links !== "number" ||
+    typeof cta.direct_buyable_links !== "number"
+  ) {
+    return "DIM";
+  }
+  const safeCta = cta.safe_cta_links;
+  const totalLinks = cta.total_retailer_links;
+  if (coverageLane.status === "ATTENTION") return "DIM";
+  if (safeCta === 0) return "DIM";
+
+  const blocked =
+    typeof cta.blocked_or_unsafe_links === "number" ? cta.blocked_or_unsafe_links : 0;
+  if (totalLinks > 0 && blocked > safeCta) return "DIM";
+
+  if (coverageLane.status === "OK" && safeCta > 0) return "BRIGHT";
+  return "DIM";
+}
+
+function buildCoverageHealthNeuron(
+  input: CtaCoverageHealthNeuronInput | null | undefined,
+): OwnerDashboardNeuron {
+  const proven_facts: string[] = [
+    "coverage_health data_mutation: false (Command Center command-surface + v2 coverage lane; no second retailer_links query in neuron builder).",
+    "CTA coverage is buyer-path / monetization readiness only — not revenue, commission, or conversion proof.",
+    "Valid buy CTA availability (safe_cta_links) proves link-level readiness from retailer_links aggregates, not live PDP buyer intent.",
+  ];
+  const unknown_facts: string[] = [
+    "Coverage metrics must not be used for revenue or commission claims — commission_or_revenue remains excluded from this neuron lane.",
+  ];
+  const connection_level = mapCoverageHealthToNeuronConnectionLevel(input);
+  let status: OwnerNeuronStatus = "UNKNOWN";
+
+  if (!input) {
+    unknown_facts.push(
+      "command_center_v2.coverage_health and command-surface cta_coverage_metrics are missing from Command Center owner load.",
+    );
+    return {
+      neuron_key: "coverage_health",
+      title: "CTA / coverage health",
+      connection_level: "DARK",
+      freshness_method:
+        "command_center_v2.coverage_health + report-buckparts-command-surface.cta_coverage_metrics at owner-dashboard load time.",
+      proven_facts,
+      unknown_facts,
+      next_owner_action:
+        "Run buckparts:command-surface read-only and restore Supabase retailer_links visibility before using this neuron.",
+      status,
+    };
+  }
+
+  if (connection_level === "BRIGHT") {
+    status = "PROVEN";
+  }
+
+  const { coverageLane, ctaCoverage: cta, blockedRemediation } = input;
+  proven_facts.push(`coverage_health lane status: ${coverageLane.status}.`);
+  proven_facts.push(`cta_coverage_metrics runtime_status: ${cta.runtime_status}.`);
+  proven_facts.push(`cta_coverage_metrics source: ${cta.source}.`);
+  if (typeof cta.safe_cta_links === "number") {
+    proven_facts.push(`safe_cta_links (valid buy CTA): ${cta.safe_cta_links}.`);
+  } else {
+    unknown_facts.push("safe_cta_links is UNKNOWN — valid CTA coverage cannot be proven.");
+  }
+  if (typeof cta.total_retailer_links === "number") {
+    proven_facts.push(`total_retailer_links: ${cta.total_retailer_links}.`);
+  }
+  if (typeof cta.direct_buyable_links === "number") {
+    proven_facts.push(`direct_buyable_links: ${cta.direct_buyable_links}.`);
+  }
+  if (typeof cta.blocked_or_unsafe_links === "number") {
+    proven_facts.push(`blocked_or_unsafe_links: ${cta.blocked_or_unsafe_links}.`);
+    if (cta.safe_cta_links === 0) {
+      unknown_facts.push(
+        `safe_cta_links is 0 with ${cta.blocked_or_unsafe_links} blocked_or_unsafe_links — significant buy-path gaps remain.`,
+      );
+    }
+  }
+  if (typeof cta.missing_browser_truth_links === "number" && cta.missing_browser_truth_links > 0) {
+    unknown_facts.push(
+      `missing_browser_truth_links: ${cta.missing_browser_truth_links} — browser-truth gaps remain on retailer_links.`,
+    );
+  }
+  if (coverageLane.blocker) {
+    unknown_facts.push(`coverage_health blocker: ${coverageLane.blocker}.`);
+  }
+  if (coverageLane.top_items && coverageLane.top_items.length > 0) {
+    proven_facts.push(`coverage_health top_items: ${coverageLane.top_items.join("; ")}.`);
+  }
+  if (blockedRemediation?.runtime_status === "OK") {
+    if (
+      blockedRemediation.top_blocked_states !== "UNKNOWN" &&
+      blockedRemediation.top_blocked_states.length > 0
+    ) {
+      const top = blockedRemediation.top_blocked_states
+        .slice(0, 3)
+        .map((s) => `${s.state}:${s.count}`)
+        .join(", ");
+      proven_facts.push(`strongest blocked_link states (command-surface): ${top}.`);
+    }
+    if (
+      blockedRemediation.top_blocked_retailer_keys !== "UNKNOWN" &&
+      blockedRemediation.top_blocked_retailer_keys.length > 0
+    ) {
+      const top = blockedRemediation.top_blocked_retailer_keys
+        .slice(0, 3)
+        .map((r) => `${r.retailer_key}:${r.count}`)
+        .join(", ");
+      proven_facts.push(`strongest blocked retailer keys (command-surface): ${top}.`);
+    }
+  }
+  if (cta.runtime_status !== "OK") {
+    unknown_facts.push(
+      `cta_coverage_metrics runtime_status is ${cta.runtime_status}; retailer_links aggregates are not fully usable.`,
+    );
+  }
+
+  return {
+    neuron_key: "coverage_health",
+    title: "CTA / coverage health",
+    connection_level,
+    freshness_method:
+      "command_center_v2.coverage_health (command-surface health projection) + cta_coverage_metrics from report-buckparts-command-surface (single Supabase read at command-surface build).",
+    proven_facts,
+    unknown_facts,
+    next_owner_action: coverageLane.next_owner_action,
+    status,
+  };
+}
+
 export function mapSearchDemandAndGapsToNeuronConnectionLevel(
   search: OwnerSearchDemandAndGapsNeuron | null | undefined,
 ): OwnerNeuronConnectionLevel {
@@ -707,6 +880,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   clickVisibility?: ClickVisibilitySnapshot | null;
   /** When set, adds affiliate_readiness neuron from CC v2 lane + v1 summary only (no duplicate tracker scan). */
   affiliateReadiness?: AffiliateReadinessNeuronInput | null;
+  /** When set, adds coverage_health neuron from CC v2 + command-surface cta_coverage_metrics (no duplicate query). */
+  ctaCoverageHealth?: CtaCoverageHealthNeuronInput | null;
   /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
   batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
 }): OwnerCommandCenterNeuronsReport {
@@ -956,6 +1131,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   const searchNeuronIncluded = args.searchDemandAndGaps !== undefined;
   const clickNeuronIncluded = args.clickVisibility !== undefined;
   const affiliateNeuronIncluded = args.affiliateReadiness !== undefined;
+  const coverageNeuronIncluded = args.ctaCoverageHealth !== undefined;
   const batchNeuronIncluded = args.batchProductionOwnerDecisionsLane !== undefined;
   if (searchNeuronIncluded) {
     optionalNeurons.push(buildSearchDemandAndGapsNeuron(args.searchDemandAndGaps));
@@ -965,6 +1141,9 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   }
   if (affiliateNeuronIncluded) {
     optionalNeurons.push(buildAffiliateReadinessNeuron(args.affiliateReadiness));
+  }
+  if (coverageNeuronIncluded) {
+    optionalNeurons.push(buildCoverageHealthNeuron(args.ctaCoverageHealth));
   }
   if (batchNeuronIncluded) {
     optionalNeurons.push(buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane));
@@ -986,6 +1165,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       ...(affiliateNeuronIncluded
         ? [
             "command_center_v2.affiliate_readiness + affiliate_readiness_summary (from report-buckparts-command-center; no duplicate tracker scan)",
+          ]
+        : []),
+      ...(coverageNeuronIncluded
+        ? [
+            "command_center_v2.coverage_health + report-buckparts-command-surface.cta_coverage_metrics (no duplicate retailer_links query)",
           ]
         : []),
       ...(batchNeuronIncluded
@@ -1552,6 +1736,11 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
         commission_or_revenue:
           report.command_center_v2.revenue_snapshot.click_visibility?.commission_or_revenue ??
           "NOT_CONNECTED",
+      },
+      ctaCoverageHealth: {
+        coverageLane: report.command_center_v2.coverage_health,
+        ctaCoverage: commandSurface.cta_coverage_metrics,
+        blockedRemediation: commandSurface.blocked_retailer_link_remediation,
       },
       batchProductionOwnerDecisionsLane:
         report.command_center_v2.batch_production_owner_decisions_lane_v1,
