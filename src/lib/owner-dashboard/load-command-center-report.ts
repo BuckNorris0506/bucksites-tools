@@ -30,6 +30,7 @@ import {
   type Ga4TrustFunnelEventTotals,
   type Ga4TrustFunnelRates,
 } from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
+import type { BatchProductionOwnerDecisionsLaneV1 } from "../../../scripts/lib/buckparts-command-center-v2-types";
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -55,7 +56,11 @@ export type OwnerNeuronConnectionLevel = "BRIGHT" | "DIM" | "DARK";
 type OwnerNeuronStatus = "PROVEN" | "UNKNOWN";
 
 export type OwnerDashboardNeuron = {
-  neuron_key: "page_state_distribution" | "trust_funnel_measurement" | "gsc_search_discovery";
+  neuron_key:
+    | "page_state_distribution"
+    | "trust_funnel_measurement"
+    | "gsc_search_discovery"
+    | "batch_production_owner_decisions";
   title: string;
   connection_level: OwnerNeuronConnectionLevel;
   freshness_method: string;
@@ -251,6 +256,106 @@ export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
 const STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH =
   "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.";
 
+export function mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel(
+  lane: BatchProductionOwnerDecisionsLaneV1 | null | undefined,
+): OwnerNeuronConnectionLevel {
+  if (!lane) return "DARK";
+  if (
+    lane.runtime_status === "OK" &&
+    lane.approved_for_planning_count > 0 &&
+    lane.may_mutate === false
+  ) {
+    return "BRIGHT";
+  }
+  if (
+    lane.runtime_status === "UNKNOWN_REGISTRY_MISSING" ||
+    lane.runtime_status === "UNKNOWN_NO_BATCH_ROWS"
+  ) {
+    return "DARK";
+  }
+  return "DIM";
+}
+
+function buildBatchProductionOwnerDecisionsNeuron(
+  batchLane: BatchProductionOwnerDecisionsLaneV1 | null | undefined,
+): OwnerDashboardNeuron {
+  const proven_facts: string[] = [];
+  const unknown_facts: string[] = [];
+  const connection_level = mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel(batchLane);
+  let status: OwnerNeuronStatus = "UNKNOWN";
+
+  if (!batchLane) {
+    unknown_facts.push(
+      "command_center_v2.batch_production_owner_decisions_lane_v1 is missing from Command Center report.",
+    );
+    return {
+      neuron_key: "batch_production_owner_decisions",
+      title: "Batch production owner decisions (Layer 7)",
+      connection_level: "DARK",
+      freshness_method:
+        "Command Center v2 batch_production_owner_decisions_lane_v1 at owner-dashboard load time (no registry scan in neuron builder).",
+      proven_facts,
+      unknown_facts,
+      next_owner_action:
+        "Restore Command Center v2 batch lane wiring from committed founder decision registry export.",
+      status,
+    };
+  }
+
+  if (connection_level === "BRIGHT") {
+    status = "PROVEN";
+  }
+
+  proven_facts.push(`runtime_status: ${batchLane.runtime_status}.`);
+  proven_facts.push(`approved_for_planning_count: ${batchLane.approved_for_planning_count}.`);
+  for (const row of batchLane.approved_rows) {
+    proven_facts.push(`approved row_id=${row.row_id} token=${row.token}.`);
+  }
+  if (batchLane.excluded_not_owner_review_ready_row_ids !== "UNKNOWN") {
+    proven_facts.push(
+      `excluded_not_owner_review_ready_row_ids: ${batchLane.excluded_not_owner_review_ready_row_ids.join(", ")}.`,
+    );
+  } else {
+    unknown_facts.push("excluded_not_owner_review_ready_row_ids is UNKNOWN.");
+  }
+  proven_facts.push(`may_mutate: ${String(batchLane.may_mutate)}.`);
+  proven_facts.push(`may_write_production_evidence: ${String(batchLane.may_write_production_evidence)}.`);
+  proven_facts.push(`batch_size_20_status: ${batchLane.batch_size_20_status}.`);
+  proven_facts.push(
+    `layer_6_founder_only_production_mutation_approval: ${batchLane.layer_6_founder_only_production_mutation_approval}.`,
+  );
+  proven_facts.push(`production_evidence_commit: ${batchLane.production_evidence_commit}.`);
+
+  if (batchLane.source_row_count !== "UNKNOWN") {
+    proven_facts.push(`source_row_count: ${batchLane.source_row_count}.`);
+  } else {
+    unknown_facts.push("source_row_count is UNKNOWN.");
+  }
+  if (batchLane.primary_source_registry_file === "UNKNOWN") {
+    unknown_facts.push("primary_source_registry_file is UNKNOWN.");
+  } else {
+    proven_facts.push(`primary_source_registry_file: ${batchLane.primary_source_registry_file}.`);
+  }
+  for (const f of batchLane.proven_facts) {
+    if (!proven_facts.includes(f)) proven_facts.push(f);
+  }
+  for (const f of batchLane.unknown_facts) {
+    if (!unknown_facts.includes(f)) unknown_facts.push(f);
+  }
+
+  return {
+    neuron_key: "batch_production_owner_decisions",
+    title: "Batch production owner decisions (Layer 7)",
+    connection_level,
+    freshness_method:
+      "Command Center v2 batch_production_owner_decisions_lane_v1 at owner-dashboard load time (no dashboard registry scan).",
+    proven_facts,
+    unknown_facts,
+    next_owner_action: batchLane.next_agent_action,
+    status,
+  };
+}
+
 export function buildOwnerCommandCenterNeuronsReport(args: {
   rootDir: string;
   pageState:
@@ -279,6 +384,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     artifact: Ga4TrustFunnelArtifact;
   } | null;
   trustFunnelAggregateIssue?: string | null;
+  /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
+  batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
 }): OwnerCommandCenterNeuronsReport {
   const allEmittersPresent = args.trustFunnelEmitterContractOverride?.all_emitters_present ?? true;
   const missingEmitterFiles = args.trustFunnelEmitterContractOverride?.missing_emitter_files ?? [];
@@ -484,14 +591,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     gscUnknownFacts.push(STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH);
   }
 
-  return {
-    data_mutation: false,
-    generated_from: [
-      "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
-      ...(ext ? ["src/lib/owner-dashboard/gsc-external-demand.ts (reconciles gsc_search_discovery)"] : []),
-      ...TRUST_FUNNEL_EMITTER_MODULES,
-    ],
-    neurons: [
+  const coreNeurons: OwnerDashboardNeuron[] = [
       {
         neuron_key: "page_state_distribution",
         title: "Page-state distribution",
@@ -527,7 +627,24 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         next_owner_action: gscNextOwnerAction,
         status: gscStatus,
       },
+  ];
+
+  const batchNeuronIncluded = args.batchProductionOwnerDecisionsLane !== undefined;
+  const neurons = batchNeuronIncluded
+    ? [...coreNeurons, buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane)]
+    : coreNeurons;
+
+  return {
+    data_mutation: false,
+    generated_from: [
+      "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
+      ...(ext ? ["src/lib/owner-dashboard/gsc-external-demand.ts (reconciles gsc_search_discovery)"] : []),
+      ...TRUST_FUNNEL_EMITTER_MODULES,
+      ...(batchNeuronIncluded
+        ? ["command_center_v2.batch_production_owner_decisions_lane_v1 (read-only; no neuron registry scan)"]
+        : []),
     ],
+    neurons,
   };
 }
 
@@ -1078,6 +1195,8 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
       gscExternalDemand: gscExternalDemand.gsc_external_demand,
       trustFunnelAggregateArtifact: ga4TrustFunnelAggregate.artifact,
       trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
+      batchProductionOwnerDecisionsLane:
+        report.command_center_v2.batch_production_owner_decisions_lane_v1,
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });

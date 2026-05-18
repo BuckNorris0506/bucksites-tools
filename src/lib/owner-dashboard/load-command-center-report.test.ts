@@ -13,7 +13,9 @@ import {
   buildOwnerIntegritySentinelReport,
   buildOwnerSearchDemandAndGapsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
+  mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
 } from "@/lib/owner-dashboard/load-command-center-report";
+import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
   parseGscPerformanceCsv,
@@ -379,7 +381,70 @@ describe("owner quarantined fridge summary", () => {
     assert.equal(gsc.unknown_facts.some((f) => f.includes(STALE_GSC_AGGREGATES_PHRASE_SNIPPET)), false);
     assert.ok(gsc.next_owner_action.includes("Regenerate export"));
   });
+});
 
+describe("batch_production_owner_decisions neuron", () => {
+  it("appears in owner_command_center_neurons when v2 batch lane is passed", () => {
+    const lane = buildBatchProductionOwnerDecisionsLaneV1({ rootDir: process.cwd() });
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      batchProductionOwnerDecisionsLane: lane,
+    });
+    assert.equal(neurons.neurons.length, 4);
+    const batch = neurons.neurons.find((n) => n.neuron_key === "batch_production_owner_decisions");
+    assert.ok(batch);
+    assert.equal(
+      mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel(lane),
+      "BRIGHT",
+    );
+    assert.equal(batch.connection_level, "BRIGHT");
+    assert.equal(batch.status, "PROVEN");
+    assert.ok(
+      batch.proven_facts.some((f) => f.includes("approved_for_planning_count: 3")),
+    );
+    assert.ok(batch.proven_facts.some((f) => f.includes("may_mutate: false")));
+    assert.ok(batch.proven_facts.some((f) => f.includes("batch_size_20_status: BLOCKED")));
+    assert.ok(batch.proven_facts.some((f) => f.includes("row_id=da97-08006b")));
+    assert.ok(
+      neurons.generated_from.some((s) =>
+        s.includes("batch_production_owner_decisions_lane_v1"),
+      ),
+    );
+  });
+
+  it("maps missing lane to DARK when batchProductionOwnerDecisionsLane is null", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      batchProductionOwnerDecisionsLane: null,
+    });
+    assert.equal(neurons.neurons.length, 4);
+    const batch = neurons.neurons.find((n) => n.neuron_key === "batch_production_owner_decisions");
+    assert.ok(batch);
+    assert.equal(batch.connection_level, "DARK");
+    assert.ok(
+      batch.unknown_facts.some((f) => f.includes("batch_production_owner_decisions_lane_v1 is missing")),
+    );
+  });
+
+  it("omits batch neuron when batch lane arg is omitted (legacy three-neuron tests)", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    assert.equal(neurons.neurons.length, 3);
+    assert.equal(
+      neurons.neurons.find((n) => n.neuron_key === "batch_production_owner_decisions"),
+      undefined,
+    );
+  });
+});
+
+describe("owner integrity sentinel", () => {
   it("fallback_active true triggers CAUTION_INCOMPLETE_INPUTS", () => {
     const sentinel = buildOwnerIntegritySentinelReport({
       report: {
