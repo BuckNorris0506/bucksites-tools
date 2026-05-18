@@ -16,6 +16,8 @@ import {
   mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
   mapSearchDemandAndGapsToNeuronConnectionLevel,
   mapClickVisibilityToNeuronConnectionLevel,
+  mapAffiliateReadinessToNeuronConnectionLevel,
+  type AffiliateReadinessNeuronInput,
 } from "@/lib/owner-dashboard/load-command-center-report";
 import type { ClickVisibilitySnapshot } from "../../../scripts/lib/buckparts-command-center-v2-types";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
@@ -695,6 +697,103 @@ describe("click_visibility neuron", () => {
       gscPresence: null,
     });
     assert.equal(neurons.neurons.find((n) => n.neuron_key === "click_visibility"), undefined);
+  });
+});
+
+describe("affiliate_readiness neuron", () => {
+  const okAffiliate: AffiliateReadinessNeuronInput = {
+    lane: {
+      status: "OK",
+      count: 0,
+      blocker: null,
+      next_agent_action:
+        "Refresh affiliate tracker JSON read-only; no network submissions from this script.",
+      next_owner_action:
+        "Submit and track affiliate program approvals in operator workflow outside this repo task.",
+    },
+    summary: {
+      approved_count: 2,
+      pending_count: 1,
+      pending_network_or_programs: ["flexoffers"],
+      repairclinic_status: "APPROVED",
+      affiliate_approval_pending: false,
+    },
+    commission_or_revenue: "NOT_CONNECTED",
+  };
+
+  it("appears in owner_command_center_neurons when Command Center affiliate readiness is passed", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      affiliateReadiness: okAffiliate,
+    });
+    assert.equal(neurons.data_mutation, false);
+    assert.equal(neurons.neurons.length, 4);
+    const affiliate = neurons.neurons.find((n) => n.neuron_key === "affiliate_readiness");
+    assert.ok(affiliate);
+    assert.equal(mapAffiliateReadinessToNeuronConnectionLevel(okAffiliate), "BRIGHT");
+    assert.equal(affiliate.connection_level, "BRIGHT");
+    assert.equal(affiliate.status, "PROVEN");
+    assert.ok(affiliate.proven_facts.some((f) => f.includes("not revenue")));
+    assert.ok(affiliate.proven_facts.some((f) => f.includes("commission_or_revenue: NOT_CONNECTED")));
+    assert.ok(affiliate.proven_facts.some((f) => f.includes("approved_count: 2")));
+    assert.ok(
+      neurons.generated_from.some((s) => s.includes("affiliate_readiness")),
+    );
+  });
+
+  it("maps affiliate_approval_pending to DIM when programs are still pending", () => {
+    const pending: AffiliateReadinessNeuronInput = {
+      ...okAffiliate,
+      lane: {
+        ...okAffiliate.lane,
+        status: "ATTENTION",
+        count: 1,
+        blocker: "affiliate_approval_pending",
+        top_items: ["pending_non_amazon_affiliate_programs"],
+      },
+      summary: {
+        ...okAffiliate.summary,
+        approved_count: 1,
+        affiliate_approval_pending: true,
+        pending_count: 2,
+        pending_network_or_programs: ["flexoffers", "shareasale"],
+      },
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      affiliateReadiness: pending,
+    });
+    const affiliate = neurons.neurons.find((n) => n.neuron_key === "affiliate_readiness");
+    assert.ok(affiliate);
+    assert.equal(mapAffiliateReadinessToNeuronConnectionLevel(pending), "DIM");
+    assert.equal(affiliate.connection_level, "DIM");
+    assert.ok(affiliate.unknown_facts.some((f) => f.includes("affiliate_approval_pending")));
+  });
+
+  it("maps missing affiliate readiness to DARK when affiliateReadiness is null", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      affiliateReadiness: null,
+    });
+    const affiliate = neurons.neurons.find((n) => n.neuron_key === "affiliate_readiness");
+    assert.ok(affiliate);
+    assert.equal(affiliate.connection_level, "DARK");
+    assert.ok(affiliate.unknown_facts.some((f) => f.includes("missing")));
+  });
+
+  it("omits affiliate neuron when affiliateReadiness arg is omitted", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    assert.equal(neurons.neurons.find((n) => n.neuron_key === "affiliate_readiness"), undefined);
   });
 });
 

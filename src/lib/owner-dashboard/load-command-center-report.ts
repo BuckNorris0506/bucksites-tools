@@ -33,7 +33,21 @@ import {
 import type {
   BatchProductionOwnerDecisionsLaneV1,
   ClickVisibilitySnapshot,
+  DecisionLane,
 } from "../../../scripts/lib/buckparts-command-center-v2-types";
+
+/** Command Center affiliate readiness slice for neuron wiring (no duplicate tracker scan). */
+export type AffiliateReadinessNeuronInput = {
+  lane: DecisionLane;
+  summary: {
+    approved_count: number;
+    pending_count: number;
+    pending_network_or_programs: string[];
+    repairclinic_status: string | "UNKNOWN";
+    affiliate_approval_pending: boolean;
+  };
+  commission_or_revenue: "NOT_CONNECTED" | string;
+};
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -65,6 +79,7 @@ export type OwnerDashboardNeuron = {
     | "gsc_search_discovery"
     | "search_demand_and_gaps"
     | "click_visibility"
+    | "affiliate_readiness"
     | "batch_production_owner_decisions";
   title: string;
   connection_level: OwnerNeuronConnectionLevel;
@@ -380,6 +395,119 @@ function buildClickVisibilityNeuron(
   };
 }
 
+export function mapAffiliateReadinessToNeuronConnectionLevel(
+  input: AffiliateReadinessNeuronInput | null | undefined,
+): OwnerNeuronConnectionLevel {
+  if (!input) return "DARK";
+  const { lane, summary } = input;
+  if (lane.status === "UNKNOWN" || lane.status === "PLACEHOLDER" || lane.status === "BLOCKED") {
+    return "DARK";
+  }
+  if (
+    lane.status === "OK" &&
+    summary.approved_count >= 1 &&
+    !summary.affiliate_approval_pending
+  ) {
+    return "BRIGHT";
+  }
+  return "DIM";
+}
+
+function buildAffiliateReadinessNeuron(
+  input: AffiliateReadinessNeuronInput | null | undefined,
+): OwnerDashboardNeuron {
+  const proven_facts: string[] = [
+    "affiliate_readiness data_mutation: false (Command Center read-only affiliate tracker summary; no second file scan in neuron builder).",
+    "Affiliate approval/setup state is monetization readiness only — not revenue, commission, or conversion proof.",
+  ];
+  const unknown_facts: string[] = [];
+  const connection_level = mapAffiliateReadinessToNeuronConnectionLevel(input);
+  let status: OwnerNeuronStatus = "UNKNOWN";
+
+  if (!input) {
+    unknown_facts.push(
+      "command_center_v2.affiliate_readiness and affiliate_readiness_summary are missing from Command Center report.",
+    );
+    unknown_facts.push("Affiliate program status is unavailable — do not infer revenue from setup state.");
+    return {
+      neuron_key: "affiliate_readiness",
+      title: "Affiliate readiness",
+      connection_level: "DARK",
+      freshness_method:
+        "Command Center v2 affiliate_readiness lane + v1 affiliate_readiness_summary at owner-dashboard load time.",
+      proven_facts,
+      unknown_facts,
+      next_owner_action:
+        "Restore affiliate tracker read model via Command Center (data/affiliate/affiliate-application-tracker.json) before using this neuron.",
+      status,
+    };
+  }
+
+  if (connection_level === "BRIGHT") {
+    status = "PROVEN";
+  }
+
+  const { lane, summary, commission_or_revenue } = input;
+  proven_facts.push(`affiliate_readiness lane status: ${lane.status}.`);
+  proven_facts.push(`approved_count: ${summary.approved_count}.`);
+  proven_facts.push(`pending_count: ${summary.pending_count}.`);
+  proven_facts.push(`affiliate_approval_pending: ${String(summary.affiliate_approval_pending)}.`);
+  proven_facts.push(`repairclinic_status: ${summary.repairclinic_status}.`);
+  proven_facts.push(`commission_or_revenue: ${commission_or_revenue}.`);
+  if (commission_or_revenue === "NOT_CONNECTED") {
+    proven_facts.push(
+      "Commission / revenue remains NOT_CONNECTED in Command Center — affiliate approvals must not be treated as revenue proof.",
+    );
+  } else {
+    unknown_facts.push(
+      "commission_or_revenue is not NOT_CONNECTED in this snapshot — verify Command Center revenue ledger before any revenue claim.",
+    );
+  }
+  if (summary.approved_count >= 1 && summary.pending_network_or_programs.length > 0) {
+    proven_facts.push(
+      `Notable approved monetization programs are proven via tracker (approved_count=${summary.approved_count}); pending networks/programs remain: ${summary.pending_network_or_programs.join(", ")}.`,
+    );
+  } else if (summary.approved_count >= 1) {
+    proven_facts.push(
+      `At least one approved affiliate program is proven (approved_count=${summary.approved_count}).`,
+    );
+  }
+  if (summary.pending_network_or_programs.length > 0) {
+    proven_facts.push(`pending_network_or_programs: ${summary.pending_network_or_programs.join(", ")}.`);
+  }
+  if (summary.affiliate_approval_pending) {
+    unknown_facts.push(
+      "affiliate_approval_pending is true — non-Amazon monetization programs still need owner setup/approval workflow.",
+    );
+  }
+  if (summary.approved_count === 0) {
+    unknown_facts.push("approved_count is 0 — no approved affiliate programs are proven for monetization readiness.");
+  }
+  if (summary.pending_count > 0) {
+    unknown_facts.push(
+      `pending_count is ${summary.pending_count} — affiliate tracker shows programs still pending or in-flight.`,
+    );
+  }
+  if (lane.blocker) {
+    unknown_facts.push(`affiliate_readiness blocker: ${lane.blocker}.`);
+  }
+  if (lane.top_items && lane.top_items.length > 0) {
+    proven_facts.push(`affiliate_readiness top_items: ${lane.top_items.join(", ")}.`);
+  }
+
+  return {
+    neuron_key: "affiliate_readiness",
+    title: "Affiliate readiness",
+    connection_level,
+    freshness_method:
+      "Command Center affiliate_readiness lane + affiliate_readiness_summary from report-buckparts-command-center (tracker already ingested once).",
+    proven_facts,
+    unknown_facts,
+    next_owner_action: lane.next_owner_action,
+    status,
+  };
+}
+
 export function mapSearchDemandAndGapsToNeuronConnectionLevel(
   search: OwnerSearchDemandAndGapsNeuron | null | undefined,
 ): OwnerNeuronConnectionLevel {
@@ -577,6 +705,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   searchDemandAndGaps?: OwnerSearchDemandAndGapsNeuron | null;
   /** When set, adds click_visibility neuron from revenue_snapshot.click_visibility only (no duplicate Supabase query). */
   clickVisibility?: ClickVisibilitySnapshot | null;
+  /** When set, adds affiliate_readiness neuron from CC v2 lane + v1 summary only (no duplicate tracker scan). */
+  affiliateReadiness?: AffiliateReadinessNeuronInput | null;
   /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
   batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
 }): OwnerCommandCenterNeuronsReport {
@@ -825,12 +955,16 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   const optionalNeurons: OwnerDashboardNeuron[] = [];
   const searchNeuronIncluded = args.searchDemandAndGaps !== undefined;
   const clickNeuronIncluded = args.clickVisibility !== undefined;
+  const affiliateNeuronIncluded = args.affiliateReadiness !== undefined;
   const batchNeuronIncluded = args.batchProductionOwnerDecisionsLane !== undefined;
   if (searchNeuronIncluded) {
     optionalNeurons.push(buildSearchDemandAndGapsNeuron(args.searchDemandAndGaps));
   }
   if (clickNeuronIncluded) {
     optionalNeurons.push(buildClickVisibilityNeuron(args.clickVisibility));
+  }
+  if (affiliateNeuronIncluded) {
+    optionalNeurons.push(buildAffiliateReadinessNeuron(args.affiliateReadiness));
   }
   if (batchNeuronIncluded) {
     optionalNeurons.push(buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane));
@@ -848,6 +982,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         : []),
       ...(clickNeuronIncluded
         ? ["command_center_v2.revenue_snapshot.click_visibility (read-only click_events snapshot; no duplicate Supabase query)"]
+        : []),
+      ...(affiliateNeuronIncluded
+        ? [
+            "command_center_v2.affiliate_readiness + affiliate_readiness_summary (from report-buckparts-command-center; no duplicate tracker scan)",
+          ]
         : []),
       ...(batchNeuronIncluded
         ? ["command_center_v2.batch_production_owner_decisions_lane_v1 (read-only; no neuron registry scan)"]
@@ -1407,6 +1546,13 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
       trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
       searchDemandAndGaps: searchDemandAndGaps.search_demand_and_gaps,
       clickVisibility: report.command_center_v2.revenue_snapshot.click_visibility,
+      affiliateReadiness: {
+        lane: report.command_center_v2.affiliate_readiness,
+        summary: report.affiliate_readiness_summary,
+        commission_or_revenue:
+          report.command_center_v2.revenue_snapshot.click_visibility?.commission_or_revenue ??
+          "NOT_CONNECTED",
+      },
       batchProductionOwnerDecisionsLane:
         report.command_center_v2.batch_production_owner_decisions_lane_v1,
     });
