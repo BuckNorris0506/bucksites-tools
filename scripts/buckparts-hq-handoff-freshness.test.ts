@@ -33,9 +33,15 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
-    id: "batch_head_399251a",
-    needle: "399251a",
+    id: "batch_head_ab3aedc",
+    needle: "ab3aedc",
     describe: "latest batch lane HEAD reference",
+  },
+  {
+    id: "hq_next_move_prompt_rule",
+    needle:
+      'Do not give Jared the "best next move" without giving the exact copy/paste prompt or command',
+    describe: "HQ must include copy/paste prompt with next move",
   },
   {
     id: "batch_owner_review_report",

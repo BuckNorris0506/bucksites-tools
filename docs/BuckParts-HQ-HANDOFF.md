@@ -4,13 +4,13 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate):** refreshed through pushed HEAD **`399251a`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate):** refreshed through pushed HEAD **`ab3aedc`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `399251a`)
+## Current stopping point / chat migration state (through `ab3aedc`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -18,8 +18,8 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`399251a`** — *Add batch owner approval gate* |
-| Recent chain | `1362b65` Add batch owner review report · `2d5032c` Separate owner review readiness from production evidence gates · `4f3a497` Add non-Amazon PDP source for batch review |
+| Latest pushed HEAD | **`ab3aedc`** — *Update HQ handoff for batch owner approval gate* |
+| Recent chain | `399251a` Add batch owner approval gate · `1362b65` Add batch owner review report · `2d5032c` Separate owner review readiness from production evidence gates |
 
 ### Batch Production Lane v1 — status (PROVEN in-repo)
 
@@ -75,6 +75,8 @@ node --import tsx scripts/report-batch-owner-approval-checklist.ts --source non-
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local only unless intentionally promoted |
 
 ### Operator rules (do not regress)
+
+**HQ / agent chat behavior:** Do not give Jared the "best next move" without giving the exact copy/paste prompt or command in the same chat message. If HQ states a next move, the prompt/command must be included immediately.
 
 - **Do not** restart the Amazon interstitial loop as the primary batch path.
 - **Do not** make Jared manually author JSON facts — agent fills facts → founder reviews and approves via **Markdown**.
