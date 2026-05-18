@@ -698,6 +698,36 @@ export type BrainIntegrityGateBrainStatusV1 =
   | "PROCEED_WITH_KNOWN_LIMITS"
   | "STOP_THE_LINE";
 
+export type BrainConsolidationPlanEntryV1 = {
+  system_id: string;
+  verdict: BrainCoverageVerdictV1;
+  dashboard_only: boolean;
+  cc_json_path: string | null;
+  consolidation_reason: string;
+};
+
+/** Read-only consolidation roadmap from manifest + gate (one slice at a time). */
+export type BrainConsolidationPlanV1 = {
+  contract: "brain_consolidation_plan_v1";
+  read_only: true;
+  data_mutation: false;
+  total_entries: number;
+  connected_count: number;
+  missing_count: number;
+  bypassing_count: number;
+  duplicate_count: number;
+  deprecated_count: number;
+  partial_count: number;
+  dashboard_only_gap_count: number;
+  high_priority_consolidation_targets: BrainConsolidationPlanEntryV1[];
+  intentionally_standalone_entries: BrainConsolidationPlanEntryV1[];
+  do_not_integrate_entries: BrainConsolidationPlanEntryV1[];
+  next_consolidation_slice: string;
+  stop_rule: string;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 /** Read-only lane-work governance derived from brain coverage manifest only. */
 export type BrainIntegrityGateV1 = {
   contract: "brain_integrity_gate_v1";
@@ -791,6 +821,7 @@ export type CommandCenterV2Report = {
   brain_integrity_gate_v1: BrainIntegrityGateV1;
   owner_integrity_sentinel_v1: OwnerIntegritySentinelV1;
   owner_quarantined_fridge_models_v1: OwnerQuarantinedFridgeModelsV1;
+  brain_consolidation_plan_v1: BrainConsolidationPlanV1;
 };
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";

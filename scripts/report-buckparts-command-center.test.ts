@@ -2664,6 +2664,29 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.ok(gh!.verdict === "MISSING" || gh!.verdict === "PARTIAL");
 });
 
+test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation roadmap", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const plan = report.command_center_v2.brain_consolidation_plan_v1;
+  const manifest = report.command_center_v2.command_center_brain_coverage_manifest_v1;
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(plan);
+  assert.equal(plan.contract, "brain_consolidation_plan_v1");
+  assert.equal(plan.read_only, true);
+  assert.equal(plan.data_mutation, false);
+  assert.equal(plan.connected_count, manifest.verdict_counts.CONNECTED);
+  assert.equal(plan.bypassing_count, manifest.verdict_counts.BYPASSING);
+  assert.ok(plan.next_consolidation_slice.includes("owner_vertical_launch_policy"));
+  const mutate = plan.do_not_integrate_entries.find((e) => e.system_id.includes("mutate"));
+  assert.ok(mutate);
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "hq_handoff_doc"));
+  assert.ok(plan.proven_facts.some((f) => f.includes(gate.brain_status)));
+});
+
 test("command_center_v2.owner_quarantined_fridge_models_v1 is read-only CC-owned quarantine lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

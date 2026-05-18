@@ -15,6 +15,7 @@ import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-sc
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import { buildCommandCenterBrainCoverageManifestV1 } from "./buckparts-brain-coverage-manifest-v1";
 import { buildBrainIntegrityGateV1 } from "./buckparts-brain-integrity-gate-v1";
+import { buildBrainConsolidationPlanV1 } from "./buckparts-brain-consolidation-plan-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -550,10 +551,16 @@ export function buildCommandCenterV2Report(input: {
         fileExists: input.fileExists,
         readTextFile: input.readTextFile,
       });
+      const brain_integrity_gate_v1 = buildBrainIntegrityGateV1({
+        manifest: command_center_brain_coverage_manifest_v1,
+        now: input.now,
+      });
       return {
         command_center_brain_coverage_manifest_v1,
-        brain_integrity_gate_v1: buildBrainIntegrityGateV1({
+        brain_integrity_gate_v1,
+        brain_consolidation_plan_v1: buildBrainConsolidationPlanV1({
           manifest: command_center_brain_coverage_manifest_v1,
+          gate: brain_integrity_gate_v1,
           now: input.now,
         }),
       };
