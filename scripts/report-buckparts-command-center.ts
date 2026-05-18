@@ -28,6 +28,10 @@ import {
   createConfidenceApprovalLookup,
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
+import {
+  buildOwnerCommandCenterNeuronsForReport,
+  type OwnerCommandCenterNeuronsReport,
+} from "../src/lib/owner-dashboard/owner-command-center-neurons-v1";
 
 type FlexoffersReadinessReport = {
   report_name: string;
@@ -186,6 +190,7 @@ type CommandCenterReport = {
   known_unknowns: string[];
   /** Owner/operator decision surface (lanes, token controls, evidence rollup). Read-only. */
   command_center_v2: CommandCenterV2Report;
+  owner_command_center_neurons: OwnerCommandCenterNeuronsReport;
 };
 
 type BuildOptions = {
@@ -823,6 +828,35 @@ export async function buildBuckpartsCommandCenterReport(
     confidenceApprovalLookup,
   });
 
+  const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({
+    rootDir,
+    pageState: commandSurface?.state_system_metrics?.page_state ?? null,
+    gscPresence: commandSurface?.gsc_exports_present ?? null,
+    searchAndClickIntelligenceSummary: searchAndClickSummary,
+    clickVisibility: command_center_v2.revenue_snapshot.click_visibility ?? null,
+    affiliateReadiness: {
+      lane: command_center_v2.affiliate_readiness,
+      summary: {
+        approved_count: affiliateTracker.records_approved.length,
+        pending_count: pendingNetworkOrPrograms.length,
+        pending_network_or_programs: pendingNetworkOrPrograms,
+        repairclinic_status: repairclinicStatus,
+        affiliate_approval_pending: affiliateApprovalPending,
+      },
+      commission_or_revenue:
+        command_center_v2.revenue_snapshot.click_visibility?.commission_or_revenue ?? "NOT_CONNECTED",
+    },
+    ctaCoverageHealth:
+      commandSurface?.cta_coverage_metrics != null
+        ? {
+            coverageLane: command_center_v2.coverage_health,
+            ctaCoverage: commandSurface.cta_coverage_metrics,
+            blockedRemediation: commandSurface.blocked_retailer_link_remediation,
+          }
+        : null,
+    batchProductionOwnerDecisionsLane: command_center_v2.batch_production_owner_decisions_lane_v1,
+  });
+
   return {
     report_name: "buckparts_command_center_v1",
     generated_at: now().toISOString(),
@@ -878,6 +912,7 @@ export async function buildBuckpartsCommandCenterReport(
     operator_can_be_away_status: operatorAwayStatus,
     known_unknowns: knownUnknowns,
     command_center_v2,
+    owner_command_center_neurons,
   };
 }
 

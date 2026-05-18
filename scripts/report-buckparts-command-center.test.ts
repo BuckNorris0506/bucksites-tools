@@ -2578,6 +2578,31 @@ test("command_center_v2 batch_production_owner_decisions_lane_v1 with real regis
   );
 });
 
+const EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS = [
+  "page_state_distribution",
+  "trust_funnel_measurement",
+  "gsc_search_discovery",
+  "search_demand_and_gaps",
+  "click_visibility",
+  "affiliate_readiness",
+  "coverage_health",
+  "batch_production_owner_decisions",
+] as const;
+
+test("Command Center JSON includes owner_command_center_neurons from CC build (not dashboard-only)", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.ok(report.owner_command_center_neurons);
+  assert.equal(report.owner_command_center_neurons.data_mutation, false);
+  const keys = report.owner_command_center_neurons.neurons.map((n) => n.neuron_key);
+  assert.deepEqual([...keys].sort(), [...EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS].sort());
+  assert.equal(keys.length, EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS.length);
+});
+
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {
   const imp = baseEvidenceImportForPlan({
     candidates: [confidenceAssignmentEligibleCand(0)],
