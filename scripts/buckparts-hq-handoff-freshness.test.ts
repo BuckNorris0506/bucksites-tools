@@ -25,7 +25,27 @@ const REQUIRED_TERMS: RequiredTerm[] = [
   {
     id: "active_lane_batch",
     needle: "Batch Production Lane v1",
-    describe: "next business lane (planned, not implemented)",
+    describe: "batch production lane reference",
+  },
+  {
+    id: "stopping_point_block",
+    needle: "Current stopping point / chat migration state",
+    describe: "chat migration stopping point section",
+  },
+  {
+    id: "batch_head_1362b65",
+    needle: "1362b65",
+    describe: "latest batch lane HEAD reference",
+  },
+  {
+    id: "batch_owner_review_report",
+    needle: "report-batch-owner-review.ts",
+    describe: "batch owner Markdown review report CLI",
+  },
+  {
+    id: "owner_review_markdown_primary",
+    needle: "Owner-facing Markdown review is the primary owner surface",
+    describe: "owner review surface doctrine",
   },
   {
     id: "batch_lane_contract_doc",

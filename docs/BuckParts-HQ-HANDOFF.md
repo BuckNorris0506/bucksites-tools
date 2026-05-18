@@ -4,9 +4,73 @@
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review):** refreshed through pushed HEAD **`1362b65`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
+
+---
+
+## Current stopping point / chat migration state (through `1362b65`)
+
+Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
+
+### Repo HEAD (PROVEN)
+
+| Item | Value |
+|------|--------|
+| Latest pushed HEAD | **`1362b65`** — *Add batch owner review report* |
+| Recent chain | `2d5032c` Separate owner review readiness from production evidence gates · `4f3a497` Add non-Amazon PDP source for batch review · `13b57eb` Add batch agent evidence capture packet |
+
+### Batch Production Lane v1 — status (PROVEN in-repo)
+
+**PROVEN:** Read-only Batch Production Lane v1 is **implemented and business-useful** for **non-Amazon PDP** founder review. **Owner-facing Markdown review is the primary owner surface** (`scripts/report-batch-owner-review.ts`); machine JSON (`batch_owner_screenshot_draft_packet_v1`) is **debug/support only**.
+
+**PROVEN — non-Amazon PDP cohort (`--source non-amazon-pdp-candidates`):** 5 candidate rows:
+
+| row_id | token |
+|--------|--------|
+| `da97-08006b` | DA97-08006B |
+| `da97-15217d` | DA97-15217D |
+| `da29-00012b` | DA29-00012B |
+| `adq75795101` | ADQ75795101 |
+| `rpwfe` | RPWFE |
+
+**PROVEN — agent-filled facts (terminal run):** 5/5 `product_detail_page`; exact token visible in title; buy path visible.
+
+**PROVEN — owner review report (terminal run):** `row_count` 5 · owner-review-ready 5 · blocked 0 · `mutation_ready` 0 · `may_write_production_evidence` false · `may_mutate` false · `layer_6_founder_only_approval` **NOT_PROVEN**.
+
+**PROVEN — readiness split (commit `2d5032c`):**
+
+- `draft_ready_for_owner_review` = agent facts structurally usable for founder review.
+- **Non-Amazon** owner-review-ready does **not** require ASIN or committed screenshot.
+- `production_evidence_commit_blockers` (screenshot commit; ASIN on Amazon) gate **durable** `data/evidence/` writes only — not owner review.
+
+**INFERRED:** Amazon rescue default lane (`--source amazon-rescue-default`) remains a **fallback** only; do **not** restart an Amazon interstitial / screenshot loop as the main path.
+
+**UNKNOWN:** Whether founder has recorded per-row decisions in `founder_decision_registry_v1` for this cohort (review report is read-only; decisions are separate).
+
+### What remains NOT_PROVEN / UNKNOWN
+
+| Area | Status |
+|------|--------|
+| Layer 6 founder-only approval loop | **NOT_PROVEN** (`layer_6_founder_only_approval` stays `NOT_PROVEN` on batch artifacts) |
+| Production evidence commit for this cohort | **NOT_PROVEN** — screenshot/durable evidence commit still blocked |
+| Supabase / `retailer_links` mutation from batch lane | **NOT_PROVEN** — no apply/mutation script |
+| Digest / dashboard embed of batch lane | **NOT_IMPLEMENTED** |
+| `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — local lane artifacts only unless intentionally promoted to a small outcome artifact |
+
+### Operator rules (do not regress)
+
+- **Do not** restart the Amazon interstitial loop as the primary batch path.
+- **Do not** make Jared manually author JSON facts — agent fills facts → founder reviews **Markdown**.
+- **Do not** commit generated `data/batch-production/drafts/*` files as production evidence or canonical truth unless intentionally converted to a small, reviewed outcome artifact.
+- **Do not** treat owner-review approval as authorization to mutate Supabase, `retailer_links`, `data/evidence/`, affiliate URLs, or deploy.
+
+### Next best move after chat migration (INFERRED)
+
+**Owner review / approval design** for the 5 ready non-Amazon PDP rows — e.g. record `approve_for_next_planning_only`, `reject`, `request_more_evidence`, or `defer` per row in the founder decision registry. **Not** more raw JSON plumbing; **not** immediate production mutation or evidence commit.
+
+**Normative commands:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` · `npm run buckparts:batch-owner-review` (after draft JSON exists).
 
 ---
 
@@ -183,7 +247,7 @@ Operating rules:
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
 ```
 
 ---
@@ -194,8 +258,9 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially §0B) and docs/BuckParts-TRUTH-MAP
 
 ### Active lane (HQ priority order)
 
-1. **Finish Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**).
-2. **Then Batch Production Lane v1** — **contract:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`; **PROVEN:** read-only report builder + `node --import tsx scripts/report-batch-production-review.ts` (stdout JSON). **NOT implemented:** queue wiring, digest embed, apply lane. V1 cap **10** rows; **20–50** deferred.
+1. **Batch Production Lane v1 — non-Amazon owner review** (**current stop** through **`1362b65`**) — **PROVEN:** review → agent facts → draft JSON → **Markdown owner report**; 5/5 non-Amazon rows owner-review-ready; mutation still blocked. **Next:** founder approval design per row (registry), not production mutation. See **Current stopping point** above.
+2. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
+3. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
@@ -272,11 +337,11 @@ Machine-parseable JSON scripts: **`node --import tsx scripts/…`** — not `npm
 
 Seeded read model `failure_pattern_registry_read_model_v1`; feeds Layer 6 readiness counts. Informational only — does not widen Runner allowlist.
 
-### Batch Production Lane v1 (read-only report — partial)
+### Batch Production Lane v1 (read-only — non-Amazon review usable)
 
-**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`. **PROVEN:** `src/lib/owner-dashboard/batch-production-lane-v1.ts`, `node --import tsx scripts/report-batch-production-review.ts`. **NOT PROVEN:** digest embed, auto-queue ingestion, apply/mutation script.
+**Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md`. **PROVEN (through `1362b65`):** production review report, evidence plan, agent capture packet, owner screenshot drafts (`draft_ready_for_owner_review` vs `production_evidence_commit_blockers`), **owner Markdown review report** (`scripts/report-batch-owner-review.ts`), non-Amazon PDP source (`--source non-amazon-pdp-candidates`). **Primary owner surface:** Markdown review report. **Machine JSON:** debug/support only. **NOT PROVEN:** digest embed, apply/mutation script, production evidence commit for reviewed rows.
 
-**V1 intent:** read-only **batch candidate review generator** — **5–10** rows per report, founder approval before any apply/commit/deploy. **Non-goals:** auto-publish, auto-commit, Supabase/`retailer_links`/evidence/affiliate mutation. **Future:** **20–50** rows only after V1 report quality is proven. **Layer 6:** remains **`NOT_PROVEN`**; batch lane does not change that.
+**V1 intent:** read-only **batch candidate review** — **5–10** rows, agent-filled facts, founder Markdown review, explicit registry decisions before any apply/commit/deploy. **Non-goals:** auto-publish, auto-commit, Supabase/`retailer_links`/evidence/affiliate mutation, Jared-authored JSON. **Do not** restart Amazon interstitial loop as main path. **Layer 6:** remains **`NOT_PROVEN`**.
 
 ### Layer 6 / Codex — key commands (copy from repo root)
 

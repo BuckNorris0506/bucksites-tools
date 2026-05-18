@@ -281,7 +281,7 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | `npm run buckparts:batch-production-review` | **PROVEN** human alias; machine JSON: `node --import tsx scripts/report-batch-production-review.ts` |
 | Digest / dashboard embed | **NOT_IMPLEMENTED** |
 | Apply / mutation script | **NOT_IMPLEMENTED** (out of scope) |
-| `data/batch-production/drafts/` writes | **NOT_IMPLEMENTED** (stdout-only default) |
+| Lane-local draft writes (`--out data/batch-production/drafts/*`) | **PROVEN** — opt-in only via explicit scripts (e.g. owner review `.md`); not production evidence; do not commit as canonical truth unless promoted to a small outcome artifact |
 
 **Commands:**
 
