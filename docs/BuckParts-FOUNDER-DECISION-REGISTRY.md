@@ -45,6 +45,7 @@
 | `evidence_required_before_mutation` | boolean | yes | Must be **`true`** when `allowed_next_scope` is `owner_mutation_approved` (explicit evidence gate). |
 | `prohibited_actions_still_apply` | string[] | yes | Non-empty; typically copied from the decision packet snapshot. |
 | `codex_output_review_context_v1` | object | no | When present, records owner judgment for **`codex_output_review_packet_v1`** (digest/dashboard read model counts + digest correlation only). See subsection below. |
+| `batch_production_owner_review_context_v1` | object | no | When present, records owner judgment for **`batch_owner_screenshot_draft_packet_v1`** / batch owner approval checklist. See subsection below. |
 
 ### `codex_output_review_context_v1` (optional)
 
@@ -61,6 +62,23 @@
 - **request_followup_readonly** → `needs_more_evidence` + `read_only_agent`.
 - **defer_review** → `deferred` + `none`.
 
+### `batch_production_owner_review_context_v1` (optional)
+
+| Field | Type | Required | Notes |
+|--------|------|----------|-------|
+| `review_packet_contract` | string | yes | Must be exactly `batch_owner_screenshot_draft_packet_v1`. |
+| `founder_option_id` | string | yes | One of: `approve_for_next_planning_only`, `reject`, `request_more_evidence`, `defer` (batch owner approval checklist). |
+| `batch_row_id` | string | yes | Batch production row id (e.g. `da97-08006b`). |
+| `token` | string | yes | Part token for the row. |
+
+**When `batch_production_owner_review_context_v1` is set (PROVEN in validator):**
+
+- `source_decision_packet_id` **must** be `batch_owner_review_packet_v1:${batch_row_id}`.
+- **approve_for_next_planning_only** → `approved` + `read_only_agent` (planning only — **not** production mutation or evidence commit).
+- **reject** → `rejected` + `none`.
+- **request_more_evidence** → `needs_more_evidence` + `read_only_agent`.
+- **defer** → `deferred` + `none`.
+
 ---
 
 ## Semantic rules (PROVEN in validator)
@@ -70,6 +88,7 @@
 3. **`approve_readonly_findings` (Codex review)** — validator requires `decision_status: approved` and `allowed_next_scope: read_only_agent`. **Must not** be treated as mutation approval, `owner_mutation_approved`, or authority for Supabase, `retailer_links`, evidence JSON, affiliate edits, commits, or Runner input. **PROVEN:** `founderRegistryRowGrantsMutatingRepoAuthority` returns **false** for these rows.
 4. Invalid `decision_status` or `allowed_next_scope` values fail validation.
 5. **`codex_output_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (including **no** `owner_mutation_approved` pairing for `approve_readonly_findings`).
+6. **`batch_production_owner_review_context_v1`** — optional; when present, alignment rules in the subsection above are enforced (**no** `owner_mutation_approved` for `approve_for_next_planning_only`).
 
 ---
 

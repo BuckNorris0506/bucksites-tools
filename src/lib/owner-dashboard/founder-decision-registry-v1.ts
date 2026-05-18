@@ -42,10 +42,33 @@ export type CodexOutputReviewRegistryFounderOptionIdV1 =
 
 const CODEX_REVIEW_OPTIONS = new Set<string>(CODEX_OUTPUT_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1);
 
+/** Mirrors `batch_owner_approval_packet_v1` / review checklist founder option ids. */
+export const BATCH_PRODUCTION_OWNER_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1 = [
+  "approve_for_next_planning_only",
+  "reject",
+  "request_more_evidence",
+  "defer",
+] as const;
+
+export type BatchProductionOwnerReviewRegistryFounderOptionIdV1 =
+  (typeof BATCH_PRODUCTION_OWNER_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1)[number];
+
+const BATCH_OWNER_REVIEW_OPTIONS = new Set<string>(
+  BATCH_PRODUCTION_OWNER_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1,
+);
+
 /** Optional linkage: founder recorded a judgment for Codex Output Review (read-only informational row). */
 export type FounderDecisionRegistryCodexOutputReviewContextV1 = {
   review_packet_contract: "codex_output_review_packet_v1";
   founder_option_id: CodexOutputReviewRegistryFounderOptionIdV1;
+};
+
+/** Optional linkage: founder recorded a judgment for Batch Production owner review (read-only). */
+export type FounderDecisionRegistryBatchProductionOwnerReviewContextV1 = {
+  review_packet_contract: "batch_owner_screenshot_draft_packet_v1";
+  founder_option_id: BatchProductionOwnerReviewRegistryFounderOptionIdV1;
+  batch_row_id: string;
+  token: string;
 };
 
 export type FounderDecisionRegistryRowV1 = {
@@ -73,6 +96,12 @@ export type FounderDecisionRegistryRowV1 = {
    * `decision_status` / `allowed_next_scope` must align with `founder_option_id` (no `owner_mutation_approved` for approve-read-only).
    */
   codex_output_review_context_v1?: FounderDecisionRegistryCodexOutputReviewContextV1;
+  /**
+   * When set, records owner judgment for `batch_owner_screenshot_draft_packet_v1` (batch lane read-only).
+   * **PROVEN in validator:** `source_decision_packet_id` must be `batch_owner_review_packet_v1:${batch_row_id}`;
+   * `approve_for_next_planning_only` uses `read_only_agent` only — never `owner_mutation_approved`.
+   */
+  batch_production_owner_review_context_v1?: FounderDecisionRegistryBatchProductionOwnerReviewContextV1;
 };
 
 export type FounderDecisionRegistryDocumentV1 = {
@@ -105,6 +134,17 @@ function isNonEmptyString(v: unknown): v is string {
 /** PROVEN: structural predicate for read-model Codex review decision counts (validated rows only). */
 export function isCodexOutputReviewRegistryRowV1(row: FounderDecisionRegistryRowV1): boolean {
   return row.codex_output_review_context_v1 != null;
+}
+
+/** PROVEN: structural predicate for batch production owner-review decision rows. */
+export function isBatchProductionOwnerReviewRegistryRowV1(
+  row: FounderDecisionRegistryRowV1,
+): boolean {
+  return row.batch_production_owner_review_context_v1 != null;
+}
+
+function expectedBatchOwnerReviewSourceDecisionPacketId(batch_row_id: string): string {
+  return `batch_owner_review_packet_v1:${batch_row_id.trim()}`;
 }
 
 function expectedCodexReviewSourceDecisionPacketId(source_queue_row_id: string): string {
@@ -158,6 +198,106 @@ function validateCodexOutputReviewContextV1(args: {
     }
   }
   return errors;
+}
+
+function validateBatchProductionOwnerReviewContextV1(args: {
+  ctx: FounderDecisionRegistryBatchProductionOwnerReviewContextV1;
+  decision_status: FounderDecisionRegistryDecisionStatusV1;
+  allowed_next_scope: FounderDecisionRegistryAllowedNextScopeV1;
+  source_decision_packet_id: string;
+}): string[] {
+  const errors: string[] = [];
+  const { ctx, decision_status, allowed_next_scope, source_decision_packet_id } = args;
+  if (ctx.review_packet_contract !== "batch_owner_screenshot_draft_packet_v1") {
+    errors.push(
+      'batch_production_owner_review_context_v1.review_packet_contract must be "batch_owner_screenshot_draft_packet_v1"',
+    );
+  }
+  if (!isNonEmptyString(ctx.batch_row_id)) {
+    errors.push("batch_production_owner_review_context_v1.batch_row_id must be non-empty");
+  }
+  if (!isNonEmptyString(ctx.token)) {
+    errors.push("batch_production_owner_review_context_v1.token must be non-empty");
+  }
+  const expectedId = expectedBatchOwnerReviewSourceDecisionPacketId(ctx.batch_row_id);
+  if (source_decision_packet_id !== expectedId) {
+    errors.push(
+      `source_decision_packet_id must be "${expectedId}" when batch_production_owner_review_context_v1 is set (got ${JSON.stringify(source_decision_packet_id)})`,
+    );
+  }
+  const opt = ctx.founder_option_id;
+  if (opt === "approve_for_next_planning_only") {
+    if (decision_status !== "approved" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "batch_production_owner_review_context_v1.founder_option_id approve_for_next_planning_only requires decision_status approved and allowed_next_scope read_only_agent (does not grant mutation authority)",
+      );
+    }
+  } else if (opt === "reject") {
+    if (decision_status !== "rejected" || allowed_next_scope !== "none") {
+      errors.push(
+        "batch_production_owner_review_context_v1.founder_option_id reject requires decision_status rejected and allowed_next_scope none",
+      );
+    }
+  } else if (opt === "request_more_evidence") {
+    if (decision_status !== "needs_more_evidence" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "batch_production_owner_review_context_v1.founder_option_id request_more_evidence requires decision_status needs_more_evidence and allowed_next_scope read_only_agent",
+      );
+    }
+  } else if (opt === "defer") {
+    if (decision_status !== "deferred" || allowed_next_scope !== "none") {
+      errors.push(
+        "batch_production_owner_review_context_v1.founder_option_id defer requires decision_status deferred and allowed_next_scope none",
+      );
+    }
+  }
+  return errors;
+}
+
+function parseBatchProductionOwnerReviewContextV1(
+  raw: unknown,
+): { ok: true; ctx?: FounderDecisionRegistryBatchProductionOwnerReviewContextV1 } | { ok: false; errors: string[] } {
+  if (raw === undefined || raw === null) {
+    return { ok: true };
+  }
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    return {
+      ok: false,
+      errors: ["batch_production_owner_review_context_v1 must be an object when present"],
+    };
+  }
+  const o = raw as Record<string, unknown>;
+  const errors: string[] = [];
+  const contract = o.review_packet_contract;
+  const opt = o.founder_option_id;
+  const batch_row_id = o.batch_row_id;
+  const token = o.token;
+  if (contract !== "batch_owner_screenshot_draft_packet_v1") {
+    errors.push(
+      'batch_production_owner_review_context_v1.review_packet_contract must be "batch_owner_screenshot_draft_packet_v1"',
+    );
+  }
+  if (typeof opt !== "string" || !BATCH_OWNER_REVIEW_OPTIONS.has(opt)) {
+    errors.push(
+      `batch_production_owner_review_context_v1.founder_option_id must be one of: ${BATCH_PRODUCTION_OWNER_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1.join(", ")}`,
+    );
+  }
+  if (typeof batch_row_id !== "string" || !batch_row_id.trim()) {
+    errors.push("batch_production_owner_review_context_v1.batch_row_id must be a non-empty string");
+  }
+  if (typeof token !== "string" || !token.trim()) {
+    errors.push("batch_production_owner_review_context_v1.token must be a non-empty string");
+  }
+  if (errors.length > 0) return { ok: false, errors };
+  return {
+    ok: true,
+    ctx: {
+      review_packet_contract: "batch_owner_screenshot_draft_packet_v1",
+      founder_option_id: opt as BatchProductionOwnerReviewRegistryFounderOptionIdV1,
+      batch_row_id: (batch_row_id as string).trim(),
+      token: (token as string).trim(),
+    },
+  };
 }
 
 function parseCodexOutputReviewContextV1(
@@ -265,6 +405,22 @@ export function validateFounderDecisionRegistryRowV1(
     codexCtx = codexParse.ctx;
   }
 
+  let batchCtx: FounderDecisionRegistryBatchProductionOwnerReviewContextV1 | undefined;
+  const batchParse = parseBatchProductionOwnerReviewContextV1(
+    o.batch_production_owner_review_context_v1,
+  );
+  if (!batchParse.ok) {
+    errors.push(...batchParse.errors);
+  } else if (batchParse.ctx) {
+    batchCtx = batchParse.ctx;
+  }
+
+  if (codexCtx && batchCtx) {
+    errors.push(
+      "row must not set both codex_output_review_context_v1 and batch_production_owner_review_context_v1",
+    );
+  }
+
   let expires_at: string | null | undefined;
   let review_after: string | null | undefined;
   try {
@@ -295,6 +451,17 @@ export function validateFounderDecisionRegistryRowV1(
     );
   }
 
+  if (batchCtx) {
+    errors.push(
+      ...validateBatchProductionOwnerReviewContextV1({
+        ctx: batchCtx,
+        decision_status,
+        allowed_next_scope,
+        source_decision_packet_id,
+      }),
+    );
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -313,6 +480,7 @@ export function validateFounderDecisionRegistryRowV1(
     evidence_required_before_mutation,
     prohibited_actions_still_apply: prohib as string[],
     ...(codexCtx ? { codex_output_review_context_v1: codexCtx } : {}),
+    ...(batchCtx ? { batch_production_owner_review_context_v1: batchCtx } : {}),
   };
   return { ok: true, row };
 }

@@ -178,6 +178,52 @@ test("codex_output_review_context_v1 requires matching source_decision_packet_id
   if (!v.ok) assert.ok(v.errors.some((e) => /codex_output_review_packet_v1:queue-amazon-agent/.test(e)));
 });
 
+test("batch_production_owner_review_context approve_for_next_planning_only validates read_only_agent only", () => {
+  const v = validateFounderDecisionRegistryRowV1({
+    decision_id: "decision-batch-1",
+    source_queue_row_id: "queue-non-amazon-pdp-agent",
+    source_decision_packet_id: "batch_owner_review_packet_v1:da97-08006b",
+    decided_at: "2026-05-17T12:00:00.000Z",
+    decision_status: "approved",
+    owner_note: "Planning only.",
+    allowed_next_scope: "read_only_agent",
+    evidence_required_before_mutation: false,
+    prohibited_actions_still_apply: ["Do not mutate production."],
+    batch_production_owner_review_context_v1: {
+      review_packet_contract: "batch_owner_screenshot_draft_packet_v1",
+      founder_option_id: "approve_for_next_planning_only",
+      batch_row_id: "da97-08006b",
+      token: "DA97-08006B",
+    },
+  });
+  assert.equal(v.ok, true);
+  if (v.ok) {
+    assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(v.row, "2026-05-20T00:00:00.000Z"), false);
+  }
+});
+
+test("batch approve_for_next_planning_only rejects owner_mutation_approved scope", () => {
+  const v = validateFounderDecisionRegistryRowV1({
+    decision_id: "decision-batch-bad",
+    source_queue_row_id: "queue-non-amazon-pdp-agent",
+    source_decision_packet_id: "batch_owner_review_packet_v1:da97-08006b",
+    decided_at: "2026-05-17T12:00:00.000Z",
+    decision_status: "approved",
+    owner_note: "Bad scope.",
+    allowed_next_scope: "owner_mutation_approved",
+    evidence_required_before_mutation: true,
+    prohibited_actions_still_apply: ["p"],
+    batch_production_owner_review_context_v1: {
+      review_packet_contract: "batch_owner_screenshot_draft_packet_v1",
+      founder_option_id: "approve_for_next_planning_only",
+      batch_row_id: "da97-08006b",
+      token: "DA97-08006B",
+    },
+  });
+  assert.equal(v.ok, false);
+  if (!v.ok) assert.ok(v.errors.some((e) => /approve_for_next_planning_only requires/i.test(e)));
+});
+
 test("request_followup_readonly codex row requires needs_more_evidence + read_only_agent", () => {
   const v = validateFounderDecisionRegistryRowV1({
     decision_id: "d2",

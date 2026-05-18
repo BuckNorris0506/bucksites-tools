@@ -275,6 +275,10 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | `scripts/report-batch-owner-screenshot-drafts.ts` | **PROVEN** — `--plan` + `--facts` file paths; stdout JSON only (machine/debug artifact) |
 | `src/lib/owner-dashboard/batch-owner-review-report-v1.ts` | **PROVEN** — founder-facing Markdown from `batch_owner_screenshot_draft_packet_v1` JSON |
 | `scripts/report-batch-owner-review.ts` | **PROVEN** — `--review` draft JSON; optional `--out data/batch-production/drafts/*.md` (primary owner surface) |
+| `src/lib/owner-dashboard/batch-owner-approval-v1.ts` | **PROVEN** — founder Markdown decisions → `batch_owner_approval_packet_v1` + optional `founder_decision_registry_v1` export |
+| `scripts/report-batch-owner-approval-checklist.ts` | **PROVEN** — `--source` (repo cohort, no hand JSON) or `--review` draft JSON → fillable approval checklist Markdown |
+| `scripts/report-batch-owner-approval.ts` | **PROVEN** — `--source` + optional `--facts` or `--review` + `--decisions` checklist.md → approval packet; optional `--registry-out data/owner-decisions/*.json` |
+| `src/lib/owner-dashboard/batch-production-lane-pipeline-v1.ts` | **PROVEN** — shared read-only `--source` → review + plan + capture packet + planning-seed draft review |
 | `src/lib/owner-dashboard/batch-agent-evidence-capture-packet-v1.ts` | **PROVEN** — `batch_agent_evidence_capture_packet_v1` (agent fills facts; owner reviews) |
 | `scripts/report-batch-agent-evidence-capture-packet.ts` | **PROVEN** — stdout JSON only; `--source non-amazon-pdp-candidates` (primary) or `amazon-rescue-default` |
 | `src/lib/owner-dashboard/batch-production-non-amazon-pdp-source-v1.ts` | **PROVEN** — non-Amazon retailer PDP URLs from retailer_links + seeded PDP constants |
@@ -314,6 +318,16 @@ node --import tsx scripts/report-batch-owner-screenshot-drafts.ts --plan /tmp/ba
 # Owner-facing surface (Markdown — not raw JSON):
 node --import tsx scripts/report-batch-owner-review.ts --review /tmp/draft-review.json
 node --import tsx scripts/report-batch-owner-review.ts --review /tmp/draft-review.json --out data/batch-production/drafts/owner-review.non-amazon-pdp-candidates.md
+
+# Owner approval (Markdown checklist → approval artifact; not production mutation):
+# Primary: reproducible from repo source — no hand-authored draft-review JSON required:
+node --import tsx scripts/report-batch-owner-approval-checklist.ts --source non-amazon-pdp-candidates --out data/batch-production/drafts/batch-owner-approval-checklist.md
+# After agent saves facts JSON (lane draft under data/batch-production/drafts/, not data/evidence/):
+node --import tsx scripts/report-batch-owner-approval-checklist.ts --source non-amazon-pdp-candidates --facts data/batch-production/drafts/agent-filled-facts.non-amazon-pdp-candidates.json --out data/batch-production/drafts/batch-owner-approval-checklist.md
+# Fallback when draft-review JSON already exists on disk:
+node --import tsx scripts/report-batch-owner-approval-checklist.ts --review /tmp/draft-review.json --out data/batch-production/drafts/batch-owner-approval-checklist.md
+# Jared edits founder_decision: lines in the checklist, then compile:
+node --import tsx scripts/report-batch-owner-approval.ts --source non-amazon-pdp-candidates --facts data/batch-production/drafts/agent-filled-facts.non-amazon-pdp-candidates.json --decisions data/batch-production/drafts/batch-owner-approval-checklist.md --registry-out data/owner-decisions/batch-non-amazon-pdp-owner-approval.json
 
 # Owner-filled JSON / capture worksheet: fallback/debug only (not main workflow)
 node --import tsx scripts/write-batch-owner-screenshot-facts-template-draft.ts --source amazon-rescue-default

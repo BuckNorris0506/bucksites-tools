@@ -47,6 +47,8 @@ export type BatchOwnerScreenshotDraftRowV1 = {
   proposed_production_evidence_prefix: string | null;
   /** INFERRED: suggested full path if founder later commits — not written by this builder. */
   suggested_production_evidence_path: string | null;
+  /** Read-only candidate URL from batch review source (planning seed before agent facts). */
+  planning_review_candidate_url?: string | null;
   draft_packet: AmazonOwnerScreenshotEvidenceV1 | null;
   /** Owner-review blockers only (structural gaps or founder-review checklist). */
   missing_owner_facts: string[];

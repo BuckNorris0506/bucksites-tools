@@ -85,6 +85,8 @@
     "buckparts:batch-evidence-collection-plan": "tsx scripts/report-batch-evidence-collection-plan.ts",
     "buckparts:batch-owner-screenshot-drafts": "tsx scripts/report-batch-owner-screenshot-drafts.ts",
     "buckparts:batch-owner-review": "tsx scripts/report-batch-owner-review.ts",
+    "buckparts:batch-owner-approval-checklist": "tsx scripts/report-batch-owner-approval-checklist.ts",
+    "buckparts:batch-owner-approval": "tsx scripts/report-batch-owner-approval.ts",
     "buckparts:batch-owner-screenshot-facts-template": "tsx scripts/report-batch-owner-screenshot-facts-template.ts",
     "buckparts:write-batch-owner-screenshot-facts-template-draft": "tsx scripts/write-batch-owner-screenshot-facts-template-draft.ts",
     "buckparts:write-batch-owner-screenshot-capture-worksheet": "tsx scripts/write-batch-owner-screenshot-capture-worksheet.ts",
