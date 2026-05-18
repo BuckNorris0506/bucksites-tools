@@ -607,6 +607,40 @@ export type BatchProductionOwnerDecisionsApprovedRowV1 = {
   source_registry_file: string;
 };
 
+export type ExternalMeasurementFreshnessStatusV1 = "OK" | "STALE" | "UNKNOWN";
+export type ExternalMeasurementFreshnessRuntimeStatusV1 = "OK" | "PARTIAL" | "UNKNOWN";
+
+export type ExternalMeasurementFreshnessGscV1 = {
+  runtime_status: "OK" | "UNKNOWN";
+  connection_level: "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
+  artifact_source: "SUPABASE" | "LOCAL_ARTIFACT" | "MANUAL_EXPORT" | "NONE";
+  fetched_at_or_export_date: string | "UNKNOWN";
+  freshness_status: ExternalMeasurementFreshnessStatusV1;
+  top_level_note: string;
+};
+
+export type ExternalMeasurementFreshnessGa4V1 = {
+  runtime_status: "OK" | "UNKNOWN";
+  artifact_source: "SUPABASE" | "LOCAL_ARTIFACT" | "NONE";
+  fetched_at: string | "UNKNOWN";
+  freshness_status: ExternalMeasurementFreshnessStatusV1;
+  top_level_note: string;
+};
+
+/** Read-only GSC/GA4 durable artifact freshness for Command Center — no fetch or mutation. */
+export type ExternalMeasurementFreshnessV1 = {
+  contract: "external_measurement_freshness_v1";
+  read_only: true;
+  data_mutation: false;
+  runtime_status: ExternalMeasurementFreshnessRuntimeStatusV1;
+  overall_status: ExternalMeasurementFreshnessStatusV1;
+  gsc: ExternalMeasurementFreshnessGscV1;
+  ga4: ExternalMeasurementFreshnessGa4V1;
+  recommended_commands: ["npm run buckparts:gsc:fetch", "npm run buckparts:ga4:fetch"];
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 /** Read-only Layer 7 batch owner approvals from committed founder_decision_registry_v1 exports. */
 export type BatchProductionOwnerDecisionsLaneV1 = {
   contract: "batch_production_owner_decisions_lane_v1";
@@ -672,4 +706,5 @@ export type CommandCenterV2Report = {
   /** Read-only foundation maturity scorecard toward 100% pre-polish — not dashboard UI. */
   top_of_game_foundation_scorecard_v1: TopOfGameFoundationScorecardV1;
   batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
+  external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
 };

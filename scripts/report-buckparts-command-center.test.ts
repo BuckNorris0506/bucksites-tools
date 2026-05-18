@@ -41,6 +41,8 @@ import {
   buildRevenueTruthLedgerContractV1,
   REVENUE_LEDGER_FILE_RELATIVE_V1,
 } from "./lib/revenue-truth-ledger-contract-v1";
+import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
+import type { Ga4TrustFunnelArtifact } from "../src/lib/owner-dashboard/ga4-trust-funnel-artifact";
 import {
   buildBuckpartsCommandCenterReport,
   stripEvidenceUncappedCandidatesForStdout,
@@ -2588,6 +2590,124 @@ const EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS = [
   "coverage_health",
   "batch_production_owner_decisions",
 ] as const;
+
+test("command_center_v2.external_measurement_freshness_v1 is read-only CC truth", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.external_measurement_freshness_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "external_measurement_freshness_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.deepEqual(lane.recommended_commands, [
+    "npm run buckparts:gsc:fetch",
+    "npm run buckparts:ga4:fetch",
+  ]);
+  assert.ok(lane.proven_facts.some((f) => f.includes("does not fetch GSC/GA4")));
+  assert.ok(["OK", "STALE", "UNKNOWN"].includes(lane.overall_status));
+  assert.ok(["OK", "PARTIAL", "UNKNOWN"].includes(lane.runtime_status));
+});
+
+test("external_measurement_freshness_v1 reports UNKNOWN when GSC and GA4 artifacts are missing", async () => {
+  const lane = await buildExternalMeasurementFreshnessV1({
+    rootDir: process.cwd(),
+    deps: {
+      now: () => new Date("2026-05-16T12:00:00.000Z"),
+      loadGa4: async () => ({ artifact: null, issue: null }),
+      buildGsc: async () => ({
+        neuron_key: "gsc_external_demand",
+        connection_level: "DARK",
+        source_class: "UNKNOWN",
+        artifact_source: "NONE",
+        fetched_at: "UNKNOWN",
+        status: "UNKNOWN",
+        freshness_method: "test",
+        export_file_used: "UNKNOWN",
+        export_date: "UNKNOWN",
+        total_impressions: "UNKNOWN",
+        total_clicks: "UNKNOWN",
+        average_ctr: "UNKNOWN",
+        average_position: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_queries_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        proven_facts: [],
+        unknown_facts: [],
+        next_owner_action: "test",
+      }),
+    },
+  });
+  assert.equal(lane.overall_status, "UNKNOWN");
+  assert.equal(lane.runtime_status, "UNKNOWN");
+  assert.equal(lane.gsc.freshness_status, "UNKNOWN");
+  assert.equal(lane.ga4.freshness_status, "UNKNOWN");
+  assert.notEqual(lane.overall_status, "OK");
+});
+
+test("external_measurement_freshness_v1 marks stale GA4 artifact timestamps as STALE", async () => {
+  const staleGa4: Ga4TrustFunnelArtifact = {
+    status: "OK",
+    fetched_at: "2020-01-01T00:00:00.000Z",
+    property_id: "UNKNOWN",
+    date_range: "UNKNOWN",
+    event_totals: "UNKNOWN",
+    rates: "UNKNOWN",
+    dimension_breakdowns: {
+      top_model_slugs: "UNKNOWN",
+      top_filter_slugs: "UNKNOWN",
+      quarantined_vs_normal: "UNKNOWN",
+    },
+    proven_facts: [],
+    unknown_facts: [],
+    provenance: {
+      source: "google_analytics_data_api",
+      scope: "https://www.googleapis.com/auth/analytics.readonly",
+      writer: "test",
+    },
+  };
+  const lane = await buildExternalMeasurementFreshnessV1({
+    rootDir: process.cwd(),
+    deps: {
+      now: () => new Date("2026-05-16T12:00:00.000Z"),
+      loadGa4: async () => ({
+        artifact: { source: "LOCAL_ARTIFACT", artifact: staleGa4 },
+        issue: null,
+      }),
+      buildGsc: async () => ({
+        neuron_key: "gsc_external_demand",
+        connection_level: "DARK",
+        source_class: "UNKNOWN",
+        artifact_source: "NONE",
+        fetched_at: "UNKNOWN",
+        status: "UNKNOWN",
+        freshness_method: "test",
+        export_file_used: "UNKNOWN",
+        export_date: "UNKNOWN",
+        total_impressions: "UNKNOWN",
+        total_clicks: "UNKNOWN",
+        average_ctr: "UNKNOWN",
+        average_position: "UNKNOWN",
+        top_queries_by_impressions: "UNKNOWN",
+        top_queries_by_clicks: "UNKNOWN",
+        top_pages_by_impressions: "UNKNOWN",
+        top_pages_by_clicks: "UNKNOWN",
+        high_impression_low_click_opportunities: "UNKNOWN",
+        proven_facts: [],
+        unknown_facts: [],
+        next_owner_action: "test",
+      }),
+    },
+  });
+  assert.equal(lane.ga4.freshness_status, "STALE");
+  assert.equal(lane.overall_status, "STALE");
+  assert.notEqual(lane.overall_status, "OK");
+});
 
 test("Command Center JSON includes owner_command_center_neurons from CC build (not dashboard-only)", async () => {
   const report = await buildBuckpartsCommandCenterReport({

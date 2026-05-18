@@ -28,6 +28,7 @@ import {
   createConfidenceApprovalLookup,
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
+import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -804,29 +805,38 @@ export async function buildBuckpartsCommandCenterReport(
     loadLearningOutcomesConfidenceApprovalsRegistry({ rootDir, fileExists, readTextFile });
   const confidenceApprovalLookup = createConfidenceApprovalLookup(learningOutcomesConfidenceApprovals.valid_approvals);
 
-  const command_center_v2 = buildCommandCenterV2Report({
-    now,
-    rootDir,
-    fileExists,
-    readTextFile,
-    registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
-    registryEntries: tokenRegistryEntries,
-    registryLoadError: tokenRegistryLoadError,
-    evidenceRollup: evidenceRollupForV2,
-    evidenceInventory: evidenceInventoryForV2,
-    amazonFirstBlocked,
-    commandSurfaceHealthStatus: commandSurface.system_health.status,
-    commandSurfaceReasons: commandSurface.system_health.reasons,
-    affiliateApprovalPending,
-    affiliateApprovedCount: affiliateTracker.records_approved.length,
-    clickVisibility,
-    liveSiteMonitor,
-    demandToCoverageEngine,
-    learningOutcomesReadModel,
-    evidenceToLearningOutcomesCandidateImport,
-    learningOutcomesConfidenceApprovals,
-    confidenceApprovalLookup,
-  });
+  const [command_center_v2_base, external_measurement_freshness_v1] = await Promise.all([
+    Promise.resolve(
+      buildCommandCenterV2Report({
+        now,
+        rootDir,
+        fileExists,
+        readTextFile,
+        registryPath: path.relative(rootDir, tokenControlsAbs) || "data/ops/amazon-rescue-token-controls.json",
+        registryEntries: tokenRegistryEntries,
+        registryLoadError: tokenRegistryLoadError,
+        evidenceRollup: evidenceRollupForV2,
+        evidenceInventory: evidenceInventoryForV2,
+        amazonFirstBlocked,
+        commandSurfaceHealthStatus: commandSurface.system_health.status,
+        commandSurfaceReasons: commandSurface.system_health.reasons,
+        affiliateApprovalPending,
+        affiliateApprovedCount: affiliateTracker.records_approved.length,
+        clickVisibility,
+        liveSiteMonitor,
+        demandToCoverageEngine,
+        learningOutcomesReadModel,
+        evidenceToLearningOutcomesCandidateImport,
+        learningOutcomesConfidenceApprovals,
+        confidenceApprovalLookup,
+      }),
+    ),
+    buildExternalMeasurementFreshnessV1({ rootDir, deps: { now } }),
+  ]);
+  const command_center_v2 = {
+    ...command_center_v2_base,
+    external_measurement_freshness_v1,
+  };
 
   const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({
     rootDir,

@@ -187,7 +187,7 @@ export function buildCommandCenterV2Report(input: {
   evidenceToLearningOutcomesCandidateImport: EvidenceToLearningOutcomesCandidateImportV1;
   learningOutcomesConfidenceApprovals: LearningOutcomesConfidenceApprovalsLoadedV1;
   confidenceApprovalLookup: ConfidenceApprovalLookup;
-}): CommandCenterV2Report {
+}): Omit<CommandCenterV2Report, "external_measurement_freshness_v1"> {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
     registryByToken.set(e.token.toUpperCase(), e);
