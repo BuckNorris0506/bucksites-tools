@@ -33,9 +33,24 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
-    id: "batch_head_93dcd3d",
+    id: "cc_head_84fb4b3",
+    needle: "84fb4b3",
+    describe: "latest Command Center neuron map HEAD reference",
+  },
+  {
+    id: "owner_command_center_neurons",
+    needle: "owner_command_center_neurons",
+    describe: "Command Center-owned neuron map field",
+  },
+  {
+    id: "cc_not_hq_handoff_truth",
+    needle: "HQ handoff is **not** the source of operating truth",
+    describe: "HQ handoff vs Command Center doctrine",
+  },
+  {
+    id: "batch_lane_head_93dcd3d",
     needle: "93dcd3d",
-    describe: "latest batch lane HEAD reference",
+    describe: "batch production owner decisions lane HEAD reference",
   },
   {
     id: "batch_cc_lane_contract",

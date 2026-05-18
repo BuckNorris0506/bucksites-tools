@@ -2,15 +2,17 @@
 
 **How to use:** Paste this whole file into a new ChatGPT / Cursor chat when picking up BuckParts work.
 
-**Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files. Treat this handoff as operational context layered on top of that map.
+**Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Batch Production Lane v1 (non-Amazon review + owner approval gate + Command Center lane):** refreshed through pushed HEAD **`93dcd3d`** (see **Current stopping point** below). **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); the **Command Center neuron map** milestone at **`84fb4b3`** qualifies.
+
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Command Center neuron map (`owner_command_center_neurons`):** refreshed through pushed HEAD **`84fb4b3`** (see **Current stopping point** below). **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `93dcd3d`)
+## Current stopping point / chat migration state (through `84fb4b3`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -18,8 +20,8 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`93dcd3d`** — *Add batch production owner decisions lane to Command Center v2* |
-| Recent chain | `78ff67d` Allow partial batch approvals for ready rows · `c73fd69` Update HQ handoff for 78ff67d Layer 7 five-row E2E proof · `f71f61f` Clarify batch owner approval blocked-row summary · `399251a` Add batch owner approval gate |
+| Latest pushed HEAD | **`84fb4b3`** — *Move Command Center neurons into Command Center JSON* |
+| Recent chain | `b38629b` Coverage health neuron · `68e2147` Affiliate readiness neuron · `499cb4f` Click visibility neuron · `38c0daa` Search demand and gaps neuron · `ea2d67f` Batch production owner decisions neuron · `93dcd3d` Add batch production owner decisions lane to Command Center v2 |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -28,10 +30,43 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 - **`f71f61f`** — approval checklist summary distinguishes blocked vs awaiting agent facts.
 - **`78ff67d`** — partial approval compile: expects founder decisions only for `draft_ready_for_owner_review` rows when facts exist; durable registry export for ready rows only.
 - **`93dcd3d`** — `command_center_v2.batch_production_owner_decisions_lane_v1` reads committed batch registry exports; owner dashboard displays Layer 7 batch state **through Command Center only** (no dashboard-only registry scan for this lane).
+- **`84fb4b3`** — `owner_command_center_neurons` is built inside `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`); raw Command Center stdout is the neuron source; owner dashboard **displays** that field and does not create primary neuron truth when the field is present.
+
+### Command Center neuron map — source of truth (PROVEN through `84fb4b3`)
+
+**Architecture (do not regress):**
+
+- **Command Center JSON** owns `owner_command_center_neurons` (`data_mutation: false`).
+- **Owner dashboard** reads `report.owner_command_center_neurons` from Command Center load (`src/app/ownerdashboard/[secret]/page.tsx`); it is the visual/readable surface only.
+- **Owner load fallback** (`src/lib/owner-dashboard/load-command-center-report.ts`): `report.owner_command_center_neurons ?? buildOwnerCommandCenterNeuronsForReport(...)` exists for tests/mocks missing the field — it does **not** override the primary rule when Command Center stdout includes neurons.
+- **No forbidden circular import:** `scripts/report-buckparts-command-center.ts` does **not** import `load-command-center-report.ts`; `owner-command-center-neurons-v1.ts` does **not** import `report-buckparts-command-center.ts`.
+
+**PROVEN — raw Command Center stdout (re-run before trusting live connection levels):**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '{data_mutation: .owner_command_center_neurons.data_mutation, neuron_count: (.owner_command_center_neurons.neurons | length), neuron_keys: [.owner_command_center_neurons.neurons[].neuron_key]}'
+```
+
+Expected shape at this milestone: `data_mutation: false`, `neuron_count: 8`, keys exactly:
+
+- `page_state_distribution`
+- `trust_funnel_measurement`
+- `gsc_search_discovery`
+- `search_demand_and_gaps`
+- `click_visibility`
+- `affiliate_readiness`
+- `coverage_health`
+- `batch_production_owner_decisions`
+
+**PROVEN — builder wiring:** `buildOwnerCommandCenterNeuronsForReport` in `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`; attached in `scripts/report-buckparts-command-center.ts` before return. Inputs are in-scope Command Center / command-surface data only (no duplicate registry scan in neuron builder for batch lane).
+
+**PARTIAL / NOT complete operating truth:** The eight-neuron map improves bright/dim/dark coverage but Command Center is **not** yet complete operating truth. Feeds below remain **NOT_PROVEN**, **NOT_CONNECTED**, or **UNKNOWN** unless a named command proves otherwise.
+
+**PROVEN — validation before commit (`84fb4b3`):** `report-buckparts-command-center.test.ts` (neuron keys on CC JSON); `load-command-center-report.test.ts`; `buckparts-hq-handoff-freshness`; `npm run lint`; `npm run build`.
 
 ### Batch Production Lane v1 — status (PROVEN in-repo)
 
-**PROVEN:** Read-only Batch Production Lane v1 is **implemented** for **non-Amazon PDP** cohort review and **owner approval gate** (planning/read-model only). **Owner-facing surfaces are Markdown-first:** owner review report (`scripts/report-batch-owner-review.ts`) and owner approval checklist (`scripts/report-batch-owner-approval-checklist.ts`). Machine JSON (`batch_owner_screenshot_draft_packet_v1`, `batch_owner_approval_packet_v1`) is **debug/support only**.
+**PROVEN:** Read-only Batch Production Lane v1 is **implemented** for **non-Amazon PDP** cohort review and **batch owner approval gate** (planning/read-model only). **Owner-facing surfaces are Markdown-first:** owner review report (`scripts/report-batch-owner-review.ts`) and owner approval checklist (`scripts/report-batch-owner-approval-checklist.ts`). Machine JSON (`batch_owner_screenshot_draft_packet_v1`, `batch_owner_approval_packet_v1`) is **debug/support only**.
 
 **PROVEN — non-Amazon PDP cohort (`--source non-amazon-pdp-candidates`):** 5 candidate rows:
 
@@ -106,7 +141,8 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 
 | Area | Status |
 |------|--------|
-| Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — Layer 7 batch lane is integrated; broader feeds below are not yet fully Command Center-owned |
+| Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — `owner_command_center_neurons` (8 keys) is Command Center-owned at `84fb4b3`; broader feeds below are not yet fully Command Center-owned |
+| `owner_command_center_neurons` on dashboard-only path when CC field present | **NOT_PROVEN** as primary path — dashboard displays CC field; fallback builder is tests/mocks only |
 | Founder Digest embedding Layer 7 batch lane | **NOT_PROVEN** — digest slices Command Center but does not yet surface `batch_production_owner_decisions_lane_v1` as a first-class section unless proven in digest builder |
 | Production evidence commit for this cohort | **NOT_PROVEN** |
 | Supabase / `retailer_links` mutation from batch lane | **NOT_PROVEN** — no apply/mutation script |
@@ -121,12 +157,16 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 
 Read-only inventory at this stop:
 
-- **Owner dashboard is not yet a single report surface** — `src/app/ownerdashboard/[secret]/page.tsx` surfaces Command Center v2 + selected neurons; many `scripts/report-*.ts` outputs remain CLI-only.
+- **PROVEN:** Command Center JSON owns the bright/dim/dark **neuron map** at `owner_command_center_neurons` (`84fb4b3`) — eight keys; `data_mutation: false`; inspect via jq block above.
+- **PROVEN:** Owner dashboard displays Command Center neuron truth (`report.owner_command_center_neurons`); it does not build primary neuron truth when that field is present.
+- **INFERRED:** Owner load still attaches separate lanes (`owner_integrity_sentinel`, `owner_search_demand_and_gaps`, `owner_gsc_external_demand`, quarantine, launch policy) and may call `buildBuckpartsCommandSurfaceReport` again for sentinel — not the same as dashboard-owned neuron fabrication.
+- **Owner dashboard is not yet a single report surface** — many `scripts/report-*.ts` outputs remain CLI-only; neuron map + v2 lanes are not the full operating picture.
 - **PROVEN:** Layer 7 batch owner decisions are surfaced on the owner dashboard **via** `command_center_v2.batch_production_owner_decisions_lane_v1` (Command Center is the truth source for that lane).
 - **GitHub Actions live status is not Command Center-owned** — workflows exist under `.github/workflows/`; dashboard control plane lists workflow **basenames from disk only**, not live PASS/FAIL from GitHub API.
 - **Sentry health is not Command Center-owned** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized Command Center / dashboard panel in-repo.
-- **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED**.
-- **GSC/GA4 freshness is not fully Command Center-owned** — fetch via `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch`; dashboard neurons attach partial artifacts; freshness **UNKNOWN** until fetch runs.
+- **Netlify deploy API proof is not Command Center-owned** — live-site lane uses smoke/monitor artifacts; v2 text treats deploy commit hints as **not** Netlify API proof unless proven elsewhere.
+- **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED** unless a future feed proves otherwise.
+- **GSC/GA4 freshness is not fully Command Center-owned** — fetch via `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch`; neurons load partial artifacts inside CC build; freshness **UNKNOWN** until fetch/artifact timestamps prove current data.
 - **Runner Step live JSON is not Command Center-owned by default** — `npm run buckparts:runner-step` is CLI/CI; optional digest env `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` only.
 - **Daily Operator status is not Command Center-owned** — `npm run buckparts:daily` is a separate `buckparts_daily_operator_v1` report (builds on Command Center internally but not merged into CC JSON).
 - **Founder Digest status is not Command Center-owned** — `npm run buckparts:founder-digest` is Markdown stdout; slices Command Center but is a separate surface.
@@ -142,7 +182,13 @@ Read-only inventory at this stop:
 
 ### Next best move after chat migration (INFERRED)
 
-**Run a Command Center completeness audit** (which feeds are bright/dim/dark vs CLI-only), then pick the next integration slice: **Founder Digest** batch lane section, **GSC/GA4 freshness** in Command Center v2 lanes, or **blocked-row re-capture** for `da29-00012b` / `adq75795101`. **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
+Neuron source-of-truth refactor is **done** at `84fb4b3`. Next slices (pick one): **Founder Digest** batch lane + neuron-aware sections, **GSC/GA4 freshness** surfaced in Command Center v2 lanes, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, or the next **NOT_PROVEN** feed from the inventory above (GitHub Actions live status, Sentry summary, Runner Step default in CC JSON, Daily Operator merged into CC JSON). **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
+
+**Copy/paste (repo root) — confirm Command Center neuron map:**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '{data_mutation: .owner_command_center_neurons.data_mutation, neuron_count: (.owner_command_center_neurons.neurons | length), neuron_keys: [.owner_command_center_neurons.neurons[].neuron_key]}'
+```
 
 **Copy/paste (repo root) — confirm Layer 7 batch lane in Command Center:**
 
@@ -338,9 +384,10 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0
 
 ### Active lane (HQ priority order)
 
-1. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (**current stop** through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** full Command Center completeness audit, Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
-2. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
-3. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
+1. **Command Center neuron map (`owner_command_center_neurons`)** (**current stop** through **`84fb4b3`**) — **PROVEN:** eight neurons on raw `buckparts:command-center` JSON; `data_mutation: false`; dashboard displays CC-owned neurons. **NOT PROVEN:** Command Center as complete operating truth; feeds in reporting inventory remain CLI-only or **NOT_CONNECTED** / **UNKNOWN**.
+2. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
+3. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
+4. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
