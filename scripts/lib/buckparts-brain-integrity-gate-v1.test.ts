@@ -31,9 +31,7 @@ test("buildBrainIntegrityGateV1 classifies live manifest as PROCEED_WITH_KNOWN_L
   assert.deepEqual(gate.brain_manifest_counts, manifest.verdict_counts);
   assert.ok(gate.missing_entries.some((e) => e.system_id === "github_actions_live_status"));
   assert.ok(gate.missing_entries.some((e) => e.system_id === "sentry_error_monitoring"));
-  assert.ok(
-    gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"),
-  );
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
 });
 
 test("buildBrainIntegrityGateV1 excludes mutating executor from stop-the-line", () => {
@@ -90,7 +88,7 @@ test("buildBrainIntegrityGateV1 PROCEED when no decision-useful gaps remain", ()
   assert.equal(gate.brain_status, "PROCEED");
 });
 
-test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries", () => {
+test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries excluding integrity sentinel", () => {
   const manifest = buildCommandCenterBrainCoverageManifestV1({
     rootDir: process.cwd(),
     now: () => new Date("2026-05-18T12:00:00.000Z"),

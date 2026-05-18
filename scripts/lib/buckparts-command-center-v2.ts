@@ -31,7 +31,10 @@ import type {
   RevenueSnapshotLane,
 } from "./buckparts-command-center-v2-types";
 
-export type { CommandCenterV2Report } from "./buckparts-command-center-v2-types";
+export type {
+  CommandCenterV2Report,
+  CommandCenterV2ReportWithoutIntegritySentinelV1,
+} from "./buckparts-command-center-v2-types";
 
 function buildDeployLiveSiteStatus(
   mon: LiveSiteMonitorV1 | null,
@@ -189,7 +192,7 @@ export function buildCommandCenterV2Report(input: {
   evidenceToLearningOutcomesCandidateImport: EvidenceToLearningOutcomesCandidateImportV1;
   learningOutcomesConfidenceApprovals: LearningOutcomesConfidenceApprovalsLoadedV1;
   confidenceApprovalLookup: ConfidenceApprovalLookup;
-}): Omit<CommandCenterV2Report, "external_measurement_freshness_v1"> {
+}): Omit<CommandCenterV2Report, "external_measurement_freshness_v1" | "owner_integrity_sentinel_v1"> {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
     registryByToken.set(e.token.toUpperCase(), e);

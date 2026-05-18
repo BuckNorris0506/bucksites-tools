@@ -91,14 +91,14 @@ const CURATED_ENTRIES: EntrySeed[] = [
   },
   {
     system_id: "owner_integrity_sentinel",
-    npm_script_or_path: "src/lib/owner-dashboard/load-command-center-report.ts",
-    cc_json_path: null,
-    dashboard_only: true,
-    verdict: "BYPASSING",
+    npm_script_or_path: "src/lib/owner-dashboard/owner-integrity-sentinel-v1.ts",
+    cc_json_path: "command_center_v2.owner_integrity_sentinel_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
     blocks_lane_work: false,
     validation_command:
-      "node --import tsx scripts/report-buckparts-command-center.ts | jq 'has(\"owner_integrity_sentinel\")'",
-    reason: "Meta-quality sentinel synthesized at dashboard load; not Command Center operating truth.",
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.owner_integrity_sentinel_v1.data_mutation'",
+    reason: "Truth-quality sentinel built during Command Center report generation (read-only).",
   },
   {
     system_id: "owner_gsc_external_demand",

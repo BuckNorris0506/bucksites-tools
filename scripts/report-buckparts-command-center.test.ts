@@ -2650,8 +2650,9 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
 
   const sentinel = findBrainManifestEntry(report, (r) => r.system_id === "owner_integrity_sentinel");
   assert.ok(sentinel);
-  assert.equal(sentinel!.dashboard_only, true);
-  assert.ok(sentinel!.verdict === "BYPASSING" || sentinel!.verdict === "PARTIAL");
+  assert.equal(sentinel!.dashboard_only, false);
+  assert.equal(sentinel!.verdict, "CONNECTED");
+  assert.equal(sentinel!.cc_json_path, "command_center_v2.owner_integrity_sentinel_v1");
 
   const sentry = findBrainManifestEntry(report, (r) => r.system_id === "sentry_error_monitoring");
   assert.ok(sentry);
@@ -2661,6 +2662,22 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.ok(gh);
   assert.notEqual(gh!.verdict, "CONNECTED");
   assert.ok(gh!.verdict === "MISSING" || gh!.verdict === "PARTIAL");
+});
+
+test("command_center_v2.owner_integrity_sentinel_v1 is read-only CC-owned truth gate", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.owner_integrity_sentinel_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "owner_integrity_sentinel_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.ok(lane.providers.length >= 1);
+  assert.ok(["PASS", "WARN", "FAIL", "UNKNOWN"].includes(lane.overall_status));
 });
 
 test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain coverage manifest", async () => {
@@ -2689,7 +2706,7 @@ test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain cov
 
   assert.ok(gate.missing_entries.some((e) => e.system_id === "github_actions_live_status"));
   assert.ok(gate.missing_entries.some((e) => e.system_id === "sentry_error_monitoring"));
-  assert.ok(gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
 
   if (gate.brain_status === "STOP_THE_LINE") {
     assert.equal(report.next_best_action, gate.next_brain_action);

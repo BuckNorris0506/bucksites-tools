@@ -19,7 +19,6 @@ export const MANIFEST_DEFAULT_BYPASS_REASON =
 
 /** Dashboard-only surfaces that bypass CC but affect operator decisions. */
 export const DASHBOARD_DECISION_BRAIN_GAP_SYSTEM_IDS = [
-  "owner_integrity_sentinel",
   "owner_quarantined_fridge_models",
   "owner_vertical_launch_policy",
 ] as const;

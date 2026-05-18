@@ -1,5 +1,6 @@
 /** Command Center v2 — owner/operator decision surface (read-only reports). */
 
+import type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
 export type TokenControlStatus =
@@ -787,4 +788,12 @@ export type CommandCenterV2Report = {
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
   command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
   brain_integrity_gate_v1: BrainIntegrityGateV1;
+  owner_integrity_sentinel_v1: OwnerIntegritySentinelV1;
 };
+
+export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
+
+export type CommandCenterV2ReportWithoutIntegritySentinelV1 = Omit<
+  CommandCenterV2Report,
+  "owner_integrity_sentinel_v1"
+>;

@@ -29,6 +29,7 @@ import {
   loadLearningOutcomesConfidenceApprovalsRegistry,
 } from "./lib/learning-outcomes-confidence-approvals-registry-v1";
 import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
+import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -833,11 +834,40 @@ export async function buildBuckpartsCommandCenterReport(
     ),
     buildExternalMeasurementFreshnessV1({ rootDir, deps: { now } }),
   ]);
-  const command_center_v2: CommandCenterV2Report = {
+  const command_center_v2_without_sentinel: Omit<CommandCenterV2Report, "owner_integrity_sentinel_v1"> = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
     command_center_brain_coverage_manifest_v1: command_center_v2_base.command_center_brain_coverage_manifest_v1,
     brain_integrity_gate_v1: command_center_v2_base.brain_integrity_gate_v1,
+  };
+
+  const owner_integrity_sentinel_v1 = buildOwnerIntegritySentinelV1({
+    report: {
+      generated_at: now().toISOString(),
+      system_health_summary: {
+        status: commandSurface.system_health.status,
+      },
+      affiliate_readiness_summary: {
+        approved_count: affiliateTracker.records_approved.length,
+        pending_count: pendingNetworkOrPrograms.length,
+        repairclinic_status: repairclinicStatus,
+      },
+      search_and_click_intelligence_summary: searchAndClickSummary,
+      money_funnel_summary: moneyFunnelSummary,
+      rescue_velocity_summary: rescueVelocitySummary,
+      rescue_delta_trend_summary: rescueDeltaTrendSummary,
+      amazon_first_blocked_queue_summary: amazonFirstSummary,
+      command_center_v2: command_center_v2_without_sentinel,
+    },
+    commandSurface: {
+      generated_at: commandSurface.generated_at,
+      known_unknowns: commandSurface.known_unknowns,
+    },
+  });
+
+  const command_center_v2: CommandCenterV2Report = {
+    ...command_center_v2_without_sentinel,
+    owner_integrity_sentinel_v1,
   };
 
   const brainGate = command_center_v2.brain_integrity_gate_v1;
