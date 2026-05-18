@@ -272,7 +272,9 @@ Implementing Batch Production Lane v1 **does not** change Layer 6 status unless 
 | `src/lib/owner-dashboard/batch-evidence-collection-plan-v1.ts` | **PROVEN** — `batch_evidence_collection_plan_v1` from review report (no evidence writes) |
 | `scripts/report-batch-evidence-collection-plan.ts` | **PROVEN** — `--source amazon-rescue-default` or `--stdin` review JSON |
 | `src/lib/owner-dashboard/batch-owner-screenshot-draft-packet-v1.ts` | **PROVEN** — `batch_owner_screenshot_draft_packet_v1` from plan + owner facts (no `data/evidence/` writes). **`draft_ready_for_owner_review`** = agent-filled facts usable for founder review; **`production_evidence_commit_blockers`** = ASIN (Amazon only) + repo screenshot commit — gates durable `data/evidence/` writes, not owner review. Non-Amazon PDP rows (`queue-non-amazon-pdp-agent`) do not require ASIN for owner review. |
-| `scripts/report-batch-owner-screenshot-drafts.ts` | **PROVEN** — `--plan` + `--facts` file paths; stdout JSON only |
+| `scripts/report-batch-owner-screenshot-drafts.ts` | **PROVEN** — `--plan` + `--facts` file paths; stdout JSON only (machine/debug artifact) |
+| `src/lib/owner-dashboard/batch-owner-review-report-v1.ts` | **PROVEN** — founder-facing Markdown from `batch_owner_screenshot_draft_packet_v1` JSON |
+| `scripts/report-batch-owner-review.ts` | **PROVEN** — `--review` draft JSON; optional `--out data/batch-production/drafts/*.md` (primary owner surface) |
 | `src/lib/owner-dashboard/batch-agent-evidence-capture-packet-v1.ts` | **PROVEN** — `batch_agent_evidence_capture_packet_v1` (agent fills facts; owner reviews) |
 | `scripts/report-batch-agent-evidence-capture-packet.ts` | **PROVEN** — stdout JSON only; `--source non-amazon-pdp-candidates` (primary) or `amazon-rescue-default` |
 | `src/lib/owner-dashboard/batch-production-non-amazon-pdp-source-v1.ts` | **PROVEN** — non-Amazon retailer PDP URLs from retailer_links + seeded PDP constants |
@@ -301,18 +303,21 @@ node --import tsx scripts/report-batch-production-review.ts --source amazon-resc
 # Evidence collection plan (owner browser capture checklist per token; stdout only)
 node --import tsx scripts/report-batch-evidence-collection-plan.ts --source amazon-rescue-default
 
-# Primary path: agent evidence capture packet → agent fills lane draft facts → owner reviews draft packet
+# Primary path: agent fills facts → machine draft JSON → owner Markdown review report
 node --import tsx scripts/report-batch-agent-evidence-capture-packet.ts --source non-amazon-pdp-candidates
 # Amazon rescue cohort (often blocked by interstitials — fallback lane only):
 node --import tsx scripts/report-batch-agent-evidence-capture-packet.ts --source amazon-rescue-default
 
-# Owner-filled JSON / worksheet / template file writes: fallback/debug only (not main workflow)
+node --import tsx scripts/report-batch-evidence-collection-plan.ts --source non-amazon-pdp-candidates > /tmp/batch-plan.json
+# Agent saves lane draft facts JSON under data/batch-production/drafts/ (not data/evidence/)
+node --import tsx scripts/report-batch-owner-screenshot-drafts.ts --plan /tmp/batch-plan.json --facts data/batch-production/drafts/agent-filled-facts.non-amazon-pdp-candidates.json > /tmp/draft-review.json
+# Owner-facing surface (Markdown — not raw JSON):
+node --import tsx scripts/report-batch-owner-review.ts --review /tmp/draft-review.json
+node --import tsx scripts/report-batch-owner-review.ts --review /tmp/draft-review.json --out data/batch-production/drafts/owner-review.non-amazon-pdp-candidates.md
+
+# Owner-filled JSON / capture worksheet: fallback/debug only (not main workflow)
 node --import tsx scripts/write-batch-owner-screenshot-facts-template-draft.ts --source amazon-rescue-default
 node --import tsx scripts/write-batch-owner-screenshot-capture-worksheet.ts --source amazon-rescue-default
-
-# Owner screenshot draft packets (review-only; does not write data/evidence/)
-node --import tsx scripts/report-batch-evidence-collection-plan.ts --source amazon-rescue-default > /tmp/batch-plan.json
-node --import tsx scripts/report-batch-owner-screenshot-drafts.ts --plan /tmp/batch-plan.json --facts data/batch-production/drafts/owner-screenshot-facts-template.amazon-rescue-default.json
 ```
 
 ---
