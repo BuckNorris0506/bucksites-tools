@@ -2617,6 +2617,11 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.equal(manifest.read_only, true);
   assert.equal(manifest.data_mutation, false);
   assert.ok(manifest.entries.length > 0);
+  assert.equal(manifest.total_entries, manifest.entries.length);
+  assert.ok(manifest.verdict_counts);
+  assert.ok(manifest.summary);
+  assert.deepEqual(manifest.summary.verdict_counts, manifest.verdict_counts);
+  assert.ok(manifest.verdict_counts.CONNECTED >= 1);
   assert.ok(manifest.summary_by_verdict.CONNECTED >= 1);
   assert.ok(manifest.proven_facts.some((f) => f.includes("buckparts:")));
 
@@ -2672,6 +2677,8 @@ test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain cov
   assert.equal(gate.read_only, true);
   assert.equal(gate.data_mutation, false);
   assert.equal(gate.total_entries, manifest.entries.length);
+  assert.deepEqual(gate.verdict_counts, manifest.verdict_counts);
+  assert.deepEqual(gate.brain_manifest_counts, manifest.verdict_counts);
   assert.ok(
     gate.brain_status === "PROCEED_WITH_KNOWN_LIMITS" || gate.brain_status === "STOP_THE_LINE",
   );

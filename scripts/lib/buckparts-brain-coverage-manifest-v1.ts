@@ -8,6 +8,7 @@ import path from "node:path";
 
 import type {
   BrainCoverageManifestEntryV1,
+  BrainCoverageVerdictCountsV1,
   BrainCoverageVerdictV1,
   CommandCenterBrainCoverageManifestV1,
 } from "./buckparts-command-center-v2-types";
@@ -315,12 +316,14 @@ function parseBuckpartsScripts(packageJsonText: string): Array<{ scriptName: str
   return out;
 }
 
-function summarizeByVerdict(entries: BrainCoverageManifestEntryV1[]): CommandCenterBrainCoverageManifestV1["summary_by_verdict"] {
-  const summary = Object.fromEntries(VERDICTS.map((v) => [v, 0])) as CommandCenterBrainCoverageManifestV1["summary_by_verdict"];
+export function buildBrainCoverageVerdictCountsV1(
+  entries: BrainCoverageManifestEntryV1[],
+): BrainCoverageVerdictCountsV1 {
+  const counts = Object.fromEntries(VERDICTS.map((v) => [v, 0])) as BrainCoverageVerdictCountsV1;
   for (const row of entries) {
-    summary[row.verdict] += 1;
+    counts[row.verdict] += 1;
   }
-  return summary;
+  return counts;
 }
 
 export function buildCommandCenterBrainCoverageManifestV1(
@@ -383,13 +386,23 @@ export function buildCommandCenterBrainCoverageManifestV1(
     "Individual buckparts:* scripts without explicit override default to BYPASSING unless ingested by report-buckparts-command-center.ts.",
   ];
 
+  const sortedEntries = entries.sort((a, b) => a.system_id.localeCompare(b.system_id));
+  const verdict_counts = buildBrainCoverageVerdictCountsV1(sortedEntries);
+  const summary = {
+    total_entries: sortedEntries.length,
+    verdict_counts,
+  };
+
   return {
     contract: "command_center_brain_coverage_manifest_v1",
     generated_at: args.now().toISOString(),
     read_only: true,
     data_mutation: false,
-    entries: entries.sort((a, b) => a.system_id.localeCompare(b.system_id)),
-    summary_by_verdict: summarizeByVerdict(entries),
+    total_entries: sortedEntries.length,
+    entries: sortedEntries,
+    verdict_counts,
+    summary,
+    summary_by_verdict: verdict_counts,
     proven_facts,
     unknown_facts,
   };

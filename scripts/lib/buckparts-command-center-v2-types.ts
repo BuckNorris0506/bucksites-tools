@@ -665,14 +665,27 @@ export type BrainCoverageManifestEntryV1 = {
   reason: string;
 };
 
+export type BrainCoverageVerdictCountsV1 = Record<BrainCoverageVerdictV1, number>;
+
+/** Compact operator snapshot; avoids scanning entries[] for verdict totals. */
+export type CommandCenterBrainCoverageManifestSummaryV1 = {
+  total_entries: number;
+  verdict_counts: BrainCoverageVerdictCountsV1;
+};
+
 /** Read-only inventory of which operating systems feed Command Center JSON vs bypass it. */
 export type CommandCenterBrainCoverageManifestV1 = {
   contract: "command_center_brain_coverage_manifest_v1";
   generated_at: string;
   read_only: true;
   data_mutation: false;
+  total_entries: number;
   entries: BrainCoverageManifestEntryV1[];
-  summary_by_verdict: Record<BrainCoverageVerdictV1, number>;
+  /** Compact verdict totals for operator jq (same object as summary.verdict_counts). */
+  verdict_counts: BrainCoverageVerdictCountsV1;
+  summary: CommandCenterBrainCoverageManifestSummaryV1;
+  /** @deprecated Use verdict_counts or summary.verdict_counts; kept for backward compatibility. */
+  summary_by_verdict: BrainCoverageVerdictCountsV1;
   proven_facts: string[];
   unknown_facts: string[];
 };
@@ -691,7 +704,9 @@ export type BrainIntegrityGateV1 = {
   runtime_status: BrainIntegrityGateRuntimeStatusV1;
   brain_status: BrainIntegrityGateBrainStatusV1;
   total_entries: number;
-  verdict_counts: Record<BrainCoverageVerdictV1, number>;
+  verdict_counts: BrainCoverageVerdictCountsV1;
+  /** Same totals as command_center_brain_coverage_manifest_v1.verdict_counts when manifest is present. */
+  brain_manifest_counts: BrainCoverageVerdictCountsV1;
   stop_the_line_entries: BrainCoverageManifestEntryV1[];
   allowed_bypass_entries: BrainCoverageManifestEntryV1[];
   missing_entries: BrainCoverageManifestEntryV1[];

@@ -27,6 +27,8 @@ test("buildBrainIntegrityGateV1 classifies live manifest as PROCEED_WITH_KNOWN_L
   );
   assert.equal(gate.brain_status, "PROCEED_WITH_KNOWN_LIMITS");
   assert.equal(gate.lane_work_allowed, true);
+  assert.deepEqual(gate.verdict_counts, manifest.verdict_counts);
+  assert.deepEqual(gate.brain_manifest_counts, manifest.verdict_counts);
   assert.ok(gate.missing_entries.some((e) => e.system_id === "github_actions_live_status"));
   assert.ok(gate.missing_entries.some((e) => e.system_id === "sentry_error_monitoring"));
   assert.ok(

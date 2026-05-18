@@ -22,7 +22,17 @@ test("buildCommandCenterBrainCoverageManifestV1 enumerates buckparts scripts fro
   assert.ok(cc);
   assert.equal(cc!.verdict, "CONNECTED");
   assert.ok(manifest.entries.some((e) => e.system_id === "hq_handoff_doc"));
-  const total = Object.values(manifest.summary_by_verdict).reduce((a, b) => a + b, 0);
+  assert.equal(manifest.read_only, true);
+  assert.equal(manifest.data_mutation, false);
+  assert.ok(manifest.verdict_counts);
+  assert.ok(manifest.summary);
+  assert.equal(manifest.summary.total_entries, manifest.total_entries);
+  assert.deepEqual(manifest.summary.verdict_counts, manifest.verdict_counts);
+  assert.deepEqual(manifest.summary_by_verdict, manifest.verdict_counts);
+  for (const verdict of ["CONNECTED", "PARTIAL", "BYPASSING", "DUPLICATE", "DEPRECATED", "MISSING"] as const) {
+    assert.equal(typeof manifest.verdict_counts[verdict], "number");
+  }
+  const total = Object.values(manifest.verdict_counts).reduce((a, b) => a + b, 0);
   assert.equal(total, manifest.entries.length);
 });
 

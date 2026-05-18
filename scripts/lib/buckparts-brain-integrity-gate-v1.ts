@@ -4,7 +4,6 @@
 
 import type {
   BrainCoverageManifestEntryV1,
-  BrainCoverageVerdictV1,
   CommandCenterBrainCoverageManifestV1,
 } from "./buckparts-command-center-v2-types";
 import type { BrainIntegrityGateV1 } from "./buckparts-command-center-v2-types";
@@ -75,26 +74,15 @@ function isDecisionUsefulBrainGap(entry: BrainCoverageManifestEntryV1): boolean 
   return false;
 }
 
-function summarizeVerdictCounts(
-  entries: BrainCoverageManifestEntryV1[],
-): Record<BrainCoverageVerdictV1, number> {
-  const counts = {
-    CONNECTED: 0,
-    PARTIAL: 0,
-    BYPASSING: 0,
-    DUPLICATE: 0,
-    DEPRECATED: 0,
-    MISSING: 0,
-  } satisfies Record<BrainCoverageVerdictV1, number>;
-  for (const row of entries) {
-    counts[row.verdict] += 1;
-  }
-  return counts;
-}
-
 export function buildBrainIntegrityGateV1(args: BuildBrainIntegrityGateArgs): BrainIntegrityGateV1 {
   const { manifest } = args;
   const entries = manifest.entries ?? [];
+  const verdict_counts = manifest.verdict_counts ?? manifest.summary?.verdict_counts;
+  if (!verdict_counts) {
+    throw new Error(
+      "buildBrainIntegrityGateV1 requires command_center_brain_coverage_manifest_v1.verdict_counts",
+    );
+  }
 
   const stop_the_line_entries = entries.filter(
     (e) => e.blocks_lane_work && !isIntentionallyExcludedMutationSurface(e),
@@ -158,8 +146,9 @@ export function buildBrainIntegrityGateV1(args: BuildBrainIntegrityGateArgs): Br
     data_mutation: false,
     runtime_status: entries.length > 0 ? "OK" : "UNKNOWN",
     brain_status,
-    total_entries: entries.length,
-    verdict_counts: summarizeVerdictCounts(entries),
+    total_entries: manifest.total_entries ?? entries.length,
+    verdict_counts,
+    brain_manifest_counts: verdict_counts,
     stop_the_line_entries,
     allowed_bypass_entries,
     missing_entries,
