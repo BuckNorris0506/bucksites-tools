@@ -60,6 +60,7 @@ export type OwnerDashboardNeuron = {
     | "page_state_distribution"
     | "trust_funnel_measurement"
     | "gsc_search_discovery"
+    | "search_demand_and_gaps"
     | "batch_production_owner_decisions";
   title: string;
   connection_level: OwnerNeuronConnectionLevel;
@@ -256,6 +257,71 @@ export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
 const STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH =
   "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.";
 
+export function mapSearchDemandAndGapsToNeuronConnectionLevel(
+  search: OwnerSearchDemandAndGapsNeuron | null | undefined,
+): OwnerNeuronConnectionLevel {
+  if (!search) return "DARK";
+  if (search.connection_level === "UNKNOWN") return "DARK";
+  return search.connection_level;
+}
+
+function buildSearchDemandAndGapsNeuron(
+  search: OwnerSearchDemandAndGapsNeuron | null | undefined,
+): OwnerDashboardNeuron {
+  const proven_facts: string[] = ["owner_search_demand_and_gaps data_mutation: false."];
+  const unknown_facts: string[] = [];
+  const connection_level = mapSearchDemandAndGapsToNeuronConnectionLevel(search);
+  let status: OwnerNeuronStatus = "UNKNOWN";
+
+  if (!search) {
+    unknown_facts.push(
+      "owner_search_demand_and_gaps.search_demand_and_gaps is missing from Command Center owner load.",
+    );
+    return {
+      neuron_key: "search_demand_and_gaps",
+      title: "Search demand and gaps",
+      connection_level: "DARK",
+      freshness_method:
+        "Built at owner-dashboard request time from command_center search_and_click_intelligence_summary (no duplicate DB query in neuron builder).",
+      proven_facts,
+      unknown_facts,
+      next_owner_action:
+        "Restore command-surface search runtime availability before using this neuron to guide demand decisions.",
+      status,
+    };
+  }
+
+  if (connection_level === "BRIGHT") {
+    status = "PROVEN";
+  }
+
+  proven_facts.push(`connection_level (source report): ${search.connection_level}.`);
+  proven_facts.push(`runtime_status: ${search.runtime_status}.`);
+  proven_facts.push(`source_class: ${search.source_class}.`);
+  if (typeof search.actionable_search_gaps === "number") {
+    proven_facts.push(`actionable_search_gaps: ${search.actionable_search_gaps}.`);
+  } else {
+    unknown_facts.push("actionable_search_gaps is UNKNOWN — search gap backlog is not fully queryable.");
+  }
+  for (const f of search.proven_facts) {
+    if (!proven_facts.includes(f)) proven_facts.push(f);
+  }
+  for (const f of search.unknown_facts) {
+    if (!unknown_facts.includes(f)) unknown_facts.push(f);
+  }
+
+  return {
+    neuron_key: "search_demand_and_gaps",
+    title: "Search demand and gaps",
+    connection_level,
+    freshness_method: search.freshness_method,
+    proven_facts,
+    unknown_facts,
+    next_owner_action: search.next_owner_action,
+    status,
+  };
+}
+
 export function mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel(
   lane: BatchProductionOwnerDecisionsLaneV1 | null | undefined,
 ): OwnerNeuronConnectionLevel {
@@ -384,6 +450,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     artifact: Ga4TrustFunnelArtifact;
   } | null;
   trustFunnelAggregateIssue?: string | null;
+  /** When set, adds search_demand_and_gaps neuron from owner_search_demand_and_gaps output only (no duplicate query). */
+  searchDemandAndGaps?: OwnerSearchDemandAndGapsNeuron | null;
   /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
   batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
 }): OwnerCommandCenterNeuronsReport {
@@ -629,10 +697,16 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       },
   ];
 
+  const optionalNeurons: OwnerDashboardNeuron[] = [];
+  const searchNeuronIncluded = args.searchDemandAndGaps !== undefined;
   const batchNeuronIncluded = args.batchProductionOwnerDecisionsLane !== undefined;
-  const neurons = batchNeuronIncluded
-    ? [...coreNeurons, buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane)]
-    : coreNeurons;
+  if (searchNeuronIncluded) {
+    optionalNeurons.push(buildSearchDemandAndGapsNeuron(args.searchDemandAndGaps));
+  }
+  if (batchNeuronIncluded) {
+    optionalNeurons.push(buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane));
+  }
+  const neurons = [...coreNeurons, ...optionalNeurons];
 
   return {
     data_mutation: false,
@@ -640,6 +714,9 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       "scripts/report-buckparts-command-surface.ts (state_system_metrics + gsc_exports_present)",
       ...(ext ? ["src/lib/owner-dashboard/gsc-external-demand.ts (reconciles gsc_search_discovery)"] : []),
       ...TRUST_FUNNEL_EMITTER_MODULES,
+      ...(searchNeuronIncluded
+        ? ["owner_search_demand_and_gaps.search_demand_and_gaps (from buildOwnerSearchDemandAndGapsReport; no duplicate DB query)"]
+        : []),
       ...(batchNeuronIncluded
         ? ["command_center_v2.batch_production_owner_decisions_lane_v1 (read-only; no neuron registry scan)"]
         : []),
@@ -1188,6 +1265,7 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
     const ga4TrustFunnelAggregate = await loadGa4TrustFunnelAggregateArtifact({ rootDir });
     const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
+    const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
     const neurons = buildOwnerCommandCenterNeuronsReport({
       rootDir,
       pageState: commandSurface.state_system_metrics.page_state,
@@ -1195,11 +1273,11 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
       gscExternalDemand: gscExternalDemand.gsc_external_demand,
       trustFunnelAggregateArtifact: ga4TrustFunnelAggregate.artifact,
       trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
+      searchDemandAndGaps: searchDemandAndGaps.search_demand_and_gaps,
       batchProductionOwnerDecisionsLane:
         report.command_center_v2.batch_production_owner_decisions_lane_v1,
     });
     const sentinel = buildOwnerIntegritySentinelReport({ report, commandSurface });
-    const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
     const withQuarantine = attachOwnerQuarantinedFridgeModelsReport(report, quarantined);
     const withLaunchPolicy = attachOwnerVerticalLaunchPolicyReport(withQuarantine, launchPolicy);
     const withNeurons = attachOwnerCommandCenterNeuronsReport(withLaunchPolicy, neurons);

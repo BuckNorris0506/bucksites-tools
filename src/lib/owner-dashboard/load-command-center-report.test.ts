@@ -14,6 +14,7 @@ import {
   buildOwnerSearchDemandAndGapsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
   mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
+  mapSearchDemandAndGapsToNeuronConnectionLevel,
 } from "@/lib/owner-dashboard/load-command-center-report";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
@@ -441,6 +442,136 @@ describe("batch_production_owner_decisions neuron", () => {
       neurons.neurons.find((n) => n.neuron_key === "batch_production_owner_decisions"),
       undefined,
     );
+  });
+});
+
+describe("search_demand_and_gaps neuron", () => {
+  const brightSearchReport = {
+    search_and_click_intelligence_summary: {
+      runtime_status: "OK",
+      window_days: { short: 7, long: 30 },
+      search_events: {
+        last_7d: 7,
+        last_30d: 70,
+        zero_result_last_7d: 3,
+        zero_result_last_30d: 25,
+        zero_result_rate_last_7d: 0.4,
+        zero_result_rate_last_30d: 0.35,
+      },
+      search_gaps_backlog: {
+        open: 1,
+        reviewing: 0,
+        queued: 0,
+        total_actionable: 2,
+      },
+      click_events: { last_7d: 4, last_30d: 12 },
+      known_unknowns: [],
+    },
+  } as never;
+
+  it("appears in owner_command_center_neurons when existing search report is passed", () => {
+    const search = buildOwnerSearchDemandAndGapsReport({ report: brightSearchReport }).search_demand_and_gaps;
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      searchDemandAndGaps: search,
+    });
+    assert.equal(neurons.data_mutation, false);
+    assert.equal(neurons.neurons.length, 4);
+    const demand = neurons.neurons.find((n) => n.neuron_key === "search_demand_and_gaps");
+    assert.ok(demand);
+    assert.equal(mapSearchDemandAndGapsToNeuronConnectionLevel(search), "BRIGHT");
+    assert.equal(demand.connection_level, "BRIGHT");
+    assert.equal(demand.status, "PROVEN");
+    assert.ok(demand.proven_facts.some((f) => f.includes("data_mutation: false")));
+    assert.ok(demand.proven_facts.some((f) => f.includes("runtime_status: OK")));
+    assert.ok(demand.proven_facts.some((f) => f.includes("actionable_search_gaps: 2")));
+    assert.ok(demand.proven_facts.some((f) => f.includes("source_class: LIVE")));
+    assert.ok(
+      neurons.generated_from.some((s) => s.includes("buildOwnerSearchDemandAndGapsReport")),
+    );
+  });
+
+  it("connection_level is DARK when search runtime is UNKNOWN_DB_UNAVAILABLE", () => {
+    const search = buildOwnerSearchDemandAndGapsReport({
+      report: {
+        search_and_click_intelligence_summary: {
+          runtime_status: "UNKNOWN_DB_UNAVAILABLE",
+          window_days: { short: 7, long: 30 },
+          search_events: {
+            last_7d: "UNKNOWN",
+            last_30d: "UNKNOWN",
+            zero_result_last_7d: "UNKNOWN",
+            zero_result_last_30d: "UNKNOWN",
+            zero_result_rate_last_7d: "UNKNOWN",
+            zero_result_rate_last_30d: "UNKNOWN",
+          },
+          search_gaps_backlog: {
+            open: "UNKNOWN",
+            reviewing: "UNKNOWN",
+            queued: "UNKNOWN",
+            total_actionable: "UNKNOWN",
+          },
+          click_events: { last_7d: "UNKNOWN", last_30d: "UNKNOWN" },
+          known_unknowns: [],
+        },
+      } as never,
+    }).search_demand_and_gaps;
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      searchDemandAndGaps: search,
+    });
+    const demand = neurons.neurons.find((n) => n.neuron_key === "search_demand_and_gaps");
+    assert.ok(demand);
+    assert.equal(search.connection_level, "DARK");
+    assert.equal(demand.connection_level, "DARK");
+    assert.ok(
+      demand.unknown_facts.some((f) => f.includes("UNKNOWN_DB_UNAVAILABLE") || f.includes("not fully usable")),
+    );
+  });
+
+  it("maps missing search report to DARK when searchDemandAndGaps is null", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      searchDemandAndGaps: null,
+    });
+    assert.equal(neurons.neurons.length, 4);
+    const demand = neurons.neurons.find((n) => n.neuron_key === "search_demand_and_gaps");
+    assert.ok(demand);
+    assert.equal(demand.connection_level, "DARK");
+    assert.ok(demand.unknown_facts.some((f) => f.includes("missing")));
+  });
+
+  it("omits search neuron when searchDemandAndGaps arg is omitted", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    assert.equal(
+      neurons.neurons.find((n) => n.neuron_key === "search_demand_and_gaps"),
+      undefined,
+    );
+  });
+
+  it("includes both search and batch neurons when both optional args are passed", () => {
+    const search = buildOwnerSearchDemandAndGapsReport({ report: brightSearchReport }).search_demand_and_gaps;
+    const lane = buildBatchProductionOwnerDecisionsLaneV1({ rootDir: process.cwd() });
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      searchDemandAndGaps: search,
+      batchProductionOwnerDecisionsLane: lane,
+    });
+    assert.equal(neurons.neurons.length, 5);
+    assert.ok(neurons.neurons.some((n) => n.neuron_key === "search_demand_and_gaps"));
+    assert.ok(neurons.neurons.some((n) => n.neuron_key === "batch_production_owner_decisions"));
   });
 });
 
