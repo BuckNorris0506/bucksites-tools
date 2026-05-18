@@ -33,8 +33,8 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "chat migration stopping point section",
   },
   {
-    id: "batch_head_181bc54",
-    needle: "181bc54",
+    id: "batch_head_78ff67d",
+    needle: "78ff67d",
     describe: "latest batch lane HEAD reference",
   },
   {
