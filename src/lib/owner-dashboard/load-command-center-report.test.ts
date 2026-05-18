@@ -15,7 +15,9 @@ import {
   buildOwnerQuarantinedFridgeModelsSummary,
   mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
   mapSearchDemandAndGapsToNeuronConnectionLevel,
+  mapClickVisibilityToNeuronConnectionLevel,
 } from "@/lib/owner-dashboard/load-command-center-report";
+import type { ClickVisibilitySnapshot } from "../../../scripts/lib/buckparts-command-center-v2-types";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
@@ -572,6 +574,127 @@ describe("search_demand_and_gaps neuron", () => {
     assert.equal(neurons.neurons.length, 5);
     assert.ok(neurons.neurons.some((n) => n.neuron_key === "search_demand_and_gaps"));
     assert.ok(neurons.neurons.some((n) => n.neuron_key === "batch_production_owner_decisions"));
+  });
+});
+
+describe("click_visibility neuron", () => {
+  const emptyWedge = {
+    refrigerator_water: 0,
+    air_purifier: 0,
+    whole_house_water: 0,
+    vacuum: 0,
+    humidifier: 0,
+    appliance_air: 0,
+    other_or_legacy: 0,
+  } as const;
+
+  const okClick: ClickVisibilitySnapshot = {
+    runtime_status: "OK",
+    generated_at: "2026-01-01T00:00:00.000Z",
+    window_days: { short: 7, long: 30 },
+    last_7_days_clicks: 2,
+    last_30_days_clicks: 10,
+    raw_last_7_days_clicks: 2,
+    raw_last_30_days_clicks: 10,
+    human_likely_last_7_days_clicks: 1,
+    human_likely_last_30_days_clicks: 3,
+    excluded_last_30_days_clicks: 7,
+    excluded_by_category_30d: { KNOWN_BOT: 2 },
+    newest_click_at: "2026-01-01T00:00:00.000Z",
+    oldest_click_at_in_30d_window: "2025-12-01T00:00:00.000Z",
+    click_freshness_status: "OK",
+    click_freshness_reason: "Newest click within freshness window.",
+    commission_or_revenue: "NOT_CONNECTED",
+    commission_or_revenue_notes: "No affiliate revenue feed connected in-repo.",
+    clicks_by_wedge_30d: { ...emptyWedge },
+  };
+
+  it("appears in owner_command_center_neurons when Command Center click_visibility is passed", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      clickVisibility: okClick,
+    });
+    assert.equal(neurons.data_mutation, false);
+    assert.equal(neurons.neurons.length, 4);
+    const click = neurons.neurons.find((n) => n.neuron_key === "click_visibility");
+    assert.ok(click);
+    assert.equal(mapClickVisibilityToNeuronConnectionLevel(okClick), "BRIGHT");
+    assert.equal(click.connection_level, "BRIGHT");
+    assert.equal(click.status, "PROVEN");
+    assert.ok(click.proven_facts.some((f) => f.includes("not revenue")));
+    assert.ok(click.proven_facts.some((f) => f.includes("commission_or_revenue: NOT_CONNECTED")));
+    assert.ok(click.proven_facts.some((f) => f.includes("human_likely_last_30_days_clicks: 3")));
+    assert.ok(click.proven_facts.some((f) => f.includes("newest_click_at:")));
+    assert.ok(
+      neurons.generated_from.some((s) => s.includes("revenue_snapshot.click_visibility")),
+    );
+  });
+
+  it("maps UNKNOWN_DB_UNAVAILABLE to DARK", () => {
+    const unavailable: ClickVisibilitySnapshot = {
+      ...okClick,
+      runtime_status: "UNKNOWN_DB_UNAVAILABLE",
+      click_freshness_status: "UNKNOWN",
+      click_freshness_reason: "Missing SUPABASE_SERVICE_ROLE_KEY",
+      last_30_days_clicks: "UNKNOWN",
+      human_likely_last_30_days_clicks: "UNKNOWN",
+      newest_click_at: "UNKNOWN",
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      clickVisibility: unavailable,
+    });
+    const click = neurons.neurons.find((n) => n.neuron_key === "click_visibility");
+    assert.ok(click);
+    assert.equal(click.connection_level, "DARK");
+    assert.ok(
+      click.unknown_facts.some((f) => f.includes("UNKNOWN_DB_UNAVAILABLE") || f.includes("not fully usable")),
+    );
+  });
+
+  it("maps OK runtime with STALE freshness to DIM", () => {
+    const stale: ClickVisibilitySnapshot = {
+      ...okClick,
+      click_freshness_status: "STALE",
+      click_freshness_reason: "Newest click older than freshness threshold.",
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      clickVisibility: stale,
+    });
+    const click = neurons.neurons.find((n) => n.neuron_key === "click_visibility");
+    assert.ok(click);
+    assert.equal(mapClickVisibilityToNeuronConnectionLevel(stale), "DIM");
+    assert.equal(click.connection_level, "DIM");
+    assert.ok(click.unknown_facts.some((f) => f.includes("STALE")));
+  });
+
+  it("maps missing click_visibility to DARK when clickVisibility is null", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      clickVisibility: null,
+    });
+    const click = neurons.neurons.find((n) => n.neuron_key === "click_visibility");
+    assert.ok(click);
+    assert.equal(click.connection_level, "DARK");
+    assert.ok(click.unknown_facts.some((f) => f.includes("missing")));
+  });
+
+  it("omits click neuron when clickVisibility arg is omitted", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+    });
+    assert.equal(neurons.neurons.find((n) => n.neuron_key === "click_visibility"), undefined);
   });
 });
 

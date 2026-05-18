@@ -30,7 +30,10 @@ import {
   type Ga4TrustFunnelEventTotals,
   type Ga4TrustFunnelRates,
 } from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
-import type { BatchProductionOwnerDecisionsLaneV1 } from "../../../scripts/lib/buckparts-command-center-v2-types";
+import type {
+  BatchProductionOwnerDecisionsLaneV1,
+  ClickVisibilitySnapshot,
+} from "../../../scripts/lib/buckparts-command-center-v2-types";
 
 type QuarantinedFridgeModelStats = {
   mapped_filter_count: number;
@@ -61,6 +64,7 @@ export type OwnerDashboardNeuron = {
     | "trust_funnel_measurement"
     | "gsc_search_discovery"
     | "search_demand_and_gaps"
+    | "click_visibility"
     | "batch_production_owner_decisions";
   title: string;
   connection_level: OwnerNeuronConnectionLevel;
@@ -257,6 +261,125 @@ export function attachOwnerQuarantinedFridgeModelsReport<T extends object>(
 const STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH =
   "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.";
 
+export function mapClickVisibilityToNeuronConnectionLevel(
+  click: ClickVisibilitySnapshot | null | undefined,
+): OwnerNeuronConnectionLevel {
+  if (!click) return "DARK";
+  if (click.runtime_status === "UNKNOWN_DB_UNAVAILABLE") return "DARK";
+  if (click.runtime_status === "UNKNOWN_SCHEMA") return "DIM";
+  if (click.runtime_status !== "OK") return "DARK";
+  if (click.click_freshness_status === "STALE" || click.click_freshness_status === "NO_RECENT_EVENTS") {
+    return "DIM";
+  }
+  if (click.click_freshness_status !== "OK") return "DIM";
+  const partialMetrics =
+    click.last_30_days_clicks === "UNKNOWN" ||
+    click.human_likely_last_30_days_clicks === "UNKNOWN" ||
+    click.newest_click_at === "UNKNOWN";
+  return partialMetrics ? "DIM" : "BRIGHT";
+}
+
+function buildClickVisibilityNeuron(
+  click: ClickVisibilitySnapshot | null | undefined,
+): OwnerDashboardNeuron {
+  const proven_facts: string[] = [
+    "revenue_snapshot.click_visibility data_mutation: false (read-only Supabase aggregate; no second query in neuron builder).",
+    "Outbound clicks are operational visibility only — not revenue, commission, or conversion proof.",
+  ];
+  const unknown_facts: string[] = [];
+  const connection_level = mapClickVisibilityToNeuronConnectionLevel(click);
+  let status: OwnerNeuronStatus = "UNKNOWN";
+
+  if (!click) {
+    unknown_facts.push(
+      "command_center_v2.revenue_snapshot.click_visibility is missing from Command Center report.",
+    );
+    unknown_facts.push("Click counts are unavailable — do not infer revenue or buyer intent.");
+    return {
+      neuron_key: "click_visibility",
+      title: "Supabase click visibility",
+      connection_level: "DARK",
+      freshness_method:
+        "Command Center v2 revenue_snapshot.click_visibility at owner-dashboard load time (no duplicate Supabase query).",
+      proven_facts,
+      unknown_facts,
+      next_owner_action:
+        "Restore the same Supabase URL + SUPABASE_SERVICE_ROLE_KEY contract used by Command Center for read-only click_events counts.",
+      status,
+    };
+  }
+
+  if (connection_level === "BRIGHT") {
+    status = "PROVEN";
+  }
+
+  proven_facts.push(`runtime_status: ${click.runtime_status}.`);
+  proven_facts.push(`click_freshness_status: ${click.click_freshness_status}.`);
+  proven_facts.push(`commission_or_revenue: ${click.commission_or_revenue}.`);
+  if (click.commission_or_revenue === "NOT_CONNECTED") {
+    proven_facts.push(
+      click.commission_or_revenue_notes ||
+        "Commission / revenue remains NOT_CONNECTED in Command Center — clicks must not be treated as revenue.",
+    );
+  } else {
+    unknown_facts.push(
+      "commission_or_revenue is not NOT_CONNECTED in this snapshot — verify Command Center before treating as revenue truth.",
+    );
+  }
+  if (click.newest_click_at !== "UNKNOWN") {
+    proven_facts.push(`newest_click_at: ${click.newest_click_at}.`);
+  } else {
+    unknown_facts.push("newest_click_at is UNKNOWN — click freshness cannot be fully proven.");
+  }
+  if (typeof click.human_likely_last_30_days_clicks === "number") {
+    proven_facts.push(`human_likely_last_30_days_clicks: ${click.human_likely_last_30_days_clicks}.`);
+  } else {
+    unknown_facts.push("human_likely_last_30_days_clicks is UNKNOWN.");
+  }
+  if (typeof click.last_30_days_clicks === "number") {
+    proven_facts.push(`last_30_days_clicks (raw): ${click.last_30_days_clicks}.`);
+  }
+  if (click.click_freshness_reason) {
+    proven_facts.push(`click_freshness_reason: ${click.click_freshness_reason}.`);
+  }
+  if (click.click_quality_notes) {
+    proven_facts.push(click.click_quality_notes);
+  }
+  if (click.runtime_status !== "OK") {
+    unknown_facts.push(
+      `Click visibility runtime_status is ${click.runtime_status}; Supabase click_events snapshot is not fully usable.`,
+    );
+  }
+  if (click.click_freshness_status === "STALE") {
+    unknown_facts.push("Click data is STALE per Command Center freshness — treat counts as cautionary only.");
+  }
+  if (click.click_freshness_status === "NO_RECENT_EVENTS") {
+    unknown_facts.push("No recent click_events in the freshness window — visibility is partial.");
+  }
+  if (click.click_freshness_status === "UNKNOWN") {
+    unknown_facts.push("click_freshness_status is UNKNOWN — freshness is not proven.");
+  }
+  for (const note of click.aggregation_notes ?? []) {
+    if (!unknown_facts.includes(note)) unknown_facts.push(note);
+  }
+
+  return {
+    neuron_key: "click_visibility",
+    title: "Supabase click visibility",
+    connection_level,
+    freshness_method: `Command Center click snapshot generated_at=${click.generated_at}; window ${click.window_days.short}d/${click.window_days.long}d.`,
+    proven_facts,
+    unknown_facts,
+    next_owner_action:
+      click.runtime_status === "OK"
+        ? click.click_freshness_status === "OK"
+          ? "Use human_likely_* counts for conservative ops visibility; never treat clicks as revenue until commission_or_revenue is connected with a real feed."
+          : "Refresh click_events visibility or investigate stale/no-recent freshness before prioritizing monetization work from raw counts."
+        : "Restore read-only Supabase click_events access before using this neuron for operational visibility.",
+    status,
+  };
+}
+
 export function mapSearchDemandAndGapsToNeuronConnectionLevel(
   search: OwnerSearchDemandAndGapsNeuron | null | undefined,
 ): OwnerNeuronConnectionLevel {
@@ -452,6 +575,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   trustFunnelAggregateIssue?: string | null;
   /** When set, adds search_demand_and_gaps neuron from owner_search_demand_and_gaps output only (no duplicate query). */
   searchDemandAndGaps?: OwnerSearchDemandAndGapsNeuron | null;
+  /** When set, adds click_visibility neuron from revenue_snapshot.click_visibility only (no duplicate Supabase query). */
+  clickVisibility?: ClickVisibilitySnapshot | null;
   /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
   batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
 }): OwnerCommandCenterNeuronsReport {
@@ -699,9 +824,13 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
 
   const optionalNeurons: OwnerDashboardNeuron[] = [];
   const searchNeuronIncluded = args.searchDemandAndGaps !== undefined;
+  const clickNeuronIncluded = args.clickVisibility !== undefined;
   const batchNeuronIncluded = args.batchProductionOwnerDecisionsLane !== undefined;
   if (searchNeuronIncluded) {
     optionalNeurons.push(buildSearchDemandAndGapsNeuron(args.searchDemandAndGaps));
+  }
+  if (clickNeuronIncluded) {
+    optionalNeurons.push(buildClickVisibilityNeuron(args.clickVisibility));
   }
   if (batchNeuronIncluded) {
     optionalNeurons.push(buildBatchProductionOwnerDecisionsNeuron(args.batchProductionOwnerDecisionsLane));
@@ -716,6 +845,9 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       ...TRUST_FUNNEL_EMITTER_MODULES,
       ...(searchNeuronIncluded
         ? ["owner_search_demand_and_gaps.search_demand_and_gaps (from buildOwnerSearchDemandAndGapsReport; no duplicate DB query)"]
+        : []),
+      ...(clickNeuronIncluded
+        ? ["command_center_v2.revenue_snapshot.click_visibility (read-only click_events snapshot; no duplicate Supabase query)"]
         : []),
       ...(batchNeuronIncluded
         ? ["command_center_v2.batch_production_owner_decisions_lane_v1 (read-only; no neuron registry scan)"]
@@ -1274,6 +1406,7 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
       trustFunnelAggregateArtifact: ga4TrustFunnelAggregate.artifact,
       trustFunnelAggregateIssue: ga4TrustFunnelAggregate.issue,
       searchDemandAndGaps: searchDemandAndGaps.search_demand_and_gaps,
+      clickVisibility: report.command_center_v2.revenue_snapshot.click_visibility,
       batchProductionOwnerDecisionsLane:
         report.command_center_v2.batch_production_owner_decisions_lane_v1,
     });
