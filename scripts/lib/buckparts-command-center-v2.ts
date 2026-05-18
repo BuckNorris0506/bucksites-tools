@@ -14,6 +14,7 @@ import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-t
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import { buildCommandCenterBrainCoverageManifestV1 } from "./buckparts-brain-coverage-manifest-v1";
+import { buildBrainIntegrityGateV1 } from "./buckparts-brain-integrity-gate-v1";
 import type {
   AmazonRescueTokenControlEntry,
   ClickVisibilitySnapshot,
@@ -536,11 +537,20 @@ export function buildCommandCenterV2Report(input: {
     next_owner_action,
     top_of_game_foundation_scorecard_v1,
     batch_production_owner_decisions_lane_v1,
-    command_center_brain_coverage_manifest_v1: buildCommandCenterBrainCoverageManifestV1({
-      rootDir: input.rootDir,
-      now: input.now,
-      fileExists: input.fileExists,
-      readTextFile: input.readTextFile,
-    }),
+    ...(() => {
+      const command_center_brain_coverage_manifest_v1 = buildCommandCenterBrainCoverageManifestV1({
+        rootDir: input.rootDir,
+        now: input.now,
+        fileExists: input.fileExists,
+        readTextFile: input.readTextFile,
+      });
+      return {
+        command_center_brain_coverage_manifest_v1,
+        brain_integrity_gate_v1: buildBrainIntegrityGateV1({
+          manifest: command_center_brain_coverage_manifest_v1,
+          now: input.now,
+        }),
+      };
+    })(),
   };
 }

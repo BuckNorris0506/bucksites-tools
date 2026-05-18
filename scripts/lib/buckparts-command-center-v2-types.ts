@@ -677,6 +677,33 @@ export type CommandCenterBrainCoverageManifestV1 = {
   unknown_facts: string[];
 };
 
+export type BrainIntegrityGateRuntimeStatusV1 = "OK" | "UNKNOWN";
+export type BrainIntegrityGateBrainStatusV1 =
+  | "PROCEED"
+  | "PROCEED_WITH_KNOWN_LIMITS"
+  | "STOP_THE_LINE";
+
+/** Read-only lane-work governance derived from brain coverage manifest only. */
+export type BrainIntegrityGateV1 = {
+  contract: "brain_integrity_gate_v1";
+  read_only: true;
+  data_mutation: false;
+  runtime_status: BrainIntegrityGateRuntimeStatusV1;
+  brain_status: BrainIntegrityGateBrainStatusV1;
+  total_entries: number;
+  verdict_counts: Record<BrainCoverageVerdictV1, number>;
+  stop_the_line_entries: BrainCoverageManifestEntryV1[];
+  allowed_bypass_entries: BrainCoverageManifestEntryV1[];
+  missing_entries: BrainCoverageManifestEntryV1[];
+  duplicate_entries: BrainCoverageManifestEntryV1[];
+  partial_entries: BrainCoverageManifestEntryV1[];
+  next_brain_action: string;
+  lane_work_allowed: boolean;
+  lane_work_allowed_reason: string;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
 /** Read-only Layer 7 batch owner approvals from committed founder_decision_registry_v1 exports. */
 export type BatchProductionOwnerDecisionsLaneV1 = {
   contract: "batch_production_owner_decisions_lane_v1";
@@ -744,4 +771,5 @@ export type CommandCenterV2Report = {
   batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
   command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
+  brain_integrity_gate_v1: BrainIntegrityGateV1;
 };

@@ -837,7 +837,19 @@ export async function buildBuckpartsCommandCenterReport(
     ...command_center_v2_base,
     external_measurement_freshness_v1,
     command_center_brain_coverage_manifest_v1: command_center_v2_base.command_center_brain_coverage_manifest_v1,
+    brain_integrity_gate_v1: command_center_v2_base.brain_integrity_gate_v1,
   };
+
+  const brainGate = command_center_v2.brain_integrity_gate_v1;
+  if (brainGate.brain_status === "STOP_THE_LINE") {
+    nextBestAction = brainGate.next_brain_action;
+    whyThisAction = brainGate.lane_work_allowed_reason;
+  } else if (brainGate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
+    const brainCaveat = brainGate.proven_facts.find((f) => f.startsWith("BRAIN_CAVEAT:"));
+    if (brainCaveat) {
+      whyThisAction = `${whyThisAction} ${brainCaveat}`;
+    }
+  }
 
   const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({
     rootDir,

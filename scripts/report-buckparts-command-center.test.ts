@@ -2658,6 +2658,40 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.ok(gh!.verdict === "MISSING" || gh!.verdict === "PARTIAL");
 });
 
+test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain coverage manifest", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  const manifest = report.command_center_v2.command_center_brain_coverage_manifest_v1;
+  assert.ok(gate);
+  assert.equal(gate.contract, "brain_integrity_gate_v1");
+  assert.equal(gate.read_only, true);
+  assert.equal(gate.data_mutation, false);
+  assert.equal(gate.total_entries, manifest.entries.length);
+  assert.ok(
+    gate.brain_status === "PROCEED_WITH_KNOWN_LIMITS" || gate.brain_status === "STOP_THE_LINE",
+  );
+
+  const mutate = manifest.entries.find((e) => e.npm_script_or_path.includes(":mutate"));
+  assert.ok(mutate);
+  assert.ok(!gate.stop_the_line_entries.some((e) => e.system_id === mutate!.system_id));
+
+  assert.ok(gate.missing_entries.some((e) => e.system_id === "github_actions_live_status"));
+  assert.ok(gate.missing_entries.some((e) => e.system_id === "sentry_error_monitoring"));
+  assert.ok(gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
+
+  if (gate.brain_status === "STOP_THE_LINE") {
+    assert.equal(report.next_best_action, gate.next_brain_action);
+  } else if (gate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
+    assert.ok(gate.proven_facts.some((f) => f.startsWith("BRAIN_CAVEAT:")));
+    assert.ok(report.why_this_action.includes("BRAIN_CAVEAT:"));
+  }
+});
+
 test("command_center_v2.external_measurement_freshness_v1 is read-only CC truth", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
