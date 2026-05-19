@@ -91,6 +91,11 @@ function deterministicCommandSurfaceOptions(
         affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/1",
         browser_truth_classification: null,
       },
+      {
+        retailer_key: "oem-b",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/12345/2",
+        browser_truth_classification: null,
+      },
     ],
     fetchSearchAndClickIntelligenceSummary: async () => ({
       window_days: { short: 7, long: 30 },
@@ -672,6 +677,121 @@ test("blocked remediation excludes LIVE states", async () => {
   }
 });
 
+test("blocked remediation buckets separate intentional OEM catalog search from repairable paths", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    skipLearningOutcomesQuery: true,
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://levoit.com/search?q=LEVOIT-RF-RAR029",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-parts-catalog",
+        affiliate_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=WFCB",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-a",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/1",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000099",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  const buckets = report.blocked_retailer_link_remediation.remediation_buckets;
+  assert.notEqual(buckets, "UNKNOWN");
+  if (buckets === "UNKNOWN") return;
+  assert.equal(buckets.intentionally_non_buyable_catalog_or_discovery_links.count, 2);
+  assert.equal(buckets.missing_browser_truth.count, 1);
+  assert.equal(buckets.repairable_blocked_buy_paths.count, 0);
+  assert.deepEqual(report.retailer_link_state_metrics.distribution, {
+    LIVE_DIRECT_BUYABLE: 1,
+    BLOCKED_SEARCH_OR_DISCOVERY: 2,
+    BLOCKED_BROWSER_TRUTH_MISSING: 1,
+  });
+  assert.ok(
+    report.blocked_retailer_link_remediation.proven_facts.some((f) =>
+      f.includes("isSearchPlaceholderBuyLink"),
+    ),
+  );
+});
+
+test("system_health does not WARN when only intentional catalog/discovery placeholders exceed LIVE", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => [],
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://levoit.com/search?q=A",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://levoit.com/search?q=B",
+        browser_truth_classification: "direct_buyable",
+      },
+      {
+        retailer_key: "oem-parts-catalog",
+        affiliate_url: "https://www.frigidaire.com/en/catalogsearch/result/?q=C",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000088",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.equal(
+    report.system_health.reasons.includes(
+      "retailer_link_state_metrics decision-useful blocked buy paths exceed LIVE_*",
+    ),
+    false,
+  );
+  assert.equal(
+    report.system_health.reasons.includes("retailer_link_state_metrics BLOCKED_* exceeds LIVE_*"),
+    false,
+  );
+});
+
+test("system_health WARNs when decision-useful blocked buy paths exceed LIVE", async () => {
+  const report = await buildBuckpartsCommandSurfaceReport({
+    fetchLearningOutcomesRows: async () => [],
+    fetchCtaCoverageRows: async () => [
+      {
+        retailer_key: "oem-a",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/1",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-b",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/2",
+        browser_truth_classification: null,
+      },
+      {
+        retailer_key: "oem-c",
+        affiliate_url: "https://www.repairclinic.com/PartDetail/Water-Filter/3",
+        browser_truth_classification: "likely_valid",
+      },
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B000000077",
+        browser_truth_classification: "direct_buyable",
+      },
+    ],
+  });
+  assert.ok(
+    report.system_health.reasons.includes(
+      "retailer_link_state_metrics decision-useful blocked buy paths exceed LIVE_*",
+    ),
+  );
+});
+
 test("blocked remediation recommended action follows top blocked state", async () => {
   const searchTop = await buildBuckpartsCommandSurfaceReport({
     skipLearningOutcomesQuery: true,
@@ -685,7 +805,7 @@ test("blocked remediation recommended action follows top blocked state", async (
   });
   assert.equal(
     searchTop.blocked_retailer_link_remediation.recommended_next_action,
-    "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+    "Catalog/discovery placeholder rows (oem-catalog/oem-parts-catalog site-search, google-search, SERP URLs) are expected non-buyable inventory; do not treat them as repairable buy-path blockers.",
   );
 
   const unsafeTop = await buildBuckpartsCommandSurfaceReport({
@@ -1178,6 +1298,10 @@ test("affiliate action required makes CRITICAL", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1195,6 +1319,10 @@ test("unknown learning outcomes makes CRITICAL", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1212,6 +1340,10 @@ test("unknown state systems makes WARNING, not stop-line CRITICAL", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1230,6 +1362,10 @@ test("missing GSC export makes WARNING when no criticals", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: false,
       coverage_zip: true,
@@ -1247,6 +1383,10 @@ test("zero approved affiliates makes WARNING when no criticals", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1273,6 +1413,10 @@ test("unverified affiliate tag makes WARNING when no criticals", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1290,6 +1434,10 @@ test("degrading trend makes WARNING when no criticals", () => {
     trend: { overall_trend: "DEGRADING" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1307,6 +1455,10 @@ test("OK when no reasons", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1325,6 +1477,10 @@ test("system_health reacts to UNKNOWN CTA metrics", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "UNKNOWN_DB_UNAVAILABLE" } as never,
     retailer_link_state_metrics: { runtime_status: "OK", distribution: {} } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1342,6 +1498,10 @@ test("system_health reacts to UNKNOWN retailer_link_state_metrics", () => {
     trend: { overall_trend: "FLAT" } as never,
     cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
     retailer_link_state_metrics: { runtime_status: "UNKNOWN", distribution: "UNKNOWN" } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1374,7 +1534,7 @@ test("system_health does not include retailer_link_state_metrics UNKNOWN when CT
   );
 });
 
-test("system_health WARNING when BLOCKED_* exceeds LIVE_*", () => {
+test("system_health WARNING when BLOCKED_* exceeds LIVE_* without remediation buckets", () => {
   const health = computeSystemHealth({
     affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
     learning_outcomes_metrics: { runtime_status: "OK" } as never,
@@ -1388,6 +1548,10 @@ test("system_health WARNING when BLOCKED_* exceeds LIVE_*", () => {
         LIVE_DIRECT_BUYABLE: 1,
       },
     } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "UNKNOWN",
+      remediation_buckets: "UNKNOWN",
+    } as never,
     gsc_exports_present: {
       sitemap_xml: true,
       coverage_zip: true,
@@ -1395,6 +1559,85 @@ test("system_health WARNING when BLOCKED_* exceeds LIVE_*", () => {
     },
   });
   assert.equal(health.status, "WARNING");
+  assert.ok(
+    health.reasons.includes("retailer_link_state_metrics BLOCKED_* exceeds LIVE_*"),
+  );
+});
+
+test("system_health WARNING when decision-useful blocked exceeds LIVE with remediation buckets", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
+    retailer_link_state_metrics: {
+      runtime_status: "OK",
+      distribution: {
+        BLOCKED_SEARCH_OR_DISCOVERY: 10,
+        BLOCKED_BROWSER_TRUTH_MISSING: 2,
+        LIVE_DIRECT_BUYABLE: 1,
+      },
+    } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "OK",
+      remediation_buckets: {
+        repairable_blocked_buy_paths: { count: 0, top_retailer_keys: [] },
+        intentionally_non_buyable_catalog_or_discovery_links: {
+          count: 10,
+          top_retailer_keys: [],
+        },
+        missing_browser_truth: { count: 2, top_retailer_keys: [] },
+        unsafe_browser_truth: { count: 0, top_retailer_keys: [] },
+      },
+    } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "WARNING");
+  assert.ok(
+    health.reasons.includes(
+      "retailer_link_state_metrics decision-useful blocked buy paths exceed LIVE_*",
+    ),
+  );
+});
+
+test("system_health OK when only intentional placeholders exceed LIVE with remediation buckets", () => {
+  const health = computeSystemHealth({
+    affiliate_tracker: { health: { status: "OK" }, approved_count: 1 } as never,
+    learning_outcomes_metrics: { runtime_status: "OK" } as never,
+    state_system_metrics: { runtime_status: "PARTIAL" } as never,
+    trend: { overall_trend: "FLAT" } as never,
+    cta_coverage_metrics: { runtime_status: "OK", safe_cta_links: 1 } as never,
+    retailer_link_state_metrics: {
+      runtime_status: "OK",
+      distribution: {
+        BLOCKED_SEARCH_OR_DISCOVERY: 10,
+        LIVE_DIRECT_BUYABLE: 1,
+      },
+    } as never,
+    blocked_retailer_link_remediation: {
+      runtime_status: "OK",
+      remediation_buckets: {
+        repairable_blocked_buy_paths: { count: 0, top_retailer_keys: [] },
+        intentionally_non_buyable_catalog_or_discovery_links: {
+          count: 10,
+          top_retailer_keys: [],
+        },
+        missing_browser_truth: { count: 0, top_retailer_keys: [] },
+        unsafe_browser_truth: { count: 0, top_retailer_keys: [] },
+      },
+    } as never,
+    gsc_exports_present: {
+      sitemap_xml: true,
+      coverage_zip: true,
+      performance_zip: true,
+    },
+  });
+  assert.equal(health.status, "OK");
 });
 
 test("recommended next step changes for CRITICAL", async () => {

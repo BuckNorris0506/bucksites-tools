@@ -15,7 +15,10 @@ import {
   getVerticalLaunchState,
   VERTICAL_SLUGS_WITH_APP_SEGMENT_LAYOUT,
 } from "@/lib/catalog/vertical-launch-state";
-import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
+import {
+  buyLinkGateFailureKind,
+  isSearchPlaceholderBuyLink,
+} from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
 type BoolMap = Record<string, boolean>;
@@ -41,6 +44,57 @@ type CtaCoverageRow = {
   browser_truth_checked_at?: string | null;
   gate_failure_kind?: string | null;
 };
+
+type BlockedRemediationBucketV1 = {
+  count: number;
+  top_retailer_keys: Array<{ retailer_key: string; count: number }>;
+};
+
+export type BlockedRetailerLinkRemediationBucketKey =
+  | "repairable_blocked_buy_paths"
+  | "intentionally_non_buyable_catalog_or_discovery_links"
+  | "missing_browser_truth"
+  | "unsafe_browser_truth";
+
+const BLOCKED_REMEDIATION_BUCKET_KEYS: BlockedRetailerLinkRemediationBucketKey[] = [
+  "repairable_blocked_buy_paths",
+  "intentionally_non_buyable_catalog_or_discovery_links",
+  "missing_browser_truth",
+  "unsafe_browser_truth",
+];
+
+export function classifyBlockedRetailerLinkRemediationBucket(
+  row: CtaCoverageRow,
+): BlockedRetailerLinkRemediationBucketKey | null {
+  const affiliateUrl = row.affiliate_url ?? "";
+  const gateFailureKind = buyLinkGateFailureKind({
+    retailer_key: row.retailer_key,
+    affiliate_url: affiliateUrl,
+    browser_truth_classification: row.browser_truth_classification,
+  });
+  const state = mapSignalsToRetailerLinkState({
+    browserTruthClassification: row.browser_truth_classification,
+    gateFailureKind,
+  });
+  if (!state.startsWith("BLOCKED_")) {
+    return null;
+  }
+
+  if (
+    gateFailureKind === "search_placeholder" ||
+    gateFailureKind === "indirect_discovery" ||
+    isSearchPlaceholderBuyLink(row.retailer_key, affiliateUrl)
+  ) {
+    return "intentionally_non_buyable_catalog_or_discovery_links";
+  }
+  if (gateFailureKind === "missing_browser_truth" || state === "BLOCKED_BROWSER_TRUTH_MISSING") {
+    return "missing_browser_truth";
+  }
+  if (gateFailureKind === "unsafe_browser_truth" || state === "BLOCKED_BROWSER_TRUTH_UNSAFE") {
+    return "unsafe_browser_truth";
+  }
+  return "repairable_blocked_buy_paths";
+}
 
 export type CommandSurfaceReport = {
   report_name: string;
@@ -121,6 +175,16 @@ export type CommandSurfaceReport = {
     runtime_status: "OK" | "UNKNOWN";
     top_blocked_states: Array<{ state: string; count: number }> | "UNKNOWN";
     top_blocked_retailer_keys: Array<{ retailer_key: string; count: number }> | "UNKNOWN";
+    remediation_buckets:
+      | {
+          repairable_blocked_buy_paths: BlockedRemediationBucketV1;
+          intentionally_non_buyable_catalog_or_discovery_links: BlockedRemediationBucketV1;
+          missing_browser_truth: BlockedRemediationBucketV1;
+          unsafe_browser_truth: BlockedRemediationBucketV1;
+        }
+      | "UNKNOWN";
+    proven_facts: string[];
+    unknown_facts: string[];
     recommended_next_action: string;
   };
   search_and_click_intelligence_summary: {
@@ -1026,9 +1090,68 @@ function unknownBlockedRetailerLinkRemediation(): CommandSurfaceReport["blocked_
     runtime_status: "UNKNOWN",
     top_blocked_states: "UNKNOWN",
     top_blocked_retailer_keys: "UNKNOWN",
+    remediation_buckets: "UNKNOWN",
+    proven_facts: [],
+    unknown_facts: ["CTA coverage dataset unavailable; remediation buckets cannot be derived."],
     recommended_next_action:
       "CTA coverage dataset unavailable; blocked-state remediation queue cannot be derived.",
   };
+}
+
+type BlockedRemediationBucketsV1 = {
+  repairable_blocked_buy_paths: BlockedRemediationBucketV1;
+  intentionally_non_buyable_catalog_or_discovery_links: BlockedRemediationBucketV1;
+  missing_browser_truth: BlockedRemediationBucketV1;
+  unsafe_browser_truth: BlockedRemediationBucketV1;
+};
+
+function emptyRemediationBuckets(): BlockedRemediationBucketsV1 {
+  return {
+    repairable_blocked_buy_paths: { count: 0, top_retailer_keys: [] },
+    intentionally_non_buyable_catalog_or_discovery_links: { count: 0, top_retailer_keys: [] },
+    missing_browser_truth: { count: 0, top_retailer_keys: [] },
+    unsafe_browser_truth: { count: 0, top_retailer_keys: [] },
+  };
+}
+
+function buildRemediationBucketsFromRows(rows: CtaCoverageRow[]): BlockedRemediationBucketsV1 {
+  const bucketRetailerCounts: Record<BlockedRetailerLinkRemediationBucketKey, Record<string, number>> =
+    {
+      repairable_blocked_buy_paths: {},
+      intentionally_non_buyable_catalog_or_discovery_links: {},
+      missing_browser_truth: {},
+      unsafe_browser_truth: {},
+    };
+  const bucketCounts: Record<BlockedRetailerLinkRemediationBucketKey, number> = {
+    repairable_blocked_buy_paths: 0,
+    intentionally_non_buyable_catalog_or_discovery_links: 0,
+    missing_browser_truth: 0,
+    unsafe_browser_truth: 0,
+  };
+
+  for (const row of rows) {
+    const bucket = classifyBlockedRetailerLinkRemediationBucket(row);
+    if (bucket == null) {
+      continue;
+    }
+    bucketCounts[bucket] += 1;
+    const retailerKey =
+      typeof row.retailer_key === "string" && row.retailer_key.trim().length > 0
+        ? row.retailer_key
+        : "(unknown_retailer)";
+    bucketRetailerCounts[bucket][retailerKey] = (bucketRetailerCounts[bucket][retailerKey] ?? 0) + 1;
+  }
+
+  const buckets = emptyRemediationBuckets();
+  for (const key of BLOCKED_REMEDIATION_BUCKET_KEYS) {
+    buckets[key] = {
+      count: bucketCounts[key],
+      top_retailer_keys: sortCountsDescThenLexical(bucketRetailerCounts[key])
+        .slice(0, 5)
+        .map((entry) => ({ retailer_key: entry.key, count: entry.count })),
+    };
+  }
+  return buckets;
 }
 
 function buildRetailerLinkStateMetricsFromRows(
@@ -1064,7 +1187,23 @@ function sortCountsDescThenLexical(
     .sort((a, b) => b.count - a.count || a.key.localeCompare(b.key));
 }
 
-function recommendedBlockedRemediationAction(topState: string | null): string {
+function recommendedBlockedRemediationAction(args: {
+  topState: string | null;
+  buckets: BlockedRemediationBucketsV1;
+}): string {
+  const { topState, buckets } = args;
+  if (buckets.repairable_blocked_buy_paths.count > 0) {
+    return "Prioritize repairable blocked buy-path rows (broken destinations, token/match risk, and other non-placeholder BLOCKED states): replace discovery URLs with direct PDPs or resolve destination evidence for highest-volume keys.";
+  }
+  if (buckets.missing_browser_truth.count > 0) {
+    return "Collect browser-truth evidence for rows missing verification.";
+  }
+  if (buckets.unsafe_browser_truth.count > 0) {
+    return "Recheck browser-truth evidence for highest-volume unsafe retailer keys.";
+  }
+  if (buckets.intentionally_non_buyable_catalog_or_discovery_links.count > 0) {
+    return "Catalog/discovery placeholder rows (oem-catalog/oem-parts-catalog site-search, google-search, SERP URLs) are expected non-buyable inventory; do not treat them as repairable buy-path blockers.";
+  }
   if (topState === "BLOCKED_SEARCH_OR_DISCOVERY") {
     return "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.";
   }
@@ -1116,14 +1255,34 @@ function buildBlockedRetailerLinkRemediationFromRows(
     }),
   );
 
+  const remediation_buckets = buildRemediationBucketsFromRows(rows);
+  const proven_facts = [
+    "remediation_buckets classify blocked rows using buyLinkGateFailureKind + mapSignalsToRetailerLinkState without changing retailer_link_state_metrics distribution.",
+    "oem-catalog and oem-parts-catalog manufacturer site-search URLs are intentionally_non_buyable_catalog_or_discovery_links per launch-buy-links isSearchPlaceholderBuyLink (read-only reporting; buy gates unchanged).",
+    "google-search and generic SERP affiliate_url rows share the intentional catalog/discovery bucket.",
+  ];
+  const unknown_facts: string[] = [];
+  if (
+    remediation_buckets.repairable_blocked_buy_paths.count === 0 &&
+    remediation_buckets.intentionally_non_buyable_catalog_or_discovery_links.count === 0 &&
+    remediation_buckets.missing_browser_truth.count === 0 &&
+    remediation_buckets.unsafe_browser_truth.count === 0
+  ) {
+    unknown_facts.push("No BLOCKED_* rows in CTA dataset; remediation buckets are all zero.");
+  }
+
   return {
     source: "derived_from_cta_coverage_dataset",
     runtime_status: "OK",
     top_blocked_states: topBlockedStates,
     top_blocked_retailer_keys: topBlockedRetailerKeys,
-    recommended_next_action: recommendedBlockedRemediationAction(
-      topBlockedStates[0]?.state ?? null,
-    ),
+    remediation_buckets,
+    proven_facts,
+    unknown_facts,
+    recommended_next_action: recommendedBlockedRemediationAction({
+      topState: topBlockedStates[0]?.state ?? null,
+      buckets: remediation_buckets,
+    }),
   };
 }
 
@@ -1455,6 +1614,7 @@ type SystemHealthInputs = Pick<
   | "gsc_exports_present"
   | "cta_coverage_metrics"
   | "retailer_link_state_metrics"
+  | "blocked_retailer_link_remediation"
 >;
 
 export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceReport["system_health"] {
@@ -1510,14 +1670,32 @@ export function computeSystemHealth(input: SystemHealthInputs): CommandSurfaceRe
     typeof input.retailer_link_state_metrics.distribution === "object"
   ) {
     const dist = input.retailer_link_state_metrics.distribution;
-    const blockedTotal = Object.entries(dist)
-      .filter(([key]) => key.startsWith("BLOCKED_"))
-      .reduce((sum, [, value]) => sum + value, 0);
     const liveTotal = Object.entries(dist)
       .filter(([key]) => key.startsWith("LIVE_"))
       .reduce((sum, [, value]) => sum + value, 0);
-    if (blockedTotal > liveTotal) {
-      warningReasons.push("retailer_link_state_metrics BLOCKED_* exceeds LIVE_*");
+
+    const remediation = input.blocked_retailer_link_remediation;
+    if (
+      remediation?.runtime_status === "OK" &&
+      remediation.remediation_buckets !== "UNKNOWN"
+    ) {
+      const buckets = remediation.remediation_buckets;
+      const decisionUsefulBlocked =
+        buckets.repairable_blocked_buy_paths.count +
+        buckets.missing_browser_truth.count +
+        buckets.unsafe_browser_truth.count;
+      if (decisionUsefulBlocked > liveTotal) {
+        warningReasons.push(
+          "retailer_link_state_metrics decision-useful blocked buy paths exceed LIVE_*",
+        );
+      }
+    } else {
+      const blockedTotal = Object.entries(dist)
+        .filter(([key]) => key.startsWith("BLOCKED_"))
+        .reduce((sum, [, value]) => sum + value, 0);
+      if (blockedTotal > liveTotal) {
+        warningReasons.push("retailer_link_state_metrics BLOCKED_* exceeds LIVE_*");
+      }
     }
   }
 
@@ -1753,6 +1931,7 @@ export async function buildBuckpartsCommandSurfaceReport(
     trend,
     cta_coverage_metrics: ctaCoverageMetrics,
     retailer_link_state_metrics: retailerLinkStateMetrics,
+    blocked_retailer_link_remediation: blockedRetailerLinkRemediation,
     gsc_exports_present: {
       sitemap_xml: checks.sitemap_xml,
       coverage_zip: checks.coverage_zip,
