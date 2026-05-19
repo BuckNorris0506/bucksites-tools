@@ -2646,6 +2646,26 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.equal(demandQueue!.verdict, "CONNECTED");
   assert.equal(demandQueue!.cc_json_path, "command_center_v2.demand_work_queue_summary_v1");
 
+  const audit = findBrainManifestEntry(report, (r) => r.system_id === "buckparts_audit");
+  assert.ok(audit);
+  assert.equal(audit!.verdict, "CONNECTED");
+  assert.equal(audit!.cc_json_path, "command_center_v2.system_contract_audit_summary_v1");
+
+  const founderRegistry = findBrainManifestEntry(report, (r) => r.system_id === "buckparts_founder-decision-registry");
+  assert.ok(founderRegistry);
+  assert.equal(founderRegistry!.verdict, "CONNECTED");
+  assert.equal(founderRegistry!.cc_json_path, "command_center_v2.founder_decision_registry_summary_v1");
+
+  const nextPacket = findBrainManifestEntry(report, (r) => r.system_id === "buckparts_next-execution-packet");
+  assert.ok(nextPacket);
+  assert.equal(nextPacket!.verdict, "CONNECTED");
+  assert.equal(nextPacket!.cc_json_path, "command_center_v2.next_execution_packet_summary_v1");
+
+  const operatingMap = findBrainManifestEntry(report, (r) => r.system_id === "buckparts_operating-map");
+  assert.ok(operatingMap);
+  assert.equal(operatingMap!.verdict, "CONNECTED");
+  assert.equal(operatingMap!.cc_json_path, "command_center_v2.operating_map_summary_v1");
+
   const hq = findBrainManifestEntry(report, (r) => r.system_id === "hq_handoff_doc");
   assert.ok(hq);
   assert.equal(hq!.verdict, "DEPRECATED");
@@ -2686,8 +2706,17 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.ok(!plan.next_consolidation_slice.includes("daily_operator_summary_v1"));
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_demand-work-queue"));
   assert.ok(!plan.next_consolidation_slice.includes("demand_work_queue_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_audit"));
+  assert.ok(!plan.next_consolidation_slice.includes("system_contract_audit_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_founder-decision-registry"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_next-execution-packet"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_operating-map"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_daily"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_demand-work-queue"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_audit"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_founder-decision-registry"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_next-execution-packet"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_operating-map"));
   const mutate = plan.do_not_integrate_entries.find((e) => e.system_id.includes("mutate"));
   assert.ok(mutate);
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "hq_handoff_doc"));
@@ -2721,6 +2750,37 @@ test("command_center_v2.daily_operator_summary_v1 is read-only CC-owned daily op
   );
   assert.equal(bypassGaps.length, 0);
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_daily"));
+});
+
+test("command_center_v2 Mode B wave #1 summary lanes are read-only CC-owned", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lanes = [
+    ["system_contract_audit_summary_v1", "npm run buckparts:audit", "buckparts_audit"],
+    ["founder_decision_registry_summary_v1", "npm run buckparts:founder-decision-registry", "buckparts_founder-decision-registry"],
+    ["next_execution_packet_summary_v1", "npm run buckparts:next-execution-packet", "buckparts_next-execution-packet"],
+    ["operating_map_summary_v1", "npm run buckparts:operating-map", "buckparts_operating-map"],
+  ] as const;
+  for (const [contract, sourceCommand, systemId] of lanes) {
+    const lane = report.command_center_v2[contract];
+    assert.ok(lane, contract);
+    assert.equal(lane.contract, contract);
+    assert.equal(lane.read_only, true);
+    assert.equal(lane.data_mutation, false);
+    assert.equal(lane.source_command, sourceCommand);
+    const manifestEntry = findBrainManifestEntry(report, (r) => r.system_id === systemId);
+    assert.ok(manifestEntry, systemId);
+    assert.equal(manifestEntry!.verdict, "CONNECTED");
+    assert.equal(manifestEntry!.cc_json_path, `command_center_v2.${contract}`);
+  }
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  for (const [, , systemId] of lanes) {
+    assert.ok(!gate.partial_entries.some((e) => e.system_id === systemId));
+  }
 });
 
 test("command_center_v2.demand_work_queue_summary_v1 is read-only CC-owned demand queue lane", async () => {

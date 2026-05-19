@@ -363,7 +363,9 @@ export function runBuckpartsSystemContractAudit(
   for (const frozenPath of frozenPaths) {
     const absPath = path.resolve(rootDir, frozenPath);
     if (fileExists(absPath)) {
-      sources.frozenScriptContentsByPath[frozenPath] = readTextFile(absPath);
+      const frozenContents = sources.frozenScriptContentsByPath ?? {};
+      frozenContents[frozenPath] = readTextFile(absPath);
+      sources.frozenScriptContentsByPath = frozenContents;
     }
   }
 

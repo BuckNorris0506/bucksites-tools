@@ -34,6 +34,13 @@ import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
+import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
+import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
+import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
+import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
+import { runBuckpartsSystemContractAudit } from "./audit-buckparts-system-contracts";
+import { runReportFounderDecisionRegistryV1 } from "./report-founder-decision-registry";
+import { runReportBuckpartsOperatingMap } from "./report-buckparts-operating-map";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -845,6 +852,10 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_vertical_launch_policy_v1"
     | "daily_operator_summary_v1"
     | "demand_work_queue_summary_v1"
+    | "system_contract_audit_summary_v1"
+    | "founder_decision_registry_summary_v1"
+    | "next_execution_packet_summary_v1"
+    | "operating_map_summary_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -881,7 +892,12 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_before_daily: Omit<
     CommandCenterV2Report,
-    "daily_operator_summary_v1" | "demand_work_queue_summary_v1"
+    | "daily_operator_summary_v1"
+    | "demand_work_queue_summary_v1"
+    | "system_contract_audit_summary_v1"
+    | "founder_decision_registry_summary_v1"
+    | "next_execution_packet_summary_v1"
+    | "operating_map_summary_v1"
   > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
@@ -965,7 +981,14 @@ export async function buildBuckpartsCommandCenterReport(
   });
   const daily_operator_summary_v1 = buildDailyOperatorSummaryV1FromReport(dailyOperatorFull);
 
-  const command_center_v2_before_demand: Omit<CommandCenterV2Report, "demand_work_queue_summary_v1"> = {
+  const command_center_v2_before_demand: Omit<
+    CommandCenterV2Report,
+    | "demand_work_queue_summary_v1"
+    | "system_contract_audit_summary_v1"
+    | "founder_decision_registry_summary_v1"
+    | "next_execution_packet_summary_v1"
+    | "operating_map_summary_v1"
+  > = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
   };
@@ -980,9 +1003,41 @@ export async function buildBuckpartsCommandCenterReport(
   });
   const demand_work_queue_summary_v1 = buildDemandWorkQueueSummaryV1FromReport(demandWorkQueueFull);
 
-  const command_center_v2: CommandCenterV2Report = {
+  const systemContractAuditFull = runBuckpartsSystemContractAudit({ rootDir });
+  const system_contract_audit_summary_v1 = buildSystemContractAuditSummaryV1FromReport(systemContractAuditFull, {
+    generated_at: now().toISOString(),
+  });
+
+  const founderDecisionRegistryFull = runReportFounderDecisionRegistryV1(rootDir);
+  const founder_decision_registry_summary_v1 =
+    buildFounderDecisionRegistrySummaryV1FromReport(founderDecisionRegistryFull);
+
+  const operatingMapFull = runReportBuckpartsOperatingMap();
+  const operating_map_summary_v1 = buildOperatingMapSummaryV1FromReport(operatingMapFull);
+
+  const command_center_v2_before_next_packet: Omit<CommandCenterV2Report, "next_execution_packet_summary_v1"> = {
     ...command_center_v2_before_demand,
+    daily_operator_summary_v1,
     demand_work_queue_summary_v1,
+    system_contract_audit_summary_v1,
+    founder_decision_registry_summary_v1,
+    operating_map_summary_v1,
+  };
+
+  const commandCenterShellForNextPacket = {
+    ...commandCenterShellForDaily,
+    command_center_v2: command_center_v2_before_next_packet,
+  };
+
+  const next_execution_packet_summary_v1 = buildNextExecutionPacketSummaryV1FromCommandCenterJson({
+    commandCenterJson: commandCenterShellForNextPacket,
+    command_center_ok: true,
+    now,
+  });
+
+  const command_center_v2: CommandCenterV2Report = {
+    ...command_center_v2_before_next_packet,
+    next_execution_packet_summary_v1,
   };
 
   const brainGate = command_center_v2.brain_integrity_gate_v1;

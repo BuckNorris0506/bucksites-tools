@@ -241,6 +241,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Demand work queue summary projected into Command Center JSON during report generation (read-only); full buckparts_demand_work_queue_v1 remains on npm run buckparts:demand-work-queue.",
   },
+  "buckparts:audit": {
+    cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.system_contract_audit_summary_v1.data_mutation'",
+    reason:
+      "System contract audit summary projected into Command Center JSON during report generation (read-only); full buckparts_system_contract_audit_v1 remains on npm run buckparts:audit.",
+  },
   "buckparts:founder-digest": {
     cc_json_path: null,
     verdict: "BYPASSING",
@@ -248,16 +256,20 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason: "Markdown digest slices CC; not operating JSON truth.",
   },
   "buckparts:next-execution-packet": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:next-execution-packet",
-    reason: "Wraps CC for copy-paste prompts; separate snapshot contract.",
+    cc_json_path: "command_center_v2.next_execution_packet_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.next_execution_packet_summary_v1.data_mutation'",
+    reason:
+      "Next execution packet summary projected into Command Center JSON during report generation (read-only); full snapshot remains on npm run buckparts:next-execution-packet.",
   },
   "buckparts:operating-map": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:operating-map",
-    reason: "Static topology JSON; not generated from live CC output.",
+    cc_json_path: "command_center_v2.operating_map_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.operating_map_summary_v1.data_mutation'",
+    reason:
+      "Operating map summary projected into Command Center JSON during report generation (read-only); full buckparts_operating_map_v1 remains on npm run buckparts:operating-map.",
   },
   "buckparts:precheck:amazon-refrigerator-tokens": {
     cc_json_path: null,
@@ -266,22 +278,18 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason: "Amazon insert-safety precheck CLI; not embedded in CC JSON.",
   },
   "buckparts:founder-decision-registry": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:founder-decision-registry",
-    reason: "Full registry report; CC only exposes batch_production_owner_decisions_lane_v1 slice.",
+    cc_json_path: "command_center_v2.founder_decision_registry_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.founder_decision_registry_summary_v1.data_mutation'",
+    reason:
+      "Founder decision registry summary projected into Command Center JSON during report generation (read-only); full founder_decision_registry_read_model_v1 remains on npm run buckparts:founder-decision-registry.",
   },
   "buckparts:runner-step": {
     cc_json_path: null,
     verdict: "BYPASSING",
     validation_command: "npm run buckparts:runner-step",
     reason: "Runner Step v1 JSON; optional digest env only, not CC lane.",
-  },
-  "buckparts:audit": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:audit",
-    reason: "System contract audit JSON separate from Command Center.",
   },
   "buckparts:learning-outcomes-approved-insert:mutate": {
     cc_json_path: null,

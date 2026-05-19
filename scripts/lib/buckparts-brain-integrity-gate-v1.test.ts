@@ -103,6 +103,10 @@ test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_vertical_launch_policy"));
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_daily"));
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_demand-work-queue"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_audit"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_founder-decision-registry"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_next-execution-packet"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_operating-map"));
 });
 
 test("buildBrainIntegrityGateV1 allowed_bypass uses default manifest bypass reason only", () => {

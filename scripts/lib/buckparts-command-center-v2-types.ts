@@ -4,6 +4,10 @@ import type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/own
 import type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-v1";
 import type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
+import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
+import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
+import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
@@ -827,6 +831,10 @@ export type CommandCenterV2Report = {
   owner_vertical_launch_policy_v1: OwnerVerticalLaunchPolicyV1;
   daily_operator_summary_v1: DailyOperatorSummaryV1;
   demand_work_queue_summary_v1: DemandWorkQueueSummaryV1;
+  system_contract_audit_summary_v1: SystemContractAuditSummaryV1;
+  founder_decision_registry_summary_v1: FounderDecisionRegistrySummaryV1;
+  next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
+  operating_map_summary_v1: OperatingMapSummaryV1;
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
 };
 
@@ -835,6 +843,10 @@ export type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboa
 export type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 export type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-v1";
 export type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
+export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
+export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
+export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -843,6 +855,10 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "owner_vertical_launch_policy_v1"
   | "daily_operator_summary_v1"
   | "demand_work_queue_summary_v1"
+  | "system_contract_audit_summary_v1"
+  | "founder_decision_registry_summary_v1"
+  | "next_execution_packet_summary_v1"
+  | "operating_map_summary_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */

@@ -60,6 +60,23 @@ test("buildBrainConsolidationPlanV1 advances next_consolidation_slice past CONNE
   assert.ok(!plan.high_priority_consolidation_targets.some((t) => t.system_id === "buckparts_demand-work-queue"));
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_demand-work-queue"));
   assert.ok(!plan.next_consolidation_slice.includes("demand_work_queue_summary_v1"));
+  const waveSystemIds = [
+    "buckparts_audit",
+    "buckparts_founder-decision-registry",
+    "buckparts_next-execution-packet",
+    "buckparts_operating-map",
+  ] as const;
+  for (const systemId of waveSystemIds) {
+    const manifestEntry = buildCommandCenterBrainCoverageManifestV1({
+      rootDir: process.cwd(),
+      now: () => new Date("2026-05-18T12:00:00.000Z"),
+      fileExists: existsSync,
+      readTextFile: (p) => readFileSync(p, "utf8"),
+    }).entries.find((e) => e.system_id === systemId);
+    assert.equal(manifestEntry?.verdict, "CONNECTED", systemId);
+    assert.ok(!plan.high_priority_consolidation_targets.some((t) => t.system_id === systemId), systemId);
+    assert.ok(!plan.next_consolidation_slice.includes(systemId), systemId);
+  }
 });
 
 test("buildBrainConsolidationPlanV1 excludes mutating executor from integration targets", () => {
