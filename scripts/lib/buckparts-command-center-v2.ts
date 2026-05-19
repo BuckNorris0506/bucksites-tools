@@ -195,7 +195,10 @@ export function buildCommandCenterV2Report(input: {
   confidenceApprovalLookup: ConfidenceApprovalLookup;
 }): Omit<
   CommandCenterV2Report,
-  "external_measurement_freshness_v1" | "owner_integrity_sentinel_v1" | "owner_quarantined_fridge_models_v1"
+  | "external_measurement_freshness_v1"
+  | "owner_integrity_sentinel_v1"
+  | "owner_quarantined_fridge_models_v1"
+  | "owner_vertical_launch_policy_v1"
 > {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {

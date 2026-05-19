@@ -26,12 +26,19 @@ test("buildBrainConsolidationPlanV1 is read-only and summarizes manifest verdict
   assert.ok(plan.high_priority_consolidation_targets.length >= 1);
 });
 
-test("buildBrainConsolidationPlanV1 prefers owner_vertical_launch_policy for next_consolidation_slice while dashboard-only", () => {
+test("buildBrainConsolidationPlanV1 advances next_consolidation_slice past CONNECTED owner_vertical_launch_policy", () => {
   const plan = buildLivePlan();
-  assert.ok(plan.next_consolidation_slice.includes("owner_vertical_launch_policy"));
-  assert.ok(
-    plan.high_priority_consolidation_targets.some((t) => t.system_id === "owner_vertical_launch_policy"),
-  );
+  const verticalManifest = buildCommandCenterBrainCoverageManifestV1({
+    rootDir: process.cwd(),
+    now: () => new Date("2026-05-18T12:00:00.000Z"),
+    fileExists: existsSync,
+    readTextFile: (p) => readFileSync(p, "utf8"),
+  }).entries.find((e) => e.system_id === "owner_vertical_launch_policy");
+  assert.equal(verticalManifest?.verdict, "CONNECTED");
+  assert.equal(verticalManifest?.dashboard_only, false);
+  assert.ok(!plan.high_priority_consolidation_targets.some((t) => t.system_id === "owner_vertical_launch_policy"));
+  assert.ok(plan.next_consolidation_slice.includes("buckparts_daily"));
+  assert.ok(!plan.next_consolidation_slice.includes("owner_vertical_launch_policy_v1"));
 });
 
 test("buildBrainConsolidationPlanV1 excludes mutating executor from integration targets", () => {

@@ -31,6 +31,7 @@ import {
 import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
 import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
+import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -837,7 +838,9 @@ export async function buildBuckpartsCommandCenterReport(
   ]);
   const command_center_v2_core: Omit<
     CommandCenterV2Report,
-    "owner_integrity_sentinel_v1" | "owner_quarantined_fridge_models_v1"
+    | "owner_integrity_sentinel_v1"
+    | "owner_quarantined_fridge_models_v1"
+    | "owner_vertical_launch_policy_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -846,6 +849,7 @@ export async function buildBuckpartsCommandCenterReport(
   };
 
   const owner_quarantined_fridge_models_v1 = await buildOwnerQuarantinedFridgeModelsV1();
+  const owner_vertical_launch_policy_v1 = buildOwnerVerticalLaunchPolicyV1();
 
   const owner_integrity_sentinel_v1 = buildOwnerIntegritySentinelV1({
     report: {
@@ -874,6 +878,7 @@ export async function buildBuckpartsCommandCenterReport(
   const command_center_v2: CommandCenterV2Report = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
+    owner_vertical_launch_policy_v1,
     owner_integrity_sentinel_v1,
   };
 

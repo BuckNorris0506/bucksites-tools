@@ -2680,11 +2680,36 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.equal(plan.data_mutation, false);
   assert.equal(plan.connected_count, manifest.verdict_counts.CONNECTED);
   assert.equal(plan.bypassing_count, manifest.verdict_counts.BYPASSING);
-  assert.ok(plan.next_consolidation_slice.includes("owner_vertical_launch_policy"));
+  assert.ok(plan.next_consolidation_slice.includes("buckparts_daily"));
+  assert.ok(!plan.next_consolidation_slice.includes("owner_vertical_launch_policy_v1"));
   const mutate = plan.do_not_integrate_entries.find((e) => e.system_id.includes("mutate"));
   assert.ok(mutate);
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "hq_handoff_doc"));
   assert.ok(plan.proven_facts.some((f) => f.includes(gate.brain_status)));
+});
+
+test("command_center_v2.owner_vertical_launch_policy_v1 is read-only CC-owned launch policy lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.owner_vertical_launch_policy_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "owner_vertical_launch_policy_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.ok(lane.rows.some((r) => r.vertical_slug === "refrigerator"));
+
+  const manifestEntry = findBrainManifestEntry(report, (r) => r.system_id === "owner_vertical_launch_policy");
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.dashboard_only, false);
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.owner_vertical_launch_policy_v1");
+
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_vertical_launch_policy"));
 });
 
 test("command_center_v2.owner_quarantined_fridge_models_v1 is read-only CC-owned quarantine lane", async () => {

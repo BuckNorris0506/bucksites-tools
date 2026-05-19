@@ -13,11 +13,11 @@ import {
   buildOwnerSearchDemandAndGapsReportFromSummary,
   type OwnerSearchDemandAndGapsReport,
 } from "@/lib/owner-dashboard/owner-search-demand-and-gaps-build-v1";
+import type { OwnerVerticalLaunchPolicyReport } from "@/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import {
   attachOwnerVerticalLaunchPolicyReport,
-  buildOwnerVerticalLaunchPolicyReport,
-  type OwnerVerticalLaunchPolicyReport,
-} from "@/lib/owner-dashboard/owner-vertical-launch-policy";
+  buildOwnerVerticalLaunchPolicyV1,
+} from "@/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
   type OwnerGscExternalDemandNeuron,
@@ -64,6 +64,17 @@ export {
   buildOwnerQuarantinedFridgeModelsSummary,
   buildOwnerQuarantinedFridgeModelsV1,
 } from "@/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
+
+export type {
+  OwnerVerticalLaunchPolicyReport,
+  OwnerVerticalLaunchPolicyRow,
+  OwnerVerticalLaunchPolicyV1,
+} from "@/lib/owner-dashboard/owner-vertical-launch-policy-v1";
+export {
+  attachOwnerVerticalLaunchPolicyReport,
+  buildOwnerVerticalLaunchPolicyReport,
+  buildOwnerVerticalLaunchPolicyV1,
+} from "@/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 
 export type {
   IntegritySentinelActionSafety,
@@ -176,7 +187,8 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
     const quarantinedLane =
       report.command_center_v2.owner_quarantined_fridge_models_v1 ??
       (await buildOwnerQuarantinedFridgeModelsV1());
-    const launchPolicy = buildOwnerVerticalLaunchPolicyReport();
+    const launchPolicy =
+      report.command_center_v2.owner_vertical_launch_policy_v1 ?? buildOwnerVerticalLaunchPolicyV1();
     const gscExternalDemand = await buildOwnerGscExternalDemandReport({ rootDir });
     const searchDemandAndGaps = buildOwnerSearchDemandAndGapsReport({ report });
     const neurons =
