@@ -1,0 +1,7 @@
+{
+  "contract": "buckparts_spend_ledger_v1",
+  "read_only": false,
+  "data_mutation": true,
+  "updated_at": "2026-05-18T00:00:00.000Z",
+  "entries": []
+}

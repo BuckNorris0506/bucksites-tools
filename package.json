@@ -95,6 +95,7 @@
     "buckparts:next-execution-packet": "tsx scripts/buckparts-next-execution-packet.ts",
     "buckparts:copy-next-execution-packet": "tsx scripts/buckparts-copy-next-execution-packet.ts",
     "buckparts:runner-step": "tsx scripts/buckparts-runner-step.ts",
+    "buckparts:spend-ledger:append": "tsx scripts/append-buckparts-spend-ledger-entry.ts",
     "buckparts:runner-step:gh": "tsx scripts/run-buckparts-runner-step-gh.ts",
     "buckparts:codex-readonly-smoke": "tsx scripts/run-buckparts-codex-readonly-smoke.ts",
     "buckparts:codex-next-execution-packet": "tsx scripts/run-buckparts-codex-next-execution-packet.ts",
