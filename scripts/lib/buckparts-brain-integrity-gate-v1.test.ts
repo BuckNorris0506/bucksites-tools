@@ -101,6 +101,7 @@ test("buildBrainIntegrityGateV1 lists dashboard decision gaps in partial_entries
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_integrity_sentinel"));
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_quarantined_fridge_models"));
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_vertical_launch_policy"));
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_daily"));
 });
 
 test("buildBrainIntegrityGateV1 allowed_bypass uses default manifest bypass reason only", () => {

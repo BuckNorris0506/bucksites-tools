@@ -226,10 +226,12 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason: "Read-only check feeds deploy lane when artifact exists.",
   },
   "buckparts:daily": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:daily",
-    reason: "Separate buckparts_daily_operator_v1 contract; reads CC internally but does not publish into CC JSON.",
+    cc_json_path: "command_center_v2.daily_operator_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.daily_operator_summary_v1.data_mutation'",
+    reason:
+      "Daily operator decision summary projected into Command Center JSON during report generation (read-only); full buckparts_daily_operator_v1 remains on npm run buckparts:daily.",
   },
   "buckparts:demand-work-queue": {
     cc_json_path: null,

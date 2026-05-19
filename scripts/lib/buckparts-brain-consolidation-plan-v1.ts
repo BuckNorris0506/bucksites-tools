@@ -24,7 +24,7 @@ export type BuildBrainConsolidationPlanArgs = {
 const NEXT_SLICE_PRIORITY_SYSTEM_IDS = [
   "owner_vertical_launch_policy",
   "buckparts_daily",
-  "buckparts_demand_work_queue",
+  "buckparts_demand-work-queue",
   "owner_gsc_external_demand",
   "owner_search_demand_and_gaps",
   "buckparts_founder_decision_registry",

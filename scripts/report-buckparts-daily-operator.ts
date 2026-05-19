@@ -292,13 +292,14 @@ function buildTopOfGameChecklistStatus(input: {
     typeof input.gsc.total_impressions === "number" &&
     typeof input.gsc.total_clicks === "number";
   const pageInventoryOk =
-    input.commandSurface?.state_system_metrics.page_state.computable === true &&
-    input.commandSurface.state_system_metrics.page_state.contract === "sitemap_artifact_inventory_v1";
+    input.commandSurface?.state_system_metrics?.page_state?.computable === true &&
+    input.commandSurface?.state_system_metrics?.page_state?.contract === "sitemap_artifact_inventory_v1";
   const ctaOk =
-    input.commandSurface?.cta_coverage_metrics.runtime_status === "OK" &&
-    input.commandSurface.retailer_link_state_metrics.runtime_status === "OK";
+    input.commandSurface?.cta_coverage_metrics?.runtime_status === "OK" &&
+    input.commandSurface?.retailer_link_state_metrics?.runtime_status === "OK";
   const evidenceInventoryOk =
-    input.commandCenter?.command_center_v2.recent_evidence.evidence_inventory.contract === "evidence_inventory_v1";
+    input.commandCenter?.command_center_v2?.recent_evidence?.evidence_inventory?.contract ===
+    "evidence_inventory_v1";
   const ga4Ok = input.ga4?.status === "OK";
   const liveSiteKnown = input.liveSite != null && input.liveSite.runtime_status !== "UNKNOWN_CONFIG";
   const readOnlyKnown = input.liveSite != null || input.commandCenter != null || input.commandSurface != null;
@@ -597,10 +598,10 @@ export async function buildBuckpartsDailyOperatorReport(
     ga4?.status === "OK"
       ? `GA4 trust-funnel aggregate loaded from ${ga4.source}; zero event totals are treated as valid counts, not failure by themselves.`
       : null,
-    commandSurface?.state_system_metrics.page_state.contract === "sitemap_artifact_inventory_v1"
+    commandSurface?.state_system_metrics?.page_state?.contract === "sitemap_artifact_inventory_v1"
       ? "Page-state signal is authoritative only as sitemap artifact inventory/policy."
       : null,
-    commandCenter?.command_center_v2.recent_evidence.evidence_inventory.contract === "evidence_inventory_v1"
+    commandCenter?.command_center_v2?.recent_evidence?.evidence_inventory?.contract === "evidence_inventory_v1"
       ? "Evidence signal is authoritative only as inventory/body mapping."
       : null,
   ].filter((v): v is string => typeof v === "string");

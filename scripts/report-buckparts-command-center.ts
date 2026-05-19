@@ -32,6 +32,7 @@ import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/
 import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
+import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -841,6 +842,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_integrity_sentinel_v1"
     | "owner_quarantined_fridge_models_v1"
     | "owner_vertical_launch_policy_v1"
+    | "daily_operator_summary_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -875,11 +877,92 @@ export async function buildBuckpartsCommandCenterReport(
     },
   });
 
-  const command_center_v2: CommandCenterV2Report = {
+  const command_center_v2_before_daily: Omit<CommandCenterV2Report, "daily_operator_summary_v1"> = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
     owner_vertical_launch_policy_v1,
     owner_integrity_sentinel_v1,
+  };
+
+  const commandCenterShellForDaily = {
+    report_name: "buckparts_command_center_v1" as const,
+    generated_at: now().toISOString(),
+    read_only: true as const,
+    data_mutation: false as const,
+    system_health_summary: {
+      status: commandSurface.system_health.status,
+      reasons: commandSurface.system_health.reasons,
+      recommended_next_step: commandSurface.recommended_next_step,
+    },
+    affiliate_readiness_summary: {
+      approved_count: affiliateTracker.records_approved.length,
+      pending_count: pendingNetworkOrPrograms.length,
+      pending_network_or_programs: pendingNetworkOrPrograms,
+      repairclinic_status: repairclinicStatus,
+      affiliate_approval_pending: affiliateApprovalPending,
+    },
+    top_money_queue: topMoneyQueue,
+    recent_learning_outcomes: {
+      frigidaire_dead_oem_outcome: {
+        all_resolved: frigidaireDeadOem.all_resolved,
+        unresolved_count: frigidaireDeadOem.targets.filter((target) => !target.found).length,
+        recommended_next_action: frigidaireDeadOem.recommended_next_action,
+      },
+      evidence_files: evidenceFiles,
+    },
+    blocked_link_summary: {
+      total_blocked_links: blockedQueue.total_blocked_links,
+      top_blocked_state:
+        blockedQueue.top_blocked_states === "UNKNOWN"
+          ? "UNKNOWN"
+          : (blockedQueue.top_blocked_states[0]?.state ?? "UNKNOWN"),
+      top_blocked_retailer_key:
+        blockedQueue.top_blocked_retailer_keys === "UNKNOWN"
+          ? "UNKNOWN"
+          : (blockedQueue.top_blocked_retailer_keys[0]?.retailer_key ?? "UNKNOWN"),
+      recommended_first_action: blockedQueue.recommended_first_action,
+    },
+    search_and_click_intelligence_summary: searchAndClickSummary,
+    money_funnel_summary: moneyFunnelSummary,
+    rescue_velocity_summary: rescueVelocitySummary,
+    rescue_delta_trend_summary: rescueDeltaTrendSummary,
+    amazon_first_blocked_queue_summary: amazonFirstSummary,
+    execution_guidance: {
+      next_move_mode: nextMoveMode,
+      next_move_command: nextMoveCommand,
+      mutating_blocked: mutatingBlocked,
+      mutating_block_reasons: mutatingBlockedReasons,
+      staleness_or_dirty_risk: stalenessOrDirtyRisk,
+    },
+    next_best_action: nextBestAction,
+    why_this_action: whyThisAction,
+    operator_can_be_away_status: operatorAwayStatus,
+    known_unknowns: knownUnknowns,
+    command_center_v2: command_center_v2_before_daily,
+    owner_command_center_neurons: null as unknown,
+  };
+
+  const { buildBuckpartsDailyOperatorReport } = await import("./report-buckparts-daily-operator");
+  const dailyOperatorFull = await buildBuckpartsDailyOperatorReport({
+    rootDir,
+    now,
+    providers: {
+      commandCenter: async () =>
+        commandCenterShellForDaily as Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+      commandSurface: async () => commandSurface,
+      liveSiteSmokeCheck: async () => {
+        if (liveSiteMonitor) return liveSiteMonitor;
+        throw new Error(
+          "Live-site monitor artifact unavailable during Command Center build; daily operator live-site signal is UNKNOWN.",
+        );
+      },
+    },
+  });
+  const daily_operator_summary_v1 = buildDailyOperatorSummaryV1FromReport(dailyOperatorFull);
+
+  const command_center_v2: CommandCenterV2Report = {
+    ...command_center_v2_before_daily,
+    daily_operator_summary_v1,
   };
 
   const brainGate = command_center_v2.brain_integrity_gate_v1;

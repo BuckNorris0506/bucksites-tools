@@ -37,7 +37,17 @@ test("buildBrainConsolidationPlanV1 advances next_consolidation_slice past CONNE
   assert.equal(verticalManifest?.verdict, "CONNECTED");
   assert.equal(verticalManifest?.dashboard_only, false);
   assert.ok(!plan.high_priority_consolidation_targets.some((t) => t.system_id === "owner_vertical_launch_policy"));
-  assert.ok(plan.next_consolidation_slice.includes("buckparts_daily"));
+  const dailyManifest = buildCommandCenterBrainCoverageManifestV1({
+    rootDir: process.cwd(),
+    now: () => new Date("2026-05-18T12:00:00.000Z"),
+    fileExists: existsSync,
+    readTextFile: (p) => readFileSync(p, "utf8"),
+  }).entries.find((e) => e.system_id === "buckparts_daily");
+  assert.equal(dailyManifest?.verdict, "CONNECTED");
+  assert.equal(dailyManifest?.cc_json_path, "command_center_v2.daily_operator_summary_v1");
+  assert.ok(!plan.high_priority_consolidation_targets.some((t) => t.system_id === "buckparts_daily"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_daily"));
+  assert.ok(!plan.next_consolidation_slice.includes("daily_operator_summary_v1"));
   assert.ok(!plan.next_consolidation_slice.includes("owner_vertical_launch_policy_v1"));
 });
 
