@@ -30,7 +30,6 @@ const NEXT_SLICE_PRIORITY_SYSTEM_IDS = [
   "buckparts_founder_decision_registry",
   "buckparts_next_execution_packet",
   "buckparts_operating_map",
-  "buckparts_precheck_amazon_refrigerator_tokens",
   "buckparts_runner_step",
   "buckparts_audit",
   "sentry_error_monitoring",
@@ -83,11 +82,18 @@ function isMarkdownDownstreamDigest(entry: BrainCoverageManifestEntryV1): boolea
   return /Markdown downstream digest; intentionally standalone/i.test(entry.reason);
 }
 
+function isAmazonInsertSafetyPrecheck(entry: BrainCoverageManifestEntryV1): boolean {
+  if (entry.system_id === "buckparts_precheck_amazon-refrigerator-tokens") return true;
+  if (entry.npm_script_or_path.includes("buckparts:precheck:amazon-refrigerator-tokens")) return true;
+  return /insert-safety precheck; intentionally standalone/i.test(entry.reason);
+}
+
 function isIntentionallyStandalone(entry: BrainCoverageManifestEntryV1): boolean {
   if (isDoNotIntegrate(entry)) return false;
   if (entry.verdict === "CONNECTED") return false;
   if (isPartialWithCcPath(entry)) return false;
   if (isMarkdownDownstreamDigest(entry)) return true;
+  if (isAmazonInsertSafetyPrecheck(entry)) return true;
   if (isMutatingSurface(entry)) return true;
   const path = `${entry.system_id} ${entry.npm_script_or_path}`;
   if (
@@ -186,7 +192,9 @@ export function buildBrainConsolidationPlanV1(args: BuildBrainConsolidationPlanA
           entry,
           isMarkdownDownstreamDigest(entry)
             ? "Markdown downstream digest; reformats CC JSON and optional CI artifacts for founder copy/paste — not CC operating truth."
-            : isMutatingSurface(entry)
+            : isAmazonInsertSafetyPrecheck(entry)
+              ? "On-demand Amazon refrigerator insert-safety precheck; per-token ASIN reuse proof stays on CLI — cohort priority in command_center_v2.amazon_rescue / amazon_first_blocked_queue_summary."
+              : isMutatingSurface(entry)
               ? "Mutating or write path; must remain outside read-only CC brain."
               : "Operational CLI, guardrail, runbook, or batch worksheet; standalone by design.",
         ),

@@ -2721,6 +2721,24 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
     (report.command_center_v2 as { founder_digest_summary_v1?: unknown }).founder_digest_summary_v1,
     undefined,
   );
+  assert.ok(!plan.next_consolidation_slice.includes("precheck"));
+  assert.ok(!plan.next_consolidation_slice.includes("amazon-refrigerator-token"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_precheck_amazon-refrigerator-tokens"));
+  assert.ok(
+    plan.intentionally_standalone_entries.some(
+      (e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens",
+    ),
+  );
+  assert.ok(
+    !plan.high_priority_consolidation_targets.some(
+      (e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens",
+    ),
+  );
+  assert.equal(
+    (report.command_center_v2 as { amazon_refrigerator_token_precheck_summary_v1?: unknown })
+      .amazon_refrigerator_token_precheck_summary_v1,
+    undefined,
+  );
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_daily"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_demand-work-queue"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_audit"));

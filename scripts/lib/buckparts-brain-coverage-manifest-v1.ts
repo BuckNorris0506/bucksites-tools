@@ -276,7 +276,8 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     cc_json_path: null,
     verdict: "BYPASSING",
     validation_command: "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens GSWF",
-    reason: "Amazon insert-safety precheck CLI; not embedded in CC JSON.",
+    reason:
+      "On-demand Amazon refrigerator insert-safety precheck; intentionally standalone. Cohort-level token priority lives in command_center_v2.amazon_rescue / amazon_first_blocked_queue_summary; run this CLI with --tokens from the CC Amazon rescue cohort only when insert planning or ASIN reuse proof is needed.",
   },
   "buckparts:founder-decision-registry": {
     cc_json_path: "command_center_v2.founder_decision_registry_summary_v1",

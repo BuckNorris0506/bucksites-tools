@@ -106,6 +106,33 @@ test("buildBrainConsolidationPlanV1 treats buckparts_founder-digest as intention
   assert.ok(!plan.next_consolidation_slice.includes("founder_digest_summary_v1"));
 });
 
+test("buildBrainConsolidationPlanV1 treats buckparts_precheck_amazon-refrigerator-tokens as intentionally standalone", () => {
+  const plan = buildLivePlan();
+  const manifestEntry = buildCommandCenterBrainCoverageManifestV1({
+    rootDir: process.cwd(),
+    now: () => new Date("2026-05-18T12:00:00.000Z"),
+    fileExists: existsSync,
+    readTextFile: (p) => readFileSync(p, "utf8"),
+  }).entries.find((e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens");
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "BYPASSING");
+  assert.equal(manifestEntry!.cc_json_path, null);
+  assert.equal(manifestEntry!.dashboard_only, false);
+  assert.match(manifestEntry!.reason, /insert-safety precheck; intentionally standalone/);
+  const standalone = plan.intentionally_standalone_entries.find(
+    (e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens",
+  );
+  assert.ok(standalone);
+  assert.ok(
+    !plan.high_priority_consolidation_targets.some(
+      (e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens",
+    ),
+  );
+  assert.ok(!plan.next_consolidation_slice.includes("precheck"));
+  assert.ok(!plan.next_consolidation_slice.includes("amazon-refrigerator-token"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_precheck_amazon-refrigerator-tokens"));
+});
+
 test("buildBrainConsolidationPlanV1 keeps HQ handoff in do_not_integrate", () => {
   const plan = buildLivePlan();
   const hq = plan.do_not_integrate_entries.find((e) => e.system_id === "hq_handoff_doc");
