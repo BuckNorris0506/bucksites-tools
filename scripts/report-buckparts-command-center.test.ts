@@ -2711,6 +2711,16 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_founder-decision-registry"));
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_next-execution-packet"));
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_operating-map"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_founder-digest"));
+  assert.ok(!plan.next_consolidation_slice.includes("founder_digest_summary_v1"));
+  assert.ok(
+    plan.intentionally_standalone_entries.some((e) => e.system_id === "buckparts_founder-digest"),
+  );
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_founder-digest"));
+  assert.equal(
+    (report.command_center_v2 as { founder_digest_summary_v1?: unknown }).founder_digest_summary_v1,
+    undefined,
+  );
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_daily"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_demand-work-queue"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_audit"));

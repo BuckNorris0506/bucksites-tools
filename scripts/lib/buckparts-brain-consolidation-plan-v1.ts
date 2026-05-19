@@ -28,7 +28,6 @@ const NEXT_SLICE_PRIORITY_SYSTEM_IDS = [
   "owner_gsc_external_demand",
   "owner_search_demand_and_gaps",
   "buckparts_founder_decision_registry",
-  "buckparts_founder_digest",
   "buckparts_next_execution_packet",
   "buckparts_operating_map",
   "buckparts_precheck_amazon_refrigerator_tokens",
@@ -78,10 +77,17 @@ function isPartialWithCcPath(entry: BrainCoverageManifestEntryV1): boolean {
   return entry.verdict === "PARTIAL" && entry.cc_json_path != null && entry.cc_json_path.length > 0;
 }
 
+function isMarkdownDownstreamDigest(entry: BrainCoverageManifestEntryV1): boolean {
+  if (entry.system_id === "buckparts_founder-digest") return true;
+  if (entry.npm_script_or_path.includes("buckparts:founder-digest")) return true;
+  return /Markdown downstream digest; intentionally standalone/i.test(entry.reason);
+}
+
 function isIntentionallyStandalone(entry: BrainCoverageManifestEntryV1): boolean {
   if (isDoNotIntegrate(entry)) return false;
   if (entry.verdict === "CONNECTED") return false;
   if (isPartialWithCcPath(entry)) return false;
+  if (isMarkdownDownstreamDigest(entry)) return true;
   if (isMutatingSurface(entry)) return true;
   const path = `${entry.system_id} ${entry.npm_script_or_path}`;
   if (
@@ -178,9 +184,11 @@ export function buildBrainConsolidationPlanV1(args: BuildBrainConsolidationPlanA
       intentionally_standalone_entries.push(
         toPlanEntry(
           entry,
-          isMutatingSurface(entry)
-            ? "Mutating or write path; must remain outside read-only CC brain."
-            : "Operational CLI, guardrail, runbook, or batch worksheet; standalone by design.",
+          isMarkdownDownstreamDigest(entry)
+            ? "Markdown downstream digest; reformats CC JSON and optional CI artifacts for founder copy/paste — not CC operating truth."
+            : isMutatingSurface(entry)
+              ? "Mutating or write path; must remain outside read-only CC brain."
+              : "Operational CLI, guardrail, runbook, or batch worksheet; standalone by design.",
         ),
       );
       continue;

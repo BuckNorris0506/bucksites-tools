@@ -253,7 +253,8 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     cc_json_path: null,
     verdict: "BYPASSING",
     validation_command: "npm run buckparts:founder-digest",
-    reason: "Markdown digest slices CC; not operating JSON truth.",
+    reason:
+      "Markdown downstream digest; intentionally standalone. Reformats Command Center JSON plus optional CI/artifact inputs for founder copy/paste; not Command Center operating truth.",
   },
   "buckparts:next-execution-packet": {
     cc_json_path: "command_center_v2.next_execution_packet_summary_v1",
