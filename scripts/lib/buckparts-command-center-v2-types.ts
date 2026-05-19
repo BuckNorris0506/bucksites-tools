@@ -8,6 +8,7 @@ import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decis
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
+import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
@@ -860,6 +861,8 @@ export type CommandCenterV2Report = {
   next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
   operating_map_summary_v1: OperatingMapSummaryV1;
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
+  /** Read-only semantic page/publishability truth for refrigerator filter pages (Cruise diagnostics). */
+  page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
 };
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
@@ -871,6 +874,10 @@ export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decis
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
+export type {
+  PagePublishabilityTruthSummaryV1,
+  PagePublishabilityTruthRowV1,
+} from "./buckparts-page-publishability-truth-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -883,6 +890,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"
   | "operating_map_summary_v1"
+  | "page_publishability_truth_summary_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */

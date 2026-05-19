@@ -38,6 +38,14 @@ import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
 import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
+import {
+  buildPagePublishabilityTruthSummaryV1,
+  parseFilterSlugToModelSlugsFromCompatibilityCsv,
+  parseRefrigeratorFiltersCatalogCsv,
+  tryLoadRefrigeratorFilterCtaJoinBySlugV1,
+  tryLoadRefrigeratorUsefulFilterSlugsV1,
+  type PagePublishabilityTruthSummaryV1,
+} from "./lib/buckparts-page-publishability-truth-v1";
 import { runBuckpartsSystemContractAudit } from "./audit-buckparts-system-contracts";
 import { runReportFounderDecisionRegistryV1 } from "./report-founder-decision-registry";
 import { runReportBuckpartsOperatingMap } from "./report-buckparts-operating-map";
@@ -222,6 +230,8 @@ type BuildOptions = {
   evidenceToLearningOutcomesCandidateImportLoader?: () => Promise<EvidenceToLearningOutcomesCandidateImportV1>;
   /** When set, skips disk load of confidence approvals registry (tests). */
   learningOutcomesConfidenceApprovalsLoader?: () => LearningOutcomesConfidenceApprovalsLoadedV1;
+  /** When set, skips catalog/Supabase joins for page publishability truth (tests). */
+  pagePublishabilityTruthSummaryLoader?: () => Promise<PagePublishabilityTruthSummaryV1>;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -856,6 +866,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "page_publishability_truth_summary_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -890,6 +901,36 @@ export async function buildBuckpartsCommandCenterReport(
     },
   });
 
+  const filtersCsvPath = path.resolve(rootDir, "data/filters.csv");
+  const compatCsvPath = path.resolve(rootDir, "data/compatibility_mappings.csv");
+  const refrigeratorCatalogRows = fileExists(filtersCsvPath)
+    ? parseRefrigeratorFiltersCatalogCsv(readTextFile(filtersCsvPath))
+    : [];
+  const refrigeratorFilterSlugToModels = fileExists(compatCsvPath)
+    ? parseFilterSlugToModelSlugsFromCompatibilityCsv(readTextFile(compatCsvPath))
+    : new Map<string, string[]>();
+
+  const pagePublishabilityTruthLoader =
+    options.pagePublishabilityTruthSummaryLoader ??
+    (async () => {
+      const [indexable_slugs, cta_join_by_filter_slug] = await Promise.all([
+        tryLoadRefrigeratorUsefulFilterSlugsV1(),
+        tryLoadRefrigeratorFilterCtaJoinBySlugV1(refrigeratorFilterSlugToModels),
+      ]);
+      return buildPagePublishabilityTruthSummaryV1({
+        generated_at: now().toISOString(),
+        catalog_rows: refrigeratorCatalogRows,
+        evidence_inventory: command_center_v2_core.recent_evidence.evidence_inventory,
+        filter_slug_to_model_slugs: refrigeratorFilterSlugToModels,
+        indexable_slugs,
+        cta_join_by_filter_slug,
+        affiliate_approval_pending: affiliateApprovalPending,
+        commission_or_revenue: "NOT_CONNECTED",
+      });
+    });
+
+  const page_publishability_truth_summary_v1 = await pagePublishabilityTruthLoader();
+
   const command_center_v2_before_daily: Omit<
     CommandCenterV2Report,
     | "daily_operator_summary_v1"
@@ -903,6 +944,7 @@ export async function buildBuckpartsCommandCenterReport(
     owner_quarantined_fridge_models_v1,
     owner_vertical_launch_policy_v1,
     owner_integrity_sentinel_v1,
+    page_publishability_truth_summary_v1,
   };
 
   const commandCenterShellForDaily = {

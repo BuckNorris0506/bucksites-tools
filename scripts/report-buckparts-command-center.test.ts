@@ -44,6 +44,9 @@ import {
 import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/external-measurement-freshness-v1";
 import type { Ga4TrustFunnelArtifact } from "../src/lib/owner-dashboard/ga4-trust-funnel-artifact";
 import {
+  buildPagePublishabilityTruthSummaryV1,
+} from "./lib/buckparts-page-publishability-truth-v1";
+import {
   buildBuckpartsCommandCenterReport,
   stripEvidenceUncappedCandidatesForStdout,
 } from "./report-buckparts-command-center";
@@ -3214,6 +3217,82 @@ test("Command Center JSON includes owner_command_center_neurons from CC build (n
   const keys = report.owner_command_center_neurons.neurons.map((n) => n.neuron_key);
   assert.deepEqual([...keys].sort(), [...EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS].sort());
   assert.equal(keys.length, EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS.length);
+});
+
+test("command_center_v2.page_publishability_truth_summary_v1 is read-only semantic lane", async () => {
+  const stubSummary = buildPagePublishabilityTruthSummaryV1({
+    generated_at: "2026-05-18T00:00:00.000Z",
+    catalog_rows: [{ filter_slug: "mwf", oem_token: "MWF", brand_slug: "ge" }],
+    evidence_inventory: {
+      contract: "evidence_inventory_v1",
+      proven_facts: [],
+      unknown_facts: [],
+      data_evidence: {
+        directory_relative_path: "data/evidence",
+        total_json_files: 0,
+        filename_outcome_buckets: {
+          live_outcome_by_filename_substring: 0,
+          unknown_outcome_by_filename_substring: 0,
+          fail_hold_outcome_by_filename_substring: 0,
+          other_json_not_matching_filename_patterns: 0,
+        },
+        recent_filenames: [],
+        recent_ordering: "lexicographic_by_filename",
+        proven_facts: [],
+        unknown_facts: [],
+        body_mapping: {
+          parsed_ok_count: 0,
+          parse_error_count: 0,
+          mapped_count: 0,
+          unmapped_count: 0,
+          by_scope: {},
+          by_filter_slug: {},
+          by_token: {},
+        },
+      },
+      refrigerator_manual_evidence: {
+        inventory_contract: "refrigerator_manual_evidence_files_v1",
+        directory_relative_path: "data/manual-evidence/refrigerator",
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+      fridge_form_factor_evidence: {
+        inventory_contract: "fridge_form_factor_evidence_files_v1",
+        directory_relative_path: "data/fridge-form-factor-evidence",
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+    },
+    filter_slug_to_model_slugs: new Map(),
+    indexable_slugs: null,
+    cta_join_by_filter_slug: null,
+    affiliate_approval_pending: true,
+    commission_or_revenue: "NOT_CONNECTED",
+  });
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: fileExistsTokenControlsOnly,
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("affiliate-application-tracker.json") ? BASE_TRACKER : ""),
+    pagePublishabilityTruthSummaryLoader: async () => stubSummary,
+  });
+
+  const lane = report.command_center_v2.page_publishability_truth_summary_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "page_publishability_truth_summary_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.page_kind, "refrigerator_filter");
+  assert.ok(lane.unknown_join_count > 0);
+  assert.ok(!Object.keys(lane.distribution_automation_allowed).includes("auto_fix_allowed"));
+  assert.ok(lane.sample_rows.length <= 25);
 });
 
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {

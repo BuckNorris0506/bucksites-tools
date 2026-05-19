@@ -205,6 +205,7 @@ export function buildCommandCenterV2Report(input: {
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"
   | "operating_map_summary_v1"
+  | "page_publishability_truth_summary_v1"
 > {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {
