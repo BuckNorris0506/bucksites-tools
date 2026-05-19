@@ -3219,6 +3219,44 @@ test("Command Center JSON includes owner_command_center_neurons from CC build (n
   assert.equal(keys.length, EXPECTED_OWNER_COMMAND_CENTER_NEURON_KEYS.length);
 });
 
+test("page_state_distribution neuron reflects page_publishability_truth_summary_v1 when computable", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir: path.resolve(__dirname, ".."),
+    providers: baseProviders(),
+    fileExists: (p) =>
+      p.endsWith("data/filters.csv") ||
+      p.endsWith("data/compatibility_mappings.csv") ||
+      fileExistsTokenControlsOnly(p),
+    readDir: () => [],
+    readTextFile: (p) => {
+      if (p.endsWith("affiliate-application-tracker.json")) return BASE_TRACKER;
+      if (p.endsWith("amazon-rescue-token-controls.json")) return MINIMAL_TOKEN_CONTROLS_JSON;
+      return fs.readFileSync(p, "utf8");
+    },
+  });
+  const lane = report.command_center_v2.page_publishability_truth_summary_v1;
+  assert.ok(lane);
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  const ps = report.owner_command_center_neurons.neurons.find(
+    (n) => n.neuron_key === "page_state_distribution",
+  );
+  assert.ok(ps);
+  if (lane.computable_semantic_count > 0) {
+    assert.equal(ps.status, "PROVEN");
+    assert.ok(ps.proven_facts.some((f) => f.includes("page_publishability_truth_summary_v1")));
+    assert.ok(
+      !ps.unknown_facts.some(
+        (f) => f.includes("Semantic PageState/PublishabilityState") && f.includes("is UNKNOWN in this neuron"),
+      ),
+    );
+    if (lane.unknown_join_count > 0 && ps.proven_facts.some((f) => f.includes("Sitemap artifact inventory contract"))) {
+      assert.equal(ps.connection_level, "DIM");
+    }
+    assert.ok(!Object.keys(lane.distribution_automation_allowed).includes("auto_fix_allowed"));
+  }
+});
+
 test("command_center_v2.page_publishability_truth_summary_v1 is read-only semantic lane", async () => {
   const stubSummary = buildPagePublishabilityTruthSummaryV1({
     generated_at: "2026-05-18T00:00:00.000Z",

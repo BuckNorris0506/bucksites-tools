@@ -18,10 +18,14 @@ import {
   mapClickVisibilityToNeuronConnectionLevel,
   mapAffiliateReadinessToNeuronConnectionLevel,
   mapCoverageHealthToNeuronConnectionLevel,
+  mapPageStateNeuronConnectionLevelWithPublishabilityTruth,
   type AffiliateReadinessNeuronInput,
   type CtaCoverageHealthNeuronInput,
 } from "@/lib/owner-dashboard/load-command-center-report";
-import type { ClickVisibilitySnapshot } from "../../../scripts/lib/buckparts-command-center-v2-types";
+import type {
+  ClickVisibilitySnapshot,
+  PagePublishabilityTruthSummaryV1,
+} from "../../../scripts/lib/buckparts-command-center-v2-types";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
@@ -36,6 +40,36 @@ import {
   buildOwnerVerticalLaunchPolicyReport,
 } from "@/lib/owner-dashboard/owner-vertical-launch-policy";
 import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "../../../scripts/lib/owner-dashboard-top-of-game-panel-readiness-v1";
+
+function stubPublishabilityTruthSummary(
+  overrides: Partial<PagePublishabilityTruthSummaryV1> = {},
+): PagePublishabilityTruthSummaryV1 {
+  return {
+    contract: "page_publishability_truth_summary_v1",
+    read_only: true,
+    data_mutation: false,
+    runtime_status: "ATTENTION",
+    page_kind: "refrigerator_filter",
+    total_candidate_pages: 57,
+    computable_semantic_count: 57,
+    unknown_join_count: 114,
+    distribution_page_state: { INDEXABLE_INFO_ONLY: 30, INDEXABLE_BUY_READY: 27 },
+    distribution_publishability_state: { PUBLISHABLE_INFO_READY: 30, PUBLISHABLE_BUY_READY: 27 },
+    distribution_automation_allowed: {
+      read_only_only: 28,
+      never_auto_mutate: 2,
+      owner_approval_required: 27,
+    },
+    top_unknown_join_reasons: [
+      "per_page_click_not_joined_v1 (57 pages)",
+      "per_page_demand_not_joined_v1 (57 pages)",
+    ],
+    sample_rows: [],
+    proven_facts: ["fixture semantic lane"],
+    unknown_facts: ["Per-page demand and click signals are UNKNOWN until search_gaps/click_events are joined by page key."],
+    ...overrides,
+  };
+}
 
 describe("page_state_distribution neuron", () => {
   it("is BRIGHT for sitemap artifact inventory contract but UNKNOWN semantic PageState status", () => {
@@ -60,6 +94,72 @@ describe("page_state_distribution neuron", () => {
     assert.ok(ps.unknown_facts.some((f) => f.includes("Buy-gate")));
     assert.ok(ps.unknown_facts.some((f) => f.includes("Quarantine")));
     assert.ok(ps.unknown_facts.some((f) => f.toLowerCase().includes("demand")));
+  });
+
+  it("upgrades semantic status to PROVEN when page_publishability_truth_summary_v1 has computable pages", () => {
+    const lane = stubPublishabilityTruthSummary();
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        contract: "sitemap_artifact_inventory_v1",
+        artifact_relative_path: "data/gsc/sitemap.xml",
+        url_count: 2,
+        distribution: { VERTICAL_POLICY_LIVE_refrigerator: 2 },
+        reason: "fixture inventory note",
+      },
+      gscPresence: null,
+      pagePublishabilityTruth: lane,
+    });
+    const ps = neurons.neurons.find((n) => n.neuron_key === "page_state_distribution");
+    assert.ok(ps);
+    assert.equal(ps.connection_level, "DIM");
+    assert.equal(ps.status, "PROVEN");
+    assert.ok(ps.proven_facts.some((f) => f.includes("page_publishability_truth_summary_v1")));
+    assert.ok(ps.proven_facts.some((f) => f.includes("Semantic PageState/PublishabilityState is computable")));
+    assert.ok(
+      !ps.unknown_facts.some((f) =>
+        f.includes("Semantic PageState/PublishabilityState") && f.includes("is UNKNOWN in this neuron"),
+      ),
+    );
+    assert.ok(ps.unknown_facts.some((f) => f.includes("unknown_join_count=114")));
+    assert.ok(ps.unknown_facts.some((f) => f.includes("demand_signal and click_signal remain UNKNOWN")));
+    assert.ok(ps.unknown_facts.some((f) => f.includes("Automation remains constrained")));
+    assert.ok(
+      !Object.keys(lane.distribution_automation_allowed).includes("auto_fix_allowed"),
+    );
+    assert.equal(
+      mapPageStateNeuronConnectionLevelWithPublishabilityTruth({
+        inventoryConnectionLevel: "BRIGHT",
+        publishabilityTruth: lane,
+      }),
+      "DIM",
+    );
+  });
+
+  it("preserves UNKNOWN semantic status when publishability lane is absent", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        contract: "sitemap_artifact_inventory_v1",
+        artifact_relative_path: "data/gsc/sitemap.xml",
+        url_count: 2,
+        distribution: { VERTICAL_POLICY_LIVE_refrigerator: 2 },
+        reason: "fixture inventory note",
+      },
+      gscPresence: null,
+      pagePublishabilityTruth: null,
+    });
+    const ps = neurons.neurons.find((n) => n.neuron_key === "page_state_distribution");
+    assert.ok(ps);
+    assert.equal(ps.connection_level, "BRIGHT");
+    assert.equal(ps.status, "UNKNOWN");
+    assert.ok(
+      ps.unknown_facts.some(
+        (f) => f.includes("Semantic PageState/PublishabilityState") && f.includes("is UNKNOWN in this neuron"),
+      ),
+    );
   });
 
   it("treats numeric page_state without inventory contract as DIM with UNKNOWN semantic status", () => {

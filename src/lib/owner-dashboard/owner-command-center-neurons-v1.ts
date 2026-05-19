@@ -20,6 +20,7 @@ import type {
   BatchProductionOwnerDecisionsLaneV1,
   ClickVisibilitySnapshot,
   DecisionLane,
+  PagePublishabilityTruthSummaryV1,
 } from "../../../scripts/lib/buckparts-command-center-v2-types";
 
 /** Command Center affiliate readiness slice for neuron wiring (no duplicate tracker scan). */
@@ -113,6 +114,84 @@ const TRUST_FUNNEL_EMITTER_MODULES = [
 /** Legacy copy when `owner_gsc_external_demand` is not passed into neuron reconciliation (tests only). */
 const STALE_GSC_AGGREGATES_UNKNOWN_OWNER_PATH =
   "Parsed impressions/clicks aggregates are UNKNOWN in owner dashboard unless explicit parser outputs are added to command-center inputs.";
+
+const SEMANTIC_PAGE_STATE_FULLY_UNKNOWN_FACT =
+  "Semantic PageState/PublishabilityState (buy-ready vs info-only, READY-style cohorts, quarantine integration, demand/noindex exclusions) is UNKNOWN in this neuron unless CTA, buy-gate/trust, quarantine, and demand signals are explicitly joined—this lane does not prove those facts.";
+
+function hasComputableSemanticPublishabilityTruth(
+  lane: PagePublishabilityTruthSummaryV1 | null | undefined,
+): lane is PagePublishabilityTruthSummaryV1 {
+  return !!lane && lane.computable_semantic_count > 0;
+}
+
+/** DIM when semantic truth exists but joins/automation still constrain completeness (not fully green). */
+export function mapPageStateNeuronConnectionLevelWithPublishabilityTruth(args: {
+  inventoryConnectionLevel: OwnerNeuronConnectionLevel;
+  publishabilityTruth: PagePublishabilityTruthSummaryV1 | null | undefined;
+}): OwnerNeuronConnectionLevel {
+  const { inventoryConnectionLevel, publishabilityTruth } = args;
+  if (!hasComputableSemanticPublishabilityTruth(publishabilityTruth)) {
+    return inventoryConnectionLevel;
+  }
+  if (
+    publishabilityTruth.unknown_join_count > 0 ||
+    publishabilityTruth.runtime_status === "ATTENTION" ||
+    publishabilityTruth.runtime_status === "UNKNOWN"
+  ) {
+    return inventoryConnectionLevel === "BRIGHT" ? "DIM" : inventoryConnectionLevel;
+  }
+  return inventoryConnectionLevel;
+}
+
+function appendSemanticPublishabilityTruthToPageStateNeuron(args: {
+  lane: PagePublishabilityTruthSummaryV1;
+  proven_facts: string[];
+  unknown_facts: string[];
+}): { status: OwnerNeuronStatus; next_owner_action: string } {
+  const { lane } = args;
+  const proven = args.proven_facts;
+  const unknown = args.unknown_facts;
+
+  proven.push(
+    `command_center_v2.page_publishability_truth_summary_v1: contract=${lane.contract}; read_only=${String(lane.read_only)}; data_mutation=${String(lane.data_mutation)}.`,
+  );
+  proven.push(
+    `Semantic PageState/PublishabilityState is computable for ${lane.computable_semantic_count}/${lane.total_candidate_pages} refrigerator_filter catalog pages (page_kind=${lane.page_kind}).`,
+  );
+  proven.push(`page_publishability_truth runtime_status: ${lane.runtime_status}.`);
+  proven.push(`distribution_page_state: ${JSON.stringify(lane.distribution_page_state)}.`);
+  proven.push(
+    `distribution_publishability_state: ${JSON.stringify(lane.distribution_publishability_state)}.`,
+  );
+  proven.push(
+    `distribution_automation_allowed: ${JSON.stringify(lane.distribution_automation_allowed)} (v1 never emits auto_fix_allowed).`,
+  );
+  if (lane.top_unknown_join_reasons.length > 0) {
+    proven.push(`top_unknown_join_reasons: ${lane.top_unknown_join_reasons.join("; ")}.`);
+  }
+
+  unknown.push(
+    `unknown_join_count=${lane.unknown_join_count} across per-page joins — semantic distributions are proven for computable pages, but the lane is not fully complete.`,
+  );
+  unknown.push(
+    "Per-page demand_signal and click_signal remain UNKNOWN in page_publishability_truth_summary_v1 until explicit page-key joins exist.",
+  );
+  if (lane.unknown_join_count > 0) {
+    unknown.push(
+      "Automation remains constrained (read_only_only / owner_approval_required / never_auto_mutate) — do not treat semantic buy-ready counts as permission for autonomous mutation.",
+    );
+  }
+  for (const f of lane.unknown_facts) {
+    if (!unknown.includes(f)) unknown.push(f);
+  }
+
+  const next_owner_action =
+    lane.runtime_status === "ATTENTION" || lane.unknown_join_count > 0
+      ? "Use page_publishability_truth_summary_v1 sample_rows for refrigerator_filter semantic truth; keep sitemap inventory buckets separate; resolve unknown per-page demand/click joins before treating this neuron as fully bright."
+      : "Semantic refrigerator_filter publishability truth is proven for all candidate pages in this lane; still treat commission/revenue and autonomous mutation as out-of-scope for this neuron.";
+
+  return { status: "PROVEN", next_owner_action };
+}
 
 export function mapClickVisibilityToNeuronConnectionLevel(
   click: ClickVisibilitySnapshot | null | undefined,
@@ -700,6 +779,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   ctaCoverageHealth?: CtaCoverageHealthNeuronInput | null;
   /** When set, adds batch_production_owner_decisions neuron from CC v2 lane only (no registry scan). */
   batchProductionOwnerDecisionsLane?: BatchProductionOwnerDecisionsLaneV1 | null;
+  /** When set with computable_semantic_count > 0, upgrades semantic PageState truth (inventory metrics unchanged). */
+  pagePublishabilityTruth?: PagePublishabilityTruthSummaryV1 | null;
 }): OwnerCommandCenterNeuronsReport {
   const allEmittersPresent = args.trustFunnelEmitterContractOverride?.all_emitters_present ?? true;
   const missingEmitterFiles = args.trustFunnelEmitterContractOverride?.missing_emitter_files ?? [];
@@ -709,8 +790,8 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
   let pageStateConnectionLevel: OwnerNeuronConnectionLevel = "DARK";
   let pageStateStatus: OwnerNeuronStatus = "UNKNOWN";
 
-  const semanticPageStateUnknownFacts = [
-    "Semantic PageState/PublishabilityState (buy-ready vs info-only, READY-style cohorts, quarantine integration, demand/noindex exclusions) is UNKNOWN in this neuron unless CTA, buy-gate/trust, quarantine, and demand signals are explicitly joined—this lane does not prove those facts.",
+  const semanticPageStateUnknownFactsWithoutPublishabilityLane = [
+    SEMANTIC_PAGE_STATE_FULLY_UNKNOWN_FACT,
     "Per-page CTA availability is not represented unless proven via joined retailer/link truth.",
     "Buy-gate and trust-suppressed buy paths are not represented unless proven via runtime trust inputs.",
     "Quarantine or mapping-conflict integration is not represented in page-state counts (see dedicated owner lanes when present).",
@@ -737,8 +818,10 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
     pageStateProvenFacts.push(`Inventory note: ${ps.reason}`);
     pageStateUnknownFacts.push(
       "VERTICAL_POLICY_* buckets are route-prefix projections from `vertical-launch-state` — not proof of live Google indexing or on-page robots metadata.",
-      ...semanticPageStateUnknownFacts,
     );
+    if (!hasComputableSemanticPublishabilityTruth(args.pagePublishabilityTruth)) {
+      pageStateUnknownFacts.push(...semanticPageStateUnknownFactsWithoutPublishabilityLane);
+    }
   } else if (hasNumericDistribution) {
     pageStateConnectionLevel = "DIM";
     pageStateStatus = "UNKNOWN";
@@ -746,13 +829,34 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       `Command-surface reported a numeric page_state distribution without the sitemap artifact inventory contract (${JSON.stringify(args.pageState?.distribution)}).`,
     );
     pageStateProvenFacts.push(`Computation note: ${args.pageState?.reason ?? "UNKNOWN"}.`);
-    pageStateUnknownFacts.push(...semanticPageStateUnknownFacts);
+    if (!hasComputableSemanticPublishabilityTruth(args.pagePublishabilityTruth)) {
+      pageStateUnknownFacts.push(...semanticPageStateUnknownFactsWithoutPublishabilityLane);
+    }
   } else {
     pageStateUnknownFacts.push(
       args.pageState?.reason ??
         "state_system_metrics.page_state is UNKNOWN or unavailable from command-surface in this load path.",
-      ...semanticPageStateUnknownFacts,
     );
+    if (!hasComputableSemanticPublishabilityTruth(args.pagePublishabilityTruth)) {
+      pageStateUnknownFacts.push(...semanticPageStateUnknownFactsWithoutPublishabilityLane);
+    }
+  }
+
+  let pageStateNextOwnerAction =
+    "Treat inventory/policy buckets as artifact truth only; wire joined CTA/trust/quarantine/demand inputs if you need semantic PageState or PublishabilityState counts.";
+
+  if (hasComputableSemanticPublishabilityTruth(args.pagePublishabilityTruth)) {
+    const semantic = appendSemanticPublishabilityTruthToPageStateNeuron({
+      lane: args.pagePublishabilityTruth,
+      proven_facts: pageStateProvenFacts,
+      unknown_facts: pageStateUnknownFacts,
+    });
+    pageStateStatus = semantic.status;
+    pageStateNextOwnerAction = semantic.next_owner_action;
+    pageStateConnectionLevel = mapPageStateNeuronConnectionLevelWithPublishabilityTruth({
+      inventoryConnectionLevel: pageStateConnectionLevel,
+      publishabilityTruth: args.pagePublishabilityTruth,
+    });
   }
 
   const trustFunnelProvenFacts: string[] = [];
@@ -913,8 +1017,7 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
         freshness_method: "Built at owner-dashboard request time from command-surface output.",
         proven_facts: pageStateProvenFacts,
         unknown_facts: pageStateUnknownFacts,
-        next_owner_action:
-          "Treat inventory/policy buckets as artifact truth only; wire joined CTA/trust/quarantine/demand inputs if you need semantic PageState or PublishabilityState counts.",
+        next_owner_action: pageStateNextOwnerAction,
         status: pageStateStatus,
       },
       {
@@ -991,6 +1094,11 @@ export function buildOwnerCommandCenterNeuronsReport(args: {
       ...(batchNeuronIncluded
         ? ["command_center_v2.batch_production_owner_decisions_lane_v1 (read-only; no neuron registry scan)"]
         : []),
+      ...(hasComputableSemanticPublishabilityTruth(args.pagePublishabilityTruth)
+        ? [
+            "command_center_v2.page_publishability_truth_summary_v1 (semantic PageState/PublishabilityState for refrigerator_filter pages; inventory contract unchanged)",
+          ]
+        : []),
     ],
     neurons,
   };
@@ -1028,6 +1136,7 @@ export type OwnerCommandCenterNeuronsForReportInput = {
   affiliateReadiness: AffiliateReadinessNeuronInput | null;
   ctaCoverageHealth: CtaCoverageHealthNeuronInput | null;
   batchProductionOwnerDecisionsLane: BatchProductionOwnerDecisionsLaneV1 | null;
+  pagePublishabilityTruth?: PagePublishabilityTruthSummaryV1 | null;
 };
 
 /** Command Center path: all eight neurons from in-scope CC/command-surface data only. */
@@ -1058,5 +1167,6 @@ export async function buildOwnerCommandCenterNeuronsForReport(
     affiliateReadiness: args.affiliateReadiness,
     ctaCoverageHealth: args.ctaCoverageHealth,
     batchProductionOwnerDecisionsLane: args.batchProductionOwnerDecisionsLane,
+    pagePublishabilityTruth: args.pagePublishabilityTruth ?? null,
   });
 }

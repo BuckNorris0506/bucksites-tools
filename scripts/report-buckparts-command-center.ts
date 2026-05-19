@@ -1120,6 +1120,7 @@ export async function buildBuckpartsCommandCenterReport(
           }
         : null,
     batchProductionOwnerDecisionsLane: command_center_v2.batch_production_owner_decisions_lane_v1,
+    pagePublishabilityTruth: command_center_v2.page_publishability_truth_summary_v1,
   });
 
   return {

@@ -44,6 +44,7 @@ export {
   mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
   mapClickVisibilityToNeuronConnectionLevel,
   mapCoverageHealthToNeuronConnectionLevel,
+  mapPageStateNeuronConnectionLevelWithPublishabilityTruth,
   mapSearchDemandAndGapsToNeuronConnectionLevel,
 } from "@/lib/owner-dashboard/owner-command-center-neurons-v1";
 export { loadGa4TrustFunnelAggregateArtifact } from "@/lib/owner-dashboard/load-ga4-trust-funnel-aggregate-artifact";
@@ -213,6 +214,7 @@ export async function loadCommandCenterReportForOwner(rootDir = process.cwd()): 
         },
         batchProductionOwnerDecisionsLane:
           report.command_center_v2.batch_production_owner_decisions_lane_v1,
+        pagePublishabilityTruth: report.command_center_v2.page_publishability_truth_summary_v1,
       }));
     const sentinel =
       report.command_center_v2.owner_integrity_sentinel_v1 ??
