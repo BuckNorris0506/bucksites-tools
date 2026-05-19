@@ -36,6 +36,19 @@ export type AffiliateReadinessNeuronInput = {
   commission_or_revenue: "NOT_CONNECTED" | string;
 };
 
+/** Mirrors command-surface blocked_retailer_link_remediation.remediation_buckets bucket shape (read-only). */
+export type BlockedRemediationBucketCountsV1 = {
+  count: number;
+  top_retailer_keys: Array<{ retailer_key: string; count: number }>;
+};
+
+export type BlockedRemediationRemediationBucketsV1 = {
+  repairable_blocked_buy_paths: BlockedRemediationBucketCountsV1;
+  intentionally_non_buyable_catalog_or_discovery_links: BlockedRemediationBucketCountsV1;
+  missing_browser_truth: BlockedRemediationBucketCountsV1;
+  unsafe_browser_truth: BlockedRemediationBucketCountsV1;
+};
+
 /** Command Center CTA / coverage slice for neuron wiring (no duplicate Supabase retailer_links query). */
 export type CtaCoverageHealthNeuronInput = {
   coverageLane: DecisionLane;
@@ -53,6 +66,7 @@ export type CtaCoverageHealthNeuronInput = {
     runtime_status: "OK" | "UNKNOWN";
     top_blocked_states: Array<{ state: string; count: number }> | "UNKNOWN";
     top_blocked_retailer_keys: Array<{ retailer_key: string; count: number }> | "UNKNOWN";
+    remediation_buckets?: BlockedRemediationRemediationBucketsV1 | "UNKNOWN";
     recommended_next_action: string;
   };
 };
@@ -465,6 +479,53 @@ export function mapCoverageHealthToNeuronConnectionLevel(
   return "DIM";
 }
 
+/** Appends command-surface remediation bucket counts for operator clarity (read-only facts only). */
+export function appendBlockedRemediationBucketCoverageFacts(args: {
+  proven_facts: string[];
+  unknown_facts: string[];
+  ctaCoverage: CtaCoverageHealthNeuronInput["ctaCoverage"];
+  remediation_buckets: BlockedRemediationRemediationBucketsV1;
+  connection_level: OwnerNeuronConnectionLevel;
+}): void {
+  const { proven_facts, unknown_facts, ctaCoverage: cta, remediation_buckets: buckets, connection_level } =
+    args;
+
+  proven_facts.push(
+    `remediation_buckets.repairable_blocked_buy_paths: ${buckets.repairable_blocked_buy_paths.count}.`,
+  );
+  proven_facts.push(
+    `remediation_buckets.intentionally_non_buyable_catalog_or_discovery_links: ${buckets.intentionally_non_buyable_catalog_or_discovery_links.count}.`,
+  );
+  proven_facts.push(`remediation_buckets.missing_browser_truth: ${buckets.missing_browser_truth.count}.`);
+  proven_facts.push(`remediation_buckets.unsafe_browser_truth: ${buckets.unsafe_browser_truth.count}.`);
+
+  const safeCta = cta.safe_cta_links;
+  const blocked = cta.blocked_or_unsafe_links;
+  if (typeof safeCta === "number" && typeof blocked === "number") {
+    proven_facts.push(
+      `cta_coverage pressure summary: safe_cta_links=${safeCta}, blocked_or_unsafe_links=${blocked}.`,
+    );
+    const decisionUsefulBlocked =
+      buckets.repairable_blocked_buy_paths.count +
+      buckets.missing_browser_truth.count +
+      buckets.unsafe_browser_truth.count;
+    proven_facts.push(
+      `decision-useful blocked buy-path rows (excludes intentional catalog/discovery placeholders): ${decisionUsefulBlocked}.`,
+    );
+    if (blocked > safeCta) {
+      unknown_facts.push(
+        "Command Surface system_health_summary can be OK while coverage_health remains DIM: intentional catalog/discovery placeholder links are not stop-line issues under remediation_buckets, but safe_cta_links still trails blocked_or_unsafe_links (buy-path coverage pressure).",
+      );
+    }
+  }
+
+  if (connection_level !== "BRIGHT" && buckets.intentionally_non_buyable_catalog_or_discovery_links.count > 0) {
+    proven_facts.push(
+      "intentional_non_buyable rows (oem-catalog/oem-parts-catalog site-search, google-search, SERP URLs) explain much BLOCKED_SEARCH_OR_DISCOVERY inventory without implying the same stop-line severity as decision-useful blocked buy paths.",
+    );
+  }
+}
+
 function buildCoverageHealthNeuron(
   input: CtaCoverageHealthNeuronInput | null | undefined,
 ): OwnerDashboardNeuron {
@@ -555,6 +616,18 @@ function buildCoverageHealthNeuron(
         .map((r) => `${r.retailer_key}:${r.count}`)
         .join(", ");
       proven_facts.push(`strongest blocked retailer keys (command-surface): ${top}.`);
+    }
+    if (
+      blockedRemediation.remediation_buckets !== undefined &&
+      blockedRemediation.remediation_buckets !== "UNKNOWN"
+    ) {
+      appendBlockedRemediationBucketCoverageFacts({
+        proven_facts,
+        unknown_facts,
+        ctaCoverage: cta,
+        remediation_buckets: blockedRemediation.remediation_buckets,
+        connection_level,
+      });
     }
   }
   if (cta.runtime_status !== "OK") {

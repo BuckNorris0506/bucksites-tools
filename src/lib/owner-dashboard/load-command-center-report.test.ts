@@ -1020,6 +1020,100 @@ describe("coverage_health neuron", () => {
     });
     assert.equal(neurons.neurons.find((n) => n.neuron_key === "coverage_health"), undefined);
   });
+
+  const sampleRemediationBuckets = {
+    repairable_blocked_buy_paths: { count: 8, top_retailer_keys: [{ retailer_key: "amazon", count: 4 }] },
+    intentionally_non_buyable_catalog_or_discovery_links: {
+      count: 120,
+      top_retailer_keys: [{ retailer_key: "oem-catalog", count: 90 }],
+    },
+    missing_browser_truth: { count: 1, top_retailer_keys: [] },
+    unsafe_browser_truth: { count: 61, top_retailer_keys: [{ retailer_key: "repairclinic", count: 20 }] },
+  };
+
+  it("includes remediation_buckets in coverage_health neuron proven_facts", () => {
+    const input: CtaCoverageHealthNeuronInput = {
+      ...okCoverage,
+      ctaCoverage: {
+        ...okCoverage.ctaCoverage,
+        safe_cta_links: 66,
+        blocked_or_unsafe_links: 201,
+      },
+      blockedRemediation: {
+        ...okCoverage.blockedRemediation!,
+        remediation_buckets: sampleRemediationBuckets,
+      },
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: input,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.ok(
+      coverage.proven_facts.some((f) =>
+        f.includes("remediation_buckets.intentionally_non_buyable_catalog_or_discovery_links: 120"),
+      ),
+    );
+    assert.ok(
+      coverage.proven_facts.some((f) =>
+        f.includes("cta_coverage pressure summary: safe_cta_links=66, blocked_or_unsafe_links=201"),
+      ),
+    );
+    assert.ok(
+      coverage.proven_facts.some((f) => f.includes("decision-useful blocked buy-path rows")),
+    );
+  });
+
+  it("coverage_health stays DIM when blocked_or_unsafe_links exceeds safe_cta_links despite OK coverage lane", () => {
+    const input: CtaCoverageHealthNeuronInput = {
+      ...okCoverage,
+      coverageLane: {
+        ...okCoverage.coverageLane,
+        status: "OK",
+        blocker: null,
+      },
+      ctaCoverage: {
+        ...okCoverage.ctaCoverage,
+        safe_cta_links: 66,
+        blocked_or_unsafe_links: 201,
+      },
+      blockedRemediation: {
+        ...okCoverage.blockedRemediation!,
+        remediation_buckets: sampleRemediationBuckets,
+      },
+    };
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: input,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(coverage.connection_level, "DIM");
+    assert.equal(coverage.status, "UNKNOWN");
+    assert.ok(
+      coverage.unknown_facts.some((f) =>
+        f.includes("system_health_summary can be OK while coverage_health remains DIM"),
+      ),
+    );
+  });
+
+  it("coverage_health can remain BRIGHT when safe_cta_links exceeds blocked_or_unsafe_links", () => {
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: null,
+      gscPresence: null,
+      ctaCoverageHealth: okCoverage,
+    });
+    const coverage = neurons.neurons.find((n) => n.neuron_key === "coverage_health");
+    assert.ok(coverage);
+    assert.equal(coverage.connection_level, "BRIGHT");
+    assert.equal(coverage.status, "PROVEN");
+  });
 });
 
 describe("owner integrity sentinel", () => {
