@@ -291,7 +291,8 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     cc_json_path: null,
     verdict: "BYPASSING",
     validation_command: "npm run buckparts:runner-step",
-    reason: "Runner Step v1 JSON; optional digest env only, not CC lane.",
+    reason:
+      "Runner Step v1 validation harness; intentionally standalone — must not run inside Command Center. Packet/orientation truth lives in command_center_v2.next_execution_packet_summary_v1; run npm run buckparts:runner-step, CI artifact buckparts-runner-step, or npm run buckparts:runner-step:gh for validation capture; founder digest may embed optional runner JSON via FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH when artifact exists.",
   },
   "buckparts:learning-outcomes-approved-insert:mutate": {
     cc_json_path: null,

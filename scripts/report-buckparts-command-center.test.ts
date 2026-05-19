@@ -2702,17 +2702,33 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.equal(plan.data_mutation, false);
   assert.equal(plan.connected_count, manifest.verdict_counts.CONNECTED);
   assert.equal(plan.bypassing_count, manifest.verdict_counts.BYPASSING);
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_daily"));
-  assert.ok(!plan.next_consolidation_slice.includes("daily_operator_summary_v1"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_demand-work-queue"));
-  assert.ok(!plan.next_consolidation_slice.includes("demand_work_queue_summary_v1"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_audit"));
-  assert.ok(!plan.next_consolidation_slice.includes("system_contract_audit_summary_v1"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_founder-decision-registry"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_next-execution-packet"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_operating-map"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_founder-digest"));
-  assert.ok(!plan.next_consolidation_slice.includes("founder_digest_summary_v1"));
+  assert.ok(plan.classification_counts);
+  assert.equal(
+    plan.skipped_standalone_count,
+    plan.classification_counts.INTENTIONALLY_STANDALONE_DOWNSTREAM_VIEW +
+      plan.classification_counts.INTENTIONALLY_STANDALONE_VALIDATION_HARNESS +
+      plan.classification_counts.INTENTIONALLY_STANDALONE_ON_DEMAND_DEEP_PROOF,
+  );
+  for (const target of plan.high_priority_consolidation_targets) {
+    assert.equal(target.consolidation_classification, "INTEGRATE_AS_CC_OPERATING_SUMMARY");
+  }
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "owner_gsc_external_demand"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "owner_search_demand_and_gaps"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_daily"));
+  assert.ok(!plan.next_consolidation_slice?.includes("daily_operator_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_demand-work-queue"));
+  assert.ok(!plan.next_consolidation_slice?.includes("demand_work_queue_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_audit"));
+  assert.ok(!plan.next_consolidation_slice?.includes("system_contract_audit_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_founder-decision-registry"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_next-execution-packet"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_operating-map"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_founder-digest"));
+  assert.ok(!plan.next_consolidation_slice?.includes("founder_digest_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice?.includes("owner_gsc_external_demand"));
+  assert.ok(!plan.next_consolidation_slice?.includes("owner_search_demand_and_gaps"));
+  assert.ok(!plan.next_consolidation_slice?.includes("sentry_error_monitoring"));
+  assert.ok(!plan.next_consolidation_slice?.includes("github_actions_live_status"));
   assert.ok(
     plan.intentionally_standalone_entries.some((e) => e.system_id === "buckparts_founder-digest"),
   );
@@ -2721,9 +2737,9 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
     (report.command_center_v2 as { founder_digest_summary_v1?: unknown }).founder_digest_summary_v1,
     undefined,
   );
-  assert.ok(!plan.next_consolidation_slice.includes("precheck"));
-  assert.ok(!plan.next_consolidation_slice.includes("amazon-refrigerator-token"));
-  assert.ok(!plan.next_consolidation_slice.includes("buckparts_precheck_amazon-refrigerator-tokens"));
+  assert.ok(!plan.next_consolidation_slice?.includes("precheck"));
+  assert.ok(!plan.next_consolidation_slice?.includes("amazon-refrigerator-token"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_precheck_amazon-refrigerator-tokens"));
   assert.ok(
     plan.intentionally_standalone_entries.some(
       (e) => e.system_id === "buckparts_precheck_amazon-refrigerator-tokens",
@@ -2737,6 +2753,21 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.equal(
     (report.command_center_v2 as { amazon_refrigerator_token_precheck_summary_v1?: unknown })
       .amazon_refrigerator_token_precheck_summary_v1,
+    undefined,
+  );
+  assert.ok(!plan.next_consolidation_slice?.includes("runner-step"));
+  assert.ok(!plan.next_consolidation_slice?.includes("buckparts_runner-step"));
+  assert.ok(!plan.next_consolidation_slice?.includes("runner_step_summary_v1"));
+  if (plan.next_consolidation_slice !== null) {
+    assert.equal(
+      plan.next_safe_integration_target?.consolidation_classification,
+      "INTEGRATE_AS_CC_OPERATING_SUMMARY",
+    );
+  }
+  assert.ok(plan.intentionally_standalone_entries.some((e) => e.system_id === "buckparts_runner-step"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_runner-step"));
+  assert.equal(
+    (report.command_center_v2 as { runner_step_summary_v1?: unknown }).runner_step_summary_v1,
     undefined,
   );
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_daily"));

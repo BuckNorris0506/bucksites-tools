@@ -705,11 +705,28 @@ export type BrainIntegrityGateBrainStatusV1 =
   | "PROCEED_WITH_KNOWN_LIMITS"
   | "STOP_THE_LINE";
 
+export const BRAIN_CONSOLIDATION_CLASSIFICATIONS_V1 = [
+  "INTEGRATE_AS_CC_OPERATING_SUMMARY",
+  "INTENTIONALLY_STANDALONE_DOWNSTREAM_VIEW",
+  "INTENTIONALLY_STANDALONE_VALIDATION_HARNESS",
+  "INTENTIONALLY_STANDALONE_ON_DEMAND_DEEP_PROOF",
+  "DO_NOT_INTEGRATE_MUTATING_EXECUTOR",
+  "DO_NOT_INTEGRATE_DEPRECATED_CONTEXT",
+  "EXTERNAL_LIVE_TRUTH_REQUIRED",
+  "DEDUPE_EXISTING_CC_TRUTH",
+  "UNKNOWN_CLASSIFICATION_REQUIRES_REVIEW",
+] as const;
+
+export type BrainConsolidationClassificationV1 = (typeof BRAIN_CONSOLIDATION_CLASSIFICATIONS_V1)[number];
+
+export type BrainConsolidationClassificationCountsV1 = Record<BrainConsolidationClassificationV1, number>;
+
 export type BrainConsolidationPlanEntryV1 = {
   system_id: string;
   verdict: BrainCoverageVerdictV1;
   dashboard_only: boolean;
   cc_json_path: string | null;
+  consolidation_classification: BrainConsolidationClassificationV1;
   consolidation_reason: string;
 };
 
@@ -726,10 +743,17 @@ export type BrainConsolidationPlanV1 = {
   deprecated_count: number;
   partial_count: number;
   dashboard_only_gap_count: number;
+  classification_counts: BrainConsolidationClassificationCountsV1;
+  next_safe_integration_target: BrainConsolidationPlanEntryV1 | null;
+  skipped_standalone_count: number;
+  skipped_external_count: number;
+  skipped_duplicate_count: number;
+  unknown_classification_count: number;
   high_priority_consolidation_targets: BrainConsolidationPlanEntryV1[];
   intentionally_standalone_entries: BrainConsolidationPlanEntryV1[];
   do_not_integrate_entries: BrainConsolidationPlanEntryV1[];
-  next_consolidation_slice: string;
+  /** Set only when classification is INTEGRATE_AS_CC_OPERATING_SUMMARY; otherwise null. */
+  next_consolidation_slice: string | null;
   stop_rule: string;
   proven_facts: string[];
   unknown_facts: string[];
