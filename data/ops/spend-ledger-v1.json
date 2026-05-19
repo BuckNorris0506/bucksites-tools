@@ -2,7 +2,7 @@
   "contract": "buckparts_spend_ledger_v1",
   "read_only": false,
   "data_mutation": true,
-  "updated_at": "2026-05-19T19:38:00.892Z",
+  "updated_at": "2026-05-19T21:26:35.312Z",
   "entries": [
     {
       "id": "9eb8b076-7148-4e7a-8e9d-93ef2492e6cf",
@@ -32,6 +32,36 @@
         "INFERRED: if main is connected to Netlify production auto-deploy, this push may have consumed production deploy credits."
       ],
       "notes": "First spend-ledger row records deploy-credit risk from the spend-ledger commit push; replace or supplement later with dashboard-proven credit truth."
+    },
+    {
+      "id": "6932c886-1994-455e-9b9e-f1d4a3d25350",
+      "recorded_at": "2026-05-19T21:26:35.311Z",
+      "provider": "netlify",
+      "unit_type": "netlify_credits",
+      "amount": 0,
+      "amount_unit": "credits",
+      "exact_cost_proven": false,
+      "estimated_cost_usd": null,
+      "source_surface": "manual:netlify-dashboard",
+      "task_id": null,
+      "session_id": null,
+      "related_commit": "a4c225f",
+      "related_branch": "main",
+      "purpose": "deploy_credit_conservation",
+      "outcome": "partial",
+      "useful_output": true,
+      "deploy_triggered": false,
+      "mutation_triggered": false,
+      "proven_facts": [
+        "OPERATOR_REPORTED: Netlify publishing is locked/paused after the team exceeded the credit limit.",
+        "OPERATOR_REPORTED: Netlify dashboard shows production deploys paused and published production remains main@9bce6a1.",
+        "PROVEN: repo commit a4c225f was pushed to origin/main, but live publish is not proven while Netlify publishing is paused."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: Exact Netlify credit charge for push a4c225f was not verified from Netlify billing breakdown.",
+        "UNKNOWN: Live owner dashboard does not include commit a4c225f until Netlify publishing resumes or a later deploy is proven."
+      ],
+      "notes": "Operator screenshot showed Netlify project paused due to exceeded credit limit; use this row to make Command Center and owner dashboard reflect OPERATOR_REPORTED publishing lock."
     }
   ]
 }
