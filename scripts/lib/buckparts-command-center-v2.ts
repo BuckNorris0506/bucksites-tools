@@ -200,6 +200,7 @@ export function buildCommandCenterV2Report(input: {
   | "owner_quarantined_fridge_models_v1"
   | "owner_vertical_launch_policy_v1"
   | "daily_operator_summary_v1"
+  | "demand_work_queue_summary_v1"
 > {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {

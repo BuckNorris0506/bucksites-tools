@@ -234,10 +234,12 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
       "Daily operator decision summary projected into Command Center JSON during report generation (read-only); full buckparts_daily_operator_v1 remains on npm run buckparts:daily.",
   },
   "buckparts:demand-work-queue": {
-    cc_json_path: null,
-    verdict: "BYPASSING",
-    validation_command: "npm run buckparts:demand-work-queue",
-    reason: "Separate buckparts_demand_work_queue_v1 contract built from daily operator, not CC stdout.",
+    cc_json_path: "command_center_v2.demand_work_queue_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.demand_work_queue_summary_v1.data_mutation'",
+    reason:
+      "Demand work queue summary projected into Command Center JSON during report generation (read-only); full buckparts_demand_work_queue_v1 remains on npm run buckparts:demand-work-queue.",
   },
   "buckparts:founder-digest": {
     cc_json_path: null,

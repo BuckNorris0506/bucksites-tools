@@ -2643,7 +2643,8 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
     r.npm_script_or_path.includes("buckparts:demand-work-queue"),
   );
   assert.ok(demandQueue);
-  assert.equal(demandQueue!.verdict, "BYPASSING");
+  assert.equal(demandQueue!.verdict, "CONNECTED");
+  assert.equal(demandQueue!.cc_json_path, "command_center_v2.demand_work_queue_summary_v1");
 
   const hq = findBrainManifestEntry(report, (r) => r.system_id === "hq_handoff_doc");
   assert.ok(hq);
@@ -2683,7 +2684,10 @@ test("command_center_v2.brain_consolidation_plan_v1 is read-only consolidation r
   assert.equal(plan.bypassing_count, manifest.verdict_counts.BYPASSING);
   assert.ok(!plan.next_consolidation_slice.includes("buckparts_daily"));
   assert.ok(!plan.next_consolidation_slice.includes("daily_operator_summary_v1"));
+  assert.ok(!plan.next_consolidation_slice.includes("buckparts_demand-work-queue"));
+  assert.ok(!plan.next_consolidation_slice.includes("demand_work_queue_summary_v1"));
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_daily"));
+  assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "buckparts_demand-work-queue"));
   const mutate = plan.do_not_integrate_entries.find((e) => e.system_id.includes("mutate"));
   assert.ok(mutate);
   assert.ok(!plan.high_priority_consolidation_targets.some((e) => e.system_id === "hq_handoff_doc"));
@@ -2717,6 +2721,32 @@ test("command_center_v2.daily_operator_summary_v1 is read-only CC-owned daily op
   );
   assert.equal(bypassGaps.length, 0);
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_daily"));
+});
+
+test("command_center_v2.demand_work_queue_summary_v1 is read-only CC-owned demand queue lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.demand_work_queue_summary_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "demand_work_queue_summary_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.source_command, "npm run buckparts:demand-work-queue");
+  assert.ok(lane.top_items.length <= 5);
+  assert.ok(lane.blocked_or_unknown_inputs.length <= 3);
+
+  const manifestEntry = findBrainManifestEntry(report, (r) => r.system_id === "buckparts_demand-work-queue");
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.dashboard_only, false);
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.demand_work_queue_summary_v1");
+
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_demand-work-queue"));
 });
 
 test("command_center_v2.owner_vertical_launch_policy_v1 is read-only CC-owned launch policy lane", async () => {

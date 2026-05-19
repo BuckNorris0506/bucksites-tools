@@ -7,6 +7,7 @@ import {
 } from "./report-buckparts-daily-operator";
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import { CATALOG_REFRIGERATOR_WATER_FILTER } from "@/lib/catalog/constants";
 import { searchCatalog, type SearchHit } from "@/lib/data/search";
 
 type RuntimeStatus = "OK" | "ATTENTION" | "UNKNOWN";
@@ -185,7 +186,7 @@ function rankCandidates(candidates: CandidateItem[]): DemandWorkQueueItem[] {
 }
 
 function publicPathForHit(hit: SearchHit): string {
-  if (hit.catalog === "refrigerator_water_filters") {
+  if (hit.catalog === CATALOG_REFRIGERATOR_WATER_FILTER) {
     return hit.kind === "fridge" ? `/fridge/${hit.slug}` : `/filter/${hit.slug}`;
   }
   const vertical = hit.catalog.replace(/_filters$/, "").replace(/_/g, "-");

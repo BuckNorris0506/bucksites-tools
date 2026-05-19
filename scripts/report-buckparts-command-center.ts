@@ -33,6 +33,7 @@ import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-
 import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
+import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import {
   buildOwnerCommandCenterNeuronsForReport,
   type OwnerCommandCenterNeuronsReport,
@@ -843,6 +844,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_quarantined_fridge_models_v1"
     | "owner_vertical_launch_policy_v1"
     | "daily_operator_summary_v1"
+    | "demand_work_queue_summary_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -877,7 +879,10 @@ export async function buildBuckpartsCommandCenterReport(
     },
   });
 
-  const command_center_v2_before_daily: Omit<CommandCenterV2Report, "daily_operator_summary_v1"> = {
+  const command_center_v2_before_daily: Omit<
+    CommandCenterV2Report,
+    "daily_operator_summary_v1" | "demand_work_queue_summary_v1"
+  > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
     owner_vertical_launch_policy_v1,
@@ -960,9 +965,24 @@ export async function buildBuckpartsCommandCenterReport(
   });
   const daily_operator_summary_v1 = buildDailyOperatorSummaryV1FromReport(dailyOperatorFull);
 
-  const command_center_v2: CommandCenterV2Report = {
+  const command_center_v2_before_demand: Omit<CommandCenterV2Report, "demand_work_queue_summary_v1"> = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
+  };
+
+  const { buildBuckpartsDemandWorkQueueReport } = await import("./report-buckparts-demand-work-queue");
+  const demandWorkQueueFull = await buildBuckpartsDemandWorkQueueReport({
+    rootDir,
+    now,
+    providers: {
+      dailyOperator: async () => dailyOperatorFull,
+    },
+  });
+  const demand_work_queue_summary_v1 = buildDemandWorkQueueSummaryV1FromReport(demandWorkQueueFull);
+
+  const command_center_v2: CommandCenterV2Report = {
+    ...command_center_v2_before_demand,
+    demand_work_queue_summary_v1,
   };
 
   const brainGate = command_center_v2.brain_integrity_gate_v1;

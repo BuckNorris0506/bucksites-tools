@@ -3,6 +3,7 @@
 import type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-v1";
+import type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
@@ -825,6 +826,7 @@ export type CommandCenterV2Report = {
   owner_quarantined_fridge_models_v1: OwnerQuarantinedFridgeModelsV1;
   owner_vertical_launch_policy_v1: OwnerVerticalLaunchPolicyV1;
   daily_operator_summary_v1: DailyOperatorSummaryV1;
+  demand_work_queue_summary_v1: DemandWorkQueueSummaryV1;
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
 };
 
@@ -832,6 +834,7 @@ export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/own
 export type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 export type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 export type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-v1";
+export type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -839,6 +842,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "owner_quarantined_fridge_models_v1"
   | "owner_vertical_launch_policy_v1"
   | "daily_operator_summary_v1"
+  | "demand_work_queue_summary_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */
