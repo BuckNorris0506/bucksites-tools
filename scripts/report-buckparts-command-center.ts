@@ -873,6 +873,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "page_publishability_truth_summary_v1"
+    | "operator_digest_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -962,6 +963,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "operator_digest_v1"
   > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
@@ -1053,6 +1055,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "operator_digest_v1"
   > = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
@@ -1080,7 +1083,10 @@ export async function buildBuckpartsCommandCenterReport(
   const operatingMapFull = runReportBuckpartsOperatingMap();
   const operating_map_summary_v1 = buildOperatingMapSummaryV1FromReport(operatingMapFull);
 
-  const command_center_v2_before_next_packet: Omit<CommandCenterV2Report, "next_execution_packet_summary_v1"> = {
+  const command_center_v2_before_next_packet: Omit<
+    CommandCenterV2Report,
+    "next_execution_packet_summary_v1" | "operator_digest_v1"
+  > = {
     ...command_center_v2_before_demand,
     daily_operator_summary_v1,
     demand_work_queue_summary_v1,
@@ -1100,7 +1106,7 @@ export async function buildBuckpartsCommandCenterReport(
     now,
   });
 
-  const command_center_v2: CommandCenterV2Report = {
+  const command_center_v2 = {
     ...command_center_v2_before_next_packet,
     next_execution_packet_summary_v1,
   };
@@ -1115,6 +1121,27 @@ export async function buildBuckpartsCommandCenterReport(
       whyThisAction = `${whyThisAction} ${brainCaveat}`;
     }
   }
+
+  const execution_guidance: CommandCenterReport["execution_guidance"] = {
+    next_move_mode: nextMoveMode,
+    next_move_command: nextMoveCommand,
+    mutating_blocked: mutatingBlocked,
+    mutating_block_reasons: mutatingBlockedReasons,
+    staleness_or_dirty_risk: stalenessOrDirtyRisk,
+  };
+
+  const command_center_v2_with_operator_digest: CommandCenterV2Report = {
+    ...command_center_v2,
+    operator_digest_v1: {
+      contract: "operator_digest_v1",
+      read_only: true,
+      data_mutation: false,
+      next_best_action: nextBestAction,
+      why_this_action: whyThisAction,
+      execution_guidance,
+      source: "buckparts_command_center_v1_root_digest",
+    },
+  };
 
   const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({
     rootDir,
@@ -1189,18 +1216,12 @@ export async function buildBuckpartsCommandCenterReport(
     rescue_velocity_summary: rescueVelocitySummary,
     rescue_delta_trend_summary: rescueDeltaTrendSummary,
     amazon_first_blocked_queue_summary: amazonFirstSummary,
-    execution_guidance: {
-      next_move_mode: nextMoveMode,
-      next_move_command: nextMoveCommand,
-      mutating_blocked: mutatingBlocked,
-      mutating_block_reasons: mutatingBlockedReasons,
-      staleness_or_dirty_risk: stalenessOrDirtyRisk,
-    },
+    execution_guidance,
     next_best_action: nextBestAction,
     why_this_action: whyThisAction,
     operator_can_be_away_status: operatorAwayStatus,
     known_unknowns: knownUnknowns,
-    command_center_v2,
+    command_center_v2: command_center_v2_with_operator_digest,
     owner_command_center_neurons,
   };
 }

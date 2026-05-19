@@ -808,6 +808,23 @@ export type BatchProductionOwnerDecisionsLaneV1 = {
   unknown_facts: string[];
 };
 
+/** Read-only mirror of final root operator digest fields for jq-safe v2 queries. */
+export type OperatorDigestProjectionV1 = {
+  contract: "operator_digest_v1";
+  read_only: true;
+  data_mutation: false;
+  next_best_action: string;
+  why_this_action: string;
+  execution_guidance: {
+    next_move_mode: "READ_ONLY" | "MUTATING";
+    next_move_command: string;
+    mutating_blocked: boolean;
+    mutating_block_reasons: string[];
+    staleness_or_dirty_risk: string[];
+  };
+  source: "buckparts_command_center_v1_root_digest";
+};
+
 export type CommandCenterV2Report = {
   schema_version: "1";
   generated_at: string;
@@ -863,6 +880,8 @@ export type CommandCenterV2Report = {
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
   /** Read-only semantic page/publishability truth for refrigerator filter pages (Cruise diagnostics). */
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
+  /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
+  operator_digest_v1: OperatorDigestProjectionV1;
 };
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
@@ -891,6 +910,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "next_execution_packet_summary_v1"
   | "operating_map_summary_v1"
   | "page_publishability_truth_summary_v1"
+  | "operator_digest_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */

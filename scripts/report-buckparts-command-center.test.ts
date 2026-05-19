@@ -802,6 +802,36 @@ test("emits one concrete next_best_action", async () => {
   assert.equal(report.next_best_action.trim().length > 0, true);
 });
 
+test("Command Center JSON shape contract: root digest, v2 lanes, operator_digest_v1 mirror", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const v2 = report.command_center_v2;
+  const mirror = v2.operator_digest_v1;
+
+  assert.equal(typeof report.next_best_action, "string");
+  assert.equal(report.next_best_action.trim().length > 0, true);
+
+  assert.ok(mirror);
+  assert.equal(mirror.contract, "operator_digest_v1");
+  assert.equal(mirror.read_only, true);
+  assert.equal(mirror.data_mutation, false);
+  assert.equal(mirror.source, "buckparts_command_center_v1_root_digest");
+  assert.equal(mirror.next_best_action, report.next_best_action);
+  assert.equal(mirror.why_this_action, report.why_this_action);
+  assert.deepEqual(mirror.execution_guidance, report.execution_guidance);
+
+  assert.equal("next_best_action" in v2, false);
+  assert.equal("command_surface" in report, false);
+  assert.equal("command_surface" in v2, false);
+
+  assert.ok(report.owner_command_center_neurons);
+  assert.equal("owner_command_center_neurons" in v2, false);
+});
+
 test("skips Amazon-first NBA when another non-Amazon affiliate is APPROVED", async () => {
   const tracker = JSON.stringify([
     {

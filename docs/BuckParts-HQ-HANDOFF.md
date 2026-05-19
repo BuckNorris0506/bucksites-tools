@@ -54,6 +54,16 @@ node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_cent
 
 **PROVEN — validation before commit (`b85e90b`):** `report-buckparts-command-center.test.ts` (lane contract, UNKNOWN missing artifacts, STALE GA4 mock); `load-command-center-report.test.ts`; `buckparts-hq-handoff-freshness`; `npm run lint`; `npm run build`.
 
+### Command Center JSON shape contract
+
+**Architecture (do not regress):**
+
+- **Root (`buckparts_command_center_v1`)** — operator digest shell: queue summaries, `execution_guidance`, final `next_best_action` / `why_this_action`, and **`owner_command_center_neurons`**.
+- **`command_center_v2`** — decision lanes, brain gates, semantic diagnostics (e.g. `page_publishability_truth_summary_v1`), and lane-level `next_owner_action` (distinct from root headline action).
+- **`command_surface`** — separate report (`npm run buckparts:command-surface`); **not** embedded in Command Center JSON stdout.
+- **`command_center_v2.operator_digest_v1`** — read-only mirror of final root operator guidance (`next_best_action`, `why_this_action`, `execution_guidance`) populated **after** any `brain_integrity_gate_v1` override so jq can query `command_center_v2.operator_digest_v1.next_best_action` safely. There is **no** top-level `command_center_v2.next_best_action`.
+- **`owner_command_center_neurons`** intentionally remains **root-owned** (not under `command_center_v2`).
+
 ### Command Center neuron map — source of truth (PROVEN through `84fb4b3`)
 
 **Architecture (do not regress):**
