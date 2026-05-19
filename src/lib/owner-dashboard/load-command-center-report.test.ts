@@ -137,6 +137,60 @@ describe("page_state_distribution neuron", () => {
     );
   });
 
+  it("omits stale per-page join UNKNOWN copy when unknown_join_count is 0", () => {
+    const lane = stubPublishabilityTruthSummary({
+      runtime_status: "OK",
+      unknown_join_count: 0,
+      top_unknown_join_reasons: [],
+      unknown_facts: [
+        "CTA join uses read-only retailer_links.filter_id grouped to filters.slug.",
+        "Per-page click_signal is joined from the same click_events 30d fetch as revenue_snapshot.click_visibility.",
+        "Per-page demand_signal is joined via exact OEM/alias match on actionable search_gaps only.",
+      ],
+    });
+    const neurons = buildOwnerCommandCenterNeuronsReport({
+      rootDir: process.cwd(),
+      pageState: {
+        computable: true,
+        contract: "sitemap_artifact_inventory_v1",
+        artifact_relative_path: "data/gsc/sitemap.xml",
+        url_count: 2,
+        distribution: { VERTICAL_POLICY_LIVE_refrigerator: 2 },
+        reason: "fixture inventory note",
+      },
+      gscPresence: null,
+      pagePublishabilityTruth: lane,
+    });
+    const ps = neurons.neurons.find((n) => n.neuron_key === "page_state_distribution");
+    assert.ok(ps);
+    assert.equal(ps.status, "PROVEN");
+    assert.equal(ps.connection_level, "BRIGHT");
+    assert.ok(
+      !ps.unknown_facts.some((f) => f.includes("demand_signal and click_signal remain UNKNOWN")),
+    );
+    assert.ok(
+      ps.proven_facts.some((f) =>
+        f.includes("Per-page click_signal is joined in page_publishability_truth_summary_v1"),
+      ),
+    );
+    assert.ok(
+      ps.proven_facts.some((f) =>
+        f.includes("Per-page demand_signal is joined in page_publishability_truth_summary_v1"),
+      ),
+    );
+    assert.ok(ps.unknown_facts.some((f) => f.includes("Automation remains constrained")));
+    assert.ok(
+      ps.unknown_facts.some((f) => f.includes("not proof of live Google indexing")),
+    );
+    assert.equal(
+      mapPageStateNeuronConnectionLevelWithPublishabilityTruth({
+        inventoryConnectionLevel: "BRIGHT",
+        publishabilityTruth: lane,
+      }),
+      "BRIGHT",
+    );
+  });
+
   it("preserves UNKNOWN semantic status when publishability lane is absent", () => {
     const neurons = buildOwnerCommandCenterNeuronsReport({
       rootDir: process.cwd(),

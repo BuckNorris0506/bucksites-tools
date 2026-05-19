@@ -138,6 +138,15 @@ function hasComputableSemanticPublishabilityTruth(
   return !!lane && lane.computable_semantic_count > 0;
 }
 
+function isStalePerPageJoinUnknownCopy(fact: string): boolean {
+  return (
+    fact.includes("demand_signal and click_signal remain UNKNOWN") ||
+    fact.includes("Per-page demand and click signals are UNKNOWN") ||
+    fact.includes("per_page_click_not_joined") ||
+    fact.includes("per_page_demand_not_joined")
+  );
+}
+
 /** DIM when semantic truth exists but joins/automation still constrain completeness (not fully green). */
 export function mapPageStateNeuronConnectionLevelWithPublishabilityTruth(args: {
   inventoryConnectionLevel: OwnerNeuronConnectionLevel;
@@ -184,18 +193,32 @@ function appendSemanticPublishabilityTruthToPageStateNeuron(args: {
     proven.push(`top_unknown_join_reasons: ${lane.top_unknown_join_reasons.join("; ")}.`);
   }
 
-  unknown.push(
-    `unknown_join_count=${lane.unknown_join_count} across per-page joins — semantic distributions are proven for computable pages, but the lane is not fully complete.`,
-  );
-  unknown.push(
-    "Per-page demand_signal and click_signal remain UNKNOWN in page_publishability_truth_summary_v1 until explicit page-key joins exist.",
-  );
+  const automationConstrainedFact =
+    "Automation remains constrained (read_only_only / owner_approval_required / never_auto_mutate) — do not treat semantic buy-ready counts as permission for autonomous mutation.";
+  const semanticNotLiveIndexFact =
+    "Semantic PageState/PublishabilityState distributions are repo-joined catalog truth — not proof of live Google indexing, sitemap freshness, or on-page robots metadata.";
+
   if (lane.unknown_join_count > 0) {
     unknown.push(
-      "Automation remains constrained (read_only_only / owner_approval_required / never_auto_mutate) — do not treat semantic buy-ready counts as permission for autonomous mutation.",
+      `unknown_join_count=${lane.unknown_join_count} across per-page joins — semantic distributions are proven for computable pages, but the lane is not fully complete.`,
     );
+    unknown.push(
+      "Per-page demand_signal and click_signal remain UNKNOWN in page_publishability_truth_summary_v1 until explicit page-key joins exist.",
+    );
+    unknown.push(automationConstrainedFact);
+  } else {
+    proven.push(
+      "Per-page click_signal is joined in page_publishability_truth_summary_v1 (click_events human-likely 30d window by filter_slug/page_slug; operational visibility only, not revenue proof).",
+    );
+    proven.push(
+      "Per-page demand_signal is joined in page_publishability_truth_summary_v1 (exact OEM/alias search_gaps match; search demand only, not fit or buy proof).",
+    );
+    unknown.push(automationConstrainedFact);
+    unknown.push(semanticNotLiveIndexFact);
   }
+
   for (const f of lane.unknown_facts) {
+    if (lane.unknown_join_count === 0 && isStalePerPageJoinUnknownCopy(f)) continue;
     if (!unknown.includes(f)) unknown.push(f);
   }
 
