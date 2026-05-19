@@ -3257,6 +3257,77 @@ test("page_state_distribution neuron reflects page_publishability_truth_summary_
   }
 });
 
+test("command_center_v2.page_publishability_truth_summary_v1 v1.1 clears click and demand unknown reasons when joins supplied", async () => {
+  const summary = buildPagePublishabilityTruthSummaryV1({
+    generated_at: "2026-05-18T00:00:00.000Z",
+    catalog_rows: [{ filter_slug: "mwf", oem_token: "MWF", brand_slug: "ge" }],
+    evidence_inventory: {
+      contract: "evidence_inventory_v1",
+      proven_facts: [],
+      unknown_facts: [],
+      data_evidence: {
+        directory_relative_path: "data/evidence",
+        total_json_files: 0,
+        filename_outcome_buckets: {
+          live_outcome_by_filename_substring: 0,
+          unknown_outcome_by_filename_substring: 0,
+          fail_hold_outcome_by_filename_substring: 0,
+          other_json_not_matching_filename_patterns: 0,
+        },
+        recent_filenames: [],
+        recent_ordering: "lexicographic_by_filename",
+        proven_facts: [],
+        unknown_facts: [],
+        body_mapping: {
+          parsed_ok_count: 0,
+          parse_error_count: 0,
+          mapped_count: 0,
+          unmapped_count: 0,
+          by_scope: {},
+          by_filter_slug: {},
+          by_token: {},
+        },
+      },
+      refrigerator_manual_evidence: {
+        inventory_contract: "refrigerator_manual_evidence_files_v1",
+        directory_relative_path: "data/manual-evidence/refrigerator",
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+      fridge_form_factor_evidence: {
+        inventory_contract: "fridge_form_factor_evidence_files_v1",
+        directory_relative_path: "data/fridge-form-factor-evidence",
+        valid_record_count: 0,
+        invalid_or_unreadable_count: 0,
+        validated_model_slugs: [],
+        proven_facts: [],
+        unknown_facts: [],
+      },
+    },
+    filter_slug_to_model_slugs: new Map([["mwf", []]]),
+    indexable_slugs: new Set(["mwf"]),
+    cta_join_by_filter_slug: new Map([
+      ["mwf", { safe_cta_link_count: 1, direct_buyable_link_count: 0, mapped_model_count: 0 }],
+    ]),
+    affiliate_approval_pending: false,
+    commission_or_revenue: "NOT_CONNECTED",
+    human_likely_clicks_by_filter_slug: new Map([["mwf", 2]]),
+    click_visibility_runtime_status: "OK",
+    demand_present_by_filter_slug: new Map([["mwf", true]]),
+  });
+  assert.ok(
+    !summary.top_unknown_join_reasons.some((r) => r.includes("per_page_click_not_joined_v1")),
+  );
+  assert.ok(
+    !summary.top_unknown_join_reasons.some((r) => r.includes("per_page_demand_not_joined_v1")),
+  );
+  assert.equal(summary.sample_rows[0]?.click_signal, "present");
+  assert.equal(summary.sample_rows[0]?.demand_signal, "present");
+});
+
 test("command_center_v2.page_publishability_truth_summary_v1 is read-only semantic lane", async () => {
   const stubSummary = buildPagePublishabilityTruthSummaryV1({
     generated_at: "2026-05-18T00:00:00.000Z",
@@ -3312,6 +3383,9 @@ test("command_center_v2.page_publishability_truth_summary_v1 is read-only semant
     cta_join_by_filter_slug: null,
     affiliate_approval_pending: true,
     commission_or_revenue: "NOT_CONNECTED",
+    human_likely_clicks_by_filter_slug: null,
+    click_visibility_runtime_status: null,
+    demand_present_by_filter_slug: null,
   });
 
   const report = await buildBuckpartsCommandCenterReport({

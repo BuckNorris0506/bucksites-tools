@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   aggregateClickRowsForTopLists,
+  buildRefrigeratorFilterHumanLikelyClicksBySlug30d,
   classifyClickUserAgent,
   clickSnapshotForTests,
   computeClickQualityFromRows,
@@ -222,4 +223,50 @@ test("clickSnapshotForTests fixture is OK-shaped with quality fields", () => {
   assert.equal(s.raw_last_30_days_clicks, 10);
   assert.equal(s.human_likely_last_30_days_clicks, 3);
   assert.equal(s.excluded_last_30_days_clicks, 7);
+});
+
+test("buildRefrigeratorFilterHumanLikelyClicksBySlug30d counts human-likely refrigerator_filter page_slug only", () => {
+  const map = buildRefrigeratorFilterHumanLikelyClicksBySlug30d([
+    {
+      filter_id: "f1",
+      retailer_slug: "amazon",
+      page_type: "refrigerator_filter",
+      page_slug: "mwf",
+      air_purifier_retailer_link_id: null,
+      vacuum_retailer_link_id: null,
+      humidifier_retailer_link_id: null,
+      whole_house_water_retailer_link_id: null,
+      appliance_air_retailer_link_id: null,
+      created_at: "2026-05-01T00:00:00.000Z",
+      user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+    },
+    {
+      filter_id: "f1",
+      retailer_slug: "amazon",
+      page_type: "refrigerator_filter",
+      page_slug: "mwf",
+      air_purifier_retailer_link_id: null,
+      vacuum_retailer_link_id: null,
+      humidifier_retailer_link_id: null,
+      whole_house_water_retailer_link_id: null,
+      appliance_air_retailer_link_id: null,
+      created_at: "2026-05-01T00:00:00.000Z",
+      user_agent: "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+    },
+    {
+      filter_id: "f2",
+      retailer_slug: "amazon",
+      page_type: "fridge_filter",
+      page_slug: "other",
+      air_purifier_retailer_link_id: null,
+      vacuum_retailer_link_id: null,
+      humidifier_retailer_link_id: null,
+      whole_house_water_retailer_link_id: null,
+      appliance_air_retailer_link_id: null,
+      created_at: "2026-05-01T00:00:00.000Z",
+      user_agent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36",
+    },
+  ]);
+  assert.equal(map.get("mwf"), 1);
+  assert.equal(map.has("other"), false);
 });

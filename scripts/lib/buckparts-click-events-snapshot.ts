@@ -258,6 +258,37 @@ export function aggregateClickRowsForTopLists(rows: ClickEventAggRow[]): Pick<
   return { top_retailer_slugs_30d, top_page_attribution_30d, top_wedge_link_ids_30d };
 }
 
+const REFRIGERATOR_FILTER_PAGE_TYPE = "refrigerator_filter";
+
+/** Human-likely outbound clicks in the 30d window keyed by filter page_slug (lowercase). */
+export function buildRefrigeratorFilterHumanLikelyClicksBySlug30d(
+  rows: ClickEventReadRow[],
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const row of rows) {
+    const pageType = row.page_type?.trim().toLowerCase();
+    if (pageType !== REFRIGERATOR_FILTER_PAGE_TYPE) continue;
+    const slug = row.page_slug?.trim().toLowerCase();
+    if (!slug) continue;
+    if (classifyClickUserAgent(row.user_agent) !== "HUMAN_LIKELY") continue;
+    counts.set(slug, (counts.get(slug) ?? 0) + 1);
+  }
+  return counts;
+}
+
+export type BuckpartsClickEventsQueryResult = {
+  snapshot: ClickVisibilitySnapshot;
+  /** Full 30d click_events rows when row fetch succeeded; null when snapshot DB/read failed early. */
+  click_rows_30d: ClickEventReadRow[] | null;
+};
+
+function clickQueryResult(
+  snapshot: ClickVisibilitySnapshot,
+  click_rows_30d: ClickEventReadRow[] | null,
+): BuckpartsClickEventsQueryResult {
+  return { snapshot, click_rows_30d };
+}
+
 function emptyWedge(): ClickVisibilitySnapshot["clicks_by_wedge_30d"] {
   return {
     refrigerator_water: "UNKNOWN",
@@ -365,17 +396,20 @@ async function fetchAllClickRowsIn30d(
 export async function queryBuckpartsClickEventsSnapshot(
   supabase: SupabaseClient,
   nowMs: number,
-): Promise<ClickVisibilitySnapshot> {
+): Promise<BuckpartsClickEventsQueryResult> {
   const last7 = new Date(nowMs - 7 * 86400000).toISOString();
   const last30 = new Date(nowMs - 30 * 86400000).toISOString();
 
   const [c7, c30] = await Promise.all([headCount(supabase, last7), headCount(supabase, last30)]);
 
   if (c7.error || c30.error) {
-    return unknownSnapshot("UNKNOWN_DB_UNAVAILABLE", [
-      c7.error?.message ?? "",
-      c30.error?.message ?? "",
-    ].filter(Boolean));
+    return clickQueryResult(
+      unknownSnapshot("UNKNOWN_DB_UNAVAILABLE", [
+        c7.error?.message ?? "",
+        c30.error?.message ?? "",
+      ].filter(Boolean)),
+      null,
+    );
   }
 
   const raw7 = c7.count;
@@ -431,21 +465,24 @@ export async function queryBuckpartsClickEventsSnapshot(
   }[];
 
   if (wedgeErrors.length > 0) {
-    return {
-      runtime_status: "UNKNOWN_SCHEMA",
-      generated_at: new Date(nowMs).toISOString(),
-      window_days: { short: 7, long: 30 },
-      ...unknownQualityBlock(),
-      last_7_days_clicks: raw7,
-      last_30_days_clicks: raw30,
-      raw_last_7_days_clicks: raw7,
-      raw_last_30_days_clicks: raw30,
-      clicks_by_wedge_30d: emptyWedge(),
-      commission_or_revenue: "NOT_CONNECTED",
-      commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
-      click_quality_notes: CLICK_QUALITY_NOTES,
-      aggregation_notes: wedgeErrors.map((e) => e.message),
-    };
+    return clickQueryResult(
+      {
+        runtime_status: "UNKNOWN_SCHEMA",
+        generated_at: new Date(nowMs).toISOString(),
+        window_days: { short: 7, long: 30 },
+        ...unknownQualityBlock(),
+        last_7_days_clicks: raw7,
+        last_30_days_clicks: raw30,
+        raw_last_7_days_clicks: raw7,
+        raw_last_30_days_clicks: raw30,
+        clicks_by_wedge_30d: emptyWedge(),
+        commission_or_revenue: "NOT_CONNECTED",
+        commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+        click_quality_notes: CLICK_QUALITY_NOTES,
+        aggregation_notes: wedgeErrors.map((e) => e.message),
+      },
+      null,
+    );
   }
 
   const wedgeCounts = {
@@ -468,21 +505,24 @@ export async function queryBuckpartsClickEventsSnapshot(
 
   const { rows: allRows, error: fetchErr } = await fetchAllClickRowsIn30d(supabase, last30);
   if (fetchErr) {
-    return {
-      runtime_status: "UNKNOWN_SCHEMA",
-      generated_at: new Date(nowMs).toISOString(),
-      window_days: { short: 7, long: 30 },
-      ...unknownQualityBlock(),
-      last_7_days_clicks: raw7,
-      last_30_days_clicks: raw30,
-      raw_last_7_days_clicks: raw7,
-      raw_last_30_days_clicks: raw30,
-      clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
-      commission_or_revenue: "NOT_CONNECTED",
-      commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
-      click_quality_notes: CLICK_QUALITY_NOTES,
-      aggregation_notes: [fetchErr.message],
-    };
+    return clickQueryResult(
+      {
+        runtime_status: "UNKNOWN_SCHEMA",
+        generated_at: new Date(nowMs).toISOString(),
+        window_days: { short: 7, long: 30 },
+        ...unknownQualityBlock(),
+        last_7_days_clicks: raw7,
+        last_30_days_clicks: raw30,
+        raw_last_7_days_clicks: raw7,
+        raw_last_30_days_clicks: raw30,
+        clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
+        commission_or_revenue: "NOT_CONNECTED",
+        commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+        click_quality_notes: CLICK_QUALITY_NOTES,
+        aggregation_notes: [fetchErr.message],
+      },
+      null,
+    );
   }
 
   const quality = computeClickQualityFromRows(allRows, { last7Iso: last7, raw7, raw30 });
@@ -502,30 +542,33 @@ export async function queryBuckpartsClickEventsSnapshot(
     );
   }
 
-  return {
-    runtime_status: "OK",
-    generated_at: new Date(nowMs).toISOString(),
-    window_days: { short: 7, long: 30 },
-    last_7_days_clicks: raw7,
-    last_30_days_clicks: raw30,
-    raw_last_7_days_clicks: raw7,
-    raw_last_30_days_clicks: raw30,
-    human_likely_last_7_days_clicks: quality.human_likely_last_7_days_clicks,
-    human_likely_last_30_days_clicks: quality.human_likely_last_30_days_clicks,
-    excluded_last_30_days_clicks: quality.excluded_last_30_days_clicks,
-    excluded_by_category_30d: quality.excluded_by_category_30d,
-    top_user_agent_families_30d: quality.top_user_agent_families_30d,
-    newest_click_at: quality.newest_click_at,
-    oldest_click_at_in_30d_window: quality.oldest_click_at_in_30d_window,
-    click_freshness_status: quality.click_freshness_status,
-    click_freshness_reason: quality.click_freshness_reason,
-    click_quality_notes: CLICK_QUALITY_NOTES,
-    clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
-    ...tops,
-    commission_or_revenue: "NOT_CONNECTED",
-    commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
-    aggregation_notes: notes.length > 0 ? notes : undefined,
-  };
+  return clickQueryResult(
+    {
+      runtime_status: "OK",
+      generated_at: new Date(nowMs).toISOString(),
+      window_days: { short: 7, long: 30 },
+      last_7_days_clicks: raw7,
+      last_30_days_clicks: raw30,
+      raw_last_7_days_clicks: raw7,
+      raw_last_30_days_clicks: raw30,
+      human_likely_last_7_days_clicks: quality.human_likely_last_7_days_clicks,
+      human_likely_last_30_days_clicks: quality.human_likely_last_30_days_clicks,
+      excluded_last_30_days_clicks: quality.excluded_last_30_days_clicks,
+      excluded_by_category_30d: quality.excluded_by_category_30d,
+      top_user_agent_families_30d: quality.top_user_agent_families_30d,
+      newest_click_at: quality.newest_click_at,
+      oldest_click_at_in_30d_window: quality.oldest_click_at_in_30d_window,
+      click_freshness_status: quality.click_freshness_status,
+      click_freshness_reason: quality.click_freshness_reason,
+      click_quality_notes: CLICK_QUALITY_NOTES,
+      clicks_by_wedge_30d: { ...wedgeCounts, other_or_legacy },
+      ...tops,
+      commission_or_revenue: "NOT_CONNECTED",
+      commission_or_revenue_notes: COMMISSION_NOT_CONNECTED,
+      aggregation_notes: notes.length > 0 ? notes : undefined,
+    },
+    allRows,
+  );
 }
 
 export function clickSnapshotForTests(overrides: Partial<ClickVisibilitySnapshot> = {}): ClickVisibilitySnapshot {

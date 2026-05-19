@@ -40,9 +40,11 @@ import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-
 import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
 import {
   buildPagePublishabilityTruthSummaryV1,
+  parseFilterAliasesCsv,
   parseFilterSlugToModelSlugsFromCompatibilityCsv,
   parseRefrigeratorFiltersCatalogCsv,
   tryLoadRefrigeratorFilterCtaJoinBySlugV1,
+  tryLoadRefrigeratorFilterDemandPresentBySlugV1,
   tryLoadRefrigeratorUsefulFilterSlugsV1,
   type PagePublishabilityTruthSummaryV1,
 } from "./lib/buckparts-page-publishability-truth-v1";
@@ -401,6 +403,8 @@ export async function buildBuckpartsCommandCenterReport(
   const trackerText = readTextFile(path.resolve(rootDir, "data/affiliate/affiliate-application-tracker.json"));
   const trackerRows = trackerRowsFromText(trackerText);
 
+  let clickRows30d: import("./lib/buckparts-click-events-snapshot").ClickEventReadRow[] | null = null;
+
   const clickEventsSnapshotRunner =
     options.providers?.clickEventsSnapshot ??
     (async () => {
@@ -410,7 +414,9 @@ export async function buildBuckpartsCommandCenterReport(
         const { queryBuckpartsClickEventsSnapshot } = await import("./lib/buckparts-click-events-snapshot");
         loadEnv();
         const supabase = getSupabaseAdmin();
-        return await queryBuckpartsClickEventsSnapshot(supabase, now().getTime());
+        const result = await queryBuckpartsClickEventsSnapshot(supabase, now().getTime());
+        clickRows30d = result.click_rows_30d;
+        return result.snapshot;
       } catch (e) {
         const { unavailableClickSnapshot } = await import("./lib/buckparts-click-events-snapshot");
         return unavailableClickSnapshot([e instanceof Error ? e.message : "UNKNOWN"]);
@@ -913,9 +919,23 @@ export async function buildBuckpartsCommandCenterReport(
   const pagePublishabilityTruthLoader =
     options.pagePublishabilityTruthSummaryLoader ??
     (async () => {
-      const [indexable_slugs, cta_join_by_filter_slug] = await Promise.all([
+      const aliasesCsvPath = path.resolve(rootDir, "data/filter_aliases.csv");
+      const alias_to_filter_slug = fileExists(aliasesCsvPath)
+        ? parseFilterAliasesCsv(readTextFile(aliasesCsvPath))
+        : new Map<string, string>();
+      const { buildRefrigeratorFilterHumanLikelyClicksBySlug30d } = await import(
+        "./lib/buckparts-click-events-snapshot"
+      );
+      const human_likely_clicks_by_filter_slug =
+        clickRows30d !== null ? buildRefrigeratorFilterHumanLikelyClicksBySlug30d(clickRows30d) : null;
+
+      const [indexable_slugs, cta_join_by_filter_slug, demand_present_by_filter_slug] = await Promise.all([
         tryLoadRefrigeratorUsefulFilterSlugsV1(),
         tryLoadRefrigeratorFilterCtaJoinBySlugV1(refrigeratorFilterSlugToModels),
+        tryLoadRefrigeratorFilterDemandPresentBySlugV1({
+          catalog_rows: refrigeratorCatalogRows,
+          alias_to_filter_slug,
+        }),
       ]);
       return buildPagePublishabilityTruthSummaryV1({
         generated_at: now().toISOString(),
@@ -926,6 +946,9 @@ export async function buildBuckpartsCommandCenterReport(
         cta_join_by_filter_slug,
         affiliate_approval_pending: affiliateApprovalPending,
         commission_or_revenue: "NOT_CONNECTED",
+        human_likely_clicks_by_filter_slug,
+        click_visibility_runtime_status: clickVisibility.runtime_status,
+        demand_present_by_filter_slug,
       });
     });
 

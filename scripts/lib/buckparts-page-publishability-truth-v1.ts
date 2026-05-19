@@ -10,7 +10,10 @@ import {
   type PublishabilityState,
 } from "@/lib/page-state/publishability-state";
 import { listFridgeModelReviewOverrides } from "@/lib/fridge/fridge-model-review-overrides";
-import type { EvidenceInventoryV1 } from "./buckparts-command-center-v2-types";
+import type {
+  ClickVisibilitySnapshot,
+  EvidenceInventoryV1,
+} from "./buckparts-command-center-v2-types";
 
 export const PAGE_PUBLISHABILITY_TRUTH_SUMMARY_CONTRACT_V1 = "page_publishability_truth_summary_v1" as const;
 
@@ -92,8 +95,17 @@ export type BuildPagePublishabilityTruthSummaryArgs = {
   cta_join_by_filter_slug: Map<string, RefrigeratorFilterCtaJoinV1> | null;
   affiliate_approval_pending: boolean;
   commission_or_revenue: "CONNECTED" | "NOT_CONNECTED" | "UNKNOWN";
+  /** When null, click_signal is UNKNOWN for all rows. */
+  human_likely_clicks_by_filter_slug: Map<string, number> | null;
+  /** Required to distinguish absent vs UNKNOWN for click_signal when human_likely_clicks map is set. */
+  click_visibility_runtime_status: ClickVisibilitySnapshot["runtime_status"] | null;
+  /** When null, demand_signal is UNKNOWN for all rows (true=present, false=absent when map is set). */
+  demand_present_by_filter_slug: Map<string, boolean> | null;
   sample_row_cap?: number;
 };
+
+const REFRIGERATOR_WATER_SEARCH_GAPS_CATALOG = "refrigerator_water" as const;
+const ACTIONABLE_SEARCH_GAP_STATUSES = ["open", "reviewing", "queued"] as const;
 
 const SAMPLE_ROW_CAP_DEFAULT = 25 as const;
 
@@ -125,6 +137,28 @@ function parseSimpleCsv(text: string): string[][] {
     rows.push(fields);
   }
   return rows;
+}
+
+function normalizeExactDemandQueryKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+export function parseFilterAliasesCsv(csvText: string): Map<string, string> {
+  const rows = parseSimpleCsv(csvText);
+  const map = new Map<string, string>();
+  if (rows.length < 2) return map;
+  const header = rows[0]!.map((h) => h.trim());
+  const slugIdx = header.indexOf("filter_slug");
+  const aliasIdx = header.indexOf("alias");
+  if (slugIdx < 0 || aliasIdx < 0) return map;
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i]!;
+    const filter_slug = (r[slugIdx] ?? "").trim().toLowerCase();
+    const alias = (r[aliasIdx] ?? "").trim().toLowerCase();
+    if (!filter_slug || !alias) continue;
+    map.set(alias, filter_slug);
+  }
+  return map;
 }
 
 export function parseRefrigeratorFiltersCatalogCsv(csvText: string): RefrigeratorFilterCatalogRowV1[] {
@@ -209,6 +243,29 @@ function deriveBuyerPathState(
   return "UNKNOWN";
 }
 
+function deriveClickSignal(args: {
+  filter_slug: string;
+  human_likely_clicks_by_filter_slug: Map<string, number> | null;
+  click_visibility_runtime_status: ClickVisibilitySnapshot["runtime_status"] | null;
+}): PagePublishabilityTruthRowV1["click_signal"] {
+  if (
+    args.human_likely_clicks_by_filter_slug === null ||
+    args.click_visibility_runtime_status !== "OK"
+  ) {
+    return "UNKNOWN";
+  }
+  const count = args.human_likely_clicks_by_filter_slug.get(args.filter_slug) ?? 0;
+  return count > 0 ? "present" : "absent";
+}
+
+function deriveDemandSignal(
+  filter_slug: string,
+  demand_present_by_filter_slug: Map<string, boolean> | null,
+): PagePublishabilityTruthRowV1["demand_signal"] {
+  if (demand_present_by_filter_slug === null) return "UNKNOWN";
+  return demand_present_by_filter_slug.get(filter_slug) === true ? "present" : "absent";
+}
+
 function deriveBuyAllowed(cta: RefrigeratorFilterCtaJoinV1 | null): PagePublishabilityCtaTruthV1["buy_allowed"] {
   if (!cta) return "UNKNOWN";
   if (cta.safe_cta_link_count > 0) return "allowed";
@@ -286,6 +343,9 @@ export function buildPagePublishabilityTruthRowV1(args: {
   cta_join_by_filter_slug: Map<string, RefrigeratorFilterCtaJoinV1> | null;
   affiliate_approval_pending: boolean;
   commission_or_revenue: "CONNECTED" | "NOT_CONNECTED" | "UNKNOWN";
+  human_likely_clicks_by_filter_slug: Map<string, number> | null;
+  click_visibility_runtime_status: ClickVisibilitySnapshot["runtime_status"] | null;
+  demand_present_by_filter_slug: Map<string, boolean> | null;
 }): PagePublishabilityTruthRowV1 {
   const { catalog } = args;
   const slug = catalog.filter_slug;
@@ -340,10 +400,40 @@ export function buildPagePublishabilityTruthRowV1(args: {
     proven_facts.push(`Evidence inventory references: ${evidence_tokens.join(", ")}.`);
   }
 
+  const click_signal = deriveClickSignal({
+    filter_slug: slug,
+    human_likely_clicks_by_filter_slug: args.human_likely_clicks_by_filter_slug,
+    click_visibility_runtime_status: args.click_visibility_runtime_status,
+  });
+  const demand_signal = deriveDemandSignal(slug, args.demand_present_by_filter_slug);
+
+  if (args.human_likely_clicks_by_filter_slug !== null && args.click_visibility_runtime_status === "OK") {
+    const humanLikelyClicks = args.human_likely_clicks_by_filter_slug.get(slug) ?? 0;
+    proven_facts.push(
+      `click_signal: ${click_signal} (${humanLikelyClicks} human-likely refrigerator_filter click_events in 30d window for page_slug=${slug}; operational visibility only, not revenue or buyer proof).`,
+    );
+  } else if (args.human_likely_clicks_by_filter_slug === null) {
+    unknown_facts.push("Per-page click_signal join (click_events 30d rows) was not supplied.");
+  } else {
+    unknown_facts.push(
+      `click_visibility runtime_status=${args.click_visibility_runtime_status ?? "UNKNOWN"}; per-page click_signal is UNKNOWN.`,
+    );
+  }
+
+  if (args.demand_present_by_filter_slug !== null) {
+    proven_facts.push(
+      `demand_signal: ${demand_signal} (exact normalized_query match on search_gaps catalog=${REFRIGERATOR_WATER_SEARCH_GAPS_CATALOG} for OEM token or filter_aliases.csv alias; search demand only, not fit or buy proof).`,
+    );
+  } else {
+    unknown_facts.push("Per-page demand_signal join (search_gaps exact match) was not supplied.");
+  }
+
   const isIndexableBool =
     indexable === "UNKNOWN" ? null : indexable === true;
   const validCtaCount = typeof cta.safe_cta_link_count === "number" ? cta.safe_cta_link_count : null;
   const buyerPathState = cta.buyer_path_state === "UNKNOWN" ? null : cta.buyer_path_state;
+  const hasDemandSignal =
+    demand_signal === "present" ? true : demand_signal === "absent" ? false : null;
 
   const page_state: PageState | "UNKNOWN" =
     isIndexableBool === null
@@ -357,7 +447,7 @@ export function buildPagePublishabilityTruthRowV1(args: {
               : buyerPathState === "suppress_buy"
                 ? "suppress_buy"
                 : null,
-          hasDemandSignal: null,
+          hasDemandSignal,
         });
 
   const publishability_state: PublishabilityState | "UNKNOWN" =
@@ -393,8 +483,8 @@ export function buildPagePublishabilityTruthRowV1(args: {
     page_state,
     publishability_state,
     cta,
-    demand_signal: "UNKNOWN",
-    click_signal: "UNKNOWN",
+    demand_signal,
+    click_signal,
     evidence_file_count,
     evidence_tokens,
     quarantine,
@@ -408,7 +498,6 @@ export function buildPagePublishabilityTruthRowV1(args: {
 
   rowBase.automation_allowed = deriveAutomationAllowed(rowBase);
   rowBase.next_safe_action = deriveNextSafeAction(rowBase);
-  unknown_facts.push("Per-page demand_signal and click_signal joins are not proven in v1.");
   return rowBase;
 }
 
@@ -430,6 +519,9 @@ export function buildPagePublishabilityTruthSummaryV1(
       cta_join_by_filter_slug: args.cta_join_by_filter_slug,
       affiliate_approval_pending: args.affiliate_approval_pending,
       commission_or_revenue: args.commission_or_revenue,
+      human_likely_clicks_by_filter_slug: args.human_likely_clicks_by_filter_slug,
+      click_visibility_runtime_status: args.click_visibility_runtime_status,
+      demand_present_by_filter_slug: args.demand_present_by_filter_slug,
     }),
   );
 
@@ -487,16 +579,24 @@ export function buildPagePublishabilityTruthSummaryV1(
     `Refrigerator filter catalog rows=${rows.length} from data/filters.csv.`,
     `CTA join supplied=${args.cta_join_by_filter_slug !== null}.`,
     `Indexable join supplied=${args.indexable_slugs !== null}.`,
+    `Click join supplied=${args.human_likely_clicks_by_filter_slug !== null && args.click_visibility_runtime_status === "OK"}.`,
+    `Demand join supplied=${args.demand_present_by_filter_slug !== null}.`,
     `Quarantine via compatibility_mappings.csv + fridge model review overrides.`,
-    "v1 never emits auto_fix_allowed.",
+    "v1.1 never emits auto_fix_allowed.",
+    "click_signal uses human-likely click_events for page_type=refrigerator_filter + page_slug only; not revenue or conversion proof.",
+    "demand_signal uses exact normalized_query match on search_gaps (refrigerator_water) plus data/filter_aliases.csv; no fuzzy matching.",
   ];
 
   const unknown_facts = [
-    "Per-page demand and click signals are UNKNOWN until search_gaps/click_events are joined by page key.",
-    "Semantic page_state does not set hasDemandSignal (always null in classifier input).",
     args.cta_join_by_filter_slug === null
       ? "All pages missing proven CTA join; cta.safe_cta_link_count is UNKNOWN."
       : "CTA join uses read-only retailer_links.filter_id grouped to filters.slug.",
+    args.human_likely_clicks_by_filter_slug === null || args.click_visibility_runtime_status !== "OK"
+      ? "Per-page click_signal remains UNKNOWN when click_events 30d join or click_visibility runtime is unavailable."
+      : "Per-page click_signal is joined from the same click_events 30d fetch as revenue_snapshot.click_visibility.",
+    args.demand_present_by_filter_slug === null
+      ? "Per-page demand_signal remains UNKNOWN when search_gaps read fails."
+      : "Per-page demand_signal is joined via exact OEM/alias match on actionable search_gaps only.",
   ];
 
   const sample_rows = [...rows]
@@ -648,6 +748,60 @@ export async function tryLoadRefrigeratorFilterCtaJoinBySlugV1(
     });
 
     return join;
+  } catch {
+    return null;
+  }
+}
+
+type SearchGapDemandRow = {
+  normalized_query: string;
+  search_count: number;
+};
+
+/** Read-only exact-match demand join: OEM token or filter_aliases.csv alias → filter_slug. */
+export async function tryLoadRefrigeratorFilterDemandPresentBySlugV1(args: {
+  catalog_rows: RefrigeratorFilterCatalogRowV1[];
+  alias_to_filter_slug: Map<string, string>;
+}): Promise<Map<string, boolean> | null> {
+  try {
+    const { loadEnv } = await import("./load-env");
+    const { getSupabaseAdmin } = await import("./supabase-admin");
+    loadEnv();
+    const supabase = getSupabaseAdmin();
+
+    const present = new Map<string, boolean>();
+    const slugQueryKeys = new Map<string, Set<string>>();
+    for (const catalog of args.catalog_rows) {
+      present.set(catalog.filter_slug, false);
+      const keys = new Set<string>();
+      keys.add(normalizeExactDemandQueryKey(catalog.oem_token));
+      Array.from(args.alias_to_filter_slug.entries()).forEach(([alias, slug]) => {
+        if (slug === catalog.filter_slug) keys.add(normalizeExactDemandQueryKey(alias));
+      });
+      slugQueryKeys.set(catalog.filter_slug, keys);
+    }
+
+    for (let from = 0; ; from += SUPABASE_PAGE) {
+      const { data, error } = await supabase
+        .from("search_gaps")
+        .select("normalized_query, search_count")
+        .eq("catalog", REFRIGERATOR_WATER_SEARCH_GAPS_CATALOG)
+        .in("status", [...ACTIONABLE_SEARCH_GAP_STATUSES])
+        .range(from, from + SUPABASE_PAGE - 1);
+      if (error) throw error;
+      const chunk = (data ?? []) as SearchGapDemandRow[];
+      for (const gap of chunk) {
+        if (gap.search_count <= 0) continue;
+        const nq = normalizeExactDemandQueryKey(gap.normalized_query);
+        Array.from(slugQueryKeys.keys()).forEach((filterSlug) => {
+          const keys = slugQueryKeys.get(filterSlug);
+          if (keys?.has(nq)) present.set(filterSlug, true);
+        });
+      }
+      if (chunk.length < SUPABASE_PAGE) break;
+    }
+
+    return present;
   } catch {
     return null;
   }

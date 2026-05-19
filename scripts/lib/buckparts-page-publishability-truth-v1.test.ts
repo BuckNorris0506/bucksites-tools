@@ -5,6 +5,7 @@ import type { EvidenceInventoryV1 } from "./buckparts-command-center-v2-types";
 import {
   buildPagePublishabilityTruthRowV1,
   buildPagePublishabilityTruthSummaryV1,
+  parseFilterAliasesCsv,
   parseFilterSlugToModelSlugsFromCompatibilityCsv,
   parseRefrigeratorFiltersCatalogCsv,
 } from "./buckparts-page-publishability-truth-v1";
@@ -81,6 +82,9 @@ test("missing CTA join forces UNKNOWN safe_cta_link_count and read_only_only", (
     cta_join_by_filter_slug: null,
     affiliate_approval_pending: true,
     commission_or_revenue: "NOT_CONNECTED",
+    human_likely_clicks_by_filter_slug: null,
+    click_visibility_runtime_status: null,
+    demand_present_by_filter_slug: null,
   });
   assert.equal(row.cta.safe_cta_link_count, "UNKNOWN");
   assert.equal(row.automation_allowed, "never_auto_mutate");
@@ -102,6 +106,9 @@ test("buildPagePublishabilityTruthSummaryV1 never emits auto_fix_allowed", () =>
     ]),
     affiliate_approval_pending: false,
     commission_or_revenue: "CONNECTED",
+    human_likely_clicks_by_filter_slug: null,
+    click_visibility_runtime_status: null,
+    demand_present_by_filter_slug: null,
   });
   assert.equal(summary.contract, "page_publishability_truth_summary_v1");
   assert.equal(summary.read_only, true);
@@ -123,7 +130,59 @@ test("unknown_join_count increments when CTA join missing", () => {
     cta_join_by_filter_slug: null,
     affiliate_approval_pending: false,
     commission_or_revenue: "UNKNOWN",
+    human_likely_clicks_by_filter_slug: null,
+    click_visibility_runtime_status: null,
+    demand_present_by_filter_slug: null,
   });
   assert.ok(summary.unknown_join_count > 0);
   assert.ok(summary.top_unknown_join_reasons.some((r) => r.includes("cta_filter_slug_join_missing")));
+});
+
+test("click and demand joins set present absent without UNKNOWN when maps supplied", () => {
+  const summary = buildPagePublishabilityTruthSummaryV1({
+    generated_at: "2026-05-18T00:00:00.000Z",
+    catalog_rows: [
+      { filter_slug: "mwf", oem_token: "MWF", brand_slug: "ge" },
+      { filter_slug: "empty", oem_token: "EMPTY", brand_slug: "ge" },
+    ],
+    evidence_inventory: emptyEvidenceInventory(),
+    filter_slug_to_model_slugs: new Map([
+      ["mwf", []],
+      ["empty", []],
+    ]),
+    indexable_slugs: new Set(["mwf", "empty"]),
+    cta_join_by_filter_slug: new Map([
+      ["mwf", { safe_cta_link_count: 1, direct_buyable_link_count: 0, mapped_model_count: 0 }],
+      ["empty", { safe_cta_link_count: 0, direct_buyable_link_count: 0, mapped_model_count: 0 }],
+    ]),
+    affiliate_approval_pending: false,
+    commission_or_revenue: "NOT_CONNECTED",
+    human_likely_clicks_by_filter_slug: new Map([["mwf", 3]]),
+    click_visibility_runtime_status: "OK",
+    demand_present_by_filter_slug: new Map([
+      ["mwf", true],
+      ["empty", false],
+    ]),
+  });
+  const mwf = summary.sample_rows.find((r) => r.filter_slug === "mwf");
+  const empty = summary.sample_rows.find((r) => r.filter_slug === "empty");
+  assert.ok(mwf);
+  assert.ok(empty);
+  assert.equal(mwf.click_signal, "present");
+  assert.equal(mwf.demand_signal, "present");
+  assert.equal(empty.click_signal, "absent");
+  assert.equal(empty.demand_signal, "absent");
+  assert.ok(
+    !summary.top_unknown_join_reasons.some((r) => r.includes("per_page_click_not_joined_v1")),
+  );
+  assert.ok(
+    !summary.top_unknown_join_reasons.some((r) => r.includes("per_page_demand_not_joined_v1")),
+  );
+});
+
+test("parseFilterAliasesCsv maps alias to filter_slug", () => {
+  const map = parseFilterAliasesCsv(`filter_slug,alias
+mwf,LT1000P
+`);
+  assert.equal(map.get("lt1000p"), "mwf");
 });
