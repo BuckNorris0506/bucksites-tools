@@ -1,6 +1,8 @@
 import { readFileSync } from "node:fs";
 import { createSign } from "node:crypto";
 
+import { throwGoogleApiLogSafeError } from "./google-api-log-safe-error";
+
 export const READONLY_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 const OAUTH_TOKEN_URL = "https://oauth2.googleapis.com/token";
 
@@ -84,7 +86,7 @@ async function fetchAccessToken(serviceAccount: ServiceAccount): Promise<string>
     body,
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch OAuth access token.");
+    await throwGoogleApiLogSafeError(response, "oauth2/token(service_account)");
   }
   const parsed = (await response.json()) as { access_token?: string };
   if (typeof parsed.access_token !== "string" || parsed.access_token.length === 0) {
@@ -116,7 +118,7 @@ async function fetchAccessTokenFromRefreshToken(args: {
     body,
   });
   if (!response.ok) {
-    throw new Error("Failed to fetch OAuth access token.");
+    await throwGoogleApiLogSafeError(response, "oauth2/token(refresh_token)");
   }
   const parsed = (await response.json()) as { access_token?: string };
   if (typeof parsed.access_token !== "string" || parsed.access_token.length === 0) {

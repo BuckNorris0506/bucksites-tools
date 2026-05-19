@@ -3,6 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { loadEnv } from "./lib/load-env";
+import {
+  collectLogSafeFactsFromUnknown,
+  throwGoogleApiLogSafeError,
+} from "./lib/google-api-log-safe-error";
 import { createSearchConsoleClientFromEnv } from "./lib/gsc-search-console-api";
 import type { GscArtifactTopEntry, GscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
@@ -40,7 +44,9 @@ async function querySearchAnalytics(args: {
       }),
     },
   );
-  if (!response.ok) throw new Error("Search Analytics query failed.");
+  if (!response.ok) {
+    await throwGoogleApiLogSafeError(response, "gsc/searchAnalytics/query");
+  }
   const parsed = (await response.json()) as { rows?: SearchConsoleApiRow[] };
   return parsed.rows ?? [];
 }
@@ -261,7 +267,8 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
         writer: "scripts/fetch-buckparts-gsc-artifact.ts",
       },
     };
-  } catch {
+  } catch (error) {
+    const diagnosticFacts = collectLogSafeFactsFromUnknown(error);
     return buildUnknownArtifact({
       status: "UNKNOWN_API_ERROR",
       property: client.property,
@@ -269,6 +276,7 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
       unknownFacts: [
         "Search Console API query failed.",
         "Verify property access for the configured service account and check API quota/availability.",
+        ...diagnosticFacts,
       ],
       provenFacts: [`Configured property=${client.property}.`],
     });
@@ -307,6 +315,7 @@ export async function main(): Promise<void> {
         fetched_at: result.artifact.fetched_at,
         property: result.artifact.property,
         durable_write: result.durable_write,
+        ...(result.artifact.status !== "OK" ? { unknown_facts: result.artifact.unknown_facts } : {}),
       },
       null,
       2,

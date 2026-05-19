@@ -83,3 +83,8 @@ Slug/trust-state breakdowns cannot be BRIGHT until GA4 custom definitions are co
 
 Until then, stage-1 artifact keeps those breakdown fields explicitly `UNKNOWN`.
 
+## Failure diagnostics
+
+- `UNKNOWN_API_ERROR` artifacts may include **sanitized** HTTP/Google diagnostics in `unknown_facts` (for example `http_status`, `google_status`, `google_reason`, truncated `google_message`). These lines never include tokens, secrets, Authorization headers, or full raw API bodies.
+- Command Center `external_measurement_freshness_v1` still requires artifact `status=OK` for usable measurement; error artifacts remain not OK even when diagnostics are present.
+

@@ -4,6 +4,10 @@ import { fileURLToPath } from "node:url";
 
 import { loadEnv } from "./lib/load-env";
 import { createGa4ClientFromEnv } from "./lib/ga4-data-api";
+import {
+  collectLogSafeFactsFromUnknown,
+  throwGoogleApiLogSafeError,
+} from "./lib/google-api-log-safe-error";
 import type { Ga4TrustFunnelArtifact, Ga4TrustFunnelEventTotals } from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
 import {
   OWNER_REPORT_ARTIFACT_KEY_GA4_TRUST_FUNNEL,
@@ -89,7 +93,7 @@ async function queryEventTotals(args: {
     },
   );
   if (!response.ok) {
-    throw new Error("GA4 runReport failed.");
+    await throwGoogleApiLogSafeError(response, "ga4/runReport");
   }
   const parsed = (await response.json()) as { rows?: RunReportRow[] };
   return parseEventTotals(parsed.rows);
@@ -176,7 +180,8 @@ export async function buildGa4TrustFunnelArtifact(args?: {
         writer: "scripts/fetch-buckparts-ga4-trust-funnel-artifact.ts",
       },
     };
-  } catch {
+  } catch (error) {
+    const diagnosticFacts = collectLogSafeFactsFromUnknown(error);
     return buildUnknownArtifact({
       status: "UNKNOWN_API_ERROR",
       property_id: client.property_id,
@@ -185,6 +190,7 @@ export async function buildGa4TrustFunnelArtifact(args?: {
       unknown_facts: [
         "GA4 Data API query failed.",
         "Verify Analytics Data API access, property permissions, and quota/availability.",
+        ...diagnosticFacts,
       ],
     });
   }
@@ -228,6 +234,7 @@ export async function main(): Promise<void> {
         fetched_at: result.artifact.fetched_at,
         property_id: result.artifact.property_id,
         durable_write: result.durable_write,
+        ...(result.artifact.status !== "OK" ? { unknown_facts: result.artifact.unknown_facts } : {}),
       },
       null,
       2,

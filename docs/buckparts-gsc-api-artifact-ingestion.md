@@ -122,6 +122,7 @@ Access model:
 - Durable row missing: lane falls back to local artifact, then manual export.
 - Durable payload malformed: lane marks UNKNOWN for durable source and falls back.
 - GSC auth/API failure in scheduler: artifact status becomes `UNKNOWN_CONFIG` or `UNKNOWN_API_ERROR`; lane surfaces status honestly.
+- `UNKNOWN_API_ERROR` artifacts may include **sanitized** HTTP/Google diagnostics in `unknown_facts` (for example `http_status`, `google_status`, `google_reason`, truncated `google_message`). These lines never include tokens, secrets, Authorization headers, or full raw API bodies. Command Center still treats `UNKNOWN_API_ERROR` artifacts as **not usable** for measurement.
 
 ## Security notes
 
