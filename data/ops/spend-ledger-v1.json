@@ -2,6 +2,36 @@
   "contract": "buckparts_spend_ledger_v1",
   "read_only": false,
   "data_mutation": true,
-  "updated_at": "2026-05-18T00:00:00.000Z",
-  "entries": []
+  "updated_at": "2026-05-19T19:38:00.892Z",
+  "entries": [
+    {
+      "id": "9eb8b076-7148-4e7a-8e9d-93ef2492e6cf",
+      "recorded_at": "2026-05-19T19:38:00.891Z",
+      "provider": "netlify",
+      "unit_type": "netlify_credits",
+      "amount": 15,
+      "amount_unit": "credits",
+      "exact_cost_proven": false,
+      "estimated_cost_usd": null,
+      "source_surface": "git:push-origin-main-inferred-netlify-production-deploy-risk",
+      "task_id": "spend-ledger-v1-commit",
+      "session_id": null,
+      "related_commit": "0f375b4",
+      "related_branch": "main",
+      "purpose": "ops_foundation",
+      "outcome": "success",
+      "useful_output": true,
+      "deploy_triggered": true,
+      "mutation_triggered": false,
+      "proven_facts": [
+        "PROVEN: git push origin main completed for commit 0f375b4.",
+        "PROVEN: repo netlify.toml uses npm run build for Netlify builds."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: Netlify dashboard was not checked in this row, so actual credit burn is not proven.",
+        "INFERRED: if main is connected to Netlify production auto-deploy, this push may have consumed production deploy credits."
+      ],
+      "notes": "First spend-ledger row records deploy-credit risk from the spend-ledger commit push; replace or supplement later with dashboard-proven credit truth."
+    }
+  ]
 }
