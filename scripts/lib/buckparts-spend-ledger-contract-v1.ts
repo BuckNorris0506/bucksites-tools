@@ -297,8 +297,9 @@ export function parseSpendLedgerFileV1(raw: unknown): { ok: true; ledger: SpendL
   }
 
   const entries: SpendLedgerEntryV1[] = [];
-  for (const [index, item] of (raw.entries as unknown[]).entries()) {
-    const validated = validateSpendLedgerEntryInputV1(item);
+  const rawEntries = raw.entries as unknown[];
+  for (let index = 0; index < rawEntries.length; index += 1) {
+    const validated = validateSpendLedgerEntryInputV1(rawEntries[index]);
     if (!validated.ok) {
       return {
         ok: false,

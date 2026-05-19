@@ -14,6 +14,11 @@ import {
 } from "./report-amazon-first-blocked-conversion-queue";
 import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
+import {
+  parseSpendLedgerFileV1,
+  SPEND_LEDGER_FILE_RELATIVE_V1,
+} from "./lib/buckparts-spend-ledger-contract-v1";
+import { buildSemiCruiseStatusSummaryV1 } from "../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type {
   CommandCenterV2Report,
   DemandToCoverageEngineV1,
@@ -874,6 +879,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operating_map_summary_v1"
     | "page_publishability_truth_summary_v1"
     | "operator_digest_v1"
+    | "semi_cruise_status_summary_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -964,6 +970,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "operator_digest_v1"
+    | "semi_cruise_status_summary_v1"
   > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
@@ -1056,6 +1063,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "operator_digest_v1"
+    | "semi_cruise_status_summary_v1"
   > = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
@@ -1085,7 +1093,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
-    "next_execution_packet_summary_v1" | "operator_digest_v1"
+    "next_execution_packet_summary_v1" | "operator_digest_v1" | "semi_cruise_status_summary_v1"
   > = {
     ...command_center_v2_before_demand,
     daily_operator_summary_v1,
@@ -1130,7 +1138,7 @@ export async function buildBuckpartsCommandCenterReport(
     staleness_or_dirty_risk: stalenessOrDirtyRisk,
   };
 
-  const command_center_v2_with_operator_digest: CommandCenterV2Report = {
+  const command_center_v2_with_operator_digest: Omit<CommandCenterV2Report, "semi_cruise_status_summary_v1"> = {
     ...command_center_v2,
     operator_digest_v1: {
       contract: "operator_digest_v1",
@@ -1142,6 +1150,18 @@ export async function buildBuckpartsCommandCenterReport(
       source: "buckparts_command_center_v1_root_digest",
     },
   };
+
+  function loadSpendLedgerEntriesReadOnly(): import("./lib/buckparts-spend-ledger-contract-v1").SpendLedgerEntryV1[] {
+    const rel = SPEND_LEDGER_FILE_RELATIVE_V1;
+    const abs = path.join(rootDir, ...rel.split("/"));
+    if (!fileExists(abs)) return [];
+    try {
+      const parsed = parseSpendLedgerFileV1(JSON.parse(readTextFile(abs)) as unknown);
+      return parsed.ok ? parsed.ledger.entries : [];
+    } catch {
+      return [];
+    }
+  }
 
   const owner_command_center_neurons = await buildOwnerCommandCenterNeuronsForReport({
     rootDir,
@@ -1172,6 +1192,23 @@ export async function buildBuckpartsCommandCenterReport(
     batchProductionOwnerDecisionsLane: command_center_v2.batch_production_owner_decisions_lane_v1,
     pagePublishabilityTruth: command_center_v2.page_publishability_truth_summary_v1,
   });
+
+  const semi_cruise_status_summary_v1 = buildSemiCruiseStatusSummaryV1({
+    generated_at: now().toISOString(),
+    read_only: true,
+    data_mutation: false,
+    operator_can_be_away_status: operatorAwayStatus,
+    system_health_status: commandSurface.system_health.status,
+    execution_guidance,
+    command_center_v2: command_center_v2_with_operator_digest,
+    owner_command_center_neurons,
+    spend_ledger_entries: loadSpendLedgerEntriesReadOnly(),
+  });
+
+  const command_center_v2_final: CommandCenterV2Report = {
+    ...command_center_v2_with_operator_digest,
+    semi_cruise_status_summary_v1,
+  };
 
   return {
     report_name: "buckparts_command_center_v1",
@@ -1221,7 +1258,7 @@ export async function buildBuckpartsCommandCenterReport(
     why_this_action: whyThisAction,
     operator_can_be_away_status: operatorAwayStatus,
     known_unknowns: knownUnknowns,
-    command_center_v2: command_center_v2_with_operator_digest,
+    command_center_v2: command_center_v2_final,
     owner_command_center_neurons,
   };
 }

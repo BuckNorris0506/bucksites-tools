@@ -50,6 +50,7 @@ import {
   buildLayerSixReadinessSummaryV1,
   type LayerSixReadinessSummaryV1,
 } from "@/lib/owner-dashboard/layer-six-readiness-summary-v1";
+import type { SemiCruiseStatusSummaryV1 } from "@/lib/owner-dashboard/semi-cruise-status-summary-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -708,6 +709,45 @@ function CodexOutputReviewDashboardSection() {
   );
 }
 
+function SemiCruiseStatusSection({ summary }: { summary: SemiCruiseStatusSummaryV1 }) {
+  return (
+    <ExecutiveSection
+      title="Semi-Cruise + Netlify conservation (read-only v1)"
+      subtitle="Command Center projection — informational only; does not authorize deploys, git push, or mutation."
+    >
+      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+        Contract <span className="font-mono text-[11px]">{summary.contract}</span> · read_only=
+        {String(summary.read_only)} · data_mutation={String(summary.data_mutation)} · runtime_status=
+        <span className="font-mono text-[10px]"> {summary.runtime_status}</span>
+      </p>
+      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <FieldBlock label="Read-only Semi-Cruise" value={summary.read_only_semi_cruise_status} />
+        <FieldBlock label="Mutation Semi-Cruise" value={summary.mutation_semi_cruise_status} />
+        <FieldBlock label="Netlify publishing" value={summary.netlify_publishing_status} />
+        <FieldBlock label="Deploy credit risk" value={summary.deploy_credit_risk_status} />
+        <FieldBlock
+          label="Neurons BRIGHT / DIM / DARK"
+          value={`${summary.bright_neuron_count} / ${summary.dim_neuron_count} / ${summary.dark_neuron_count}`}
+        />
+      </div>
+      <p className="mt-3 text-sm text-slate-800 dark:text-slate-200">
+        <span className="font-semibold text-slate-900 dark:text-slate-100">Recommended:</span>{" "}
+        {summary.recommended_next_action}
+      </p>
+      {summary.remaining_owner_gates.length > 0 ? (
+        <ul className="mt-2 list-inside list-disc space-y-1 text-[11px] text-slate-700 dark:text-slate-300">
+          {summary.remaining_owner_gates.slice(0, 6).map((g, i) => (
+            <li key={i}>{g}</li>
+          ))}
+        </ul>
+      ) : null}
+      <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+        Netlify credit truth remains on the Usage &amp; billing dashboard — this summary does not call Netlify APIs.
+      </p>
+    </ExecutiveSection>
+  );
+}
+
 function LayerSixReadinessSection({ summary }: { summary: LayerSixReadinessSummaryV1 }) {
   return (
     <ExecutiveSection title="Layer 6 Readiness Summary (informational v1)" subtitle={LAYER_SIX_READINESS_OWNER_DASHBOARD_LINE_V1}>
@@ -1077,6 +1117,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderDecisionRegistryReadModelSection model={registryReadModel} />
 
         <FailurePatternRegistrySection model={failurePatternReadModel} />
+
+        <SemiCruiseStatusSection summary={v2.semi_cruise_status_summary_v1} />
 
         <LayerSixReadinessSection summary={layerSixReadiness} />
 

@@ -3437,6 +3437,47 @@ test("command_center_v2.page_publishability_truth_summary_v1 is read-only semant
   assert.ok(lane.sample_rows.length <= 25);
 });
 
+test("command_center_v2.semi_cruise_status_summary_v1 is read-only and reports mutation NOT_PROVEN", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json") || p.includes("spend-ledger-v1.json"),
+    readDir: () => [],
+    readTextFile: (p) => {
+      if (p.endsWith("package.json")) return fs.readFileSync(p, "utf8");
+      if (p.includes("spend-ledger-v1.json")) {
+        return fs.readFileSync(path.join(process.cwd(), "data/ops/spend-ledger-v1.json"), "utf8");
+      }
+      return BASE_TRACKER;
+    },
+  });
+  const lane = report.command_center_v2.semi_cruise_status_summary_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "semi_cruise_status_summary_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_semi_cruise_status, "NOT_PROVEN");
+  assert.ok(
+    lane.unknown_facts.some((f) => f.includes("Netlify Usage & billing dashboard")),
+  );
+  assert.ok(!lane.proven_facts.some((f) => /exact.*credit burn.*proven/i.test(f)));
+});
+
+test("semi_cruise_status_summary_v1 netlify publishing is UNKNOWN without durable lock proven_facts", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.semi_cruise_status_summary_v1;
+  const ledgerHasLock = fs.existsSync(path.join(process.cwd(), "data/ops/spend-ledger-v1.json"))
+    ? fs.readFileSync(path.join(process.cwd(), "data/ops/spend-ledger-v1.json"), "utf8").includes("PROVEN: Netlify publishing locked")
+    : false;
+  if (!ledgerHasLock) {
+    assert.equal(lane.netlify_publishing_status, "UNKNOWN");
+  }
+});
+
 test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matching_owner_confidence_registry_entry (false without registry match)", () => {
   const imp = baseEvidenceImportForPlan({
     candidates: [confidenceAssignmentEligibleCand(0)],

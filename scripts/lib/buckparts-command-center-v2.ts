@@ -207,6 +207,7 @@ export function buildCommandCenterV2Report(input: {
   | "operating_map_summary_v1"
   | "page_publishability_truth_summary_v1"
   | "operator_digest_v1"
+  | "semi_cruise_status_summary_v1"
 > {
   const registryByToken = new Map<string, AmazonRescueTokenControlEntry>();
   for (const e of input.registryEntries) {

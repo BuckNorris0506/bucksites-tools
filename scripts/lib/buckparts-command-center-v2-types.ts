@@ -10,6 +10,7 @@ import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
+import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
 export type TokenControlStatus =
@@ -882,7 +883,11 @@ export type CommandCenterV2Report = {
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
   operator_digest_v1: OperatorDigestProjectionV1;
+  /** Read-only Semi-Cruise + Netlify credit conservation snapshot — not a mutation permission source. */
+  semi_cruise_status_summary_v1: SemiCruiseStatusSummaryV1;
 };
+
+export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 export type { OwnerQuarantinedFridgeModelsV1 } from "../../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
@@ -911,6 +916,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "operating_map_summary_v1"
   | "page_publishability_truth_summary_v1"
   | "operator_digest_v1"
+  | "semi_cruise_status_summary_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */

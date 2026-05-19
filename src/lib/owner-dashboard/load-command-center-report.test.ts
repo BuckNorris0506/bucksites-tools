@@ -40,6 +40,10 @@ import {
   buildOwnerVerticalLaunchPolicyReport,
 } from "@/lib/owner-dashboard/owner-vertical-launch-policy";
 import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "../../../scripts/lib/owner-dashboard-top-of-game-panel-readiness-v1";
+import {
+  buildSemiCruiseStatusSummaryV1,
+  SEMI_CRUISE_STATUS_SUMMARY_CONTRACT_V1,
+} from "@/lib/owner-dashboard/semi-cruise-status-summary-v1";
 
 function stubPublishabilityTruthSummary(
   overrides: Partial<PagePublishabilityTruthSummaryV1> = {},
@@ -1898,6 +1902,14 @@ describe("owner integrity sentinel", () => {
     assert.equal(report.owner_gsc_external_demand.gsc_external_demand.neuron_key, "gsc_external_demand");
   });
 
+  it("owner dashboard renders semi_cruise_status_summary_v1 section from command_center_v2", () => {
+    const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes("function SemiCruiseStatusSection"));
+    assert.ok(src.includes("semi_cruise_status_summary_v1"));
+    assert.ok(src.includes('title="Semi-Cruise + Netlify conservation (read-only v1)"'));
+    assert.ok(src.includes("does not authorize deploys, git push, or mutation"));
+  });
+
   it("owner dashboard compression renders three executive sections and drilldown details groups", () => {
     const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
     assert.ok(src.includes('title="Stop-the-line"'));
@@ -1930,5 +1942,50 @@ describe("owner integrity sentinel", () => {
     assert.ok(src.includes("const manualEvidence = reviewOverride"));
     assert.ok(src.includes("mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}"));
     assert.ok(src.includes("quarantineMessage={reviewOverride?.public_message ?? null}"));
+  });
+
+  it("semi_cruise_status_summary_v1 exposes owner-dashboard display fields", () => {
+    const summary = buildSemiCruiseStatusSummaryV1({
+      generated_at: "2026-05-19T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      operator_can_be_away_status: "READY_FOR_AUTONOMOUS_READ_ONLY",
+      system_health_status: "OK",
+      execution_guidance: { next_move_mode: "READ_ONLY", mutating_blocked: true },
+      command_center_v2: {
+        external_measurement_freshness_v1: {
+          contract: "external_measurement_freshness_v1",
+          read_only: true,
+          data_mutation: false,
+          runtime_status: "OK",
+          overall_status: "OK",
+          gsc: {} as never,
+          ga4: {} as never,
+          recommended_commands: ["npm run buckparts:gsc:fetch", "npm run buckparts:ga4:fetch"],
+          proven_facts: [],
+          unknown_facts: [],
+        },
+        page_publishability_truth_summary_v1: stubPublishabilityTruthSummary({ unknown_join_count: 0 }),
+        affiliate_readiness: { status: "OK", blocker: null },
+        coverage_health: { status: "OK", blocker: null },
+        amazon_rescue: {
+          status: "OK",
+          human_browser_required_tokens: [],
+          blocker: null,
+          next_owner_action: "",
+        } as never,
+        revenue_snapshot: {
+          click_visibility: { commission_or_revenue: "NOT_CONNECTED" },
+        } as never,
+      },
+      owner_command_center_neurons: null,
+      spend_ledger_entries: [],
+    });
+    assert.equal(summary.contract, SEMI_CRUISE_STATUS_SUMMARY_CONTRACT_V1);
+    assert.equal(summary.mutation_semi_cruise_status, "NOT_PROVEN");
+    assert.equal(summary.read_only, true);
+    assert.equal(summary.data_mutation, false);
+    assert.ok(summary.recommended_next_action.length > 0);
+    assert.ok(summary.remaining_owner_gates.some((g) => g.includes("NOT_CONNECTED")));
   });
 });
