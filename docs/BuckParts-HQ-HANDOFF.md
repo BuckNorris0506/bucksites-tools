@@ -6,13 +6,79 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Command Center external measurement freshness:** refreshed through pushed HEAD **`b85e90b`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Semi-Cruise read-only milestone:** documented at HEAD **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point / chat migration state (through `b85e90b`)
+## Semi-Cruise Readiness Milestone (PROVEN through `edfeeba`)
+
+**Purpose:** Record the first **proven** read-only operator loop (Command Center → Runner Step → Founder Digest) without claiming mutation autonomy, revenue truth, or complete neuron coverage.
+
+### What is PROVEN operational (read-only Semi-Cruise)
+
+| Area | PROVEN state (operator run at `edfeeba`) |
+|------|------------------------------------------|
+| Command Center contract | `read_only: true`, `data_mutation: false` |
+| Execution guidance | `next_move_mode: READ_ONLY`, `mutating_blocked: false` |
+| Operator away status | `operator_can_be_away_status: READY_FOR_AUTONOMOUS_READ_ONLY` |
+| System health | `system_health_summary.status: OK` |
+| Brain gate | `brain_integrity_gate_v1.brain_status: PROCEED_WITH_KNOWN_LIMITS` |
+| External measurement | `external_measurement_freshness_v1.runtime_status: OK`, `overall_status: OK` |
+| GSC / GA4 artifacts | Durable **SUPABASE** sources; per-feed **measurement_usability_status: OK** and **artifact_recency_status: OK** |
+| Page publishability | `page_publishability_truth_summary_v1.runtime_status: OK`, `unknown_join_count: 0` |
+| Runner Step | **PASS** — `lint`, `build`, `buckparts:operator-proof` all **PASS** |
+| Founder Digest | Generated successfully (`npm run buckparts:founder-digest`) |
+| Bright / PROVEN neurons | `page_state_distribution`, `trust_funnel_measurement`, `gsc_search_discovery`, `search_demand_and_gaps`, `click_visibility`, `batch_production_owner_decisions` |
+| DIM / UNKNOWN neurons | `affiliate_readiness`, `coverage_health` (incomplete — not blocking read-only loop) |
+| Click visibility | `revenue_snapshot.click_visibility` **OK** (operational clicks only) |
+| Amazon rescue lane | **ATTENTION** — `next_allowed_agent_token: GSWF2`; owner/browser/frozen/operator-decision cohorts remain active |
+
+**Doctrine:** **Read-only Semi-Cruise is PROVEN operational** at this milestone — an operator (or agent under Runner allowlist) can refresh truth, validate the repo, and produce digest output **without** production mutation.
+
+### What remains NOT_PROVEN (do not regress claims)
+
+| Area | Status |
+|------|--------|
+| **Mutation Semi-Cruise** | **NOT_PROVEN** — remains **owner-gated**; no autonomous Supabase/`retailer_links`/evidence/affiliate/production-route mutation from this loop |
+| **Revenue truth** | **NOT_CONNECTED** — `commission_or_revenue` / Associates commission feed not connected despite OK click visibility |
+| **Affiliate readiness** | **Incomplete** — neuron **DIM** / **UNKNOWN**; tracker and program state not fully bright |
+| **Coverage health** | **Incomplete** — neuron **DIM** / **UNKNOWN**; safe vs blocked CTA pressure not fully green |
+| **Command Center as complete OS truth** | **NOT_PROVEN** — eight-neuron map + v2 lanes are substantial but not every feed is CC-owned (see inventory below) |
+
+### PROVEN validation loop (copy/paste from repo root)
+
+Re-run before trusting; numbers below are a **milestone snapshot**, not durable forever.
+
+```bash
+# 1) Command Center truth (primary operating JSON)
+node --import tsx scripts/report-buckparts-command-center.ts | jq '{
+  read_only: .read_only,
+  data_mutation: .data_mutation,
+  operator_can_be_away_status,
+  system_health: .command_center_v2.system_health_summary.status,
+  brain_status: .command_center_v2.brain_integrity_gate_v1.brain_status,
+  next_move_mode: .execution_guidance.next_move_mode,
+  mutating_blocked: .execution_guidance.mutating_blocked,
+  external_measurement: .command_center_v2.external_measurement_freshness_v1 | {runtime_status, overall_status, gsc: .gsc | {artifact_source, measurement_usability_status, artifact_recency_status}, ga4: .ga4 | {artifact_source, measurement_usability_status, artifact_recency_status}},
+  publishability: .command_center_v2.page_publishability_truth_summary_v1 | {runtime_status, unknown_join_count},
+  commission_or_revenue: .command_center_v2.commission_or_revenue,
+  neurons: [.owner_command_center_neurons.neurons[] | {neuron_key, connection_level, status}]
+}'
+
+# 2) Repo-owned Runner Step (allowlist: lint, build, operator-proof only)
+npm run buckparts:runner-step
+
+# 3) Founder Digest (Markdown stdout; slices Command Center)
+npm run buckparts:founder-digest
+```
+
+**PROVEN — validation before this handoff update:** `buckparts-hq-handoff-freshness`; `npm run lint`; `npm run build`.
+
+---
+
+## Current stopping point / chat migration state (through `edfeeba`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -20,8 +86,9 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`b85e90b`** — *Add external measurement freshness lane to Command Center* |
-| Recent chain | `97e3a45` Update HQ handoff for Command Center neuron source-of-truth · `84fb4b3` Move Command Center neurons into Command Center JSON · `b38629b` Coverage health neuron · `93dcd3d` Add batch production owner decisions lane to Command Center v2 |
+| Latest pushed HEAD | **`edfeeba`** — *Semi-Cruise read-only milestone (HQ handoff + page_state neuron copy)* |
+| Prior milestone chain | `b85e90b` external measurement freshness lane · `84fb4b3` Command Center neuron map · `b38629b` coverage health neuron · `93dcd3d` batch production owner decisions lane |
+| Recent chain | See **Semi-Cruise Readiness Milestone** above for operator-proven loop at `edfeeba` |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 

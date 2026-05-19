@@ -204,6 +204,41 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "buckparts-hq-handoff-freshness.test.ts",
     describe: "handoff freshness guard command",
   },
+  {
+    id: "semi_cruise_milestone_section",
+    needle: "## Semi-Cruise Readiness Milestone",
+    describe: "Semi-Cruise read-only milestone handoff section",
+  },
+  {
+    id: "semi_cruise_head_edfeeba",
+    needle: "edfeeba",
+    describe: "Semi-Cruise milestone HEAD reference",
+  },
+  {
+    id: "semi_cruise_read_only_proven",
+    needle: "Read-only Semi-Cruise is PROVEN operational",
+    describe: "read-only Semi-Cruise PROVEN doctrine",
+  },
+  {
+    id: "semi_cruise_mutation_not_proven",
+    needle: "Mutation Semi-Cruise",
+    describe: "mutation Semi-Cruise NOT_PROVEN label",
+  },
+  {
+    id: "operator_away_ready_read_only",
+    needle: "READY_FOR_AUTONOMOUS_READ_ONLY",
+    describe: "operator away read-only ready status",
+  },
+  {
+    id: "semi_cruise_runner_step_command",
+    needle: "npm run buckparts:runner-step",
+    describe: "Semi-Cruise Runner Step validation command",
+  },
+  {
+    id: "semi_cruise_founder_digest_command",
+    needle: "npm run buckparts:founder-digest",
+    describe: "Semi-Cruise Founder Digest validation command",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {
