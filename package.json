@@ -78,6 +78,7 @@
     "buckparts:live-site-smoke": "tsx scripts/live-site-smoke-artifact.ts",
     "buckparts:live-site-smoke:check": "tsx scripts/live-site-smoke-check.ts",
     "buckparts:operator-proof": "tsx scripts/buckparts-operator-proof.ts",
+    "buckparts:proof:filter-purchase-option-order": "tsx scripts/proof-filter-purchase-option-order.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",
     "buckparts:founder-decision-registry": "tsx scripts/report-founder-decision-registry.ts",
