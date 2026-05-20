@@ -78,7 +78,7 @@ npm run buckparts:founder-digest
 
 ---
 
-## Current stopping point / chat migration state (through `edfeeba`)
+## Current stopping point / chat migration state (through `a343464`)
 
 Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
 
@@ -86,9 +86,9 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`edfeeba`** — *Semi-Cruise read-only milestone (HQ handoff + page_state neuron copy)* |
-| Prior milestone chain | `b85e90b` external measurement freshness lane · `84fb4b3` Command Center neuron map · `b38629b` coverage health neuron · `93dcd3d` batch production owner decisions lane |
-| Recent chain | See **Semi-Cruise Readiness Milestone** above for operator-proven loop at `edfeeba` |
+| Latest pushed HEAD | **`a343464`** — *Record Waterdrop DA29-00020B browser proof without live CTA* |
+| Prior milestone chain | `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement freshness · `84fb4b3` neuron map · `93dcd3d` batch production owner decisions lane |
+| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba` (see **Semi-Cruise Readiness Milestone**); later commits add Waterdrop proof + customer-language doctrine without changing mutation authority |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -99,6 +99,24 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 - **`93dcd3d`** — `command_center_v2.batch_production_owner_decisions_lane_v1` reads committed batch registry exports; owner dashboard displays Layer 7 batch state **through Command Center only** (no dashboard-only registry scan for this lane).
 - **`84fb4b3`** — `owner_command_center_neurons` is built inside `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`); raw Command Center stdout is the neuron source; owner dashboard **displays** that field and does not create primary neuron truth when the field is present.
 - **`b85e90b`** — `command_center_v2.external_measurement_freshness_v1` is built in `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/external-measurement-freshness-v1.ts`); read-only artifact staleness for GSC + GA4 — **not** live API fetch, **not** revenue proof.
+- **`a343464`** — Waterdrop DA29-00020B owner-browser proof in `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json`; Rakuten `tagVerified` on `rakuten-waterdrop-filter`; **no** live CTA and **no** `retailer_links` insert.
+
+### Customer language doctrine + Waterdrop research (PROVEN in-repo)
+
+| Item | Path / status |
+|------|----------------|
+| Customer language + definitions (durable) | `docs/BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md` |
+| **No OEM cold** rule | Public copy must not use **OEM** unless defined immediately as **original equipment manufacturer**; prefer **Samsung-made**, **official Samsung filter**, **compatible replacement filter**, **non-Samsung replacement filter** |
+| Command Center lane | `command_center_v2.customer_language_and_waterdrop_research_lane_v1` (`read_only`, `mutation_authority: false`) |
+| Waterdrop trust module draft | `docs/drafts/waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md` — **design/research only**, **not** published live copy |
+| Waterdrop live CTA | **`NOT_LIVE`** — seed `data/retailer_links.csv` has RepairClinic search placeholder only; insert plan `docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql` **BLOCKED** pending Supabase prechecks |
+| Waterdrop evidence | `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json` — `mutation_ready: false`, owner-browser buy-path **PROVEN**, DB insert **not** authorized |
+
+**PROVEN — inspect lane:**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.customer_language_and_waterdrop_research_lane_v1 | {contract, customer_language_doctrine_path, no_oem_cold_rule, waterdrop_research_draft_path, waterdrop_live_cta_status, waterdrop_research_draft_published, mutation_authority}'
+```
 
 ### Command Center external measurement freshness (PROVEN through `b85e90b`)
 

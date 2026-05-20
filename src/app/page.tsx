@@ -54,8 +54,7 @@ export default async function HomePage() {
                   Find the right replacement before you buy the wrong one.
                 </h1>
                 <p className="max-w-2xl text-pretty text-base leading-relaxed text-bp-muted sm:text-lg">
-                  Search a model number, part number, old filter label, or cartridge code. BuckParts shows what
-                  matched, what to compare, and whether a store shortcut can appear after our listing checks.
+                  Search a model number, part number, old filter label, or cartridge code. BuckParts shows what matched, what to compare, and whether purchase options are available after listing checks.
                 </p>
               </div>
 
@@ -166,9 +165,9 @@ export default async function HomePage() {
                           className="absolute -left-px top-1.5 h-2 w-2 -translate-x-1/2 rounded-full border-2 border-bp-surface bg-bp-trust"
                           aria-hidden
                         />
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-bp-muted">Store shortcut</p>
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-bp-muted">Purchase options</p>
                         <p className="mt-1 text-sm leading-snug text-bp-text/90">
-                          Shown only after listing checks pass—not on every page.
+                          Store links appear only after BuckParts checks the listing against the part number.
                         </p>
                       </li>
                     </ol>
@@ -220,9 +219,9 @@ export default async function HomePage() {
             </li>
             <li className="flex flex-col rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
               <span className="text-xs font-bold uppercase tracking-wide text-bp-trust">Step 3</span>
-              <h3 className="mt-2 text-lg font-semibold tracking-tight text-bp-text">Shop only when checks pass</h3>
+              <h3 className="mt-2 text-lg font-semibold tracking-tight text-bp-text">Shop only after checks pass</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-bp-muted">
-                Store shortcuts appear only when listing evidence lines up with the part number.
+                BuckParts shows purchase options only when the listing matches the part number well enough to pass our checks.
               </p>
             </li>
           </ul>

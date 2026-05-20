@@ -239,6 +239,36 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "npm run buckparts:founder-digest",
     describe: "Semi-Cruise Founder Digest validation command",
   },
+  {
+    id: "waterdrop_head_a343464",
+    needle: "a343464",
+    describe: "Waterdrop DA29-00020B browser proof HEAD reference",
+  },
+  {
+    id: "customer_language_doctrine_doc",
+    needle: "BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md",
+    describe: "customer language and definitions doctrine path",
+  },
+  {
+    id: "no_oem_cold_rule",
+    needle: "No OEM cold",
+    describe: "no OEM cold public copy rule",
+  },
+  {
+    id: "customer_language_cc_lane",
+    needle: "customer_language_and_waterdrop_research_lane_v1",
+    describe: "Command Center customer language + Waterdrop research lane",
+  },
+  {
+    id: "waterdrop_live_cta_not_live",
+    needle: "waterdrop_live_cta_status",
+    describe: "Waterdrop live CTA status field in HQ handoff",
+  },
+  {
+    id: "waterdrop_research_draft_path",
+    needle: "waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md",
+    describe: "Waterdrop OEM vs compatible research draft path",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

@@ -228,12 +228,27 @@ describe("public merchant-priority copy guard", () => {
     );
   });
 
-  it("homepage includes listing-evidence store shortcut framing (slice-1 doctrine)", () => {
+  it("homepage uses final purchase-options copy (customer language doctrine)", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
+    assert.ok(!/store shortcut/i.test(src));
     assert.ok(
       src.includes(
-        "Store shortcuts appear only when listing evidence lines up with the part number",
+        "BuckParts shows what matched, what to compare, and whether purchase options are available after listing checks.",
       ),
     );
+    assert.ok(src.includes("Purchase options"));
+    assert.ok(
+      src.includes(
+        "Store links appear only after BuckParts checks the listing against the part number.",
+      ),
+    );
+    assert.ok(src.includes("Shop only after checks pass"));
+    assert.ok(
+      src.includes(
+        "BuckParts shows purchase options only when the listing matches the part number well enough to pass our checks.",
+      ),
+    );
+    assert.ok(!/Shop only when checks pass/.test(src));
+    assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 });

@@ -13,6 +13,7 @@ import { buildRevenueTruthLedgerContractV1 } from "./revenue-truth-ledger-contra
 import { evaluateOwnerDashboardTopOfGamePanelProofV1 } from "./owner-dashboard-top-of-game-panel-readiness-v1";
 import { buildTopOfGameFoundationScorecardV1 } from "./top-of-game-foundation-scorecard-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
+import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "@/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import { buildCommandCenterBrainCoverageManifestV1 } from "./buckparts-brain-coverage-manifest-v1";
 import { buildBrainIntegrityGateV1 } from "./buckparts-brain-integrity-gate-v1";
 import { buildBrainConsolidationPlanV1 } from "./buckparts-brain-consolidation-plan-v1";
@@ -511,6 +512,12 @@ export function buildCommandCenterV2Report(input: {
     generated_at: input.now().toISOString(),
   });
 
+  const customer_language_and_waterdrop_research_lane_v1 =
+    buildCustomerLanguageAndWaterdropResearchLaneV1({
+      rootDir: input.rootDir,
+      fileExists: input.fileExists,
+    });
+
   const top_of_game_foundation_scorecard_v1 = buildTopOfGameFoundationScorecardV1({
     demand: input.demandToCoverageEngine,
     evidenceImport: input.evidenceToLearningOutcomesCandidateImport,
@@ -556,6 +563,7 @@ export function buildCommandCenterV2Report(input: {
     next_owner_action,
     top_of_game_foundation_scorecard_v1,
     batch_production_owner_decisions_lane_v1,
+    customer_language_and_waterdrop_research_lane_v1,
     ...(() => {
       const command_center_brain_coverage_manifest_v1 = buildCommandCenterBrainCoverageManifestV1({
         rootDir: input.rootDir,

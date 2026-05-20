@@ -309,6 +309,19 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(batchLane.may_mutate, false);
   assert.equal(batchLane.mutation_authority, false);
   assert.equal(batchLane.batch_size_20_status, "BLOCKED");
+  const langLane = report.command_center_v2.customer_language_and_waterdrop_research_lane_v1;
+  assert.equal(langLane.contract, "customer_language_and_waterdrop_research_lane_v1");
+  assert.equal(langLane.read_only, true);
+  assert.equal(langLane.data_mutation, false);
+  assert.equal(langLane.mutation_authority, false);
+  assert.equal(langLane.customer_language_doctrine_path, "docs/BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md");
+  assert.match(langLane.no_oem_cold_rule, /must not use OEM unless defined/i);
+  assert.equal(
+    langLane.waterdrop_research_draft_path,
+    "docs/drafts/waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md",
+  );
+  assert.equal(langLane.waterdrop_live_cta_status, "NOT_LIVE");
+  assert.equal(langLane.waterdrop_research_draft_published, false);
   const pt = report.command_center_v2.public_trust_unification_backend_contract_v1;
   assert.equal(pt.contract, "public_trust_unification_backend_contract_v1");
   assert.equal(pt.read_only, true);

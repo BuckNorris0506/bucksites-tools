@@ -11,6 +11,7 @@ import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-a
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
+import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 
 export type TokenControlStatus =
@@ -885,8 +886,11 @@ export type CommandCenterV2Report = {
   operator_digest_v1: OperatorDigestProjectionV1;
   /** Read-only Semi-Cruise + Netlify credit conservation snapshot — not a mutation permission source. */
   semi_cruise_status_summary_v1: SemiCruiseStatusSummaryV1;
+  /** Read-only customer language doctrine paths + Waterdrop DA29-00020B research/CTA status — not published copy. */
+  customer_language_and_waterdrop_research_lane_v1: CustomerLanguageAndWaterdropResearchLaneV1;
 };
 
+export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 
 export type { OwnerIntegritySentinelV1 } from "../../src/lib/owner-dashboard/owner-integrity-sentinel-v1";

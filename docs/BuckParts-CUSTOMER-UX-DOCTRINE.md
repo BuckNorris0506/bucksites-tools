@@ -12,7 +12,9 @@ BuckParts is a **calm, evidence-first replacement decision utility** for homeown
 
 ## Language
 
+- **Definitions and “no OEM cold” rule:** `docs/BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md` (durable; Command Center lane `customer_language_and_waterdrop_research_lane_v1`).
 - Prefer: **checked against this part number**, **reviewed listing**, **listing evidence**, **on file for this part number**, **compare before buying**, **not enough evidence to show a store link**, **store shortcut unavailable**, **do not buy yet**.
+- Prefer **Samsung-made**, **official Samsung filter**, **compatible replacement filter**, **non-Samsung replacement filter** over undefined **OEM** on public pages.
 - Avoid broad standalone **“verified”** product claims; avoid **guaranteed**, **best** (ranking/superlative), **AI-powered**, **database match**, **safe to buy**, and internal terms (**call-to-action** as acronym, **browser_truth**, **repo**, **gating**, **entity**, **slug**, **monetized path**) in customer-visible copy.
 
 ## Machine checks
