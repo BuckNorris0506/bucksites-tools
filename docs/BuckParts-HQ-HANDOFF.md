@@ -113,11 +113,12 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 | Waterdrop evidence | `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json` — `mutation_ready: false` (no automation authority); `production_insert_outcome` + `runtime_proof` **PROVEN** read-only |
 | Insert plan | `docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql` — **EXECUTED** manually 2026-05-20; **do not re-run INSERT** unless prechecks show waterdrop row absent |
 | Broad Waterdrop rollout | **NOT authorized** — first verified non-Amazon DTC affiliate CTA is **this slice only** (`da29-00020b` / WDP-F27) |
+| Purchase-option ranking (`da29-00020b`) | **Waterdrop-first** when exact proof slice + `direct_buyable` + `COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE`; **Amazon fallback** elsewhere — `src/lib/retailers/launch-buy-links.ts` + `waterdrop-exact-proof-slice-v1.ts` (ranking after gates only; no broad rollout) |
 
 **PROVEN — inspect lane:**
 
 ```bash
-node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.customer_language_and_waterdrop_research_lane_v1 | {contract, customer_language_doctrine_path, no_oem_cold_rule, waterdrop_research_draft_path, waterdrop_evidence_path, waterdrop_live_cta_status, waterdrop_production_row_id, waterdrop_research_draft_published, mutation_authority, first_verified_waterdrop_non_amazon_dtc_slice_note}'
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.customer_language_and_waterdrop_research_lane_v1 | {contract, customer_language_doctrine_path, no_oem_cold_rule, purchase_option_monetization_priority, waterdrop_research_draft_path, waterdrop_evidence_path, waterdrop_live_cta_status, waterdrop_production_row_id, waterdrop_research_draft_published, mutation_authority, first_verified_waterdrop_non_amazon_dtc_slice_note}'
 ```
 
 ### Command Center external measurement freshness (PROVEN through `b85e90b`)

@@ -4,6 +4,7 @@ import path from "node:path";
 import {
   CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH,
   NO_OEM_COLD_RULE_V1,
+  PURCHASE_OPTION_MONETIZATION_PRIORITY_V1,
   WATERDROP_DA29_00020B_EVIDENCE_REL_PATH,
   WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH,
   WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
@@ -17,6 +18,7 @@ export type CustomerLanguageAndWaterdropResearchLaneV1 = {
   mutation_authority: false;
   customer_language_doctrine_path: string;
   no_oem_cold_rule: string;
+  purchase_option_monetization_priority: string;
   waterdrop_research_draft_path: string;
   waterdrop_evidence_path: string;
   waterdrop_insert_plan_path: string;
@@ -114,6 +116,7 @@ export function buildCustomerLanguageAndWaterdropResearchLaneV1(input: {
       );
     }
     if (waterdropLive && productionRowId) {
+      proven_facts.push(`PROVEN: ${PURCHASE_OPTION_MONETIZATION_PRIORITY_V1}`);
       proven_facts.push(
         `PROVEN: Waterdrop live CTA for da29-00020b — production row ${productionRowId}; runtime /filter and /go proof in evidence runtime_proof.`,
       );
@@ -174,6 +177,7 @@ export function buildCustomerLanguageAndWaterdropResearchLaneV1(input: {
     mutation_authority: false,
     customer_language_doctrine_path: CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH,
     no_oem_cold_rule: NO_OEM_COLD_RULE_V1,
+    purchase_option_monetization_priority: PURCHASE_OPTION_MONETIZATION_PRIORITY_V1,
     waterdrop_research_draft_path: WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
     waterdrop_evidence_path: WATERDROP_DA29_00020B_EVIDENCE_REL_PATH,
     waterdrop_insert_plan_path: WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH,

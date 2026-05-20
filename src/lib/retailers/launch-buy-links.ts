@@ -11,6 +11,11 @@
  * Those are treated as placeholders when URL structure matches catalog/search discovery patterns.
  */
 
+import {
+  isVerifiedWaterdropCompatibleDirectBuyable,
+  isWaterdropExactProofSliceSlug,
+} from "@/lib/retailers/waterdrop-exact-proof-slice-v1";
+
 /** Mirrors `SEARCH_ENGINE_HOST_SUFFIXES` in `scripts/buckparts-approved-links-v1.ts` (buy-path). */
 const SEARCH_ENGINE_HOST_SUFFIXES = [
   "google.com",
@@ -413,6 +418,12 @@ export type BuyPathSortContext = {
   exactOemCatalogPart: boolean;
   /** Canonical OEM part token for this PDP (e.g. `MWF`, `HRF-R1`) to avoid cross-pack winner drift. */
   expectedOemPartNumber?: string | null;
+  /**
+   * When true, a verified Waterdrop compatible-replacement row on a repo-proven exact-proof slice
+   * may outrank Amazon among gated links. Set via {@link buyPathSortContextForFilter} only for
+   * committed evidence slices — not broad Waterdrop rollout.
+   */
+  waterdropExactProofSlice?: boolean;
 };
 
 /**
@@ -439,11 +450,22 @@ export function buyPathSortContextForFilter(
   return {
     exactOemCatalogPart: !isCompatibleReplacementFilterPdp(slug, name),
     expectedOemPartNumber: oemPartNumber ?? null,
+    waterdropExactProofSlice: isWaterdropExactProofSliceSlug(slug),
   };
 }
 
 function isAmazonRetailerKey(key: string | null | undefined): boolean {
   return key?.trim().toLowerCase() === "amazon";
+}
+
+/** Extra sort key: 2 when verified Waterdrop may be primary on a committed exact-proof slice. */
+function waterdropExactProofPrimaryBoost(
+  link: WinnerSelectableBuyLink,
+  sortContext: BuyPathSortContext | undefined,
+): number {
+  if (!sortContext?.waterdropExactProofSlice) return 0;
+  if (!isVerifiedWaterdropCompatibleDirectBuyable(link)) return 0;
+  return 2;
 }
 
 /** Extra sort key: 1 when Amazon may be preferred as primary CTA for an exact-OEM PDP. */
@@ -496,11 +518,14 @@ function checkedAtUnixMs(value: string | null | undefined): number {
 /**
  * Deterministic winner arbitration for Phase 1 corrected standard.
  * Precedence:
- * 1) When {@link BuyPathSortContext.exactOemCatalogPart} is true, prefer verified Amazon
+ * 1) On a committed Waterdrop exact-proof slice, prefer verified Waterdrop compatible replacement
+ *    (`waterdrop` + `direct_buyable` + `COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE`) over other retailers.
+ * 2) When {@link BuyPathSortContext.exactOemCatalogPart} is true, prefer verified Amazon
  *    (`retailer_key` amazon + `direct_buyable`) before URL-shape arbitration.
- * 2) Highest verified destination specificity from affiliate URL shape.
- * 3) Most recently checked browser-truth timestamp.
- * 4) Stable lexical tie-breaks (retailer_name, then id).
+ * 3) Buyable subtype (single-unit before multipack before generic compatible).
+ * 4) Highest verified destination specificity from affiliate URL shape.
+ * 5) Most recently checked browser-truth timestamp.
+ * 6) Stable lexical tie-breaks (retailer_name, then id).
  *
  * Callers pass {@link BuyPathSortContext} from PDP metadata (e.g. `buyPathSortContextForFilter`);
  * omitting it skips Amazon promotion (legacy ordering).
@@ -513,7 +538,13 @@ export function sortBestVerifiedBuyLinks<T extends WinnerSelectableBuyLink>(
     const scoreA = buyPathSpecificityScore(a.affiliate_url);
     const scoreB = buyPathSpecificityScore(b.affiliate_url);
 
-    // Policy: exact-OEM pages prefer verified Amazon over other direct-buyable rows.
+    const waterdropBoostA = waterdropExactProofPrimaryBoost(a, sortContext);
+    const waterdropBoostB = waterdropExactProofPrimaryBoost(b, sortContext);
+    if (waterdropBoostA !== waterdropBoostB) {
+      return waterdropBoostB - waterdropBoostA;
+    }
+
+    // Policy: exact-OEM pages prefer verified Amazon over other direct-buyable rows (after Waterdrop proof slice).
     const boostA = amazonExactOemPrimaryBoost(a, sortContext);
     const boostB = amazonExactOemPrimaryBoost(b, sortContext);
     if (boostA !== boostB) {

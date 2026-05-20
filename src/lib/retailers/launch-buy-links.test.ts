@@ -793,6 +793,11 @@ describe("buyPathSortContextForFilter / isCompatibleReplacementFilterPdp", () =>
     assert.equal(buyPathSortContextForFilter("mwf", "GE MWF").exactOemCatalogPart, true);
   });
 
+  it("sets waterdropExactProofSlice only for committed proof-slice slugs", () => {
+    assert.equal(buyPathSortContextForFilter("da29-00020b", "Samsung DA29-00020B / HAF-CIN family").waterdropExactProofSlice, true);
+    assert.equal(buyPathSortContextForFilter("mwf", "GE MWF").waterdropExactProofSlice, false);
+  });
+
   it("propagated sort context changes winner ordering for compatible replacement PDPs", () => {
     const links = [
       {
@@ -818,5 +823,137 @@ describe("buyPathSortContextForFilter / isCompatibleReplacementFilterPdp", () =>
 
     assert.equal(selectBestVerifiedBuyLink(links, exactCtx)?.id, "amazon");
     assert.equal(selectBestVerifiedBuyLink(links, compatibleCtx)?.id, "oem-compat");
+  });
+});
+
+describe("Waterdrop exact-proof purchase-option priority", () => {
+  const DA29_WATERDROP_URL =
+    "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter";
+  const DA29_AMAZON_URL = "https://www.amazon.com/dp/B004UB1NRY";
+
+  it("verified Waterdrop ranks before verified Amazon on da29-00020b proof slice", () => {
+    const ctx = buyPathSortContextForFilter("da29-00020b", "Samsung DA29-00020B / HAF-CIN family", "DA29-00020B");
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+          retailer_key: "waterdrop",
+          retailer_name: "Waterdrop Filter",
+          affiliate_url: DA29_WATERDROP_URL,
+          browser_truth_checked_at: "2026-05-20T20:00:00+00",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+        },
+        {
+          id: "amazon-da29",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: DA29_AMAZON_URL,
+          browser_truth_checked_at: "2026-05-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      ctx,
+    );
+    assert.deepEqual(sorted.map((r) => r.id), ["d4cbad0c-4bab-4854-89bf-59e6d6492c6b", "amazon-da29"]);
+  });
+
+  it("documents prior ranking: Amazon won before Waterdrop boost on exact-OEM PDP", () => {
+    const ctx = buyPathSortContextForFilter("da29-00020b", "Samsung DA29-00020B / HAF-CIN family", "DA29-00020B");
+    const links = [
+      {
+        id: "wd",
+        retailer_key: "waterdrop",
+        retailer_name: "Waterdrop Filter",
+        affiliate_url: DA29_WATERDROP_URL,
+        browser_truth_checked_at: "2026-05-20T20:00:00+00",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+      },
+      {
+        id: "amz",
+        retailer_key: "amazon",
+        retailer_name: "Amazon",
+        affiliate_url: DA29_AMAZON_URL,
+        browser_truth_checked_at: "2026-05-20T12:00:00.000Z",
+        browser_truth_classification: "direct_buyable",
+      },
+    ] as const;
+    assert.equal(selectBestVerifiedBuyLink(links, ctx)?.id, "wd");
+    const withoutProofSlice = { ...ctx, waterdropExactProofSlice: false };
+    assert.equal(selectBestVerifiedBuyLink(links, withoutProofSlice)?.id, "amz");
+  });
+
+  it("unsafe or missing-browser-truth Waterdrop does not appear in gated buy links", () => {
+    assert.equal(
+      filterRealBuyRetailerLinks([
+        {
+          retailer_key: "waterdrop",
+          affiliate_url: DA29_WATERDROP_URL,
+          browser_truth_classification: null,
+        },
+        {
+          retailer_key: "waterdrop",
+          affiliate_url: DA29_WATERDROP_URL,
+          browser_truth_classification: "direct_buyable",
+          browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
+        },
+      ]).length,
+      0,
+    );
+  });
+
+  it("non-Waterdrop compatible replacement does not outrank Amazon on exact-OEM PDP", () => {
+    const ctx = buyPathSortContextForFilter("mwf", "GE MWF", "MWF");
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "compat",
+          retailer_key: "other",
+          retailer_name: "Compatible Store",
+          affiliate_url: "https://shop.example.com/product/compatible-mwf",
+          browser_truth_checked_at: "2026-05-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+        },
+        {
+          id: "amz",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AST3AK",
+          browser_truth_checked_at: "2026-05-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      ctx,
+    );
+    assert.deepEqual(sorted.map((r) => r.id), ["amz", "compat"]);
+  });
+
+  it("Waterdrop without proof slice slug does not outrank Amazon", () => {
+    const ctx = buyPathSortContextForFilter("mwf", "GE MWF", "MWF");
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "wd",
+          retailer_key: "waterdrop",
+          retailer_name: "Waterdrop Filter",
+          affiliate_url: "https://www.waterdropfilter.com/products/some-filter",
+          browser_truth_checked_at: "2026-05-20T20:00:00+00",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+        },
+        {
+          id: "amz",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: "https://www.amazon.com/dp/B000AST3AK",
+          browser_truth_checked_at: "2026-05-20T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      ctx,
+    );
+    assert.deepEqual(sorted.map((r) => r.id), ["amz", "wd"]);
   });
 });

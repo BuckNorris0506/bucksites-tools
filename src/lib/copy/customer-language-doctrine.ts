@@ -28,3 +28,10 @@ export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED" | "LIVE";
 /** Owner-facing Command Center / blocked-link queue remediation (not customer HTML). */
 export const OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 =
   "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists." as const;
+
+/**
+ * Purchase-option ranking after buy-path gates (not customer HTML).
+ * Waterdrop-first only on committed exact-proof slices; Amazon remains default elsewhere.
+ */
+export const PURCHASE_OPTION_MONETIZATION_PRIORITY_V1 =
+  "Active monetization priority: Waterdrop-first when exact proof slice exists and browser-truth gates pass; Amazon fallback when Waterdrop is absent, unsafe, or unproven. No broad Waterdrop rollout. Compatible-replacement labels must state not made by Samsung where applicable." as const;
