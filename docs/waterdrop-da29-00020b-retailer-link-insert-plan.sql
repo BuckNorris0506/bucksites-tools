@@ -5,7 +5,13 @@
 -- Evidence: data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json
 -- Owner manual insert approved: 2026-05-20 (owner_manual_insert_approved true; mutation_ready false)
 -- =============================================================================
--- MANUAL EXECUTION ONLY. Operator must run Precheck D and E in this session before INSERT.
+-- *** EXECUTED MANUALLY 2026-05-20 — DO NOT RE-RUN INSERT UNLESS PRECHECKS SHOW ROW ABSENT ***
+-- Inserted row id: d4cbad0c-4bab-4854-89bf-59e6d6492c6b
+-- Postcheck: production /filter/da29-00020b renders Waterdrop + /go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b (HTTP 200).
+-- Postcheck: /go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b → HTTP 302 LinkSynergy; GET reached Waterdrop PDP (DA29-00020B, WDP-F27, Add to Cart, Buy Now).
+-- Re-run Precheck D/E only; if waterdrop_row_count > 0, skip INSERT below (duplicate would violate unique index).
+-- =============================================================================
+-- MANUAL EXECUTION ONLY (historical). Operator ran Precheck D and E before INSERT.
 -- Abort if approved_waterdrop_count != 0 or waterdrop_row_count != 0.
 -- Adds ONE approved waterdrop retailer_link; does not modify oem-parts-catalog or amazon rows.
 -- affiliate_url MUST be the LinkSynergy click URL (not the image pixel URL).

@@ -260,9 +260,19 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "Command Center customer language + Waterdrop research lane",
   },
   {
-    id: "waterdrop_live_cta_not_live",
+    id: "waterdrop_live_cta_status",
     needle: "waterdrop_live_cta_status",
     describe: "Waterdrop live CTA status field in HQ handoff",
+  },
+  {
+    id: "waterdrop_production_row_id",
+    needle: "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+    describe: "Waterdrop production retailer_links row id",
+  },
+  {
+    id: "waterdrop_insert_executed",
+    needle: "EXECUTED",
+    describe: "Waterdrop insert plan executed marker in HQ handoff",
   },
   {
     id: "waterdrop_research_draft_path",

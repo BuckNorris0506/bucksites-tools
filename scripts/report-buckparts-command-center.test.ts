@@ -284,9 +284,11 @@ function baseProviders() {
 }
 
 test("command center is read_only true and data_mutation false", async () => {
+  const rootDir = path.resolve(__dirname, "..");
   const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
     providers: baseProviders(),
-    fileExists: () => false,
+    fileExists: fs.existsSync,
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
@@ -320,8 +322,14 @@ test("command center is read_only true and data_mutation false", async () => {
     langLane.waterdrop_research_draft_path,
     "docs/drafts/waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md",
   );
-  assert.equal(langLane.waterdrop_live_cta_status, "NOT_LIVE");
+  assert.equal(langLane.waterdrop_live_cta_status, "LIVE");
+  assert.equal(langLane.waterdrop_production_row_id, "d4cbad0c-4bab-4854-89bf-59e6d6492c6b");
+  assert.equal(
+    langLane.waterdrop_evidence_path,
+    "data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json",
+  );
   assert.equal(langLane.waterdrop_research_draft_published, false);
+  assert.ok(langLane.first_verified_waterdrop_non_amazon_dtc_slice_note?.includes("proof slice"));
   const pt = report.command_center_v2.public_trust_unification_backend_contract_v1;
   assert.equal(pt.contract, "public_trust_unification_backend_contract_v1");
   assert.equal(pt.read_only, true);

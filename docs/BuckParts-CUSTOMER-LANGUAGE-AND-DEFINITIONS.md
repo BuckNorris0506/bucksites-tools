@@ -68,7 +68,7 @@ When “OEM” is used:
 |------|--------|
 | Evidence file | `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json` |
 | Research / trust module draft (not published) | `docs/drafts/waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md` |
-| Live CTA on `/filter/da29-00020b` | **NOT_LIVE** — no `retailer_links` waterdrop row; insert plan blocked |
+| Live CTA on `/filter/da29-00020b` | **LIVE** — production row `d4cbad0c-4bab-4854-89bf-59e6d6492c6b`; evidence `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json`; no broad Waterdrop rollout |
 | Browser proof committed | **PROVEN** in evidence (owner-browser 2026-05-20); see HQ handoff commit **a343464** |
 
 ---

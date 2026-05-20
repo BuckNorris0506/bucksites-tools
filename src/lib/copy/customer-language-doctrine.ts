@@ -23,4 +23,4 @@ export const WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH =
 export const NO_OEM_COLD_RULE_V1 =
   "Public BuckParts customer-facing copy must not use OEM unless defined first/immediately as original equipment manufacturer; prefer Samsung-made, official Samsung filter, compatible replacement filter, or non-Samsung replacement filter where accurate." as const;
 
-export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED";
+export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED" | "LIVE";

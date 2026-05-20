@@ -7,6 +7,8 @@
   "token": "DA29-00020B",
   "filter_slug": "da29-00020b",
   "filter_id": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
+  "waterdrop_live_cta_status": "LIVE",
+  "first_verified_waterdrop_non_amazon_dtc_affiliate_row_note": "First verified Waterdrop (Rakuten LinkSynergy) non-Amazon DTC affiliate retailer_links row in this proof slice only; not a broad Waterdrop rollout.",
   "retailer_program": {
     "network": "Rakuten Advertising",
     "retailer_key_candidate": "waterdrop",
@@ -16,29 +18,25 @@
     "affiliate_approval_equals_cta_permission": false,
     "tag_verified_in_repo": true
   },
-  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+  "verdict": "LIVE_OUTCOME_RECORDED",
   "mutation_ready": false,
   "owner_manual_insert_approved": true,
   "owner_manual_insert_approved_at": "2026-05-20T23:00:00.000Z",
   "owner_manual_insert_approval_scope": "manual_sql_one_waterdrop_row_da29_00020b_only_no_automation",
   "mutation_ready_basis": {
     "insert_plan_path": "docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql",
-    "insert_plan_status": "READY_FOR_OWNER_MANUAL_EXECUTION",
+    "insert_plan_status": "EXECUTED_MANUAL",
     "insert_prechecks_status": "PASSED_READ_ONLY",
     "automation_mutation_authority": false,
     "blocking_reasons": [
-      "No retailer_links waterdrop row committed; live compatible CTA remains NOT_LIVE at runtime until insert postcheck and gates pass.",
-      "Operator must re-run Precheck D and Precheck E in the same session immediately before INSERT; abort if approved_waterdrop_count or waterdrop_row_count is non-zero."
-    ],
-    "final_precheck_required_before_insert": [
-      "Precheck D: approved_waterdrop_count = 0 for filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 and retailer_key waterdrop",
-      "Precheck E: waterdrop_row_count = 0 for filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 and retailer_key waterdrop"
+      "No broad Waterdrop rollout or automation authority; this slice is da29-00020b only.",
+      "Commission or revenue from Rakuten remains NOT_CONNECTED."
     ],
     "precheck_waterdrop_approved_row_count_expected": 0,
     "precheck_waterdrop_approved_row_count_proven": 0,
     "precheck_waterdrop_row_count_proven": 0,
     "precheck_filter_id_proven": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
-    "precheck_notes": "Read-only Supabase precheck recorded 2026-05-20; production has oem-parts-catalog + amazon rows for filter_id; waterdrop count zero. Repo seed CSV differs (placeholder only)."
+    "precheck_notes": "Read-only Supabase precheck recorded 2026-05-20 before manual insert; production now has waterdrop row d4cbad0c-4bab-4854-89bf-59e6d6492c6b."
   },
   "supabase_read_only_precheck": {
     "checked_at": "2026-05-20T22:00:00.000Z",
@@ -78,10 +76,83 @@
           "browser_truth_classification": "direct_buyable",
           "browser_truth_buyable_subtype": null
         }
-      ]
+      ],
+      "note": "Snapshot before manual insert; production now includes waterdrop row per production_insert_outcome."
     },
     "waterdrop_row_count": 0,
     "approved_waterdrop_count": 0
+  },
+  "production_insert_outcome": {
+    "insert_outcome": "COMMITTED_VERIFIED_READ_ONLY",
+    "executed_at": "2026-05-20T14:00:09.668822+00",
+    "execution_mode": "owner_manual_sql",
+    "data_mutation_from_evidence_file": false,
+    "inserted_row": {
+      "id": "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+      "filter_id": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
+      "retailer_key": "waterdrop",
+      "retailer_name": "Waterdrop Filter",
+      "retailer_slug": "waterdrop",
+      "status": "approved",
+      "source": "manual",
+      "is_primary": false,
+      "destination_url": "https://www.waterdropfilter.com/products/waterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter?variant=33108474495058",
+      "affiliate_url": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_buyable_subtype": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+      "browser_truth_checked_at": "2026-05-20T20:00:00+00",
+      "created_at": "2026-05-20T14:00:09.668822+00"
+    },
+    "postcheck": {
+      "approved_waterdrop_count": 1,
+      "waterdrop_row_count": 1
+    }
+  },
+  "committed_live_row": {
+    "link_id": "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+    "filter_id": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
+    "retailer_key": "waterdrop",
+    "retailer_slug": "waterdrop",
+    "retailer_name": "Waterdrop Filter",
+    "affiliate_url": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058",
+    "destination_url": "https://www.waterdropfilter.com/products/waterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter?variant=33108474495058",
+    "is_primary": false,
+    "status": "approved",
+    "source": "manual",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_buyable_subtype": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    "browser_truth_checked_at": "2026-05-20T20:00:00+00"
+  },
+  "runtime_proof": {
+    "checked_at": "2026-05-20T23:30:00.000Z",
+    "data_mutation": false,
+    "filter_page": {
+      "url": "https://buckparts.com/filter/da29-00020b",
+      "http_status": 200,
+      "rendered_html_contains": [
+        "Waterdrop",
+        "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+        "/go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b"
+      ]
+    },
+    "go_redirect": {
+      "go_url": "https://buckparts.com/go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+      "http_status": 302,
+      "redirect_target": "linksynergy_affiliate_url",
+      "linksynergy_head_http_status": 400,
+      "linksynergy_head_non_blocking": true,
+      "linksynergy_head_note": "HEAD returned 400 after redirect chain; GET path reached Waterdrop PDP HTML — not treated as BuckParts /go failure."
+    },
+    "destination_after_go_get": {
+      "reached_waterdrop_html": true,
+      "html_contains": [
+        "DA29-00020B",
+        "WDP-F27",
+        "Add to Cart",
+        "Buy Now",
+        "waterdrop-replacement-for-samsung-da29-00020b"
+      ]
+    }
   },
   "operator_reported": {
     "source": "operator_rakuten_catalog_and_urls",
@@ -131,36 +202,30 @@
     "browser_truth_checked_at": "2026-05-20T20:00:00.000Z"
   },
   "unknown_facts": [
-    "Runtime browser_truth_classification on a future committed waterdrop retailer_links row until manual insert postcheck.",
     "Commission or revenue attribution from Rakuten (NOT_CONNECTED).",
-    "Whether production /filter/da29-00020b will show Waterdrop buying option after insert without separate smoke pass (UNKNOWN until row exists)."
+    "Whether other filter slugs receive Waterdrop rows without separate proof slices (UNKNOWN — no broad rollout)."
   ],
   "proven_facts": [
     "Canonical filter slug da29-00020b and token DA29-00020B exist in data/filters.csv and data/filter_aliases.csv.",
-    "Read-only Supabase precheck: filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 for slug da29-00020b (filter_count=1).",
-    "Read-only Supabase precheck: waterdrop_row_count=0 and approved_waterdrop_count=0 for filter_id.",
-    "Read-only Supabase precheck: production retailer_links has oem-parts-catalog (RepairClinic search) and amazon (B004UB1NRY direct_buyable) rows; no waterdrop row.",
-    "Read-only Supabase schema: retailer_links.id default gen_random_uuid(); created_at default now(); unique index retailer_links_filter_retailer_key_unique on (filter_id, retailer_key); no updated_at column.",
-    "Operator-supplied destination_pdp_url and affiliate_url_candidate (LinkSynergy click wrapper) are https URLs.",
-    "Owner browser: direct PDP and LinkSynergy affiliate URL both land on the same Waterdrop PDP variant 33108474495058.",
-    "Owner browser: PDP title includes DA29-00020B; Add to Cart and Buy Now visible at $41.99 one-time purchase.",
-    "Product is aftermarket compatible replacement, not OEM Samsung.",
-    "affiliate-application-tracker rakuten-waterdrop-filter tagVerified true after operator LinkSynergy click test (not commission proof)."
+    "Production retailer_links row d4cbad0c-4bab-4854-89bf-59e6d6492c6b inserted manually for filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874.",
+    "Production /filter/da29-00020b renders Waterdrop buying option with /go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b (HTTP 200 page proof).",
+    "Production /go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b returns HTTP 302 to LinkSynergy; GET reaches Waterdrop PDP with DA29-00020B and buy path.",
+    "First verified Waterdrop non-Amazon DTC affiliate row in this proof slice; not authorization for catalog-wide Waterdrop automation.",
+    "mutation_ready remains false — no autonomous retailer_links mutation from repo automation."
   ],
   "allowed_final_classifications": [
     "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
     "HUMAN_BROWSER_VERIFICATION_REQUIRED",
     "UNKNOWN"
   ],
-  "required_next_action": "RUN_SAME_SESSION_PRECHECKS_D_AND_E_THEN_EXECUTE_MANUAL_SQL_AND_POSTCHECK",
-  "insert_outcome": "NOT_COMMITTED",
+  "required_next_action": "MONITOR_PRODUCTION_GO_AND_COMMISSION_NOT_CONNECTED_NO_BROAD_ROLLOUT",
+  "insert_outcome": "COMMITTED_VERIFIED_READ_ONLY",
   "revenue_claim": "none",
   "commission_or_revenue": "NOT_CONNECTED",
   "notes": [
-    "Evidence only. No Supabase writes from this JSON file; no autonomous retailer_links mutation.",
-    "owner_manual_insert_approved true authorizes documented manual SQL only; mutation_ready remains false (no automation authority).",
-    "Affiliate_url_candidate is stored here for insert-plan reference only.",
-    "applyAmazonAffiliateRedirectUrl does not rewrite non-amazon.com hosts; LinkSynergy URL would pass through /go unchanged if row gates pass later.",
-    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime."
+    "Evidence only. Records read-only verification of production insert and runtime proof; does not perform Supabase writes.",
+    "owner_manual_insert_approved and production insert do not grant automation authority; mutation_ready remains false.",
+    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime.",
+    "LinkSynergy HEAD 400 after redirect is documented as non-blocking when GET reaches expected Waterdrop PDP."
   ]
 }

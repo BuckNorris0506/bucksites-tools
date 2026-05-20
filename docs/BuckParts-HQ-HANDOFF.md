@@ -99,7 +99,7 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 - **`93dcd3d`** — `command_center_v2.batch_production_owner_decisions_lane_v1` reads committed batch registry exports; owner dashboard displays Layer 7 batch state **through Command Center only** (no dashboard-only registry scan for this lane).
 - **`84fb4b3`** — `owner_command_center_neurons` is built inside `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`); raw Command Center stdout is the neuron source; owner dashboard **displays** that field and does not create primary neuron truth when the field is present.
 - **`b85e90b`** — `command_center_v2.external_measurement_freshness_v1` is built in `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/external-measurement-freshness-v1.ts`); read-only artifact staleness for GSC + GA4 — **not** live API fetch, **not** revenue proof.
-- **`a343464`** — Waterdrop DA29-00020B owner-browser proof in `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json`; Rakuten `tagVerified` on `rakuten-waterdrop-filter`; **no** live CTA and **no** `retailer_links` insert.
+- **`a343464`** — Waterdrop DA29-00020B owner-browser proof in `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json`; Rakuten `tagVerified` on `rakuten-waterdrop-filter` (browser proof baseline; production insert recorded separately in evidence).
 
 ### Customer language doctrine + Waterdrop research (PROVEN in-repo)
 
@@ -109,13 +109,15 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 | **No OEM cold** rule | Public copy must not use **OEM** unless defined immediately as **original equipment manufacturer**; prefer **Samsung-made**, **official Samsung filter**, **compatible replacement filter**, **non-Samsung replacement filter** |
 | Command Center lane | `command_center_v2.customer_language_and_waterdrop_research_lane_v1` (`read_only`, `mutation_authority: false`) |
 | Waterdrop trust module draft | `docs/drafts/waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md` — **design/research only**, **not** published live copy |
-| Waterdrop live CTA | **`NOT_LIVE`** — seed `data/retailer_links.csv` has RepairClinic search placeholder only; insert plan `docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql` **BLOCKED** pending Supabase prechecks |
-| Waterdrop evidence | `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json` — `mutation_ready: false`, owner-browser buy-path **PROVEN**, DB insert **not** authorized |
+| Waterdrop live CTA (`da29-00020b`) | **`LIVE`** — production `retailer_links` row **`d4cbad0c-4bab-4854-89bf-59e6d6492c6b`**; `/filter/da29-00020b` and `/go/d4cbad0c-4bab-4854-89bf-59e6d6492c6b` runtime proof in evidence |
+| Waterdrop evidence | `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json` — `mutation_ready: false` (no automation authority); `production_insert_outcome` + `runtime_proof` **PROVEN** read-only |
+| Insert plan | `docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql` — **EXECUTED** manually 2026-05-20; **do not re-run INSERT** unless prechecks show waterdrop row absent |
+| Broad Waterdrop rollout | **NOT authorized** — first verified non-Amazon DTC affiliate CTA is **this slice only** (`da29-00020b` / WDP-F27) |
 
 **PROVEN — inspect lane:**
 
 ```bash
-node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.customer_language_and_waterdrop_research_lane_v1 | {contract, customer_language_doctrine_path, no_oem_cold_rule, waterdrop_research_draft_path, waterdrop_live_cta_status, waterdrop_research_draft_published, mutation_authority}'
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.customer_language_and_waterdrop_research_lane_v1 | {contract, customer_language_doctrine_path, no_oem_cold_rule, waterdrop_research_draft_path, waterdrop_evidence_path, waterdrop_live_cta_status, waterdrop_production_row_id, waterdrop_research_draft_published, mutation_authority, first_verified_waterdrop_non_amazon_dtc_slice_note}'
 ```
 
 ### Command Center external measurement freshness (PROVEN through `b85e90b`)

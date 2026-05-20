@@ -22,7 +22,9 @@ export type CustomerLanguageAndWaterdropResearchLaneV1 = {
   waterdrop_insert_plan_path: string;
   waterdrop_research_draft_published: false;
   waterdrop_live_cta_status: WaterdropLiveCtaStatusV1;
+  waterdrop_production_row_id: string | null;
   waterdrop_proof_commit_ref: "a343464";
+  first_verified_waterdrop_non_amazon_dtc_slice_note: string | null;
   proven_facts: string[];
   unknown_facts: string[];
 };
@@ -43,6 +45,23 @@ function readJsonIfPresent<T extends Record<string, unknown>>(
   } catch {
     return null;
   }
+}
+
+function productionRowIdFromEvidence(evidence: Record<string, unknown> | null): string | null {
+  if (!evidence) return null;
+  const committed = evidence.committed_live_row as { link_id?: string } | undefined;
+  if (committed?.link_id) return committed.link_id;
+  const prod = evidence.production_insert_outcome as { inserted_row?: { id?: string } } | undefined;
+  return prod?.inserted_row?.id ?? null;
+}
+
+function isWaterdropLiveInEvidence(evidence: Record<string, unknown> | null): boolean {
+  if (!evidence) return false;
+  if (evidence.waterdrop_live_cta_status === "LIVE") return true;
+  const insertOutcome = evidence.insert_outcome as string | undefined;
+  if (insertOutcome === "COMMITTED_VERIFIED_READ_ONLY") return true;
+  const prod = evidence.production_insert_outcome as { insert_outcome?: string } | undefined;
+  return prod?.insert_outcome === "COMMITTED_VERIFIED_READ_ONLY";
 }
 
 /** Read-only lane: customer language doctrine + Waterdrop DA29-00020B research status (no mutation authority). */
@@ -76,44 +95,77 @@ export function buildCustomerLanguageAndWaterdropResearchLaneV1(input: {
     unknown_facts.push(`${WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH} missing on disk.`);
   }
 
-  const evidence = readJsonIfPresent<{
-    mutation_ready?: boolean;
-    data_mutation?: boolean;
-    read_only?: boolean;
-    insert_outcome?: string;
-    verdict?: string;
-  }>(input.rootDir, WATERDROP_DA29_00020B_EVIDENCE_REL_PATH, input.fileExists);
+  const evidence = readJsonIfPresent<Record<string, unknown>>(
+    input.rootDir,
+    WATERDROP_DA29_00020B_EVIDENCE_REL_PATH,
+    input.fileExists,
+  );
+
+  const productionRowId = productionRowIdFromEvidence(evidence);
+  const waterdropLive = isWaterdropLiveInEvidence(evidence);
 
   if (evidenceOk && evidence) {
     proven_facts.push(
       `PROVEN: ${WATERDROP_DA29_00020B_EVIDENCE_REL_PATH} present; read_only=${String(evidence.read_only)} data_mutation=${String(evidence.data_mutation)} verdict=${String(evidence.verdict)}.`,
     );
     if (evidence.mutation_ready === false) {
-      proven_facts.push("PROVEN: Waterdrop evidence mutation_ready=false — no retailer_links insert authorized from evidence alone.");
+      proven_facts.push(
+        "PROVEN: Waterdrop evidence mutation_ready=false — no autonomous retailer_links mutation from repo automation.",
+      );
+    }
+    if (waterdropLive && productionRowId) {
+      proven_facts.push(
+        `PROVEN: Waterdrop live CTA for da29-00020b — production row ${productionRowId}; runtime /filter and /go proof in evidence runtime_proof.`,
+      );
+      const sliceNote = evidence.first_verified_waterdrop_non_amazon_dtc_affiliate_row_note as string | undefined;
+      if (sliceNote) {
+        proven_facts.push(`PROVEN: ${sliceNote}`);
+      }
     }
   } else if (evidenceOk) {
     proven_facts.push(`PROVEN: ${WATERDROP_DA29_00020B_EVIDENCE_REL_PATH} file exists (JSON parse not required for lane).`);
   }
 
   if (insertPlanOk) {
-    proven_facts.push(`PROVEN: ${WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH} exists; SQL remains operator-blocked.`);
+    if (waterdropLive) {
+      proven_facts.push(
+        `PROVEN: ${WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH} exists; manual INSERT executed — do not re-run unless prechecks show row absent.`,
+      );
+    } else {
+      proven_facts.push(`PROVEN: ${WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH} exists; SQL remains operator-blocked.`);
+    }
   }
 
-  proven_facts.push(
-    "PROVEN: Repo seed data/retailer_links.csv has no waterdrop row for da29-00020b — live compatible CTA NOT_LIVE at catalog seed layer.",
-  );
-  proven_facts.push(
-    "PROVEN: HQ commit a343464 recorded Waterdrop DA29-00020B browser proof without live CTA (see docs/BuckParts-HQ-HANDOFF.md).",
-  );
+  if (!waterdropLive) {
+    proven_facts.push(
+      "PROVEN: Repo seed data/retailer_links.csv has no waterdrop row for da29-00020b — production live state UNKNOWN until evidence records insert.",
+    );
+    proven_facts.push(
+      "PROVEN: HQ commit a343464 recorded Waterdrop DA29-00020B browser proof without live CTA (see docs/BuckParts-HQ-HANDOFF.md).",
+    );
+  }
 
-  const waterdrop_live_cta_status: WaterdropLiveCtaStatusV1 = "NOT_LIVE";
+  const waterdrop_live_cta_status: WaterdropLiveCtaStatusV1 = waterdropLive ? "LIVE" : "NOT_LIVE";
 
-  unknown_facts.push(
-    "Production Supabase retailer_links waterdrop row count for da29-00020b UNKNOWN until read-only precheck (insert plan Precheck D).",
-  );
+  const first_verified_waterdrop_non_amazon_dtc_slice_note = waterdropLive
+    ? ((evidence?.first_verified_waterdrop_non_amazon_dtc_affiliate_row_note as string | undefined) ??
+      "First verified Waterdrop non-Amazon DTC affiliate row for da29-00020b proof slice only; no broad Waterdrop rollout.")
+    : null;
+
+  if (!waterdropLive) {
+    unknown_facts.push(
+      "Production Supabase retailer_links waterdrop row for da29-00020b UNKNOWN until evidence records production_insert_outcome.",
+    );
+  }
+
   unknown_facts.push(
     "Whether research draft is published to /filter/da29-00020b or /help UNKNOWN — draft is non-public by design.",
   );
+  if (waterdropLive) {
+    unknown_facts.push(
+      "Rakuten commission or revenue for waterdrop row NOT_CONNECTED — live CTA does not imply revenue proof.",
+    );
+  }
 
   return {
     contract: "customer_language_and_waterdrop_research_lane_v1",
@@ -127,7 +179,9 @@ export function buildCustomerLanguageAndWaterdropResearchLaneV1(input: {
     waterdrop_insert_plan_path: WATERDROP_DA29_00020B_INSERT_PLAN_REL_PATH,
     waterdrop_research_draft_published: false,
     waterdrop_live_cta_status,
+    waterdrop_production_row_id: productionRowId,
     waterdrop_proof_commit_ref: "a343464",
+    first_verified_waterdrop_non_amazon_dtc_slice_note,
     proven_facts,
     unknown_facts,
   };
