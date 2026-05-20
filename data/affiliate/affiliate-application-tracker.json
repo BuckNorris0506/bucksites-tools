@@ -247,12 +247,12 @@
     "lastStatusAt": "2026-05-20T18:00:00.000Z",
     "decisionAt": "2026-05-20T18:00:00.000Z",
     "rejectionReason": null,
-    "nextAction": "Do not add Waterdrop retailer_links or live CTAs until tracking link/MID is verified and tested with exact buyer-path evidence. Rakuten approval is affiliate access only — not fit proof.",
+    "nextAction": "Do not add live CTAs until guarded retailer_links insert passes Supabase prechecks and owner unblocks docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql. Rakuten approval and tag click-test are not commission proof.",
     "nextActionDueAt": null,
-    "notes": "OPERATOR_REPORTED: Waterdrop Filter is APPROVED/PARTNERED through Rakuten. MID: 53950. Offer: 8% -12% Waterdrop High Commission. Cookie window: 30 days. Date joined shown in Rakuten: 20 May, 2026. Auto renew: Enabled. Transaction update window: 90 days. No program URL or tracking tag recorded in-repo. PPC restrictions (operator terms): no bidding on protected SEM keywords waterdrop, waterdrop ro, waterdrop reverse osmosis filtration system, waterdrop filter, waterdrop ro system, waterdrop refrigerator water filter; no Waterdrop phrase-match ad terms (e.g. Waterdrop coupons, Waterdrop deals); no brand/domain/misspelling/alternate-spacing variants in paid search; do not use www.waterdropfilter.com as display URL; paid promotion not allowed on Google Ads, Bing Ads, Yandex Ads, Facebook Ads, or Yahoo Ads without express permission; BuckParts-owned display URLs such as buckparts.com/waterdrop allowed only if paid ads were separately approved. Approval is not permission to show CTAs without exact buyer-path evidence.",
-    "tagVerified": null,
-    "tagVerifiedAt": null,
-    "tagValue": null
+    "notes": "OPERATOR_REPORTED: Waterdrop Filter is APPROVED/PARTNERED through Rakuten. MID: 53950. Offer: 8% -12% Waterdrop High Commission. Cookie window: 30 days. Date joined shown in Rakuten: 20 May, 2026. Auto renew: Enabled. Transaction update window: 90 days. OPERATOR_REPORTED (2026-05-20): LinkSynergy click URL tested — https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058 — landed on expected Waterdrop DA29-00020B PDP (variant 33108474495058). Owner-browser PDP proof for DA29-00020B buy path recorded in data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json. No commission/revenue claim. PPC restrictions (operator terms): no bidding on protected SEM keywords waterdrop, waterdrop ro, waterdrop reverse osmosis filtration system, waterdrop filter, waterdrop ro system, waterdrop refrigerator water filter; no Waterdrop phrase-match ad terms (e.g. Waterdrop coupons, Waterdrop deals); no brand/domain/misspelling/alternate-spacing variants in paid search; do not use www.waterdropfilter.com as display URL; paid promotion not allowed on Google Ads, Bing Ads, Yandex Ads, Facebook Ads, or Yahoo Ads without express permission; BuckParts-owned display URLs such as buckparts.com/waterdrop allowed only if paid ads were separately approved. Approval is not permission to show live CTAs without retailer_links insert and runtime gates.",
+    "tagVerified": true,
+    "tagVerifiedAt": "2026-05-20T20:00:00.000Z",
+    "tagValue": "GTFBcFcCW48"
   },
   {
     "id": "rakuten-appliancepartspros",

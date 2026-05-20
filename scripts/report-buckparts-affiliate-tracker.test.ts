@@ -40,11 +40,14 @@ test("detects DRAFTING records", () => {
   assert.equal(report.status_counts.DRAFTING, 6);
 });
 
-test("records Rakuten Waterdrop as APPROVED without tag verification", () => {
+test("records Rakuten Waterdrop as APPROVED with LinkSynergy tag verification", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.ok(report.records_approved.includes("rakuten-waterdrop-filter"));
   assert.ok(report.records_approved.includes("amazon-associates"));
   assert.ok(report.records_rejected.includes("rakuten-appliancepartspros"));
+  const raw = JSON.parse(readFileSync(TRACKER_PATH, "utf8")) as { id: string; tagVerified: boolean | null }[];
+  const waterdrop = raw.find((r) => r.id === "rakuten-waterdrop-filter");
+  assert.equal(waterdrop?.tagVerified, true);
 });
 
 test("Waterdrop tracker row encodes operator PPC restrictions and no-CTA guard", () => {
@@ -58,8 +61,9 @@ test("Waterdrop tracker row encodes operator PPC restrictions and no-CTA guard",
   assert.match(waterdrop!.notes ?? "", /MID: 53950/);
   assert.match(waterdrop!.notes ?? "", /waterdrop refrigerator water filter/);
   assert.match(waterdrop!.notes ?? "", /www\.waterdropfilter\.com/);
-  assert.match(waterdrop!.notes ?? "", /not permission to show CTAs/i);
-  assert.match(waterdrop!.nextAction ?? "", /not fit proof/i);
+  assert.match(waterdrop!.notes ?? "", /not permission to show live CTAs/i);
+  assert.match(waterdrop!.nextAction ?? "", /retailer_links insert/i);
+  assert.match(waterdrop!.notes ?? "", /LinkSynergy click URL tested/i);
 });
 
 test("invalid tracker record fails", () => {
@@ -141,9 +145,9 @@ test("recommended next action prioritizes REAPPLY_REQUIRED over DRAFTING", () =>
 test("includes tag verification summary", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.deepEqual(report.tag_verification, {
-    verified_count: 1,
+    verified_count: 2,
     unverified_count: 0,
-    unknown_count: 21,
+    unknown_count: 20,
     unverified_records: [],
   });
 });

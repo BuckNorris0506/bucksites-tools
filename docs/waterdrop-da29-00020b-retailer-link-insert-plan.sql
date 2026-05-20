@@ -4,11 +4,10 @@
 -- Evidence: data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json
 -- =============================================================================
 -- BLOCKED until ALL are true (abort if any fails):
---   1. Owner-browser evidence update proves Waterdrop PDP title includes DA29-00020B
---      AND visible direct buy path (Add to Cart / equivalent) on variant 33108474495058.
---   2. evidence JSON mutation_ready_basis.insert_plan_status is owner-unblocked.
---   3. affiliate-application-tracker rakuten-waterdrop-filter tagVerified = true with click test notes.
---   4. filter_id resolved from slug (Precheck C) and matches evidence after commit.
+--   1. [SATISFIED in evidence] Owner-browser PDP proof: DA29-00020B title + Add to Cart/Buy Now on variant 33108474495058.
+--   2. [SATISFIED in tracker] rakuten-waterdrop-filter tagVerified = true; LinkSynergy click test notes in-repo.
+--   3. evidence JSON mutation_ready_basis.insert_plan_status is owner-unblocked (still BLOCKED).
+--   4. filter_id resolved from slug (Precheck C) and copied into evidence before INSERT.
 --   5. Precheck D returns 0 approved waterdrop rows for that filter_id.
 -- This plan adds ONE approved waterdrop retailer_link; it does not modify OEM rows.
 -- affiliate_url MUST be the LinkSynergy click URL (not the image pixel URL).

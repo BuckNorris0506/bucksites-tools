@@ -7,33 +7,58 @@ import { describe, it } from "node:test";
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), "../.."));
 const EVIDENCE_REL = "data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json";
 const INSERT_PLAN_REL = "docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql";
+const TRACKER_REL = "data/affiliate/affiliate-application-tracker.json";
 
 const OPERATOR_LINKSYNERGY =
   "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058";
 
+const PDP_TITLE =
+  "Waterdrop WDP-F27 Replacement for Samsung DA29-00020B Fridge Water Filter";
+
 describe("waterdrop DA29-00020B proof slice v1", () => {
-  it("evidence file is read-only, not mutation-ready, and blocks on UNKNOWN buy path", () => {
+  it("evidence file is read-only, not mutation-ready, with owner-browser buy-path proof", () => {
     const raw = readFileSync(path.join(REPO_ROOT, EVIDENCE_REL), "utf8");
     const doc = JSON.parse(raw) as Record<string, unknown>;
 
     assert.equal(doc.read_only, true);
     assert.equal(doc.data_mutation, false);
     assert.equal(doc.mutation_ready, false);
-    assert.equal(doc.verdict, "UNKNOWN");
+    assert.equal(doc.verdict, "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT");
     assert.equal(doc.token, "DA29-00020B");
     assert.equal(doc.filter_slug, "da29-00020b");
     assert.equal(doc.affiliate_url_candidate, OPERATOR_LINKSYNERGY);
 
+    const owner = doc.owner_browser_proof as Record<string, unknown>;
+    assert.equal(owner.linksynergy_landed_on_expected_pdp, true);
+    assert.equal(owner.seller_title_visible, PDP_TITLE);
+    assert.equal(owner.add_to_cart_visible, true);
+    assert.equal(owner.buy_now_visible, true);
+
     const browser = doc.browser_evidence as Record<string, unknown>;
-    assert.equal(browser.buy_path_visible, "UNKNOWN");
-    assert.equal(browser.browser_verdict, "UNKNOWN");
+    assert.equal(browser.waterdrop_pdp_browser_inspected_in_repo, true);
+    assert.equal(browser.seller_title_visible, PDP_TITLE);
+    assert.equal(browser.token_visible_in_pdp_title, true);
+    assert.equal(browser.price_visible_usd, 41.99);
+    assert.equal(browser.cart_availability_visible, true);
+    assert.equal(
+      browser.browser_verdict,
+      "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE",
+    );
+    assert.equal(
+      browser.browser_truth_buyable_subtype_candidate,
+      "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    );
 
     const basis = doc.mutation_ready_basis as Record<string, unknown>;
     assert.equal(basis.insert_plan_status, "BLOCKED");
     assert.equal(basis.insert_plan_path, INSERT_PLAN_REL);
 
+    const blocking = basis.blocking_reasons as string[];
+    assert.ok(!blocking.some((r) => /owner-browser.*buy-path/i.test(r)));
+    assert.ok(blocking.some((r) => /filter_id/i.test(r)));
+
     const unknowns = doc.unknown_facts as string[];
-    assert.ok(unknowns.some((f) => /Add to Cart/i.test(f)));
+    assert.ok(!unknowns.some((f) => /Add to Cart/i.test(f)));
     assert.ok(unknowns.some((f) => /filter_id/i.test(f)));
   });
 
@@ -46,5 +71,20 @@ describe("waterdrop DA29-00020B proof slice v1", () => {
     assert.match(sql, /-- begin;/);
     assert.match(sql, /linksynergy\.com/);
     assert.doesNotMatch(sql, /^insert into public\.retailer_links/m);
+  });
+
+  it("rakuten-waterdrop-filter tracker records LinkSynergy click-test verification", () => {
+    const raw = JSON.parse(readFileSync(path.join(REPO_ROOT, TRACKER_REL), "utf8")) as {
+      id: string;
+      tagVerified: boolean | null;
+      tagValue: string | null;
+      notes: string | null;
+    }[];
+    const waterdrop = raw.find((r) => r.id === "rakuten-waterdrop-filter");
+    assert.ok(waterdrop);
+    assert.equal(waterdrop!.tagVerified, true);
+    assert.equal(waterdrop!.tagValue, "GTFBcFcCW48");
+    assert.match(waterdrop!.notes ?? "", /LinkSynergy click URL tested/i);
+    assert.match(waterdrop!.notes ?? "", /DA29-00020B/i);
   });
 });
