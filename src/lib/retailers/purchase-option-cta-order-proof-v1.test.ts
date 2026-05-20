@@ -88,6 +88,12 @@ describe("purchase-option CTA order proof v1", () => {
     assert.equal(check.ok, true);
   });
 
+  it("strips trailing arrow from retailer label in CTA anchor text", () => {
+    const html = `<p>Buying options</p><a href="/go/${WATERDROP_ID}">Waterdrop Filter\u2192</a>`;
+    const proof = extractPurchaseOptionCtaOrderFromHtml(html);
+    assert.equal(proof.primary?.retailer_label, "Waterdrop Filter");
+  });
+
   it("extractPurchaseOptionCtaOrder ignores document Amazon before buying-options block", () => {
     const html = `<div>Amazon mentioned in unrelated copy</div>
       <p class="text-xs">Buying options</p>

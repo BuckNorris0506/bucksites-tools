@@ -44,10 +44,15 @@ function extractBuyingOptionsSlice(html: string): string | null {
   return html.slice(start, end);
 }
 
+/** Trailing CTA arrow (U+2192) from TieredBuyLinks markup — no `u` regex flag (ES5-safe target). */
+function stripTrailingCtaArrow(text: string): string {
+  return text.replace(/\u2192\s*$/, "").trim();
+}
+
 function retailerLabelFromAnchorInner(html: string): string {
   const withoutSr = html.replace(/<span[^>]*class="[^"]*sr-only[^"]*"[^>]*>[\s\S]*?<\/span>/gi, "");
   const text = stripTags(withoutSr);
-  return text.replace(/→\s*$/u, "").trim();
+  return stripTrailingCtaArrow(text);
 }
 
 function parseGoAnchorsInOrder(html: string): PurchaseOptionCtaEntryV1[] {
