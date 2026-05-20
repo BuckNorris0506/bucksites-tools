@@ -2,7 +2,7 @@
   "contract": "buckparts_spend_ledger_v1",
   "read_only": false,
   "data_mutation": true,
-  "updated_at": "2026-05-19T21:26:35.312Z",
+  "updated_at": "2026-05-19T23:48:56.365Z",
   "entries": [
     {
       "id": "9eb8b076-7148-4e7a-8e9d-93ef2492e6cf",
@@ -62,6 +62,35 @@
         "UNKNOWN: Live owner dashboard does not include commit a4c225f until Netlify publishing resumes or a later deploy is proven."
       ],
       "notes": "Operator screenshot showed Netlify project paused due to exceeded credit limit; use this row to make Command Center and owner dashboard reflect OPERATOR_REPORTED publishing lock."
+    },
+    {
+      "id": "96c706e9-31b4-4741-a444-30b1ad5831b7",
+      "recorded_at": "2026-05-19T23:48:56.364Z",
+      "provider": "netlify",
+      "unit_type": "netlify_credits",
+      "amount": 0,
+      "amount_unit": "credits",
+      "exact_cost_proven": false,
+      "estimated_cost_usd": null,
+      "source_surface": "operator:netlify-dashboard-publishing-restored",
+      "task_id": null,
+      "session_id": null,
+      "related_commit": null,
+      "related_branch": "main",
+      "purpose": "netlify_publishing_state",
+      "outcome": "success",
+      "useful_output": true,
+      "deploy_triggered": false,
+      "mutation_triggered": false,
+      "proven_facts": [
+        "OPERATOR_REPORTED: Netlify publishing is operational again after the prior credit-limit lock/pause.",
+        "OPERATOR_REPORTED: Founder checked Netlify UI before resuming production work."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: Exact remaining Netlify credit balance is not recorded in this row.",
+        "UNKNOWN: Actual deploy credit burn must still be proven from Netlify Usage & billing after any production deploy."
+      ],
+      "notes": "Restores operator-reported publishing state for BuckParts operating mode; does not authorize casual deploys."
     }
   ]
 }

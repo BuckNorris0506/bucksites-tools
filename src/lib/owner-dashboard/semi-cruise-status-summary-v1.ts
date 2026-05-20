@@ -64,6 +64,179 @@ export type SemiCruiseStatusSummaryBuildInputV1 = {
 const OPERATOR_REPORTED_PUBLISHING_PREFIX = "OPERATOR_REPORTED:";
 const PROVEN_LOCKED_PUBLISHING_PREFIX = "PROVEN:";
 
+export type NetlifyPublishingLedgerSignalV1 = "proven_lock" | "lock" | "restore";
+
+export type NetlifyPublishingFromSpendLedgerV1 = {
+  status: NetlifyPublishingStatusV1;
+  /** True when the latest chronological publishing-state signal is lock/pause/suspend. */
+  publishing_locked: boolean;
+  latest_signal: NetlifyPublishingLedgerSignalV1 | null;
+  latest_recorded_at: string | null;
+  proven_facts: string[];
+  unknown_facts: string[];
+};
+
+function parseRecordedAtMs(recorded_at: string): number {
+  const ms = Date.parse(recorded_at);
+  return Number.isFinite(ms) ? ms : 0;
+}
+
+function isNetlifyPublishingStateEntry(entry: SpendLedgerEntryV1): boolean {
+  if (entry.provider !== "netlify") return false;
+  if (entry.purpose === "netlify_publishing_state" || entry.purpose === "deploy_credit_conservation") {
+    return true;
+  }
+  return entry.proven_facts.some((line) => {
+    const lower = line.toLowerCase();
+    return (
+      (line.trim().startsWith(OPERATOR_REPORTED_PUBLISHING_PREFIX) ||
+        line.trim().startsWith(PROVEN_LOCKED_PUBLISHING_PREFIX)) &&
+      lower.includes("netlify") &&
+      (lower.includes("publish") ||
+        lower.includes("locked") ||
+        lower.includes("paused") ||
+        lower.includes("operational") ||
+        lower.includes("suspend"))
+    );
+  });
+}
+
+/** Classify one ledger entry's publishing signal; restore beats lock within the same entry. */
+export function classifyNetlifyPublishingSignalFromEntryV1(
+  entry: SpendLedgerEntryV1,
+): NetlifyPublishingLedgerSignalV1 | null {
+  let hasProvenLock = false;
+  let hasLock = false;
+  let hasRestore = false;
+
+  for (const line of entry.proven_facts) {
+    const trimmed = line.trim();
+    const lower = trimmed.toLowerCase();
+    if (!lower.includes("netlify")) continue;
+
+    if (
+      trimmed.startsWith(PROVEN_LOCKED_PUBLISHING_PREFIX) &&
+      (lower.includes("publish") || lower.includes("locked") || lower.includes("paused"))
+    ) {
+      hasProvenLock = true;
+    }
+
+    if (trimmed.startsWith(OPERATOR_REPORTED_PUBLISHING_PREFIX)) {
+      if (
+        /operational again|publishing is operational|unlocked|resumed|restored|restore/.test(lower)
+      ) {
+        hasRestore = true;
+      }
+      if (/locked|paused|suspend|credit limit|exceeded|deploys paused/.test(lower)) {
+        hasLock = true;
+      }
+    }
+  }
+
+  if (hasProvenLock) return "proven_lock";
+  if (hasRestore) return "restore";
+  if (hasLock) return "lock";
+  return null;
+}
+
+/**
+ * Resolve Netlify publishing from spend ledger using the latest chronological publishing-state entry.
+ * PROVEN: repo truth only — not Netlify API.
+ */
+export function resolveNetlifyPublishingFromSpendLedgerV1(
+  entries: SpendLedgerEntryV1[],
+): NetlifyPublishingFromSpendLedgerV1 {
+  const publishingEntries = entries
+    .filter(isNetlifyPublishingStateEntry)
+    .slice()
+    .sort((a, b) => parseRecordedAtMs(a.recorded_at) - parseRecordedAtMs(b.recorded_at));
+
+  let latest_signal: NetlifyPublishingLedgerSignalV1 | null = null;
+  let latest_recorded_at: string | null = null;
+  const proven_facts: string[] = [];
+
+  for (const entry of publishingEntries) {
+    const signal = classifyNetlifyPublishingSignalFromEntryV1(entry);
+    if (!signal) continue;
+    latest_signal = signal;
+    latest_recorded_at = entry.recorded_at;
+    proven_facts.push(
+      `PROVEN: Latest publishing-state signal (${signal}) from spend-ledger entry recorded_at=${entry.recorded_at}.`,
+    );
+  }
+
+  if (!latest_signal) {
+    return {
+      status: "UNKNOWN",
+      publishing_locked: false,
+      latest_signal: null,
+      latest_recorded_at: null,
+      proven_facts,
+      unknown_facts: [
+        "UNKNOWN: No durable repo source for Netlify publishing state (expected spend-ledger proven_facts with OPERATOR_REPORTED: or PROVEN: Netlify publishing lines).",
+      ],
+    };
+  }
+
+  if (latest_signal === "proven_lock") {
+    return {
+      status: "LOCKED",
+      publishing_locked: true,
+      latest_signal,
+      latest_recorded_at,
+      proven_facts: [
+        ...proven_facts,
+        "PROVEN: Netlify publishing lock attested in data/ops/spend-ledger-v1.json proven_facts (latest chronological signal).",
+      ],
+      unknown_facts: [
+        "UNKNOWN: Netlify dashboard was not queried by this summary builder; confirm lock/suspend in Usage & billing UI.",
+      ],
+    };
+  }
+
+  if (latest_signal === "lock") {
+    return {
+      status: "OPERATOR_REPORTED",
+      publishing_locked: true,
+      latest_signal,
+      latest_recorded_at,
+      proven_facts: [
+        ...proven_facts,
+        "OPERATOR_REPORTED: Netlify publishing lock/pause is the latest spend-ledger publishing-state signal (not a Netlify API proof).",
+      ],
+      unknown_facts: [
+        "UNKNOWN: Netlify dashboard was not queried by this summary builder; confirm lock/suspend in Usage & billing UI.",
+      ],
+    };
+  }
+
+  return {
+    status: "OPERATOR_REPORTED",
+    publishing_locked: false,
+    latest_signal,
+    latest_recorded_at,
+    proven_facts: [
+      ...proven_facts,
+      "OPERATOR_REPORTED: Netlify publishing restore/operational is the latest spend-ledger publishing-state signal (not a Netlify API proof).",
+    ],
+    unknown_facts: [
+      "UNKNOWN: Remaining Netlify credit balance is not proven in-repo; confirm Usage & billing before production deploy.",
+    ],
+  };
+}
+
+/** @deprecated Prefer resolveNetlifyPublishingFromSpendLedgerV1 — status-only wrapper for older tests. */
+export function resolveNetlifyPublishingStatusFromSpendLedgerV1(
+  entries: SpendLedgerEntryV1[],
+): { status: NetlifyPublishingStatusV1; proven_facts: string[]; unknown_facts: string[] } {
+  const resolved = resolveNetlifyPublishingFromSpendLedgerV1(entries);
+  return {
+    status: resolved.status,
+    proven_facts: resolved.proven_facts,
+    unknown_facts: resolved.unknown_facts,
+  };
+}
+
 function countNeuronsByLevel(
   neurons: OwnerCommandCenterNeuronsReport["neurons"] | undefined,
 ): { bright: number; dim: number; dark: number } {
@@ -77,63 +250,14 @@ function countNeuronsByLevel(
   return counts;
 }
 
-/** PROVEN in-repo only when spend-ledger proven_facts carry explicit durable lock lines. */
-export function resolveNetlifyPublishingStatusFromSpendLedgerV1(
+function resolveDeployCreditRiskV1(
   entries: SpendLedgerEntryV1[],
-): { status: NetlifyPublishingStatusV1; proven_facts: string[]; unknown_facts: string[] } {
-  const proven_facts: string[] = [];
-  const unknown_facts: string[] = [];
-
-  for (const entry of entries) {
-    for (const line of entry.proven_facts) {
-      const trimmed = line.trim();
-      const lower = trimmed.toLowerCase();
-      if (
-        trimmed.startsWith(PROVEN_LOCKED_PUBLISHING_PREFIX) &&
-        lower.includes("netlify") &&
-        (lower.includes("publish") || lower.includes("locked") || lower.includes("paused"))
-      ) {
-        proven_facts.push(trimmed);
-        return {
-          status: "LOCKED",
-          proven_facts: [
-            ...proven_facts,
-            "PROVEN: Netlify publishing lock attested in data/ops/spend-ledger-v1.json proven_facts.",
-          ],
-          unknown_facts,
-        };
-      }
-      if (trimmed.startsWith(OPERATOR_REPORTED_PUBLISHING_PREFIX) && lower.includes("netlify")) {
-        proven_facts.push(trimmed);
-        return {
-          status: "OPERATOR_REPORTED",
-          proven_facts: [
-            ...proven_facts,
-            "OPERATOR_REPORTED: Netlify publishing state recorded in spend ledger proven_facts (not a Netlify API proof).",
-          ],
-          unknown_facts: [
-            "UNKNOWN: Netlify dashboard was not queried by this summary builder; confirm lock/suspend in Usage & billing UI.",
-          ],
-        };
-      }
-    }
-  }
-
-  return {
-    status: "UNKNOWN",
-    proven_facts,
-    unknown_facts: [
-      "UNKNOWN: No durable repo source for Netlify publishing lock (expected spend-ledger proven_facts with OPERATOR_REPORTED: or PROVEN: Netlify publishing lines).",
-    ],
-  };
-}
-
-function resolveDeployCreditRiskV1(entries: SpendLedgerEntryV1[]): {
+  publishing: NetlifyPublishingFromSpendLedgerV1,
+): {
   status: DeployCreditRiskStatusV1;
   proven_facts: string[];
   unknown_facts: string[];
 } {
-  const deployRows = entries.filter((e) => e.provider === "netlify" && e.deploy_triggered);
   const unknown_facts = [
     "UNKNOWN: Actual Netlify credit burn is proven only from Netlify Usage & billing dashboard or export — not from git push alone.",
   ];
@@ -141,6 +265,27 @@ function resolveDeployCreditRiskV1(entries: SpendLedgerEntryV1[]): {
     "PROVEN: Official credit-plan rule (Netlify docs): production deploys consume deploy credits; preview/branch deploys are 0 on credit plans.",
   ];
 
+  if (publishing.publishing_locked) {
+    proven_facts.push(
+      "PROVEN: Latest spend-ledger publishing-state signal is lock/pause — deploy_credit_risk_status elevated.",
+    );
+    return { status: "HIGH_RISK", proven_facts, unknown_facts };
+  }
+
+  if (publishing.latest_signal === "restore") {
+    const deployRows = entries.filter((e) => e.provider === "netlify" && e.deploy_triggered);
+    if (deployRows.length > 0) {
+      proven_facts.push(
+        `PROVEN: ${deployRows.length} historical spend-ledger deploy_triggered row(s) exist but are superseded by a newer publishing restore signal.`,
+      );
+    }
+    proven_facts.push(
+      "PROVEN: deploy_credit_risk_status=MONITOR while publishing is operator-reported operational; credit balance still requires dashboard proof before deploy.",
+    );
+    return { status: "MONITOR", proven_facts, unknown_facts };
+  }
+
+  const deployRows = entries.filter((e) => e.provider === "netlify" && e.deploy_triggered);
   if (deployRows.length === 0) {
     return {
       status: "MONITOR",
@@ -160,7 +305,9 @@ function resolveDeployCreditRiskV1(entries: SpendLedgerEntryV1[]): {
     );
   }
   if (anyExact) {
-    proven_facts.push("PROVEN: At least one spend-ledger Netlify row claims exact_cost_proven=true from operator/vendor proof.");
+    proven_facts.push(
+      "PROVEN: At least one spend-ledger Netlify row claims exact_cost_proven=true from operator/vendor proof.",
+    );
   }
 
   return {
@@ -274,8 +421,8 @@ export function buildSemiCruiseStatusSummaryV1(
 ): SemiCruiseStatusSummaryV1 {
   const neuronCounts = countNeuronsByLevel(input.owner_command_center_neurons?.neurons);
   const readOnlyEval = evaluateReadOnlySemiCruiseOperational(input);
-  const publishing = resolveNetlifyPublishingStatusFromSpendLedgerV1(input.spend_ledger_entries);
-  const deployRisk = resolveDeployCreditRiskV1(input.spend_ledger_entries);
+  const publishing = resolveNetlifyPublishingFromSpendLedgerV1(input.spend_ledger_entries);
+  const deployRisk = resolveDeployCreditRiskV1(input.spend_ledger_entries, publishing);
   const remaining_owner_gates = buildRemainingOwnerGates(input);
 
   const proven_facts = [
@@ -304,10 +451,15 @@ export function buildSemiCruiseStatusSummaryV1(
     runtime_status = "ATTENTION";
   }
 
-  const recommended_next_action =
-    readOnlyEval.status === "PROVEN_OPERATIONAL"
-      ? "Stay on read-only Semi-Cruise: `npm run buckparts:command-center`, `npm run buckparts:runner-step`, `npm run buckparts:founder-digest` — no git push to main until Netlify credits reset and publishing state is dashboard-proven. Log spend rows from Netlify Usage & billing before any production deploy."
-      : "Restore read-only Semi-Cruise prerequisites on Command Center (system health, external measurement, publishability joins, READ_ONLY next_move_mode) before expanding scope. Do not push to Netlify production while deploy_credit_risk_status is elevated.";
+  const recommended_next_action = (() => {
+    if (readOnlyEval.status !== "PROVEN_OPERATIONAL") {
+      return "Restore read-only Semi-Cruise prerequisites on Command Center (system health, external measurement, publishability joins, READ_ONLY next_move_mode) before expanding scope. Do not push to Netlify production while deploy_credit_risk_status is elevated.";
+    }
+    if (publishing.publishing_locked) {
+      return "Stay on read-only Semi-Cruise: `npm run buckparts:command-center`, `npm run buckparts:runner-step`, `npm run buckparts:founder-digest` — no git push to main until Netlify credits reset and publishing state is dashboard-proven. Log spend rows from Netlify Usage & billing before any production deploy.";
+    }
+    return "Stay on read-only Semi-Cruise: `npm run buckparts:command-center`, `npm run buckparts:runner-step`, `npm run buckparts:founder-digest`. Confirm remaining Netlify credits in Usage & billing before any production deploy; log dashboard-proven spend rows. Operator-reported publishing restore in spend ledger is not a deploy authorization.";
+  })();
 
   return {
     contract: SEMI_CRUISE_STATUS_SUMMARY_CONTRACT_V1,
