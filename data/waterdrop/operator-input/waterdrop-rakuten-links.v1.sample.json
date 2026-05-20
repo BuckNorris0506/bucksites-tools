@@ -1,0 +1,16 @@
+{
+  "contract": "waterdrop_rakuten_operator_input_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "source": "rakuten_product_links_export_or_manual_snippet",
+  "notes": "Copy to waterdrop-rakuten-links.v1.json and paste Rakuten link rows. One entry per Waterdrop SKU. Do not commit secrets.",
+  "entries": [
+    {
+      "id": "da29-00020b-fixture",
+      "affiliate_url": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058",
+      "visible_title": "Waterdrop WDP-F27 Replacement for Samsung DA29-00020B Fridge Water Filter",
+      "image_url": null,
+      "raw_html": null
+    }
+  ]
+}
