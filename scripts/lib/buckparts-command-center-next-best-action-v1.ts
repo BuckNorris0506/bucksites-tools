@@ -72,7 +72,7 @@ export function resolveCommandCenterNextBestActionV1(
   let why_this_action = "";
 
   if (input.preferAmazonFirstConversion) {
-    next_best_action = `Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (${input.amazonFirstTokenHint}).`;
+    next_best_action = `Prioritize Amazon-first blocked-search rescue: run exact-token Amazon product-page searches and verify buyability for queued refrigerator tokens (${input.amazonFirstTokenHint}).`;
     why_this_action =
       "Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.";
     if (input.amazonUnknownEvidenceDeferredCount > 0) {

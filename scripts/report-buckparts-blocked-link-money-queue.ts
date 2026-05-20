@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 } from "@/lib/copy/customer-language-doctrine";
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
@@ -83,7 +84,7 @@ function retailerSort(
 
 function buildRecommendedFirstAction(topState: string | null, topRetailerKey: string | null): string {
   if (topRetailerKey === "oem-catalog" || topRetailerKey === "oem-parts-catalog") {
-    return "Replace OEM catalog/search-style rows with verified direct PDPs where exact-token proof exists.";
+    return OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1;
   }
   if (topState === "BLOCKED_BROWSER_TRUTH_UNSAFE") {
     return "Recheck browser-truth evidence for unsafe rows before promoting.";

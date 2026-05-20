@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 } from "@/lib/copy/customer-language-doctrine";
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
@@ -43,7 +44,7 @@ export type OemCatalogBlockedDetailsReport = {
   rows_by_blocked_state: Record<string, number> | "UNKNOWN";
   sample_rows: DetailRow[] | "UNKNOWN";
   prioritized_rows: PrioritizedRow[] | "UNKNOWN";
-  recommended_next_action: "Replace OEM catalog/search-style rows with verified direct PDPs only where exact-token proof exists.";
+  recommended_next_action: OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1;
   known_unknowns: string[];
 };
 
@@ -53,8 +54,7 @@ type BuildOptions = {
 };
 
 const OEM_KEYS = new Set(["oem-catalog", "oem-parts-catalog"]);
-const REPORT_ACTION =
-  "Replace OEM catalog/search-style rows with verified direct PDPs only where exact-token proof exists.";
+const REPORT_ACTION = OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1;
 const SAMPLE_LIMIT = 25;
 const PRIORITIZED_LIMIT = 25;
 

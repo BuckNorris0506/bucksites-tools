@@ -24,3 +24,7 @@ export const NO_OEM_COLD_RULE_V1 =
   "Public BuckParts customer-facing copy must not use OEM unless defined first/immediately as original equipment manufacturer; prefer Samsung-made, official Samsung filter, compatible replacement filter, or non-Samsung replacement filter where accurate." as const;
 
 export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED" | "LIVE";
+
+/** Owner-facing Command Center / blocked-link queue remediation (not customer HTML). */
+export const OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 =
+  "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists." as const;

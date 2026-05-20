@@ -99,7 +99,7 @@ test("recommended action prefers OEM key when top key is oem-catalog", () => {
   );
   assert.equal(
     report.recommended_first_action,
-    "Replace OEM catalog/search-style rows with verified direct PDPs where exact-token proof exists.",
+    "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists.",
   );
 });
 

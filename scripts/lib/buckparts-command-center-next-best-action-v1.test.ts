@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
+import { OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 } from "../../src/lib/copy/customer-language-doctrine";
 import { buildBuckpartsCommandCenterReport } from "../report-buckparts-command-center";
 import {
   affiliateTrackerPrimaryCommandPending,
@@ -104,11 +105,11 @@ describe("resolveCommandCenterNextBestActionV1", () => {
       amazonDeferredUnknownTopTokens: "",
       flexoffersMonetizationBlocked: true,
       blockedLinkRecommendedFirstAction:
-        "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+        "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists.",
     });
 
     assert.equal(/Prepare pending FlexOffers slots/i.test(result.next_best_action), false);
-    assert.match(result.next_best_action, /Replace search\/discovery URLs/i);
+    assert.match(result.next_best_action, /manufacturer catalog\/search rows/i);
     assert.match(result.why_this_action, /FlexOffers publisher network is REJECTED/i);
   });
 
@@ -189,7 +190,7 @@ function minimalCommandCenterProviders() {
         total_blocked_links: 5,
         top_blocked_states: [{ state: "BLOCKED_SEARCH_OR_DISCOVERY", count: 5 }],
         top_blocked_retailer_keys: [{ retailer_key: "oem-catalog", blocked_count: 5, inferred_importance_count: 5 }],
-        recommended_first_action: "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+        recommended_first_action: OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
         known_unknowns: [],
       }) as never,
     oemNextMoneyCohort: async () =>

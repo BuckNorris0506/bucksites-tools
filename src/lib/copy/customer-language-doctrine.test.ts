@@ -7,6 +7,7 @@ import { describe, it } from "node:test";
 import {
   CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH,
   NO_OEM_COLD_RULE_V1,
+  OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
   WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
 } from "@/lib/copy/customer-language-doctrine";
 
@@ -24,6 +25,10 @@ describe("customer language doctrine", () => {
     assert.match(md, /purchase options/i);
     assert.match(md, /Store links appear only after BuckParts checks the listing against the part number/i);
     assert.match(md, /avoid sending you to a bad match/i);
+    assert.equal(
+      OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
+      "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists.",
+    );
     const goUnavailable = readFileSync(path.join(REPO_ROOT, "src/app/go-unavailable/page.tsx"), "utf8");
     assert.ok(!/store shortcut/i.test(goUnavailable));
     const partTrust = readFileSync(path.join(REPO_ROOT, "src/lib/trust/part-trust.ts"), "utf8");

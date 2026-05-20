@@ -46,6 +46,7 @@ import type { Ga4TrustFunnelArtifact } from "../src/lib/owner-dashboard/ga4-trus
 import {
   buildPagePublishabilityTruthSummaryV1,
 } from "./lib/buckparts-page-publishability-truth-v1";
+import { OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1 } from "../src/lib/copy/customer-language-doctrine";
 import {
   buildBuckpartsCommandCenterReport,
   stripEvidenceUncappedCandidatesForStdout,
@@ -250,7 +251,7 @@ function baseProviders() {
         total_blocked_links: 5,
         top_blocked_states: [{ state: "BLOCKED_SEARCH_OR_DISCOVERY", count: 5 }],
         top_blocked_retailer_keys: [{ retailer_key: "oem-catalog", blocked_count: 5, inferred_importance_count: 5 }],
-        recommended_first_action: "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+        recommended_first_action: OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
         known_unknowns: [],
       }) as never,
     oemNextMoneyCohort: async () =>
@@ -272,7 +273,8 @@ function baseProviders() {
         report_name: "buckparts_frigidaire_next_monetizable_candidates_v1",
         runtime_status: "OK",
         candidates: [{ filter_slug: "foo" }],
-        recommended_next_action: "Start with candidates already containing direct_buyable non-OEM links.",
+        recommended_next_action:
+          "Start with candidates already containing direct_buyable non-manufacturer-catalog links.",
         known_unknowns: [],
       }) as never,
     amazonFirstBlockedQueue: amazonQueueOkMock({ needs: 0, tokens: [] }),
@@ -611,7 +613,7 @@ test("includes amazon_first_blocked_queue_summary with runtime OK when queue res
   );
 });
 
-test("NBA prefers Amazon-first OEM rescue when Amazon verified, needs search, no other APPROVED affiliate", async () => {
+test("NBA prefers Amazon-first rescue when Amazon verified, needs search, no other APPROVED affiliate", async () => {
   const providers = baseProviders();
   providers.amazonFirstBlockedQueue = amazonQueueOkMock({
     needs: 2,
@@ -623,7 +625,8 @@ test("NBA prefers Amazon-first OEM rescue when Amazon verified, needs search, no
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
-  assert.match(report.next_best_action, /Amazon-first OEM blocked-search rescue/i);
+  assert.match(report.next_best_action, /Amazon-first blocked-search rescue/i);
+  assert.ok(!/\bOEM\b/.test(report.next_best_action));
   assert.match(report.next_best_action, /TOK1/);
   assert.equal(/Rerun affiliate tracker \+ command surface/i.test(report.next_best_action), false);
   assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
@@ -643,7 +646,7 @@ test("does not choose Amazon-first NBA when queue is UNKNOWN", async () => {
     readTextFile: () => BASE_TRACKER,
   });
   assert.equal(report.amazon_first_blocked_queue_summary.runtime_status, "UNKNOWN");
-  assert.equal(/Amazon-first OEM blocked-search rescue/i.test(report.next_best_action), false);
+  assert.equal(/Amazon-first blocked-search rescue/i.test(report.next_best_action), false);
 });
 
 test("execution_guidance block exists with required fields", async () => {
@@ -881,6 +884,44 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
   assert.equal(affiliateLane.status, "ATTENTION");
 });
 
+test("owner-facing next_best_action and blocked_link_summary avoid cold OEM wording", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const tracker = fs.readFileSync(path.join(rootDir, "data/affiliate/affiliate-application-tracker.json"), "utf8");
+  const { affiliateTracker: _affiliateTrackerMock, ...providersWithoutTrackerMock } = baseProviders();
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: {
+      ...providersWithoutTrackerMock,
+      frigidaireNextCandidates: async () =>
+        ({
+          report_name: "buckparts_frigidaire_next_monetizable_candidates_v1",
+          runtime_status: "OK",
+          candidates: [],
+          recommended_next_action:
+            "No Frigidaire candidate with blocked manufacturer catalog plus alternate retailer link exists in current data.",
+          known_unknowns: [],
+        }) as never,
+    },
+    fileExists: fs.existsSync,
+    readDir: () => [],
+    readTextFile: (abs) => {
+      if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
+      return BASE_TRACKER;
+    },
+  });
+  assert.ok(!/OEM catalog|OEM blocked-search|Amazon-first OEM/i.test(report.next_best_action));
+  assert.match(
+    report.blocked_link_summary.recommended_first_action,
+    /manufacturer catalog\/search rows with verified direct product pages/i,
+  );
+  assert.equal(
+    report.command_center_v2.customer_language_and_waterdrop_research_lane_v1.waterdrop_live_cta_status,
+    "LIVE",
+  );
+  const flexLane = report.top_money_queue.find((lane) => lane.lane === "flexoffers_readiness_refrigerator_water");
+  assert.ok(flexLane?.exhausted);
+});
+
 test("next_best_action does not recommend FlexOffers slot prep when tracker shows REJECTED", async () => {
   const rootDir = path.resolve(__dirname, "..");
   const tracker = fs.readFileSync(path.join(rootDir, "data/affiliate/affiliate-application-tracker.json"), "utf8");
@@ -937,7 +978,7 @@ test("skips Amazon-first NBA when another non-Amazon affiliate is APPROVED", asy
     readDir: () => [],
     readTextFile: () => tracker,
   });
-  assert.equal(/Amazon-first OEM blocked-search rescue/i.test(report.next_best_action), false);
+  assert.equal(/Amazon-first blocked-search rescue/i.test(report.next_best_action), false);
 });
 
 test("command_center_v2 loads token controls and excludes registry tokens from fresh_search_top_tokens", async () => {
