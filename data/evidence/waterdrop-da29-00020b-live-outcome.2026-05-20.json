@@ -18,14 +18,21 @@
   },
   "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
   "mutation_ready": false,
+  "owner_manual_insert_approved": true,
+  "owner_manual_insert_approved_at": "2026-05-20T23:00:00.000Z",
+  "owner_manual_insert_approval_scope": "manual_sql_one_waterdrop_row_da29_00020b_only_no_automation",
   "mutation_ready_basis": {
     "insert_plan_path": "docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql",
-    "insert_plan_status": "BLOCKED",
+    "insert_plan_status": "READY_FOR_OWNER_MANUAL_EXECUTION",
     "insert_prechecks_status": "PASSED_READ_ONLY",
-    "prechecks_passed_owner_insert_not_approved": true,
+    "automation_mutation_authority": false,
     "blocking_reasons": [
-      "insert_plan_status remains BLOCKED until owner explicitly unblocks manual SQL (no automation authority).",
-      "No retailer_links waterdrop row committed; live compatible CTA remains NOT_LIVE at runtime until insert postcheck and gates pass."
+      "No retailer_links waterdrop row committed; live compatible CTA remains NOT_LIVE at runtime until insert postcheck and gates pass.",
+      "Operator must re-run Precheck D and Precheck E in the same session immediately before INSERT; abort if approved_waterdrop_count or waterdrop_row_count is non-zero."
+    ],
+    "final_precheck_required_before_insert": [
+      "Precheck D: approved_waterdrop_count = 0 for filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 and retailer_key waterdrop",
+      "Precheck E: waterdrop_row_count = 0 for filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 and retailer_key waterdrop"
     ],
     "precheck_waterdrop_approved_row_count_expected": 0,
     "precheck_waterdrop_approved_row_count_proven": 0,
@@ -145,13 +152,13 @@
     "HUMAN_BROWSER_VERIFICATION_REQUIRED",
     "UNKNOWN"
   ],
-  "required_next_action": "OWNER_UNBLOCK_INSERT_PLAN_AND_EXECUTE_MANUAL_SQL_ONLY",
+  "required_next_action": "RUN_SAME_SESSION_PRECHECKS_D_AND_E_THEN_EXECUTE_MANUAL_SQL_AND_POSTCHECK",
   "insert_outcome": "NOT_COMMITTED",
   "revenue_claim": "none",
   "commission_or_revenue": "NOT_CONNECTED",
   "notes": [
-    "Evidence only. No Supabase writes, no retailer_links insert, no live CTA, no route changes.",
-    "insert_prechecks_status PASSED_READ_ONLY does not authorize automation; mutation_ready remains false until owner unblocks insert plan and executes manual SQL.",
+    "Evidence only. No Supabase writes from this JSON file; no autonomous retailer_links mutation.",
+    "owner_manual_insert_approved true authorizes documented manual SQL only; mutation_ready remains false (no automation authority).",
     "Affiliate_url_candidate is stored here for insert-plan reference only.",
     "applyAmazonAffiliateRedirectUrl does not rewrite non-amazon.com hosts; LinkSynergy URL would pass through /go unchanged if row gates pass later.",
     "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime."
