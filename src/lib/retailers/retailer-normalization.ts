@@ -12,6 +12,7 @@ export const CANONICAL_RETAILER_KEYS = [
   "levoit-oem-dtc",
   "coway-oem-dtc",
   "winix-oem-dtc",
+  "waterdrop",
 ] as const;
 
 export type CanonicalRetailerKey = (typeof CANONICAL_RETAILER_KEYS)[number];
@@ -69,6 +70,9 @@ const RETAILER_NAME_TO_KEY = new Map<string, CanonicalRetailerKey>([
 
   ["winix oem dtc", "winix-oem-dtc"],
   ["winix", "winix-oem-dtc"],
+
+  ["waterdrop", "waterdrop"],
+  ["waterdrop filter", "waterdrop"],
 ]);
 
 /** Maps user/vendor retailer text to a canonical BuckParts retailer_key. */

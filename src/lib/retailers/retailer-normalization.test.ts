@@ -40,6 +40,12 @@ describe("normalizeRetailerName", () => {
     assert.equal(normalizeRetailerName("Winix (OEM/DTC)"), "winix-oem-dtc");
   });
 
+  it("maps Waterdrop Filter variants", () => {
+    assert.equal(normalizeRetailerName("Waterdrop Filter"), "waterdrop");
+    assert.equal(normalizeRetailerName("waterdrop"), "waterdrop");
+    assert.equal(normalizeRetailerName("WATERDROP FILTER"), "waterdrop");
+  });
+
   it("returns null for unknown inputs", () => {
     assert.equal(normalizeRetailerName("best buy"), null);
     assert.equal(normalizeRetailerName(""), null);

@@ -1,0 +1,93 @@
+{
+  "report_name": "buckparts_waterdrop_da29_00020b_live_outcome_v1",
+  "generated_at": "2026-05-20T12:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "DA29-00020B",
+  "filter_slug": "da29-00020b",
+  "filter_id": "UNKNOWN",
+  "retailer_program": {
+    "network": "Rakuten Advertising",
+    "retailer_key_candidate": "waterdrop",
+    "retailer_name_candidate": "Waterdrop Filter",
+    "affiliate_tracker_id": "rakuten-waterdrop-filter",
+    "affiliate_approval_proven_in_repo": true,
+    "affiliate_approval_equals_cta_permission": false,
+    "tag_verified_in_repo": false
+  },
+  "verdict": "UNKNOWN",
+  "mutation_ready": false,
+  "mutation_ready_basis": {
+    "insert_plan_path": "docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql",
+    "insert_plan_status": "BLOCKED",
+    "blocking_reasons": [
+      "Waterdrop PDP owner-browser buy-path proof not captured in this file (Add to Cart / cart availability UNKNOWN).",
+      "filter_id not resolved in-repo; requires read-only Supabase precheck before insert.",
+      "affiliate-application-tracker rakuten-waterdrop-filter tagVerified is null in-repo.",
+      "Rakuten catalog title/price alone do not satisfy launch-buy-links direct_buyable browser_truth gates."
+    ],
+    "precheck_waterdrop_approved_row_count_expected": 0,
+    "precheck_notes": "Repo seed data/retailer_links.csv has oem-parts-catalog RepairClinic search placeholder only for da29-00020b; no waterdrop row in CSV."
+  },
+  "operator_reported": {
+    "source": "operator_rakuten_catalog_and_urls",
+    "checked_at": "2026-05-20T12:00:00.000Z",
+    "rakuten_product_title_visible": "Waterdrop WDP-F27 Replacement for Samsung DA29-00020B Fridge Water Filter",
+    "token_visible_in_rakuten_title": true,
+    "operator_sku_visible": "WDP-F27",
+    "rakuten_price_visible_usd": 41.99,
+    "price_source": "rakuten_listing_not_independently_verified_on_waterdrop_pdp",
+    "product_attribution_operator": "aftermarket_compatible_replacement_not_oem_samsung"
+  },
+  "destination_pdp_url": "https://www.waterdropfilter.com/products/waterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter?variant=33108474495058",
+  "affiliate_url_candidate": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539508551730292149506115&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter%3fvariant%3d33108474495058",
+  "image_pixel_url_excluded_from_buyer_redirect": "https://ad.linksynergy.com/fs-bin/show?id=GTFBcFcCW48&bids=1888875.539508551730292149506115&type=2&subid=0",
+  "product_attribution": "aftermarket_compatible",
+  "exact_token_proof": "OPERATOR_REPORTED: Rakuten listing title includes literal DA29-00020B. Not proven on Waterdrop PDP title in owner-browser capture committed to repo.",
+  "buyability_proof": "UNKNOWN — operator Rakuten listing shows price; Add to Cart / Buy Now on Waterdrop PDP not owner-browser verified in repo.",
+  "browser_evidence": {
+    "waterdrop_pdp_browser_inspected_in_repo": false,
+    "waterdrop_pdp_url": "https://www.waterdropfilter.com/products/waterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter?variant=33108474495058",
+    "seller_title_visible": "UNKNOWN",
+    "token_visible_in_pdp_title": "UNKNOWN",
+    "buy_path_visible": "UNKNOWN",
+    "price_visible_usd": "UNKNOWN",
+    "cart_availability_visible": "UNKNOWN",
+    "oem_or_aftermarket": "aftermarket compatible",
+    "compatible_replacement_subtype_candidate": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    "browser_verdict": "UNKNOWN",
+    "browser_truth_checked_at": "UNKNOWN"
+  },
+  "unknown_facts": [
+    "filter_id UUID for slug da29-00020b (resolve via Supabase read-only precheck before insert).",
+    "Waterdrop PDP seller-controlled title includes DA29-00020B (Rakuten title only is operator-reported, not PDP browser proof).",
+    "Waterdrop PDP Add to Cart / Buy Now / checkout entry visible.",
+    "Waterdrop PDP in-stock or cart availability.",
+    "Waterdrop PDP price in USD (Rakuten $41.99 is not PDP browser proof).",
+    "LinkSynergy click lands on expected variant PDP with attribution intact (tagVerified null in affiliate tracker).",
+    "Runtime browser_truth_classification for a future retailer_links row."
+  ],
+  "proven_facts": [
+    "Canonical filter slug da29-00020b and token DA29-00020B exist in data/filters.csv and data/filter_aliases.csv.",
+    "Operator-supplied destination_pdp_url and affiliate_url_candidate (LinkSynergy click wrapper) are https URLs.",
+    "Product is aftermarket compatible replacement, not OEM Samsung (operator-reported; aligns with BuckParts attribution policy for non-OEM CTAs).",
+    "Image pixel URL must not be used as buyer redirect (excluded explicitly).",
+    "Rakuten Waterdrop Filter program APPROVED in affiliate-application-tracker.json does not authorize live CTA without buyer-path evidence."
+  ],
+  "allowed_final_classifications": [
+    "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    "HUMAN_BROWSER_VERIFICATION_REQUIRED",
+    "UNKNOWN"
+  ],
+  "required_next_action": "OWNER_BROWSER_VERIFY_WATERDROP_PDP_BUY_PATH_THEN_UNBLOCK_INSERT_PLAN",
+  "insert_outcome": "NOT_COMMITTED",
+  "revenue_claim": "none",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "notes": [
+    "Evidence only. No Supabase writes, no retailer_links insert, no live CTA, no route changes.",
+    "Affiliate_url_candidate is stored here for insert-plan reference only; do not insert until mutation_ready becomes true after PDP browser proof and prechecks pass.",
+    "applyAmazonAffiliateRedirectUrl does not rewrite non-amazon.com hosts; LinkSynergy URL would pass through /go unchanged if row gates pass later.",
+    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime."
+  ]
+}
