@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import { buildBuckpartsAffiliateTrackerReport } from "./report-buckparts-affiliate-tracker";
+
+const TRACKER_PATH = path.resolve(process.cwd(), "data/affiliate/affiliate-application-tracker.json");
 
 test("report is read_only true and data_mutation false", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
@@ -11,19 +15,19 @@ test("report is read_only true and data_mutation false", () => {
 
 test("counts records correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.record_count, 14);
+  assert.equal(report.record_count, 22);
 });
 
 test("counts statuses correctly", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
   assert.equal(report.status_counts.REAPPLY_REQUIRED, 0);
-  assert.equal(report.status_counts.DRAFTING, 7);
-  assert.equal(report.status_counts.NOT_STARTED, 1);
-  assert.equal(report.status_counts.SUBMITTED, 1);
-  assert.equal(report.status_counts.IN_REVIEW, 2);
-  assert.equal(report.status_counts.APPROVED, 1);
-  assert.equal(report.status_counts.REJECTED, 2);
-  assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 0);
+  assert.equal(report.status_counts.DRAFTING, 6);
+  assert.equal(report.status_counts.NOT_STARTED, 0);
+  assert.equal(report.status_counts.SUBMITTED, 4);
+  assert.equal(report.status_counts.IN_REVIEW, 3);
+  assert.equal(report.status_counts.APPROVED, 3);
+  assert.equal(report.status_counts.REJECTED, 5);
+  assert.equal(report.status_counts.PAUSED_OR_INACTIVE, 1);
 });
 
 test("detects REAPPLY_REQUIRED records", () => {
@@ -33,7 +37,29 @@ test("detects REAPPLY_REQUIRED records", () => {
 
 test("detects DRAFTING records", () => {
   const report = buildBuckpartsAffiliateTrackerReport();
-  assert.equal(report.status_counts.DRAFTING, 7);
+  assert.equal(report.status_counts.DRAFTING, 6);
+});
+
+test("records Rakuten Waterdrop as APPROVED without tag verification", () => {
+  const report = buildBuckpartsAffiliateTrackerReport();
+  assert.ok(report.records_approved.includes("rakuten-waterdrop-filter"));
+  assert.ok(report.records_approved.includes("amazon-associates"));
+  assert.ok(report.records_rejected.includes("rakuten-appliancepartspros"));
+});
+
+test("Waterdrop tracker row encodes operator PPC restrictions and no-CTA guard", () => {
+  const raw = JSON.parse(readFileSync(TRACKER_PATH, "utf8")) as {
+    id: string;
+    notes: string | null;
+    nextAction: string | null;
+  }[];
+  const waterdrop = raw.find((r) => r.id === "rakuten-waterdrop-filter");
+  assert.ok(waterdrop);
+  assert.match(waterdrop!.notes ?? "", /MID: 53950/);
+  assert.match(waterdrop!.notes ?? "", /waterdrop refrigerator water filter/);
+  assert.match(waterdrop!.notes ?? "", /www\.waterdropfilter\.com/);
+  assert.match(waterdrop!.notes ?? "", /not permission to show CTAs/i);
+  assert.match(waterdrop!.nextAction ?? "", /not fit proof/i);
 });
 
 test("invalid tracker record fails", () => {
@@ -117,7 +143,7 @@ test("includes tag verification summary", () => {
   assert.deepEqual(report.tag_verification, {
     verified_count: 1,
     unverified_count: 0,
-    unknown_count: 13,
+    unknown_count: 21,
     unverified_records: [],
   });
 });
