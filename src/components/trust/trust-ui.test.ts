@@ -228,6 +228,13 @@ describe("public merchant-priority copy guard", () => {
     );
   });
 
+  it("go-unavailable page uses purchase-options wording (no store shortcut)", () => {
+    const src = readFileSync(rooted("src/app/go-unavailable/page.tsx"), "utf8");
+    assert.ok(!/store shortcut/i.test(src));
+    assert.match(src, /purchase option/i);
+    assert.ok(!/avoid sending you to a bad match/i.test(src));
+  });
+
   it("homepage uses final purchase-options copy (customer language doctrine)", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
     assert.ok(!/store shortcut/i.test(src));

@@ -24,6 +24,10 @@ describe("customer language doctrine", () => {
     assert.match(md, /purchase options/i);
     assert.match(md, /Store links appear only after BuckParts checks the listing against the part number/i);
     assert.match(md, /avoid sending you to a bad match/i);
+    const goUnavailable = readFileSync(path.join(REPO_ROOT, "src/app/go-unavailable/page.tsx"), "utf8");
+    assert.ok(!/store shortcut/i.test(goUnavailable));
+    const partTrust = readFileSync(path.join(REPO_ROOT, "src/lib/trust/part-trust.ts"), "utf8");
+    assert.ok(!/store shortcut/i.test(partTrust));
   });
 
   it("Waterdrop research draft exists and is marked not published", () => {

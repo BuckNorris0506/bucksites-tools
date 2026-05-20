@@ -60,13 +60,15 @@ export function resolveCommandCenterNextBestActionV1(
       input.topMoneyQueue[0].recommended_action,
       input.waterdropLiveProofSlice,
     );
-    why_this_action = "OEM catalog money cohort has concrete remaining blocked rows and is currently monetizable.";
+    why_this_action =
+      "Manufacturer catalog/search money cohort has concrete remaining blocked rows and is currently monetizable.";
   } else if (!input.topMoneyQueue[1]?.exhausted) {
     next_best_action = withWaterdropLiveMonitorPrefix(
       input.topMoneyQueue[1].recommended_action,
       input.waterdropLiveProofSlice,
     );
-    why_this_action = "Frigidaire lane still has candidates after OEM next-money cohort is exhausted.";
+    why_this_action =
+      "Frigidaire lane still has candidates after manufacturer catalog/search next-money cohort is exhausted.";
   } else if (!input.topMoneyQueue[2]?.exhausted) {
     next_best_action = withWaterdropLiveMonitorPrefix(
       input.topMoneyQueue[2].recommended_action,

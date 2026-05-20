@@ -105,6 +105,9 @@ describe("part-trust", () => {
       withModels.replacement_reasoning_summary,
       /listing evidence checked against this part number/i,
     );
+    assert.match(withModels.replacement_reasoning_summary, /Buying options are shown only when/i);
+    assert.ok(!/store shortcut/i.test(withModels.replacement_reasoning_summary));
+    assert.ok(!/\bOEM\b/i.test(withModels.replacement_reasoning_summary));
     assert.ok(!/\bverify\b/i.test(withModels.replacement_reasoning_summary));
 
     const noModels = buildPartPageTrust({

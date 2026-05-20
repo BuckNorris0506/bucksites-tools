@@ -754,17 +754,17 @@ export async function buildBuckpartsCommandCenterReport(
       );
       if (altMoneyLane.lane === "frigidaire_next_monetizable") {
         whyThisAction =
-          "Frigidaire lane still has candidates; RepairClinic-tagged OEM cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
+          "Frigidaire lane still has candidates; RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else if (altMoneyLane.lane === "flexoffers_readiness_refrigerator_water") {
         whyThisAction =
-          "FlexOffers readiness queue is next after RepairClinic-tagged OEM cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
+          "FlexOffers readiness queue is next after RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else {
         whyThisAction =
           "RepairClinic affiliate lane is not approval-ready, so RepairClinic-tagged retailer_links work is suppressed; using the next monetizable queue lane.";
       }
     } else {
       nextBestAction =
-        "Advance non-RepairClinic queues only (OEM cohort, FlexOffers readiness, and affiliate approvals) until RepairClinic status is submit/review approved.";
+        "Advance non-RepairClinic queues only (manufacturer catalog/search cohort, FlexOffers readiness, and affiliate approvals) until RepairClinic status is submit/review approved.";
       whyThisAction =
         "RepairClinic affiliate lane is not approval-ready, so RepairClinic evidence work is intentionally suppressed.";
     }
