@@ -16,6 +16,10 @@ import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-control
 import {
   affiliateTrackerPrimaryCommandPending,
   appendWaterdropAndAffiliatePendingWhy,
+  FLEXOFFERS_TRACKER_BLOCKED_ACTION,
+  flexoffersAffiliateTrackerStatus,
+  isFlexoffersMonetizationBlocked,
+  isTopMoneyQueueLaneActionable,
   resolveCommandCenterNextBestActionV1,
   withWaterdropLiveMonitorPrefix,
 } from "./lib/buckparts-command-center-next-best-action-v1";
@@ -649,6 +653,12 @@ export async function buildBuckpartsCommandCenterReport(
   if (record?.status) repairclinicStatus = record.status;
 
   const affiliateApprovalPending = pendingNetworkOrPrograms.length > 0;
+  const flexoffersTrackerStatus = flexoffersAffiliateTrackerStatus(trackerRows);
+  const flexoffersMonetizationBlocked = isFlexoffersMonetizationBlocked(flexoffersTrackerStatus);
+  const flexoffersTargetCount =
+    flexoffersReadiness !== null && Array.isArray(flexoffersReadiness.targets)
+      ? flexoffersReadiness.targets.length
+      : ("UNKNOWN" as const);
   const frigidaireLaneExhausted =
     frigidaireNextCandidates.runtime_status === "OK" &&
     frigidaireNextCandidates.candidates.length === 0;
@@ -676,16 +686,15 @@ export async function buildBuckpartsCommandCenterReport(
     {
       lane: "flexoffers_readiness_refrigerator_water",
       exhausted:
-        flexoffersReadiness !== null &&
-        Array.isArray(flexoffersReadiness.targets) &&
-        flexoffersReadiness.targets.length === 0,
-      candidate_count:
-        flexoffersReadiness !== null && Array.isArray(flexoffersReadiness.targets)
-          ? flexoffersReadiness.targets.length
-          : "UNKNOWN",
+        flexoffersMonetizationBlocked ||
+        (flexoffersReadiness !== null &&
+          Array.isArray(flexoffersReadiness.targets) &&
+          flexoffersReadiness.targets.length === 0),
+      candidate_count: flexoffersTargetCount,
       source_report: flexoffersReadiness?.report_name ?? "flexoffers_readiness_report_missing",
-      recommended_action:
-        flexoffersReadiness !== null
+      recommended_action: flexoffersMonetizationBlocked
+        ? FLEXOFFERS_TRACKER_BLOCKED_ACTION
+        : flexoffersReadiness !== null
           ? "Prepare pending FlexOffers slots for listed weak/zero-CTA slugs (no link insert)."
           : "Generate FlexOffers readiness report for refrigerator-water weak/zero-CTA demand slugs.",
     },
@@ -734,6 +743,8 @@ export async function buildBuckpartsCommandCenterReport(
       amazonFirstTokenHint,
       amazonUnknownEvidenceDeferredCount: amazonFirstSummary.unknown_evidence_deferred_count,
       amazonDeferredUnknownTopTokens,
+      flexoffersMonetizationBlocked,
+      blockedLinkRecommendedFirstAction: blockedQueue.recommended_first_action,
     });
 
   // Explicit safeguard: never recommend RepairClinic evidence when affiliate is not launch-ready.
@@ -743,9 +754,7 @@ export async function buildBuckpartsCommandCenterReport(
   ) {
     const altMoneyLane = topMoneyQueue.find(
       (lane) =>
-        !lane.exhausted &&
-        lane.candidate_count !== "UNKNOWN" &&
-        !/repairclinic/i.test(lane.recommended_action),
+        isTopMoneyQueueLaneActionable(lane) && !/repairclinic/i.test(lane.recommended_action),
     );
     if (altMoneyLane) {
       nextBestAction = withWaterdropLiveMonitorPrefix(
@@ -757,16 +766,18 @@ export async function buildBuckpartsCommandCenterReport(
           "Frigidaire lane still has candidates; RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else if (altMoneyLane.lane === "flexoffers_readiness_refrigerator_water") {
         whyThisAction =
-          "FlexOffers readiness queue is next after RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
+          "Weak/zero-CTA placeholder readiness queue is next after RepairClinic-tagged manufacturer catalog/search cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
       } else {
         whyThisAction =
           "RepairClinic affiliate lane is not approval-ready, so RepairClinic-tagged retailer_links work is suppressed; using the next monetizable queue lane.";
       }
     } else {
-      nextBestAction =
-        "Advance non-RepairClinic queues only (manufacturer catalog/search cohort, FlexOffers readiness, and affiliate approvals) until RepairClinic status is submit/review approved.";
+      nextBestAction = withWaterdropLiveMonitorPrefix(
+        blockedQueue.recommended_first_action,
+        waterdropLiveProofSlice,
+      );
       whyThisAction =
-        "RepairClinic affiliate lane is not approval-ready, so RepairClinic evidence work is intentionally suppressed.";
+        "RepairClinic affiliate lane is not approval-ready; FlexOffers network is REJECTED in affiliate tracker, so blocked-link remediation is the next actionable money path.";
     }
     whyThisAction = appendWaterdropAndAffiliatePendingWhy(whyThisAction, {
       next_best_action: nextBestAction,

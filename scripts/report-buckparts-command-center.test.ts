@@ -881,6 +881,25 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
   assert.equal(affiliateLane.status, "ATTENTION");
 });
 
+test("next_best_action does not recommend FlexOffers slot prep when tracker shows REJECTED", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const tracker = fs.readFileSync(path.join(rootDir, "data/affiliate/affiliate-application-tracker.json"), "utf8");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: () => [],
+    readTextFile: (abs) => {
+      if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
+      return BASE_TRACKER;
+    },
+  });
+  const flexLane = report.top_money_queue.find((lane) => lane.lane === "flexoffers_readiness_refrigerator_water");
+  assert.ok(flexLane);
+  assert.equal(flexLane!.exhausted, true);
+  assert.equal(/Prepare pending FlexOffers slots/i.test(report.next_best_action), false);
+});
+
 test("skips Amazon-first NBA when another non-Amazon affiliate is APPROVED", async () => {
   const tracker = JSON.stringify([
     {

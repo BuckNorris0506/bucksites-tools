@@ -7,6 +7,9 @@ import { describe, it } from "node:test";
 import { buildBuckpartsCommandCenterReport } from "../report-buckparts-command-center";
 import {
   affiliateTrackerPrimaryCommandPending,
+  flexoffersAffiliateTrackerStatus,
+  FLEXOFFERS_TRACKER_BLOCKED_ACTION,
+  isFlexoffersMonetizationBlocked,
   resolveCommandCenterNextBestActionV1,
 } from "./buckparts-command-center-next-best-action-v1";
 
@@ -33,6 +36,7 @@ describe("resolveCommandCenterNextBestActionV1", () => {
       amazonFirstTokenHint: "TOK1",
       amazonUnknownEvidenceDeferredCount: 0,
       amazonDeferredUnknownTopTokens: "",
+      flexoffersMonetizationBlocked: false,
     });
 
     assert.equal(
@@ -67,6 +71,7 @@ describe("resolveCommandCenterNextBestActionV1", () => {
       amazonFirstTokenHint: "",
       amazonUnknownEvidenceDeferredCount: 0,
       amazonDeferredUnknownTopTokens: "",
+      flexoffersMonetizationBlocked: false,
     });
 
     assert.equal(
@@ -75,6 +80,36 @@ describe("resolveCommandCenterNextBestActionV1", () => {
     );
     assert.match(result.next_best_action, /repairclinic\.com/i);
     assert.match(result.why_this_action, /Other affiliate program approvals remain pending/i);
+  });
+
+  it("does not recommend FlexOffers slot prep when flexoffers lane is tracker-blocked", () => {
+    const result = resolveCommandCenterNextBestActionV1({
+      preferAmazonFirstConversion: false,
+      affiliateApprovalPending: true,
+      nonAmazonApproved: true,
+      waterdropLiveProofSlice: true,
+      waterdropProductionRowId: "d4cbad0c-4bab-4854-89bf-59e6d6492c6b",
+      pendingNetworkOrPrograms: ["DRAFTING:1"],
+      topMoneyQueue: [
+        { exhausted: true, candidate_count: 0, recommended_action: "Manufacturer cohort done" },
+        { exhausted: true, candidate_count: 0, recommended_action: "Frigidaire done" },
+        {
+          exhausted: true,
+          candidate_count: 10,
+          recommended_action: FLEXOFFERS_TRACKER_BLOCKED_ACTION,
+        },
+      ],
+      amazonFirstTokenHint: "",
+      amazonUnknownEvidenceDeferredCount: 0,
+      amazonDeferredUnknownTopTokens: "",
+      flexoffersMonetizationBlocked: true,
+      blockedLinkRecommendedFirstAction:
+        "Replace search/discovery URLs with direct PDP URLs for highest-volume retailer keys.",
+    });
+
+    assert.equal(/Prepare pending FlexOffers slots/i.test(result.next_best_action), false);
+    assert.match(result.next_best_action, /Replace search\/discovery URLs/i);
+    assert.match(result.why_this_action, /FlexOffers publisher network is REJECTED/i);
   });
 
   it("still emits stale NBA when pending affiliates and no non-Amazon approval or live slice", () => {
@@ -93,9 +128,21 @@ describe("resolveCommandCenterNextBestActionV1", () => {
       amazonFirstTokenHint: "",
       amazonUnknownEvidenceDeferredCount: 0,
       amazonDeferredUnknownTopTokens: "",
+      flexoffersMonetizationBlocked: false,
     });
 
     assert.match(result.next_best_action, /until at least one non-Amazon network lane reaches APPROVED/i);
+  });
+});
+
+describe("flexoffers affiliate tracker helpers", () => {
+  it("reads REJECTED from committed tracker JSON", () => {
+    const tracker = JSON.parse(
+      readFileSync(path.join(REPO_ROOT, "data/affiliate/affiliate-application-tracker.json"), "utf8"),
+    ) as unknown[];
+    const status = flexoffersAffiliateTrackerStatus(tracker);
+    assert.equal(status, "REJECTED");
+    assert.equal(isFlexoffersMonetizationBlocked(status), true);
   });
 });
 
@@ -212,5 +259,12 @@ describe("buildBuckpartsCommandCenterReport next_best_action with Waterdrop LIVE
       false,
     );
     assert.match(report.why_this_action, /Waterdrop DA29-00020B proof slice is LIVE/i);
+    assert.equal(/Prepare pending FlexOffers slots/i.test(report.next_best_action), false);
+    const flexLane = report.top_money_queue.find(
+      (lane) => lane.lane === "flexoffers_readiness_refrigerator_water",
+    );
+    assert.ok(flexLane);
+    assert.equal(flexLane!.exhausted, true);
+    assert.match(flexLane!.recommended_action, /BLOCKED: FlexOffers network REJECTED/i);
   });
 });
