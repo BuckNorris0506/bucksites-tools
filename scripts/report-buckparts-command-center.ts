@@ -13,7 +13,14 @@ import {
   type AmazonFirstBlockedConversionQueueReport,
 } from "./report-amazon-first-blocked-conversion-queue";
 import { loadAmazonRescueTokenControls } from "./lib/amazon-rescue-token-controls";
+import {
+  affiliateTrackerPrimaryCommandPending,
+  appendWaterdropAndAffiliatePendingWhy,
+  resolveCommandCenterNextBestActionV1,
+  withWaterdropLiveMonitorPrefix,
+} from "./lib/buckparts-command-center-next-best-action-v1";
 import { buildCommandCenterV2Report } from "./lib/buckparts-command-center-v2";
+import { buildCustomerLanguageAndWaterdropResearchLaneV1 } from "../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import {
   parseSpendLedgerFileV1,
   SPEND_LEDGER_FILE_RELATIVE_V1,
@@ -684,65 +691,91 @@ export async function buildBuckpartsCommandCenterReport(
     },
   ];
 
+  const waterdropResearchLane = buildCustomerLanguageAndWaterdropResearchLaneV1({
+    rootDir,
+    fileExists,
+  });
+  const waterdropLiveProofSlice = waterdropResearchLane.waterdrop_live_cta_status === "LIVE";
+
   const amazonReady = amazonAssociatesTagVerified(trackerRows);
   const nonAmazonApproved = hasNonAmazonApprovedAffiliate(trackerRows);
   const needsAmazonSearchCount =
     amazonFirstSummary.needs_amazon_search_count !== "UNKNOWN"
       ? amazonFirstSummary.needs_amazon_search_count
       : 0;
+  const staleAffiliateNbaGate =
+    affiliateApprovalPending && !nonAmazonApproved && !waterdropLiveProofSlice;
+
   const preferAmazonFirstConversion =
     amazonFirstSummary.runtime_status === "OK" &&
     amazonReady &&
     needsAmazonSearchCount > 0 &&
-    !nonAmazonApproved;
+    !nonAmazonApproved &&
+    !waterdropLiveProofSlice;
 
-  let nextBestAction = "";
-  let whyThisAction = "";
-  if (preferAmazonFirstConversion) {
-    const tokenHint =
-      amazonFirstSummary.top_5_tokens.length > 0
-        ? amazonFirstSummary.top_5_tokens.join(", ")
-        : "see buckparts:amazon-first-blocked-queue";
-    nextBestAction = `Prioritize Amazon-first OEM blocked-search rescue: run exact-token Amazon PDP searches and verify buyability for queued refrigerator tokens (${tokenHint}).`;
-    whyThisAction =
-      "Amazon Associates is APPROVED with verified tag, no other affiliate is APPROVED yet, and the Amazon-first queue reports rows needing SEARCH_AMAZON_EXACT_TOKEN.";
-    if (amazonFirstSummary.unknown_evidence_deferred_count > 0) {
-      const dTok =
-        amazonFirstSummary.deferred_unknown_top_tokens.length > 0
-          ? amazonFirstSummary.deferred_unknown_top_tokens.join(", ")
-          : "see buckparts:amazon-first-blocked-queue unknown_evidence_deferred";
-      nextBestAction += ` Do not treat ${amazonFirstSummary.unknown_evidence_deferred_count} deferred token(s) as the same priority cohort until HUMAN_BROWSER_VERIFICATION_REQUIRED is satisfied (${dTok}).`;
-      whyThisAction +=
-        " Committed UNKNOWN evidence files demote those filters out of the ordinary exact-token search headline cohort.";
-    }
-  } else if (affiliateApprovalPending) {
-    nextBestAction =
-      "Rerun affiliate tracker + command surface and keep FlexOffers readiness queue current until at least one non-Amazon network lane reaches APPROVED.";
-    whyThisAction =
-      "Affiliate approvals are still pending, so retailer-specific evidence work that cannot monetize now is deprioritized by policy.";
-  } else if (!topMoneyQueue[0].exhausted && topMoneyQueue[0].candidate_count !== "UNKNOWN") {
-    nextBestAction = topMoneyQueue[0].recommended_action;
-    whyThisAction = "OEM catalog money cohort has concrete remaining blocked rows and is currently monetizable.";
-  } else if (!topMoneyQueue[1].exhausted) {
-    nextBestAction = topMoneyQueue[1].recommended_action;
-    whyThisAction = "Frigidaire lane still has candidates after OEM next-money cohort is exhausted.";
-  } else if (!topMoneyQueue[2].exhausted) {
-    nextBestAction = topMoneyQueue[2].recommended_action;
-    whyThisAction = "FlexOffers readiness queue remains available as the next monetization-prep lane.";
-  } else {
-    nextBestAction = "No actionable queue available; regenerate source reports and re-evaluate lane inputs.";
-    whyThisAction = "All current lanes are exhausted or unknown.";
-  }
+  const amazonFirstTokenHint =
+    amazonFirstSummary.top_5_tokens.length > 0
+      ? amazonFirstSummary.top_5_tokens.join(", ")
+      : "see buckparts:amazon-first-blocked-queue";
+  const amazonDeferredUnknownTopTokens =
+    amazonFirstSummary.deferred_unknown_top_tokens.length > 0
+      ? amazonFirstSummary.deferred_unknown_top_tokens.join(", ")
+      : "see buckparts:amazon-first-blocked-queue unknown_evidence_deferred";
+
+  let { next_best_action: nextBestAction, why_this_action: whyThisAction } =
+    resolveCommandCenterNextBestActionV1({
+      preferAmazonFirstConversion,
+      affiliateApprovalPending,
+      nonAmazonApproved,
+      waterdropLiveProofSlice,
+      waterdropProductionRowId: waterdropResearchLane.waterdrop_production_row_id,
+      pendingNetworkOrPrograms,
+      topMoneyQueue,
+      amazonFirstTokenHint,
+      amazonUnknownEvidenceDeferredCount: amazonFirstSummary.unknown_evidence_deferred_count,
+      amazonDeferredUnknownTopTokens,
+    });
 
   // Explicit safeguard: never recommend RepairClinic evidence when affiliate is not launch-ready.
   if (
     (repairclinicStatus === "NOT_STARTED" || repairclinicStatus === "DRAFTING") &&
     /repairclinic/i.test(nextBestAction)
   ) {
-    nextBestAction =
-      "Advance non-RepairClinic queues only (OEM cohort, FlexOffers readiness, and affiliate approvals) until RepairClinic status is submit/review approved.";
-    whyThisAction =
-      "RepairClinic affiliate lane is not approval-ready, so RepairClinic evidence work is intentionally suppressed.";
+    const altMoneyLane = topMoneyQueue.find(
+      (lane) =>
+        !lane.exhausted &&
+        lane.candidate_count !== "UNKNOWN" &&
+        !/repairclinic/i.test(lane.recommended_action),
+    );
+    if (altMoneyLane) {
+      nextBestAction = withWaterdropLiveMonitorPrefix(
+        altMoneyLane.recommended_action,
+        waterdropLiveProofSlice,
+      );
+      if (altMoneyLane.lane === "frigidaire_next_monetizable") {
+        whyThisAction =
+          "Frigidaire lane still has candidates; RepairClinic-tagged OEM cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
+      } else if (altMoneyLane.lane === "flexoffers_readiness_refrigerator_water") {
+        whyThisAction =
+          "FlexOffers readiness queue is next after RepairClinic-tagged OEM cohort action is suppressed while RepairClinic affiliate status is not approval-ready.";
+      } else {
+        whyThisAction =
+          "RepairClinic affiliate lane is not approval-ready, so RepairClinic-tagged retailer_links work is suppressed; using the next monetizable queue lane.";
+      }
+    } else {
+      nextBestAction =
+        "Advance non-RepairClinic queues only (OEM cohort, FlexOffers readiness, and affiliate approvals) until RepairClinic status is submit/review approved.";
+      whyThisAction =
+        "RepairClinic affiliate lane is not approval-ready, so RepairClinic evidence work is intentionally suppressed.";
+    }
+    whyThisAction = appendWaterdropAndAffiliatePendingWhy(whyThisAction, {
+      next_best_action: nextBestAction,
+      waterdropLiveProofSlice,
+      waterdropProductionRowId: waterdropResearchLane.waterdrop_production_row_id,
+      affiliateApprovalPending,
+      staleAffiliateGate: staleAffiliateNbaGate,
+      pendingNetworkOrPrograms,
+    });
   }
 
   const operatorAwayStatus: CommandCenterReport["operator_can_be_away_status"] =
@@ -820,11 +853,17 @@ export async function buildBuckpartsCommandCenterReport(
       ? "MUTATING"
       : "READ_ONLY";
 
+  const affiliateTrackerPrimaryCommand = affiliateTrackerPrimaryCommandPending({
+    affiliateApprovalPending,
+    nonAmazonApproved,
+    waterdropLiveProofSlice,
+  });
+
   const nextMoveCommand =
     nextMoveMode === "READ_ONLY"
       ? preferAmazonFirstConversion
         ? "npm run buckparts:amazon-first-blocked-queue"
-        : affiliateApprovalPending
+        : affiliateTrackerPrimaryCommand
           ? "npm run buckparts:affiliate-tracker && npm run buckparts:command-surface && npm run buckparts:command-center"
           : !topMoneyQueue[0].exhausted
             ? "npm run buckparts:oem-next-money-cohort"
