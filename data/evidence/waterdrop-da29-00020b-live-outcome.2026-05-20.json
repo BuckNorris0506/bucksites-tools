@@ -6,7 +6,7 @@
   "scope": "refrigerator_water",
   "token": "DA29-00020B",
   "filter_slug": "da29-00020b",
-  "filter_id": "UNKNOWN",
+  "filter_id": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
   "retailer_program": {
     "network": "Rakuten Advertising",
     "retailer_key_candidate": "waterdrop",
@@ -21,14 +21,60 @@
   "mutation_ready_basis": {
     "insert_plan_path": "docs/waterdrop-da29-00020b-retailer-link-insert-plan.sql",
     "insert_plan_status": "BLOCKED",
+    "insert_prechecks_status": "PASSED_READ_ONLY",
+    "prechecks_passed_owner_insert_not_approved": true,
     "blocking_reasons": [
-      "filter_id not resolved in-repo; requires read-only Supabase precheck before insert.",
-      "Precheck D must confirm zero approved waterdrop retailer_links rows for resolved filter_id.",
-      "insert_plan_status remains BLOCKED until owner explicitly unblocks SQL after Supabase prechecks pass.",
-      "No retailer_links row committed; live CTA remains suppressed at runtime."
+      "insert_plan_status remains BLOCKED until owner explicitly unblocks manual SQL (no automation authority).",
+      "No retailer_links waterdrop row committed; live compatible CTA remains NOT_LIVE at runtime until insert postcheck and gates pass."
     ],
     "precheck_waterdrop_approved_row_count_expected": 0,
-    "precheck_notes": "Repo seed data/retailer_links.csv has oem-parts-catalog RepairClinic search placeholder only for da29-00020b; no waterdrop row in CSV. Owner-browser PDP and LinkSynergy click proof recorded 2026-05-20."
+    "precheck_waterdrop_approved_row_count_proven": 0,
+    "precheck_waterdrop_row_count_proven": 0,
+    "precheck_filter_id_proven": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
+    "precheck_notes": "Read-only Supabase precheck recorded 2026-05-20; production has oem-parts-catalog + amazon rows for filter_id; waterdrop count zero. Repo seed CSV differs (placeholder only)."
+  },
+  "supabase_read_only_precheck": {
+    "checked_at": "2026-05-20T22:00:00.000Z",
+    "data_mutation": false,
+    "schema_defaults_proven": {
+      "id_default": "gen_random_uuid()",
+      "created_at_default": "now()",
+      "is_primary_default": false,
+      "status_default": "approved",
+      "source_default": "manual",
+      "updated_at_column": false
+    },
+    "unique_index_proven": {
+      "name": "retailer_links_filter_retailer_key_unique",
+      "columns": ["filter_id", "retailer_key"]
+    },
+    "filter": {
+      "filter_count": 1,
+      "filter_id": "f58a2c03-0f51-4b61-953a-5daf0abf2874",
+      "slug": "da29-00020b",
+      "name": "Samsung DA29-00020B / HAF-CIN family",
+      "oem_part_number": "DA29-00020B"
+    },
+    "existing_retailer_links_summary": {
+      "total_count_for_filter": 2,
+      "rows": [
+        {
+          "retailer_key": "oem-parts-catalog",
+          "status": "approved",
+          "destination_url": "https://www.repairclinic.com/Search?SearchTerm=DA29-00020B",
+          "browser_truth_classification": null
+        },
+        {
+          "retailer_key": "amazon",
+          "status": "approved",
+          "destination_url": "https://www.amazon.com/dp/B004UB1NRY",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_buyable_subtype": null
+        }
+      ]
+    },
+    "waterdrop_row_count": 0,
+    "approved_waterdrop_count": 0
   },
   "operator_reported": {
     "source": "operator_rakuten_catalog_and_urls",
@@ -78,35 +124,36 @@
     "browser_truth_checked_at": "2026-05-20T20:00:00.000Z"
   },
   "unknown_facts": [
-    "filter_id UUID for slug da29-00020b (resolve via Supabase read-only precheck before insert).",
-    "Production retailer_links row count for waterdrop on this filter_id (Precheck D).",
-    "Runtime browser_truth_classification on a future committed retailer_links row until insert postcheck.",
-    "Commission or revenue attribution from Rakuten (NOT_CONNECTED)."
+    "Runtime browser_truth_classification on a future committed waterdrop retailer_links row until manual insert postcheck.",
+    "Commission or revenue attribution from Rakuten (NOT_CONNECTED).",
+    "Whether production /filter/da29-00020b will show Waterdrop buying option after insert without separate smoke pass (UNKNOWN until row exists)."
   ],
   "proven_facts": [
     "Canonical filter slug da29-00020b and token DA29-00020B exist in data/filters.csv and data/filter_aliases.csv.",
+    "Read-only Supabase precheck: filter_id f58a2c03-0f51-4b61-953a-5daf0abf2874 for slug da29-00020b (filter_count=1).",
+    "Read-only Supabase precheck: waterdrop_row_count=0 and approved_waterdrop_count=0 for filter_id.",
+    "Read-only Supabase precheck: production retailer_links has oem-parts-catalog (RepairClinic search) and amazon (B004UB1NRY direct_buyable) rows; no waterdrop row.",
+    "Read-only Supabase schema: retailer_links.id default gen_random_uuid(); created_at default now(); unique index retailer_links_filter_retailer_key_unique on (filter_id, retailer_key); no updated_at column.",
     "Operator-supplied destination_pdp_url and affiliate_url_candidate (LinkSynergy click wrapper) are https URLs.",
     "Owner browser: direct PDP and LinkSynergy affiliate URL both land on the same Waterdrop PDP variant 33108474495058.",
     "Owner browser: PDP title includes DA29-00020B; Add to Cart and Buy Now visible at $41.99 one-time purchase.",
     "Product is aftermarket compatible replacement, not OEM Samsung.",
-    "Image pixel URL must not be used as buyer redirect (excluded explicitly).",
-    "affiliate-application-tracker rakuten-waterdrop-filter tagVerified true after operator LinkSynergy click test (not commission proof).",
-    "Rakuten program APPROVED does not by itself authorize live CTA without retailer_links insert and runtime gates."
+    "affiliate-application-tracker rakuten-waterdrop-filter tagVerified true after operator LinkSynergy click test (not commission proof)."
   ],
   "allowed_final_classifications": [
     "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
     "HUMAN_BROWSER_VERIFICATION_REQUIRED",
     "UNKNOWN"
   ],
-  "required_next_action": "RUN_SUPABASE_PRECHECKS_AND_OWNER_UNBLOCK_INSERT_PLAN_BEFORE_RETAILER_LINKS_INSERT",
+  "required_next_action": "OWNER_UNBLOCK_INSERT_PLAN_AND_EXECUTE_MANUAL_SQL_ONLY",
   "insert_outcome": "NOT_COMMITTED",
   "revenue_claim": "none",
   "commission_or_revenue": "NOT_CONNECTED",
   "notes": [
     "Evidence only. No Supabase writes, no retailer_links insert, no live CTA, no route changes.",
-    "Affiliate_url_candidate is stored here for insert-plan reference only; do not insert until mutation_ready becomes true after Supabase prechecks and owner unblocks SQL.",
+    "insert_prechecks_status PASSED_READ_ONLY does not authorize automation; mutation_ready remains false until owner unblocks insert plan and executes manual SQL.",
+    "Affiliate_url_candidate is stored here for insert-plan reference only.",
     "applyAmazonAffiliateRedirectUrl does not rewrite non-amazon.com hosts; LinkSynergy URL would pass through /go unchanged if row gates pass later.",
-    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime.",
-    "browser_verdict uses repo convention PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE; browser_truth_buyable_subtype_candidate COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE for future row."
+    "Trust gates (launch-buy-links / go-redirect-gate) remain authoritative at runtime."
   ]
 }
