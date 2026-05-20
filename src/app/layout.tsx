@@ -7,6 +7,7 @@ import {
   SITE_DEFAULT_DESCRIPTION,
   SITE_DISPLAY_NAME,
 } from "@/lib/site-brand";
+import { buildDeployCommitRefForMetadata } from "@/lib/deploy/buckparts-deploy-identity-v1";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const geistSans = localFont({
@@ -25,6 +26,7 @@ const siteDesc = SITE_DEFAULT_DESCRIPTION;
 const impactVerificationValue = "bd3fcd9a-5fb7-4016-b37d-afad3a592b71";
 
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+const deployCommitRef = buildDeployCommitRefForMetadata();
 
 export const metadata: Metadata = {
   metadataBase: new URL(getRequiredSiteUrl()),
@@ -54,6 +56,9 @@ export default function RootLayout({
         {/* Impact requires the verification token in the meta `value` attribute. */}
         {/* @ts-expect-error Impact verification uses non-standard meta attribute `value`. */}
         <meta name="impact-site-verification" value={impactVerificationValue} />
+        {deployCommitRef ? (
+          <meta name="buckparts-deploy-commit" content={deployCommitRef} />
+        ) : null}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

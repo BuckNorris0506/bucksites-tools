@@ -8,8 +8,13 @@
  *   npx tsx scripts/proof-filter-purchase-option-order.ts --url https://buckparts.com/filter/da29-00020b
  *   npx tsx scripts/proof-filter-purchase-option-order.ts --file /tmp/da29-live.html --slug da29-00020b
  */
+import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
+import {
+  compareDeployCommitToLocalHead,
+  parseDeployCommitRefFromHtml,
+} from "../src/lib/deploy/buckparts-deploy-identity-v1";
 import {
   WATERDROP_DA29_00020B_EVIDENCE_REL_PATH,
 } from "../src/lib/copy/customer-language-doctrine";
@@ -107,14 +112,30 @@ async function repoExpectedPrimaryLinkId(slug: string): Promise<{
   };
 }
 
+function resolveLocalHeadCommit(): string | "UNKNOWN" {
+  try {
+    return execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
+  } catch {
+    return "UNKNOWN";
+  }
+}
+
 async function main(): Promise<number> {
   const args = parseArgs(process.argv);
   const html = await loadHtml({ url: args.url, file: args.file });
   const proof = extractPurchaseOptionCtaOrderFromHtml(html);
   const repo = await repoExpectedPrimaryLinkId(args.slug);
+  const localHead = resolveLocalHeadCommit();
+  const deploySync = compareDeployCommitToLocalHead({
+    localHeadCommit: localHead,
+    liveDeployCommit: parseDeployCommitRefFromHtml(html),
+  });
 
   const lines: string[] = [];
   lines.push(`slug: ${args.slug}`);
+  lines.push(`local_head_commit: ${localHead}`);
+  lines.push(`live_deploy_commit: ${deploySync.live_deploy_commit}`);
+  lines.push(`deploy_sync: ${deploySync.sync}`);
   lines.push(`buying_options_section_found: ${proof.buying_options_section_found}`);
   lines.push(`raw_text_index_amazon: ${proof.raw_text_index_amazon} (document-wide diagnostic only)`);
   lines.push(`raw_text_index_waterdrop: ${proof.raw_text_index_waterdrop} (document-wide diagnostic only)`);
@@ -130,9 +151,19 @@ async function main(): Promise<number> {
     lines.push(`verdict: ${check.ok ? "PASS" : "FAIL"}`);
     lines.push(`reason: ${check.reason}`);
     if (!check.ok) {
-      lines.push(
-        "note: If repo_sorted shows Waterdrop first but live primary is Amazon, live deploy likely predates Waterdrop-first ranking commit (251cb8d) or edge cache — re-run after deploy.",
-      );
+      if (deploySync.sync === "UNKNOWN_LIVE_DEPLOY_COMMIT") {
+        lines.push(
+          "note: Live HTML has no buckparts-deploy-commit meta yet — deployed SHA is UNKNOWN; production likely predates Waterdrop-first ranking (251cb8d+) until Netlify rebuilds with deploy marker.",
+        );
+      } else if (deploySync.sync === "DIFFERS_FROM_LOCAL_HEAD") {
+        lines.push(
+          "note: Live deploy commit differs from local HEAD — trigger Netlify production deploy for current main before re-proving CTA order.",
+        );
+      } else {
+        lines.push(
+          "note: Deploy commit matches local HEAD but CTA order still wrong — investigate runtime/env outside deploy SHA (unexpected).",
+        );
+      }
       exit = 1;
     }
   } else {
