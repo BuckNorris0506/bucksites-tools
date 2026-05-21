@@ -1,0 +1,16 @@
+{
+  "contract": "exa_fridge_water_discovery_v1",
+  "discovery_run_id": "2026-05-21-v3-netnew-refresh",
+  "generated_at": "2026-05-21T18:41:07.936Z",
+  "read_only": true,
+  "data_mutation": false,
+  "wedge": "refrigerator_water",
+  "input_path": "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v3-netnew.2026-05-21.json",
+  "query_count": 7,
+  "raw_hit_count": 9,
+  "candidate_count": 9,
+  "notes": [
+    "PROVEN: Exa discovery is candidate input only — not compatibility truth.",
+    "PROVEN: mutation_ready and catalog_import_ready are false for all rows."
+  ]
+}
