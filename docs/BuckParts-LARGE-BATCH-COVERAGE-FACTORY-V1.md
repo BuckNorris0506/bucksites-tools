@@ -38,6 +38,12 @@ npx tsx scripts/report-large-batch-coverage-factory.ts --limit 50
 - `data/ops/amazon-rescue-token-controls.json`
 - `data/waterdrop/operator-input/waterdrop-rakuten-links.v1.json` when present (**UNKNOWN** if absent; sample JSON is not used by default)
 
+## Bulk-only expansion rows (v1)
+
+Net-new slugs live in `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` inside `fridge-homekeep-bulk-catalog-v1.ts` (not in committed `data/filters.csv`). Factory classifies them as `new_product_candidate` until owner import/review. Do not run `seed:import` from this lane.
+
+Rejected from the first slice (review notes): `hafcin` (HAF-CIN / `da29-00020b` alias-family risk), `fpuresource3` (OEM `WF3CB` duplicates live `wf3cb`), `fpuresourceultra` (OEM `EPTWFU01` duplicates live `eptwfu01` and matches `LARGE_BATCH_EXCLUDED_FRIGIDAIRE_TOKENS_V1`).
+
 ## Non-goals
 
 No Supabase writes, no `retailer_links` mutation, no UI/ranking/gate changes, no auto-publish.

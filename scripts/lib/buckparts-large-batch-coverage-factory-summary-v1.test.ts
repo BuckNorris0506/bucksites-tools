@@ -95,7 +95,7 @@ test("factory build failure degrades to ATTENTION without throwing", () => {
     now: () => new Date("2026-05-21T00:00:00.000Z"),
     buildFactoryReport: () => {
       throw new Error("fixture failure");
-    } as never,
+    },
   });
   assert.equal(summary.runtime_status, "ATTENTION");
   assert.equal(summary.candidate_count, "UNKNOWN");
@@ -112,4 +112,20 @@ test("next_agent_action stays read-only planning language", () => {
   assert.doesNotMatch(summary.next_agent_action, /\bdeploy\b/i);
   assert.doesNotMatch(summary.next_agent_action, /\bpublish\b/i);
   assert.match(summary.next_owner_action, /Do not hand-edit/i);
+});
+
+test("repo summary reflects bulk expansion new_product_candidate count", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({ rootDir: process.cwd() });
+  assert.equal(summary.read_only, true);
+  assert.equal(summary.data_mutation, false);
+  assert.equal(summary.mutation_ready, false);
+  if (summary.runtime_status !== "OK") {
+    assert.fail(`expected OK runtime_status, got ${summary.runtime_status}`);
+  }
+  assert.ok(typeof summary.candidate_count === "number" && summary.candidate_count > 57);
+  assert.ok(
+    typeof summary.state_counts === "object" &&
+      (summary.state_counts.new_product_candidate ?? 0) > 0,
+  );
+  assert.ok(summary.expansion_blocker_summary.includes("bulk-only slug"));
 });

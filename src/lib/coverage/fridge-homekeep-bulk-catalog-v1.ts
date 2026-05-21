@@ -88,6 +88,60 @@ export const FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1: Record<string, FridgeHome
     ],
   };
 
+/**
+ * Bulk-only expansion rows (not in committed data/filters.csv).
+ * Sources: data/bulk/filters.bulk.sample.csv (reviewed net-new slugs) + sibling OEM rows
+ * matching naming patterns in FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1.
+ * Do not run seed:import until owner approves.
+ */
+export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBulkFilterEntryV1 & {
+  brand_slug: string;
+  expansion_source: "bulk_sample_csv" | "catalog_pattern";
+})[] = [
+  {
+    brand_slug: "whirlpool",
+    slug: "4396702",
+    oem: "4396702",
+    name: "Whirlpool 4396702 (EveryDrop Filter 2 numeric OEM)",
+    expansion_source: "bulk_sample_csv",
+  },
+  {
+    brand_slug: "lg",
+    slug: "lt120f",
+    oem: "LT120F",
+    name: "LG LT120F refrigerator filter",
+    expansion_source: "bulk_sample_csv",
+  },
+  {
+    brand_slug: "whirlpool",
+    slug: "edr5rxd1",
+    oem: "EDR5RXD1",
+    name: "EveryDrop Filter 5 (EDR5RXD1)",
+    expansion_source: "catalog_pattern",
+  },
+  {
+    brand_slug: "samsung",
+    slug: "da97-15217b",
+    oem: "DA97-15217B",
+    name: "Samsung DA97-15217B (HAF-QIN family variant)",
+    expansion_source: "catalog_pattern",
+  },
+  {
+    brand_slug: "samsung",
+    slug: "da29-00003b",
+    oem: "DA29-00003B",
+    name: "Samsung DA29-00003B (prior revision)",
+    expansion_source: "catalog_pattern",
+  },
+  {
+    brand_slug: "lg",
+    slug: "adq73613404",
+    oem: "ADQ73613404",
+    name: "LG ADQ73613404 (slim cartridge variant)",
+    expansion_source: "catalog_pattern",
+  },
+] as const;
+
 export type FridgeHomekeepBulkFilterRowV1 = {
   brand_slug: string;
   slug: string;
@@ -107,6 +161,14 @@ export function listFridgeHomekeepBulkFilterRowsV1(): FridgeHomekeepBulkFilterRo
         name: row.name.trim(),
       });
     }
+  }
+  for (const row of FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1) {
+    out.push({
+      brand_slug: row.brand_slug,
+      slug: row.slug.trim().toLowerCase(),
+      oem_part_number: row.oem.trim().toUpperCase(),
+      name: row.name.trim(),
+    });
   }
   return out;
 }

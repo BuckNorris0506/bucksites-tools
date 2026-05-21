@@ -9,6 +9,11 @@ import {
   classifyLargeBatchCandidateV1,
   LARGE_BATCH_COVERAGE_FACTORY_STATES_V1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
+import {
+  FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1,
+  listFridgeHomekeepBulkFilterRowsV1,
+} from "@/lib/coverage/fridge-homekeep-bulk-catalog-v1";
+import { loadBuckpartsFridgeFilterIndexFromRepo } from "@/lib/retailers/buckparts-fridge-filter-index-v1";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
 const REPO_ROOT = process.cwd();
@@ -245,4 +250,108 @@ test("full repo report builds without Supabase", () => {
   });
   assert.ok(report.candidate_count > 50);
   assert.ok(report.top_candidates.length === 5);
+});
+
+test("bulk expansion slugs are absent from committed data/filters.csv", () => {
+  const liveSlugs = new Set(
+    loadBuckpartsFridgeFilterIndexFromRepo(REPO_ROOT).filters.map((f) => f.slug),
+  );
+  for (const row of FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1) {
+    assert.equal(liveSlugs.has(row.slug), false, `expected ${row.slug} not in live catalog`);
+  }
+});
+
+test("repo bulk catalog exceeds live filters.csv and surfaces new_product_candidate", () => {
+  const liveCount = loadBuckpartsFridgeFilterIndexFromRepo(REPO_ROOT).filters.length;
+  const bulkCount = listFridgeHomekeepBulkFilterRowsV1().length;
+  assert.ok(bulkCount > liveCount);
+  assert.equal(bulkCount - liveCount, FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.length);
+
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 500,
+  });
+  assert.ok(report.candidate_count > liveCount);
+  assert.ok((report.state_counts.new_product_candidate ?? 0) > 0);
+  assert.equal(report.read_only, true);
+  assert.equal(report.data_mutation, false);
+
+  const expansionSlugs = FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.map((r) => r.slug);
+  const bySlug = new Map(report.top_candidates.map((c) => [c.slug, c]));
+  for (const slug of expansionSlugs) {
+    const row = bySlug.get(slug);
+    assert.ok(row, `missing expansion candidate ${slug} in top_candidates`);
+    assert.equal(row!.factory_state, "new_product_candidate");
+    assert.equal(row!.is_bulk_catalog_row, true);
+    assert.equal(row!.is_live_catalog_row, false);
+    assert.equal(row!.has_gated_buyable_link, false);
+    assert.notEqual(row!.factory_state, "publishable_amazon_candidate");
+    assert.notEqual(row!.factory_state, "publishable_waterdrop_candidate");
+  }
+});
+
+test("risky bulk sample hafcin is not a safe publishable candidate", () => {
+  const classified = classifyLargeBatchCandidateV1({
+    slug: "hafcin",
+    oem_part_number: "HAFCIN",
+    brand_slug: "samsung",
+    is_live: false,
+    is_bulk: true,
+    alias_collision: false,
+    links: [],
+    waterdrop: null,
+    amazon_control: null,
+    evidence_filenames: [],
+  });
+  assert.equal(classified.factory_state, "new_product_candidate");
+  assert.equal(classified.signals.has_gated_buyable_link, false);
+  assert.notEqual(classified.factory_state, "publishable_amazon_candidate");
+  assert.notEqual(classified.factory_state, "publishable_waterdrop_candidate");
+
+  const withCollision = classifyLargeBatchCandidateV1({
+    slug: "hafcin",
+    oem_part_number: "HAFCIN",
+    brand_slug: "samsung",
+    is_live: false,
+    is_bulk: true,
+    alias_collision: true,
+    links: [],
+    waterdrop: null,
+    amazon_control: null,
+    evidence_filenames: [],
+  });
+  assert.equal(withCollision.factory_state, "alias_collision_candidate");
+});
+
+test("rejected bulk sample rows are blocked or not buy-ready publishable", () => {
+  const fpuresource3 = classifyLargeBatchCandidateV1({
+    slug: "fpuresource3",
+    oem_part_number: "WF3CB",
+    brand_slug: "frigidaire",
+    is_live: false,
+    is_bulk: true,
+    alias_collision: false,
+    links: [],
+    waterdrop: null,
+    amazon_control: null,
+    evidence_filenames: [],
+  });
+  assert.notEqual(fpuresource3.factory_state, "publishable_amazon_candidate");
+  assert.notEqual(fpuresource3.factory_state, "publishable_waterdrop_candidate");
+  assert.equal(fpuresource3.signals.has_gated_buyable_link, false);
+
+  const fpuresourceultra = classifyLargeBatchCandidateV1({
+    slug: "fpuresourceultra",
+    oem_part_number: "EPTWFU01",
+    brand_slug: "frigidaire",
+    is_live: false,
+    is_bulk: true,
+    alias_collision: false,
+    links: [],
+    waterdrop: null,
+    amazon_control: null,
+    evidence_filenames: [],
+  });
+  assert.equal(fpuresourceultra.factory_state, "blocked_do_not_publish");
+  assert.equal(fpuresourceultra.block_reason, "excluded_frigidaire_routing_token");
 });
