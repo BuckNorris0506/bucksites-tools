@@ -70,6 +70,17 @@ function sampleFactoryReport(): LargeBatchCoverageFactoryReportV1 {
         path: "data/ops/amazon-rescue-token-controls.json",
         entry_count: 5,
       },
+      exa_fridge_water_discovery: {
+        status: "MISSING",
+        path: null,
+        manifest_path: "data/discovery/exa/fridge-water/manifest.v1.json",
+        run_id: null,
+        row_count: 0,
+        merged_into_factory_count: 0,
+        evidence_needed_count: 0,
+        blocked_count: 0,
+        omitted_live_slug_count: 0,
+      },
     },
     notes: [],
   };

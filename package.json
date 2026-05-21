@@ -81,6 +81,7 @@
     "buckparts:proof:filter-purchase-option-order": "tsx scripts/proof-filter-purchase-option-order.ts",
     "buckparts:waterdrop-proof-slice-candidates": "tsx scripts/report-waterdrop-proof-slice-candidates.ts",
     "buckparts:large-batch-coverage-factory": "tsx scripts/report-large-batch-coverage-factory.ts",
+    "buckparts:exa-fridge-water-discovery": "tsx scripts/report-exa-fridge-water-discovery-v1.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",
     "buckparts:founder-decision-registry": "tsx scripts/report-founder-decision-registry.ts",

@@ -69,8 +69,13 @@ function buildExpansionBlockerSummary(report: LargeBatchCoverageFactoryReportV1)
   const bulkCount = report.source_summary.bulk_catalog.row_count;
   const liveCount = report.source_summary.live_filters_csv.row_count;
   const newCount = report.state_counts.new_product_candidate ?? 0;
+  const exa = report.source_summary.exa_fridge_water_discovery;
+  const exaNote =
+    exa.status === "PROVEN" && exa.merged_into_factory_count > 0
+      ? ` PROVEN: Exa discovery merged ${exa.merged_into_factory_count} read-only row(s) (${exa.evidence_needed_count} evidence_needed, ${exa.blocked_count} blocked) from ${exa.path}.`
+      : "";
   if (newCount === 0 && bulkCount === liveCount) {
-    return `PROVEN: new_product_candidate=0 and bulk_catalog.row_count (${bulkCount}) equals live_filters_csv.row_count (${liveCount}). ${EXPANSION_DEPTH_NOTE_V1} ${FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1}`;
+    return `PROVEN: new_product_candidate=0 and bulk_catalog.row_count (${bulkCount}) equals live_filters_csv.row_count (${liveCount}). ${EXPANSION_DEPTH_NOTE_V1} ${FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1}${exaNote}`;
   }
   if (newCount > 0) {
     return `PROVEN: ${newCount} bulk-only slug(s) await import/review — run batch production lane before production mutation.`;

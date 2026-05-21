@@ -7,6 +7,11 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "csv-parse/sync";
 
+import {
+  buildExaDiscoveryFactoryCandidatesV1,
+  loadExaDiscoveryForFactoryV1,
+  type ExaFridgeWaterDiscoverySourceSummaryV1,
+} from "@/lib/coverage/exa-discovery-factory-merge-v1";
 import { listFridgeHomekeepBulkFilterRowsV1 } from "@/lib/coverage/fridge-homekeep-bulk-catalog-v1";
 import {
   loadBuckpartsFridgeFilterIndexFromRepo,
@@ -109,6 +114,7 @@ export type LargeBatchCoverageSourceSummaryV1 = {
     path: string;
     entry_count: number;
   };
+  exa_fridge_water_discovery: ExaFridgeWaterDiscoverySourceSummaryV1;
 };
 
 export type LargeBatchCoverageFactoryReportV1 = {
@@ -139,6 +145,7 @@ export type BuildLargeBatchCoverageFactoryDepsV1 = {
   listEvidenceFilenames?: (absolutePath: string) => string[];
   loadFridgeIndex?: (rootDir: string) => BuckpartsFridgeFilterIndexV1;
   listBulkRows?: () => ReturnType<typeof listFridgeHomekeepBulkFilterRowsV1>;
+  loadExaDiscovery?: (rootDir: string) => ReturnType<typeof loadExaDiscoveryForFactoryV1>;
 };
 
 function defaultReadText(absolutePath: string): string {
@@ -737,6 +744,15 @@ export function buildLargeBatchCoverageFactoryReportV1(
     });
   }
 
+  const exaLoad = (deps.loadExaDiscovery ?? loadExaDiscoveryForFactoryV1)(rootDir);
+  const existingSlugs = new Set(candidates.map((c) => c.slug));
+  const exaAdds = buildExaDiscoveryFactoryCandidatesV1(exaLoad, rootDir);
+  for (const exaRow of exaAdds) {
+    if (existingSlugs.has(exaRow.slug)) continue;
+    existingSlugs.add(exaRow.slug);
+    candidates.push(exaRow);
+  }
+
   candidates.sort((a, b) => b.priority_score - a.priority_score || a.slug.localeCompare(b.slug));
 
   const state_counts = emptyStateCounts();
@@ -761,6 +777,11 @@ export function buildLargeBatchCoverageFactoryReportV1(
     "PROVEN: bulk catalog sourced from src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts (shared with generate-fridge-homekeep-bulk-csv.ts).",
     "PROVEN: Waterdrop operator input uses data/waterdrop/operator-input/waterdrop-rakuten-links.v1.json only when present; sample JSON is not used by default.",
     "INFERRED: top_candidates ordering is priority_score desc for operator review, not mutation approval.",
+    ...(exaLoad.source_summary.status === "PROVEN"
+      ? [
+          `PROVEN: Exa fridge-water discovery merged ${exaLoad.source_summary.merged_into_factory_count} row(s) from ${exaLoad.source_summary.path} — never new_product_candidate.`,
+        ]
+      : []),
   ];
 
   return {
@@ -818,6 +839,7 @@ export function buildLargeBatchCoverageFactoryReportV1(
         path: "data/ops/amazon-rescue-token-controls.json",
         entry_count: amazonControls.size,
       },
+      exa_fridge_water_discovery: exaLoad.source_summary,
     },
     notes,
   };

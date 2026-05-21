@@ -50,6 +50,8 @@ Rejected from the first slice (review notes): `hafcin` (HAF-CIN / `da29-00020b` 
 
 **Demoted (first fridge batch):** `lt120f` (wrong wedge — air filter), `4396702`, `edr5rxd1`, `adq73613404`, `da29-00003b`, `da97-15217b`.
 
+**Exa discovery (optional):** `docs/BuckParts-EXA-FRIDGE-WATER-DISCOVERY-V1.md` — operator MCP export → `data/discovery/exa/fridge-water/`; factory reads `manifest.v1.json` when present. Merges `evidence_needed` / `blocked_do_not_publish` only; never `new_product_candidate`; does not change `bulk_catalog.row_count`.
+
 ## Non-goals
 
 No Supabase writes, no `retailer_links` mutation, no UI/ranking/gate changes, no auto-publish.

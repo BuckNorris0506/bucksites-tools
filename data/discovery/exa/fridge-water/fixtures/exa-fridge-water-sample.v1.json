@@ -1,0 +1,60 @@
+{
+  "contract": "exa_mcp_export_fridge_water_v1",
+  "discovery_run_id": "fixture-sample-v1",
+  "queries": [
+    {
+      "query": "site:lg.com ADQ99999001 refrigerator water filter official compatible models",
+      "results": [
+        {
+          "url": "https://www.lg.com/us/support/parts-accessories/adq99999001-water-filter",
+          "title": "LG ADQ99999001 Refrigerator Water Filter",
+          "snippet": "Genuine LG refrigerator water filter ADQ99999001 for select French door models.",
+          "fetch_excerpt": "LG ADQ99999001 refrigerator water filter. Replace every 6 months. Compatible with LRFXS2503S. Water filter only — not an air filter."
+        }
+      ]
+    },
+    {
+      "query": "amazon everydrop refrigerator water filter EDR3RXD1",
+      "results": [
+        {
+          "url": "https://www.amazon.com/dp/B00EXAMPLE",
+          "title": "EveryDrop EDR3RXD1 Refrigerator Water Filter",
+          "snippet": "Buy EveryDrop filter 3 on Amazon marketplace."
+        }
+      ]
+    },
+    {
+      "query": "LG LT120F refrigerator air filter official",
+      "results": [
+        {
+          "url": "https://www.lg.com/us/appliances-accessories/lg-lt120f-refrigerator-air-filter",
+          "title": "LG LT120F Refrigerator Air Filter",
+          "snippet": "LG LT120F fresh air filter reduces odors. Not a water filter.",
+          "fetch_excerpt": "LG LT120F is a refrigerator air filter cartridge. Fresh air filter replacement."
+        }
+      ]
+    },
+    {
+      "query": "site:whirlpool.com 4396702 everydrop filter 2",
+      "results": [
+        {
+          "url": "https://www.whirlpool.com/accessories/refrigerator-water-filter-4396702",
+          "title": "Whirlpool 4396702 EveryDrop Filter 2",
+          "snippet": "Numeric OEM 4396702 for EveryDrop refrigerator water filter 2.",
+          "fetch_excerpt": "Whirlpool accessory 4396702 EveryDrop Filter 2 refrigerator water filter."
+        }
+      ]
+    },
+    {
+      "query": "site:lg.com LT1000P refrigerator water filter",
+      "results": [
+        {
+          "url": "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter",
+          "title": "LG LT1000P Refrigerator Water Filter",
+          "snippet": "Official LG LT1000P water filter already in BuckParts live catalog.",
+          "fetch_excerpt": "LG LT1000P refrigerator water filter ADQ74793501 compatible models."
+        }
+      ]
+    }
+  ]
+}
