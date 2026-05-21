@@ -203,8 +203,9 @@ const MANUFACTURER_HOST_RULES: Array<{
   },
 ];
 
+/** Manufacturer fridge-water tokens; longer / more specific alternates before shorter families (e.g. EDR6RXD1 before EDR6D1, MWFA before MWF). */
 const OEM_TOKEN_REGEX =
-  /\b(?:EDR[1-6]RXD1|LT\d{3,4}[A-Z]{1,2}|ADQ\d{8,11}|DA\d{2,3}-[\dA-Z]{5,12}|DA97-[\dA-Z]{5,12}|MWF|MSWF|RPWFE|XWFE|XWF|GSWF2?|WF3CB|ULTRAWF|UKF8001|W10413645A|439\d{4}|46-9002|8171413)\b/gi;
+  /\b(?:EDR[1-6]RXD1|EDR[1-6]D1B?|FPPWFU01|MWFA|LT\d{3,4}[A-Z]{1,2}|ADQ\d{8,11}|DA\d{2,3}-[\dA-Z]{5,12}|DA97-[\dA-Z]{5,12}|MWF|MSWF|RPWFE|XWFE|XWF|GSWF2?|GWF0?\d{1,2}|WF3CB|ULTRAWF|UKF8001|W10413645A|439\d{4}|46-9002|8171413)\b/gi;
 
 const MODEL_TOKEN_REGEX =
   /\b(?:RF\d{2}[A-Z0-9]{6,12}|LR[A-Z]{3,4}\d{4,8}[A-Z]?|LFX[A-Z0-9]{6,12}|WR[FXS][A-Z0-9]{4,10})\b/gi;

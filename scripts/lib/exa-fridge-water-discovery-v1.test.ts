@@ -19,6 +19,14 @@ const FIXTURE_PATH = path.join(
   REPO_ROOT,
   "data/discovery/exa/fridge-water/fixtures/exa-fridge-water-sample.v1.json",
 );
+const V3_OPERATOR_INPUT_PATH = path.join(
+  REPO_ROOT,
+  "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v3-netnew.2026-05-21.json",
+);
+const V2_OPERATOR_INPUT_PATH = path.join(
+  REPO_ROOT,
+  "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v2-netnew.2026-05-21.json",
+);
 
 function loadFixture(): ExaMcpExportInputV1 {
   return JSON.parse(readFileSync(FIXTURE_PATH, "utf8")) as ExaMcpExportInputV1;
@@ -198,4 +206,71 @@ test("factory with Exa fixture merge keeps bulk 57 and new_product 0", () => {
   for (const c of report.top_candidates) {
     assert.notEqual(c.factory_state, "new_product_candidate");
   }
+});
+
+function findCandidateByUrlFragment(
+  candidates: ReturnType<typeof buildExaFridgeWaterDiscoveryFromMcpExport>["candidates_file"]["candidates"],
+  fragment: string,
+) {
+  return candidates.find(
+    (c) => c.discovered_url.includes(fragment) || c.discovered_title.toUpperCase().includes(fragment),
+  );
+}
+
+test("v3 manufacturer rows extract MWFA FPPWFU01 GWF06 with safe classification", () => {
+  const input = JSON.parse(readFileSync(V3_OPERATOR_INPUT_PATH, "utf8")) as ExaMcpExportInputV1;
+  const built = buildExaFridgeWaterDiscoveryFromMcpExport({
+    input,
+    discovery_run_id: "2026-05-21-v3-netnew",
+    rootDir: REPO_ROOT,
+    generated_at: "2026-05-21T22:00:00.000Z",
+    input_path: V3_OPERATOR_INPUT_PATH,
+  });
+
+  const mwfa = findCandidateByUrlFragment(built.candidates_file.candidates, "MWFA");
+  assert.ok(mwfa, "MWFA GE PDP row");
+  assert.deepEqual(mwfa!.extracted_part_tokens, ["MWFA"]);
+  assert.equal(mwfa!.candidate_slug, "mwfa");
+  assert.equal(mwfa!.recommended_factory_state, "evidence_needed");
+  assert.ok(!mwfa!.rejection_flags.includes("no_oem_token"));
+  assert.equal(mwfa!.omit_from_factory_merge, false);
+  assert.equal(mwfa!.catalog_import_ready, false);
+  assert.equal(mwfa!.mutation_ready, false);
+
+  const fpp = findCandidateByUrlFragment(built.candidates_file.candidates, "FPPWFU01");
+  assert.ok(fpp, "FPPWFU01 Frigidaire PDP row");
+  assert.deepEqual(fpp!.extracted_part_tokens, ["FPPWFU01"]);
+  assert.equal(fpp!.candidate_slug, "fppwfu01");
+  assert.equal(fpp!.recommended_factory_state, "blocked_do_not_publish");
+  assert.ok(fpp!.rejection_flags.includes("live_slug_exists"));
+  assert.equal(fpp!.omit_from_factory_merge, true);
+
+  const gwf06 = findCandidateByUrlFragment(built.candidates_file.candidates, "GWF06");
+  assert.ok(gwf06, "GWF06 GE PDP row");
+  assert.deepEqual(gwf06!.extracted_part_tokens, ["GWF06"]);
+  assert.equal(gwf06!.candidate_slug, "gwf06");
+  assert.equal(gwf06!.recommended_factory_state, "evidence_needed");
+  assert.ok(!gwf06!.rejection_flags.includes("no_oem_token"));
+  assert.equal(gwf06!.omit_from_factory_merge, false);
+});
+
+test("v2 EDR6D1 manufacturer PDP extracts token as evidence_needed not live slug", () => {
+  const input = JSON.parse(readFileSync(V2_OPERATOR_INPUT_PATH, "utf8")) as ExaMcpExportInputV1;
+  const built = buildExaFridgeWaterDiscoveryFromMcpExport({
+    input,
+    discovery_run_id: "2026-05-21-v2-netnew",
+    rootDir: REPO_ROOT,
+    generated_at: "2026-05-21T12:00:00.000Z",
+  });
+  const edr6d1 = built.candidates_file.candidates.find((c) =>
+    c.discovered_url.toLowerCase().includes("edr6d1"),
+  );
+  assert.ok(edr6d1);
+  assert.deepEqual(edr6d1!.extracted_part_tokens, ["EDR6D1"]);
+  assert.equal(edr6d1!.candidate_slug, "edr6d1");
+  assert.equal(edr6d1!.recommended_factory_state, "evidence_needed");
+  assert.ok(!edr6d1!.rejection_flags.includes("no_oem_token"));
+  assert.ok(!edr6d1!.rejection_flags.includes("live_slug_exists"));
+  assert.equal(edr6d1!.omit_from_factory_merge, false);
+  assert.equal(edr6d1!.catalog_import_ready, false);
 });

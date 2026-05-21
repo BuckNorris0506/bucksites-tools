@@ -74,6 +74,19 @@ After search, run **web_fetch_exa** on tier A/B URLs only; store `fetch_excerpt`
 | `E_marketplace_weak` | amazon.com, ebay.com, walmart.com |
 | `F_unknown` | Unclassified |
 
+## OEM token extraction (`OEM_TOKEN_REGEX`)
+
+`src/lib/discovery/exa-fridge-water-discovery-v1.ts` extracts manufacturer fridge-water part tokens from title, snippet, and `fetch_excerpt`. v3 audit gaps (official PDP copy present, `no_oem_token` in committed run JSON) motivated these additions:
+
+| Token | Pattern | Typical classification |
+|-------|---------|------------------------|
+| `MWFA` | `\bMWFA\b` | `evidence_needed` when not live in `data/filters.csv` |
+| `GWF06` | `\bGWF0?\d{1,2}\b` (e.g. GWF06) | `evidence_needed` when not live |
+| `FPPWFU01` | `\bFPPWFU01\b` | `live_slug_exists` → blocked, omitted from factory merge |
+| `EDR6D1` | `\bEDR[1-6]D1B?\b` (after `EDR6RXD1`) | `evidence_needed` when not live; does not replace active manifest merge for `edr6rxd1` |
+
+Committed `runs/*/candidates.json` snapshots are historical until re-run; factory reads the manifest’s `latest_candidates_path` only.
+
 ## Rejection flags
 
 `demoted_registry_match`, `live_slug_exists`, `alias_family_hold`, `wrong_wedge_air_filter`, `marketplace_only`, `search_results_page`, `revision_sibling_unproven`, `snippet_only_no_fetch`, `seo_title_only`, `no_oem_token`
