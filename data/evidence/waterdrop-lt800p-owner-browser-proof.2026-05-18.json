@@ -1,0 +1,107 @@
+{
+  "report_name": "buckparts_waterdrop_lt800p_owner_browser_proof_v1",
+  "generated_at": "2026-05-18T12:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "scope": "refrigerator_water",
+  "token": "LT800P",
+  "filter_slug": "lt800p",
+  "filter_id": "0b0c1bb2-ac28-4d8e-ac91-01b5a6be2539",
+  "oem_part_number": "LT800P",
+  "alias_tokens_visible_in_title": ["ADQ73613401"],
+  "waterdrop_live_cta_status": "NOT_LIVE",
+  "no_live_cta_change": true,
+  "verdict": "OWNER_BROWSER_PROOF_RECORDED",
+  "owner_browser_proof_status": "PASS",
+  "mutation_ready": false,
+  "mutation_ready_basis": {
+    "insert_plan_path": null,
+    "insert_plan_status": "NOT_PREPARED",
+    "automation_mutation_authority": false,
+    "owner_manual_insert_approved": false,
+    "blocking_reasons": [
+      "WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 does not include lt800p; no broad Waterdrop rollout.",
+      "No retailer_links insert plan prepared or executed for this slug.",
+      "Evidence records owner-browser PDP proof only; does not grant CTA or Supabase mutation authority."
+    ]
+  },
+  "rakuten_productsearch_api_derived": {
+    "source_path": "data/waterdrop/operator-input/local/waterdrop-rakuten-productsearch.v1.json",
+    "entry_id": "rakuten-waterdrop-539507420827021633352815",
+    "entry_count_in_local_extract": 141,
+    "linksynergy_id": "GTFBcFcCW48",
+    "offerid": "1888875.539507420827021633352815",
+    "link_type": "15",
+    "variant_sku": "39389060792402"
+  },
+  "candidate_extractor_snapshot": {
+    "source": "buckparts_waterdrop_proof_slice_candidates_v1",
+    "matched_slug": "lt800p",
+    "matched_oem_part_number": "LT800P",
+    "match_confidence": "EXACT_OEM_PART_NUMBER",
+    "pdp_specificity": "VARIANT_PDP",
+    "recommended_for_owner_browser_proof": true,
+    "production_snapshot_basis": "repo_amazon_live_outcome_plus_retailer_links_csv_no_waterdrop_row",
+    "production_snapshot": {
+      "gated_buyable_count": 1,
+      "has_amazon_direct_buyable": true,
+      "has_waterdrop_row": false,
+      "has_repairclinic_search_only": true
+    },
+    "amazon_live_evidence_path": "data/evidence/amazon-lt800p-live-outcome.2026-05-03.json"
+  },
+  "destination_pdp_url": "https://www.waterdropfilter.com/products/lg-lt800p-water-filter-replacement-by-waterdrop?variant=39389060792402",
+  "affiliate_url_candidate": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539507420827021633352815&type=15&murl=https%3A%2F%2Fwww.waterdropfilter.com%2Fproducts%2Flg-lt800p-water-filter-replacement-by-waterdrop%3Fvariant%3D39389060792402",
+  "product_attribution": "aftermarket_compatible",
+  "product_attribution_proof": "Waterdrop replacement listing for LG LT800P / ADQ73613401; not LG manufacturer-made.",
+  "owner_browser_proof": {
+    "source": "owner_browser_screenshot_observation",
+    "checked_at": "2026-05-18T12:00:00.000Z",
+    "screenshot_file_committed": false,
+    "direct_pdp_url_opened": "https://www.waterdropfilter.com/products/lg-lt800p-water-filter-replacement-by-waterdrop?variant=39389060792402",
+    "linksynergy_affiliate_url_opened": "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539507420827021633352815&type=15&murl=https%3A%2F%2Fwww.waterdropfilter.com%2Fproducts%2Flg-lt800p-water-filter-replacement-by-waterdrop%3Fvariant%3D39389060792402",
+    "linksynergy_landed_on_expected_pdp": true,
+    "seller_title_visible": "Waterdrop Replacement for LG Refrigerator Water Filter LT800P ADQ73613401",
+    "exact_token_visible_in_title": true,
+    "tokens_visible_in_title": ["LT800P", "ADQ73613401"],
+    "price_visible_usd": 11.99,
+    "one_time_purchase_selected_usd": 11.99,
+    "add_to_cart_visible": true,
+    "buy_now_visible": true,
+    "compatibility_copy_visible": true,
+    "manufacturer_made_claimed": false
+  },
+  "browser_evidence": {
+    "waterdrop_pdp_browser_inspected_by_owner": true,
+    "waterdrop_pdp_url": "https://www.waterdropfilter.com/products/lg-lt800p-water-filter-replacement-by-waterdrop?variant=39389060792402",
+    "seller_title_visible": "Waterdrop Replacement for LG Refrigerator Water Filter LT800P ADQ73613401",
+    "token_visible_in_pdp_title": true,
+    "buy_path_visible": "Add to Cart and Buy Now visible; one-time purchase $11.99",
+    "price_visible_usd": 11.99,
+    "cart_availability_visible": true,
+    "cart_availability_visible_basis": "Add to Cart and Buy Now buttons visible only; does not prove warehouse inventory quantity.",
+    "oem_or_aftermarket": "aftermarket compatible",
+    "browser_truth_buyable_subtype_candidate": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+    "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE",
+    "browser_truth_checked_at": "2026-05-18T12:00:00.000Z"
+  },
+  "required_next_action": "OWNER_DECIDES_MANUAL_INSERT_PLAN_LATER_NO_AUTOMATION",
+  "commission_or_revenue": "NOT_CONNECTED",
+  "revenue_claim": "none",
+  "proven_facts": [
+    "Canonical filter slug lt800p and token LT800P exist in data/filters.csv.",
+    "Rakuten Product Search API local extract (141 entries) includes LinkSynergy affiliate URL for this variant PDP.",
+    "Owner browser screenshot showed seller title with LT800P and ADQ73613401, $11.99 one-time purchase, Add to Cart and Buy Now.",
+    "Production Amazon direct_buyable row exists per data/evidence/amazon-lt800p-live-outcome.2026-05-03.json; no production waterdrop row.",
+    "mutation_ready remains false; insert_plan_status NOT_PREPARED."
+  ],
+  "unknown_facts": [
+    "Whether owner will approve a separate manual insert plan for lt800p (UNKNOWN).",
+    "Commission or revenue attribution from Rakuten for a future waterdrop row (NOT_CONNECTED)."
+  ],
+  "notes": [
+    "Evidence only. Does not perform Supabase writes or change live CTAs.",
+    "Does not expand WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 (da29-00020b remains the only live exact-proof slice).",
+    "Trust gates remain authoritative until a future owner-approved insert plan and proof-slice allowlist extension."
+  ]
+}
