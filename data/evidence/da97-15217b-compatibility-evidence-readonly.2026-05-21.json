@@ -1,0 +1,63 @@
+{
+  "report_name": "buckparts_da97_15217b_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "da97-15217b",
+  "oem_part_number": "DA97-15217B",
+  "brand_slug": "samsung",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "BLOCKED_REVISION_UNPROVEN",
+  "catalog_import_ready": false,
+  "recommended_outcome": "block_for_now",
+  "sources": [
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live slug da97-15217d / OEM DA97-15217D exists.",
+        "No live row for da97-15217b."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/compatibility_mappings.csv",
+      "source_tier": "repo",
+      "proves": [
+        "da97-15217d has 11 compatibility_mappings rows.",
+        "da97-15217b has 0 rows."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/evidence/amazon-da97-15217d-live-outcome.2026-05-03.json",
+      "source_tier": "repo_committed_evidence",
+      "proves": [
+        "Live da97-15217d has committed Amazon live-outcome evidence."
+      ],
+      "does_not_prove": [
+        "DA97-15217B variant fit or separate publishable slug."
+      ]
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Samsung manufacturer documentation for DA97-15217B vs DA97-15217D interchangeability.",
+    "Whether catalog comment HAF-QIN family variant is accurate for B suffix."
+  ],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv",
+      "result": "PROVEN_PASS",
+      "detail": "Distinct OEM tokens (DA9715217B vs DA9715217D)."
+    },
+    {
+      "check": "Sibling variant coverage",
+      "result": "PROVEN_BLOCK",
+      "detail": "Live da97-15217d already has compat + evidence; B variant unproven."
+    }
+  ],
+  "recommended_next_action": "Defer import. Collect Samsung OEM chart proving DA97-15217B model list distinct from D before any catalog plan."
+}

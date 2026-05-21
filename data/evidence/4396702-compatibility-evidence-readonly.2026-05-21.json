@@ -1,0 +1,89 @@
+{
+  "report_name": "buckparts_4396702_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "4396702",
+  "oem_part_number": "4396702",
+  "brand_slug": "whirlpool",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "CREDIBLE_SOURCES_FOUND_ALIAS_FAMILY_HOLD",
+  "catalog_import_ready": false,
+  "recommended_outcome": "alias_collision_hold",
+  "sources": [
+    {
+      "url": "data/bulk/filters.bulk.sample.csv",
+      "source_tier": "repo_bulk_sample",
+      "proves": [
+        "Bulk sample row labels 4396702 as Whirlpool Everydrop 2."
+      ],
+      "does_not_prove": [
+        "Distinct physical SKU vs EDR2RXD1 on Whirlpool.com."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-2-edr2rxd1-pack-of-1.edr2rxd1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "everydrop Refrigerator Water Filter 2 canonical model on Whirlpool US site is EDR2RXD1.",
+        "Filter 2 replaces P9WB2L per PDP copy."
+      ],
+      "does_not_prove": [
+        "Whirlpool US PDP for numeric OEM 4396702 (not found in manufacturer fetch)."
+      ]
+    },
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live slug edr2rxd1 / OEM EDR2RXD1 is EveryDrop Filter 2.",
+        "No live row for 4396702."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/filter_aliases.csv",
+      "source_tier": "repo",
+      "proves": [
+        "edr2rxd1 aliases include EveryDrop 2 and FILTER2.",
+        "No alias row for 4396702."
+      ],
+      "does_not_prove": [
+        "That 4396702 is not the same cartridge as EDR2RXD1."
+      ]
+    },
+    {
+      "url": "data/evidence/amazon-edr2rxd1-live-outcome.2026-05-05.json",
+      "source_tier": "repo_committed_evidence",
+      "proves": [
+        "Live Filter 2 path already has Amazon live-outcome evidence on edr2rxd1."
+      ],
+      "does_not_prove": []
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Whether numeric 4396702 is an alternate marking for the same Filter 2 cartridge as EDR2RXD1 (UNKNOWN — no Whirlpool.com 4396702 PDP captured).",
+    "Any model-specific compatibility for slug 4396702 (0 repo rows; cannot copy edr2rxd1 rows without owner proof)."
+  ],
+  "collision_checks": [
+    {
+      "check": "CSV alias_collision_candidate",
+      "result": "PROVEN_PASS",
+      "detail": "4396702 OEM token does not appear in filter_aliases.csv."
+    },
+    {
+      "check": "EveryDrop Filter 2 family vs live edr2rxd1",
+      "result": "PROVEN_BLOCK",
+      "detail": "Bulk sample + Whirlpool Filter 2 PDP + edr2rxd1 aliases (EveryDrop 2) — wrong-purchase risk if both slugs published without alias strategy."
+    },
+    {
+      "check": "compatibility_mappings inheritance",
+      "result": "PROVEN_BLOCK",
+      "detail": "edr2rxd1 has 21 compat rows; 4396702 has 0 — must not copy sibling rows without OEM proof."
+    }
+  ],
+  "recommended_next_action": "Owner decides: add 4396702 as alias on live edr2rxd1 (approved filter_aliases.csv task) OR prove distinct SKU with manufacturer docs before any filters.csv import. Do not seed:import 4396702 as new slug while hold stands."
+}

@@ -1,0 +1,64 @@
+{
+  "report_name": "buckparts_adq73613404_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "adq73613404",
+  "oem_part_number": "ADQ73613404",
+  "brand_slug": "lg",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "BLOCKED_INSUFFICIENT_MANUFACTURER_EVIDENCE",
+  "catalog_import_ready": false,
+  "recommended_outcome": "block_for_now",
+  "sources": [
+    {
+      "url": "https://www.lg.com/us/appliances-accessories/lg-lt800p-refrigerator-water-filter",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "LG LT800P US accessory page references replacement part ADQ73613401 (not ADQ73613404).",
+        "Product type is refrigerator water filter."
+      ],
+      "does_not_prove": [
+        "ADQ73613404 exists as US LG water filter SKU.",
+        "Model compatibility list for ADQ73613404."
+      ]
+    },
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live LG water slugs adq73613402 and adq73613403 exist.",
+        "No live row for adq73613404."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/compatibility_mappings.csv",
+      "source_tier": "repo",
+      "proves": [
+        "adq73613402 has 14 rows; adq73613403 has 13 rows; adq73613404 has 0 rows."
+      ],
+      "does_not_prove": []
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Whether ADQ73613404 is a distinct slim cartridge vs ADQ73613402/03 (catalog_pattern comment only — INFERRED).",
+    "LG US official PDP or manual listing models for ADQ73613404."
+  ],
+  "collision_checks": [
+    {
+      "check": "OEM token distinct from live 02/03",
+      "result": "PROVEN_PASS",
+      "detail": "No filter_aliases.csv collision for ADQ73613404 token."
+    },
+    {
+      "check": "Sibling slug coverage",
+      "result": "PROVEN_BLOCK",
+      "detail": "Live siblings already cover ADQ73613402/03 families with compat — variant unproven."
+    }
+  ],
+  "recommended_next_action": "Obtain LG manufacturer chart or Filter Finder export naming ADQ73613404 and explicit model numbers before revisiting import plan. Do not inherit adq73613402/03 compatibility_mappings rows."
+}

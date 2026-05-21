@@ -1,0 +1,74 @@
+{
+  "report_name": "buckparts_edr5rxd1_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "edr5rxd1",
+  "oem_part_number": "EDR5RXD1",
+  "brand_slug": "whirlpool",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "CREDIBLE_SOURCES_FOUND_ALIAS_FAMILY_HOLD",
+  "catalog_import_ready": false,
+  "recommended_outcome": "alias_collision_hold",
+  "sources": [
+    {
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-2-edr2rxd1-pack-of-1.edr2rxd1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "Whirlpool/everydrop canonical Filter 2 SKU on US site is EDR2RXD1 (Filter 2 family reference for comparison)."
+      ],
+      "does_not_prove": [
+        "That EDR5RXD1 should be a separate live slug in data/filters.csv."
+      ]
+    },
+    {
+      "url": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+      "source_tier": "repo_committed_evidence",
+      "proves": [
+        "Live slug 4396508 is the committed Filter 5 numeric OEM with owner-browser Amazon evidence.",
+        "Seller title on 4396508 PDP lists EDR5RXD1 as a cross-reference string (aftermarket compatible framing), not as canonical OEM identity for slug edr5rxd1."
+      ],
+      "does_not_prove": [
+        "OEM EveryDrop Filter 5 PDP for slug edr5rxd1."
+      ]
+    },
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live row whirlpool,4396508,4396508 exists.",
+        "No live row for edr5rxd1."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/compatibility_mappings.csv",
+      "source_tier": "repo",
+      "proves": [
+        "filter_slug 4396508 has 17 compatibility_mappings rows.",
+        "filter_slug edr5rxd1 has 0 rows."
+      ],
+      "does_not_prove": []
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Whether owner wants edr5rxd1 as canonical slug instead of live 4396508.",
+    "Whirlpool.com Filter 5 PDP fetch failed in triage run — UNKNOWN additional manufacturer model list for EDR5RXD1."
+  ],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv OEM token collision",
+      "result": "PROVEN_PASS",
+      "detail": "No alias row maps EDR5RXD1 to multiple slugs."
+    },
+    {
+      "check": "live Filter 5 family already covered",
+      "result": "PROVEN_BLOCK",
+      "detail": "Committed catalog + compat + evidence center on 4396508; EDR5RXD1 appears only as aftermarket cross-ref in 4396508 evidence title."
+    }
+  ],
+  "recommended_next_action": "Do not import edr5rxd1 as a new slug. If Filter 5 must use EDR5RXD1 token, run a separate approved task to add filter_aliases on live 4396508 — not a bulk expansion import."
+}

@@ -46,6 +46,8 @@ Rejected from the first slice (review notes): `hafcin` (HAF-CIN / `da29-00020b` 
 
 **Removed from expansion queue:** `lt120f` — **PROVEN** refrigerator air filter per `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json`; wrong wedge for `data/filters.csv` (refrigerator water).
 
+**Evidence triage (remaining 5):** `docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md` — **PROVEN** no `ready_for_catalog_import_plan` candidates; `4396702` / `edr5rxd1` alias-family hold; Samsung/LG variants `block_for_now`.
+
 ## Non-goals
 
 No Supabase writes, no `retailer_links` mutation, no UI/ranking/gate changes, no auto-publish.

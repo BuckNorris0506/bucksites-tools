@@ -1,0 +1,65 @@
+{
+  "report_name": "buckparts_da29_00003b_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "da29-00003b",
+  "oem_part_number": "DA29-00003B",
+  "brand_slug": "samsung",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "BLOCKED_REVISION_UNPROVEN",
+  "catalog_import_ready": false,
+  "recommended_outcome": "block_for_now",
+  "sources": [
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live slug da29-00003g / OEM DA29-00003G exists.",
+        "No live row for da29-00003b."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/compatibility_mappings.csv",
+      "source_tier": "repo",
+      "proves": [
+        "da29-00003g has 16 compatibility_mappings rows.",
+        "da29-00003b has 0 rows."
+      ],
+      "does_not_prove": [
+        "That B-revision fits the same models as G."
+      ]
+    },
+    {
+      "url": "data/fridge_models.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Models mapped to da29-00003g exist (e.g. samsung-rf23j9011sg / RF23J9011SG per compatibility_mappings.csv)."
+      ],
+      "does_not_prove": [
+        "DA29-00003B fit for those models."
+      ]
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Samsung US manufacturer page explicitly tying DA29-00003B to model list (not captured in triage fetch).",
+    "Whether DA29-00003B is superseded by DA29-00003G for US models."
+  ],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv",
+      "result": "PROVEN_PASS",
+      "detail": "OEM tokens distinct (DA29000003B vs DA29000003G compact keys)."
+    },
+    {
+      "check": "Sibling revision interchangeability",
+      "result": "PROVEN_BLOCK",
+      "detail": "Prior-revision hypothesis from catalog_pattern only; cannot inherit 16 da29-00003g compat rows."
+    }
+  ],
+  "recommended_next_action": "Owner browser: Samsung parts manual or refrigerator spec sheet per model must list DA29-00003B (not G) before compat draft. Separate approved task if proven."
+}
