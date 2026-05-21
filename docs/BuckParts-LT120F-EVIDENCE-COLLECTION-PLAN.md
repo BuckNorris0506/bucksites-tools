@@ -6,6 +6,8 @@
 **Report type:** read-only evidence plan — no production mutation  
 **Baseline:** `docs/BuckParts-FIRST-FRIDGE-EXPANSION-OWNER-REVIEW.md` (cohort hold); factory `new_product_candidate`; `mutation_ready=false`
 
+**Evidence outcome (2026-05-18):** `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json` — LG official sources prove LT120F is a **refrigerator air filter**; `catalog_import_ready: false`; `recommended_outcome: block_for_now` for `data/filters.csv` water wedge.
+
 ---
 
 ## 1. LT120F current repo truth
@@ -161,7 +163,8 @@ Minimum proof required before `lt120f` may enter an **approved** `data/filters.c
 
 | State | When it applies to LT120F |
 |-------|----------------------------|
-| `needs_more_compatibility_evidence` | **Current** — no manufacturer model list / no compat rows |
+| `needs_more_compatibility_evidence` | Partial LG per-model specs captured (4 models); full Filter Finder list still **UNKNOWN** |
+| `block_for_now` | **Current for fridge water import** — LG proves air-filter category; wrong wedge vs `data/filters.csv` |
 | `alias_collision_hold` | `LT120F` maps to multiple slugs or duplicates live OEM in `filter_aliases.csv` |
 | `block_for_now` | LG docs show LT120F is obsolete alias of an existing live slug; or owner defers |
 | `ready_for_catalog_import_plan` | Manufacturer compat captured; model list mapped to `fridge_models.csv` slugs; collision checks passed; owner approves separate import task (still **not** auto-import) |

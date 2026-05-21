@@ -1,0 +1,182 @@
+{
+  "report_name": "buckparts_lt120f_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-18T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "lt120f",
+  "oem_part_number": "LT120F",
+  "brand_slug": "lg",
+  "filter_category_proven": "refrigerator_air_filter",
+  "evidence_status": "CREDIBLE_SOURCES_FOUND_BLOCKED_FOR_FRIDGE_WATER_CATALOG",
+  "catalog_import_ready": false,
+  "recommended_outcome": "block_for_now",
+  "sources": [
+    {
+      "url": "https://www.lg.com/us/appliances-accessories/lg-lt120f-refrigerator-air-filter",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "LT120F is a genuine LG 6-month Replacement Refrigerator Air Filter (not a water filter).",
+        "Replacement part number ADQ73334008.",
+        "Replace every six months or when FILTER alert light turns on."
+      ],
+      "does_not_prove": [
+        "A static list of compatible refrigerator model numbers on the accessory PDP."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/support/help-library/lg-refrigerator-fresh-air-filter-lt120f-installation-CT10000021-1397853642229",
+      "source_tier": "manufacturer_official_support",
+      "proves": [
+        "LT120F is the Fresh Air Filter product family with published installation steps.",
+        "Maintenance interval approximately six months and/or CHANGE FILTER light."
+      ],
+      "does_not_prove": [
+        "Per-model compatibility matrix."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/support/parts-locator",
+      "source_tier": "manufacturer_official_support",
+      "proves": [
+        "LG routes LT120F through Water & Air Filter Finder (model-number lookup required)."
+      ],
+      "does_not_prove": [
+        "Model list without interactive lookup."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/refrigerators/lg-LFX31925ST-french-3-door-refrigerator",
+      "source_tier": "manufacturer_official_product_specs",
+      "proves": [
+        "Model LFX31925ST specifications include Fresh Air Filter: Yes, Air Filter LT120F.",
+        "Same model Water Filtration System: Filter LT700P (distinct water cartridge)."
+      ],
+      "does_not_prove": [
+        "All other models in the LT120F family without per-model spec pages."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/refrigerators/lg-LFX31925SB-french-3-door-refrigerator",
+      "source_tier": "manufacturer_official_product_specs",
+      "proves": [
+        "Model LFX31925SB specifications include Fresh Air Filter: Yes, Air Filter LT120F.",
+        "Same model Water Filtration System: Filter LT700P."
+      ],
+      "does_not_prove": [
+        "Repo fridge_models.csv coverage for this model number."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/refrigerators/lg-LFX31915ST-french-3-door-refrigerator",
+      "source_tier": "manufacturer_official_product_specs",
+      "proves": [
+        "Model LFX31915ST specifications include Fresh Air Filter: Yes, Air Filter LT120F."
+      ],
+      "does_not_prove": [
+        "Water filter OEM on this page without separate spec line capture in this artifact."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/refrigerators/lg-LFXS24623W-french-3-door-refrigerator",
+      "source_tier": "manufacturer_official_product_specs",
+      "proves": [
+        "Model LFXS24623W specifications include Fresh Air Filter: Yes, Air Filter LT120F.",
+        "Same model Water Filtration System: Filter LT700P."
+      ],
+      "does_not_prove": [
+        "Repo fridge_models.csv coverage for this model number."
+      ]
+    },
+    {
+      "url": "https://www.lg.com/us/appliances-accessories/lg-lt1000p-lt120f-refrigerator-filter-bundle",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "LG sells LT1000P water filter and LT120F air filter as separate cartridges in one bundle (different replacement categories)."
+      ],
+      "does_not_prove": [
+        "That LT120F is interchangeable with LT1000P or belongs in water-filter catalog."
+      ]
+    }
+  ],
+  "proven_model_numbers": [
+    {
+      "model_number": "LFX31925ST",
+      "proof_status": "PROVEN",
+      "source_url": "https://www.lg.com/us/refrigerators/lg-LFX31925ST-french-3-door-refrigerator",
+      "air_filter_oem": "LT120F",
+      "water_filter_oem_on_same_model": "LT700P",
+      "in_data_fridge_models_csv": false
+    },
+    {
+      "model_number": "LFX31925SB",
+      "proof_status": "PROVEN",
+      "source_url": "https://www.lg.com/us/refrigerators/lg-LFX31925SB-french-3-door-refrigerator",
+      "air_filter_oem": "LT120F",
+      "water_filter_oem_on_same_model": "LT700P",
+      "in_data_fridge_models_csv": false
+    },
+    {
+      "model_number": "LFX31915ST",
+      "proof_status": "PROVEN",
+      "source_url": "https://www.lg.com/us/refrigerators/lg-LFX31915ST-french-3-door-refrigerator",
+      "air_filter_oem": "LT120F",
+      "water_filter_oem_on_same_model": "UNKNOWN",
+      "in_data_fridge_models_csv": false
+    },
+    {
+      "model_number": "LFXS24623W",
+      "proof_status": "PROVEN",
+      "source_url": "https://www.lg.com/us/refrigerators/lg-LFXS24623W-french-3-door-refrigerator",
+      "air_filter_oem": "LT120F",
+      "water_filter_oem_on_same_model": "LT700P",
+      "in_data_fridge_models_csv": false
+    }
+  ],
+  "unknowns": [
+    "Full LG LT120F compatible model list (LG uses interactive Filter Finder; no complete static OEM list captured).",
+    "Whether any proven model numbers exist in data/fridge_models.csv (PROVEN: none of the four sample models match).",
+    "Replacement interval 6 months for LT120F in committed catalog (INFERRED from LG accessory pages; bulk sample uses 6).",
+    "Whether BuckParts should catalog LT120F under refrigerator water (data/filters.csv) vs appliance-air vertical (UNKNOWN owner product decision)."
+  ],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv token LT120F maps to live water slug",
+      "result": "PROVEN_PASS",
+      "detail": "No filter_aliases.csv row for lt120f or LT120F; OEM token does not map to live slug via fridge index."
+    },
+    {
+      "check": "LT120F OEM equals live water filter OEM (lt700p/lt800p/lt1000p)",
+      "result": "PROVEN_PASS",
+      "detail": "LT120F is air filter OEM; sample LG refrigerator spec pages pair LT120F air with LT700P water on the same models — different cartridge roles."
+    },
+    {
+      "check": "Wrong wedge: fridge water catalog vs air filter product type",
+      "result": "PROVEN_BLOCK",
+      "detail": "LG official accessory PDP title: Replacement Refrigerator Air Filter. Bulk expansion row sits in fridge-homekeep-bulk-catalog-v1 (shared with water filter CSV generator). data/filters.csv rows are refrigerator water filters only (PROVEN by live LG slugs LT700P/LT1000P naming)."
+    },
+    {
+      "check": "proven models exist in data/fridge_models.csv for compatibility_mappings import",
+      "result": "PROVEN_BLOCK",
+      "detail": "LFX31925ST, LFX31925SB, LFX31915ST, LFXS24623W — all NOT_IN_REPO at evidence capture time."
+    },
+    {
+      "check": "copy lt1000p compatibility rows for LT120F",
+      "result": "PROVEN_BLOCK",
+      "detail": "Must not inherit water-filter mappings; air vs water category mismatch."
+    }
+  ],
+  "repo_cross_check": {
+    "data_filters_csv_row_for_lt120f": false,
+    "data_compatibility_mappings_rows_for_lt120f": 0,
+    "data_retailer_links_rows_for_lt120f": 0,
+    "factory_state": "new_product_candidate",
+    "factory_has_gated_buyable_link": false
+  },
+  "recommended_next_action": "BLOCK import into data/filters.csv (refrigerator water wedge). If owner wants LT120F in BuckParts, open a separate approved task for appliance-air catalog (src/lib/data/appliance-air/, Supabase appliance_air_parts) — not fridge-homekeep bulk water expansion. Before any catalog plan: (1) owner confirms vertical, (2) add missing fridge_models.csv rows for proven LG model numbers or appliance-air model tables, (3) build compatibility from per-model LG spec pages or Filter Finder exports — do not run seed:import from this artifact.",
+  "notes": [
+    "PROVEN: Third-party retailer compatibility lists (FridgeFilters, Famous Tate, Amazon SEO) were not used as proof sources per BuckParts evidence rules.",
+    "PROVEN: This file does not authorize data/filters.csv, compatibility_mappings.csv, retailer_links, or Supabase mutation."
+  ]
+}
