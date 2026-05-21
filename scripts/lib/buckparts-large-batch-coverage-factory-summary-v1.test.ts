@@ -185,21 +185,23 @@ test("repo summary without Exa manifest keeps 57 candidates and demoted expansio
   }
 });
 
-test("repo summary with active v2 Exa manifest yields 58 and evidence_needed edr6rxd1", () => {
+test("repo summary with active combined Exa manifest yields 60 and three evidence_needed", () => {
   const report = buildLargeBatchCoverageFactoryReportV1({
     rootDir: REPO_ROOT,
     topCandidatesLimit: 500,
   });
   const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(report);
   assert.equal(summary.runtime_status, "OK");
-  assert.equal(summary.candidate_count, 58);
+  assert.equal(summary.candidate_count, 60);
   assert.equal(summary.state_counts.new_product_candidate, 0);
-  assert.equal(summary.state_counts.evidence_needed, 1);
+  assert.equal(summary.state_counts.evidence_needed, 3);
   assert.ok(
-    summary.expansion_blocker_summary.includes("Exa discovery merged 1 read-only row(s)"),
+    summary.expansion_blocker_summary.includes("Exa discovery merged 3 read-only row(s)"),
   );
-  const edr6 = report.top_candidates.find((c) => c.slug === "edr6rxd1");
-  assert.ok(edr6, "edr6rxd1 must appear in factory cohort when v2 manifest is active");
-  assert.equal(edr6!.factory_state, "evidence_needed");
-  assert.equal(edr6!.has_gated_buyable_link, false);
+  for (const slug of ["edr6rxd1", "mwfa", "gwf06"] as const) {
+    const row = report.top_candidates.find((c) => c.slug === slug);
+    assert.ok(row, `${slug} must appear when combined manifest is active`);
+    assert.equal(row!.factory_state, "evidence_needed");
+    assert.equal(row!.has_gated_buyable_link, false);
+  }
 });

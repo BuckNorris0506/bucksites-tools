@@ -496,13 +496,13 @@ test("Exa v2 fixture merge adds edr6rxd1 as evidence_needed without new_product_
   assert.notEqual(factoryRow!.factory_state, "new_product_candidate");
 });
 
-test("active repo v2 Exa manifest matches fixture merge expectations", () => {
+test("active repo combined Exa manifest merges edr6rxd1 mwfa gwf06", () => {
   const manifestPath = path.join(REPO_ROOT, EXA_DISCOVERY_MANIFEST_REL_PATH_V1);
-  const v2CandidatesPath = path.join(
+  const combinedCandidatesPath = path.join(
     REPO_ROOT,
-    "data/discovery/exa/fridge-water/runs/2026-05-21-v2-netnew/candidates.json",
+    "data/discovery/exa/fridge-water/runs/2026-05-21-combined-review/candidates.json",
   );
-  if (!existsSync(manifestPath) || !existsSync(v2CandidatesPath)) {
+  if (!existsSync(manifestPath) || !existsSync(combinedCandidatesPath)) {
     return;
   }
 
@@ -511,24 +511,31 @@ test("active repo v2 Exa manifest matches fixture merge expectations", () => {
     topCandidatesLimit: 500,
   });
 
-  assert.equal(report.candidate_count, 58);
+  assert.equal(report.candidate_count, 60);
   assert.equal(report.state_counts.new_product_candidate, 0);
-  assert.equal(report.state_counts.evidence_needed, 1);
-  assert.equal(report.source_summary.exa_fridge_water_discovery.run_id, "2026-05-21-v2-netnew");
-  assert.equal(report.source_summary.exa_fridge_water_discovery.row_count, 11);
-  assert.equal(report.source_summary.exa_fridge_water_discovery.merged_into_factory_count, 1);
-  assert.equal(report.source_summary.exa_fridge_water_discovery.evidence_needed_count, 1);
+  assert.equal(report.state_counts.evidence_needed, 3);
+  assert.equal(
+    report.source_summary.exa_fridge_water_discovery.run_id,
+    "2026-05-21-combined-review",
+  );
+  assert.equal(report.source_summary.exa_fridge_water_discovery.row_count, 3);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.merged_into_factory_count, 3);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.evidence_needed_count, 3);
+  assert.equal(report.source_summary.bulk_catalog.row_count, 57);
 
-  const edr6 = report.top_candidates.find((c) => c.slug === "edr6rxd1");
-  assert.ok(edr6);
-  assert.equal(edr6!.factory_state, "evidence_needed");
-  assert.equal(edr6!.has_gated_buyable_link, false);
+  for (const slug of ["edr6rxd1", "mwfa", "gwf06"] as const) {
+    const row = report.top_candidates.find((c) => c.slug === slug);
+    assert.ok(row, `${slug} must be in factory cohort`);
+    assert.equal(row!.factory_state, "evidence_needed");
+    assert.equal(row!.has_gated_buyable_link, false);
+  }
 
   const discoveryFile = JSON.parse(
-    readFileSync(v2CandidatesPath, "utf8"),
+    readFileSync(combinedCandidatesPath, "utf8"),
   ) as ExaFridgeWaterDiscoveryCandidatesFileV1;
-  const discoveryRow = discoveryFile.candidates.find((c) => c.candidate_slug === "edr6rxd1");
-  assert.ok(discoveryRow);
-  assert.equal(discoveryRow!.mutation_ready, false);
-  assert.equal(discoveryRow!.catalog_import_ready, false);
+  assert.equal(discoveryFile.candidates.length, 3);
+  for (const row of discoveryFile.candidates) {
+    assert.equal(row.mutation_ready, false);
+    assert.equal(row.catalog_import_ready, false);
+  }
 });

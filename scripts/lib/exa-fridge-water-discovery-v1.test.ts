@@ -27,6 +27,10 @@ const V2_OPERATOR_INPUT_PATH = path.join(
   REPO_ROOT,
   "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v2-netnew.2026-05-21.json",
 );
+const COMBINED_REVIEW_CANDIDATES_PATH = path.join(
+  REPO_ROOT,
+  "data/discovery/exa/fridge-water/runs/2026-05-21-combined-review/candidates.json",
+);
 
 function loadFixture(): ExaMcpExportInputV1 {
   return JSON.parse(readFileSync(FIXTURE_PATH, "utf8")) as ExaMcpExportInputV1;
@@ -252,6 +256,38 @@ test("v3 manufacturer rows extract MWFA FPPWFU01 GWF06 with safe classification"
   assert.equal(gwf06!.recommended_factory_state, "evidence_needed");
   assert.ok(!gwf06!.rejection_flags.includes("no_oem_token"));
   assert.equal(gwf06!.omit_from_factory_merge, false);
+});
+
+test("combined review run merges v2 edr6rxd1 and v3-refresh mwfa gwf06", () => {
+  const file = JSON.parse(readFileSync(COMBINED_REVIEW_CANDIDATES_PATH, "utf8")) as {
+    discovery_run_id: string;
+    candidates: Array<{
+      candidate_slug: string | null;
+      recommended_factory_state: string;
+      omit_from_factory_merge: boolean;
+      mutation_ready: boolean;
+      catalog_import_ready: boolean;
+      discovery_run_id: string;
+      discovered_url: string;
+    }>;
+  };
+  assert.equal(file.discovery_run_id, "2026-05-21-combined-review");
+  assert.equal(file.candidates.length, 3);
+  const slugs = file.candidates.map((c) => c.candidate_slug).sort();
+  assert.deepEqual(slugs, ["edr6rxd1", "gwf06", "mwfa"]);
+  for (const row of file.candidates) {
+    assert.equal(row.recommended_factory_state, "evidence_needed");
+    assert.equal(row.omit_from_factory_merge, false);
+    assert.equal(row.mutation_ready, false);
+    assert.equal(row.catalog_import_ready, false);
+  }
+  const edr6 = file.candidates.find((c) => c.candidate_slug === "edr6rxd1");
+  assert.equal(edr6!.discovery_run_id, "2026-05-21-v2-netnew");
+  assert.ok(edr6!.discovered_url.includes("EDR6RXD1"));
+  const mwfa = file.candidates.find((c) => c.candidate_slug === "mwfa");
+  assert.equal(mwfa!.discovery_run_id, "2026-05-21-v3-netnew-refresh");
+  const gwf06 = file.candidates.find((c) => c.candidate_slug === "gwf06");
+  assert.equal(gwf06!.discovery_run_id, "2026-05-21-v3-netnew-refresh");
 });
 
 test("v2 EDR6D1 manufacturer PDP extracts token as evidence_needed not live slug", () => {

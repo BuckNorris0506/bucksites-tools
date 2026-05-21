@@ -1,0 +1,44 @@
+{
+  "contract": "exa_fridge_water_discovery_v1",
+  "discovery_run_id": "2026-05-21-combined-review",
+  "generated_at": "2026-05-21T18:46:54.479Z",
+  "read_only": true,
+  "data_mutation": false,
+  "wedge": "refrigerator_water",
+  "input_path": null,
+  "query_count": 0,
+  "raw_hit_count": 0,
+  "candidate_count": 3,
+  "notes": [
+    "PROVEN: Combined historical review run — not active manifest.",
+    "PROVEN: Rows merged from v2 and v3-refresh evidence_needed cohorts only.",
+    "PROVEN: mutation_ready and catalog_import_ready are false for all rows."
+  ],
+  "source_runs": [
+    {
+      "discovery_run_id": "2026-05-21-v2-netnew",
+      "candidates_path": "data/discovery/exa/fridge-water/runs/2026-05-21-v2-netnew/candidates.json",
+      "source_row_count": 11,
+      "review_eligible_count": 1,
+      "review_slugs": [
+        "edr6rxd1"
+      ]
+    },
+    {
+      "discovery_run_id": "2026-05-21-v3-netnew-refresh",
+      "candidates_path": "data/discovery/exa/fridge-water/runs/2026-05-21-v3-netnew-refresh/candidates.json",
+      "source_row_count": 9,
+      "review_eligible_count": 2,
+      "review_slugs": [
+        "gwf06",
+        "mwfa"
+      ]
+    }
+  ],
+  "dedupe_rule": "candidate_slug; v2 rows precede v3-refresh on collision",
+  "combined_slugs": [
+    "edr6rxd1",
+    "gwf06",
+    "mwfa"
+  ]
+}
