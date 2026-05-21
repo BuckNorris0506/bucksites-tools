@@ -7,9 +7,31 @@ import {
   LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1,
 } from "./buckparts-large-batch-coverage-factory-summary-v1";
 import {
+  buildLargeBatchCoverageFactoryReportV1,
   LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1,
   type LargeBatchCoverageFactoryReportV1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
+import type { LoadExaDiscoveryForFactoryResultV1 } from "@/lib/coverage/exa-discovery-factory-merge-v1";
+
+const REPO_ROOT = process.cwd();
+
+function missingExaDiscoveryLoadResultV1(): LoadExaDiscoveryForFactoryResultV1 {
+  return {
+    manifest: null,
+    candidates: [],
+    source_summary: {
+      status: "MISSING",
+      path: null,
+      manifest_path: "data/discovery/exa/fridge-water/manifest.v1.json",
+      run_id: null,
+      row_count: 0,
+      merged_into_factory_count: 0,
+      evidence_needed_count: 0,
+      blocked_count: 0,
+      omitted_live_slug_count: 0,
+    },
+  };
+}
 
 function sampleFactoryReport(): LargeBatchCoverageFactoryReportV1 {
   return {
@@ -125,8 +147,15 @@ test("next_agent_action stays read-only planning language", () => {
   assert.match(summary.next_owner_action, /Do not hand-edit/i);
 });
 
-test("repo summary does not present failed first fridge expansion as open growth work", () => {
-  const summary = buildLargeBatchCoverageFactorySummaryV1({ rootDir: process.cwd() });
+test("repo summary without Exa manifest keeps 57 candidates and demoted expansion note", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+  });
   assert.equal(summary.read_only, true);
   assert.equal(summary.data_mutation, false);
   assert.equal(summary.mutation_ready, false);
@@ -136,14 +165,8 @@ test("repo summary does not present failed first fridge expansion as open growth
   assert.equal(summary.candidate_count, 57);
   assert.equal(summary.state_counts.new_product_candidate, 0);
   assert.ok(summary.expansion_blocker_summary.includes("new_product_candidate=0"));
-  assert.ok(
-    summary.expansion_blocker_summary.includes(
-      "first fridge expansion batch",
-    ),
-  );
-  assert.ok(
-    summary.expansion_blocker_summary.includes("stronger upstream source"),
-  );
+  assert.ok(summary.expansion_blocker_summary.includes("first fridge expansion batch"));
+  assert.ok(summary.expansion_blocker_summary.includes("stronger upstream source"));
   const openGrowth = summary.top_5_candidates.filter(
     (c) => c.factory_state === "new_product_candidate",
   );
@@ -160,4 +183,23 @@ test("repo summary does not present failed first fridge expansion as open growth
       `${slug} must not appear in top_5_candidates`,
     );
   }
+});
+
+test("repo summary with active v2 Exa manifest yields 58 and evidence_needed edr6rxd1", () => {
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 500,
+  });
+  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(report);
+  assert.equal(summary.runtime_status, "OK");
+  assert.equal(summary.candidate_count, 58);
+  assert.equal(summary.state_counts.new_product_candidate, 0);
+  assert.equal(summary.state_counts.evidence_needed, 1);
+  assert.ok(
+    summary.expansion_blocker_summary.includes("Exa discovery merged 1 read-only row(s)"),
+  );
+  const edr6 = report.top_candidates.find((c) => c.slug === "edr6rxd1");
+  assert.ok(edr6, "edr6rxd1 must appear in factory cohort when v2 manifest is active");
+  assert.equal(edr6!.factory_state, "evidence_needed");
+  assert.equal(edr6!.has_gated_buyable_link, false);
 });

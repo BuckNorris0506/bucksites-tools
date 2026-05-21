@@ -1,0 +1,150 @@
+{
+  "contract": "exa_mcp_export_fridge_water_v1",
+  "discovery_run_id": "2026-05-21-v2-netnew",
+  "generated_at": "2026-05-21T20:00:00.000Z",
+  "operator_note": "Exa v2 net-new pass via Cursor MCP. Rejected hubs/finders/category pages from search results. Queries 6, 8, 12, 14 skipped or empty due to Exa MCP rate limit after prior searches.",
+  "queries": [
+    {
+      "query": "site:samsung.com RF28 refrigerator specifications water filter model DA29 OR DA97",
+      "results": [
+        {
+          "url": "https://www.samsung.com/us/business/builder/our-appliances/refrigerators/side-by-side/28-cu-ft-smart-side-by-side-refrigerator-in-stainless-steel-rs28a500asr-aa/",
+          "title": "28 cu. ft. Smart Side-by-Side Refrigerator in Stainless Steel RS28A500ASR",
+          "snippet": "Model RS28A500ASR. Water Filter HAF-QIN (DA97-17376B).",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "RS28A500ASR/AA. Handle Water Filter HAF-QIN (DA97-17376B). Multi Air Flow Yes. Total Capacity 28 cu. ft."
+        },
+        {
+          "url": "https://image-us.samsung.com/SamsungUS/home/home-appliances/refrigerators/3-door-french-door/pdp/rf28t5021s/silver/RF28T5021SR_V2.pdf",
+          "title": "RF28T5021SR Planning Spec Sheet",
+          "snippet": "28 cu. ft. French Door. Accessories Water Filter: HAF-QIN.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "RF28T5021SR. Water Filter Indicator. Accessories Water Filter: HAF-QIN. Refrigerator 19.6 cu. ft. Total Capacity 28.2 cu. ft."
+        }
+      ]
+    },
+    {
+      "query": "site:samsung.com RS27 refrigerator owner manual water filter cartridge part number",
+      "results": [
+        {
+          "url": "https://www.samsung.com/us/home-appliances/refrigerators/3-door-french-door/27-cu-ft-large-capacity-3-door-french-door-refrigerator-with-external-water-ice-dispenser-in-stainless-steel-rf27t5201sr-aa/",
+          "title": "27 cu. ft. 3-Door French Door RF27T5201SR",
+          "snippet": "RF27T5201SR. Water Filter HAF-QIN (Included). External filtered water and ice.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "RF27T5201SR/AA. Water Filter HAF-QIN (Included). External Filtered Water and Ice Dispenser Yes. Model specifications list HAF-QIN family filter for this refrigerator."
+        }
+      ]
+    },
+    {
+      "query": "site:lg.com LFXS refrigerator specifications replacement water filter ADQ OR LT",
+      "results": [
+        {
+          "url": "https://www.lg.com/us/support/products/documents/LFXS26973-Spec-Sheet.pdf",
+          "title": "LFXS26973 Spec Sheet",
+          "snippet": "LFXS26973 3-Door French Door. Water Filter LT1000P. Model LFXS26973S.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "LFXS26973_ 3-Door French Door Refrigerator. Water Filter LT1000P. Total Capacity 26.20 cu.ft. UPC LFXS26973S PrintProof Stainless Steel."
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com refrigerator model specifications water filter RPWFE OR MWF OR XWFE",
+      "results": []
+    },
+    {
+      "query": "site:whirlpool.com refrigerator model WRX735 water filter everydrop part number specifications",
+      "results": [
+        {
+          "url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/p.WRX735SDHZ.html",
+          "title": "36-Inch French Door WRX735SDHZ",
+          "snippet": "Model WRX735SDHZ. Water Filter Part Number EDR4RXD1. Exterior ice and water dispenser.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Model WRX735SDHZ. Water Filter Indicator/Reset. Water Filter Location Interior. Water Filter Part Number EDR4RXD1. Exterior Ice and Water Dispenser with EveryDrop Filtration."
+        }
+      ]
+    },
+    {
+      "query": "site:frigidaire.com refrigerator gallery specifications water filter WF OR EPTWFU",
+      "results": []
+    },
+    {
+      "query": "site:samsung.com \"water filter\" \"DA29\" filetype:pdf refrigerator user manual",
+      "results": []
+    },
+    {
+      "query": "site:lg.com \"water filter\" \"ADQ\" \"owner's manual\" refrigerator",
+      "results": []
+    },
+    {
+      "query": "site:geappliances.com \"water filter installation\" MWF OR RPWFE manual",
+      "results": [
+        {
+          "url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=16933",
+          "title": "SmartWater SmartWater Plus Water Filters",
+          "snippet": "MWFA/MWF/GWF/HWF and MWFP/MWFA/MWF filter families. MWF replaced by MWFP.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Refrigerator water filters MWFA/MWF/GWF/HWF and GSWF/MSWF. MWFP/MWFA/MWF SmartWater Plus systems. The MWF filter has been replaced by the MWFP. The current filter is now the MWFP or XWFE on select models."
+        },
+        {
+          "url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=34522",
+          "title": "How to Locate Filter Installation Instructions",
+          "snippet": "MWF/MWFP/MSWF/GSWF RPWFE XWFE installation documentation.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "MWF/MWFP/MSWF/GSWF Filters. MWF (Now MWFP): About the MWFP Water Filter Cartridge. RPWFE Filter instructions on package insert. XWFE (formally XWF) Filter instructions on filter label."
+        }
+      ]
+    },
+    {
+      "query": "site:producthelp.whirlpool.com refrigerator water filter replacement instructions EDR model",
+      "results": [
+        {
+          "url": "https://producthelp.whirlpool.com/Refrigeration/Water_Filter_Information/Installation_Support/How_to_Flush_the_Water_System_in_a_Refrigerator",
+          "title": "How to Flush the Water System in a Refrigerator",
+          "snippet": "Replace Whirlpool water filter every 6 months. everydrop filter flush volumes.",
+          "fetch_status": "not_fetched",
+          "fetch_excerpt": null
+        }
+      ]
+    },
+    {
+      "query": "site:whirlpool.com everydrop refrigerator water filter 6 EDR6RXD1 product page -water-filters.html",
+      "results": [
+        {
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-6-edr6d1-pack-of-1.edr6d1.html",
+          "title": "everydrop Refrigerator Water Filter 6 EDR6D1",
+          "snippet": "Model EDR6D1. Filter 6 replaces WF-NL120V and WF-L200V.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "everydrop Refrigerator Water Filter 6 EDR6D1 Pack of 1. Model EDR6D1. NSF certified. everydrop Ice and Water Refrigerator Filter 6 replaces WF-NL120V and WF-L200V. Replace filter every 6 months or 200 gallons."
+        }
+      ]
+    },
+    {
+      "query": "site:everydrop.com EDR6RXD1 refrigerator water filter official",
+      "results": [
+        {
+          "url": "https://www.whirlpool.com/owners-center-pdp.EDR6RXD1.html",
+          "title": "EDR6RXD1 Owner Center (Whirlpool host)",
+          "snippet": "Model EDR6RXD1. Ice and Water Refrigerator Filter 6.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Model EDR6RXD1. Ice and Water Refrigerator Filter 6. Register product EDR6RXD1. Genuine everydrop filter 6 accessory."
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com MWFA refrigerator water filter official -icemaker-replacement-filters",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA",
+          "title": "GE REFRIGERATOR WATER FILTER MWFA",
+          "snippet": "Model MWFA. Genuine GE refrigerator water filter. Discontinued manufacture.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE REFRIGERATOR WATER FILTER Model MWFA. Model# MWFA. This model is no longer being manufactured. Genuine GE water filter cartridge."
+        }
+      ]
+    },
+    {
+      "query": "site:frigidaire.com EPTWFU01 OR FPPWFU01 refrigerator water filter accessory -WF3CB",
+      "results": []
+    }
+  ]
+}

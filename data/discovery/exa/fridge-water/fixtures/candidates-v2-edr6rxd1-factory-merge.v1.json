@@ -1,0 +1,57 @@
+{
+  "contract": "exa_fridge_water_discovery_v1",
+  "discovery_run_id": "fixture-v2-edr6rxd1",
+  "generated_at": "2026-05-21T20:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "candidates": [
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "fixture-v2-edr6rxd1",
+      "query": "site:everydrop.com EDR6RXD1 refrigerator water filter official",
+      "discovered_url": "https://www.whirlpool.com/owners-center-pdp.EDR6RXD1.html",
+      "discovered_title": "EDR6RXD1 Owner Center (Whirlpool host)",
+      "discovered_snippet": "Model EDR6RXD1. Ice and Water Refrigerator Filter 6.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Model EDR6RXD1. Ice and Water Refrigerator Filter 6. Register product EDR6RXD1. Genuine everydrop filter 6 accessory.",
+      "extracted_part_tokens": ["EDR6RXD1"],
+      "extracted_model_tokens": [],
+      "brand_guess": "whirlpool",
+      "candidate_slug": "edr6rxd1",
+      "candidate_oem_part_number": "EDR6RXD1",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token EDR6RXD1 appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "evidence_needed",
+      "recommended_block_reason": "exa_discovery_unverified",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": false
+    }
+  ]
+}

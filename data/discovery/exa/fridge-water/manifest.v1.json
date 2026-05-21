@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "wedge": "refrigerator_water",
-  "latest_run_id": "2026-05-21-first-run",
-  "latest_candidates_path": "data/discovery/exa/fridge-water/runs/2026-05-21-first-run/candidates.json",
+  "latest_run_id": "2026-05-21-v2-netnew",
+  "latest_candidates_path": "data/discovery/exa/fridge-water/runs/2026-05-21-v2-netnew/candidates.json",
   "demoted_slug_blocklist_source": "src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts:FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1"
 }

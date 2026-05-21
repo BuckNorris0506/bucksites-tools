@@ -1,14 +1,19 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
+import type { ExaFridgeWaterDiscoveryCandidatesFileV1 } from "@/lib/discovery/exa-fridge-water-discovery-v1";
 import {
   buildLargeBatchCoverageFactoryReportV1,
   classifyLargeBatchCandidateV1,
   LARGE_BATCH_COVERAGE_FACTORY_STATES_V1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
+import {
+  EXA_DISCOVERY_MANIFEST_REL_PATH_V1,
+  type LoadExaDiscoveryForFactoryResultV1,
+} from "@/lib/coverage/exa-discovery-factory-merge-v1";
 import {
   FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1,
   FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1,
@@ -18,6 +23,62 @@ import { loadBuckpartsFridgeFilterIndexFromRepo } from "@/lib/retailers/buckpart
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
 const REPO_ROOT = process.cwd();
+
+const V2_EDR6_CANDIDATES_FIXTURE_REL =
+  "data/discovery/exa/fridge-water/fixtures/candidates-v2-edr6rxd1-factory-merge.v1.json";
+
+function missingExaDiscoveryLoadResultV1(): LoadExaDiscoveryForFactoryResultV1 {
+  return {
+    manifest: null,
+    candidates: [],
+    source_summary: {
+      status: "MISSING",
+      path: null,
+      manifest_path: EXA_DISCOVERY_MANIFEST_REL_PATH_V1,
+      run_id: null,
+      row_count: 0,
+      merged_into_factory_count: 0,
+      evidence_needed_count: 0,
+      blocked_count: 0,
+      omitted_live_slug_count: 0,
+    },
+  };
+}
+
+function loadExaV2Edr6FixtureDiscoveryV1(rootDir: string): LoadExaDiscoveryForFactoryResultV1 {
+  const candidatesPath = path.join(rootDir, V2_EDR6_CANDIDATES_FIXTURE_REL);
+  const file = JSON.parse(readFileSync(candidatesPath, "utf8")) as ExaFridgeWaterDiscoveryCandidatesFileV1;
+  const candidates = file.candidates ?? [];
+  const merged = candidates.filter((c) => !c.omit_from_factory_merge && c.candidate_slug);
+  return {
+    manifest: {
+      contract: "exa_fridge_water_discovery_manifest_v1",
+      read_only: true,
+      data_mutation: false,
+      wedge: "refrigerator_water",
+      latest_run_id: "fixture-v2-edr6rxd1",
+      latest_candidates_path: V2_EDR6_CANDIDATES_FIXTURE_REL,
+      demoted_slug_blocklist_source:
+        "src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts:FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1",
+    },
+    candidates,
+    source_summary: {
+      status: "PROVEN",
+      path: V2_EDR6_CANDIDATES_FIXTURE_REL,
+      manifest_path: EXA_DISCOVERY_MANIFEST_REL_PATH_V1,
+      run_id: "fixture-v2-edr6rxd1",
+      row_count: candidates.length,
+      merged_into_factory_count: merged.length,
+      evidence_needed_count: merged.filter((c) => c.recommended_factory_state === "evidence_needed")
+        .length,
+      blocked_count: merged.filter((c) => c.recommended_factory_state === "blocked_do_not_publish")
+        .length,
+      omitted_live_slug_count: candidates.filter((c) =>
+        c.rejection_flags.includes("live_slug_exists"),
+      ).length,
+    },
+  };
+}
 
 function writeMinimalFixtureRoot(args: {
   filtersCsv: string;
@@ -318,9 +379,13 @@ test("failed first fridge expansion slugs are demoted not new_product_candidate"
   const report = buildLargeBatchCoverageFactoryReportV1({
     rootDir: REPO_ROOT,
     topCandidatesLimit: 500,
+    loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
   });
   assert.equal(report.candidate_count, 57);
   assert.equal(report.state_counts.new_product_candidate, 0);
+  assert.equal(report.state_counts.evidence_needed, 0);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.status, "MISSING");
+  assert.equal(report.source_summary.exa_fridge_water_discovery.merged_into_factory_count, 0);
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
 
@@ -397,4 +462,73 @@ test("rejected bulk sample rows are blocked or not buy-ready publishable", () =>
   });
   assert.equal(fpuresourceultra.factory_state, "blocked_do_not_publish");
   assert.equal(fpuresourceultra.block_reason, "excluded_frigidaire_routing_token");
+});
+
+test("Exa v2 fixture merge adds edr6rxd1 as evidence_needed without new_product_candidate", () => {
+  const exaLoad = loadExaV2Edr6FixtureDiscoveryV1(REPO_ROOT);
+  const discoveryRow = exaLoad.candidates.find((c) => c.candidate_slug === "edr6rxd1");
+  assert.ok(discoveryRow);
+  assert.equal(discoveryRow!.recommended_factory_state, "evidence_needed");
+  assert.equal(discoveryRow!.mutation_ready, false);
+  assert.equal(discoveryRow!.catalog_import_ready, false);
+  assert.equal(discoveryRow!.omit_from_factory_merge, false);
+
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 500,
+    loadExaDiscovery: () => exaLoad,
+  });
+
+  assert.equal(report.candidate_count, 58);
+  assert.equal(report.state_counts.new_product_candidate, 0);
+  assert.equal(report.state_counts.evidence_needed, 1);
+  assert.equal(report.source_summary.bulk_catalog.row_count, 57);
+  assert.equal(report.source_summary.live_filters_csv.row_count, 57);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.merged_into_factory_count, 1);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.evidence_needed_count, 1);
+
+  const factoryRow = report.top_candidates.find((c) => c.slug === "edr6rxd1");
+  assert.ok(factoryRow);
+  assert.equal(factoryRow!.factory_state, "evidence_needed");
+  assert.equal(factoryRow!.has_gated_buyable_link, false);
+  assert.equal(factoryRow!.is_live_catalog_row, false);
+  assert.equal(factoryRow!.is_bulk_catalog_row, false);
+  assert.notEqual(factoryRow!.factory_state, "new_product_candidate");
+});
+
+test("active repo v2 Exa manifest matches fixture merge expectations", () => {
+  const manifestPath = path.join(REPO_ROOT, EXA_DISCOVERY_MANIFEST_REL_PATH_V1);
+  const v2CandidatesPath = path.join(
+    REPO_ROOT,
+    "data/discovery/exa/fridge-water/runs/2026-05-21-v2-netnew/candidates.json",
+  );
+  if (!existsSync(manifestPath) || !existsSync(v2CandidatesPath)) {
+    return;
+  }
+
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 500,
+  });
+
+  assert.equal(report.candidate_count, 58);
+  assert.equal(report.state_counts.new_product_candidate, 0);
+  assert.equal(report.state_counts.evidence_needed, 1);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.run_id, "2026-05-21-v2-netnew");
+  assert.equal(report.source_summary.exa_fridge_water_discovery.row_count, 11);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.merged_into_factory_count, 1);
+  assert.equal(report.source_summary.exa_fridge_water_discovery.evidence_needed_count, 1);
+
+  const edr6 = report.top_candidates.find((c) => c.slug === "edr6rxd1");
+  assert.ok(edr6);
+  assert.equal(edr6!.factory_state, "evidence_needed");
+  assert.equal(edr6!.has_gated_buyable_link, false);
+
+  const discoveryFile = JSON.parse(
+    readFileSync(v2CandidatesPath, "utf8"),
+  ) as ExaFridgeWaterDiscoveryCandidatesFileV1;
+  const discoveryRow = discoveryFile.candidates.find((c) => c.candidate_slug === "edr6rxd1");
+  assert.ok(discoveryRow);
+  assert.equal(discoveryRow!.mutation_ready, false);
+  assert.equal(discoveryRow!.catalog_import_ready, false);
 });
