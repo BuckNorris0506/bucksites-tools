@@ -1,0 +1,701 @@
+{
+  "contract": "exa_fridge_water_discovery_v1",
+  "discovery_run_id": "2026-05-21-first-run",
+  "generated_at": "2026-05-21T17:38:38.166Z",
+  "read_only": true,
+  "data_mutation": false,
+  "candidates": [
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:whirlpool.com official EveryDrop refrigerator water filter OEM part number compatibility chart",
+      "discovered_url": "https://www.whirlpool.com/kitchen/refrigeration/water-filters.html",
+      "discovered_title": "Whirlpool® Approved Refrigerator Water Filters",
+      "discovered_snippet": "Shop Whirlpool® approved water filters. Lists EDR1RXD1, EDR2RXD1, EDR3RXD1, EDR4RXD1, EDR5RXD1, EDR6RXD1 and WHR filter markings. NSF certified; replace every 6 months.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Refrigerator Water Filters Shop Whirlpool® approved water filters. Browse these approved water filters: Filter 2 — WHR2RXD1 / EDR2RXD1 Refrigerator Water Filter 2 by everydrop®. Filter 5 — EDR5RXD1 Refrigerator Water Filter 5 by everydrop®. Replacing your filter is quick and easy. First, look for the number printed on your filter or find the water filter recommended for your Whirlpool® refrigerator based on its model number.",
+      "extracted_part_tokens": [
+        "EDR1RXD1",
+        "EDR2RXD1",
+        "EDR3RXD1",
+        "EDR4RXD1",
+        "EDR5RXD1",
+        "EDR6RXD1"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "whirlpool",
+      "candidate_slug": "edr1rxd1",
+      "candidate_oem_part_number": "EDR1RXD1",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token EDR1RXD1 appears in search snippet/title only",
+          "status": "INFERRED"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "seo_title_only",
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "seo_title_only",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:whirlpool.com official EveryDrop refrigerator water filter OEM part number compatibility chart",
+      "discovered_url": "https://producthelp.whirlpool.com/Refrigeration/Water_Filter_Information/Product_Assistance/How_to_Avoid_Purchasing_Counterfeit_Filters",
+      "discovered_title": "How to Avoid Purchasing Counterfeit Filters - Product Help | Whirlpool",
+      "discovered_snippet": "Choosing genuine everydrop® filters. Purchase filters directly from Whirlpool, everydrop®, or authorized retailers.",
+      "fetch_status": "not_fetched",
+      "fetch_excerpt": null,
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "whirlpool",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token",
+        "snippet_only_no_fetch"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_fetch_excerpt",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:lg.com refrigerator water filter official compatible refrigerator models LT700P LT800P LT1000P",
+      "discovered_url": "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter",
+      "discovered_title": "LG LT1000P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+      "discovered_snippet": "Model LT1000P (Part No. ADQ74793501). NSF-certified LG filters. Genuine LG Filter. Find compatible products for your accessory.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "LG LT1000P - Replacement Refrigerator Water Filter. Model LT1000P (Part No. ADQ74793501 / AGF80300704 / AGF80300705 / ADQ74793507 / AGF80300703). NSF-certified LG filters that reduce contaminants. Guaranteed fit and performance with a Genuine LG Filter.",
+      "extracted_part_tokens": [
+        "LT1000P",
+        "ADQ74793501",
+        "ADQ74793507"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "lg",
+      "candidate_slug": "lt1000p",
+      "candidate_oem_part_number": "LT1000P",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token LT1000P appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:lg.com refrigerator water filter official compatible refrigerator models LT700P LT800P LT1000P",
+      "discovered_url": "https://www.lg.com/us/appliances-accessories/lg-lt800p-refrigerator-water-filter",
+      "discovered_title": "LG LT800P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+      "discovered_snippet": "Model LT800P (Part No. ADQ73613408 / ADQ73613401). Replacement Part # ADQ73613401. NSF42 and NSF53.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "LG LT800P - Replacement Refrigerator Water Filter. Model LT800P (Part No. ADQ73613408 / ADQ73613401). Replacement Part # ADQ73613401. Provide cleaner, fresher and better tasting water and ice. NSF-certified LG filters.",
+      "extracted_part_tokens": [
+        "LT800P",
+        "ADQ73613408",
+        "ADQ73613401"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "lg",
+      "candidate_slug": "lt800p",
+      "candidate_oem_part_number": "LT800P",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token LT800P appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:lg.com refrigerator water filter official compatible refrigerator models LT700P LT800P LT1000P",
+      "discovered_url": "https://www.lg.com/us/appliances-accessories/lg-lt700p-refrigerator-water-filter",
+      "discovered_title": "LG LT700P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+      "discovered_snippet": "Model LT700P (Part No. ADQ36006101). Replacement Part # ADQ36006101.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "LG LT700P - Replacement Refrigerator Water Filter. Model LT700P (Part No. ADQ36006101 / AGF80300702 / ADQ36006113 / ADQ36006111 / AGF80300701). Replacement Part # ADQ36006101. NSF-certified LG filters.",
+      "extracted_part_tokens": [
+        "LT700P",
+        "ADQ36006101",
+        "ADQ36006113",
+        "ADQ36006111"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "lg",
+      "candidate_slug": "lt700p",
+      "candidate_oem_part_number": "LT700P",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token LT700P appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:lg.com refrigerator water filter official compatible refrigerator models LT700P LT800P LT1000P",
+      "discovered_url": "https://www.lg.com/us/support/parts-locator",
+      "discovered_title": "Water & Air Filter Finder | LG USA Support",
+      "discovered_snippet": "Search by Refrigerator Model. Popular: LT1000P, LT800P, LT700P, LT120F air filter.",
+      "fetch_status": "not_fetched",
+      "fetch_excerpt": null,
+      "extracted_part_tokens": [
+        "LT1000P",
+        "LT800P",
+        "LT700P",
+        "LT120F"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "lg",
+      "candidate_slug": "lt1000p",
+      "candidate_oem_part_number": "LT1000P",
+      "wedge_guess": "refrigerator_air",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token LT1000P appears in search snippet/title only",
+          "status": "INFERRED"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "wrong_wedge_air_filter",
+        "snippet_only_no_fetch",
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_fetch_excerpt",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "wrong_wedge_air_filter",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:samsung.com DA29 refrigerator water filter official compatible models support page",
+      "discovered_url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/",
+      "discovered_title": "Refrigerator Water Filters & Replacements | Samsung US",
+      "discovered_snippet": "HAF-CIN, HAF-QIN, HAF-CUIN filter families. NSF 42, 53, and 401 certified. See which filter is right for your Samsung fridge.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Shop water filters. HAF-CIN filter compatible with select French Door and Side-by-Side refrigerator models. HAF-QIN filter compatible with select French Door refrigerator models. See which filter is right for your Samsung fridge. Our water filters are NSF certified.",
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "samsung",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:samsung.com DA29 refrigerator water filter official compatible models support page",
+      "discovered_url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+      "discovered_title": "Water Filter Finder | Samsung US",
+      "discovered_snippet": "Find your water filter for Samsung refrigerator.",
+      "fetch_status": "not_fetched",
+      "fetch_excerpt": null,
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "samsung",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token",
+        "snippet_only_no_fetch"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_fetch_excerpt",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:geappliances.com OR site:geapplianceparts.com MWF RPWFE XWFE refrigerator water filter official part page",
+      "discovered_url": "https://www.geappliances.com/appliance/GE-RPWFE-REFRIGERATOR-WATER-FILTER-RPWFE",
+      "discovered_title": "GE® RPWFE™ REFRIGERATOR WATER FILTER",
+      "discovered_snippet": "Model #: RPWFE. Genuine GE water filter. RFID-enabled RPWFE filter for compatible GE refrigerators.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "GE® RPWFE™ REFRIGERATOR WATER FILTER Model #: RPWFE. Will this filter fit my refrigerator? Our water filter finder will guide you to the right filter for your refrigerator.",
+      "extracted_part_tokens": [
+        "RPWFE"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "rpwfe",
+      "candidate_oem_part_number": "RPWFE",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token RPWFE appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:geappliances.com OR site:geapplianceparts.com MWF RPWFE XWFE refrigerator water filter official part page",
+      "discovered_url": "https://www.geappliances.com/ge/parts/refrigerator-mwf-replacement-water-filter.htm",
+      "discovered_title": "Official GE® MWF Refrigerator Water Filters",
+      "discovered_snippet": "MWFA and MWFP pharmaceutical water filters. Reduces chlorine, lead, mercury, pharmaceuticals per performance data sheet.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Official GE® MWF Refrigerator Water Filters. GE MWFA Water Filters. GE MWFP Pharmaceutical Water Filters. Reduces Lead, Mercury. Shop MWFA Shop MWFP.",
+      "extracted_part_tokens": [
+        "MWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "mwf",
+      "candidate_oem_part_number": "MWF",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token MWF appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:geappliances.com OR site:geapplianceparts.com MWF RPWFE XWFE refrigerator water filter official part page",
+      "discovered_url": "https://www.geappliances.com/ge/parts/refrigerator-icemaker-replacement-filters.htm",
+      "discovered_title": "GE Appliances Replacement Refrigerator Water Filters",
+      "discovered_snippet": "XWFE, RPWFE, MWF, MSWF, GSWF filter families. Genuine GE Appliances refrigerator water filters NSF certified.",
+      "fetch_status": "not_fetched",
+      "fetch_excerpt": null,
+      "extracted_part_tokens": [
+        "XWFE",
+        "RPWFE",
+        "MWF",
+        "MSWF",
+        "GSWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "xwfe",
+      "candidate_oem_part_number": "XWFE",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token XWFE appears in search snippet/title only",
+          "status": "INFERRED"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "snippet_only_no_fetch",
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_fetch_excerpt",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "snippet_only_no_fetch",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:frigidaire.com PureSource refrigerator water filter WF3CB ULTRAWF official accessory page",
+      "discovered_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "discovered_title": "PureSource® 3 Water and Ice Refrigerator Filter",
+      "discovered_snippet": "WF3CB. Genuine Replacement Part. Alternate Part Number 242069601. NSF 42, 53 and 401 certified. Rated Capacity 200 Gallons.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "PureSource® 3 Water and Ice Refrigerator Filter WF3CB. Genuine Replacement Part. Alternate Part Number 242069601; 242069603; 242086203; 242294501. NSF 42, 53 and 401 Certified. Rated Capacity 200 Gallons. Recommended Change Frequency 3 - 6 Months.",
+      "extracted_part_tokens": [
+        "WF3CB"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "frigidaire",
+      "candidate_slug": "wf3cb",
+      "candidate_oem_part_number": "WF3CB",
+      "wedge_guess": "unknown",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token WF3CB appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-first-run",
+      "query": "site:frigidaire.com PureSource refrigerator water filter WF3CB ULTRAWF official accessory page",
+      "discovered_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "discovered_title": "PureSource Ultra® Water and Ice Refrigerator Filter",
+      "discovered_snippet": "ULTRAWF PureSource Ultra refrigerator water filter accessory.",
+      "fetch_status": "not_fetched",
+      "fetch_excerpt": null,
+      "extracted_part_tokens": [
+        "ULTRAWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "frigidaire",
+      "candidate_slug": "ultrawf",
+      "candidate_oem_part_number": "ULTRAWF",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token ULTRAWF appears in search snippet/title only",
+          "status": "INFERRED"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "snippet_only_no_fetch",
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_fetch_excerpt",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "snippet_only_no_fetch",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    }
+  ]
+}

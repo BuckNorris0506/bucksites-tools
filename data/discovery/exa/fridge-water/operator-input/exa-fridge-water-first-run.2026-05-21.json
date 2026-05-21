@@ -1,0 +1,119 @@
+{
+  "contract": "exa_mcp_export_fridge_water_v1",
+  "discovery_run_id": "2026-05-21-first-run",
+  "generated_at": "2026-05-21T18:00:00.000Z",
+  "operator_note": "First real Exa MCP pass via Cursor. Search + web_fetch_exa on manufacturer PDPs only. Not compatibility proof.",
+  "queries": [
+    {
+      "query": "site:whirlpool.com official EveryDrop refrigerator water filter OEM part number compatibility chart",
+      "results": [
+        {
+          "url": "https://www.whirlpool.com/kitchen/refrigeration/water-filters.html",
+          "title": "Whirlpool® Approved Refrigerator Water Filters",
+          "snippet": "Shop Whirlpool® approved water filters. Lists EDR1RXD1, EDR2RXD1, EDR3RXD1, EDR4RXD1, EDR5RXD1, EDR6RXD1 and WHR filter markings. NSF certified; replace every 6 months.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Refrigerator Water Filters Shop Whirlpool® approved water filters. Browse these approved water filters: Filter 2 — WHR2RXD1 / EDR2RXD1 Refrigerator Water Filter 2 by everydrop®. Filter 5 — EDR5RXD1 Refrigerator Water Filter 5 by everydrop®. Replacing your filter is quick and easy. First, look for the number printed on your filter or find the water filter recommended for your Whirlpool® refrigerator based on its model number."
+        },
+        {
+          "url": "https://producthelp.whirlpool.com/Refrigeration/Water_Filter_Information/Product_Assistance/How_to_Avoid_Purchasing_Counterfeit_Filters",
+          "title": "How to Avoid Purchasing Counterfeit Filters - Product Help | Whirlpool",
+          "snippet": "Choosing genuine everydrop® filters. Purchase filters directly from Whirlpool, everydrop®, or authorized retailers.",
+          "fetch_status": "not_fetched"
+        }
+      ]
+    },
+    {
+      "query": "site:lg.com refrigerator water filter official compatible refrigerator models LT700P LT800P LT1000P",
+      "results": [
+        {
+          "url": "https://www.lg.com/us/appliances-accessories/lg-lt1000p-refrigerator-water-filter",
+          "title": "LG LT1000P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+          "snippet": "Model LT1000P (Part No. ADQ74793501). NSF-certified LG filters. Genuine LG Filter. Find compatible products for your accessory.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "LG LT1000P - Replacement Refrigerator Water Filter. Model LT1000P (Part No. ADQ74793501 / AGF80300704 / AGF80300705 / ADQ74793507 / AGF80300703). NSF-certified LG filters that reduce contaminants. Guaranteed fit and performance with a Genuine LG Filter."
+        },
+        {
+          "url": "https://www.lg.com/us/appliances-accessories/lg-lt800p-refrigerator-water-filter",
+          "title": "LG LT800P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+          "snippet": "Model LT800P (Part No. ADQ73613408 / ADQ73613401). Replacement Part # ADQ73613401. NSF42 and NSF53.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "LG LT800P - Replacement Refrigerator Water Filter. Model LT800P (Part No. ADQ73613408 / ADQ73613401). Replacement Part # ADQ73613401. Provide cleaner, fresher and better tasting water and ice. NSF-certified LG filters."
+        },
+        {
+          "url": "https://www.lg.com/us/appliances-accessories/lg-lt700p-refrigerator-water-filter",
+          "title": "LG LT700P - 6 Month / 200 Gallon Capacity Replacement Refrigerator Water Filter",
+          "snippet": "Model LT700P (Part No. ADQ36006101). Replacement Part # ADQ36006101.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "LG LT700P - Replacement Refrigerator Water Filter. Model LT700P (Part No. ADQ36006101 / AGF80300702 / ADQ36006113 / ADQ36006111 / AGF80300701). Replacement Part # ADQ36006101. NSF-certified LG filters."
+        },
+        {
+          "url": "https://www.lg.com/us/support/parts-locator",
+          "title": "Water & Air Filter Finder | LG USA Support",
+          "snippet": "Search by Refrigerator Model. Popular: LT1000P, LT800P, LT700P, LT120F air filter.",
+          "fetch_status": "not_fetched"
+        }
+      ]
+    },
+    {
+      "query": "site:samsung.com DA29 refrigerator water filter official compatible models support page",
+      "results": [
+        {
+          "url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/",
+          "title": "Refrigerator Water Filters & Replacements | Samsung US",
+          "snippet": "HAF-CIN, HAF-QIN, HAF-CUIN filter families. NSF 42, 53, and 401 certified. See which filter is right for your Samsung fridge.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Shop water filters. HAF-CIN filter compatible with select French Door and Side-by-Side refrigerator models. HAF-QIN filter compatible with select French Door refrigerator models. See which filter is right for your Samsung fridge. Our water filters are NSF certified."
+        },
+        {
+          "url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+          "title": "Water Filter Finder | Samsung US",
+          "snippet": "Find your water filter for Samsung refrigerator.",
+          "fetch_status": "not_fetched"
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com OR site:geapplianceparts.com MWF RPWFE XWFE refrigerator water filter official part page",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-RPWFE-REFRIGERATOR-WATER-FILTER-RPWFE",
+          "title": "GE® RPWFE™ REFRIGERATOR WATER FILTER",
+          "snippet": "Model #: RPWFE. Genuine GE water filter. RFID-enabled RPWFE filter for compatible GE refrigerators.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE® RPWFE™ REFRIGERATOR WATER FILTER Model #: RPWFE. Will this filter fit my refrigerator? Our water filter finder will guide you to the right filter for your refrigerator."
+        },
+        {
+          "url": "https://www.geappliances.com/ge/parts/refrigerator-mwf-replacement-water-filter.htm",
+          "title": "Official GE® MWF Refrigerator Water Filters",
+          "snippet": "MWFA and MWFP pharmaceutical water filters. Reduces chlorine, lead, mercury, pharmaceuticals per performance data sheet.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Official GE® MWF Refrigerator Water Filters. GE MWFA Water Filters. GE MWFP Pharmaceutical Water Filters. Reduces Lead, Mercury. Shop MWFA Shop MWFP."
+        },
+        {
+          "url": "https://www.geappliances.com/ge/parts/refrigerator-icemaker-replacement-filters.htm",
+          "title": "GE Appliances Replacement Refrigerator Water Filters",
+          "snippet": "XWFE, RPWFE, MWF, MSWF, GSWF filter families. Genuine GE Appliances refrigerator water filters NSF certified.",
+          "fetch_status": "not_fetched"
+        }
+      ]
+    },
+    {
+      "query": "site:frigidaire.com PureSource refrigerator water filter WF3CB ULTRAWF official accessory page",
+      "results": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "title": "PureSource® 3 Water and Ice Refrigerator Filter",
+          "snippet": "WF3CB. Genuine Replacement Part. Alternate Part Number 242069601. NSF 42, 53 and 401 certified. Rated Capacity 200 Gallons.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "PureSource® 3 Water and Ice Refrigerator Filter WF3CB. Genuine Replacement Part. Alternate Part Number 242069601; 242069603; 242086203; 242294501. NSF 42, 53 and 401 Certified. Rated Capacity 200 Gallons. Recommended Change Frequency 3 - 6 Months."
+        },
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "title": "PureSource Ultra® Water and Ice Refrigerator Filter",
+          "snippet": "ULTRAWF PureSource Ultra refrigerator water filter accessory.",
+          "fetch_status": "fetched_failed"
+        }
+      ]
+    }
+  ]
+}
