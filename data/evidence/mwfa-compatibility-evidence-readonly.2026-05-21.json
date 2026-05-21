@@ -1,0 +1,161 @@
+{
+  "report_name": "buckparts_mwfa_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "mwfa",
+  "oem_part_number": "MWFA",
+  "brand_slug": "ge",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "MANUFACTURER_IDENTITY_ONLY_DISCONTINUED_NO_COMPAT_LIST",
+  "catalog_import_ready": false,
+  "recommended_state": "evidence_needed",
+  "recommended_outcome": "block_for_now",
+  "factory_merge_state_at_triage": "evidence_needed",
+  "no_catalog_csv_changes_attestation": "This triage did not modify data/filters.csv, data/filter_aliases.csv, data/compatibility_mappings.csv, data/fridge_models.csv, or data/retailer_links.csv.",
+  "repo_checks": {
+    "filters_csv_live_slug_mwfa": false,
+    "filters_csv_live_ge_water_slugs": ["mwf", "gswf", "smartwater-mwfp", "rpwfe", "xwfe", "pfmwf", "gswf2"],
+    "filter_aliases_mwfa": false,
+    "filter_aliases_mwf_maps_to_slug_mwf": true,
+    "filter_aliases_mwfp_maps_to_slug_smartwater_mwfp": true,
+    "compatibility_mappings_row_count_mwfa": 0,
+    "compatibility_mappings_row_count_mwf": 5,
+    "compatibility_mappings_row_count_smartwater_mwfp": 15,
+    "compatibility_mappings_row_count_gswf": 17,
+    "compatibility_mappings_row_count_rpwfe": 19,
+    "retailer_links_rows_mwfa": 0,
+    "fridge_models_token_mwfa": 0,
+    "demoted_registry_match": false,
+    "exa_combined_review_row": true
+  },
+  "manufacturer_sources_checked": [
+    {
+      "url": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA",
+      "host": "geappliances.com",
+      "source_tier": "manufacturer_official",
+      "fetch_method": "curl_static_html_2026-05-21"
+    },
+    {
+      "url": "data/discovery/exa/fridge-water/runs/2026-05-21-combined-review/candidates.json",
+      "host": "repo_exa_combined_review",
+      "source_tier": "repo_exa_discovery",
+      "fetch_method": "committed_artifact"
+    },
+    {
+      "url": "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v2-netnew.2026-05-21.json",
+      "host": "repo_exa_operator_input",
+      "source_tier": "repo_exa_discovery",
+      "fetch_method": "committed_v2_hub_excerpt"
+    }
+  ],
+  "proof_claims": [
+    {
+      "claim": "GE Appliances official PDP titles SKU Model# MWFA as GE REFRIGERATOR WATER FILTER.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA"
+    },
+    {
+      "claim": "Official PDP states this model is no longer being manufactured.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA"
+    },
+    {
+      "claim": "Official PDP lists dimensions 5 1/4 H x 3 3/8 W x 3 3/8 D.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA"
+    },
+    {
+      "claim": "Official PDP uses interactive water filter finder for fit; no static compatible refrigerator model list in captured HTML.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA"
+    },
+    {
+      "claim": "BCData on official PDP shows sku MWFA, upc 084691813361, purchasable false.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA"
+    },
+    {
+      "claim": "BuckParts has live slug mwf (OEM MWF) and smartwater-mwfp (OEM MWFP); no live slug mwfa.",
+      "status": "PROVEN",
+      "source": "data/filters.csv"
+    },
+    {
+      "claim": "filter_aliases.csv maps MWF to mwf and MWFP to smartwater-mwfp; MWFA is absent.",
+      "status": "PROVEN",
+      "source": "data/filter_aliases.csv"
+    },
+    {
+      "claim": "Exa v2 hub excerpt groups MWFA with MWF/MWFP SmartWater filter families and states MWF filter has been replaced by MWFP on select models.",
+      "status": "PROVEN",
+      "source": "data/discovery/exa/fridge-water/operator-input/exa-fridge-water-v2-netnew.2026-05-21.json"
+    }
+  ],
+  "evidence_gaps": [
+    "Manufacturer-published static list of at least three compatible refrigerator model numbers for MWFA.",
+    "Official cross-reference table proving MWFA is interchangeable with live slug mwf or smartwater-mwfp.",
+    "Replacement interval and gallon capacity on MWFA PDP static HTML (not captured).",
+    "Committed compatibility_mappings.csv rows for slug mwfa.",
+    "Gated buyable retailer link evidence for MWFA."
+  ],
+  "proven_model_numbers": [],
+  "proven_model_numbers_in_fridge_models_csv": [],
+  "alias_replacement_risk": {
+    "live_slug_mwf": {
+      "risk": "INFERRED_FAMILY_ADJACENCY_NOT_ALIAS",
+      "detail": "MWFA shares MWF-family naming in Exa v2 hub copy; filter_aliases.csv does not list MWFA. Do not treat mwfa as alias of mwf without manufacturer interchange proof."
+    },
+    "live_slug_smartwater_mwfp": {
+      "risk": "INFERRED_SUCCESSOR_FAMILY_NOT_MWFA",
+      "detail": "Official Exa-sourced hub copy states MWF replaced by MWFP on select models; does not name MWFA as the MWFP replacement token."
+    },
+    "live_slug_gswf": {
+      "risk": "PROVEN_DISTINCT_HOUSING",
+      "detail": "GSWF is a separate live cylindrical SmartWater slug; no repo alias ties GSWF to MWFA."
+    },
+    "live_slug_rpwfe_xwfe": {
+      "risk": "PROVEN_DISTINCT_PRODUCT_LINE",
+      "detail": "RPWFE and XWFE are separate live RFID French-door filter slugs; no MWFA token in their alias rows."
+    }
+  },
+  "rejected_sources": [
+    {
+      "url": "third_party_retailers",
+      "reason": "Scope requires official GE/GE Appliances pages for catalog-import proof; retailer PDPs may be used only as secondary leads."
+    }
+  ],
+  "collision_checks": [
+    {
+      "check": "live_slug_exists",
+      "result": "PROVEN_PASS",
+      "detail": "mwfa is not a live filters.csv slug."
+    },
+    {
+      "check": "alias_collision_hold",
+      "result": "PROVEN_PASS",
+      "detail": "MWFA does not appear in filter_aliases.csv."
+    },
+    {
+      "check": "wrong_wedge",
+      "result": "PROVEN_PASS",
+      "detail": "Official PDP and Exa wedge_guess are refrigerator_water."
+    },
+    {
+      "check": "compatibility_mappings_inheritance",
+      "result": "PROVEN_BLOCK",
+      "detail": "Cannot copy mwf or smartwater-mwfp compat rows to mwfa — 0 rows for mwfa; family adjacency is not interchange proof."
+    }
+  ],
+  "unknowns": [
+    "Whether MWFA cartridges are interchangeable with MWF or MWFP housings for specific model years.",
+    "Whether mwfa should alias to mwf, smartwater-mwfp, or remain a standalone slug if ever imported."
+  ],
+  "missing_proof_for_import": [
+    "Three or more manufacturer-named refrigerator models with explicit MWFA assignment.",
+    "fridge_models.csv crosswalk for any proven models.",
+    "Owner policy for discontinued GE DTC SKUs with purchasable false."
+  ],
+  "recommended_next_action": "Keep factory Exa row at evidence_needed. Do not seed:import mwfa. Do not add filter_aliases.csv row without manufacturer interchange table. Optional follow-up: run GE water filter finder export for MWFA or capture NSF listing if linked from PDP."
+}

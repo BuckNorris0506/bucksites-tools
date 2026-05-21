@@ -1,0 +1,149 @@
+{
+  "report_name": "buckparts_gwf06_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "gwf06",
+  "oem_part_number": "GWF06",
+  "brand_slug": "ge",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "MANUFACTURER_IDENTITY_ONLY_DISCONTINUED_NO_COMPAT_LIST",
+  "catalog_import_ready": false,
+  "recommended_state": "evidence_needed",
+  "recommended_outcome": "block_for_now",
+  "factory_merge_state_at_triage": "evidence_needed",
+  "no_catalog_csv_changes_attestation": "This triage did not modify data/filters.csv, data/filter_aliases.csv, data/compatibility_mappings.csv, data/fridge_models.csv, or data/retailer_links.csv.",
+  "repo_checks": {
+    "filters_csv_live_slug_gwf06": false,
+    "filters_csv_live_ge_water_slugs": ["mwf", "gswf", "smartwater-mwfp", "rpwfe", "xwfe", "pfmwf", "gswf2"],
+    "filter_aliases_gwf06": false,
+    "filter_aliases_gswf_maps_to_slug_gswf": true,
+    "compatibility_mappings_row_count_gwf06": 0,
+    "compatibility_mappings_row_count_gswf": 17,
+    "compatibility_mappings_row_count_mwf": 5,
+    "retailer_links_rows_gwf06": 0,
+    "fridge_models_token_gwf06": 0,
+    "demoted_registry_match": false,
+    "exa_combined_review_row": true
+  },
+  "manufacturer_sources_checked": [
+    {
+      "url": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06",
+      "host": "geappliances.com",
+      "source_tier": "manufacturer_official",
+      "fetch_method": "curl_static_html_2026-05-21"
+    },
+    {
+      "url": "data/discovery/exa/fridge-water/runs/2026-05-21-combined-review/candidates.json",
+      "host": "repo_exa_combined_review",
+      "source_tier": "repo_exa_discovery",
+      "fetch_method": "committed_artifact"
+    },
+    {
+      "url": "data/discovery/exa/fridge-water/runs/2026-05-21-v3-netnew-refresh/candidates.json",
+      "host": "repo_exa_v3_refresh",
+      "source_tier": "repo_exa_discovery",
+      "fetch_method": "committed_artifact"
+    }
+  ],
+  "proof_claims": [
+    {
+      "claim": "GE Appliances official PDP titles SKU Model# GWF06 as FILTER CYST refrigerator water filter cartridge.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06"
+    },
+    {
+      "claim": "Official PDP states this model is no longer being manufactured.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06"
+    },
+    {
+      "claim": "Official PDP uses interactive water filter finder for fit; no static compatible refrigerator model list in captured HTML.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06"
+    },
+    {
+      "claim": "BCData on official PDP shows sku GWF06, price $0.00 formatted, purchasable false.",
+      "status": "PROVEN",
+      "source": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06"
+    },
+    {
+      "claim": "BuckParts has live slug gswf (OEM GSWF) but no live slug gwf06.",
+      "status": "PROVEN",
+      "source": "data/filters.csv"
+    },
+    {
+      "claim": "filter_aliases.csv maps GSWF and GSWF2 to gswf; GWF06 is absent.",
+      "status": "PROVEN",
+      "source": "data/filter_aliases.csv"
+    },
+    {
+      "claim": "compatibility_mappings.csv has 0 rows with filter_slug gwf06.",
+      "status": "PROVEN",
+      "source": "data/compatibility_mappings.csv"
+    }
+  ],
+  "evidence_gaps": [
+    "Manufacturer-published static list of at least three compatible refrigerator model numbers for GWF06.",
+    "Official cross-reference proving GWF06 replaces or is replaced by live slug gswf (GSWF token differs).",
+    "Replacement interval, capacity, and NSF claims on GWF06 PDP static HTML (not captured).",
+    "Committed compatibility_mappings.csv rows for slug gwf06.",
+    "Gated buyable retailer link evidence for GWF06."
+  ],
+  "proven_model_numbers": [],
+  "proven_model_numbers_in_fridge_models_csv": [],
+  "alias_replacement_risk": {
+    "live_slug_gswf": {
+      "risk": "PROVEN_DISTINCT_TOKEN",
+      "detail": "Live catalog uses GSWF OEM token and gswf slug; GWF06 is a separate GE Model# on FILTER CYST PDP. No filter_aliases.csv bridge."
+    },
+    "live_slug_gswf2": {
+      "risk": "PROVEN_DISTINCT_TOKEN",
+      "detail": "GSWF2 is a separate live slug; no GWF06 alias row."
+    },
+    "live_slug_mwf": {
+      "risk": "PROVEN_DISTINCT_PRODUCT_LINE",
+      "detail": "MWF is MWF-family inline filter; GWF06 is FILTER CYST naming — no manufacturer interchange proof captured."
+    }
+  },
+  "rejected_sources": [
+    {
+      "url": "third_party_retailers",
+      "reason": "Scope requires official GE/GE Appliances pages for catalog-import proof; retailer PDPs may be used only as secondary leads."
+    }
+  ],
+  "collision_checks": [
+    {
+      "check": "live_slug_exists",
+      "result": "PROVEN_PASS",
+      "detail": "gwf06 is not a live filters.csv slug."
+    },
+    {
+      "check": "alias_collision_hold",
+      "result": "PROVEN_PASS",
+      "detail": "GWF06 does not appear in filter_aliases.csv."
+    },
+    {
+      "check": "wrong_wedge",
+      "result": "PROVEN_PASS",
+      "detail": "Official PDP and Exa wedge_guess are refrigerator_water."
+    },
+    {
+      "check": "compatibility_mappings_inheritance",
+      "result": "PROVEN_BLOCK",
+      "detail": "Cannot copy gswf compat rows to gwf06 — 0 rows for gwf06; GSWF vs GWF06 token mismatch."
+    }
+  ],
+  "unknowns": [
+    "Whether GWF06 cyst cartridge shares housing with any live BuckParts GE slug.",
+    "Which refrigerator models required FILTER CYST GWF06 per GE parts database."
+  ],
+  "missing_proof_for_import": [
+    "Three or more manufacturer-named refrigerator models with explicit GWF06 assignment.",
+    "fridge_models.csv crosswalk for any proven models.",
+    "Owner policy for discontinued GE SKUs with $0 DTC price and purchasable false."
+  ],
+  "recommended_next_action": "Keep factory Exa row at evidence_needed. Do not seed:import gwf06. Do not alias to gswf without manufacturer crosswalk. Optional follow-up: GE water filter finder export for GWF06 or products.geappliances.com parts lookup tied to fridge model numbers."
+}
