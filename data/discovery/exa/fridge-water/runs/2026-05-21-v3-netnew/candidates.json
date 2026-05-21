@@ -1,0 +1,459 @@
+{
+  "contract": "exa_fridge_water_discovery_v1",
+  "discovery_run_id": "2026-05-21-v3-netnew",
+  "generated_at": "2026-05-21T18:14:17.726Z",
+  "read_only": true,
+  "data_mutation": false,
+  "candidates": [
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com \"MWFA\" \"refrigerator water filter\" \"official\"",
+      "discovered_url": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA",
+      "discovered_title": "GE REFRIGERATOR WATER FILTER MWFA",
+      "discovered_snippet": "Model MWFA. Genuine GE refrigerator water filter. Discontinued manufacture.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "GE REFRIGERATOR WATER FILTER Model MWFA. Model# MWFA. This model is no longer being manufactured. Genuine GE water filter cartridge. Refrigerator water filter.",
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com \"GSWF\" \"refrigerator water filter\" \"official\"",
+      "discovered_url": "https://www.geappliances.com/appliance/GE-GSWF-REFRIGERATOR-WATER-FILTER-GSWF",
+      "discovered_title": "GE GSWF REFRIGERATOR WATER FILTER",
+      "discovered_snippet": "Model GSWF. Cylindrical SmartWater filter for top/bottom freezer models.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "GE GSWF REFRIGERATOR WATER FILTER Model GSWF. Model# GSWF. Genuine GE refrigerator water filter cartridge. Dimensions 8.375 H x 2 W x 2 D.",
+      "extracted_part_tokens": [
+        "GSWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "gswf",
+      "candidate_oem_part_number": "GSWF",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token GSWF appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": true,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com \"PFCS1NFZSS\" \"water filter\" refrigerator",
+      "discovered_url": "https://www.geappliances.com/appliance/GE-Profile-ENERGY-STAR-20-7-Cu-Ft-Counter-Depth-French-Door-Refrigerator-with-Icemaker-PFCS1NFZSS",
+      "discovered_title": "GE Profile PFCS1NFZSS French Door Refrigerator",
+      "discovered_snippet": "Model PFCS1NFZSS. Water filter finder on PDP; no static filter part number in page fetch.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "GE Profile ENERGY STAR 20.7 Cu. Ft. Counter-Depth French-Door Refrigerator with Icemaker Model PFCS1NFZSS. Will this filter fit my refrigerator? Water filter finder guides to right filter. No explicit RPWFE XWFE MWF token in static HTML excerpt.",
+      "extracted_part_tokens": [
+        "RPWFE",
+        "XWFE",
+        "MWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "rpwfe",
+      "candidate_oem_part_number": "RPWFE",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token RPWFE appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com \"PFCS1NFZSS\" \"water filter\" refrigerator",
+      "discovered_url": "https://products.geappliances.com/appliance/gea-specs/PFCS1PJZSS/parts",
+      "discovered_title": "PFCS1PJZSS Parts & Accessories",
+      "discovered_snippet": "Popular accessory lists GE MWF REFRIGERATOR WATER FILTER MWFP for Profile French door family.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Owner Center Model PFCS1PJZSS GE Profile French-Door Refrigerator. Popular accessories: GE MWF REFRIGERATOR WATER FILTER MWFP. Refrigerator water line accessories.",
+      "extracted_part_tokens": [
+        "MWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "mwf",
+      "candidate_oem_part_number": "MWF",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token MWF appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:frigidaire.com \"FPPWFU01\" \"refrigerator water filter\" official",
+      "discovered_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+      "discovered_title": "PurePour Water and Ice Refrigerator Filter PWF-1 FPPWFU01",
+      "discovered_snippet": "Frigidaire PurePour water filter accessory FPPWFU01.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "Frigidaire PurePour Water and Ice Refrigerator Filter PWF-1 FPPWFU01. Refrigerator water filter accessory page on frigidaire.com.",
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "frigidaire",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:frigidaire.com \"WF2CB\" \"refrigerator water filter\" official",
+      "discovered_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "discovered_title": "PureSource 3 Water Filter WF3CB (hub contrast — live slug)",
+      "discovered_snippet": "WF3CB listed for scope contrast; primary WF2CB target below.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "PureSource 3 Water and Ice Refrigerator Filter WF3CB. Genuine Replacement Part. NSF certified. (Live catalog slug wf3cb — not v3 merge target.)",
+      "extracted_part_tokens": [
+        "WF3CB"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "frigidaire",
+      "candidate_slug": "wf3cb",
+      "candidate_oem_part_number": "WF3CB",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token WF3CB appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:frigidaire.com \"WF2CB\" \"refrigerator water filter\" official",
+      "discovered_url": "https://support.frigidaire.com/Owner-Center/Product-Support/GLHS66EESB",
+      "discovered_title": "GLHS66EESB — Replacement filter WF2CB",
+      "discovered_snippet": "REPLACEMENT FILTER FOR THIS MODEL Frigidaire Gallery PureSource 2 Filter WF2CB.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "REPLACEMENT FILTER FOR THIS MODEL Frigidaire Gallery PureSource 2 Water and Ice Refrigerator Filter WF2CB. Model GLHS66EESB side-by-side refrigerator. Water Filter Yes.",
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "frigidaire",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com GWF refrigerator water filter official model -GWF3PK",
+      "discovered_url": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06",
+      "discovered_title": "FILTER CYST GWF06",
+      "discovered_snippet": "Model GWF06. GE refrigerator water filter cartridge.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "FILTER CYST Model GWF06. Model# GWF06. This model is no longer being manufactured. Refrigerator water filter cartridge.",
+      "extracted_part_tokens": [],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": null,
+      "candidate_oem_part_number": null,
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "no_oem_token"
+      ],
+      "evidence_gaps": [
+        "no_extractable_oem_part_token",
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": false,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "no_oem_token",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    },
+    {
+      "discovery_source": "exa_web_discovery",
+      "discovery_run_id": "2026-05-21-v3-netnew",
+      "query": "site:geappliances.com \"MWFP\" refrigerator water filter official -MWF",
+      "discovered_url": "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+      "discovered_title": "GE MWF REFRIGERATOR WATER FILTER MWFP",
+      "discovered_snippet": "Model MWFP. MWF family pharmaceutical filter listing.",
+      "fetch_status": "fetched_ok",
+      "fetch_excerpt": "GE MWF REFRIGERATOR WATER FILTER Model MWFP. Model# MWFP. Genuine GE refrigerator water filter. MWF filter replaced by MWFP on select models.",
+      "extracted_part_tokens": [
+        "MWF"
+      ],
+      "extracted_model_tokens": [],
+      "brand_guess": "ge",
+      "candidate_slug": "mwf",
+      "candidate_oem_part_number": "MWF",
+      "wedge_guess": "refrigerator_water",
+      "evidence_tier": "A_manufacturer_official",
+      "source_type": "manufacturer_pdp",
+      "proof_claims": [
+        {
+          "claim": "OEM token MWF appears in fetch excerpt",
+          "status": "PROVEN"
+        },
+        {
+          "claim": "URL host classified as manufacturer official",
+          "status": "PROVEN"
+        }
+      ],
+      "rejection_flags": [
+        "live_slug_exists"
+      ],
+      "evidence_gaps": [
+        "no_explicit_model_compatibility_list",
+        "no_committed_evidence_json",
+        "no_repo_collision_check_pass"
+      ],
+      "repo_checks": {
+        "in_live_filters_csv": true,
+        "in_bulk_catalog": false,
+        "in_demoted_registry": false,
+        "alias_collision": false,
+        "live_family_slug": null
+      },
+      "recommended_factory_state": "blocked_do_not_publish",
+      "recommended_block_reason": "live_slug_exists",
+      "catalog_import_ready": false,
+      "mutation_ready": false,
+      "read_only": true,
+      "data_mutation": false,
+      "omit_from_factory_merge": true
+    }
+  ]
+}

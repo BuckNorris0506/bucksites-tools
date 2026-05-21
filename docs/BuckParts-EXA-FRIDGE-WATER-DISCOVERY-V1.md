@@ -88,6 +88,15 @@ When manifest is **missing**: factory baseline stays `candidate_count=57`, `new_
 
 When manifest is **present**: factory may add `evidence_needed` / `blocked_do_not_publish` rows only; **never** `new_product_candidate`; bulk row count unchanged.
 
+## Recorded runs (manifest vs history)
+
+| Run ID | Manifest active? | Factory merge | Notes |
+|--------|------------------|---------------|--------|
+| `2026-05-21-v2-netnew` | **Yes** (`manifest.v1.json`) | `edr6rxd1` → `evidence_needed` | Net-new Filter 6 token from owner-center; factory `candidate_count=58` |
+| `2026-05-21-v3-netnew` | **No** (historical only) | 0 merge-eligible | Avoided Filter 6 rabbit-hole; 9 rows, all blocked (`live_slug_exists` / `no_oem_token`). Artifacts under `operator-input/` and `runs/` remain for audit. |
+
+Do **not** point `manifest.v1.json` at v3 unless intentionally demoting `edr6rxd1` from active factory output.
+
 ## Safety rules (failed-batch prevention)
 
 1. Never auto-append discovery slugs to `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1`.

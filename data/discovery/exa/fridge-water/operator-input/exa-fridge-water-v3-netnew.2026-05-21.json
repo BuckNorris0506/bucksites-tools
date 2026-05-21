@@ -1,0 +1,126 @@
+{
+  "contract": "exa_mcp_export_fridge_water_v1",
+  "discovery_run_id": "2026-05-21-v3-netnew",
+  "generated_at": "2026-05-21T22:00:00.000Z",
+  "operator_note": "Exa v3 net-new pass via Cursor MCP + curl excerpts. Explicitly excludes EDR6RXD1/EDR6D1/Filter 6. Samsung queries 4-5 and LG query 10 hit Exa MCP rate limit after GE/Frigidaire searches; omitted hub/finder/locator pages per scope.",
+  "queries": [
+    {
+      "query": "site:geappliances.com \"MWFA\" \"refrigerator water filter\" \"official\"",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-REFRIGERATOR-WATER-FILTER-MWFA",
+          "title": "GE REFRIGERATOR WATER FILTER MWFA",
+          "snippet": "Model MWFA. Genuine GE refrigerator water filter. Discontinued manufacture.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE REFRIGERATOR WATER FILTER Model MWFA. Model# MWFA. This model is no longer being manufactured. Genuine GE water filter cartridge. Refrigerator water filter."
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com \"GSWF\" \"refrigerator water filter\" \"official\"",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-GSWF-REFRIGERATOR-WATER-FILTER-GSWF",
+          "title": "GE GSWF REFRIGERATOR WATER FILTER",
+          "snippet": "Model GSWF. Cylindrical SmartWater filter for top/bottom freezer models.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE GSWF REFRIGERATOR WATER FILTER Model GSWF. Model# GSWF. Genuine GE refrigerator water filter cartridge. Dimensions 8.375 H x 2 W x 2 D."
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com \"PFCS1NFZSS\" \"water filter\" refrigerator",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-Profile-ENERGY-STAR-20-7-Cu-Ft-Counter-Depth-French-Door-Refrigerator-with-Icemaker-PFCS1NFZSS",
+          "title": "GE Profile PFCS1NFZSS French Door Refrigerator",
+          "snippet": "Model PFCS1NFZSS. Water filter finder on PDP; no static filter part number in page fetch.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE Profile ENERGY STAR 20.7 Cu. Ft. Counter-Depth French-Door Refrigerator with Icemaker Model PFCS1NFZSS. Will this filter fit my refrigerator? Water filter finder guides to right filter. No explicit RPWFE XWFE MWF token in static HTML excerpt."
+        },
+        {
+          "url": "https://products.geappliances.com/appliance/gea-specs/PFCS1PJZSS/parts",
+          "title": "PFCS1PJZSS Parts & Accessories",
+          "snippet": "Popular accessory lists GE MWF REFRIGERATOR WATER FILTER MWFP for Profile French door family.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Owner Center Model PFCS1PJZSS GE Profile French-Door Refrigerator. Popular accessories: GE MWF REFRIGERATOR WATER FILTER MWFP. Refrigerator water line accessories."
+        }
+      ]
+    },
+    {
+      "query": "site:samsung.com \"DA29-00020A\" \"refrigerator water filter\" official",
+      "results": []
+    },
+    {
+      "query": "site:samsung.com \"DA29-00012B\" \"refrigerator water filter\" official",
+      "results": []
+    },
+    {
+      "query": "site:samsung.com \"HAF-QIN\" \"DA97\" \"water filter\" refrigerator",
+      "results": []
+    },
+    {
+      "query": "site:frigidaire.com \"FPPWFU01\" \"refrigerator water filter\" official",
+      "results": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+          "title": "PurePour Water and Ice Refrigerator Filter PWF-1 FPPWFU01",
+          "snippet": "Frigidaire PurePour water filter accessory FPPWFU01.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "Frigidaire PurePour Water and Ice Refrigerator Filter PWF-1 FPPWFU01. Refrigerator water filter accessory page on frigidaire.com."
+        }
+      ]
+    },
+    {
+      "query": "site:frigidaire.com \"WF2CB\" \"refrigerator water filter\" official",
+      "results": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "title": "PureSource 3 Water Filter WF3CB (hub contrast — live slug)",
+          "snippet": "WF3CB listed for scope contrast; primary WF2CB target below.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "PureSource 3 Water and Ice Refrigerator Filter WF3CB. Genuine Replacement Part. NSF certified. (Live catalog slug wf3cb — not v3 merge target.)"
+        },
+        {
+          "url": "https://support.frigidaire.com/Owner-Center/Product-Support/GLHS66EESB",
+          "title": "GLHS66EESB — Replacement filter WF2CB",
+          "snippet": "REPLACEMENT FILTER FOR THIS MODEL Frigidaire Gallery PureSource 2 Filter WF2CB.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "REPLACEMENT FILTER FOR THIS MODEL Frigidaire Gallery PureSource 2 Water and Ice Refrigerator Filter WF2CB. Model GLHS66EESB side-by-side refrigerator. Water Filter Yes."
+        }
+      ]
+    },
+    {
+      "query": "site:lg.com \"ADQ36006101\" \"refrigerator water filter\" official",
+      "results": []
+    },
+    {
+      "query": "site:lg.com \"ADQ73613404\" \"refrigerator water filter\" official",
+      "results": []
+    },
+    {
+      "query": "site:geappliances.com GWF refrigerator water filter official model -GWF3PK",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/FILTER-CYST-GWF06",
+          "title": "FILTER CYST GWF06",
+          "snippet": "Model GWF06. GE refrigerator water filter cartridge.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "FILTER CYST Model GWF06. Model# GWF06. This model is no longer being manufactured. Refrigerator water filter cartridge."
+        }
+      ]
+    },
+    {
+      "query": "site:geappliances.com \"MWFP\" refrigerator water filter official -MWF",
+      "results": [
+        {
+          "url": "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+          "title": "GE MWF REFRIGERATOR WATER FILTER MWFP",
+          "snippet": "Model MWFP. MWF family pharmaceutical filter listing.",
+          "fetch_status": "fetched_ok",
+          "fetch_excerpt": "GE MWF REFRIGERATOR WATER FILTER Model MWFP. Model# MWFP. Genuine GE refrigerator water filter. MWF filter replaced by MWFP on select models."
+        }
+      ]
+    }
+  ]
+}
