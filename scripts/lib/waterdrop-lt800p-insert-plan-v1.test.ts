@@ -87,7 +87,8 @@ describe("waterdrop LT800P insert plan v1", () => {
     assert.equal(basis.insert_plan_status, "EXECUTED_MANUAL");
     assert.equal(basis.automation_mutation_authority, false);
     assert.equal(basis.repo_pass_no_ranking_or_allowlist_change, true);
-    assert.ok(!(WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 as readonly string[]).includes("lt800p"));
+    assert.ok((WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 as readonly string[]).includes("lt800p"));
+    assert.ok((WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 as readonly string[]).includes("da29-00020b"));
   });
 
   it("DA29 live proof and executed insert plan remain unchanged", () => {

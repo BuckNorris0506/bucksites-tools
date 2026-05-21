@@ -3,10 +3,11 @@
  * Not a broad Waterdrop rollout — extend only when a new slice has matching evidence on disk.
  *
  * @see WATERDROP_DA29_00020B_EVIDENCE_REL_PATH in customer-language-doctrine
+ * @see data/evidence/waterdrop-lt800p-owner-browser-proof.2026-05-18.json (LIVE outcome)
  */
 
 /** Filter slugs with committed exact part-number Waterdrop proof (evidence LIVE + insert executed). */
-export const WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 = ["da29-00020b"] as const;
+export const WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 = ["da29-00020b", "lt800p"] as const;
 
 export type WaterdropExactProofSliceSlugV1 =
   (typeof WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1)[number];

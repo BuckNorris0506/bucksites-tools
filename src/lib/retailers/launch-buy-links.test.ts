@@ -795,7 +795,9 @@ describe("buyPathSortContextForFilter / isCompatibleReplacementFilterPdp", () =>
 
   it("sets waterdropExactProofSlice only for committed proof-slice slugs", () => {
     assert.equal(buyPathSortContextForFilter("da29-00020b", "Samsung DA29-00020B / HAF-CIN family").waterdropExactProofSlice, true);
+    assert.equal(buyPathSortContextForFilter("lt800p", "LG LT800P", "LT800P").waterdropExactProofSlice, true);
     assert.equal(buyPathSortContextForFilter("mwf", "GE MWF").waterdropExactProofSlice, false);
+    assert.equal(buyPathSortContextForFilter("ukf8001", "KitchenAid UKF8001 (EveryDrop Filter 4 compatible)").waterdropExactProofSlice, false);
   });
 
   it("propagated sort context changes winner ordering for compatible replacement PDPs", () => {
@@ -830,6 +832,39 @@ describe("Waterdrop exact-proof purchase-option priority", () => {
   const DA29_WATERDROP_URL =
     "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875&type=2&murl=https%3a%2f%2fwww.waterdropfilter.com%2fproducts%2fwaterdrop-replacement-for-samsung-da29-00020b-fridge-water-filter";
   const DA29_AMAZON_URL = "https://www.amazon.com/dp/B004UB1NRY";
+  const LT800P_WATERDROP_URL =
+    "https://click.linksynergy.com/link?id=GTFBcFcCW48&offerid=1888875.539507420827021633352815&type=15&murl=https%3A%2F%2Fwww.waterdropfilter.com%2Fproducts%2Flg-lt800p-water-filter-replacement-by-waterdrop%3Fvariant%3D39389060792402";
+  const LT800P_AMAZON_URL = "https://www.amazon.com/dp/B00X3DWMS4";
+
+  it("verified Waterdrop ranks before verified Amazon on lt800p proof slice", () => {
+    const ctx = buyPathSortContextForFilter("lt800p", "LG LT800P", "LT800P");
+    const sorted = sortBestVerifiedBuyLinks(
+      [
+        {
+          id: "8fb8189c-6c29-46c9-ae95-d3e26be05add",
+          retailer_key: "waterdrop",
+          retailer_name: "Waterdrop Filter",
+          affiliate_url: LT800P_WATERDROP_URL,
+          browser_truth_checked_at: "2026-05-18T00:00:00+00",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_buyable_subtype: BUYABLE_SUBTYPES.COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE,
+        },
+        {
+          id: "6bbf8586-a87e-46de-932c-2bc341587619",
+          retailer_key: "amazon",
+          retailer_name: "Amazon",
+          affiliate_url: LT800P_AMAZON_URL,
+          browser_truth_checked_at: "2026-05-03T12:00:00.000Z",
+          browser_truth_classification: "direct_buyable",
+        },
+      ],
+      ctx,
+    );
+    assert.deepEqual(sorted.map((r) => r.id), [
+      "8fb8189c-6c29-46c9-ae95-d3e26be05add",
+      "6bbf8586-a87e-46de-932c-2bc341587619",
+    ]);
+  });
 
   it("verified Waterdrop ranks before verified Amazon on da29-00020b proof slice", () => {
     const ctx = buyPathSortContextForFilter("da29-00020b", "Samsung DA29-00020B / HAF-CIN family", "DA29-00020B");
@@ -955,5 +990,38 @@ describe("Waterdrop exact-proof purchase-option priority", () => {
       ctx,
     );
     assert.deepEqual(sorted.map((r) => r.id), ["amz", "wd"]);
+  });
+
+  it("Amazon remains primary on lt800p when Waterdrop is missing or not direct_buyable", () => {
+    const ctx = buyPathSortContextForFilter("lt800p", "LG LT800P", "LT800P");
+    const amazonLink = {
+      id: "6bbf8586-a87e-46de-932c-2bc341587619",
+      retailer_key: "amazon",
+      retailer_name: "Amazon",
+      affiliate_url: LT800P_AMAZON_URL,
+      browser_truth_checked_at: "2026-05-03T12:00:00.000Z",
+      browser_truth_classification: "direct_buyable",
+    } as const;
+
+    assert.equal(selectBestVerifiedBuyLink([amazonLink], ctx)?.id, "6bbf8586-a87e-46de-932c-2bc341587619");
+
+    const unsafeWaterdropLink = {
+      id: "8fb8189c-6c29-46c9-ae95-d3e26be05add",
+      retailer_key: "waterdrop",
+      retailer_name: "Waterdrop Filter",
+      affiliate_url: LT800P_WATERDROP_URL,
+      browser_truth_checked_at: "2026-05-18T00:00:00+00",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
+    } as const;
+
+    assert.equal(
+      selectBestVerifiedBuyLink([unsafeWaterdropLink, amazonLink], ctx)?.id,
+      "6bbf8586-a87e-46de-932c-2bc341587619",
+    );
+    assert.deepEqual(
+      filterRealBuyRetailerLinks([unsafeWaterdropLink, amazonLink]).map((r) => r.id),
+      ["6bbf8586-a87e-46de-932c-2bc341587619"],
+    );
   });
 });
