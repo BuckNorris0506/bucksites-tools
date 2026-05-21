@@ -15,14 +15,15 @@
   "owner_browser_proof_status": "PASS",
   "mutation_ready": false,
   "mutation_ready_basis": {
-    "insert_plan_path": null,
-    "insert_plan_status": "NOT_PREPARED",
+    "insert_plan_path": "docs/waterdrop-lt800p-retailer-link-insert-plan.sql",
+    "insert_plan_status": "READY_FOR_OWNER_MANUAL_EXECUTION",
+    "insert_plan_executed": false,
     "automation_mutation_authority": false,
     "owner_manual_insert_approved": false,
     "blocking_reasons": [
-      "WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 does not include lt800p; no broad Waterdrop rollout.",
-      "No retailer_links insert plan prepared or executed for this slug.",
-      "Evidence records owner-browser PDP proof only; does not grant CTA or Supabase mutation authority."
+      "WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 does not include lt800p; no broad Waterdrop rollout; purchase-option ranking boost requires separate allowlist commit after insert proof.",
+      "Insert plan prepared only; owner must run read-only prechecks D/E and guarded INSERT in manual Supabase session.",
+      "Evidence records owner-browser PDP proof only; does not grant automation, live CTA, or proof-slice expansion authority."
     ]
   },
   "rakuten_productsearch_api_derived": {
@@ -85,7 +86,7 @@
     "browser_verdict": "PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE",
     "browser_truth_checked_at": "2026-05-18T12:00:00.000Z"
   },
-  "required_next_action": "OWNER_DECIDES_MANUAL_INSERT_PLAN_LATER_NO_AUTOMATION",
+  "required_next_action": "OWNER_MANUAL_EXECUTE_INSERT_PLAN_IF_APPROVED_NO_AUTOMATION",
   "commission_or_revenue": "NOT_CONNECTED",
   "revenue_claim": "none",
   "proven_facts": [
@@ -93,15 +94,16 @@
     "Rakuten Product Search API local extract (141 entries) includes LinkSynergy affiliate URL for this variant PDP.",
     "Owner browser screenshot showed seller title with LT800P and ADQ73613401, $11.99 one-time purchase, Add to Cart and Buy Now.",
     "Production Amazon direct_buyable row exists per data/evidence/amazon-lt800p-live-outcome.2026-05-03.json; no production waterdrop row.",
-    "mutation_ready remains false; insert_plan_status NOT_PREPARED."
+    "Manual insert plan prepared at docs/waterdrop-lt800p-retailer-link-insert-plan.sql (NOT EXECUTED).",
+    "mutation_ready remains false; insert_plan_status READY_FOR_OWNER_MANUAL_EXECUTION."
   ],
   "unknown_facts": [
-    "Whether owner will approve a separate manual insert plan for lt800p (UNKNOWN).",
+    "Whether owner will execute the manual insert plan in Supabase (UNKNOWN).",
     "Commission or revenue attribution from Rakuten for a future waterdrop row (NOT_CONNECTED)."
   ],
   "notes": [
     "Evidence only. Does not perform Supabase writes or change live CTAs.",
     "Does not expand WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 (da29-00020b remains the only live exact-proof slice).",
-    "Trust gates remain authoritative until a future owner-approved insert plan and proof-slice allowlist extension."
+    "Insert plan is owner-manual-only; trust gates and WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 remain unchanged until owner executes insert and any separate allowlist commit."
   ]
 }

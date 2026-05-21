@@ -32,7 +32,11 @@ function loadEvidence(rel: string): Record<string, unknown> {
   return JSON.parse(readFileSync(path.join(REPO_ROOT, rel), "utf8")) as Record<string, unknown>;
 }
 
-function assertNoMutationAuthority(doc: Record<string, unknown>, slug: string): void {
+function assertNoMutationAuthority(
+  doc: Record<string, unknown>,
+  slug: string,
+  expectedInsertPlanStatus: "NOT_PREPARED" | "READY_FOR_OWNER_MANUAL_EXECUTION",
+): void {
   assert.equal(doc.read_only, true);
   assert.equal(doc.data_mutation, false);
   assert.equal(doc.mutation_ready, false);
@@ -44,7 +48,7 @@ function assertNoMutationAuthority(doc: Record<string, unknown>, slug: string): 
   assert.ok(!("committed_live_row" in doc));
 
   const basis = doc.mutation_ready_basis as Record<string, unknown>;
-  assert.equal(basis.insert_plan_status, "NOT_PREPARED");
+  assert.equal(basis.insert_plan_status, expectedInsertPlanStatus);
   assert.equal(basis.automation_mutation_authority, false);
   assert.equal(basis.owner_manual_insert_approved, false);
   assert.ok(!(WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 as readonly string[]).includes(slug));
@@ -61,12 +65,24 @@ function assertNoMutationAuthority(doc: Record<string, unknown>, slug: string): 
   assert.equal(prod.has_amazon_direct_buyable, true);
 }
 
+const INSERT_PLAN_STATUS_BY_SLUG: Record<
+  (typeof SLICES)[number]["slug"],
+  "NOT_PREPARED" | "READY_FOR_OWNER_MANUAL_EXECUTION"
+> = {
+  lt800p: "READY_FOR_OWNER_MANUAL_EXECUTION",
+  ukf8001: "NOT_PREPARED",
+};
+
 describe("waterdrop owner-browser proof slices v1 (lt800p, ukf8001)", () => {
   for (const slice of SLICES) {
     it(`${slice.slug} evidence is read-only proof without mutation or live CTA authority`, () => {
       const doc = loadEvidence(slice.evidenceRel);
-      assertNoMutationAuthority(doc, slice.slug);
-      assert.match(String(doc.required_next_action), /OWNER_DECIDES_MANUAL_INSERT_PLAN/i);
+      assertNoMutationAuthority(doc, slice.slug, INSERT_PLAN_STATUS_BY_SLUG[slice.slug]);
+      if (slice.slug === "lt800p") {
+        assert.match(String(doc.required_next_action), /OWNER_MANUAL_EXECUTE_INSERT_PLAN/i);
+      } else {
+        assert.match(String(doc.required_next_action), /OWNER_DECIDES_MANUAL_INSERT_PLAN/i);
+      }
 
       const affiliate = String(doc.affiliate_url_candidate);
       assert.ok(affiliate.includes("click.linksynergy.com"));
