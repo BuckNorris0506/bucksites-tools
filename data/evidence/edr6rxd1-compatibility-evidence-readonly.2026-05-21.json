@@ -1,0 +1,136 @@
+{
+  "report_name": "buckparts_edr6rxd1_compatibility_evidence_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "slug": "edr6rxd1",
+  "oem_part_number": "EDR6RXD1",
+  "related_manufacturer_model_token": "EDR6D1",
+  "brand_slug": "whirlpool",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "CREDIBLE_SOURCES_FOUND_FILTER6_IDENTITY_ONLY",
+  "catalog_import_ready": false,
+  "recommended_outcome": "block_for_now",
+  "factory_merge_state_at_triage": "evidence_needed",
+  "sources": [
+    {
+      "url": "https://www.whirlpool.com/owners-center-pdp.EDR6RXD1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "Whirlpool owner-center model token EDR6RXD1 is Ice & Water Refrigerator Filter 6.",
+        "Genuine everydrop Filter 6 accessory framing on manufacturer host."
+      ],
+      "does_not_prove": [
+        "Compatible refrigerator model numbers.",
+        "That EDR6D1 and EDR6RXD1 are interchangeable without a manufacturer crosswalk table.",
+        "Catalog import readiness."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-6-edr6d1-pack-of-1.edr6d1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "everydrop Refrigerator Water Filter 6 PDP lists Model EDR6D1.",
+        "Filter 6 replaces legacy markings WF-NL120V and WF-L200V.",
+        "NSF-certified water filter; 6-month / 200-gallon replacement interval on PDP copy."
+      ],
+      "does_not_prove": [
+        "That the canonical BuckParts slug should be edr6rxd1 vs edr6d1 without owner token policy.",
+        "Per-model refrigerator compatibility rows."
+      ]
+    },
+    {
+      "url": "data/discovery/exa/fridge-water/runs/2026-05-21-v2-netnew/candidates.json",
+      "source_tier": "repo_exa_discovery",
+      "proves": [
+        "Exa v2 merged edr6rxd1 from owners-center fetch excerpt with EDR6RXD1 token.",
+        "Same run fetched EDR6D1 PDP but discovery normalization emitted no_oem_token (EDR6D1 not in OEM_TOKEN_REGEX).",
+        "WRX735SDHZ model page in same run specifies Water Filter Part Number EDR4RXD1 (Filter 4 family), not Filter 6."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/filters.csv",
+      "source_tier": "repo",
+      "proves": [
+        "Live EveryDrop slugs edr1rxd1, edr2rxd1, edr3rxd1, edr4rxd1 exist.",
+        "Live Filter 5 numeric slug 4396508 exists.",
+        "No live row for edr6rxd1, edr6d1, or EDR6RXD1."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/filter_aliases.csv",
+      "source_tier": "repo",
+      "proves": [
+        "No alias row for EDR6RXD1, EDR6D1, WF-NL120V, or WF-L200V.",
+        "edr4rxd1 aliases include EveryDrop 4 and UKF8001; 4396508 aliases only map to 4396508."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/compatibility_mappings.csv",
+      "source_tier": "repo",
+      "proves": [
+        "filter_slug edr4rxd1 has 20 compatibility_mappings rows.",
+        "filter_slug 4396508 has 17 compatibility_mappings rows.",
+        "filter_slug edr6rxd1 has 0 rows."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/evidence/edr5rxd1-compatibility-evidence-readonly.2026-05-21.json",
+      "source_tier": "repo_committed_evidence",
+      "proves": [
+        "Demoted edr5rxd1 is alias_collision_hold vs live 4396508 (Filter 5 family) — separate from Filter 6.",
+        "Pattern: marketing EDRnRXD1 token vs numeric live slug for same filter family."
+      ],
+      "does_not_prove": [
+        "That EDR6RXD1 should alias to an existing live slug (no live Filter 6 slug in catalog)."
+      ]
+    }
+  ],
+  "proven_model_numbers": [],
+  "unknowns": [
+    "Whether EDR6RXD1 and EDR6D1 are the same sellable SKU with two manufacturer printings (INFERRED likely, not proven by a single PDP listing both tokens).",
+    "Numeric Whirlpool OEM for Filter 6 (if any) for filter_aliases strategy — UNKNOWN in repo.",
+    "Manufacturer compatibility chart or model-finder export listing refrigerators requiring Filter 6 — not captured in Exa v2 fetch excerpts.",
+    "Amazon exact-token buyable PDP for EDR6RXD1 or EDR6D1 — UNKNOWN (no committed amazon-* evidence file)."
+  ],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv OEM token collision",
+      "result": "PROVEN_PASS",
+      "detail": "EDR6RXD1 and EDR6D1 do not appear in filter_aliases.csv."
+    },
+    {
+      "check": "live Filter 6 family slug",
+      "result": "PROVEN_PASS",
+      "detail": "No live slug covers EveryDrop Filter 6 — not alias_collision_hold vs an existing live row (contrast edr5rxd1 vs 4396508)."
+    },
+    {
+      "check": "Filter 4 / Filter 5 family separation",
+      "result": "PROVEN_PASS",
+      "detail": "edr4rxd1 and 4396508 are distinct live families with non-overlapping compat cohorts; Filter 6 legacy markings WF-NL120V/WF-L200V are not live slugs."
+    },
+    {
+      "check": "compatibility_mappings inheritance",
+      "result": "PROVEN_BLOCK",
+      "detail": "Cannot copy edr4rxd1 or 4396508 compat rows — different filter housings; 0 rows for edr6rxd1."
+    },
+    {
+      "check": "demoted_registry",
+      "result": "PROVEN_PASS",
+      "detail": "edr6rxd1 is not in FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1."
+    }
+  ],
+  "missing_proof_for_import": [
+    "Manufacturer-published compatible refrigerator model list for Filter 6 (EDR6RXD1 or EDR6D1).",
+    "Owner-approved canonical OEM token and slug (edr6rxd1 vs edr6d1 vs future numeric OEM).",
+    "Committed compatibility_mappings.csv rows tied to proven model numbers.",
+    "Amazon or gated buy-link evidence if publish lane requires it."
+  ],
+  "recommended_next_action": "Keep factory Exa row at evidence_needed until owner resolves Filter 6 token policy and captures a manufacturer compat chart. Do not seed:import edr6rxd1. Do not copy Filter 4/5 compat rows. Optional follow-up: fetch full everydrop Filter 6 PDP compatibility section and everydrop filter finder; add demoted_registry entry only after separate approved task if outcome stays block_for_now."
+}
