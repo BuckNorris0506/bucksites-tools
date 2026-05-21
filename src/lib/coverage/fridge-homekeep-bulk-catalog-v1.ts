@@ -90,24 +90,53 @@ export const FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1: Record<string, FridgeHome
 
 /**
  * Bulk-only expansion rows (not in committed data/filters.csv).
- * Sources: data/bulk/filters.bulk.sample.csv (reviewed net-new slugs) + sibling OEM rows
- * matching naming patterns in FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1.
- * Do not run seed:import until owner approves.
+ * Factory classifies these as `new_product_candidate` via listFridgeHomekeepBulkFilterRowsV1.
+ * Do not run seed:import until owner approves per-slug evidence.
  *
- * Removed from queue (wrong wedge): `lt120f` — LG LT120F is a refrigerator *air* filter,
- * not a water filter. See data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json.
- * Appliance-air catalog is out of scope for this module.
+ * **Active queue is empty** after first fridge expansion evidence triage (2026-05-21):
+ * docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md — 0 import-plan candidates.
+ * Failed slugs live in FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1 (not factory candidates).
  */
 export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBulkFilterEntryV1 & {
   brand_slug: string;
   expansion_source: "bulk_sample_csv" | "catalog_pattern";
-})[] = [
+})[] = [] as const;
+
+/** Demoted expansion attempts — learning registry only; excluded from factory bulk row list. */
+export const FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1: readonly {
+  brand_slug: string;
+  slug: string;
+  oem: string;
+  name: string;
+  expansion_source: "bulk_sample_csv" | "catalog_pattern";
+  demotion_reason: string;
+  evidence_json: string;
+  triage_outcome:
+    | "alias_collision_hold"
+    | "block_for_now"
+    | "wrong_wedge_block";
+}[] = [
+  {
+    brand_slug: "lg",
+    slug: "lt120f",
+    oem: "LT120F",
+    name: "LG LT120F (refrigerator air filter — wrong wedge for water catalog)",
+    expansion_source: "bulk_sample_csv",
+    demotion_reason:
+      "PROVEN refrigerator air filter per data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json",
+    evidence_json: "data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json",
+    triage_outcome: "wrong_wedge_block",
+  },
   {
     brand_slug: "whirlpool",
     slug: "4396702",
     oem: "4396702",
     name: "Whirlpool 4396702 (EveryDrop Filter 2 numeric OEM)",
     expansion_source: "bulk_sample_csv",
+    demotion_reason:
+      "alias_collision_hold vs live edr2rxd1 — see docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md",
+    evidence_json: "data/evidence/4396702-compatibility-evidence-readonly.2026-05-21.json",
+    triage_outcome: "alias_collision_hold",
   },
   {
     brand_slug: "whirlpool",
@@ -115,6 +144,10 @@ export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBul
     oem: "EDR5RXD1",
     name: "EveryDrop Filter 5 (EDR5RXD1)",
     expansion_source: "catalog_pattern",
+    demotion_reason:
+      "alias_collision_hold vs live 4396508 — see docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md",
+    evidence_json: "data/evidence/edr5rxd1-compatibility-evidence-readonly.2026-05-21.json",
+    triage_outcome: "alias_collision_hold",
   },
   {
     brand_slug: "samsung",
@@ -122,6 +155,10 @@ export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBul
     oem: "DA97-15217B",
     name: "Samsung DA97-15217B (HAF-QIN family variant)",
     expansion_source: "catalog_pattern",
+    demotion_reason:
+      "block_for_now — revision unproven vs live da97-15217d",
+    evidence_json: "data/evidence/da97-15217b-compatibility-evidence-readonly.2026-05-21.json",
+    triage_outcome: "block_for_now",
   },
   {
     brand_slug: "samsung",
@@ -129,6 +166,10 @@ export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBul
     oem: "DA29-00003B",
     name: "Samsung DA29-00003B (prior revision)",
     expansion_source: "catalog_pattern",
+    demotion_reason:
+      "block_for_now — revision unproven vs live da29-00003g",
+    evidence_json: "data/evidence/da29-00003b-compatibility-evidence-readonly.2026-05-21.json",
+    triage_outcome: "block_for_now",
   },
   {
     brand_slug: "lg",
@@ -136,6 +177,10 @@ export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBul
     oem: "ADQ73613404",
     name: "LG ADQ73613404 (slim cartridge variant)",
     expansion_source: "catalog_pattern",
+    demotion_reason:
+      "block_for_now — insufficient LG US manufacturer evidence for ADQ73613404",
+    evidence_json: "data/evidence/adq73613404-compatibility-evidence-readonly.2026-05-21.json",
+    triage_outcome: "block_for_now",
   },
 ] as const;
 

@@ -42,11 +42,13 @@ npx tsx scripts/report-large-batch-coverage-factory.ts --limit 50
 
 Net-new slugs live in `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` inside `fridge-homekeep-bulk-catalog-v1.ts` (not in committed `data/filters.csv`). Factory classifies them as `new_product_candidate` until owner import/review. Do not run `seed:import` from this lane.
 
+**Active queue (2026-05-21):** **PROVEN** empty — `bulk_catalog.row_count` equals `live_filters_csv.row_count` (57); `new_product_candidate=0`. Command Center `expansion_blocker_summary` cites first-fridge batch outcome and need for a stronger upstream expansion source before re-queuing bulk-only rows.
+
+**Demoted registry (learning only):** `FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1` — not included in `listFridgeHomekeepBulkFilterRowsV1()`; factory does not surface these slugs. See `docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md` and per-slug `data/evidence/*-compatibility-evidence-readonly.2026-05-21.json`.
+
 Rejected from the first slice (review notes): `hafcin` (HAF-CIN / `da29-00020b` alias-family risk), `fpuresource3` (OEM `WF3CB` duplicates live `wf3cb`), `fpuresourceultra` (OEM `EPTWFU01` duplicates live `eptwfu01` and matches `LARGE_BATCH_EXCLUDED_FRIGIDAIRE_TOKENS_V1`).
 
-**Removed from expansion queue:** `lt120f` — **PROVEN** refrigerator air filter per `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json`; wrong wedge for `data/filters.csv` (refrigerator water).
-
-**Evidence triage (remaining 5):** `docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md` — **PROVEN** no `ready_for_catalog_import_plan` candidates; `4396702` / `edr5rxd1` alias-family hold; Samsung/LG variants `block_for_now`.
+**Demoted (first fridge batch):** `lt120f` (wrong wedge — air filter), `4396702`, `edr5rxd1`, `adq73613404`, `da29-00003b`, `da97-15217b`.
 
 ## Non-goals
 

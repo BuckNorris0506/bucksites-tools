@@ -10,6 +10,7 @@ import {
   LARGE_BATCH_COVERAGE_FACTORY_STATES_V1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
 import {
+  FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1,
   FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1,
   listFridgeHomekeepBulkFilterRowsV1,
 } from "@/lib/coverage/fridge-homekeep-bulk-catalog-v1";
@@ -261,10 +262,22 @@ test("bulk expansion slugs are absent from committed data/filters.csv", () => {
   }
 });
 
+const FIRST_FRIDGE_EXPANSION_DEMOTED_SLUGS_V1 = [
+  "4396702",
+  "edr5rxd1",
+  "adq73613404",
+  "da29-00003b",
+  "da97-15217b",
+] as const;
+
 test("lt120f is excluded from refrigerator-water bulk expansion (wrong-wedge air filter)", () => {
   assert.ok(
     !FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.some((r) => r.slug === "lt120f"),
     "lt120f must not be in FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1",
+  );
+  assert.ok(
+    FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1.some((r) => r.slug === "lt120f"),
+    "lt120f must be in demoted registry for learning history",
   );
   assert.ok(
     !listFridgeHomekeepBulkFilterRowsV1().some((r) => r.slug === "lt120f"),
@@ -279,36 +292,44 @@ test("lt120f is excluded from refrigerator-water bulk expansion (wrong-wedge air
     undefined,
     "factory must not surface lt120f after removal from bulk catalog",
   );
-  assert.equal(report.candidate_count, 62);
-  assert.equal(report.state_counts.new_product_candidate, 5);
 });
 
-test("repo bulk catalog exceeds live filters.csv and surfaces new_product_candidate", () => {
+test("active bulk expansion queue is empty after first fridge evidence triage", () => {
+  assert.equal(FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.length, 0);
+});
+
+test("failed first fridge expansion slugs are demoted not new_product_candidate", () => {
   const liveCount = loadBuckpartsFridgeFilterIndexFromRepo(REPO_ROOT).filters.length;
   const bulkCount = listFridgeHomekeepBulkFilterRowsV1().length;
-  assert.ok(bulkCount > liveCount);
-  assert.equal(bulkCount - liveCount, FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.length);
+  assert.equal(bulkCount, liveCount);
+  assert.equal(FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.length, 0);
+
+  for (const slug of FIRST_FRIDGE_EXPANSION_DEMOTED_SLUGS_V1) {
+    assert.ok(
+      FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1.some((r) => r.slug === slug),
+      `${slug} must be in demoted registry`,
+    );
+    assert.ok(
+      !listFridgeHomekeepBulkFilterRowsV1().some((r) => r.slug === slug),
+      `${slug} must not be in active bulk row list`,
+    );
+  }
 
   const report = buildLargeBatchCoverageFactoryReportV1({
     rootDir: REPO_ROOT,
     topCandidatesLimit: 500,
   });
-  assert.equal(report.candidate_count, 62);
-  assert.equal(report.state_counts.new_product_candidate, 5);
+  assert.equal(report.candidate_count, 57);
+  assert.equal(report.state_counts.new_product_candidate, 0);
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
 
-  const expansionSlugs = FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.map((r) => r.slug);
-  const bySlug = new Map(report.top_candidates.map((c) => [c.slug, c]));
-  for (const slug of expansionSlugs) {
-    const row = bySlug.get(slug);
-    assert.ok(row, `missing expansion candidate ${slug} in top_candidates`);
-    assert.equal(row!.factory_state, "new_product_candidate");
-    assert.equal(row!.is_bulk_catalog_row, true);
-    assert.equal(row!.is_live_catalog_row, false);
-    assert.equal(row!.has_gated_buyable_link, false);
-    assert.notEqual(row!.factory_state, "publishable_amazon_candidate");
-    assert.notEqual(row!.factory_state, "publishable_waterdrop_candidate");
+  for (const slug of FIRST_FRIDGE_EXPANSION_DEMOTED_SLUGS_V1) {
+    assert.equal(
+      report.top_candidates.find((c) => c.slug === slug),
+      undefined,
+      `${slug} must not appear as factory candidate after demotion`,
+    );
   }
 });
 

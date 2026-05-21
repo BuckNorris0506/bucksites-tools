@@ -21,6 +21,9 @@ const MAX_TOP_CANDIDATES = 5;
 const EXPANSION_DEPTH_NOTE_V1 =
   "Factory currently classifies the existing fridge set only until a deeper expansion source is added (bulk catalog row count matches live filters.csv today).";
 
+const FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1 =
+  "PROVEN: first fridge expansion batch (docs/BuckParts-FIRST-FRIDGE-EXPANSION-EVIDENCE-TRIAGE.md) produced 0 import-ready candidates; failed slugs are in FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1 only — active expansion source needs a stronger upstream source before new bulk-only rows are queued.";
+
 export type LargeBatchCoverageFactorySummaryRuntimeStatusV1 = "OK" | "ATTENTION" | "UNKNOWN";
 
 export type LargeBatchCoverageFactorySummaryTopCandidateV1 = {
@@ -67,7 +70,7 @@ function buildExpansionBlockerSummary(report: LargeBatchCoverageFactoryReportV1)
   const liveCount = report.source_summary.live_filters_csv.row_count;
   const newCount = report.state_counts.new_product_candidate ?? 0;
   if (newCount === 0 && bulkCount === liveCount) {
-    return `PROVEN: new_product_candidate=0 and bulk_catalog.row_count (${bulkCount}) equals live_filters_csv.row_count (${liveCount}). ${EXPANSION_DEPTH_NOTE_V1}`;
+    return `PROVEN: new_product_candidate=0 and bulk_catalog.row_count (${bulkCount}) equals live_filters_csv.row_count (${liveCount}). ${EXPANSION_DEPTH_NOTE_V1} ${FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1}`;
   }
   if (newCount > 0) {
     return `PROVEN: ${newCount} bulk-only slug(s) await import/review — run batch production lane before production mutation.`;
@@ -123,6 +126,11 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
       `${LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_CONTRACT_V1} is a read-only Command Center projection of ${LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1}.`,
       "PROVEN: mutation_ready is false — not a Codex publish or retailer_links authority source.",
       EXPANSION_DEPTH_NOTE_V1,
+      ...(report.state_counts.new_product_candidate === 0 &&
+      report.source_summary.bulk_catalog.row_count ===
+        report.source_summary.live_filters_csv.row_count
+        ? [FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1]
+        : []),
     ],
     unknown_facts: [],
   };

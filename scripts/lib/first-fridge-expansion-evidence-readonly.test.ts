@@ -3,6 +3,12 @@ import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import {
+  FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1,
+  FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1,
+  listFridgeHomekeepBulkFilterRowsV1,
+} from "@/lib/coverage/fridge-homekeep-bulk-catalog-v1";
+
 const REPO_ROOT = process.cwd();
 const EVIDENCE_DIR = path.join(REPO_ROOT, "data/evidence");
 const EXPANSION_EVIDENCE_SUFFIX = "-compatibility-evidence-readonly.2026-05-21.json";
@@ -45,6 +51,20 @@ test("expansion evidence JSON files stay read-only and not import-ready", () => 
     assert.equal(doc.no_live_cta_change, true);
     assert.notEqual(doc.recommended_outcome, "ready_for_catalog_import_plan");
     assert.ok(EXPANSION_SLUGS.includes(doc.slug as (typeof EXPANSION_SLUGS)[number]));
+  }
+});
+
+test("failed triage slugs are demoted from active bulk expansion queue", () => {
+  assert.equal(FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.length, 0);
+  for (const slug of EXPANSION_SLUGS) {
+    assert.ok(
+      FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1.some((r) => r.slug === slug),
+      `${slug} must be in demoted registry`,
+    );
+    assert.ok(
+      !listFridgeHomekeepBulkFilterRowsV1().some((r) => r.slug === slug),
+      `${slug} must not be in active bulk catalog rows`,
+    );
   }
 });
 

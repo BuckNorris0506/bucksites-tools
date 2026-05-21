@@ -114,7 +114,7 @@ test("next_agent_action stays read-only planning language", () => {
   assert.match(summary.next_owner_action, /Do not hand-edit/i);
 });
 
-test("repo summary reflects bulk expansion new_product_candidate count", () => {
+test("repo summary does not present failed first fridge expansion as open growth work", () => {
   const summary = buildLargeBatchCoverageFactorySummaryV1({ rootDir: process.cwd() });
   assert.equal(summary.read_only, true);
   assert.equal(summary.data_mutation, false);
@@ -122,10 +122,31 @@ test("repo summary reflects bulk expansion new_product_candidate count", () => {
   if (summary.runtime_status !== "OK") {
     assert.fail(`expected OK runtime_status, got ${summary.runtime_status}`);
   }
-  assert.ok(typeof summary.candidate_count === "number" && summary.candidate_count > 57);
+  assert.equal(summary.candidate_count, 57);
+  assert.equal(summary.state_counts.new_product_candidate, 0);
+  assert.ok(summary.expansion_blocker_summary.includes("new_product_candidate=0"));
   assert.ok(
-    typeof summary.state_counts === "object" &&
-      (summary.state_counts.new_product_candidate ?? 0) > 0,
+    summary.expansion_blocker_summary.includes(
+      "first fridge expansion batch",
+    ),
   );
-  assert.ok(summary.expansion_blocker_summary.includes("bulk-only slug"));
+  assert.ok(
+    summary.expansion_blocker_summary.includes("stronger upstream source"),
+  );
+  const openGrowth = summary.top_5_candidates.filter(
+    (c) => c.factory_state === "new_product_candidate",
+  );
+  assert.equal(openGrowth.length, 0);
+  for (const slug of [
+    "4396702",
+    "edr5rxd1",
+    "adq73613404",
+    "da29-00003b",
+    "da97-15217b",
+  ]) {
+    assert.ok(
+      !summary.top_5_candidates.some((c) => c.slug === slug),
+      `${slug} must not appear in top_5_candidates`,
+    );
+  }
 });

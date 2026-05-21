@@ -1,8 +1,8 @@
 # BuckParts — First fridge expansion evidence triage (read-only)
 
 **Generated:** 2026-05-21  
-**Factory baseline:** `candidate_count=62`, `new_product_candidate=5`, `mutation_ready=false`  
-**Cohort:** `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` in `src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts` (5 slugs; `lt120f` removed — see `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json`)
+**Factory baseline (post-demotion):** `candidate_count=57`, `new_product_candidate=0`, `mutation_ready=false`  
+**Cohort (historical):** first fridge expansion batch — 5 slugs triaged here plus `lt120f` (wrong wedge). **PROVEN (2026-05-21):** all removed from active `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1`; learning history in `FRIDGE_HOMEKEEP_BULK_EXPANSION_DEMOTED_V1` (`src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts`). Factory `new_product_candidate=0`.
 
 ## Executive verdict
 
