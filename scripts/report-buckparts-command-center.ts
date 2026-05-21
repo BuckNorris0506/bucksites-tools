@@ -50,6 +50,7 @@ import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
+import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
@@ -923,6 +924,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_vertical_launch_policy_v1"
     | "daily_operator_summary_v1"
     | "demand_work_queue_summary_v1"
+    | "large_batch_coverage_factory_summary_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1015,6 +1017,7 @@ export async function buildBuckpartsCommandCenterReport(
     CommandCenterV2Report,
     | "daily_operator_summary_v1"
     | "demand_work_queue_summary_v1"
+    | "large_batch_coverage_factory_summary_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1108,6 +1111,7 @@ export async function buildBuckpartsCommandCenterReport(
   const command_center_v2_before_demand: Omit<
     CommandCenterV2Report,
     | "demand_work_queue_summary_v1"
+    | "large_batch_coverage_factory_summary_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1129,6 +1133,11 @@ export async function buildBuckpartsCommandCenterReport(
   });
   const demand_work_queue_summary_v1 = buildDemandWorkQueueSummaryV1FromReport(demandWorkQueueFull);
 
+  const large_batch_coverage_factory_summary_v1 = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir,
+    now,
+  });
+
   const systemContractAuditFull = runBuckpartsSystemContractAudit({ rootDir });
   const system_contract_audit_summary_v1 = buildSystemContractAuditSummaryV1FromReport(systemContractAuditFull, {
     generated_at: now().toISOString(),
@@ -1148,6 +1157,7 @@ export async function buildBuckpartsCommandCenterReport(
     ...command_center_v2_before_demand,
     daily_operator_summary_v1,
     demand_work_queue_summary_v1,
+    large_batch_coverage_factory_summary_v1,
     system_contract_audit_summary_v1,
     founder_decision_registry_summary_v1,
     operating_map_summary_v1,

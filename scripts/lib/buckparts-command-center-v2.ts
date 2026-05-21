@@ -202,6 +202,7 @@ export function buildCommandCenterV2Report(input: {
   | "owner_vertical_launch_policy_v1"
   | "daily_operator_summary_v1"
   | "demand_work_queue_summary_v1"
+  | "large_batch_coverage_factory_summary_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"

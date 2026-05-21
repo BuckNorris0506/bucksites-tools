@@ -241,6 +241,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Demand work queue summary projected into Command Center JSON during report generation (read-only); full buckparts_demand_work_queue_v1 remains on npm run buckparts:demand-work-queue.",
   },
+  "buckparts:large-batch-coverage-factory": {
+    cc_json_path: "command_center_v2.large_batch_coverage_factory_summary_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.large_batch_coverage_factory_summary_v1.data_mutation'",
+    reason:
+      "Large Batch Coverage Factory summary projected into Command Center JSON during report generation (read-only); full buckparts_large_batch_coverage_factory_v1 remains on npm run buckparts:large-batch-coverage-factory.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

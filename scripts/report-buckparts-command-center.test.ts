@@ -3010,6 +3010,45 @@ test("command_center_v2.demand_work_queue_summary_v1 is read-only CC-owned deman
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_demand-work-queue"));
 });
 
+test("command_center_v2.large_batch_coverage_factory_summary_v1 is read-only Codex planning lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.large_batch_coverage_factory_summary_v1;
+  assert.ok(lane);
+  assert.equal(lane.report_name, "buckparts_large_batch_coverage_factory_summary_v1");
+  assert.equal(lane.contract, "large_batch_coverage_factory_summary_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_ready, false);
+  assert.equal(lane.source_command, "npm run buckparts:large-batch-coverage-factory");
+  if (lane.runtime_status === "OK") {
+    assert.equal(typeof lane.candidate_count, "number");
+    assert.ok(lane.candidate_count > 0);
+    assert.notEqual(lane.state_counts, "UNKNOWN");
+    assert.ok(lane.top_5_candidates.length <= 5);
+    assert.ok(lane.expansion_blocker_summary.includes("Factory currently classifies"));
+  }
+  assert.match(lane.next_agent_action, /read-only/i);
+  assert.match(lane.next_agent_action, /do not mutate production/i);
+  assert.doesNotMatch(lane.next_agent_action, /\bimport-seed\b/i);
+  assert.doesNotMatch(lane.next_agent_action, /\bdeploy\b/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_large-batch-coverage-factory",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.large_batch_coverage_factory_summary_v1");
+
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_large-batch-coverage-factory"));
+});
+
 test("command_center_v2.owner_vertical_launch_policy_v1 is read-only CC-owned launch policy lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

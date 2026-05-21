@@ -52,6 +52,7 @@ export type SemiCruiseStatusSummaryBuildInputV1 = {
     CommandCenterV2Report,
     | "external_measurement_freshness_v1"
     | "page_publishability_truth_summary_v1"
+    | "large_batch_coverage_factory_summary_v1"
     | "affiliate_readiness"
     | "coverage_health"
     | "amazon_rescue"
@@ -353,6 +354,21 @@ function buildRemainingOwnerGates(input: SemiCruiseStatusSummaryBuildInputV1): s
     [];
   if (dimNeurons.length > 0) {
     gates.push(`owner_command_center_neurons DIM: ${dimNeurons.join(", ")}`);
+  }
+
+  const factory = v2.large_batch_coverage_factory_summary_v1;
+  if (factory.runtime_status === "ATTENTION" || factory.runtime_status === "UNKNOWN") {
+    gates.push(
+      `large_batch_coverage_factory: ${factory.runtime_status} — ${factory.factory_failure_reason ?? factory.expansion_blocker_summary}`,
+    );
+  } else if (factory.mutation_ready !== false) {
+    gates.push("large_batch_coverage_factory: mutation_ready must stay false for Semi-Cruise read-only loop.");
+  } else if (
+    factory.state_counts !== "UNKNOWN" &&
+    typeof factory.state_counts.new_product_candidate === "number" &&
+    factory.state_counts.new_product_candidate === 0
+  ) {
+    gates.push(`large_batch_coverage_factory: ${factory.expansion_blocker_summary}`);
   }
 
   return gates;

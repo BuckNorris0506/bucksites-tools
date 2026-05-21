@@ -1,0 +1,115 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  buildLargeBatchCoverageFactorySummaryV1,
+  buildLargeBatchCoverageFactorySummaryV1FromReport,
+  LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1,
+} from "./buckparts-large-batch-coverage-factory-summary-v1";
+import {
+  LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1,
+  type LargeBatchCoverageFactoryReportV1,
+} from "@/lib/coverage/large-batch-coverage-factory-v1";
+
+function sampleFactoryReport(): LargeBatchCoverageFactoryReportV1 {
+  return {
+    report_name: LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1,
+    read_only: true,
+    data_mutation: false,
+    generated_at: "2026-05-21T00:00:00.000Z",
+    candidate_count: 57,
+    top_candidates_limit: 5,
+    top_candidates: [
+      {
+        candidate_key: "lt700p",
+        slug: "lt700p",
+        oem_part_number: "LT700P",
+        brand_slug: "lg",
+        factory_state: "new_product_candidate",
+        priority_score: 750,
+        block_reason: null,
+        rationale: [],
+        sources: [],
+        is_live_catalog_row: false,
+        is_bulk_catalog_row: true,
+        has_gated_buyable_link: false,
+        has_search_placeholder_only_links: false,
+        waterdrop_recommended: false,
+        has_amazon_live_evidence: false,
+      },
+    ],
+    state_counts: {
+      existing_live_product: 50,
+      new_product_candidate: 0,
+      alias_collision_candidate: 1,
+      publishable_no_buy_page: 2,
+      publishable_amazon_candidate: 3,
+      publishable_waterdrop_candidate: 0,
+      evidence_needed: 0,
+      blocked_do_not_publish: 1,
+    },
+    blocked_counts: { total: 1, by_reason: { frozen_amazon_rescue_token: 1 } },
+    source_summary: {
+      live_filters_csv: { status: "PROVEN", path: "data/filters.csv", row_count: 57 },
+      filter_aliases_csv: { status: "PROVEN", path: "data/filter_aliases.csv", row_count: 97 },
+      retailer_links_csv: { status: "PROVEN", path: "data/retailer_links.csv", row_count: 57 },
+      bulk_catalog: {
+        status: "PROVEN",
+        module: "src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts",
+        row_count: 57,
+      },
+      waterdrop_operator_input: {
+        status: "UNKNOWN",
+        path: null,
+        entry_count: 0,
+        recommended_slug_count: 0,
+      },
+      evidence_dir: { status: "PROVEN", path: "data/evidence", file_count: 37 },
+      amazon_rescue_token_controls: {
+        status: "PROVEN",
+        path: "data/ops/amazon-rescue-token-controls.json",
+        entry_count: 5,
+      },
+    },
+    notes: [],
+  };
+}
+
+test("summary from factory report is read-only and surfaces counts", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(sampleFactoryReport());
+  assert.equal(summary.report_name, LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1);
+  assert.equal(summary.read_only, true);
+  assert.equal(summary.data_mutation, false);
+  assert.equal(summary.mutation_ready, false);
+  assert.equal(summary.runtime_status, "OK");
+  assert.equal(summary.candidate_count, 57);
+  assert.equal(summary.state_counts.new_product_candidate, 0);
+  assert.equal(summary.blocked_counts.total, 1);
+  assert.equal(summary.top_5_candidates.length, 1);
+  assert.ok(summary.expansion_blocker_summary.includes("new_product_candidate=0"));
+});
+
+test("factory build failure degrades to ATTENTION without throwing", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: "/nonexistent",
+    now: () => new Date("2026-05-21T00:00:00.000Z"),
+    buildFactoryReport: () => {
+      throw new Error("fixture failure");
+    } as never,
+  });
+  assert.equal(summary.runtime_status, "ATTENTION");
+  assert.equal(summary.candidate_count, "UNKNOWN");
+  assert.equal(summary.state_counts, "UNKNOWN");
+  assert.equal(summary.top_5_candidates.length, 0);
+  assert.ok(summary.factory_failure_reason?.includes("fixture failure"));
+});
+
+test("next_agent_action stays read-only planning language", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(sampleFactoryReport());
+  assert.match(summary.next_agent_action, /read-only/i);
+  assert.match(summary.next_agent_action, /do not mutate production/i);
+  assert.doesNotMatch(summary.next_agent_action, /\bimport-seed\b/i);
+  assert.doesNotMatch(summary.next_agent_action, /\bdeploy\b/i);
+  assert.doesNotMatch(summary.next_agent_action, /\bpublish\b/i);
+  assert.match(summary.next_owner_action, /Do not hand-edit/i);
+});
