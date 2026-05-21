@@ -3,12 +3,14 @@
 -- Token: LT800P | Slug: lt800p
 -- Filter ID (PROVEN repo evidence 2026-05-18): 0b0c1bb2-ac28-4d8e-ac91-01b5a6be2539
 -- Evidence: data/evidence/waterdrop-lt800p-owner-browser-proof.2026-05-18.json
--- Owner manual insert approved: false (plan prepared only; mutation_ready false)
+-- Owner manual insert approved: 2026-05-21 (owner_manual_insert_approved true; mutation_ready false)
 -- =============================================================================
--- *** NOT EXECUTED — READY FOR OWNER MANUAL SESSION ONLY ***
--- Do not run from CI, agents, or scripts. Operator must run Precheck A–E in same session before INSERT.
--- If waterdrop_row_count > 0 or approved_waterdrop_count > 0, skip INSERT (duplicate violates unique index).
--- Does NOT expand WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1; separate owner decision after insert + runtime proof.
+-- *** EXECUTED MANUALLY 2026-05-21 — DO NOT RE-RUN INSERT UNLESS PRECHECKS SHOW ROW ABSENT ***
+-- Inserted row id: 8fb8189c-6c29-46c9-ae95-d3e26be05add
+-- Postcheck: production /filter/lt800p renders Waterdrop + /go/8fb8189c-6c29-46c9-ae95-d3e26be05add (HTTP/2 200).
+-- Postcheck: /go/8fb8189c-6c29-46c9-ae95-d3e26be05add → HTTP/2 302 LinkSynergy LT800P affiliate URL.
+-- Re-run Precheck D/E only; if waterdrop_row_count > 0, skip INSERT below (duplicate would violate unique index).
+-- Does NOT expand WATERDROP_EXACT_PROOF_SLICE_SLUGS_V1 in repo; separate allowlist commit for ranking.
 -- Does NOT modify amazon row 6bbf8586-a87e-46de-932c-2bc341587619 or oem-parts-catalog rows.
 -- affiliate_url MUST be the LinkSynergy click URL (not the image pixel URL).
 -- =============================================================================
@@ -49,7 +51,7 @@ where filter_id = '0b0c1bb2-ac28-4d8e-ac91-01b5a6be2539'
   and retailer_key = 'waterdrop';
 
 -- ---------------------------------------------------------------------------
--- Guarded INSERT — one row (manual operator session only; NOT EXECUTED in repo)
+-- Guarded INSERT — one row (manual operator session only; EXECUTED 2026-05-21)
 -- ---------------------------------------------------------------------------
 begin;
 
