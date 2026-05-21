@@ -52,3 +52,11 @@ next-env.d.ts
 /data/reports/*
 !/data/gsc/.gitkeep
 !/data/reports/.gitkeep
+
+# BuckParts local agent/tooling artifacts
+.agents/
+skills-lock.json
+
+# BuckParts local operator input exports
+data/waterdrop/operator-input/local/
+data/waterdrop/operator-input/waterdrop-rakuten-links.v1.json
