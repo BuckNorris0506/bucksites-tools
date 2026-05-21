@@ -2,8 +2,10 @@
 
 **Report type:** read-only owner-review cohort (no production mutation)  
 **Generated:** 2026-05-18  
-**Factory baseline:** `candidate_count=63`, `new_product_candidate=6`, `mutation_ready=false`  
-**Cohort source:** `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` in `src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts`
+**Factory baseline (historical at review):** `candidate_count=63`, `new_product_candidate=6`, `mutation_ready=false`  
+**Current expansion cohort (after LT120F removal):** 5 slugs — `candidate_count=62`, `new_product_candidate=5`  
+**Cohort source:** `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` in `src/lib/coverage/fridge-homekeep-bulk-catalog-v1.ts`  
+**Removed:** `lt120f` — wrong wedge (air filter); evidence `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json`
 
 ## 1. Executive verdict
 
@@ -12,10 +14,10 @@
 | Verdict | Count |
 |---------|-------|
 | Safe to promote later (after evidence) | **0** now |
-| Hold / block for now | **6** |
+| Hold / block for now | **5** (active cohort; `lt120f` removed) |
 | Import / seed:import | **Do not run** |
 
-**PROVEN:** All six slugs are absent from committed `data/filters.csv`, classified by Large Batch Coverage Factory as `new_product_candidate`, and have `has_gated_buyable_link: false` (no buy-ready CTA path).
+**PROVEN:** All five active expansion slugs are absent from committed `data/filters.csv` (`lt120f` was removed from the bulk queue after air-filter evidence). classified by Large Batch Coverage Factory as `new_product_candidate`, and have `has_gated_buyable_link: false` (no buy-ready CTA path).
 
 **PROVEN:** None have rows in `data/retailer_links.csv`, `data/compatibility_mappings.csv`, or `data/evidence/*` files named for these slugs.
 

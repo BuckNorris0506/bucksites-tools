@@ -93,6 +93,10 @@ export const FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1: Record<string, FridgeHome
  * Sources: data/bulk/filters.bulk.sample.csv (reviewed net-new slugs) + sibling OEM rows
  * matching naming patterns in FRIDGE_HOMEKEEP_BULK_FILTERS_BY_BRAND_V1.
  * Do not run seed:import until owner approves.
+ *
+ * Removed from queue (wrong wedge): `lt120f` — LG LT120F is a refrigerator *air* filter,
+ * not a water filter. See data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json.
+ * Appliance-air catalog is out of scope for this module.
  */
 export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBulkFilterEntryV1 & {
   brand_slug: string;
@@ -103,13 +107,6 @@ export const FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1: readonly (FridgeHomekeepBul
     slug: "4396702",
     oem: "4396702",
     name: "Whirlpool 4396702 (EveryDrop Filter 2 numeric OEM)",
-    expansion_source: "bulk_sample_csv",
-  },
-  {
-    brand_slug: "lg",
-    slug: "lt120f",
-    oem: "LT120F",
-    name: "LG LT120F refrigerator filter",
     expansion_source: "bulk_sample_csv",
   },
   {

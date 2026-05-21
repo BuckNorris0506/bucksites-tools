@@ -261,6 +261,28 @@ test("bulk expansion slugs are absent from committed data/filters.csv", () => {
   }
 });
 
+test("lt120f is excluded from refrigerator-water bulk expansion (wrong-wedge air filter)", () => {
+  assert.ok(
+    !FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.some((r) => r.slug === "lt120f"),
+    "lt120f must not be in FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1",
+  );
+  assert.ok(
+    !listFridgeHomekeepBulkFilterRowsV1().some((r) => r.slug === "lt120f"),
+    "lt120f must not appear in listFridgeHomekeepBulkFilterRowsV1",
+  );
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 500,
+  });
+  assert.equal(
+    report.top_candidates.find((c) => c.slug === "lt120f"),
+    undefined,
+    "factory must not surface lt120f after removal from bulk catalog",
+  );
+  assert.equal(report.candidate_count, 62);
+  assert.equal(report.state_counts.new_product_candidate, 5);
+});
+
 test("repo bulk catalog exceeds live filters.csv and surfaces new_product_candidate", () => {
   const liveCount = loadBuckpartsFridgeFilterIndexFromRepo(REPO_ROOT).filters.length;
   const bulkCount = listFridgeHomekeepBulkFilterRowsV1().length;
@@ -271,8 +293,8 @@ test("repo bulk catalog exceeds live filters.csv and surfaces new_product_candid
     rootDir: REPO_ROOT,
     topCandidatesLimit: 500,
   });
-  assert.ok(report.candidate_count > liveCount);
-  assert.ok((report.state_counts.new_product_candidate ?? 0) > 0);
+  assert.equal(report.candidate_count, 62);
+  assert.equal(report.state_counts.new_product_candidate, 5);
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
 

@@ -44,6 +44,8 @@ Net-new slugs live in `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` inside `fridge-ho
 
 Rejected from the first slice (review notes): `hafcin` (HAF-CIN / `da29-00020b` alias-family risk), `fpuresource3` (OEM `WF3CB` duplicates live `wf3cb`), `fpuresourceultra` (OEM `EPTWFU01` duplicates live `eptwfu01` and matches `LARGE_BATCH_EXCLUDED_FRIGIDAIRE_TOKENS_V1`).
 
+**Removed from expansion queue:** `lt120f` — **PROVEN** refrigerator air filter per `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json`; wrong wedge for `data/filters.csv` (refrigerator water).
+
 ## Non-goals
 
 No Supabase writes, no `retailer_links` mutation, no UI/ranking/gate changes, no auto-publish.

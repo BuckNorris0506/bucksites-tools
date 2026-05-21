@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import { FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1 } from "@/lib/coverage/fridge-homekeep-bulk-catalog-v1";
+
 const REPO_ROOT = process.cwd();
 const EVIDENCE_PATH = path.join(
   REPO_ROOT,
@@ -32,6 +34,10 @@ test("lt120f compatibility evidence artifact stays read-only and not import-read
   assert.equal(doc.slug, "lt120f");
   assert.equal(doc.filter_category_proven, "refrigerator_air_filter");
   assert.notEqual(doc.recommended_outcome, "ready_for_catalog_import_plan");
+});
+
+test("lt120f is not queued in refrigerator-water bulk expansion", () => {
+  assert.ok(!FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1.some((r) => r.slug === "lt120f"));
 });
 
 test("lt120f evidence does not imply filters.csv or compatibility_mappings.csv edits", () => {

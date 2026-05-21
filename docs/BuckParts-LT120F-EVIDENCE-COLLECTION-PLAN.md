@@ -6,7 +6,7 @@
 **Report type:** read-only evidence plan — no production mutation  
 **Baseline:** `docs/BuckParts-FIRST-FRIDGE-EXPANSION-OWNER-REVIEW.md` (cohort hold); factory `new_product_candidate`; `mutation_ready=false`
 
-**Evidence outcome (2026-05-18):** `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json` — LG official sources prove LT120F is a **refrigerator air filter**; `catalog_import_ready: false`; `recommended_outcome: block_for_now` for `data/filters.csv` water wedge.
+**Evidence outcome (2026-05-18):** `data/evidence/lt120f-compatibility-evidence-readonly.2026-05-18.json` — LG official sources prove LT120F is a **refrigerator air filter**; `catalog_import_ready: false`; `recommended_outcome: block_for_now` for `data/filters.csv` water wedge. **PROVEN:** `lt120f` removed from `FRIDGE_HOMEKEEP_BULK_EXPANSION_ONLY_V1` (fridge-water bulk queue).
 
 ---
 
