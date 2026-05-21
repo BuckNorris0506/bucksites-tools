@@ -1,0 +1,185 @@
+{
+  "report_name": "buckparts_edr6rxd1_compatibility_evidence_followup_readonly_v1",
+  "generated_at": "2026-05-21T00:00:00.000Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_ready": false,
+  "no_live_cta_change": true,
+  "prior_artifact": "data/evidence/edr6rxd1-compatibility-evidence-readonly.2026-05-21.json",
+  "slug": "edr6rxd1",
+  "oem_part_number": "EDR6RXD1",
+  "related_manufacturer_model_tokens": ["EDR6D1", "EDR6D1B", "EDR6RXD1"],
+  "brand_slug": "whirlpool",
+  "filter_category_proven": "refrigerator_water_filter",
+  "evidence_status": "MANUFACTURER_FILTER6_IDENTITY_AND_LEGACY_REPLACEMENTS_PROVEN_MODEL_COHORT_UNKNOWN",
+  "catalog_import_ready": false,
+  "recommended_outcome": "evidence_needed",
+  "factory_merge_state_at_followup": "evidence_needed",
+  "verdicts": {
+    "edr6rxd1_vs_edr6d1": {
+      "label": "INFERRED_SAME_FILTER6_FAMILY_SEPARATE_MANUFACTURER_SKUS",
+      "summary": "Whirlpool/everydrop host both under Filter 6 with distinct model tokens (EDR6RXD1 owner-center vs EDR6D1 PDP). No single manufacturer page lists both tokens as one interchangeable SKU."
+    },
+    "wf_nl120v_wf_l200v": {
+      "label": "PROVEN_LEGACY_REPLACEMENTS_ON_MANUFACTURER_PDP",
+      "summary": "Official Whirlpool and everydrop Filter 6 PDP copy states Filter 6 replaces WF-NL120V and WF-L200V. NSF Whirlpool listings tie EDR6D1 to NL120V and L200V variant markings (certification adjunct, not a fridge model list)."
+    },
+    "compatible_refrigerator_models": {
+      "label": "UNKNOWN",
+      "summary": "No static manufacturer page or manual excerpt in this follow-up captured three or more refrigerator model numbers with an explicit Filter 6 / EDR6D1 / EDR6RXD1 water-filter assignment. Whirlpool approved-filters hub requires model-number lookup (JS); PDP Compatibility Check tab not captured in fetch."
+    },
+    "numeric_oem_4396701": {
+      "label": "INFERRED_LEGACY_NUMERIC_NOT_ON_FILTER6_PDP",
+      "summary": "4396701 appears in a manufacturer-hosted PDP customer review citing GR2FHTXTL00 manual markings (L200V/NL120V/NLC120V) — not in official PDP product description. Not in repo filters.csv or filter_aliases.csv."
+    }
+  },
+  "sources": [
+    {
+      "url": "https://www.whirlpool.com/owners-center-pdp.EDR6RXD1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "Model EDR6RXD1 is Ice & Water Refrigerator Filter 6 on Whirlpool owner-center."
+      ],
+      "does_not_prove": [
+        "Compatible refrigerator model numbers.",
+        "That EDR6RXD1 and EDR6D1 are the same physical SKU."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-6-edr6d1-pack-of-1.edr6d1.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "Model EDR6D1 is everydrop Refrigerator Water Filter 6.",
+        "Filter 6 replaces WF-NL120V and WF-L200V (manufacturer PDP product description).",
+        "Compatible with Whirlpool, Maytag, Amana, KitchenAid, and JennAir refrigerators (brand-level statement only)."
+      ],
+      "does_not_prove": [
+        "Per-refrigerator model compatibility list.",
+        "That EDR6RXD1 should be canonical slug over edr6d1."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/kitchen/refrigeration/water-filters.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "Approved-filters hub lists Filter 6 twice: EDR6RXD1 and EDR6D1 as separate everydrop Filter 6 entries.",
+        "Hub instructs entering refrigerator model number (6–12 digits) to browse compatible filters — interactive lookup, not a published static model list in page fetch."
+      ],
+      "does_not_prove": [
+        "Exportable compatibility matrix for seed:import."
+      ]
+    },
+    {
+      "url": "https://www.everydropwater.com/water-filter.refrigerator-water-and-ice-filter-6.edr6d1.html",
+      "source_tier": "manufacturer_official_everydrop",
+      "proves": [
+        "everydrop.com Filter 6 PDP mirrors EDR6D1 model and WF-NL120V / WF-L200V replacement copy."
+      ],
+      "does_not_prove": [
+        "Refrigerator model numbers."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/owners-center-pdp.EDR6D1B.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "EDR6D1B is a separate owner-center token for Ice & Water Refrigerator Filter 6."
+      ],
+      "does_not_prove": [
+        "Canonical slug choice among edr6rxd1, edr6d1, edr6d1b."
+      ]
+    },
+    {
+      "url": "https://info.nsf.org/Certified/DWTU/Listings.asp?Company=C0480192&Standard=042",
+      "source_tier": "certification_adjunct",
+      "proves": [
+        "Whirlpool NSF refrigerator-filter listings include EDR6D1-L200V and EDR6D1-NL120V replacement elements — supports legacy marking crosswalk to EDR6D1 family."
+      ],
+      "does_not_prove": [
+        "Manufacturer refrigerator model compatibility.",
+        "That WF-NL120V string appears verbatim on NSF page (uses NL120V/L200V suffix form)."
+      ]
+    },
+    {
+      "url": "https://www.whirlpool.com/owners-center-pdp.GR2FHTXTL.html",
+      "source_tier": "manufacturer_official",
+      "proves": [
+        "GR2FHTXTL refrigerator family has Whirlpool owner-center PDP with Repair Part List link (model prefix GR2FHTXTL)."
+      ],
+      "does_not_prove": [
+        "Filter part number on owner-center fetch (SPA; repair part list content not captured)."
+      ]
+    },
+    {
+      "url": "data/evidence/edr6rxd1-compatibility-evidence-readonly.2026-05-21.json",
+      "source_tier": "repo_committed_evidence",
+      "proves": [
+        "Prior triage: no filters.csv row, no aliases, 0 compatibility_mappings for edr6rxd1.",
+        "Not alias_collision_hold (no live Filter 6 slug)."
+      ],
+      "does_not_prove": []
+    },
+    {
+      "url": "data/fridge_models.csv",
+      "source_tier": "repo",
+      "proves": [
+        "No rows for GR2FHTXTL00, GR2FHTXTL, ET1FHTXMT00, or other Filter-6 cohort tokens searched in this follow-up."
+      ],
+      "does_not_prove": [
+        "That those models are incompatible — only that repo has no matching fridge_models rows yet."
+      ]
+    }
+  ],
+  "rejected_evidence": [
+    {
+      "url": "https://www.waterfilters.net/collections/jenn-air-water-filters/products/everydrop-ice-and-water-refrigerator-filter-6-by-whirlpool",
+      "reason": "Retailer PDP model list — not used for PROVEN compatible model claims per BuckParts scope."
+    },
+    {
+      "url": "https://www.appliancezone.net/edr6d1-6-everydrop-whirlpool-maytag-refrigerator-ice-water-filter/",
+      "reason": "Third-party parts dealer model list — rejected."
+    },
+    {
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-6-edr6d1-pack-of-1.edr6d1.html",
+      "note": "Customer review on manufacturer PDP mentioning GR2FHTXTL00 and 4396701 — logged as INFERRED lead only, not PROVEN model compatibility."
+    }
+  ],
+  "proven_model_numbers": [],
+  "repo_model_matches": [],
+  "collision_checks": [
+    {
+      "check": "filter_aliases.csv OEM token collision",
+      "result": "PROVEN_PASS",
+      "detail": "EDR6RXD1, EDR6D1, WF-NL120V, WF-L200V, 4396701 absent from filter_aliases.csv."
+    },
+    {
+      "check": "live Filter 6 family slug",
+      "result": "PROVEN_PASS",
+      "detail": "No live slug in filters.csv for Filter 6 — not alias_collision_hold vs existing live row."
+    },
+    {
+      "check": "compatibility_mappings inheritance",
+      "result": "PROVEN_BLOCK",
+      "detail": "edr6rxd1 has 0 rows; cannot copy edr4rxd1 or 4396508 cohorts."
+    },
+    {
+      "check": "fridge_models.csv coverage for manufacturer model leads",
+      "result": "PROVEN_BLOCK",
+      "detail": "Zero repo fridge_models rows matched for any manufacturer-verified model number in this follow-up."
+    }
+  ],
+  "unknowns": [
+    "Three or more refrigerator model numbers with manufacturer-official Filter 6 assignment on product specs, owner manual PDF, or repair-parts list.",
+    "Whether canonical BuckParts slug should be edr6rxd1, edr6d1, or numeric 4396701.",
+    "Whether EDR6RXD1 and EDR6D1 are interchangeable sellable units or parallel catalog tokens for the same cartridge.",
+    "Compatibility Check tab output on Whirlpool EDR6D1 PDP (not captured without interactive fetch).",
+    "Amazon exact-token buyable PDP for EDR6RXD1 or EDR6D1."
+  ],
+  "missing_proof_for_import_plan": [
+    "Manufacturer-published per-model refrigerator list (≥3 models) tied to Filter 6.",
+    "fridge_models.csv rows for proven models.",
+    "compatibility_mappings.csv rows from proven model evidence.",
+    "Owner canonical OEM token policy (edr6rxd1 vs edr6d1 vs 4396701)."
+  ],
+  "recommended_next_action": "Keep factory Exa row at evidence_needed. Do not seed:import. Next evidence pass: capture Whirlpool model-number lookup results for GR2FHTXTL00 and two additional top-freezer models via official repair-parts list or owner-manual PDF on whirlpool.com/content/dam; add fridge_models rows only after models are PROVEN. Do not use retailer compatibility tables."
+}
