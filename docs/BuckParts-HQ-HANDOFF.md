@@ -500,6 +500,7 @@ Proven from current prompt context and repo files:
   - DMARC.
 - Deploy only for production proof, production fixes, or meaningful customer/business improvements.
 - Protect Codex/Cursor/Netlify usage: prompts should be efficient, validation should be one step at a time, and deploys should not be wasted.
+- **PROVEN (`netlify.toml`):** `scripts/netlify-ignore-build.sh` skips Netlify production builds when only non-runtime paths change (`docs/**`, HQ handoff, `docs/mockups/**`, `data/evidence/**`, `data/discovery/**`, operator scripts/reports). Runtime deploys remain for `src/**`, catalog CSVs (`data/filters.csv`, `data/retailer_links.csv`, etc.), and dependency/config changes. Product batch scale before widening automation: **1 → 5 → 20 → 100**.
 
 ### WHAT NOT TO DO
 
