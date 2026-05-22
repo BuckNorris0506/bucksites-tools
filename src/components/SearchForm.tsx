@@ -1,5 +1,6 @@
 "use client";
 
+import { addRecentSearch } from "@/lib/client/recent-searches";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -18,6 +19,7 @@ export function SearchForm({
     e.preventDefault();
     const trimmed = q.trim();
     if (trimmed.length < 2) return;
+    addRecentSearch(trimmed);
     const path = actionPath.replace(/\/$/, "");
     router.push(`${path}?q=${encodeURIComponent(trimmed)}`);
   }
@@ -39,7 +41,7 @@ export function SearchForm({
       />
       <button
         type="submit"
-        className="min-h-14 shrink-0 rounded-md bg-neutral-900 px-6 text-base font-semibold text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+        className="bp-btn-press min-h-14 shrink-0 rounded-md bg-neutral-900 px-6 text-base font-semibold text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
       >
         Search
       </button>

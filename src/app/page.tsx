@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RecentSearches } from "@/components/RecentSearches";
+import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SearchForm } from "@/components/SearchForm";
 import { listBrowseFilters } from "@/lib/catalog/browse";
 import { homePageMetaDescription } from "@/lib/copy/public-trust";
@@ -64,6 +66,7 @@ export default async function HomePage() {
                   Look up a code
                 </p>
                 <SearchForm />
+                <RecentSearches actionPath="/search" />
               </div>
 
               <div className="flex flex-wrap gap-2" aria-label="Example codes to try in search">
@@ -99,8 +102,8 @@ export default async function HomePage() {
               </p>
             </div>
 
-            <aside className="lg:col-span-5">
-              <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface lg:sticky lg:top-20">
+            <RevealOnScroll as="aside" className="lg:col-span-5" delayMs={50}>
+              <div className="overflow-hidden rounded-2xl border border-bp-border bg-bp-surface bp-card-interactive lg:sticky lg:top-20">
                 {/* Signature band — authority without gradient */}
                 <div className="border-b border-bp-trust/20 bg-bp-trust px-4 py-3 sm:px-5 sm:py-3.5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
@@ -183,15 +186,12 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
-            </aside>
+            </RevealOnScroll>
           </div>
         </section>
 
-        {/* How it works: three decision cards */}
-        <section
-          aria-labelledby="how-heading"
-          className="mt-16 border-t border-bp-border pt-14 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20"
-        >
+        <RevealOnScroll className="mt-16 border-t border-bp-border pt-14 sm:mt-20 sm:pt-16 lg:mt-24 lg:pt-20">
+        <section aria-labelledby="how-heading">
           <h2
             id="how-heading"
             className="max-w-3xl text-2xl font-semibold tracking-tight text-bp-text sm:text-[1.65rem]"
@@ -203,34 +203,36 @@ export default async function HomePage() {
           </p>
 
           <ul className="mt-8 grid list-none grid-cols-1 gap-4 p-0 md:grid-cols-3 md:gap-5 lg:mt-10">
-            <li className="flex flex-col rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
+            <RevealOnScroll as="li" delayMs={40} className="flex flex-col rounded-xl border border-bp-border bg-bp-surface bp-card-interactive p-5 sm:p-6">
               <span className="text-xs font-bold uppercase tracking-wide text-bp-trust">Step 1</span>
               <h3 className="mt-2 text-lg font-semibold tracking-tight text-bp-text">Search any number you have</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-bp-muted">
                 Model number, part number, cartridge code, or old filter label.
               </p>
-            </li>
-            <li className="flex flex-col rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
+            </RevealOnScroll>
+            <RevealOnScroll as="li" delayMs={80} className="flex flex-col rounded-xl border border-bp-border bg-bp-surface bp-card-interactive p-5 sm:p-6">
               <span className="text-xs font-bold uppercase tracking-wide text-bp-trust">Step 2</span>
               <h3 className="mt-2 text-lg font-semibold tracking-tight text-bp-text">Check the evidence</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-bp-muted">
                 See what matched, what still needs comparing, and where uncertainty remains.
               </p>
-            </li>
-            <li className="flex flex-col rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
+            </RevealOnScroll>
+            <RevealOnScroll as="li" delayMs={120} className="flex flex-col rounded-xl border border-bp-border bg-bp-surface bp-card-interactive p-5 sm:p-6">
               <span className="text-xs font-bold uppercase tracking-wide text-bp-trust">Step 3</span>
               <h3 className="mt-2 text-lg font-semibold tracking-tight text-bp-text">Shop only after checks pass</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-bp-muted">
                 BuckParts shows purchase options only when the listing matches the part number well enough to pass our checks.
               </p>
-            </li>
+            </RevealOnScroll>
           </ul>
         </section>
+        </RevealOnScroll>
       </div>
 
       {popularFilters.length > 0 && (
         <div className="mx-auto w-full max-w-7xl px-0 pb-20 text-bp-text lg:pb-24">
-          <section className="space-y-6 border-t border-bp-border pt-12 lg:space-y-8 lg:pt-16">
+          <RevealOnScroll className="space-y-6 border-t border-bp-border pt-12 lg:space-y-8 lg:pt-16">
+          <section className="space-y-6 lg:space-y-8">
             <h2 className="text-lg font-semibold tracking-tight text-bp-text sm:text-xl">
               Fridge-water starting points
             </h2>
@@ -238,10 +240,12 @@ export default async function HomePage() {
               A short list from our refrigerator-water browse data—not a bestseller chart.
             </p>
             <ul className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-              {popularFilters.map((f) => (
-                <li
+              {popularFilters.map((f, i) => (
+                <RevealOnScroll
+                  as="li"
                   key={f.slug}
-                  className="flex flex-col border border-bp-border bg-bp-surface px-4 py-4 sm:px-5 sm:py-5"
+                  delayMs={40 + i * 45}
+                  className="flex flex-col border border-bp-border bg-bp-surface bp-card-interactive px-4 py-4 sm:px-5 sm:py-5"
                 >
                   <p className="text-xs font-medium uppercase tracking-wide text-bp-trust/90">
                     {SITE_DISPLAY_NAME}
@@ -258,10 +262,11 @@ export default async function HomePage() {
                   >
                     View part
                   </Link>
-                </li>
+                </RevealOnScroll>
               ))}
             </ul>
           </section>
+          </RevealOnScroll>
         </div>
       )}
     </>

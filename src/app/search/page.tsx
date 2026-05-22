@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RecentSearches } from "@/components/RecentSearches";
+import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SearchForm } from "@/components/SearchForm";
 import {
   CATALOG_LABELS,
@@ -39,10 +41,10 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 const searchResultCardClass =
-  "block rounded-lg border border-bp-border bg-bp-surface p-4 transition-colors hover:border-bp-muted/50 hover:bg-bp-trust-soft/40";
+  "bp-card-interactive block rounded-lg border border-bp-border bg-bp-surface p-4 transition-colors hover:border-bp-muted/50 hover:bg-bp-trust-soft/40";
 
 const searchResultCardStaticClass =
-  "rounded-lg border border-bp-border bg-bp-surface p-4";
+  "bp-card-interactive rounded-lg border border-bp-border bg-bp-surface p-4";
 
 function globalSearchModelHref(
   catalog: CatalogId,
@@ -256,6 +258,7 @@ export default async function SearchPage({ searchParams }: Props) {
           result includes a way to buy.
         </div>
         <SearchForm initialQuery={query} />
+        <RecentSearches actionPath="/search" />
       </div>
 
       {error && (
@@ -279,7 +282,7 @@ export default async function SearchPage({ searchParams }: Props) {
             if (models.length === 0 && filters.length === 0) return null;
 
             return (
-              <section key={catalog} className="space-y-6">
+              <RevealOnScroll key={catalog} as="section" className="space-y-6">
                 <h2 className="border-b border-bp-border pb-2 text-base font-semibold text-bp-text">
                   {label}
                   <span className="ml-2 font-normal text-sm text-bp-muted">
@@ -294,14 +297,18 @@ export default async function SearchPage({ searchParams }: Props) {
                       Models & units
                     </h3>
                     <ul className="space-y-2">
-                      {models.map((hit) => (
-                        <li key={`${hit.catalog}-${hit.kind}-${hit.slug}`}>
+                      {models.map((hit, i) => (
+                        <RevealOnScroll
+                          as="li"
+                          key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                          delayMs={25 + i * 35}
+                        >
                           <ModelHitCard
                             hit={hit}
                             href={globalSearchModelHref(catalog, hit)}
                             catalogLabel={label}
                           />
-                        </li>
+                        </RevealOnScroll>
                       ))}
                     </ul>
                   </div>
@@ -313,19 +320,23 @@ export default async function SearchPage({ searchParams }: Props) {
                       Parts & filter numbers
                     </h3>
                     <ul className="space-y-2">
-                      {filters.map((hit) => (
-                        <li key={`${hit.catalog}-${hit.kind}-${hit.slug}`}>
+                      {filters.map((hit, i) => (
+                        <RevealOnScroll
+                          as="li"
+                          key={`${hit.catalog}-${hit.kind}-${hit.slug}`}
+                          delayMs={25 + i * 35}
+                        >
                           <FilterHitCard
                             hit={hit}
                             href={globalSearchFilterHref(catalog, hit)}
                             catalogLabel={label}
                           />
-                        </li>
+                        </RevealOnScroll>
                       ))}
                     </ul>
                   </div>
                 )}
-              </section>
+              </RevealOnScroll>
             );
           })}
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { listPopulatedCatalogCards } from "@/lib/catalog/catalog-availability";
 
 export const dynamic = "force-dynamic";
@@ -68,11 +69,11 @@ export default async function CatalogPage() {
         </div>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {cards.map((c) => (
-            <li key={c.href}>
+          {cards.map((c, i) => (
+            <RevealOnScroll as="li" key={c.href} delayMs={40 + i * 50}>
               <Link
                 href={c.href}
-                className="flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/50"
+                className="bp-card-interactive flex h-full flex-col rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/50"
               >
                 <span className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   {c.title}
@@ -84,7 +85,7 @@ export default async function CatalogPage() {
                   Open category →
                 </span>
               </Link>
-            </li>
+            </RevealOnScroll>
           ))}
         </ul>
       )}
