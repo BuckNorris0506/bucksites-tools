@@ -48,6 +48,10 @@ import { buildExternalMeasurementFreshnessV1 } from "../src/lib/owner-dashboard/
 import { buildOwnerIntegritySentinelV1 } from "../src/lib/owner-dashboard/owner-integrity-sentinel-v1";
 import { buildOwnerQuarantinedFridgeModelsV1 } from "../src/lib/owner-dashboard/owner-quarantined-fridge-models-v1";
 import { buildOwnerVerticalLaunchPolicyV1 } from "../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
+import {
+  buildDemandToCoverageNextLaneUnknownV1,
+  buildDemandToCoverageNextLaneV1Report,
+} from "./lib/demand-to-coverage-next-lane-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
@@ -942,6 +946,25 @@ export async function buildBuckpartsCommandCenterReport(
   const owner_quarantined_fridge_models_v1 = await buildOwnerQuarantinedFridgeModelsV1();
   const owner_vertical_launch_policy_v1 = buildOwnerVerticalLaunchPolicyV1();
 
+  let demand_to_coverage_next_lane_v1 = buildDemandToCoverageNextLaneUnknownV1({
+    now,
+    reason: "demand_to_coverage_next_lane_v1 not loaded yet",
+  });
+  try {
+    demand_to_coverage_next_lane_v1 = await buildDemandToCoverageNextLaneV1Report({
+      rootDir,
+      now,
+      fileExists,
+      readTextFile,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    demand_to_coverage_next_lane_v1 = buildDemandToCoverageNextLaneUnknownV1({
+      now,
+      reason: `demand_to_coverage_next_lane_v1 failed: ${message}`,
+    });
+  }
+
   const owner_integrity_sentinel_v1 = buildOwnerIntegritySentinelV1({
     report: {
       generated_at: now().toISOString(),
@@ -1030,6 +1053,7 @@ export async function buildBuckpartsCommandCenterReport(
     owner_vertical_launch_policy_v1,
     owner_integrity_sentinel_v1,
     page_publishability_truth_summary_v1,
+    demand_to_coverage_next_lane_v1,
   };
 
   const commandCenterShellForDaily = {

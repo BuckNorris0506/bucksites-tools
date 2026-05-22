@@ -14,6 +14,7 @@ import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
+import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 
 export type TokenControlStatus =
   | "LIVE_OUTCOME_RECORDED"
@@ -891,7 +892,11 @@ export type CommandCenterV2Report = {
   semi_cruise_status_summary_v1: SemiCruiseStatusSummaryV1;
   /** Read-only customer language doctrine paths + Waterdrop DA29-00020B research/CTA status — not published copy. */
   customer_language_and_waterdrop_research_lane_v1: CustomerLanguageAndWaterdropResearchLaneV1;
+  /** Read-only GSC demand × wedge launch × repo buyer-path coverage join — not mutation authority. */
+  demand_to_coverage_next_lane_v1: DemandToCoverageNextLaneReportV1;
 };
+
+export type { DemandToCoverageNextLaneReportV1 };
 
 export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
