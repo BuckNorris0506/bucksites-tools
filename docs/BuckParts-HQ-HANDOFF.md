@@ -6,9 +6,93 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Semi-Cruise read-only milestone:** documented at HEAD **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
+
+---
+
+## Latest validated checkpoint — existing UI motion + recent-search memory (PROVEN through `bbadce5`)
+
+**Purpose:** Record a **validated UX/memory checkpoint** on the **existing** BuckParts customer UI. This is **not** a redesign milestone, **not** a clean stopping point, and **not** permission to pause revenue/trust/coverage work.
+
+### Repo checkpoint (PROVEN)
+
+| Item | Value |
+|------|--------|
+| HEAD | **`bbadce5`** — *Add subtle motion and recent searches to existing BuckParts UI* |
+| Local / remote sync | **PROVEN** synced at `bbadce5` when this handoff was updated |
+| Proof folder (committed) | `docs/mockups/existing-site-animation-memory-proof-v1/` (README + `capture.mjs` + screenshots) |
+
+### What changed (PROVEN in-repo at `bbadce5`)
+
+| Area | PROVEN state |
+|------|----------------|
+| Visual direction | **Existing BuckParts UI preserved** — no Hallmark concepts, no recommended hybrid layout, no mockup-driven homepage/search/catalog redesign |
+| Rejected exploration artifacts | Hallmark / hybrid / redesign mockup directions **removed from the working tree** before this checkpoint (not carried into `bbadce5`) |
+| Scroll reveal | `RevealOnScroll` — subtle fade + small translate; `prefers-reduced-motion` respected; conservative use on homepage sections/cards, search result groups/cards, catalog cards |
+| Hover / focus polish | `bp-card-interactive` / `bp-btn-press` on existing cards and search submit — navy/trust palette unchanged |
+| Recent searches | Browser-only `localStorage` key **`buckparts.recentSearches.v1`** — max **6**, case-insensitive dedupe, trim, min **2** / max **80** chars, control chars stripped; label **Recent searches**; Clear action; chips route via normal **`/search?q=`** |
+| SearchForm behavior | Min length, `actionPath`, and `router.push` routing **unchanged**; valid submit saves query **before** navigation |
+
+**Implementation paths (PROVEN):** `src/components/RevealOnScroll.tsx`, `src/components/RecentSearches.tsx`, `src/lib/client/recent-searches.ts`, `src/components/SearchForm.tsx`, `src/app/page.tsx`, `src/app/search/page.tsx`, `src/app/catalog/page.tsx`, `src/app/globals.css` (interaction classes only).
+
+### Protected paths (PROVEN untouched at `bbadce5`)
+
+- `data/filters.csv`, `data/filter_aliases.csv`, `data/compatibility_mappings.csv`, `data/fridge_models.csv`, `data/retailer_links.csv`
+- `data/evidence/*`, `data/discovery/*`
+- Buy gates / search semantics (intentionally unchanged): `TrustAwareBuySection`, `TieredBuyLinks`, `/go` redirect logic, `searchCatalog` semantics, result ordering, href generation, retailer-link logic
+
+### Validation before commit (PROVEN)
+
+```bash
+node --import tsx --test src/lib/copy/customer-ux-doctrine.test.ts
+node --import tsx --test src/app/filter/filter-pdp-homeowner.test.ts
+node --import tsx --test src/app/fridge/fridge-trust-funnel-wiring.test.ts
+npm run lint
+npm run build
+```
+
+(`npm run build` **passed** at this checkpoint.)
+
+### Live verification (PROVEN / UNKNOWN)
+
+| Claim | Status |
+|-------|--------|
+| `buckparts.com` loads | **PROVEN** (browser) |
+| Recent searches work after deployment settled | **PROVEN** (browser) |
+| Live HTML exposes deploy commit via `buckparts-deploy-commit` meta | **UNKNOWN** — earlier `curl` could not prove which commit was live |
+
+### Product lesson (PROVEN direction for near-term customer UX)
+
+Full redesign exploration (Hallmark concepts, recommended hybrid mockups) was **rejected** as not better than the existing site. **INFERRED near-term customer UX rule:** keep the existing BuckParts UI and add **targeted** interaction/memory improvements that increase usefulness **without** weakening trust or buy-gate safety.
+
+### What this checkpoint does NOT prove
+
+| Area | Status |
+|------|--------|
+| Revenue, conversion, or repeat-visit lift from motion/memory | **UNKNOWN** — no attributed business metrics in-repo |
+| Command Center / Semi-Cruise / batch lane authority changes | **NOT changed** by `bbadce5` |
+| Monetized coverage growth | **NOT advanced** by this commit alone |
+
+### Next priority after this checkpoint (INFERRED — business does not stop here)
+
+Compound toward revenue while preserving fit/buy safety:
+
+1. Preserve fit/buy safety (gates, evidence, wrong-purchase prevention).
+2. Improve customer trust and conversion on existing surfaces.
+3. Increase useful return behavior and repeat lookup value (recent searches is one slice only).
+4. Continue monetized coverage growth **only** from verified evidence.
+5. Avoid broad redesign churn unless it **directly** improves trust or conversion.
+
+**Copy/paste (repo root) — re-validate UI checkpoint tests:**
+
+```bash
+node --import tsx --test src/lib/copy/customer-ux-doctrine.test.ts
+node --import tsx --test src/app/filter/filter-pdp-homeowner.test.ts
+node --import tsx --test src/app/fridge/fridge-trust-funnel-wiring.test.ts
+npm run lint && npm run build
+```
 
 ---
 
@@ -78,17 +162,19 @@ npm run buckparts:founder-digest
 
 ---
 
-## Current stopping point / chat migration state (through `a343464`)
+## Current stopping point / chat migration state (through `bbadce5`)
 
-Use this block first in a new HQ or implementation chat. It records the **exact** repo stopping point before chat migration.
+Use this block first in a new HQ or implementation chat. It records the **latest validated repo checkpoint** and prior milestone chain. **The business does not stop at `bbadce5`.**
 
 ### Repo HEAD (PROVEN)
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`a343464`** — *Record Waterdrop DA29-00020B browser proof without live CTA* |
-| Prior milestone chain | `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement freshness · `84fb4b3` neuron map · `93dcd3d` batch production owner decisions lane |
-| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba` (see **Semi-Cruise Readiness Milestone**); later commits add Waterdrop proof + customer-language doctrine without changing mutation authority |
+| Latest pushed HEAD | **`bbadce5`** — *Add subtle motion and recent searches to existing BuckParts UI* |
+| Prior milestone chain | `a343464` Waterdrop browser proof + customer-language doctrine · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement freshness · `84fb4b3` neuron map · `93dcd3d` batch production owner decisions lane |
+| Customer UI | **Existing BuckParts look preserved** at `bbadce5`; rejected Hallmark/hybrid/redesign mockups not in tree; motion + `buckparts.recentSearches.v1` only |
+| Live recent searches | **PROVEN** in browser on `buckparts.com` after deployment settled; deploy commit via live HTML meta **UNKNOWN** (see UX checkpoint section) |
+| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba` (see **Semi-Cruise Readiness Milestone**); later commits do not grant mutation authority |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -100,6 +186,7 @@ Use this block first in a new HQ or implementation chat. It records the **exact*
 - **`84fb4b3`** — `owner_command_center_neurons` is built inside `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/owner-command-center-neurons-v1.ts`); raw Command Center stdout is the neuron source; owner dashboard **displays** that field and does not create primary neuron truth when the field is present.
 - **`b85e90b`** — `command_center_v2.external_measurement_freshness_v1` is built in `scripts/report-buckparts-command-center.ts` (via `src/lib/owner-dashboard/external-measurement-freshness-v1.ts`); read-only artifact staleness for GSC + GA4 — **not** live API fetch, **not** revenue proof.
 - **`a343464`** — Waterdrop DA29-00020B owner-browser proof in `data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json`; Rakuten `tagVerified` on `rakuten-waterdrop-filter` (browser proof baseline; production insert recorded separately in evidence).
+- **`bbadce5`** — Existing-site scroll reveal + hover/focus polish + recent-search `localStorage` (`buckparts.recentSearches.v1`); proof at `docs/mockups/existing-site-animation-memory-proof-v1/`; catalog CSVs, evidence, discovery, buy gates, and search semantics untouched.
 
 ### Customer language doctrine + Waterdrop research (PROVEN in-repo)
 
@@ -305,7 +392,7 @@ Read-only inventory at this stop:
 
 ### Next best move after chat migration (INFERRED)
 
-Neuron source-of-truth (`84fb4b3`) and **external measurement freshness lane** (`b85e90b`) are **done**. If jq shows **STALE**, run artifact refresh before treating GSC/GA4 as current. Next slices (pick one): **Founder Digest** batch lane + neuron-aware sections, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, or the next **NOT_PROVEN** feed from the inventory above (GitHub Actions live status, Sentry summary, Runner Step default in CC JSON, Daily Operator merged into CC JSON). **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, or apply execution.
+**Customer UI:** `bbadce5` validated motion/memory on the **existing** site — **do not** reopen broad redesign or mockup aesthetics unless a specific trust/conversion hypothesis is named and measured. **Operator / revenue stack:** neuron source-of-truth (`84fb4b3`) and **external measurement freshness lane** (`b85e90b`) remain the Command Center backbone; if jq shows **STALE**, run artifact refresh before treating GSC/GA4 as current. Prioritize compounding **revenue + trust + verified coverage** — e.g. **Founder Digest** batch lane + neuron-aware sections, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, Waterdrop/monetization follow-ons where evidence-backed, or the next **NOT_PROVEN** Command Center feed from the inventory above. **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, apply execution, or redesign churn without a trust/conversion link.
 
 **Copy/paste (repo root) — confirm external measurement freshness lane:**
 
@@ -501,8 +588,13 @@ Operating rules:
 - The owner judges what customers see/read/trust and approves important business choices.
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
+Current repo checkpoint:
+- HEAD bbadce5 — existing BuckParts UI preserved; subtle motion + recent searches (buckparts.recentSearches.v1) only; rejected redesign mockups removed from tree.
+- Live buckparts.com recent searches proven in browser after deploy settled.
+- Business does not stop here — next work compounds revenue, trust, and verified coverage; avoid aesthetic redesign wandering.
+
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Latest validated checkpoint**, **Current stopping point**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
 ```
 
 ---
@@ -513,7 +605,8 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point** and §0
 
 ### Active lane (HQ priority order)
 
-1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (**current stop** through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; `read_only: true`, `data_mutation: false`; GSC/GA4 **STALE/OK/UNKNOWN** from artifact timestamps only. **NOT PROVEN:** live API fetch during CC build, revenue, or complete operating truth.
+0. **Customer UX memory/motion (`bbadce5`)** — **PROVEN** on existing UI; live recent searches **PROVEN** in browser after deploy settled. **NOT** a redesign program; **NOT** a stopping point. Next customer work = trust/conversion/return-value slices only.
+1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; `read_only: true`, `data_mutation: false`; GSC/GA4 **STALE/OK/UNKNOWN** from artifact timestamps only. **NOT PROVEN:** live API fetch during CC build, revenue, or complete operating truth.
 2. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on raw `buckparts:command-center` JSON; `data_mutation: false`; dashboard displays CC-owned neurons.
 3. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
 4. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
