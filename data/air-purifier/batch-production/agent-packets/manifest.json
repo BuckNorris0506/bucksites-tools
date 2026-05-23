@@ -1,0 +1,15 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "generated_at": "2026-05-23T04:43:27.921Z",
+  "packet_count": 4,
+  "packet_ids": [
+    "ap-blueair-catalog-identity-v1",
+    "ap-levoit-oem-discovery-v1",
+    "ap-oem-search-placeholder-v1",
+    "ap-amazon-secondary-v1"
+  ],
+  "read_only": true,
+  "data_mutation": false,
+  "no_commit": true,
+  "no_deploy": true
+}
