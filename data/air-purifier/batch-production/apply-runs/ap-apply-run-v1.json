@@ -1,6 +1,6 @@
 {
   "report_name": "air_purifier_apply_executor_v1",
-  "generated_at": "2026-05-23T13:05:01.895Z",
+  "generated_at": "2026-05-23T13:07:01.313Z",
   "mode": "dry_run",
   "data_mutation": false,
   "source_plan_path": "data/air-purifier/batch-production/apply-plans/ap-apply-plan-v1.json",
