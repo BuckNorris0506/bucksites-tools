@@ -1,0 +1,914 @@
+{
+  "report_name": "air_purifier_agent_results_aggregator_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-23T05:11:38.529Z",
+  "source_status": "PROVEN",
+  "results_dir": "data/air-purifier/batch-production/agent-results",
+  "result_file_count": 3,
+  "row_count": 19,
+  "valid_row_count": 12,
+  "invalid_row_count": 7,
+  "decision_counts": {
+    "PASS_DIRECT_BUYABLE": 10,
+    "NEEDS_OWNER_REVIEW": 5,
+    "NO_SAFE_PATH": 2,
+    "PASS_REFERENCE": 2
+  },
+  "review_groups": {
+    "auto_apply_eligible": [
+      {
+        "slug": "levoit-rf-lv-h133",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "auto_apply_eligible",
+        "review_reasons": [
+          "passes_auto_apply_validation"
+        ],
+        "final_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "LV-H133",
+          "H133-RF"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "levoit-rf-lv-h133",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "destination_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter",
+            "affiliate_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter"
+          },
+          "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search 0 results for LEVOIT-RF-LV-H133. Official tower replacement PDP 200; H1 'Levoit LV-H133 Tower Air Purifier Replacement Filter'; LV-H133 and H133-RF in primary product area; Add to Cart present. Wrong-family LV-H132/LV-H134 not in primary. Shopify SKU HEACAFLVNUS0008."
+      },
+      {
+        "slug": "levoit-rf-lv-h128",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "auto_apply_eligible",
+        "review_reasons": [
+          "passes_auto_apply_validation"
+        ],
+        "final_url": "https://levoit.com/products/lv-h128-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "LV-H128",
+          "H128-RF"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "levoit-rf-lv-h128",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "destination_url": "https://levoit.com/products/lv-h128-replacement-filter",
+            "affiliate_url": "https://levoit.com/products/lv-h128-replacement-filter"
+          },
+          "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search 0 results for LEVOIT-RF-LV-H128. Official desktop replacement PDP 200; H1 'Levoit LV-H128 Replacement Filter'; LV-H128 and H128-RF in primary area; Add to Cart present. Wrong-family LV-H132/LV-H133 not dominant in primary. Shopify SKU HEACAFLVNUS0049."
+      },
+      {
+        "slug": "levoit-vital100-rf",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "auto_apply_eligible",
+        "review_reasons": [
+          "passes_auto_apply_validation"
+        ],
+        "final_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "Vital 100-RF"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "levoit-vital100-rf",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "destination_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter",
+            "affiliate_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter"
+          },
+          "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search 0 results for LEVOIT-VITAL100-RF. Official Vital 100 replacement PDP 200; primary copy includes 'Vital 100-RF 3-Stage Replacement Filter'; Add to Cart on page; Vital 200 not in primary. Product JSON body confirms Vital 100-RF token. Shopify SKU HEACAFLVNUS0018."
+      }
+    ],
+    "reference_eligible": [],
+    "owner_review_required": [
+      {
+        "slug": "medify-ma25-rf",
+        "packet_id": "ap-amazon-secondary-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "validation:pass_direct_buyable_final_url_not_pdp_like",
+          "owner_review_required_flag",
+          "pass_direct_buyable_failed_auto_apply_checks",
+          "recommended_mutation_touches_primary_choice"
+        ],
+        "final_url": "https://www.amazon.com/dp/B084Q965BF",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-25",
+          "Medify MA-25 Genuine Replacement Filter Set"
+        ],
+        "wrong_family_tokens_seen": [
+          "25 Air Purifier S1/W1/B1",
+          "MA-40",
+          "MA-15"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma25-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-25 Genuine filter PDP; This item In Stock; Amazon.com seller $49.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-25-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-25-RF). Amazon secondary /dp/B084Q965BF: Tavily advanced extract 2026-05-22 — PDP title Medify MA-25 Genuine Replacement Filter Set 1-Pack; This item $49.99 In Stock Ships from and sold by Amazon.com. Catalog SKU string MEDIFY-MA-25-RF not printed on Amazon; model-family MA-25 in primary product area. Compare-widget and FBT surfaces MA-14/MA-15/MA-40; Amazon's Choice aftermarket '25 Replacement Filter S1/W1/B1' in similar-items (seller/product ambiguity). OEM discovery still blocked — owner policy required before any Amazon-primary promotion."
+      },
+      {
+        "slug": "medify-ma40-rf",
+        "packet_id": "ap-amazon-secondary-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "validation:pass_direct_buyable_final_url_not_pdp_like",
+          "owner_review_required_flag",
+          "pass_direct_buyable_failed_auto_apply_checks",
+          "recommended_mutation_touches_primary_choice"
+        ],
+        "final_url": "https://www.amazon.com/dp/B07MTQFFNT",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-40",
+          "Medify MA-40 Genuine Replacement Filter"
+        ],
+        "wrong_family_tokens_seen": [
+          "MA Series 40 Air Purifier",
+          "MA-25",
+          "MA-50",
+          "MA-14",
+          "MA-15"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma40-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-40 Genuine filter PDP; This item In Stock; Amazon.com seller $59.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-40-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-40-RF). Amazon secondary /dp/B07MTQFFNT: Tavily advanced extract 2026-05-22 — PDP title Medify MA-40 Genuine Replacement Filter 1-Pack; This item $59.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-40-RF not on page; MA-40 family token in title/primary area. Comparison grid lists other Medify models; aftermarket '40 Replacement Filter Compatible with MA Series 40' in recommendations (third-party seller ambiguity). Owner policy required before Amazon-primary promotion."
+      },
+      {
+        "slug": "medify-ma50-rf",
+        "packet_id": "ap-amazon-secondary-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "validation:pass_direct_buyable_final_url_not_pdp_like",
+          "owner_review_required_flag",
+          "pass_direct_buyable_failed_auto_apply_checks",
+          "recommended_mutation_touches_primary_choice"
+        ],
+        "final_url": "https://www.amazon.com/dp/B08YCCX11J",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-50",
+          "Medify MA-50 Genuine Replacement Filter"
+        ],
+        "wrong_family_tokens_seen": [
+          "MA Series 50W/50B/50S",
+          "Model 50 Replacement Filter",
+          "MA-25",
+          "MA-40"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma50-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-50 Genuine filter 2-Pack PDP; This item In Stock; Amazon.com seller $125.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-50-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-50-RF). Amazon secondary /dp/B08YCCX11J: Tavily advanced extract 2026-05-22 — PDP title Medify MA-50 Genuine Replacement Filter 2-Pack; This item $125.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-50-RF not on page; MA-50 in primary product area. Aftermarket 'Model 50 Replacement Filter' compatible listing in similar-items (seller ambiguity). Owner policy required before Amazon-primary promotion."
+      },
+      {
+        "slug": "levoit-rf-rar040",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "NEEDS_OWNER_REVIEW",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "agent_needs_owner_review",
+          "owner_review_required_flag"
+        ],
+        "final_url": "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [
+          "400S-P",
+          "Core 400"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "HTTP fetch 2026-05-23 (BuckPartsOEMBrowserTruth/1.0): catalog primary is levoit.com search → 0 product results. Discovered PDP via collection JSON + model-family match to Core 400 compat. Final URL 200, H1 'Levoit Core® 400S-P 3-Stage Replacement Filter', Add to Cart present. Shopify SKU HEACAFLVNUS0051A. Wrong-family tokens (RAR060, CR200, Vital 200) not in primary slice."
+      },
+      {
+        "slug": "levoit-rf-rar060",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "NEEDS_OWNER_REVIEW",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "agent_needs_owner_review",
+          "owner_review_required_flag"
+        ],
+        "final_url": "https://levoit.com/products/core-600s-p-original-replacement-filter",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [
+          "600S-P",
+          "Core 600"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search placeholder returns 0 results for LEVOIT-RF-RAR060. PDP core-600s-p-original-replacement-filter 200, Add to Cart in primary area. levoit-core-600s-p-replacement-filter also resolves 200 but primary showed Sold out without Add to Cart. No RAR060 token on page; 600S-P family naming only."
+      },
+      {
+        "slug": "levoit-rf-c131",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "NEEDS_OWNER_REVIEW",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "agent_needs_owner_review",
+          "owner_review_required_flag"
+        ],
+        "final_url": "https://levoit.com/products/lv-pur131-air-purifier-replacement-filter",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [
+          "LV-PUR131",
+          "PUR131"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search 0 results for LEVOIT-RF-C131. PDP lv-pur131-air-purifier-replacement-filter 200; H1 references LV-PUR131; Add to Cart present. PUR131 tower family matches compat models; C131 OEM token absent on PDP text/JSON body."
+      },
+      {
+        "slug": "levoit-rf-cr200",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "NEEDS_OWNER_REVIEW",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "agent_needs_owner_review",
+          "owner_review_required_flag"
+        ],
+        "final_url": "https://levoit.com/products/core-200s-p-replacement-filter",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [
+          "200S-P",
+          "Core 200"
+        ],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Search 0 results for LEVOIT-RF-CR200. Handle core-200s-p-3-stage-replacement-filter returns 404; correct PDP from replacement-filter-new collection JSON: core-200s-p-replacement-filter (200, Add to Cart). Consumer 200S-P naming only; no CR200 token in body."
+      },
+      {
+        "slug": "holmes-hapf30",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_REFERENCE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "reference_retailer_not_on_allowlist",
+          "wrong_family_tokens_present"
+        ],
+        "final_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "browser_truth_classification": "likely_valid",
+        "exact_tokens_seen": [
+          "HAPF300AHD",
+          "HAPF300"
+        ],
+        "wrong_family_tokens_seen": [
+          "HAPF360",
+          "HAPF1009"
+        ],
+        "buy_action_seen": false,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "holmes-hapf30",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+            "browser_truth_classification": "likely_valid"
+          },
+          "note": "Replace search placeholder with official HAPF300AHD PDP; reference-only until Holmes restores direct purchase."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "Catalog row: holmes-hapf30 / HOLMES-HAPF30 / oem-catalog search placeholder. Retailer link matches packet primary_url. Discovered manufacturer PDP via aer1 filter catalog and HAP9423 documentation referencing Type A HAPF30 family. PDP Model field HAPF300AHD-U4R-2; compatible HAP942x tower line. Catalog internal token HOLMES-HAPF30 not printed on PDP (aliases HAPF30/HAPF300 per filter_aliases.csv)."
+      },
+      {
+        "slug": "winix-carbon-116131",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "NEEDS_OWNER_REVIEW",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "agent_needs_owner_review",
+          "owner_review_required_flag"
+        ],
+        "final_url": "https://www.winixamerica.com/product/filter-i-116131/",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [
+          "116131"
+        ],
+        "wrong_family_tokens_seen": [
+          "115115",
+          "116130",
+          "C555"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "Catalog describes WINIX-116131 as granular carbon sheet (Filter B) for 5500-2/5300-2 compat family. Official winixamerica.com PDP for SKU 116131 is Filter I—a one-year HEPA + washable AOC carbon combo for model C555 only—not a carbon-only sheet for 5500-2. Filter H (116130) is the documented 5500-2 replacement set. Add to Cart present on Filter I PDP but product family conflicts with catalog carbon-only identity and compat mappings."
+      },
+      {
+        "slug": "winix-hepa-115115",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "pass_direct_buyable_failed_auto_apply_checks"
+        ],
+        "final_url": "https://www.winixamerica.com/product/filter-a-115115/",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "115115",
+          "WINIX-115115"
+        ],
+        "wrong_family_tokens_seen": [
+          "116130",
+          "116131"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "winix-hepa-115115",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.winixamerica.com/product/filter-a-115115/",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace search placeholder with browser-proven Filter A PDP; Add to Cart + token 115115 verified."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "Official Filter A PDP. Primary H1/title Filter A – 115115; description cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Compatible models include 5300-2, 5500-2, C535 per product copy—matches catalog compat set."
+      },
+      {
+        "slug": "gg-flt5000",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "pass_direct_buyable_failed_auto_apply_checks"
+        ],
+        "final_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "FLT5000",
+          "GUARDIAN-FLT5000"
+        ],
+        "wrong_family_tokens_seen": [
+          "FLT28CB4",
+          "FLT5111"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "gg-flt5000",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace germguardian.com search placeholder with Guardian Technologies official FLT5000 PDP; Add to Cart verified."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront for GermGuardian. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility list AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat."
+      },
+      {
+        "slug": "coway-max2-hepa",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "pass_direct_buyable_failed_auto_apply_checks"
+        ],
+        "final_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "3304899",
+          "COWAY-3304899",
+          "AP-1512HH"
+        ],
+        "wrong_family_tokens_seen": [
+          "3109905",
+          "3118096",
+          "Max2Green"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "coway-max2-hepa",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace coway.com search placeholder with cowaymega.com PDP; token 3304899 and Add to Cart verified."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "coway.com (Korea corporate) search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity."
+      },
+      {
+        "slug": "shark-hepa-hp100",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_REFERENCE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "reference_retailer_not_on_allowlist",
+          "wrong_family_tokens_present"
+        ],
+        "final_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+        "browser_truth_classification": "likely_valid",
+        "exact_tokens_seen": [
+          "HE1FKBAS",
+          "HP100",
+          "HP102"
+        ],
+        "wrong_family_tokens_seen": [
+          "HE2FKPRO",
+          "HP200",
+          "HP070"
+        ],
+        "buy_action_seen": false,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "shark-hepa-hp100",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+            "browser_truth_classification": "likely_valid"
+          },
+          "note": "Replace search placeholder with official HE1FKBAS PDP; reference-only while Out of Stock."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "Discovered from sharkclean.com parts search and HP102 product cross-links. PDP lists compatibility HP100, HP100C, HP102, HP102C, HP132, HC450 series. Integrated 3-in-1 HEPA+carbon filter; exact marketing token SHARK-HEPA-HP100 not on page."
+      },
+      {
+        "slug": "rabbit-biogs-minusa2",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "review_group": "owner_review_required",
+        "review_reasons": [
+          "validation:pass_direct_buyable_with_wrong_family_tokens",
+          "pass_direct_buyable_failed_auto_apply_checks"
+        ],
+        "final_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "BioGS",
+          "BioGS HEPA",
+          "MinusA2"
+        ],
+        "wrong_family_tokens_seen": [
+          "SPA-550A",
+          "SPA-625A",
+          "BioGS 2.0"
+        ],
+        "buy_action_seen": true,
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "rabbit-biogs-minusa2",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace search placeholder with MinusA2 BioGS HEPA PDP; Add to Cart verified."
+        },
+        "owner_review_required": false,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "rabbitair.com search placeholder replaced by official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string."
+      }
+    ],
+    "rejected": [],
+    "catalog_task_required": [],
+    "no_safe_path": [
+      {
+        "slug": "levoit-rf-meta-air",
+        "packet_id": "ap-levoit-oem-discovery-v1",
+        "decision": "NO_SAFE_PATH",
+        "review_group": "no_safe_path",
+        "review_reasons": [
+          "NO_SAFE_PATH"
+        ],
+        "final_url": "https://levoit.com/search?q=LEVOIT-RF-META&type=product",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [],
+        "wrong_family_tokens_seen": [],
+        "buy_action_seen": false,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json",
+        "evidence_notes": "Live search page title 'Search: 0 results found for LEVOIT-RF-META'. replacement-filter-new and air-purifier-filters Shopify JSON (39 SKUs) contain no Meta Air / MA101 / PlasmaPro cartridge listing. Cannot browser-proof product PDP or buy action."
+      },
+      {
+        "slug": "shark-carbon-foam",
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "decision": "NO_SAFE_PATH",
+        "review_group": "no_safe_path",
+        "review_reasons": [
+          "NO_SAFE_PATH"
+        ],
+        "final_url": "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
+        "browser_truth_classification": null,
+        "exact_tokens_seen": [],
+        "wrong_family_tokens_seen": [
+          "HE1FKBAS",
+          "HE2FKPRO",
+          "HP070",
+          "HE6FKPRO"
+        ],
+        "buy_action_seen": false,
+        "recommended_csv_mutation": null,
+        "owner_review_required": true,
+        "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+        "evidence_notes": "sharkclean.com site search for SHARK-CARBON-FOAM resolves to generic SharkNinja marketing homepage—no filter PDP. HP100/HP102 family uses integrated 3-in-1 NanoSeal cartridge (HE1FKBAS / HE1FKPRO) with carbon layer built in; no separate carbon/foam replacement SKU found on sharkclean.com parts catalog. Cannot prove SHARK-CARBON-FOAM token on any official manufacturer PDP."
+      }
+    ]
+  },
+  "projected_coverage_delta": {
+    "direct_buyable_plus": 3,
+    "official_reference_plus": 0,
+    "blocked_minus": 3
+  },
+  "recommended_next_action": "Owner review 3 auto_apply_eligible row(s), then run a future apply planner (not this script).",
+  "owner_review_summary": [
+    "3 slug(s) pass strict auto-apply validation: levoit-rf-lv-h133, levoit-rf-lv-h128, levoit-vital100-rf",
+    "Owner review (validation:pass_direct_buyable_with_wrong_family_tokens): medify-ma25-rf, medify-ma40-rf, medify-ma50-rf, winix-hepa-115115, gg-flt5000, coway-max2-hepa, rabbit-biogs-minusa2",
+    "Owner review (agent_needs_owner_review): levoit-rf-rar040, levoit-rf-rar060, levoit-rf-c131, levoit-rf-cr200, winix-carbon-116131",
+    "Owner review (reference_retailer_not_on_allowlist): holmes-hapf30, shark-hepa-hp100",
+    "No safe path: levoit-rf-meta-air, shark-carbon-foam",
+    "7 row(s) failed strict validation — see invalid_rows (may still appear in owner_review_required)."
+  ],
+  "invalid_files": [],
+  "invalid_rows": [
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+      "slug": "medify-ma25-rf",
+      "packet_id": "ap-amazon-secondary-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens",
+        "pass_direct_buyable_final_url_not_pdp_like"
+      ],
+      "row": {
+        "packet_id": "ap-amazon-secondary-v1",
+        "slug": "medify-ma25-rf",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.amazon.com/dp/B084Q965BF?tag=buckparts20-20",
+        "final_url": "https://www.amazon.com/dp/B084Q965BF",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-25",
+          "Medify MA-25 Genuine Replacement Filter Set"
+        ],
+        "wrong_family_tokens_seen": [
+          "25 Air Purifier S1/W1/B1",
+          "MA-40",
+          "MA-15"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-25-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-25-RF). Amazon secondary /dp/B084Q965BF: Tavily advanced extract 2026-05-22 — PDP title Medify MA-25 Genuine Replacement Filter Set 1-Pack; This item $49.99 In Stock Ships from and sold by Amazon.com. Catalog SKU string MEDIFY-MA-25-RF not printed on Amazon; model-family MA-25 in primary product area. Compare-widget and FBT surfaces MA-14/MA-15/MA-40; Amazon's Choice aftermarket '25 Replacement Filter S1/W1/B1' in similar-items (seller/product ambiguity). OEM discovery still blocked — owner policy required before any Amazon-primary promotion.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma25-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-25 Genuine filter PDP; This item In Stock; Amazon.com seller $49.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+      "slug": "medify-ma40-rf",
+      "packet_id": "ap-amazon-secondary-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens",
+        "pass_direct_buyable_final_url_not_pdp_like"
+      ],
+      "row": {
+        "packet_id": "ap-amazon-secondary-v1",
+        "slug": "medify-ma40-rf",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.amazon.com/dp/B07MTQFFNT?tag=buckparts20-20",
+        "final_url": "https://www.amazon.com/dp/B07MTQFFNT",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-40",
+          "Medify MA-40 Genuine Replacement Filter"
+        ],
+        "wrong_family_tokens_seen": [
+          "MA Series 40 Air Purifier",
+          "MA-25",
+          "MA-50",
+          "MA-14",
+          "MA-15"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-40-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-40-RF). Amazon secondary /dp/B07MTQFFNT: Tavily advanced extract 2026-05-22 — PDP title Medify MA-40 Genuine Replacement Filter 1-Pack; This item $59.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-40-RF not on page; MA-40 family token in title/primary area. Comparison grid lists other Medify models; aftermarket '40 Replacement Filter Compatible with MA Series 40' in recommendations (third-party seller ambiguity). Owner policy required before Amazon-primary promotion.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma40-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-40 Genuine filter PDP; This item In Stock; Amazon.com seller $59.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+      "slug": "medify-ma50-rf",
+      "packet_id": "ap-amazon-secondary-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens",
+        "pass_direct_buyable_final_url_not_pdp_like"
+      ],
+      "row": {
+        "packet_id": "ap-amazon-secondary-v1",
+        "slug": "medify-ma50-rf",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.amazon.com/dp/B08YCCX11J?tag=buckparts20-20",
+        "final_url": "https://www.amazon.com/dp/B08YCCX11J",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "MA-50",
+          "Medify MA-50 Genuine Replacement Filter"
+        ],
+        "wrong_family_tokens_seen": [
+          "MA Series 50W/50B/50S",
+          "Model 50 Replacement Filter",
+          "MA-25",
+          "MA-40"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "Catalog: medify / MEDIFY-MA-50-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-50-RF). Amazon secondary /dp/B08YCCX11J: Tavily advanced extract 2026-05-22 — PDP title Medify MA-50 Genuine Replacement Filter 2-Pack; This item $125.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-50-RF not on page; MA-50 in primary product area. Aftermarket 'Model 50 Replacement Filter' compatible listing in similar-items (seller ambiguity). Owner policy required before Amazon-primary promotion.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "medify-ma50-rf",
+          "retailer_key": "amazon",
+          "fields": {
+            "browser_truth_classification": "direct_buyable",
+            "browser_truth_notes": "2026-05-22 Tavily: MA-50 Genuine filter 2-Pack PDP; This item In Stock; Amazon.com seller $125.99. Secondary only — do not flip primary.",
+            "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+          },
+          "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+        },
+        "owner_review_required": true
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+      "slug": "winix-hepa-115115",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens"
+      ],
+      "row": {
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "slug": "winix-hepa-115115",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+        "final_url": "https://www.winixamerica.com/product/filter-a-115115/",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "115115",
+          "WINIX-115115"
+        ],
+        "wrong_family_tokens_seen": [
+          "116130",
+          "116131"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "Official Filter A PDP. Primary H1/title Filter A – 115115; description cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Compatible models include 5300-2, 5500-2, C535 per product copy—matches catalog compat set.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "winix-hepa-115115",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.winixamerica.com/product/filter-a-115115/",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace search placeholder with browser-proven Filter A PDP; Add to Cart + token 115115 verified."
+        },
+        "owner_review_required": false
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+      "slug": "gg-flt5000",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens"
+      ],
+      "row": {
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "slug": "gg-flt5000",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+        "final_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "FLT5000",
+          "GUARDIAN-FLT5000"
+        ],
+        "wrong_family_tokens_seen": [
+          "FLT28CB4",
+          "FLT5111"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront for GermGuardian. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility list AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "gg-flt5000",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace germguardian.com search placeholder with Guardian Technologies official FLT5000 PDP; Add to Cart verified."
+        },
+        "owner_review_required": false
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+      "slug": "coway-max2-hepa",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens"
+      ],
+      "row": {
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "slug": "coway-max2-hepa",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://coway.com/search?q=COWAY-3304899",
+        "final_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "3304899",
+          "COWAY-3304899",
+          "AP-1512HH"
+        ],
+        "wrong_family_tokens_seen": [
+          "3109905",
+          "3118096",
+          "Max2Green"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "coway.com (Korea corporate) search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "coway-max2-hepa",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace coway.com search placeholder with cowaymega.com PDP; token 3304899 and Add to Cart verified."
+        },
+        "owner_review_required": false
+      }
+    },
+    {
+      "source_file": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+      "slug": "rabbit-biogs-minusa2",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "reasons": [
+        "pass_direct_buyable_with_wrong_family_tokens"
+      ],
+      "row": {
+        "packet_id": "ap-oem-search-placeholder-v1",
+        "slug": "rabbit-biogs-minusa2",
+        "decision": "PASS_DIRECT_BUYABLE",
+        "candidate_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+        "final_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+        "browser_truth_classification": "direct_buyable",
+        "exact_tokens_seen": [
+          "BioGS",
+          "BioGS HEPA",
+          "MinusA2"
+        ],
+        "wrong_family_tokens_seen": [
+          "SPA-550A",
+          "SPA-625A",
+          "BioGS 2.0"
+        ],
+        "buy_action_seen": true,
+        "reference_only_reason": null,
+        "evidence_notes": "rabbitair.com search placeholder replaced by official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string.",
+        "recommended_csv_mutation": {
+          "file": "data/air-purifier/retailer_links.csv",
+          "filter_slug": "rabbit-biogs-minusa2",
+          "retailer_key": "oem-catalog",
+          "fields": {
+            "primary_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+            "browser_truth_classification": "direct_buyable"
+          },
+          "note": "Replace search placeholder with MinusA2 BioGS HEPA PDP; Add to Cart verified."
+        },
+        "owner_review_required": false
+      }
+    }
+  ],
+  "notes": [
+    "Read-only aggregator — does not apply recommended_csv_mutation or edit CSVs.",
+    "auto_apply_eligible requires empty wrong_family_tokens_seen per strict validation rules.",
+    "reference_eligible requires shark-official allowlist on recommended retailer_key when present.",
+    "Rows failing PASS_DIRECT_BUYABLE validation are listed in invalid_rows and routed to owner_review_required."
+  ]
+}

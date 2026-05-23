@@ -1,0 +1,109 @@
+{
+  "contract": "air_purifier_agent_evidence_result_v1",
+  "packet_id": "ap-amazon-secondary-v1",
+  "generated_at": "2026-05-22T12:00:00.000Z",
+  "read_only_submission": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "rows": [
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma25-rf",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.amazon.com/dp/B084Q965BF?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B084Q965BF",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": [
+        "MA-25",
+        "Medify MA-25 Genuine Replacement Filter Set"
+      ],
+      "wrong_family_tokens_seen": [
+        "25 Air Purifier S1/W1/B1",
+        "MA-40",
+        "MA-15"
+      ],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Catalog: medify / MEDIFY-MA-25-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-25-RF). Amazon secondary /dp/B084Q965BF: Tavily advanced extract 2026-05-22 — PDP title Medify MA-25 Genuine Replacement Filter Set 1-Pack; This item $49.99 In Stock Ships from and sold by Amazon.com. Catalog SKU string MEDIFY-MA-25-RF not printed on Amazon; model-family MA-25 in primary product area. Compare-widget and FBT surfaces MA-14/MA-15/MA-40; Amazon's Choice aftermarket '25 Replacement Filter S1/W1/B1' in similar-items (seller/product ambiguity). OEM discovery still blocked — owner policy required before any Amazon-primary promotion.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "medify-ma25-rf",
+        "retailer_key": "amazon",
+        "fields": {
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "2026-05-22 Tavily: MA-25 Genuine filter PDP; This item In Stock; Amazon.com seller $49.99. Secondary only — do not flip primary.",
+          "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+        },
+        "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+      },
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma40-rf",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.amazon.com/dp/B07MTQFFNT?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B07MTQFFNT",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": [
+        "MA-40",
+        "Medify MA-40 Genuine Replacement Filter"
+      ],
+      "wrong_family_tokens_seen": [
+        "MA Series 40 Air Purifier",
+        "MA-25",
+        "MA-50",
+        "MA-14",
+        "MA-15"
+      ],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Catalog: medify / MEDIFY-MA-40-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-40-RF). Amazon secondary /dp/B07MTQFFNT: Tavily advanced extract 2026-05-22 — PDP title Medify MA-40 Genuine Replacement Filter 1-Pack; This item $59.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-40-RF not on page; MA-40 family token in title/primary area. Comparison grid lists other Medify models; aftermarket '40 Replacement Filter Compatible with MA Series 40' in recommendations (third-party seller ambiguity). Owner policy required before Amazon-primary promotion.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "medify-ma40-rf",
+        "retailer_key": "amazon",
+        "fields": {
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "2026-05-22 Tavily: MA-40 Genuine filter PDP; This item In Stock; Amazon.com seller $59.99. Secondary only — do not flip primary.",
+          "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+        },
+        "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+      },
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma50-rf",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.amazon.com/dp/B08YCCX11J?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B08YCCX11J",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": [
+        "MA-50",
+        "Medify MA-50 Genuine Replacement Filter"
+      ],
+      "wrong_family_tokens_seen": [
+        "MA Series 50W/50B/50S",
+        "Model 50 Replacement Filter",
+        "MA-25",
+        "MA-40"
+      ],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Catalog: medify / MEDIFY-MA-50-RF; primary oem-catalog search placeholder (0 results on medifyair.com for MEDIFY-MA-50-RF). Amazon secondary /dp/B08YCCX11J: Tavily advanced extract 2026-05-22 — PDP title Medify MA-50 Genuine Replacement Filter 2-Pack; This item $125.99 In Stock Ships from and sold by Amazon.com. MEDIFY-MA-50-RF not on page; MA-50 in primary product area. Aftermarket 'Model 50 Replacement Filter' compatible listing in similar-items (seller ambiguity). Owner policy required before Amazon-primary promotion.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "medify-ma50-rf",
+        "retailer_key": "amazon",
+        "fields": {
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "2026-05-22 Tavily: MA-50 Genuine filter 2-Pack PDP; This item In Stock; Amazon.com seller $125.99. Secondary only — do not flip primary.",
+          "browser_truth_checked_at": "2026-05-22T12:00:00.000Z"
+        },
+        "note": "Amazon secondary browser_truth only; keep oem-catalog primary until owner Amazon-primary policy."
+      },
+      "owner_review_required": true
+    }
+  ]
+}
