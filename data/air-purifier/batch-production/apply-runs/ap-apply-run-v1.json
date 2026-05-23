@@ -1,0 +1,73 @@
+{
+  "report_name": "air_purifier_apply_executor_v1",
+  "generated_at": "2026-05-23T13:05:01.895Z",
+  "mode": "dry_run",
+  "data_mutation": false,
+  "source_plan_path": "data/air-purifier/batch-production/apply-plans/ap-apply-plan-v1.json",
+  "apply_status": "BLOCKED",
+  "planned_change_count": 3,
+  "applied_change_count": 0,
+  "changed_slugs": [],
+  "blocked_reasons": [
+    "levoit-rf-lv-h133: current CSV row does not match plan before_row",
+    "levoit-rf-lv-h128: current CSV row does not match plan before_row",
+    "levoit-vital100-rf: current CSV row does not match plan before_row"
+  ],
+  "preflight": {
+    "plan_status": "READY_FOR_OWNER_APPROVAL",
+    "planned_change_count": 3,
+    "owner_approval_required": true,
+    "csv_row_count": 64,
+    "before_row_match_count": 0,
+    "validation_errors": [
+      "levoit-rf-lv-h133: current CSV row does not match plan before_row",
+      "levoit-rf-lv-h128: current CSV row does not match plan before_row",
+      "levoit-vital100-rf: current CSV row does not match plan before_row"
+    ],
+    "duplicate_targets": []
+  },
+  "post_apply_validation": null,
+  "rollback_rows": [
+    {
+      "filter_slug": "levoit-rf-lv-h133",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H133",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H133",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-lv-h128",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H128",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H128",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-vital100-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-VITAL100-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-VITAL100-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "notes": [
+    "Executor v1 mutates ONLY data/air-purifier/retailer_links.csv when --apply is set.",
+    "planned_changes only — refused_changes and other review groups are never applied.",
+    "Dry-run only — no CSV written. Pass --apply to mutate after owner approval."
+  ]
+}
