@@ -332,11 +332,35 @@ test("writes apply-run report artifacts", () => {
   rmSync(tmp, { recursive: true, force: true });
 });
 
-test("live dry-run is DRY_RUN_READY with 3 planned changes", () => {
+const LIVE_APPLIED_SLUGS = [
+  "levoit-rf-lv-h133",
+  "levoit-rf-lv-h128",
+  "levoit-vital100-rf",
+] as const;
+
+test("live dry-run matches repo apply state (DRY_RUN_READY pre-apply or BLOCKED post-apply)", () => {
   const report = runAirPurifierApplyExecutorV1({ rootDir: REPO_ROOT, mode: "dry_run" });
-  assert.equal(report.apply_status, "DRY_RUN_READY");
   assert.equal(report.planned_change_count, 3);
-  assert.equal(report.preflight.before_row_match_count, 3);
+
+  if (report.preflight.before_row_match_count === 3) {
+    assert.equal(report.apply_status, "DRY_RUN_READY");
+    assert.equal(report.applied_change_count, 0);
+    assert.equal(report.data_mutation, false);
+    return;
+  }
+
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.equal(report.preflight.before_row_match_count, 0);
+  assert.equal(report.applied_change_count, 0);
+  assert.equal(report.data_mutation, false);
+  for (const slug of LIVE_APPLIED_SLUGS) {
+    assert.ok(
+      report.blocked_reasons.some(
+        (r) => r.startsWith(`${slug}:`) && r.includes("does not match plan before_row"),
+      ),
+      `expected before_row mismatch blocked reason for ${slug}`,
+    );
+  }
 });
 
 test("does not mutate CSV in dry-run against live repo", () => {

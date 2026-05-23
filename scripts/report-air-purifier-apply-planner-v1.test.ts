@@ -197,8 +197,22 @@ test("includes rollback rows matching planned changes", () => {
   });
   assert.equal(report.rollback_rows.length, report.planned_change_count);
   assert.equal(report.rollback_rows.length, 3);
-  for (const rb of report.rollback_rows) {
-    assert.ok(rb.affiliate_url.includes("search?q=") || rb.destination_url.includes("search?q="));
+  for (let i = 0; i < report.planned_changes.length; i++) {
+    const rb = report.rollback_rows[i]!;
+    const before = report.planned_changes[i]!.before_row;
+    assert.equal(rb.filter_slug, before.filter_slug);
+    assert.equal(rb.retailer_key, before.retailer_key);
+    assert.equal(rb.affiliate_url, before.affiliate_url);
+    assert.equal(rb.destination_url, before.destination_url);
+    assert.equal(rb.browser_truth_classification, before.browser_truth_classification);
+    const isPreApplySnapshot =
+      (rb.affiliate_url.includes("search?q=") || rb.destination_url.includes("search?q=")) &&
+      !rb.browser_truth_classification?.trim();
+    const isPostApplySnapshot = rb.browser_truth_classification === "direct_buyable";
+    assert.ok(
+      isPreApplySnapshot || isPostApplySnapshot,
+      "rollback should reflect current CSV (search placeholder pre-apply or direct_buyable post-apply)",
+    );
   }
 });
 
