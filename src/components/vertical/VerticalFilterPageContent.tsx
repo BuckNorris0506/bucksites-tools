@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
+import { OfficialProductReferenceLinks } from "@/components/trust/OfficialProductReferenceLinks";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { Prose } from "@/components/Prose";
 import {
@@ -49,6 +50,8 @@ type Props = {
   gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
   /** Override default copy when `trust.buyer_path_state === "suppress_buy"`. */
   buySuppressMessage?: string;
+  /** AP-only today: verified official non-buy PDPs (direct outbound, not `/go`). */
+  officialReferenceLinks?: BuyLinkRow[];
 };
 
 export function VerticalFilterPageContent({
@@ -71,6 +74,7 @@ export function VerticalFilterPageContent({
   filterSlug,
   gateSuppressionSummary,
   buySuppressMessage,
+  officialReferenceLinks,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
   const buyPathSortContext = buyPathSortContextForFilter(filterSlug ?? oemPartNumber, name, oemPartNumber);
@@ -142,6 +146,9 @@ export function VerticalFilterPageContent({
               gateSuppressionSummary={gateSuppressionSummary ?? undefined}
               buyPathSortContext={buyPathSortContext}
             />
+            {officialReferenceLinks && officialReferenceLinks.length > 0 ? (
+              <OfficialProductReferenceLinks links={officialReferenceLinks} />
+            ) : null}
           </div>
         </div>
       </div>

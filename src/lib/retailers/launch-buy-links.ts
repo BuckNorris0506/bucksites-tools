@@ -580,3 +580,93 @@ export function selectBestVerifiedBuyLink<T extends WinnerSelectableBuyLink>(
 ): T | null {
   return sortBestVerifiedBuyLinks(links, sortContext)[0] ?? null;
 }
+
+/** Official manufacturer storefront keys eligible for non-buy reference links (narrow allowlist). */
+export const OFFICIAL_REFERENCE_RETAILER_KEYS = new Set(["shark-official"]);
+
+export type OfficialReferenceRetailerLink = {
+  retailer_key?: string | null;
+  affiliate_url: string;
+  browser_truth_classification?: string | null;
+  browser_truth_notes?: string | null;
+  browser_truth_checked_at?: string | null;
+};
+
+/**
+ * PDP-shaped URL suitable for "Official product reference" (not site search / SERP / known indirect).
+ */
+export function isOfficialReferencePdpUrl(url: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(url.trim());
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return false;
+  if (isSearchEngineDiscoveryUrl(url)) return false;
+  if (isKnownIndirectDiscoveryUrl(url)) return false;
+  if (isKnownBrokenUrl(url)) return false;
+  if (isManufacturerSiteSearchUrl(url)) return false;
+
+  const path = u.pathname.toLowerCase();
+  if (isSerpStylePath(path) && hasSearchIntentQuery(u)) return false;
+
+  const productPath =
+    /\/products?\//.test(path) ||
+    /\/store\/products?\//.test(path) ||
+    /\.html$/i.test(path);
+  return productPath;
+}
+
+/** Operator/browser proof recorded on the row (token + PDP check documented in notes). */
+export function hasOfficialReferenceBrowserTruthProof(
+  notes: string | null | undefined,
+  checkedAt: string | null | undefined,
+): boolean {
+  const n = (notes ?? "").trim();
+  const at = (checkedAt ?? "").trim();
+  if (!at || n.length < 12) return false;
+  return true;
+}
+
+/**
+ * Verified official PDP rows that are useful but not live buy paths.
+ * Excluded from `filterRealBuyRetailerLinks` and must never use `/go`.
+ */
+export function filterOfficialReferenceRetailerLinks<
+  T extends OfficialReferenceRetailerLink,
+>(links: T[]): T[] {
+  return links.filter((link) => {
+    const classification = link.browser_truth_classification?.trim();
+    if (classification !== "likely_valid") return false;
+    if (passesDirectBuyableGate(link)) return false;
+    if (buyLinkGateFailureKind(link) === null) return false;
+
+    const key = link.retailer_key?.trim().toLowerCase();
+    if (!key || !OFFICIAL_REFERENCE_RETAILER_KEYS.has(key)) return false;
+
+    const url = link.affiliate_url?.trim() ?? "";
+    if (!url || !isOfficialReferencePdpUrl(url)) return false;
+
+    if (!hasOfficialReferenceBrowserTruthProof(link.browser_truth_notes, link.browser_truth_checked_at)) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+/** True when a row must be counted as a safe direct-buy CTA (demand/coverage scripts). */
+export function isDirectBuyableSafeCtaRow<
+  T extends {
+    browser_truth_classification?: string | null;
+    browser_truth_buyable_subtype?: string | null;
+    retailer_key?: string | null;
+    affiliate_url: string;
+  },
+>(link: T): boolean {
+  return (
+    buyLinkGateFailureKind(link) === null &&
+    link.browser_truth_classification?.trim() === "direct_buyable"
+  );
+}
