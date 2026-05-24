@@ -1,0 +1,165 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "packet_id": "ap-amazon-secondary-v1",
+  "wedge": "air_purifier",
+  "source_pattern": "amazon_secondary_verification",
+  "candidate_slugs": [
+    "medify-ma25-rf",
+    "medify-ma40-rf",
+    "medify-ma50-rf"
+  ],
+  "candidates": [
+    {
+      "rank": 44,
+      "filter_slug": "medify-ma25-rf",
+      "brand_slug": "medify",
+      "oem_part_number": "MEDIFY-MA-25-RF",
+      "state": "owner_review",
+      "priority_score": 23,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 3,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://medifyair.com/search?q=MEDIFY-MA-25-RF",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Primary OEM search placeholder with Amazon secondary — Amazon-primary vs OEM discovery policy decision",
+      "proof_required": "Browser: Amazon exact token + buyability OR OEM PDP discovery",
+      "allowed_future_mutations": [
+        "Primary promotion only after owner policy + browser proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof",
+        "Do not flip primary to Amazon without token proof"
+      ]
+    },
+    {
+      "rank": 48,
+      "filter_slug": "medify-ma40-rf",
+      "brand_slug": "medify",
+      "oem_part_number": "MEDIFY-MA-40-RF",
+      "state": "owner_review",
+      "priority_score": 21,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://medifyair.com/search?q=MEDIFY-MA-40-RF",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Primary OEM search placeholder with Amazon secondary — Amazon-primary vs OEM discovery policy decision",
+      "proof_required": "Browser: Amazon exact token + buyability OR OEM PDP discovery",
+      "allowed_future_mutations": [
+        "Primary promotion only after owner policy + browser proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof",
+        "Do not flip primary to Amazon without token proof"
+      ]
+    },
+    {
+      "rank": 49,
+      "filter_slug": "medify-ma50-rf",
+      "brand_slug": "medify",
+      "oem_part_number": "MEDIFY-MA-50-RF",
+      "state": "owner_review",
+      "priority_score": 21,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://medifyair.com/search?q=MEDIFY-MA-50-RF",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Primary OEM search placeholder with Amazon secondary — Amazon-primary vs OEM discovery policy decision",
+      "proof_required": "Browser: Amazon exact token + buyability OR OEM PDP discovery",
+      "allowed_future_mutations": [
+        "Primary promotion only after owner policy + browser proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof",
+        "Do not flip primary to Amazon without token proof"
+      ]
+    }
+  ],
+  "max_rows": 10,
+  "task_type": "amazon_secondary_verification",
+  "objective": "Verify Amazon /dp/ secondaries for Medify slugs; policy decision before primary promotion.",
+  "exact_proof_required": "Amazon /dp/ page: exact OEM token visible + purchase UI",
+  "allowed_mutations": [
+    "Primary promotion or Amazon browser_truth after owner policy"
+  ],
+  "forbidden_actions": [
+    "Do not deploy or push without explicit owner approval.",
+    "Do not commit CSV or catalog changes unless explicitly requested.",
+    "Do not write to Supabase or call production mutation APIs.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "Do not edit data/air-purifier/filters.csv, filter_aliases.csv, or compatibility_mappings.csv.",
+    "Do not add filter rows, alias rows, or redirects without an approved catalog task.",
+    "Do not weaken buy gates, /go rules, search logic, or compatibility mappings.",
+    "Do not mark direct_buyable without Add to Cart + exact token proof on primary PDP.",
+    "Do not alias GSC slugs (e.g. blueair-f4max-411 → blueair-particle-411) without product-token proof.",
+    "Do not apply recommended_csv_mutation — return evidence only; owner applies in a separate step."
+  ],
+  "reject_rules": [
+    "No primary flip without token proof"
+  ],
+  "expected_output_schema": {
+    "contract": "air_purifier_agent_evidence_result_v1",
+    "row_shape": {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "filter_slug",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://example.com/...",
+      "final_url": "https://example.com/...",
+      "browser_truth_classification": "direct_buyable | likely_valid | null",
+      "exact_tokens_seen": [
+        "OEM-TOKEN"
+      ],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Playwright/browser proof summary",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    "decisions": [
+      "PASS_DIRECT_BUYABLE",
+      "PASS_REFERENCE",
+      "CATALOG_GAP",
+      "ALIAS_REDIRECT_GAP",
+      "REJECT_WRONG_FAMILY",
+      "REJECT_SEARCH_CATEGORY",
+      "NEEDS_OWNER_REVIEW",
+      "NO_SAFE_PATH"
+    ],
+    "results_path_hint": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json"
+  },
+  "validation_checklist": [
+    "Owner policy required before Amazon-primary promotion.",
+    "Final URL is a product PDP, not search/category/error.",
+    "Exact OEM token visible in primary product area.",
+    "Wrong-family tokens checked and documented.",
+    "Buy action (Add to Cart / equivalent) recorded when claiming direct_buyable.",
+    "recommended_csv_mutation is null unless browser proof is complete.",
+    "Return JSON only — do not mutate repo CSVs in this step."
+  ],
+  "owner_review_required": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-24T05:12:39.035Z"
+}

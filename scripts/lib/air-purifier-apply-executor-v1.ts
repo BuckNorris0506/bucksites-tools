@@ -17,8 +17,10 @@ import {
   RETAILER_LINK_STATES,
 } from "@/lib/retailers/retailer-link-state";
 
+import { AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
 import type { AirPurifierApplyPlannerReportV1, ApPlannedChangeV1, ApRetailerLinkCsvRowV1 } from "./air-purifier-apply-planner-v1";
 import {
+  AIR_PURIFIER_APPLY_PLANNER_REPORT_NAME_V1,
   AP_RETAILER_LINKS_CSV_REL_V1,
   findUniqueCsvRowV1,
   loadApRetailerLinksCsvV1,
@@ -29,11 +31,38 @@ export const AIR_PURIFIER_APPLY_EXECUTOR_REPORT_NAME_V1 = "air_purifier_apply_ex
 export const AP_APPLY_PLAN_DEFAULT_PATH_V1 =
   "data/air-purifier/batch-production/apply-plans/ap-apply-plan-v1.json" as const;
 
+export const AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1 =
+  "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json" as const;
+
 export const AP_APPLY_RUN_DEFAULT_JSON_V1 =
   "data/air-purifier/batch-production/apply-runs/ap-apply-run-v1.json" as const;
 
 export const AP_APPLY_RUN_DEFAULT_MD_V1 =
   "data/air-purifier/batch-production/apply-runs/ap-apply-run-v1.md" as const;
+
+export const AP_APPLY_RUN_BATCH_V2_DEFAULT_JSON_V1 =
+  "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json" as const;
+
+export const AP_APPLY_RUN_BATCH_V2_DEFAULT_MD_V1 =
+  "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.md" as const;
+
+export const AP_APPLY_PLAN_ACCEPTED_REPORT_NAMES_V1 = [
+  AIR_PURIFIER_APPLY_PLANNER_REPORT_NAME_V1,
+  AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
+] as const;
+
+export type ApApplyPlanContractV1 = Pick<
+  AirPurifierApplyPlannerReportV1,
+  | "report_name"
+  | "plan_status"
+  | "planned_change_count"
+  | "planned_changes"
+  | "refused_changes"
+  | "rollback_rows"
+  | "owner_approval_required"
+> & {
+  target_csv_file?: string;
+};
 
 export type ApApplyExecutorModeV1 = "dry_run" | "apply";
 
@@ -324,14 +353,64 @@ export function loadAirPurifierApplyPlanV1(
   rootDir: string,
   planPath?: string,
   readText?: (absPath: string) => string,
-): AirPurifierApplyPlannerReportV1 {
+): ApApplyPlanContractV1 {
   const rel = planPath?.trim() || AP_APPLY_PLAN_DEFAULT_PATH_V1;
   const abs = path.isAbsolute(rel) ? rel : path.join(rootDir, rel);
   const read = readText ?? ((p) => readFileSync(p, "utf8"));
   if (!existsSync(abs)) {
     throw new Error(`Apply plan not found: ${rel}`);
   }
-  return JSON.parse(read(abs)) as AirPurifierApplyPlannerReportV1;
+  return JSON.parse(read(abs)) as ApApplyPlanContractV1;
+}
+
+/** Contract guard for accepted planner outputs (v1 + batch-v2). Returns blocked reasons. */
+export function validateApplyPlanContractV1(plan: ApApplyPlanContractV1): string[] {
+  const blocked: string[] = [];
+
+  if (
+    !AP_APPLY_PLAN_ACCEPTED_REPORT_NAMES_V1.includes(
+      plan.report_name as (typeof AP_APPLY_PLAN_ACCEPTED_REPORT_NAMES_V1)[number],
+    )
+  ) {
+    blocked.push(`unexpected plan report_name: ${plan.report_name}`);
+    return blocked;
+  }
+
+  if (plan.report_name === AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1) {
+    if (plan.plan_status !== "READY_FOR_OWNER_APPROVAL") {
+      blocked.push(
+        `batch_v2 plan_status must be READY_FOR_OWNER_APPROVAL (got ${plan.plan_status})`,
+      );
+    }
+    if (plan.owner_approval_required !== true) {
+      blocked.push("batch_v2 owner_approval_required must be true");
+    }
+    if ((plan.planned_changes ?? []).length === 0) {
+      blocked.push("batch_v2 planned_changes must be non-empty");
+    }
+    if (plan.planned_change_count !== (plan.planned_changes ?? []).length) {
+      blocked.push("batch_v2 planned_change_count must match planned_changes length");
+    }
+  }
+
+  return blocked;
+}
+
+export function resolveDefaultApplyRunPathsV1(planPath: string): {
+  jsonPath: string;
+  markdownPath: string;
+} {
+  const normalized = planPath.replace(/\\/g, "/");
+  if (normalized.includes("/apply-plans-batch-v2/")) {
+    return {
+      jsonPath: AP_APPLY_RUN_BATCH_V2_DEFAULT_JSON_V1,
+      markdownPath: AP_APPLY_RUN_BATCH_V2_DEFAULT_MD_V1,
+    };
+  }
+  return {
+    jsonPath: AP_APPLY_RUN_DEFAULT_JSON_V1,
+    markdownPath: AP_APPLY_RUN_DEFAULT_MD_V1,
+  };
 }
 
 export function runAirPurifierApplyExecutorV1(args: {
@@ -361,12 +440,9 @@ export function runAirPurifierApplyExecutorV1(args: {
     "planned_changes only — refused_changes and other review groups are never applied.",
   ];
 
-  if (plan.report_name !== "air_purifier_apply_planner_v1") {
-    blocked_reasons.push(`unexpected plan report_name: ${plan.report_name}`);
-  }
+  blocked_reasons.push(...validateApplyPlanContractV1(plan));
 
-  const planTargetFile = (plan as AirPurifierApplyPlannerReportV1 & { target_csv_file?: string })
-    .target_csv_file;
+  const planTargetFile = plan.target_csv_file;
   if (planTargetFile && planTargetFile !== AP_RETAILER_LINKS_CSV_REL_V1) {
     blocked_reasons.push(
       `target_csv_file must be ${AP_RETAILER_LINKS_CSV_REL_V1} (got ${planTargetFile})`,

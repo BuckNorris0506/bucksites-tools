@@ -1,0 +1,200 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "packet_id": "ap-blueair-catalog-identity-v1",
+  "wedge": "air_purifier",
+  "source_pattern": "blueair_catalog_identity",
+  "candidate_slugs": [
+    "blueair-particle-411",
+    "blueair-f2-211",
+    "blueair-pro-m-particle"
+  ],
+  "candidates": [
+    {
+      "rank": 4,
+      "filter_slug": "blueair-particle-411",
+      "brand_slug": "blueair",
+      "oem_part_number": "BLUEAIR-PART411",
+      "state": "catalog_identity_gap",
+      "priority_score": 68,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 3,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "blueair_catalog_identity",
+      "rationale": "F4MAX vs PART411 identity split; GSC blueair-f4max-411 404; blueair-411a-max compat may map wrong filter — catalog task before buyer-path",
+      "proof_required": "Resolve F4MAX catalog row + compat; do not alias GSC slug to this row",
+      "allowed_future_mutations": [
+        "Catalog/compat in approved task only; then retailer_links on matching slug"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof",
+        "Do not alias blueair-f4max-411 to blueair-particle-411",
+        "Do not direct_buyable until identity + token proof"
+      ]
+    },
+    {
+      "rank": 6,
+      "filter_slug": "blueair-f2-211",
+      "brand_slug": "blueair",
+      "oem_part_number": "BLUEAIR-F2MAX211PAC",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 56,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 5,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "blueair_catalog_identity",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 7,
+      "filter_slug": "blueair-pro-m-particle",
+      "brand_slug": "blueair",
+      "oem_part_number": "BLUEAIR-PRO-M-PART",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 52,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 3,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.blueair.com/us/search?q=BLUEAIR-PRO-M-PART",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "blueair_catalog_identity",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    }
+  ],
+  "max_rows": 3,
+  "task_type": "catalog_identity_review",
+  "objective": "Resolve Blueair F4MAX vs PART411 catalog identity before any particle-411 buyer-path work.",
+  "exact_proof_required": "Prove F4MAX vs PART411; fix compat before any particle-411 buyer-path",
+  "allowed_mutations": [
+    "Catalog/compat in approved task only"
+  ],
+  "forbidden_actions": [
+    "Do not deploy or push without explicit owner approval.",
+    "Do not commit CSV or catalog changes unless explicitly requested.",
+    "Do not write to Supabase or call production mutation APIs.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "Do not edit data/air-purifier/filters.csv, filter_aliases.csv, or compatibility_mappings.csv.",
+    "Do not add filter rows, alias rows, or redirects without an approved catalog task.",
+    "Do not weaken buy gates, /go rules, search logic, or compatibility mappings.",
+    "Do not mark direct_buyable without Add to Cart + exact token proof on primary PDP.",
+    "Do not alias GSC slugs (e.g. blueair-f4max-411 → blueair-particle-411) without product-token proof.",
+    "Do not apply recommended_csv_mutation — return evidence only; owner applies in a separate step."
+  ],
+  "reject_rules": [
+    "No alias blueair-f4max-411 → particle-411",
+    "No retailer_links-only F4MAX fix"
+  ],
+  "expected_output_schema": {
+    "contract": "air_purifier_agent_evidence_result_v1",
+    "row_shape": {
+      "packet_id": "ap-blueair-catalog-identity-v1",
+      "slug": "filter_slug",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://example.com/...",
+      "final_url": "https://example.com/...",
+      "browser_truth_classification": "direct_buyable | likely_valid | null",
+      "exact_tokens_seen": [
+        "OEM-TOKEN"
+      ],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Playwright/browser proof summary",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    "decisions": [
+      "PASS_DIRECT_BUYABLE",
+      "PASS_REFERENCE",
+      "CATALOG_GAP",
+      "ALIAS_REDIRECT_GAP",
+      "REJECT_WRONG_FAMILY",
+      "REJECT_SEARCH_CATEGORY",
+      "NEEDS_OWNER_REVIEW",
+      "NO_SAFE_PATH"
+    ],
+    "results_path_hint": "data/air-purifier/batch-production/agent-results/ap-blueair-catalog-identity-v1.results.json"
+  },
+  "validation_checklist": [
+    "Do not recommend buyer-path CSV mutation until F4MAX catalog row + compat are resolved.",
+    "Final URL is a product PDP, not search/category/error.",
+    "Exact OEM token visible in primary product area.",
+    "Wrong-family tokens checked and documented.",
+    "Buy action (Add to Cart / equivalent) recorded when claiming direct_buyable.",
+    "recommended_csv_mutation is null unless browser proof is complete.",
+    "Return JSON only — do not mutate repo CSVs in this step."
+  ],
+  "owner_review_required": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-24T05:12:39.035Z",
+  "catalog_identity_gaps": [
+    {
+      "gap_id": "blueair-f4max-411-gsc-slug",
+      "gap_type": "gsc_slug_drift",
+      "demand_signal": "/air-purifier/filter/blueair-f4max-411 (GSC; ~10 impressions)",
+      "catalog_slug": null,
+      "issue": "GSC URL conflates F4MAX (411i Max / 411a Max filter) with 411-series naming; slug never existed in filters.csv; unsafe to alias to blueair-particle-411",
+      "safe_action": "Catalog task: add F4MAX filter row + compat fix for blueair-411a-max; then 301 redirect — not buyer-path alias",
+      "related_filter_slugs": [
+        "blueair-particle-411"
+      ]
+    },
+    {
+      "gap_id": "blueair-411a-max-compat-f4max",
+      "gap_type": "compat_mismatch",
+      "demand_signal": "blueair-411a-max model → blueair-particle-411 compat row",
+      "catalog_slug": "blueair-particle-411",
+      "issue": "OEM F4MAX filter serves 411a Max / 411i Max; PART411 filter serves 411/411+/411 Auto — distinct sellable filters",
+      "safe_action": "Owner-approved compat/catalog change before any blueair-particle-411 direct_buyable claim for Max owners",
+      "related_filter_slugs": [
+        "blueair-particle-411"
+      ]
+    },
+    {
+      "gap_id": "blueair-f4max-missing-filter-row",
+      "gap_type": "missing_filter_row",
+      "demand_signal": "F4MAX / 110036 official PDP exists on blueair.com",
+      "catalog_slug": null,
+      "issue": "No live filter slug for Blue Pure 411i Max / 411a Max F4MAX cartridge",
+      "safe_action": "Add filter row (e.g. blueair-f4max-411max) in approved catalog task — not retailer_links-only mutation",
+      "related_filter_slugs": [
+        "blueair-particle-411"
+      ]
+    }
+  ]
+}

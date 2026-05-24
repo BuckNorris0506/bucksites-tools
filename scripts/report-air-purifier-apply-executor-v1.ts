@@ -2,9 +2,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
+  AP_APPLY_PLAN_DEFAULT_PATH_V1,
   AP_APPLY_RUN_DEFAULT_JSON_V1,
   AP_APPLY_RUN_DEFAULT_MD_V1,
   parseAirPurifierApplyExecutorCliArgsV1,
+  resolveDefaultApplyRunPathsV1,
   runAirPurifierApplyExecutorV1,
   writeApplyRunArtifactsV1,
 } from "./lib/air-purifier-apply-executor-v1";
@@ -15,14 +17,16 @@ async function main(): Promise<void> {
   const cli = parseAirPurifierApplyExecutorCliArgsV1(process.argv.slice(2));
   const mode = cli.apply ? "apply" : "dry_run";
 
+  const relPlanPath = cli.planPath ?? AP_APPLY_PLAN_DEFAULT_PATH_V1;
   const report = runAirPurifierApplyExecutorV1({
     rootDir,
     mode,
-    planPath: cli.planPath ?? undefined,
+    planPath: relPlanPath,
   });
 
-  const outPath = cli.outPath ?? AP_APPLY_RUN_DEFAULT_JSON_V1;
-  const markdownOutPath = cli.markdownOutPath ?? AP_APPLY_RUN_DEFAULT_MD_V1;
+  const defaultRunPaths = resolveDefaultApplyRunPathsV1(relPlanPath);
+  const outPath = cli.outPath ?? defaultRunPaths.jsonPath;
+  const markdownOutPath = cli.markdownOutPath ?? defaultRunPaths.markdownPath;
 
   writeApplyRunArtifactsV1({
     report,

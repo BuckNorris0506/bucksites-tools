@@ -1,0 +1,454 @@
+{
+  "report_name": "air_purifier_apply_planner_batch_v2_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-24T05:39:50.319Z",
+  "source_results_dir": "data/air-purifier/batch-production/agent-results-batch-v2",
+  "source_aggregator_generated_at": "2026-05-24T05:39:50.321Z",
+  "synthesized_mutation_slugs": [
+    "winix-hepa-115115",
+    "gg-flt5000",
+    "coway-max2-hepa",
+    "rabbit-biogs-minusa2"
+  ],
+  "plan_status": "READY_FOR_OWNER_APPROVAL",
+  "planned_change_count": 4,
+  "planned_changes": [
+    {
+      "filter_slug": "winix-hepa-115115",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "final_url": "https://www.winixamerica.com/product/filter-a-115115/",
+      "before_row": {
+        "filter_slug": "winix-hepa-115115",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "winix-hepa-115115",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.winixamerica.com/product/filter-a-115115/",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://www.winixamerica.com/product/filter-a-115115/",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice.",
+        "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice.",
+      "browser_truth_checked_at": "2026-05-24T05:39:50.321Z",
+      "evidence_summary": "Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice."
+    },
+    {
+      "filter_slug": "gg-flt5000",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "final_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+      "before_row": {
+        "filter_slug": "gg-flt5000",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "gg-flt5000",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat. FLT28CB4/FLT5111 checked in related products—not in primary slice.",
+        "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat. FLT28CB4/FLT5111 checked in related products—not in primary slice.",
+      "browser_truth_checked_at": "2026-05-24T05:39:50.321Z",
+      "evidence_summary": "Batch-v2 re-proof 2026-05-24: germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat. FLT28CB4/FLT5111 checked in related products—not in primary slice."
+    },
+    {
+      "filter_slug": "coway-max2-hepa",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "final_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+      "before_row": {
+        "filter_slug": "coway-max2-hepa",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://coway.com/search?q=COWAY-3304899",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://coway.com/search?q=COWAY-3304899",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "coway-max2-hepa",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: coway.com search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity. Other Coway SKUs (3109905, 3118096) checked—not dominant in primary area.",
+        "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: coway.com search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity. Other Coway SKUs (3109905, 3118096) checked—not dominant in primary area.",
+      "browser_truth_checked_at": "2026-05-24T05:39:50.321Z",
+      "evidence_summary": "Batch-v2 re-proof 2026-05-24: coway.com search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity. Other Coway SKUs (3109905, 3118096) checked—not dominant in primary area."
+    },
+    {
+      "filter_slug": "rabbit-biogs-minusa2",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "final_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+      "before_row": {
+        "filter_slug": "rabbit-biogs-minusa2",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "rabbit-biogs-minusa2",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: rabbitair.com official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string. BioGS 2.0/SPA-550A tokens checked—not in primary slice.",
+        "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: rabbitair.com official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string. BioGS 2.0/SPA-550A tokens checked—not in primary slice.",
+      "browser_truth_checked_at": "2026-05-24T05:39:50.321Z",
+      "evidence_summary": "Batch-v2 re-proof 2026-05-24: rabbitair.com official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string. BioGS 2.0/SPA-550A tokens checked—not in primary slice."
+    }
+  ],
+  "refused_changes": [
+    {
+      "slug": "holmes-hapf30",
+      "retailer_key": null,
+      "review_group": "reference_eligible",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=reference_eligible",
+        "passes_reference_validation"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "shark-hepa-hp100",
+      "retailer_key": null,
+      "review_group": "reference_eligible",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=reference_eligible",
+        "passes_reference_validation"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma25-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma40-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma50-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-f2-211",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-pro-m-particle",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-rar040",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-rar060",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-c131",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-cr200",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-vital200-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "winix-carbon-116131",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "rabbit-carbon-minusa2",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "coway-airmega250-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-rar029",
+      "retailer_key": null,
+      "review_group": "rejected",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=rejected",
+        "REJECT_WRONG_FAMILY"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-particle-411",
+      "retailer_key": null,
+      "review_group": "catalog_task_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=catalog_task_required",
+        "CATALOG_GAP"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-meta-air",
+      "retailer_key": null,
+      "review_group": "no_safe_path",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=no_safe_path",
+        "NO_SAFE_PATH"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "shark-carbon-foam",
+      "retailer_key": null,
+      "review_group": "no_safe_path",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=no_safe_path",
+        "NO_SAFE_PATH"
+      ],
+      "source": "review_group"
+    }
+  ],
+  "rollback_rows": [
+    {
+      "filter_slug": "winix-hepa-115115",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "gg-flt5000",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "coway-max2-hepa",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://coway.com/search?q=COWAY-3304899",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://coway.com/search?q=COWAY-3304899",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "rabbit-biogs-minusa2",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "projected_coverage_delta": {
+    "direct_buyable_plus": 4,
+    "official_reference_plus": 0,
+    "blocked_minus": 4
+  },
+  "owner_approval_required": true,
+  "apply_executor_available": false,
+  "recommended_next_action": "Owner approve 4 batch-v2 planned change(s), then run apply executor with --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json (not run in this step).",
+  "validation_checklist": [
+    "Confirm owner approval for each of the 4 batch-v2 direct-buy slugs before apply.",
+    "Re-run buyLinkGateFailureKind on after_row payloads — expect null for direct_buyable.",
+    "Verify /air-purifier/go remains safe-only after apply (future executor step).",
+    "Keep rollback_rows to revert data/air-purifier/retailer_links.csv if needed.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "npm run lint && npm run build after apply executor (future task)."
+  ],
+  "notes": [
+    "Batch-v2 bridge — read-only plan; no CSV writes in this step.",
+    "Only aggregator review_groups.auto_apply_eligible rows are eligible (PASS_DIRECT_BUYABLE with strict validation).",
+    "recommended_csv_mutation synthesized from final_url when evidence rows had null mutations.",
+    "PASS_REFERENCE, NEEDS_OWNER_REVIEW, NO_SAFE_PATH, REJECT_*, and CATALOG_GAP rows are in refused_changes."
+  ]
+}

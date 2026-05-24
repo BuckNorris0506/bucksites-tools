@@ -1,0 +1,55 @@
+{
+  "contract": "air_purifier_agent_evidence_result_v1",
+  "packet_id": "ap-blueair-catalog-identity-v1",
+  "generated_at": "2026-05-24T06:30:00.000Z",
+  "read_only_submission": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "rows": [
+    {
+      "packet_id": "ap-blueair-catalog-identity-v1",
+      "slug": "blueair-particle-411",
+      "decision": "CATALOG_GAP",
+      "candidate_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+      "final_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["411", "411+", "411 Auto", "F411PACF"],
+      "wrong_family_tokens_seen": ["F4MAX", "411i Max", "411a Max", "110036"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Batch-v2 catalog/compat review only 2026-05-24: CSV search URL 404. Official PART411-family PDP blue-pure-411-particle-carbon verified with Add to cart ($23.99) for Blue Pure 411/411+/411 Auto—distinct from F4MAX Max-series filter (411i Max/411a Max at f4max-replacement-pac-filter-for-411max-series-f4max). Catalog token BLUEAIR-PART411 not printed on PDP. GSC slug blueair-f4max-411 conflates F4MAX with particle-411; blueair-411a-max compat may map wrong filter. Do not alias or mutate retailer_links for this slug until approved catalog task resolves F4MAX row + compat.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-blueair-catalog-identity-v1",
+      "slug": "blueair-f2-211",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+      "final_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["211+", "Blue Pure 211+ Series", "211+ Series Filter"],
+      "wrong_family_tokens_seen": ["211i Max", "211+ Auto"],
+      "buy_action_seen": true,
+      "reference_only_reason": "Official Blue Pure 211+ Series particle+carbon PDP with Add to cart; catalog OEM token BLUEAIR-F2MAX211PAC / F2MAX211PAC not visible in primary product area.",
+      "evidence_notes": "Batch-v2 browser proof 2026-05-24: blueair.com/us/search?q=BLUEAIR-F2MAX211PAC returns 404. Discovered PDP blue-pure-211-plus-particle-carbon—H1 Blue Pure 211+ Series Filter, compatible with 211/211+ (not 211+ Auto; separate auto PDP exists). Add to cart $69.99. Owner must confirm F2MAX211PAC maps to 211+ Series marketing name before buyer-path update.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-blueair-catalog-identity-v1",
+      "slug": "blueair-pro-m-particle",
+      "decision": "PASS_REFERENCE",
+      "candidate_url": "https://www.blueair.com/us/search?q=BLUEAIR-PRO-M-PART",
+      "final_url": "https://www.blueair.com/products/pro-particle",
+      "browser_truth_classification": "likely_valid",
+      "exact_tokens_seen": ["Pro Particle Filter", "FProPA", "PRO series"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": false,
+      "reference_only_reason": "Official Pro Particle Filter PDP (SKU FProPA, $99.99) verified via product JSON; US storefront widget shows Out of Stock—no Add to Cart in primary probe. Catalog token BLUEAIR-PRO-M-PART not printed on PDP.",
+      "evidence_notes": "Batch-v2 browser proof 2026-05-24: search placeholder URL 404. Product JSON at blueair.com/products/pro-particle.json confirms Pro Particle Filter for PRO series, SKU FProPA. Live PDP fetch redirected to regional homepage with Out of Stock badge on pro-particle card—reference-only until restock and token policy confirmed for Pro M compat row.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    }
+  ]
+}

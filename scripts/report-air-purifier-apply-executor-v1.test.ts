@@ -10,7 +10,14 @@ import {
   type ApPlannedChangeV1,
 } from "./lib/air-purifier-apply-planner-v1";
 import {
+  AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
+} from "./lib/air-purifier-apply-planner-batch-v2-v1";
+import {
+  AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
+  AP_APPLY_RUN_DEFAULT_JSON_V1,
+  AP_APPLY_RUN_DEFAULT_MD_V1,
   loadAirPurifierApplyPlanV1,
+  resolveDefaultApplyRunPathsV1,
   rowMatchesSnapshotV1,
   runAirPurifierApplyExecutorV1,
   serializeRetailerLinksCsvV1,
@@ -119,6 +126,128 @@ function minimalPlan(changes: ApPlannedChangeV1[]): AirPurifierApplyPlannerRepor
     notes: [],
   };
 }
+
+function minimalBatchV2Plan(changes: ApPlannedChangeV1[]): AirPurifierApplyPlannerReportV1 & {
+  report_name: typeof AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1;
+} {
+  return {
+    ...minimalPlan(changes),
+    report_name: AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
+  };
+}
+
+test("rejects unknown plan report_name", () => {
+  const slug = "fixture-slug-unknown-report";
+  const plan = minimalPlan([plannedChange(slug, "unknown-report")]) as AirPurifierApplyPlannerReportV1 & {
+    report_name: string;
+  };
+  plan.report_name = "not_a_real_planner";
+
+  const tmp = mkdtempSync(path.join(tmpdir(), "ap-exec-unknown-report-"));
+  const { planPath } = writeFixtureTree({
+    dir: tmp,
+    csvRows: [searchRow(slug)],
+    plan,
+  });
+
+  const report = runAirPurifierApplyExecutorV1({
+    rootDir: tmp,
+    mode: "dry_run",
+    planPath: planPath,
+  });
+
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.ok(report.blocked_reasons.some((r) => r.includes("unexpected plan report_name")));
+  rmSync(tmp, { recursive: true, force: true });
+});
+
+test("batch-v2 plan report_name is accepted in dry-run when plan is otherwise valid", () => {
+  const report = runAirPurifierApplyExecutorV1({
+    rootDir: REPO_ROOT,
+    mode: "dry_run",
+    planPath: AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
+  });
+  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.planned_change_count, 4);
+  assert.equal(report.preflight.before_row_match_count, 4);
+  assert.equal(report.data_mutation, false);
+  assert.ok(!report.blocked_reasons.some((r) => r.includes("unexpected plan report_name")));
+});
+
+test("batch-v2 plan still refuses non-AP target file", () => {
+  const slug = "fixture-slug-batch-v2-fridge-file";
+  const plan = {
+    ...minimalBatchV2Plan([plannedChange(slug, "batch-v2-fridge")]),
+    target_csv_file: "data/retailer_links.csv",
+  };
+
+  const tmp = mkdtempSync(path.join(tmpdir(), "ap-exec-batch-v2-fridge-file-"));
+  const { planPath } = writeFixtureTree({
+    dir: tmp,
+    csvRows: [searchRow(slug)],
+    plan,
+  });
+
+  const report = runAirPurifierApplyExecutorV1({
+    rootDir: tmp,
+    mode: "dry_run",
+    planPath: planPath,
+  });
+
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.ok(report.blocked_reasons.some((r) => r.includes("target_csv_file")));
+  rmSync(tmp, { recursive: true, force: true });
+});
+
+test("batch-v2 plan still refuses stale before_row mismatch", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "ap-exec-batch-v2-mismatch-"));
+  const slug = "fixture-slug-batch-v2-mismatch";
+  const { planPath } = writeFixtureTree({
+    dir: tmp,
+    csvRows: [
+      {
+        ...searchRow(slug),
+        affiliate_url: "https://levoit.com/search?q=CHANGED",
+        destination_url: "https://levoit.com/search?q=CHANGED",
+      },
+    ],
+    plan: minimalBatchV2Plan([plannedChange(slug, "batch-v2-mismatch")]),
+  });
+
+  const report = runAirPurifierApplyExecutorV1({
+    rootDir: tmp,
+    mode: "dry_run",
+    planPath: planPath,
+  });
+
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.ok(
+    report.blocked_reasons.some((r) => r.includes("does not match plan before_row")),
+  );
+  rmSync(tmp, { recursive: true, force: true });
+});
+
+test("resolveDefaultApplyRunPaths routes batch-v2 plan to batch-v2 apply-run artifacts", () => {
+  const paths = resolveDefaultApplyRunPathsV1(AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1);
+  assert.ok(paths.jsonPath.includes("apply-runs-batch-v2"));
+  assert.ok(paths.markdownPath.includes("apply-runs-batch-v2"));
+  assert.equal(
+    resolveDefaultApplyRunPathsV1("data/air-purifier/batch-production/apply-plans/ap-apply-plan-v1.json")
+      .jsonPath,
+    AP_APPLY_RUN_DEFAULT_JSON_V1,
+  );
+});
+
+test("batch-v2 dry-run does not mutate live AP CSV", () => {
+  const before = readFileSync(path.join(REPO_ROOT, AP_RETAILER_LINKS_CSV_REL_V1), "utf8");
+  runAirPurifierApplyExecutorV1({
+    rootDir: REPO_ROOT,
+    mode: "dry_run",
+    planPath: AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
+  });
+  const after = readFileSync(path.join(REPO_ROOT, AP_RETAILER_LINKS_CSV_REL_V1), "utf8");
+  assert.equal(before, after);
+});
 
 test("dry-run does not mutate CSV", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "ap-exec-dry-"));

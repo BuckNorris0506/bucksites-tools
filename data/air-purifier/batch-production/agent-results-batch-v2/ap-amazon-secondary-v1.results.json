@@ -1,0 +1,55 @@
+{
+  "contract": "air_purifier_agent_evidence_result_v1",
+  "packet_id": "ap-amazon-secondary-v1",
+  "generated_at": "2026-05-24T06:30:00.000Z",
+  "read_only_submission": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "rows": [
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma25-rf",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://www.amazon.com/dp/B084Q965BF?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B084Q965BF",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["MA-25", "Medify MA-25 Genuine Replacement Filter Set"],
+      "wrong_family_tokens_seen": ["MA-40", "MA-15", "25 Air Purifier S1/W1/B1"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Batch-v2 Amazon-secondary verification 2026-05-24: primary oem-catalog search on medifyair.com returns 0 results for MEDIFY-MA-25-RF. Amazon secondary /dp/B084Q965BF shows Medify MA-25 Genuine Replacement Filter Set, In Stock, Amazon.com seller, purchase UI present. Catalog SKU MEDIFY-MA-25-RF not on page; aftermarket similar-items create seller ambiguity. Owner policy required before any Amazon-primary promotion—decision NEEDS_OWNER_REVIEW not PASS_DIRECT_BUYABLE.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma40-rf",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://www.amazon.com/dp/B07MTQFFNT?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B07MTQFFNT",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["MA-40", "Medify MA-40 Genuine Replacement Filter"],
+      "wrong_family_tokens_seen": ["MA-25", "MA-50", "MA Series 40 Air Purifier"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Batch-v2 Amazon-secondary verification 2026-05-24: primary oem-catalog search returns 0 results for MEDIFY-MA-40-RF. Amazon secondary /dp/B07MTQFFNT shows Medify MA-40 Genuine Replacement Filter 1-Pack, In Stock, Amazon.com seller, purchase UI present. MEDIFY-MA-40-RF not on page; third-party compatible listings in recommendations. Owner policy required before Amazon-primary promotion.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-amazon-secondary-v1",
+      "slug": "medify-ma50-rf",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://www.amazon.com/dp/B08YCCX11J?tag=buckparts20-20",
+      "final_url": "https://www.amazon.com/dp/B08YCCX11J",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["MA-50", "Medify MA-50 Genuine Replacement Filter"],
+      "wrong_family_tokens_seen": ["MA-25", "MA-40", "Model 50 Replacement Filter"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Batch-v2 Amazon-secondary verification 2026-05-24: primary oem-catalog search returns 0 results for MEDIFY-MA-50-RF. Amazon secondary /dp/B08YCCX11J shows Medify MA-50 Genuine Replacement Filter 2-Pack, In Stock, Amazon.com seller, purchase UI present. MEDIFY-MA-50-RF not on page; aftermarket Model 50 compatible listing in similar-items. Owner policy required before Amazon-primary promotion.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    }
+  ]
+}

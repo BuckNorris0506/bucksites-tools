@@ -1,0 +1,367 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "packet_id": "ap-oem-search-placeholder-v1",
+  "wedge": "air_purifier",
+  "source_pattern": "oem_search_placeholder_discovery",
+  "candidate_slugs": [
+    "holmes-hapf30",
+    "winix-carbon-116131",
+    "winix-hepa-115115",
+    "shark-carbon-foam",
+    "gg-flt5000",
+    "coway-max2-hepa",
+    "shark-hepa-hp100",
+    "rabbit-biogs-minusa2",
+    "rabbit-carbon-minusa2",
+    "coway-airmega250-rf",
+    "gg-flt4100",
+    "shark-hepa-hp200",
+    "shark-hepa-hp400",
+    "vornado-carbon-pad",
+    "vornado-md1-0023",
+    "coway-airmega400-rf",
+    "alen-fl40",
+    "gg-flt4825",
+    "hb-trueair-04384",
+    "renpho-rp-ap003"
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "filter_slug": "holmes-hapf30",
+      "brand_slug": "holmes",
+      "oem_part_number": "HOLMES-HAPF30",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 81,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 31,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 2,
+      "filter_slug": "winix-carbon-116131",
+      "brand_slug": "winix",
+      "oem_part_number": "WINIX-116131",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 77,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 28,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.winixamerica.com/search?q=WINIX-116131",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 3,
+      "filter_slug": "winix-hepa-115115",
+      "brand_slug": "winix",
+      "oem_part_number": "WINIX-115115",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 77,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 28,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 5,
+      "filter_slug": "shark-carbon-foam",
+      "brand_slug": "shark",
+      "oem_part_number": "SHARK-CARBON-FOAM",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 63,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 21,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 8,
+      "filter_slug": "gg-flt5000",
+      "brand_slug": "germguardian",
+      "oem_part_number": "GUARDIAN-FLT5000",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 51,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 15,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 11,
+      "filter_slug": "coway-max2-hepa",
+      "brand_slug": "coway",
+      "oem_part_number": "COWAY-3304899",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 45,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 12,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://coway.com/search?q=COWAY-3304899",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 16,
+      "filter_slug": "shark-hepa-hp100",
+      "brand_slug": "shark",
+      "oem_part_number": "SHARK-HEPA-HP100",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 39,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 9,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.sharkclean.com/search?q=SHARK-HEPA-HP100",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 17,
+      "filter_slug": "rabbit-biogs-minusa2",
+      "brand_slug": "rabbit-air",
+      "oem_part_number": "RABBIT-BIOGS-MA2",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 37,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 8,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 18,
+      "filter_slug": "rabbit-carbon-minusa2",
+      "brand_slug": "rabbit-air",
+      "oem_part_number": "RABBIT-CARBON-MA2",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 37,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 8,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.rabbitair.com/search?q=RABBIT-CARBON-MA2",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 20,
+      "filter_slug": "coway-airmega250-rf",
+      "brand_slug": "coway",
+      "oem_part_number": "COWAY-3712487",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 35,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 7,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://coway.com/search?q=COWAY-3712487",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    }
+  ],
+  "max_rows": 20,
+  "task_type": "search_placeholder_rescue",
+  "objective": "Replace OEM site-search placeholder URLs with browser-proven manufacturer PDPs.",
+  "exact_proof_required": "Official manufacturer PDP; exact token; Add to Cart for direct_buyable",
+  "allowed_mutations": [
+    "Update existing primary URL + browser_truth"
+  ],
+  "forbidden_actions": [
+    "Do not deploy or push without explicit owner approval.",
+    "Do not commit CSV or catalog changes unless explicitly requested.",
+    "Do not write to Supabase or call production mutation APIs.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "Do not edit data/air-purifier/filters.csv, filter_aliases.csv, or compatibility_mappings.csv.",
+    "Do not add filter rows, alias rows, or redirects without an approved catalog task.",
+    "Do not weaken buy gates, /go rules, search logic, or compatibility mappings.",
+    "Do not mark direct_buyable without Add to Cart + exact token proof on primary PDP.",
+    "Do not alias GSC slugs (e.g. blueair-f4max-411 → blueair-particle-411) without product-token proof.",
+    "Do not apply recommended_csv_mutation — return evidence only; owner applies in a separate step."
+  ],
+  "reject_rules": [
+    "No new retailer rows without approval"
+  ],
+  "expected_output_schema": {
+    "contract": "air_purifier_agent_evidence_result_v1",
+    "row_shape": {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "filter_slug",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://example.com/...",
+      "final_url": "https://example.com/...",
+      "browser_truth_classification": "direct_buyable | likely_valid | null",
+      "exact_tokens_seen": [
+        "OEM-TOKEN"
+      ],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Playwright/browser proof summary",
+      "recommended_csv_mutation": null,
+      "owner_review_required": false
+    },
+    "decisions": [
+      "PASS_DIRECT_BUYABLE",
+      "PASS_REFERENCE",
+      "CATALOG_GAP",
+      "ALIAS_REDIRECT_GAP",
+      "REJECT_WRONG_FAMILY",
+      "REJECT_SEARCH_CATEGORY",
+      "NEEDS_OWNER_REVIEW",
+      "NO_SAFE_PATH"
+    ],
+    "results_path_hint": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json"
+  },
+  "validation_checklist": [
+    "Final URL is a product PDP, not search/category/error.",
+    "Exact OEM token visible in primary product area.",
+    "Wrong-family tokens checked and documented.",
+    "Buy action (Add to Cart / equivalent) recorded when claiming direct_buyable.",
+    "recommended_csv_mutation is null unless browser proof is complete.",
+    "Return JSON only — do not mutate repo CSVs in this step."
+  ],
+  "owner_review_required": false,
+  "no_commit": true,
+  "no_deploy": true,
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-24T05:12:39.035Z"
+}

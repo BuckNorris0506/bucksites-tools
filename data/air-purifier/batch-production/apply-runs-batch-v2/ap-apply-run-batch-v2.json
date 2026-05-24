@@ -1,0 +1,77 @@
+{
+  "report_name": "air_purifier_apply_executor_v1",
+  "generated_at": "2026-05-24T05:39:50.591Z",
+  "mode": "dry_run",
+  "data_mutation": false,
+  "source_plan_path": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+  "apply_status": "DRY_RUN_READY",
+  "planned_change_count": 4,
+  "applied_change_count": 0,
+  "changed_slugs": [],
+  "blocked_reasons": [],
+  "preflight": {
+    "plan_status": "READY_FOR_OWNER_APPROVAL",
+    "planned_change_count": 4,
+    "owner_approval_required": true,
+    "csv_row_count": 64,
+    "before_row_match_count": 4,
+    "validation_errors": [],
+    "duplicate_targets": []
+  },
+  "post_apply_validation": null,
+  "rollback_rows": [
+    {
+      "filter_slug": "winix-hepa-115115",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "gg-flt5000",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "coway-max2-hepa",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://coway.com/search?q=COWAY-3304899",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://coway.com/search?q=COWAY-3304899",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "rabbit-biogs-minusa2",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "notes": [
+    "Executor v1 mutates ONLY data/air-purifier/retailer_links.csv when --apply is set.",
+    "planned_changes only — refused_changes and other review groups are never applied.",
+    "Dry-run only — no CSV written. Pass --apply to mutate after owner approval."
+  ]
+}
