@@ -1,0 +1,184 @@
+{
+  "contract": "air_purifier_agent_evidence_result_v1",
+  "packet_id": "ap-oem-search-placeholder-v1",
+  "generated_at": "2026-05-22T12:00:00.000Z",
+  "read_only_submission": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "rows": [
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "holmes-hapf30",
+      "decision": "PASS_REFERENCE",
+      "candidate_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "final_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      "browser_truth_classification": "likely_valid",
+      "exact_tokens_seen": ["HAPF300AHD", "HAPF300"],
+      "wrong_family_tokens_seen": ["HAPF360", "HAPF1009"],
+      "buy_action_seen": false,
+      "reference_only_reason": "Official Holmes aer1 True HEPA PDP (HAPF300AHD 2-pack) is out of stock on holmesproducts.com; primary product area shows Where To Buy / external retailer routing only—no Add to Cart. Site search for HOLMES-HAPF30 returns zero results.",
+      "evidence_notes": "Catalog row: holmes-hapf30 / HOLMES-HAPF30 / oem-catalog search placeholder. Retailer link matches packet primary_url. Discovered manufacturer PDP via aer1 filter catalog and HAP9423 documentation referencing Type A HAPF30 family. PDP Model field HAPF300AHD-U4R-2; compatible HAP942x tower line. Catalog internal token HOLMES-HAPF30 not printed on PDP (aliases HAPF30/HAPF300 per filter_aliases.csv).",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "holmes-hapf30",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+          "browser_truth_classification": "likely_valid"
+        },
+        "note": "Replace search placeholder with official HAPF300AHD PDP; reference-only until Holmes restores direct purchase."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "winix-carbon-116131",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://www.winixamerica.com/search?q=WINIX-116131",
+      "final_url": "https://www.winixamerica.com/product/filter-i-116131/",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["116131"],
+      "wrong_family_tokens_seen": ["115115", "116130", "C555"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Catalog describes WINIX-116131 as granular carbon sheet (Filter B) for 5500-2/5300-2 compat family. Official winixamerica.com PDP for SKU 116131 is Filter I—a one-year HEPA + washable AOC carbon combo for model C555 only—not a carbon-only sheet for 5500-2. Filter H (116130) is the documented 5500-2 replacement set. Add to Cart present on Filter I PDP but product family conflicts with catalog carbon-only identity and compat mappings.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "winix-hepa-115115",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.winixamerica.com/search?q=WINIX-115115",
+      "final_url": "https://www.winixamerica.com/product/filter-a-115115/",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["115115", "WINIX-115115"],
+      "wrong_family_tokens_seen": ["116130", "116131"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Official Filter A PDP. Primary H1/title Filter A – 115115; description cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Compatible models include 5300-2, 5500-2, C535 per product copy—matches catalog compat set.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "winix-hepa-115115",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://www.winixamerica.com/product/filter-a-115115/",
+          "browser_truth_classification": "direct_buyable"
+        },
+        "note": "Replace search placeholder with browser-proven Filter A PDP; Add to Cart + token 115115 verified."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "shark-carbon-foam",
+      "decision": "NO_SAFE_PATH",
+      "candidate_url": "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
+      "final_url": "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": ["HE1FKBAS", "HE2FKPRO", "HP070", "HE6FKPRO"],
+      "buy_action_seen": false,
+      "reference_only_reason": null,
+      "evidence_notes": "sharkclean.com site search for SHARK-CARBON-FOAM resolves to generic SharkNinja marketing homepage—no filter PDP. HP100/HP102 family uses integrated 3-in-1 NanoSeal cartridge (HE1FKBAS / HE1FKPRO) with carbon layer built in; no separate carbon/foam replacement SKU found on sharkclean.com parts catalog. Cannot prove SHARK-CARBON-FOAM token on any official manufacturer PDP.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "gg-flt5000",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT5000",
+      "final_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["FLT5000", "GUARDIAN-FLT5000"],
+      "wrong_family_tokens_seen": ["FLT28CB4", "FLT5111"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront for GermGuardian. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility list AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "gg-flt5000",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+          "browser_truth_classification": "direct_buyable"
+        },
+        "note": "Replace germguardian.com search placeholder with Guardian Technologies official FLT5000 PDP; Add to Cart verified."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "coway-max2-hepa",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://coway.com/search?q=COWAY-3304899",
+      "final_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["3304899", "COWAY-3304899", "AP-1512HH"],
+      "wrong_family_tokens_seen": ["3109905", "3118096", "Max2Green"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "coway.com (Korea corporate) search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "coway-max2-hepa",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+          "browser_truth_classification": "direct_buyable"
+        },
+        "note": "Replace coway.com search placeholder with cowaymega.com PDP; token 3304899 and Add to Cart verified."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "shark-hepa-hp100",
+      "decision": "PASS_REFERENCE",
+      "candidate_url": "https://www.sharkclean.com/search?q=SHARK-HEPA-HP100",
+      "final_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+      "browser_truth_classification": "likely_valid",
+      "exact_tokens_seen": ["HE1FKBAS", "HP100", "HP102"],
+      "wrong_family_tokens_seen": ["HE2FKPRO", "HP200", "HP070"],
+      "buy_action_seen": false,
+      "reference_only_reason": "Official Shark parts PDP for HP100/HP102 family (Model HE1FKBAS) is Out of Stock with Notify me only—no Add to Cart or equivalent buy action. Catalog token SHARK-HEPA-HP100 is marketing slug; storefront uses HE1FKBAS.",
+      "evidence_notes": "Discovered from sharkclean.com parts search and HP102 product cross-links. PDP lists compatibility HP100, HP100C, HP102, HP102C, HP132, HC450 series. Integrated 3-in-1 HEPA+carbon filter; exact marketing token SHARK-HEPA-HP100 not on page.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "shark-hepa-hp100",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+          "browser_truth_classification": "likely_valid"
+        },
+        "note": "Replace search placeholder with official HE1FKBAS PDP; reference-only while Out of Stock."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-oem-search-placeholder-v1",
+      "slug": "rabbit-biogs-minusa2",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://www.rabbitair.com/search?q=RABBIT-BIOGS-MA2",
+      "final_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["BioGS", "BioGS HEPA", "MinusA2"],
+      "wrong_family_tokens_seen": ["SPA-550A", "SPA-625A", "BioGS 2.0"],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "rabbitair.com search placeholder replaced by official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "rabbit-biogs-minusa2",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "primary_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+          "browser_truth_classification": "direct_buyable"
+        },
+        "note": "Replace search placeholder with MinusA2 BioGS HEPA PDP; Add to Cart verified."
+      },
+      "owner_review_required": false
+    }
+  ]
+}

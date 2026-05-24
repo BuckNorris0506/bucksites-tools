@@ -1,0 +1,157 @@
+{
+  "contract": "air_purifier_agent_evidence_result_v1",
+  "packet_id": "ap-levoit-oem-discovery-v1",
+  "generated_at": "2026-05-23T05:15:00.000Z",
+  "read_only_submission": true,
+  "no_commit": true,
+  "no_deploy": true,
+  "rows": [
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-rar040",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+      "final_url": "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["400S-P", "Core 400"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": "Official Core 400S-P 3-Stage filter PDP with Add to Cart; catalog OEM LEVOIT-RF-RAR040 / RAR040 not visible in primary product area (site uses -P consumer naming).",
+      "evidence_notes": "HTTP fetch 2026-05-23 (BuckPartsOEMBrowserTruth/1.0): catalog primary is levoit.com search → 0 product results. Discovered PDP via collection JSON + model-family match to Core 400 compat. Final URL 200, H1 'Levoit Core® 400S-P 3-Stage Replacement Filter', Add to Cart present. Shopify SKU HEACAFLVNUS0051A. Wrong-family tokens (RAR060, CR200, Vital 200) not in primary slice.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-rar060",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+      "final_url": "https://levoit.com/products/core-600s-p-original-replacement-filter",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["600S-P", "Core 600"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": "Official Core 600S-P Original filter PDP with Add to Cart; catalog OEM LEVOIT-RF-RAR060 / RAR060 not in primary product area. Alternate handle levoit-core-600s-p-replacement-filter showed Sold out in primary probe — used in-stock PDP.",
+      "evidence_notes": "Search placeholder returns 0 results for LEVOIT-RF-RAR060. PDP core-600s-p-original-replacement-filter 200, Add to Cart in primary area. levoit-core-600s-p-replacement-filter also resolves 200 but primary showed Sold out without Add to Cart. No RAR060 token on page; 600S-P family naming only.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-lv-h133",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H133",
+      "final_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["LV-H133", "H133-RF"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Search 0 results for LEVOIT-RF-LV-H133. Official tower replacement PDP 200; H1 'Levoit LV-H133 Tower Air Purifier Replacement Filter'; LV-H133 and H133-RF in primary product area; Add to Cart present. Wrong-family LV-H132/LV-H134 not in primary. Shopify SKU HEACAFLVNUS0008.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "levoit-rf-lv-h133",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "destination_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter",
+          "affiliate_url": "https://levoit.com/products/lv-h133-air-purifier-tower-replacement-filter"
+        },
+        "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-c131",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+      "final_url": "https://levoit.com/products/lv-pur131-air-purifier-replacement-filter",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["LV-PUR131", "PUR131"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": "Official LV-PUR131 replacement PDP with Add to Cart; catalog OEM LEVOIT-RF-C131 / C131 not surfaced in primary product area.",
+      "evidence_notes": "Search 0 results for LEVOIT-RF-C131. PDP lv-pur131-air-purifier-replacement-filter 200; H1 references LV-PUR131; Add to Cart present. PUR131 tower family matches compat models; C131 OEM token absent on PDP text/JSON body.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-cr200",
+      "decision": "NEEDS_OWNER_REVIEW",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+      "final_url": "https://levoit.com/products/core-200s-p-replacement-filter",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": ["200S-P", "Core 200"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": "Official Core 200S-P 3-Stage replacement PDP with Add to Cart; catalog OEM LEVOIT-RF-CR200 / CR200 not in primary product area.",
+      "evidence_notes": "Search 0 results for LEVOIT-RF-CR200. Handle core-200s-p-3-stage-replacement-filter returns 404; correct PDP from replacement-filter-new collection JSON: core-200s-p-replacement-filter (200, Add to Cart). Consumer 200S-P naming only; no CR200 token in body.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-lv-h128",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-LV-H128",
+      "final_url": "https://levoit.com/products/lv-h128-replacement-filter",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["LV-H128", "H128-RF"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Search 0 results for LEVOIT-RF-LV-H128. Official desktop replacement PDP 200; H1 'Levoit LV-H128 Replacement Filter'; LV-H128 and H128-RF in primary area; Add to Cart present. Wrong-family LV-H132/LV-H133 not dominant in primary. Shopify SKU HEACAFLVNUS0049.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "levoit-rf-lv-h128",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "destination_url": "https://levoit.com/products/lv-h128-replacement-filter",
+          "affiliate_url": "https://levoit.com/products/lv-h128-replacement-filter"
+        },
+        "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+      },
+      "owner_review_required": false
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-rf-meta-air",
+      "decision": "NO_SAFE_PATH",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-META",
+      "final_url": "https://levoit.com/search?q=LEVOIT-RF-META&type=product",
+      "browser_truth_classification": null,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": false,
+      "reference_only_reason": "No official Meta Air / LEVOIT-RF-META filter PDP on levoit.com; site search returns zero product results.",
+      "evidence_notes": "Live search page title 'Search: 0 results found for LEVOIT-RF-META'. replacement-filter-new and air-purifier-filters Shopify JSON (39 SKUs) contain no Meta Air / MA101 / PlasmaPro cartridge listing. Cannot browser-proof product PDP or buy action.",
+      "recommended_csv_mutation": null,
+      "owner_review_required": true
+    },
+    {
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "slug": "levoit-vital100-rf",
+      "decision": "PASS_DIRECT_BUYABLE",
+      "candidate_url": "https://levoit.com/search?q=LEVOIT-VITAL100-RF",
+      "final_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter",
+      "browser_truth_classification": "direct_buyable",
+      "exact_tokens_seen": ["Vital 100-RF"],
+      "wrong_family_tokens_seen": [],
+      "buy_action_seen": true,
+      "reference_only_reason": null,
+      "evidence_notes": "Search 0 results for LEVOIT-VITAL100-RF. Official Vital 100 replacement PDP 200; primary copy includes 'Vital 100-RF 3-Stage Replacement Filter'; Add to Cart on page; Vital 200 not in primary. Product JSON body confirms Vital 100-RF token. Shopify SKU HEACAFLVNUS0018.",
+      "recommended_csv_mutation": {
+        "file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "levoit-vital100-rf",
+        "retailer_key": "oem-catalog",
+        "fields": {
+          "destination_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter",
+          "affiliate_url": "https://levoit.com/products/vital100-air-purifier-replacement-filter"
+        },
+        "note": "Replace oem-catalog search placeholder with browser-proven official PDP (owner apply only)."
+      },
+      "owner_review_required": false
+    }
+  ]
+}

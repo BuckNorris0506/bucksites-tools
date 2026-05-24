@@ -7,6 +7,7 @@ import type {
   AirPurifierRetailerLink,
 } from "./types";
 import {
+  filterOfficialReferenceRetailerLinks,
   filterRealBuyRetailerLinks,
   summarizeBuyPathGateSuppression,
   type BuyPathGateSuppressionSummary,
@@ -19,6 +20,8 @@ export type AirPurifierFilterDetail = AirPurifierFilterRow & {
 export type AirPurifierFilterWithModels = AirPurifierFilterDetail & {
   models: AirPurifierModelListRow[];
   retailer_links: AirPurifierRetailerLink[];
+  /** Verified official PDPs that are not direct-buyable; direct outbound only (no `/go`). */
+  official_reference_links: AirPurifierRetailerLink[];
   /** Why on-file retailer rows are not eligible for live buy CTAs (parallel to `filterRealBuyRetailerLinks`). */
   buy_path_gate_suppression: BuyPathGateSuppressionSummary;
   /** Search aliases from air_purifier_filter_aliases (excludes redundant OEM echo). */
@@ -112,6 +115,7 @@ export async function getAirPurifierFilterBySlug(
     ...filterRow,
     models,
     retailer_links: filterRealBuyRetailerLinks(rawRetailerLinks),
+    official_reference_links: filterOfficialReferenceRetailerLinks(rawRetailerLinks),
     buy_path_gate_suppression: summarizeBuyPathGateSuppression(rawRetailerLinks),
     also_known_as,
   };
