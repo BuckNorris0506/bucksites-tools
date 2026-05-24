@@ -4,12 +4,16 @@ import path from "node:path";
 import test from "node:test";
 
 import type { AirPurifierApplyPlannerReportV1, ApPlannedChangeV1 } from "./lib/air-purifier-apply-planner-v1";
+import { AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 } from "./lib/air-purifier-apply-planner-batch-v2-v1";
 import {
+  AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1,
   AP_SUPABASE_PARITY_UPDATE_FIELDS_V1,
   buildSupabaseUpdatePatchFromAfterRowV1,
   dbRowMatchesBeforeRowForParityV1,
   dbRowMatchesPlanSnapshotV1,
   gateFailureForProjectedRowV1,
+  isSlugAllowedByParityPlanV1,
+  planAllowedSlugsV1,
   runAirPurifierSupabaseParityV1,
   validateApSupabaseParityPlanV1,
   type ApDbRetailerLinkRowV1,
@@ -318,7 +322,14 @@ test("dbRowMatchesPlanSnapshot compares browser_truth fields", () => {
   assert.equal(dbRowMatchesPlanSnapshotV1(db, snap), false);
 });
 
-test("live plan validates three Levoit slugs", () => {
+function minimalBatchV2Plan(changes: ApPlannedChangeV1[]): AirPurifierApplyPlannerReportV1 {
+  return {
+    ...minimalPlan(changes),
+    report_name: AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
+  };
+}
+
+test("live v1 parity plan validates three Levoit slugs", () => {
   const plan = JSON.parse(
     readFileSync(
       path.join(
@@ -331,6 +342,102 @@ test("live plan validates three Levoit slugs", () => {
   const reasons = validateApSupabaseParityPlanV1(plan);
   assert.equal(reasons.length, 0);
   assert.equal(plan.planned_change_count, 3);
+});
+
+test("live batch-v2 parity plan validates exactly four planned slugs", () => {
+  const plan = JSON.parse(
+    readFileSync(
+      path.join(REPO_ROOT, AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1),
+      "utf8",
+    ),
+  ) as AirPurifierApplyPlannerReportV1;
+  const reasons = validateApSupabaseParityPlanV1(plan);
+  assert.equal(reasons.length, 0);
+  assert.equal(plan.planned_change_count, 4);
+  assert.deepEqual(planAllowedSlugsV1(plan).sort(), [
+    "coway-max2-hepa",
+    "gg-flt5000",
+    "rabbit-biogs-minusa2",
+    "winix-hepa-115115",
+  ]);
+  for (const slug of planAllowedSlugsV1(plan)) {
+    assert.equal(isSlugAllowedByParityPlanV1(plan, slug), true);
+  }
+  assert.equal(isSlugAllowedByParityPlanV1(plan, "levoit-rf-lv-h133"), false);
+});
+
+test("batch-v2 plan rejects slug not present in planned_changes", () => {
+  const plan = JSON.parse(
+    readFileSync(
+      path.join(REPO_ROOT, AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1),
+      "utf8",
+    ),
+  ) as AirPurifierApplyPlannerReportV1;
+  assert.equal(isSlugAllowedByParityPlanV1(plan, "levoit-rf-lv-h133"), false);
+  assert.equal(isSlugAllowedByParityPlanV1(plan, "medify-ma25-rf"), false);
+});
+
+test("batch-v2 plan rejects unknown report_name", () => {
+  const plan = minimalBatchV2Plan([
+    plannedChange("winix-hepa-115115", "filter-a-115115"),
+  ]) as AirPurifierApplyPlannerReportV1 & { report_name: string };
+  plan.report_name = "not_a_real_planner";
+  const reasons = validateApSupabaseParityPlanV1(plan);
+  assert.ok(reasons.some((r) => r.includes("unexpected plan report_name")));
+});
+
+test("batch-v2 plan rejects non-AP target CSV file", () => {
+  const plan = {
+    ...minimalBatchV2Plan([plannedChange("winix-hepa-115115", "filter-a-115115")]),
+    target_csv_file: "data/retailer_links.csv",
+  };
+  const reasons = validateApSupabaseParityPlanV1(plan);
+  assert.ok(reasons.some((r) => r.includes("target_csv_file")));
+});
+
+test("batch-v2 dry-run does not write with mocked deps", async () => {
+  const plan = JSON.parse(
+    readFileSync(
+      path.join(REPO_ROOT, AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1),
+      "utf8",
+    ),
+  ) as AirPurifierApplyPlannerReportV1;
+  const linksBySlug: Record<string, ApDbRetailerLinkRowV1[]> = {};
+  for (const change of plan.planned_changes) {
+    linksBySlug[change.filter_slug] = [
+      dbRowFromSnapshot(change.filter_slug, change.before_row),
+    ];
+  }
+  const deps = mockDeps({ linksBySlug });
+  const report = await runAirPurifierSupabaseParityV1({
+    rootDir: REPO_ROOT,
+    mode: "dry_run",
+    planPath: AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1,
+    deps,
+  });
+  assert.equal(validateApSupabaseParityPlanV1(plan).length, 0);
+  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.planned_change_count, 4);
+  assert.equal(report.rows.length, 4);
+  assert.equal(deps.updateCalls.length, 0);
+  assert.equal(report.data_mutation, false);
+  for (const row of report.rows) {
+    assert.equal(row.gate_after_projected, null);
+    assert.equal(row.would_update, true);
+  }
+});
+
+test("batch-v2 plan rejects projected row with search URL gate failure", () => {
+  const change = plannedChange("winix-hepa-115115", "filter-a-115115");
+  change.after_row = {
+    ...change.after_row,
+    affiliate_url: "https://www.winixamerica.com/search?q=WINIX-115115",
+    destination_url: "https://www.winixamerica.com/search?q=WINIX-115115",
+    browser_truth_classification: "direct_buyable",
+  };
+  const plan = minimalBatchV2Plan([change]);
+  const reasons = validateApSupabaseParityPlanV1(plan);
+  assert.ok(reasons.some((r) => r.includes("gate_after_projected")));
 });
 
 

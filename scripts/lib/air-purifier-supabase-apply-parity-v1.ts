@@ -8,12 +8,16 @@ import path from "node:path";
 
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
+import { AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
 import type {
   AirPurifierApplyPlannerReportV1,
   ApPlannedChangeV1,
   ApRetailerLinkCsvRowV1,
 } from "./air-purifier-apply-planner-v1";
-import { AP_RETAILER_LINKS_CSV_REL_V1 } from "./air-purifier-apply-planner-v1";
+import {
+  AIR_PURIFIER_APPLY_PLANNER_REPORT_NAME_V1,
+  AP_RETAILER_LINKS_CSV_REL_V1,
+} from "./air-purifier-apply-planner-v1";
 
 export const AIR_PURIFIER_SUPABASE_PARITY_REPORT_NAME_V1 =
   "air_purifier_supabase_apply_parity_v1" as const;
@@ -21,13 +25,26 @@ export const AIR_PURIFIER_SUPABASE_PARITY_REPORT_NAME_V1 =
 export const AP_SUPABASE_PARITY_DEFAULT_PLAN_PATH_V1 =
   "data/air-purifier/batch-production/apply-plans/ap-apply-plan-v1.json" as const;
 
+export const AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1 =
+  "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json" as const;
+
 export const AP_SUPABASE_PARITY_TARGET_TABLE_V1 = "air_purifier_retailer_links" as const;
 
-export const AP_SUPABASE_PARITY_ALLOWED_SLUGS_V1 = [
-  "levoit-rf-lv-h133",
-  "levoit-rf-lv-h128",
-  "levoit-vital100-rf",
+export const AP_SUPABASE_PARITY_ACCEPTED_REPORT_NAMES_V1 = [
+  AIR_PURIFIER_APPLY_PLANNER_REPORT_NAME_V1,
+  AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
 ] as const;
+
+export type ApSupabaseParityPlanContractV1 = Pick<
+  AirPurifierApplyPlannerReportV1,
+  | "report_name"
+  | "plan_status"
+  | "planned_change_count"
+  | "planned_changes"
+  | "owner_approval_required"
+> & {
+  target_csv_file?: string;
+};
 
 export const AP_SUPABASE_PARITY_REQUIRED_RETAILER_KEY_V1 = "oem-catalog" as const;
 
@@ -129,8 +146,7 @@ export function dbRowMatchesBeforeRowForParityV1(
   );
 }
 
-export 
-function normalizeParityComparableValueV1(field: string, value: unknown): unknown {
+export function normalizeParityComparableValueV1(field: string, value: unknown): unknown {
   if (value === null || value === undefined) return value;
   if (field.endsWith("_checked_at") || field === "browser_truth_checked_at") {
     const raw = String(value).trim();
@@ -186,16 +202,34 @@ export function buildSupabaseUpdatePatchFromAfterRowV1(
   };
 }
 
-export function validateApSupabaseParityPlanV1(
-  plan: AirPurifierApplyPlannerReportV1,
-): string[] {
+export function planAllowedSlugsV1(plan: ApSupabaseParityPlanContractV1): string[] {
+  return (plan.planned_changes ?? []).map((change) => change.filter_slug);
+}
+
+export function isSlugAllowedByParityPlanV1(
+  plan: ApSupabaseParityPlanContractV1,
+  slug: string,
+): boolean {
+  return planAllowedSlugsV1(plan).includes(slug);
+}
+
+export function validateApSupabaseParityPlanV1(plan: ApSupabaseParityPlanContractV1): string[] {
   const reasons: string[] = [];
 
-  if (plan.report_name !== "air_purifier_apply_planner_v1") {
+  if (
+    !AP_SUPABASE_PARITY_ACCEPTED_REPORT_NAMES_V1.includes(
+      plan.report_name as (typeof AP_SUPABASE_PARITY_ACCEPTED_REPORT_NAMES_V1)[number],
+    )
+  ) {
     reasons.push(`unexpected plan report_name: ${plan.report_name}`);
+    return reasons;
   }
+
   if (plan.plan_status !== "READY_FOR_OWNER_APPROVAL") {
     reasons.push(`plan_status must be READY_FOR_OWNER_APPROVAL (got ${plan.plan_status})`);
+  }
+  if (plan.owner_approval_required !== true) {
+    reasons.push("owner_approval_required must be true");
   }
   if (plan.planned_change_count !== (plan.planned_changes?.length ?? 0)) {
     reasons.push(
@@ -203,17 +237,24 @@ export function validateApSupabaseParityPlanV1(
     );
   }
 
-  const targetCsv = (plan as AirPurifierApplyPlannerReportV1 & { target_csv_file?: string })
-    .target_csv_file;
-  if (targetCsv && targetCsv !== AP_RETAILER_LINKS_CSV_REL_V1) {
-    reasons.push(`target_csv_file must be ${AP_RETAILER_LINKS_CSV_REL_V1} (got ${targetCsv})`);
+  if (plan.target_csv_file && plan.target_csv_file !== AP_RETAILER_LINKS_CSV_REL_V1) {
+    reasons.push(
+      `target_csv_file must be ${AP_RETAILER_LINKS_CSV_REL_V1} (got ${plan.target_csv_file})`,
+    );
   }
 
-  const allowedSlugs = new Set<string>(AP_SUPABASE_PARITY_ALLOWED_SLUGS_V1);
-  for (const change of plan.planned_changes ?? []) {
-    if (!allowedSlugs.has(change.filter_slug)) {
-      reasons.push(`${change.filter_slug}: slug not in approved AP Supabase parity allowlist`);
+  const planned = plan.planned_changes ?? [];
+  if (planned.length === 0) {
+    reasons.push("planned_changes must be non-empty");
+  }
+
+  const slugSeen = new Set<string>();
+  for (const change of planned) {
+    if (slugSeen.has(change.filter_slug)) {
+      reasons.push(`${change.filter_slug}: duplicate planned target in plan`);
     }
+    slugSeen.add(change.filter_slug);
+
     if (
       normEmpty(change.retailer_key).toLowerCase() !==
       AP_SUPABASE_PARITY_REQUIRED_RETAILER_KEY_V1
@@ -224,9 +265,19 @@ export function validateApSupabaseParityPlanV1(
     }
     if (!change.before_row || !change.after_row) {
       reasons.push(`${change.filter_slug}: missing before_row or after_row`);
+      continue;
     }
-    if (normEmpty(change.after_row?.browser_truth_classification) !== "direct_buyable") {
-      reasons.push(`${change.filter_slug}: after_row browser_truth_classification must be direct_buyable`);
+    if (normEmpty(change.after_row.browser_truth_classification) !== "direct_buyable") {
+      reasons.push(
+        `${change.filter_slug}: after_row browser_truth_classification must be direct_buyable`,
+      );
+    }
+
+    const gate = gateFailureForProjectedRowV1(
+      buildSupabaseUpdatePatchFromAfterRowV1(change.after_row),
+    );
+    if (gate !== null) {
+      reasons.push(`${change.filter_slug}: gate_after_projected ${gate}`);
     }
   }
 
@@ -237,14 +288,20 @@ export function loadApSupabaseParityPlanV1(
   rootDir: string,
   planPath?: string,
   readText?: (absPath: string) => string,
-): AirPurifierApplyPlannerReportV1 {
+): ApSupabaseParityPlanContractV1 & {
+  planned_changes: ApPlannedChangeV1[];
+  planned_change_count: number;
+} {
   const rel = planPath?.trim() || AP_SUPABASE_PARITY_DEFAULT_PLAN_PATH_V1;
   const abs = path.isAbsolute(rel) ? rel : path.join(rootDir, rel);
   const read = readText ?? ((p) => readFileSync(p, "utf8"));
   if (!readText && !existsSync(abs)) {
     throw new Error(`Apply plan not found: ${rel}`);
   }
-  return JSON.parse(read(abs)) as AirPurifierApplyPlannerReportV1;
+  return JSON.parse(read(abs)) as ApSupabaseParityPlanContractV1 & {
+    planned_changes: ApPlannedChangeV1[];
+    planned_change_count: number;
+  };
 }
 
 export function gateFailureForProjectedRowV1(
@@ -335,6 +392,10 @@ async function resolveParityRowV1(args: {
   const slug = args.change.filter_slug;
   const retailerKey = args.change.retailer_key;
   const afterProjected = buildSupabaseUpdatePatchFromAfterRowV1(args.change.after_row);
+  const gateAfterProjected = gateFailureForProjectedRowV1(afterProjected);
+  if (gateAfterProjected !== null) {
+    args.blocked_reasons.push(`${slug}: gate_after_projected ${gateAfterProjected}`);
+  }
 
   const emptyRow: ApSupabaseParityRowReportV1 = {
     filter_slug: slug,
@@ -344,7 +405,7 @@ async function resolveParityRowV1(args: {
     match_mode: "none",
     before_db: {},
     after_db_projected: afterProjected,
-    gate_after_projected: gateFailureForProjectedRowV1(afterProjected),
+    gate_after_projected: gateAfterProjected,
     would_update: false,
     updated: false,
   };
@@ -395,7 +456,7 @@ async function resolveParityRowV1(args: {
     );
   }
 
-  const would_update = match_mode === "before_row";
+  const would_update = match_mode === "before_row" && gateAfterProjected === null;
   let updated = false;
 
   if (would_update && args.mode === "apply") {
@@ -411,7 +472,7 @@ async function resolveParityRowV1(args: {
     match_mode,
     before_db: beforeDb,
     after_db_projected: afterProjected,
-    gate_after_projected: gateFailureForProjectedRowV1(afterProjected),
+    gate_after_projected: gateAfterProjected,
     would_update,
     updated,
   };
