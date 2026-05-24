@@ -29,18 +29,28 @@ test("PROVEN: v1 planner cannot plan batch-v2 auto_apply rows without recommende
   assert.equal(proof.missing_mutation_refusals, 4);
 });
 
-test("batch-v2 bridge plans exactly 4 direct-buy auto_apply_eligible slugs", () => {
+test("batch-v2 bridge plans exactly 4 direct-buy auto_apply_eligible slugs before apply, or blocks after apply when plan is spent", () => {
   const report = buildAirPurifierApplyPlannerBatchV2V1Report({ rootDir: REPO_ROOT });
-  assert.equal(report.plan_status, "READY_FOR_OWNER_APPROVAL");
-  assert.equal(report.planned_change_count, 4);
-  assert.deepEqual(
-    report.planned_changes.map((c) => c.filter_slug).sort(),
-    [...AP_BATCH_V2_DIRECT_BUY_SLUGS_V1].sort(),
-  );
-  assert.equal(report.synthesized_mutation_slugs.length, 4);
-  for (const slug of AP_BATCH_V2_DIRECT_BUY_SLUGS_V1) {
-    assert.ok(report.synthesized_mutation_slugs.includes(slug), slug);
+
+  if (report.plan_status === "READY_FOR_OWNER_APPROVAL") {
+    assert.equal(report.planned_change_count, 4);
+    assert.deepEqual(report.synthesized_mutation_slugs, [
+      "winix-hepa-115115",
+      "gg-flt5000",
+      "coway-max2-hepa",
+      "rabbit-biogs-minusa2",
+    ]);
+    assert.equal(report.refused_changes.length, 19);
+    return;
   }
+
+  assert.equal(report.plan_status, "BLOCKED");
+  assert.equal(report.planned_change_count, 0);
+  assert.equal(report.planned_changes.length, 0);
+  assert.ok(
+    report.refused_changes.length >= 4,
+    "spent post-apply plan should refuse rows instead of planning stale before_rows",
+  );
 });
 
 test("excluded review groups are not in planned_changes", () => {
@@ -111,14 +121,21 @@ test("after_row passes direct_buyable gate for each planned change", () => {
   }
 });
 
-test("rollback_rows match before_row snapshots", () => {
+test("rollback_rows match before_row snapshots when plan is ready; spent post-apply plans have no rollback rows", () => {
   const report = buildAirPurifierApplyPlannerBatchV2V1Report({ rootDir: REPO_ROOT });
-  assert.equal(report.rollback_rows.length, 4);
-  for (let i = 0; i < report.planned_changes.length; i++) {
-    const rb = report.rollback_rows[i]!;
-    const before = report.planned_changes[i]!.before_row;
-    assert.deepEqual(rb, before);
+
+  if (report.plan_status === "READY_FOR_OWNER_APPROVAL") {
+    assert.equal(report.rollback_rows.length, 4);
+    assert.deepEqual(
+      report.rollback_rows,
+      report.planned_changes.map((change) => change.before_row),
+    );
+    return;
   }
+
+  assert.equal(report.plan_status, "BLOCKED");
+  assert.equal(report.rollback_rows.length, 0);
+  assert.equal(report.planned_changes.length, 0);
 });
 
 test("does not mutate AP CSV or fridge retailer_links.csv", () => {

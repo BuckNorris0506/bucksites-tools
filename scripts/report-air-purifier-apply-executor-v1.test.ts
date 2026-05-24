@@ -161,17 +161,40 @@ test("rejects unknown plan report_name", () => {
   rmSync(tmp, { recursive: true, force: true });
 });
 
-test("batch-v2 plan report_name is accepted in dry-run when plan is otherwise valid", () => {
+test("batch-v2 plan report_name is accepted; live plan may be ready before apply or blocked after apply", () => {
   const report = runAirPurifierApplyExecutorV1({
     rootDir: REPO_ROOT,
     mode: "dry_run",
     planPath: AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
   });
-  assert.equal(report.apply_status, "DRY_RUN_READY");
+
   assert.equal(report.planned_change_count, 4);
-  assert.equal(report.preflight.before_row_match_count, 4);
   assert.equal(report.data_mutation, false);
-  assert.ok(!report.blocked_reasons.some((r) => r.includes("unexpected plan report_name")));
+  assert.ok(
+    !report.blocked_reasons.some((r) => r.includes("unexpected plan report_name")),
+    `batch-v2 report_name should be accepted; blocked_reasons=${report.blocked_reasons.join("; ")}`,
+  );
+
+  if (report.apply_status === "DRY_RUN_READY") {
+    assert.equal(report.preflight.before_row_match_count, 4);
+    assert.deepEqual(report.blocked_reasons, []);
+    return;
+  }
+
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.equal(report.applied_change_count, 0);
+  assert.ok(
+    report.blocked_reasons.length > 0,
+    "spent plan should include blocked reasons after apply",
+  );
+  assert.ok(
+    report.blocked_reasons.every((reason) =>
+      reason.includes("before_row") ||
+      reason.includes("does not match") ||
+      reason.includes("stale"),
+    ),
+    `unexpected blocked reasons: ${report.blocked_reasons.join("; ")}`,
+  );
 });
 
 test("batch-v2 plan still refuses non-AP target file", () => {

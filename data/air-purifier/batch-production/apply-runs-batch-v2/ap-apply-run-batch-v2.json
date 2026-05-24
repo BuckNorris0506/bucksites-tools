@@ -1,13 +1,18 @@
 {
   "report_name": "air_purifier_apply_executor_v1",
-  "generated_at": "2026-05-24T05:39:50.591Z",
-  "mode": "dry_run",
-  "data_mutation": false,
+  "generated_at": "2026-05-24T05:44:39.235Z",
+  "mode": "apply",
+  "data_mutation": true,
   "source_plan_path": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
-  "apply_status": "DRY_RUN_READY",
+  "apply_status": "APPLIED",
   "planned_change_count": 4,
-  "applied_change_count": 0,
-  "changed_slugs": [],
+  "applied_change_count": 4,
+  "changed_slugs": [
+    "winix-hepa-115115",
+    "gg-flt5000",
+    "coway-max2-hepa",
+    "rabbit-biogs-minusa2"
+  ],
   "blocked_reasons": [],
   "preflight": {
     "plan_status": "READY_FOR_OWNER_APPROVAL",
@@ -18,7 +23,39 @@
     "validation_errors": [],
     "duplicate_targets": []
   },
-  "post_apply_validation": null,
+  "post_apply_validation": {
+    "changed_row_count": 4,
+    "target_slugs": [
+      "winix-hepa-115115",
+      "gg-flt5000",
+      "coway-max2-hepa",
+      "rabbit-biogs-minusa2"
+    ],
+    "only_target_slugs_changed": true,
+    "all_direct_buyable": true,
+    "no_search_urls_on_targets": true,
+    "gate_by_slug": {
+      "winix-hepa-115115": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "gg-flt5000": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "coway-max2-hepa": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "rabbit-biogs-minusa2": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      }
+    },
+    "ap_safe_cta_count_before": 6,
+    "ap_safe_cta_count_after": 10,
+    "ap_safe_cta_delta": 4
+  },
   "rollback_rows": [
     {
       "filter_slug": "winix-hepa-115115",
@@ -72,6 +109,6 @@
   "notes": [
     "Executor v1 mutates ONLY data/air-purifier/retailer_links.csv when --apply is set.",
     "planned_changes only — refused_changes and other review groups are never applied.",
-    "Dry-run only — no CSV written. Pass --apply to mutate after owner approval."
+    "Applied 4 row(s) to data/air-purifier/retailer_links.csv."
   ]
 }
