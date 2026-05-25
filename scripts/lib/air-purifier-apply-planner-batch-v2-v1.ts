@@ -331,7 +331,7 @@ export function renderAirPurifierApplyPlannerBatchV2MarkdownV1(
     "**NO CSV CHANGED · Read-only plan · Apply not run**",
     "",
   ].join("\n");
-  return header + base.replace(/^# Air Purifier Apply Plan v1[^\n]*\n[\s\S]*?\*\*NO CSV CHANGED[^\n]*\n\n/s, "");
+  return header + base.replace(/^# Air Purifier Apply Plan v1[^\n]*\n[\s\S]*?\*\*NO CSV CHANGED[^\n]*\n\n/, "");
 }
 
 export function parseAirPurifierApplyPlannerBatchV2CliArgsV1(argv: string[]): {

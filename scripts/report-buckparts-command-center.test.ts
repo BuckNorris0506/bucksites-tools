@@ -3049,6 +3049,52 @@ test("command_center_v2.large_batch_coverage_factory_summary_v1 is read-only Cod
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_large-batch-coverage-factory"));
 });
 
+test("command_center_v2.batch_production_operating_checklist_v1 is read-only batch director", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json") || p.includes("batch-production"),
+    readDir: () => [],
+    readTextFile: (p) => {
+      if (p.endsWith("package.json")) return fs.readFileSync(p, "utf8");
+      if (p.includes("ap-batch-v2-proven-run")) {
+        return fs.readFileSync(
+          path.join(process.cwd(), "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json"),
+          "utf8",
+        );
+      }
+      if (p.includes("ap-apply-plan-batch-v2.json")) {
+        return fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+          ),
+          "utf8",
+        );
+      }
+      if (p.includes("ap-apply-run-batch-v2.json")) {
+        return fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json",
+          ),
+          "utf8",
+        );
+      }
+      if (p.includes("retailer_links.csv")) {
+        return fs.readFileSync(path.join(process.cwd(), "data/air-purifier/retailer_links.csv"), "utf8");
+      }
+      return BASE_TRACKER;
+    },
+  });
+  const lane = report.command_center_v2.batch_production_operating_checklist_v1;
+  assert.equal(lane.contract, "batch_production_operating_checklist_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.may_mutate, false);
+  assert.ok(lane.runs.length >= 1);
+  assert.equal(lane.setback_detectors_catalog.length, 5);
+});
+
 test("command_center_v2.owner_vertical_launch_policy_v1 is read-only CC-owned launch policy lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

@@ -47,6 +47,7 @@ export type ApAggregatedReviewRowV1 = {
   buy_action_seen: boolean | null;
   recommended_csv_mutation: ApAgentEvidenceCsvMutationV1 | null;
   owner_review_required: boolean;
+  reference_only_reason: string | null;
   source_file: string;
   evidence_notes: string;
 };
@@ -271,7 +272,7 @@ function classifyReviewGroup(args: {
     reasons.push("token_equivalence_plausible_but_unproven");
   }
 
-  return { group: "owner_review_required", reasons: [...new Set(reasons)] };
+  return { group: "owner_review_required", reasons: Array.from(new Set(reasons)) };
 }
 
 export function parseAgentResultFileContentV1(
@@ -388,6 +389,7 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
       buy_action_seen: row.buy_action_seen,
       recommended_csv_mutation: row.recommended_csv_mutation,
       owner_review_required: row.owner_review_required,
+      reference_only_reason: row.reference_only_reason,
       source_file: sourceFile,
       evidence_notes: row.evidence_notes,
     };
@@ -443,7 +445,7 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
       list.push(r.slug);
       byReason.set(key, list);
     }
-    for (const [reason, slugs] of byReason) {
+    for (const [reason, slugs] of Array.from(byReason.entries())) {
       owner_review_summary.push(`Owner review (${reason}): ${slugs.join(", ")}`);
     }
   }

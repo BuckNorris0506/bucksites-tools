@@ -261,7 +261,7 @@ function supplementalSharkPacket(lane: AirPurifierBatchProductionLaneReportV1): 
     ...lane.reference_link_candidates.filter((c) => c.state === "reference_candidate"),
     ...lane.top_candidates.filter((c) => c.state === "reference_candidate"),
   ].map((c) => c.filter_slug);
-  const unique = [...new Set(slugs)];
+  const unique = Array.from(new Set(slugs));
   if (unique.length === 0) return null;
   return {
     packet_id: "ap-shark-official-reference-v1",
@@ -286,7 +286,7 @@ function supplementalHoneywellPacket(lane: AirPurifierBatchProductionLaneReportV
       (c) => c.state === "direct_buy_candidate" && c.brand_slug === "honeywell",
     ),
   ].map((c) => c.filter_slug);
-  const unique = [...new Set(slugs)];
+  const unique = Array.from(new Set(slugs));
   if (unique.length === 0) return null;
   return {
     packet_id: "ap-honeywell-store-direct-buy-v1",
@@ -330,7 +330,7 @@ export function mergeFactoryAndSupplementalPackets(
     const p = byId.get(id);
     if (p) out.push(p);
   }
-  for (const [id, p] of byId) {
+  for (const [id, p] of Array.from(byId.entries())) {
     if (!order.includes(id)) out.push(p);
   }
   return out;

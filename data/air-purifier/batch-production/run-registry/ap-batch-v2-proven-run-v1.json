@@ -1,0 +1,33 @@
+{
+  "contract": "batch_production_proven_run_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "run_id": "ap-batch-v2-2026-05-24",
+  "wedge": "air_purifier",
+  "lane_label": "AP batch-v2",
+  "proven_at": "2026-05-24T05:44:39.235Z",
+  "closeout_complete": true,
+  "expected_evidence_row_count": 23,
+  "expected_auto_apply_slugs": [
+    "winix-hepa-115115",
+    "gg-flt5000",
+    "coway-max2-hepa",
+    "rabbit-biogs-minusa2"
+  ],
+  "artifact_paths": {
+    "lane_report_command": "npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts",
+    "packets_manifest": "data/air-purifier/batch-production/agent-packets-batch-v2/manifest.json",
+    "results_dir": "data/air-purifier/batch-production/agent-results-batch-v2",
+    "apply_plan": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+    "apply_run": "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json",
+    "target_csv": "data/air-purifier/retailer_links.csv"
+  },
+  "operator_lessons": [
+    "PROVEN: 23 evidence rows were collected across 4 batch-v2 packets; only 4 auto_apply_eligible PASS_DIRECT_BUYABLE slugs were planned and applied.",
+    "PROVEN: CSV apply and repo post_apply_validation succeeded (4 direct-buy OEM rows; safe /go gate inputs).",
+    "LESSON: Coverage added (new OEM direct-buy row) does not always mean the production primary CTA changed — pages can still show an existing Amazon safe /go when both paths are safe.",
+    "LESSON: Do not treat 'new manufacturer PDP not first rendered CTA' as apply failure when production already had multiple safe buy paths.",
+    "LESSON: Supabase parity must accept plan-derived slug allowlists and batch-v2 planner report_name — hardcoded 3-slug allowlists block valid post-apply dry-runs.",
+    "LESSON: After apply, planner/executor dry-runs may report BLOCKED/spent plan — tests and operators must expect post-apply state, not pre-apply before_row matches."
+  ]
+}

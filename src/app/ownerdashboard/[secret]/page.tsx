@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 
 import type {
   BatchProductionOwnerDecisionsLaneV1,
+  BatchProductionOperatingChecklistV1,
   CommandCenterV2Report,
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
@@ -508,6 +509,83 @@ function FounderDecisionPacketsSection({
           ))}
         </div>
       )}
+    </ExecutiveSection>
+  );
+}
+
+function BatchProductionOperatingChecklistSection({
+  checklist,
+}: {
+  checklist: BatchProductionOperatingChecklistV1;
+}) {
+  const run = checklist.runs[0] ?? null;
+  return (
+    <ExecutiveSection
+      title="Batch production operating checklist"
+      subtitle="Command Center v2 batch_production_operating_checklist_v1 — stage gates, safety classifications, setback detectors (read-only)"
+    >
+      <dl className="mt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-3">
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">runtime_status</dt>
+        <dd>{checklist.runtime_status}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">may_mutate</dt>
+        <dd>{String(checklist.may_mutate)}</dd>
+        <dt className="font-semibold text-slate-600 dark:text-slate-400">proven runs</dt>
+        <dd className="font-mono text-[10px]">{checklist.proven_historical_run_ids.join(", ") || "none"}</dd>
+      </dl>
+      <FieldBlock label="recommended_next_action" value={checklist.recommended_next_action} />
+      {run ? (
+        <>
+          <p className="mt-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
+            Run {run.run_id} · next blocked stage:{" "}
+            <span className="font-mono">{run.next_blocked_stage ?? "none"}</span>
+          </p>
+          <div className="mt-2 overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
+            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
+              <thead className="bg-slate-50 dark:bg-slate-900/60">
+                <tr>
+                  {["stage", "status", "blockers"].map((h) => (
+                    <th
+                      key={h}
+                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {run.stages.map((stage) => (
+                  <tr key={stage.stage_id} className="bg-white dark:bg-slate-950">
+                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{stage.stage_id}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{stage.status}</td>
+                    <td className="px-3 py-2 font-mono text-[10px] text-slate-600 dark:text-slate-400">
+                      {stage.blocker_reasons.length > 0 ? stage.blocker_reasons.join("; ") : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {run.setbacks.filter((s) => s.fired).length > 0 ? (
+            <ul className="mt-3 list-inside list-disc space-y-1 text-xs text-amber-900 dark:text-amber-200">
+              {run.setbacks
+                .filter((s) => s.fired)
+                .map((s) => (
+                  <li key={s.detector_id}>
+                    <span className="font-mono">{s.detector_id}</span>: {s.message}
+                  </li>
+                ))}
+            </ul>
+          ) : null}
+          {run.operator_lessons.length > 0 ? (
+            <ul className="mt-3 list-inside list-disc space-y-1 text-xs text-slate-800 dark:text-slate-200">
+              {run.operator_lessons.slice(0, 4).map((lesson, i) => (
+                <li key={i}>{lesson}</li>
+              ))}
+            </ul>
+          ) : null}
+        </>
+      ) : null}
     </ExecutiveSection>
   );
 }
@@ -1109,6 +1187,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <FounderControlPlaneSection model={founderControlPlane} />
 
         <BatchProductionOwnerDecisionsLaneSection lane={v2.batch_production_owner_decisions_lane_v1} />
+
+        <BatchProductionOperatingChecklistSection checklist={v2.batch_production_operating_checklist_v1} />
 
         <FounderActionQueueSection queue={founderActionQueue} />
 

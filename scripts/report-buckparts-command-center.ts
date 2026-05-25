@@ -58,6 +58,7 @@ import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-b
 import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
+import { buildBatchProductionOperatingChecklistV1 } from "./lib/buckparts-batch-production-operating-checklist-v1";
 import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
 import {
   buildPagePublishabilityTruthSummaryV1,
@@ -933,6 +934,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "batch_production_operating_checklist_v1"
     | "page_publishability_truth_summary_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
@@ -1046,6 +1048,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "batch_production_operating_checklist_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1141,6 +1144,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
+    | "batch_production_operating_checklist_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1175,6 +1179,11 @@ export async function buildBuckpartsCommandCenterReport(
   const operatingMapFull = runReportBuckpartsOperatingMap();
   const operating_map_summary_v1 = buildOperatingMapSummaryV1FromReport(operatingMapFull);
 
+  const batch_production_operating_checklist_v1 = buildBatchProductionOperatingChecklistV1({
+    rootDir,
+    generated_at: now().toISOString(),
+  });
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     "next_execution_packet_summary_v1" | "operator_digest_v1" | "semi_cruise_status_summary_v1"
@@ -1186,6 +1195,7 @@ export async function buildBuckpartsCommandCenterReport(
     system_contract_audit_summary_v1,
     founder_decision_registry_summary_v1,
     operating_map_summary_v1,
+    batch_production_operating_checklist_v1,
   };
 
   const commandCenterShellForNextPacket = {

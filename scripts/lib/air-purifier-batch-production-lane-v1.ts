@@ -283,7 +283,7 @@ function buildGscDemandMaps(args: {
   const queries = args.gscResult.artifact.top_queries_by_impressions ?? [];
 
   for (const entry of pages as GscArtifactTopEntry[]) {
-    const page = entry.page ?? entry.url ?? "";
+    const page = entry.key ?? "";
     if (wedgeFromPageUrl(page) !== HOMEKEEP_WEDGE_CATALOG.air_purifier) continue;
     const impressions = typeof entry.impressions === "number" ? entry.impressions : 0;
     const match = page.match(/\/air-purifier\/filter\/([^/?#]+)/i);
@@ -294,7 +294,7 @@ function buildGscDemandMaps(args: {
   }
 
   for (const entry of queries as GscArtifactTopEntry[]) {
-    const query = (entry.query ?? "").trim();
+    const query = (entry.key ?? "").trim();
     if (!query) continue;
     if (wedgeFromQueryText(query) !== HOMEKEEP_WEDGE_CATALOG.air_purifier) continue;
     const impressions = typeof entry.impressions === "number" ? entry.impressions : 0;
@@ -302,7 +302,7 @@ function buildGscDemandMaps(args: {
   }
 
   // GSC pages that do not match any live catalog slug
-  for (const [slug, imp] of pageImpressionsByFilterSlug) {
+  for (const [slug, imp] of Array.from(pageImpressionsByFilterSlug.entries())) {
     if (slug === "blueair-f4max-411" && imp > 0) {
       aliasOrRedirectGaps.push(slug);
     }
@@ -325,7 +325,7 @@ function gscQueriesForFilter(
 
   const matched: string[] = [];
   let impressions = 0;
-  for (const [query, imp] of queryImpressionsByToken) {
+  for (const [query, imp] of Array.from(queryImpressionsByToken.entries())) {
     const hit = tokens.some(
       (t) => t.length >= 4 && (query.includes(t) || query.replace(/\s+/g, "").includes(t)),
     );
@@ -656,13 +656,13 @@ function buildAgentWorkPackets(candidates: ApBatchCandidateV1[]): ApAgentWorkPac
     if (group.length === 0 && def.pattern !== "blueair_catalog_identity") continue;
     const slugs =
       def.pattern === "blueair_catalog_identity"
-        ? [
-            ...new Set([
+        ? Array.from(
+            new Set([
               ...group.map((c) => c.filter_slug),
               "blueair-particle-411",
               "blueair-f2-211",
             ]),
-          ]
+          )
         : group.map((c) => c.filter_slug);
     packets.push({
       packet_id: def.packet_id,

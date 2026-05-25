@@ -53,7 +53,6 @@ export const AP_APPLY_PLAN_ACCEPTED_REPORT_NAMES_V1 = [
 
 export type ApApplyPlanContractV1 = Pick<
   AirPurifierApplyPlannerReportV1,
-  | "report_name"
   | "plan_status"
   | "planned_change_count"
   | "planned_changes"
@@ -61,6 +60,7 @@ export type ApApplyPlanContractV1 = Pick<
   | "rollback_rows"
   | "owner_approval_required"
 > & {
+  report_name: (typeof AP_APPLY_PLAN_ACCEPTED_REPORT_NAMES_V1)[number];
   target_csv_file?: string;
 };
 
@@ -228,7 +228,7 @@ function findDuplicatePlannedTargetsV1(changes: ApPlannedChangeV1[]): string[] {
     const key = `${c.filter_slug}::${c.retailer_key}`;
     seen.set(key, (seen.get(key) ?? 0) + 1);
   }
-  for (const [key, count] of seen) {
+  for (const [key, count] of Array.from(seen.entries())) {
     if (count > 1) dupes.push(key);
   }
   return dupes;

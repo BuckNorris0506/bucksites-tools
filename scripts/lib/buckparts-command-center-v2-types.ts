@@ -8,6 +8,7 @@ import type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
@@ -869,6 +870,8 @@ export type CommandCenterV2Report = {
   /** Read-only foundation maturity scorecard toward 100% pre-polish — not dashboard UI. */
   top_of_game_foundation_scorecard_v1: TopOfGameFoundationScorecardV1;
   batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
+  /** Read-only batch production stage gates, safety classifications, and setback detectors. */
+  batch_production_operating_checklist_v1: BatchProductionOperatingChecklistV1;
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
   command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
   brain_integrity_gate_v1: BrainIntegrityGateV1;
@@ -910,6 +913,7 @@ export type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+export type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 export type {
   PagePublishabilityTruthSummaryV1,

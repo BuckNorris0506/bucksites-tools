@@ -6,7 +6,7 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1:** through **`93dcd3d`**. **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1 (Layer 7 owner decisions):** through **`93dcd3d`**. **Batch production operating checklist (Command Center backbone):** implemented in-repo; **pre-commit dirty worktree** at handoff refresh (see **Batch production operating checklist v1** below; base commit **`98412a1`**). **AP batch-v2 CSV apply + Supabase parity:** **PROVEN applied** in prior operator work (artifacts on disk; not re-run in this doc step). **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -162,19 +162,21 @@ npm run buckparts:founder-digest
 
 ---
 
-## Current stopping point / chat migration state (through `bbadce5`)
+## Current stopping point / chat migration state (through `98412a1` + pre-commit checklist)
 
-Use this block first in a new HQ or implementation chat. It records the **latest validated repo checkpoint** and prior milestone chain. **The business does not stop at `bbadce5`.**
+Use this block first in a new HQ or implementation chat. **Command Center is moving toward director-of-operations truth** — the founder should **not** keep acting as the manual runner between batch scripts. **The business does not stop at UI motion or a single AP batch.**
 
-### Repo HEAD (PROVEN)
+### Repo HEAD (PROVEN at handoff refresh)
 
 | Item | Value |
 |------|--------|
-| Latest pushed HEAD | **`bbadce5`** — *Add subtle motion and recent searches to existing BuckParts UI* |
-| Prior milestone chain | `a343464` Waterdrop browser proof + customer-language doctrine · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement freshness · `84fb4b3` neuron map · `93dcd3d` batch production owner decisions lane |
-| Customer UI | **Existing BuckParts look preserved** at `bbadce5`; rejected Hallmark/hybrid/redesign mockups not in tree; motion + `buckparts.recentSearches.v1` only |
-| Live recent searches | **PROVEN** in browser on `buckparts.com` after deployment settled; deploy commit via live HTML meta **UNKNOWN** (see UX checkpoint section) |
-| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba` (see **Semi-Cruise Readiness Milestone**); later commits do not grant mutation authority |
+| Branch | **`main`** |
+| Latest known committed HEAD | **`98412a1`** — verify with `git rev-parse HEAD` after pull |
+| Pre-commit dirty worktree | **PROVEN at doc refresh:** Command Center **`batch_production_operating_checklist_v1`** + owner dashboard section + AP compile-target fixes (see checklist section); **commit after** `buckparts-hq-handoff-freshness`, checklist tests, `npm run lint`, `npm run build` all pass |
+| Prior milestone chain | `bbadce5` UX motion/memory · `a343464` Waterdrop · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement · `84fb4b3` neurons · `93dcd3d` Layer 7 batch owner decisions |
+| AP batch-v2 production apply | **PROVEN (prior work, on disk):** 4 auto-safe direct-buy slugs applied to `data/air-purifier/retailer_links.csv`; apply-run at `data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json` (`apply_status: APPLIED`); Supabase parity applied in operator session — **no parity apply-run artifact committed in repo** (stage stays **UNKNOWN** in checklist until ingested) |
+| Customer UI | **Existing BuckParts look preserved** at `bbadce5`; motion + `buckparts.recentSearches.v1` only |
+| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba`; checklist work does **not** grant mutation authority |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -344,10 +346,107 @@ node --import tsx scripts/report-batch-owner-approval.ts \
 
 **INFERRED:** Amazon rescue default lane (`--source amazon-rescue-default`) remains a **fallback** only; do **not** restart an Amazon interstitial / screenshot loop as the main path.
 
+### Batch production operating checklist v1 — Command Center director backbone (PROVEN in-repo; pre-commit at `98412a1`)
+
+**Strategic truth (do not regress):**
+
+- Command Center is **closer** to being the **director of operations**, but is **NOT fully automatic** yet.
+- The **checklist is the batch-production operating backbone** — future batch actions must **route through Command Center checklist/state first**, not ad-hoc script chains.
+- Command Center must **own run-state truth** before adding more product rows at scale.
+- **Coverage added ≠ primary CTA changed** on production when multiple safe buy paths already exist (Amazon + new OEM direct-buy).
+
+**PROVEN — artifacts and wiring:**
+
+| Item | Path / contract |
+|------|------------------|
+| Checklist builder | `scripts/lib/buckparts-batch-production-operating-checklist-v1.ts` — contract `batch_production_operating_checklist_v1`; `read_only: true`, `data_mutation: false`, `may_mutate: false` |
+| Checklist tests | `scripts/lib/buckparts-batch-production-operating-checklist-v1.test.ts` — **6/6 pass** at handoff refresh |
+| Proven historical run registry | `data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json` — `run_id: ap-batch-v2-2026-05-24`; **23** evidence rows; **4** auto-apply slugs; operator lessons captured |
+| Command Center v2 field | `command_center_v2.batch_production_operating_checklist_v1` in `scripts/lib/buckparts-command-center-v2-types.ts`; built in `scripts/report-buckparts-command-center.ts` |
+| Owner dashboard surface | `src/app/ownerdashboard/[secret]/page.tsx` — **Batch production operating checklist** section (reads Command Center only) |
+
+**PROVEN — eleven stage gates (read-only inspection):** `lane_selected`, `packets_generated`, `evidence_collected`, `aggregator_reviewed`, `apply_plan_ready`, `csv_apply_complete`, `repo_validation_complete`, `supabase_parity_dry_run_ready`, `supabase_parity_applied`, `production_runtime_smoke_complete`, `closeout_complete`.
+
+**PROVEN — safety classifications:** `SAFE_PRIMARY_MATCH`, `SAFE_MULTIPLE_BUY_PATHS`, `SAFE_BUT_PRIMARY_POLICY_UNKNOWN`, `CSV_DB_PARITY_DRIFT`, `UNSAFE_OR_STALE`, `OWNER_REVIEW_REQUIRED`, `CATALOG_TASK_REQUIRED`.
+
+**PROVEN — setback detectors:** `planned_rows_spent_post_apply`, `tests_expect_pre_apply_after_apply`, `production_safe_cta_differs_from_applied_row`, `supabase_parity_rejects_valid_report_name`, `local_csv_supabase_disagree`.
+
+**PROVEN — AP batch-v2 run on disk (registry + artifacts):**
+
+| Slug | Role |
+|------|------|
+| `winix-hepa-115115` | auto-apply direct-buy |
+| `gg-flt5000` | auto-apply direct-buy |
+| `coway-max2-hepa` | auto-apply direct-buy |
+| `rabbit-biogs-minusa2` | auto-apply direct-buy |
+
+**PROVEN — inspect checklist lane (copy/paste):**
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_operating_checklist_v1 | {contract, runtime_status, may_mutate, proven_historical_run_ids, recommended_next_action, run: .runs[0] | {run_id, next_blocked_stage, stages: [.stages[] | {stage_id, status}], fired_setbacks: [.setbacks[] | select(.fired) | .detector_id], operator_lessons: .operator_lessons[:3]}}'
+```
+
+**PARTIAL / UNKNOWN (honest limits):**
+
+| Area | Status |
+|------|--------|
+| End-to-end orchestration | **PARTIAL** — Command Center **shows** stage state and setbacks; it does **not** yet execute one orchestrated flow or auto-run the next script |
+| Supabase parity **applied** in checklist | **UNKNOWN** in-repo — no committed parity apply-run artifact; checklist stage `supabase_parity_applied` reports **unknown** until durable ingestion exists |
+| Production runtime smoke / live /go CTA order | **PARTIAL** — inferred from apply-run `post_apply_validation.gate_by_slug` only; **not** live production fetch; batch-specific smoke artifact ingestion **MISSING** |
+| Single orchestration entrypoint | **MISSING/PARTIAL** — no one read-only command yet returns next exact command + blocked stage + owner decision + mutation allowed/denied |
+| Run-size policy | **MISSING/PARTIAL** — no detector yet preventing tiny repeated batches when larger safe batches are possible |
+| Generalized run ledger across wedges | **MISSING/PARTIAL** — AP batch-v2 proven run only; not yet generalized |
+
+**PROVEN — build blockers fixed (compile-only; no gate/CSV/Supabase changes):**
+
+- Checklist imports `AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1` from `scripts/lib/air-purifier-apply-executor-v1.ts` (exported there).
+- `scripts/lib/air-purifier-agent-packets-v1.ts` uses `Array.from(new Set(...))` instead of Set spread under current TS target.
+- Additional TS-target fixes required for `npm run build` in: `air-purifier-agent-results-aggregator-v1.ts`, `air-purifier-apply-executor-v1.ts`, `air-purifier-apply-planner-batch-v2-v1.ts`, `air-purifier-batch-production-lane-v1.ts`, `buckparts-batch-production-operating-checklist-v1.ts`, `buckparts-command-center-v2.ts`, `report-buckparts-command-center.ts`.
+
+**PROVEN — validation before committing checklist work:**
+
+```bash
+node --import tsx --test scripts/lib/buckparts-batch-production-operating-checklist-v1.test.ts
+node --import tsx --test scripts/report-buckparts-command-center.test.ts
+npm run lint
+npm run build
+```
+
+(Command Center tests: **104/104 pass** in session at handoff refresh; full suite is slow.)
+
+---
+
+## Current next build priority
+
+Finish **Command Center operating backbone** before more product-row expansion:
+
+1. **Commit** checklist + compile fixes after tests, lint, build, and this handoff freshness pass.
+2. **Add durable Supabase parity apply artifact ingestion** so `supabase_parity_applied` is repo-proven, not operator-memory only.
+3. **Add batch-specific production runtime /go CTA-order smoke artifact ingestion** (distinguish coverage added vs primary CTA changed vs multiple safe paths).
+4. **Add one read-only orchestration entrypoint** that tells the owner the **next exact command**, **blocked stage**, **owner decision**, and whether **mutation is allowed** — without bypassing checklist/state.
+5. **Only then** scale batch size and add more product rows/wedges.
+
+---
+
+## Do not do next
+
+- Do **not** start another one-off AP/fridge/whole-house batch **outside** Command Center checklist/state.
+- Do **not** add new wedges before Command Center can prove **run stage**, **parity state**, **runtime smoke**, **owner-review queue**, and **next lane**.
+- Do **not** treat lint/test pass as complete if **`npm run build` fails**.
+- Do **not** call checklist work **done** until **docs**, **tests**, **lint**, **build**, and **handoff freshness** all pass.
+- Do **not** let Cursor/Codex create more **isolated tools** without registering them in Command Center checklist/state.
+- Do **not** weaken buy gates, `/go` gates, exact-token gates, fit gates, or wrong-purchase protections.
+
+---
+
 ### What remains NOT_PROVEN / UNKNOWN
 
 | Area | Status |
 |------|--------|
+| Command Center as **complete** operating truth | **NOT_PROVEN** — checklist backbone (`batch_production_operating_checklist_v1`) is **PROVEN read-only** but orchestration, parity-apply ingestion, and live runtime smoke remain **PARTIAL/UNKNOWN** |
+| Command Center batch checklist orchestration | **PARTIAL** — stage/setback display **PROVEN**; single next-command entrypoint **MISSING** |
+| Supabase parity applied (checklist stage) | **UNKNOWN** in-repo — operator-applied in prior session; no committed parity apply-run artifact |
+| Production /go primary CTA order (batch smoke) | **PARTIAL/UNKNOWN** — apply-run gate proof only; live CTA-order artifact **MISSING** |
 | Command Center as **complete** operating truth (bright/dim/dark neuron audit) | **NOT_PROVEN** — neurons (`84fb4b3`) + `external_measurement_freshness_v1` (`b85e90b`) are CC-owned; broader feeds below are not yet fully Command Center-owned |
 | GSC/GA4 artifact freshness on Command Center | **PROVEN lane** at `b85e90b` — `command_center_v2.external_measurement_freshness_v1`; **current artifact ages may still be STALE or UNKNOWN** until `buckparts:gsc:fetch` / `buckparts:ga4:fetch` refresh durable artifacts |
 | Live GSC/GA4 API integration in Command Center | **NOT_PROVEN** — freshness lane reads existing artifacts only; no fetch during `buckparts:command-center` |
@@ -372,6 +471,7 @@ Read-only inventory at this stop:
 - **INFERRED:** Owner load still attaches separate lanes (`owner_integrity_sentinel`, `owner_search_demand_and_gaps`, `owner_gsc_external_demand`, quarantine, launch policy) and may call `buildBuckpartsCommandSurfaceReport` again for sentinel — not the same as dashboard-owned neuron fabrication.
 - **Owner dashboard is not yet a single report surface** — many `scripts/report-*.ts` outputs remain CLI-only; neuron map + v2 lanes are not the full operating picture.
 - **PROVEN:** Layer 7 batch owner decisions are surfaced on the owner dashboard **via** `command_center_v2.batch_production_owner_decisions_lane_v1` (Command Center is the truth source for that lane).
+- **PROVEN:** Batch production operating checklist is surfaced on the owner dashboard **via** `command_center_v2.batch_production_operating_checklist_v1` (Command Center is the truth source; not a parallel dashboard scan).
 - **GitHub Actions live status is not Command Center-owned** — workflows exist under `.github/workflows/`; dashboard control plane lists workflow **basenames from disk only**, not live PASS/FAIL from GitHub API.
 - **Sentry health is not Command Center-owned** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized Command Center / dashboard panel in-repo.
 - **Netlify deploy API proof is not Command Center-owned** — live-site lane uses smoke/monitor artifacts; v2 text treats deploy commit hints as **not** Netlify API proof unless proven elsewhere.
@@ -592,12 +692,12 @@ Operating rules:
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
 Current repo checkpoint:
-- HEAD bbadce5 — existing BuckParts UI preserved; subtle motion + recent searches (buckparts.recentSearches.v1) only; rejected redesign mockups removed from tree.
-- Live buckparts.com recent searches proven in browser after deploy settled.
-- Business does not stop here — next work compounds revenue, trust, and verified coverage; avoid aesthetic redesign wandering.
+- Branch main; latest known commit 98412a1; Command Center batch_production_operating_checklist_v1 in dirty worktree (pre-commit).
+- AP batch-v2: 23 evidence rows, 4 auto-safe slugs applied (artifacts on disk); treat checklist as batch-production backbone.
+- npm run build must pass before calling checklist work done.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Latest validated checkpoint**, **Current stopping point**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point**, **Batch production operating checklist v1**, **Current next build priority**, **Do not do next**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
 ```
 
 ---
@@ -608,12 +708,14 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Latest validated checkpoint**, *
 
 ### Active lane (HQ priority order)
 
-0. **Customer UX memory/motion (`bbadce5`)** — **PROVEN** on existing UI; live recent searches **PROVEN** in browser after deploy settled. **NOT** a redesign program; **NOT** a stopping point. Next customer work = trust/conversion/return-value slices only.
-1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; `read_only: true`, `data_mutation: false`; GSC/GA4 **STALE/OK/UNKNOWN** from artifact timestamps only. **NOT PROVEN:** live API fetch during CC build, revenue, or complete operating truth.
-2. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on raw `buckparts:command-center` JSON; `data_mutation: false`; dashboard displays CC-owned neurons.
-3. **Batch Production Lane v1 — non-Amazon review + owner approval gate + Command Center lane** (through **`93dcd3d`**) — **PROVEN:** five-row loop → durable registry export → `command_center_v2.batch_production_owner_decisions_lane_v1` → owner dashboard via Command Center load; 3 approved planning rows; 2 excluded rows visible in lane; `may_mutate: false`; `batch_size_20_status: BLOCKED`. **NOT PROVEN:** Founder Digest batch section, production evidence commit, mutation/apply, Layer 6 production mutation approval. See **Current stopping point** above.
-4. **Layer 6 control-plane documentation + audit** — prove what the repo can and cannot claim about founder judgment, Codex read-only execution, Runner validation, and registry visibility (**this handoff + freshness guard are part of that**). **NOT PROVEN:** Layer 6 complete.
-5. **Batch lane follow-ons (deferred)** — digest embed, apply/mutation script, **20–50** row batches. V1 cap **10** rows.
+0. **Batch production operating checklist (`batch_production_operating_checklist_v1`)** — **PROVEN in-repo; pre-commit dirty at `98412a1`:** stage gates, safety classifications, setback detectors, AP batch-v2 proven run registry, owner dashboard + Command Center v2 wiring. **PARTIAL:** shows state only — no single orchestration entrypoint yet. **Route all future batch work through checklist first.** See **Current next build priority** and **Do not do next**.
+1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; artifact staleness only. **NOT PROVEN:** live API fetch, revenue, complete operating truth.
+2. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on CC JSON; dashboard displays CC-owned neurons.
+3. **Batch Production Lane v1 — Layer 7 owner decisions** (through **`93dcd3d`**) — **PROVEN:** fridge non-Amazon five-row registry loop; distinct from AP batch-v2 factory apply (see checklist proven run).
+4. **AP batch-v2 apply artifacts (on disk)** — **PROVEN:** 4-slug CSV apply + repo validation; Supabase parity applied in operator session — **UNKNOWN** in checklist until parity apply artifact committed.
+5. **Customer UX memory/motion (`bbadce5`)** — **PROVEN**; **NOT** a stopping point.
+6. **Layer 6 control-plane documentation + audit** — **NOT PROVEN:** Layer 6 complete.
+7. **Batch lane follow-ons (deferred until backbone done)** — orchestration entrypoint, parity/smoke artifact ingestion, larger batch policy, cross-wedge run ledger.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
