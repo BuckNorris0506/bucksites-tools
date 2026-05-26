@@ -33,6 +33,8 @@ export type BuckpartsCommandCenterDispatchRunV1 = {
 
 export type DispatchRunnerDepsV1 = {
   rootDir: string;
+  /** Override dispatch-run output directory (absolute or relative to rootDir). Tests must use a temp dir. */
+  dispatchRunsDirRel?: string;
   now?: () => Date;
   reportBuilder?: () => Promise<Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>>;
   exec?: (cmd: string, cwd: string) => Promise<{ stdout: string; stderr: string; exitCode: number }>;
@@ -181,7 +183,10 @@ export async function runBuckpartsCommandCenterDispatchRunnerV1(
   const source_commit = resolveSourceCommitReadOnly(deps.rootDir, readText);
   const generated_at = now().toISOString();
 
-  const dirAbs = path.join(deps.rootDir, COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1);
+  const dispatchRunsDirRel = deps.dispatchRunsDirRel ?? COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1;
+  const dirAbs = path.isAbsolute(dispatchRunsDirRel)
+    ? dispatchRunsDirRel
+    : path.join(deps.rootDir, dispatchRunsDirRel);
   if (!exists(dirAbs)) mkdirp(dirAbs);
   const fileBase = `dispatch-run-${generated_at.replaceAll(":", "").replaceAll(".", "")}.json`;
   const artifact_abs_path = path.join(dirAbs, fileBase);

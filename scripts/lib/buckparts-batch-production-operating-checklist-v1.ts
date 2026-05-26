@@ -300,6 +300,8 @@ export type BuildBatchProductionOperatingChecklistDepsV1 = {
   listDir?: (absPath: string) => string[];
   /** When false, skip reading data/command-center/dispatch-runs for parity proof (isolated tests). */
   ingest_dispatch_run_parity_proof?: boolean;
+  /** Override dispatch-run proof directory (absolute or relative to rootDir). Tests must use a temp dir. */
+  dispatch_runs_dir_rel?: string;
 };
 
 function defaultFileExists(absPath: string): boolean {
@@ -332,7 +334,7 @@ function parseJsonSafe<T>(text: string, label: string): T | null {
 
 function tryLoadLatestParityDispatchRunProofV1(
   ctx: StageEvalContextV1,
-  dispatchRunsDirRel: string = BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1,
+  dispatchRunsDirRel: string = ctx.dispatch_runs_dir_rel,
 ): { artifact_rel_path: string; apply_status: string } | null {
   const dirRel = dispatchRunsDirRel;
   const dirAbs = relToAbs(ctx.rootDir, dirRel);
@@ -639,6 +641,7 @@ type StageEvalContextV1 = {
   evidenceRowCount: number;
   aggregatorRowCount: number;
   ingest_dispatch_run_parity_proof: boolean;
+  dispatch_runs_dir_rel: string;
 };
 
 function evaluateStagesV1(ctx: StageEvalContextV1): BatchProductionChecklistStageV1[] {
@@ -1271,6 +1274,8 @@ export function buildBatchProductionChecklistRunV1(
     evidenceRowCount,
     aggregatorRowCount,
     ingest_dispatch_run_parity_proof: deps.ingest_dispatch_run_parity_proof !== false,
+    dispatch_runs_dir_rel:
+      deps.dispatch_runs_dir_rel ?? BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1,
   };
   const stages = evaluateStagesV1(stageCtx);
 

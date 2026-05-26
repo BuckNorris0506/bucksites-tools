@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -8,6 +10,12 @@ import {
 } from "./buckparts-command-center-dispatch-runner-v1";
 
 const REPO_ROOT = process.cwd();
+
+function tempDispatchRunsDir(): string {
+  const root = mkdtempSync(path.join(tmpdir(), "cc-dispatch-runs-"));
+  const dir = path.join(root, COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1);
+  return dir;
+}
 
 function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
   return {
@@ -96,78 +104,112 @@ function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
 }
 
 test("runner refuses OWNER_REVIEW_REQUIRED dispatch and writes artifact", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-05-25T00:00:00.000Z");
-  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
-    rootDir: REPO_ROOT,
-    now: () => fixedNow,
-    reportBuilder: async () => fakeReportWithDispatch({ dispatch_status: "OWNER_REVIEW_REQUIRED" }),
-    exec: async () => {
-      throw new Error("exec should not run when refused");
-    },
-  });
-  assert.ok(res.artifact_abs_path.includes(COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1));
-  assert.equal(res.artifact.read_only, true);
-  assert.equal(res.artifact.data_mutation, false);
-  assert.equal(res.artifact.execution_status, "REFUSED");
-  assert.equal(res.artifact.execution_allowed, false);
-  assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("dispatch_status must be READY")));
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () => fakeReportWithDispatch({ dispatch_status: "OWNER_REVIEW_REQUIRED" }),
+      exec: async () => {
+        throw new Error("exec should not run when refused");
+      },
+    });
+    assert.ok(res.artifact_abs_path.startsWith(dispatchRunsDir));
+    assert.equal(res.artifact.read_only, true);
+    assert.equal(res.artifact.data_mutation, false);
+    assert.equal(res.artifact.execution_status, "REFUSED");
+    assert.equal(res.artifact.execution_allowed, false);
+    assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("dispatch_status must be READY")));
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
 });
 
 test("runner refuses --apply, git push/commit, and mutation patterns", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-05-25T00:00:01.000Z");
-  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
-    rootDir: REPO_ROOT,
-    now: () => fixedNow,
-    reportBuilder: async () =>
-      fakeReportWithDispatch({
-        exact_command: "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --apply --plan x",
-      }),
-    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
-  });
-  const reasons = res.artifact.blocked_reasons.join(" ");
-  assert.match(reasons, /forbidden patterns/i);
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          exact_command: "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --apply --plan x",
+        }),
+      exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+    });
+    const reasons = res.artifact.blocked_reasons.join(" ");
+    assert.match(reasons, /forbidden patterns/i);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
 });
 
 test("runner refuses git push/commit commands", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-05-25T00:00:01.500Z");
-  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
-    rootDir: REPO_ROOT,
-    now: () => fixedNow,
-    reportBuilder: async () => fakeReportWithDispatch({ exact_command: "git push origin main" }),
-    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
-  });
-  const reasons = res.artifact.blocked_reasons.join(" ");
-  assert.match(reasons, /git push/i);
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () => fakeReportWithDispatch({ exact_command: "git push origin main" }),
+      exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+    });
+    const reasons = res.artifact.blocked_reasons.join(" ");
+    assert.match(reasons, /git push/i);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
 });
 
 test("runner executes allowlisted command when dispatch is READY (mocked)", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
   const fixedNow = new Date("2026-05-25T00:00:02.000Z");
   let executed: string | null = null;
   const allowlisted =
     "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json";
-  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
-    rootDir: REPO_ROOT,
-    now: () => fixedNow,
-    reportBuilder: async () => fakeReportWithDispatch({ exact_command: allowlisted }),
-    exec: async (cmd) => {
-      executed = cmd;
-      return { stdout: "{\"ok\":true}", stderr: "", exitCode: 0 };
-    },
-  });
-  assert.equal(executed, allowlisted);
-  assert.equal(res.artifact.execution_status, "EXECUTED");
-  assert.equal(res.artifact.execution_allowed, true);
-  assert.deepEqual(res.artifact.parsed_json_summary, { ok: true });
+  try {
+    const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => fixedNow,
+      reportBuilder: async () => fakeReportWithDispatch({ exact_command: allowlisted }),
+      exec: async (cmd) => {
+        executed = cmd;
+        return { stdout: "{\"ok\":true}", stderr: "", exitCode: 0 };
+      },
+    });
+    assert.equal(executed, allowlisted);
+    assert.equal(res.artifact.execution_status, "EXECUTED");
+    assert.equal(res.artifact.execution_allowed, true);
+    assert.deepEqual(res.artifact.parsed_json_summary, { ok: true });
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
 });
 
 test("runner does not mutate product CSV", async () => {
+  const dispatchRunsDir = tempDispatchRunsDir();
   const before = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
-  await runBuckpartsCommandCenterDispatchRunnerV1({
-    rootDir: REPO_ROOT,
-    now: () => new Date("2026-05-25T00:00:03.000Z"),
-    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
-  });
-  const after = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
-  assert.equal(before, after);
+  try {
+    await runBuckpartsCommandCenterDispatchRunnerV1({
+      rootDir: REPO_ROOT,
+      dispatchRunsDirRel: dispatchRunsDir,
+      now: () => new Date("2026-05-25T00:00:03.000Z"),
+      reportBuilder: async () =>
+        fakeReportWithDispatch({
+          exact_command:
+            "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+        }),
+      exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+    });
+    const after = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
+    assert.equal(before, after);
+  } finally {
+    rmSync(path.dirname(path.dirname(path.dirname(dispatchRunsDir))), { recursive: true, force: true });
+  }
 });
-

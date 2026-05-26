@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import { AP_BATCH_V2_DIRECT_BUY_SLUGS_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
@@ -7,6 +9,7 @@ import {
   BATCH_PRODUCTION_CHECKLIST_DEFAULT_REGISTRY_PATH_V1,
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
   BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1,
+  BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1,
   BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1,
   buildBatchProductionOperatingChecklistV1,
   classifyBatchProductionSpentPlanV1,
@@ -20,6 +23,7 @@ import {
 } from "./buckparts-batch-production-operating-dispatch-v1";
 import { loadApRetailerLinksCsvV1 } from "./air-purifier-apply-planner-v1";
 import { validateApSupabaseParityPlanV1 } from "./air-purifier-supabase-apply-parity-v1";
+import { buildBuckpartsCommandCenterReport } from "../report-buckparts-command-center";
 
 const REPO_ROOT = process.cwd();
 
@@ -281,10 +285,9 @@ test("checklist builder does not mutate CSV", () => {
   assert.equal(before, after);
 });
 
-test("checklist ingests successful dispatch-run parity artifact", () => {
-  const dir = `${REPO_ROOT}/data/command-center/dispatch-runs`;
-  const file = `${dir}/dispatch-run-test-parity-proof.json`;
-  mkdirSync(dir, { recursive: true });
+test("checklist ingests successful dispatch-run parity artifact from temp dir", () => {
+  const dispatchRunsDir = mkdtempSync(path.join(tmpdir(), "cc-checklist-dispatch-runs-"));
+  const file = path.join(dispatchRunsDir, "dispatch-run-test-parity-proof.json");
   writeFileSync(
     file,
     JSON.stringify(
@@ -312,12 +315,32 @@ test("checklist ingests successful dispatch-run parity artifact", () => {
     "utf8",
   );
   try {
-    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({
+      rootDir: REPO_ROOT,
+      dispatch_runs_dir_rel: dispatchRunsDir,
+    });
     const parity = checklist.stages.find((s) => s.stage_id === "supabase_parity_applied");
     assert.equal(parity?.status, "complete");
-    assert.ok(parity?.evidence.some((e) => e.includes("dispatch_run_proof=data/command-center/dispatch-runs/")));
+    assert.ok(parity?.evidence.some((e) => e.includes("dispatch_run_proof=")));
     assert.ok(parity?.evidence.some((e) => e.includes("parity_apply_status=ALREADY_APPLIED")));
   } finally {
-    rmSync(file, { force: true });
+    rmSync(dispatchRunsDir, { recursive: true, force: true });
+  }
+});
+
+test("report and checklist read-only paths do not mutate committed dispatch-run artifacts", async () => {
+  const dir = path.join(REPO_ROOT, BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1);
+  const before = new Map<string, string>();
+  for (const name of readdirSync(dir)) {
+    if (!name.endsWith(".json")) continue;
+    before.set(name, readFileSync(path.join(dir, name), "utf8"));
+  }
+  assert.ok(before.size >= 1);
+
+  buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  await buildBuckpartsCommandCenterReport({ rootDir: REPO_ROOT });
+
+  for (const [name, content] of before) {
+    assert.equal(readFileSync(path.join(dir, name), "utf8"), content, `mutated ${name}`);
   }
 });
