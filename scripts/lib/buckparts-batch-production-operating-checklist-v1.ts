@@ -203,6 +203,8 @@ export const BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1 =
 export const BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1 =
   "npx tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_operating_checklist_v1.operating_decision'" as const;
 
+export const BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 = "data/command-center/dispatch-runs" as const;
+
 export type BatchProductionChecklistSetbacksSummaryV1 = {
   all: BatchProductionSetbackV1[];
   fired: BatchProductionSetbackV1[];
@@ -269,6 +271,8 @@ export type BuildBatchProductionOperatingChecklistDepsV1 = {
   fileExists?: (absPath: string) => boolean;
   readText?: (absPath: string) => string;
   listDir?: (absPath: string) => string[];
+  /** When false, skip reading data/command-center/dispatch-runs for parity proof (isolated tests). */
+  ingest_dispatch_run_parity_proof?: boolean;
 };
 
 function defaultFileExists(absPath: string): boolean {
@@ -297,6 +301,50 @@ function parseJsonSafe<T>(text: string, label: string): T | null {
   } catch {
     return null;
   }
+}
+
+function tryLoadLatestParityDispatchRunProofV1(
+  ctx: StageEvalContextV1,
+  dispatchRunsDirRel: string = BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1,
+): { artifact_rel_path: string; apply_status: string } | null {
+  const dirRel = dispatchRunsDirRel;
+  const dirAbs = relToAbs(ctx.rootDir, dirRel);
+  if (!ctx.fileExists(dirAbs)) return null;
+
+  const names = ctx
+    .listDir(dirAbs)
+    .filter((n) => n.endsWith(".json"))
+    .sort()
+    .reverse();
+
+  for (const name of names) {
+    const rel = `${dirRel}/${name}`;
+    const abs = path.join(dirAbs, name);
+    const parsed = parseJsonSafe<{
+      report_name?: string;
+      execution_status?: string;
+      execution_allowed?: boolean;
+      exact_command?: string;
+      blocked_reasons?: string[];
+      parsed_json_summary?: any;
+    }>(ctx.readText(abs), rel);
+    if (!parsed) continue;
+    if (parsed.report_name !== "buckparts_command_center_dispatch_run_v1") continue;
+    if (parsed.execution_allowed !== true) continue;
+    if (parsed.execution_status !== "EXECUTED") continue;
+    if ((parsed.blocked_reasons ?? []).length > 0) continue;
+    if (
+      parsed.exact_command !==
+      "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json"
+    ) {
+      continue;
+    }
+    const apply_status = String(parsed.parsed_json_summary?.apply_status ?? "");
+    if (apply_status === "APPLIED" || apply_status === "ALREADY_APPLIED") {
+      return { artifact_rel_path: rel, apply_status };
+    }
+  }
+  return null;
 }
 
 function normRowField(row: ApRetailerLinkCsvRowV1, key: string): string {
@@ -420,6 +468,7 @@ type StageEvalContextV1 = {
   applyRun: ApplyRunShapeV1 | null;
   evidenceRowCount: number;
   aggregatorRowCount: number;
+  ingest_dispatch_run_parity_proof: boolean;
 };
 
 function evaluateStagesV1(ctx: StageEvalContextV1): BatchProductionChecklistStageV1[] {
@@ -544,6 +593,24 @@ function evaluateStagesV1(ctx: StageEvalContextV1): BatchProductionChecklistStag
     ["UNKNOWN: no committed supabase parity apply-run artifact in repo — dry-run contract only PROVEN."],
     [],
   );
+
+  const parityProof = ctx.ingest_dispatch_run_parity_proof
+    ? tryLoadLatestParityDispatchRunProofV1(ctx)
+    : null;
+  if (parityProof) {
+    const idx = stages.findIndex((s) => s.stage_id === "supabase_parity_applied");
+    if (idx >= 0) {
+      stages[idx] = {
+        ...stages[idx],
+        status: "complete",
+        evidence: [
+          ...stages[idx]!.evidence,
+          `dispatch_run_proof=${parityProof.artifact_rel_path}`,
+          `parity_apply_status=${parityProof.apply_status}`,
+        ],
+      };
+    }
+  }
 
   const gates = post?.gate_by_slug ?? {};
   const gateFailures = Object.entries(gates).filter(([, g]) => g?.gate_failure_kind != null);
@@ -979,6 +1046,7 @@ export function buildBatchProductionChecklistRunV1(
     applyRun,
     evidenceRowCount,
     aggregatorRowCount,
+    ingest_dispatch_run_parity_proof: deps.ingest_dispatch_run_parity_proof !== false,
   };
   const stages = evaluateStagesV1(stageCtx);
 

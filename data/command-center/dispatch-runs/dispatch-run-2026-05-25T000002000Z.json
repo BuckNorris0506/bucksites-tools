@@ -1,0 +1,19 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-05-25T00:00:02.000Z",
+  "source_commit": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "supabase_parity_apply_proof",
+  "exact_command": "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+  "execution_allowed": true,
+  "execution_status": "EXECUTED",
+  "stdout_excerpt": "{\"ok\":true}",
+  "stderr_excerpt": "",
+  "parsed_json_summary": {
+    "ok": true
+  },
+  "blocked_reasons": [],
+  "next_expected_state": "x",
+  "read_only": true,
+  "data_mutation": false
+}

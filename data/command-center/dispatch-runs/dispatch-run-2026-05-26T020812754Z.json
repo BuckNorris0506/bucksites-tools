@@ -1,0 +1,172 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-05-26T02:08:12.754Z",
+  "source_commit": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "supabase_parity_apply_proof",
+  "exact_command": "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+  "execution_allowed": true,
+  "execution_status": "EXECUTED",
+  "stdout_excerpt": "{\n  \"report_name\": \"air_purifier_supabase_apply_parity_v1\",\n  \"generated_at\": \"2026-05-26T02:08:13.042Z\",\n  \"mode\": \"dry_run\",\n  \"data_mutation\": false,\n  \"source_plan_path\": \"data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json\",\n  \"target_table\": \"air_purifier_retailer_links\",\n  \"apply_status\": \"ALREADY_APPLIED\",\n  \"planned_change_count\": 4,\n  \"applied_change_count\": 0,\n  \"already_applied_count\": 4,\n  \"blocked_reasons\": [],\n  \"rows\": [\n    {\n      \"filter_slug\": \"winix-hepa-115115\",\n      \"filter_id\": \"38754173-543f-477a-897e-bb3f2914b3c1\",\n      \"retailer_key\": \"oem-catalog\",\n      \"link_id\": \"4a82e2aa-5311-4254-8b54-b9fcf6cf6027\",\n      \"match_mode\": \"after_row\",\n      \"before_db\": {\n        \"id\": \"4a82e2aa-5311-4254-8b54-b9fcf6cf6027\",\n        \"affiliate_url\": \"https://www.winixamerica.com/product/filter-a-115115/\",\n        \"destination_url\": \"https://www.winixamerica.com/product/filter-a-115115/\",\n        \"retailer_name\": \"OEM / manufacturer catalog (keyword lookup)\",\n        \"is_primary\": true,\n        \"retailer_key\": \"oem-catalog\",\n        \"retailer_slug\": \"oem-catalog\",\n        \"status\": \"approved\",\n        \"browser_truth_classification\": \"direct_buyable\",\n        \"browser_truth_notes\": \"Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice.\",\n        \"browser_truth_checked_at\": \"2026-05-24T05:39:50.321+00:00\"\n      },\n      \"after_db_projected\": {\n        \"affiliate_url\": \"http\n…(truncated)",
+  "stderr_excerpt": "",
+  "parsed_json_summary": {
+    "report_name": "air_purifier_supabase_apply_parity_v1",
+    "generated_at": "2026-05-26T02:08:13.042Z",
+    "mode": "dry_run",
+    "data_mutation": false,
+    "source_plan_path": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+    "target_table": "air_purifier_retailer_links",
+    "apply_status": "ALREADY_APPLIED",
+    "planned_change_count": 4,
+    "applied_change_count": 0,
+    "already_applied_count": 4,
+    "blocked_reasons": [],
+    "rows": [
+      {
+        "filter_slug": "winix-hepa-115115",
+        "filter_id": "38754173-543f-477a-897e-bb3f2914b3c1",
+        "retailer_key": "oem-catalog",
+        "link_id": "4a82e2aa-5311-4254-8b54-b9fcf6cf6027",
+        "match_mode": "after_row",
+        "before_db": {
+          "id": "4a82e2aa-5311-4254-8b54-b9fcf6cf6027",
+          "affiliate_url": "https://www.winixamerica.com/product/filter-a-115115/",
+          "destination_url": "https://www.winixamerica.com/product/filter-a-115115/",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "status": "approved",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321+00:00"
+        },
+        "after_db_projected": {
+          "affiliate_url": "https://www.winixamerica.com/product/filter-a-115115/",
+          "destination_url": "https://www.winixamerica.com/product/filter-a-115115/",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 strict re-proof 2026-05-24 (prior wrong-family flag cleared): official Filter A PDP. Primary H1/title Filter A – 115115; body cites Winix 115115 Replacement Filter A. In stock with Add to cart at $84.99. Exact token 115115 visible in primary product area. Compatible models 5300-2, 5500-2, C535 per product copy. Neighboring SKUs 116130/116131 appear only in cross-sell—not wrong-family in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+        },
+        "gate_after_projected": null,
+        "would_update": false,
+        "updated": false
+      },
+      {
+        "filter_slug": "gg-flt5000",
+        "filter_id": "ebfd261f-325f-4a3a-9b08-80b7eed3c8cf",
+        "retailer_key": "oem-catalog",
+        "link_id": "988418bc-078e-4b18-8a7b-50da09c6c557",
+        "match_mode": "after_row",
+        "before_db": {
+          "id": "988418bc-078e-4b18-8a7b-50da09c6c557",
+          "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+          "destination_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "status": "approved",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat. FLT28CB4/FLT5111 checked in related products—not in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321+00:00"
+        },
+        "after_db_projected": {
+          "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+          "destination_url": "https://guardiantechnologies.com/products/germguardian-flt5000-hepa-genuine-replacement-filter-c",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: germguardian.com search URL returned HTTP 403 in fetch; Guardian Technologies is the manufacturer storefront. Official PDP shows GermGuardian FLT5000 HEPA GENUINE Replacement Filter C, $34.99 in stock, Add to cart and Buy Now. Primary product area and model compatibility AC5000/AC5300/AC5350/CDAP5500 family matching catalog compat. FLT28CB4/FLT5111 checked in related products—not in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+        },
+        "gate_after_projected": null,
+        "would_update": false,
+        "updated": false
+      },
+      {
+        "filter_slug": "coway-max2-hepa",
+        "filter_id": "cf7040bf-f229-488c-b7b6-ac11e24ddbb5",
+        "retailer_key": "oem-catalog",
+        "link_id": "cd2fbb38-3da0-4e5e-8782-52002be836f0",
+        "match_mode": "after_row",
+        "before_db": {
+          "id": "cd2fbb38-3da0-4e5e-8782-52002be836f0",
+          "affiliate_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+          "destination_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "status": "approved",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: coway.com search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity. Other Coway SKUs (3109905, 3118096) checked—not dominant in primary area.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321+00:00"
+        },
+        "after_db_projected": {
+          "affiliate_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+          "destination_url": "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: coway.com search for COWAY-3304899 returns zero products. US manufacturer store cowaymega.com lists Airmega Mighty AP-1512HH & 200M Filter Set with SKU 3304899 in primary product area, Add to cart at $54.99, in stock. Matches catalog AP-1512 family Max2/hepa filter set identity. Other Coway SKUs (3109905, 3118096) checked—not dominant in primary area.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+        },
+        "gate_after_projected": null,
+        "would_update": false,
+        "updated": false
+      },
+      {
+        "filter_slug": "rabbit-biogs-minusa2",
+        "filter_id": "cd996891-661a-4633-87af-3f33d5951ac4",
+        "retailer_key": "oem-catalog",
+        "link_id": "13d933aa-06d1-4edb-8797-05496e625d0f",
+        "match_mode": "after_row",
+        "before_db": {
+          "id": "13d933aa-06d1-4edb-8797-05496e625d0f",
+          "affiliate_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+          "destination_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "status": "approved",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: rabbitair.com official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string. BioGS 2.0/SPA-550A tokens checked—not in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321+00:00"
+        },
+        "after_db_projected": {
+          "affiliate_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+          "destination_url": "https://www.rabbitair.com/products/minusa2-hepa-filter",
+          "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+          "is_primary": true,
+          "retailer_key": "oem-catalog",
+          "retailer_slug": "oem-catalog",
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_notes": "Batch-v2 re-proof 2026-05-24: rabbitair.com official MinusA2 HEPA Filter PDP ($45.00). Primary product title MinusA2 HEPA Filter; six-stage docs name BioGS HEPA layer for MinusA2 SPA-700A/780A/N. Add to Cart present. Catalog token RABBIT-BIOGS-MA2 aligns with BioGS alias row; storefront does not print RABBIT-BIOGS-MA2 string. BioGS 2.0/SPA-550A tokens checked—not in primary slice.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+        },
+        "gate_after_projected": null,
+        "would_update": false,
+        "updated": false
+      }
+    ],
+    "notes": [
+      "Updates public.air_purifier_retailer_links only — no insert path.",
+      "Matches approved rows by air_purifier_filter_id + retailer_key (status=approved).",
+      "Do not use npm run seed:import:air-purifier for this parity apply."
+    ]
+  },
+  "blocked_reasons": [],
+  "next_expected_state": "Parity apply-run JSON committed — supabase_parity_applied stage becomes complete; dispatch re-evaluates runtime smoke.",
+  "read_only": true,
+  "data_mutation": false
+}

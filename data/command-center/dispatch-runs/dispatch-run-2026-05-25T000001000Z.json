@@ -1,0 +1,20 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-05-25T00:00:01.000Z",
+  "source_commit": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+  "dispatch_status_before": "READY",
+  "selected_subsystem": "supabase_parity_apply_proof",
+  "exact_command": "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --apply --plan x",
+  "execution_allowed": false,
+  "execution_status": "REFUSED",
+  "stdout_excerpt": "",
+  "stderr_excerpt": "",
+  "parsed_json_summary": null,
+  "blocked_reasons": [
+    "Refused: exact_command contains forbidden patterns: --apply",
+    "Refused: exact_command is not allowlisted for v1."
+  ],
+  "next_expected_state": "x",
+  "read_only": true,
+  "data_mutation": false
+}

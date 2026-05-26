@@ -1,0 +1,173 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+
+import {
+  COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1,
+  runBuckpartsCommandCenterDispatchRunnerV1,
+} from "./buckparts-command-center-dispatch-runner-v1";
+
+const REPO_ROOT = process.cwd();
+
+function fakeReportWithDispatch(overrides: Record<string, unknown>): any {
+  return {
+    report_name: "buckparts_command_center_v1",
+    generated_at: "2026-05-25T00:00:00.000Z",
+    read_only: true,
+    data_mutation: false,
+    next_best_action: "x",
+    why_this_action: "x",
+    execution_guidance: {
+      next_move_mode: "READ_ONLY",
+      next_move_command: "x",
+      mutating_blocked: true,
+      mutating_block_reasons: [],
+      staleness_or_dirty_risk: [],
+    },
+    system_health_summary: { status: "OK", reasons: [], recommended_next_step: "x" },
+    affiliate_readiness_summary: {
+      approved_count: 1,
+      pending_count: 0,
+      pending_network_or_programs: [],
+      repairclinic_status: "DRAFTING",
+      affiliate_approval_pending: false,
+    },
+    top_money_queue: { runtime_status: "OK", next_best_action: "x", blocked_reasons: [] },
+    recent_learning_outcomes: {
+      frigidaire_dead_oem_outcome: { all_resolved: true, unresolved_count: 0, recommended_next_action: "x" },
+      evidence_files: [],
+    },
+    blocked_link_summary: {
+      total_blocked_links: 0,
+      top_blocked_state: "UNKNOWN",
+      top_blocked_retailer_key: "UNKNOWN",
+      recommended_first_action: "x",
+    },
+    search_and_click_intelligence_summary: { runtime_status: "OK" },
+    money_funnel_summary: { runtime_status: "OK" },
+    rescue_velocity_summary: { runtime_status: "OK" },
+    rescue_delta_trend_summary: { runtime_status: "OK" },
+    amazon_first_blocked_queue_summary: {
+      runtime_status: "OK",
+      source_report: "x",
+      top_candidate_count: 0,
+      needs_amazon_search_count: 0,
+      unknown_evidence_deferred_count: 0,
+      deferred_unknown_top_tokens: [],
+      top_5_tokens: [],
+      recommended_next_action: "x",
+    },
+    operator_can_be_away_status: "PROCEED_WITH_KNOWN_LIMITS",
+    known_unknowns: [],
+    owner_command_center_neurons: { contract: "owner_command_center_neurons_v1", read_only: true, data_mutation: false },
+    command_center_v2: {
+      schema_version: "1",
+      generated_at: "2026-05-25T00:00:00.000Z",
+      read_only: true,
+      data_mutation: false,
+      batch_production_operating_dispatch_v1: {
+        contract: "batch_production_operating_dispatch_v1",
+        read_only: true,
+        data_mutation: false,
+        runtime_status: "ATTENTION",
+        dispatch_status: "READY",
+        current_stage_id: "supabase_parity_applied",
+        next_stage_id: "production_runtime_smoke_complete",
+        selected_subsystem: "supabase_parity_apply_proof",
+        exact_command:
+          "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+        command_surface: "terminal",
+        allowed_mutations: ["parity_dry_run_read_only"],
+        forbidden_mutations: ["product_csv_write"],
+        owner_approval_required: false,
+        mutation_allowed: false,
+        proof_required_before_execution: "x",
+        expected_artifact_paths: [],
+        success_transition: "x",
+        failure_transition: "x",
+        why_this_is_next: "x",
+        blocked_reasons: [],
+        expansion_blocked: true,
+        derived_from_checklist_contract: "batch_production_operating_checklist_v1",
+        ...overrides,
+      },
+    },
+  };
+}
+
+test("runner refuses OWNER_REVIEW_REQUIRED dispatch and writes artifact", async () => {
+  const fixedNow = new Date("2026-05-25T00:00:00.000Z");
+  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+    rootDir: REPO_ROOT,
+    now: () => fixedNow,
+    reportBuilder: async () => fakeReportWithDispatch({ dispatch_status: "OWNER_REVIEW_REQUIRED" }),
+    exec: async () => {
+      throw new Error("exec should not run when refused");
+    },
+  });
+  assert.ok(res.artifact_abs_path.includes(COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1));
+  assert.equal(res.artifact.read_only, true);
+  assert.equal(res.artifact.data_mutation, false);
+  assert.equal(res.artifact.execution_status, "REFUSED");
+  assert.equal(res.artifact.execution_allowed, false);
+  assert.ok(res.artifact.blocked_reasons.some((r) => r.includes("dispatch_status must be READY")));
+});
+
+test("runner refuses --apply, git push/commit, and mutation patterns", async () => {
+  const fixedNow = new Date("2026-05-25T00:00:01.000Z");
+  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+    rootDir: REPO_ROOT,
+    now: () => fixedNow,
+    reportBuilder: async () =>
+      fakeReportWithDispatch({
+        exact_command: "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --apply --plan x",
+      }),
+    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+  });
+  const reasons = res.artifact.blocked_reasons.join(" ");
+  assert.match(reasons, /forbidden patterns/i);
+});
+
+test("runner refuses git push/commit commands", async () => {
+  const fixedNow = new Date("2026-05-25T00:00:01.500Z");
+  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+    rootDir: REPO_ROOT,
+    now: () => fixedNow,
+    reportBuilder: async () => fakeReportWithDispatch({ exact_command: "git push origin main" }),
+    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+  });
+  const reasons = res.artifact.blocked_reasons.join(" ");
+  assert.match(reasons, /git push/i);
+});
+
+test("runner executes allowlisted command when dispatch is READY (mocked)", async () => {
+  const fixedNow = new Date("2026-05-25T00:00:02.000Z");
+  let executed: string | null = null;
+  const allowlisted =
+    "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json";
+  const res = await runBuckpartsCommandCenterDispatchRunnerV1({
+    rootDir: REPO_ROOT,
+    now: () => fixedNow,
+    reportBuilder: async () => fakeReportWithDispatch({ exact_command: allowlisted }),
+    exec: async (cmd) => {
+      executed = cmd;
+      return { stdout: "{\"ok\":true}", stderr: "", exitCode: 0 };
+    },
+  });
+  assert.equal(executed, allowlisted);
+  assert.equal(res.artifact.execution_status, "EXECUTED");
+  assert.equal(res.artifact.execution_allowed, true);
+  assert.deepEqual(res.artifact.parsed_json_summary, { ok: true });
+});
+
+test("runner does not mutate product CSV", async () => {
+  const before = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
+  await runBuckpartsCommandCenterDispatchRunnerV1({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-05-25T00:00:03.000Z"),
+    exec: async () => ({ stdout: "", stderr: "", exitCode: 0 }),
+  });
+  const after = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
+  assert.equal(before, after);
+});
+

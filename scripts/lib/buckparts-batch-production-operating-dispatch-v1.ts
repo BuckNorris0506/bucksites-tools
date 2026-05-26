@@ -90,6 +90,9 @@ const FORBIDDEN_EXPANSION_V1 = [
   "scale_batch_size",
 ] as const;
 
+const SAFE_PARITY_PROOF_COMMAND_V1 =
+  "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json" as const;
+
 export function resolveNextBatchProductionStageIdV1(
   current: BatchProductionChecklistStageIdV1 | null,
 ): BatchProductionChecklistStageIdV1 | null {
@@ -203,20 +206,24 @@ export function buildBatchProductionOperatingDispatchV1(
 
   if (parityUnknown) {
     const proof = decision.proof_required_before_next_stage;
+    const exact_command = BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1;
+    const isSafeReadOnlyProofCommand =
+      exact_command === SAFE_PARITY_PROOF_COMMAND_V1 &&
+      !exact_command.includes("--apply");
     return {
       contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
       read_only: true,
       data_mutation: false,
       runtime_status: checklist.runtime_status,
-      dispatch_status: stopTheLine ? "BLOCKED" : "OWNER_REVIEW_REQUIRED",
+      dispatch_status: stopTheLine ? "BLOCKED" : isSafeReadOnlyProofCommand ? "READY" : "OWNER_REVIEW_REQUIRED",
       current_stage_id,
       next_stage_id: resolveNextBatchProductionStageIdV1("supabase_parity_applied"),
       selected_subsystem: "supabase_parity_apply_proof",
-      exact_command: BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
+      exact_command,
       command_surface: "terminal",
       allowed_mutations: ["parity_dry_run_read_only"],
       forbidden_mutations: [...forbidden_mutations, "supabase_apply", "csv_apply"],
-      owner_approval_required: true,
+      owner_approval_required: stopTheLine ? true : false,
       mutation_allowed: false,
       proof_required_before_execution: proof,
       expected_artifact_paths: [

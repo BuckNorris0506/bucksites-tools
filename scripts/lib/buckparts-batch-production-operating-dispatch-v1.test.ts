@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
+  BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
   buildBatchProductionOperatingChecklistV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
 import {
@@ -26,16 +27,24 @@ test("dispatch is derived from checklist operating_decision and stages", () => {
   assert.equal(dispatch.exact_command.length > 0, true);
 });
 
-test("parity UNKNOWN blocks expansion and selects supabase parity subsystem", () => {
-  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+test("parity UNKNOWN uses READY read-only proof dispatch and blocks expansion", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({
+    rootDir: REPO_ROOT,
+    ingest_dispatch_run_parity_proof: false,
+  });
   const parityStage = checklist.stages.find((s) => s.stage_id === "supabase_parity_applied");
   assert.equal(parityStage?.status, "unknown");
+  assert.equal(checklist.operating_decision.current_stage, "supabase_parity_applied");
 
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
   assert.equal(dispatch.selected_subsystem, "supabase_parity_apply_proof");
+  assert.equal(dispatch.dispatch_status, "READY");
+  assert.equal(dispatch.command_surface, "terminal");
+  assert.equal(dispatch.mutation_allowed, false);
+  assert.equal(dispatch.exact_command, BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1);
+  assert.equal(dispatch.exact_command.includes("--apply"), false);
   assert.equal(dispatch.expansion_blocked, true);
   assert.ok(dispatch.forbidden_mutations.includes("add_products_or_wedges"));
-  assert.notEqual(dispatch.dispatch_status, "READY");
 });
 
 test("runtime smoke incomplete blocks expansion when parity is complete", () => {

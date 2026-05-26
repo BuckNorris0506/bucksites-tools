@@ -1,0 +1,20 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-05-25T00:00:03.000Z",
+  "source_commit": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+  "dispatch_status_before": "OWNER_REVIEW_REQUIRED",
+  "selected_subsystem": "batch_checklist_inspect",
+  "exact_command": "npx tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_operating_checklist_v1.operating_decision'",
+  "execution_allowed": false,
+  "execution_status": "REFUSED",
+  "stdout_excerpt": "",
+  "stderr_excerpt": "",
+  "parsed_json_summary": null,
+  "blocked_reasons": [
+    "Refused: exact_command is not allowlisted for v1.",
+    "Refused: dispatch_status must be READY in v1 (got OWNER_REVIEW_REQUIRED)."
+  ],
+  "next_expected_state": "Dispatch remains blocked — follow forbidden_mutations.",
+  "read_only": true,
+  "data_mutation": false
+}

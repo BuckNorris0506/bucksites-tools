@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import test from "node:test";
 
 import { AP_BATCH_V2_DIRECT_BUY_SLUGS_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
@@ -65,7 +65,10 @@ test("expansion readiness is false when batch loop needs attention", () => {
 });
 
 test("parity unknown blocks mutation in operating decision", () => {
-  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({
+    rootDir: REPO_ROOT,
+    ingest_dispatch_run_parity_proof: false,
+  });
   const parityStage = checklist.stages.find((s) => s.stage_id === "supabase_parity_applied");
   assert.equal(parityStage?.status, "unknown");
   assert.equal(parityStage?.stage_label, "Supabase parity applied");
@@ -191,4 +194,45 @@ test("checklist builder does not mutate CSV", () => {
   });
   const after = readFileSync(`${REPO_ROOT}/data/air-purifier/retailer_links.csv`, "utf8");
   assert.equal(before, after);
+});
+
+test("checklist ingests successful dispatch-run parity artifact", () => {
+  const dir = `${REPO_ROOT}/data/command-center/dispatch-runs`;
+  const file = `${dir}/dispatch-run-test-parity-proof.json`;
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(
+    file,
+    JSON.stringify(
+      {
+        report_name: "buckparts_command_center_dispatch_run_v1",
+        generated_at: "2026-05-26T02:00:00.000Z",
+        source_commit: "test",
+        dispatch_status_before: "READY",
+        selected_subsystem: "supabase_parity_apply_proof",
+        exact_command:
+          "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+        execution_allowed: true,
+        execution_status: "EXECUTED",
+        stdout_excerpt: "",
+        stderr_excerpt: "",
+        parsed_json_summary: { apply_status: "ALREADY_APPLIED" },
+        blocked_reasons: [],
+        next_expected_state: "x",
+        read_only: true,
+        data_mutation: false,
+      },
+      null,
+      2,
+    ) + "\n",
+    "utf8",
+  );
+  try {
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const parity = checklist.stages.find((s) => s.stage_id === "supabase_parity_applied");
+    assert.equal(parity?.status, "complete");
+    assert.ok(parity?.evidence.some((e) => e.includes("dispatch_run_proof=data/command-center/dispatch-runs/")));
+    assert.ok(parity?.evidence.some((e) => e.includes("parity_apply_status=ALREADY_APPLIED")));
+  } finally {
+    rmSync(file, { force: true });
+  }
 });

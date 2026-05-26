@@ -1,0 +1,19 @@
+{
+  "report_name": "buckparts_command_center_dispatch_run_v1",
+  "generated_at": "2026-05-26T01:45:59.063Z",
+  "source_commit": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+  "dispatch_status_before": "OWNER_REVIEW_REQUIRED",
+  "selected_subsystem": "supabase_parity_apply_proof",
+  "exact_command": "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+  "execution_allowed": false,
+  "execution_status": "REFUSED",
+  "stdout_excerpt": "",
+  "stderr_excerpt": "",
+  "parsed_json_summary": null,
+  "blocked_reasons": [
+    "Refused: dispatch_status must be READY in v1 (got OWNER_REVIEW_REQUIRED)."
+  ],
+  "next_expected_state": "Remain blocked — expansion and Supabase apply stay forbidden.",
+  "read_only": true,
+  "data_mutation": false
+}
