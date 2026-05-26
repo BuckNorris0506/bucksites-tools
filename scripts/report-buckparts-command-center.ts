@@ -58,6 +58,14 @@ import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-b
 import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
+import {
+  buildApBatchV3RunInstantiationV1Report,
+  buildApBatchV3UnknownV1,
+} from "./lib/ap-batch-v3-run-instantiation-v1";
+import {
+  buildBuckpartsMarketingIntelligenceEngineUnknownV1,
+  buildBuckpartsMarketingIntelligenceEngineV1Report,
+} from "./lib/buckparts-marketing-intelligence-engine-v1";
 import { buildBatchProductionOperatingChecklistV1 } from "./lib/buckparts-batch-production-operating-checklist-v1";
 import {
   buildBatchProductionOperatingDispatchV1,
@@ -943,6 +951,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
     | "batch_production_operating_dispatch_v1"
+    | "ap_batch_v3_run_instantiation_v1"
+    | "marketing_intelligence_engine_v1"
     | "page_publishability_truth_summary_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
@@ -1058,6 +1068,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
     | "batch_production_operating_dispatch_v1"
+    | "ap_batch_v3_run_instantiation_v1"
+    | "marketing_intelligence_engine_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1155,6 +1167,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
     | "batch_production_operating_dispatch_v1"
+    | "ap_batch_v3_run_instantiation_v1"
+    | "marketing_intelligence_engine_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1197,9 +1211,43 @@ export async function buildBuckpartsCommandCenterReport(
     listDir: readDir,
   });
 
+  let ap_batch_v3_run_instantiation_v1;
+  try {
+    ap_batch_v3_run_instantiation_v1 = await buildApBatchV3RunInstantiationV1Report({
+      rootDir,
+      now,
+      demandToCoverageNextLane: demand_to_coverage_next_lane_v1,
+      checklist: batch_production_operating_checklist_v1,
+      fileExists,
+      readTextFile,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    ap_batch_v3_run_instantiation_v1 = buildApBatchV3UnknownV1({
+      generated_at: now().toISOString(),
+      reason: `ap_batch_v3_run_instantiation_v1 failed: ${message}`,
+    });
+  }
+
   const batch_production_operating_dispatch_v1 = buildBatchProductionOperatingDispatchV1(
     batch_production_operating_checklist_v1,
+    { ap_batch_v3_run_instantiation: ap_batch_v3_run_instantiation_v1 },
   );
+
+  let marketing_intelligence_engine_v1;
+  try {
+    marketing_intelligence_engine_v1 = await buildBuckpartsMarketingIntelligenceEngineV1Report({
+      rootDir,
+      now,
+      demandToCoverageNextLane: demand_to_coverage_next_lane_v1,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    marketing_intelligence_engine_v1 = buildBuckpartsMarketingIntelligenceEngineUnknownV1({
+      generated_at: now().toISOString(),
+      reason: `marketing_intelligence_engine_v1 failed: ${message}`,
+    });
+  }
 
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
@@ -1214,6 +1262,8 @@ export async function buildBuckpartsCommandCenterReport(
     operating_map_summary_v1,
     batch_production_operating_checklist_v1,
     batch_production_operating_dispatch_v1,
+    ap_batch_v3_run_instantiation_v1,
+    marketing_intelligence_engine_v1,
   };
 
   const commandCenterShellForNextPacket = {

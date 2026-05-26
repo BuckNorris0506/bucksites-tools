@@ -5,10 +5,13 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import type {
+  ApBatchV3RunInstantiationV1,
   BatchProductionOwnerDecisionsLaneV1,
   BatchProductionOperatingChecklistV1,
   BatchProductionOperatingDispatchV1,
+  BuckpartsMarketingIntelligenceEngineV1,
   CommandCenterV2Report,
+  MarketingOpportunityV1,
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
 import { buildRunnerStepVisibilityModeledV1 } from "../../../../scripts/lib/buckparts-runner-step-summary-v1";
@@ -517,9 +520,11 @@ function FounderDecisionPacketsSection({
 function BatchProductionOperatingChecklistSection({
   checklist,
   dispatch,
+  runInstantiation,
 }: {
   checklist: BatchProductionOperatingChecklistV1;
   dispatch: BatchProductionOperatingDispatchV1;
+  runInstantiation?: ApBatchV3RunInstantiationV1 | null;
 }) {
   const run = checklist.runs[0] ?? null;
   const stageRows = checklist.stages.length > 0 ? checklist.stages : (run?.stages ?? []);
@@ -580,6 +585,21 @@ function BatchProductionOperatingChecklistSection({
             </ul>
           ) : null}
         </div>
+
+        {runInstantiation && runInstantiation.run_id !== "UNKNOWN" ? (
+          <div
+            data-testid="batch-production-ap-batch-v3-run-plan"
+            className="rounded-lg border border-emerald-300/70 bg-emerald-50/70 p-4 text-xs text-slate-800 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-slate-200"
+          >
+            <p className="font-semibold">Command Center proposed AP batch run ({runInstantiation.run_id})</p>
+            <p className="mt-2">
+              Buyer-path candidates: {runInstantiation.buyer_path_candidate_count} · catalog-review:{" "}
+              {runInstantiation.catalog_review_candidate_count} · owner-review (separate):{" "}
+              {runInstantiation.owner_review_candidate_count}
+            </p>
+            <p className="mt-1 text-slate-600 dark:text-slate-400">{runInstantiation.next_command_center_step}</p>
+          </div>
+        ) : null}
 
         <details className="rounded-lg border border-slate-200 bg-slate-50/60 dark:border-slate-700 dark:bg-slate-900/30">
           <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -646,6 +666,73 @@ function BatchProductionOperatingChecklistSection({
   );
 }
 
+
+function MarketingIntelligenceEngineSection({
+  engine,
+}: {
+  engine: BuckpartsMarketingIntelligenceEngineV1;
+}) {
+  const rows: MarketingOpportunityV1[] = engine.selected_opportunities;
+
+  return (
+    <ExecutiveSection
+      title="Marketing Intelligence — Wrong Part Prevention Department"
+      subtitle="From Command Center v2 marketing_intelligence_engine_v1 — ranked asset briefs only; not a campaign manager."
+    >
+      <div data-testid="marketing-intelligence-engine-v1" className="space-y-4">
+        <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-100">
+          <span className="font-semibold">{engine.motto}</span> — read-only opportunities from GSC demand, buyer-path
+          coverage, batch lane, and aggregator truth. No auto-publish.
+        </p>
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-4">
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">source_status</dt>
+          <dd>{engine.source_status}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">opportunity_count</dt>
+          <dd>{engine.opportunity_count}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">selected</dt>
+          <dd>{rows.length}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">read_only</dt>
+          <dd>{String(engine.read_only)}</dd>
+        </dl>
+        {rows.length === 0 ? (
+          <p className="text-xs text-slate-600 dark:text-slate-400">No selected opportunities in this snapshot.</p>
+        ) : (
+          <ol className="space-y-3">
+            {rows.map((opp) => (
+              <li
+                key={opp.opportunity_id}
+                className="rounded-lg border border-slate-200 bg-white p-3 text-xs dark:border-slate-700 dark:bg-slate-950"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] text-slate-500">{opp.opportunity_id}</span>
+                  <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold uppercase dark:bg-slate-800">
+                    {opp.opportunity_class.replaceAll("_", " ")}
+                  </span>
+                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-900 dark:bg-amber-950 dark:text-amber-200">
+                    {opp.publishability_status.replaceAll("_", " ")}
+                  </span>
+                  <span className="text-[10px] text-slate-500">rank {opp.rank_score}</span>
+                </div>
+                <p className="mt-2 font-medium text-slate-900 dark:text-slate-100">{opp.plain_english_explanation}</p>
+                <p className="mt-1 text-slate-700 dark:text-slate-300">{opp.trust_copy_angle}</p>
+                {opp.sarcastic_hooks[0] ? (
+                  <p className="mt-2 italic text-slate-600 dark:text-slate-400">{opp.sarcastic_hooks[0]}</p>
+                ) : null}
+                {opp.blocked_reasons.length > 0 ? (
+                  <ul className="mt-2 list-inside list-disc text-amber-900 dark:text-amber-200">
+                    {opp.blocked_reasons.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </ExecutiveSection>
+  );
+}
 
 function BatchProductionOwnerDecisionsLaneSection({
   lane,
@@ -1248,7 +1335,10 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         <BatchProductionOperatingChecklistSection
           checklist={v2.batch_production_operating_checklist_v1}
           dispatch={v2.batch_production_operating_dispatch_v1}
+          runInstantiation={v2.ap_batch_v3_run_instantiation_v1}
         />
+
+        <MarketingIntelligenceEngineSection engine={v2.marketing_intelligence_engine_v1} />
 
         <FounderActionQueueSection queue={founderActionQueue} />
 

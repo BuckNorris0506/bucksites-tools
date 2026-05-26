@@ -3,6 +3,8 @@
  * derived only from batch_production_operating_checklist_v1 (no separate guessing).
  */
 
+import type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
+import { AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1 } from "./ap-batch-v3-run-instantiation-v1";
 import {
   AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
   AP_APPLY_RUN_BATCH_V2_DEFAULT_JSON_V1,
@@ -52,6 +54,7 @@ export type BatchProductionSelectedSubsystemV1 =
   | "operator_closeout"
   | "expansion_loop_next_batch_selection"
   | "demand_to_coverage_next_lane"
+  | "ap_batch_v3_run_instantiation"
   | "batch_checklist_inspect";
 
 export type BatchProductionOperatingDispatchV1 = {
@@ -136,6 +139,7 @@ function subsystemCommandSurface(
     case "apply_plan_owner_review":
     case "expansion_loop_next_batch_selection":
     case "demand_to_coverage_next_lane":
+    case "ap_batch_v3_run_instantiation":
       return "cursor_agent";
     case "none":
       return "none";
@@ -144,8 +148,13 @@ function subsystemCommandSurface(
   }
 }
 
+export type BatchProductionOperatingDispatchExpansionContextV1 = {
+  ap_batch_v3_run_instantiation?: ApBatchV3RunInstantiationV1 | null;
+};
+
 export function buildBatchProductionOperatingDispatchV1(
   checklist: BatchProductionOperatingChecklistV1,
+  expansionContext?: BatchProductionOperatingDispatchExpansionContextV1,
 ): BatchProductionOperatingDispatchV1 {
   const decision = checklist.operating_decision;
   const stages = checklist.stages;
@@ -281,6 +290,39 @@ export function buildBatchProductionOperatingDispatchV1(
     checklist.runtime_status === "OK" &&
     closeoutStage?.status === "complete"
   ) {
+    const instantiation = expansionContext?.ap_batch_v3_run_instantiation ?? null;
+    if (instantiation?.may_proceed_to_packet_write === true) {
+      return {
+        contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
+        read_only: true,
+        data_mutation: false,
+        runtime_status: checklist.runtime_status,
+        dispatch_status: "READY",
+        current_stage_id: null,
+        next_stage_id: "lane_selected",
+        selected_subsystem: "ap_batch_v3_run_instantiation",
+        exact_command: AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
+        command_surface: "cursor_agent",
+        allowed_mutations: ["batch_run_planning_read_only", "ap_batch_v3_run_descriptor_read_only"],
+        forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
+        owner_approval_required: false,
+        mutation_allowed: false,
+        proof_required_before_execution:
+          "Command Center selected air_purifier reopen — review proposed ap-batch-v3 run descriptor before packet generation.",
+        expected_artifact_paths: [
+          instantiation.proposed_artifact_paths.run_registry,
+          instantiation.proposed_artifact_paths.packets_dir,
+        ],
+        success_transition:
+          "Owner approves ap-batch-v3 run descriptor — write packets to agent-packets-batch-v3 and open lane_selected stage.",
+        failure_transition: "Do not mutate CSV/Supabase or reuse ap-batch-v2 plans.",
+        why_this_is_next: `Instantiate ap-batch-v3 from Command Center selection (${String(instantiation.buyer_path_candidate_count)} buyer-path candidates; ${String(instantiation.catalog_review_candidate_count)} catalog-review). ${instantiation.next_command_center_step}`,
+        blocked_reasons: [],
+        expansion_blocked: false,
+        derived_from_checklist_contract: checklist.contract,
+      };
+    }
+
     const activeWedge = checklist.runs[0]?.wedge ?? "";
     const useDemandLane = activeWedge === "air_purifier";
     const selected_subsystem: BatchProductionSelectedSubsystemV1 = useDemandLane

@@ -8,6 +8,7 @@ import type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+import type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
@@ -17,6 +18,7 @@ import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/se
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
+import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 
 export type TokenControlStatus =
   | "LIVE_OUTCOME_RECORDED"
@@ -902,6 +904,10 @@ export type CommandCenterV2Report = {
   customer_language_and_waterdrop_research_lane_v1: CustomerLanguageAndWaterdropResearchLaneV1;
   /** Read-only GSC demand × wedge launch × repo buyer-path coverage join — not mutation authority. */
   demand_to_coverage_next_lane_v1: DemandToCoverageNextLaneReportV1;
+  /** Read-only proposed ap-batch-v3 run descriptor from Command Center lane selection — not mutation authority. */
+  ap_batch_v3_run_instantiation_v1?: ApBatchV3RunInstantiationV1;
+  /** Read-only marketing opportunities and asset briefs from proven operating truth — no auto-publish. */
+  marketing_intelligence_engine_v1: BuckpartsMarketingIntelligenceEngineV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
@@ -918,6 +924,11 @@ export type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
+export type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
+export type {
+  BuckpartsMarketingIntelligenceEngineV1,
+  MarketingOpportunityV1,
+} from "./buckparts-marketing-intelligence-engine-v1";
 export type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 export type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";

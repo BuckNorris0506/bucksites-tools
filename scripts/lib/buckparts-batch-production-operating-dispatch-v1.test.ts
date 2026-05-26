@@ -4,10 +4,14 @@ import test from "node:test";
 
 import {
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
-  BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1,
   BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
   buildBatchProductionOperatingChecklistV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
+import {
+  AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
+  buildApBatchV3RunInstantiationV1Report,
+} from "./ap-batch-v3-run-instantiation-v1";
+import { buildDemandToCoverageNextLaneV1Report } from "./demand-to-coverage-next-lane-v1";
 import {
   BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
   buildBatchProductionOperatingDispatchV1,
@@ -90,13 +94,21 @@ test("dispatch director override surfaces BATCH DISPATCH next action when blocke
   assert.equal(override.next_move_command, dispatch.exact_command);
 });
 
-test("dispatch moves to demand-to-coverage when closed batch proof is complete", () => {
+test("dispatch moves to ap-batch-v3 run instantiation when closed batch proof is complete", async () => {
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   assert.equal(checklist.spent_plan_closeout.classification, "SPENT_CLOSED_SUCCESS");
-  const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
-  assert.equal(dispatch.selected_subsystem, "demand_to_coverage_next_lane");
+  const instantiation = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+    ap_batch_v3_run_instantiation: instantiation,
+  });
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
   assert.equal(dispatch.dispatch_status, "READY");
-  assert.equal(dispatch.exact_command, BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1);
+  assert.equal(dispatch.exact_command, AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1);
   assert.equal(dispatch.expansion_blocked, false);
   assert.equal(dispatch.current_stage_id, null);
 });
