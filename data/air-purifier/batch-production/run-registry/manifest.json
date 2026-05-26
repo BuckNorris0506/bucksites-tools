@@ -1,0 +1,14 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "generated_at": "2026-05-26T22:47:43.630Z",
+  "run_id": "ap-batch-v3-proposed-2026-05-26",
+  "packet_count": 3,
+  "packet_ids": [
+    "ap-levoit-oem-discovery-v1",
+    "ap-oem-search-placeholder-v1",
+    "ap-blueair-catalog-identity-v1"
+  ],
+  "read_only": true,
+  "data_mutation": false,
+  "proposed": true
+}

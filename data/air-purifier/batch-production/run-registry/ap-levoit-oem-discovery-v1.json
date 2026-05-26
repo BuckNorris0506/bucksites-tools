@@ -1,0 +1,22 @@
+{
+  "packet_id": "ap-levoit-oem-discovery-v1",
+  "pattern": "levoit_oem_discovery",
+  "candidate_slugs": [
+    "levoit-rf-rar040",
+    "levoit-rf-rar060",
+    "levoit-rf-c131",
+    "levoit-rf-cr200",
+    "levoit-rf-meta-air",
+    "levoit-vital200-rf"
+  ],
+  "max_rows": 6,
+  "task_type": "oem_pdp_discovery",
+  "exact_proof_required": "levoit.com product PDP with exact RAR* / RF-* token; wrong-family check",
+  "allowed_mutations": [
+    "Replace search URL on primary after proof"
+  ],
+  "reject_rules": [
+    "No Amazon-primary without exact token"
+  ],
+  "owner_review_required": false
+}

@@ -1,0 +1,26 @@
+{
+  "packet_id": "ap-oem-search-placeholder-v1",
+  "pattern": "oem_search_placeholder_discovery",
+  "candidate_slugs": [
+    "holmes-hapf30",
+    "winix-carbon-116131",
+    "shark-carbon-foam",
+    "shark-hepa-hp100",
+    "rabbit-carbon-minusa2",
+    "coway-airmega250-rf",
+    "gg-flt4100",
+    "shark-hepa-hp200",
+    "shark-hepa-hp400",
+    "vornado-carbon-pad"
+  ],
+  "max_rows": 10,
+  "task_type": "search_placeholder_rescue",
+  "exact_proof_required": "Official manufacturer PDP; exact token; Add to Cart for direct_buyable",
+  "allowed_mutations": [
+    "Update existing primary URL + browser_truth"
+  ],
+  "reject_rules": [
+    "No new retailer rows without approval"
+  ],
+  "owner_review_required": false
+}

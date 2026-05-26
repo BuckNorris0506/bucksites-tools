@@ -1,0 +1,34 @@
+{
+  "contract": "batch_production_proven_run_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "run_id": "ap-batch-v3-proposed-2026-05-26",
+  "wedge": "air_purifier",
+  "lane_label": "AP batch-v3",
+  "proposed": true,
+  "source_proven_run_id": "ap-batch-v2-2026-05-24",
+  "source_recommendation_proof": {
+    "demand_report": "demand_to_coverage_next_lane_v1",
+    "recommended_wedge": "air_purifier",
+    "recommendation_status": "RECOMMEND_REOPEN",
+    "next_action": "Produce an air purifier buyer-path coverage snapshot and top-20 queue before expanding fridge retailer_links batch."
+  },
+  "expected_evidence_row_count": 16,
+  "expected_auto_apply_slugs": [],
+  "artifact_paths": {
+    "run_registry": "data/air-purifier/batch-production/run-registry/ap-batch-v3-proposed-run-v1.json",
+    "packets_dir": "data/air-purifier/batch-production/agent-packets-batch-v3",
+    "results_dir": "data/air-purifier/batch-production/agent-results-batch-v3",
+    "apply_plan_dir": "data/air-purifier/batch-production/apply-plans-batch-v3",
+    "apply_run_dir": "data/air-purifier/batch-production/apply-runs-batch-v3",
+    "lane_report_command": "npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts",
+    "packets_command": "npx tsx scripts/report-air-purifier-agent-packets-v1.ts --out-dir data/air-purifier/batch-production/agent-packets-batch-v3"
+  },
+  "operator_lessons": [
+    "Read-only run instantiation — does not mutate ap-batch-v2 plans, product CSV, or Supabase.",
+    "Excluded 13 slugs including existing_direct_buyable and ap-batch-v2 applied slugs.",
+    "Owner-review rows (3) are listed separately — not in buyer-path packets.",
+    "Catalog-review rows (1) are not buyer-path mutation tasks."
+  ],
+  "may_proceed_to_packet_write": true
+}

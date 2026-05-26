@@ -1,0 +1,18 @@
+{
+  "packet_id": "ap-blueair-catalog-identity-v1",
+  "pattern": "blueair_catalog_identity",
+  "candidate_slugs": [
+    "blueair-particle-411"
+  ],
+  "max_rows": 1,
+  "task_type": "catalog_identity_review",
+  "exact_proof_required": "Prove F4MAX vs PART411; fix compat before any particle-411 buyer-path",
+  "allowed_mutations": [
+    "Catalog/compat in approved task only"
+  ],
+  "reject_rules": [
+    "No alias blueair-f4max-411 → particle-411",
+    "No retailer_links-only F4MAX fix"
+  ],
+  "owner_review_required": true
+}
