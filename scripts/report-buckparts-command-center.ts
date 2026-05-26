@@ -59,6 +59,10 @@ import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
 import { buildBatchProductionOperatingChecklistV1 } from "./lib/buckparts-batch-production-operating-checklist-v1";
+import {
+  buildBatchProductionOperatingDispatchV1,
+  resolveBatchProductionDispatchDirectorOverrideV1,
+} from "./lib/buckparts-batch-production-operating-dispatch-v1";
 import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
 import {
   buildPagePublishabilityTruthSummaryV1,
@@ -843,7 +847,7 @@ export async function buildBuckpartsCommandCenterReport(
       "flexoffers_readiness_refrigerator_water report missing (data/reports/flexoffers-readiness-refrigerator-water.json)",
     );
   }
-  const mutatingBlocked = mutatingBlockedReasons.length > 0;
+  let mutatingBlocked = mutatingBlockedReasons.length > 0;
 
   const stalenessOrDirtyRisk: string[] = [];
   if (commandSurface.trend.overall_trend === "UNKNOWN") {
@@ -888,6 +892,9 @@ export async function buildBuckpartsCommandCenterReport(
               ? "npm run buckparts:frigidaire-next-candidates"
               : "npm run buckparts:command-center"
       : "UNKNOWN";
+
+  let effectiveNextMoveMode = nextMoveMode;
+  let effectiveNextMoveCommand = nextMoveCommand;
 
   const learningOutcomesConfidenceApprovals =
     options.learningOutcomesConfidenceApprovalsLoader?.() ??
@@ -935,6 +942,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
+    | "batch_production_operating_dispatch_v1"
     | "page_publishability_truth_summary_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
@@ -1049,6 +1057,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
+    | "batch_production_operating_dispatch_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1145,6 +1154,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operating_map_summary_v1"
     | "batch_production_operating_checklist_v1"
+    | "batch_production_operating_dispatch_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1182,7 +1192,14 @@ export async function buildBuckpartsCommandCenterReport(
   const batch_production_operating_checklist_v1 = buildBatchProductionOperatingChecklistV1({
     rootDir,
     generated_at: now().toISOString(),
+    fileExists,
+    readText: readTextFile,
+    listDir: readDir,
   });
+
+  const batch_production_operating_dispatch_v1 = buildBatchProductionOperatingDispatchV1(
+    batch_production_operating_checklist_v1,
+  );
 
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
@@ -1196,6 +1213,7 @@ export async function buildBuckpartsCommandCenterReport(
     founder_decision_registry_summary_v1,
     operating_map_summary_v1,
     batch_production_operating_checklist_v1,
+    batch_production_operating_dispatch_v1,
   };
 
   const commandCenterShellForNextPacket = {
@@ -1225,9 +1243,26 @@ export async function buildBuckpartsCommandCenterReport(
     }
   }
 
+  const batchDispatchOverride = resolveBatchProductionDispatchDirectorOverrideV1({
+    dispatch: batch_production_operating_dispatch_v1,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+  });
+  if (batchDispatchOverride) {
+    nextBestAction = batchDispatchOverride.next_best_action;
+    whyThisAction = batchDispatchOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = batchDispatchOverride.next_move_command;
+    for (const reason of batchDispatchOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  }
+
   const execution_guidance: CommandCenterReport["execution_guidance"] = {
-    next_move_mode: nextMoveMode,
-    next_move_command: nextMoveCommand,
+    next_move_mode: effectiveNextMoveMode,
+    next_move_command: effectiveNextMoveCommand,
     mutating_blocked: mutatingBlocked,
     mutating_block_reasons: mutatingBlockedReasons,
     staleness_or_dirty_risk: stalenessOrDirtyRisk,
@@ -1244,6 +1279,7 @@ export async function buildBuckpartsCommandCenterReport(
       execution_guidance,
       source: "buckparts_command_center_v1_root_digest",
     },
+    execution_guidance,
   };
 
   function loadSpendLedgerEntriesReadOnly(): import("./lib/buckparts-spend-ledger-contract-v1").SpendLedgerEntryV1[] {

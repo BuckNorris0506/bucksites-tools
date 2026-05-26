@@ -48,6 +48,67 @@ export const BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1 = [
   "closeout_complete",
 ] as const;
 
+export const BATCH_PRODUCTION_STAGE_OWNER_CATALOG_V1: Record<
+  BatchProductionChecklistStageIdV1,
+  { stage_label: string; required_proof: string; what_must_be_built_if_missing: string }
+> = {
+  lane_selected: {
+    stage_label: "Batch lane selected",
+    required_proof: "Proven run registry names wedge + lane label",
+    what_must_be_built_if_missing: "Add a run-registry JSON before opening a new batch lane.",
+  },
+  packets_generated: {
+    stage_label: "Agent packets generated",
+    required_proof: "Packets manifest on disk with packet_count > 0",
+    what_must_be_built_if_missing: "Generate Codex/agent packets for the batch slugs.",
+  },
+  evidence_collected: {
+    stage_label: "Browser evidence collected",
+    required_proof: "Results JSON rows meet registry expected_evidence_row_count",
+    what_must_be_built_if_missing: "Collect browser-truth evidence for every planned slug.",
+  },
+  aggregator_reviewed: {
+    stage_label: "Aggregator reviewed",
+    required_proof: "Aggregator valid rows + apply plan artifact present",
+    what_must_be_built_if_missing: "Run aggregator review and produce apply plan JSON.",
+  },
+  apply_plan_ready: {
+    stage_label: "Apply plan owner-ready",
+    required_proof: "Plan status READY_FOR_OWNER_APPROVAL with planned_changes",
+    what_must_be_built_if_missing: "Finish planner until plan is owner-review ready.",
+  },
+  csv_apply_complete: {
+    stage_label: "CSV apply executed",
+    required_proof: "Apply-run artifact with apply_status APPLIED",
+    what_must_be_built_if_missing: "Run CSV apply executor after owner approval.",
+  },
+  repo_validation_complete: {
+    stage_label: "Repo validation passed",
+    required_proof: "post_apply_validation: direct_buyable, target-only, no search URLs",
+    what_must_be_built_if_missing: "Fix apply-run validation failures before parity or smoke.",
+  },
+  supabase_parity_dry_run_ready: {
+    stage_label: "Supabase parity dry-run ready",
+    required_proof: "validateApSupabaseParityPlanV1 returns zero reasons",
+    what_must_be_built_if_missing: "Fix plan parity blockers before any Supabase apply.",
+  },
+  supabase_parity_applied: {
+    stage_label: "Supabase parity applied",
+    required_proof: "Committed read-only Supabase parity apply-run JSON in repo",
+    what_must_be_built_if_missing: "Ingest durable parity apply proof — dry-run alone is not enough.",
+  },
+  production_runtime_smoke_complete: {
+    stage_label: "Production runtime smoke",
+    required_proof: "Live or artifact gate_by_slug shows no buy/go gate failures",
+    what_must_be_built_if_missing: "Run production smoke on applied slugs before scaling batch size.",
+  },
+  closeout_complete: {
+    stage_label: "Return to expansion loop",
+    required_proof: "Operator closeout marked in registry — growth mode ready, not a permanent finish",
+    what_must_be_built_if_missing: "Mark closeout when this batch cycle is logged — then pick next wedge or batch size.",
+  },
+};
+
 export type BatchProductionChecklistStageIdV1 =
   (typeof BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1)[number];
 
@@ -91,6 +152,9 @@ export type BatchProductionProvenRunRegistryV1 = {
 export type BatchProductionChecklistStageV1 = {
   stage_id: BatchProductionChecklistStageIdV1;
   status: BatchProductionChecklistStageStatusV1;
+  stage_label: string;
+  required_proof: string;
+  what_must_be_built_if_missing: string;
   evidence: string[];
   blocker_reasons: string[];
 };
@@ -103,9 +167,11 @@ export type BatchProductionSlugSafetyV1 = {
 
 export type BatchProductionSetbackV1 = {
   detector_id: BatchProductionSetbackDetectorIdV1;
+  display_name: string;
   fired: boolean;
   severity: "info" | "warning" | "stop_the_line";
   message: string;
+  recommended_fix: string;
   proof: string[];
 };
 
@@ -126,6 +192,55 @@ export type BatchProductionChecklistRunV1 = {
 
 export type BatchProductionOperatingChecklistRuntimeStatusV1 = "OK" | "ATTENTION" | "BLOCKED";
 
+export const BATCH_PRODUCTION_PROOF_UNKNOWN_STAGE_IDS_V1 = [
+  "supabase_parity_applied",
+  "production_runtime_smoke_complete",
+] as const satisfies readonly BatchProductionChecklistStageIdV1[];
+
+export const BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1 =
+  "npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json" as const;
+
+export const BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1 =
+  "npx tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_operating_checklist_v1.operating_decision'" as const;
+
+export type BatchProductionChecklistSetbacksSummaryV1 = {
+  all: BatchProductionSetbackV1[];
+  fired: BatchProductionSetbackV1[];
+  fired_ids: BatchProductionSetbackDetectorIdV1[];
+};
+
+export type BatchProductionOperatingDecisionV1 = {
+  contract: "batch_production_operating_decision_v1";
+  read_only: true;
+  data_mutation: false;
+  active_run_id: string | null;
+  current_stage: BatchProductionChecklistStageIdV1 | null;
+  runtime_status: BatchProductionOperatingChecklistRuntimeStatusV1;
+  mutation_allowed: false;
+  owner_action_required: boolean;
+  blocking_reasons: string[];
+  next_exact_command: string;
+  next_owner_action: string;
+  next_agent_action: string;
+  proof_required_before_next_stage: string;
+};
+
+export type BatchProductionChecklistDirectorOverrideV1 = {
+  next_best_action: string;
+  why_this_action: string;
+  next_move_command: string;
+  mutation_allowed: false;
+  mutation_block_reasons: string[];
+};
+
+export type BatchProductionExpansionReadinessV1 = {
+  contract: "batch_production_expansion_readiness_v1";
+  read_only: true;
+  ready_to_add_products_or_wedges: boolean | "unknown";
+  summary: string;
+  blockers_outranking_expansion: string[];
+};
+
 export type BatchProductionOperatingChecklistV1 = {
   contract: typeof BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1;
   read_only: true;
@@ -133,6 +248,12 @@ export type BatchProductionOperatingChecklistV1 = {
   may_mutate: false;
   generated_at: string;
   runtime_status: BatchProductionOperatingChecklistRuntimeStatusV1;
+  active_run_id: string | null;
+  /** Director view — promoted from active run for jq/Command Center consumers. */
+  stages: BatchProductionChecklistStageV1[];
+  setbacks: BatchProductionChecklistSetbacksSummaryV1;
+  operating_decision: BatchProductionOperatingDecisionV1;
+  expansion_readiness: BatchProductionExpansionReadinessV1;
   proven_historical_run_ids: string[];
   runs: BatchProductionChecklistRunV1[];
   setback_detectors_catalog: BatchProductionSetbackDetectorIdV1[];
@@ -311,7 +432,16 @@ function evaluateStagesV1(ctx: StageEvalContextV1): BatchProductionChecklistStag
     evidence: string[],
     blocker_reasons: string[] = [],
   ) => {
-    stages.push({ stage_id, status, evidence, blocker_reasons });
+    const meta = BATCH_PRODUCTION_STAGE_OWNER_CATALOG_V1[stage_id];
+    stages.push({
+      stage_id,
+      status,
+      stage_label: meta.stage_label,
+      required_proof: meta.required_proof,
+      what_must_be_built_if_missing: meta.what_must_be_built_if_missing,
+      evidence,
+      blocker_reasons,
+    });
   };
 
   push(
@@ -463,23 +593,33 @@ export function detectBatchProductionSetbacksV1(args: {
 
   setbacks.push({
     detector_id: "planned_rows_spent_post_apply",
+    display_name: "Apply plan is post-apply spent",
     fired: spentCount > 0,
     severity: spentCount > 0 ? "warning" : "info",
     message:
       spentCount > 0
         ? `Plan before_row no longer matches CSV for ${spentCount} slug(s) — plan is post-apply spent.`
         : "Plan before_row still matches CSV for planned rows (pre-apply or unapplied).",
+    recommended_fix:
+      spentCount > 0
+        ? "Treat the plan as spent: refresh plan or start a new run registry before re-apply dry-runs."
+        : "No action — plan still matches pre-apply CSV rows.",
     proof: spentSlugs.map((s) => `spent:${s}`),
   });
 
   setbacks.push({
     detector_id: "tests_expect_pre_apply_after_apply",
+    display_name: "Tests still expect pre-apply state",
     fired: spentCount > 0,
     severity: "warning",
     message:
       spentCount > 0
         ? "Executor/planner dry-runs and tests that assert pre-apply before_row matches will fail until updated for post-apply state."
         : "No post-apply spent rows detected.",
+    recommended_fix:
+      spentCount > 0
+        ? "Update operator docs and tests for post-apply before_row — do not re-run apply on spent rows."
+        : "No action required.",
     proof: spentSlugs.length > 0 ? [`affected_slugs=${spentSlugs.join(",")}`] : [],
   });
 
@@ -495,12 +635,17 @@ export function detectBatchProductionSetbacksV1(args: {
 
   setbacks.push({
     detector_id: "production_safe_cta_differs_from_applied_row",
+    display_name: "Primary CTA may differ from applied row",
     fired: multiPathApplied.length > 0,
     severity: multiPathApplied.length > 0 ? "warning" : "info",
     message:
       multiPathApplied.length > 0
         ? "Production may render a different safe primary CTA (e.g. Amazon) than the newly applied OEM direct-buy row."
         : "No applied slug with concurrent Amazon row in CSV.",
+    recommended_fix:
+      multiPathApplied.length > 0
+        ? "Verify live /go primary CTA on affected slugs before scaling — safe Amazon path is not an apply failure."
+        : "No action required.",
     proof: multiPathApplied.map((s) => `amazon_plus_oem:${s}`),
   });
 
@@ -513,25 +658,251 @@ export function detectBatchProductionSetbacksV1(args: {
 
   setbacks.push({
     detector_id: "supabase_parity_rejects_valid_report_name",
+    display_name: "Supabase parity rejects valid report name",
     fired: parityRejectsReportName,
     severity: parityRejectsReportName ? "stop_the_line" : "info",
     message: parityRejectsReportName
       ? `Supabase parity rejected accepted report_name ${reportName}.`
       : "Supabase parity accepts planner report_name for loaded plan.",
+    recommended_fix: parityRejectsReportName
+      ? "Fix parity validator or plan report_name before any Supabase apply."
+      : "No action — report_name accepted by parity contract.",
     proof: parityRejectsReportName ? parityValidationReasons : [`report_name=${reportName}`],
   });
 
   setbacks.push({
     detector_id: "local_csv_supabase_disagree",
+    display_name: "CSV vs Supabase drift",
     fired: false,
     severity: "info",
     message: supabaseParityApplyArtifactPresent
       ? "INFERRED: compare parity apply artifact to CSV when present."
       : "UNKNOWN: live Supabase not read — run parity dry-run/apply report to detect CSV_DB_PARITY_DRIFT.",
+    recommended_fix: supabaseParityApplyArtifactPresent
+      ? "Compare parity apply artifact rows to retailer_links.csv for drift."
+      : "Run parity dry-run, then ingest apply proof before trusting production DB parity.",
     proof: [],
   });
 
   return setbacks;
+}
+
+export function summarizeBatchProductionSetbacksV1(
+  setbacks: BatchProductionSetbackV1[],
+): BatchProductionChecklistSetbacksSummaryV1 {
+  const fired = setbacks.filter((s) => s.fired);
+  return {
+    all: setbacks,
+    fired,
+    fired_ids: fired.map((s) => s.detector_id),
+  };
+}
+
+export function resolveDirectorCurrentStageV1(
+  stages: BatchProductionChecklistStageV1[],
+): BatchProductionChecklistStageIdV1 | null {
+  for (const stage_id of BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1) {
+    const stage = stages.find((s) => s.stage_id === stage_id);
+    if (!stage) continue;
+    if (stage.status === "blocked" || stage.status === "pending") return stage_id;
+    if (
+      stage.status === "unknown" &&
+      (BATCH_PRODUCTION_PROOF_UNKNOWN_STAGE_IDS_V1 as readonly string[]).includes(stage_id)
+    ) {
+      return stage_id;
+    }
+  }
+  return null;
+}
+
+export function buildBatchProductionOperatingDecisionV1(args: {
+  runtime_status: BatchProductionOperatingChecklistRuntimeStatusV1;
+  active_run: BatchProductionChecklistRunV1 | null;
+  stages: BatchProductionChecklistStageV1[];
+  setbacks: BatchProductionChecklistSetbacksSummaryV1;
+}): BatchProductionOperatingDecisionV1 {
+  const { runtime_status, active_run, stages, setbacks } = args;
+  const current_stage = resolveDirectorCurrentStageV1(stages);
+  const parityStage = stages.find((s) => s.stage_id === "supabase_parity_applied");
+  const runtimeSmokeStage = stages.find((s) => s.stage_id === "production_runtime_smoke_complete");
+  const proofUnknown =
+    parityStage?.status === "unknown" || runtimeSmokeStage?.status === "unknown";
+
+  const blocking_reasons: string[] = [];
+  if (current_stage) {
+    const stage = stages.find((s) => s.stage_id === current_stage);
+    blocking_reasons.push(...(stage?.blocker_reasons ?? []));
+    if (stage?.status === "unknown") {
+      blocking_reasons.push(...stage.evidence.filter((e) => e.startsWith("UNKNOWN:")));
+    }
+  }
+  for (const setback of setbacks.fired) {
+    blocking_reasons.push(`${setback.detector_id}: ${setback.message}`);
+  }
+  if (!args.active_run) {
+    blocking_reasons.push("No active batch run loaded from run-registry.");
+  }
+
+  const owner_action_required =
+    runtime_status !== "OK" || setbacks.fired.length > 0 || proofUnknown || current_stage !== null;
+
+  const runLabel = active_run?.run_id ?? "active batch run";
+  let proof_required_before_next_stage =
+    "No additional proof required — do not start a new batch lane outside Command Center checklist.";
+  let next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+  let next_owner_action =
+    "Batch production checklist OK — do not bypass checklist for the next batch lane.";
+  let next_agent_action =
+    "Do not run CSV apply, Supabase --apply, or new batch scripts outside checklist state.";
+
+  if (current_stage === "supabase_parity_applied" && parityStage?.status === "unknown") {
+    proof_required_before_next_stage =
+      "Committed read-only Supabase parity apply-run JSON for the active plan (or registry path update) before scaling batch size or opening a new wedge.";
+    next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+    next_owner_action = `BATCH CHECKLIST [${runtime_status}]: Ingest durable Supabase parity apply proof for ${runLabel} before the next batch lane — parity applied state is UNKNOWN in repo.`;
+    next_agent_action =
+      "Do not run Supabase --apply or CSV apply for a new batch. Parity dry-run only when validating a plan: " +
+      BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1;
+  } else if (setbacks.fired.some((s) => s.detector_id === "planned_rows_spent_post_apply")) {
+    proof_required_before_next_stage =
+      "Treat apply plan as post-apply spent; refresh plan or start a new run registry before re-apply dry-runs.";
+    next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+    next_owner_action = `BATCH CHECKLIST [${runtime_status}]: ${runLabel} is post-apply spent — do not re-interpret safe Amazon CTAs as apply failure; resolve checklist setbacks before new batch work.`;
+    next_agent_action =
+      "Do not re-run apply executor on spent before_row. Update tests/operators for post-apply state; run Command Center checklist inspect only.";
+  } else if (current_stage) {
+    proof_required_before_next_stage = `Clear stage ${current_stage} per checklist evidence before advancing batch production.`;
+    next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+    next_owner_action = `BATCH CHECKLIST [${runtime_status}]: Resolve stage ${current_stage} for ${runLabel} before starting another batch lane.`;
+    next_agent_action =
+      "Read-only: inspect checklist operating_decision via Command Center JSON — no CSV/Supabase mutation.";
+  } else if (runtime_status !== "OK") {
+    next_owner_action = `BATCH CHECKLIST [${runtime_status}]: Follow batch_production_operating_checklist_v1 before any new batch lane.`;
+    next_agent_action = next_exact_command;
+  }
+
+  const mutation_allowed = false as const;
+
+  return {
+    contract: "batch_production_operating_decision_v1",
+    read_only: true,
+    data_mutation: false,
+    active_run_id: active_run?.run_id ?? null,
+    current_stage,
+    runtime_status,
+    mutation_allowed,
+    owner_action_required,
+    blocking_reasons,
+    next_exact_command,
+    next_owner_action,
+    next_agent_action,
+    proof_required_before_next_stage,
+  };
+}
+
+export function resolveBatchProductionChecklistDirectorOverrideV1(args: {
+  checklist: BatchProductionOperatingChecklistV1;
+  brainStopTheLine: boolean;
+}): BatchProductionChecklistDirectorOverrideV1 | null {
+  if (args.brainStopTheLine) return null;
+  if (args.checklist.runtime_status === "OK") return null;
+
+  const decision = args.checklist.operating_decision;
+  const mutation_block_reasons = [...decision.blocking_reasons];
+  if (!decision.mutation_allowed || decision.owner_action_required) {
+    mutation_block_reasons.push(
+      "Batch production checklist: mutation blocked until proof stages and setbacks are resolved.",
+    );
+  }
+
+  return {
+    next_best_action: decision.next_owner_action,
+    why_this_action:
+      `Batch production operating checklist directs next action (${args.checklist.runtime_status}). ` +
+      decision.blocking_reasons.slice(0, 3).join(" "),
+    next_move_command: decision.next_exact_command,
+    mutation_allowed: false,
+    mutation_block_reasons,
+  };
+}
+
+export function buildBatchProductionExpansionReadinessV1(args: {
+  runtime_status: BatchProductionOperatingChecklistRuntimeStatusV1;
+  operating_decision: BatchProductionOperatingDecisionV1;
+  setbacks: BatchProductionChecklistSetbacksSummaryV1;
+  active_run: BatchProductionChecklistRunV1 | null;
+  stages: BatchProductionChecklistStageV1[];
+}): BatchProductionExpansionReadinessV1 {
+  const { runtime_status, operating_decision, setbacks, active_run, stages } = args;
+
+  if (!active_run) {
+    return {
+      contract: "batch_production_expansion_readiness_v1",
+      read_only: true,
+      ready_to_add_products_or_wedges: "unknown",
+      summary: "No active batch run loaded — cannot assess expansion readiness.",
+      blockers_outranking_expansion: ["No active batch run in run-registry."],
+    };
+  }
+
+  const blockers_outranking_expansion: string[] = [];
+  if (operating_decision.current_stage) {
+    const stage = stages.find((s) => s.stage_id === operating_decision.current_stage);
+    blockers_outranking_expansion.push(
+      `Operating loop at stage: ${stage?.stage_label ?? operating_decision.current_stage}.`,
+    );
+  }
+  for (const setback of setbacks.fired) {
+    blockers_outranking_expansion.push(`${setback.display_name}: ${setback.message}`);
+  }
+  blockers_outranking_expansion.push(...operating_decision.blocking_reasons.slice(0, 4));
+
+  const closeoutStage = stages.find((s) => s.stage_id === "closeout_complete");
+  const growthLoopReady =
+    runtime_status === "OK" &&
+    setbacks.fired.length === 0 &&
+    operating_decision.current_stage === null &&
+    closeoutStage?.status === "complete";
+
+  if (growthLoopReady) {
+    return {
+      contract: "batch_production_expansion_readiness_v1",
+      read_only: true,
+      ready_to_add_products_or_wedges: true,
+      summary:
+        "Growth mode ready — this batch cycle is closed. Return to the expansion loop to add products or open a new wedge.",
+      blockers_outranking_expansion: [],
+    };
+  }
+
+  if (runtime_status === "BLOCKED") {
+    return {
+      contract: "batch_production_expansion_readiness_v1",
+      read_only: true,
+      ready_to_add_products_or_wedges: false,
+      summary: "Stop-the-line batch blockers — do not add products or wedges until resolved.",
+      blockers_outranking_expansion: Array.from(new Set(blockers_outranking_expansion)).slice(0, 8),
+    };
+  }
+
+  if (runtime_status === "ATTENTION") {
+    return {
+      contract: "batch_production_expansion_readiness_v1",
+      read_only: true,
+      ready_to_add_products_or_wedges: false,
+      summary:
+        "Not ready to expand — finish the current batch operating loop and clear missing proof before adding products or wedges.",
+      blockers_outranking_expansion: Array.from(new Set(blockers_outranking_expansion)).slice(0, 8),
+    };
+  }
+
+  return {
+    contract: "batch_production_expansion_readiness_v1",
+    read_only: true,
+    ready_to_add_products_or_wedges: false,
+    summary: "Batch loop in progress — complete remaining stages before expansion.",
+    blockers_outranking_expansion: Array.from(new Set(blockers_outranking_expansion)).slice(0, 8),
+  };
 }
 
 function countEvidenceRowsV1(
@@ -630,8 +1001,7 @@ export function buildBatchProductionChecklistRunV1(
     supabaseParityApplyArtifactPresent: false,
   });
 
-  const next_blocked_stage =
-    stages.find((s) => s.status === "blocked" || s.status === "pending")?.stage_id ?? null;
+  const next_blocked_stage = resolveDirectorCurrentStageV1(stages);
 
   return {
     run_id: registry.run_id,
@@ -662,21 +1032,43 @@ export function buildBatchProductionOperatingChecklistV1(
   }
 
   const apRun = runs.find((r) => r.run_id === "ap-batch-v2-2026-05-24") ?? runs[0] ?? null;
-  const firedSetbacks = apRun?.setbacks.filter((s) => s.fired) ?? [];
-  const blockedStages = apRun?.stages.filter((s) => s.status === "blocked") ?? [];
+  const stages = apRun?.stages ?? [];
+  const setbacksSummary = summarizeBatchProductionSetbacksV1(apRun?.setbacks ?? []);
+  const firedSetbacks = setbacksSummary.fired;
+  const blockedStages = stages.filter((s) => s.status === "blocked");
+  const unknownProofStages = stages.filter(
+    (s) =>
+      s.status === "unknown" &&
+      (BATCH_PRODUCTION_PROOF_UNKNOWN_STAGE_IDS_V1 as readonly string[]).includes(s.stage_id),
+  );
 
   let runtime_status: BatchProductionOperatingChecklistRuntimeStatusV1 = "OK";
   if (firedSetbacks.some((s) => s.severity === "stop_the_line")) {
     runtime_status = "BLOCKED";
-  } else if (firedSetbacks.length > 0 || blockedStages.length > 0) {
+  } else if (
+    firedSetbacks.length > 0 ||
+    blockedStages.length > 0 ||
+    unknownProofStages.length > 0
+  ) {
     runtime_status = "ATTENTION";
   }
 
-  const recommended_next_action = apRun?.next_blocked_stage
-    ? `Advance batch run ${apRun.run_id}: resolve stage ${apRun.next_blocked_stage} before new apply or production interpretation.`
-    : apRun
-      ? `Batch run ${apRun.run_id} stages complete per repo artifacts — use safety classifications before judging production CTAs.`
-      : "Register a proven batch run under data/air-purifier/batch-production/run-registry/.";
+  const operating_decision = buildBatchProductionOperatingDecisionV1({
+    runtime_status,
+    active_run: apRun,
+    stages,
+    setbacks: setbacksSummary,
+  });
+
+  const expansion_readiness = buildBatchProductionExpansionReadinessV1({
+    runtime_status,
+    operating_decision,
+    setbacks: setbacksSummary,
+    active_run: apRun,
+    stages,
+  });
+
+  const recommended_next_action = operating_decision.next_owner_action;
 
   const proven_facts = [
     `Checklist contract ${BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1} is read-only.`,
@@ -700,6 +1092,11 @@ export function buildBatchProductionOperatingChecklistV1(
     may_mutate: false,
     generated_at,
     runtime_status,
+    active_run_id: apRun?.run_id ?? null,
+    stages,
+    setbacks: setbacksSummary,
+    operating_decision,
+    expansion_readiness,
     proven_historical_run_ids: runs.map((r) => r.run_id),
     runs,
     setback_detectors_catalog: [

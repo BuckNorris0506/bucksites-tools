@@ -208,6 +208,7 @@ export function buildCommandCenterV2Report(input: {
   | "next_execution_packet_summary_v1"
   | "operating_map_summary_v1"
   | "batch_production_operating_checklist_v1"
+  | "batch_production_operating_dispatch_v1"
   | "page_publishability_truth_summary_v1"
   | "demand_to_coverage_next_lane_v1"
   | "operator_digest_v1"

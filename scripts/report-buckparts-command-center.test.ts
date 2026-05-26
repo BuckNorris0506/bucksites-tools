@@ -862,7 +862,10 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
   const report = await buildBuckpartsCommandCenterReport({
     rootDir,
     providers: baseProviders(),
-    fileExists: fs.existsSync,
+    fileExists: (abs) => {
+      if (abs.includes("batch-production")) return false;
+      return fs.existsSync(abs);
+    },
     readDir: () => [],
     readTextFile: (abs) => {
       if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
@@ -3093,6 +3096,86 @@ test("command_center_v2.batch_production_operating_checklist_v1 is read-only bat
   assert.equal(lane.may_mutate, false);
   assert.ok(lane.runs.length >= 1);
   assert.equal(lane.setback_detectors_catalog.length, 5);
+  assert.ok(lane.stages.length >= 11);
+  assert.ok(Array.isArray(lane.setbacks.fired));
+  assert.ok(lane.setbacks.fired.length >= 1);
+  assert.ok(lane.operating_decision);
+  assert.ok(lane.expansion_readiness);
+  assert.ok(report.command_center_v2.batch_production_operating_dispatch_v1);
+  assert.equal(report.command_center_v2.batch_production_operating_dispatch_v1.contract, "batch_production_operating_dispatch_v1");
+  assert.equal(
+    report.command_center_v2.batch_production_operating_dispatch_v1.current_stage_id,
+    lane.operating_decision.current_stage,
+  );
+  assert.equal(lane.operating_decision.mutation_allowed, false);
+});
+
+test("command center next_best_action defers to batch dispatch when not UNKNOWN", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json") || p.includes("batch-production"),
+    readDir: () => [],
+    readTextFile: (p) => {
+      if (p.endsWith("package.json")) return fs.readFileSync(p, "utf8");
+      if (p.includes("ap-batch-v2-proven-run")) {
+        return fs.readFileSync(
+          path.join(process.cwd(), "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json"),
+          "utf8",
+        );
+      }
+      if (p.includes("ap-apply-plan-batch-v2.json")) {
+        return fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+          ),
+          "utf8",
+        );
+      }
+      if (p.includes("ap-apply-run-batch-v2.json")) {
+        return fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json",
+          ),
+          "utf8",
+        );
+      }
+      if (p.includes("retailer_links.csv")) {
+        return fs.readFileSync(path.join(process.cwd(), "data/air-purifier/retailer_links.csv"), "utf8");
+      }
+      return BASE_TRACKER;
+    },
+  });
+  const checklist = report.command_center_v2.batch_production_operating_checklist_v1;
+  const dispatch = report.command_center_v2.batch_production_operating_dispatch_v1;
+  assert.notEqual(dispatch.dispatch_status, "UNKNOWN");
+  assert.ok(report.next_best_action.startsWith("BATCH DISPATCH ["));
+  assert.equal(report.next_best_action, `BATCH DISPATCH [${dispatch.dispatch_status}]: ${dispatch.why_this_is_next}`);
+  assert.equal(report.execution_guidance.next_move_command, dispatch.exact_command);
+  assert.equal(report.command_center_v2.execution_guidance.next_move_command, dispatch.exact_command);
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.equal(dispatch.current_stage_id, checklist.operating_decision.current_stage);
+  assert.equal(dispatch.selected_subsystem, "supabase_parity_apply_proof");
+  assert.equal(dispatch.expansion_blocked, true);
+});
+
+test("owner dashboard renders batch checklist operating decision marker", () => {
+  const dashAbs = path.join(
+    process.cwd(),
+    "src/app/ownerdashboard/[secret]/page.tsx",
+  );
+  const src = fs.readFileSync(dashAbs, "utf8");
+  assert.ok(src.includes('data-testid="batch-production-operating-checklist"'));
+  assert.ok(src.includes('data-testid="batch-production-operating-decision"'));
+  assert.ok(src.includes('data-testid="batch-production-stage-list"'));
+  assert.ok(src.includes('data-testid="batch-production-setbacks"'));
+  assert.ok(src.includes('data-testid="batch-production-expansion-readiness"'));
+  assert.ok(src.includes("BatchProductionOperatingChecklistSection"));
+  assert.ok(src.includes("expansion_readiness"));
+  assert.ok(src.includes('data-testid="batch-production-operating-dispatch"'));
+  assert.ok(src.includes("Command Center selected next action"));
+  assert.ok(src.includes("dispatch={v2.batch_production_operating_dispatch_v1}"));
 });
 
 test("command_center_v2.owner_vertical_launch_policy_v1 is read-only CC-owned launch policy lane", async () => {
@@ -3194,7 +3277,12 @@ test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain cov
     assert.equal(report.next_best_action, gate.next_brain_action);
   } else if (gate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
     assert.ok(gate.proven_facts.some((f) => f.startsWith("BRAIN_CAVEAT:")));
-    assert.ok(report.why_this_action.includes("BRAIN_CAVEAT:"));
+    const checklist = report.command_center_v2.batch_production_operating_checklist_v1;
+    if (checklist.runtime_status === "OK") {
+      assert.ok(report.why_this_action.includes("BRAIN_CAVEAT:"));
+    } else {
+      assert.ok(report.next_best_action.startsWith("BATCH CHECKLIST ["));
+    }
   }
 });
 

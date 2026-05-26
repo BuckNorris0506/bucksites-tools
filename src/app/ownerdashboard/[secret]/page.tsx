@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import type {
   BatchProductionOwnerDecisionsLaneV1,
   BatchProductionOperatingChecklistV1,
+  BatchProductionOperatingDispatchV1,
   CommandCenterV2Report,
   TopOfGameFoundationScorecardV1,
 } from "../../../../scripts/lib/buckparts-command-center-v2-types";
@@ -515,80 +516,117 @@ function FounderDecisionPacketsSection({
 
 function BatchProductionOperatingChecklistSection({
   checklist,
+  dispatch,
 }: {
   checklist: BatchProductionOperatingChecklistV1;
+  dispatch: BatchProductionOperatingDispatchV1;
 }) {
   const run = checklist.runs[0] ?? null;
+  const stageRows = checklist.stages.length > 0 ? checklist.stages : (run?.stages ?? []);
+  const currentStageId = dispatch.current_stage_id;
+
   return (
     <ExecutiveSection
-      title="Batch production operating checklist"
-      subtitle="Command Center v2 batch_production_operating_checklist_v1 — stage gates, safety classifications, setback detectors (read-only)"
+      title="Batch Production Operating Checklist"
+      subtitle="Command Center owns the loop — this page only displays what Command Center dispatched. Do not manage batch work from the dashboard."
     >
-      <dl className="mt-1 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-3">
-        <dt className="font-semibold text-slate-600 dark:text-slate-400">runtime_status</dt>
-        <dd>{checklist.runtime_status}</dd>
-        <dt className="font-semibold text-slate-600 dark:text-slate-400">may_mutate</dt>
-        <dd>{String(checklist.may_mutate)}</dd>
-        <dt className="font-semibold text-slate-600 dark:text-slate-400">proven runs</dt>
-        <dd className="font-mono text-[10px]">{checklist.proven_historical_run_ids.join(", ") || "none"}</dd>
-      </dl>
-      <FieldBlock label="recommended_next_action" value={checklist.recommended_next_action} />
-      {run ? (
-        <>
-          <p className="mt-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
-            Run {run.run_id} · next blocked stage:{" "}
-            <span className="font-mono">{run.next_blocked_stage ?? "none"}</span>
+      <div data-testid="batch-production-operating-checklist" className="space-y-5">
+        <div
+          data-testid="batch-production-operating-dispatch"
+          className="rounded-lg border border-blue-300/80 bg-gradient-to-br from-blue-50/95 to-white p-4 shadow-sm dark:border-blue-700/50 dark:from-blue-950/50 dark:to-slate-950"
+        >
+          <p className="text-[11px] font-bold uppercase tracking-wide text-blue-800 dark:text-blue-200">
+            Command Center selected next action
           </p>
-          <div className="mt-2 overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-700">
-              <thead className="bg-slate-50 dark:bg-slate-900/60">
-                <tr>
-                  {["stage", "status", "blockers"].map((h) => (
-                    <th
-                      key={h}
-                      className="whitespace-nowrap px-3 py-2 font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400"
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {run.stages.map((stage) => (
-                  <tr key={stage.stage_id} className="bg-white dark:bg-slate-950">
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-[11px]">{stage.stage_id}</td>
-                    <td className="whitespace-nowrap px-3 py-2">{stage.status}</td>
-                    <td className="px-3 py-2 font-mono text-[10px] text-slate-600 dark:text-slate-400">
-                      {stage.blocker_reasons.length > 0 ? stage.blocker_reasons.join("; ") : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <StatusPill status={dispatch.runtime_status} />
+            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-800 ring-1 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-200">
+              {dispatch.dispatch_status.replaceAll("_", " ")}
+            </span>
+            <span className="font-mono text-[10px] text-slate-600 dark:text-slate-400">{dispatch.selected_subsystem}</span>
+            <span className="text-[10px] uppercase text-slate-500 dark:text-slate-400">via {dispatch.command_surface}</span>
           </div>
-          {run.setbacks.filter((s) => s.fired).length > 0 ? (
+          <p className="mt-3 text-sm font-medium leading-relaxed text-slate-900 dark:text-slate-100">
+            {dispatch.why_this_is_next}
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <FieldBlock label="Current stage" value={currentStageId ?? "Loop clear"} />
+            <FieldBlock label="Next stage" value={dispatch.next_stage_id ?? "—"} />
+            <FieldBlock
+              label="Expansion"
+              value={dispatch.expansion_blocked ? "Blocked by dispatch" : "Allowed when READY"}
+            />
+            <FieldBlock label="Mutation" value={dispatch.mutation_allowed ? "allowed" : "blocked"} />
+            <FieldBlock label="Owner approval" value={dispatch.owner_approval_required ? "required" : "not required"} />
+            <FieldBlock label="Exact command" value={<span className="break-all font-mono text-xs">{dispatch.exact_command}</span>} />
+          </div>
+          <FieldBlock label="Proof required before execution" value={dispatch.proof_required_before_execution} />
+          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <FieldBlock
+              label="Allowed mutations"
+              value={dispatch.allowed_mutations.length > 0 ? dispatch.allowed_mutations.join(", ") : "none (read-only)"}
+            />
+            <FieldBlock label="Forbidden mutations" value={dispatch.forbidden_mutations.join(", ")} />
+          </div>
+          <div className="mt-3 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <FieldBlock label="On success" value={dispatch.success_transition} />
+            <FieldBlock label="On failure" value={dispatch.failure_transition} />
+          </div>
+          {dispatch.blocked_reasons.length > 0 ? (
             <ul className="mt-3 list-inside list-disc space-y-1 text-xs text-amber-900 dark:text-amber-200">
-              {run.setbacks
-                .filter((s) => s.fired)
-                .map((s) => (
-                  <li key={s.detector_id}>
-                    <span className="font-mono">{s.detector_id}</span>: {s.message}
-                  </li>
-                ))}
-            </ul>
-          ) : null}
-          {run.operator_lessons.length > 0 ? (
-            <ul className="mt-3 list-inside list-disc space-y-1 text-xs text-slate-800 dark:text-slate-200">
-              {run.operator_lessons.slice(0, 4).map((lesson, i) => (
-                <li key={i}>{lesson}</li>
+              {dispatch.blocked_reasons.map((b) => (
+                <li key={b}>{b}</li>
               ))}
             </ul>
           ) : null}
-        </>
-      ) : null}
+        </div>
+
+        <details className="rounded-lg border border-slate-200 bg-slate-50/60 dark:border-slate-700 dark:bg-slate-900/30">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-200">
+            Checklist reference (read-only — not for manual management)
+          </summary>
+          <div className="space-y-4 border-t border-slate-200 px-4 py-4 dark:border-slate-700">
+            <div data-testid="batch-production-operating-decision" className="text-xs text-slate-700 dark:text-slate-300">
+              <p>
+                Checklist status: {checklist.runtime_status} · expansion:{" "}
+                {checklist.expansion_readiness.ready_to_add_products_or_wedges === true
+                  ? "growth mode ready"
+                  : checklist.expansion_readiness.ready_to_add_products_or_wedges === false
+                    ? "not ready"
+                    : "unknown"}
+              </p>
+            </div>
+            <div data-testid="batch-production-expansion-readiness">
+              <p className="text-xs text-slate-600 dark:text-slate-400">{checklist.expansion_readiness.summary}</p>
+            </div>
+            <div data-testid="batch-production-stage-list">
+              <ol className="space-y-2">
+                {stageRows.map((stage) => (
+                  <li key={stage.stage_id} className="rounded border border-slate-200 bg-white p-2 text-xs dark:border-slate-700 dark:bg-slate-950">
+                    <span className="font-medium">{stage.stage_label}</span> · {stage.status}
+                    {stage.stage_id === currentStageId ? " · current" : ""}
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div data-testid="batch-production-setbacks">
+              {checklist.setbacks.fired.length > 0 ? (
+                <ul className="list-inside list-disc text-xs text-amber-900 dark:text-amber-200">
+                  {checklist.setbacks.fired.map((s) => (
+                    <li key={s.detector_id}>{s.display_name}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs text-slate-600 dark:text-slate-400">No fired setbacks.</p>
+              )}
+            </div>
+          </div>
+        </details>
+      </div>
     </ExecutiveSection>
   );
 }
+
 
 function BatchProductionOwnerDecisionsLaneSection({
   lane,
@@ -1188,7 +1226,10 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
 
         <BatchProductionOwnerDecisionsLaneSection lane={v2.batch_production_owner_decisions_lane_v1} />
 
-        <BatchProductionOperatingChecklistSection checklist={v2.batch_production_operating_checklist_v1} />
+        <BatchProductionOperatingChecklistSection
+          checklist={v2.batch_production_operating_checklist_v1}
+          dispatch={v2.batch_production_operating_dispatch_v1}
+        />
 
         <FounderActionQueueSection queue={founderActionQueue} />
 

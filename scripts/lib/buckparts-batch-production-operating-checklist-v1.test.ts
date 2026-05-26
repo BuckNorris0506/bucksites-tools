@@ -11,6 +11,10 @@ import {
   classifySlugSafetyV1,
   detectBatchProductionSetbacksV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
+import {
+  buildBatchProductionOperatingDispatchV1,
+  resolveBatchProductionDispatchDirectorOverrideV1,
+} from "./buckparts-batch-production-operating-dispatch-v1";
 import { loadApRetailerLinksCsvV1 } from "./air-purifier-apply-planner-v1";
 import { validateApSupabaseParityPlanV1 } from "./air-purifier-supabase-apply-parity-v1";
 
@@ -23,10 +27,52 @@ test("checklist contract exposes all stage gates and setback catalog", () => {
   assert.equal(checklist.data_mutation, false);
   assert.equal(checklist.may_mutate, false);
   assert.equal(checklist.setback_detectors_catalog.length, 5);
+  assert.equal(checklist.stages.length, BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1.length);
+  assert.deepEqual(
+    checklist.stages.map((s) => s.stage_id),
+    [...BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1],
+  );
   assert.deepEqual(
     checklist.runs[0]?.stages.map((s) => s.stage_id),
     [...BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1],
   );
+  assert.ok(Array.isArray(checklist.setbacks.fired));
+  assert.ok(checklist.setbacks.fired.length >= 1);
+  assert.ok(checklist.setbacks.fired_ids.length >= 1);
+  assert.equal(checklist.operating_decision.contract, "batch_production_operating_decision_v1");
+  assert.equal(checklist.operating_decision.mutation_allowed, false);
+});
+
+test("dispatch director routes ATTENTION checklist to next action", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  assert.notEqual(checklist.runtime_status, "OK");
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
+  const override = resolveBatchProductionDispatchDirectorOverrideV1({
+    dispatch,
+    brainStopTheLine: false,
+  });
+  assert.ok(override);
+  assert.ok(override.next_best_action.startsWith("BATCH DISPATCH ["));
+});
+
+test("expansion readiness is false when batch loop needs attention", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  assert.equal(checklist.expansion_readiness.contract, "batch_production_expansion_readiness_v1");
+  assert.equal(checklist.expansion_readiness.ready_to_add_products_or_wedges, false);
+  assert.ok(checklist.expansion_readiness.blockers_outranking_expansion.length >= 1);
+  assert.ok(checklist.stages.every((s) => s.stage_label.length > 0));
+  assert.ok(checklist.setbacks.fired.every((s) => s.display_name.length > 0 && s.recommended_fix.length > 0));
+});
+
+test("parity unknown blocks mutation in operating decision", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const parityStage = checklist.stages.find((s) => s.stage_id === "supabase_parity_applied");
+  assert.equal(parityStage?.status, "unknown");
+  assert.equal(parityStage?.stage_label, "Supabase parity applied");
+  assert.equal(checklist.operating_decision.current_stage, "supabase_parity_applied");
+  assert.equal(checklist.operating_decision.mutation_allowed, false);
+  assert.equal(checklist.operating_decision.owner_action_required, true);
+  assert.ok(checklist.operating_decision.next_owner_action.includes("BATCH CHECKLIST ["));
 });
 
 test("AP batch-v2 proven run validates stages and teaches multi-path lesson", () => {

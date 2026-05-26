@@ -9,6 +9,7 @@ import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decis
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
+import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
@@ -872,6 +873,8 @@ export type CommandCenterV2Report = {
   batch_production_owner_decisions_lane_v1: BatchProductionOwnerDecisionsLaneV1;
   /** Read-only batch production stage gates, safety classifications, and setback detectors. */
   batch_production_operating_checklist_v1: BatchProductionOperatingChecklistV1;
+  /** Machine-readable batch dispatch derived from checklist operating_decision + stages. */
+  batch_production_operating_dispatch_v1: BatchProductionOperatingDispatchV1;
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
   command_center_brain_coverage_manifest_v1: CommandCenterBrainCoverageManifestV1;
   brain_integrity_gate_v1: BrainIntegrityGateV1;
@@ -891,6 +894,8 @@ export type CommandCenterV2Report = {
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
   operator_digest_v1: OperatorDigestProjectionV1;
+  /** jq-safe mirror of root execution_guidance after batch dispatch override (set in report builder). */
+  execution_guidance?: OperatorDigestProjectionV1["execution_guidance"];
   /** Read-only Semi-Cruise + Netlify credit conservation snapshot — not a mutation permission source. */
   semi_cruise_status_summary_v1: SemiCruiseStatusSummaryV1;
   /** Read-only customer language doctrine paths + Waterdrop DA29-00020B research/CTA status — not published copy. */
@@ -914,6 +919,7 @@ export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decis
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 export type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
+export type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 export type {
   PagePublishabilityTruthSummaryV1,
