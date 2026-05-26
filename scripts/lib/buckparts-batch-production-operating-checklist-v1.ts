@@ -183,6 +183,7 @@ export type BatchProductionChecklistRunV1 = {
   stages: BatchProductionChecklistStageV1[];
   safety_by_slug: BatchProductionSlugSafetyV1[];
   setbacks: BatchProductionSetbackV1[];
+  spent_plan_closeout: BatchProductionSpentPlanCloseoutV1;
   operator_lessons: string[];
   next_blocked_stage: BatchProductionChecklistStageIdV1 | null;
   may_mutate: false;
@@ -204,6 +205,30 @@ export const BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1 =
   "npx tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_operating_checklist_v1.operating_decision'" as const;
 
 export const BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 = "data/command-center/dispatch-runs" as const;
+
+export const BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1 =
+  "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts" as const;
+
+export const BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1 =
+  "Closed batch: plan spent because it already applied." as const;
+
+export const BATCH_PRODUCTION_SUPABASE_PARITY_APPLY_RUNS_DIR_REL_V1 =
+  "data/air-purifier/batch-production/supabase-parity-apply-runs" as const;
+
+export type BatchProductionSpentPlanClassificationV1 =
+  | "SPENT_BLOCKING"
+  | "SPENT_CLOSED_SUCCESS"
+  | "SPENT_UNKNOWN";
+
+export type BatchProductionSpentPlanCloseoutV1 = {
+  contract: "batch_production_spent_plan_closeout_v1";
+  read_only: true;
+  classification: BatchProductionSpentPlanClassificationV1;
+  spent_slug_count: number;
+  spent_slugs: string[];
+  proof: string[];
+  closed_run_notes: string[];
+};
 
 export type BatchProductionChecklistSetbacksSummaryV1 = {
   all: BatchProductionSetbackV1[];
@@ -262,6 +287,8 @@ export type BatchProductionOperatingChecklistV1 = {
   recommended_next_action: string;
   proven_facts: string[];
   unknown_facts: string[];
+  spent_plan_closeout: BatchProductionSpentPlanCloseoutV1;
+  closed_run_notes: string[];
 };
 
 export type BuildBatchProductionOperatingChecklistDepsV1 = {
@@ -448,6 +475,7 @@ type ApplyRunShapeV1 = {
   apply_status?: string;
   planned_change_count?: number;
   applied_change_count?: number;
+  blocked_reasons?: string[];
   post_apply_validation?: {
     all_direct_buyable?: boolean;
     only_target_slugs_changed?: boolean;
@@ -455,6 +483,148 @@ type ApplyRunShapeV1 = {
     gate_by_slug?: Record<string, { gate_failure_kind?: string | null }>;
   };
 };
+
+export function countSpentPlannedRowsV1(
+  plan: AirPurifierApplyPlannerReportV1 | null,
+  csvRows: ApRetailerLinkCsvRowV1[],
+): { spentCount: number; spentSlugs: string[] } {
+  let spentCount = 0;
+  const spentSlugs: string[] = [];
+  for (const change of plan?.planned_changes ?? []) {
+    const live = rowsForSlug(csvRows, change.filter_slug).find(
+      (r) => normRowField(r, "retailer_key") === normRowField(change.before_row, "retailer_key"),
+    );
+    if (!live) continue;
+    const matchesAfter = csvRowMatchesSnapshot(live, change.after_row);
+    const matchesBefore = csvRowMatchesSnapshot(live, change.before_row);
+    if (matchesAfter && !matchesBefore) {
+      spentCount += 1;
+      spentSlugs.push(change.filter_slug);
+    }
+  }
+  return { spentCount, spentSlugs };
+}
+
+function hasSupabaseParityApplyArtifactInRepoV1(ctx: {
+  rootDir: string;
+  fileExists: (p: string) => boolean;
+  listDir: (p: string) => string[];
+}): boolean {
+  const dirAbs = relToAbs(ctx.rootDir, BATCH_PRODUCTION_SUPABASE_PARITY_APPLY_RUNS_DIR_REL_V1);
+  if (!ctx.fileExists(dirAbs)) return false;
+  return ctx.listDir(dirAbs).some((n) => n.endsWith(".json"));
+}
+
+export function classifyBatchProductionSpentPlanV1(args: {
+  plan: AirPurifierApplyPlannerReportV1 | null;
+  applyRun: ApplyRunShapeV1 | null;
+  registry: BatchProductionProvenRunRegistryV1;
+  stages: BatchProductionChecklistStageV1[];
+  spentCount: number;
+  spentSlugs: string[];
+  parityDispatchProof: { artifact_rel_path: string; apply_status: string } | null;
+  supabaseParityApplyArtifactPresent: boolean;
+}): BatchProductionSpentPlanCloseoutV1 {
+  const {
+    plan,
+    applyRun,
+    registry,
+    stages,
+    spentCount,
+    spentSlugs,
+    parityDispatchProof,
+    supabaseParityApplyArtifactPresent,
+  } = args;
+
+  const base: BatchProductionSpentPlanCloseoutV1 = {
+    contract: "batch_production_spent_plan_closeout_v1",
+    read_only: true,
+    classification: "SPENT_UNKNOWN",
+    spent_slug_count: spentCount,
+    spent_slugs: spentSlugs,
+    proof: [],
+    closed_run_notes: [],
+  };
+
+  if (spentCount === 0) {
+    return {
+      ...base,
+      proof: ["no_spent_planned_rows"],
+    };
+  }
+
+  const plannedCount = plan?.planned_changes?.length ?? 0;
+  const applyStatus = applyRun?.apply_status ?? "UNKNOWN";
+  const applyBlocked = (applyRun?.blocked_reasons ?? []).length > 0;
+  const appliedCount = applyRun?.applied_change_count ?? 0;
+  const post = applyRun?.post_apply_validation;
+  const repoValidationOk =
+    post?.only_target_slugs_changed === true &&
+    post?.all_direct_buyable === true &&
+    post?.no_search_urls_on_targets === true;
+  const gates = post?.gate_by_slug ?? {};
+  const gatesOk =
+    Object.keys(gates).length === 0 ||
+    Object.values(gates).every((g) => g?.gate_failure_kind == null);
+  const csvApplyOk =
+    applyStatus === "APPLIED" &&
+    !applyBlocked &&
+    appliedCount >= spentCount &&
+    (plannedCount === 0 || appliedCount >= Math.min(plannedCount, spentCount));
+
+  const parityStage = stages.find((s) => s.stage_id === "supabase_parity_applied");
+  const parityProofOk =
+    parityStage?.status === "complete" &&
+    (parityDispatchProof != null || supabaseParityApplyArtifactPresent);
+
+  const closeoutStage = stages.find((s) => s.stage_id === "closeout_complete");
+  const closeoutOk =
+    registry.closeout_complete === true || closeoutStage?.status === "complete";
+
+  const proof: string[] = [
+    `spent_slug_count=${String(spentCount)}`,
+    `csv_apply_status=${applyStatus}`,
+    `applied_change_count=${String(appliedCount)}`,
+    `repo_validation_ok=${String(repoValidationOk)}`,
+    `gates_ok=${String(gatesOk)}`,
+    `parity_stage=${parityStage?.status ?? "missing"}`,
+    `parity_dispatch_proof=${parityDispatchProof != null}`,
+    `parity_artifact_in_repo=${String(supabaseParityApplyArtifactPresent)}`,
+    `closeout_ok=${String(closeoutOk)}`,
+  ];
+
+  if (
+    csvApplyOk &&
+    repoValidationOk &&
+    gatesOk &&
+    parityProofOk &&
+    closeoutOk
+  ) {
+    return {
+      ...base,
+      classification: "SPENT_CLOSED_SUCCESS",
+      proof,
+      closed_run_notes: [
+        BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1,
+        `Post-apply spent rows (${String(spentCount)}): ${spentSlugs.join(", ")} — expected after a successful apply; refresh the plan before the next apply cycle.`,
+      ],
+    };
+  }
+
+  if (!csvApplyOk || !repoValidationOk || !gatesOk || applyBlocked) {
+    return {
+      ...base,
+      classification: "SPENT_BLOCKING",
+      proof,
+    };
+  }
+
+  return {
+    ...base,
+    classification: "SPENT_UNKNOWN",
+    proof,
+  };
+}
 
 type StageEvalContextV1 = {
   rootDir: string;
@@ -639,54 +809,65 @@ export function detectBatchProductionSetbacksV1(args: {
   csvRows: ApRetailerLinkCsvRowV1[];
   parityValidationReasons: string[];
   supabaseParityApplyArtifactPresent: boolean;
+  spentPlanClassification?: BatchProductionSpentPlanClassificationV1;
+  spentSlugCount?: number;
 }): BatchProductionSetbackV1[] {
-  const { plan, csvRows, parityValidationReasons, supabaseParityApplyArtifactPresent } = args;
+  const {
+    plan,
+    csvRows,
+    parityValidationReasons,
+    supabaseParityApplyArtifactPresent,
+    spentPlanClassification,
+    spentSlugCount,
+  } = args;
   const setbacks: BatchProductionSetbackV1[] = [];
 
-  let spentCount = 0;
-  const spentSlugs: string[] = [];
-  for (const change of plan?.planned_changes ?? []) {
-    const live = rowsForSlug(csvRows, change.filter_slug).find(
-      (r) => normRowField(r, "retailer_key") === normRowField(change.before_row, "retailer_key"),
-    );
-    if (!live) continue;
-    const matchesAfter = csvRowMatchesSnapshot(live, change.after_row);
-    const matchesBefore = csvRowMatchesSnapshot(live, change.before_row);
-    if (matchesAfter && !matchesBefore) {
-      spentCount += 1;
-      spentSlugs.push(change.filter_slug);
-    }
-  }
+  const { spentCount, spentSlugs } =
+    spentSlugCount != null
+      ? {
+          spentCount: spentSlugCount,
+          spentSlugs: countSpentPlannedRowsV1(plan, csvRows).spentSlugs,
+        }
+      : countSpentPlannedRowsV1(plan, csvRows);
+  const closedSuccess = spentPlanClassification === "SPENT_CLOSED_SUCCESS";
 
   setbacks.push({
     detector_id: "planned_rows_spent_post_apply",
-    display_name: "Apply plan is post-apply spent",
-    fired: spentCount > 0,
-    severity: spentCount > 0 ? "warning" : "info",
+    display_name: closedSuccess ? "Closed batch apply plan (spent)" : "Apply plan is post-apply spent",
+    fired: spentCount > 0 && !closedSuccess,
+    severity: closedSuccess ? "info" : spentCount > 0 ? "warning" : "info",
     message:
-      spentCount > 0
-        ? `Plan before_row no longer matches CSV for ${spentCount} slug(s) — plan is post-apply spent.`
-        : "Plan before_row still matches CSV for planned rows (pre-apply or unapplied).",
+      closedSuccess
+        ? `${BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1} (${spentCount} slug(s)).`
+        : spentCount > 0
+          ? `Plan before_row no longer matches CSV for ${spentCount} slug(s) — plan is post-apply spent.`
+          : "Plan before_row still matches CSV for planned rows (pre-apply or unapplied).",
     recommended_fix:
-      spentCount > 0
-        ? "Treat the plan as spent: refresh plan or start a new run registry before re-apply dry-runs."
-        : "No action — plan still matches pre-apply CSV rows.",
+      closedSuccess
+        ? "No blocker — start a new run registry or refresh the plan before the next apply cycle."
+        : spentCount > 0
+          ? "Treat the plan as spent: refresh plan or start a new run registry before re-apply dry-runs."
+          : "No action — plan still matches pre-apply CSV rows.",
     proof: spentSlugs.map((s) => `spent:${s}`),
   });
 
   setbacks.push({
     detector_id: "tests_expect_pre_apply_after_apply",
     display_name: "Tests still expect pre-apply state",
-    fired: spentCount > 0,
-    severity: "warning",
+    fired: spentCount > 0 && !closedSuccess,
+    severity: closedSuccess ? "info" : spentCount > 0 ? "warning" : "info",
     message:
-      spentCount > 0
-        ? "Executor/planner dry-runs and tests that assert pre-apply before_row matches will fail until updated for post-apply state."
-        : "No post-apply spent rows detected.",
+      closedSuccess
+        ? "Closed-run lesson: executor/planner dry-runs and tests may still assert pre-apply before_row until updated for post-apply state."
+        : spentCount > 0
+          ? "Executor/planner dry-runs and tests that assert pre-apply before_row matches will fail until updated for post-apply state."
+          : "No post-apply spent rows detected.",
     recommended_fix:
-      spentCount > 0
-        ? "Update operator docs and tests for post-apply before_row — do not re-run apply on spent rows."
-        : "No action required.",
+      closedSuccess
+        ? "Update operator docs and tests for post-apply before_row when opening the next batch — not a blocker for expansion."
+        : spentCount > 0
+          ? "Update operator docs and tests for post-apply before_row — do not re-run apply on spent rows."
+          : "No action required.",
     proof: spentSlugs.length > 0 ? [`affected_slugs=${spentSlugs.join(",")}`] : [],
   });
 
@@ -787,8 +968,10 @@ export function buildBatchProductionOperatingDecisionV1(args: {
   active_run: BatchProductionChecklistRunV1 | null;
   stages: BatchProductionChecklistStageV1[];
   setbacks: BatchProductionChecklistSetbacksSummaryV1;
+  spent_plan_closeout: BatchProductionSpentPlanCloseoutV1;
 }): BatchProductionOperatingDecisionV1 {
-  const { runtime_status, active_run, stages, setbacks } = args;
+  const { runtime_status, active_run, stages, setbacks, spent_plan_closeout } = args;
+  const spentClosedSuccess = spent_plan_closeout.classification === "SPENT_CLOSED_SUCCESS";
   const current_stage = resolveDirectorCurrentStageV1(stages);
   const parityStage = stages.find((s) => s.stage_id === "supabase_parity_applied");
   const runtimeSmokeStage = stages.find((s) => s.stage_id === "production_runtime_smoke_complete");
@@ -811,12 +994,16 @@ export function buildBatchProductionOperatingDecisionV1(args: {
   }
 
   const owner_action_required =
-    runtime_status !== "OK" || setbacks.fired.length > 0 || proofUnknown || current_stage !== null;
+    runtime_status !== "OK" ||
+    setbacks.fired.length > 0 ||
+    proofUnknown ||
+    current_stage !== null ||
+    (spent_plan_closeout.classification === "SPENT_BLOCKING" && spent_plan_closeout.spent_slug_count > 0);
 
   const runLabel = active_run?.run_id ?? "active batch run";
   let proof_required_before_next_stage =
     "No additional proof required — do not start a new batch lane outside Command Center checklist.";
-  let next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
+  let next_exact_command: string = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
   let next_owner_action =
     "Batch production checklist OK — do not bypass checklist for the next batch lane.";
   let next_agent_action =
@@ -830,13 +1017,23 @@ export function buildBatchProductionOperatingDecisionV1(args: {
     next_agent_action =
       "Do not run Supabase --apply or CSV apply for a new batch. Parity dry-run only when validating a plan: " +
       BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1;
-  } else if (setbacks.fired.some((s) => s.detector_id === "planned_rows_spent_post_apply")) {
+  } else if (
+    setbacks.fired.some((s) => s.detector_id === "planned_rows_spent_post_apply") &&
+    !spentClosedSuccess
+  ) {
     proof_required_before_next_stage =
       "Treat apply plan as post-apply spent; refresh plan or start a new run registry before re-apply dry-runs.";
     next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
     next_owner_action = `BATCH CHECKLIST [${runtime_status}]: ${runLabel} is post-apply spent — do not re-interpret safe Amazon CTAs as apply failure; resolve checklist setbacks before new batch work.`;
     next_agent_action =
       "Do not re-run apply executor on spent before_row. Update tests/operators for post-apply state; run Command Center checklist inspect only.";
+  } else if (spentClosedSuccess && current_stage === null && runtime_status === "OK") {
+    proof_required_before_next_stage =
+      "Prior batch closed successfully — use demand-to-coverage next lane (read-only) before opening a new apply cycle.";
+    next_exact_command = BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1;
+    next_owner_action = `BATCH CHECKLIST [OK]: ${runLabel} closed — ${BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1} Return to expansion loop for next wedge or batch candidate.`;
+    next_agent_action =
+      "Read-only: run demand-to-coverage next lane report — no CSV apply, Supabase --apply, or spent-plan re-apply.";
   } else if (current_stage) {
     proof_required_before_next_stage = `Clear stage ${current_stage} per checklist evidence before advancing batch production.`;
     next_exact_command = BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
@@ -899,8 +1096,11 @@ export function buildBatchProductionExpansionReadinessV1(args: {
   setbacks: BatchProductionChecklistSetbacksSummaryV1;
   active_run: BatchProductionChecklistRunV1 | null;
   stages: BatchProductionChecklistStageV1[];
+  spent_plan_closeout: BatchProductionSpentPlanCloseoutV1;
 }): BatchProductionExpansionReadinessV1 {
-  const { runtime_status, operating_decision, setbacks, active_run, stages } = args;
+  const { runtime_status, operating_decision, setbacks, active_run, stages, spent_plan_closeout } =
+    args;
+  const spentClosedSuccess = spent_plan_closeout.classification === "SPENT_CLOSED_SUCCESS";
 
   if (!active_run) {
     return {
@@ -922,24 +1122,48 @@ export function buildBatchProductionExpansionReadinessV1(args: {
   for (const setback of setbacks.fired) {
     blockers_outranking_expansion.push(`${setback.display_name}: ${setback.message}`);
   }
-  blockers_outranking_expansion.push(...operating_decision.blocking_reasons.slice(0, 4));
+  if (!spentClosedSuccess) {
+    blockers_outranking_expansion.push(...operating_decision.blocking_reasons.slice(0, 4));
+  } else if (operating_decision.current_stage) {
+    const stage = stages.find((s) => s.stage_id === operating_decision.current_stage);
+    blockers_outranking_expansion.push(
+      `Operating loop at stage: ${stage?.stage_label ?? operating_decision.current_stage}.`,
+    );
+  }
 
   const closeoutStage = stages.find((s) => s.stage_id === "closeout_complete");
+  const smokeStage = stages.find((s) => s.stage_id === "production_runtime_smoke_complete");
+  const smokeComplete = smokeStage?.status === "complete";
   const growthLoopReady =
     runtime_status === "OK" &&
     setbacks.fired.length === 0 &&
     operating_decision.current_stage === null &&
-    closeoutStage?.status === "complete";
+    closeoutStage?.status === "complete" &&
+    smokeComplete &&
+    (spentClosedSuccess || spent_plan_closeout.spent_slug_count === 0);
 
   if (growthLoopReady) {
     return {
       contract: "batch_production_expansion_readiness_v1",
       read_only: true,
       ready_to_add_products_or_wedges: true,
-      summary:
-        "Growth mode ready — this batch cycle is closed. Return to the expansion loop to add products or open a new wedge.",
-      blockers_outranking_expansion: [],
+      summary: spentClosedSuccess
+        ? `Growth mode ready — ${BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1} Return to the expansion loop for the next wedge or batch candidate.`
+        : "Growth mode ready — this batch cycle is closed. Return to the expansion loop to add products or open a new wedge.",
+      blockers_outranking_expansion: spentClosedSuccess
+        ? spent_plan_closeout.closed_run_notes.slice(0, 2)
+        : [],
     };
+  }
+
+  if (
+    spentClosedSuccess &&
+    !smokeComplete &&
+    (smokeStage?.status === "unknown" || smokeStage?.status === "blocked")
+  ) {
+    blockers_outranking_expansion.push(
+      `Production runtime smoke: ${smokeStage?.stage_label ?? "production_runtime_smoke_complete"} not proven.`,
+    );
   }
 
   if (runtime_status === "BLOCKED") {
@@ -1062,12 +1286,35 @@ export function buildBatchProductionChecklistRunV1(
   );
 
   const parityReasons = plan ? validateApSupabaseParityPlanV1(plan) : ["plan missing"];
+  const parityDispatchProof = stageCtx.ingest_dispatch_run_parity_proof
+    ? tryLoadLatestParityDispatchRunProofV1(stageCtx)
+    : null;
+  const supabaseParityApplyArtifactPresent = hasSupabaseParityApplyArtifactInRepoV1(stageCtx);
+  const { spentCount, spentSlugs } = countSpentPlannedRowsV1(plan, csvRows);
+  const spent_plan_closeout = classifyBatchProductionSpentPlanV1({
+    plan,
+    applyRun,
+    registry,
+    stages,
+    spentCount,
+    spentSlugs,
+    parityDispatchProof,
+    supabaseParityApplyArtifactPresent,
+  });
   const setbacks = detectBatchProductionSetbacksV1({
     plan,
     csvRows,
     parityValidationReasons: parityReasons,
-    supabaseParityApplyArtifactPresent: false,
+    supabaseParityApplyArtifactPresent,
+    spentPlanClassification: spent_plan_closeout.classification,
+    spentSlugCount: spentCount,
   });
+  const operator_lessons = [
+    ...(registry.operator_lessons ?? []),
+    ...(spent_plan_closeout.classification === "SPENT_CLOSED_SUCCESS"
+      ? spent_plan_closeout.closed_run_notes.map((n) => `LESSON: ${n}`)
+      : []),
+  ];
 
   const next_blocked_stage = resolveDirectorCurrentStageV1(stages);
 
@@ -1079,7 +1326,8 @@ export function buildBatchProductionChecklistRunV1(
     stages,
     safety_by_slug,
     setbacks,
-    operator_lessons: registry.operator_lessons ?? [],
+    spent_plan_closeout,
+    operator_lessons,
     next_blocked_stage,
     may_mutate: false,
     read_only: true,
@@ -1121,11 +1369,24 @@ export function buildBatchProductionOperatingChecklistV1(
     runtime_status = "ATTENTION";
   }
 
+  const spent_plan_closeout =
+    apRun?.spent_plan_closeout ?? {
+      contract: "batch_production_spent_plan_closeout_v1",
+      read_only: true,
+      classification: "SPENT_UNKNOWN",
+      spent_slug_count: 0,
+      spent_slugs: [],
+      proof: [],
+      closed_run_notes: [],
+    };
+  const closed_run_notes = spent_plan_closeout.closed_run_notes;
+
   const operating_decision = buildBatchProductionOperatingDecisionV1({
     runtime_status,
     active_run: apRun,
     stages,
     setbacks: setbacksSummary,
+    spent_plan_closeout,
   });
 
   const expansion_readiness = buildBatchProductionExpansionReadinessV1({
@@ -1134,6 +1395,7 @@ export function buildBatchProductionOperatingChecklistV1(
     setbacks: setbacksSummary,
     active_run: apRun,
     stages,
+    spent_plan_closeout,
   });
 
   const recommended_next_action = operating_decision.next_owner_action;
@@ -1177,5 +1439,7 @@ export function buildBatchProductionOperatingChecklistV1(
     recommended_next_action,
     proven_facts,
     unknown_facts,
+    spent_plan_closeout,
+    closed_run_notes,
   };
 }

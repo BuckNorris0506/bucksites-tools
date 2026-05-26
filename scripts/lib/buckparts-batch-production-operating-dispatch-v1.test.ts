@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
+  BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1,
   BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
   buildBatchProductionOperatingChecklistV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
@@ -75,7 +76,10 @@ test("runtime smoke incomplete blocks expansion when parity is complete", () => 
 });
 
 test("dispatch director override surfaces BATCH DISPATCH next action when blocked", () => {
-  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({
+    rootDir: REPO_ROOT,
+    ingest_dispatch_run_parity_proof: false,
+  });
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
   const override = resolveBatchProductionDispatchDirectorOverrideV1({
     dispatch,
@@ -84,6 +88,17 @@ test("dispatch director override surfaces BATCH DISPATCH next action when blocke
   assert.ok(override);
   assert.ok(override.next_best_action.startsWith("BATCH DISPATCH ["));
   assert.equal(override.next_move_command, dispatch.exact_command);
+});
+
+test("dispatch moves to demand-to-coverage when closed batch proof is complete", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  assert.equal(checklist.spent_plan_closeout.classification, "SPENT_CLOSED_SUCCESS");
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
+  assert.equal(dispatch.selected_subsystem, "demand_to_coverage_next_lane");
+  assert.equal(dispatch.dispatch_status, "READY");
+  assert.equal(dispatch.exact_command, BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1);
+  assert.equal(dispatch.expansion_blocked, false);
+  assert.equal(dispatch.current_stage_id, null);
 });
 
 test("dispatch builder does not mutate product CSV", () => {

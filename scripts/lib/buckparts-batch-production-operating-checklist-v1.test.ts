@@ -6,9 +6,12 @@ import { AP_BATCH_V2_DIRECT_BUY_SLUGS_V1 } from "./air-purifier-apply-planner-ba
 import {
   BATCH_PRODUCTION_CHECKLIST_DEFAULT_REGISTRY_PATH_V1,
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
+  BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1,
   BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1,
   buildBatchProductionOperatingChecklistV1,
+  classifyBatchProductionSpentPlanV1,
   classifySlugSafetyV1,
+  countSpentPlannedRowsV1,
   detectBatchProductionSetbacksV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
 import {
@@ -37,15 +40,13 @@ test("checklist contract exposes all stage gates and setback catalog", () => {
     [...BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1],
   );
   assert.ok(Array.isArray(checklist.setbacks.fired));
-  assert.ok(checklist.setbacks.fired.length >= 1);
-  assert.ok(checklist.setbacks.fired_ids.length >= 1);
+  assert.equal(checklist.spent_plan_closeout.contract, "batch_production_spent_plan_closeout_v1");
   assert.equal(checklist.operating_decision.contract, "batch_production_operating_decision_v1");
   assert.equal(checklist.operating_decision.mutation_allowed, false);
 });
 
-test("dispatch director routes ATTENTION checklist to next action", () => {
+test("dispatch director routes closed-success checklist to expansion dispatch", () => {
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
-  assert.notEqual(checklist.runtime_status, "OK");
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist);
   const override = resolveBatchProductionDispatchDirectorOverrideV1({
     dispatch,
@@ -55,13 +56,25 @@ test("dispatch director routes ATTENTION checklist to next action", () => {
   assert.ok(override.next_best_action.startsWith("BATCH DISPATCH ["));
 });
 
-test("expansion readiness is false when batch loop needs attention", () => {
+test("closed ap-batch-v2 with spent plan is expansion-ready", () => {
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  assert.equal(checklist.spent_plan_closeout.classification, "SPENT_CLOSED_SUCCESS");
+  assert.equal(checklist.runtime_status, "OK");
   assert.equal(checklist.expansion_readiness.contract, "batch_production_expansion_readiness_v1");
-  assert.equal(checklist.expansion_readiness.ready_to_add_products_or_wedges, false);
-  assert.ok(checklist.expansion_readiness.blockers_outranking_expansion.length >= 1);
+  assert.equal(checklist.expansion_readiness.ready_to_add_products_or_wedges, true);
+  assert.ok(
+    checklist.expansion_readiness.summary.includes("Closed batch: plan spent because it already applied"),
+  );
+  assert.equal(
+    checklist.setbacks.all.find((s) => s.detector_id === "planned_rows_spent_post_apply")?.fired,
+    false,
+  );
+  assert.equal(
+    checklist.setbacks.all.find((s) => s.detector_id === "tests_expect_pre_apply_after_apply")?.fired,
+    false,
+  );
+  assert.ok(checklist.closed_run_notes.some((n) => n.includes("Closed batch")));
   assert.ok(checklist.stages.every((s) => s.stage_label.length > 0));
-  assert.ok(checklist.setbacks.fired.every((s) => s.display_name.length > 0 && s.recommended_fix.length > 0));
 });
 
 test("parity unknown blocks mutation in operating decision", () => {
@@ -131,7 +144,7 @@ test("batch-v2 plan passes supabase parity — setback for report_name must not 
   assert.equal(reportNameSetback?.fired, false);
 });
 
-test("post-apply spent plan fires planned_rows_spent and test-expectation setbacks", () => {
+test("post-apply spent plan fires planned_rows_spent when not closed-success", () => {
   const plan = JSON.parse(
     readFileSync(
       `${REPO_ROOT}/data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json`,
@@ -144,6 +157,8 @@ test("post-apply spent plan fires planned_rows_spent and test-expectation setbac
     csvRows,
     parityValidationReasons: [],
     supabaseParityApplyArtifactPresent: false,
+    spentPlanClassification: "SPENT_BLOCKING",
+    spentSlugCount: countSpentPlannedRowsV1(plan, csvRows).spentCount,
   });
   assert.equal(
     setbacks.find((s) => s.detector_id === "planned_rows_spent_post_apply")?.fired,
@@ -153,6 +168,76 @@ test("post-apply spent plan fires planned_rows_spent and test-expectation setbac
     setbacks.find((s) => s.detector_id === "tests_expect_pre_apply_after_apply")?.fired,
     true,
   );
+});
+
+test("closed-success spent plan does not fire spent setbacks as blockers", () => {
+  const plan = JSON.parse(
+    readFileSync(
+      `${REPO_ROOT}/data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json`,
+      "utf8",
+    ),
+  );
+  const csvRows = loadApRetailerLinksCsvV1(REPO_ROOT);
+  const { spentCount } = countSpentPlannedRowsV1(plan, csvRows);
+  assert.ok(spentCount > 0);
+  const setbacks = detectBatchProductionSetbacksV1({
+    plan,
+    csvRows,
+    parityValidationReasons: [],
+    supabaseParityApplyArtifactPresent: true,
+    spentPlanClassification: "SPENT_CLOSED_SUCCESS",
+    spentSlugCount: spentCount,
+  });
+  assert.equal(
+    setbacks.find((s) => s.detector_id === "planned_rows_spent_post_apply")?.fired,
+    false,
+  );
+  assert.equal(
+    setbacks.find((s) => s.detector_id === "tests_expect_pre_apply_after_apply")?.fired,
+    false,
+  );
+  assert.ok(
+    setbacks
+      .find((s) => s.detector_id === "tests_expect_pre_apply_after_apply")
+      ?.message.includes("Closed-run lesson"),
+  );
+});
+
+test("ap-batch-v2 proven run classifies spent plan as SPENT_CLOSED_SUCCESS", () => {
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const run = checklist.runs.find((r) => r.run_id === "ap-batch-v2-2026-05-24");
+  assert.ok(run);
+  assert.equal(run.spent_plan_closeout.classification, "SPENT_CLOSED_SUCCESS");
+  assert.ok(run.spent_plan_closeout.spent_slug_count >= 4);
+  assert.ok(run.spent_plan_closeout.closed_run_notes.includes(BATCH_PRODUCTION_CLOSED_RUN_NOTE_SPENT_PLAN_V1));
+});
+
+test("unsafe stale spent plan without apply proof is SPENT_BLOCKING", () => {
+  const plan = JSON.parse(
+    readFileSync(
+      `${REPO_ROOT}/data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json`,
+      "utf8",
+    ),
+  );
+  const csvRows = loadApRetailerLinksCsvV1(REPO_ROOT);
+  const { spentCount, spentSlugs } = countSpentPlannedRowsV1(plan, csvRows);
+  const closeout = classifyBatchProductionSpentPlanV1({
+    plan,
+    applyRun: { apply_status: "BLOCKED", blocked_reasons: ["preflight"] },
+    registry: {
+      contract: "batch_production_proven_run_v1",
+      run_id: "fixture",
+      wedge: "air_purifier",
+      lane_label: "fixture",
+      artifact_paths: {},
+    },
+    stages: [],
+    spentCount,
+    spentSlugs,
+    parityDispatchProof: null,
+    supabaseParityApplyArtifactPresent: false,
+  });
+  assert.equal(closeout.classification, "SPENT_BLOCKING");
 });
 
 test("slug with OEM direct_buyable plus Amazon row gets SAFE_MULTIPLE and primary-policy-unknown", () => {

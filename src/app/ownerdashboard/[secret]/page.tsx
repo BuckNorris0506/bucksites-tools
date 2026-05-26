@@ -598,6 +598,16 @@ function BatchProductionOperatingChecklistSection({
             </div>
             <div data-testid="batch-production-expansion-readiness">
               <p className="text-xs text-slate-600 dark:text-slate-400">{checklist.expansion_readiness.summary}</p>
+              {checklist.closed_run_notes.length > 0 ? (
+                <ul
+                  data-testid="batch-production-closed-run-notes"
+                  className="mt-2 list-inside list-disc text-xs text-slate-600 dark:text-slate-400"
+                >
+                  {checklist.closed_run_notes.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
             <div data-testid="batch-production-stage-list">
               <ol className="space-y-2">
@@ -614,6 +624,15 @@ function BatchProductionOperatingChecklistSection({
                 <ul className="list-inside list-disc text-xs text-amber-900 dark:text-amber-200">
                   {checklist.setbacks.fired.map((s) => (
                     <li key={s.detector_id}>{s.display_name}</li>
+                  ))}
+                </ul>
+              ) : checklist.closed_run_notes.length > 0 ? (
+                <ul
+                  data-testid="batch-production-closed-run-notes-setbacks"
+                  className="list-inside list-disc text-xs text-slate-600 dark:text-slate-400"
+                >
+                  {checklist.closed_run_notes.map((note) => (
+                    <li key={note}>{note}</li>
                   ))}
                 </ul>
               ) : (

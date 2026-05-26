@@ -15,6 +15,7 @@ import type {
 import {
   BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1,
   BATCH_PRODUCTION_CHECKLIST_STAGE_IDS_V1,
+  BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1,
   BATCH_PRODUCTION_OPERATING_CHECKLIST_CONTRACT_V1,
   BATCH_PRODUCTION_PARITY_DRY_RUN_COMMAND_V1,
 } from "./buckparts-batch-production-operating-checklist-v1";
@@ -49,7 +50,8 @@ export type BatchProductionSelectedSubsystemV1 =
   | "supabase_parity_apply_proof"
   | "production_runtime_smoke_proof"
   | "operator_closeout"
-  | "expansion_loop_next_batch"
+  | "expansion_loop_next_batch_selection"
+  | "demand_to_coverage_next_lane"
   | "batch_checklist_inspect";
 
 export type BatchProductionOperatingDispatchV1 = {
@@ -132,7 +134,8 @@ function subsystemCommandSurface(
     case "supabase_parity_apply_proof":
       return "supabase_sql";
     case "apply_plan_owner_review":
-    case "expansion_loop_next_batch":
+    case "expansion_loop_next_batch_selection":
+    case "demand_to_coverage_next_lane":
       return "cursor_agent";
     case "none":
       return "none";
@@ -278,6 +281,14 @@ export function buildBatchProductionOperatingDispatchV1(
     checklist.runtime_status === "OK" &&
     closeoutStage?.status === "complete"
   ) {
+    const activeWedge = checklist.runs[0]?.wedge ?? "";
+    const useDemandLane = activeWedge === "air_purifier";
+    const selected_subsystem: BatchProductionSelectedSubsystemV1 = useDemandLane
+      ? "demand_to_coverage_next_lane"
+      : "expansion_loop_next_batch_selection";
+    const exact_command = useDemandLane
+      ? BATCH_PRODUCTION_DEMAND_TO_COVERAGE_NEXT_LANE_COMMAND_V1
+      : BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1;
     return {
       contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
       read_only: true,
@@ -286,20 +297,22 @@ export function buildBatchProductionOperatingDispatchV1(
       dispatch_status: "READY",
       current_stage_id: null,
       next_stage_id: "lane_selected",
-      selected_subsystem: "expansion_loop_next_batch",
-      exact_command: BATCH_PRODUCTION_CHECKLIST_INSPECT_COMMAND_V1,
+      selected_subsystem,
+      exact_command,
       command_surface: "cursor_agent",
-      allowed_mutations: ["batch_planning_read_only", "codex_packet_generation_read_only"],
+      allowed_mutations: ["batch_planning_read_only", "demand_to_coverage_read_only"],
       forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
       owner_approval_required: false,
       mutation_allowed: false,
       proof_required_before_execution:
-        "Prior cycle closeout complete — select next wedge or batch size via planning artifacts only until a new run-registry exists.",
+        "Prior cycle closeout complete — read-only next-lane planning only until a new owner-approved apply plan exists.",
       expected_artifact_paths,
       success_transition: "New run-registry + lane_selected — batch loop restarts.",
       failure_transition: "Do not mutate CSV/Supabase without a fresh owner-approved plan.",
       why_this_is_next:
-        "Growth mode ready — return to the expansion loop for the next wedge or batch candidate generation (read-only planning first).",
+        checklist.spent_plan_closeout.classification === "SPENT_CLOSED_SUCCESS"
+          ? "Closed batch with full apply/parity/closeout proof — return to demand-to-coverage for the next wedge or batch candidate (read-only planning first)."
+          : "Growth mode ready — return to the expansion loop for the next wedge or batch candidate generation (read-only planning first).",
       blocked_reasons: [],
       expansion_blocked: false,
       derived_from_checklist_contract: checklist.contract,
