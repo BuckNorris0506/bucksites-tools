@@ -145,8 +145,8 @@ test("Command Center dispatch advances past packet generation when committed pac
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
-  assert.equal(dispatch.current_stage_id, "packets_generated");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_aggregation_review");
+  assert.equal(dispatch.current_stage_id, "evidence_collected");
   assert.equal(dispatch.dispatch_status, "READY");
   assert.equal(dispatch.expansion_blocked, false);
   assert.notEqual(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
@@ -290,6 +290,106 @@ test("missing packet manifest keeps dispatch on ap_batch_v3_run_instantiation", 
   }
 });
 
+test("result stage incomplete when one expected file is missing", async () => {
+  const sandbox = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-missing-result-"));
+  try {
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_REGISTRY_REL_V1);
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1);
+    for (const packet of [
+      "ap-levoit-oem-discovery-v1",
+      "ap-oem-search-placeholder-v1",
+      "ap-blueair-catalog-identity-v1",
+    ]) {
+      copyRepoBatchFileToSandbox(sandbox, `${AP_BATCH_V3_PACKETS_DIR_REL_V1}/${packet}.json`);
+    }
+    copyRepoBatchFileToSandbox(
+      sandbox,
+      "data/air-purifier/batch-production/agent-results-batch-v3/ap-levoit-oem-discovery-v1.results.json",
+    );
+    copyRepoBatchFileToSandbox(
+      sandbox,
+      "data/air-purifier/batch-production/agent-results-batch-v3/ap-blueair-catalog-identity-v1.results.json",
+    );
+
+    const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const report = await buildApBatchV3RunInstantiationV1Report({
+      rootDir: REPO_ROOT,
+      artifactRootDir: sandbox,
+      demandToCoverageNextLane: demand,
+      checklist,
+    });
+    assert.equal(report.packets_stage_complete, true);
+    assert.equal(report.result_stage_complete, false);
+    assert.equal(report.result_stage_status, "MISSING_RESULT_FILES");
+    assert.ok(report.missing_result_files_rel.some((p) => p.includes("ap-oem-search-placeholder-v1")));
+    const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+      ap_batch_v3_run_instantiation: report,
+    });
+    assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  } finally {
+    rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test("result stage complete when all expected result files exist", async () => {
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const report = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  assert.equal(report.packets_stage_complete, true);
+  assert.equal(report.result_stage_complete, true);
+  assert.equal(report.result_stage_status, "COMPLETE");
+  assert.equal(report.ready_result_files_rel.length, 3);
+});
+
+test("invalid result file with wrong run_id or data_mutation true does not advance", async () => {
+  const sandbox = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-invalid-result-"));
+  try {
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_REGISTRY_REL_V1);
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1);
+    for (const packet of [
+      "ap-levoit-oem-discovery-v1",
+      "ap-oem-search-placeholder-v1",
+      "ap-blueair-catalog-identity-v1",
+    ]) {
+      copyRepoBatchFileToSandbox(sandbox, `${AP_BATCH_V3_PACKETS_DIR_REL_V1}/${packet}.json`);
+      copyRepoBatchFileToSandbox(
+        sandbox,
+        `data/air-purifier/batch-production/agent-results-batch-v3/${packet}.results.json`,
+      );
+    }
+    const invalidPath = path.join(
+      sandbox,
+      "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json",
+    );
+    const invalid = JSON.parse(readFileSync(invalidPath, "utf8")) as Record<string, unknown>;
+    invalid.run_id = "ap-batch-v3-proposed-2099-01-01";
+    invalid.data_mutation = true;
+    writeFileSync(invalidPath, `${JSON.stringify(invalid, null, 2)}\n`, "utf8");
+
+    const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const instantiation = await buildApBatchV3RunInstantiationV1Report({
+      rootDir: REPO_ROOT,
+      artifactRootDir: sandbox,
+      demandToCoverageNextLane: demand,
+      checklist,
+    });
+    assert.equal(instantiation.result_stage_complete, false);
+    assert.equal(instantiation.result_stage_status, "INVALID_RESULT_FILE");
+    const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+      ap_batch_v3_run_instantiation: instantiation,
+    });
+    assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  } finally {
+    rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
 test("missing packet file blocks advancement and lists missing file", async () => {
   const sandbox = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-missing-packet-"));
   try {
@@ -342,7 +442,7 @@ test("Command Center dispatch expected_artifact_paths exist when packets stage c
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_aggregation_review");
   assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_REGISTRY_REL_V1)));
   assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1)));
   for (const rel of instantiation.ready_packet_files_rel) {

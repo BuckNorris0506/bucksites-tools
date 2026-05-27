@@ -11,7 +11,6 @@ import {
 import {
   AP_BATCH_V3_PACKETS_DIR_REL_V1,
   AP_BATCH_V3_REGISTRY_REL_V1,
-  AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
   buildApBatchV3RunInstantiationV1Report,
 } from "./ap-batch-v3-run-instantiation-v1";
 import { buildDemandToCoverageNextLaneV1Report } from "./demand-to-coverage-next-lane-v1";
@@ -110,9 +109,9 @@ test("dispatch advances to agent evidence when committed ap-batch-v3 packets exi
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_aggregation_review");
   assert.equal(dispatch.dispatch_status, "READY");
-  assert.equal(dispatch.current_stage_id, "packets_generated");
+  assert.equal(dispatch.current_stage_id, "evidence_collected");
   assert.equal(dispatch.expansion_blocked, false);
   assert.ok(
     dispatch.expected_artifact_paths.some((p) => p.includes("agent-results-batch-v3")),
@@ -130,7 +129,7 @@ test("ap-batch-v3 dispatch expected_artifact_paths include results when packets 
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_aggregation_review");
   assert.ok(dispatch.expected_artifact_paths.includes(AP_BATCH_V3_REGISTRY_REL_V1));
   assert.ok(dispatch.expected_artifact_paths.includes(AP_BATCH_V3_PACKETS_DIR_REL_V1));
   assert.ok(

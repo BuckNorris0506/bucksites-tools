@@ -62,6 +62,7 @@ export type BatchProductionSelectedSubsystemV1 =
   | "demand_to_coverage_next_lane"
   | "ap_batch_v3_run_instantiation"
   | "ap_batch_v3_agent_evidence_required"
+  | "ap_batch_v3_aggregation_review"
   | "batch_checklist_inspect";
 
 export type BatchProductionOperatingDispatchV1 = {
@@ -148,6 +149,7 @@ function subsystemCommandSurface(
     case "demand_to_coverage_next_lane":
     case "ap_batch_v3_run_instantiation":
     case "ap_batch_v3_agent_evidence_required":
+    case "ap_batch_v3_aggregation_review":
       return "cursor_agent";
     case "none":
       return "none";
@@ -301,7 +303,40 @@ export function buildBatchProductionOperatingDispatchV1(
     const instantiation = expansionContext?.ap_batch_v3_run_instantiation ?? null;
     if (instantiation?.may_proceed_to_packet_write === true) {
       if (instantiation.packets_stage_complete) {
-        const packetList = instantiation.committed_run_artifact?.packet_ids ?? [];
+        if (instantiation.result_stage_complete) {
+          return {
+            contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
+            read_only: true,
+            data_mutation: false,
+            runtime_status: checklist.runtime_status,
+            dispatch_status: "READY",
+            current_stage_id: "evidence_collected",
+            next_stage_id: "aggregator_reviewed",
+            selected_subsystem: "ap_batch_v3_aggregation_review",
+            exact_command: AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1,
+            command_surface: "cursor_agent",
+            allowed_mutations: ["batch_run_planning_read_only", "aggregation_review_read_only"],
+            forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
+            owner_approval_required: instantiation.result_stage_has_proposed_csv_mutation,
+            mutation_allowed: false,
+            proof_required_before_execution:
+              "All expected AP batch-v3 result files are committed and valid; run read-only aggregation to surface PASS/UNKNOWN/BLOCKED and any owner-review mutation proposals.",
+            expected_artifact_paths: [
+              AP_BATCH_V3_REGISTRY_REL_V1,
+              AP_BATCH_V3_PACKETS_DIR_REL_V1,
+              AP_BATCH_V3_RESULTS_DIR_REL_V1,
+              ...instantiation.expected_result_artifact_paths_rel,
+            ],
+            success_transition:
+              "Aggregation reviewed — continue with owner-only decisions for any proposed CSV mutations and catalog actions.",
+            failure_transition:
+              "If aggregation is invalid or stale, remain read-only and refresh AP result artifacts only.",
+            why_this_is_next: `AP batch-v3 result stage is COMPLETE for ${instantiation.run_id}; run aggregation review before any apply planning.`,
+            blocked_reasons: [],
+            expansion_blocked: false,
+            derived_from_checklist_contract: checklist.contract,
+          };
+        }
         return {
           contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
           read_only: true,
@@ -329,10 +364,15 @@ export function buildBatchProductionOperatingDispatchV1(
             ...instantiation.expected_result_artifact_paths_rel,
           ],
           success_transition:
-            "All packet result files committed — run read-only aggregator review before any apply planning.",
+            "All packet result files committed and valid — dispatch advances to ap_batch_v3_aggregation_review.",
           failure_transition: "Do not mutate CSV/Supabase; do not run agents from Command Center automatically.",
           why_this_is_next: `AP batch-v3 packet stage complete for ${instantiation.run_id}. Ready packet files: ${instantiation.ready_packet_files_rel.join(", ")}. Next: external agent evidence → ${instantiation.expected_result_artifact_paths_rel.join(", ")}.`,
-          blocked_reasons: [],
+          blocked_reasons: [
+            ...instantiation.missing_result_files_rel.map((p) => `missing_result_file:${p}`),
+            ...instantiation.invalid_result_files.map(
+              (f) => `invalid_result_file:${f.path}:${f.reasons.join("|")}`,
+            ),
+          ],
           expansion_blocked: false,
           derived_from_checklist_contract: checklist.contract,
         };

@@ -91,6 +91,12 @@ export type ApBatchV3PacketStageStatusV1 =
   | "RUN_ID_MISMATCH"
   | "NOT_STARTED";
 
+export type ApBatchV3ResultStageStatusV1 =
+  | "COMPLETE"
+  | "MISSING_RESULT_FILES"
+  | "INVALID_RESULT_FILE"
+  | "NOT_STARTED";
+
 export type ApBatchV3ActiveRunIdSourceV1 = "committed_registry" | "proposed_daily";
 
 export type ApBatchV3CommittedRunRegistryV1 = {
@@ -122,6 +128,16 @@ export type ApBatchV3CommittedRunArtifactV1 = {
   expected_result_artifact_paths_rel: string[];
   packet_stage_status: ApBatchV3PacketStageStatusV1;
   missing_packet_files_rel: string[];
+  proven_facts: string[];
+};
+
+export type ApBatchV3CommittedResultStageV1 = {
+  result_stage_status: ApBatchV3ResultStageStatusV1;
+  result_stage_complete: boolean;
+  ready_result_files_rel: string[];
+  missing_result_files_rel: string[];
+  invalid_result_files: Array<{ path: string; reasons: string[] }>;
+  has_proposed_csv_mutation: boolean;
   proven_facts: string[];
 };
 
@@ -174,6 +190,12 @@ export type ApBatchV3RunInstantiationV1 = {
   ready_packet_files_rel: string[];
   missing_packet_files_rel: string[];
   expected_result_artifact_paths_rel: string[];
+  result_stage_status: ApBatchV3ResultStageStatusV1;
+  result_stage_complete: boolean;
+  ready_result_files_rel: string[];
+  missing_result_files_rel: string[];
+  invalid_result_files: Array<{ path: string; reasons: string[] }>;
+  result_stage_has_proposed_csv_mutation: boolean;
   next_command_center_step: string;
   notes: string[];
   files_written: string[];
@@ -279,6 +301,135 @@ export function apBatchV3PacketFileRelV1(packetId: string): string {
 
 export function apBatchV3ResultFileRelV1(packetId: string): string {
   return `${AP_BATCH_V3_RESULTS_DIR_REL_V1}/${packetId}.results.json`;
+}
+
+function validateCommittedResultFileV1(args: {
+  relPath: string;
+  expectedRunId: string;
+  expectedPacketId: string;
+  rootDir: string;
+  readTextFile: (absolutePath: string) => string;
+}): { valid: boolean; reasons: string[]; hasProposedCsvMutation: boolean } {
+  const reasons: string[] = [];
+  let hasProposedCsvMutation = false;
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(args.readTextFile(path.join(args.rootDir, args.relPath))) as Record<string, unknown>;
+  } catch {
+    return { valid: false, reasons: ["invalid_json"], hasProposedCsvMutation: false };
+  }
+
+  if (parsed.read_only !== true) reasons.push("read_only_not_true");
+  if (parsed.data_mutation !== false) reasons.push("data_mutation_not_false");
+  if (parsed.run_id !== args.expectedRunId) reasons.push("run_id_mismatch");
+  if (parsed.packet_id !== args.expectedPacketId) reasons.push("packet_id_mismatch");
+  if (typeof parsed.report_name !== "string" || parsed.report_name.length === 0) {
+    reasons.push("report_name_missing");
+  }
+  if (!Array.isArray(parsed.candidate_results)) {
+    reasons.push("candidate_results_missing");
+  } else {
+    for (const row of parsed.candidate_results as Array<Record<string, unknown>>) {
+      if (row.recommended_csv_mutation && row.recommended_csv_mutation !== null) {
+        hasProposedCsvMutation = true;
+        break;
+      }
+    }
+  }
+  return { valid: reasons.length === 0, reasons, hasProposedCsvMutation };
+}
+
+export function loadApBatchV3CommittedResultStageV1(args: {
+  rootDir: string;
+  runArtifact: ApBatchV3CommittedRunArtifactV1;
+  fileExists?: (absolutePath: string) => boolean;
+  readTextFile?: (absolutePath: string) => string;
+}): ApBatchV3CommittedResultStageV1 {
+  const fileExists = args.fileExists ?? defaultFileExists;
+  const readTextFile = args.readTextFile ?? defaultReadText;
+
+  if (args.runArtifact.packet_stage_status !== "COMPLETE") {
+    return {
+      result_stage_status: "NOT_STARTED",
+      result_stage_complete: false,
+      ready_result_files_rel: [],
+      missing_result_files_rel: [],
+      invalid_result_files: [],
+      has_proposed_csv_mutation: false,
+      proven_facts: ["Result-stage validation skipped until packet stage is COMPLETE."],
+    };
+  }
+
+  const ready_result_files_rel: string[] = [];
+  const missing_result_files_rel: string[] = [];
+  const invalid_result_files: Array<{ path: string; reasons: string[] }> = [];
+  let has_proposed_csv_mutation = false;
+  const proven_facts: string[] = [];
+
+  const packetIds = args.runArtifact.packet_ids;
+  for (let i = 0; i < packetIds.length; i += 1) {
+    const packetId = packetIds[i]!;
+    const rel = apBatchV3ResultFileRelV1(packetId);
+    const abs = path.join(args.rootDir, rel);
+    if (!fileExists(abs)) {
+      missing_result_files_rel.push(rel);
+      continue;
+    }
+    const validated = validateCommittedResultFileV1({
+      relPath: rel,
+      expectedRunId: args.runArtifact.run_id,
+      expectedPacketId: packetId,
+      rootDir: args.rootDir,
+      readTextFile,
+    });
+    if (!validated.valid) {
+      invalid_result_files.push({ path: rel, reasons: validated.reasons });
+      continue;
+    }
+    if (validated.hasProposedCsvMutation) has_proposed_csv_mutation = true;
+    ready_result_files_rel.push(rel);
+  }
+
+  if (missing_result_files_rel.length > 0) {
+    return {
+      result_stage_status: "MISSING_RESULT_FILES",
+      result_stage_complete: false,
+      ready_result_files_rel,
+      missing_result_files_rel,
+      invalid_result_files,
+      has_proposed_csv_mutation,
+      proven_facts: [
+        ...proven_facts,
+        `PARTIAL: missing result file(s): ${missing_result_files_rel.join(", ")}`,
+      ],
+    };
+  }
+  if (invalid_result_files.length > 0) {
+    return {
+      result_stage_status: "INVALID_RESULT_FILE",
+      result_stage_complete: false,
+      ready_result_files_rel,
+      missing_result_files_rel,
+      invalid_result_files,
+      has_proposed_csv_mutation,
+      proven_facts: [
+        ...proven_facts,
+        `BLOCKED: invalid result file(s): ${invalid_result_files.map((r) => r.path).join(", ")}`,
+      ],
+    };
+  }
+  return {
+    result_stage_status: "COMPLETE",
+    result_stage_complete: true,
+    ready_result_files_rel,
+    missing_result_files_rel,
+    invalid_result_files,
+    has_proposed_csv_mutation,
+    proven_facts: [
+      ...proven_facts,
+      `PROVEN: all ${String(ready_result_files_rel.length)} result files exist, read_only=true, data_mutation=false, run_id/packet_id match manifest.`,
+    ],
+  };
 }
 
 /** Read committed run descriptor + packet manifest from repo; validate packet files on disk. */
@@ -552,6 +703,12 @@ export function buildApBatchV3UnknownV1(args: {
     ready_packet_files_rel: [],
     missing_packet_files_rel: [],
     expected_result_artifact_paths_rel: [],
+    result_stage_status: "NOT_STARTED",
+    result_stage_complete: false,
+    ready_result_files_rel: [],
+    missing_result_files_rel: [],
+    invalid_result_files: [],
+    result_stage_has_proposed_csv_mutation: false,
     next_command_center_step: args.reason,
     notes: [args.reason],
     files_written: [],
@@ -670,6 +827,12 @@ export async function buildApBatchV3RunInstantiationV1Report(
     : committed_run_artifact.packet_stage_status === "MISSING_REGISTRY"
       ? "NOT_STARTED"
       : committed_run_artifact.packet_stage_status;
+  const committed_result_stage = loadApBatchV3CommittedResultStageV1({
+    rootDir: artifactRootDir,
+    runArtifact: committed_run_artifact,
+    fileExists: deps.fileExists,
+    readTextFile: deps.readTextFile,
+  });
 
   const notes = [
     "Read-only run instantiation — does not mutate ap-batch-v2 plans, product CSV, or Supabase.",
@@ -677,6 +840,7 @@ export async function buildApBatchV3RunInstantiationV1Report(
     `Owner-review rows (${String(owner_review_required.length)}) are listed separately — not in buyer-path packets.`,
     `Catalog-review rows (${String(catalog_review.length)}) are not buyer-path mutation tasks.`,
     ...committed_run_artifact.proven_facts,
+    ...committed_result_stage.proven_facts,
   ];
 
   if (active_run_id_source === "committed_registry") {
@@ -684,6 +848,9 @@ export async function buildApBatchV3RunInstantiationV1Report(
   }
   if (packets_stage_complete) {
     notes.push("Packet stage COMPLETE — committed registry, manifest, and packet files on disk.");
+    if (committed_result_stage.result_stage_complete) {
+      notes.push("Result stage COMPLETE — all expected result files are valid and committed.");
+    }
   } else if (
     may_proceed_to_packet_write &&
     packet_stage_status === "MISSING_MANIFEST"
@@ -696,7 +863,9 @@ export async function buildApBatchV3RunInstantiationV1Report(
   }
 
   const next_command_center_step = packets_stage_complete
-    ? `Packets committed for ${run_id}. Collect external agent evidence into ${AP_BATCH_V3_RESULTS_DIR_REL_V1} (${committed_run_artifact.packet_ids.join(", ")}).`
+    ? committed_result_stage.result_stage_complete
+      ? `All AP batch-v3 results committed for ${run_id}. Run read-only aggregation review from ${AP_BATCH_V3_RESULTS_DIR_REL_V1}.`
+      : `Packets committed for ${run_id}. Collect external agent evidence into ${AP_BATCH_V3_RESULTS_DIR_REL_V1} (${committed_run_artifact.packet_ids.join(", ")}).`
     : may_proceed_to_packet_write
       ? "Review proposed ap-batch-v3 run descriptor; owner may write packets with --write --write-packets."
       : preflight_blockers[0] ?? "Resolve preflight blockers before ap-batch-v3 instantiation.";
@@ -749,6 +918,12 @@ export async function buildApBatchV3RunInstantiationV1Report(
     ready_packet_files_rel: committed_run_artifact.packet_files_rel,
     missing_packet_files_rel: committed_run_artifact.missing_packet_files_rel,
     expected_result_artifact_paths_rel: committed_run_artifact.expected_result_artifact_paths_rel,
+    result_stage_status: committed_result_stage.result_stage_status,
+    result_stage_complete: committed_result_stage.result_stage_complete,
+    ready_result_files_rel: committed_result_stage.ready_result_files_rel,
+    missing_result_files_rel: committed_result_stage.missing_result_files_rel,
+    invalid_result_files: committed_result_stage.invalid_result_files,
+    result_stage_has_proposed_csv_mutation: committed_result_stage.has_proposed_csv_mutation,
     next_command_center_step,
     notes,
     files_written: [],
