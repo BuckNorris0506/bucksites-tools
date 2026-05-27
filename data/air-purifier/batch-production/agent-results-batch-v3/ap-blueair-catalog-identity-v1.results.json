@@ -1,0 +1,36 @@
+{
+  "report_name": "air_purifier_agent_packet_result_v1",
+  "run_id": "ap-batch-v3-proposed-2026-05-26",
+  "packet_id": "ap-blueair-catalog-identity-v1",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-27T14:09:00.000Z",
+  "source_packet_path": "data/air-purifier/batch-production/agent-packets-batch-v3/ap-blueair-catalog-identity-v1.json",
+  "candidate_results": [
+    {
+      "filter_slug": "blueair-particle-411",
+      "searched_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+      "candidate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+      "evidence_status": "BLOCKED",
+      "browser_truth_classification": "wrong_family",
+      "exact_token_found": false,
+      "add_to_cart_or_buy_button_found": true,
+      "token_evidence": "Committed catalog-identity evidence proves official Blueair PDPs for both families, but exact token BLUEAIR-PART411 is not shown on the particle-411 PDP primary product area.",
+      "buy_button_evidence": "blue-pure-411-particle-carbon and F4MAX PDPs both showed purchasable/add-to-cart evidence in committed repo truth.",
+      "catalog_identity_evidence": "F4MAX (411i Max/411a Max, token family 110036/F4MAX) is a distinct sellable filter from PART411/F411PACF (411/411+/411 Auto). GSC slug blueair-f4max-411 conflates identities.",
+      "compatibility_evidence": "Repo docs and packet rationale flag possible wrong compat mapping for blueair-411a-max to blueair-particle-411. Packet reject rules prohibit aliasing blueair-f4max-411 to blueair-particle-411 without exact proof.",
+      "rejection_reason": "Catalog identity split unresolved for buyer-path use. Wrong-family risk remains; cannot mark direct_buyable or alias drift slug.",
+      "recommended_csv_mutation": null,
+      "recommended_catalog_action": {
+        "action_type": "OWNER_APPROVED_CATALOG_IDENTITY_TASK_REQUIRED",
+        "summary": "Create separate F4MAX catalog row and repair compat/route mappings before any buyer-path mutation for blueair-particle-411.",
+        "required_proof": [
+          "Official Blueair product-token proof distinguishing F4MAX/110036 vs PART411/F411PACF families",
+          "Owner-approved compat correction for 411a-max/411i-max if currently mapped to particle-411",
+          "Redirect/slug plan for GSC drift URL blueair-f4max-411 only after identity-safe target exists"
+        ]
+      },
+      "notes": "Catalog identity review only; no buyer-path apply recommendation. Evidence derived from committed batch-v2 catalog identity result and repo docs."
+    }
+  ]
+}
