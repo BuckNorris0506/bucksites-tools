@@ -63,6 +63,7 @@ import {
   buildApBatchV3UnknownV1,
 } from "./lib/ap-batch-v3-run-instantiation-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./lib/air-purifier-model-first-production-lane-v1";
+import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
 import {
   buildBuckpartsMarketingIntelligenceEngineUnknownV1,
   buildBuckpartsMarketingIntelligenceEngineV1Report,
@@ -1247,6 +1248,14 @@ export async function buildBuckpartsCommandCenterReport(
     listDir: readDir,
   });
 
+  const air_purifier_weak_buyer_path_audit_v1 = buildAirPurifierWeakBuyerPathAuditV1Report({
+    rootDir,
+    now,
+    fileExists,
+    readText: readTextFile,
+    listDir: readDir,
+  });
+
   let marketing_intelligence_engine_v1;
   try {
     marketing_intelligence_engine_v1 = await buildBuckpartsMarketingIntelligenceEngineV1Report({
@@ -1280,6 +1289,7 @@ export async function buildBuckpartsCommandCenterReport(
     batch_production_operating_dispatch_v1,
     ap_batch_v3_run_instantiation_v1,
     air_purifier_model_first_production_lane_v1,
+    air_purifier_weak_buyer_path_audit_v1,
     marketing_intelligence_engine_v1,
   };
 
