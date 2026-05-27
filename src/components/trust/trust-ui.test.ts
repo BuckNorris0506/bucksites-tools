@@ -183,9 +183,11 @@ describe("public merchant-priority copy guard", () => {
         path: "src/app/catalog/page.tsx",
         required: [
           /models, filter numbers, alternates, or pages to compare/i,
-          /model number on your refrigerator/i,
+          /model or part number on your unit/i,
           /filter number printed on the old part/i,
           /Buying options appear only when the\s+destination looks safe enough to show/i,
+          /not a popularity ranking/i,
+          /Being verified/i,
         ],
       },
       {

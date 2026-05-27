@@ -79,39 +79,39 @@ export type CatalogCardDef = {
 const CATALOG_CARD_DEFS_ALL: CatalogCardDef[] = [
   {
     category: "refrigerator_water",
-    href: "/",
+    href: "/brand",
     title: "Refrigerator water filters",
     description: "Fridge models and filter numbers by brand and part number.",
   },
   {
     category: "air_purifier",
     href: "/air-purifier",
-    title: "Air purifiers",
-    description: "Replacement filters for room air purifiers.",
+    title: "Air purifier filters",
+    description: "Room air purifier models and replacement filter numbers.",
   },
   {
     category: "vacuum",
     href: "/vacuum",
-    title: "Vacuum",
-    description: "Filters for vacuums and similar units.",
+    title: "Vacuum filters",
+    description: "Vacuum models and replacement filter numbers.",
   },
   {
     category: "humidifier",
     href: "/humidifier",
-    title: "Humidifiers",
-    description: "Wicks, pads, and cartridges for humidifiers.",
+    title: "Humidifier filters",
+    description: "Humidifier models, wicks, pads, and cartridges.",
   },
   {
     category: "appliance_air",
     href: "/appliance-air",
-    title: "Appliance air",
-    description: "Air filters built into appliances.",
+    title: "Appliance air filters",
+    description: "Built-in appliance air filters by brand and part number.",
   },
   {
     category: "whole_house_water",
     href: "/whole-house-water",
-    title: "Whole-house water",
-    description: "System cartridges and housings.",
+    title: "Whole-house water filters",
+    description: "System cartridges and housings by brand and part number.",
   },
 ];
 

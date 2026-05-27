@@ -18,7 +18,7 @@ describe("owner vertical launch / crawler policy (read-only)", () => {
     assert.ok(r.rows.length >= 6);
   });
 
-  it("refrigerator: LIVE, sitemap discovery, not layout-noindexed, promoted on catalog + homepage", () => {
+  it("refrigerator: LIVE, sitemap discovery, not layout-noindexed, LIVE catalog + homepage promo", () => {
     const r = buildOwnerVerticalLaunchPolicyReport();
     const row = r.rows.find((x) => x.vertical_slug === "refrigerator");
     assert.ok(row);
@@ -27,11 +27,12 @@ describe("owner vertical launch / crawler policy (read-only)", () => {
     assert.equal(row.sitemap_discovery_urls_expected, true);
     assert.equal(row.layout_noindex_follow_expected, false);
     assert.equal(row.catalog_hub_promo_expected, true);
+    assert.equal(row.catalog_hub_live_promo_expected, true);
     assert.equal(row.homepage_browse_promo_expected, true);
     assert.equal(row.owner_note, null);
   });
 
-  it("air-purifier and whole-house-water: non-live, no sitemap discovery, layout noindex, no promos", () => {
+  it("air-purifier and whole-house-water: non-live, catalog hub card with honest preview, no homepage promo", () => {
     const r = buildOwnerVerticalLaunchPolicyReport();
     for (const slug of ["air-purifier", "whole-house-water"] as const) {
       const row = r.rows.find((x) => x.vertical_slug === slug);
@@ -40,7 +41,8 @@ describe("owner vertical launch / crawler policy (read-only)", () => {
       assert.equal(row.is_live, false);
       assert.equal(row.sitemap_discovery_urls_expected, false);
       assert.equal(row.layout_noindex_follow_expected, true);
-      assert.equal(row.catalog_hub_promo_expected, false);
+      assert.equal(row.catalog_hub_promo_expected, true);
+      assert.equal(row.catalog_hub_live_promo_expected, false);
       assert.equal(row.homepage_browse_promo_expected, false);
     }
   });

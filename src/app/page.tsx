@@ -92,12 +92,12 @@ export default async function HomePage() {
               </div>
 
               <p className="text-sm leading-relaxed text-bp-muted sm:text-base">
-                <span className="font-medium text-bp-text/90">Browse refrigerator water filters:</span>{" "}
+                <span className="font-medium text-bp-text/90">Browse replacement filter categories:</span>{" "}
                 <Link
                   href="/catalog"
                   className="font-semibold text-bp-trust underline decoration-bp-trust/30 decoration-2 underline-offset-[3px] transition-colors hover:decoration-bp-trust/55"
                 >
-                  Open the catalog hub
+                  Open the category hub
                 </Link>
               </p>
             </div>
@@ -234,10 +234,11 @@ export default async function HomePage() {
           <RevealOnScroll className="space-y-6 border-t border-bp-border pt-12 lg:space-y-8 lg:pt-16">
           <section className="space-y-6 lg:space-y-8">
             <h2 className="text-lg font-semibold tracking-tight text-bp-text sm:text-xl">
-              Fridge-water starting points
+              Refrigerator water filter starting points
             </h2>
             <p className="max-w-3xl text-sm leading-relaxed text-bp-muted sm:text-[15px]">
-              A short list from our refrigerator-water browse data—not a bestseller chart.
+              A short browse sample from refrigerator water filter data—not a popularity ranking,
+              sales chart, or bestseller list.
             </p>
             <ul className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {popularFilters.map((f, i) => (

@@ -3,6 +3,7 @@
  * Derive from repo constants — do not duplicate launch truth manually.
  */
 import { CATALOG_HUB_LAUNCH_CATEGORIES } from "@/lib/catalog/catalog-availability";
+import { PUBLIC_CATEGORY_HUB_ORDER } from "@/lib/catalog/public-category-hub";
 import type { CatalogId } from "@/lib/catalog/constants";
 import {
   CATALOG_ID_TO_WEDGE,
@@ -39,7 +40,8 @@ const WEDGE_TO_PRIMARY_CATALOG_ID: Record<HomekeepWedgeCatalog, CatalogId> = (()
   return out;
 })();
 
-const CATALOG_HUB_SET = new Set<HomekeepWedgeCatalog>(CATALOG_HUB_LAUNCH_CATEGORIES);
+const CATALOG_HUB_LIVE_SET = new Set<HomekeepWedgeCatalog>(CATALOG_HUB_LAUNCH_CATEGORIES);
+const PUBLIC_CATALOG_HUB_SET = new Set<HomekeepWedgeCatalog>(PUBLIC_CATEGORY_HUB_ORDER);
 
 const GENERATED_FROM = [
   "src/lib/catalog/vertical-launch-state.ts",
@@ -59,8 +61,10 @@ export type OwnerVerticalLaunchPolicyRow = {
   sitemap_discovery_urls_expected: boolean;
   /** True when `src/app/<vertical>/layout.tsx` applies `noindex,follow` (non-LIVE + segment layout). */
   layout_noindex_follow_expected: boolean;
-  /** True when `/catalog` hub should list a card for this wedge (see `CATALOG_HUB_LAUNCH_CATEGORIES`). */
+  /** True when `/catalog` hub lists this wedge (see `PUBLIC_CATEGORY_HUB_ORDER`). */
   catalog_hub_promo_expected: boolean;
+  /** True when wedge is LIVE on the public hub (see `CATALOG_HUB_LAUNCH_CATEGORIES`). */
+  catalog_hub_live_promo_expected: boolean;
   /** True when homepage browse strip promotes this vertical (fridge-first list). */
   homepage_browse_promo_expected: boolean;
   owner_note: string | null;
@@ -116,7 +120,8 @@ export function buildOwnerVerticalLaunchPolicyReport(): OwnerVerticalLaunchPolic
         is_live: live,
         sitemap_discovery_urls_expected: sitemapDiscoveryExpected(vertical),
         layout_noindex_follow_expected: segmentLayoutNoindexExpected(vertical),
-        catalog_hub_promo_expected: CATALOG_HUB_SET.has(wedge),
+        catalog_hub_promo_expected: PUBLIC_CATALOG_HUB_SET.has(wedge),
+        catalog_hub_live_promo_expected: CATALOG_HUB_LIVE_SET.has(wedge),
         homepage_browse_promo_expected: FRIDGE_FIRST_HOMEPAGE_BROWSE_PROMO_VERTICALS.includes(vertical),
         owner_note: ownerNoteForRow(vertical, live),
       };
