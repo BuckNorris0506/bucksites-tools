@@ -9,6 +9,7 @@ import type {
   BatchProductionOwnerDecisionsLaneV1,
   BatchProductionOperatingChecklistV1,
   BatchProductionOperatingDispatchV1,
+  BuckpartsAgentControlPlaneV1,
   BuckpartsMarketingIntelligenceEngineV1,
   CommandCenterV2Report,
   MarketingOpportunityV1,
@@ -671,6 +672,45 @@ function BatchProductionOperatingChecklistSection({
   );
 }
 
+
+function AgentControlPlaneSection({ plane }: { plane: BuckpartsAgentControlPlaneV1 }) {
+  return (
+    <ExecutiveSection
+      title="Agent Control Plane v1"
+      subtitle="Read-only always-on agent queue — does not replace batch dispatch; product mutations stay Command Center–gated."
+    >
+      <div data-testid="agent-control-plane-v1" className="space-y-3">
+        <p className="text-sm text-slate-800 dark:text-slate-200">{plane.always_on_queue_summary}</p>
+        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300 sm:grid-cols-4">
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">eligible_jobs</dt>
+          <dd>{plane.eligible_job_count}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">ap_batch_v3</dt>
+          <dd>{plane.ap_batch_v3_truth.classification}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">csv_mutations</dt>
+          <dd>{plane.ap_batch_v3_truth.safe_csv_mutation_count}</dd>
+          <dt className="font-semibold text-slate-600 dark:text-slate-400">catalog_actions</dt>
+          <dd>{plane.ap_batch_v3_truth.catalog_owner_action_count}</dd>
+        </dl>
+        {plane.eligible_jobs.length > 0 ? (
+          <ul className="space-y-2 text-xs text-slate-800 dark:text-slate-200">
+            {plane.eligible_jobs.map((job) => (
+              <li
+                key={job.job_id}
+                className="rounded border border-slate-200 bg-white p-2 dark:border-slate-700 dark:bg-slate-950"
+              >
+                <span className="font-mono font-semibold">{job.agent_lane}</span>
+                <span className="ml-2 text-slate-500">({job.permission_level})</span>
+                <p className="mt-1 text-slate-600 dark:text-slate-400">{job.why_eligible_or_blocked}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-slate-600 dark:text-slate-400">No eligible jobs in this snapshot.</p>
+        )}
+      </div>
+    </ExecutiveSection>
+  );
+}
 
 function MarketingIntelligenceEngineSection({
   engine,
@@ -1344,6 +1384,8 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         />
 
         <MarketingIntelligenceEngineSection engine={v2.marketing_intelligence_engine_v1} />
+
+        <AgentControlPlaneSection plane={v2.agent_control_plane_v1} />
 
         <FounderActionQueueSection queue={founderActionQueue} />
 

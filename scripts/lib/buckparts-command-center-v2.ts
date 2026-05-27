@@ -212,6 +212,7 @@ export function buildCommandCenterV2Report(input: {
   | "page_publishability_truth_summary_v1"
   | "demand_to_coverage_next_lane_v1"
   | "marketing_intelligence_engine_v1"
+  | "agent_control_plane_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
 > {

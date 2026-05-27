@@ -71,6 +71,7 @@ import {
   buildBatchProductionOperatingDispatchV1,
   resolveBatchProductionDispatchDirectorOverrideV1,
 } from "./lib/buckparts-batch-production-operating-dispatch-v1";
+import { buildBuckpartsAgentControlPlaneV1Report } from "./lib/buckparts-agent-control-plane-v1";
 import { buildSystemContractAuditSummaryV1FromReport } from "./lib/buckparts-system-contract-audit-summary-v1";
 import {
   buildPagePublishabilityTruthSummaryV1,
@@ -953,6 +954,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "batch_production_operating_dispatch_v1"
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
+    | "agent_control_plane_v1"
     | "page_publishability_truth_summary_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
@@ -1070,6 +1072,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "batch_production_operating_dispatch_v1"
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
+    | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1169,6 +1172,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "batch_production_operating_dispatch_v1"
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
+    | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
   > = {
@@ -1251,7 +1255,10 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
-    "next_execution_packet_summary_v1" | "operator_digest_v1" | "semi_cruise_status_summary_v1"
+    | "next_execution_packet_summary_v1"
+    | "operator_digest_v1"
+    | "semi_cruise_status_summary_v1"
+    | "agent_control_plane_v1"
   > = {
     ...command_center_v2_before_demand,
     daily_operator_summary_v1,
@@ -1318,7 +1325,10 @@ export async function buildBuckpartsCommandCenterReport(
     staleness_or_dirty_risk: stalenessOrDirtyRisk,
   };
 
-  const command_center_v2_with_operator_digest: Omit<CommandCenterV2Report, "semi_cruise_status_summary_v1"> = {
+  const command_center_v2_with_operator_digest: Omit<
+    CommandCenterV2Report,
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1"
+  > = {
     ...command_center_v2,
     operator_digest_v1: {
       contract: "operator_digest_v1",
@@ -1386,9 +1396,27 @@ export async function buildBuckpartsCommandCenterReport(
     spend_ledger_entries: loadSpendLedgerEntriesReadOnly(),
   });
 
+  const agent_control_plane_v1 = buildBuckpartsAgentControlPlaneV1Report({
+    rootDir,
+    generated_at: now().toISOString(),
+    batch_production_operating_dispatch_v1,
+    ap_batch_v3_run_instantiation_v1,
+    demand_to_coverage_next_lane_v1,
+    marketing_intelligence_engine_v1,
+    external_measurement_freshness_v1: command_center_v2_with_operator_digest.external_measurement_freshness_v1,
+    evidence_to_learning_outcomes_candidate_import_v1:
+      command_center_v2_with_operator_digest.evidence_to_learning_outcomes_candidate_import_v1,
+    learning_outcomes_insert_plan_v1:
+      command_center_v2_with_operator_digest.learning_outcomes_insert_plan_v1,
+    batch_production_operating_checklist_v1,
+    fileExists,
+    readTextFile,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     semi_cruise_status_summary_v1,
+    agent_control_plane_v1,
   };
 
   return {

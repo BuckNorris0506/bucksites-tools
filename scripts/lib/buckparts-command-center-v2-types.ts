@@ -19,6 +19,7 @@ import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/o
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
+import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 
 export type TokenControlStatus =
   | "LIVE_OUTCOME_RECORDED"
@@ -908,6 +909,8 @@ export type CommandCenterV2Report = {
   ap_batch_v3_run_instantiation_v1?: ApBatchV3RunInstantiationV1;
   /** Read-only marketing opportunities and asset briefs from proven operating truth — no auto-publish. */
   marketing_intelligence_engine_v1: BuckpartsMarketingIntelligenceEngineV1;
+  /** Read-only always-on agent work queue — permissioned lanes; does not replace batch dispatch. */
+  agent_control_plane_v1: BuckpartsAgentControlPlaneV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
@@ -929,6 +932,7 @@ export type {
   BuckpartsMarketingIntelligenceEngineV1,
   MarketingOpportunityV1,
 } from "./buckparts-marketing-intelligence-engine-v1";
+export type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 export type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 export type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
@@ -952,6 +956,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "page_publishability_truth_summary_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
+  | "agent_control_plane_v1"
 >;
 
 /** @deprecated Use CommandCenterV2ReportWithoutOwnerLanesV1 */
