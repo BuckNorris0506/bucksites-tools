@@ -6,6 +6,7 @@ import test from "node:test";
 
 import {
   buildAirPurifierAgentResultsAggregatorV1Report,
+  normalizePacketResultCandidateV1,
   parseAgentResultFileContentV1,
   validateAgentEvidenceRowV1,
 } from "./lib/air-purifier-agent-results-aggregator-v1";
@@ -54,14 +55,70 @@ function writeResultsDir(rowsByFile: Record<string, unknown>): string {
   return dir;
 }
 
-test("parseAgentResultFileContent supports array, results, and rows shapes", () => {
+test("parseAgentResultFileContent supports array, results, rows, and candidate_results shapes", () => {
   const row = baseRow();
   assert.deepEqual(parseAgentResultFileContentV1([row], "a.json").rows, [row]);
   assert.deepEqual(parseAgentResultFileContentV1({ results: [row] }, "b.json").rows, [row]);
   assert.deepEqual(parseAgentResultFileContentV1({ rows: [row], packet_id: "x" }, "c.json").rows, [
     row,
   ]);
+  const packetResult = parseAgentResultFileContentV1(
+    {
+      report_name: "air_purifier_agent_packet_result_v1",
+      packet_id: "ap-test-v1",
+      candidate_results: [{ filter_slug: "slug-a", evidence_status: "UNKNOWN" }],
+    },
+    "e.json",
+  );
+  assert.equal(packetResult.error, null);
+  assert.equal(packetResult.result_format, "air_purifier_agent_packet_result_v1");
+  assert.equal(packetResult.packet_id, "ap-test-v1");
+  assert.equal(packetResult.rows.length, 1);
   assert.ok(parseAgentResultFileContentV1({ bad: true }, "d.json").error);
+});
+
+test("committed ap-batch-v3 result files aggregate to 17 rows with expected evidence_status counts", () => {
+  const report = buildAirPurifierAgentResultsAggregatorV1Report({
+    rootDir: REPO_ROOT,
+    resultsDir: "data/air-purifier/batch-production/agent-results-batch-v3",
+  });
+  assert.equal(report.result_file_count, 3);
+  assert.equal(report.row_count, 17);
+  assert.equal(report.valid_row_count, 17);
+  assert.equal(report.invalid_row_count, 0);
+  assert.equal(report.invalid_files.length, 0);
+  assert.equal(report.source_status, "PROVEN");
+  assert.equal(report.decision_counts.BLOCKED, 4);
+  assert.equal(report.decision_counts.UNKNOWN, 11);
+  assert.equal(report.decision_counts.FAIL, 2);
+  assert.equal(report.recommended_csv_mutation_count, 0);
+  assert.equal(report.recommended_catalog_action_count, 1);
+  assert.equal(report.projected_coverage_delta.direct_buyable_plus, 0);
+  assert.equal(report.projected_coverage_delta.official_reference_plus, 0);
+  assert.equal(report.projected_coverage_delta.blocked_minus, 0);
+  assert.equal(report.review_groups.catalog_task_required.length, 1);
+  assert.ok(report.review_groups.catalog_task_required.some((r) => r.slug === "blueair-particle-411"));
+  assert.ok(
+    report.recommended_next_action.includes("No CSV apply is safe"),
+    report.recommended_next_action,
+  );
+  assert.ok(
+    report.recommended_next_action.toLowerCase().includes("catalog"),
+    report.recommended_next_action,
+  );
+});
+
+test("normalizePacketResultCandidateV1 reads candidate_results row path", () => {
+  const normalized = normalizePacketResultCandidateV1("ap-blueair-catalog-identity-v1", {
+    filter_slug: "blueair-particle-411",
+    evidence_status: "BLOCKED",
+    browser_truth_classification: "wrong_family",
+    recommended_catalog_action: { action_type: "OWNER_APPROVED_CATALOG_IDENTITY_TASK_REQUIRED" },
+  });
+  assert.ok(normalized);
+  assert.equal(normalized!.row.slug, "blueair-particle-411");
+  assert.equal(normalized!.evidence_status, "BLOCKED");
+  assert.equal(normalized!.row.decision, "CATALOG_GAP");
 });
 
 test("reads multiple result files from results dir", () => {

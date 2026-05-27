@@ -38,6 +38,8 @@ export type ApAggregatedReviewRowV1 = {
   slug: string;
   packet_id: string;
   decision: ApAgentEvidenceDecisionV1 | string;
+  /** Present on `air_purifier_agent_packet_result_v1` rows (batch-v3 evidence_status). */
+  evidence_status?: string;
   review_group: ApReviewGroupKeyV1;
   review_reasons: string[];
   final_url: string | null;
@@ -77,6 +79,8 @@ export type AirPurifierAgentResultsAggregatorReportV1 = {
   row_count: number;
   valid_row_count: number;
   invalid_row_count: number;
+  recommended_csv_mutation_count: number;
+  recommended_catalog_action_count: number;
   decision_counts: Record<string, number>;
   review_groups: Record<ApReviewGroupKeyV1, ApAggregatedReviewRowV1[]>;
   projected_coverage_delta: {
@@ -275,21 +279,131 @@ function classifyReviewGroup(args: {
   return { group: "owner_review_required", reasons: Array.from(new Set(reasons)) };
 }
 
+export type ApAgentResultFileFormatV1 = "legacy_rows" | "air_purifier_agent_packet_result_v1";
+
+export type ParsedAgentResultFileContentV1 = {
+  rows: unknown[];
+  packet_id: string | null;
+  result_format: ApAgentResultFileFormatV1;
+  error: string | null;
+};
+
+/** One row inside `candidate_results[]` on batch-v3 `air_purifier_agent_packet_result_v1` files. */
+export type ApPacketResultCandidateV1 = {
+  filter_slug?: string;
+  searched_url?: string | null;
+  candidate_url?: string | null;
+  evidence_status?: string;
+  browser_truth_classification?: string | null;
+  exact_token_found?: boolean;
+  add_to_cart_or_buy_button_found?: boolean;
+  token_evidence?: string;
+  buy_button_evidence?: string;
+  catalog_identity_evidence?: string;
+  compatibility_evidence?: string;
+  rejection_reason?: string;
+  notes?: string;
+  recommended_csv_mutation?: ApAgentEvidenceCsvMutationV1 | null;
+  recommended_catalog_action?: unknown;
+};
+
+export function normalizePacketResultCandidateV1(
+  packetId: string,
+  raw: unknown,
+): { row: ApAgentEvidenceRowV1; evidence_status: string } | null {
+  const c = raw as ApPacketResultCandidateV1;
+  const slug = c.filter_slug?.trim();
+  if (!slug) return null;
+
+  const evidence_status = (c.evidence_status ?? "UNKNOWN").trim().toUpperCase();
+  const classification = c.browser_truth_classification?.trim().toLowerCase() ?? "";
+
+  let decision: ApAgentEvidenceDecisionV1;
+  if (c.recommended_catalog_action != null) {
+    decision = "CATALOG_GAP";
+  } else if (evidence_status === "FAIL") {
+    decision = "NO_SAFE_PATH";
+  } else if (evidence_status === "BLOCKED" && classification === "wrong_family") {
+    decision = "REJECT_WRONG_FAMILY";
+  } else if (evidence_status === "BLOCKED") {
+    decision = "NEEDS_OWNER_REVIEW";
+  } else {
+    decision = "NEEDS_OWNER_REVIEW";
+  }
+
+  const evidence_notes = [
+    c.notes,
+    c.rejection_reason,
+    c.token_evidence,
+    c.buy_button_evidence,
+    c.catalog_identity_evidence,
+    c.compatibility_evidence,
+  ]
+    .filter((part): part is string => Boolean(part?.trim()))
+    .join(" | ");
+
+  return {
+    evidence_status,
+    row: {
+      packet_id: packetId,
+      slug,
+      decision,
+      candidate_url: c.candidate_url ?? c.searched_url ?? null,
+      final_url: c.candidate_url ?? null,
+      browser_truth_classification: c.browser_truth_classification ?? null,
+      exact_tokens_seen: c.exact_token_found === true ? ["exact_token_reported"] : [],
+      wrong_family_tokens_seen: classification === "wrong_family" ? ["wrong_family_reported"] : [],
+      buy_action_seen: c.add_to_cart_or_buy_button_found ?? null,
+      reference_only_reason:
+        classification === "official_reference" ? "official_reference_without_exact_token" : null,
+      evidence_notes: evidence_notes || evidence_status,
+      recommended_csv_mutation: c.recommended_csv_mutation ?? null,
+      owner_review_required:
+        c.recommended_catalog_action != null ||
+        decision === "CATALOG_GAP" ||
+        decision === "NEEDS_OWNER_REVIEW" ||
+        evidence_status === "UNKNOWN" ||
+        evidence_status === "BLOCKED",
+    },
+  };
+}
+
 export function parseAgentResultFileContentV1(
   raw: unknown,
   sourceFile: string,
-): { rows: unknown[]; error: string | null } {
+): ParsedAgentResultFileContentV1 {
   if (Array.isArray(raw)) {
-    return { rows: raw, error: null };
+    return { rows: raw, packet_id: null, result_format: "legacy_rows", error: null };
   }
   if (raw && typeof raw === "object") {
     const obj = raw as Record<string, unknown>;
-    if (Array.isArray(obj.results)) return { rows: obj.results, error: null };
-    if (Array.isArray(obj.rows)) return { rows: obj.rows, error: null };
+    if (
+      obj.report_name === "air_purifier_agent_packet_result_v1" &&
+      Array.isArray(obj.candidate_results)
+    ) {
+      const packet_id =
+        typeof obj.packet_id === "string" && obj.packet_id.trim() ? obj.packet_id.trim() : null;
+      return {
+        rows: obj.candidate_results,
+        packet_id,
+        result_format: "air_purifier_agent_packet_result_v1",
+        error: null,
+      };
+    }
+    if (Array.isArray(obj.results)) {
+      return { rows: obj.results, packet_id: null, result_format: "legacy_rows", error: null };
+    }
+    if (Array.isArray(obj.rows)) {
+      const packet_id =
+        typeof obj.packet_id === "string" && obj.packet_id.trim() ? obj.packet_id.trim() : null;
+      return { rows: obj.rows, packet_id, result_format: "legacy_rows", error: null };
+    }
   }
   return {
     rows: [],
-    error: `unsupported shape in ${sourceFile} (expected array, results[], or rows[])`,
+    packet_id: null,
+    result_format: "legacy_rows",
+    error: `unsupported shape in ${sourceFile} (expected array, results[], rows[], or air_purifier_agent_packet_result_v1.candidate_results[])`,
   };
 }
 
@@ -311,8 +425,15 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
 
   const invalid_files: ApInvalidFileV1[] = [];
   const invalid_rows: ApInvalidRowV1[] = [];
-  const parsedRows: Array<{ row: ApAgentEvidenceRowV1; sourceFile: string; invalid: ApInvalidRowV1 | null }> =
-    [];
+  const parsedRows: Array<{
+    row: ApAgentEvidenceRowV1;
+    sourceFile: string;
+    invalid: ApInvalidRowV1 | null;
+    evidence_status: string | null;
+  }> = [];
+
+  let recommended_csv_mutation_count = 0;
+  let recommended_catalog_action_count = 0;
 
   let resultFiles: string[] = [];
   if (existsSync(absResultsDir)) {
@@ -342,20 +463,55 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
       continue;
     }
 
+    const packetIdFromFile =
+      extracted.packet_id ??
+      fileName.replace(/\.results\.json$/i, "");
+
     for (const rawRow of extracted.rows) {
-      const validated = validateAgentEvidenceRowV1(rawRow, relFile);
+      let rowInput: ApAgentEvidenceRowV1;
+      let evidence_status: string | null = null;
+
+      if (extracted.result_format === "air_purifier_agent_packet_result_v1") {
+        const normalized = normalizePacketResultCandidateV1(packetIdFromFile, rawRow);
+        if (!normalized) {
+          invalid_rows.push({
+            source_file: relFile,
+            slug: null,
+            packet_id: packetIdFromFile,
+            decision: (rawRow as ApPacketResultCandidateV1).evidence_status ?? null,
+            reasons: ["missing_filter_slug"],
+            row: rawRow,
+          });
+          continue;
+        }
+        rowInput = normalized.row;
+        evidence_status = normalized.evidence_status;
+        if ((rawRow as ApPacketResultCandidateV1).recommended_catalog_action != null) {
+          recommended_catalog_action_count += 1;
+        }
+      } else {
+        rowInput = rawRow as ApAgentEvidenceRowV1;
+      }
+
+      const validated = validateAgentEvidenceRowV1(rowInput, relFile);
       if (!validated.ok) {
         invalid_rows.push(validated.invalid);
         if (validated.invalid.slug && validated.invalid.packet_id && validated.invalid.decision) {
           parsedRows.push({
-            row: rawRow as ApAgentEvidenceRowV1,
+            row: rowInput,
             sourceFile: relFile,
             invalid: validated.invalid,
+            evidence_status,
           });
         }
         continue;
       }
-      parsedRows.push({ row: validated.row, sourceFile: relFile, invalid: null });
+      parsedRows.push({
+        row: validated.row,
+        sourceFile: relFile,
+        invalid: null,
+        evidence_status,
+      });
     }
   }
 
@@ -372,14 +528,17 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
   const slugSeen = new Map<string, ApAggregatedReviewRowV1>();
 
   for (const entry of parsedRows) {
-    const { row, sourceFile, invalid } = entry;
-    decision_counts[row.decision] = (decision_counts[row.decision] ?? 0) + 1;
+    const { row, sourceFile, invalid, evidence_status } = entry;
+    const decisionKey = evidence_status ?? row.decision;
+    decision_counts[decisionKey] = (decision_counts[decisionKey] ?? 0) + 1;
+    if (row.recommended_csv_mutation) recommended_csv_mutation_count += 1;
 
     const classified = classifyReviewGroup({ row, invalid });
     const aggregated: ApAggregatedReviewRowV1 = {
       slug: row.slug,
       packet_id: row.packet_id,
       decision: row.decision,
+      evidence_status: evidence_status ?? undefined,
       review_group: classified.group,
       review_reasons: classified.reasons,
       final_url: row.final_url,
@@ -418,11 +577,20 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
     "Review owner_review_summary; no CSV apply until owner approves auto_apply_eligible rows.";
   if (direct_buyable_plus > 0) {
     recommended_next_action = `Owner review ${direct_buyable_plus} auto_apply_eligible row(s), then run a future apply planner (not this script).`;
+  } else if (
+    recommended_csv_mutation_count === 0 &&
+    recommended_catalog_action_count > 0
+  ) {
+    recommended_next_action =
+      "No CSV apply is safe (0 recommended_csv_mutation). Owner-approved catalog identity task required — see catalog_task_required (Blueair F4MAX vs PART411 split) before buyer-path or apply planning.";
   } else if (review_groups.owner_review_required.length > 0) {
     recommended_next_action =
       "Resolve owner_review_required rows (token equivalence, Amazon policy, wrong-family notes) before apply planner.";
   } else if (resultFiles.length === 0) {
     recommended_next_action = "No agent result files found — run agents and save *.results.json first.";
+  } else if (recommended_csv_mutation_count === 0 && valid_row_count > 0) {
+    recommended_next_action =
+      "No CSV apply is safe (0 recommended_csv_mutation). Review review_groups and owner_review_summary before any apply planner.";
   }
 
   const owner_review_summary: string[] = [];
@@ -454,6 +622,14 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
       `No safe path: ${review_groups.no_safe_path.map((r) => r.slug).join(", ")}`,
     );
   }
+  if (review_groups.catalog_task_required.length > 0) {
+    owner_review_summary.push(
+      `Catalog identity task required (${recommended_catalog_action_count}): ${review_groups.catalog_task_required.map((r) => r.slug).join(", ")}`,
+    );
+  }
+  if (recommended_csv_mutation_count === 0 && valid_row_count > 0) {
+    owner_review_summary.push("No recommended_csv_mutation rows — CSV apply is not safe from this batch.");
+  }
   if (invalid_rows.length > 0) {
     owner_review_summary.push(
       `${invalid_rows.length} row(s) failed strict validation — see invalid_rows (may still appear in owner_review_required).`,
@@ -478,6 +654,8 @@ export function buildAirPurifierAgentResultsAggregatorV1Report(args: {
     row_count: parsedRows.length,
     valid_row_count,
     invalid_row_count,
+    recommended_csv_mutation_count,
+    recommended_catalog_action_count,
     decision_counts,
     review_groups,
     projected_coverage_delta: {
