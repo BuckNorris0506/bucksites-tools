@@ -15,9 +15,6 @@ async function main(): Promise<void> {
   if (writePackets && !write) {
     throw new Error("--write-packets requires --write");
   }
-  if ((write || writePackets) && !outDir) {
-    throw new Error("--write requires --out-dir");
-  }
 
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir });

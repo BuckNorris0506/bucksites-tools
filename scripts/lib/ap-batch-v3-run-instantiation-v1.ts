@@ -38,6 +38,15 @@ export const AP_BATCH_V3_REGISTRY_REL_V1 =
 export const AP_BATCH_V3_PACKETS_DIR_REL_V1 =
   "data/air-purifier/batch-production/agent-packets-batch-v3" as const;
 
+export const AP_BATCH_V3_PACKETS_MANIFEST_REL_V1 =
+  "data/air-purifier/batch-production/agent-packets-batch-v3/manifest.json" as const;
+
+/** Run-registry JSON files that are run descriptors — not agent packet sources. */
+export const AP_BATCH_V3_RUN_REGISTRY_DESCRIPTOR_BASENAMES_V1 = [
+  "ap-batch-v3-proposed-run-v1.json",
+  "ap-batch-v2-proven-run-v1.json",
+] as const;
+
 export const AP_BATCH_V3_RESULTS_DIR_REL_V1 =
   "data/air-purifier/batch-production/agent-results-batch-v3" as const;
 
@@ -198,6 +207,47 @@ function filterPacketSlugs(
 function proposedRunId(now: () => Date): string {
   const d = now().toISOString().slice(0, 10);
   return `ap-batch-v3-proposed-${d}`;
+}
+
+/** Resolve registry vs packet paths. `--out-dir` is a sandbox root mirroring batch-production layout. */
+export function resolveApBatchV3ArtifactPathsV1(args: {
+  rootDir: string;
+  sandboxRoot?: string | null;
+}): {
+  registryAbs: string;
+  packetsDirAbs: string;
+  manifestAbs: string;
+} {
+  const sandbox = args.sandboxRoot?.trim()
+    ? path.isAbsolute(args.sandboxRoot)
+      ? args.sandboxRoot
+      : path.join(args.rootDir, args.sandboxRoot)
+    : null;
+
+  const registryAbs = sandbox
+    ? path.join(sandbox, "run-registry", path.basename(AP_BATCH_V3_REGISTRY_REL_V1))
+    : path.join(args.rootDir, AP_BATCH_V3_REGISTRY_REL_V1);
+
+  const packetsDirAbs = sandbox
+    ? path.join(sandbox, "agent-packets-batch-v3")
+    : path.join(args.rootDir, AP_BATCH_V3_PACKETS_DIR_REL_V1);
+
+  return {
+    registryAbs,
+    packetsDirAbs,
+    manifestAbs: path.join(packetsDirAbs, "manifest.json"),
+  };
+}
+
+/** True when a run-registry filename is a misplaced agent packet (not a run descriptor). */
+export function isApBatchV3RunRegistryPacketMisplacementV1(filename: string): boolean {
+  if (filename === "manifest.json") return true;
+  if (
+    (AP_BATCH_V3_RUN_REGISTRY_DESCRIPTOR_BASENAMES_V1 as readonly string[]).includes(filename)
+  ) {
+    return false;
+  }
+  return /^ap-.+-v\d+\.json$/i.test(filename);
 }
 
 export function buildApBatchV3UnknownV1(args: {
@@ -395,13 +445,11 @@ export async function buildApBatchV3RunInstantiationV1Report(
   };
 
   if (deps.write) {
-    const outRoot = deps.outDir?.trim()
-      ? path.isAbsolute(deps.outDir)
-        ? deps.outDir
-        : path.join(deps.rootDir, deps.outDir)
-      : path.join(deps.rootDir, path.dirname(AP_BATCH_V3_REGISTRY_REL_V1));
+    const { registryAbs, packetsDirAbs, manifestAbs } = resolveApBatchV3ArtifactPathsV1({
+      rootDir: deps.rootDir,
+      sandboxRoot: deps.outDir,
+    });
 
-    const registryAbs = path.join(outRoot, path.basename(AP_BATCH_V3_REGISTRY_REL_V1));
     mkdirSync(path.dirname(registryAbs), { recursive: true });
 
     const registryPayload = {
@@ -424,11 +472,8 @@ export async function buildApBatchV3RunInstantiationV1Report(
     writeFileSync(registryAbs, `${JSON.stringify(registryPayload, null, 2)}\n`, "utf8");
     report.files_written.push(registryAbs);
 
-    if (deps.writePackets && deps.outDir?.trim()) {
-      const packetsAbs = path.isAbsolute(deps.outDir)
-        ? deps.outDir
-        : path.join(deps.rootDir, deps.outDir);
-      mkdirSync(packetsAbs, { recursive: true });
+    if (deps.writePackets) {
+      mkdirSync(packetsDirAbs, { recursive: true });
       const allPackets = [...buyer_path_packets, ...catalog_review_packets];
       const manifest = {
         contract: "air_purifier_agent_packets_v1",
@@ -440,11 +485,10 @@ export async function buildApBatchV3RunInstantiationV1Report(
         data_mutation: false,
         proposed: true,
       };
-      const manifestPath = path.join(packetsAbs, "manifest.json");
-      writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
-      report.files_written.push(manifestPath);
+      writeFileSync(manifestAbs, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+      report.files_written.push(manifestAbs);
       for (const packet of allPackets) {
-        const packetPath = path.join(packetsAbs, `${packet.packet_id}.json`);
+        const packetPath = path.join(packetsDirAbs, `${packet.packet_id}.json`);
         writeFileSync(packetPath, `${JSON.stringify(packet, null, 2)}\n`, "utf8");
         report.files_written.push(packetPath);
       }

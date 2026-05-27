@@ -1,14 +1,19 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import { AP_BATCH_V2_DIRECT_BUY_SLUGS_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
 import {
+  AP_BATCH_V3_PACKETS_DIR_REL_V1,
+  AP_BATCH_V3_PACKETS_MANIFEST_REL_V1,
+  AP_BATCH_V3_REGISTRY_REL_V1,
   AP_BATCH_V3_RUN_INSTANTIATION_CONTRACT_V1,
   AP_BATCH_V3_SOURCE_PROVEN_RUN_ID_V1,
   buildApBatchV3RunInstantiationV1Report,
+  isApBatchV3RunRegistryPacketMisplacementV1,
+  resolveApBatchV3ArtifactPathsV1,
 } from "./ap-batch-v3-run-instantiation-v1";
 import { buildBatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import {
@@ -166,7 +171,85 @@ test("read-only report paths do not mutate CSV Supabase or dispatch-run artifact
   }
 });
 
-test("write flag writes only to explicit out-dir", async () => {
+test("write flag writes registry and packets to separate sandbox subdirs", async () => {
+  const outRoot = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-write-"));
+  try {
+    const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const report = await buildApBatchV3RunInstantiationV1Report({
+      rootDir: REPO_ROOT,
+      demandToCoverageNextLane: demand,
+      checklist,
+      write: true,
+      writePackets: true,
+      outDir: outRoot,
+    });
+
+    const paths = resolveApBatchV3ArtifactPathsV1({ rootDir: REPO_ROOT, sandboxRoot: outRoot });
+    assert.ok(report.files_written.includes(paths.registryAbs));
+    assert.ok(report.files_written.includes(paths.manifestAbs));
+    assert.ok(report.files_written.every((p) => p.startsWith(outRoot)));
+
+    const registryDir = path.join(outRoot, "run-registry");
+    const registryFiles = readdirSync(registryDir);
+    assert.ok(registryFiles.includes("ap-batch-v3-proposed-run-v1.json"));
+    for (const name of registryFiles) {
+      assert.equal(
+        isApBatchV3RunRegistryPacketMisplacementV1(name),
+        false,
+        `run-registry must not contain packet-source file: ${name}`,
+      );
+    }
+
+    const packetDir = path.join(outRoot, "agent-packets-batch-v3");
+    assert.ok(existsSync(path.join(packetDir, "manifest.json")));
+    const packetFiles = readdirSync(packetDir).filter((n) => n.endsWith(".json") && n !== "manifest.json");
+    assert.ok(packetFiles.length >= 1);
+    for (const packetId of report.packets_grouped_by_task.buyer_path
+      .concat(report.packets_grouped_by_task.catalog_review)
+      .map((p) => p.packet_id)) {
+      assert.ok(packetFiles.includes(`${packetId}.json`), `missing packet ${packetId}`);
+    }
+  } finally {
+    rmSync(outRoot, { recursive: true, force: true });
+  }
+});
+
+test("repo run-registry contains only run descriptors — packets live under agent-packets-batch-v3", () => {
+  const registryDir = path.join(REPO_ROOT, path.dirname(AP_BATCH_V3_REGISTRY_REL_V1));
+  for (const name of readdirSync(registryDir)) {
+    if (!name.endsWith(".json")) continue;
+    assert.equal(
+      isApBatchV3RunRegistryPacketMisplacementV1(name),
+      false,
+      `misplaced packet artifact in run-registry: ${name}`,
+    );
+  }
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1)));
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_DIR_REL_V1)));
+});
+
+test("Command Center dispatch expected_artifact_paths exist after packet write layout", async () => {
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const instantiation = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+    ap_batch_v3_run_instantiation: instantiation,
+  });
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+  for (const rel of dispatch.expected_artifact_paths) {
+    assert.ok(
+      existsSync(path.join(REPO_ROOT, rel)) || existsSync(path.join(REPO_ROOT, rel, "manifest.json")),
+      `expected artifact missing: ${rel}`,
+    );
+  }
+});
+
+test("write flag writes registry only to explicit out-dir when writePackets false", async () => {
   const outRoot = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-write-"));
   try {
     const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
@@ -180,6 +263,7 @@ test("write flag writes only to explicit out-dir", async () => {
     });
     assert.ok(report.files_written.length >= 1);
     assert.ok(report.files_written.every((p) => p.startsWith(outRoot)));
+    assert.ok(!existsSync(path.join(outRoot, "agent-packets-batch-v3", "manifest.json")));
   } finally {
     rmSync(outRoot, { recursive: true, force: true });
   }

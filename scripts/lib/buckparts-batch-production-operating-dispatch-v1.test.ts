@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -8,6 +9,8 @@ import {
   buildBatchProductionOperatingChecklistV1,
 } from "./buckparts-batch-production-operating-checklist-v1";
 import {
+  AP_BATCH_V3_PACKETS_DIR_REL_V1,
+  AP_BATCH_V3_REGISTRY_REL_V1,
   AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
   buildApBatchV3RunInstantiationV1Report,
 } from "./ap-batch-v3-run-instantiation-v1";
@@ -111,6 +114,25 @@ test("dispatch moves to ap-batch-v3 run instantiation when closed batch proof is
   assert.equal(dispatch.exact_command, AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1);
   assert.equal(dispatch.expansion_blocked, false);
   assert.equal(dispatch.current_stage_id, null);
+});
+
+test("ap-batch-v3 dispatch expected_artifact_paths match on-disk layout", async () => {
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const instantiation = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+    ap_batch_v3_run_instantiation: instantiation,
+  });
+  assert.deepEqual(dispatch.expected_artifact_paths, [
+    AP_BATCH_V3_REGISTRY_REL_V1,
+    AP_BATCH_V3_PACKETS_DIR_REL_V1,
+  ]);
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_REGISTRY_REL_V1)));
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_DIR_REL_V1)));
 });
 
 test("dispatch builder does not mutate product CSV", () => {
