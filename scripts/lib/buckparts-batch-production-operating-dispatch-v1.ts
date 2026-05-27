@@ -4,7 +4,13 @@
  */
 
 import type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
-import { AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1 } from "./ap-batch-v3-run-instantiation-v1";
+import {
+  AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1,
+  AP_BATCH_V3_PACKETS_DIR_REL_V1,
+  AP_BATCH_V3_REGISTRY_REL_V1,
+  AP_BATCH_V3_RESULTS_DIR_REL_V1,
+  AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
+} from "./ap-batch-v3-run-instantiation-v1";
 import {
   AP_APPLY_PLAN_BATCH_V2_DEFAULT_PATH_V1,
   AP_APPLY_RUN_BATCH_V2_DEFAULT_JSON_V1,
@@ -55,6 +61,7 @@ export type BatchProductionSelectedSubsystemV1 =
   | "expansion_loop_next_batch_selection"
   | "demand_to_coverage_next_lane"
   | "ap_batch_v3_run_instantiation"
+  | "ap_batch_v3_agent_evidence_required"
   | "batch_checklist_inspect";
 
 export type BatchProductionOperatingDispatchV1 = {
@@ -140,6 +147,7 @@ function subsystemCommandSurface(
     case "expansion_loop_next_batch_selection":
     case "demand_to_coverage_next_lane":
     case "ap_batch_v3_run_instantiation":
+    case "ap_batch_v3_agent_evidence_required":
       return "cursor_agent";
     case "none":
       return "none";
@@ -292,32 +300,89 @@ export function buildBatchProductionOperatingDispatchV1(
   ) {
     const instantiation = expansionContext?.ap_batch_v3_run_instantiation ?? null;
     if (instantiation?.may_proceed_to_packet_write === true) {
+      if (instantiation.packets_stage_complete) {
+        const packetList = instantiation.committed_run_artifact?.packet_ids ?? [];
+        return {
+          contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
+          read_only: true,
+          data_mutation: false,
+          runtime_status: checklist.runtime_status,
+          dispatch_status: "READY",
+          current_stage_id: "packets_generated",
+          next_stage_id: "evidence_collected",
+          selected_subsystem: "ap_batch_v3_agent_evidence_required",
+          exact_command: AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1,
+          command_surface: "cursor_agent",
+          allowed_mutations: [
+            "batch_run_planning_read_only",
+            "external_browser_evidence_collection_read_only",
+          ],
+          forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
+          owner_approval_required: false,
+          mutation_allowed: false,
+          proof_required_before_execution:
+            "Committed ap-batch-v3 packets are on disk — run external browser agents per packet JSON; commit *.results.json under agent-results-batch-v3 (read-only planning until aggregator review).",
+          expected_artifact_paths: [
+            AP_BATCH_V3_REGISTRY_REL_V1,
+            AP_BATCH_V3_PACKETS_DIR_REL_V1,
+            AP_BATCH_V3_RESULTS_DIR_REL_V1,
+            ...instantiation.expected_result_artifact_paths_rel,
+          ],
+          success_transition:
+            "All packet result files committed — run read-only aggregator review before any apply planning.",
+          failure_transition: "Do not mutate CSV/Supabase; do not run agents from Command Center automatically.",
+          why_this_is_next: `AP batch-v3 packet stage complete for ${instantiation.run_id}. Ready packet files: ${instantiation.ready_packet_files_rel.join(", ")}. Next: external agent evidence → ${instantiation.expected_result_artifact_paths_rel.join(", ")}.`,
+          blocked_reasons: [],
+          expansion_blocked: false,
+          derived_from_checklist_contract: checklist.contract,
+        };
+      }
+
+      const packetBlockedReasons = [...blocked_reasons];
+      if (instantiation.packet_stage_status === "MISSING_PACKET_FILES") {
+        for (const missing of instantiation.missing_packet_files_rel) {
+          packetBlockedReasons.push(`missing_packet_file:${missing}`);
+        }
+      }
+      if (instantiation.packet_stage_status === "MISSING_MANIFEST") {
+        packetBlockedReasons.push(`missing_manifest:${AP_BATCH_V3_PACKETS_DIR_REL_V1}/manifest.json`);
+      }
+      if (instantiation.packet_stage_status === "RUN_ID_MISMATCH") {
+        packetBlockedReasons.push("run_id_mismatch:registry_vs_manifest");
+      }
+
+      const dispatch_status: BatchProductionDispatchStatusV1 =
+        instantiation.packet_stage_status === "MISSING_PACKET_FILES" ||
+        instantiation.packet_stage_status === "RUN_ID_MISMATCH"
+          ? "OWNER_REVIEW_REQUIRED"
+          : "READY";
+
       return {
         contract: BATCH_PRODUCTION_OPERATING_DISPATCH_CONTRACT_V1,
         read_only: true,
         data_mutation: false,
         runtime_status: checklist.runtime_status,
-        dispatch_status: "READY",
+        dispatch_status,
         current_stage_id: null,
-        next_stage_id: "lane_selected",
+        next_stage_id: "packets_generated",
         selected_subsystem: "ap_batch_v3_run_instantiation",
         exact_command: AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1,
         command_surface: "cursor_agent",
         allowed_mutations: ["batch_run_planning_read_only", "ap_batch_v3_run_descriptor_read_only"],
         forbidden_mutations: [...FORBIDDEN_MUTATIONS_BASE_V1],
-        owner_approval_required: false,
+        owner_approval_required: instantiation.packet_stage_status !== "NOT_STARTED",
         mutation_allowed: false,
         proof_required_before_execution:
-          "Command Center selected air_purifier reopen — review proposed ap-batch-v3 run descriptor before packet generation.",
+          "Command Center selected air_purifier reopen — committed run descriptor and packet manifest must exist on disk before evidence collection.",
         expected_artifact_paths: [
           instantiation.proposed_artifact_paths.run_registry,
           instantiation.proposed_artifact_paths.packets_dir,
         ],
         success_transition:
-          "Owner approves ap-batch-v3 run descriptor — write packets to agent-packets-batch-v3 and open lane_selected stage.",
+          "Committed registry + manifest + packet JSON files on disk — dispatch advances to ap_batch_v3_agent_evidence_required.",
         failure_transition: "Do not mutate CSV/Supabase or reuse ap-batch-v2 plans.",
-        why_this_is_next: `Instantiate ap-batch-v3 from Command Center selection (${String(instantiation.buyer_path_candidate_count)} buyer-path candidates; ${String(instantiation.catalog_review_candidate_count)} catalog-review). ${instantiation.next_command_center_step}`,
-        blocked_reasons: [],
+        why_this_is_next: `Instantiate/write ap-batch-v3 packets (${String(instantiation.buyer_path_candidate_count)} buyer-path; ${String(instantiation.catalog_review_candidate_count)} catalog-review). ${instantiation.next_command_center_step}`,
+        blocked_reasons: packetBlockedReasons,
         expansion_blocked: false,
         derived_from_checklist_contract: checklist.contract,
       };

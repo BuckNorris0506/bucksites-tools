@@ -591,7 +591,12 @@ function BatchProductionOperatingChecklistSection({
             data-testid="batch-production-ap-batch-v3-run-plan"
             className="rounded-lg border border-emerald-300/70 bg-emerald-50/70 p-4 text-xs text-slate-800 dark:border-emerald-800/50 dark:bg-emerald-950/30 dark:text-slate-200"
           >
-            <p className="font-semibold">Command Center proposed AP batch run ({runInstantiation.run_id})</p>
+            <p className="font-semibold">Command Center AP batch run ({runInstantiation.run_id})</p>
+            <p className="mt-2 text-[11px] text-slate-700 dark:text-slate-300">
+              Packet stage: {runInstantiation.packet_stage_status}
+              {runInstantiation.packets_stage_complete ? " · packets committed on disk" : ""}
+              {" · "}run id source: {runInstantiation.active_run_id_source}
+            </p>
             <p className="mt-2">
               Buyer-path candidates: {runInstantiation.buyer_path_candidate_count} · catalog-review:{" "}
               {runInstantiation.catalog_review_candidate_count} · owner-review (separate):{" "}

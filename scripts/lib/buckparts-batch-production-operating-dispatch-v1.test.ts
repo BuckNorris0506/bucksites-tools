@@ -97,7 +97,7 @@ test("dispatch director override surfaces BATCH DISPATCH next action when blocke
   assert.equal(override.next_move_command, dispatch.exact_command);
 });
 
-test("dispatch moves to ap-batch-v3 run instantiation when closed batch proof is complete", async () => {
+test("dispatch advances to agent evidence when committed ap-batch-v3 packets exist", async () => {
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   assert.equal(checklist.spent_plan_closeout.classification, "SPENT_CLOSED_SUCCESS");
@@ -106,17 +106,20 @@ test("dispatch moves to ap-batch-v3 run instantiation when closed batch proof is
     demandToCoverageNextLane: demand,
     checklist,
   });
+  assert.equal(instantiation.packets_stage_complete, true);
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
   assert.equal(dispatch.dispatch_status, "READY");
-  assert.equal(dispatch.exact_command, AP_BATCH_V3_RUN_INSTANTIATION_COMMAND_V1);
+  assert.equal(dispatch.current_stage_id, "packets_generated");
   assert.equal(dispatch.expansion_blocked, false);
-  assert.equal(dispatch.current_stage_id, null);
+  assert.ok(
+    dispatch.expected_artifact_paths.some((p) => p.includes("agent-results-batch-v3")),
+  );
 });
 
-test("ap-batch-v3 dispatch expected_artifact_paths match on-disk layout", async () => {
+test("ap-batch-v3 dispatch expected_artifact_paths include results when packets complete", async () => {
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   const instantiation = await buildApBatchV3RunInstantiationV1Report({
@@ -127,10 +130,12 @@ test("ap-batch-v3 dispatch expected_artifact_paths match on-disk layout", async 
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.deepEqual(dispatch.expected_artifact_paths, [
-    AP_BATCH_V3_REGISTRY_REL_V1,
-    AP_BATCH_V3_PACKETS_DIR_REL_V1,
-  ]);
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.ok(dispatch.expected_artifact_paths.includes(AP_BATCH_V3_REGISTRY_REL_V1));
+  assert.ok(dispatch.expected_artifact_paths.includes(AP_BATCH_V3_PACKETS_DIR_REL_V1));
+  assert.ok(
+    dispatch.expected_artifact_paths.some((p) => p.endsWith(".results.json")),
+  );
   assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_REGISTRY_REL_V1)));
   assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_DIR_REL_V1)));
 });

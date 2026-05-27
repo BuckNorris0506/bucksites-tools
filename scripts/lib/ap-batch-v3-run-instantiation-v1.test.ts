@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -13,6 +13,7 @@ import {
   AP_BATCH_V3_SOURCE_PROVEN_RUN_ID_V1,
   buildApBatchV3RunInstantiationV1Report,
   isApBatchV3RunRegistryPacketMisplacementV1,
+  loadApBatchV3CommittedRunArtifactV1,
   resolveApBatchV3ArtifactPathsV1,
 } from "./ap-batch-v3-run-instantiation-v1";
 import { buildBatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
@@ -129,7 +130,7 @@ test("ap-batch-v3 generates more than 4 buyer-path candidates when lane backlog 
   assert.equal(report.may_proceed_to_packet_write, true);
 });
 
-test("Command Center dispatch surfaces ap-batch-v3 run instantiation", async () => {
+test("Command Center dispatch advances past packet generation when committed packets exist", async () => {
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   const instantiation = await buildApBatchV3RunInstantiationV1Report({
@@ -137,12 +138,32 @@ test("Command Center dispatch surfaces ap-batch-v3 run instantiation", async () 
     demandToCoverageNextLane: demand,
     checklist,
   });
+  assert.equal(instantiation.packets_stage_complete, true);
+  assert.equal(instantiation.active_run_id_source, "committed_registry");
+  assert.notEqual(instantiation.run_id, "UNKNOWN");
+
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.equal(dispatch.current_stage_id, "packets_generated");
   assert.equal(dispatch.dispatch_status, "READY");
   assert.equal(dispatch.expansion_blocked, false);
+  assert.notEqual(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+});
+
+test("committed run id wins over regenerated daily proposed id", async () => {
+  const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+  const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+  const report = await buildApBatchV3RunInstantiationV1Report({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2099-01-01T12:00:00.000Z"),
+    demandToCoverageNextLane: demand,
+    checklist,
+  });
+  assert.equal(report.active_run_id_source, "committed_registry");
+  assert.equal(report.run_id, "ap-batch-v3-proposed-2026-05-26");
+  assert.notEqual(report.run_id, "ap-batch-v3-proposed-2099-01-01");
 });
 
 test("read-only report paths do not mutate CSV Supabase or dispatch-run artifacts", async () => {
@@ -229,7 +250,88 @@ test("repo run-registry contains only run descriptors — packets live under age
   assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_DIR_REL_V1)));
 });
 
-test("Command Center dispatch expected_artifact_paths exist after packet write layout", async () => {
+function copyRepoBatchFileToSandbox(sandboxRoot: string, rel: string): string {
+  const dst = path.join(sandboxRoot, rel);
+  mkdirSync(path.dirname(dst), { recursive: true });
+  writeFileSync(dst, readFileSync(path.join(REPO_ROOT, rel), "utf8"), "utf8");
+  return dst;
+}
+
+test("missing packet manifest keeps dispatch on ap_batch_v3_run_instantiation", async () => {
+  const sandbox = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-missing-manifest-"));
+  try {
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_REGISTRY_REL_V1);
+
+    const committed = loadApBatchV3CommittedRunArtifactV1({
+      rootDir: sandbox,
+      fileExists: (p) => existsSync(p),
+      readTextFile: (p) => readFileSync(p, "utf8"),
+    });
+    assert.equal(committed.packet_stage_status, "MISSING_MANIFEST");
+
+    const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const instantiation = await buildApBatchV3RunInstantiationV1Report({
+      rootDir: REPO_ROOT,
+      artifactRootDir: sandbox,
+      demandToCoverageNextLane: demand,
+      checklist,
+    });
+    assert.equal(instantiation.packets_stage_complete, false);
+    assert.equal(instantiation.packet_stage_status, "MISSING_MANIFEST");
+    assert.equal(instantiation.may_proceed_to_packet_write, true);
+
+    const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+      ap_batch_v3_run_instantiation: instantiation,
+    });
+    assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+  } finally {
+    rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test("missing packet file blocks advancement and lists missing file", async () => {
+  const sandbox = mkdtempSync(path.join(tmpdir(), "ap-batch-v3-missing-packet-"));
+  try {
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_REGISTRY_REL_V1);
+    copyRepoBatchFileToSandbox(sandbox, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1);
+    copyRepoBatchFileToSandbox(
+      sandbox,
+      `${AP_BATCH_V3_PACKETS_DIR_REL_V1}/ap-levoit-oem-discovery-v1.json`,
+    );
+
+    const committed = loadApBatchV3CommittedRunArtifactV1({
+      rootDir: sandbox,
+      fileExists: (p) => existsSync(p),
+      readTextFile: (p) => readFileSync(p, "utf8"),
+    });
+    assert.equal(committed.packet_stage_status, "MISSING_PACKET_FILES");
+    assert.ok(committed.missing_packet_files_rel.length > 0);
+
+    const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
+    const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
+    const instantiation = await buildApBatchV3RunInstantiationV1Report({
+      rootDir: REPO_ROOT,
+      artifactRootDir: sandbox,
+      demandToCoverageNextLane: demand,
+      checklist,
+    });
+    assert.equal(instantiation.packet_stage_status, "MISSING_PACKET_FILES");
+    assert.equal(instantiation.may_proceed_to_packet_write, true);
+    const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
+      ap_batch_v3_run_instantiation: instantiation,
+    });
+    assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
+    assert.equal(dispatch.dispatch_status, "OWNER_REVIEW_REQUIRED");
+    assert.ok(
+      dispatch.blocked_reasons.some((r) => r.startsWith("missing_packet_file:")),
+    );
+  } finally {
+    rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test("Command Center dispatch expected_artifact_paths exist when packets stage complete", async () => {
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   const instantiation = await buildApBatchV3RunInstantiationV1Report({
@@ -240,12 +342,11 @@ test("Command Center dispatch expected_artifact_paths exist after packet write l
   const dispatch = buildBatchProductionOperatingDispatchV1(checklist, {
     ap_batch_v3_run_instantiation: instantiation,
   });
-  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_run_instantiation");
-  for (const rel of dispatch.expected_artifact_paths) {
-    assert.ok(
-      existsSync(path.join(REPO_ROOT, rel)) || existsSync(path.join(REPO_ROOT, rel, "manifest.json")),
-      `expected artifact missing: ${rel}`,
-    );
+  assert.equal(dispatch.selected_subsystem, "ap_batch_v3_agent_evidence_required");
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_REGISTRY_REL_V1)));
+  assert.ok(existsSync(path.join(REPO_ROOT, AP_BATCH_V3_PACKETS_MANIFEST_REL_V1)));
+  for (const rel of instantiation.ready_packet_files_rel) {
+    assert.ok(existsSync(path.join(REPO_ROOT, rel)), `packet file missing: ${rel}`);
   }
 });
 

@@ -3,7 +3,7 @@
  * selection into a proposed run descriptor without mutating CSV, Supabase, or v2 artifacts.
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
@@ -56,6 +56,10 @@ export const AP_BATCH_V3_APPLY_PLAN_DIR_REL_V1 =
 export const AP_BATCH_V3_APPLY_RUN_DIR_REL_V1 =
   "data/air-purifier/batch-production/apply-runs-batch-v3" as const;
 
+/** Read-only aggregator inspect for batch-v3 evidence rows (no CSV/Supabase mutation). */
+export const AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1 =
+  `npx tsx scripts/report-air-purifier-agent-results-aggregator-v1.ts --results-dir ${AP_BATCH_V3_RESULTS_DIR_REL_V1}` as const;
+
 const CATALOG_REVIEW_PACKET_IDS_V1 = new Set(["ap-blueair-catalog-identity-v1"]);
 const OWNER_REVIEW_PACKET_IDS_V1 = new Set(["ap-amazon-secondary-v1"]);
 
@@ -77,6 +81,48 @@ export type ApBatchV3ExcludedCandidateV1 = {
   filter_slug: string;
   state: ApBatchProductionLaneStateV1;
   reason: string;
+};
+
+export type ApBatchV3PacketStageStatusV1 =
+  | "COMPLETE"
+  | "MISSING_REGISTRY"
+  | "MISSING_MANIFEST"
+  | "MISSING_PACKET_FILES"
+  | "RUN_ID_MISMATCH"
+  | "NOT_STARTED";
+
+export type ApBatchV3ActiveRunIdSourceV1 = "committed_registry" | "proposed_daily";
+
+export type ApBatchV3CommittedRunRegistryV1 = {
+  contract?: string;
+  run_id?: string;
+  wedge?: string;
+  lane_label?: string;
+  proposed?: boolean;
+  artifact_paths?: {
+    packets_dir?: string;
+    results_dir?: string;
+  };
+  may_proceed_to_packet_write?: boolean;
+};
+
+export type ApBatchV3CommittedPacketManifestV1 = {
+  contract?: string;
+  run_id?: string;
+  packet_ids?: string[];
+  packet_count?: number;
+};
+
+export type ApBatchV3CommittedRunArtifactV1 = {
+  registry_rel: string;
+  manifest_rel: string;
+  run_id: string;
+  packet_ids: string[];
+  packet_files_rel: string[];
+  expected_result_artifact_paths_rel: string[];
+  packet_stage_status: ApBatchV3PacketStageStatusV1;
+  missing_packet_files_rel: string[];
+  proven_facts: string[];
 };
 
 export type ApBatchV3RunInstantiationV1 = {
@@ -120,6 +166,14 @@ export type ApBatchV3RunInstantiationV1 = {
   };
   preflight_blockers: string[];
   may_proceed_to_packet_write: boolean;
+  /** True when committed registry + manifest + all packet JSON files exist on disk. */
+  packets_stage_complete: boolean;
+  packet_stage_status: ApBatchV3PacketStageStatusV1;
+  active_run_id_source: ApBatchV3ActiveRunIdSourceV1;
+  committed_run_artifact: ApBatchV3CommittedRunArtifactV1 | null;
+  ready_packet_files_rel: string[];
+  missing_packet_files_rel: string[];
+  expected_result_artifact_paths_rel: string[];
   next_command_center_step: string;
   notes: string[];
   files_written: string[];
@@ -127,6 +181,8 @@ export type ApBatchV3RunInstantiationV1 = {
 
 export type BuildApBatchV3RunInstantiationDepsV1 = {
   rootDir: string;
+  /** Defaults to rootDir — lane CSVs use rootDir; committed artifacts use this when set. */
+  artifactRootDir?: string;
   now?: () => Date;
   demandToCoverageNextLane: DemandToCoverageNextLaneReportV1;
   checklist?: BatchProductionOperatingChecklistV1 | null;
@@ -207,6 +263,202 @@ function filterPacketSlugs(
 function proposedRunId(now: () => Date): string {
   const d = now().toISOString().slice(0, 10);
   return `ap-batch-v3-proposed-${d}`;
+}
+
+function defaultFileExists(absolutePath: string): boolean {
+  return existsSync(absolutePath);
+}
+
+function defaultReadText(absolutePath: string): string {
+  return readFileSync(absolutePath, "utf8");
+}
+
+export function apBatchV3PacketFileRelV1(packetId: string): string {
+  return `${AP_BATCH_V3_PACKETS_DIR_REL_V1}/${packetId}.json`;
+}
+
+export function apBatchV3ResultFileRelV1(packetId: string): string {
+  return `${AP_BATCH_V3_RESULTS_DIR_REL_V1}/${packetId}.results.json`;
+}
+
+/** Read committed run descriptor + packet manifest from repo; validate packet files on disk. */
+export function loadApBatchV3CommittedRunArtifactV1(args: {
+  rootDir: string;
+  fileExists?: (absolutePath: string) => boolean;
+  readTextFile?: (absolutePath: string) => string;
+}): ApBatchV3CommittedRunArtifactV1 {
+  const fileExists = args.fileExists ?? defaultFileExists;
+  const readTextFile = args.readTextFile ?? defaultReadText;
+  const proven_facts: string[] = [];
+  const registry_rel = AP_BATCH_V3_REGISTRY_REL_V1;
+  const manifest_rel = AP_BATCH_V3_PACKETS_MANIFEST_REL_V1;
+  const registryAbs = path.join(args.rootDir, registry_rel);
+
+  if (!fileExists(registryAbs)) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id: "UNKNOWN",
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_REGISTRY",
+      missing_packet_files_rel: [],
+      proven_facts,
+    };
+  }
+
+  let registry: ApBatchV3CommittedRunRegistryV1;
+  try {
+    registry = JSON.parse(readTextFile(registryAbs)) as ApBatchV3CommittedRunRegistryV1;
+  } catch {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id: "UNKNOWN",
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_REGISTRY",
+      missing_packet_files_rel: [registry_rel],
+      proven_facts: [`INVALID: ${registry_rel} is not valid JSON.`],
+    };
+  }
+
+  const run_id = typeof registry.run_id === "string" ? registry.run_id.trim() : "";
+  if (!run_id) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id: "UNKNOWN",
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_REGISTRY",
+      missing_packet_files_rel: [],
+      proven_facts: [`INVALID: ${registry_rel} missing run_id.`],
+    };
+  }
+
+  proven_facts.push(`PROVEN: committed run registry ${registry_rel} run_id=${run_id}.`);
+
+  const manifestAbs = path.join(args.rootDir, manifest_rel);
+  if (!fileExists(manifestAbs)) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id,
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_MANIFEST",
+      missing_packet_files_rel: [manifest_rel],
+      proven_facts,
+    };
+  }
+
+  let manifest: ApBatchV3CommittedPacketManifestV1;
+  try {
+    manifest = JSON.parse(readTextFile(manifestAbs)) as ApBatchV3CommittedPacketManifestV1;
+  } catch {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id,
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_MANIFEST",
+      missing_packet_files_rel: [manifest_rel],
+      proven_facts: [...proven_facts, `INVALID: ${manifest_rel} is not valid JSON.`],
+    };
+  }
+
+  const manifestRunId = typeof manifest.run_id === "string" ? manifest.run_id.trim() : "";
+  if (manifestRunId && manifestRunId !== run_id) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id,
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "RUN_ID_MISMATCH",
+      missing_packet_files_rel: [],
+      proven_facts: [
+        ...proven_facts,
+        `BLOCKED: manifest run_id=${manifestRunId} does not match registry run_id=${run_id}.`,
+      ],
+    };
+  }
+
+  const packet_ids = Array.isArray(manifest.packet_ids)
+    ? manifest.packet_ids.filter((id): id is string => typeof id === "string" && id.trim().length > 0)
+    : [];
+
+  if (packet_ids.length === 0) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id,
+      packet_ids: [],
+      packet_files_rel: [],
+      expected_result_artifact_paths_rel: [],
+      packet_stage_status: "MISSING_MANIFEST",
+      missing_packet_files_rel: [manifest_rel],
+      proven_facts: [...proven_facts, `INVALID: ${manifest_rel} has no packet_ids.`],
+    };
+  }
+
+  proven_facts.push(
+    `PROVEN: packet manifest ${manifest_rel} lists ${String(packet_ids.length)} packet(s).`,
+  );
+
+  const packet_files_rel: string[] = [];
+  const missing_packet_files_rel: string[] = [];
+  for (const packetId of packet_ids) {
+    const rel = apBatchV3PacketFileRelV1(packetId);
+    if (fileExists(path.join(args.rootDir, rel))) {
+      packet_files_rel.push(rel);
+    } else {
+      missing_packet_files_rel.push(rel);
+    }
+  }
+
+  const expected_result_artifact_paths_rel = packet_ids.map((id) => apBatchV3ResultFileRelV1(id));
+
+  if (missing_packet_files_rel.length > 0) {
+    return {
+      registry_rel,
+      manifest_rel,
+      run_id,
+      packet_ids,
+      packet_files_rel,
+      expected_result_artifact_paths_rel,
+      packet_stage_status: "MISSING_PACKET_FILES",
+      missing_packet_files_rel,
+      proven_facts: [
+        ...proven_facts,
+        `PARTIAL: missing packet file(s): ${missing_packet_files_rel.join(", ")}`,
+      ],
+    };
+  }
+
+  proven_facts.push(
+    `PROVEN: all ${String(packet_ids.length)} packet JSON files exist under ${AP_BATCH_V3_PACKETS_DIR_REL_V1}.`,
+  );
+
+  return {
+    registry_rel,
+    manifest_rel,
+    run_id,
+    packet_ids,
+    packet_files_rel,
+    expected_result_artifact_paths_rel,
+    packet_stage_status: "COMPLETE",
+    missing_packet_files_rel: [],
+    proven_facts,
+  };
 }
 
 /** Resolve registry vs packet paths. `--out-dir` is a sandbox root mirroring batch-production layout. */
@@ -293,6 +545,13 @@ export function buildApBatchV3UnknownV1(args: {
     },
     preflight_blockers: [args.reason],
     may_proceed_to_packet_write: false,
+    packets_stage_complete: false,
+    packet_stage_status: "NOT_STARTED",
+    active_run_id_source: "proposed_daily",
+    committed_run_artifact: null,
+    ready_packet_files_rel: [],
+    missing_packet_files_rel: [],
+    expected_result_artifact_paths_rel: [],
     next_command_center_step: args.reason,
     notes: [args.reason],
     files_written: [],
@@ -388,13 +647,59 @@ export async function buildApBatchV3RunInstantiationV1Report(
   const may_proceed_to_packet_write =
     preflight_blockers.length === 0 && buyer_path.length > 4;
 
-  const run_id = proposedRunId(now);
+  const artifactRootDir = deps.artifactRootDir ?? deps.rootDir;
+  const committed_run_artifact = loadApBatchV3CommittedRunArtifactV1({
+    rootDir: artifactRootDir,
+    fileExists: deps.fileExists,
+    readTextFile: deps.readTextFile,
+  });
+
+  const active_run_id_source: ApBatchV3ActiveRunIdSourceV1 =
+    committed_run_artifact.packet_stage_status !== "MISSING_REGISTRY"
+      ? "committed_registry"
+      : "proposed_daily";
+
+  const run_id =
+    active_run_id_source === "committed_registry"
+      ? committed_run_artifact.run_id
+      : proposedRunId(now);
+
+  const packets_stage_complete = committed_run_artifact.packet_stage_status === "COMPLETE";
+  const packet_stage_status: ApBatchV3PacketStageStatusV1 = packets_stage_complete
+    ? "COMPLETE"
+    : committed_run_artifact.packet_stage_status === "MISSING_REGISTRY"
+      ? "NOT_STARTED"
+      : committed_run_artifact.packet_stage_status;
+
   const notes = [
     "Read-only run instantiation — does not mutate ap-batch-v2 plans, product CSV, or Supabase.",
     `Excluded ${String(excluded.length)} slugs including existing_direct_buyable and ap-batch-v2 applied slugs.`,
     `Owner-review rows (${String(owner_review_required.length)}) are listed separately — not in buyer-path packets.`,
     `Catalog-review rows (${String(catalog_review.length)}) are not buyer-path mutation tasks.`,
+    ...committed_run_artifact.proven_facts,
   ];
+
+  if (active_run_id_source === "committed_registry") {
+    notes.push(`Active run_id locked from ${AP_BATCH_V3_REGISTRY_REL_V1}: ${run_id}.`);
+  }
+  if (packets_stage_complete) {
+    notes.push("Packet stage COMPLETE — committed registry, manifest, and packet files on disk.");
+  } else if (
+    may_proceed_to_packet_write &&
+    packet_stage_status === "MISSING_MANIFEST"
+  ) {
+    notes.push(`Packet stage incomplete — write manifest to ${AP_BATCH_V3_PACKETS_MANIFEST_REL_V1}.`);
+  } else if (packet_stage_status === "MISSING_PACKET_FILES") {
+    notes.push(
+      `Packet stage blocked — missing files: ${committed_run_artifact.missing_packet_files_rel.join(", ")}`,
+    );
+  }
+
+  const next_command_center_step = packets_stage_complete
+    ? `Packets committed for ${run_id}. Collect external agent evidence into ${AP_BATCH_V3_RESULTS_DIR_REL_V1} (${committed_run_artifact.packet_ids.join(", ")}).`
+    : may_proceed_to_packet_write
+      ? "Review proposed ap-batch-v3 run descriptor; owner may write packets with --write --write-packets."
+      : preflight_blockers[0] ?? "Resolve preflight blockers before ap-batch-v3 instantiation.";
 
   const report: ApBatchV3RunInstantiationV1 = {
     contract: AP_BATCH_V3_RUN_INSTANTIATION_CONTRACT_V1,
@@ -437,9 +742,14 @@ export async function buildApBatchV3RunInstantiationV1Report(
     },
     preflight_blockers,
     may_proceed_to_packet_write,
-    next_command_center_step: may_proceed_to_packet_write
-      ? "Review proposed ap-batch-v3 run descriptor; owner may write packets with --write --write-packets --out-dir."
-      : preflight_blockers[0] ?? "Resolve preflight blockers before ap-batch-v3 instantiation.",
+    packets_stage_complete,
+    packet_stage_status,
+    active_run_id_source,
+    committed_run_artifact,
+    ready_packet_files_rel: committed_run_artifact.packet_files_rel,
+    missing_packet_files_rel: committed_run_artifact.missing_packet_files_rel,
+    expected_result_artifact_paths_rel: committed_run_artifact.expected_result_artifact_paths_rel,
+    next_command_center_step,
     notes,
     files_written: [],
   };
