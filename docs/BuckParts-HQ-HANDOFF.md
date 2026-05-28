@@ -6,7 +6,7 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1 (Layer 7 owner decisions):** through **`93dcd3d`**. **Batch production operating checklist (Command Center backbone):** implemented in-repo; **pre-commit dirty worktree** at handoff refresh (see **Batch production operating checklist v1** below; base commit **`98412a1`**). **AP batch-v2 CSV apply + Supabase parity:** **PROVEN applied** in prior operator work (artifacts on disk; not re-run in this doc step). **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1 (Layer 7 owner decisions):** through **`93dcd3d`**. **Batch production operating checklist (Command Center backbone):** through **`98412a1`**. **Fridge truth spine (`command_center_v2.fridge_truth_spine_v1`):** through **`7b09529`** — see **Fridge truth spine v1 — Command Center** below. **AP batch-v2 CSV apply + Supabase parity:** **PROVEN applied** in prior operator work (artifacts on disk; not re-run in this doc step). **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -162,21 +162,104 @@ npm run buckparts:founder-digest
 
 ---
 
-## Current stopping point / chat migration state (through `98412a1` + pre-commit checklist)
+## Fridge truth spine v1 — Command Center (PROVEN through `7b09529`)
 
-Use this block first in a new HQ or implementation chat. **Command Center is moving toward director-of-operations truth** — the founder should **not** keep acting as the manual runner between batch scripts. **The business does not stop at UI motion or a single AP batch.**
+**Purpose:** Record the **verified refrigerator truth stack** now exposed read-only on Command Center. This is **truth inventory**, not permission to mutate CSV/Supabase or rebuild fridge products from scratch.
+
+### Repo checkpoint (PROVEN)
+
+| Item | Value |
+|------|--------|
+| HEAD | **`7b09529`** — *Surface fridge truth spine in Command Center* |
+| Command Center field | `command_center_v2.fridge_truth_spine_v1` |
+| Builder | `scripts/lib/fridge-truth-spine-v1.ts` (composes model-first audit, reconciliation, Supabase-vs-CSV diff, public-truth audit) |
+| Contract | `fridge_truth_spine_v1`; `read_only: true`; `data_mutation: false` |
+
+### What is PROVEN (read-only fridge truth spine)
+
+| Layer | PROVEN state |
+|-------|----------------|
+| **CSV buyer-path truth** | Committed `data/retailer_links.csv`: **0/57** linked fridge filters with safe direct-buyable primaries; all **57** primaries **`SEARCH_PLACEHOLDER_PRIMARY`**; `safe_buyer_path_verdict: PROVEN_TRUE` |
+| **Evidence truth** | **19** fridge win artifacts; **18** linked slugs with evidence-win artifacts |
+| **Supabase vs CSV** | Supabase **CHECKED**; **16/18** evidence-win slugs **`SUPABASE_HAS_WIN_CSV_MISSING`** |
+| **Evidence-only mismatch** | **`4396508`**, **`gswf`** — evidence-win artifacts **not** in Supabase |
+| **Public truth (prior audit)** | **18/18** live/public filter pages checked in `fridge_command_center_and_public_truth_audit_v1`; `public_truth_status: PUBLIC_TRUTHFUL`; `should_redo_fridge_products_now: NO` |
+| **Spine live HTTP in CC build** | **`UNKNOWN_NOT_CHECKED`** inside spine build (Command Center skips live HTTP probes) — run `report-fridge-command-center-and-public-truth-audit-v1` for full live proof |
+| **Mutation authority** | Spine **does not** authorize CSV export, CSV apply, Supabase mutation, dispatch-run mutation, batch-review mutation, or public customer UI mutation |
+
+### Recommended fridge next action (lane-only — not top-level NBA)
+
+**Founder-approved CSV export/backfill plan for 16 Supabase-proven fridge buyer paths; do not rebuild fridge products from scratch; do not apply without owner approval.**
+
+### Truth doctrine (PROVEN in spine)
+
+- Affiliate links remain **second to truth**.
+- Safe CTAs are allowed **only** when buyer-path gates pass.
+- Mapping confidence remains a **separate fit-truth issue** and must not be overclaimed.
+
+### Command Center `next_best_action` vs fridge spine (PROVEN)
+
+- Top-level **`next_best_action`** remains **AP model-first steering** when `ap_model_first_evidence_queue_v1` is **READY** (e.g. shark-carbon-foam at handoff refresh) — fridge spine **does not override** that steering.
+- Fridge truth is **exposed read-only** on Command Center for owner/report visibility; it is **not** wired as automatic CSV apply/export authorization.
+
+### Operating decision (PROVEN direction)
+
+- **Do not redo fridge products from scratch** right now (`should_redo_fridge_products_now: NO`).
+- Next **product-expansion** work should use **model-first discovery**, but **only after** this HQ handoff reflects the stopping point.
+
+### PROVEN — inspect spine lane (copy/paste from repo root)
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_truth_spine_v1 | {
+  contract,
+  read_only,
+  data_mutation,
+  csv_truth,
+  evidence_truth,
+  supabase_csv_diff,
+  public_truth,
+  recommended_next_action,
+  truth_first_notes
+}'
+```
+
+### PROVEN — focused validation (save credits; avoid full Command Center suite unless CC changes)
+
+```bash
+node --import tsx --test scripts/lib/fridge-truth-spine-v1.test.ts
+node --import tsx --test scripts/lib/refrigerator-model-first-truth-audit-v1.test.ts
+node --import tsx --test scripts/lib/fridge-truth-reconciliation-v1.test.ts
+node --import tsx --test scripts/lib/fridge-supabase-vs-csv-retailer-links-diff-v1.test.ts
+node --import tsx --test scripts/lib/fridge-command-center-and-public-truth-audit-v1.test.ts
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+**Full live public HTTP proof (when needed):**
+
+```bash
+npx tsx scripts/report-fridge-command-center-and-public-truth-audit-v1.ts
+```
+
+**PROVEN — validation before this handoff update:** `buckparts-hq-handoff-freshness`; focused fridge spine tests above; `npm run lint` (docs-only change).
+
+---
+
+## Current stopping point / chat migration state (through `7b09529`)
+
+Use this block first in a new HQ or implementation chat. **Command Center is the operating brain** — fridge truth is now on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval. **The business does not stop at UI motion or a single AP batch.**
 
 ### Repo HEAD (PROVEN at handoff refresh)
 
 | Item | Value |
 |------|--------|
 | Branch | **`main`** |
-| Latest known committed HEAD | **`98412a1`** — verify with `git rev-parse HEAD` after pull |
-| Pre-commit dirty worktree | **PROVEN at doc refresh:** Command Center **`batch_production_operating_checklist_v1`** + owner dashboard section + AP compile-target fixes (see checklist section); **commit after** `buckparts-hq-handoff-freshness`, checklist tests, `npm run lint`, `npm run build` all pass |
-| Prior milestone chain | `bbadce5` UX motion/memory · `a343464` Waterdrop · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement · `84fb4b3` neurons · `93dcd3d` Layer 7 batch owner decisions |
+| Latest known committed HEAD | **`7b09529`** — *Surface fridge truth spine in Command Center* — verify with `git rev-parse HEAD` after pull |
+| Fridge truth spine | **PROVEN on Command Center:** `command_center_v2.fridge_truth_spine_v1` (`read_only`, `data_mutation: false`) — see **Fridge truth spine v1** section |
+| Command Center partial vs aware | **INFERRED:** spine composes full fridge truth stack; wiring scan in public-truth audit may still read **`COMMAND_CENTER_PARTIAL`** until explicit spine field markers are added to wiring scan — **do not treat as license to redo fridge products** |
+| Prior milestone chain | `98412a1` batch checklist · `bbadce5` UX motion/memory · `a343464` Waterdrop · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement · `84fb4b3` neurons · `93dcd3d` Layer 7 batch owner decisions |
 | AP batch-v2 production apply | **PROVEN (prior work, on disk):** 4 auto-safe direct-buy slugs applied to `data/air-purifier/retailer_links.csv`; apply-run at `data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json` (`apply_status: APPLIED`); Supabase parity applied in operator session — **no parity apply-run artifact committed in repo** (stage stays **UNKNOWN** in checklist until ingested) |
 | Customer UI | **Existing BuckParts look preserved** at `bbadce5`; motion + `buckparts.recentSearches.v1` only |
-| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba`; checklist work does **not** grant mutation authority |
+| Semi-Cruise read-only loop | Still **PROVEN** at `edfeeba`; fridge spine work does **not** grant mutation authority |
 
 **Commit lineage (Layer 7 + HQ + Command Center):**
 
@@ -418,23 +501,27 @@ npm run build
 
 ## Current next build priority
 
-Finish **Command Center operating backbone** before more product-row expansion:
+**After HQ handoff reflects fridge truth spine (`7b09529`):**
 
-1. **Commit** checklist + compile fixes after tests, lint, build, and this handoff freshness pass.
-2. **Add durable Supabase parity apply artifact ingestion** so `supabase_parity_applied` is repo-proven, not operator-memory only.
-3. **Add batch-specific production runtime /go CTA-order smoke artifact ingestion** (distinguish coverage added vs primary CTA changed vs multiple safe paths).
-4. **Add one read-only orchestration entrypoint** that tells the owner the **next exact command**, **blocked stage**, **owner decision**, and whether **mutation is allowed** — without bypassing checklist/state.
-5. **Only then** scale batch size and add more product rows/wedges.
+1. **Do not redo fridge products from scratch** — public truth audit says **`should_redo_fridge_products_now: NO`**; spine lane is read-only inventory only.
+2. **Founder-approved CSV export/backfill plan** for **16** Supabase-proven fridge buyer paths — **plan only**; **do not apply** without explicit owner approval.
+3. **Next product-expansion work:** **model-first discovery** (AP steering already active on Command Center `next_best_action` when queue is READY).
+4. **Finish Command Center operating backbone** (checklist orchestration, parity apply artifact ingestion, runtime smoke ingestion) before scaling batch size or new wedges.
+5. **Save credits:** use **focused fridge spine tests** (see Fridge truth spine section) for fridge/doc work; run full `report-buckparts-command-center.test.ts` only when Command Center wiring changes.
 
 ---
 
 ## Do not do next
 
+- Do **not** redo fridge products from scratch — spine + public-truth audit say **`NO`**.
+- Do **not** apply fridge CSV export/backfill without **founder-approved plan** and explicit owner approval.
+- Do **not** treat `fridge_truth_spine_v1` as CSV apply/export authorization — lane is **read-only**.
+- Do **not** override AP model-first steering on Command Center `next_best_action` unless existing logic already chooses fridge (it does not today when AP queue is READY).
 - Do **not** start another one-off AP/fridge/whole-house batch **outside** Command Center checklist/state.
 - Do **not** add new wedges before Command Center can prove **run stage**, **parity state**, **runtime smoke**, **owner-review queue**, and **next lane**.
-- Do **not** treat lint/test pass as complete if **`npm run build` fails**.
-- Do **not** call checklist work **done** until **docs**, **tests**, **lint**, **build**, and **handoff freshness** all pass.
-- Do **not** let Cursor/Codex create more **isolated tools** without registering them in Command Center checklist/state.
+- Do **not** treat lint/test pass as complete if **`npm run build` fails** (required for code changes; docs-only handoff may skip build).
+- Do **not** call checklist or fridge spine work **done** until **docs**, **focused tests**, and **handoff freshness** pass.
+- Do **not** let Cursor/Codex create more **isolated tools** without registering them in Command Center checklist/state or truth spine.
 - Do **not** weaken buy gates, `/go` gates, exact-token gates, fit gates, or wrong-purchase protections.
 
 ---
@@ -443,7 +530,9 @@ Finish **Command Center operating backbone** before more product-row expansion:
 
 | Area | Status |
 |------|--------|
-| Command Center as **complete** operating truth | **NOT_PROVEN** — checklist backbone (`batch_production_operating_checklist_v1`) is **PROVEN read-only** but orchestration, parity-apply ingestion, and live runtime smoke remain **PARTIAL/UNKNOWN** |
+| Command Center as **complete** operating truth | **NOT_PROVEN** — `fridge_truth_spine_v1` is **PROVEN read-only** on CC JSON; checklist backbone, orchestration, parity-apply ingestion, and live runtime smoke remain **PARTIAL/UNKNOWN** |
+| Fridge truth spine live HTTP in CC build | **UNKNOWN_NOT_CHECKED** in spine — prior public-truth audit **PROVEN** 18/18 when run with live probes; re-run `report-fridge-command-center-and-public-truth-audit-v1` to refresh |
+| Fridge CSV apply / export from spine lane | **NOT_PROVEN** — recommended action is **plan-only**; `do not apply without owner approval` |
 | Command Center batch checklist orchestration | **PARTIAL** — stage/setback display **PROVEN**; single next-command entrypoint **MISSING** |
 | Supabase parity applied (checklist stage) | **UNKNOWN** in-repo — operator-applied in prior session; no committed parity apply-run artifact |
 | Production /go primary CTA order (batch smoke) | **PARTIAL/UNKNOWN** — apply-run gate proof only; live CTA-order artifact **MISSING** |
@@ -471,6 +560,7 @@ Read-only inventory at this stop:
 - **INFERRED:** Owner load still attaches separate lanes (`owner_integrity_sentinel`, `owner_search_demand_and_gaps`, `owner_gsc_external_demand`, quarantine, launch policy) and may call `buildBuckpartsCommandSurfaceReport` again for sentinel — not the same as dashboard-owned neuron fabrication.
 - **Owner dashboard is not yet a single report surface** — many `scripts/report-*.ts` outputs remain CLI-only; neuron map + v2 lanes are not the full operating picture.
 - **PROVEN:** Layer 7 batch owner decisions are surfaced on the owner dashboard **via** `command_center_v2.batch_production_owner_decisions_lane_v1` (Command Center is the truth source for that lane).
+- **PROVEN:** Command Center JSON owns read-only **fridge truth spine** at `command_center_v2.fridge_truth_spine_v1` (`7b09529`) — CSV 0/57 safe, 16/18 Supabase-win CSV-missing, evidence-only slugs `4396508`/`gswf`, public redo=NO; **does not** authorize apply/export.
 - **PROVEN:** Batch production operating checklist is surfaced on the owner dashboard **via** `command_center_v2.batch_production_operating_checklist_v1` (Command Center is the truth source; not a parallel dashboard scan).
 - **GitHub Actions live status is not Command Center-owned** — workflows exist under `.github/workflows/`; dashboard control plane lists workflow **basenames from disk only**, not live PASS/FAIL from GitHub API.
 - **Sentry health is not Command Center-owned** — Sentry is integrated for runtime capture (`src/lib/monitoring/error-monitoring.ts`); no summarized Command Center / dashboard panel in-repo.
@@ -478,7 +568,7 @@ Read-only inventory at this stop:
 - **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED** unless a future feed proves otherwise.
 - **GSC/GA4 freshness lane exists on Command Center** (`b85e90b`) — inspect `external_measurement_freshness_v1`; artifacts may still read **STALE** until operator runs `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` (listed in lane `recommended_commands`).
 - **Demand-to-coverage next lane (2026-05-22):** Command Center v2 now includes read-only `command_center_v2.demand_to_coverage_next_lane_v1` (builder: `scripts/lib/demand-to-coverage-next-lane-v1.ts`; CLI: `npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts`). Joins GSC top pages/queries → wedge, `owner_vertical_launch_policy` launch state, sitemap inventory, repo `retailer_links` blocked/safe CTA counts. When GSC artifact is fresh, air purifier can surface as `RECOMMEND_REOPEN` even though `top_money_queue` stays fridge-first. **Does not** replace `next_best_action` or mutate wedges.
-- **Fridge money queues unchanged:** `next_best_action` / `top_money_queue` remain **refrigerator monetization** lanes (`oem_catalog_next_money`, Frigidaire, FlexOffers fridge readiness, Amazon-first blocked fridge tokens). `demand_to_coverage_engine_v1` still reads `search_gaps` only — not a substitute for `demand_to_coverage_next_lane_v1`.
+- **Fridge money queues vs spine:** `top_money_queue` may still surface refrigerator monetization lanes; **`fridge_truth_spine_v1`** is the **truth inventory** lane (buyer-path + Supabase-vs-CSV + public-truth summary). **`next_best_action`** may remain **AP model-first steering** when evidence queue is READY — spine does **not** override.
 - **Runner Step live JSON is not Command Center-owned by default** — `npm run buckparts:runner-step` is CLI/CI; optional digest env `FOUNDER_DIGEST_RUNNER_STEP_JSON_PATH` only.
 - **Daily Operator status is not Command Center-owned** — `npm run buckparts:daily` is a separate `buckparts_daily_operator_v1` report (builds on Command Center internally but not merged into CC JSON).
 - **Founder Digest status is not Command Center-owned** — `npm run buckparts:founder-digest` is Markdown stdout; slices Command Center but is a separate surface.
@@ -494,24 +584,18 @@ Read-only inventory at this stop:
 
 ### Next best move after chat migration (INFERRED)
 
-**Customer UI:** `bbadce5` validated motion/memory on the **existing** site — **do not** reopen broad redesign or mockup aesthetics unless a specific trust/conversion hypothesis is named and measured. **Operator / revenue stack:** neuron source-of-truth (`84fb4b3`) and **external measurement freshness lane** (`b85e90b`) remain the Command Center backbone; if jq shows **STALE**, run artifact refresh before treating GSC/GA4 as current. Prioritize compounding **revenue + trust + verified coverage** — e.g. **Founder Digest** batch lane + neuron-aware sections, **blocked-row re-capture** for `da29-00012b` / `adq75795101`, Waterdrop/monetization follow-ons where evidence-backed, or the next **NOT_PROVEN** Command Center feed from the inventory above. **Not** production mutation, evidence commit, Supabase, `retailer_links`, affiliate edits, batch size 20, apply execution, or redesign churn without a trust/conversion link.
+**Fridge:** Command Center now exposes **`fridge_truth_spine_v1`** — **do not redo fridge products from scratch**; next fridge work is **founder-approved CSV export/backfill plan** for 16 Supabase-proven paths (**plan only**, no apply without approval). **Product expansion:** continue **model-first discovery** (AP steering may own top-level `next_best_action` when queue is READY). **Customer UI:** `bbadce5` validated motion/memory on the **existing** site — **do not** reopen broad redesign. **Operator stack:** neuron map (`84fb4b3`) + external measurement freshness (`b85e90b`) remain backbone; if jq shows **STALE**, refresh artifacts before treating GSC/GA4 as current. **Save credits:** focused fridge spine tests for fridge/doc work; full Command Center suite only when CC wiring changes.
 
-**Copy/paste (repo root) — confirm external measurement freshness lane:**
+**Copy/paste (repo root) — confirm fridge truth spine lane:**
 
 ```bash
-node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.external_measurement_freshness_v1 | {contract, read_only, data_mutation, runtime_status, overall_status, gsc: .gsc.freshness_status, ga4: .ga4.freshness_status}'
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_truth_spine_v1 | {contract, read_only, data_mutation, csv_truth, supabase_csv_diff, public_truth, recommended_next_action}'
 ```
 
-**Copy/paste (repo root) — confirm Command Center neuron map:**
+**Copy/paste (repo root) — confirm top-level NBA (may be AP model-first, not fridge):**
 
 ```bash
-node --import tsx scripts/report-buckparts-command-center.ts | jq '{data_mutation: .owner_command_center_neurons.data_mutation, neuron_count: (.owner_command_center_neurons.neurons | length), neuron_keys: [.owner_command_center_neurons.neurons[].neuron_key]}'
-```
-
-**Copy/paste (repo root) — confirm Layer 7 batch lane in Command Center:**
-
-```bash
-node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_production_owner_decisions_lane_v1 | {runtime_status, approved_for_planning_count, approved_rows: [.approved_rows[] | {row_id, token, allowed_next_scope}], excluded_not_owner_review_ready_row_ids, may_mutate, batch_size_20_status}'
+node --import tsx scripts/report-buckparts-command-center.ts | jq '{next_best_action, why_this_action}'
 ```
 
 **Normative spec:** `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` · `data/owner-decisions/batch-non-amazon-pdp-owner-approval.json` · `src/lib/owner-dashboard/batch-production-owner-decisions-lane-v1.ts`
@@ -692,12 +776,13 @@ Operating rules:
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
 Current repo checkpoint:
-- Branch main; latest known commit 98412a1; Command Center batch_production_operating_checklist_v1 in dirty worktree (pre-commit).
-- AP batch-v2: 23 evidence rows, 4 auto-safe slugs applied (artifacts on disk); treat checklist as batch-production backbone.
-- npm run build must pass before calling checklist work done.
+- Branch main; latest known commit 7b09529; Command Center fridge_truth_spine_v1 PROVEN read-only on CC JSON.
+- Fridge: CSV 0/57 safe direct-buyable; 16/18 Supabase-win CSV-missing; do NOT redo fridge products from scratch; CSV backfill plan-only until founder approval.
+- AP model-first may own next_best_action when evidence queue READY; fridge spine does not override.
+- Save credits: focused fridge spine tests for fridge/doc work; full Command Center suite only when CC changes.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point**, **Batch production operating checklist v1**, **Current next build priority**, **Do not do next**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Fridge truth spine v1**, **Current stopping point**, **Current next build priority**, **Do not do next**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
 ```
 
 ---
@@ -708,14 +793,16 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point**, **Batc
 
 ### Active lane (HQ priority order)
 
-0. **Batch production operating checklist (`batch_production_operating_checklist_v1`)** — **PROVEN in-repo; pre-commit dirty at `98412a1`:** stage gates, safety classifications, setback detectors, AP batch-v2 proven run registry, owner dashboard + Command Center v2 wiring. **PARTIAL:** shows state only — no single orchestration entrypoint yet. **Route all future batch work through checklist first.** See **Current next build priority** and **Do not do next**.
-1. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; artifact staleness only. **NOT PROVEN:** live API fetch, revenue, complete operating truth.
-2. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on CC JSON; dashboard displays CC-owned neurons.
-3. **Batch Production Lane v1 — Layer 7 owner decisions** (through **`93dcd3d`**) — **PROVEN:** fridge non-Amazon five-row registry loop; distinct from AP batch-v2 factory apply (see checklist proven run).
-4. **AP batch-v2 apply artifacts (on disk)** — **PROVEN:** 4-slug CSV apply + repo validation; Supabase parity applied in operator session — **UNKNOWN** in checklist until parity apply artifact committed.
-5. **Customer UX memory/motion (`bbadce5`)** — **PROVEN**; **NOT** a stopping point.
-6. **Layer 6 control-plane documentation + audit** — **NOT PROVEN:** Layer 6 complete.
-7. **Batch lane follow-ons (deferred until backbone done)** — orchestration entrypoint, parity/smoke artifact ingestion, larger batch policy, cross-wedge run ledger.
+0. **Fridge truth spine (`fridge_truth_spine_v1`)** — **PROVEN at `7b09529`:** read-only Command Center lane; CSV 0/57 safe; 16/18 Supabase-win CSV-missing; public redo=NO. **NOT authorization** for CSV apply/export. **Next:** founder-approved backfill **plan** only.
+1. **Batch production operating checklist (`batch_production_operating_checklist_v1`)** — **PROVEN through `98412a1`:** stage gates, safety classifications, setback detectors, AP batch-v2 proven run registry. **PARTIAL:** shows state only — no single orchestration entrypoint yet. **Route batch work through checklist first.**
+2. **AP model-first production steering** — **PROVEN:** may own Command Center `next_best_action` when evidence queue READY; distinct from fridge spine truth inventory.
+3. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; artifact staleness only. **NOT PROVEN:** live API fetch, revenue, complete operating truth.
+4. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on CC JSON; dashboard displays CC-owned neurons.
+5. **Batch Production Lane v1 — Layer 7 owner decisions** (through **`93dcd3d`**) — **PROVEN:** fridge non-Amazon five-row registry loop; distinct from AP batch-v2 factory apply (see checklist proven run).
+6. **AP batch-v2 apply artifacts (on disk)** — **PROVEN:** 4-slug CSV apply + repo validation; Supabase parity applied in operator session — **UNKNOWN** in checklist until parity apply artifact committed.
+7. **Customer UX memory/motion (`bbadce5`)** — **PROVEN**; **NOT** a stopping point.
+8. **Layer 6 control-plane documentation + audit** — **NOT PROVEN:** Layer 6 complete.
+9. **Batch lane follow-ons (deferred until backbone done)** — orchestration entrypoint, parity/smoke artifact ingestion, larger batch policy, cross-wedge run ledger.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 

@@ -279,6 +279,21 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "waterdrop-da29-00020b-oem-vs-compatible-trust-module-v1.md",
     describe: "Waterdrop OEM vs compatible research draft path",
   },
+  {
+    id: "fridge_truth_spine_head_7b09529",
+    needle: "7b09529",
+    describe: "Fridge truth spine Command Center HEAD reference",
+  },
+  {
+    id: "fridge_truth_spine_v1",
+    needle: "fridge_truth_spine_v1",
+    describe: "Command Center fridge truth spine lane contract",
+  },
+  {
+    id: "fridge_no_redo_products",
+    needle: "Do not redo fridge products from scratch",
+    describe: "fridge operating decision — no full rebuild",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {
