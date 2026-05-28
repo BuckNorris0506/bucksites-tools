@@ -15,6 +15,10 @@ import {
   type ApModelFirstEvidenceQueueReportV1,
 } from "./ap-model-first-evidence-queue-v1";
 import {
+  AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1,
+  loadModelFirstEvidenceResultV1,
+} from "./air-purifier-model-first-evidence-result-v1";
+import {
   AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1,
   AP_BATCH_V3_RESULTS_DIR_REL_V1,
   type ApBatchV3RunInstantiationV1,
@@ -628,6 +632,13 @@ export function buildBuckpartsAgentControlPlaneV1Report(
     }),
   ];
 
+  const holmesModelFirstResult = loadModelFirstEvidenceResultV1({
+    rootDir: input.rootDir,
+    relPath: AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1,
+    fileExists,
+    readText: readTextFile,
+  });
+
   const eligible_jobs = jobs.filter((j) => j.eligible_now);
   const proven_facts = [
     ...apTruth.proven_facts,
@@ -635,6 +646,11 @@ export function buildBuckpartsAgentControlPlaneV1Report(
     `dispatch.selected_subsystem=${dispatch.selected_subsystem}`,
     `ap_batch_v3.classification=${apTruth.classification}`,
   ];
+  if (holmesModelFirstResult) {
+    proven_facts.push(
+      `PROVEN: Committed model-first result ${AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1} (${String(holmesModelFirstResult.model_rows.length)} model rows; UNKNOWN=${String(holmesModelFirstResult.evidence_status_counts.UNKNOWN ?? 0)}).`,
+    );
+  }
   if (apTruth.safe_csv_mutation_count === 0 && apTruth.result_files_complete) {
     proven_facts.push("PROVEN: no SAFE_APPLY_GATED job — zero proposed CSV mutations in batch-v3 results.");
   }
@@ -664,6 +680,7 @@ export function buildBuckpartsAgentControlPlaneV1Report(
     unknown_facts,
     derived_from: [
       "scripts/lib/ap-model-first-evidence-queue-v1.ts",
+      "scripts/lib/air-purifier-model-first-evidence-result-v1.ts",
       "scripts/lib/air-purifier-weak-buyer-path-audit-v1.ts",
       "scripts/lib/buckparts-batch-production-operating-dispatch-v1.ts",
       "scripts/lib/ap-batch-v3-run-instantiation-v1.ts",

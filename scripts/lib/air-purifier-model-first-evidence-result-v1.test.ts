@@ -1,0 +1,214 @@
+import assert from "node:assert/strict";
+import { readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
+import test from "node:test";
+
+import { buildApModelFirstEvidenceQueueV1Report } from "./ap-model-first-evidence-queue-v1";
+import {
+  AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+  AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1,
+  AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1,
+  AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1,
+  AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_REPORT_NAME_V1,
+  buildHolmesHapf30ModelFirstEvidenceFromQueueV1,
+  isAllowedModelFirstEvidenceResultRelPathV1,
+  liveBrowserBuyerPathMayRecommendCsvMutationV1,
+  loadModelFirstEvidenceResultV1,
+  validateModelFirstEvidenceResultV1,
+} from "./air-purifier-model-first-evidence-result-v1";
+import { buildAirPurifierModelFirstProductionLaneV1Report } from "./air-purifier-model-first-production-lane-v1";
+import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./air-purifier-weak-buyer-path-audit-v1";
+import { BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1 } from "./buckparts-batch-production-operating-checklist-v1";
+
+const REPO_ROOT = process.cwd();
+
+test("model-first evidence result schema is valid", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const result = buildHolmesHapf30ModelFirstEvidenceFromQueueV1({ rootDir: REPO_ROOT, queue });
+
+  assert.equal(result.contract, AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1);
+  assert.equal(result.read_only, true);
+  assert.equal(result.data_mutation, false);
+  assert.equal(result.anchor_filter_slug, "holmes-hapf30");
+  assert.equal(result.model_rows.length, 5);
+  assert.equal(result.recommended_csv_mutation, null);
+  for (const row of result.model_rows) {
+    assert.equal(row.recommended_csv_mutation, null);
+    assert.equal(row.do_not_claim_unavailable, true);
+    assert.equal(row.documented_filter_slug, "holmes-hapf30");
+  }
+});
+
+test("artifact path is under ap_model_first_evidence_v1 allowed results dir", () => {
+  assert.ok(AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1.includes(AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1));
+  assert.ok(AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1.endsWith(".results.json"));
+});
+
+test("writing holmes result does not mutate CSV Supabase dispatch batch-review", () => {
+  const csvPaths = [
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/filters.csv",
+    "data/air-purifier/models.csv",
+    "data/air-purifier/compatibility_mappings.csv",
+  ];
+  const before = new Map(csvPaths.map((p) => [p, readFileSync(path.join(REPO_ROOT, p), "utf8")]));
+  const dispatchDir = path.join(REPO_ROOT, BATCH_PRODUCTION_DISPATCH_RUNS_DIR_REL_V1);
+  const dispatchBefore = new Map<string, string>();
+  for (const name of readdirSync(dispatchDir)) {
+    if (name.endsWith(".json")) dispatchBefore.set(name, readFileSync(path.join(dispatchDir, name), "utf8"));
+  }
+  const reviewPath = path.join(
+    REPO_ROOT,
+    "data/air-purifier/batch-production/batch-review/ap-agent-results-review-v1.json",
+  );
+  const reviewBefore = readFileSync(reviewPath, "utf8");
+
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  buildHolmesHapf30ModelFirstEvidenceFromQueueV1({
+    rootDir: REPO_ROOT,
+    queue,
+    writeResult: true,
+  });
+
+  for (const [p, content] of before) {
+    assert.equal(readFileSync(path.join(REPO_ROOT, p), "utf8"), content);
+  }
+  for (const [name, content] of dispatchBefore) {
+    assert.equal(readFileSync(path.join(dispatchDir, name), "utf8"), content);
+  }
+  assert.equal(readFileSync(reviewPath, "utf8"), reviewBefore);
+
+  const loaded = loadModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    relPath: AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1,
+  });
+  assert.ok(loaded);
+  assert.equal(loaded!.evidence_status_counts.UNKNOWN, 5);
+});
+
+test("live-browser model-first artifact schema is accepted", () => {
+  const loaded = loadModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    relPath: AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1,
+  });
+  assert.ok(loaded);
+  assert.equal(loaded!.evidence_collection_mode, "live_browser_model_first_v1");
+  if (loaded!.evidence_collection_mode === "live_browser_model_first_v1") {
+    assert.equal(loaded.evidence_mode, "live_browser_model_first_v1");
+    assert.equal(loaded.filter_slug, "holmes-hapf30");
+    assert.equal(loaded.model_rows.length, 5);
+    assert.ok(loaded.candidate_buyer_paths.length >= 1);
+    assert.equal(loaded.recommended_csv_mutation, null);
+    assert.equal(loaded.evidence_status_counts.PASS, 0);
+  }
+});
+
+test("live-browser artifact path is only under allowed model-first results dir", () => {
+  assert.ok(isAllowedModelFirstEvidenceResultRelPathV1(AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1));
+  assert.ok(
+    AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_RESULT_REL_V1.startsWith(
+      AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+    ),
+  );
+  assert.equal(isAllowedModelFirstEvidenceResultRelPathV1("data/air-purifier/filters.csv"), false);
+  assert.equal(
+    isAllowedModelFirstEvidenceResultRelPathV1(
+      "../agent-results-model-first-v1/evil.results.json",
+    ),
+    false,
+  );
+});
+
+test("unsafe search-page buyer paths cannot validate as PASS with empty token proof", () => {
+  const bad = {
+    contract: AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1,
+    report_name: AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_REPORT_NAME_V1,
+    packet_id: "test",
+    run_id: "test",
+    queue_contract: "ap_model_first_evidence_queue_v1",
+    anchor_filter_slug: "holmes-hapf30",
+    filter_slug: "holmes-hapf30",
+    read_only: true,
+    data_mutation: false,
+    generated_at: "2026-01-01T00:00:00.000Z",
+    checked_at: "2026-01-01T00:00:00.000Z",
+    source_status: "PARTIAL",
+    evidence_collection_mode: "live_browser_model_first_v1",
+    evidence_mode: "live_browser_model_first_v1",
+    model_rows: [
+      {
+        model_slug: "holmes-hap412bcs",
+        model_number: "HAP412BCS",
+        official_source_urls: [],
+        manual_urls: [],
+        documented_filter_tokens: [],
+        evidence_status: "UNKNOWN",
+        buyer_path_status: "x",
+        notes: "x",
+      },
+    ],
+    candidate_buyer_paths: [
+      {
+        url: "https://www.holmesproducts.com/search?q=HAPF30",
+        retailer_or_source: "holmes_official",
+        exact_token_proof: "",
+        buyability_proof: "search page",
+        wrong_family_risk: "high",
+        status: "PASS",
+      },
+    ],
+    filter_first_cross_reference: null,
+    evidence_status_counts: { PASS: 0, FAIL: 0, UNKNOWN: 1, BLOCKED: 0 },
+    recommended_csv_mutation: null,
+    proven_facts: [],
+    inferred_facts: [],
+    unknown_facts: [],
+  };
+  assert.equal(validateModelFirstEvidenceResultV1(bad), false);
+  assert.equal(
+    liveBrowserBuyerPathMayRecommendCsvMutationV1(bad.candidate_buyer_paths[0]),
+    false,
+  );
+});
+
+test("exact-token proof is required before PASS buyer path can recommend mutation", () => {
+  assert.equal(
+    liveBrowserBuyerPathMayRecommendCsvMutationV1({
+      url: "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      retailer_or_source: "holmes_official",
+      exact_token_proof: "UNKNOWN: no exact token",
+      buyability_proof: "Add to Cart",
+      wrong_family_risk: "low",
+      status: "PASS",
+    }),
+    false,
+  );
+  assert.equal(
+    liveBrowserBuyerPathMayRecommendCsvMutationV1({
+      url: "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      retailer_or_source: "holmes_official",
+      exact_token_proof: "PROVEN: HAPF30 on PDP",
+      buyability_proof: "Add to Cart",
+      wrong_family_risk: "low",
+      status: "PASS",
+    }),
+    true,
+  );
+});
+
+test("top queue sample models are the holmes rows checked", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const top = queue.top_candidates.find((c) => c.filter_slug === "holmes-hapf30");
+  assert.ok(top);
+  const result = buildHolmesHapf30ModelFirstEvidenceFromQueueV1({ rootDir: REPO_ROOT, queue });
+  assert.deepEqual(
+    result.model_rows.map((r) => r.model_slug).sort(),
+    top!.sample_model_slugs.slice().sort(),
+  );
+});
