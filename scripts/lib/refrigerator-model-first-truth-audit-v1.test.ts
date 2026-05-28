@@ -25,18 +25,37 @@ test("counts are derived from repository files", () => {
   assert.ok(report.exact_repo_paths_read.includes("data/retailer_links.csv"));
 });
 
-test("0/57 safe primary is PROVEN_TRUE on committed CSV with diagnostics crosscheck", () => {
+test("root safe_buyer_path_verdict and diagnostic_crosscheck_summary are populated", () => {
+  const report = buildRefrigeratorModelFirstTruthAuditV1({ rootDir: REPO_ROOT });
+  assert.notEqual(report.safe_buyer_path_verdict, null);
+  assert.notEqual(report.diagnostic_crosscheck_summary, null);
+  assert.equal(report.safe_buyer_path_verdict, "PROVEN_TRUE");
+  const x = report.diagnostic_crosscheck_summary;
+  assert.equal(x.filters_with_any_retailer_link_count, report.unique_linked_filter_slugs);
+  assert.equal(x.filters_with_primary_link_count, report.unique_linked_filter_slugs);
+  assert.equal(x.filters_with_safe_direct_buyable_primary_count, 0);
+  assert.equal(x.filters_with_direct_buyable_anywhere_count, 0);
+  assert.equal(x.filters_with_filter_real_buy_any_count, 0);
+  assert.equal(x.filters_with_buy_gate_pass_any_count, 0);
+  assert.equal(x.audit_vs_publishability_mismatch_count, 0);
+  assert.equal(x.primary_weak_reason_counts.SEARCH_PLACEHOLDER_PRIMARY, report.unique_linked_filter_slugs);
+  assert.deepEqual(x.sample_safe_or_expected_safe_filters, []);
+  assert.ok(x.classification_explanation.includes("0/57"));
+});
+
+test("root diagnostic fields mirror buyer_path_diagnostics nested slice", () => {
   const report = buildRefrigeratorModelFirstTruthAuditV1({ rootDir: REPO_ROOT });
   const d = report.buyer_path_diagnostics;
-  assert.equal(d.filters_with_any_retailer_link_count, report.unique_linked_filter_slugs);
-  assert.equal(d.filters_with_primary_link_count, report.unique_linked_filter_slugs);
-  assert.equal(d.filters_with_safe_direct_buyable_primary_count, 0);
-  assert.equal(d.filters_with_direct_buyable_anywhere_count, 0);
-  assert.equal(d.safe_cta_crosscheck_summary.safe_buyer_path_verdict, "PROVEN_TRUE");
-  assert.equal(d.safe_cta_crosscheck_summary.audit_vs_publishability_mismatch_count, 0);
-  assert.equal(d.primary_weak_reason_counts.SEARCH_PLACEHOLDER_PRIMARY, report.unique_linked_filter_slugs);
+  assert.equal(report.safe_buyer_path_verdict, d.safe_cta_crosscheck_summary.safe_buyer_path_verdict);
+  assert.equal(
+    report.diagnostic_crosscheck_summary.filters_with_any_retailer_link_count,
+    d.filters_with_any_retailer_link_count,
+  );
+  assert.equal(
+    report.diagnostic_crosscheck_summary.audit_vs_publishability_mismatch_count,
+    d.safe_cta_crosscheck_summary.audit_vs_publishability_mismatch_count,
+  );
   assert.ok(d.buyer_path_truth_source_paths.includes("src/lib/retailers/launch-buy-links.ts"));
-  assert.ok(d.classification_explanation.includes("0/57"));
 });
 
 test("recommended action exists and remains read-only only", () => {

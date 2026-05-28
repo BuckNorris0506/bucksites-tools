@@ -69,6 +69,41 @@ export type RefrigeratorBuyerPathDiagnosticsV1 = {
   classification_explanation: string;
 };
 
+/** Root-level contract slice for Command Center / post-push proof consumers. */
+export type RefrigeratorDiagnosticCrosscheckSummaryV1 = {
+  filters_with_any_retailer_link_count: number;
+  filters_with_primary_link_count: number;
+  filters_with_direct_buyable_anywhere_count: number;
+  filters_with_safe_direct_buyable_primary_count: number;
+  filters_with_filter_real_buy_any_count: number;
+  filters_with_buy_gate_pass_any_count: number;
+  primary_weak_reason_counts: Record<string, number>;
+  sample_safe_or_expected_safe_filters: Array<{
+    filter_slug: string;
+    reason: string;
+  }>;
+  audit_vs_publishability_mismatch_count: number;
+  classification_explanation: string;
+};
+
+export function toDiagnosticCrosscheckSummaryV1(
+  diagnostics: RefrigeratorBuyerPathDiagnosticsV1,
+): RefrigeratorDiagnosticCrosscheckSummaryV1 {
+  return {
+    filters_with_any_retailer_link_count: diagnostics.filters_with_any_retailer_link_count,
+    filters_with_primary_link_count: diagnostics.filters_with_primary_link_count,
+    filters_with_direct_buyable_anywhere_count: diagnostics.filters_with_direct_buyable_anywhere_count,
+    filters_with_safe_direct_buyable_primary_count: diagnostics.filters_with_safe_direct_buyable_primary_count,
+    filters_with_filter_real_buy_any_count: diagnostics.filters_with_filter_real_buy_any_count,
+    filters_with_buy_gate_pass_any_count: diagnostics.filters_with_buy_gate_pass_any_count,
+    primary_weak_reason_counts: diagnostics.primary_weak_reason_counts,
+    sample_safe_or_expected_safe_filters: diagnostics.sample_safe_or_expected_safe_filters,
+    audit_vs_publishability_mismatch_count:
+      diagnostics.safe_cta_crosscheck_summary.audit_vs_publishability_mismatch_count,
+    classification_explanation: diagnostics.classification_explanation,
+  };
+}
+
 export type RefrigeratorModelFirstTruthAuditV1 = {
   contract: typeof REFRIGERATOR_MODEL_FIRST_TRUTH_AUDIT_CONTRACT_V1;
   read_only: true;
@@ -82,6 +117,8 @@ export type RefrigeratorModelFirstTruthAuditV1 = {
   unique_linked_filter_slugs: number;
   linked_filters_with_safe_direct_buyable_primary: number;
   linked_filters_without_safe_direct_buyable_primary: number;
+  safe_buyer_path_verdict: RefrigeratorSafeBuyerPathVerdictV1;
+  diagnostic_crosscheck_summary: RefrigeratorDiagnosticCrosscheckSummaryV1;
   mapping_confidence_counts: {
     PROVEN: number;
     INFERRED: number;
@@ -402,6 +439,8 @@ export function buildRefrigeratorModelFirstTruthAuditV1(args: {
     unique_linked_filter_slugs: uniqueMappedFilterSlugs.size,
     linked_filters_with_safe_direct_buyable_primary: safeFilters.size,
     linked_filters_without_safe_direct_buyable_primary: uniqueMappedFilterSlugs.size - safeFilters.size,
+    safe_buyer_path_verdict: buyerPathDiagnostics.safe_cta_crosscheck_summary.safe_buyer_path_verdict,
+    diagnostic_crosscheck_summary: toDiagnosticCrosscheckSummaryV1(buyerPathDiagnostics),
     mapping_confidence_counts: {
       PROVEN: 0,
       INFERRED: 0,
