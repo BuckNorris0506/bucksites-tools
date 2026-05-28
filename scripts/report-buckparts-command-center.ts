@@ -63,7 +63,12 @@ import {
   buildApBatchV3UnknownV1,
 } from "./lib/ap-batch-v3-run-instantiation-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./lib/air-purifier-model-first-production-lane-v1";
+import {
+  buildApModelFirstEvidenceQueueUnknownV1,
+  buildApModelFirstEvidenceQueueV1Report,
+} from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
+import { resolveModelFirstSteeringOverrideV1 } from "./lib/buckparts-model-first-steering-v1";
 import {
   buildBuckpartsMarketingIntelligenceEngineUnknownV1,
   buildBuckpartsMarketingIntelligenceEngineV1Report,
@@ -1256,6 +1261,21 @@ export async function buildBuckpartsCommandCenterReport(
     listDir: readDir,
   });
 
+  let ap_model_first_evidence_queue_v1;
+  try {
+    ap_model_first_evidence_queue_v1 = buildApModelFirstEvidenceQueueV1Report({
+      now,
+      modelFirstLane: air_purifier_model_first_production_lane_v1,
+      weakBuyerPathAudit: air_purifier_weak_buyer_path_audit_v1,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    ap_model_first_evidence_queue_v1 = buildApModelFirstEvidenceQueueUnknownV1({
+      now,
+      reason: `ap_model_first_evidence_queue_v1 failed: ${message}`,
+    });
+  }
+
   let marketing_intelligence_engine_v1;
   try {
     marketing_intelligence_engine_v1 = await buildBuckpartsMarketingIntelligenceEngineV1Report({
@@ -1290,6 +1310,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_batch_v3_run_instantiation_v1,
     air_purifier_model_first_production_lane_v1,
     air_purifier_weak_buyer_path_audit_v1,
+    ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
   };
 
@@ -1320,11 +1341,30 @@ export async function buildBuckpartsCommandCenterReport(
     }
   }
 
+  const modelFirstSteeringOverride = resolveModelFirstSteeringOverrideV1({
+    queue: ap_model_first_evidence_queue_v1,
+    weakBuyerPathAudit: air_purifier_weak_buyer_path_audit_v1,
+    dispatch: batch_production_operating_dispatch_v1,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+  });
+
   const batchDispatchOverride = resolveBatchProductionDispatchDirectorOverrideV1({
     dispatch: batch_production_operating_dispatch_v1,
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
-  if (batchDispatchOverride) {
+
+  if (modelFirstSteeringOverride) {
+    nextBestAction = modelFirstSteeringOverride.next_best_action;
+    whyThisAction = modelFirstSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = modelFirstSteeringOverride.next_move_command;
+    for (const reason of modelFirstSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (batchDispatchOverride) {
     nextBestAction = batchDispatchOverride.next_best_action;
     whyThisAction = batchDispatchOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -1421,6 +1461,8 @@ export async function buildBuckpartsCommandCenterReport(
     generated_at: now().toISOString(),
     batch_production_operating_dispatch_v1,
     ap_batch_v3_run_instantiation_v1,
+    ap_model_first_evidence_queue_v1,
+    air_purifier_weak_buyer_path_audit_v1,
     demand_to_coverage_next_lane_v1,
     marketing_intelligence_engine_v1,
     external_measurement_freshness_v1: command_center_v2_with_operator_digest.external_measurement_freshness_v1,

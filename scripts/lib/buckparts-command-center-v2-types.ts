@@ -10,6 +10,7 @@ import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-pa
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 import type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
 import type { AirPurifierModelFirstProductionLaneReportV1 } from "./air-purifier-model-first-production-lane-v1";
+import type { ApModelFirstEvidenceQueueReportV1 } from "./ap-model-first-evidence-queue-v1";
 import type { AirPurifierWeakBuyerPathAuditReportV1 } from "./air-purifier-weak-buyer-path-audit-v1";
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
@@ -913,6 +914,8 @@ export type CommandCenterV2Report = {
   air_purifier_model_first_production_lane_v1?: AirPurifierModelFirstProductionLaneReportV1;
   /** Read-only weak buyer path diagnosis for linked AP filters without safe primaries. */
   air_purifier_weak_buyer_path_audit_v1?: AirPurifierWeakBuyerPathAuditReportV1;
+  /** Read-only model-first evidence queue for steering (no packet files written). */
+  ap_model_first_evidence_queue_v1?: ApModelFirstEvidenceQueueReportV1;
   /** Read-only marketing opportunities and asset briefs from proven operating truth — no auto-publish. */
   marketing_intelligence_engine_v1: BuckpartsMarketingIntelligenceEngineV1;
   /** Read-only always-on agent work queue — permissioned lanes; does not replace batch dispatch. */
@@ -934,6 +937,7 @@ export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decis
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
 export type { AirPurifierModelFirstProductionLaneReportV1 } from "./air-purifier-model-first-production-lane-v1";
+export type { ApModelFirstEvidenceQueueReportV1 } from "./ap-model-first-evidence-queue-v1";
 export type { AirPurifierWeakBuyerPathAuditReportV1 } from "./air-purifier-weak-buyer-path-audit-v1";
 export type { ApBatchV3RunInstantiationV1 } from "./ap-batch-v3-run-instantiation-v1";
 export type {

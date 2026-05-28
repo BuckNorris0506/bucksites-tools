@@ -7,6 +7,14 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  AP_MODEL_FIRST_EVIDENCE_PACKETS_DIR_REL_V1,
+  AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1,
+  AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+  AP_MODEL_FIRST_SEARCH_PLACEHOLDER_DOMINANCE_MIN_V1,
+  isModelFirstSteeringPrimaryEligibleV1,
+  type ApModelFirstEvidenceQueueReportV1,
+} from "./ap-model-first-evidence-queue-v1";
+import {
   AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1,
   AP_BATCH_V3_RESULTS_DIR_REL_V1,
   type ApBatchV3RunInstantiationV1,
@@ -47,6 +55,7 @@ export const AGENT_PERMISSION_LEVELS_V1 = [
 export type AgentPermissionLevelV1 = (typeof AGENT_PERMISSION_LEVELS_V1)[number];
 
 export const AGENT_LANE_IDS_V1 = [
+  "ap_model_first_evidence_v1",
   "ap_batch_v3_aggregation_review",
   "ap_batch_v3_catalog_task_review",
   "demand_to_coverage_next_lane",
@@ -73,6 +82,12 @@ export const AGENT_FORBIDDEN_SUPABASE_GLOBS_V1 = [
 export const AGENT_FORBIDDEN_DISPATCH_RUN_REGISTRY_GLOBS_V1 = [
   "data/**/run-registry/*.json",
 ] as const;
+
+export const AGENT_FORBIDDEN_DISPATCH_RUNS_DIR_GLOB_V1 =
+  "data/command-center/dispatch-runs/**" as const;
+
+export const AGENT_FORBIDDEN_BATCH_REVIEW_GLOB_V1 =
+  "data/air-purifier/batch-production/batch-review/**" as const;
 
 const GLOBAL_FORBIDDEN_WRITE_PATHS_V1 = [
   ...AGENT_FORBIDDEN_PRODUCT_CSV_GLOBS_V1,
@@ -135,6 +150,8 @@ export type BuildBuckpartsAgentControlPlaneV1Input = {
   generated_at: string;
   batch_production_operating_dispatch_v1: BatchProductionOperatingDispatchV1;
   ap_batch_v3_run_instantiation_v1?: ApBatchV3RunInstantiationV1 | null;
+  ap_model_first_evidence_queue_v1?: ApModelFirstEvidenceQueueReportV1 | null;
+  air_purifier_weak_buyer_path_audit_v1?: import("./air-purifier-weak-buyer-path-audit-v1").AirPurifierWeakBuyerPathAuditReportV1 | null;
   demand_to_coverage_next_lane_v1: DemandToCoverageNextLaneReportV1;
   marketing_intelligence_engine_v1: BuckpartsMarketingIntelligenceEngineV1;
   external_measurement_freshness_v1: ExternalMeasurementFreshnessV1;
@@ -267,11 +284,15 @@ function laneJobBase(
     AgentControlPlaneJobV1,
     "agent_lane" | "permission_level" | "forbidden_write_paths"
   > & { allowed_write_paths: string[] },
+  options?: { extra_forbidden_write_paths?: readonly string[] },
 ): AgentControlPlaneJobV1 {
   const job: AgentControlPlaneJobV1 = {
     agent_lane: lane,
     permission_level,
-    forbidden_write_paths: [...GLOBAL_FORBIDDEN_WRITE_PATHS_V1],
+    forbidden_write_paths: [
+      ...GLOBAL_FORBIDDEN_WRITE_PATHS_V1,
+      ...(options?.extra_forbidden_write_paths ?? []),
+    ],
     ...partial,
   };
   assertAgentJobWritePolicyV1(job);
@@ -321,10 +342,29 @@ export function buildBuckpartsAgentControlPlaneV1Report(
   const measurement = input.external_measurement_freshness_v1;
   const evidenceImport = input.evidence_to_learning_outcomes_candidate_import_v1;
 
+  const weakAudit = input.air_purifier_weak_buyer_path_audit_v1 ?? null;
+  const modelFirstQueue = input.ap_model_first_evidence_queue_v1 ?? null;
+
+  const modelFirstSteeringPrimary =
+    modelFirstQueue != null &&
+    weakAudit != null &&
+    isModelFirstSteeringPrimaryEligibleV1({
+      weakBuyerPathAudit: weakAudit,
+      candidateCount: modelFirstQueue.candidate_count,
+      apBatchV3SafeCsvMutationCount: apTruth.safe_csv_mutation_count,
+    });
+
+  const modelFirstEligible =
+    modelFirstSteeringPrimary &&
+    modelFirstQueue != null &&
+    modelFirstQueue.candidate_count > 0 &&
+    apTruth.safe_csv_mutation_count === 0;
+
   const aggregationEligible =
     dispatch.selected_subsystem === "ap_batch_v3_aggregation_review" &&
     apTruth.result_files_complete &&
-    dispatch.dispatch_status === "READY";
+    dispatch.dispatch_status === "READY" &&
+    !modelFirstSteeringPrimary;
 
   const catalogEligible =
     apTruth.result_files_complete &&
@@ -365,6 +405,51 @@ export function buildBuckpartsAgentControlPlaneV1Report(
   }
 
   const jobs: AgentControlPlaneJobV1[] = [
+    laneJobBase(
+      "ap_model_first_evidence_v1",
+      "EVIDENCE_ARTIFACT_WRITE",
+      {
+        job_id: "ap_model_first_evidence_v1",
+        eligible_now: modelFirstEligible,
+        queue_pull_from: "ap_model_first_evidence_queue_v1.top_candidates",
+        required_artifact_rel_paths: [
+          "data/air-purifier/models.csv",
+          "data/air-purifier/compatibility_mappings.csv",
+          "data/air-purifier/retailer_links.csv",
+        ],
+        allowed_write_paths: [`${AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/**`],
+        owner_approval_required: false,
+        blocked_reasons: modelFirstEligible
+          ? []
+          : [
+              ...(modelFirstQueue && modelFirstQueue.candidate_count > 0
+                ? []
+                : ["model_first_queue_empty"]),
+              ...(apTruth.safe_csv_mutation_count === 0
+                ? []
+                : ["ap_batch_v3_safe_csv_mutations_present"]),
+              ...(weakAudit &&
+              weakAudit.search_placeholder_primary_count >=
+                AP_MODEL_FIRST_SEARCH_PLACEHOLDER_DOMINANCE_MIN_V1
+                ? []
+                : ["search_placeholder_dominance_below_threshold"]),
+              ...(modelFirstSteeringPrimary ? [] : ["model_first_steering_not_primary"]),
+            ],
+        success_transition:
+          "Model-first evidence JSON committed under agent-results-model-first-v1/ — no product CSV or Supabase apply.",
+        exact_command: modelFirstEligible ? AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1 : null,
+        why_eligible_or_blocked: modelFirstEligible
+          ? `Search-placeholder dominance (${String(weakAudit?.search_placeholder_primary_count ?? 0)} weak filters) and zero batch-v3 safe CSV mutations — model-first evidence is primary over filter-first aggregation.`
+          : "Blocked until weak-audit dominance + queue candidates + zero safe batch-v3 mutations align.",
+      },
+      {
+        extra_forbidden_write_paths: [
+          AGENT_FORBIDDEN_DISPATCH_RUNS_DIR_GLOB_V1,
+          AGENT_FORBIDDEN_BATCH_REVIEW_GLOB_V1,
+          `${AP_MODEL_FIRST_EVIDENCE_PACKETS_DIR_REL_V1}/**`,
+        ],
+      },
+    ),
     laneJobBase("ap_batch_v3_aggregation_review", "PLAN_ARTIFACT_WRITE", {
       job_id: "ap_batch_v3_aggregation_review",
       eligible_now: aggregationEligible,
@@ -386,13 +471,18 @@ export function buildBuckpartsAgentControlPlaneV1Report(
               ? []
               : [`dispatch_selected_subsystem=${dispatch.selected_subsystem}`]),
             ...(dispatch.dispatch_status === "READY" ? [] : [`dispatch_status=${dispatch.dispatch_status}`]),
+            ...(modelFirstSteeringPrimary
+              ? ["demoted_model_first_steering_primary"]
+              : []),
           ],
       success_transition:
         "Aggregator review JSON committed under batch-review/ — catalog vs apply groups visible for owner closeout.",
       exact_command: aggregationEligible ? AP_BATCH_V3_AGENT_RESULTS_AGGREGATOR_COMMAND_V1 : null,
       why_eligible_or_blocked: aggregationEligible
         ? "All batch-v3 result files exist; batch dispatch selects aggregation review."
-        : "Blocked until result stage complete and dispatch selects ap_batch_v3_aggregation_review.",
+        : modelFirstSteeringPrimary
+          ? "Demoted while model-first steering is primary — run model-first evidence before filter-first aggregation."
+          : "Blocked until result stage complete and dispatch selects ap_batch_v3_aggregation_review.",
     }),
     laneJobBase("ap_batch_v3_catalog_task_review", "OWNER_ONLY", {
       job_id: "ap_batch_v3_catalog_task_review",
@@ -573,6 +663,8 @@ export function buildBuckpartsAgentControlPlaneV1Report(
     proven_facts,
     unknown_facts,
     derived_from: [
+      "scripts/lib/ap-model-first-evidence-queue-v1.ts",
+      "scripts/lib/air-purifier-weak-buyer-path-audit-v1.ts",
       "scripts/lib/buckparts-batch-production-operating-dispatch-v1.ts",
       "scripts/lib/ap-batch-v3-run-instantiation-v1.ts",
       "scripts/lib/air-purifier-agent-results-aggregator-v1.ts",

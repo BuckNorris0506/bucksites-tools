@@ -9,6 +9,11 @@ import {
 import { buildBatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import { buildBatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import {
+  buildApModelFirstEvidenceQueueV1Report,
+} from "./ap-model-first-evidence-queue-v1";
+import { buildAirPurifierModelFirstProductionLaneV1Report } from "./air-purifier-model-first-production-lane-v1";
+import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./air-purifier-weak-buyer-path-audit-v1";
+import {
   AGENT_PERMISSION_LEVELS_V1,
   assertAgentJobWritePolicyV1,
   buildBuckpartsAgentControlPlaneV1Report,
@@ -101,7 +106,32 @@ describe("buckparts-agent-control-plane-v1", () => {
   it("includes all supported permission levels and agent lanes", async () => {
     const plane = await buildPlaneOnRepo();
     assert.deepEqual(plane.permission_levels, AGENT_PERMISSION_LEVELS_V1);
-    assert.equal(plane.supported_agent_lanes.length, 7);
+    assert.equal(plane.supported_agent_lanes.length, 8);
+    assert.ok(plane.supported_agent_lanes.includes("ap_model_first_evidence_v1"));
+  });
+
+  it("exposes ap_model_first_evidence_v1 when steering primary eligible", async () => {
+    const plane = await buildPlaneOnRepo();
+    const modelFirstJob = plane.all_jobs.find((j) => j.agent_lane === "ap_model_first_evidence_v1");
+    assert.ok(modelFirstJob);
+    assert.equal(modelFirstJob!.permission_level, "EVIDENCE_ARTIFACT_WRITE");
+    assert.equal(modelFirstJob!.owner_approval_required, false);
+    assert.ok(
+      modelFirstJob!.allowed_write_paths.some((p) =>
+        p.includes("agent-results-model-first-v1"),
+      ),
+    );
+    if (plane.ap_batch_v3_truth.safe_csv_mutation_count === 0) {
+      const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+      const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+      const queue = buildApModelFirstEvidenceQueueV1Report({
+        modelFirstLane: lane,
+        weakBuyerPathAudit: weak,
+      });
+      if (queue.steering_primary_eligible) {
+        assert.equal(modelFirstJob!.eligible_now, true);
+      }
+    }
   });
 });
 
@@ -130,11 +160,20 @@ async function buildPlaneOnRepo() {
     demandToCoverageNextLane: demand,
   });
   const measurement = await buildExternalMeasurementFreshnessV1({ rootDir: REPO_ROOT });
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+
   return buildBuckpartsAgentControlPlaneV1Report({
     rootDir: REPO_ROOT,
     generated_at: new Date().toISOString(),
     batch_production_operating_dispatch_v1: dispatch,
     ap_batch_v3_run_instantiation_v1: instantiation,
+    ap_model_first_evidence_queue_v1: queue,
+    air_purifier_weak_buyer_path_audit_v1: weak,
     demand_to_coverage_next_lane_v1: demand,
     marketing_intelligence_engine_v1: marketing,
     external_measurement_freshness_v1: measurement,
