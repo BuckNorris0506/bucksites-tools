@@ -328,7 +328,7 @@ export async function buildFridgeCommandCenterAndPublicTruthAuditV1(args: {
   const fileExists = args.deps?.fileExists ?? ((p: string) => existsSync(p));
   const buildDiff =
     args.deps?.buildDiff ??
-    ((rootDir: string) => buildFridgeSupabaseVsCsvRetailerLinksDiffV1({ rootDir, now }));
+    ((rootDir: string) => buildFridgeSupabaseVsCsvRetailerLinksDiffV1({ rootDir, deps: { now } }));
   const loadSupabase = args.deps?.loadSupabase ?? tryLoadSupabaseRetailerLinksBySlugV1;
   const loadModelCounts = args.deps?.loadModelCounts ?? loadFridgeModelCountsByFilterId;
   const probeLivePage = args.deps?.probeLivePage ?? probePublicFilterPage;
@@ -382,6 +382,7 @@ export async function buildFridgeCommandCenterAndPublicTruthAuditV1(args: {
       const gated = filterRealBuyRetailerLinks(
         rawLinks.map((l) => ({
           id: l.filter_id,
+          retailer_name: null,
           retailer_key: l.retailer_key,
           affiliate_url: l.affiliate_url,
           browser_truth_classification: l.browser_truth_classification,

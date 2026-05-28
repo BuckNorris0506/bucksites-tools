@@ -16,6 +16,7 @@ import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-prod
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
+import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
@@ -898,6 +899,8 @@ export type CommandCenterV2Report = {
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
   /** Read-only semantic page/publishability truth for refrigerator filter pages (Cruise diagnostics). */
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
+  /** Read-only refrigerator CSV / evidence / Supabase / public truth spine — not mutation authority. */
+  fridge_truth_spine_v1: FridgeTruthSpineV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
   operator_digest_v1: OperatorDigestProjectionV1;
   /** jq-safe mirror of root execution_guidance after batch dispatch override (set in report builder). */
@@ -952,6 +955,7 @@ export type {
   PagePublishabilityTruthSummaryV1,
   PagePublishabilityTruthRowV1,
 } from "./buckparts-page-publishability-truth-v1";
+export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -966,6 +970,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "next_execution_packet_summary_v1"
   | "operating_map_summary_v1"
   | "page_publishability_truth_summary_v1"
+  | "fridge_truth_spine_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
   | "agent_control_plane_v1"

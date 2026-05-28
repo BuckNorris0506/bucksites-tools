@@ -68,6 +68,10 @@ import {
   buildApModelFirstEvidenceQueueV1Report,
 } from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
+import {
+  buildFridgeTruthSpineUnknownV1,
+  buildFridgeTruthSpineV1,
+} from "./lib/fridge-truth-spine-v1";
 import { resolveModelFirstSteeringOverrideV1 } from "./lib/buckparts-model-first-steering-v1";
 import {
   buildBuckpartsMarketingIntelligenceEngineUnknownV1,
@@ -963,6 +967,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "marketing_intelligence_engine_v1"
     | "agent_control_plane_v1"
     | "page_publishability_truth_summary_v1"
+    | "fridge_truth_spine_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
@@ -1082,6 +1087,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "fridge_truth_spine_v1"
   > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
@@ -1182,6 +1188,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "fridge_truth_spine_v1"
   > = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
@@ -1295,6 +1302,21 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let fridge_truth_spine_v1;
+  try {
+    fridge_truth_spine_v1 = await buildFridgeTruthSpineV1({
+      rootDir,
+      now,
+      skipLivePublicProbe: true,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_truth_spine_v1 = buildFridgeTruthSpineUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     | "next_execution_packet_summary_v1"
@@ -1316,6 +1338,7 @@ export async function buildBuckpartsCommandCenterReport(
     air_purifier_weak_buyer_path_audit_v1,
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
+    fridge_truth_spine_v1,
   };
 
   const commandCenterShellForNextPacket = {

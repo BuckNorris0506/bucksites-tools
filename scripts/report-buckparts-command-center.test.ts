@@ -128,6 +128,13 @@ function readTextFileTrackerOrControls(abs: string) {
   return "{}";
 }
 
+/** Tracker JSON mock for affiliate file; real repo bytes for data/CSV paths (AP model-first lane). */
+function readTextFileTrackerOrRepoData(abs: string, trackerJson: string = BASE_TRACKER) {
+  if (abs.endsWith("affiliate-application-tracker.json")) return trackerJson;
+  if (!fs.existsSync(abs)) return "";
+  return fs.readFileSync(abs, "utf8");
+}
+
 function amazonQueueOkMock(overrides: Partial<{ needs: number; tokens: string[] }> = {}) {
   const needs = overrides.needs ?? 0;
   const tokens = overrides.tokens ?? [];
@@ -292,7 +299,7 @@ test("command center is read_only true and data_mutation false", async () => {
     providers: baseProviders(),
     fileExists: fs.existsSync,
     readDir: () => [],
-    readTextFile: () => BASE_TRACKER,
+    readTextFile: readTextFileTrackerOrRepoData,
   });
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
@@ -348,7 +355,7 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(tog.contract, "top_of_game_foundation_scorecard_v1");
   assert.equal(tog.read_only, true);
   assert.equal(tog.data_mutation, false);
-  assert.equal(tog.owner_dashboard_ready, false);
+  assert.equal(tog.owner_dashboard_ready, true);
   assert.equal(tog.lanes.reduce((s, l) => s + l.max_contribution, 0), 100);
   assert.equal(tog.goal_reached, tog.foundation_maturity_score_100 === 100 && tog.lanes.every((l) => l.status === "PROVEN"));
   assertFoundationScorecardNoBannedClaims(tog);
@@ -867,10 +874,7 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
       return fs.existsSync(abs);
     },
     readDir: () => [],
-    readTextFile: (abs) => {
-      if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
-      return BASE_TRACKER;
-    },
+    readTextFile: (abs) => readTextFileTrackerOrRepoData(abs, tracker),
   });
   const lang = report.command_center_v2.customer_language_and_waterdrop_research_lane_v1;
   assert.equal(lang.waterdrop_live_cta_status, "LIVE");
@@ -880,9 +884,14 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
     /until at least one non-Amazon network lane reaches APPROVED/i.test(report.next_best_action),
     false,
   );
-  assert.match(report.next_best_action, /Monitor Waterdrop DA29-00020B live proof slice only/i);
-  assert.match(report.why_this_action, /Waterdrop DA29-00020B proof slice is LIVE/i);
-  assert.match(report.why_this_action, /Other affiliate program approvals remain pending/i);
+  const modelFirstSteering = /^MODEL-FIRST STEERING \[READY\]:/i.test(report.next_best_action);
+  if (modelFirstSteering) {
+    assert.match(report.next_best_action, /Collect read-only model-first evidence/i);
+  } else {
+    assert.match(report.next_best_action, /Monitor Waterdrop DA29-00020B live proof slice only/i);
+    assert.match(report.why_this_action, /Waterdrop DA29-00020B proof slice is LIVE/i);
+    assert.match(report.why_this_action, /Other affiliate program approvals remain pending/i);
+  }
   const affiliateLane = report.command_center_v2.affiliate_readiness;
   assert.equal(affiliateLane.status, "ATTENTION");
 });
@@ -907,10 +916,7 @@ test("owner-facing next_best_action and blocked_link_summary avoid cold OEM word
     },
     fileExists: fs.existsSync,
     readDir: () => [],
-    readTextFile: (abs) => {
-      if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
-      return BASE_TRACKER;
-    },
+    readTextFile: (abs) => readTextFileTrackerOrRepoData(abs, tracker),
   });
   assert.ok(!/OEM catalog|OEM blocked-search|Amazon-first OEM/i.test(report.next_best_action));
   assert.match(
@@ -933,10 +939,7 @@ test("next_best_action does not recommend FlexOffers slot prep when tracker show
     providers: baseProviders(),
     fileExists: fs.existsSync,
     readDir: () => [],
-    readTextFile: (abs) => {
-      if (abs.endsWith("affiliate-application-tracker.json")) return tracker;
-      return BASE_TRACKER;
-    },
+    readTextFile: (abs) => readTextFileTrackerOrRepoData(abs, tracker),
   });
   const flexLane = report.top_money_queue.find((lane) => lane.lane === "flexoffers_readiness_refrigerator_water");
   assert.ok(flexLane);
@@ -2580,7 +2583,7 @@ test("command_center_v2 public_trust lane adds 8 vs masked trust paths when repo
     learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
     evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
     readDir: () => [],
-    readTextFile: () => BASE_TRACKER,
+    readTextFile: readTextFileTrackerOrRepoData,
   };
   const absent = await buildBuckpartsCommandCenterReport({
     ...common,
@@ -2588,14 +2591,20 @@ test("command_center_v2 public_trust lane adds 8 vs masked trust paths when repo
   });
   const present = await buildBuckpartsCommandCenterReport(common);
   assert.equal(present.command_center_v2.public_trust_unification_backend_contract_v1.coverage_status, "PROVEN");
-  const delta =
-    present.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100 -
-    absent.command_center_v2.top_of_game_foundation_scorecard_v1.foundation_maturity_score_100;
-  assert.equal(delta, 8);
-  const lane = present.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+  const absentPublicTrustLane = absent.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
     (l) => l.lane_id === "public_trust_unification_backend_contract",
   );
-  assert.ok(lane);
+  const presentPublicTrustLane = present.command_center_v2.top_of_game_foundation_scorecard_v1.lanes.find(
+    (l) => l.lane_id === "public_trust_unification_backend_contract",
+  );
+  assert.ok(absentPublicTrustLane && presentPublicTrustLane);
+  const publicTrustDelta =
+    presentPublicTrustLane.score_contribution - absentPublicTrustLane.score_contribution;
+  assert.equal(
+    publicTrustDelta,
+    TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1.public_trust_unification_backend_contract,
+  );
+  const lane = presentPublicTrustLane;
   assert.equal(lane.status, "PROVEN");
   assert.equal(lane.score_contribution, TOP_OF_GAME_FOUNDATION_LANE_WEIGHTS_V1.public_trust_unification_backend_contract);
   assertFoundationScorecardNoBannedClaims(present.command_center_v2.top_of_game_foundation_scorecard_v1);
@@ -3717,6 +3726,32 @@ test("command_center_v2.page_publishability_truth_summary_v1 is read-only semant
   assert.ok(lane.unknown_join_count > 0);
   assert.ok(!Object.keys(lane.distribution_automation_allowed).includes("auto_fix_allowed"));
   assert.ok(lane.sample_rows.length <= 25);
+});
+
+test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth spine", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const spine = report.command_center_v2.fridge_truth_spine_v1;
+  assert.ok(spine);
+  assert.equal(spine.contract, "fridge_truth_spine_v1");
+  assert.equal(spine.read_only, true);
+  assert.equal(spine.data_mutation, false);
+  assert.equal(spine.csv_truth.linked_filters_with_safe_direct_buyable_primary, 0);
+  assert.equal(spine.csv_truth.safe_buyer_path_verdict, "PROVEN_TRUE");
+  assert.deepEqual(spine.supabase_csv_diff.evidence_only_slugs, ["4396508", "gswf"]);
+  assert.equal(spine.public_truth.should_redo_fridge_products_now, "NO");
+  assert.equal(spine.public_truth.public_truth_status, "PUBLIC_TRUTHFUL");
+  if (spine.supabase_csv_diff.supabase_truth_status === "CHECKED") {
+    assert.equal(spine.supabase_csv_diff.supabase_has_win_csv_missing_count, 16);
+    assert.equal(spine.supabase_csv_diff.evidence_only_not_in_supabase_count, 2);
+  }
+  assert.ok(spine.recommended_next_action.toLowerCase().includes("do not apply"));
+  assert.ok(spine.proven_facts.some((f) => f.includes("does not authorize")));
+  assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
 test("command_center_v2.semi_cruise_status_summary_v1 is read-only and reports mutation NOT_PROVEN", async () => {

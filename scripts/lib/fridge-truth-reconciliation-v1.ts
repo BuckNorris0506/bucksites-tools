@@ -159,7 +159,7 @@ function readCsvPrimaryWeakReasonBySlug(
   }
 
   const out = new Map<string, string | null>();
-  for (const slug of linkedSlugs) {
+  for (const slug of Array.from(linkedSlugs)) {
     const rows = byFilter.get(slug) ?? [];
     if (rows.length === 0) {
       out.set(slug, "NO_PRIMARY_LINK");

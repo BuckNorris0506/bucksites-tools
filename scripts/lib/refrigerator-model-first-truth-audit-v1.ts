@@ -213,7 +213,7 @@ function buildBuyerPathDiagnostics(args: {
   const primaryWeakReasonCounts: Record<string, number> = {};
   const sampleSafe: Array<{ filter_slug: string; reason: string }> = [];
 
-  for (const filterSlug of args.uniqueMappedFilterSlugs) {
+  for (const filterSlug of Array.from(args.uniqueMappedFilterSlugs)) {
     const rows = args.linksByFilter.get(filterSlug) ?? [];
     const buyRows = rows.map(toBuyLinkRow);
     if (rows.length > 0) filtersWithAnyRetailerLink += 1;
@@ -295,7 +295,7 @@ function top20Candidates(args: {
   safeByFilter: Set<string>;
 }): RefrigeratorAuditCandidateV1[] {
   const out: RefrigeratorAuditCandidateV1[] = [];
-  for (const [filterSlug, models] of args.mappingByFilter.entries()) {
+  for (const [filterSlug, models] of Array.from(args.mappingByFilter.entries())) {
     const filter = args.filters.get(filterSlug);
     if (!filter) continue;
     const weakReason = args.weakReasonByFilter.get(filterSlug) ?? "NO_PRIMARY_LINK";
@@ -385,7 +385,7 @@ export function buildRefrigeratorModelFirstTruthAuditV1(args: {
   const safeFilters = new Set<string>();
   const weakByFilter = new Map<string, string>();
   let filterExistsButBuyerPathWeakCount = 0;
-  for (const filterSlug of uniqueMappedFilterSlugs) {
+  for (const filterSlug of Array.from(uniqueMappedFilterSlugs)) {
     const primary = primaryLink(linksByFilter.get(filterSlug) ?? []);
     const reason = weakReasonForPrimary(primary);
     if (reason === "SAFE_PRIMARY") {

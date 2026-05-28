@@ -210,6 +210,7 @@ export function buildCommandCenterV2Report(input: {
   | "batch_production_operating_checklist_v1"
   | "batch_production_operating_dispatch_v1"
   | "page_publishability_truth_summary_v1"
+  | "fridge_truth_spine_v1"
   | "demand_to_coverage_next_lane_v1"
   | "marketing_intelligence_engine_v1"
   | "agent_control_plane_v1"
