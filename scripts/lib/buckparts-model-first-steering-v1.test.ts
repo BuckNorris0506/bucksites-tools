@@ -16,7 +16,11 @@ const REPO_ROOT = process.cwd();
 test("resolveModelFirstSteeringOverrideV1 returns override when steering primary eligible", async () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const queue = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
   const demand = await buildDemandToCoverageNextLaneV1Report({ rootDir: REPO_ROOT });
   const checklist = buildBatchProductionOperatingChecklistV1({ rootDir: REPO_ROOT });
   const instantiation = await buildApBatchV3RunInstantiationV1Report({
@@ -40,6 +44,11 @@ test("resolveModelFirstSteeringOverrideV1 returns override when steering primary
     assert.ok(override!.next_best_action.startsWith("MODEL-FIRST STEERING"));
     assert.ok(override!.next_move_command.includes("report-ap-model-first-evidence-queue-v1"));
     assert.equal(override!.demoted_subsystem, "ap_batch_v3_aggregation_review");
+    assert.ok(
+      override!.next_best_action.includes("winix-carbon-116131"),
+      "steering should target next active candidate after holmes-hapf30 demotion",
+    );
+    assert.ok(!override!.next_best_action.includes("holmes-hapf30"));
   }
 });
 

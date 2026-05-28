@@ -1264,9 +1264,13 @@ export async function buildBuckpartsCommandCenterReport(
   let ap_model_first_evidence_queue_v1;
   try {
     ap_model_first_evidence_queue_v1 = buildApModelFirstEvidenceQueueV1Report({
+      rootDir,
       now,
       modelFirstLane: air_purifier_model_first_production_lane_v1,
       weakBuyerPathAudit: air_purifier_weak_buyer_path_audit_v1,
+      fileExists,
+      readText: readTextFile,
+      readdir: readDir,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

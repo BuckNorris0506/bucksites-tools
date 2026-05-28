@@ -428,7 +428,11 @@ export function buildBuckpartsAgentControlPlaneV1Report(
           : [
               ...(modelFirstQueue && modelFirstQueue.candidate_count > 0
                 ? []
-                : ["model_first_queue_empty"]),
+                : modelFirstQueue &&
+                    modelFirstQueue.merged_candidate_count > 0 &&
+                    modelFirstQueue.result_history.no_mutation_completed_filter_slugs.length > 0
+                  ? ["all_active_candidates_completed_no_mutation"]
+                  : ["model_first_queue_empty"]),
               ...(apTruth.safe_csv_mutation_count === 0
                 ? []
                 : ["ap_batch_v3_safe_csv_mutations_present"]),

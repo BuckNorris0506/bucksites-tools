@@ -3,7 +3,7 @@
  * Writes only under agent-results-model-first-v1/ when explicitly requested.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "csv-parse/sync";
 
@@ -13,11 +13,10 @@ import {
   isManufacturerSiteSearchUrl,
 } from "@/lib/retailers/launch-buy-links";
 
-import {
-  AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1,
-  AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
-  type ApModelFirstEvidenceQueueReportV1,
-} from "./ap-model-first-evidence-queue-v1";
+import type { ApModelFirstEvidenceQueueReportV1 } from "./ap-model-first-evidence-queue-v1";
+
+export const AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1 =
+  "data/air-purifier/batch-production/agent-results-model-first-v1" as const;
 
 export const AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1 =
   "air_purifier_model_first_evidence_result_v1" as const;
@@ -36,6 +35,8 @@ export const AP_MODEL_FIRST_HOLMES_HAPF30_PACKET_ID_V1 = "ap-model-first-holmes-
 export const AP_MODEL_FIRST_HOLMES_HAPF30_LIVE_BROWSER_PACKET_ID_V1 =
   "ap-model-first-holmes-hapf30-live-browser-v1" as const;
 
+export const AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1 = "ap_model_first_evidence_queue_v1" as const;
+
 export const MODEL_FIRST_EVIDENCE_COLLECTION_MODES_V1 = [
   "repo_truth_only_v1",
   "live_browser_model_first_v1",
@@ -43,8 +44,6 @@ export const MODEL_FIRST_EVIDENCE_COLLECTION_MODES_V1 = [
 
 export type ModelFirstEvidenceCollectionModeV1 =
   (typeof MODEL_FIRST_EVIDENCE_COLLECTION_MODES_V1)[number];
-
-export { AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1 };
 
 export type ModelFirstEvidenceRowStatusV1 = "PASS" | "FAIL" | "UNKNOWN" | "BLOCKED";
 
@@ -535,6 +534,104 @@ export function buildModelFirstEvidenceResultV1(
   }
 
   return report;
+}
+
+export type CommittedModelFirstEvidenceResultEntryV1 = {
+  relPath: string;
+  result: AirPurifierModelFirstEvidenceResultV1;
+};
+
+export type CommittedModelFirstEvidenceResultsLoadV1 = {
+  results: CommittedModelFirstEvidenceResultEntryV1[];
+  invalid_result_files: string[];
+};
+
+export function modelFirstResultFilterSlugV1(
+  result: AirPurifierModelFirstEvidenceResultV1,
+): string | null {
+  if ("filter_slug" in result && typeof result.filter_slug === "string" && result.filter_slug.trim()) {
+    return result.filter_slug.trim();
+  }
+  const anchor = result.anchor_filter_slug?.trim();
+  return anchor || null;
+}
+
+export function modelFirstResultTimestampV1(result: AirPurifierModelFirstEvidenceResultV1): string {
+  if ("checked_at" in result && typeof result.checked_at === "string" && result.checked_at.trim()) {
+    return result.checked_at;
+  }
+  return result.generated_at;
+}
+
+/** Completed pass with no safe CSV mutation authorized (PASS count 0, recommended_csv_mutation null). */
+export function isModelFirstResultCompletedNoMutationV1(
+  result: AirPurifierModelFirstEvidenceResultV1,
+): boolean {
+  if (result.recommended_csv_mutation !== null) return false;
+  return result.evidence_status_counts.PASS === 0;
+}
+
+export function loadCommittedModelFirstEvidenceResultsV1(args: {
+  rootDir: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
+  readdir?: (absDir: string) => string[];
+}): CommittedModelFirstEvidenceResultsLoadV1 {
+  const fileExists = args.fileExists ?? defaultFileExists;
+  const readText = args.readText ?? defaultReadText;
+  const readdir = args.readdir ?? ((absDir: string) => readdirSync(absDir));
+  const resultsDirAbs = path.join(args.rootDir, AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1);
+  const invalid_result_files: string[] = [];
+  const results: CommittedModelFirstEvidenceResultEntryV1[] = [];
+
+  if (!fileExists(resultsDirAbs)) {
+    return { results, invalid_result_files };
+  }
+
+  for (const name of readdir(resultsDirAbs)) {
+    if (!name.endsWith(".results.json")) continue;
+    const relPath = `${AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/${name}`;
+    if (!isAllowedModelFirstEvidenceResultRelPathV1(relPath)) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    const loaded = loadModelFirstEvidenceResultV1({
+      rootDir: args.rootDir,
+      relPath,
+      readText,
+      fileExists,
+    });
+    if (!loaded) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    if (!modelFirstResultFilterSlugV1(loaded)) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    results.push({ relPath, result: loaded });
+  }
+
+  return { results, invalid_result_files };
+}
+
+/** Latest valid committed result per filter_slug (by generated_at / checked_at). */
+export function latestCommittedModelFirstResultsByFilterSlugV1(
+  load: CommittedModelFirstEvidenceResultsLoadV1,
+): Map<string, CommittedModelFirstEvidenceResultEntryV1> {
+  const bySlug = new Map<string, CommittedModelFirstEvidenceResultEntryV1>();
+  for (const entry of load.results) {
+    const slug = modelFirstResultFilterSlugV1(entry.result);
+    if (!slug) continue;
+    const existing = bySlug.get(slug);
+    if (
+      !existing ||
+      modelFirstResultTimestampV1(entry.result) > modelFirstResultTimestampV1(existing.result)
+    ) {
+      bySlug.set(slug, entry);
+    }
+  }
+  return bySlug;
 }
 
 export function loadModelFirstEvidenceResultV1(args: {

@@ -17,28 +17,87 @@ const REPO_ROOT = process.cwd();
 test("model-first evidence queue is read-only", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  const report = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
   assert.equal(report.contract, AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1);
   assert.equal(report.read_only, true);
   assert.equal(report.data_mutation, false);
 });
 
-test("top queue candidate is derived from weak buyer path audit", () => {
+test("holmes-hapf30 demoted after committed live-browser no-mutation result", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  const report = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+
+  assert.ok(
+    report.result_history.no_mutation_completed_filter_slugs.includes("holmes-hapf30"),
+    "expected holmes-hapf30 in no_mutation_completed_filter_slugs",
+  );
+  assert.ok(
+    report.completed_no_mutation_candidates.some((c) => c.filter_slug === "holmes-hapf30"),
+  );
+  const holmesCompleted = report.completed_no_mutation_candidates.find(
+    (c) => c.filter_slug === "holmes-hapf30",
+  );
+  assert.equal(holmesCompleted!.completion_reason, "completed_model_first_no_mutation");
+  assert.ok(
+    !report.top_candidates.some((c) => c.filter_slug === "holmes-hapf30"),
+    "holmes-hapf30 must not appear in active top_candidates",
+  );
+});
+
+test("top active candidate advances past completed holmes-hapf30", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+
   assert.ok(report.top_candidates.length >= 1);
-  const topWeak = weak.top_10_weak_filters_by_model_coverage[0]!;
   const topQueue = report.top_candidates[0]!;
-  assert.equal(topQueue.filter_slug, topWeak.filter_slug);
-  assert.equal(topQueue.brand_slug, topWeak.brand_slug);
-  assert.equal(topQueue.model_count_using_filter, topWeak.model_count_using_filter);
+  assert.notEqual(topQueue.filter_slug, "holmes-hapf30");
+  assert.equal(topQueue.filter_slug, "winix-carbon-116131");
+
+  const topWeak = weak.top_10_weak_filters_by_evidence_priority.find(
+    (r) => r.filter_slug === "winix-carbon-116131",
+  );
+  assert.ok(topWeak);
+  assert.equal(topQueue.brand_slug, topWeak!.brand_slug);
+  assert.equal(topQueue.model_count_using_filter, topWeak!.model_count_using_filter);
+});
+
+test("result history summary reflects committed artifacts", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
+
+  assert.ok(report.result_history.completed_result_count >= 1);
+  assert.ok(report.result_history.completed_filter_slugs.includes("holmes-hapf30"));
+  assert.equal(report.read_only, true);
+  assert.equal(report.data_mutation, false);
 });
 
 test("queue does not claim products unavailable or CSV mutation safety", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  const report = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
   for (const row of report.top_candidates) {
     assert.equal(row.do_not_claim_unavailable, true);
   }
@@ -54,7 +113,11 @@ test("queue does not claim products unavailable or CSV mutation safety", () => {
 test("steering primary eligible under repo dominance condition", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  const report = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const report = buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
   assert.equal(
     isModelFirstSteeringPrimaryEligibleV1({
       weakBuyerPathAudit: weak,
@@ -92,7 +155,11 @@ test("read-only build does not mutate CSV Supabase dispatch-run batch-review", (
 
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-  buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  buildApModelFirstEvidenceQueueV1Report({
+    rootDir: REPO_ROOT,
+    modelFirstLane: lane,
+    weakBuyerPathAudit: weak,
+  });
 
   for (const [p, content] of before) {
     assert.equal(readFileSync(path.join(REPO_ROOT, p), "utf8"), content);

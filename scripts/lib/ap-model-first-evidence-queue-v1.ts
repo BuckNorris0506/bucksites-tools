@@ -4,18 +4,25 @@
  */
 
 import type { AirPurifierModelFirstProductionLaneReportV1 } from "./air-purifier-model-first-production-lane-v1";
+import {
+  AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1,
+  AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+  isModelFirstResultCompletedNoMutationV1,
+  latestCommittedModelFirstResultsByFilterSlugV1,
+  loadCommittedModelFirstEvidenceResultsV1,
+} from "./air-purifier-model-first-evidence-result-v1";
 import type {
   AirPurifierWeakBuyerPathAuditReportV1,
   WeakBuyerPathWeaknessClassV1,
 } from "./air-purifier-weak-buyer-path-audit-v1";
 
-export const AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1 = "ap_model_first_evidence_queue_v1" as const;
+export {
+  AP_MODEL_FIRST_EVIDENCE_QUEUE_CONTRACT_V1,
+  AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+} from "./air-purifier-model-first-evidence-result-v1";
 
 export const AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1 =
   "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts" as const;
-
-export const AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1 =
-  "data/air-purifier/batch-production/agent-results-model-first-v1" as const;
 
 export const AP_MODEL_FIRST_EVIDENCE_PACKETS_DIR_REL_V1 =
   "data/air-purifier/batch-production/agent-packets-model-first-v1" as const;
@@ -52,6 +59,23 @@ export type ApModelFirstQueueCandidateV1 = {
   do_not_claim_unavailable: true;
 };
 
+export const MODEL_FIRST_COMPLETION_REASON_COMPLETED_NO_MUTATION_V1 =
+  "completed_model_first_no_mutation" as const;
+
+export type ApModelFirstCompletedNoMutationCandidateV1 = ApModelFirstQueueCandidateV1 & {
+  completion_reason: typeof MODEL_FIRST_COMPLETION_REASON_COMPLETED_NO_MUTATION_V1;
+  result_artifact_rel: string;
+  result_pass_count: number;
+  retry_hint: string;
+};
+
+export type ApModelFirstEvidenceResultHistoryV1 = {
+  completed_result_count: number;
+  completed_filter_slugs: string[];
+  no_mutation_completed_filter_slugs: string[];
+  invalid_result_files: string[];
+};
+
 export type ApModelFirstRecommendedPacketV1 = {
   packet_id: string;
   read_only: true;
@@ -69,8 +93,12 @@ export type ApModelFirstEvidenceQueueReportV1 = {
   generated_at: string;
   source_status: ApModelFirstQueueSourceStatusV1;
   queue_status: ApModelFirstQueueStatusV1;
+  /** Active candidates eligible for primary top slot (excludes completed no-mutation). */
   candidate_count: number;
+  merged_candidate_count: number;
   top_candidates: ApModelFirstQueueCandidateV1[];
+  completed_no_mutation_candidates: ApModelFirstCompletedNoMutationCandidateV1[];
+  result_history: ApModelFirstEvidenceResultHistoryV1;
   recommended_packet: ApModelFirstRecommendedPacketV1 | null;
   why_model_first: string;
   old_filter_first_drift_risk: string;
@@ -82,9 +110,13 @@ export type ApModelFirstEvidenceQueueReportV1 = {
 };
 
 export type BuildApModelFirstEvidenceQueueDepsV1 = {
+  rootDir?: string;
   now?: () => Date;
   modelFirstLane: AirPurifierModelFirstProductionLaneReportV1 | null;
   weakBuyerPathAudit: AirPurifierWeakBuyerPathAuditReportV1 | null;
+  fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
+  readdir?: (absDir: string) => string[];
 };
 
 function sampleModelsForFilter(
@@ -158,6 +190,71 @@ function mergeTopCandidates(
     .slice(0, 10);
 }
 
+function splitCandidatesByCommittedResults(args: {
+  merged: ApModelFirstQueueCandidateV1[];
+  exhaustedSlugs: Set<string>;
+  latestBySlug: ReturnType<typeof latestCommittedModelFirstResultsByFilterSlugV1>;
+}): {
+  active: ApModelFirstQueueCandidateV1[];
+  completed: ApModelFirstCompletedNoMutationCandidateV1[];
+} {
+  const active: ApModelFirstQueueCandidateV1[] = [];
+  const completed: ApModelFirstCompletedNoMutationCandidateV1[] = [];
+
+  for (const candidate of args.merged) {
+    if (!args.exhaustedSlugs.has(candidate.filter_slug)) {
+      active.push(candidate);
+      continue;
+    }
+    const entry = args.latestBySlug.get(candidate.filter_slug);
+    if (!entry) continue;
+    completed.push({
+      ...candidate,
+      completion_reason: MODEL_FIRST_COMPLETION_REASON_COMPLETED_NO_MUTATION_V1,
+      result_artifact_rel: entry.relPath,
+      result_pass_count: entry.result.evidence_status_counts.PASS,
+      retry_hint:
+        "Committed model-first result exists with recommended_csv_mutation null and PASS=0 — retry only after new evidence strategy or upstream catalog change.",
+    });
+  }
+
+  return { active, completed };
+}
+
+export function buildModelFirstEvidenceResultHistoryV1(args: {
+  rootDir: string;
+  fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
+  readdir?: (absDir: string) => string[];
+}): {
+  history: ApModelFirstEvidenceResultHistoryV1;
+  exhaustedSlugs: Set<string>;
+  latestBySlug: ReturnType<typeof latestCommittedModelFirstResultsByFilterSlugV1>;
+} {
+  const load = loadCommittedModelFirstEvidenceResultsV1(args);
+  const latestBySlug = latestCommittedModelFirstResultsByFilterSlugV1(load);
+  const completed_filter_slugs = Array.from(latestBySlug.keys()).sort();
+  const no_mutation_completed_filter_slugs: string[] = [];
+
+  for (const [slug, entry] of Array.from(latestBySlug.entries())) {
+    if (isModelFirstResultCompletedNoMutationV1(entry.result)) {
+      no_mutation_completed_filter_slugs.push(slug);
+    }
+  }
+  no_mutation_completed_filter_slugs.sort();
+
+  return {
+    history: {
+      completed_result_count: latestBySlug.size,
+      completed_filter_slugs,
+      no_mutation_completed_filter_slugs,
+      invalid_result_files: load.invalid_result_files.slice().sort(),
+    },
+    exhaustedSlugs: new Set(no_mutation_completed_filter_slugs),
+    latestBySlug,
+  };
+}
+
 export function isModelFirstSteeringPrimaryEligibleV1(args: {
   weakBuyerPathAudit: AirPurifierWeakBuyerPathAuditReportV1 | null;
   candidateCount: number;
@@ -186,7 +283,15 @@ export function buildApModelFirstEvidenceQueueUnknownV1(args: {
     source_status: "UNKNOWN",
     queue_status: "UNKNOWN",
     candidate_count: 0,
+    merged_candidate_count: 0,
     top_candidates: [],
+    completed_no_mutation_candidates: [],
+    result_history: {
+      completed_result_count: 0,
+      completed_filter_slugs: [],
+      no_mutation_completed_filter_slugs: [],
+      invalid_result_files: [],
+    },
     recommended_packet: null,
     why_model_first: "Model-first queue could not be built from upstream reports.",
     old_filter_first_drift_risk: args.reason,
@@ -212,7 +317,26 @@ export function buildApModelFirstEvidenceQueueV1Report(
     });
   }
 
-  const top_candidates = mergeTopCandidates(weak, lane);
+  const rootDir = deps.rootDir ?? process.cwd();
+  const merged_candidates = mergeTopCandidates(weak, lane);
+  const merged_candidate_count = merged_candidates.length;
+
+  const { history: result_history, exhaustedSlugs, latestBySlug } =
+    buildModelFirstEvidenceResultHistoryV1({
+      rootDir,
+      fileExists: deps.fileExists,
+      readText: deps.readText,
+      readdir: deps.readdir,
+    });
+
+  const { active, completed } = splitCandidatesByCommittedResults({
+    merged: merged_candidates,
+    exhaustedSlugs,
+    latestBySlug,
+  });
+
+  const top_candidates = active.slice(0, 10);
+  const completed_no_mutation_candidates = completed;
   const candidate_count = top_candidates.length;
   const top = top_candidates[0] ?? null;
 
@@ -263,7 +387,10 @@ export function buildApModelFirstEvidenceQueueV1Report(
     source_status,
     queue_status,
     candidate_count,
+    merged_candidate_count,
     top_candidates,
+    completed_no_mutation_candidates,
+    result_history,
     recommended_packet,
     why_model_first,
     old_filter_first_drift_risk,
@@ -272,15 +399,19 @@ export function buildApModelFirstEvidenceQueueV1Report(
     demoted_batch_subsystem,
     proven_facts: [
       `PROVEN: Queue built from ${lane.contract} + ${weak.contract}.`,
-      `PROVEN: ${String(candidate_count)} top queue candidate(s); top filter ${top?.filter_slug ?? "none"}.`,
+      `PROVEN: ${String(candidate_count)} active top queue candidate(s); top filter ${top?.filter_slug ?? "none"}.`,
+      `PROVEN: ${String(merged_candidate_count)} merged weak-lane candidate(s); ${String(completed_no_mutation_candidates.length)} completed no-mutation excluded.`,
+      `PROVEN: Committed model-first results loaded: ${String(result_history.completed_result_count)} valid; no_mutation_completed=${result_history.no_mutation_completed_filter_slugs.join(",") || "none"}.`,
       `PROVEN: Weak audit search_placeholder_primary_count=${String(weak.search_placeholder_primary_count)}.`,
       `PROVEN: AP batch-v3 safe_csv_mutations=${String(batchSafeMutations)}.`,
       steering_primary_eligible
-        ? "PROVEN: Model-first steering is primary-eligible (search-placeholder dominance + zero safe batch-v3 mutations + queue candidates)."
+        ? "PROVEN: Model-first steering is primary-eligible (search-placeholder dominance + zero safe batch-v3 mutations + active queue candidates)."
         : "PROVEN: Model-first steering is not primary-eligible in this snapshot.",
     ],
     unknown_facts: [
-      "UNKNOWN: Whether model-first browser evidence will yield direct_buyable primaries (no model-first result artifacts in repo yet).",
+      result_history.completed_result_count > 0
+        ? "UNKNOWN: Whether a different evidence strategy will yield PASS>0 for filters already completed with no mutation."
+        : "UNKNOWN: Whether model-first browser evidence will yield direct_buyable primaries.",
       lane.unknown_facts[0] ?? "UNKNOWN: model-first lane caveats apply.",
     ],
   };
