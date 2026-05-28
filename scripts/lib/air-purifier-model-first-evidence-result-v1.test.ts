@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { existsSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -46,7 +47,7 @@ test("artifact path is under ap_model_first_evidence_v1 allowed results dir", ()
   assert.ok(AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1.endsWith(".results.json"));
 });
 
-test("writing holmes result does not mutate CSV Supabase dispatch batch-review", () => {
+test("building holmes result read-only does not mutate CSV Supabase dispatch batch-review", () => {
   const csvPaths = [
     "data/air-purifier/retailer_links.csv",
     "data/air-purifier/filters.csv",
@@ -68,10 +69,13 @@ test("writing holmes result does not mutate CSV Supabase dispatch batch-review",
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
   const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const targetAbs = path.join(REPO_ROOT, AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1);
+  rmSync(targetAbs, { force: true });
+
   buildHolmesHapf30ModelFirstEvidenceFromQueueV1({
     rootDir: REPO_ROOT,
     queue,
-    writeResult: true,
+    writeResult: false,
   });
 
   for (const [p, content] of before) {
@@ -82,12 +86,7 @@ test("writing holmes result does not mutate CSV Supabase dispatch batch-review",
   }
   assert.equal(readFileSync(reviewPath, "utf8"), reviewBefore);
 
-  const loaded = loadModelFirstEvidenceResultV1({
-    rootDir: REPO_ROOT,
-    relPath: AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1,
-  });
-  assert.ok(loaded);
-  assert.equal(loaded!.evidence_status_counts.UNKNOWN, 5);
+  assert.equal(existsSync(targetAbs), false);
 });
 
 test("live-browser model-first artifact schema is accepted", () => {
@@ -105,6 +104,16 @@ test("live-browser model-first artifact schema is accepted", () => {
     assert.equal(loaded.recommended_csv_mutation, null);
     assert.equal(loaded.evidence_status_counts.PASS, 0);
   }
+});
+
+test("default holmes report run is read-only and does not create repo-only artifact", () => {
+  const targetAbs = path.join(REPO_ROOT, AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1);
+  rmSync(targetAbs, { force: true });
+  execSync("npx tsx scripts/report-air-purifier-model-first-evidence-holmes-hapf30-v1.ts", {
+    cwd: REPO_ROOT,
+    stdio: "pipe",
+  });
+  assert.equal(existsSync(targetAbs), false);
 });
 
 test("live-browser artifact path is only under allowed model-first results dir", () => {
@@ -200,11 +209,11 @@ test("exact-token proof is required before PASS buyer path can recommend mutatio
   );
 });
 
-test("top queue sample models are the holmes rows checked", () => {
+test("holmes sample rows are built from completed/no-mutation fallback when top queue moved", () => {
   const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
   const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
   const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
-  const top = queue.top_candidates.find((c) => c.filter_slug === "holmes-hapf30");
+  const top = queue.completed_no_mutation_candidates.find((c) => c.filter_slug === "holmes-hapf30");
   assert.ok(top);
   const result = buildHolmesHapf30ModelFirstEvidenceFromQueueV1({ rootDir: REPO_ROOT, queue });
   assert.deepEqual(

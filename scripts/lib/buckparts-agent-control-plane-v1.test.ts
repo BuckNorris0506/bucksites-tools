@@ -111,19 +111,9 @@ describe("buckparts-agent-control-plane-v1", () => {
   });
 
   it("recognizes committed holmes model-first result artifact when present", async () => {
-    const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
-    const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
-    const queue = buildApModelFirstEvidenceQueueV1Report({
-      modelFirstLane: lane,
-      weakBuyerPathAudit: weak,
-    });
-    const { buildHolmesHapf30ModelFirstEvidenceFromQueueV1 } = await import(
-      "./air-purifier-model-first-evidence-result-v1"
-    );
-    buildHolmesHapf30ModelFirstEvidenceFromQueueV1({ rootDir: REPO_ROOT, queue, writeResult: true });
     const plane = await buildPlaneOnRepo();
     assert.ok(
-      plane.proven_facts.some((f) => f.includes("ap-model-first-holmes-hapf30-v1.results.json")),
+      plane.proven_facts.some((f) => f.includes("ap-model-first-holmes-hapf30-live-browser-v1.results.json")),
     );
   });
 
