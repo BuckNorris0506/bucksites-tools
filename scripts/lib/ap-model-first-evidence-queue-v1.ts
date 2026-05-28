@@ -73,7 +73,21 @@ export type ApModelFirstEvidenceResultHistoryV1 = {
   completed_result_count: number;
   completed_filter_slugs: string[];
   no_mutation_completed_filter_slugs: string[];
+  mapping_review_required_filter_slugs: string[];
   invalid_result_files: string[];
+};
+
+export const MODEL_FIRST_REVIEW_CLASSIFICATION_MODEL_FILTER_MAPPING_REVIEW_REQUIRED_V1 =
+  "MODEL_FILTER_MAPPING_REVIEW_REQUIRED" as const;
+
+export type ModelFirstReviewClassificationV1 =
+  typeof MODEL_FIRST_REVIEW_CLASSIFICATION_MODEL_FILTER_MAPPING_REVIEW_REQUIRED_V1;
+
+export type ApModelFirstMappingReviewOpportunityV1 = {
+  filter_slug: string;
+  classification: ModelFirstReviewClassificationV1;
+  result_artifact_rel: string;
+  reason: string;
 };
 
 export type ApModelFirstRecommendedPacketV1 = {
@@ -98,6 +112,7 @@ export type ApModelFirstEvidenceQueueReportV1 = {
   merged_candidate_count: number;
   top_candidates: ApModelFirstQueueCandidateV1[];
   completed_no_mutation_candidates: ApModelFirstCompletedNoMutationCandidateV1[];
+  mapping_review_opportunities: ApModelFirstMappingReviewOpportunityV1[];
   result_history: ApModelFirstEvidenceResultHistoryV1;
   recommended_packet: ApModelFirstRecommendedPacketV1 | null;
   why_model_first: string;
@@ -221,6 +236,31 @@ function splitCandidatesByCommittedResults(args: {
   return { active, completed };
 }
 
+function hasModelFilterMappingReviewSignal(args: {
+  result: Parameters<typeof isModelFirstResultCompletedNoMutationV1>[0];
+}): boolean {
+  const result = args.result;
+  if (result.evidence_collection_mode !== "live_browser_model_first_v1") return false;
+  if (result.model_rows.length === 0) return false;
+
+  const wrongFamilyByModelRows = result.model_rows.some(
+    (row) =>
+      row.evidence_status === "FAIL" &&
+      (row.buyer_path_status.includes("WRONG_FAMILY") || row.notes.toUpperCase().includes("WRONG-FAMILY")),
+  );
+  if (wrongFamilyByModelRows) return true;
+
+  const wrongFamilyByBuyerPaths = result.candidate_buyer_paths.some(
+    (path) =>
+      path.status === "FAIL" &&
+      (path.wrong_family_risk.toUpperCase().includes("WRONG-FAMILY") ||
+        path.wrong_family_risk.includes("does not match anchor")),
+  );
+  if (wrongFamilyByBuyerPaths) return true;
+
+  return false;
+}
+
 export function buildModelFirstEvidenceResultHistoryV1(args: {
   rootDir: string;
   fileExists?: (absPath: string) => boolean;
@@ -230,28 +270,44 @@ export function buildModelFirstEvidenceResultHistoryV1(args: {
   history: ApModelFirstEvidenceResultHistoryV1;
   exhaustedSlugs: Set<string>;
   latestBySlug: ReturnType<typeof latestCommittedModelFirstResultsByFilterSlugV1>;
+  mappingReviewOpportunities: ApModelFirstMappingReviewOpportunityV1[];
 } {
   const load = loadCommittedModelFirstEvidenceResultsV1(args);
   const latestBySlug = latestCommittedModelFirstResultsByFilterSlugV1(load);
   const completed_filter_slugs = Array.from(latestBySlug.keys()).sort();
   const no_mutation_completed_filter_slugs: string[] = [];
+  const mapping_review_required_filter_slugs: string[] = [];
+  const mappingReviewOpportunities: ApModelFirstMappingReviewOpportunityV1[] = [];
 
   for (const [slug, entry] of Array.from(latestBySlug.entries())) {
     if (isModelFirstResultCompletedNoMutationV1(entry.result)) {
       no_mutation_completed_filter_slugs.push(slug);
+      if (hasModelFilterMappingReviewSignal({ result: entry.result })) {
+        mapping_review_required_filter_slugs.push(slug);
+        mappingReviewOpportunities.push({
+          filter_slug: slug,
+          classification: MODEL_FIRST_REVIEW_CLASSIFICATION_MODEL_FILTER_MAPPING_REVIEW_REQUIRED_V1,
+          result_artifact_rel: entry.relPath,
+          reason:
+            "Official model/manual evidence in committed live-browser artifact maps sampled models to filter tokens that do not match anchor filter slug.",
+        });
+      }
     }
   }
   no_mutation_completed_filter_slugs.sort();
+  mapping_review_required_filter_slugs.sort();
 
   return {
     history: {
       completed_result_count: latestBySlug.size,
       completed_filter_slugs,
       no_mutation_completed_filter_slugs,
+      mapping_review_required_filter_slugs,
       invalid_result_files: load.invalid_result_files.slice().sort(),
     },
     exhaustedSlugs: new Set(no_mutation_completed_filter_slugs),
     latestBySlug,
+    mappingReviewOpportunities,
   };
 }
 
@@ -290,8 +346,10 @@ export function buildApModelFirstEvidenceQueueUnknownV1(args: {
       completed_result_count: 0,
       completed_filter_slugs: [],
       no_mutation_completed_filter_slugs: [],
+      mapping_review_required_filter_slugs: [],
       invalid_result_files: [],
     },
+    mapping_review_opportunities: [],
     recommended_packet: null,
     why_model_first: "Model-first queue could not be built from upstream reports.",
     old_filter_first_drift_risk: args.reason,
@@ -321,7 +379,7 @@ export function buildApModelFirstEvidenceQueueV1Report(
   const merged_candidates = mergeTopCandidates(weak, lane);
   const merged_candidate_count = merged_candidates.length;
 
-  const { history: result_history, exhaustedSlugs, latestBySlug } =
+  const { history: result_history, exhaustedSlugs, latestBySlug, mappingReviewOpportunities } =
     buildModelFirstEvidenceResultHistoryV1({
       rootDir,
       fileExists: deps.fileExists,
@@ -390,6 +448,7 @@ export function buildApModelFirstEvidenceQueueV1Report(
     merged_candidate_count,
     top_candidates,
     completed_no_mutation_candidates,
+    mapping_review_opportunities: mappingReviewOpportunities,
     result_history,
     recommended_packet,
     why_model_first,
@@ -402,6 +461,7 @@ export function buildApModelFirstEvidenceQueueV1Report(
       `PROVEN: ${String(candidate_count)} active top queue candidate(s); top filter ${top?.filter_slug ?? "none"}.`,
       `PROVEN: ${String(merged_candidate_count)} merged weak-lane candidate(s); ${String(completed_no_mutation_candidates.length)} completed no-mutation excluded.`,
       `PROVEN: Committed model-first results loaded: ${String(result_history.completed_result_count)} valid; no_mutation_completed=${result_history.no_mutation_completed_filter_slugs.join(",") || "none"}.`,
+      `PROVEN: mapping_review_required=${result_history.mapping_review_required_filter_slugs.join(",") || "none"}.`,
       `PROVEN: Weak audit search_placeholder_primary_count=${String(weak.search_placeholder_primary_count)}.`,
       `PROVEN: AP batch-v3 safe_csv_mutations=${String(batchSafeMutations)}.`,
       steering_primary_eligible

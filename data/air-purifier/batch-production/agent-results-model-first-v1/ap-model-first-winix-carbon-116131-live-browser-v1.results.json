@@ -1,0 +1,190 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-winix-carbon-116131-live-browser-v1",
+  "run_id": "ap-model-first-winix-carbon-116131-live-browser-2026-05-28",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "winix-carbon-116131",
+  "filter_slug": "winix-carbon-116131",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-28T02:58:00.000Z",
+  "checked_at": "2026-05-28T02:58:00.000Z",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "model_rows": [
+    {
+      "model_slug": "winix-5500-2",
+      "model_number": "5500-2",
+      "official_source_urls": [
+        "https://www.winixamerica.com/product/filter-h-116130/",
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_5500-2.pdf",
+        "https://www.winixamerica.com/product/filter-i-116131/"
+      ],
+      "manual_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_5500-2.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Filter H",
+        "116130",
+        "Filter I",
+        "116131"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "notes": "PROVEN: Official Winix manual for 5500-2 lists Replacement Filter H / SKU 116130. PROVEN: Official Winix Filter H PDP says compatible with 5500-2 and AM80 and has In stock + Add to cart. PROVEN: Official Filter I 116131 PDP says compatible with C555 only. Therefore anchor winix-carbon-116131 is wrong-family for 5500-2 in this evidence pass."
+    },
+    {
+      "model_slug": "winix-c535",
+      "model_number": "C535",
+      "official_source_urls": [
+        "https://www.winixamerica.com/product/c535/",
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_C535.pdf",
+        "https://www.winixamerica.com/product/filter-a-115115/",
+        "https://www.winixamerica.com/product/filter-i-116131/"
+      ],
+      "manual_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_C535.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Filter A",
+        "115115",
+        "Filter I",
+        "116131"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "notes": "PROVEN: C535 official model page replacement section lists Filter A 115115 family. PROVEN: C535 manual lists Replacement Filter Filter A / SKU 115115. PROVEN: Filter I 116131 official PDP documents compatibility with C555 only. Anchor filter 116131 not proven for C535."
+    },
+    {
+      "model_slug": "winix-5300-2",
+      "model_number": "5300-2",
+      "official_source_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_5300-2.pdf",
+        "https://www.winixamerica.com/product/filter-a-115115/",
+        "https://www.winixamerica.com/product/filter-i-116131/"
+      ],
+      "manual_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_5300-2.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Filter A",
+        "115115",
+        "Filter I",
+        "116131"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "notes": "PROVEN: 5300-2 manual unit specs list Replacement Filter Filter A / SKU 115115. PROVEN: Filter A official PDP includes 5300-2 compatibility and In stock + Add to cart. PROVEN: Filter I 116131 official PDP maps to C555 only. Anchor 116131 not supported for 5300-2."
+    },
+    {
+      "model_slug": "winix-c545",
+      "model_number": "C545",
+      "official_source_urls": [
+        "https://www.winixamerica.com/product/c545/",
+        "https://www.winixamerica.com/wp-content/uploads/2022/03/C545_User-Manual2610-0256-00.pdf",
+        "https://www.winixamerica.com/product/filter-s-1712-0096-00/",
+        "https://www.winixamerica.com/product/filter-i-116131/"
+      ],
+      "manual_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/03/C545_User-Manual2610-0256-00.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Filter S",
+        "1712-0096-00",
+        "Filter I",
+        "116131"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "notes": "PROVEN: C545 official model page replacement section lists Filter S 1712-0096-00 family. PROVEN: C545 manual specs list Filter SKU Filter S: 1712-0096-00. PROVEN: official Filter I 116131 PDP is for C555 only. Anchor 116131 not supported for C545."
+    },
+    {
+      "model_slug": "winix-hr900",
+      "model_number": "HR900",
+      "official_source_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_HR900.pdf",
+        "https://www.winixamerica.com/product/filter-t-1712-0093-00/",
+        "https://www.winixamerica.com/product/filter-i-116131/"
+      ],
+      "manual_urls": [
+        "https://www.winixamerica.com/wp-content/uploads/2022/07/User-Manual_HR900.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Filter T",
+        "1712-0093-00",
+        "Filter U",
+        "1712-0094-00",
+        "Filter I",
+        "116131"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "notes": "PROVEN: HR900 manual lists Filter T / SKU 1712-0093-00 and Filter U / SKU 1712-0094-00. PROVEN: official Filter T PDP lists HR900 compatibility and In stock + Add to cart. PROVEN: Filter I 116131 official PDP maps to C555 only. Anchor 116131 not supported for HR900."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://www.winixamerica.com/product/filter-i-116131/",
+      "retailer_or_source": "winix_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP title and SKU token are Filter I – 116131.",
+      "buyability_proof": "PROVEN: Official PDP shows In stock and Add to cart.",
+      "wrong_family_risk": "PROVEN: Same official PDP states compatible with C555 only, which does not match sampled models (5500-2/C535/5300-2/C545/HR900).",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.winixamerica.com/product/filter-a-115115/",
+      "retailer_or_source": "winix_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP token Filter A – 115115; includes C535 and 5300-2 compatibility.",
+      "buyability_proof": "PROVEN: Official PDP shows In stock and Add to cart.",
+      "wrong_family_risk": "PROVEN: Exact token does not match anchor winix-carbon-116131.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.winixamerica.com/product/filter-h-116130/",
+      "retailer_or_source": "winix_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP token Filter H – 116130; includes 5500-2 compatibility.",
+      "buyability_proof": "PROVEN: Official PDP shows In stock and Add to cart.",
+      "wrong_family_risk": "PROVEN: Exact token does not match anchor winix-carbon-116131.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.winixamerica.com/product/filter-s-1712-0096-00/",
+      "retailer_or_source": "winix_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP token Filter S – 1712-0096-00; includes C545 compatibility.",
+      "buyability_proof": "PROVEN: Official PDP shows In stock and Add to cart.",
+      "wrong_family_risk": "PROVEN: Exact token does not match anchor winix-carbon-116131.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.winixamerica.com/product/filter-t-1712-0093-00/",
+      "retailer_or_source": "winix_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP token Filter T – 1712-0093-00; includes HR900 compatibility.",
+      "buyability_proof": "PROVEN: Official PDP shows In stock and Add to cart.",
+      "wrong_family_risk": "PROVEN: Exact token does not match anchor winix-carbon-116131.",
+      "status": "FAIL"
+    }
+  ],
+  "filter_first_cross_reference": null,
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 5,
+    "UNKNOWN": 0,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Live-browser pass checked 5 queue sample models for anchor filter winix-carbon-116131.",
+    "PROVEN: Official Winix Filter I – 116131 PDP exists and is direct-buyable but documents compatibility with C555 only.",
+    "PROVEN: Official model/manual evidence maps sampled models to other exact filters: 5500-2→116130, C535/5300-2→115115, C545→1712-0096-00, HR900→1712-0093-00 (and 1712-0094-00 pet prefilter).",
+    "PROVEN: recommended_csv_mutation remains null because model→anchor exact-token proof fails for all sampled models."
+  ],
+  "inferred_facts": [
+    "INFERRED: Queue anchor winix-carbon-116131 likely reflects weak-link legacy mapping that needs broader model-first reconciliation beyond this 5-model sample."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether any of the remaining non-sampled 23 linked models in queue legitimately require 116131.",
+    "UNKNOWN: Whether historical Winix aliasing in non-official sources could justify cross-family substitutions under BuckParts exact-token gates."
+  ]
+}

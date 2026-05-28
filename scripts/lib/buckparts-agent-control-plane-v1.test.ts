@@ -149,6 +149,13 @@ test("command_center_v2 surfaces agent_control_plane_v1", async () => {
   assert.equal(plane.read_only, true);
   assert.equal(plane.data_mutation, false);
   assert.equal(plane.ap_batch_v3_truth.result_file_count, 3);
+  const queue = report.command_center_v2.ap_model_first_evidence_queue_v1;
+  assert.ok(queue.result_history.mapping_review_required_filter_slugs.includes("winix-carbon-116131"));
+  assert.equal(queue.top_candidates[0]?.filter_slug, "shark-carbon-foam");
+  assert.equal(
+    plane.all_jobs.filter((j) => j.permission_level === "SAFE_APPLY_GATED").length,
+    0,
+  );
 });
 
 async function buildPlaneOnRepo() {
