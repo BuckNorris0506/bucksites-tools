@@ -4,8 +4,8 @@ import test from "node:test";
 import { CATALOG_HUB_LAUNCH_CATEGORIES } from "@/lib/catalog/catalog-availability";
 import { buildPublicCategoryHubCards } from "@/lib/catalog/public-category-hub";
 
-test("CATALOG_HUB_LAUNCH_CATEGORIES remains fridge-only LIVE discovery", () => {
-  assert.deepEqual(CATALOG_HUB_LAUNCH_CATEGORIES, ["refrigerator_water"]);
+test("CATALOG_HUB_LAUNCH_CATEGORIES includes fridge and air purifier LIVE discovery", () => {
+  assert.deepEqual(CATALOG_HUB_LAUNCH_CATEGORIES, ["refrigerator_water", "air_purifier"]);
 });
 
 test("/catalog hub surfaces all wedge categories with customer-facing titles", () => {

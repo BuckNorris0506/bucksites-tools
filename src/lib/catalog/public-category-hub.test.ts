@@ -25,17 +25,22 @@ test("public category hub lists every wedge with a route tree", () => {
   );
 });
 
-test("only refrigerator is LIVE on the public hub", () => {
+test("refrigerator and air purifier are LIVE on the public hub", () => {
   const cards = buildPublicCategoryHubCards();
   const live = cards.filter((c) => c.isLive);
-  assert.equal(live.length, 1);
-  assert.equal(live[0]!.category, "refrigerator_water");
-  assert.equal(live[0]!.statusLabel, null);
+  assert.equal(live.length, 2);
+  assert.deepEqual(
+    live.map((c) => c.category).sort(),
+    ["air_purifier", "refrigerator_water"],
+  );
+  for (const card of live) {
+    assert.equal(card.statusLabel, null);
+  }
 });
 
 test("unproven wedges show honest browse-preview status", () => {
   const cards = buildPublicCategoryHubCards().filter((c) => !c.isLive);
-  assert.equal(cards.length, 5);
+  assert.equal(cards.length, 4);
   for (const card of cards) {
     assert.equal(card.statusLabel, "Being verified");
     assert.match(card.statusNote ?? "", /Browse preview/i);

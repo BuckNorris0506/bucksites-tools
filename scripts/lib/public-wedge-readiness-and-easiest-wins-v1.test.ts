@@ -83,6 +83,39 @@ test("fridge rebuild is not recommended", () => {
   );
 });
 
+test("air_purifier is LIVE after truth-gated public opening", () => {
+  const report = buildPublicWedgeReadinessAndEasiestWinsV1({ rootDir: REPO_ROOT });
+  const ap = report.wedge_rows.find((r) => r.wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier);
+  assert.ok(ap);
+  assert.equal(ap!.currently_public_facing_status, "LIVE");
+  assert.equal(ap!.public_opening_recommendation, "OPEN_NOW_TRUTH_GATED");
+});
+
+test("whole_house_water and sample wedges remain not open", () => {
+  const report = buildPublicWedgeReadinessAndEasiestWinsV1({ rootDir: REPO_ROOT });
+  const whw = report.wedge_rows.find((r) => r.wedge === HOMEKEEP_WEDGE_CATALOG.whole_house_water);
+  assert.ok(whw);
+  assert.equal(whw!.public_opening_recommendation, "NEEDS_MORE_PROOF");
+  for (const wedge of [
+    HOMEKEEP_WEDGE_CATALOG.vacuum,
+    HOMEKEEP_WEDGE_CATALOG.humidifier,
+    HOMEKEEP_WEDGE_CATALOG.appliance_air,
+  ]) {
+    const row = report.wedge_rows.find((r) => r.wedge === wedge);
+    assert.ok(row);
+    assert.equal(row!.public_opening_recommendation, "DO_NOT_OPEN_YET");
+  }
+});
+
+test("AP data boundary still uses filterRealBuyRetailerLinks after public opening", () => {
+  const src = readFileSync(
+    path.join(REPO_ROOT, "src/lib/data/air-purifier/filters.ts"),
+    "utf8",
+  );
+  assert.match(src, /filterRealBuyRetailerLinks/);
+  assert.match(src, /retailer_links:\s*filterRealBuyRetailerLinks/);
+});
+
 test("KPI definitions are present and truth-based", () => {
   const report = buildPublicWedgeReadinessAndEasiestWinsV1({ rootDir: REPO_ROOT });
   assert.ok(report.kpi_definitions.proven_model_replacement_safe_buy_path_count.includes("safe gated"));

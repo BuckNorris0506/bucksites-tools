@@ -32,7 +32,8 @@ const HUB_CARD_STATIC: Record<CatalogBrowseCategory, HubCardStatic> = {
   air_purifier: {
     href: "/air-purifier",
     title: "Air purifier filters",
-    description: "Room air purifier models and replacement filter numbers.",
+    description:
+      "Air purifier filter lookup with truth-gated buying options where listing checks pass—not every filter is verified.",
   },
   whole_house_water: {
     href: "/whole-house-water",

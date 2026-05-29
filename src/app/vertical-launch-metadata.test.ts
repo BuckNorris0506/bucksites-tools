@@ -52,3 +52,8 @@ test("refrigerator wedge stays LIVE and is not wrapped by a segment noindex layo
   assert.equal(existsSync(join(root, "src/app/filter/layout.tsx")), false);
   assert.equal(existsSync(join(root, "src/app/refrigerator/layout.tsx")), false);
 });
+
+test("air-purifier is LIVE and layout metadata allows indexing", () => {
+  assert.ok(isVerticalLive("air-purifier"));
+  assert.notEqual(airPurifierMetadata.robots?.index, false);
+});

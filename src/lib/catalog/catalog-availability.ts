@@ -10,6 +10,7 @@ import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water
  */
 export const CATALOG_HUB_LAUNCH_CATEGORIES: readonly CatalogBrowseCategory[] = [
   "refrigerator_water",
+  "air_purifier",
 ];
 
 const CATALOG_HUB_LAUNCH_ONLY = new Set<CatalogBrowseCategory>(CATALOG_HUB_LAUNCH_CATEGORIES);
@@ -87,7 +88,8 @@ const CATALOG_CARD_DEFS_ALL: CatalogCardDef[] = [
     category: "air_purifier",
     href: "/air-purifier",
     title: "Air purifier filters",
-    description: "Room air purifier models and replacement filter numbers.",
+    description:
+      "Air purifier filter lookup with truth-gated buying options where listing checks pass—not every filter is verified.",
   },
   {
     category: "vacuum",

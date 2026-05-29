@@ -8,6 +8,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
+import { PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER } from "@/lib/catalog/public-category-hub";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
@@ -167,14 +168,15 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(/Air purifier filter replacement/i.test(src));
     assert.ok(/Find the right air purifier filter replacement/i.test(src));
     assert.ok(/air purifier model number or the filter number/i.test(src));
-    assert.ok(/BuckParts helps you compare possible matches before you buy/i.test(src));
+    assert.ok(/truth-gated buying options/i.test(src));
+    assert.ok(/not on every filter/i.test(src));
     assert.ok(/If we have checked a retailer product page for that filter/i.test(src));
     assert.ok(/If no buying option appears yet/i.test(src));
     assert.ok(/Before buying, compare the part number with your old filter or manual/i.test(src));
     assert.ok(/BuckParts is not the seller/i.test(src));
     assert.ok(!/\breference\b/i.test(src));
     assert.ok(!/\b(OEM|SKU|CTA|PDP|SERP|token|canonical|direct_buyable|affiliate-ready|compatibility mapping)\b/.test(src));
-    assert.ok(!/\bguaranteed fit\b|\bofficial manufacturer endorsement\b|\bcomplete catalog coverage\b/i.test(src));
+    assert.ok(!/\bguaranteed fit\b|\bofficial manufacturer endorsement\b|\bcomplete catalog coverage\b|\bevery air purifier filter has been verified\b/i.test(src));
   });
 
   it("catalog, brand, and search pages include homeowner trust framing without internal terms", () => {
@@ -186,7 +188,6 @@ describe("public merchant-priority copy guard", () => {
           /model or part number on your unit/i,
           /filter number printed on the old part/i,
           /Buying options appear only when the\s+destination looks safe enough to show/i,
-          /not a popularity ranking/i,
           /Being verified/i,
         ],
       },
@@ -214,6 +215,9 @@ describe("public merchant-priority copy guard", () => {
       const src = readFileSync(rooted(check.path), "utf8");
       for (const required of check.required) {
         assert.ok(required.test(src), `${check.path}: missing ${required}`);
+      }
+      if (check.path === "src/app/catalog/page.tsx") {
+        assert.match(PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER, /not a popularity ranking/i);
       }
       assert.ok(!banned.test(src), `${check.path}: public trust framing contains internal/business wording`);
     }

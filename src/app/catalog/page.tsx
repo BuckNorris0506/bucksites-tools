@@ -25,14 +25,12 @@ export default function CatalogPage() {
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-neutral-600 dark:text-neutral-400">
           Pick a category to browse models and part numbers, or use search when you already have a
-          code. Only the refrigerator water category is fully launched for public discovery; other
-          categories are browse previews while we verify listings.
+          code. Refrigerator water and air purifier categories are open for public discovery with
+          truth-gated buying options—not every filter is verified. Categories marked Being verified
+          are browse previews while we verify listings.
         </p>
         <div className="max-w-2xl rounded-lg border border-neutral-200 bg-neutral-50/80 p-4 text-sm leading-relaxed text-neutral-700 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-300">
-          BuckParts may show models, filter numbers, alternates, or pages to compare. Use the model
-          or part number on your unit and the filter number printed on the old part, then compare
-          with your manual before buying. Buying options appear only when the destination looks safe
-          enough to show.
+          BuckParts may show models, filter numbers, alternates, or pages to compare. Use the model or part number on your unit and the filter number printed on the old part, then compare with your manual before buying. Buying options appear only when the destination looks safe enough to show.
         </div>
         <p className="max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
           {PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER}
