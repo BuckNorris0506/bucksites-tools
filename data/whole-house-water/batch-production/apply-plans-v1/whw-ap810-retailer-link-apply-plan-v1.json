@@ -1,0 +1,78 @@
+{
+  "contract": "whole_house_water_safe_retailer_link_apply_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "packet_id": "whw-ap810-retailer-link-apply-plan-v1",
+  "anchor_filter_slug": "3m-ap810",
+  "source_browser_truth_artifact": "data/whole-house-water/batch-production/browser-truth-results-v1/whw-browser-truth-3m-ap810-v1.results.json",
+  "apply_authorized_by_artifact": true,
+  "founder_approval_required": true,
+  "ready_for_founder_approval": true,
+  "whw_public_opening_authorized": false,
+  "proposed_retailer_link_row": {
+    "filter_slug": "3m-ap810",
+    "retailer_name": "Aqua-Pure Filters (authorized dealer)",
+    "affiliate_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+    "is_primary": "false",
+    "retailer_key": "aquapure-dealer",
+    "retailer_slug": "aquapure-dealer",
+    "destination_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_notes": "PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+    "browser_truth_checked_at": "2026-05-29T01:42:03.621Z"
+  },
+  "row_already_exists_in_committed_csv": false,
+  "matching_committed_csv_rows": [],
+  "current_committed_primary_row": {
+    "filter_slug": "3m-ap810",
+    "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+    "affiliate_url": "https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP810",
+    "is_primary": "true",
+    "retailer_key": "oem-catalog",
+    "retailer_slug": "oem-catalog",
+    "destination_url": "https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP810"
+  },
+  "committed_csv_columns": [
+    "filter_slug",
+    "retailer_name",
+    "affiliate_url",
+    "is_primary",
+    "retailer_key",
+    "retailer_slug",
+    "destination_url"
+  ],
+  "validation_refusals": [],
+  "validation_checklist": [
+    "Founder explicitly approves adding proposed retailer_links.csv row (no auto-apply).",
+    "Confirm aquapurefilters PDP still shows AP810 / 5618902 OEM SKU with direct Add to cart.",
+    "Confirm proposed row remains is_primary=false until primary oem-catalog search placeholder is retired deliberately.",
+    "Run apply executor only after approval; re-run guardrails and Supabase parity separately.",
+    "Do not change whole-house-water launch state until broader WHW wedge criteria are met."
+  ],
+  "generated_at": "2026-05-29T01:53:36.110Z",
+  "why_whw_stays_closed": [
+    "Launch state is NOINDEX_UNPROVEN (not publicly opened).",
+    "Browser_truth artifact sets do_not_open_public=true.",
+    "This apply plan is read-only (data_mutation=false) — no CSV row written yet.",
+    "Founder approval is required before any retailer_links.csv mutation.",
+    "Even after founder-approved apply, WHW public opening requires separate launch-state decision."
+  ],
+  "proven_facts": [
+    "PROVEN: Loaded browser_truth artifact data/whole-house-water/batch-production/browser-truth-results-v1/whw-browser-truth-3m-ap810-v1.results.json with safe_apply_authorized=true.",
+    "PROVEN: recommended_csv_mutations.length=1; pass_count=1.",
+    "PROVEN: best_truthful_buyer_path retailer=aquapurefilters_authorized_dealer.",
+    "PROVEN: Committed CSV has 62 rows; 3m-ap810 primary remains oem-catalog site-search placeholder.",
+    "PROVEN: row_already_exists_in_committed_csv=false.",
+    "PROVEN: validation_refusals=none.",
+    "PROVEN: ready_for_founder_approval=true.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Founder can approve adding non-primary aquapure-dealer direct_buyable row while keeping existing oem-catalog primary until a separate primary-retirement decision.",
+    "INFERRED: Supabase parity apply is out of scope for this read-only plan packet."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether founder wants aquapure-dealer row to become primary CTA after apply.",
+    "UNKNOWN: Whether affiliate tag should be added to aquapurefilters URL on apply."
+  ]
+}
