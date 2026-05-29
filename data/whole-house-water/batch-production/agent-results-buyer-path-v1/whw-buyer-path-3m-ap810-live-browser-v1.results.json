@@ -1,0 +1,113 @@
+{
+  "contract": "whole_house_water_buyer_path_proof_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_buyer_path_v1",
+  "packet_id": "whw-buyer-path-3m-ap810-v1",
+  "anchor_filter_slug": "3m-ap810",
+  "source_model_first_artifact": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-3m-ap810-live-browser-v1.results.json",
+  "model_first_fit_status": "PASS",
+  "generated_at": "2026-05-29T01:10:05.332Z",
+  "checked_at": "2026-05-29T01:10:05.332Z",
+  "buyer_path_candidates": [
+    {
+      "url": "https://www.solventum.com/en-us/home/f/b40070898/",
+      "retailer_or_source": "solventum_official",
+      "listing_kind": "official_oem",
+      "exact_token_proof": "PROVEN: Solventum official AP810 product page lists catalog 5618902 / Product ID 7000029442 and AP810 model name (live fetch May 2026).",
+      "buyability_proof": "PROVEN: Page exposes Where to buy only — no Add to Cart / direct checkout on official PDP in this run.",
+      "wrong_family_or_compatible_risk": "LOW — official OEM reference PDP.",
+      "buy_action_observed": false,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.amazon.com/Aqua-Pure-Whole-House-Replacement-Filter/dp/B000W0TTJQ",
+      "retailer_or_source": "amazon",
+      "listing_kind": "official_oem",
+      "exact_token_proof": "PROVEN: Amazon PDP title is 3M Aqua-Pure Whole House Replacement Water Filter AP810; Manufacturer Part Number field shows AP810 5618902 (live fetch May 2026).",
+      "buyability_proof": "PROVEN: PDP shows add this item to your cart and New & Used offers from $38.40. UNKNOWN: No browser_truth_classification=direct_buyable captured in this read-only packet.",
+      "wrong_family_or_compatible_risk": "LOW for OEM listing; verify seller is Amazon-shipped OEM not aftermarket compatible-only.",
+      "buy_action_observed": true,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "UNKNOWN"
+    },
+    {
+      "url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+      "retailer_or_source": "aquapurefilters_authorized_dealer",
+      "listing_kind": "authorized_dealer",
+      "exact_token_proof": "PROVEN: Shopify PDP title Aqua-Pure AP810 (5618902); variant SKU 5618902 (recheck live fetch May 2026).",
+      "buyability_proof": "PROVEN: Add to cart control present. UNKNOWN: No browser_truth direct_buyable proof in this packet.",
+      "wrong_family_or_compatible_risk": "LOW for AP810 OEM SKU; authorized dealer — not official 3M.com checkout.",
+      "buy_action_observed": true,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "UNKNOWN"
+    },
+    {
+      "url": "https://klearwaterstore.com/3m-aqua-pure-ap810-whole-house-filter-cartridge-5-micron/",
+      "retailer_or_source": "klearwaterstore",
+      "listing_kind": "major_retailer",
+      "exact_token_proof": "PROVEN: PDP SKU 5618902; product title 3M Aqua-Pure AP810 (live fetch May 2026).",
+      "buyability_proof": "PROVEN: Adding to cart / quantity controls present. UNKNOWN: No browser_truth direct_buyable proof in this packet.",
+      "wrong_family_or_compatible_risk": "LOW — lists OEM AP810 not compatible-only branding.",
+      "buy_action_observed": true,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "UNKNOWN"
+    },
+    {
+      "url": "https://www.homedepot.com/p/Waterdrop-AP810-Whole-House-Water-Filter-10-in-x-4-5-in-5-Micron-Replacement-for-3M-Aqua-Pure-AP810-Whirlpool-WHKF-GD25BB-B-WD-AP810-2/333084969",
+      "retailer_or_source": "home_depot",
+      "listing_kind": "compatible_replacement",
+      "exact_token_proof": "PROVEN: Primary product is Waterdrop B-WD-AP810-2 compatible replacement — AP810 appears only in compatibility title text, not as sold OEM SKU.",
+      "buyability_proof": "PROVEN: Add to cart may exist on PDP but product is compatible replacement, not official AP810/5618902.",
+      "wrong_family_or_compatible_risk": "HIGH — compatible replacement must not be labeled official OEM.",
+      "buy_action_observed": true,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.amazon.com/AQUACREST-Compatible-Aqua-Pure-Whirlpool-WHKF-GD25BB/dp/B01L069O36",
+      "retailer_or_source": "amazon",
+      "listing_kind": "compatible_replacement",
+      "exact_token_proof": "PROVEN: Listing title states AQUACREST Compatible Replacement for Aqua-Pure AP810 — not OEM AP810 cartridge.",
+      "buyability_proof": "PROVEN: Buy UI may exist but product is third-party compatible, not official.",
+      "wrong_family_or_compatible_risk": "HIGH — compatible-only; do not treat as official AP810.",
+      "buy_action_observed": true,
+      "browser_truth_direct_buyable_proven": false,
+      "passes_launch_buy_links_safe_cta_gate": false,
+      "status": "FAIL"
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 3,
+    "UNKNOWN": 3,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "best_truthful_buyer_path": null,
+  "do_not_open_public": true,
+  "proven_facts": [
+    "PROVEN: Model-first artifact data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-3m-ap810-live-browser-v1.results.json records fit evidence PASS for 3m-aquapure-ap801 → 3m-ap810.",
+    "PROVEN: Committed data/whole-house-water/retailer_links.csv primary is 3M site-search placeholder with 0 direct_buyable rows.",
+    "PROVEN: Committed search URL https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP810 fails launch-buy-links search-placeholder gate (not a PDP candidate row).",
+    "PROVEN: Solventum official AP810 page documents 5618902 but has Where to buy only (no direct checkout).",
+    "PROVEN: Amazon B000W0TTJQ and aquapurefilters dealer PDPs show AP810/5618902 with buy UI; no browser_truth direct_buyable proof in this packet.",
+    "PROVEN: Buyer-path evidence_status_counts PASS=0 FAIL=3 UNKNOWN=3.",
+    "PROVEN: recommended_csv_mutation remains null.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Next step is read-only browser_truth capture on the strongest OEM PDP (Amazon B000W0TTJQ or authorized dealer) before any retailer_links.csv change.",
+    "INFERRED: Compatible Home Depot / Amazon listings are intentionally ranked FAIL despite buy UI to avoid wrong-family CTAs."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether live browser_truth run will classify Amazon B000W0TTJQ or aquapurefilters as direct_buyable without wrong-family drift.",
+    "UNKNOWN: Whether official 3M.com sells AP810 direct-checkout outside Solventum Where to buy flow."
+  ]
+}
