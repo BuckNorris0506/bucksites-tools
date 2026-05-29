@@ -18,6 +18,7 @@ import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-a
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
+import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
@@ -904,6 +905,8 @@ export type CommandCenterV2Report = {
   fridge_truth_spine_v1: FridgeTruthSpineV1;
   /** Read-only WHW multi-filter batch production director — not CSV apply or public opening authority. */
   whole_house_water_batch_production_director_v1: WholeHouseWaterBatchProductionDirectorV1;
+  /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
+  wedge_truth_spine_coverage_matrix_v1: WedgeTruthSpineCoverageMatrixV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
   operator_digest_v1: OperatorDigestProjectionV1;
   /** jq-safe mirror of root execution_guidance after batch dispatch override (set in report builder). */
@@ -960,6 +963,7 @@ export type {
 } from "./buckparts-page-publishability-truth-v1";
 export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 export type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
+export type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -976,6 +980,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "page_publishability_truth_summary_v1"
   | "fridge_truth_spine_v1"
   | "whole_house_water_batch_production_director_v1"
+  | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
   | "agent_control_plane_v1"

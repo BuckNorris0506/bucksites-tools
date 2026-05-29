@@ -3802,6 +3802,43 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
+test("command_center_v2.wedge_truth_spine_coverage_matrix_v1 is read-only wedge parity matrix", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const matrix = report.command_center_v2.wedge_truth_spine_coverage_matrix_v1;
+  assert.ok(matrix);
+  assert.equal(matrix.contract, "wedge_truth_spine_coverage_matrix_v1");
+  assert.equal(matrix.read_only, true);
+  assert.equal(matrix.data_mutation, false);
+  assert.equal(matrix.inspect_summary.wedges_with_formal_spine_count, 1);
+  assert.ok(matrix.inspect_summary.ap_truth_spine_gap_present);
+  assert.ok(matrix.inspect_summary.whw_truth_spine_gap_present);
+  assert.ok(
+    matrix.inspect_summary.wedges_public_but_without_formal_spine.includes("air_purifier"),
+  );
+  assert.ok(
+    matrix.inspect_summary.wedges_partial_operational_proof.includes("whole_house_water"),
+  );
+
+  const fridge = matrix.wedges.find((w) => w.wedge === "refrigerator_water");
+  const ap = matrix.wedges.find((w) => w.wedge === "air_purifier");
+  const whw = matrix.wedges.find((w) => w.wedge === "whole_house_water");
+  assert.ok(fridge);
+  assert.equal(fridge!.truth_coverage_status, "FORMAL_SPINE");
+  assert.equal(fridge!.truth_spine_contract_name, "fridge_truth_spine_v1");
+  assert.ok(ap);
+  assert.equal(ap!.has_formal_truth_spine, false);
+  assert.equal(ap!.truth_coverage_status, "PUBLIC_BUT_SPINE_GAP");
+  assert.ok(whw);
+  assert.equal(whw!.truth_coverage_status, "PARTIAL_OPERATIONAL_PROOF");
+  assert.equal(whw!.current_public_opening_authorized, false);
+  assert.ok(matrix.inspect_summary.recommended_jq_paths.command_center.includes("inspect_summary"));
+});
+
 test("command_center_v2.semi_cruise_status_summary_v1 is read-only and reports mutation NOT_PROVEN", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
