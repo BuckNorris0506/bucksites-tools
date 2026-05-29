@@ -5,9 +5,11 @@ import test from "node:test";
 
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
 import {
+  filterRealBuyRetailerLinks,
   isDirectBuyableSafeCtaRow,
   isManufacturerSiteSearchUrl,
 } from "@/lib/retailers/launch-buy-links";
+import { loadWhwRetailerLinksCsvV1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import { buyerPathCandidateMayRecommendCsvMutationV1 } from "./whole-house-water-buyer-path-proof-result-v1";
 import { WHW_AP810_FILTER_SLUG_V1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import {
@@ -74,40 +76,63 @@ test("lane_summary_counts is populated at root and sums to mapped filter count",
   const laneSum = lanes.reduce((acc, lane) => acc + report.lane_summary_counts[lane], 0);
   assert.equal(laneSum, report.summary.mapped_filter_count);
 
-  assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 1);
+  assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 0);
   assert.equal(report.lane_summary_counts.BROWSER_TRUTH_READY, 0);
   assert.equal(report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY, 1);
   assert.equal(report.lane_summary_counts.MODEL_FIRST_READY, 20);
   assert.equal(report.lane_summary_counts.MAPPING_REVIEW_REQUIRED, 39);
-  assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 1);
+  assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 2);
 });
 
-test("AP810 appears as APPLY_READY_FOUNDER_APPROVAL_REQUIRED, not as discovery target", () => {
+test("AP810 is not apply-ready after founder CSV apply", () => {
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
   const ap810Apply = report.apply_ready_rows.find((r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1);
-  assert.ok(ap810Apply, "expected 3m-ap810 in apply_ready_rows");
-  assert.equal(ap810Apply!.lane, "APPLY_READY_FOUNDER_APPROVAL_REQUIRED");
-  assert.equal(ap810Apply!.apply_plan_ready, true);
-  assert.equal(ap810Apply!.browser_truth_pass_count, 1);
-  assert.equal(ap810Apply!.founder_approval_required, true);
+  assert.equal(ap810Apply, undefined);
+
+  const ap810Rows = [...report.blocked_or_skip_rows, ...report.top_20_safe_cta_expansion_targets].filter(
+    (r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1,
+  );
+  const ap810 = ap810Rows[0];
+  assert.ok(ap810);
+  assert.equal(ap810!.lane, "SKIP_FOR_NOW");
+  assert.equal(ap810!.apply_row_in_committed_csv, true);
+  assert.equal(ap810!.safe_cta_in_committed_csv, true);
+  assert.equal(ap810!.browser_truth_pass_count, 1);
 
   const inTop20 = report.top_20_safe_cta_expansion_targets.find(
     (r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1,
   );
   assert.equal(inTop20, undefined);
-  const inBrowserTruth = report.top_10_browser_truth_ready.find(
-    (r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1,
-  );
-  assert.equal(inBrowserTruth, undefined);
 });
 
-test("AP810 is not counted as already applied to CSV", () => {
+test("AP810 has exactly one aquapure-dealer row and one safe CTA in committed CSV", () => {
+  const csvRows = loadWhwRetailerLinksCsvV1(REPO_ROOT);
+  const ap810Rows = csvRows.filter((r) => r.filter_slug?.trim() === WHW_AP810_FILTER_SLUG_V1);
+  assert.equal(ap810Rows.length, 2);
+
+  const aquapure = ap810Rows.filter(
+    (r) => (r.retailer_key ?? "").trim().toLowerCase() === "aquapure-dealer",
+  );
+  assert.equal(aquapure.length, 1);
+  assert.equal(aquapure[0]!.is_primary?.trim().toLowerCase(), "false");
+  assert.equal(
+    aquapure[0]!.destination_url,
+    "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+  );
+
+  const gated = filterRealBuyRetailerLinks(
+    ap810Rows.map((r) => ({
+      retailer_key: r.retailer_key ?? null,
+      affiliate_url: (r.affiliate_url ?? r.destination_url ?? "").trim(),
+      browser_truth_classification: r.browser_truth_classification ?? null,
+      browser_truth_buyable_subtype: r.browser_truth_buyable_subtype ?? null,
+    })),
+  );
+  assert.equal(gated.length, 1);
+  assert.equal(gated[0]!.retailer_key, "aquapure-dealer");
+
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
-  const ap810 = report.apply_ready_rows.find((r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1);
-  assert.ok(ap810);
-  assert.equal(ap810!.apply_row_in_committed_csv, false);
-  assert.equal(ap810!.safe_cta_in_committed_csv, false);
-  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 0);
+  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 1);
 });
 
 test("queue does not open WHW", () => {
@@ -195,27 +220,22 @@ test("search placeholders cannot count as safe CTA", () => {
   );
 
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
-  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 0);
+  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 1);
   for (const row of report.top_20_safe_cta_expansion_targets) {
     assert.notEqual(row.primary_buyer_path_status, "SAFE_GATED_DIRECT_BUYABLE");
   }
 });
 
-test("batch recommendation contains multiple candidates when available", () => {
+test("batch recommendation contains multiple discovery candidates and no AP810 founder apply", () => {
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
   assert.ok(report.recommended_next_batch.length >= 2);
 
   const kinds = new Set(report.recommended_next_batch.map((b) => b.packet_kind));
-  assert.ok(kinds.has("founder_apply_review") || kinds.has("buyer_path_proof") || kinds.has("model_first_evidence"));
-
-  const ap810Batch = report.recommended_next_batch.find((b) => b.filter_slug === WHW_AP810_FILTER_SLUG_V1);
-  assert.ok(ap810Batch);
-  assert.equal(ap810Batch!.packet_kind, "founder_apply_review");
-
-  const discoveryPackets = report.recommended_next_batch.filter(
-    (b) => b.filter_slug !== WHW_AP810_FILTER_SLUG_V1,
+  assert.ok(kinds.has("buyer_path_proof") || kinds.has("model_first_evidence"));
+  assert.equal(
+    report.recommended_next_batch.find((b) => b.filter_slug === WHW_AP810_FILTER_SLUG_V1),
+    undefined,
   );
-  assert.ok(discoveryPackets.length >= 1);
 });
 
 test("founder_approval_required on apply-ready rows", () => {

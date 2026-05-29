@@ -481,6 +481,18 @@ export function computePublicOpeningRecommendation(args: {
     };
   }
 
+  const WHW_MIN_SAFE_FILTERS_FOR_PUBLIC_OPEN = 3;
+  if (
+    r.wedge === HOMEKEEP_WEDGE_CATALOG.whole_house_water &&
+    r.linked_filters_with_safe_gated_buy_path > 0 &&
+    r.linked_filters_with_safe_gated_buy_path < WHW_MIN_SAFE_FILTERS_FOR_PUBLIC_OPEN
+  ) {
+    return {
+      recommendation: "NEEDS_MORE_PROOF",
+      reason: `Committed CSV has ${r.linked_filters_with_safe_gated_buy_path} mapped filter(s) with safe gated direct_buyable rows (${r.safe_cta_count} safe CTA row(s)) — a single founder-approved filter apply is not sufficient WHW wedge coverage for public opening.`,
+    };
+  }
+
   if (r.mapping_truth_status === "UNKNOWN" && r.buyer_path_truth_status === "MIXED") {
     return {
       recommendation: "NEEDS_MORE_PROOF",

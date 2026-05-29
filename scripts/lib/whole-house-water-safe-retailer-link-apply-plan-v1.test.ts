@@ -194,8 +194,9 @@ test("plan detects whether retailer_links.csv already contains the proposed row"
     browserTruthArtifact: artifact,
   });
   assert.ok(plan.proposed_retailer_link_row);
-  assert.equal(plan.row_already_exists_in_committed_csv, false);
-  assert.equal(plan.matching_committed_csv_rows.length, 0);
+  assert.equal(plan.row_already_exists_in_committed_csv, true);
+  assert.equal(plan.matching_committed_csv_rows.length, 1);
+  assert.equal(plan.ready_for_founder_approval, false);
 
   const csvRows = loadWhwRetailerLinksCsvV1(REPO_ROOT);
   const dup = rowsMatchProposedRetailerLinkRowV1(
@@ -236,7 +237,8 @@ test("ready plan targets aquapurefilters authorized dealer", () => {
     artifact.recommended_csv_mutations[0]!.browser_truth_buyable_subtype,
     BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
   );
-  assert.ok(plan.ready_for_founder_approval);
+  assert.equal(plan.ready_for_founder_approval, false);
+  assert.equal(plan.row_already_exists_in_committed_csv, true);
   assert.equal(plan.proposed_retailer_link_row?.browser_truth_classification, "direct_buyable");
   assert.ok(
     plan.proposed_retailer_link_row?.destination_url.includes("aquapurefilters.com/products"),

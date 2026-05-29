@@ -48,6 +48,7 @@ import {
 import {
   WHW_APPLY_PLANS_DIR_REL_V1,
   isAllowedWhwApplyPlanRelPathV1,
+  findMatchingCommittedRowsV1,
   loadWhwSafeRetailerLinkApplyPlanV1,
   loadWhwRetailerLinksCsvV1,
   type WhwSafeRetailerLinkApplyPlanV1,
@@ -249,11 +250,12 @@ export function buyerPathHasUnknownPdpCandidatesV1(result: WhwBuyerPathProofResu
 }
 
 export function classifyWhwSafeCtaExpansionLaneV1(ctx: ClassificationContextV1): WhwSafeCtaExpansionLaneV1 {
-  if (
-    ctx.applyPlan?.ready_for_founder_approval &&
-    !ctx.applyPlan.row_already_exists_in_committed_csv
-  ) {
+  if (ctx.applyPlan?.ready_for_founder_approval && !ctx.applyRowInCsv) {
     return "APPLY_READY_FOUNDER_APPROVAL_REQUIRED";
+  }
+
+  if (ctx.applyRowInCsv && ctx.safeCtaInCsv) {
+    return "SKIP_FOR_NOW";
   }
 
   const recommendedAction: WhwRecommendedActionV1 | null =
@@ -624,7 +626,12 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
       }),
     );
 
-    const applyRowInCsv = applyEntry?.plan.row_already_exists_in_committed_csv ?? false;
+    const applyRowInCsv = applyEntry?.plan.proposed_retailer_link_row
+      ? findMatchingCommittedRowsV1({
+          rows: csvRows,
+          proposed: applyEntry.plan.proposed_retailer_link_row,
+        }).length > 0
+      : false;
 
     const ctx: ClassificationContextV1 = {
       filterSlug,
