@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -44,12 +44,16 @@ test("artifact path is under allowed WHW buyer-path results dir", () => {
 
 test("default report run is read-only and does not write artifact", () => {
   const targetAbs = path.join(REPO_ROOT, WHW_AP810_BUYER_PATH_RESULT_REL_V1);
-  rmSync(targetAbs, { force: true });
-  execSync("npx tsx scripts/report-whole-house-water-buyer-path-proof-3m-ap810-v1.ts", {
+  const mtimeBefore = existsSync(targetAbs) ? statSync(targetAbs).mtimeMs : 0;
+  const out = execSync("npx tsx scripts/report-whole-house-water-buyer-path-proof-3m-ap810-v1.ts", {
     cwd: REPO_ROOT,
-    stdio: "pipe",
+    encoding: "utf8",
   });
-  assert.equal(existsSync(targetAbs), false);
+  const parsed = JSON.parse(out) as { write_requested: boolean };
+  assert.equal(parsed.write_requested, false);
+  if (existsSync(targetAbs)) {
+    assert.equal(statSync(targetAbs).mtimeMs, mtimeBefore);
+  }
 });
 
 test("search pages cannot PASS", () => {

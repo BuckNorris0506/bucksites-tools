@@ -1,0 +1,108 @@
+{
+  "contract": "whole_house_water_browser_truth_capture_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "browser_truth_capture_v1",
+  "packet_id": "whw-browser-truth-3m-ap810-v1",
+  "anchor_filter_slug": "3m-ap810",
+  "source_buyer_path_artifact": "data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap810-live-browser-v1.results.json",
+  "candidates_checked": [
+    {
+      "source_url": "https://www.amazon.com/Aqua-Pure-Whole-House-Replacement-Filter/dp/B000W0TTJQ",
+      "retailer_or_source": "amazon",
+      "listing_kind": "official_oem",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "UNKNOWN",
+      "browser_truth_classification": "likely_valid",
+      "browser_truth_buyable_subtype": null,
+      "safe_cta_gate_status": "FAIL",
+      "evidence_status": "UNKNOWN",
+      "capture_notes": "UNKNOWN: Amazon B000W0TTJQ shows AP810/5618902 and buy UI (buyer-path packet). Capture cannot prove Sold by Amazon / OEM-only fulfillment vs third-party compatible offers — not elevated to direct_buyable.",
+      "recommended_retailer_link_row": null
+    },
+    {
+      "source_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+      "retailer_or_source": "aquapurefilters_authorized_dealer",
+      "listing_kind": "authorized_dealer",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "LOW",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE",
+      "safe_cta_gate_status": "PASS",
+      "evidence_status": "PASS",
+      "capture_notes": "PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+      "recommended_retailer_link_row": {
+        "filter_slug": "3m-ap810",
+        "retailer_key": "aquapure-dealer",
+        "retailer_name": "Aqua-Pure Filters (authorized dealer)",
+        "destination_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+        "affiliate_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+        "is_primary": false,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE",
+        "browser_truth_notes": "PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+        "browser_truth_checked_at": "2026-05-29T01:42:03.621Z"
+      }
+    },
+    {
+      "source_url": "https://klearwaterstore.com/3m-aqua-pure-ap810-whole-house-filter-cartridge-5-micron/",
+      "retailer_or_source": "klearwaterstore",
+      "listing_kind": "major_retailer",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "LOW",
+      "browser_truth_classification": "likely_valid",
+      "browser_truth_buyable_subtype": null,
+      "safe_cta_gate_status": "FAIL",
+      "evidence_status": "UNKNOWN",
+      "capture_notes": "UNKNOWN: Klear Water Store PDP shows 5618902 and cart UI but capture lacks independent inventory/OEM verification beyond buyer-path token proof — kept likely_valid not direct_buyable.",
+      "recommended_retailer_link_row": null
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 1,
+    "FAIL": 0,
+    "UNKNOWN": 2,
+    "BLOCKED": 0
+  },
+  "pass_count": 1,
+  "recommended_csv_mutations": [
+    {
+      "filter_slug": "3m-ap810",
+      "retailer_key": "aquapure-dealer",
+      "destination_url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+      "exact_token_proof": "PROVEN: PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+      "buyability_proof": "PROVEN: direct_buyable browser_truth capture with safe CTA gate PASS.",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE"
+    }
+  ],
+  "safe_apply_authorized": true,
+  "best_truthful_buyer_path": {
+    "url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+    "retailer_or_source": "aquapurefilters_authorized_dealer",
+    "exact_token_proof": "PROVEN: Shopify PDP title Aqua-Pure AP810 (5618902); variant SKU 5618902 (recheck live fetch May 2026).",
+    "buyability_proof": "PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026)."
+  },
+  "generated_at": "2026-05-29T01:42:03.621Z",
+  "checked_at": "2026-05-29T01:42:03.621Z",
+  "do_not_open_public": true,
+  "proven_facts": [
+    "PROVEN: Source buyer-path artifact data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap810-live-browser-v1.results.json loaded; 3 UNKNOWN candidate(s) evaluated (FAIL rows skipped).",
+    "PROVEN: Browser_truth capture evidence_status_counts PASS=1 FAIL=0 UNKNOWN=2 BLOCKED=0.",
+    "PROVEN: pass_count=1; safe_apply_authorized=true.",
+    "PROVEN: best_truthful_buyer_path https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter (aquapurefilters_authorized_dealer).",
+    "PROVEN: Model-first fit for 3m-ap810 not re-run in this lane.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Amazon UNKNOWN rows should route to fulfillment/seller verification before any direct_buyable elevation.",
+    "INFERRED: Authorized dealer PASS row is candidate for future retailer_links.csv apply — still requires explicit human apply outside this read-only artifact."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether Amazon B000W0TTJQ will pass direct_buyable after Sold-by verification.",
+    "UNKNOWN: Whether klearwaterstore inventory is OEM-only without drop-ship compatible drift."
+  ]
+}
