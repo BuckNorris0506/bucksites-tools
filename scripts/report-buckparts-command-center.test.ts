@@ -3754,6 +3754,54 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.whole_house_water_batch_production_director_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "whole_house_water_batch_production_director_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.whw_public_opening_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.inspect_summary.whw_public_opening_authorized, false);
+  assert.equal(lane.inspect_summary.csv_apply_authorized, false);
+  assert.equal(lane.inspect_summary.ap810_in_active_batch, false);
+  assert.ok(lane.active_batch_item_count >= 2);
+  assert.ok(lane.inspect_summary.active_filter_slugs.length >= 2);
+  assert.equal(lane.grind_avoidance.do_not_grind_single_filter, true);
+  assert.equal(lane.grind_avoidance.park_unknowns_and_advance, true);
+  assert.equal(lane.factory_rules.promote_only_pass_evidence, true);
+  assert.equal(lane.factory_rules.never_open_whw_from_single_safe_cta, true);
+  assert.equal(lane.factory_rules.never_treat_row_count_as_truth, true);
+  assert.ok(lane.inspect_summary.recommended_jq_paths.command_center.includes("inspect_summary"));
+
+  const ap811Artifact = path.join(
+    process.cwd(),
+    "data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap811-batch-v1.results.json",
+  );
+  if (fs.existsSync(ap811Artifact)) {
+    assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, true);
+    assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
+    assert.equal(lane.current_batch_head?.packet_kind, "browser_truth_capture");
+    assert.equal(
+      lane.inspect_summary.active_filter_slugs.includes("3m-ap811"),
+      true,
+    );
+    assert.equal(
+      lane.inspect_summary.active_filter_slugs.includes("3m-ap810"),
+      false,
+    );
+  }
+  assert.equal(lane.inspect_summary.ap810_parked, true);
+  assert.ok(lane.next_batch_items.model_first_evidence.length >= 1);
+  assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
+});
+
 test("command_center_v2.semi_cruise_status_summary_v1 is read-only and reports mutation NOT_PROVEN", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

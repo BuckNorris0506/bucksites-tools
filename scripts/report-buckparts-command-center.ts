@@ -72,6 +72,10 @@ import {
   buildFridgeTruthSpineUnknownV1,
   buildFridgeTruthSpineV1,
 } from "./lib/fridge-truth-spine-v1";
+import {
+  buildWholeHouseWaterBatchProductionDirectorUnknownV1,
+  buildWholeHouseWaterBatchProductionDirectorV1,
+} from "./lib/whole-house-water-batch-production-director-v1";
 import { resolveModelFirstSteeringOverrideV1 } from "./lib/buckparts-model-first-steering-v1";
 import {
   buildBuckpartsMarketingIntelligenceEngineUnknownV1,
@@ -968,6 +972,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
+    | "whole_house_water_batch_production_director_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
@@ -1088,6 +1093,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "whole_house_water_batch_production_director_v1"
   > = {
     ...command_center_v2_core,
     owner_quarantined_fridge_models_v1,
@@ -1189,6 +1195,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "whole_house_water_batch_production_director_v1"
   > = {
     ...command_center_v2_before_daily,
     daily_operator_summary_v1,
@@ -1317,6 +1324,21 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let whole_house_water_batch_production_director_v1;
+  try {
+    whole_house_water_batch_production_director_v1 = buildWholeHouseWaterBatchProductionDirectorV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    whole_house_water_batch_production_director_v1 =
+      buildWholeHouseWaterBatchProductionDirectorUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     | "next_execution_packet_summary_v1"
@@ -1339,6 +1361,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
+    whole_house_water_batch_production_director_v1,
   };
 
   const commandCenterShellForNextPacket = {
