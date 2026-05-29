@@ -52,6 +52,36 @@ test("report is read_only true and data_mutation false", () => {
   assert.equal(report.founder_approval_required_for_csv_apply, true);
 });
 
+test("lane_summary_counts is populated at root and sums to mapped filter count", () => {
+  const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
+  assert.notEqual(report.lane_summary_counts, null);
+  assert.notEqual(report.lane_summary_counts, undefined);
+
+  const lanes = [
+    "APPLY_READY_FOUNDER_APPROVAL_REQUIRED",
+    "BROWSER_TRUTH_READY",
+    "BUYER_PATH_DISCOVERY_READY",
+    "MODEL_FIRST_READY",
+    "MAPPING_REVIEW_REQUIRED",
+    "SKIP_FOR_NOW",
+  ] as const;
+
+  for (const lane of lanes) {
+    assert.equal(typeof report.lane_summary_counts[lane], "number");
+    assert.equal(report.summary.lane_counts[lane], report.lane_summary_counts[lane]);
+  }
+
+  const laneSum = lanes.reduce((acc, lane) => acc + report.lane_summary_counts[lane], 0);
+  assert.equal(laneSum, report.summary.mapped_filter_count);
+
+  assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 1);
+  assert.equal(report.lane_summary_counts.BROWSER_TRUTH_READY, 0);
+  assert.equal(report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY, 1);
+  assert.equal(report.lane_summary_counts.MODEL_FIRST_READY, 20);
+  assert.equal(report.lane_summary_counts.MAPPING_REVIEW_REQUIRED, 39);
+  assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 1);
+});
+
 test("AP810 appears as APPLY_READY_FOUNDER_APPROVAL_REQUIRED, not as discovery target", () => {
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
   const ap810Apply = report.apply_ready_rows.find((r) => r.filter_slug === WHW_AP810_FILTER_SLUG_V1);

@@ -96,6 +96,19 @@ export type WhwRecommendedNextBatchItemV1 = {
   rationale: string;
 };
 
+export type WhwSafeCtaExpansionLaneSummaryCountsV1 = Record<WhwSafeCtaExpansionLaneV1, number>;
+
+export function emptyWhwSafeCtaExpansionLaneSummaryCountsV1(): WhwSafeCtaExpansionLaneSummaryCountsV1 {
+  return {
+    APPLY_READY_FOUNDER_APPROVAL_REQUIRED: 0,
+    BROWSER_TRUTH_READY: 0,
+    BUYER_PATH_DISCOVERY_READY: 0,
+    MODEL_FIRST_READY: 0,
+    MAPPING_REVIEW_REQUIRED: 0,
+    SKIP_FOR_NOW: 0,
+  };
+}
+
 export type WholeHouseWaterSafeCtaExpansionQueueV1 = {
   contract: typeof WHW_SAFE_CTA_EXPANSION_QUEUE_CONTRACT_V1;
   read_only: true;
@@ -106,11 +119,13 @@ export type WholeHouseWaterSafeCtaExpansionQueueV1 = {
   founder_approval_required_for_csv_apply: true;
   generated_at: string;
   source_paths: string[];
+  /** Root-level lane totals for Command Center / report consumers. */
+  lane_summary_counts: WhwSafeCtaExpansionLaneSummaryCountsV1;
   summary: {
     filter_count: number;
     mapped_filter_count: number;
     safe_cta_row_count_in_committed_csv: number;
-    lane_counts: Record<WhwSafeCtaExpansionLaneV1, number>;
+    lane_counts: WhwSafeCtaExpansionLaneSummaryCountsV1;
     whole_house_water_public_launch_state: string;
   };
   top_20_safe_cta_expansion_targets: WhwSafeCtaExpansionTargetV1[];
@@ -673,14 +688,7 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
     });
   }
 
-  const laneCounts: Record<WhwSafeCtaExpansionLaneV1, number> = {
-    APPLY_READY_FOUNDER_APPROVAL_REQUIRED: 0,
-    BROWSER_TRUTH_READY: 0,
-    BUYER_PATH_DISCOVERY_READY: 0,
-    MODEL_FIRST_READY: 0,
-    MAPPING_REVIEW_REQUIRED: 0,
-    SKIP_FOR_NOW: 0,
-  };
+  const laneCounts = emptyWhwSafeCtaExpansionLaneSummaryCountsV1();
   for (const row of drafts) laneCounts[row.lane] += 1;
 
   const sortDiscovery = (rows: typeof drafts) =>
@@ -737,11 +745,12 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
     founder_approval_required_for_csv_apply: true,
     generated_at: now().toISOString(),
     source_paths: [...SOURCE_PATHS],
+    lane_summary_counts: { ...laneCounts },
     summary: {
       filter_count: filterMetaBySlug.size,
       mapped_filter_count: mappedSlugs.size,
       safe_cta_row_count_in_committed_csv: safeCtaRowCount,
-      lane_counts: laneCounts,
+      lane_counts: { ...laneCounts },
       whole_house_water_public_launch_state: launchState,
     },
     top_20_safe_cta_expansion_targets,
