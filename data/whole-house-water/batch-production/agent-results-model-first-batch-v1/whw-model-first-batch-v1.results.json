@@ -1,0 +1,220 @@
+{
+  "contract": "whole_house_water_model_first_batch_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_batch_v1",
+  "packet_id": "whw-model-first-batch-v1",
+  "source_queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "source_queue_head": {
+    "filter_slug": "3m-ap811",
+    "anchor_model_slug": "3m-aquapure-ap802",
+    "queue_rank": 1
+  },
+  "batch_size": 5,
+  "candidates_checked": [
+    {
+      "queue_rank": 1,
+      "filter_slug": "3m-ap811",
+      "brand_slug": "3m",
+      "anchor_model_slug": "3m-aquapure-ap802",
+      "model_or_system_slugs": [
+        "3m-aquapure-ap802"
+      ],
+      "oem_part_number": "AP811",
+      "model_proof_status": "PASS",
+      "model_proof_notes": "PROVEN: Official 3M AP800 housing PDF and residential comparison chart document AP802-class systems and AP811 carbon cartridge (bounded batch read, May 2026). PROVEN: Committed compatibility_mappings.csv maps 3m-aquapure-ap802 → 3m-ap811 is_recommended=true. INFERRED: Dual-stage AP802 installs use AP810 sediment + AP811 carbon per committed models.csv notes — sediment not re-proven in this row.",
+      "documented_filter_tokens": [
+        "AP811"
+      ],
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/1903341O/3m-aqua-pure-ap800-series-whole-house-filter-housings.pdf",
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "buyer_path_status": "UNKNOWN",
+      "candidate_outcome": "UNKNOWN",
+      "candidate_buyer_paths": [],
+      "skip_fast_reason": null,
+      "grind_avoided": true
+    },
+    {
+      "queue_rank": 2,
+      "filter_slug": "3m-ap910r",
+      "brand_slug": "3m",
+      "anchor_model_slug": "3m-aquapure-ap903",
+      "model_or_system_slugs": [
+        "3m-aquapure-ap903"
+      ],
+      "oem_part_number": "AP910R",
+      "model_proof_status": "UNKNOWN",
+      "model_proof_notes": "PARTIAL: Committed models.csv documents AP903/AP904-class manifolds serviced with AP910R carbon + AP917HD-S sediment. Repo mapping 3m-aquapure-ap903 → 3m-ap910r is_recommended=true. UNKNOWN: AP900-series official comparison-chart row not verified in bounded batch — not grinding AP903 manual hunt.",
+      "documented_filter_tokens": [
+        "AP910R"
+      ],
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "buyer_path_status": "UNKNOWN",
+      "candidate_outcome": "UNKNOWN",
+      "candidate_buyer_paths": [],
+      "skip_fast_reason": null,
+      "grind_avoided": true
+    },
+    {
+      "queue_rank": 3,
+      "filter_slug": "3m-ap917hd-s",
+      "brand_slug": "3m",
+      "anchor_model_slug": "3m-aquapure-ap903",
+      "model_or_system_slugs": [
+        "3m-aquapure-ap903"
+      ],
+      "oem_part_number": "AP917HD-S",
+      "model_proof_status": "UNKNOWN",
+      "model_proof_notes": "PARTIAL: Same AP903 anchor as AP910R row; committed filters.csv notes AP917HD-S for AP900-series sediment. Repo mapping is_recommended=true. UNKNOWN: Official stamped-head compatibility not verified in bounded batch.",
+      "documented_filter_tokens": [
+        "AP917HD-S",
+        "AP917HDS"
+      ],
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "buyer_path_status": "UNKNOWN",
+      "candidate_outcome": "UNKNOWN",
+      "candidate_buyer_paths": [],
+      "skip_fast_reason": null,
+      "grind_avoided": true
+    },
+    {
+      "queue_rank": 4,
+      "filter_slug": "whirlpool-whkf-gd05",
+      "brand_slug": "whirlpool",
+      "anchor_model_slug": "whirlpool-whkf-dwhbb",
+      "model_or_system_slugs": [
+        "whirlpool-whkf-dwhbb"
+      ],
+      "oem_part_number": "WHKF-GD05",
+      "model_proof_status": "UNKNOWN",
+      "model_proof_notes": "PARTIAL: Committed mapping whirlpool-whkf-dwhbb → whirlpool-whkf-gd05 is_recommended=true; models.csv notes WHKF-GD05 + WHKF-WHPL on dual Big Blue installs. UNKNOWN: No official Whirlpool manual URL captured in bounded batch; primary committed link is whirlpoolparts.com search placeholder.",
+      "documented_filter_tokens": [
+        "WHKF-GD05",
+        "WHKFGD05"
+      ],
+      "official_source_urls": [],
+      "buyer_path_status": "UNKNOWN",
+      "candidate_outcome": "UNKNOWN",
+      "candidate_buyer_paths": [],
+      "skip_fast_reason": null,
+      "grind_avoided": true
+    },
+    {
+      "queue_rank": 5,
+      "filter_slug": "ge-fxhtc",
+      "brand_slug": "ge",
+      "anchor_model_slug": "ge-whole-house-gxwh20s",
+      "model_or_system_slugs": [
+        "ge-whole-house-gxwh20s",
+        "ge-whole-house-gxwh30c",
+        "ge-whole-house-gxwh35f",
+        "ge-whole-house-gxwh40f"
+      ],
+      "oem_part_number": "FXHTC",
+      "model_proof_status": "BLOCKED",
+      "model_proof_notes": "BLOCKED for fast batch: queue skip_fast_reason cites replacement-chain / generation ambiguity across GXWH20S/GXWH30C/GXWH35F/GXWH40F manifolds. Repo maps four housing models → ge-fxhtc is_recommended=true but official sticker proof not attempted in bounded batch.",
+      "documented_filter_tokens": [
+        "FXHTC"
+      ],
+      "official_source_urls": [],
+      "buyer_path_status": "UNKNOWN",
+      "candidate_outcome": "BLOCKED",
+      "candidate_buyer_paths": [],
+      "skip_fast_reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "grind_avoided": true
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 4,
+    "BLOCKED": 1
+  },
+  "candidate_outcomes": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 4,
+    "BLOCKED": 1
+  },
+  "recommended_csv_mutations": [],
+  "safe_apply_authorized": false,
+  "skipped_or_hard_cases": [
+    {
+      "filter_slug": "3m-ap810",
+      "reason": "Retry only through browser_truth capture on strongest UNKNOWN PDPs, not generic model-first queue.",
+      "classification": "BUYER_PATH_BROWSER_TRUTH_REQUIRED"
+    },
+    {
+      "filter_slug": "aquasana-eq600-replacement",
+      "reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "culligan-cw5-bb",
+      "reason": "Generic BB/slim cartridge size mapping from housing-only models — prove system sticker and OEM cartridge token before buyer-path work.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "culligan-rfc-bbsa",
+      "reason": "Generic BB/slim cartridge size mapping from housing-only models — prove system sticker and OEM cartridge token before buyer-path work.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "ge-fxhsc",
+      "reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "ge-fxusc",
+      "reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "ge-fxwpc",
+      "reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "ge-fxwtc",
+      "reason": "Replacement-chain or generation ambiguity in committed notes — official model sticker evidence required before buyer path.",
+      "classification": "RUN_MODEL_FIRST_EVIDENCE"
+    },
+    {
+      "filter_slug": "kinetico-reference-system",
+      "reason": "Dealer-network / non-checkout official destination — not a direct buyer-path proof lane.",
+      "classification": "DO_NOT_USE"
+    }
+  ],
+  "generated_at": "2026-05-29T01:28:19.428Z",
+  "checked_at": "2026-05-29T01:28:19.428Z",
+  "do_not_open_public": true,
+  "proven_facts": [
+    "PROVEN: Batch pulled 5 active candidates from whole_house_water_model_first_easiest_proof_queue_v1; head filter 3m-ap811.",
+    "PROVEN: 3m-ap810 excluded — completed_or_waiting BUYER_PATH_BROWSER_TRUTH_REQUIRED.",
+    "PROVEN: candidate_outcomes PASS=0 FAIL=0 UNKNOWN=4 BLOCKED=1.",
+    "PROVEN: recommended_csv_mutations=[]; safe_apply_authorized=false.",
+    "PROVEN: 3m-ap811 model_proof_status=PASS via official sources (2 URL(s)) + repo mapping.",
+    "PROVEN: Committed retailer_links.csv primary for 3m-ap811 is manufacturer search placeholder https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP811 — excluded from candidate_buyer_paths (search cannot PASS).",
+    "PROVEN: Committed retailer_links.csv primary for 3m-ap910r is manufacturer search placeholder https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP910R — excluded from candidate_buyer_paths (search cannot PASS).",
+    "PROVEN: Committed retailer_links.csv primary for 3m-ap917hd-s is manufacturer search placeholder https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP917HD-S — excluded from candidate_buyer_paths (search cannot PASS).",
+    "PROVEN: Committed retailer_links.csv primary for whirlpool-whkf-gd05 is manufacturer search placeholder https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=WHKF-GD05 — excluded from candidate_buyer_paths (search cannot PASS).",
+    "PROVEN: Committed retailer_links.csv primary for ge-fxhtc is manufacturer search placeholder https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=FXHTC — excluded from candidate_buyer_paths (search cannot PASS).",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Bounded batch intentionally avoids grinding any single filter — buyer paths left UNKNOWN unless safe direct_buyable proof exists.",
+    "INFERRED: Next production lane after batch is per-filter browser_truth on strongest UNKNOWN PDPs (see 3m-ap810 completed_or_waiting).",
+    "INFERRED: 3m-ap811 is the only model-fit PASS in batch v1; still lacks buyer-path PASS — no CSV apply."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether AP900-series official docs will PASS model proof for AP910R/AP917HD-S on a follow-up bounded packet.",
+    "UNKNOWN: Whether Whirlpool/GE official manuals yield PASS model proof without generation sticker ambiguity.",
+    "UNKNOWN: Whether any retailer PDP in this batch family will pass browser_truth direct_buyable without wrong-family drift."
+  ]
+}
