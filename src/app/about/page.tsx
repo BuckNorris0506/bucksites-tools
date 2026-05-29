@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: ABOUT_PAGE_META_DESCRIPTION,
 };
 
-const contactEmail = "support@buckparts.com";
+const contactEmail = "admin@buckparts.com";
 
 export default function AboutPage() {
   return (

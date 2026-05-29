@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "How BuckParts handles information when you use the site, including analytics and affiliate links.",
 };
 
-const contactEmail = "support@buckparts.com";
+const contactEmail = "admin@buckparts.com";
 
 export default function PrivacyPage() {
   return (
