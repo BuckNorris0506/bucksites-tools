@@ -7,6 +7,25 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "csv-parse/sync";
 
+import type { ModelFirstEvidenceRowStatusV1 } from "./air-purifier-model-first-evidence-result-v1";
+import {
+  type CommittedWhwBuyerPathProofResultEntryV1,
+  isWhwBuyerPathCheckedNoSafePassV1,
+  latestCommittedWhwBuyerPathResultsByFilterSlugV1,
+  loadCommittedWhwBuyerPathProofResultsV1,
+} from "./whole-house-water-buyer-path-proof-result-v1";
+
+const WHW_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1 =
+  "data/whole-house-water/batch-production/agent-results-model-first-v1" as const;
+
+const WHW_BUYER_PATH_PROOF_RESULTS_DIR_REL_V1 =
+  "data/whole-house-water/batch-production/agent-results-buyer-path-v1" as const;
+import {
+  isWhwModelFirstFitPassV1,
+  isWhwModelFirstNoMutationV1,
+  latestCommittedWhwModelFirstResultsByFilterSlugV1,
+  loadCommittedWhwModelFirstEvidenceResultsV1,
+} from "./whole-house-water-model-first-evidence-result-v1";
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
 import {
@@ -71,6 +90,33 @@ export type WhwRecommendedNextEvidencePacketV1 = {
   artifacts_not_written_yet: true;
 };
 
+export type WhwModelFirstEvidenceResultHistoryV1 = {
+  completed_model_first_filter_slugs: string[];
+  buyer_path_checked_filter_slugs: string[];
+  no_mutation_filter_slugs: string[];
+  buyer_path_unknown_filter_slugs: string[];
+  invalid_result_files: string[];
+};
+
+export type WhwCompletedOrWaitingClassificationV1 =
+  | "BUYER_PATH_BROWSER_TRUTH_REQUIRED"
+  | "COMPLETED_NO_SAFE_BUYER_PATH_YET"
+  | "MODEL_FIRST_DONE_BUYER_PATH_PENDING";
+
+export type WhwCompletedOrWaitingCandidateV1 = {
+  filter_slug: string;
+  brand_slug: string;
+  model_or_system_slugs: string[];
+  classification: WhwCompletedOrWaitingClassificationV1;
+  model_first_artifact_rel: string | null;
+  buyer_path_artifact_rel: string | null;
+  model_first_fit_status: ModelFirstEvidenceRowStatusV1 | null;
+  buyer_path_pass_count: number;
+  buyer_path_unknown_count: number;
+  recommended_csv_mutation: null;
+  retry_hint: string;
+};
+
 export type WholeHouseWaterModelFirstEasiestProofQueueV1 = {
   contract: typeof WHW_MODEL_FIRST_EASIEST_PROOF_QUEUE_CONTRACT_V1;
   read_only: true;
@@ -92,8 +138,11 @@ export type WholeHouseWaterModelFirstEasiestProofQueueV1 = {
     whole_house_water_public_launch_state: string;
   };
   top_10_easiest_candidates: WhwEasiestProofCandidateV1[];
+  completed_or_waiting_candidates: WhwCompletedOrWaitingCandidateV1[];
   skipped_or_hard_cases: WhwSkippedOrHardCaseV1[];
+  result_history: WhwModelFirstEvidenceResultHistoryV1;
   recommended_next_action: WhwRecommendedNextEvidencePacketV1 | null;
+  recommended_csv_mutation: null;
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
@@ -136,11 +185,107 @@ const SOURCE_PATHS = [
   "data/whole-house-water/retailer_links.csv",
   "data/whole-house-water/filter_aliases.csv",
   "data/whole-house-water/model_aliases.csv",
+  WHW_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
+  WHW_BUYER_PATH_PROOF_RESULTS_DIR_REL_V1,
   "src/lib/retailers/launch-buy-links.ts",
   "src/lib/data/whole-house-water/filters.ts",
   "src/lib/catalog/vertical-launch-state.ts",
   "scripts/lib/public-wedge-readiness-and-easiest-wins-v1.ts",
 ] as const;
+
+export const WHW_BUYER_PATH_BROWSER_TRUTH_RETRY_HINT_V1 =
+  "Retry only through browser_truth capture on strongest UNKNOWN PDPs, not generic model-first queue." as const;
+
+function classifyCompletedOrWaiting(args: {
+  modelFirstFitPass: boolean;
+  buyerPathEntry: CommittedWhwBuyerPathProofResultEntryV1 | undefined;
+}): WhwCompletedOrWaitingClassificationV1 {
+  if (args.modelFirstFitPass && !args.buyerPathEntry) {
+    return "MODEL_FIRST_DONE_BUYER_PATH_PENDING";
+  }
+  const counts = args.buyerPathEntry?.result.evidence_status_counts;
+  if (counts && counts.UNKNOWN > 0) {
+    return "BUYER_PATH_BROWSER_TRUTH_REQUIRED";
+  }
+  return "COMPLETED_NO_SAFE_BUYER_PATH_YET";
+}
+
+function shouldDemoteFromActiveModelFirstRetry(args: {
+  filterSlug: string;
+  modelFirstBySlug: ReturnType<typeof latestCommittedWhwModelFirstResultsByFilterSlugV1>;
+  buyerPathBySlug: ReturnType<typeof latestCommittedWhwBuyerPathResultsByFilterSlugV1>;
+}): boolean {
+  const modelEntry = args.modelFirstBySlug.get(args.filterSlug);
+  if (!modelEntry || !isWhwModelFirstFitPassV1(modelEntry.result)) return false;
+  if (!isWhwModelFirstNoMutationV1(modelEntry.result)) return false;
+  const buyerEntry = args.buyerPathBySlug.get(args.filterSlug);
+  if (!buyerEntry) return false;
+  return isWhwBuyerPathCheckedNoSafePassV1(buyerEntry.result);
+}
+
+function buildWhwEvidenceResultHistoryV1(args: {
+  rootDir: string;
+  fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
+  readdir?: (absDir: string) => string[];
+}): {
+  result_history: WhwModelFirstEvidenceResultHistoryV1;
+  modelFirstBySlug: ReturnType<typeof latestCommittedWhwModelFirstResultsByFilterSlugV1>;
+  buyerPathBySlug: ReturnType<typeof latestCommittedWhwBuyerPathResultsByFilterSlugV1>;
+  demotedFilterSlugs: Set<string>;
+} {
+  const modelLoad = loadCommittedWhwModelFirstEvidenceResultsV1(args);
+  const buyerLoad = loadCommittedWhwBuyerPathProofResultsV1(args);
+  const modelFirstBySlug = latestCommittedWhwModelFirstResultsByFilterSlugV1(modelLoad);
+  const buyerPathBySlug = latestCommittedWhwBuyerPathResultsByFilterSlugV1(buyerLoad);
+
+  const completed_model_first_filter_slugs: string[] = [];
+  const no_mutation_filter_slugs: string[] = [];
+  const buyer_path_checked_filter_slugs = Array.from(buyerPathBySlug.keys()).sort();
+  const buyer_path_unknown_filter_slugs: string[] = [];
+  const demotedFilterSlugs = new Set<string>();
+
+  for (const [slug, entry] of Array.from(modelFirstBySlug.entries())) {
+    if (isWhwModelFirstFitPassV1(entry.result)) {
+      completed_model_first_filter_slugs.push(slug);
+    }
+    const buyerEntry = buyerPathBySlug.get(slug);
+    const modelNoMutation = isWhwModelFirstNoMutationV1(entry.result);
+    if (modelNoMutation && (!buyerEntry || buyerEntry.result.recommended_csv_mutation === null)) {
+      no_mutation_filter_slugs.push(slug);
+    }
+    if (buyerEntry && buyerEntry.result.evidence_status_counts.UNKNOWN > 0) {
+      buyer_path_unknown_filter_slugs.push(slug);
+    }
+    if (
+      shouldDemoteFromActiveModelFirstRetry({
+        filterSlug: slug,
+        modelFirstBySlug,
+        buyerPathBySlug,
+      })
+    ) {
+      demotedFilterSlugs.add(slug);
+    }
+  }
+
+  const invalid_result_files = [
+    ...modelLoad.invalid_result_files,
+    ...buyerLoad.invalid_result_files,
+  ].sort();
+
+  return {
+    result_history: {
+      completed_model_first_filter_slugs: completed_model_first_filter_slugs.sort(),
+      buyer_path_checked_filter_slugs,
+      no_mutation_filter_slugs: no_mutation_filter_slugs.sort(),
+      buyer_path_unknown_filter_slugs: buyer_path_unknown_filter_slugs.sort(),
+      invalid_result_files,
+    },
+    modelFirstBySlug,
+    buyerPathBySlug,
+    demotedFilterSlugs,
+  };
+}
 
 const OEM_SYSTEM_BRANDS = new Set(["ge", "3m", "whirlpool", "culligan", "watts", "pentair"]);
 
@@ -474,8 +619,12 @@ export function buildWholeHouseWaterModelFirstEasiestProofQueueV1(args: {
     });
   }
 
+  const { result_history, modelFirstBySlug, buyerPathBySlug, demotedFilterSlugs } =
+    buildWhwEvidenceResultHistoryV1({ rootDir: args.rootDir });
+
   const activeCandidates = drafts
     .filter((d) => d.recommended_action !== "DO_NOT_USE")
+    .filter((d) => !demotedFilterSlugs.has(d.filter_slug))
     .sort((a, b) => {
       if (b.easiest_proof_score !== a.easiest_proof_score) {
         return b.easiest_proof_score - a.easiest_proof_score;
@@ -489,6 +638,36 @@ export function buildWholeHouseWaterModelFirstEasiestProofQueueV1(args: {
   const top_10_easiest_candidates: WhwEasiestProofCandidateV1[] = activeCandidates
     .slice(0, 10)
     .map((row, idx) => ({ rank: idx + 1, ...row }));
+
+  const completed_or_waiting_candidates: WhwCompletedOrWaitingCandidateV1[] = drafts
+    .filter((d) => demotedFilterSlugs.has(d.filter_slug))
+    .map((d) => {
+      const modelEntry = modelFirstBySlug.get(d.filter_slug);
+      const buyerEntry = buyerPathBySlug.get(d.filter_slug);
+      const modelFitPass = modelEntry ? isWhwModelFirstFitPassV1(modelEntry.result) : false;
+      const classification = classifyCompletedOrWaiting({
+        modelFirstFitPass: modelFitPass,
+        buyerPathEntry: buyerEntry,
+      });
+      const counts = buyerEntry?.result.evidence_status_counts;
+      return {
+        filter_slug: d.filter_slug,
+        brand_slug: d.brand_slug,
+        model_or_system_slugs: d.model_or_system_slugs,
+        classification,
+        model_first_artifact_rel: modelEntry?.relPath ?? null,
+        buyer_path_artifact_rel: buyerEntry?.relPath ?? null,
+        model_first_fit_status: modelEntry?.result.model_rows[0]?.evidence_status ?? null,
+        buyer_path_pass_count: counts?.PASS ?? 0,
+        buyer_path_unknown_count: counts?.UNKNOWN ?? 0,
+        recommended_csv_mutation: null as const,
+        retry_hint:
+          classification === "BUYER_PATH_BROWSER_TRUTH_REQUIRED"
+            ? WHW_BUYER_PATH_BROWSER_TRUTH_RETRY_HINT_V1
+            : "Model-first and buyer-path artifacts exist with recommended_csv_mutation null — do not re-queue generic model-first retry.",
+      };
+    })
+    .sort((a, b) => a.filter_slug.localeCompare(b.filter_slug));
 
   const skipped_or_hard_cases: WhwSkippedOrHardCaseV1[] = drafts
     .filter(
@@ -553,8 +732,11 @@ export function buildWholeHouseWaterModelFirstEasiestProofQueueV1(args: {
       whole_house_water_public_launch_state: launchState,
     },
     top_10_easiest_candidates,
+    completed_or_waiting_candidates,
     skipped_or_hard_cases,
+    result_history,
     recommended_next_action,
+    recommended_csv_mutation: null,
     proven_facts: [
       `PROVEN: ${models.length} whole-house-water models in committed data/whole-house-water/models.csv.`,
       `PROVEN: ${filters.length} filter/cartridge slugs in committed data/whole-house-water/filters.csv.`,
@@ -562,11 +744,17 @@ export function buildWholeHouseWaterModelFirstEasiestProofQueueV1(args: {
       `PROVEN: ${mappedFilterSlugs.size} mapped filter slugs; ${mappedFiltersWithSafeGated} with safe gated direct_buyable primary.`,
       `PROVEN: safe_cta_row_count=${safeCtaRowCount}; search_placeholder_primary_count=${searchPlaceholderPrimaryCount}.`,
       `PROVEN: whole-house-water launch state is ${launchState} (not publicly opened).`,
-      `PROVEN: Queue ranks ${top_10_easiest_candidates.length} actionable candidates; top filter ${top_10_easiest_candidates[0]?.filter_slug ?? "none"}.`,
+      `PROVEN: Queue ranks ${top_10_easiest_candidates.length} active candidates; top filter ${top_10_easiest_candidates[0]?.filter_slug ?? "none"}.`,
+      `PROVEN: Committed model-first artifacts loaded: completed_model_first=${result_history.completed_model_first_filter_slugs.join(",") || "none"}.`,
+      `PROVEN: Committed buyer-path artifacts loaded: buyer_path_checked=${result_history.buyer_path_checked_filter_slugs.join(",") || "none"}; demoted_from_active=${Array.from(demotedFilterSlugs).join(",") || "none"}.`,
+      "PROVEN: recommended_csv_mutation remains null at queue level.",
     ],
     inferred_facts: [
-      "INFERRED: OEM system families (GE FX, 3M AP810/AP811, Whirlpool WHKF) are easier model-first proof targets than generic Pentek BB cartridge rows despite lower model fan-out.",
+      "INFERRED: OEM system families (GE FX, 3M AP811, Whirlpool WHKF) are easier model-first proof targets than generic Pentek BB cartridge rows despite lower model fan-out.",
       "INFERRED: Pentek BB10 housing → cartridge mappings are browse inventory until a specific system sticker and OEM token are proven on one anchor model.",
+      completed_or_waiting_candidates.length > 0
+        ? `INFERRED: ${completed_or_waiting_candidates.length} filter(s) moved to completed_or_waiting — retry via browser_truth lane only, not generic model-first queue.`
+        : "INFERRED: No completed artifact demotions yet — top active candidate follows CSV scoring only.",
       topActionable
         ? `INFERRED: Next bounded packet should anchor model ${anchorModel} → filter ${topActionable.filter_slug} before any CSV or public launch change.`
         : "INFERRED: No RUN_MODEL_FIRST_EVIDENCE candidate surfaced — review skipped/hard cases first.",

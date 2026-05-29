@@ -3,7 +3,7 @@
  * References committed model-first artifact; does not redo fit proof.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
@@ -381,15 +381,99 @@ export function writeWhwBuyerPathProofResultV1(args: {
 export function loadWhwBuyerPathProofResultV1(args: {
   rootDir: string;
   relPath: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
 }): WhwBuyerPathProofResultV1 | null {
+  const fileExists = args.fileExists ?? existsSync;
+  const readText = args.readText ?? ((absPath: string) => readFileSync(absPath, "utf8"));
   if (!isAllowedWhwBuyerPathProofResultRelPathV1(args.relPath)) return null;
   const abs = path.join(args.rootDir, args.relPath);
-  if (!existsSync(abs)) return null;
+  if (!fileExists(abs)) return null;
   try {
-    const parsed: unknown = JSON.parse(readFileSync(abs, "utf8"));
+    const parsed: unknown = JSON.parse(readText(abs));
     if (!validateWhwBuyerPathProofResultV1(parsed)) return null;
     return parsed;
   } catch {
     return null;
   }
+}
+
+export type CommittedWhwBuyerPathProofResultEntryV1 = {
+  relPath: string;
+  result: WhwBuyerPathProofResultV1;
+};
+
+export type CommittedWhwBuyerPathProofResultsLoadV1 = {
+  results: CommittedWhwBuyerPathProofResultEntryV1[];
+  invalid_result_files: string[];
+};
+
+export function whwBuyerPathResultFilterSlugV1(result: WhwBuyerPathProofResultV1): string {
+  return result.anchor_filter_slug.trim().toLowerCase();
+}
+
+export function whwBuyerPathResultTimestampV1(result: WhwBuyerPathProofResultV1): string {
+  if (result.checked_at?.trim()) return result.checked_at;
+  return result.generated_at;
+}
+
+export function isWhwBuyerPathCheckedNoSafePassV1(result: WhwBuyerPathProofResultV1): boolean {
+  if (result.recommended_csv_mutation !== null) return false;
+  return result.evidence_status_counts.PASS === 0;
+}
+
+export function loadCommittedWhwBuyerPathProofResultsV1(args: {
+  rootDir: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
+  readdir?: (absDir: string) => string[];
+}): CommittedWhwBuyerPathProofResultsLoadV1 {
+  const fileExists = args.fileExists ?? existsSync;
+  const readdir = args.readdir ?? ((absDir: string) => readdirSync(absDir));
+  const resultsDirAbs = path.join(args.rootDir, WHW_BUYER_PATH_PROOF_RESULTS_DIR_REL_V1);
+  const invalid_result_files: string[] = [];
+  const results: CommittedWhwBuyerPathProofResultEntryV1[] = [];
+
+  if (!fileExists(resultsDirAbs)) {
+    return { results, invalid_result_files };
+  }
+
+  for (const name of readdir(resultsDirAbs)) {
+    if (!name.endsWith(".results.json")) continue;
+    const relPath = `${WHW_BUYER_PATH_PROOF_RESULTS_DIR_REL_V1}/${name}`;
+    if (!isAllowedWhwBuyerPathProofResultRelPathV1(relPath)) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    const loaded = loadWhwBuyerPathProofResultV1({
+      rootDir: args.rootDir,
+      relPath,
+      readText: args.readText,
+      fileExists: args.fileExists,
+    });
+    if (!loaded) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    results.push({ relPath, result: loaded });
+  }
+
+  return { results, invalid_result_files };
+}
+
+export function latestCommittedWhwBuyerPathResultsByFilterSlugV1(
+  load: CommittedWhwBuyerPathProofResultsLoadV1,
+): Map<string, CommittedWhwBuyerPathProofResultEntryV1> {
+  const bySlug = new Map<string, CommittedWhwBuyerPathProofResultEntryV1>();
+  for (const entry of load.results) {
+    const slug = whwBuyerPathResultFilterSlugV1(entry.result);
+    const existing = bySlug.get(slug);
+    if (
+      !existing ||
+      whwBuyerPathResultTimestampV1(entry.result) > whwBuyerPathResultTimestampV1(existing.result)
+    ) {
+      bySlug.set(slug, entry);
+    }
+  }
+  return bySlug;
 }

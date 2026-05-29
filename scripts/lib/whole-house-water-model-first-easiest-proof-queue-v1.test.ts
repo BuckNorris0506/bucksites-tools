@@ -4,7 +4,10 @@ import path from "node:path";
 import test from "node:test";
 
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
+import { WHW_AP810_LIVE_BROWSER_RESULT_REL_V1 } from "./whole-house-water-model-first-evidence-result-v1";
+import { WHW_AP810_BUYER_PATH_RESULT_REL_V1 } from "./whole-house-water-buyer-path-proof-result-v1";
 import {
+  WHW_BUYER_PATH_BROWSER_TRUTH_RETRY_HINT_V1,
   WHW_MODEL_FIRST_EASIEST_PROOF_QUEUE_CONTRACT_V1,
   buildWholeHouseWaterModelFirstEasiestProofQueueV1,
 } from "./whole-house-water-model-first-easiest-proof-queue-v1";
@@ -66,10 +69,69 @@ test("row count alone cannot create top ranking — generic pentek BB fan-out lo
     "pentek-dgd-5005 should have higher model fan-out than top ranked candidate",
   );
   assert.notEqual(top.filter_slug, "pentek-dgd-5005");
+  assert.notEqual(top.filter_slug, "3m-ap810");
   assert.ok(
-    ["3m-ap810", "ge-fxhtc", "ge-fxwpc", "3m-ap811", "whirlpool-whkf-gd05"].includes(top.filter_slug),
-    `expected OEM-system filter at rank 1, got ${top.filter_slug}`,
+    ["ge-fxhtc", "ge-fxwpc", "3m-ap811", "whirlpool-whkf-gd05"].includes(top.filter_slug),
+    `expected OEM-system filter at rank 1 after AP810 demotion, got ${top.filter_slug}`,
   );
+});
+
+test("committed 3m-ap810 artifacts are loaded into result_history", () => {
+  const report = buildWholeHouseWaterModelFirstEasiestProofQueueV1({ rootDir: REPO_ROOT });
+  assert.ok(
+    readFileSync(path.join(REPO_ROOT, WHW_AP810_LIVE_BROWSER_RESULT_REL_V1), "utf8").includes(
+      '"anchor_filter_slug": "3m-ap810"',
+    ),
+  );
+  assert.ok(
+    readFileSync(path.join(REPO_ROOT, WHW_AP810_BUYER_PATH_RESULT_REL_V1), "utf8").includes(
+      '"anchor_filter_slug": "3m-ap810"',
+    ),
+  );
+  assert.ok(report.result_history.completed_model_first_filter_slugs.includes("3m-ap810"));
+  assert.ok(report.result_history.buyer_path_checked_filter_slugs.includes("3m-ap810"));
+  assert.ok(report.result_history.no_mutation_filter_slugs.includes("3m-ap810"));
+  assert.ok(report.result_history.buyer_path_unknown_filter_slugs.includes("3m-ap810"));
+  assert.equal(report.result_history.invalid_result_files.length, 0);
+});
+
+test("3m-ap810 is demoted from active top retry after buyer-path artifact exists", () => {
+  const report = buildWholeHouseWaterModelFirstEasiestProofQueueV1({ rootDir: REPO_ROOT });
+  const ap810Active = report.top_10_easiest_candidates.find((r) => r.filter_slug === "3m-ap810");
+  assert.equal(ap810Active, undefined);
+  assert.notEqual(report.recommended_next_action?.anchor_filter_slug, "3m-ap810");
+  assert.notEqual(report.top_10_easiest_candidates[0]?.filter_slug, "3m-ap810");
+});
+
+test("3m-ap810 appears in completed_or_waiting with browser_truth_required classification", () => {
+  const report = buildWholeHouseWaterModelFirstEasiestProofQueueV1({ rootDir: REPO_ROOT });
+  const waiting = report.completed_or_waiting_candidates.find((r) => r.filter_slug === "3m-ap810");
+  assert.ok(waiting);
+  assert.equal(waiting!.classification, "BUYER_PATH_BROWSER_TRUTH_REQUIRED");
+  assert.equal(waiting!.model_first_fit_status, "PASS");
+  assert.equal(waiting!.buyer_path_pass_count, 0);
+  assert.ok(waiting!.buyer_path_unknown_count > 0);
+  assert.equal(waiting!.recommended_csv_mutation, null);
+  assert.equal(waiting!.retry_hint, WHW_BUYER_PATH_BROWSER_TRUTH_RETRY_HINT_V1);
+  assert.ok(waiting!.model_first_artifact_rel?.includes("whw-model-first-3m-ap810"));
+  assert.ok(waiting!.buyer_path_artifact_rel?.includes("whw-buyer-path-3m-ap810"));
+});
+
+test("next active candidate advances past completed 3m-ap810", () => {
+  const report = buildWholeHouseWaterModelFirstEasiestProofQueueV1({ rootDir: REPO_ROOT });
+  const top = report.top_10_easiest_candidates[0]!;
+  assert.ok(top);
+  assert.notEqual(top.filter_slug, "3m-ap810");
+  assert.equal(top.recommended_action, "RUN_MODEL_FIRST_EVIDENCE");
+  assert.equal(report.recommended_next_action?.anchor_filter_slug, top.filter_slug);
+});
+
+test("queue recommends no CSV mutation", () => {
+  const report = buildWholeHouseWaterModelFirstEasiestProofQueueV1({ rootDir: REPO_ROOT });
+  assert.equal(report.recommended_csv_mutation, null);
+  for (const row of report.completed_or_waiting_candidates) {
+    assert.equal(row.recommended_csv_mutation, null);
+  }
 });
 
 test("hard cases get skip/classification instead of blocking the queue", () => {

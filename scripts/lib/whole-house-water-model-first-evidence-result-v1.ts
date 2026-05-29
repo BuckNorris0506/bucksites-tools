@@ -3,7 +3,7 @@
  * Writes only under agent-results-model-first-v1/ when explicitly requested.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
@@ -15,7 +15,9 @@ import {
   type ModelFirstEvidenceRowStatusV1,
   type ModelFirstLiveBrowserModelRowV1,
 } from "./air-purifier-model-first-evidence-result-v1";
-import { WHW_MODEL_FIRST_EASIEST_PROOF_QUEUE_CONTRACT_V1 } from "./whole-house-water-model-first-easiest-proof-queue-v1";
+/** Matches whole-house-water-model-first-easiest-proof-queue-v1 contract (avoid circular import). */
+export const WHW_MODEL_FIRST_EASIEST_PROOF_QUEUE_CONTRACT_V1 =
+  "whole_house_water_model_first_easiest_proof_queue_v1" as const;
 
 export const WHW_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1 =
   "whole_house_water_model_first_evidence_result_v1" as const;
@@ -258,15 +260,104 @@ export function writeWhwModelFirstEvidenceResultV1(args: {
 export function loadWhwModelFirstEvidenceResultV1(args: {
   rootDir: string;
   relPath: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
 }): WhwModelFirstLiveBrowserEvidenceResultV1 | null {
+  const fileExists = args.fileExists ?? existsSync;
+  const readText = args.readText ?? ((absPath: string) => readFileSync(absPath, "utf8"));
   if (!isAllowedWhwModelFirstEvidenceResultRelPathV1(args.relPath)) return null;
   const abs = path.join(args.rootDir, args.relPath);
-  if (!existsSync(abs)) return null;
+  if (!fileExists(abs)) return null;
   try {
-    const parsed: unknown = JSON.parse(readFileSync(abs, "utf8"));
+    const parsed: unknown = JSON.parse(readText(abs));
     if (!validateWhwModelFirstEvidenceResultV1(parsed)) return null;
     return parsed;
   } catch {
     return null;
   }
+}
+
+export type CommittedWhwModelFirstEvidenceResultEntryV1 = {
+  relPath: string;
+  result: WhwModelFirstLiveBrowserEvidenceResultV1;
+};
+
+export type CommittedWhwModelFirstEvidenceResultsLoadV1 = {
+  results: CommittedWhwModelFirstEvidenceResultEntryV1[];
+  invalid_result_files: string[];
+};
+
+export function whwModelFirstResultFilterSlugV1(
+  result: WhwModelFirstLiveBrowserEvidenceResultV1,
+): string {
+  return (result.filter_slug ?? result.anchor_filter_slug).trim().toLowerCase();
+}
+
+export function whwModelFirstResultTimestampV1(result: WhwModelFirstLiveBrowserEvidenceResultV1): string {
+  if (result.checked_at?.trim()) return result.checked_at;
+  return result.generated_at;
+}
+
+export function isWhwModelFirstFitPassV1(result: WhwModelFirstLiveBrowserEvidenceResultV1): boolean {
+  return result.model_rows.some((row) => row.evidence_status === "PASS");
+}
+
+export function isWhwModelFirstNoMutationV1(result: WhwModelFirstLiveBrowserEvidenceResultV1): boolean {
+  return result.recommended_csv_mutation === null;
+}
+
+export function loadCommittedWhwModelFirstEvidenceResultsV1(args: {
+  rootDir: string;
+  readText?: (absPath: string) => string;
+  fileExists?: (absPath: string) => boolean;
+  readdir?: (absDir: string) => string[];
+}): CommittedWhwModelFirstEvidenceResultsLoadV1 {
+  const fileExists = args.fileExists ?? existsSync;
+  const readdir = args.readdir ?? ((absDir: string) => readdirSync(absDir));
+  const resultsDirAbs = path.join(args.rootDir, WHW_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1);
+  const invalid_result_files: string[] = [];
+  const results: CommittedWhwModelFirstEvidenceResultEntryV1[] = [];
+
+  if (!fileExists(resultsDirAbs)) {
+    return { results, invalid_result_files };
+  }
+
+  for (const name of readdir(resultsDirAbs)) {
+    if (!name.endsWith(".results.json")) continue;
+    const relPath = `${WHW_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/${name}`;
+    if (!isAllowedWhwModelFirstEvidenceResultRelPathV1(relPath)) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    const loaded = loadWhwModelFirstEvidenceResultV1({
+      rootDir: args.rootDir,
+      relPath,
+      readText: args.readText,
+      fileExists: args.fileExists,
+    });
+    if (!loaded) {
+      invalid_result_files.push(relPath);
+      continue;
+    }
+    results.push({ relPath, result: loaded });
+  }
+
+  return { results, invalid_result_files };
+}
+
+export function latestCommittedWhwModelFirstResultsByFilterSlugV1(
+  load: CommittedWhwModelFirstEvidenceResultsLoadV1,
+): Map<string, CommittedWhwModelFirstEvidenceResultEntryV1> {
+  const bySlug = new Map<string, CommittedWhwModelFirstEvidenceResultEntryV1>();
+  for (const entry of load.results) {
+    const slug = whwModelFirstResultFilterSlugV1(entry.result);
+    const existing = bySlug.get(slug);
+    if (
+      !existing ||
+      whwModelFirstResultTimestampV1(entry.result) > whwModelFirstResultTimestampV1(existing.result)
+    ) {
+      bySlug.set(slug, entry);
+    }
+  }
+  return bySlug;
 }
