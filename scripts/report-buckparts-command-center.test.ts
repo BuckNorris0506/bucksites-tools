@@ -3837,6 +3837,29 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
+test("command_center_v2.sitemap_indexability_audit_v1 is read-only sitemap inventory audit", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const audit = report.command_center_v2.sitemap_indexability_audit_v1;
+  assert.ok(audit);
+  assert.equal(audit.contract, "buckparts_sitemap_indexability_audit_v1");
+  assert.equal(audit.read_only, true);
+  assert.equal(audit.data_mutation, false);
+  assert.ok(audit.live_wedges_indexable.includes("refrigerator_water"));
+  assert.ok(audit.live_wedges_indexable.includes("air_purifier"));
+  assert.ok(audit.excluded_wedges.includes("whole_house_water"));
+  assert.equal(audit.gsc_indexed_count, "UNKNOWN");
+  assert.equal(audit.gsc_discovered_count, "UNKNOWN");
+  assert.notEqual(audit.first_campaign_indexability_status, "READY");
+  assert.equal(audit.existing_public_routes_not_in_repo_sitemap.includes("/truth-policy"), true);
+  assert.ok(audit.sitemap_generation_sources.some((s) => s.includes("sitemap.ts")));
+  assert.ok(audit.proven_facts.some((f) => f.includes("does not authorize")));
+});
+
 test("command_center_v2.wedge_truth_spine_coverage_matrix_v1 is read-only wedge parity matrix", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

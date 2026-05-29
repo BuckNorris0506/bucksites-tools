@@ -69,6 +69,10 @@ import {
 } from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
 import {
+  buildBuckpartsSitemapIndexabilityAuditUnknownV1,
+  buildBuckpartsSitemapIndexabilityAuditV1,
+} from "./lib/buckparts-sitemap-indexability-audit-v1";
+import {
   buildAirPurifierTruthSpineUnknownV1,
   buildAirPurifierTruthSpineV1,
 } from "./lib/air-purifier-truth-spine-v1";
@@ -981,6 +985,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
+    | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
@@ -1104,6 +1109,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
+    | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1208,6 +1214,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
+    | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1352,6 +1359,21 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let sitemap_indexability_audit_v1;
+  try {
+    sitemap_indexability_audit_v1 = await buildBuckpartsSitemapIndexabilityAuditV1({
+      rootDir,
+      now,
+      skipLiveFetch: true,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    sitemap_indexability_audit_v1 = buildBuckpartsSitemapIndexabilityAuditUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let whole_house_water_batch_production_director_v1;
   try {
     whole_house_water_batch_production_director_v1 = buildWholeHouseWaterBatchProductionDirectorV1({
@@ -1404,6 +1426,7 @@ export async function buildBuckpartsCommandCenterReport(
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
     air_purifier_truth_spine_v1,
+    sitemap_indexability_audit_v1,
     whole_house_water_batch_production_director_v1,
     wedge_truth_spine_coverage_matrix_v1,
   };

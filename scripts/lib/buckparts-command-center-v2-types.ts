@@ -17,6 +17,7 @@ import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-produ
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
+import type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
 import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
@@ -906,6 +907,8 @@ export type CommandCenterV2Report = {
   fridge_truth_spine_v1: FridgeTruthSpineV1;
   /** Read-only air purifier committed CSV / buy-gate / public copy truth spine — not mutation authority. */
   air_purifier_truth_spine_v1: AirPurifierTruthSpineV1;
+  /** Read-only sitemap vs repo indexable inventory audit — not sitemap mutation authority. */
+  sitemap_indexability_audit_v1: BuckpartsSitemapIndexabilityAuditV1;
   /** Read-only WHW multi-filter batch production director — not CSV apply or public opening authority. */
   whole_house_water_batch_production_director_v1: WholeHouseWaterBatchProductionDirectorV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
@@ -964,6 +967,7 @@ export type {
   PagePublishabilityTruthSummaryV1,
   PagePublishabilityTruthRowV1,
 } from "./buckparts-page-publishability-truth-v1";
+export type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
 export type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
 export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 export type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
@@ -984,6 +988,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "page_publishability_truth_summary_v1"
   | "fridge_truth_spine_v1"
   | "air_purifier_truth_spine_v1"
+  | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
