@@ -1,0 +1,74 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-3m-ap810-v1",
+  "run_id": "whw-model-first-3m-ap810-live-browser-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "3m",
+  "anchor_model_slug": "3m-aquapure-ap801",
+  "anchor_filter_slug": "3m-ap810",
+  "filter_slug": "3m-ap810",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T00:43:14.488Z",
+  "checked_at": "2026-05-29T00:43:14.488Z",
+  "source_status": "PROVEN",
+  "model_rows": [
+    {
+      "model_slug": "3m-aquapure-ap801",
+      "model_number": "AP801",
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/1903341O/3m-aqua-pure-ap800-series-whole-house-filter-housings.pdf",
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "manual_urls": [
+        "https://multimedia.3m.com/mws/media/1903341O/3m-aqua-pure-ap800-series-whole-house-filter-housings.pdf"
+      ],
+      "documented_filter_tokens": [
+        "AP810",
+        "5618902"
+      ],
+      "evidence_status": "PASS",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PROVEN: Official 3M AP800 Series housing PDF documents AP801B/AP801T whole-house housings and lists AP810 (5618902) as a replacement cartridge option for AP800-series installs. PROVEN: Official 3M residential comparison chart row AP801B/AP801T → replacement cartridge AP810. PROVEN: Repo maps 3m-aquapure-ap801 → 3m-ap810 with is_recommended=true in data/whole-house-water/compatibility_mappings.csv. INFERRED: Anchor model AP801 is legacy AP800-class single-stage housing; official docs name AP801B/AP801T successors — exact AP801 token not found on a dedicated 3M.com model page in this run. Do not claim unavailable."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
+      "retailer_or_source": "aquapurefilters_authorized_dealer",
+      "exact_token_proof": "PROVEN: PDP title and Shopify SKU show Aqua-Pure AP810 / MPN 5618902 (live fetch May 2026). PROVEN: Description lists AP801/AP801B-class compatible systems including Discontinued AP801.",
+      "buyability_proof": "PROVEN: Add to cart control present on live PDP. UNKNOWN: No browser_truth_classification=direct_buyable on file; third-party dealer PDP not verified through launch-buy-links safe CTA gate in this artifact.",
+      "wrong_family_risk": "LOW for AP810 token; listing is cartridge PDP not official 3M.com — do not label compatible-only SKUs as official OEM without separate proof.",
+      "status": "UNKNOWN"
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 1,
+    "FAIL": 0,
+    "UNKNOWN": 0,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Official 3M AP800 Series housing PDF lists AP810 (5618902) as AP801B/AP801T replacement cartridge option.",
+    "PROVEN: Official 3M comparison chart maps AP801B/AP801T whole-house systems to AP810 replacement cartridge.",
+    "PROVEN: Committed retailer_links.csv primary for 3m-ap810 is oem-catalog site-search only (0 direct_buyable rows).",
+    "PROVEN: Committed primary URL https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP810 is manufacturer site-search — excluded from candidate_buyer_paths (search URLs fail schema validation).",
+    "PROVEN: Aqua-Pure Filters dealer PDP shows AP810 / 5618902 with Add to cart (live fetch May 2026).",
+    "PROVEN: recommended_csv_mutation is null — no CSV apply authorized.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Legacy AP801 anchor model shares AP810 cartridge family with official AP801B/AP801T documentation.",
+    "INFERRED: Dealer PDP is a candidate buyer-path follow-up but not yet safe-gated for public CTA without browser truth proof."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether an official 3M.com AP810 product PDP with in-stock direct checkout exists (3m.com product URLs timed out in this run).",
+    "UNKNOWN: Whether Amazon or other retailers provide exact AP810/5618902 with clean direct_buyable browser truth.",
+    "UNKNOWN: Exact dedicated official support page for legacy AP801 model suffix (vs AP801B/AP801T) on 3m.com."
+  ]
+}
