@@ -76,6 +76,14 @@ export default function AboutPage() {
 
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
         Related:{" "}
+        <Link href="/truth-policy" className="underline underline-offset-2">
+          Truth Policy
+        </Link>
+        {" · "}
+        <Link href="/wrong-part-prevention" className="underline underline-offset-2">
+          Wrong-part prevention
+        </Link>
+        {" · "}
         <Link href="/disclosure" className="underline underline-offset-2">
           Affiliate Disclosure
         </Link>

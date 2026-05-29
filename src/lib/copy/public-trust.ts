@@ -18,6 +18,14 @@ export function homePageMetaDescription(siteDisplayName: string): string {
 export const ABOUT_PAGE_META_DESCRIPTION =
   "What BuckParts does: replacement filter lookup, fit guidance, and reviewed store links when we list them.";
 
+/** Truth Policy page meta — grant-readiness / public trust pack. */
+export const TRUTH_POLICY_PAGE_META_DESCRIPTION =
+  "How BuckParts handles fit evidence, uncertainty, original vs compatible labels, and when buying options appear.";
+
+/** Wrong-part prevention page meta — homeowner-facing prevention guide. */
+export const WRONG_PART_PREVENTION_PAGE_META_DESCRIPTION =
+  "Why replacement filter shopping is confusing, common wrong-part traps, and how BuckParts withholds unsafe buy paths.";
+
 /** Compare-before-buy checklist — reuse on panels or future standalone blocks. */
 export const COMPARE_BEFORE_BUY_CHECKLIST_LINES = [
   "Compare the part number printed on the cartridge or frame you are removing.",

@@ -96,6 +96,18 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             <span aria-hidden className="text-bp-border">
               ·
             </span>
+            <Link href="/truth-policy" className={footerLinkClass}>
+              Truth Policy
+            </Link>
+            <span aria-hidden className="text-bp-border">
+              ·
+            </span>
+            <Link href="/wrong-part-prevention" className={footerLinkClass}>
+              Wrong-part prevention
+            </Link>
+            <span aria-hidden className="text-bp-border">
+              ·
+            </span>
             <Link href="/terms" className={footerLinkClass}>
               Terms
             </Link>

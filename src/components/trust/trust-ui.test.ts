@@ -124,6 +124,8 @@ describe("public merchant-priority copy guard", () => {
       "src/app/disclosure/page.tsx",
       "src/app/privacy/page.tsx",
       "src/app/terms/page.tsx",
+      "src/app/truth-policy/page.tsx",
+      "src/app/wrong-part-prevention/page.tsx",
     ];
     const banned = /\b(vetted store links|verified store links|store links|verify links)\b/i;
     for (const p of paths) {
@@ -263,5 +265,20 @@ describe("public merchant-priority copy guard", () => {
     );
     assert.ok(!/Shop only when checks pass/.test(src));
     assert.ok(!/avoid sending you to a bad match/i.test(src));
+  });
+
+  it("global shell footer links to grant trust pages", () => {
+    const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
+    assert.ok(src.includes('href="/truth-policy"'));
+    assert.ok(src.includes('href="/wrong-part-prevention"'));
+  });
+
+  it("grant trust pages use homeowner language without internal acronyms", () => {
+    const paths = ["src/app/truth-policy/page.tsx", "src/app/wrong-part-prevention/page.tsx"];
+    const banned = /\b(OEM|SKU|CTA|PDP|SERP|direct_buyable|browser_truth|buy-gate|dispatch-run)\b/;
+    for (const p of paths) {
+      const src = readFileSync(rooted(p), "utf8");
+      assert.ok(!banned.test(src), `${p}: internal jargon in public trust page`);
+    }
   });
 });
