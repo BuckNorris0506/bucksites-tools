@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -11,6 +11,11 @@ import {
 } from "@/lib/retailers/launch-buy-links";
 import { buyerPathCandidateMayRecommendCsvMutationV1 } from "./whole-house-water-buyer-path-proof-result-v1";
 import { WHW_AP811_BUYER_PATH_RESULT_REL_V1 } from "./whole-house-water-batch-buyer-path-proof-v1";
+import {
+  WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1,
+  buildWhw3mAp811BrowserTruthCaptureV1,
+  writeWhwBrowserTruthCaptureResultV1,
+} from "./whole-house-water-browser-truth-capture-result-v1";
 import { WHW_AP810_FILTER_SLUG_V1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import {
   WHW_BATCH_PRODUCTION_DIRECTOR_CONTRACT_V1,
@@ -71,8 +76,11 @@ test("WHW public opening remains false", () => {
   assert.equal(report.factory_rules.never_open_whw_from_single_safe_cta, true);
 });
 
-test("AP811 appears as browser_truth_capture current head", () => {
+test("AP811 appears as browser_truth_capture current head before capture artifact", () => {
   if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) {
+    return;
+  }
+  if (existsSync(path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1))) {
     return;
   }
   const report = buildWholeHouseWaterBatchProductionDirectorV1({ rootDir: REPO_ROOT });
@@ -85,6 +93,40 @@ test("AP811 appears as browser_truth_capture current head", () => {
       (i) => i.filter_slug === "3m-ap811" && i.packet_kind === "browser_truth_capture",
     ),
   );
+});
+
+test("AP811 advances to founder_apply_review head after browser_truth capture", () => {
+  if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) return;
+
+  const artifactAbs = path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1);
+  const hadArtifact = existsSync(artifactAbs);
+  if (!hadArtifact) {
+    writeWhwBrowserTruthCaptureResultV1({
+      rootDir: REPO_ROOT,
+      result: buildWhw3mAp811BrowserTruthCaptureV1({ rootDir: REPO_ROOT }),
+      relPath: WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1,
+    });
+  }
+
+  try {
+    const report = buildWholeHouseWaterBatchProductionDirectorV1({ rootDir: REPO_ROOT });
+    assert.ok(report.current_batch_head);
+    assert.equal(report.current_batch_head!.filter_slug, "3m-ap811");
+    assert.equal(report.current_batch_head!.packet_kind, "founder_apply_review");
+    assert.equal(report.current_batch_head!.lane, "APPLY_READY_FOUNDER_APPROVAL_REQUIRED");
+    assert.equal(report.inspect_summary.ap811_is_founder_apply_head, true);
+    assert.equal(report.inspect_summary.ap811_is_browser_truth_head, false);
+    assert.equal(report.inspect_summary.ap811_browser_truth_capture_complete, true);
+    assert.equal(
+      report.next_batch_items.browser_truth_capture.find((i) => i.filter_slug === "3m-ap811"),
+      undefined,
+    );
+    assert.ok(
+      report.next_batch_items.founder_apply_review.some((i) => i.filter_slug === "3m-ap811"),
+    );
+  } finally {
+    if (!hadArtifact) rmSync(artifactAbs, { force: true });
+  }
 });
 
 test("AP810 is not re-grinded as model_first or buyer_path", () => {
@@ -257,7 +299,14 @@ test("inspect_summary provides jq-safe flat projection", () => {
 
 test("lane_summary_counts match expansion queue", () => {
   const report = buildWholeHouseWaterBatchProductionDirectorV1({ rootDir: REPO_ROOT });
-  assert.equal(report.lane_summary_counts.BROWSER_TRUTH_READY, 1);
+  const ap811BrowserTruth = existsSync(path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1));
+  assert.equal(
+    report.lane_summary_counts.BROWSER_TRUTH_READY,
+    ap811BrowserTruth ? 0 : 1,
+  );
+  assert.equal(
+    report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED,
+    ap811BrowserTruth ? 1 : 0,
+  );
   assert.equal(report.lane_summary_counts.MODEL_FIRST_READY, 20);
-  assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 0);
 });

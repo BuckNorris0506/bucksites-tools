@@ -287,8 +287,13 @@ export function classifyWhwSafeCtaExpansionLaneV1(ctx: ClassificationContextV1):
     if (buyerUnknown && browserPass === 0) {
       return "BROWSER_TRUTH_READY";
     }
-    if (browserPass > 0 && !ctx.applyPlan?.ready_for_founder_approval) {
-      return "BROWSER_TRUTH_READY";
+    if (
+      browserPass > 0 &&
+      ctx.browserTruth?.safe_apply_authorized &&
+      !ctx.applyRowInCsv &&
+      !ctx.safeCtaInCsv
+    ) {
+      return "APPLY_READY_FOUNDER_APPROVAL_REQUIRED";
     }
     if (
       !ctx.buyerPath ||

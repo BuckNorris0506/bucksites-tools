@@ -1,0 +1,122 @@
+{
+  "contract": "whole_house_water_browser_truth_capture_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "browser_truth_capture_v1",
+  "packet_id": "whw-browser-truth-3m-ap811-v1",
+  "anchor_filter_slug": "3m-ap811",
+  "source_buyer_path_artifact": "data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap811-batch-v1.results.json",
+  "candidates_checked": [
+    {
+      "source_url": "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+      "retailer_or_source": "aquapurefilters_authorized_dealer",
+      "listing_kind": "authorized_dealer",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "LOW",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE",
+      "safe_cta_gate_status": "PASS",
+      "evidence_status": "PASS",
+      "capture_notes": "PASS: Shopify PDP sells OEM AP811 variant SKU 5618904 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+      "recommended_retailer_link_row": {
+        "filter_slug": "3m-ap811",
+        "retailer_key": "aquapure-dealer",
+        "retailer_name": "Aqua-Pure Filters (authorized dealer)",
+        "destination_url": "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+        "affiliate_url": "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+        "is_primary": false,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE",
+        "browser_truth_notes": "PASS: Shopify PDP sells OEM AP811 variant SKU 5618904 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+        "browser_truth_checked_at": "2026-05-29T16:03:40.489Z"
+      }
+    },
+    {
+      "source_url": "https://klearwaterstore.com/3m-aqua-pure-ap811-whole-house-filter-cartridge-25-micron/",
+      "retailer_or_source": "klearwaterstore",
+      "listing_kind": "major_retailer",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "LOW",
+      "browser_truth_classification": "likely_valid",
+      "browser_truth_buyable_subtype": null,
+      "safe_cta_gate_status": "FAIL",
+      "evidence_status": "UNKNOWN",
+      "capture_notes": "UNKNOWN: Klear Water Store PDP shows 5618904 and cart UI but capture lacks independent inventory/OEM verification beyond buyer-path token proof — kept likely_valid not direct_buyable.",
+      "recommended_retailer_link_row": null
+    },
+    {
+      "source_url": "https://www.allfilters.com/wholehousewaterfilters/replacementfilters/aquapure-ap811",
+      "retailer_or_source": "allfilters",
+      "listing_kind": "major_retailer",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "LOW",
+      "browser_truth_classification": "likely_valid",
+      "browser_truth_buyable_subtype": null,
+      "safe_cta_gate_status": "FAIL",
+      "evidence_status": "UNKNOWN",
+      "capture_notes": "UNKNOWN: AllFilters PDP documents genuine OEM AP811/5618904 with add-to-cart UI but capture lacks authorized-dealer inventory verification beyond buyer-path token proof — kept likely_valid not direct_buyable.",
+      "recommended_retailer_link_row": null
+    },
+    {
+      "source_url": "https://www.amazon.com/3M-Aqua-Pure-AP800-Whole-00016145165108/dp/B0BK8JF81N",
+      "retailer_or_source": "amazon",
+      "listing_kind": "official_oem",
+      "exact_token_status": "PROVEN",
+      "buy_action_status": "PROVEN",
+      "wrong_family_status": "MEDIUM",
+      "browser_truth_classification": "likely_valid",
+      "browser_truth_buyable_subtype": null,
+      "safe_cta_gate_status": "FAIL",
+      "evidence_status": "UNKNOWN",
+      "capture_notes": "UNKNOWN: Amazon B0BK8JF81N is AP800-series 4/Case carton (00016145165108) — not a verified single-unit AP811/5618904 OEM PDP in this bounded packet; cannot prove Sold-by/fulfillment safety vs multipack or compatible drift.",
+      "recommended_retailer_link_row": null
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 1,
+    "FAIL": 0,
+    "UNKNOWN": 3,
+    "BLOCKED": 0
+  },
+  "pass_count": 1,
+  "recommended_csv_mutations": [
+    {
+      "filter_slug": "3m-ap811",
+      "retailer_key": "aquapure-dealer",
+      "destination_url": "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+      "exact_token_proof": "PROVEN: PASS: Shopify PDP sells OEM AP811 variant SKU 5618904 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+      "buyability_proof": "PROVEN: direct_buyable browser_truth capture with safe CTA gate PASS.",
+      "browser_truth_classification": "direct_buyable",
+      "browser_truth_buyable_subtype": "SINGLE_UNIT_DIRECT_BUYABLE"
+    }
+  ],
+  "safe_apply_authorized": true,
+  "best_truthful_buyer_path": {
+    "url": "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+    "retailer_or_source": "aquapurefilters_authorized_dealer",
+    "exact_token_proof": "PROVEN: Shopify PDP title Aqua-Pure AP811 Whole House Water Filter (5618904); MPN 5618904 on authorized dealer page (live fetch May 2026).",
+    "buyability_proof": "PASS: Shopify PDP sells OEM AP811 variant SKU 5618904 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026)."
+  },
+  "generated_at": "2026-05-29T16:03:40.489Z",
+  "checked_at": "2026-05-29T16:03:40.489Z",
+  "do_not_open_public": true,
+  "proven_facts": [
+    "PROVEN: Source buyer-path artifact data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap811-batch-v1.results.json loaded; 4 UNKNOWN candidate(s) evaluated (FAIL rows skipped).",
+    "PROVEN: Browser_truth capture evidence_status_counts PASS=1 FAIL=0 UNKNOWN=3 BLOCKED=0.",
+    "PROVEN: pass_count=1; safe_apply_authorized=true.",
+    "PROVEN: best_truthful_buyer_path https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter (aquapurefilters_authorized_dealer).",
+    "PROVEN: Model-first fit for 3m-ap811 not re-run in this lane.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN."
+  ],
+  "inferred_facts": [
+    "INFERRED: Amazon UNKNOWN rows should route to fulfillment/seller verification before any direct_buyable elevation.",
+    "INFERRED: Authorized dealer PASS row is candidate for future retailer_links.csv apply — still requires explicit human apply outside this read-only artifact."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether a verified Amazon-shipped single-unit AP811/5618904 PDP will pass browser_truth without compatible drift.",
+    "UNKNOWN: Whether klearwaterstore or allfilters inventory is OEM-only without drop-ship compatible drift."
+  ]
+}

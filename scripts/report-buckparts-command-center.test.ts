@@ -3803,14 +3803,26 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.equal(lane.factory_rules.never_treat_row_count_as_truth, true);
   assert.ok(lane.inspect_summary.recommended_jq_paths.command_center.includes("inspect_summary"));
 
-  const ap811Artifact = path.join(
+  const ap811BuyerPathArtifact = path.join(
     process.cwd(),
     "data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap811-batch-v1.results.json",
   );
-  if (fs.existsSync(ap811Artifact)) {
-    assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, true);
-    assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
-    assert.equal(lane.current_batch_head?.packet_kind, "browser_truth_capture");
+  const ap811BrowserTruthArtifact = path.join(
+    process.cwd(),
+    "data/whole-house-water/batch-production/browser-truth-results-v1/whw-browser-truth-3m-ap811-v1.results.json",
+  );
+  if (fs.existsSync(ap811BuyerPathArtifact)) {
+    if (fs.existsSync(ap811BrowserTruthArtifact)) {
+      assert.equal(lane.inspect_summary.ap811_is_founder_apply_head, true);
+      assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, false);
+      assert.equal(lane.inspect_summary.ap811_browser_truth_capture_complete, true);
+      assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
+      assert.equal(lane.current_batch_head?.packet_kind, "founder_apply_review");
+    } else {
+      assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, true);
+      assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
+      assert.equal(lane.current_batch_head?.packet_kind, "browser_truth_capture");
+    }
     assert.equal(
       lane.inspect_summary.active_filter_slugs.includes("3m-ap811"),
       true,

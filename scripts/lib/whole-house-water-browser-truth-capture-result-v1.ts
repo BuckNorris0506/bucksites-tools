@@ -14,6 +14,12 @@ import {
   isManufacturerSiteSearchUrl,
 } from "@/lib/retailers/launch-buy-links";
 
+import {
+  WHW_AP811_BUYER_PATH_RESULT_REL_V1,
+  WHW_AP811_FILTER_SLUG_V1,
+  loadWhwBatchBuyerPathProofResultV1,
+  whwBatchBuyerPathAsExpansionBuyerPathV1,
+} from "./whole-house-water-batch-buyer-path-proof-v1";
 import type { ModelFirstEvidenceRowStatusV1 } from "./air-purifier-model-first-evidence-result-v1";
 import {
   WHW_AP810_BUYER_PATH_RESULT_REL_V1,
@@ -34,6 +40,13 @@ export const WHW_AP810_BROWSER_TRUTH_RESULT_REL_V1 =
   `${WHW_BROWSER_TRUTH_RESULTS_DIR_REL_V1}/whw-browser-truth-3m-ap810-v1.results.json` as const;
 
 export const WHW_AP810_BROWSER_TRUTH_PACKET_ID_V1 = "whw-browser-truth-3m-ap810-v1" as const;
+
+export const WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1 =
+  `${WHW_BROWSER_TRUTH_RESULTS_DIR_REL_V1}/whw-browser-truth-3m-ap811-v1.results.json` as const;
+
+export const WHW_AP811_BROWSER_TRUTH_PACKET_ID_V1 = "whw-browser-truth-3m-ap811-v1" as const;
+
+export type WhwBrowserTruthAnchorFilterSlugV1 = "3m-ap810" | typeof WHW_AP811_FILTER_SLUG_V1;
 
 export type WhwCaptureFieldStatusV1 = "PROVEN" | "FAIL" | "UNKNOWN" | "LOW" | "HIGH" | "PASS";
 
@@ -80,9 +93,9 @@ export type WhwBrowserTruthCaptureResultV1 = {
   read_only: true;
   data_mutation: false;
   evidence_mode: "browser_truth_capture_v1";
-  packet_id: typeof WHW_AP810_BROWSER_TRUTH_PACKET_ID_V1;
-  anchor_filter_slug: "3m-ap810";
-  source_buyer_path_artifact: typeof WHW_AP810_BUYER_PATH_RESULT_REL_V1;
+  packet_id: string;
+  anchor_filter_slug: WhwBrowserTruthAnchorFilterSlugV1;
+  source_buyer_path_artifact: string;
   candidates_checked: WhwBrowserTruthCandidateCheckedV1[];
   evidence_status_counts: Record<ModelFirstEvidenceRowStatusV1, number>;
   pass_count: number;
@@ -169,12 +182,14 @@ function retailerKeyForSource(retailerOrSource: string): string {
   if (key === "amazon") return "amazon";
   if (key === "aquapurefilters_authorized_dealer") return "aquapure-dealer";
   if (key === "klearwaterstore") return "klearwater";
+  if (key === "allfilters") return "allfilters";
   return key.replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
 function retailerDisplayName(retailerOrSource: string): string {
   if (retailerOrSource === "aquapurefilters_authorized_dealer") return "Aqua-Pure Filters (authorized dealer)";
   if (retailerOrSource === "klearwaterstore") return "Klear Water Store";
+  if (retailerOrSource === "allfilters") return "AllFilters";
   if (retailerOrSource === "amazon") return "Amazon";
   return retailerOrSource;
 }
@@ -191,10 +206,12 @@ type CaptureDraft = {
 /** Bounded browser_truth capture for one UNKNOWN buyer-path row (May 2026). */
 function captureDraftForUnknownCandidate(
   source: WhwBuyerPathCandidateV1,
-  checkedAt: string,
+  anchorFilterSlug: WhwBrowserTruthAnchorFilterSlugV1,
 ): CaptureDraft {
   const tokenProven = exactTokenProofIsProvenV1(source.exact_token_proof);
   const buyProven = source.buy_action_observed;
+  const oemLabel = anchorFilterSlug === WHW_AP811_FILTER_SLUG_V1 ? "AP811" : "AP810";
+  const skuLabel = anchorFilterSlug === WHW_AP811_FILTER_SLUG_V1 ? "5618904" : "5618902";
 
   if (source.listing_kind === "compatible_replacement") {
     return {
@@ -203,8 +220,7 @@ function captureDraftForUnknownCandidate(
       exact_token_status: "FAIL",
       buy_action_status: buyProven ? "PROVEN" : "FAIL",
       wrong_family_status: "HIGH",
-      capture_notes:
-        "FAIL: Compatible replacement listing — cannot label official OEM AP810; excluded from browser_truth PASS lane.",
+      capture_notes: `FAIL: Compatible replacement listing — cannot label official OEM ${oemLabel}; excluded from browser_truth PASS lane.`,
     };
   }
 
@@ -220,14 +236,17 @@ function captureDraftForUnknownCandidate(
   }
 
   if (source.retailer_or_source === "amazon") {
+    const amazonNote =
+      anchorFilterSlug === WHW_AP811_FILTER_SLUG_V1
+        ? "UNKNOWN: Amazon B0BK8JF81N is AP800-series 4/Case carton (00016145165108) — not a verified single-unit AP811/5618904 OEM PDP in this bounded packet; cannot prove Sold-by/fulfillment safety vs multipack or compatible drift."
+        : "UNKNOWN: Amazon B000W0TTJQ shows AP810/5618902 and buy UI (buyer-path packet). Capture cannot prove Sold by Amazon / OEM-only fulfillment vs third-party compatible offers — not elevated to direct_buyable.";
     return {
       browser_truth_classification: "likely_valid",
       browser_truth_buyable_subtype: null,
       exact_token_status: tokenProven ? "PROVEN" : "UNKNOWN",
       buy_action_status: buyProven ? "PROVEN" : "UNKNOWN",
-      wrong_family_status: "UNKNOWN",
-      capture_notes:
-        "UNKNOWN: Amazon B000W0TTJQ shows AP810/5618902 and buy UI (buyer-path packet). Capture cannot prove Sold by Amazon / OEM-only fulfillment vs third-party compatible offers — not elevated to direct_buyable.",
+      wrong_family_status: anchorFilterSlug === WHW_AP811_FILTER_SLUG_V1 ? "MEDIUM" : "UNKNOWN",
+      capture_notes: amazonNote,
     };
   }
 
@@ -238,8 +257,7 @@ function captureDraftForUnknownCandidate(
       exact_token_status: tokenProven ? "PROVEN" : "UNKNOWN",
       buy_action_status: buyProven ? "PROVEN" : "UNKNOWN",
       wrong_family_status: "LOW",
-      capture_notes:
-        "PASS: Shopify PDP sells OEM AP810 variant SKU 5618902 with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).",
+      capture_notes: `PASS: Shopify PDP sells OEM ${oemLabel} variant SKU ${skuLabel} with Add to cart; listing_kind authorized_dealer; no compatible-only branding; browser_truth direct_buyable + SINGLE_UNIT_DIRECT_BUYABLE (bounded capture May 2026).`,
     };
   }
 
@@ -250,8 +268,18 @@ function captureDraftForUnknownCandidate(
       exact_token_status: tokenProven ? "PROVEN" : "UNKNOWN",
       buy_action_status: buyProven ? "PROVEN" : "UNKNOWN",
       wrong_family_status: "LOW",
-      capture_notes:
-        "UNKNOWN: Klear Water Store PDP shows 5618902 and cart UI but capture lacks independent inventory/OEM verification beyond buyer-path token proof — kept likely_valid not direct_buyable.",
+      capture_notes: `UNKNOWN: Klear Water Store PDP shows ${skuLabel} and cart UI but capture lacks independent inventory/OEM verification beyond buyer-path token proof — kept likely_valid not direct_buyable.`,
+    };
+  }
+
+  if (source.retailer_or_source === "allfilters") {
+    return {
+      browser_truth_classification: "likely_valid",
+      browser_truth_buyable_subtype: null,
+      exact_token_status: tokenProven ? "PROVEN" : "UNKNOWN",
+      buy_action_status: buyProven ? "PROVEN" : "UNKNOWN",
+      wrong_family_status: "LOW",
+      capture_notes: `UNKNOWN: AllFilters PDP documents genuine OEM ${oemLabel}/${skuLabel} with add-to-cart UI but capture lacks authorized-dealer inventory verification beyond buyer-path token proof — kept likely_valid not direct_buyable.`,
     };
   }
 
@@ -269,8 +297,9 @@ function finalizeCaptureRow(args: {
   source: WhwBuyerPathCandidateV1;
   draft: CaptureDraft;
   checkedAt: string;
+  anchorFilterSlug: WhwBrowserTruthAnchorFilterSlugV1;
 }): WhwBrowserTruthCandidateCheckedV1 {
-  const { source, draft, checkedAt } = args;
+  const { source, draft, checkedAt, anchorFilterSlug } = args;
   const retailerKey = retailerKeyForSource(source.retailer_or_source);
 
   const gateLink = {
@@ -304,7 +333,7 @@ function finalizeCaptureRow(args: {
 
   if (evidence_status === "PASS") {
     recommended_retailer_link_row = {
-      filter_slug: "3m-ap810",
+      filter_slug: anchorFilterSlug,
       retailer_key: retailerKey,
       retailer_name: retailerDisplayName(source.retailer_or_source),
       destination_url: source.url,
@@ -383,14 +412,106 @@ export function validateWhwBrowserTruthCaptureResultV1(
   return true;
 }
 
+function buildWhwBrowserTruthCaptureFromSourceV1(args: {
+  now?: () => Date;
+  source: WhwBuyerPathProofResultV1;
+  packet_id: string;
+  anchor_filter_slug: WhwBrowserTruthAnchorFilterSlugV1;
+  source_buyer_path_artifact: string;
+  model_first_fit_note: string;
+  unknown_facts: string[];
+}): WhwBrowserTruthCaptureResultV1 {
+  const now = args.now ?? (() => new Date());
+  const iso = now().toISOString();
+
+  const unknownSources = selectUnknownBuyerPathCandidatesForCaptureV1(args.source);
+  const candidates_checked = unknownSources.map((row) => {
+    const draft = captureDraftForUnknownCandidate(row, args.anchor_filter_slug);
+    return finalizeCaptureRow({
+      source: row,
+      draft,
+      checkedAt: iso,
+      anchorFilterSlug: args.anchor_filter_slug,
+    });
+  });
+
+  const evidence_status_counts = countStatuses(candidates_checked);
+  const pass_count = evidence_status_counts.PASS;
+
+  const passRows = candidates_checked.filter((r) => r.evidence_status === "PASS");
+  const recommended_csv_mutations: WhwBrowserTruthCsvMutationRecommendationV1[] = passRows.map(
+    (row) => ({
+      filter_slug: args.anchor_filter_slug,
+      retailer_key: row.recommended_retailer_link_row!.retailer_key,
+      destination_url: row.source_url,
+      exact_token_proof: `PROVEN: ${row.capture_notes}`,
+      buyability_proof: "PROVEN: direct_buyable browser_truth capture with safe CTA gate PASS.",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_buyable_subtype:
+        row.browser_truth_buyable_subtype ?? BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
+    }),
+  );
+
+  const bestRow = passRows[0] ?? null;
+  const defaultTokenProof =
+    args.anchor_filter_slug === WHW_AP811_FILTER_SLUG_V1
+      ? "PROVEN: exact AP811/5618904 token on PDP."
+      : "PROVEN: exact AP810/5618902 token on PDP.";
+  const best_truthful_buyer_path: WhwBestTruthfulBuyerPathV1 = bestRow
+    ? {
+        url: bestRow.source_url,
+        retailer_or_source: bestRow.retailer_or_source,
+        exact_token_proof:
+          unknownSources.find((s) => s.url === bestRow.source_url)?.exact_token_proof ??
+          defaultTokenProof,
+        buyability_proof: bestRow.capture_notes,
+      }
+    : null;
+
+  const safe_apply_authorized = pass_count > 0;
+
+  return {
+    contract: WHW_BROWSER_TRUTH_CAPTURE_RESULT_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    evidence_mode: "browser_truth_capture_v1",
+    packet_id: args.packet_id,
+    anchor_filter_slug: args.anchor_filter_slug,
+    source_buyer_path_artifact: args.source_buyer_path_artifact,
+    candidates_checked,
+    evidence_status_counts,
+    pass_count,
+    recommended_csv_mutations,
+    safe_apply_authorized,
+    best_truthful_buyer_path,
+    generated_at: iso,
+    checked_at: iso,
+    do_not_open_public: true,
+    proven_facts: [
+      `PROVEN: Source buyer-path artifact ${args.source_buyer_path_artifact} loaded; ${String(unknownSources.length)} UNKNOWN candidate(s) evaluated (FAIL rows skipped).`,
+      `PROVEN: Browser_truth capture evidence_status_counts PASS=${evidence_status_counts.PASS} FAIL=${evidence_status_counts.FAIL} UNKNOWN=${evidence_status_counts.UNKNOWN} BLOCKED=${evidence_status_counts.BLOCKED}.`,
+      `PROVEN: pass_count=${pass_count}; safe_apply_authorized=${String(safe_apply_authorized)}.`,
+      pass_count > 0
+        ? `PROVEN: best_truthful_buyer_path ${best_truthful_buyer_path!.url} (${best_truthful_buyer_path!.retailer_or_source}).`
+        : "PROVEN: No browser_truth PASS — recommended_csv_mutations=[].",
+      args.model_first_fit_note,
+      `PROVEN: whole-house-water launch state remains ${getVerticalLaunchState("whole-house-water")}.`,
+    ],
+    inferred_facts: [
+      "INFERRED: Amazon UNKNOWN rows should route to fulfillment/seller verification before any direct_buyable elevation.",
+      pass_count > 0
+        ? "INFERRED: Authorized dealer PASS row is candidate for future retailer_links.csv apply — still requires explicit human apply outside this read-only artifact."
+        : "INFERRED: No safe CSV apply authorized from this capture packet.",
+    ],
+    unknown_facts: args.unknown_facts,
+  };
+}
+
 export function buildWhw3mAp810BrowserTruthCaptureV1(args: {
   rootDir: string;
   now?: () => Date;
   source?: WhwBuyerPathProofResultV1 | null;
 }): WhwBrowserTruthCaptureResultV1 {
-  const now = args.now ?? (() => new Date());
-  const iso = now().toISOString();
-
   const source =
     args.source !== undefined
       ? args.source
@@ -405,81 +526,57 @@ export function buildWhw3mAp810BrowserTruthCaptureV1(args: {
     );
   }
 
-  const unknownSources = selectUnknownBuyerPathCandidatesForCaptureV1(source);
-  const candidates_checked = unknownSources.map((row) => {
-    const draft = captureDraftForUnknownCandidate(row, iso);
-    return finalizeCaptureRow({ source: row, draft, checkedAt: iso });
-  });
-
-  const evidence_status_counts = countStatuses(candidates_checked);
-  const pass_count = evidence_status_counts.PASS;
-
-  const passRows = candidates_checked.filter((r) => r.evidence_status === "PASS");
-  const recommended_csv_mutations: WhwBrowserTruthCsvMutationRecommendationV1[] = passRows.map(
-    (row) => ({
-      filter_slug: "3m-ap810",
-      retailer_key: row.recommended_retailer_link_row!.retailer_key,
-      destination_url: row.source_url,
-      exact_token_proof: `PROVEN: ${row.capture_notes}`,
-      buyability_proof: "PROVEN: direct_buyable browser_truth capture with safe CTA gate PASS.",
-      browser_truth_classification: "direct_buyable",
-      browser_truth_buyable_subtype:
-        row.browser_truth_buyable_subtype ?? BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE,
-    }),
-  );
-
-  const bestRow = passRows[0] ?? null;
-  const best_truthful_buyer_path: WhwBestTruthfulBuyerPathV1 = bestRow
-    ? {
-        url: bestRow.source_url,
-        retailer_or_source: bestRow.retailer_or_source,
-        exact_token_proof:
-          unknownSources.find((s) => s.url === bestRow.source_url)?.exact_token_proof ??
-          "PROVEN: exact AP810/5618902 token on PDP.",
-        buyability_proof: bestRow.capture_notes,
-      }
-    : null;
-
-  const safe_apply_authorized = pass_count > 0;
-
-  return {
-    contract: WHW_BROWSER_TRUTH_CAPTURE_RESULT_CONTRACT_V1,
-    read_only: true,
-    data_mutation: false,
-    evidence_mode: "browser_truth_capture_v1",
+  return buildWhwBrowserTruthCaptureFromSourceV1({
+    now: args.now,
+    source,
     packet_id: WHW_AP810_BROWSER_TRUTH_PACKET_ID_V1,
     anchor_filter_slug: "3m-ap810",
     source_buyer_path_artifact: WHW_AP810_BUYER_PATH_RESULT_REL_V1,
-    candidates_checked,
-    evidence_status_counts,
-    pass_count,
-    recommended_csv_mutations,
-    safe_apply_authorized,
-    best_truthful_buyer_path,
-    generated_at: iso,
-    checked_at: iso,
-    do_not_open_public: true,
-    proven_facts: [
-      `PROVEN: Source buyer-path artifact ${WHW_AP810_BUYER_PATH_RESULT_REL_V1} loaded; ${String(unknownSources.length)} UNKNOWN candidate(s) evaluated (FAIL rows skipped).`,
-      `PROVEN: Browser_truth capture evidence_status_counts PASS=${evidence_status_counts.PASS} FAIL=${evidence_status_counts.FAIL} UNKNOWN=${evidence_status_counts.UNKNOWN} BLOCKED=${evidence_status_counts.BLOCKED}.`,
-      `PROVEN: pass_count=${pass_count}; safe_apply_authorized=${String(safe_apply_authorized)}.`,
-      pass_count > 0
-        ? `PROVEN: best_truthful_buyer_path ${best_truthful_buyer_path!.url} (${best_truthful_buyer_path!.retailer_or_source}).`
-        : "PROVEN: No browser_truth PASS — recommended_csv_mutations=[].",
-      "PROVEN: Model-first fit for 3m-ap810 not re-run in this lane.",
-      `PROVEN: whole-house-water launch state remains ${getVerticalLaunchState("whole-house-water")}.`,
-    ],
-    inferred_facts: [
-      "INFERRED: Amazon UNKNOWN rows should route to fulfillment/seller verification before any direct_buyable elevation.",
-      pass_count > 0
-        ? "INFERRED: Authorized dealer PASS row is candidate for future retailer_links.csv apply — still requires explicit human apply outside this read-only artifact."
-        : "INFERRED: No safe CSV apply authorized from this capture packet.",
-    ],
+    model_first_fit_note: "PROVEN: Model-first fit for 3m-ap810 not re-run in this lane.",
     unknown_facts: [
       "UNKNOWN: Whether Amazon B000W0TTJQ will pass direct_buyable after Sold-by verification.",
       "UNKNOWN: Whether klearwaterstore inventory is OEM-only without drop-ship compatible drift.",
     ],
-  };
+  });
+}
+
+export function loadWhw3mAp811BrowserTruthCaptureSourceV1(args: {
+  rootDir: string;
+}): WhwBuyerPathProofResultV1 | null {
+  const batch = loadWhwBatchBuyerPathProofResultV1({
+    rootDir: args.rootDir,
+    relPath: WHW_AP811_BUYER_PATH_RESULT_REL_V1,
+  });
+  if (!batch) return null;
+  return whwBatchBuyerPathAsExpansionBuyerPathV1(batch);
+}
+
+export function buildWhw3mAp811BrowserTruthCaptureV1(args: {
+  rootDir: string;
+  now?: () => Date;
+  source?: WhwBuyerPathProofResultV1 | null;
+}): WhwBrowserTruthCaptureResultV1 {
+  const source =
+    args.source !== undefined ? args.source : loadWhw3mAp811BrowserTruthCaptureSourceV1(args);
+
+  if (!source) {
+    throw new Error(
+      `Missing required buyer-path artifact: ${WHW_AP811_BUYER_PATH_RESULT_REL_V1}`,
+    );
+  }
+
+  return buildWhwBrowserTruthCaptureFromSourceV1({
+    now: args.now,
+    source,
+    packet_id: WHW_AP811_BROWSER_TRUTH_PACKET_ID_V1,
+    anchor_filter_slug: WHW_AP811_FILTER_SLUG_V1,
+    source_buyer_path_artifact: WHW_AP811_BUYER_PATH_RESULT_REL_V1,
+    model_first_fit_note: "PROVEN: Model-first fit for 3m-ap811 not re-run in this lane.",
+    unknown_facts: [
+      "UNKNOWN: Whether a verified Amazon-shipped single-unit AP811/5618904 PDP will pass browser_truth without compatible drift.",
+      "UNKNOWN: Whether klearwaterstore or allfilters inventory is OEM-only without drop-ship compatible drift.",
+    ],
+  });
 }
 
 export function writeWhwBrowserTruthCaptureResultV1(args: {

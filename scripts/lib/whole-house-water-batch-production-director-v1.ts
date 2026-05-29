@@ -69,8 +69,8 @@ export type WhwBatchProductionDirectorGrindAvoidanceV1 = {
 
 export type WhwBatchProductionDirectorCurrentHeadV1 = {
   filter_slug: string;
-  packet_kind: "browser_truth_capture";
-  lane: "BROWSER_TRUTH_READY";
+  packet_kind: Exclude<WhwBatchProductionDirectorPacketKindV1, "mapping_review" | "skip_for_now">;
+  lane: WhwSafeCtaExpansionLaneV1 | "PARKED";
   anchor_model_slug: string | null;
   rationale: string;
 };
@@ -84,6 +84,8 @@ export type WhwBatchProductionDirectorInspectSummaryV1 = {
   current_batch_head_filter_slug: string | null;
   current_batch_head_packet_kind: string | null;
   ap811_is_browser_truth_head: boolean;
+  ap811_is_founder_apply_head: boolean;
+  ap811_browser_truth_capture_complete: boolean;
   ap810_parked: boolean;
   ap810_in_active_batch: false;
   active_batch_item_count: number;
@@ -339,17 +341,25 @@ function groupActiveItems(
 function resolveCurrentBatchHead(
   groups: WhwBatchProductionDirectorItemGroupsV1,
 ): WhwBatchProductionDirectorCurrentHeadV1 | null {
-  const head =
-    groups.browser_truth_capture.find((i) => i.filter_slug === WHW_AP811_FILTER_SLUG_V1) ??
-    groups.browser_truth_capture[0] ??
-    null;
-  if (!head) return null;
+  if (groups.founder_apply_review.length > 0) {
+    const head = groups.founder_apply_review[0]!;
+    return {
+      filter_slug: head.filter_slug,
+      packet_kind: "founder_apply_review",
+      lane: head.lane === "PARKED" ? "PARKED" : head.lane,
+      anchor_model_slug: head.anchor_model_slug,
+      rationale: head.rationale,
+    };
+  }
+
+  const browserHead = groups.browser_truth_capture[0] ?? null;
+  if (!browserHead) return null;
   return {
-    filter_slug: head.filter_slug,
+    filter_slug: browserHead.filter_slug,
     packet_kind: "browser_truth_capture",
-    lane: "BROWSER_TRUTH_READY",
-    anchor_model_slug: head.anchor_model_slug,
-    rationale: head.rationale,
+    lane: browserHead.lane === "PARKED" ? "PARKED" : browserHead.lane,
+    anchor_model_slug: browserHead.anchor_model_slug,
+    rationale: browserHead.rationale,
   };
 }
 
@@ -397,6 +407,9 @@ export function buildWhwBatchProductionDirectorInspectSummaryV1(args: {
   >;
 }): WhwBatchProductionDirectorInspectSummaryV1 {
   const { director } = args;
+  const ap811FounderApply = director.next_batch_items.founder_apply_review.some(
+    (i) => i.filter_slug === WHW_AP811_FILTER_SLUG_V1,
+  );
   const ap810Parked = director.next_batch_items.skip_for_now.some(
     (i) => i.filter_slug === WHW_AP810_FILTER_SLUG_V1,
   );
@@ -412,6 +425,10 @@ export function buildWhwBatchProductionDirectorInspectSummaryV1(args: {
     ap811_is_browser_truth_head:
       director.current_batch_head?.filter_slug === WHW_AP811_FILTER_SLUG_V1 &&
       director.current_batch_head?.packet_kind === "browser_truth_capture",
+    ap811_is_founder_apply_head:
+      director.current_batch_head?.filter_slug === WHW_AP811_FILTER_SLUG_V1 &&
+      director.current_batch_head?.packet_kind === "founder_apply_review",
+    ap811_browser_truth_capture_complete: ap811FounderApply,
     ap810_parked: ap810Parked,
     ap810_in_active_batch: false,
     active_batch_item_count: director.active_batch_item_count,
