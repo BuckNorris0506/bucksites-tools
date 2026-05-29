@@ -294,6 +294,36 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "Do not redo fridge products from scratch",
     describe: "fridge operating decision — no full rebuild",
   },
+  {
+    id: "grant_readiness_contract",
+    needle: "buckparts_grant_readiness_v1",
+    describe: "grant readiness report contract",
+  },
+  {
+    id: "truth_policy_route",
+    needle: "truth-policy",
+    describe: "public truth policy route path",
+  },
+  {
+    id: "wrong_part_prevention_route",
+    needle: "wrong-part-prevention",
+    describe: "public wrong-part-prevention route path",
+  },
+  {
+    id: "whw_ap811",
+    needle: "3m-ap811",
+    describe: "WHW AP811 filter slug at current stopping point",
+  },
+  {
+    id: "whw_browser_truth_ready_lane",
+    needle: "BROWSER_TRUTH_READY",
+    describe: "WHW safe CTA expansion BROWSER_TRUTH_READY lane",
+  },
+  {
+    id: "current_head_aec8b8c",
+    needle: "aec8b8c",
+    describe: "current HEAD / origin main checkpoint reference",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

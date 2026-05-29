@@ -6,9 +6,146 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest customer UI checkpoint:** **`bbadce5`** — existing-site motion + recent-search memory (see **Latest validated checkpoint** below; **not** a redesign). **Semi-Cruise read-only milestone:** documented at **`edfeeba`** (see **Semi-Cruise Readiness Milestone** below). **Command Center external measurement freshness:** lane introduced at **`b85e90b`**; at **`edfeeba`** operator loop proved **`overall_status: OK`**. **Command Center neuron map (`owner_command_center_neurons`):** through **`84fb4b3`**. **Batch Production Lane v1 (Layer 7 owner decisions):** through **`93dcd3d`**. **Batch production operating checklist (Command Center backbone):** through **`98412a1`**. **Fridge truth spine (`command_center_v2.fridge_truth_spine_v1`):** through **`7b09529`** — see **Fridge truth spine v1 — Command Center** below. **AP batch-v2 CSV apply + Supabase parity:** **PROVEN applied** in prior operator work (artifacts on disk; not re-run in this doc step). **Waterdrop / customer-language lane:** through **`a343464`**. **Layer 6 / Codex / Runner control-plane:** refreshed **`2026-05-16`** (repo through **`40ad6eb`** and related Layer 6 commits — see §0B). **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`aec8b8c`** — Grant/Public Trust Pack v1 (see **Current stopping point — grant trust pack + WHW safe-CTA expansion** below). **Prior milestones remain documented below** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, etc.) — treat §4–§16 metric snapshots as **UNKNOWN** until re-run. **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
+
+---
+
+## Current stopping point — grant trust pack + WHW safe-CTA expansion (PROVEN through `aec8b8c`)
+
+**Read this section first** in a new HQ or implementation chat. Prior stopping-point blocks (fridge spine `7b09529`, UI motion `bbadce5`, etc.) remain **historical context** only unless re-proven by named commands.
+
+### Repo checkpoint (PROVEN)
+
+| Item | Value |
+|------|--------|
+| Branch | **`main`** |
+| HEAD / origin main | **`aec8b8c`** — *Add BuckParts grant readiness public trust pack* |
+| Prior WHW commits (on main) | **`381b5e6`** — AP810 safe retailer link apply · **`0c1a0d4`** — AP811 buyer-path proof artifact |
+
+### What BuckParts is (PROVEN doctrine — do not regress in grant or public copy)
+
+1. **BuckParts is not ecommerce.** It is a **truth-first homeowner-help / wrong-part-prevention system** — a trusted replacement-part decision engine, not a parts catalog or affiliate storefront.
+2. **Affiliate links are secondary to truth** — overhead support only; revenue does not override fit evidence or buyer-path gates.
+3. **Grant positioning** should emphasize: homeowner trust, wrong-part prevention, verification systems, tool/credit funding, accessibility, and expansion of **verified** coverage — **not** marketplace or savings hype.
+4. **Do not claim** BuckParts is the source of all truth.
+5. **Do not claim** all filters/parts are verified.
+6. **Do not claim** guaranteed savings.
+
+### Grant / Public Trust Pack v1 (PROVEN at `aec8b8c`)
+
+| Item | Path / value |
+|------|----------------|
+| Public trust routes | `src/app/truth-policy/page.tsx` · `src/app/wrong-part-prevention/page.tsx` |
+| Grant readiness report | `scripts/report-buckparts-grant-readiness-v1.ts` |
+| Contract | `buckparts_grant_readiness_v1` |
+| `read_only` | `true` |
+| `data_mutation` | `false` |
+| `truth_policy_route_present` | `true` |
+| `wrong_part_prevention_route_present` | `true` |
+| `ecommerce_positioning_risk` | **LOW** |
+| `affiliate_overclaim_risk` | **LOW** |
+
+**Next grant step (INFERRED from repo state):** **strategy / application kit** — not more public-page overbuilding unless a **specific grant** requires a named page. Do not treat LOW risk scores as permission to add ecommerce or affiliate-first copy.
+
+**PROVEN — inspect grant readiness (copy/paste from repo root):**
+
+```bash
+node --import tsx scripts/report-buckparts-grant-readiness-v1.ts | jq '{
+  contract,
+  read_only,
+  data_mutation,
+  truth_policy_route_present,
+  wrong_part_prevention_route_present,
+  ecommerce_positioning_risk,
+  affiliate_overclaim_risk
+}'
+```
+
+### Whole-house water (WHW) — not publicly open (PROVEN)
+
+| Item | Status |
+|------|--------|
+| WHW public launch | **NOT open** — remains **NOINDEX_UNPROVEN** / not publicly opened |
+| `whw_public_opening_authorized` (expansion queue) | **`false`** |
+
+**AP810 safe retailer link (`381b5e6`, PROVEN in CSV):**
+
+- `data/whole-house-water/retailer_links.csv` contains **one** safe **`direct_buyable`** **`aquapure-dealer`** row for **`3m-ap810`** (non-primary; existing **3M oem-catalog search** primary retained).
+
+**AP811 buyer-path proof (`0c1a0d4`, PROVEN artifact — no CSV apply):**
+
+| Field | Value |
+|-------|--------|
+| Artifact | `data/whole-house-water/batch-production/agent-results-buyer-path-v1/whw-buyer-path-3m-ap811-batch-v1.results.json` |
+| PASS / FAIL / UNKNOWN / BLOCKED | **0 / 2 / 4 / 0** |
+| `best_truthful_buyer_path` | **`null`** |
+| `recommended_csv_mutation` | **`null`** |
+| `safe_apply_authorized` | **`false`** |
+| WHW public opening | **unauthorized** |
+
+**WHW safe CTA expansion queue (PROVEN — re-run report before trusting):**
+
+| Lane | Count |
+|------|-------|
+| `APPLY_READY_FOUNDER_APPROVAL_REQUIRED` | **0** |
+| `BROWSER_TRUTH_READY` | **1** |
+| `BUYER_PATH_DISCOVERY_READY` | **0** |
+| `MODEL_FIRST_READY` | **20** |
+| `MAPPING_REVIEW_REQUIRED` | **39** |
+| `SKIP_FOR_NOW` | **2** |
+
+- **`3m-ap811` lane:** **`BROWSER_TRUTH_READY`**
+- **Recommended next batch head:** **`3m-ap811`** · **`browser_truth_capture`** (not model-first retry)
+- **`whw_public_opening_authorized`:** **`false`**
+
+**Next WHW execution step (PROVEN direction):** **`3m-ap811` `browser_truth_capture`** — **not** model-first retry for AP811.
+
+**PROVEN — inspect WHW expansion queue (copy/paste from repo root):**
+
+```bash
+node --import tsx scripts/report-whole-house-water-safe-cta-expansion-queue-v1.ts | jq '{
+  lane_summary_counts,
+  whw_public_opening_authorized,
+  recommended_next_batch: [.recommended_next_batch[] | select(.filter_slug == "3m-ap811") | {filter_slug, lane, packet_kind, rationale}]
+}'
+```
+
+### Stash hygiene (PROVEN at handoff refresh)
+
+- Duplicate mixed WIP stash was **dropped** after AP811 proof.
+- **Do not drop** remaining stashes without inspection:
+  - `stash@{0}`: **temp**
+  - `stash@{1}`: **strict-phase1-local**
+  - `stash@{2}`: **feat/owner-ops-v1**
+
+### Credit-saving validation rule (PROVEN)
+
+Use **focused tests** unless production/public route changes require **`npm run build`**. For this checkpoint (docs + handoff freshness): handoff freshness test + grant readiness stdout jq; full build **not required** for docs-only handoff updates.
+
+```bash
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+node --import tsx scripts/report-buckparts-grant-readiness-v1.ts | jq '.contract'
+```
+
+### Do not do next (grant + WHW — at this stopping point)
+
+- Do **not** claim BuckParts is ecommerce, all-verified, or guaranteed-savings.
+- Do **not** open WHW publicly or mutate WHW launch state without founder approval.
+- Do **not** apply WHW CSV rows from AP811 buyer-path proof — **`safe_apply_authorized: false`**.
+- Do **not** retry AP811 **model-first** as the next WHW step — next lane is **`browser_truth_capture`**.
+- Do **not** overbuild public trust pages for grant work unless a **specific grant** requires a named page.
+- Do **not** edit product CSVs, Supabase, buy gates, WHW artifacts, or unrelated UI unless explicitly founder-approved.
+
+### What this checkpoint does NOT prove
+
+| Area | Status |
+|------|--------|
+| Grant application submitted or funded | **UNKNOWN** |
+| WHW public opening timeline | **UNKNOWN** |
+| Revenue, conversion, or savings claims | **UNKNOWN** |
+| All WHW filters verified | **NOT claimed** — majority remain mapping review / model-first / skip lanes |
 
 ---
 
@@ -244,16 +381,18 @@ npx tsx scripts/report-fridge-command-center-and-public-truth-audit-v1.ts
 
 ---
 
-## Current stopping point / chat migration state (through `7b09529`)
+## Current stopping point / chat migration state (historical — superseded by `aec8b8c`)
 
-Use this block first in a new HQ or implementation chat. **Command Center is the operating brain** — fridge truth is now on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval. **The business does not stop at UI motion or a single AP batch.**
+**Superseded:** Use **Current stopping point — grant trust pack + WHW safe-CTA expansion (through `aec8b8c`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
 
-### Repo HEAD (PROVEN at handoff refresh)
+**Command Center is the operating brain** — fridge truth is on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval.
+
+### Repo HEAD (historical snapshot at `7b09529` — verify live with `git rev-parse HEAD`)
 
 | Item | Value |
 |------|--------|
 | Branch | **`main`** |
-| Latest known committed HEAD | **`7b09529`** — *Surface fridge truth spine in Command Center* — verify with `git rev-parse HEAD` after pull |
+| Latest known committed HEAD at this block’s last refresh | **`7b09529`** — *Surface fridge truth spine in Command Center* — **superseded by `aec8b8c`** |
 | Fridge truth spine | **PROVEN on Command Center:** `command_center_v2.fridge_truth_spine_v1` (`read_only`, `data_mutation: false`) — see **Fridge truth spine v1** section |
 | Command Center partial vs aware | **INFERRED:** spine composes full fridge truth stack; wiring scan in public-truth audit may still read **`COMMAND_CENTER_PARTIAL`** until explicit spine field markers are added to wiring scan — **do not treat as license to redo fridge products** |
 | Prior milestone chain | `98412a1` batch checklist · `bbadce5` UX motion/memory · `a343464` Waterdrop · `edfeeba` Semi-Cruise read-only · `b85e90b` external measurement · `84fb4b3` neurons · `93dcd3d` Layer 7 batch owner decisions |
@@ -501,18 +640,22 @@ npm run build
 
 ## Current next build priority
 
-**After HQ handoff reflects fridge truth spine (`7b09529`):**
+**At stopping point `aec8b8c` (re-run named reports before trusting):**
 
-1. **Do not redo fridge products from scratch** — public truth audit says **`should_redo_fridge_products_now: NO`**; spine lane is read-only inventory only.
-2. **Founder-approved CSV export/backfill plan** for **16** Supabase-proven fridge buyer paths — **plan only**; **do not apply** without explicit owner approval.
-3. **Next product-expansion work:** **model-first discovery** (AP steering already active on Command Center `next_best_action` when queue is READY).
-4. **Finish Command Center operating backbone** (checklist orchestration, parity apply artifact ingestion, runtime smoke ingestion) before scaling batch size or new wedges.
-5. **Save credits:** use **focused fridge spine tests** (see Fridge truth spine section) for fridge/doc work; run full `report-buckparts-command-center.test.ts` only when Command Center wiring changes.
+1. **Grant:** strategy / application kit — **not** more public trust page overbuilding unless a specific grant requires it.
+2. **WHW:** **`3m-ap811` `browser_truth_capture`** — **not** model-first retry; **no** CSV apply from AP811 buyer-path proof; **no** public WHW opening (`whw_public_opening_authorized: false`).
+3. **Doctrine:** truth-first homeowner-help / wrong-part-prevention — affiliates secondary; no all-verified or guaranteed-savings claims.
+4. **Fridge (unchanged spine truth):** do **not** redo fridge products from scratch; CSV backfill **plan only** until founder approval.
+5. **Save credits:** focused tests unless production/public route changes require **`npm run build`**.
 
 ---
 
 ## Do not do next
 
+- Do **not** claim BuckParts is ecommerce, the source of all truth, all-verified coverage, or guaranteed savings (see grant trust pack section).
+- Do **not** open WHW publicly or treat AP811 buyer-path proof as CSV-apply authorization.
+- Do **not** run AP811 model-first retry as the next WHW step — next is **`browser_truth_capture`**.
+- Do **not** overbuild public pages for grant positioning unless a specific grant requires a named page.
 - Do **not** redo fridge products from scratch — spine + public-truth audit say **`NO`**.
 - Do **not** apply fridge CSV export/backfill without **founder-approved plan** and explicit owner approval.
 - Do **not** treat `fridge_truth_spine_v1` as CSV apply/export authorization — lane is **read-only**.
@@ -582,9 +725,9 @@ Read-only inventory at this stop:
 - **Do not** commit generated `data/batch-production/drafts/*` as production evidence or canonical truth unless intentionally converted to a small, reviewed outcome artifact.
 - **Do not** treat owner approval as authorization to mutate Supabase, `retailer_links`, `data/evidence/`, affiliate URLs, deploy, or apply execution.
 
-### Next best move after chat migration (INFERRED)
+### Next best move after chat migration (INFERRED — at `aec8b8c`)
 
-**Fridge:** Command Center now exposes **`fridge_truth_spine_v1`** — **do not redo fridge products from scratch**; next fridge work is **founder-approved CSV export/backfill plan** for 16 Supabase-proven paths (**plan only**, no apply without approval). **Product expansion:** continue **model-first discovery** (AP steering may own top-level `next_best_action` when queue is READY). **Customer UI:** `bbadce5` validated motion/memory on the **existing** site — **do not** reopen broad redesign. **Operator stack:** neuron map (`84fb4b3`) + external measurement freshness (`b85e90b`) remain backbone; if jq shows **STALE**, refresh artifacts before treating GSC/GA4 as current. **Save credits:** focused fridge spine tests for fridge/doc work; full Command Center suite only when CC wiring changes.
+**Grant:** strategy / application kit using **`buckparts_grant_readiness_v1`** + public trust routes — **not** more public-page overbuilding unless a grant requires it. **WHW:** **`3m-ap811` `browser_truth_capture`** (`BROWSER_TRUTH_READY`) — **not** model-first retry; **no** CSV apply; WHW stays **not publicly open**. **Doctrine:** truth-first wrong-part-prevention; affiliates secondary. **Fridge:** spine read-only — **do not redo** products; backfill **plan only**. **Save credits:** focused tests unless production/public route changes require build.
 
 **Copy/paste (repo root) — confirm fridge truth spine lane:**
 
@@ -776,13 +919,16 @@ Operating rules:
 - HQ should keep the business pointed at the right next move and reduce hesitation without inventing facts.
 
 Current repo checkpoint:
-- Branch main; latest known commit 7b09529; Command Center fridge_truth_spine_v1 PROVEN read-only on CC JSON.
-- Fridge: CSV 0/57 safe direct-buyable; 16/18 Supabase-win CSV-missing; do NOT redo fridge products from scratch; CSV backfill plan-only until founder approval.
-- AP model-first may own next_best_action when evidence queue READY; fridge spine does not override.
-- Save credits: focused fridge spine tests for fridge/doc work; full Command Center suite only when CC changes.
+- Branch main; HEAD/origin main aec8b8c (Grant/Public Trust Pack v1).
+- BuckParts is truth-first homeowner-help / wrong-part-prevention — NOT ecommerce; affiliates secondary to truth.
+- Grant: buckparts_grant_readiness_v1; truth-policy + wrong-part-prevention routes present; ecommerce/affiliate overclaim risk LOW; next step is grant strategy/application kit — not more public pages unless a grant requires it.
+- Do NOT claim all-verified, source-of-all-truth, or guaranteed savings.
+- WHW: NOT publicly open; AP810 safe aquapure-dealer row applied at 381b5e6; AP811 buyer-path proof at 0c1a0d4 (PASS 0, no safe apply); next WHW step is 3m-ap811 browser_truth_capture (BROWSER_TRUTH_READY), NOT model-first retry.
+- Fridge spine (7b09529): read-only; do NOT redo products; CSV backfill plan-only until founder approval.
+- Save credits: focused tests unless production/public route changes require build.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Fridge truth spine v1**, **Current stopping point**, **Current next build priority**, **Do not do next**, and §0B) and docs/BuckParts-TRUTH-MAP.md, then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — grant trust pack + WHW safe-CTA expansion**, **Current next build priority**, **Do not do next**, and docs/BuckParts-TRUTH-MAP.md), then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
 ```
 
 ---
@@ -793,16 +939,17 @@ Read docs/BuckParts-HQ-HANDOFF.md (especially **Fridge truth spine v1**, **Curre
 
 ### Active lane (HQ priority order)
 
-0. **Fridge truth spine (`fridge_truth_spine_v1`)** — **PROVEN at `7b09529`:** read-only Command Center lane; CSV 0/57 safe; 16/18 Supabase-win CSV-missing; public redo=NO. **NOT authorization** for CSV apply/export. **Next:** founder-approved backfill **plan** only.
-1. **Batch production operating checklist (`batch_production_operating_checklist_v1`)** — **PROVEN through `98412a1`:** stage gates, safety classifications, setback detectors, AP batch-v2 proven run registry. **PARTIAL:** shows state only — no single orchestration entrypoint yet. **Route batch work through checklist first.**
-2. **AP model-first production steering** — **PROVEN:** may own Command Center `next_best_action` when evidence queue READY; distinct from fridge spine truth inventory.
-3. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; artifact staleness only. **NOT PROVEN:** live API fetch, revenue, complete operating truth.
-4. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on CC JSON; dashboard displays CC-owned neurons.
-5. **Batch Production Lane v1 — Layer 7 owner decisions** (through **`93dcd3d`**) — **PROVEN:** fridge non-Amazon five-row registry loop; distinct from AP batch-v2 factory apply (see checklist proven run).
-6. **AP batch-v2 apply artifacts (on disk)** — **PROVEN:** 4-slug CSV apply + repo validation; Supabase parity applied in operator session — **UNKNOWN** in checklist until parity apply artifact committed.
-7. **Customer UX memory/motion (`bbadce5`)** — **PROVEN**; **NOT** a stopping point.
-8. **Layer 6 control-plane documentation + audit** — **NOT PROVEN:** Layer 6 complete.
-9. **Batch lane follow-ons (deferred until backbone done)** — orchestration entrypoint, parity/smoke artifact ingestion, larger batch policy, cross-wedge run ledger.
+0. **Grant / Public Trust Pack + WHW safe-CTA expansion (`aec8b8c`)** — **PROVEN:** `buckparts_grant_readiness_v1`; public routes `truth-policy` + `wrong-part-prevention`; WHW **not** publicly open; AP811 → **`BROWSER_TRUTH_READY`**; next **`3m-ap811` `browser_truth_capture`**. **Next grant:** application kit — not public-page overbuild. **NOT authorization** for WHW public opening or AP811 CSV apply.
+1. **Fridge truth spine (`fridge_truth_spine_v1`)** — **PROVEN at `7b09529`:** read-only Command Center lane; CSV 0/57 safe; 16/18 Supabase-win CSV-missing; public redo=NO. **NOT authorization** for CSV apply/export. **Next:** founder-approved backfill **plan** only.
+2. **Batch production operating checklist (`batch_production_operating_checklist_v1`)** — **PROVEN through `98412a1`:** stage gates, safety classifications, setback detectors, AP batch-v2 proven run registry. **PARTIAL:** shows state only — no single orchestration entrypoint yet. **Route batch work through checklist first.**
+3. **AP model-first production steering** — **PROVEN:** may own Command Center `next_best_action` when evidence queue READY; distinct from fridge spine truth inventory.
+4. **Command Center external measurement freshness (`external_measurement_freshness_v1`)** (through **`b85e90b`**) — **PROVEN:** lane on `buckparts:command-center` JSON; artifact staleness only. **NOT PROVEN:** live API fetch, revenue, complete operating truth.
+5. **Command Center neuron map (`owner_command_center_neurons`)** (through **`84fb4b3`**) — **PROVEN:** eight neurons on CC JSON; dashboard displays CC-owned neurons.
+6. **Batch Production Lane v1 — Layer 7 owner decisions** (through **`93dcd3d`**) — **PROVEN:** fridge non-Amazon five-row registry loop; distinct from AP batch-v2 factory apply (see checklist proven run).
+7. **AP batch-v2 apply artifacts (on disk)** — **PROVEN:** 4-slug CSV apply + repo validation; Supabase parity applied in operator session — **UNKNOWN** in checklist until parity apply artifact committed.
+8. **Customer UX memory/motion (`bbadce5`)** — **PROVEN**; **NOT** a stopping point.
+9. **Layer 6 control-plane documentation + audit** — **NOT PROVEN:** Layer 6 complete.
+10. **Batch lane follow-ons (deferred until backbone done)** — orchestration entrypoint, parity/smoke artifact ingestion, larger batch policy, cross-wedge run ledger.
 
 **Meta-system rule:** Do **not** keep expanding packets, digests, registries, or wrappers unless they **reduce founder copy/paste** or produce **coverage/revenue work**. If a change only adds ceremony, stop.
 
