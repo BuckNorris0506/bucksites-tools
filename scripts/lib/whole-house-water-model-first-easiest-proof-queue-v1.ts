@@ -660,7 +660,7 @@ export function buildWholeHouseWaterModelFirstEasiestProofQueueV1(args: {
         model_first_fit_status: modelEntry?.result.model_rows[0]?.evidence_status ?? null,
         buyer_path_pass_count: counts?.PASS ?? 0,
         buyer_path_unknown_count: counts?.UNKNOWN ?? 0,
-        recommended_csv_mutation: null as const,
+        recommended_csv_mutation: null,
         retry_hint:
           classification === "BUYER_PATH_BROWSER_TRUTH_REQUIRED"
             ? WHW_BUYER_PATH_BROWSER_TRUTH_RETRY_HINT_V1

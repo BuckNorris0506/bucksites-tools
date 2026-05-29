@@ -329,7 +329,7 @@ export function whwBatchBuyerPathAsExpansionBuyerPathV1(
     proven_facts: batch.proven_facts,
     inferred_facts: batch.inferred_facts,
     unknown_facts: batch.unknown_facts,
-  } as WhwBuyerPathProofResultV1;
+  } as unknown as WhwBuyerPathProofResultV1;
 }
 
 export function loadWhwBatchBuyerPathProofResultV1(args: {

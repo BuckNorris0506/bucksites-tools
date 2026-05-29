@@ -754,9 +754,11 @@ export function buildPublicWedgeReadinessAndEasiestWinsV1(
       r.public_opening_recommendation === "OPEN_NOW_TRUTH_GATED" &&
       r.currently_public_facing_status === "PREVIEW_ONLY",
   );
-  const next_best_public_wedge_to_open_if_safe =
-    openCandidates.sort((a, b) => b.easiest_truthful_win_score - a.easiest_truthful_win_score)[0]?.wedge ??
-    "UNKNOWN";
+  const nextOpenCandidate = openCandidates.sort(
+    (a, b) => b.easiest_truthful_win_score - a.easiest_truthful_win_score,
+  )[0];
+  const next_best_public_wedge_to_open_if_safe: HomekeepWedgeCatalog | "UNKNOWN" =
+    nextOpenCandidate?.wedge ?? "UNKNOWN";
 
   const next_10_easiest_truthful_expansion_targets = buildExpansionTargets(
     wedge_rows,
@@ -836,7 +838,7 @@ export function buildPublicWedgeReadinessAndEasiestWinsV1(
     inferred_facts,
     unknown_facts,
     recommended_next_action:
-      next_best_public_wedge_to_open_if_safe !== "UNKNOWN"
+      nextOpenCandidate !== undefined
         ? `Truth-gated public opening review for ${next_best_public_wedge_to_open_if_safe} (committed safe buyer paths exist; flip launch state only after owner approval — no CSV/Supabase mutation from this report). Do not redo fridge products from scratch.`
         : `Expand ${next_best_wedge_to_expand} via model-first / safe buyer-path proof before public opening. Do not redo fridge products from scratch.`,
     truth_first_notes: [

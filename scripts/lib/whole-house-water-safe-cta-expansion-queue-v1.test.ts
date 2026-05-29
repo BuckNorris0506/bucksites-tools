@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -14,10 +14,9 @@ import { buyerPathCandidateMayRecommendCsvMutationV1 } from "./whole-house-water
 import { WHW_AP811_BUYER_PATH_RESULT_REL_V1 } from "./whole-house-water-batch-buyer-path-proof-v1";
 import {
   WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1,
-  buildWhw3mAp811BrowserTruthCaptureV1,
-  writeWhwBrowserTruthCaptureResultV1,
 } from "./whole-house-water-browser-truth-capture-result-v1";
 import { WHW_AP810_FILTER_SLUG_V1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
+import { WHW_AP811_FILTER_SLUG_V1 } from "./whole-house-water-batch-buyer-path-proof-v1";
 import {
   WHW_SAFE_CTA_EXPANSION_QUEUE_CONTRACT_V1,
   buildWholeHouseWaterSafeCtaExpansionQueueV1,
@@ -82,28 +81,12 @@ test("lane_summary_counts is populated at root and sums to mapped filter count",
   const laneSum = lanes.reduce((acc, lane) => acc + report.lane_summary_counts[lane], 0);
   assert.equal(laneSum, report.summary.mapped_filter_count);
 
-  const ap811BuyerPathArtifactExists = existsSync(
-    path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1),
-  );
-  const ap811BrowserTruthArtifactExists = existsSync(
-    path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1),
-  );
-
-  assert.equal(
-    report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED,
-    ap811BrowserTruthArtifactExists ? 1 : 0,
-  );
-  assert.equal(
-    report.lane_summary_counts.BROWSER_TRUTH_READY,
-    ap811BuyerPathArtifactExists && !ap811BrowserTruthArtifactExists ? 1 : 0,
-  );
-  assert.equal(
-    report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY,
-    ap811BuyerPathArtifactExists ? 0 : 1,
-  );
+  assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 0);
+  assert.equal(report.lane_summary_counts.BROWSER_TRUTH_READY, 0);
+  assert.equal(report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY, 0);
   assert.equal(report.lane_summary_counts.MODEL_FIRST_READY, 20);
   assert.equal(report.lane_summary_counts.MAPPING_REVIEW_REQUIRED, 39);
-  assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 2);
+  assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 3);
 });
 
 test("AP810 is not apply-ready after founder CSV apply", () => {
@@ -154,7 +137,55 @@ test("AP810 has exactly one aquapure-dealer row and one safe CTA in committed CS
   assert.equal(gated[0]!.retailer_key, "aquapure-dealer");
 
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
-  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 1);
+  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 2);
+});
+
+test("AP811 is not apply-ready after founder CSV apply", () => {
+  const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
+  const ap811Apply = report.apply_ready_rows.find((r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1);
+  assert.equal(ap811Apply, undefined);
+
+  const ap811Rows = [...report.blocked_or_skip_rows, ...report.top_20_safe_cta_expansion_targets].filter(
+    (r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1,
+  );
+  const ap811 = ap811Rows[0];
+  assert.ok(ap811);
+  assert.equal(ap811!.lane, "SKIP_FOR_NOW");
+  assert.equal(ap811!.apply_row_in_committed_csv, true);
+  assert.equal(ap811!.safe_cta_in_committed_csv, true);
+  assert.equal(ap811!.browser_truth_pass_count, 1);
+
+  const inTop20 = report.top_20_safe_cta_expansion_targets.find(
+    (r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1,
+  );
+  assert.equal(inTop20, undefined);
+});
+
+test("AP811 has exactly one aquapure-dealer row and one safe CTA in committed CSV", () => {
+  const csvRows = loadWhwRetailerLinksCsvV1(REPO_ROOT);
+  const ap811Rows = csvRows.filter((r) => r.filter_slug?.trim() === WHW_AP811_FILTER_SLUG_V1);
+  assert.equal(ap811Rows.length, 2);
+
+  const aquapure = ap811Rows.filter(
+    (r) => (r.retailer_key ?? "").trim().toLowerCase() === "aquapure-dealer",
+  );
+  assert.equal(aquapure.length, 1);
+  assert.equal(aquapure[0]!.is_primary?.trim().toLowerCase(), "false");
+  assert.equal(
+    aquapure[0]!.destination_url,
+    "https://www.aquapurefilters.com/products/aqua-pure-ap811-water-filter-whole-house-water-filter",
+  );
+
+  const gated = filterRealBuyRetailerLinks(
+    ap811Rows.map((r) => ({
+      retailer_key: r.retailer_key ?? null,
+      affiliate_url: (r.affiliate_url ?? r.destination_url ?? "").trim(),
+      browser_truth_classification: r.browser_truth_classification ?? null,
+      browser_truth_buyable_subtype: r.browser_truth_buyable_subtype ?? null,
+    })),
+  );
+  assert.equal(gated.length, 1);
+  assert.equal(gated[0]!.retailer_key, "aquapure-dealer");
 });
 
 test("queue does not open WHW", () => {
@@ -189,14 +220,16 @@ test("row count alone does not outrank easier official/OEM proof", () => {
       `expected OEM-system filter at rank 1, got ${top.filter_slug}`,
     );
   } else if (existsSync(path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1))) {
-    const ap811Apply = report.apply_ready_rows.find((r) => r.filter_slug === "3m-ap811");
-    assert.ok(ap811Apply, "expected 3m-ap811 in apply_ready_rows after browser_truth PASS");
-    assert.equal(ap811Apply!.lane, "APPLY_READY_FOUNDER_APPROVAL_REQUIRED");
+    const ap811Apply = report.apply_ready_rows.find((r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1);
+    assert.equal(ap811Apply, undefined, "AP811 should not be apply-ready after CSV apply");
+    const ap811Parked = report.blocked_or_skip_rows.find((r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1);
+    assert.ok(ap811Parked, "expected 3m-ap811 parked after CSV apply");
+    assert.equal(ap811Parked!.lane, "SKIP_FOR_NOW");
     assert.equal(
-      report.top_20_safe_cta_expansion_targets.find((r) => r.filter_slug === "3m-ap811"),
+      report.top_20_safe_cta_expansion_targets.find((r) => r.filter_slug === WHW_AP811_FILTER_SLUG_V1),
       undefined,
     );
-    assert.notEqual(top.filter_slug, "3m-ap811");
+    assert.notEqual(top.filter_slug, WHW_AP811_FILTER_SLUG_V1);
     assert.ok(
       top.lane === "MODEL_FIRST_READY" ||
         top.lane === "BUYER_PATH_DISCOVERY_READY" ||
@@ -204,7 +237,7 @@ test("row count alone does not outrank easier official/OEM proof", () => {
       `expected discovery lane at rank 1, got ${top.lane} (${top.filter_slug})`,
     );
   } else {
-    assert.equal(top.filter_slug, "3m-ap811");
+    assert.equal(top.filter_slug, WHW_AP811_FILTER_SLUG_V1);
     assert.equal(top.lane, "BROWSER_TRUTH_READY");
   }
   assert.ok(top.expansion_score > pentekDgd!.expansion_score);
@@ -262,13 +295,13 @@ test("search placeholders cannot count as safe CTA", () => {
   );
 
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
-  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 1);
+  assert.equal(report.summary.safe_cta_row_count_in_committed_csv, 2);
   for (const row of report.top_20_safe_cta_expansion_targets) {
     assert.notEqual(row.primary_buyer_path_status, "SAFE_GATED_DIRECT_BUYABLE");
   }
 });
 
-test("batch recommendation contains multiple discovery candidates and no AP810 founder apply", () => {
+test("batch recommendation contains multiple discovery candidates and no AP810 or AP811 founder apply", () => {
   const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
   assert.ok(report.recommended_next_batch.length >= 2);
 
@@ -282,24 +315,23 @@ test("batch recommendation contains multiple discovery candidates and no AP810 f
     report.recommended_next_batch.find((b) => b.filter_slug === WHW_AP810_FILTER_SLUG_V1),
     undefined,
   );
-  if (existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) {
-    if (existsSync(path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1))) {
-      assert.ok(
-        report.recommended_next_batch.some(
-          (b) => b.filter_slug === "3m-ap811" && b.packet_kind === "founder_apply_review",
-        ),
-      );
-    } else {
-      assert.ok(
-        report.recommended_next_batch.some(
-          (b) => b.filter_slug === "3m-ap811" && b.packet_kind === "browser_truth_capture",
-        ),
-      );
-    }
-  } else {
+  assert.equal(
+    report.recommended_next_batch.find(
+      (b) =>
+        b.filter_slug === WHW_AP811_FILTER_SLUG_V1 && b.packet_kind === "founder_apply_review",
+    ),
+    undefined,
+  );
+  if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) {
     assert.ok(
       report.recommended_next_batch.some(
-        (b) => b.filter_slug === "3m-ap811" && b.packet_kind === "buyer_path_proof",
+        (b) => b.filter_slug === WHW_AP811_FILTER_SLUG_V1 && b.packet_kind === "buyer_path_proof",
+      ),
+    );
+  } else if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1))) {
+    assert.ok(
+      report.recommended_next_batch.some(
+        (b) => b.filter_slug === WHW_AP811_FILTER_SLUG_V1 && b.packet_kind === "browser_truth_capture",
       ),
     );
   }
@@ -339,33 +371,52 @@ test("read-only build does not mutate retailer_links.csv, Supabase, public UI, l
   }
 });
 
-test("AP811 moves to APPLY_READY when browser_truth capture artifact exists", () => {
-  if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) return;
+test("classifyWhwSafeCtaExpansionLaneV1 marks AP811 APPLY_READY when browser_truth PASS and CSV row absent", () => {
+  const lane = classifyWhwSafeCtaExpansionLaneV1({
+    filterSlug: WHW_AP811_FILTER_SLUG_V1,
+    filter: { brand_slug: "3m", oem_part_number: "AP811" },
+    queueDraft: null,
+    batchCandidate: null,
+    modelFirstFitPass: true,
+    buyerPath: {
+      evidence_status_counts: { PASS: 1, FAIL: 0, UNKNOWN: 3, BLOCKED: 0 },
+    } as never,
+    browserTruth: {
+      pass_count: 1,
+      safe_apply_authorized: true,
+    } as never,
+    applyPlan: null,
+    safeCtaInCsv: false,
+    applyRowInCsv: false,
+    primaryBuyerPathStatus: "SEARCH_PLACEHOLDER_PRIMARY",
+    hasRecommendedMapping: true,
+    compatOnlyMapping: false,
+  });
+  assert.equal(lane, "APPLY_READY_FOUNDER_APPROVAL_REQUIRED");
+});
 
-  const artifactAbs = path.join(REPO_ROOT, WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1);
-  const hadArtifact = existsSync(artifactAbs);
-  if (!hadArtifact) {
-    writeWhwBrowserTruthCaptureResultV1({
-      rootDir: REPO_ROOT,
-      result: buildWhw3mAp811BrowserTruthCaptureV1({ rootDir: REPO_ROOT }),
-      relPath: WHW_AP811_BROWSER_TRUTH_RESULT_REL_V1,
-    });
-  }
-
-  try {
-    const report = buildWholeHouseWaterSafeCtaExpansionQueueV1({ rootDir: REPO_ROOT });
-    const ap811 = report.apply_ready_rows.find((r) => r.filter_slug === "3m-ap811");
-    assert.ok(ap811);
-    assert.equal(ap811!.lane, "APPLY_READY_FOUNDER_APPROVAL_REQUIRED");
-    assert.equal(ap811!.browser_truth_pass_count, 1);
-    assert.equal(ap811!.founder_approval_required, true);
-    assert.equal(
-      report.top_10_browser_truth_ready.find((r) => r.filter_slug === "3m-ap811"),
-      undefined,
-    );
-  } finally {
-    if (!hadArtifact) rmSync(artifactAbs, { force: true });
-  }
+test("classifyWhwSafeCtaExpansionLaneV1 parks AP811 when safe CTA already in committed CSV", () => {
+  const lane = classifyWhwSafeCtaExpansionLaneV1({
+    filterSlug: WHW_AP811_FILTER_SLUG_V1,
+    filter: { brand_slug: "3m", oem_part_number: "AP811" },
+    queueDraft: null,
+    batchCandidate: null,
+    modelFirstFitPass: true,
+    buyerPath: {
+      evidence_status_counts: { PASS: 1, FAIL: 0, UNKNOWN: 3, BLOCKED: 0 },
+    } as never,
+    browserTruth: {
+      pass_count: 1,
+      safe_apply_authorized: true,
+    } as never,
+    applyPlan: null,
+    safeCtaInCsv: true,
+    applyRowInCsv: true,
+    primaryBuyerPathStatus: "SEARCH_PLACEHOLDER_PRIMARY",
+    hasRecommendedMapping: true,
+    compatOnlyMapping: false,
+  });
+  assert.equal(lane, "SKIP_FOR_NOW");
 });
 
 test("scoreWhwSafeCtaExpansionTargetV1 penalizes compat-only mapping vs OEM model-first pass", () => {

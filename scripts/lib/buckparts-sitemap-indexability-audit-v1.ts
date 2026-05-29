@@ -15,11 +15,12 @@ import {
 } from "@/lib/catalog/identity";
 import {
   getVerticalLaunchState,
+  getSitemapLaunchVerticals,
   isVerticalLive,
   VERTICAL_SLUGS_WITH_APP_SEGMENT_LAYOUT,
+  VERTICAL_SLUGS_WITH_HOMEKEEP_SITEMAP_DISCOVERY,
   type VerticalSlug,
 } from "@/lib/catalog/vertical-launch-state";
-import { __test_only__ as sitemapTestOnly } from "@/lib/sitemap/wedge-indexable-urls";
 
 import { buildPublicWedgeReadinessAndEasiestWinsV1 } from "./public-wedge-readiness-and-easiest-wins-v1";
 
@@ -215,20 +216,20 @@ function wedgePublicIndexingStatus(wedge: HomekeepWedgeCatalog): string {
   return "UNKNOWN";
 }
 
-function buildRepoExpectedStaticRoutes(siteBase: string): string[] {
-  const previousSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  process.env.NEXT_PUBLIC_SITE_URL = siteBase.replace(/\/$/, "");
-  try {
-    return sitemapTestOnly
-      .liveStaticPaths(new Date())
-      .map((row) => normalizePathname(row.url));
-  } finally {
-    if (previousSiteUrl === undefined) {
-      delete process.env.NEXT_PUBLIC_SITE_URL;
-    } else {
-      process.env.NEXT_PUBLIC_SITE_URL = previousSiteUrl;
-    }
+/** Repo sitemap static path policy mirrored from wedge-indexable-urls liveStaticPaths. */
+function buildRepoExpectedStaticRoutes(): string[] {
+  const live = new Set(getSitemapLaunchVerticals());
+  const staticRoutes = ["/", "/catalog", "/search"];
+
+  if (live.has("air-purifier")) {
+    staticRoutes.push("/air-purifier", "/air-purifier/search");
   }
+
+  if (live.has("whole-house-water")) {
+    staticRoutes.push("/whole-house-water", "/whole-house-water/search");
+  }
+
+  return staticRoutes;
 }
 
 function buildRepoExpectedDynamicCounts(rootDir: string): ExpectedDynamicRouteCountsV1[] {
@@ -480,7 +481,7 @@ export async function buildBuckpartsSitemapIndexabilityAuditV1(args: {
   const now = args.now ?? (() => new Date());
   const siteBase = (args.siteBase ?? "https://buckparts.com").replace(/\/$/, "");
 
-  const staticRoutes = buildRepoExpectedStaticRoutes(siteBase);
+  const staticRoutes = buildRepoExpectedStaticRoutes();
   const dynamicCounts = buildRepoExpectedDynamicCounts(args.rootDir);
   const repoExpectedCount = repoExpectedUrlCount({ staticRoutes, dynamicCounts });
 
@@ -662,12 +663,14 @@ export async function buildBuckpartsSitemapIndexabilityAuditV1(args: {
   };
 }
 
-/** Test helper: repo sitemap dynamic vertical slugs from launch state. */
+/** Repo sitemap dynamic vertical slugs from launch state (matches wedge-indexable-urls policy). */
 export function repoSitemapDynamicVerticalsV1(): VerticalSlug[] {
-  return sitemapTestOnly.getSitemapDynamicUrlVerticals();
+  return VERTICAL_SLUGS_WITH_HOMEKEEP_SITEMAP_DISCOVERY.filter((vertical) =>
+    isVerticalLive(vertical),
+  );
 }
 
-/** Unused count-only path set helper retained for tests comparing static coverage. */
-export function __test_only__repoExpectedStaticRoutesV1(siteBase: string): string[] {
-  return buildRepoExpectedStaticRoutes(siteBase);
+/** Test helper comparing static route coverage against repo sitemap policy. */
+export function __test_only__repoExpectedStaticRoutesV1(_siteBase?: string): string[] {
+  return buildRepoExpectedStaticRoutes();
 }

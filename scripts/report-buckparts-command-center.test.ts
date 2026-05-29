@@ -3813,20 +3813,35 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   );
   if (fs.existsSync(ap811BuyerPathArtifact)) {
     if (fs.existsSync(ap811BrowserTruthArtifact)) {
-      assert.equal(lane.inspect_summary.ap811_is_founder_apply_head, true);
+      assert.equal(lane.inspect_summary.ap811_is_founder_apply_head, false);
       assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, false);
       assert.equal(lane.inspect_summary.ap811_browser_truth_capture_complete, true);
-      assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
-      assert.equal(lane.current_batch_head?.packet_kind, "founder_apply_review");
+      assert.ok(lane.current_batch_head);
+      assert.notEqual(lane.current_batch_head?.filter_slug, "3m-ap811");
+      assert.equal(lane.current_batch_head?.packet_kind, "model_first_evidence");
+      assert.ok(
+        lane.next_batch_items.skip_for_now.some((i) => i.filter_slug === "3m-ap811"),
+      );
+      assert.equal(
+        lane.next_batch_items.founder_apply_review.find((i) => i.filter_slug === "3m-ap811"),
+        undefined,
+      );
     } else {
       assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, true);
       assert.equal(lane.current_batch_head?.filter_slug, "3m-ap811");
       assert.equal(lane.current_batch_head?.packet_kind, "browser_truth_capture");
     }
-    assert.equal(
-      lane.inspect_summary.active_filter_slugs.includes("3m-ap811"),
-      true,
-    );
+    if (!fs.existsSync(ap811BrowserTruthArtifact)) {
+      assert.equal(
+        lane.inspect_summary.active_filter_slugs.includes("3m-ap811"),
+        true,
+      );
+    } else {
+      assert.equal(
+        lane.inspect_summary.active_filter_slugs.includes("3m-ap811"),
+        false,
+      );
+    }
     assert.equal(
       lane.inspect_summary.active_filter_slugs.includes("3m-ap810"),
       false,

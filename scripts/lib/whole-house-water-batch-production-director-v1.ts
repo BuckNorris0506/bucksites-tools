@@ -353,14 +353,39 @@ function resolveCurrentBatchHead(
   }
 
   const browserHead = groups.browser_truth_capture[0] ?? null;
-  if (!browserHead) return null;
-  return {
-    filter_slug: browserHead.filter_slug,
-    packet_kind: "browser_truth_capture",
-    lane: browserHead.lane === "PARKED" ? "PARKED" : browserHead.lane,
-    anchor_model_slug: browserHead.anchor_model_slug,
-    rationale: browserHead.rationale,
-  };
+  if (browserHead) {
+    return {
+      filter_slug: browserHead.filter_slug,
+      packet_kind: "browser_truth_capture",
+      lane: browserHead.lane === "PARKED" ? "PARKED" : browserHead.lane,
+      anchor_model_slug: browserHead.anchor_model_slug,
+      rationale: browserHead.rationale,
+    };
+  }
+
+  const buyerPathHead = groups.buyer_path_proof[0] ?? null;
+  if (buyerPathHead) {
+    return {
+      filter_slug: buyerPathHead.filter_slug,
+      packet_kind: "buyer_path_proof",
+      lane: buyerPathHead.lane === "PARKED" ? "PARKED" : buyerPathHead.lane,
+      anchor_model_slug: buyerPathHead.anchor_model_slug,
+      rationale: buyerPathHead.rationale,
+    };
+  }
+
+  const modelFirstHead = groups.model_first_evidence[0] ?? null;
+  if (modelFirstHead) {
+    return {
+      filter_slug: modelFirstHead.filter_slug,
+      packet_kind: "model_first_evidence",
+      lane: modelFirstHead.lane === "PARKED" ? "PARKED" : modelFirstHead.lane,
+      anchor_model_slug: modelFirstHead.anchor_model_slug,
+      rationale: modelFirstHead.rationale,
+    };
+  }
+
+  return null;
 }
 
 function countItemGroups(
@@ -390,7 +415,7 @@ function activeFilterSlugsFromGroups(
       slugs.add(item.filter_slug);
     }
   }
-  return [...slugs].sort();
+  return Array.from(slugs).sort();
 }
 
 export function buildWhwBatchProductionDirectorInspectSummaryV1(args: {
@@ -408,6 +433,9 @@ export function buildWhwBatchProductionDirectorInspectSummaryV1(args: {
 }): WhwBatchProductionDirectorInspectSummaryV1 {
   const { director } = args;
   const ap811FounderApply = director.next_batch_items.founder_apply_review.some(
+    (i) => i.filter_slug === WHW_AP811_FILTER_SLUG_V1,
+  );
+  const ap811Parked = director.next_batch_items.skip_for_now.some(
     (i) => i.filter_slug === WHW_AP811_FILTER_SLUG_V1,
   );
   const ap810Parked = director.next_batch_items.skip_for_now.some(
@@ -428,7 +456,7 @@ export function buildWhwBatchProductionDirectorInspectSummaryV1(args: {
     ap811_is_founder_apply_head:
       director.current_batch_head?.filter_slug === WHW_AP811_FILTER_SLUG_V1 &&
       director.current_batch_head?.packet_kind === "founder_apply_review",
-    ap811_browser_truth_capture_complete: ap811FounderApply,
+    ap811_browser_truth_capture_complete: ap811FounderApply || ap811Parked,
     ap810_parked: ap810Parked,
     ap810_in_active_batch: false,
     active_batch_item_count: director.active_batch_item_count,
@@ -577,7 +605,7 @@ export function buildWholeHouseWaterBatchProductionDirectorV1(args: {
       `PROVEN: Source expansion queue contract=${queue.contract}; lane_summary_counts BROWSER_TRUTH_READY=${String(queue.lane_summary_counts.BROWSER_TRUTH_READY)} MODEL_FIRST_READY=${String(queue.lane_summary_counts.MODEL_FIRST_READY)}.`,
       `PROVEN: whole-house-water launch state is ${launchState}.`,
       `PROVEN: whw_public_opening_authorized=false; csv_apply_authorized=false; data_mutation=false.`,
-      `PROVEN: Committed CSV safe CTA row count=${String(queue.summary.safe_cta_row_count_in_committed_csv)} (AP810 aquapure-dealer when present).`,
+      `PROVEN: Committed CSV safe CTA row count=${String(queue.summary.safe_cta_row_count_in_committed_csv)} (AP810/AP811 aquapure-dealer rows when present).`,
       currentHead
         ? `PROVEN: current_batch_head=${currentHead.filter_slug} packet_kind=${currentHead.packet_kind}.`
         : "PROVEN: No browser_truth_capture head surfaced in active batch.",
@@ -597,6 +625,9 @@ export function buildWholeHouseWaterBatchProductionDirectorV1(args: {
       parked.skip_for_now.some((s) => s.filter_slug === WHW_AP810_FILTER_SLUG_V1)
         ? `INFERRED: ${WHW_AP810_FILTER_SLUG_V1} parked in skip_for_now — safe CTA applied; no model-first or buyer-path re-grind.`
         : `INFERRED: ${WHW_AP810_FILTER_SLUG_V1} excluded from active discovery when safe_cta_in_committed_csv.`,
+      parked.skip_for_now.some((s) => s.filter_slug === WHW_AP811_FILTER_SLUG_V1)
+        ? `INFERRED: ${WHW_AP811_FILTER_SLUG_V1} parked in skip_for_now — safe CTA applied; no founder apply or browser-truth re-grind.`
+        : `INFERRED: ${WHW_AP811_FILTER_SLUG_V1} excluded from active discovery when safe_cta_in_committed_csv.`,
     ],
     unknown_facts: [
       "UNKNOWN: How many filters in this batch will produce PASS browser_truth or buyer-path evidence.",

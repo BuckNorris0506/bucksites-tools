@@ -81,7 +81,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function hasStatusCounts(value: unknown): boolean {
+function hasStatusCounts(
+  value: unknown,
+): value is Record<string, unknown> & {
+  evidence_status_counts: Record<ModelFirstEvidenceRowStatusV1, number>;
+} {
   if (!isRecord(value)) return false;
   const counts = value.evidence_status_counts;
   if (!isRecord(counts)) return false;

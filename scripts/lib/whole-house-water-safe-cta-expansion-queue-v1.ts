@@ -57,6 +57,8 @@ import {
   findMatchingCommittedRowsV1,
   loadWhwSafeRetailerLinkApplyPlanV1,
   loadWhwRetailerLinksCsvV1,
+  type WhwProposedRetailerLinkRowV1,
+  type WhwRetailerLinkCsvRowV1,
   type WhwSafeRetailerLinkApplyPlanV1,
 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 
@@ -162,7 +164,7 @@ const SOURCE_PATHS = [
 
 const OEM_SYSTEM_BRANDS = new Set(["ge", "3m", "whirlpool", "culligan", "watts", "pentair"]);
 
-const DISCOVERY_LANES: ReadonlySet<WhwSafeCtaExpansionLaneV1> = new Set([
+const DISCOVERY_LANES = new Set<WhwSafeCtaExpansionLaneV1>([
   "BROWSER_TRUTH_READY",
   "BUYER_PATH_DISCOVERY_READY",
   "MODEL_FIRST_READY",
@@ -255,13 +257,46 @@ export function buyerPathHasUnknownPdpCandidatesV1(result: WhwBuyerPathProofResu
   return result.evidence_status_counts.UNKNOWN > 0;
 }
 
+function proposedRowFromBrowserTruthPassV1(
+  browserTruth: WhwBrowserTruthCaptureResultV1,
+): WhwProposedRetailerLinkRowV1 | null {
+  const passCandidate = browserTruth.candidates_checked.find(
+    (candidate) => candidate.evidence_status === "PASS" && candidate.recommended_retailer_link_row,
+  );
+  const row = passCandidate?.recommended_retailer_link_row;
+  if (!row) return null;
+
+  return {
+    filter_slug: row.filter_slug,
+    retailer_name: row.retailer_name ?? "",
+    affiliate_url: row.affiliate_url ?? row.destination_url,
+    is_primary: "false",
+    retailer_key: row.retailer_key,
+    retailer_slug: row.retailer_key,
+    destination_url: row.destination_url,
+    browser_truth_classification: row.browser_truth_classification ?? "direct_buyable",
+    browser_truth_notes: row.browser_truth_notes ?? "",
+    browser_truth_checked_at: row.browser_truth_checked_at ?? browserTruth.checked_at ?? "",
+  };
+}
+
+export function browserTruthRecommendedRowInCommittedCsvV1(args: {
+  csvRows: WhwRetailerLinkCsvRowV1[];
+  browserTruth: WhwBrowserTruthCaptureResultV1 | null;
+}): boolean {
+  if (!args.browserTruth) return false;
+  const proposed = proposedRowFromBrowserTruthPassV1(args.browserTruth);
+  if (!proposed) return false;
+  return findMatchingCommittedRowsV1({ rows: args.csvRows, proposed }).length > 0;
+}
+
 export function classifyWhwSafeCtaExpansionLaneV1(ctx: ClassificationContextV1): WhwSafeCtaExpansionLaneV1 {
-  if (ctx.applyPlan?.ready_for_founder_approval && !ctx.applyRowInCsv) {
-    return "APPLY_READY_FOUNDER_APPROVAL_REQUIRED";
+  if (ctx.safeCtaInCsv) {
+    return "SKIP_FOR_NOW";
   }
 
-  if (ctx.applyRowInCsv && ctx.safeCtaInCsv) {
-    return "SKIP_FOR_NOW";
+  if (ctx.applyPlan?.ready_for_founder_approval && !ctx.applyRowInCsv) {
+    return "APPLY_READY_FOUNDER_APPROVAL_REQUIRED";
   }
 
   const recommendedAction: WhwRecommendedActionV1 | null =
@@ -329,10 +364,6 @@ export function classifyWhwSafeCtaExpansionLaneV1(ctx: ClassificationContextV1):
   }
 
   if (ctx.filterSlug === "kinetico-reference-system") {
-    return "SKIP_FOR_NOW";
-  }
-
-  if (ctx.safeCtaInCsv) {
     return "SKIP_FOR_NOW";
   }
 
@@ -645,12 +676,17 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
       }),
     );
 
-    const applyRowInCsv = applyEntry?.plan.proposed_retailer_link_row
-      ? findMatchingCommittedRowsV1({
-          rows: csvRows,
-          proposed: applyEntry.plan.proposed_retailer_link_row,
-        }).length > 0
-      : false;
+    const applyRowInCsv =
+      (applyEntry?.plan.proposed_retailer_link_row
+        ? findMatchingCommittedRowsV1({
+            rows: csvRows,
+            proposed: applyEntry.plan.proposed_retailer_link_row,
+          }).length > 0
+        : false) ||
+      browserTruthRecommendedRowInCommittedCsvV1({
+        csvRows,
+        browserTruth: browserEntry?.result ?? null,
+      });
 
     const ctx: ClassificationContextV1 = {
       filterSlug,

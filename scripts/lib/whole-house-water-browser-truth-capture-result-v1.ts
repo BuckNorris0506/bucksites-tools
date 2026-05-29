@@ -48,7 +48,7 @@ export const WHW_AP811_BROWSER_TRUTH_PACKET_ID_V1 = "whw-browser-truth-3m-ap811-
 
 export type WhwBrowserTruthAnchorFilterSlugV1 = "3m-ap810" | typeof WHW_AP811_FILTER_SLUG_V1;
 
-export type WhwCaptureFieldStatusV1 = "PROVEN" | "FAIL" | "UNKNOWN" | "LOW" | "HIGH" | "PASS";
+export type WhwCaptureFieldStatusV1 = "PROVEN" | "FAIL" | "UNKNOWN" | "LOW" | "MEDIUM" | "HIGH" | "PASS";
 
 export type WhwRecommendedRetailerLinkRowV1 = {
   filter_slug: string;

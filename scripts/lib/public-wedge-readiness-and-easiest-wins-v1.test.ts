@@ -96,8 +96,8 @@ test("whole_house_water and sample wedges remain not open", () => {
   const whw = report.wedge_rows.find((r) => r.wedge === HOMEKEEP_WEDGE_CATALOG.whole_house_water);
   assert.ok(whw);
   assert.equal(whw!.public_opening_recommendation, "NEEDS_MORE_PROOF");
-  assert.equal(whw!.safe_cta_count, 1);
-  assert.equal(whw!.linked_filters_with_safe_gated_buy_path, 1);
+  assert.equal(whw!.safe_cta_count, 2);
+  assert.equal(whw!.linked_filters_with_safe_gated_buy_path, 2);
   assert.match(whw!.reason, /not sufficient WHW wedge coverage/i);
   for (const wedge of [
     HOMEKEEP_WEDGE_CATALOG.vacuum,

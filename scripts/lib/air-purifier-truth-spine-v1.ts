@@ -182,7 +182,7 @@ function analyzeCommittedCsvTruth(rootDir: string): {
 
   return {
     safe_cta_count: safeCtaCount,
-    safe_filter_slugs: [...safeFilterSlugs].sort(),
+    safe_filter_slugs: Array.from(safeFilterSlugs).sort(),
     unsafe_or_unknown_filter_slugs: unsafeOrUnknown,
     mapped_filter_slug_count: mappedFilterSlugs.size,
     catalog_counts: {
@@ -423,7 +423,7 @@ export function apCommittedCsvSafeFilterSlugsViaGatesV1(rootDir: string): string
     byFilter.set(slug, list);
   }
   const safe: string[] = [];
-  for (const [slug, rows] of byFilter) {
+  for (const [slug, rows] of Array.from(byFilter.entries())) {
     const gated = filterRealBuyRetailerLinks(rows.map((r) => gateRow(r)));
     if (gated.length > 0) safe.push(slug);
   }
