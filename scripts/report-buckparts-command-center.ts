@@ -69,6 +69,10 @@ import {
 } from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
 import {
+  buildAirPurifierTruthSpineUnknownV1,
+  buildAirPurifierTruthSpineV1,
+} from "./lib/air-purifier-truth-spine-v1";
+import {
   buildFridgeTruthSpineUnknownV1,
   buildFridgeTruthSpineV1,
 } from "./lib/fridge-truth-spine-v1";
@@ -976,6 +980,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
+    | "air_purifier_truth_spine_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
@@ -1098,6 +1103,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "air_purifier_truth_spine_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1201,6 +1207,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "air_purifier_truth_spine_v1"
     | "whole_house_water_batch_production_director_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1331,6 +1338,20 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let air_purifier_truth_spine_v1;
+  try {
+    air_purifier_truth_spine_v1 = buildAirPurifierTruthSpineV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    air_purifier_truth_spine_v1 = buildAirPurifierTruthSpineUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let whole_house_water_batch_production_director_v1;
   try {
     whole_house_water_batch_production_director_v1 = buildWholeHouseWaterBatchProductionDirectorV1({
@@ -1382,6 +1403,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
+    air_purifier_truth_spine_v1,
     whole_house_water_batch_production_director_v1,
     wedge_truth_spine_coverage_matrix_v1,
   };

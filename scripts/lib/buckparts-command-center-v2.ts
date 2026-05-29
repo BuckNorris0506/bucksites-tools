@@ -211,6 +211,7 @@ export function buildCommandCenterV2Report(input: {
   | "batch_production_operating_dispatch_v1"
   | "page_publishability_truth_summary_v1"
   | "fridge_truth_spine_v1"
+  | "air_purifier_truth_spine_v1"
   | "whole_house_water_batch_production_director_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"

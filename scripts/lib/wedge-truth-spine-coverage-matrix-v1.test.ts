@@ -5,6 +5,7 @@ import test from "node:test";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { getVerticalLaunchState } from "@/lib/catalog/vertical-launch-state";
+import { AIR_PURIFIER_TRUTH_SPINE_CONTRACT_V1 } from "./air-purifier-truth-spine-v1";
 import { FRIDGE_TRUTH_SPINE_CONTRACT_V1 } from "./fridge-truth-spine-v1";
 import {
   WEDGE_TRUTH_SPINE_COVERAGE_MATRIX_CONTRACT_V1,
@@ -48,17 +49,18 @@ test("fridge is detected as having fridge_truth_spine_v1", () => {
   assert.ok(fridge!.proven_lane_refs.some((r) => r.includes("fridge-truth-spine-v1")));
 });
 
-test("AP is not falsely treated as having fridge-level formal truth spine", () => {
+test("AP has air_purifier_truth_spine_v1 formal spine not fridge contract", () => {
   const report = buildWedgeTruthSpineCoverageMatrixV1({ rootDir: REPO_ROOT });
   const ap = report.wedges.find((w) => w.wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier);
   assert.ok(ap);
-  assert.equal(ap!.has_formal_truth_spine, false);
-  assert.equal(ap!.truth_spine_contract_name, "UNKNOWN");
-  assert.notEqual(ap!.truth_coverage_status, "FORMAL_SPINE");
-  assert.equal(ap!.truth_coverage_status, "PUBLIC_BUT_SPINE_GAP");
+  assert.equal(ap!.has_formal_truth_spine, true);
+  assert.equal(ap!.truth_spine_contract_name, AIR_PURIFIER_TRUTH_SPINE_CONTRACT_V1);
+  assert.notEqual(ap!.truth_spine_contract_name, FRIDGE_TRUTH_SPINE_CONTRACT_V1);
+  assert.equal(ap!.truth_coverage_status, "FORMAL_SPINE");
   assert.equal(getVerticalLaunchState("air-purifier"), "LIVE");
   assert.ok(ap!.has_safe_cta_queue_or_batch_director);
   assert.ok(ap!.has_model_first_evidence_lane);
+  assert.ok(ap!.proven_lane_refs.some((r) => r.includes("air-purifier-truth-spine-v1")));
 });
 
 test("WHW director and evidence lanes are partial operational proof not formal spine", () => {
@@ -93,13 +95,16 @@ test("sample-only wedges remain SAMPLE_ONLY", () => {
   }
 });
 
-test("inspect_summary exposes AP and WHW truth spine gaps", () => {
+test("inspect_summary exposes WHW truth spine gap and AP formal spine", () => {
   const report = buildWedgeTruthSpineCoverageMatrixV1({ rootDir: REPO_ROOT });
   const s = report.inspect_summary;
-  assert.equal(s.wedges_with_formal_spine_count, 1);
-  assert.ok(s.ap_truth_spine_gap_present);
+  assert.equal(s.wedges_with_formal_spine_count, 2);
+  assert.equal(s.ap_truth_spine_gap_present, false);
   assert.ok(s.whw_truth_spine_gap_present);
-  assert.ok(s.wedges_public_but_without_formal_spine.includes(HOMEKEEP_WEDGE_CATALOG.air_purifier));
+  assert.equal(
+    s.wedges_public_but_without_formal_spine.includes(HOMEKEEP_WEDGE_CATALOG.air_purifier),
+    false,
+  );
   assert.ok(s.wedges_partial_operational_proof.includes(HOMEKEEP_WEDGE_CATALOG.whole_house_water));
   assert.ok(s.wedges_preview_or_sample_only.length >= 3);
   assert.ok(s.recommended_next_action.length > 20);
@@ -110,8 +115,15 @@ test("matrix does not claim all wedges equally proven", () => {
   const report = buildWedgeTruthSpineCoverageMatrixV1({ rootDir: REPO_ROOT });
   const statuses = new Set(report.wedges.map((w) => w.truth_coverage_status));
   assert.ok(statuses.size >= 3);
-  assert.ok(report.inferred_facts.some((f) => f.includes("fridge parity does not carry")));
-  assert.ok(report.proven_facts.some((f) => f.includes("wedges_with_formal_spine_count=1")));
+  assert.ok(
+    report.inferred_facts.some(
+      (f) =>
+        f.includes("WHW batch director") ||
+        f.includes("Sample-only wedges") ||
+        f.includes("PUBLIC_BUT_SPINE_GAP"),
+    ),
+  );
+  assert.ok(report.proven_facts.some((f) => f.includes("wedges_with_formal_spine_count=2")));
 });
 
 test("read-only build does not mutate forbidden paths", () => {

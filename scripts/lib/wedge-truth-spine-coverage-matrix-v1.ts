@@ -20,6 +20,7 @@ import {
   type VerticalSlug,
 } from "@/lib/catalog/vertical-launch-state";
 
+import { AIR_PURIFIER_TRUTH_SPINE_CONTRACT_V1 } from "./air-purifier-truth-spine-v1";
 import { FRIDGE_TRUTH_SPINE_CONTRACT_V1 } from "./fridge-truth-spine-v1";
 import {
   buildPublicWedgeReadinessAndEasiestWinsV1,
@@ -126,8 +127,8 @@ const WEDGE_CAPABILITY_PROBES: Record<HomekeepWedgeCatalog, WedgeCapabilityProbe
     ],
   },
   [HOMEKEEP_WEDGE_CATALOG.air_purifier]: {
-    formal_spine_contract: null,
-    formal_spine_lib: null,
+    formal_spine_contract: AIR_PURIFIER_TRUTH_SPINE_CONTRACT_V1,
+    formal_spine_lib: "scripts/lib/air-purifier-truth-spine-v1.ts",
     model_first_lib: "scripts/lib/ap-model-first-evidence-queue-v1.ts",
     buyer_path_lib: "scripts/lib/air-purifier-weak-buyer-path-audit-v1.ts",
     browser_truth_lib: null,
@@ -136,6 +137,7 @@ const WEDGE_CAPABILITY_PROBES: Record<HomekeepWedgeCatalog, WedgeCapabilityProbe
     extra_lane_refs: [
       "air_purifier_batch_production_lane_v1",
       "command_center_v2.batch_production_operating_checklist_v1",
+      "command_center_v2.air_purifier_truth_spine_v1",
     ],
   },
   [HOMEKEEP_WEDGE_CATALOG.whole_house_water]: {
@@ -260,7 +262,13 @@ function nextTruthGap(args: {
   const { wedge, status, hasFormalSpine, readiness } = args;
 
   if (status === "FORMAL_SPINE") {
-    return "Maintain fridge_truth_spine_v1 on Command Center; do not treat spine as CSV apply authorization.";
+    if (wedge === HOMEKEEP_WEDGE_CATALOG.refrigerator_water) {
+      return "Maintain fridge_truth_spine_v1 on Command Center; do not treat spine as CSV apply authorization.";
+    }
+    if (wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier) {
+      return "Maintain air_purifier_truth_spine_v1 on Command Center; expand safe buyer paths under truth gates — do not claim all filters verified.";
+    }
+    return "Maintain formal truth spine on Command Center; do not treat spine as CSV apply authorization.";
   }
   if (wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier && status === "PUBLIC_BUT_SPINE_GAP") {
     return "Add air_purifier_truth_spine_v1 (or equivalent formal spine) before treating AP as fridge-parity proven.";
@@ -442,7 +450,7 @@ export function buildWedgeTruthSpineCoverageMatrixV1(args: {
   }
 
   const recommended_next_action =
-    "Do not scale wedges as equally proven: fridge has fridge_truth_spine_v1; AP is PUBLIC_BUT_SPINE_GAP until a formal AP truth spine exists; WHW stays PARTIAL_OPERATIONAL_PROOF with whw_public_opening_authorized=false; sample-only wedges remain unproven.";
+    "Do not scale wedges as equally proven: fridge has fridge_truth_spine_v1 and AP has air_purifier_truth_spine_v1 (formal spine ≠ all-filters verified); WHW stays PARTIAL_OPERATIONAL_PROOF with whw_public_opening_authorized=false; sample-only wedges remain unproven.";
 
   const inspect_summary = buildWedgeTruthSpineCoverageMatrixInspectSummaryV1({
     wedges,
@@ -461,6 +469,7 @@ export function buildWedgeTruthSpineCoverageMatrixV1(args: {
     source_contracts: [
       PUBLIC_WEDGE_READINESS_AND_EASIEST_WINS_CONTRACT_V1,
       FRIDGE_TRUTH_SPINE_CONTRACT_V1,
+      AIR_PURIFIER_TRUTH_SPINE_CONTRACT_V1,
     ],
     wedges,
     inspect_summary,
@@ -496,9 +505,9 @@ export function buildWedgeTruthSpineCoverageMatrixV1(args: {
         : "INFERRED: No sample-only wedges detected.",
     ],
     unknown_facts: [
-      "UNKNOWN: Whether air purifier will receive air_purifier_truth_spine_v1 in a future commit.",
       "UNKNOWN: Whether whole_house_water will graduate to FORMAL_SPINE before public opening.",
       "UNKNOWN: Revenue, traffic, or conversion parity across wedges.",
+      "UNKNOWN: Live Supabase safe CTA parity vs committed CSV for air_purifier (spine proves committed inventory + buy gate only).",
     ],
   };
 }

@@ -3754,6 +3754,29 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const spine = report.command_center_v2.air_purifier_truth_spine_v1;
+  assert.ok(spine);
+  assert.equal(spine.contract, "air_purifier_truth_spine_v1");
+  assert.equal(spine.read_only, true);
+  assert.equal(spine.data_mutation, false);
+  assert.equal(spine.public_launch_state, "LIVE");
+  assert.equal(spine.public_indexing_status, "INDEXABLE_LIVE");
+  assert.equal(spine.formal_spine_status, "PROVEN");
+  assert.equal(spine.ap_public_but_spine_gap_resolved, true);
+  assert.equal(spine.all_filters_verified_claim, false);
+  assert.equal(spine.buy_gate_boundary_status, "PROVEN");
+  assert.ok(spine.safe_cta_count > 0);
+  assert.ok(spine.proven_facts.some((f) => f.includes("does not authorize")));
+  assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
+});
+
 test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -3814,11 +3837,12 @@ test("command_center_v2.wedge_truth_spine_coverage_matrix_v1 is read-only wedge 
   assert.equal(matrix.contract, "wedge_truth_spine_coverage_matrix_v1");
   assert.equal(matrix.read_only, true);
   assert.equal(matrix.data_mutation, false);
-  assert.equal(matrix.inspect_summary.wedges_with_formal_spine_count, 1);
-  assert.ok(matrix.inspect_summary.ap_truth_spine_gap_present);
+  assert.equal(matrix.inspect_summary.wedges_with_formal_spine_count, 2);
+  assert.equal(matrix.inspect_summary.ap_truth_spine_gap_present, false);
   assert.ok(matrix.inspect_summary.whw_truth_spine_gap_present);
-  assert.ok(
+  assert.equal(
     matrix.inspect_summary.wedges_public_but_without_formal_spine.includes("air_purifier"),
+    false,
   );
   assert.ok(
     matrix.inspect_summary.wedges_partial_operational_proof.includes("whole_house_water"),
@@ -3831,8 +3855,9 @@ test("command_center_v2.wedge_truth_spine_coverage_matrix_v1 is read-only wedge 
   assert.equal(fridge!.truth_coverage_status, "FORMAL_SPINE");
   assert.equal(fridge!.truth_spine_contract_name, "fridge_truth_spine_v1");
   assert.ok(ap);
-  assert.equal(ap!.has_formal_truth_spine, false);
-  assert.equal(ap!.truth_coverage_status, "PUBLIC_BUT_SPINE_GAP");
+  assert.equal(ap!.has_formal_truth_spine, true);
+  assert.equal(ap!.truth_spine_contract_name, "air_purifier_truth_spine_v1");
+  assert.equal(ap!.truth_coverage_status, "FORMAL_SPINE");
   assert.ok(whw);
   assert.equal(whw!.truth_coverage_status, "PARTIAL_OPERATIONAL_PROOF");
   assert.equal(whw!.current_public_opening_authorized, false);
