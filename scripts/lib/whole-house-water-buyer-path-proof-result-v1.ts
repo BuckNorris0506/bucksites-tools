@@ -127,7 +127,7 @@ export function buyerPathCandidateMayRecommendCsvMutationV1(
   return true;
 }
 
-function finalizeCandidate(
+export function finalizeWhwBuyerPathCandidateV1(
   draft: Omit<
     WhwBuyerPathCandidateV1,
     "status" | "passes_launch_buy_links_safe_cta_gate" | "browser_truth_direct_buyable_proven"
@@ -237,7 +237,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
     "https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP810";
 
   const drafts = [
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://www.solventum.com/en-us/home/f/b40070898/",
       retailer_or_source: "solventum_official",
       listing_kind: "official_oem",
@@ -249,7 +249,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
       buy_action_observed: false,
       retailer_key: "oem-catalog",
     }),
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://www.amazon.com/Aqua-Pure-Whole-House-Replacement-Filter/dp/B000W0TTJQ",
       retailer_or_source: "amazon",
       listing_kind: "official_oem",
@@ -262,7 +262,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
       buy_action_observed: true,
       retailer_key: "amazon",
     }),
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://www.aquapurefilters.com/products/aqua-pure-ap810-whole-house-water-filter",
       retailer_or_source: "aquapurefilters_authorized_dealer",
       listing_kind: "authorized_dealer",
@@ -275,7 +275,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
       buy_action_observed: true,
       retailer_key: "aquapure-dealer",
     }),
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://klearwaterstore.com/3m-aqua-pure-ap810-whole-house-filter-cartridge-5-micron/",
       retailer_or_source: "klearwaterstore",
       listing_kind: "major_retailer",
@@ -287,7 +287,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
       buy_action_observed: true,
       retailer_key: "klearwater",
     }),
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://www.homedepot.com/p/Waterdrop-AP810-Whole-House-Water-Filter-10-in-x-4-5-in-5-Micron-Replacement-for-3M-Aqua-Pure-AP810-Whirlpool-WHKF-GD25BB-B-WD-AP810-2/333084969",
       retailer_or_source: "home_depot",
       listing_kind: "compatible_replacement",
@@ -300,7 +300,7 @@ export function buildWhw3mAp810BuyerPathProofV1(args?: {
       buy_action_observed: true,
       retailer_key: "home-depot",
     }),
-    finalizeCandidate({
+    finalizeWhwBuyerPathCandidateV1({
       url: "https://www.amazon.com/AQUACREST-Compatible-Aqua-Pure-Whirlpool-WHKF-GD25BB/dp/B01L069O36",
       retailer_or_source: "amazon",
       listing_kind: "compatible_replacement",

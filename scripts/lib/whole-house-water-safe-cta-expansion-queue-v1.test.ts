@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -11,6 +11,7 @@ import {
 } from "@/lib/retailers/launch-buy-links";
 import { loadWhwRetailerLinksCsvV1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import { buyerPathCandidateMayRecommendCsvMutationV1 } from "./whole-house-water-buyer-path-proof-result-v1";
+import { WHW_AP811_BUYER_PATH_RESULT_REL_V1 } from "./whole-house-water-batch-buyer-path-proof-v1";
 import { WHW_AP810_FILTER_SLUG_V1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import {
   WHW_SAFE_CTA_EXPANSION_QUEUE_CONTRACT_V1,
@@ -76,9 +77,19 @@ test("lane_summary_counts is populated at root and sums to mapped filter count",
   const laneSum = lanes.reduce((acc, lane) => acc + report.lane_summary_counts[lane], 0);
   assert.equal(laneSum, report.summary.mapped_filter_count);
 
+  const ap811BuyerPathArtifactExists = existsSync(
+    path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1),
+  );
+
   assert.equal(report.lane_summary_counts.APPLY_READY_FOUNDER_APPROVAL_REQUIRED, 0);
-  assert.equal(report.lane_summary_counts.BROWSER_TRUTH_READY, 0);
-  assert.equal(report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY, 1);
+  assert.equal(
+    report.lane_summary_counts.BROWSER_TRUTH_READY,
+    ap811BuyerPathArtifactExists ? 1 : 0,
+  );
+  assert.equal(
+    report.lane_summary_counts.BUYER_PATH_DISCOVERY_READY,
+    ap811BuyerPathArtifactExists ? 0 : 1,
+  );
   assert.equal(report.lane_summary_counts.MODEL_FIRST_READY, 20);
   assert.equal(report.lane_summary_counts.MAPPING_REVIEW_REQUIRED, 39);
   assert.equal(report.lane_summary_counts.SKIP_FOR_NOW, 2);
@@ -159,12 +170,17 @@ test("row count alone does not outrank easier official/OEM proof", () => {
   );
   assert.ok(pentekDgd, "expected pentek-dgd-5005 in expansion targets");
   assert.notEqual(top.filter_slug, "pentek-dgd-5005");
-  assert.ok(
-    ["3m-ap811", "3m-ap910r", "3m-ap917hd-s", "whirlpool-whkf-gd05", "ge-fxhtc"].includes(
-      top.filter_slug,
-    ),
-    `expected OEM-system filter at rank 1, got ${top.filter_slug}`,
-  );
+  if (!existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) {
+    assert.ok(
+      ["3m-ap811", "3m-ap910r", "3m-ap917hd-s", "whirlpool-whkf-gd05", "ge-fxhtc"].includes(
+        top.filter_slug,
+      ),
+      `expected OEM-system filter at rank 1, got ${top.filter_slug}`,
+    );
+  } else {
+    assert.equal(top.filter_slug, "3m-ap811");
+    assert.equal(top.lane, "BROWSER_TRUTH_READY");
+  }
   assert.ok(top.expansion_score > pentekDgd!.expansion_score);
 });
 
@@ -231,11 +247,28 @@ test("batch recommendation contains multiple discovery candidates and no AP810 f
   assert.ok(report.recommended_next_batch.length >= 2);
 
   const kinds = new Set(report.recommended_next_batch.map((b) => b.packet_kind));
-  assert.ok(kinds.has("buyer_path_proof") || kinds.has("model_first_evidence"));
+  assert.ok(
+    kinds.has("browser_truth_capture") ||
+      kinds.has("buyer_path_proof") ||
+      kinds.has("model_first_evidence"),
+  );
   assert.equal(
     report.recommended_next_batch.find((b) => b.filter_slug === WHW_AP810_FILTER_SLUG_V1),
     undefined,
   );
+  if (existsSync(path.join(REPO_ROOT, WHW_AP811_BUYER_PATH_RESULT_REL_V1))) {
+    assert.ok(
+      report.recommended_next_batch.some(
+        (b) => b.filter_slug === "3m-ap811" && b.packet_kind === "browser_truth_capture",
+      ),
+    );
+  } else {
+    assert.ok(
+      report.recommended_next_batch.some(
+        (b) => b.filter_slug === "3m-ap811" && b.packet_kind === "buyer_path_proof",
+      ),
+    );
+  }
 });
 
 test("founder_approval_required on apply-ready rows", () => {

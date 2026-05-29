@@ -29,6 +29,12 @@ import {
   type WhwBuyerPathProofResultV1,
 } from "./whole-house-water-buyer-path-proof-result-v1";
 import {
+  WHW_AP811_BUYER_PATH_RESULT_REL_V1,
+  WHW_AP811_FILTER_SLUG_V1,
+  loadWhwBatchBuyerPathProofResultV1,
+  whwBatchBuyerPathAsExpansionBuyerPathV1,
+} from "./whole-house-water-batch-buyer-path-proof-v1";
+import {
   WHW_BROWSER_TRUTH_RESULTS_DIR_REL_V1,
   isAllowedWhwBrowserTruthCaptureResultRelPathV1,
   loadWhwBrowserTruthCaptureResultV1,
@@ -493,6 +499,10 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
   const buyerPathBySlug = latestCommittedWhwBuyerPathResultsByFilterSlugV1(
     loadCommittedWhwBuyerPathProofResultsV1({ rootDir: args.rootDir }),
   );
+  const batchAp811BuyerPath = loadWhwBatchBuyerPathProofResultV1({
+    rootDir: args.rootDir,
+    relPath: WHW_AP811_BUYER_PATH_RESULT_REL_V1,
+  });
   const browserTruthBySlug = loadCommittedWhwBrowserTruthResultsByFilterSlugV1({
     rootDir: args.rootDir,
   });
@@ -591,6 +601,10 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
     const batchCandidate = batchByFilter.get(filterSlug) ?? null;
     const modelEntry = modelFirstBySlug.get(filterSlug);
     const buyerEntry = buyerPathBySlug.get(filterSlug);
+    let buyerPathForLane: WhwBuyerPathProofResultV1 | null = buyerEntry?.result ?? null;
+    if (!buyerPathForLane && filterSlug === WHW_AP811_FILTER_SLUG_V1 && batchAp811BuyerPath) {
+      buyerPathForLane = whwBatchBuyerPathAsExpansionBuyerPathV1(batchAp811BuyerPath);
+    }
     const browserEntry = browserTruthBySlug.get(filterSlug);
     const applyEntry = applyPlansBySlug.get(filterSlug);
 
@@ -639,7 +653,7 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
       queueDraft,
       batchCandidate,
       modelFirstFitPass: modelEntry ? isWhwModelFirstFitPassV1(modelEntry.result) : false,
-      buyerPath: buyerEntry?.result ?? null,
+      buyerPath: buyerPathForLane,
       browserTruth: browserEntry?.result ?? null,
       applyPlan: applyEntry?.plan ?? null,
       safeCtaInCsv,
@@ -660,6 +674,9 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
     const artifactRefs: string[] = [];
     if (modelEntry) artifactRefs.push(modelEntry.relPath);
     if (buyerEntry) artifactRefs.push(buyerEntry.relPath);
+    else if (filterSlug === WHW_AP811_FILTER_SLUG_V1 && batchAp811BuyerPath) {
+      artifactRefs.push(WHW_AP811_BUYER_PATH_RESULT_REL_V1);
+    }
     if (browserEntry) artifactRefs.push(browserEntry.relPath);
     if (applyEntry) artifactRefs.push(applyEntry.relPath);
 
@@ -682,7 +699,8 @@ export function buildWholeHouseWaterSafeCtaExpansionQueueV1(args: {
         batchCandidate?.oem_part_number ?? filter.oem_part_number ?? null,
       primary_buyer_path_status: queueDraft?.current_buyer_path_status ?? primaryStatus,
       safe_cta_in_committed_csv: safeCtaInCsv,
-      model_first_fit_pass: ctx.modelFirstFitPass,
+      model_first_fit_pass:
+        ctx.modelFirstFitPass || batchCandidate?.model_proof_status === "PASS",
       buyer_path_unknown_count: ctx.buyerPath?.evidence_status_counts.UNKNOWN ?? 0,
       browser_truth_pass_count: ctx.browserTruth?.pass_count ?? 0,
       apply_plan_ready: ctx.applyPlan?.ready_for_founder_approval ?? false,
