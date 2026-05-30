@@ -45,6 +45,7 @@ function main(): void {
         buyer_path_proof_targets: result.buyer_path_proof_targets,
         parked_filter_slugs: result.parked_filter_slugs,
         csv_apply_authorized: result.csv_apply_authorized,
+        supabase_update_authorized: result.supabase_update_authorized,
         whw_public_opening_authorized: result.whw_public_opening_authorized,
         filters_checked: result.filters_checked.map((row) => ({
           filter_slug: row.filter_slug,

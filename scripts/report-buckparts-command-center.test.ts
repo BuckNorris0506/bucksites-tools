@@ -3869,6 +3869,8 @@ test("command_center_v2.whole_house_water_director_model_first_batch_v1 is read-
   assert.equal(lane.evidence_status_counts.PASS, 0);
   assert.equal(lane.whw_public_opening_authorized, false);
   assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.notEqual(lane.supabase_update_authorized, null);
   assert.ok(lane.filters_checked.length === 10);
   assert.ok(lane.proven_facts.some((f) => f.includes("does not authorize") || f.includes("csv_apply_authorized=false")));
 });

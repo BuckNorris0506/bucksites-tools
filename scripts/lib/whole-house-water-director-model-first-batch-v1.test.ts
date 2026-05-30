@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, rmSync, statSync } from "node:fs";
+import { existsSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -21,10 +21,17 @@ import { loadWhwModelFirstEvidenceResultV1 } from "./whole-house-water-model-fir
 
 const REPO_ROOT = process.cwd();
 
+const BATCH_ARTIFACT_ABS = path.join(
+  REPO_ROOT,
+  WHW_DIRECTOR_MODEL_FIRST_BATCH_V1_RESULT_REL_V1,
+);
+
+test.before(() => {
+  rmSync(BATCH_ARTIFACT_ABS, { force: true });
+});
+
 test.after(() => {
-  rmSync(path.join(REPO_ROOT, WHW_DIRECTOR_MODEL_FIRST_BATCH_V1_RESULT_REL_V1), {
-    force: true,
-  });
+  rmSync(BATCH_ARTIFACT_ABS, { force: true });
 });
 
 const EXPECTED_ACTIVE_SLUGS = [
@@ -111,7 +118,40 @@ test("WHW remains closed and no CSV Supabase or public opening authorized", () =
   const report = buildWholeHouseWaterDirectorModelFirstBatchV1({ rootDir: REPO_ROOT });
   assert.equal(getVerticalLaunchState("whole-house-water"), "NOINDEX_UNPROVEN");
   assert.equal(report.whw_public_opening_authorized, false);
+  assert.equal(report.csv_apply_authorized, false);
+  assert.equal(report.supabase_update_authorized, false);
+  assert.notEqual(report.supabase_update_authorized, null);
   assert.equal(report.do_not_open_public, true);
+});
+
+test("loadWhwDirectorModelFirstBatchV1 coerces null supabase_update_authorized to explicit false", () => {
+  const batchAbs = path.join(REPO_ROOT, WHW_DIRECTOR_MODEL_FIRST_BATCH_V1_RESULT_REL_V1);
+  const hadBatch = existsSync(batchAbs);
+  const prior = hadBatch ? readFileSync(batchAbs, "utf8") : null;
+
+  const report = buildWholeHouseWaterDirectorModelFirstBatchV1({ rootDir: REPO_ROOT });
+  writeWholeHouseWaterDirectorModelFirstBatchV1({
+    rootDir: REPO_ROOT,
+    result: report,
+    writePerFilterArtifacts: false,
+  });
+
+  const raw = JSON.parse(readFileSync(batchAbs, "utf8")) as Record<string, unknown>;
+  raw.supabase_update_authorized = null;
+  writeFileSync(batchAbs, `${JSON.stringify(raw, null, 2)}\n`, "utf8");
+
+  try {
+    const loaded = loadWhwDirectorModelFirstBatchV1({ rootDir: REPO_ROOT });
+    assert.ok(loaded);
+    assert.equal(loaded!.supabase_update_authorized, false);
+    assert.notEqual(loaded!.supabase_update_authorized, null);
+  } finally {
+    if (prior !== null) {
+      writeFileSync(batchAbs, prior, "utf8");
+    } else {
+      rmSync(batchAbs, { force: true });
+    }
+  }
 });
 
 test("--write creates batch and per-filter artifacts under agent-results-model-first-v1", () => {
@@ -127,10 +167,15 @@ test("--write creates batch and per-filter artifacts under agent-results-model-f
   assert.equal(written.batchRel, WHW_DIRECTOR_MODEL_FIRST_BATCH_V1_RESULT_REL_V1);
   assert.equal(written.perFilterRels.length, 10);
 
-    const loaded = loadWhwDirectorModelFirstBatchV1({ rootDir: REPO_ROOT });
-    assert.ok(loaded);
-    assert.equal(loaded!.batch_size, 10);
-    assert.equal(loaded!.director_batch_cycle_sealed, true);
+  const loaded = loadWhwDirectorModelFirstBatchV1({ rootDir: REPO_ROOT });
+  assert.ok(loaded);
+  assert.equal(loaded!.batch_size, 10);
+  assert.equal(loaded!.director_batch_cycle_sealed, true);
+  assert.equal(loaded!.supabase_update_authorized, false);
+  assert.strictEqual(
+    JSON.parse(readFileSync(batchAbs, "utf8")).supabase_update_authorized,
+    false,
+  );
 
   const ap910Artifact = loadWhwModelFirstEvidenceResultV1({
     rootDir: REPO_ROOT,

@@ -99,6 +99,21 @@ export type WholeHouseWaterDirectorModelFirstBatchV1 = {
   director_batch_cycle_sealed?: boolean;
 };
 
+/** Truth-gate fields must be explicit false — null/undefined is contract-invalid. */
+export function normalizeWhwDirectorModelFirstBatchTruthGatesV1(
+  batch: WholeHouseWaterDirectorModelFirstBatchV1,
+): WholeHouseWaterDirectorModelFirstBatchV1 {
+  return {
+    ...batch,
+    read_only: true,
+    data_mutation: false,
+    csv_apply_authorized: false,
+    supabase_update_authorized: false,
+    whw_public_opening_authorized: false,
+    do_not_open_public: true,
+  };
+}
+
 type RepoMappingRowV1 = {
   model_slug: string;
   filter_slug: string;
@@ -487,7 +502,7 @@ export function buildWholeHouseWaterDirectorModelFirstBatchUnknownV1(args: {
   generated_at: string;
   reason: string;
 }): WholeHouseWaterDirectorModelFirstBatchV1 {
-  return {
+  return normalizeWhwDirectorModelFirstBatchTruthGatesV1({
     contract: WHW_DIRECTOR_MODEL_FIRST_BATCH_CONTRACT_V1,
     read_only: true,
     data_mutation: false,
@@ -512,7 +527,7 @@ export function buildWholeHouseWaterDirectorModelFirstBatchUnknownV1(args: {
     unknown_facts: [
       `UNKNOWN: whole_house_water_director_model_first_batch_v1 failed: ${args.reason}`,
     ],
-  };
+  });
 }
 
 export function buildWholeHouseWaterDirectorModelFirstBatchV1(args?: {
@@ -564,7 +579,7 @@ export function buildWholeHouseWaterDirectorModelFirstBatchV1(args?: {
     )
     .map((row) => row.filter_slug);
 
-  return {
+  return normalizeWhwDirectorModelFirstBatchTruthGatesV1({
     contract: WHW_DIRECTOR_MODEL_FIRST_BATCH_CONTRACT_V1,
     read_only: true,
     data_mutation: false,
@@ -614,7 +629,7 @@ export function buildWholeHouseWaterDirectorModelFirstBatchV1(args?: {
       "UNKNOWN: Whether Whirlpool/GE/Pentair official manuals yield PASS without generation sticker ambiguity.",
       "UNKNOWN: Whether any retailer PDP in this batch family will pass browser_truth direct_buyable without wrong-family drift.",
     ],
-  };
+  });
 }
 
 export function loadWhwDirectorModelFirstBatchV1(args: {
@@ -631,7 +646,9 @@ export function loadWhwDirectorModelFirstBatchV1(args: {
     if (parsed.contract !== WHW_DIRECTOR_MODEL_FIRST_BATCH_CONTRACT_V1) return null;
     if (parsed.read_only !== true || parsed.data_mutation !== false) return null;
     if (!Array.isArray(parsed.filters_checked)) return null;
-    return parsed as WholeHouseWaterDirectorModelFirstBatchV1;
+    return normalizeWhwDirectorModelFirstBatchTruthGatesV1(
+      parsed as WholeHouseWaterDirectorModelFirstBatchV1,
+    );
   } catch {
     return null;
   }
@@ -657,15 +674,16 @@ export function writeWholeHouseWaterDirectorModelFirstBatchV1(args: {
   }
   const abs = path.join(args.rootDir, rel);
   mkdirSync(path.dirname(abs), { recursive: true });
+  const normalized = normalizeWhwDirectorModelFirstBatchTruthGatesV1(args.result);
   writeFileSync(
     abs,
-    `${JSON.stringify({ ...args.result, director_batch_cycle_sealed: true }, null, 2)}\n`,
+    `${JSON.stringify({ ...normalized, director_batch_cycle_sealed: true }, null, 2)}\n`,
     "utf8",
   );
 
   const perFilterRels: string[] = [];
   if (args.writePerFilterArtifacts) {
-    for (const row of args.result.filters_checked) {
+    for (const row of normalized.filters_checked) {
       const artifact = buildWhwDirectorModelFirstPerFilterArtifactV1({ filterResult: row });
       const perRel = row.per_filter_artifact_rel ?? whwDirectorModelFirstPerFilterArtifactRelV1(row.filter_slug);
       if (!isAllowedWhwModelFirstEvidenceResultRelPathV1(perRel)) {
