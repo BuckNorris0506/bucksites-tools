@@ -83,7 +83,13 @@ test("manual-evidence LG models with multi-filter legacy maps are not PROVEN fro
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
-  for (const slug of ["lg-lfxs28968s", "lg-lfxs26973s"]) {
+  for (const slug of [
+    "lg-lfxs28968s",
+    "lg-lfxs26973s",
+    "lg-lrfvs3006s",
+    "lg-lfxc22596s",
+    "lg-lmxs28626s",
+  ]) {
     const row = report.model_rows.find((r) => r.fridge_slug === slug);
     assert.ok(row, slug);
     assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
@@ -99,7 +105,7 @@ test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq cons
     manifestRelPath: MANIFEST_REL,
   });
   const reviewRows = report.model_rows.filter((r) => r.confidence === "MAPPING_REVIEW_REQUIRED");
-  assert.equal(reviewRows.length, 3);
+  assert.equal(reviewRows.length, 6);
   for (const row of reviewRows) {
     assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
     assert.ok(row.official_filter_token_or_name);
@@ -144,7 +150,7 @@ test("steering override is ready when mapping review or unknown rows remain", ()
   });
   assert.ok(override);
   assert.ok(override!.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
-  assert.match(override!.next_best_action, /Resolve 3 mapping-review models/);
-  assert.match(override!.next_best_action, /17 unknown refrigerator models/);
+  assert.match(override!.next_best_action, /Resolve 6 mapping-review models/);
+  assert.match(override!.next_best_action, /14 unknown refrigerator models/);
   assert.equal(override!.mutation_block_reasons.includes("csv_apply_authorized:false"), true);
 });
