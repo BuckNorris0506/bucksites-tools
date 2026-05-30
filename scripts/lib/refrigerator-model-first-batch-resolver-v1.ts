@@ -24,6 +24,9 @@ export const REFRIGERATOR_MODEL_FIRST_MANUAL_EVIDENCE_DIR_REL_V1 =
 export const REFRIGERATOR_MODEL_FIRST_DISCREPANCY_DOC_REL_V1 =
   "docs/fridge-model-filter-mapping-discrepancies.md" as const;
 
+export const REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1 =
+  "data/fridge/batch-production/model-first-input-v1/fridge-models-batch-v1.json" as const;
+
 export type RefrigeratorModelFirstConfidenceV1 =
   | "PROVEN"
   | "UNKNOWN"
@@ -80,6 +83,7 @@ export type RefrigeratorModelFirstBatchModelRowV1 = {
 export type RefrigeratorModelFirstBatchResolverInspectSummaryV1 = {
   recommended_jq_paths: {
     standalone_report: ".inspect_summary";
+    command_center: ".command_center_v2.refrigerator_model_first_batch_resolver_v1.inspect_summary";
   };
   batch_id: string;
   models_checked_count: number;
@@ -432,6 +436,50 @@ export function loadRefrigeratorModelFirstInputManifestV1(args: {
   return parsed;
 }
 
+export function buildRefrigeratorModelFirstBatchResolverUnknownV1(args: {
+  generated_at: string;
+  manifestRelPath: string;
+  reason: string;
+}): RefrigeratorModelFirstBatchResolverV1 {
+  const inspect_summary: RefrigeratorModelFirstBatchResolverInspectSummaryV1 = {
+    recommended_jq_paths: {
+      standalone_report: ".inspect_summary",
+      command_center: ".command_center_v2.refrigerator_model_first_batch_resolver_v1.inspect_summary",
+    },
+    batch_id: "UNKNOWN",
+    models_checked_count: 0,
+    confidence_counts: { PROVEN: 0, UNKNOWN: 0, MAPPING_REVIEW_REQUIRED: 0 },
+    grouped_official_filter_families_count: 0,
+    csv_apply_authorized: false,
+    supabase_update_authorized: false,
+    buy_link_mutation_authorized: false,
+    public_page_change_authorized: false,
+    recommended_next_action: `Fix refrigerator_model_first_batch_resolver_v1 build: ${args.reason}`,
+  };
+
+  return {
+    contract: REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    generated_at: args.generated_at,
+    manifest_contract: REFRIGERATOR_MODEL_FIRST_INPUT_MANIFEST_CONTRACT_V1,
+    manifest_path: args.manifestRelPath,
+    batch_id: "UNKNOWN",
+    source_contract: "docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md",
+    exact_repo_paths_read: [args.manifestRelPath],
+    model_rows: [],
+    grouped_official_filter_families: [],
+    csv_apply_authorized: false,
+    supabase_update_authorized: false,
+    buy_link_mutation_authorized: false,
+    public_page_change_authorized: false,
+    inspect_summary,
+    proven_facts: [],
+    inferred_facts: [],
+    unknown_facts: [`UNKNOWN: refrigerator_model_first_batch_resolver_v1 failed: ${args.reason}`],
+  };
+}
+
 export function buildRefrigeratorModelFirstBatchResolverV1(args: {
   rootDir: string;
   manifestRelPath: string;
@@ -505,7 +553,10 @@ export function buildRefrigeratorModelFirstBatchResolverV1(args: {
   const groupedFamilies = buildGroupedOfficialFamilies(modelRows);
 
   const inspect_summary: RefrigeratorModelFirstBatchResolverInspectSummaryV1 = {
-    recommended_jq_paths: { standalone_report: ".inspect_summary" },
+    recommended_jq_paths: {
+      standalone_report: ".inspect_summary",
+      command_center: ".command_center_v2.refrigerator_model_first_batch_resolver_v1.inspect_summary",
+    },
     batch_id: manifest.batch_id,
     models_checked_count: modelRows.length,
     confidence_counts: confidenceCounts,

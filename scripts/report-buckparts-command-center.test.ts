@@ -3754,6 +3754,32 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.refrigerator_model_first_batch_resolver_v1 is read-only model-first batch resolver", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.refrigerator_model_first_batch_resolver_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "refrigerator_model_first_batch_resolver_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.equal(lane.buy_link_mutation_authorized, false);
+  assert.equal(lane.public_page_change_authorized, false);
+  assert.equal(lane.inspect_summary.csv_apply_authorized, false);
+  assert.equal(lane.inspect_summary.models_checked_count, 20);
+  assert.equal(lane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 3);
+  assert.ok(
+    lane.inspect_summary.recommended_jq_paths.command_center.includes(
+      "refrigerator_model_first_batch_resolver_v1",
+    ),
+  );
+});
+
 test("command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

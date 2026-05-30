@@ -23,6 +23,7 @@ import type { VacuumBagsResearchSeedPacketV1 } from "./vacuum-bags-research-seed
 import type { VacuumBagsOemResearchEvidencePacketV1 } from "./vacuum-bags-oem-research-evidence-packet-v1";
 import type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
 import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
+import type { RefrigeratorModelFirstBatchResolverV1 } from "./refrigerator-model-first-batch-resolver-v1";
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 import type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
@@ -910,6 +911,8 @@ export type CommandCenterV2Report = {
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
   /** Read-only refrigerator CSV / evidence / Supabase / public truth spine — not mutation authority. */
   fridge_truth_spine_v1: FridgeTruthSpineV1;
+  /** Read-only refrigerator model-first batch resolver — model → official filter proof; not CSV apply authority. */
+  refrigerator_model_first_batch_resolver_v1: RefrigeratorModelFirstBatchResolverV1;
   /** Read-only air purifier committed CSV / buy-gate / public copy truth spine — not mutation authority. */
   air_purifier_truth_spine_v1: AirPurifierTruthSpineV1;
   /** Read-only AP multi-filter coverage director for zero-safe-buy-path expansion — not CSV apply authority. */
@@ -989,6 +992,7 @@ export type { VacuumBagsOemResearchEvidencePacketV1 } from "./vacuum-bags-oem-re
 export type { AirPurifierBatchCoverageDirectorV1 } from "./air-purifier-batch-coverage-director-v1";
 export type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
 export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
+export type { RefrigeratorModelFirstBatchResolverV1 } from "./refrigerator-model-first-batch-resolver-v1";
 export type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 export type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 export type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
@@ -1007,6 +1011,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "operating_map_summary_v1"
   | "page_publishability_truth_summary_v1"
   | "fridge_truth_spine_v1"
+  | "refrigerator_model_first_batch_resolver_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"
   | "vacuum_bags_wedge_feasibility_v1"

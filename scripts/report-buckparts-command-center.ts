@@ -97,6 +97,11 @@ import {
   buildFridgeTruthSpineV1,
 } from "./lib/fridge-truth-spine-v1";
 import {
+  buildRefrigeratorModelFirstBatchResolverUnknownV1,
+  buildRefrigeratorModelFirstBatchResolverV1,
+  REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
+} from "./lib/refrigerator-model-first-batch-resolver-v1";
+import {
   buildWholeHouseWaterBatchProductionDirectorUnknownV1,
   buildWholeHouseWaterBatchProductionDirectorV1,
 } from "./lib/whole-house-water-batch-production-director-v1";
@@ -1004,6 +1009,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
+    | "refrigerator_model_first_batch_resolver_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1133,6 +1139,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "refrigerator_model_first_batch_resolver_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1243,6 +1250,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
+    | "refrigerator_model_first_batch_resolver_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1376,6 +1384,22 @@ export async function buildBuckpartsCommandCenterReport(
     const message = error instanceof Error ? error.message : String(error);
     fridge_truth_spine_v1 = buildFridgeTruthSpineUnknownV1({
       generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
+  let refrigerator_model_first_batch_resolver_v1;
+  try {
+    refrigerator_model_first_batch_resolver_v1 = buildRefrigeratorModelFirstBatchResolverV1({
+      rootDir,
+      now,
+      manifestRelPath: REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    refrigerator_model_first_batch_resolver_v1 = buildRefrigeratorModelFirstBatchResolverUnknownV1({
+      generated_at: now().toISOString(),
+      manifestRelPath: REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
       reason: message,
     });
   }
@@ -1535,6 +1559,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
+    refrigerator_model_first_batch_resolver_v1,
     air_purifier_truth_spine_v1,
     air_purifier_batch_coverage_director_v1,
     vacuum_bags_wedge_feasibility_v1,
