@@ -1,0 +1,42 @@
+{
+  "fridge_model_slug": "whirlpool-wrs325sdhz",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.whirlpool.com/owners-center-pdp.WRS325SDHZ.html",
+  "source_title": "Whirlpool WRS325SDHZ Owner's Center (Water Filter EDR1RXD1)",
+  "source_host": "www.whirlpool.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Whirlpool WRS325SDHZ side-by-side models use an everydrop Filter 1 cartridge in the upper-right fresh-food compartment.",
+  "replacement_steps_summary": "Whirlpool support guidance for EDR1RXD1: remove the old filter cartridge, install the new everydrop Filter 1 until locked, flush water, then reset the filter indicator when prompted.",
+  "cautions": "Whirlpool recommends genuine everydrop filters; non-genuine filters may not be covered under warranty.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-whirlpool-edr1-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Whirlpool bundle for WRS325SDHZ — Owner's Center and product page list EDR1RXD1 (everydrop Filter 1) as the model water filter.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/owners-center-pdp.WRS325SDHZ.html",
+      "source_title": "Whirlpool WRS325SDHZ Owner's Center (Water Filter EDR1RXD1)",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/side-by-side/p.36-inch-wide-side-by-side-refrigerator-25-cu.-ft.wrs325sdhz.html",
+      "source_title": "Whirlpool WRS325SDHZ product page — EDR1RXD1 compatible accessory",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-1-edr1rxd1-pack-of-1.edr1rxd1.html",
+      "source_title": "everydrop Refrigerator Water Filter 1 — EDR1RXD1",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}

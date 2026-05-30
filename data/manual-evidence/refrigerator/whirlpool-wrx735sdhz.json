@@ -1,0 +1,42 @@
+{
+  "fridge_model_slug": "whirlpool-wrx735sdhz",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/p.WRX735SDHZ.html",
+  "source_title": "Whirlpool WRX735SDHZ product page (Water Filter EDR4RXD1)",
+  "source_host": "www.whirlpool.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Whirlpool WRX735SDHZ uses an interior everydrop Filter 4 cartridge accessed from the fresh-food compartment.",
+  "replacement_steps_summary": "Whirlpool support guidance for EDR4RXD1: turn off water supply if required, remove the old filter cartridge, install the new everydrop Filter 4 until seated, flush several gallons, then reset the filter indicator.",
+  "cautions": "Whirlpool recommends genuine everydrop filters; non-genuine filters may not be covered under warranty.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-whirlpool-edr4-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Whirlpool bundle for WRX735SDHZ — product page Filter Details lists Water Filter Part Number EDR4RXD1 (everydrop Filter 4).",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/p.WRX735SDHZ.html",
+      "source_title": "Whirlpool WRX735SDHZ product page (Water Filter EDR4RXD1)",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/french-door/p.WRX735SDHZ.html",
+      "source_title": "Whirlpool WRX735SDHZ French door PDP",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+      "source_title": "everydrop Refrigerator Water Filter 4 — EDR4RXD1",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}

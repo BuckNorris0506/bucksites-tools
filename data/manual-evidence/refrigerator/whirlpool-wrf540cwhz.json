@@ -1,0 +1,42 @@
+{
+  "fridge_model_slug": "whirlpool-wrf540cwhz",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/french-door/p.36-inch-wide-counter-depth-french-door-refrigerator-20-cu.-ft.wrf540cwhw.html",
+  "source_title": "Whirlpool WRF540 counter-depth platform (Water Filter EDR4RXD1)",
+  "source_host": "www.whirlpool.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Whirlpool WRF540 counter-depth French-door models use an interior everydrop Filter 4 cartridge behind the fresh-food compartment access panel.",
+  "replacement_steps_summary": "Whirlpool support guidance for EDR4RXD1: remove the old filter cartridge, install the new everydrop Filter 4 until seated, flush several gallons, then reset the filter indicator.",
+  "cautions": "Whirlpool recommends genuine everydrop filters; interior-dispenser EDR4RXD1 models may require a bypass cap when no filter is installed.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-whirlpool-edr4-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Whirlpool bundle for WRF540CWHZ — WRF540 counter-depth platform Filter Details on whirlpool.com list Water Filter Part Number EDR4RXD1; WRF540CWHZ is the fingerprint-resistant stainless SKU in this family.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/kitchen/refrigeration/refrigerators/french-door/p.36-inch-wide-counter-depth-french-door-refrigerator-20-cu.-ft.wrf540cwhw.html",
+      "source_title": "Whirlpool WRF540 counter-depth platform (Water Filter EDR4RXD1)",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/owners-center-pdp.WRF540CWHZ.html",
+      "source_title": "Whirlpool Owner's Center WRF540CWHZ",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+      "source_title": "everydrop Refrigerator Water Filter 4 — EDR4RXD1",
+      "source_host": "www.whirlpool.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}

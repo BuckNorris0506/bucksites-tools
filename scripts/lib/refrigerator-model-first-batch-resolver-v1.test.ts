@@ -139,13 +139,39 @@ test("manual-evidence GE GFE28G models with multi-filter legacy maps are not PRO
   }
 });
 
+test("manual-evidence Whirlpool models with legacy map conflicts are not PROVEN from CSV alone", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const edr4 = ["whirlpool-wrx735sdhz", "whirlpool-wrf540cwhz"] as const;
+  for (const slug of edr4) {
+    const row = report.model_rows.find((r) => r.fridge_slug === slug);
+    assert.ok(row, slug);
+    assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
+    assert.equal(row!.official_filter_token_or_name, "EDR4RXD1");
+    assert.ok(row!.current_legacy_buckparts_filter_slugs.length > 0);
+    assert.equal(row!.grouped_official_filter_family, "whirlpool::EDR4RXD1");
+  }
+  const edr2 = report.model_rows.find((r) => r.fridge_slug === "whirlpool-wrx986sihz");
+  assert.ok(edr2);
+  assert.equal(edr2!.confidence, "MAPPING_REVIEW_REQUIRED");
+  assert.equal(edr2!.official_filter_token_or_name, "EDR2RXD1");
+  assert.equal(edr2!.grouped_official_filter_family, "whirlpool::EDR2RXD1");
+  const edr1 = report.model_rows.find((r) => r.fridge_slug === "whirlpool-wrs325sdhz");
+  assert.ok(edr1);
+  assert.equal(edr1!.confidence, "MAPPING_REVIEW_REQUIRED");
+  assert.equal(edr1!.official_filter_token_or_name, "EDR1RXD1");
+  assert.equal(edr1!.grouped_official_filter_family, "whirlpool::EDR1RXD1");
+});
+
 test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq consumers", () => {
   const report = buildRefrigeratorModelFirstBatchResolverV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
   const reviewRows = report.model_rows.filter((r) => r.confidence === "MAPPING_REVIEW_REQUIRED");
-  assert.equal(reviewRows.length, 13);
+  assert.equal(reviewRows.length, 17);
   for (const row of reviewRows) {
     assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
     assert.ok(row.official_filter_token_or_name);
@@ -158,7 +184,7 @@ test("models without official proof default to UNKNOWN", () => {
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
-  const row = report.model_rows.find((r) => r.fridge_slug === "whirlpool-wrx735sdhz");
+  const row = report.model_rows.find((r) => r.fridge_slug === "frigidaire-fghb2868pf");
   assert.ok(row);
   assert.equal(row!.confidence, "UNKNOWN");
   assert.equal(row!.official_filter_token_or_name, null);
@@ -190,7 +216,7 @@ test("steering override is ready when mapping review or unknown rows remain", ()
   });
   assert.ok(override);
   assert.ok(override!.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
-  assert.match(override!.next_best_action, /Resolve 13 mapping-review models/);
-  assert.match(override!.next_best_action, /7 unknown refrigerator models/);
+  assert.match(override!.next_best_action, /Resolve 17 mapping-review models/);
+  assert.match(override!.next_best_action, /3 unknown refrigerator models/);
   assert.equal(override!.mutation_block_reasons.includes("csv_apply_authorized:false"), true);
 });
