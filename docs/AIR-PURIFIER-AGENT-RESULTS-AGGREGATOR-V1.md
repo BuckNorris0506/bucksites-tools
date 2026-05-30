@@ -1,5 +1,7 @@
 # Air Purifier Agent Results Aggregator v1
 
+> **Deprecated for new product addition.** Use model-first product discovery instead. Keep this document only for legacy evidence/triage unless explicitly approved. See `docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md`.
+
 Read-only **manager layer** that ingests parallel agent evidence files and produces **one owner review packet** — eliminating founder copy/paste reconciliation.
 
 **Deployment:** NOT DEPLOYED  

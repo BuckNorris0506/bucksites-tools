@@ -514,7 +514,7 @@ export function buildAirPurifierModelFirstProductionLaneV1Report(
   const recommended_next_action =
     comparison_to_filter_first_batch_v3.model_first_verdict === "PROMISING"
       ? `Run a read-only model-first evidence packet for ${topBrand?.brand_slug ?? "top"} models (${String(candidate_rows.length)} model-first candidates) — start from official model/support pages, then map to filter SKU and buyer path. Do not mutate CSV until browser proof exists.`
-      : "Continue filter-first remediation only where repo proof supports it; model-first advantage is not yet established.";
+      : "Legacy filter-first batch lane is historical/read-only triage only — do not use for new product addition; run model-first evidence first.";
 
   const proven_facts = [
     `PROVEN: ${String(models.length)} air purifier models in data/air-purifier/models.csv.`,

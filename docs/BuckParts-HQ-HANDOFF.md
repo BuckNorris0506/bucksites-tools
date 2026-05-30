@@ -1175,6 +1175,8 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 - **Script risk classes:** `docs/buckparts-script-classification-manifest.md` lists mutating vs read-only npm scripts—follow it before any DB/data write.
 - **Operating inventory:** `docs/buckparts-operating-map.md` (KEEP / FREEZE / CUT / UNKNOWN table).
 
+**Product-addition workflow truth** lives in `docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md`, **not** in this handoff. This file is chat migration/context only — not operating truth or decision truth (see header **HQ handoff vs operating truth**).
+
 ## 1A) Jared interaction rules
 
 - Truth above all else.

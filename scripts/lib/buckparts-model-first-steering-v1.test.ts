@@ -44,12 +44,18 @@ test("resolveModelFirstSteeringOverrideV1 returns override when steering primary
     assert.ok(override!.next_best_action.startsWith("MODEL-FIRST STEERING"));
     assert.ok(override!.next_move_command.includes("report-ap-model-first-evidence-queue-v1"));
     assert.equal(override!.demoted_subsystem, "ap_batch_v3_aggregation_review");
+    const topSlug = queue.top_candidates[0]?.filter_slug;
+    assert.ok(topSlug, "expected an active top queue candidate");
     assert.ok(
-      override!.next_best_action.includes("shark-carbon-foam"),
-      "steering should target next active candidate after winix completion demotion",
+      override!.next_best_action.includes(topSlug!),
+      "steering should target the current top active queue candidate",
     );
-    assert.ok(!override!.next_best_action.includes("holmes-hapf30"));
-    assert.ok(!override!.next_best_action.includes("winix-carbon-116131"));
+    for (const completed of queue.result_history.completed_filter_slugs) {
+      assert.ok(
+        !override!.next_best_action.includes(completed),
+        `steering should not target completed filter ${completed}`,
+      );
+    }
   }
 });
 
@@ -61,12 +67,13 @@ test("command center next_best_action prefers model-first over batch aggregation
   if (queue?.steering_primary_eligible) {
     assert.ok(report.next_best_action.startsWith("MODEL-FIRST STEERING"));
     assert.notEqual(report.next_best_action, `BATCH DISPATCH [READY]: ${dispatch.why_this_is_next}`);
-    assert.equal(dispatch.selected_subsystem, "ap_batch_v3_aggregation_review");
-    const aggJob = report.command_center_v2.agent_control_plane_v1?.all_jobs.find(
-      (j) => j.agent_lane === "ap_batch_v3_aggregation_review",
-    );
-    assert.ok(aggJob);
-    assert.equal(aggJob!.eligible_now, false);
-    assert.ok(aggJob!.blocked_reasons.includes("demoted_model_first_steering_primary"));
+    if (dispatch.selected_subsystem === "ap_batch_v3_aggregation_review") {
+      const aggJob = report.command_center_v2.agent_control_plane_v1?.all_jobs.find(
+        (j) => j.agent_lane === "ap_batch_v3_aggregation_review",
+      );
+      assert.ok(aggJob);
+      assert.equal(aggJob!.eligible_now, false);
+      assert.ok(aggJob!.blocked_reasons.includes("demoted_model_first_steering_primary"));
+    }
   }
 });

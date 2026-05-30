@@ -1,5 +1,7 @@
 # Air Purifier Batch Production Lane v1
 
+> **Deprecated for new product addition.** Use model-first product discovery instead. Keep this document only for legacy evidence/triage unless explicitly approved. See `docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md`.
+
 Read-only factory layer that classifies every live AP filter slug into agent-ready action buckets — replacing manual row-by-row buyer-path triage.
 
 **Generated:** 2026-05-23  

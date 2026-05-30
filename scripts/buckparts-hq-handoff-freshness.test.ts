@@ -359,6 +359,26 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "kit_ready_for_jared_review",
     describe: "grant application kit readiness flag",
   },
+  {
+    id: "product_addition_contract_pointer",
+    needle: "docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md",
+    describe: "HQ handoff pointer to product-addition contract",
+  },
+  {
+    id: "product_addition_workflow_truth_not_handoff",
+    needle: "Product-addition workflow truth",
+    describe: "product-addition truth lives outside HQ handoff",
+  },
+  {
+    id: "hq_handoff_not_operating_truth",
+    needle: "not operating truth or decision truth",
+    describe: "HQ handoff is not operating/decision truth",
+  },
+  {
+    id: "hq_handoff_vs_operating_truth_header",
+    needle: "HQ handoff vs operating truth",
+    describe: "HQ handoff vs operating truth header",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

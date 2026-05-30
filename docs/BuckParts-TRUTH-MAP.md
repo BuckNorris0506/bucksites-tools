@@ -7,6 +7,8 @@ Use this file as the primary owner/Cursor navigation map for BuckParts truth sou
 
 ## Policy Truth
 
+- **Product addition workflow (model-first only)**
+  - `docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md` — **source of truth** for new product addition (appliance model → official replacement → group by official token → safe buy path; slug-first search rescue deprecated for new adds)
 - **Page state policy**
   - `src/lib/page-state/page-state.ts`
   - `src/lib/page-state/page-state-meta.ts`

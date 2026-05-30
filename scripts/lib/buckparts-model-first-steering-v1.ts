@@ -47,7 +47,7 @@ export function resolveModelFirstSteeringOverrideV1(args: {
 
   return {
     next_best_action:
-      `MODEL-FIRST STEERING [READY]: Collect read-only model-first evidence for ${top.filter_slug} (${top.brand_slug}, ${String(top.model_count_using_filter)} models) — start from ${anchorModels} official support pages, then map to filter SKU and verified buyer path. Demoted: ${demoted_subsystem} (filter-first batch-v3 aggregation remains available after evidence).`,
+      `MODEL-FIRST STEERING [READY]: Collect read-only model-first evidence for ${top.filter_slug} (${top.brand_slug}, ${String(top.model_count_using_filter)} models) — start from ${anchorModels} official support pages, then map to filter SKU and verified buyer path. Demoted: ${demoted_subsystem} (filter-first batch-v3 aggregation is deprecated for new product addition — legacy read-only triage only).`,
     why_this_action: `${args.queue.why_model_first} ${args.queue.old_filter_first_drift_risk}`,
     next_move_command: AP_MODEL_FIRST_EVIDENCE_QUEUE_COMMAND_V1,
     demoted_subsystem,

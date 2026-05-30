@@ -1,5 +1,7 @@
 # Air Purifier Agent Packets v1
 
+> **Deprecated for new product addition.** Use model-first product discovery instead. Keep this document only for legacy evidence/triage unless explicitly approved. See `docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md`.
+
 Turns the read-only AP Batch Production Lane factory into **durable, assignable packet artifacts** so multiple agents can work in parallel without row-by-row founder micromanagement.
 
 **Deployment:** NOT DEPLOYED  
