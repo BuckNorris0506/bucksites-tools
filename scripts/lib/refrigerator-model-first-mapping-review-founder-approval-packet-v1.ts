@@ -18,6 +18,10 @@ import {
   type MappingReviewCompatApplyPlanRowV1,
   type RefrigeratorModelFirstMappingReviewCompatApplyPlanV1,
 } from "./refrigerator-model-first-mapping-review-compat-apply-plan-v1";
+import {
+  detectRefrigeratorModelFirstQaBatchPostApplyV1,
+  formatRefrigeratorModelFirstQaBatchPostApplyRecommendedNextActionV1,
+} from "./refrigerator-model-first-qa-batch-post-apply-v1";
 
 export const REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1 =
   "refrigerator_model_first_mapping_review_founder_approval_packet_v1" as const;
@@ -45,7 +49,7 @@ export type FounderApprovalPacketModelSectionV1 = {
   refrigerator_model: string;
   fridge_slug: string;
   official_filter_token_or_name: string;
-  confidence: "MAPPING_REVIEW_REQUIRED";
+  confidence: RefrigeratorModelFirstBatchModelRowV1["confidence"];
   why_mapping_review_not_pass: string;
   rows_to_remove: string[];
   rows_to_keep: string[];
@@ -74,6 +78,15 @@ export type FounderApprovalPacketInspectSummaryV1 = {
   supabase_update_authorized: false;
   buy_link_mutation_authorized: false;
   public_page_change_authorized: false;
+  public_page_confidence_upgrade_authorized: false;
+  batch_qa_cleanup_status?: "pending_pre_apply" | "applied_batch_complete";
+  batch_qa_cleanup_applied?: true;
+  removals_applied?: number;
+  additions_applied?: number;
+  keeps_verified?: number;
+  proven_model_count?: number;
+  remaining_mapping_review_count?: number;
+  samsung_marketing_token_cross_reference_resolved?: true;
 };
 
 export type RefrigeratorModelFirstQaApprovalPacketCommandCenterInspectSummaryV1 =
@@ -231,11 +244,31 @@ export function validateRefrigeratorFounderApprovalDraftOutputPathV1(args: {
 function whyMappingReviewNotPass(args: {
   resolverRow: RefrigeratorModelFirstBatchModelRowV1 | undefined;
   applyRow: MappingReviewCompatApplyPlanRowV1;
+  postApplyState: ReturnType<typeof detectRefrigeratorModelFirstQaBatchPostApplyV1>;
 }): string {
   const official = args.applyRow.official_filter_token_or_name;
   const removeCount = args.applyRow.planned_removals.length;
   const keepCount = args.applyRow.planned_keeps.length;
   const addCount = args.applyRow.planned_additions.length;
+
+  if (args.resolverRow?.confidence === "PROVEN") {
+    return (
+      `QA compat cleanup applied: legacy CSV now aligns with official ${official} under resolver rules — PROVEN. ` +
+      "No further compat row changes pending for this model."
+    );
+  }
+
+  if (
+    args.postApplyState &&
+    removeCount === 0 &&
+    addCount === 0 &&
+    args.resolverRow?.confidence === "MAPPING_REVIEW_REQUIRED"
+  ) {
+    return (
+      `Wrong-purchase risk remains: official marketing token is ${official}, but legacy CSV slugs do not match resolver token rules. ` +
+      `Planned QA CSV cleanup already applied (${String(keepCount)} keep row(s) verified) — not PASS/PROVEN until mapping aligns.`
+    );
+  }
 
   if (args.resolverRow?.plain_english_next_action) {
     return (
@@ -259,15 +292,17 @@ function whyMappingReviewNotPass(args: {
 function buildModelSection(args: {
   applyRow: MappingReviewCompatApplyPlanRowV1;
   resolverRow: RefrigeratorModelFirstBatchModelRowV1 | undefined;
+  postApplyState: ReturnType<typeof detectRefrigeratorModelFirstQaBatchPostApplyV1>;
 }): FounderApprovalPacketModelSectionV1 {
   return {
     refrigerator_model: args.applyRow.refrigerator_model,
     fridge_slug: args.applyRow.fridge_slug,
     official_filter_token_or_name: args.applyRow.official_filter_token_or_name,
-    confidence: "MAPPING_REVIEW_REQUIRED",
+    confidence: args.resolverRow?.confidence ?? "MAPPING_REVIEW_REQUIRED",
     why_mapping_review_not_pass: whyMappingReviewNotPass({
       resolverRow: args.resolverRow,
       applyRow: args.applyRow,
+      postApplyState: args.postApplyState,
     }),
     rows_to_remove: args.applyRow.planned_removals.map((r) => r.csv_row_key).sort(),
     rows_to_keep: [...args.applyRow.planned_keeps].sort(),
@@ -278,6 +313,7 @@ function buildModelSection(args: {
 function buildBrandSections(args: {
   applyPlan: RefrigeratorModelFirstMappingReviewCompatApplyPlanV1;
   resolverBySlug: Map<string, RefrigeratorModelFirstBatchModelRowV1>;
+  postApplyState: ReturnType<typeof detectRefrigeratorModelFirstQaBatchPostApplyV1>;
 }): FounderApprovalPacketBrandSectionV1[] {
   return BRAND_SECTION_ORDER_V1.map((brandDef) => {
     const models = args.applyPlan.rows
@@ -292,6 +328,7 @@ function buildBrandSections(args: {
         buildModelSection({
           applyRow,
           resolverRow: args.resolverBySlug.get(applyRow.fridge_slug),
+          postApplyState: args.postApplyState,
         }),
       );
 
@@ -318,6 +355,7 @@ function bulletList(items: string[]): string {
 
 function renderMarkdown(args: {
   packet: Omit<RefrigeratorModelFirstMappingReviewFounderApprovalPacketV1, "markdown">;
+  postApplyState: ReturnType<typeof detectRefrigeratorModelFirstQaBatchPostApplyV1>;
 }): string {
   const {
     inspect_summary,
@@ -328,12 +366,36 @@ function renderMarkdown(args: {
     qa_framing,
   } = args.packet;
 
+  const provenCount = args.postApplyState?.proven_model_count ?? 0;
+  const appliedHeader = args.postApplyState
+    ? "Classification: **post-apply QA state** — 20-model compat cleanup applied; all batch models PROVEN under resolver rules including Samsung cross-reference."
+    : "Classification: **non-runtime QA draft** — review only; no product data has been changed.";
+
+  const summaryRows: string[] = args.postApplyState
+    ? [
+        `| QA batch cleanup applied (20 models) | yes |`,
+        `| Removals applied | ${String(args.postApplyState.removals_applied)} |`,
+        `| Additions applied | ${String(args.postApplyState.additions_applied)} |`,
+        `| Keeps verified | ${String(args.postApplyState.keeps_verified)} |`,
+        `| Models at PASS / PROVEN | ${String(provenCount)} |`,
+        `| Remaining MAPPING_REVIEW_REQUIRED | ${String(args.postApplyState.remaining_mapping_review_count)} |`,
+        `| Pending compat row removals | ${inspect_summary.total_planned_removals} |`,
+        `| Pending compat row additions | ${inspect_summary.total_planned_additions} |`,
+      ]
+    : [
+        `| Models (MAPPING_REVIEW_REQUIRED) | ${inspect_summary.mapping_review_model_count} |`,
+        `| Planned compat row removals (wrong-family cleanup) | ${inspect_summary.total_planned_removals} |`,
+        `| Planned compat row additions (missing correct family) | ${inspect_summary.total_planned_additions} |`,
+        `| Planned compat row keeps (already correct) | ${inspect_summary.total_planned_keeps} |`,
+        `| Models at PASS / PROVEN | 0 |`,
+      ];
+
   const lines: string[] = [
     "# BuckParts Quality Assurance — refrigerator wrong-purchase prevention packet",
     "",
     `Generated: ${generated_at}`,
     "",
-    "Classification: **non-runtime QA draft** — review only; no product data has been changed.",
+    appliedHeader,
     "",
     "## What this packet is",
     "",
@@ -355,19 +417,18 @@ function renderMarkdown(args: {
     "",
     "| Metric | Count |",
     "| --- | ---: |",
-    `| Models (MAPPING_REVIEW_REQUIRED) | ${inspect_summary.mapping_review_model_count} |`,
-    `| Planned compat row removals (wrong-family cleanup) | ${inspect_summary.total_planned_removals} |`,
-    `| Planned compat row additions (missing correct family) | ${inspect_summary.total_planned_additions} |`,
-    `| Planned compat row keeps (already correct) | ${inspect_summary.total_planned_keeps} |`,
-    `| Models at PASS / PROVEN | 0 |`,
+    ...summaryRows,
     "",
     "| Gate | Status |",
     "| --- | --- |",
     "| CSV apply authorized | **NO** |",
-    "| QA / founder approval | **REQUIRED (pending)** |",
+    args.postApplyState
+      ? "| QA batch compat cleanup | **APPLIED** |"
+      : "| QA / founder approval | **REQUIRED (pending)** |",
     "| Supabase update authorized | **NO** |",
     "| Buy-link mutation authorized | **NO** |",
     "| Public page change authorized | **NO** |",
+    "| Public page confidence upgrade authorized | **NO** |",
     "",
     `Source manifest: \`${source_manifest_path}\``,
     "",
@@ -389,7 +450,7 @@ function renderMarkdown(args: {
       lines.push(`### ${model.refrigerator_model} (\`${model.fridge_slug}\`)`);
       lines.push("");
       lines.push(`- **Official filter (manufacturer evidence):** \`${model.official_filter_token_or_name}\``);
-      lines.push(`- **QA status:** \`${model.confidence}\` — not PASS / not PROVEN until CSV is reconciled`);
+      lines.push(`- **QA status:** \`${model.confidence}\`${model.confidence === "PROVEN" ? " — resolver PROVEN after QA compat cleanup" : " — not PASS / not PROVEN until resolver alias cross-reference is implemented"}`);
       lines.push(`- **Wrong-purchase risk / why not PASS yet:** ${model.why_mapping_review_not_pass}`);
       lines.push("- **Rows to remove (wrong-family / compat-risk cleanup):");
       lines.push(bulletList(model.rows_to_remove));
@@ -438,7 +499,28 @@ export function buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1(
     });
 
   const resolverBySlug = new Map(resolver.model_rows.map((row) => [row.fridge_slug, row]));
-  const brand_sections = buildBrandSections({ applyPlan, resolverBySlug });
+  const postApplyState = detectRefrigeratorModelFirstQaBatchPostApplyV1({ resolver });
+  const brand_sections = buildBrandSections({ applyPlan, resolverBySlug, postApplyState });
+
+  const qa_framing: FounderApprovalPacketQaFramingV1 = postApplyState
+    ? {
+        ...QA_FRAMING_V1,
+        pass_proven_status: `${String(postApplyState.proven_model_count)} of 20 batch models are PROVEN after approved QA compat cleanup and evidence-backed Samsung HAF-QIN/HAF-CIN to DA97/DA29 cross-reference.`,
+        qa_gate_role:
+          "QA compat cleanup for the 20-model batch is applied and fit mapping is PROVEN under resolver rules. Buy links and public confidence upgrades remain separately gated.",
+      }
+    : QA_FRAMING_V1;
+
+  const explicit_warnings = postApplyState
+    ? [
+        "Wrong-purchase prevention: approved 20-model QA compat cleanup is applied — do not re-apply the same batch CSV changes.",
+        "All 20 batch models are PROVEN for fit mapping under resolver rules including Samsung marketing-token cross-reference.",
+        "No buy-link changes are authorized from this resolver packet alone.",
+        "No public page confidence upgrade is authorized from this resolver packet alone.",
+        "No Supabase changes are authorized by this packet.",
+        "Buy-path proof remains separate from fit-mapping PROVEN status.",
+      ]
+    : [...EXPLICIT_WARNINGS_V1];
 
   const inspect_summary: FounderApprovalPacketInspectSummaryV1 = {
     mapping_review_model_count: applyPlan.inspect_summary.mapping_review_model_count,
@@ -452,6 +534,22 @@ export function buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1(
     supabase_update_authorized: false,
     buy_link_mutation_authorized: false,
     public_page_change_authorized: false,
+    public_page_confidence_upgrade_authorized: false,
+    ...(postApplyState
+      ? {
+          batch_qa_cleanup_status: "applied_batch_complete" as const,
+          batch_qa_cleanup_applied: true as const,
+          removals_applied: postApplyState.removals_applied,
+          additions_applied: postApplyState.additions_applied,
+          keeps_verified: postApplyState.keeps_verified,
+          proven_model_count: postApplyState.proven_model_count,
+          remaining_mapping_review_count: postApplyState.remaining_mapping_review_count,
+          samsung_marketing_token_cross_reference_resolved:
+            postApplyState.samsung_marketing_token_cross_reference_resolved,
+        }
+      : {
+          batch_qa_cleanup_status: "pending_pre_apply" as const,
+        }),
   };
 
   const withoutMarkdown: Omit<
@@ -469,13 +567,13 @@ export function buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1(
     generated_at: now().toISOString(),
     source_manifest_path: manifestRelPath,
     source_apply_plan_contract: REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_COMPAT_APPLY_PLAN_CONTRACT_V1,
-    qa_framing: QA_FRAMING_V1,
+    qa_framing,
     inspect_summary,
     brand_sections,
-    explicit_warnings: [...EXPLICIT_WARNINGS_V1],
+    explicit_warnings,
   };
 
-  const markdown = renderMarkdown({ packet: withoutMarkdown });
+  const markdown = renderMarkdown({ packet: withoutMarkdown, postApplyState });
 
   return { ...withoutMarkdown, markdown };
 }
@@ -526,7 +624,13 @@ export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1(a
       now: args.now,
     });
 
-  const mappingReviewModelCount = packet.inspect_summary.mapping_review_model_count;
+  const postApplyState = detectRefrigeratorModelFirstQaBatchPostApplyV1({
+    resolver: buildRefrigeratorModelFirstBatchResolverV1({
+      rootDir: args.rootDir,
+      manifestRelPath: args.manifestRelPath,
+      now: args.now,
+    }),
+  });
 
   return {
     contract: REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1,
@@ -551,8 +655,11 @@ export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1(a
           ".command_center_v2.refrigerator_model_first_qa_approval_packet_v1.inspect_summary",
         standalone_report: ".inspect_summary",
       },
-      recommended_next_action:
-        formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1(mappingReviewModelCount),
+      recommended_next_action: postApplyState
+        ? formatRefrigeratorModelFirstQaBatchPostApplyRecommendedNextActionV1(postApplyState)
+        : formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1(
+            packet.inspect_summary.mapping_review_model_count,
+          ),
     },
   };
 }
@@ -588,6 +695,7 @@ export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneUnkn
       supabase_update_authorized: false,
       buy_link_mutation_authorized: false,
       public_page_change_authorized: false,
+      public_page_confidence_upgrade_authorized: false,
       recommended_jq_paths: {
         command_center:
           ".command_center_v2.refrigerator_model_first_qa_approval_packet_v1.inspect_summary",

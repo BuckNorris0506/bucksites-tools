@@ -11,6 +11,10 @@ import {
   filterRealBuyRetailerLinks,
   isDirectBuyableSafeCtaRow,
 } from "@/lib/retailers/launch-buy-links";
+import {
+  legacyFilterSlugsMatchOfficialTokenV1,
+  normalizeRefrigeratorFilterTokenV1,
+} from "./refrigerator-model-first-samsung-marketing-token-cross-reference-v1";
 
 export const REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_CONTRACT_V1 =
   "refrigerator_model_first_batch_resolver_v1" as const;
@@ -149,9 +153,20 @@ export function resolveRefrigeratorModelFirstSteeringOverrideV1(args: {
   if (models_checked_count === 0) return null;
   if (mappingReview === 0 && unknown === 0) return null;
 
+  const mappingReviewClause =
+    unknown === 0
+      ? `Resolve ${String(mappingReview)} remaining mapping-review model${mappingReview === 1 ? "" : "s"} via Samsung HAF-QIN/HAF-CIN marketing-token to DA97/DA29 part-number cross-reference review`
+      : `Resolve ${String(mappingReview)} mapping-review model${mappingReview === 1 ? "" : "s"}`;
+  const unknownClause =
+    mappingReview === 0
+      ? `continue official evidence capture for ${String(unknown)} unknown refrigerator model${unknown === 1 ? "" : "s"}`
+      : unknown > 0
+        ? `and continue official evidence capture for ${String(unknown)} unknown refrigerator model${unknown === 1 ? "" : "s"}`
+        : "";
+
   return {
     next_best_action:
-      `REFRIGERATOR MODEL-FIRST [READY]: Resolve ${String(mappingReview)} mapping-review model${mappingReview === 1 ? "" : "s"} and continue official evidence capture for ${String(unknown)} unknown refrigerator model${unknown === 1 ? "" : "s"} before any CSV or buy-link changes.`,
+      `REFRIGERATOR MODEL-FIRST [READY]: ${mappingReviewClause}${unknownClause ? ` ${unknownClause}` : ""} before any CSV or buy-link changes.`,
     why_this_action:
       `BuckParts product-addition contract requires refrigerator model → official water filter → group by official filter → safe buy path. Committed batch resolver checked ${String(models_checked_count)} high-risk refrigerator models (${String(mappingReview)} MAPPING_REVIEW_REQUIRED, ${String(unknown)} UNKNOWN) — prioritize fridge official-manufacturer evidence over AP filter-first steering until mapping review is cleared. Source: ${args.resolver.source_contract}.`,
     next_move_command: REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_COMMAND_V1,
@@ -219,7 +234,7 @@ function readCsv<T extends Record<string, string>>(rootDir: string, relPath: str
 }
 
 function normalizeToken(value: string): string {
-  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return normalizeRefrigeratorFilterTokenV1(value);
 }
 
 function isPrimary(v: string | undefined): boolean {
@@ -327,20 +342,12 @@ function loadDiscrepancyEntries(rootDir: string): Map<string, DiscrepancyEntryV1
 }
 
 function legacySlugsMatchOfficial(args: {
+  brandSlug: string;
   officialToken: string;
   legacyFilterSlugs: string[];
   filterOemBySlug: Map<string, string>;
 }): boolean {
-  const officialNorm = normalizeToken(args.officialToken);
-  if (args.legacyFilterSlugs.length === 0) return false;
-
-  const matchingSlugs = args.legacyFilterSlugs.filter((slug) => {
-    const oem = args.filterOemBySlug.get(slug) ?? slug;
-    const oemNorm = normalizeToken(oem);
-    return oemNorm === officialNorm || oemNorm.startsWith(officialNorm) || officialNorm.startsWith(oemNorm);
-  });
-
-  return matchingSlugs.length === args.legacyFilterSlugs.length && matchingSlugs.length > 0;
+  return legacyFilterSlugsMatchOfficialTokenV1(args);
 }
 
 function resolveSafeBuyPathExists(args: {
@@ -401,6 +408,7 @@ function resolveModelRow(args: {
   const legacySlugs = args.legacyFromCsv.length > 0 ? args.legacyFromCsv : (args.input.legacy_csv_filter_slugs ?? []);
   const legacyOems = legacySlugs.map((slug) => args.filterOemBySlug.get(slug) ?? slug);
 
+  const brandSlug = args.input.brand_slug.trim().toLowerCase();
   let officialProof =
     args.manualEvidence ? officialProofFromManualEvidence(args.manualEvidence) : null;
   if (!officialProof && args.discrepancy) {
@@ -421,6 +429,7 @@ function resolveModelRow(args: {
 
   if (officialProof) {
     const matches = legacySlugsMatchOfficial({
+      brandSlug,
       officialToken: officialProof.official_filter_token,
       legacyFilterSlugs: legacySlugs,
       filterOemBySlug: args.filterOemBySlug,
@@ -428,7 +437,11 @@ function resolveModelRow(args: {
     if (matches) {
       confidence = "PROVEN";
       plainAction =
-        "Official manufacturer proof matches legacy CSV mapping for the documented filter token — buy-path proof remains separate; no CSV mutation authorized.";
+        brandSlug === "samsung" &&
+        (normalizeToken(officialProof.official_filter_token) === "HAFQIN" ||
+          normalizeToken(officialProof.official_filter_token) === "HAFCIN")
+          ? `Official Samsung ${officialProof.official_filter_token} marketing token matches committed DA97/DA29 part-number-family cross-reference for legacy CSV slugs — buy-path proof remains separate; no CSV mutation authorized.`
+          : "Official manufacturer proof matches legacy CSV mapping for the documented filter token — buy-path proof remains separate; no CSV mutation authorized.";
     } else {
       confidence = "MAPPING_REVIEW_REQUIRED";
       plainAction =
@@ -436,7 +449,6 @@ function resolveModelRow(args: {
     }
   }
 
-  const brandSlug = args.input.brand_slug.trim().toLowerCase();
   const officialTokenOrName = officialProof?.official_filter_token ?? null;
   const groupedFamily =
     officialTokenOrName != null ? `${brandSlug}::${normalizeToken(officialTokenOrName)}` : null;
@@ -612,15 +624,19 @@ export function buildRefrigeratorModelFirstBatchResolverV1(args: {
     buy_link_mutation_authorized: false,
     public_page_change_authorized: false,
     recommended_next_action:
-      confidenceCounts.MAPPING_REVIEW_REQUIRED > 0
-        ? "Resolve MAPPING_REVIEW_REQUIRED models from official manufacturer proof before any CSV compat changes; continue read-only evidence capture for UNKNOWN models."
-        : "Continue read-only official manufacturer evidence capture for UNKNOWN models; no CSV or buy-path mutation authorized.",
+      confidenceCounts.MAPPING_REVIEW_REQUIRED > 0 && confidenceCounts.UNKNOWN === 0
+        ? "Resolve remaining MAPPING_REVIEW_REQUIRED models via Samsung HAF-QIN/HAF-CIN marketing-token to DA97/DA29 part-number cross-reference review before any CSV compat changes."
+        : confidenceCounts.MAPPING_REVIEW_REQUIRED > 0
+          ? "Resolve MAPPING_REVIEW_REQUIRED models from official manufacturer proof before any CSV compat changes; continue read-only evidence capture for UNKNOWN models."
+          : confidenceCounts.UNKNOWN > 0
+            ? "Continue read-only official manufacturer evidence capture for UNKNOWN models; no CSV or buy-path mutation authorized."
+            : "Batch v1 fit mapping PROVEN for all manifest models — buy-path proof remains separate; no CSV or buy-link mutation authorized.",
   };
 
   const proven_facts = [
     `PROVEN: manifest_contract=${REFRIGERATOR_MODEL_FIRST_INPUT_MANIFEST_CONTRACT_V1}.`,
     `PROVEN: models_checked_count=${String(modelRows.length)} from ${args.manifestRelPath}.`,
-    "PROVEN: CSV mappings loaded as hypothesis only — PROVEN confidence requires committed manual evidence or discrepancy-doc official token plus matching legacy OEM tokens.",
+    "PROVEN: CSV mappings loaded as hypothesis only — PROVEN confidence requires committed manual evidence or discrepancy-doc official token plus matching legacy OEM tokens (Samsung HAF-QIN/HAF-CIN use evidence-backed DA97/DA29 family cross-reference).",
     "PROVEN: csv_apply_authorized=false; supabase_update_authorized=false; buy_link_mutation_authorized=false; public_page_change_authorized=false.",
     `PROVEN: manual_evidence_fixtures_loaded=${String(manualEvidenceBySlug.size)} from ${REFRIGERATOR_MODEL_FIRST_MANUAL_EVIDENCE_DIR_REL_V1}.`,
     `PROVEN: discrepancy_doc_entries_loaded=${String(discrepancyBySlug.size)} from ${REFRIGERATOR_MODEL_FIRST_DISCREPANCY_DOC_REL_V1}.`,

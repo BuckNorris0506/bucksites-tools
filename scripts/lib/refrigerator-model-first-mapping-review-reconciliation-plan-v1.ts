@@ -86,21 +86,15 @@ export type RefrigeratorModelFirstMappingReviewReconciliationPlanV1 = {
   unknown_facts: string[];
 };
 
+import {
+  canonicalSamsungRefrigeratorFilterSlugV1,
+  legacyFilterSlugsMatchOfficialTokenV1,
+  normalizeRefrigeratorFilterTokenV1,
+} from "./refrigerator-model-first-samsung-marketing-token-cross-reference-v1";
+
 type FilterRow = { slug: string; oem_part_number?: string };
 
 const FILTERS_CSV_REL_V1 = "data/filters.csv" as const;
-
-/** Samsung marketing tokens map to part-number slug families in data/filters.csv. */
-const OFFICIAL_TOKEN_FAMILY_FILTER_SLUGS_V1: Readonly<Record<string, readonly string[]>> = {
-  HAFQIN: ["da97-17376a", "da97-17376b"],
-  HAFCIN: ["da29-00020a", "da29-00020b"],
-};
-
-/** Preferred canonical slug when official token is a marketing alias (e.g. HAF-QIN → da97-17376b). */
-const OFFICIAL_TOKEN_CANONICAL_FILTER_SLUG_V1: Readonly<Record<string, string>> = {
-  HAFQIN: "da97-17376b",
-  HAFCIN: "da29-00020b",
-};
 
 export type MappingReviewReconciliationPlanFamilyGroupV1 = {
   group_key: string;
@@ -124,25 +118,21 @@ function readFiltersCsv(rootDir: string): Map<string, string> {
 }
 
 function normalizeToken(value: string): string {
-  return value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return normalizeRefrigeratorFilterTokenV1(value);
 }
 
 function slugOemMatchesOfficial(args: {
+  brandSlug: string;
   filterSlug: string;
   officialToken: string;
   filterOemBySlug: Map<string, string>;
 }): boolean {
-  const officialNorm = normalizeToken(args.officialToken);
-  const familySlugs = OFFICIAL_TOKEN_FAMILY_FILTER_SLUGS_V1[officialNorm];
-  if (familySlugs?.includes(args.filterSlug)) return true;
-
-  const oem = args.filterOemBySlug.get(args.filterSlug) ?? args.filterSlug;
-  const oemNorm = normalizeToken(oem);
-  return (
-    oemNorm === officialNorm ||
-    oemNorm.startsWith(officialNorm) ||
-    officialNorm.startsWith(oemNorm)
-  );
+  return legacyFilterSlugsMatchOfficialTokenV1({
+    brandSlug: args.brandSlug,
+    officialToken: args.officialToken,
+    legacyFilterSlugs: [args.filterSlug],
+    filterOemBySlug: args.filterOemBySlug,
+  });
 }
 
 function compatRowKey(fridgeSlug: string, filterSlug: string): string {
@@ -153,10 +143,10 @@ function canonicalOfficialFilterSlug(args: {
   officialToken: string;
   filterOemBySlug: Map<string, string>;
 }): string | null {
-  const officialNorm = normalizeToken(args.officialToken);
-  const preset = OFFICIAL_TOKEN_CANONICAL_FILTER_SLUG_V1[officialNorm];
-  if (preset && args.filterOemBySlug.has(preset)) return preset;
+  const samsungCanonical = canonicalSamsungRefrigeratorFilterSlugV1(args);
+  if (samsungCanonical) return samsungCanonical;
 
+  const officialNorm = normalizeToken(args.officialToken);
   for (const [slug, oem] of args.filterOemBySlug.entries()) {
     if (normalizeToken(oem) === officialNorm) return slug;
   }
@@ -173,6 +163,7 @@ function buildPlanRow(args: {
   }
 
   const fridgeSlug = args.modelRow.fridge_slug.trim().toLowerCase();
+  const brandSlug = fridgeSlug.split("-")[0] ?? "unknown";
   const legacySlugs = args.modelRow.current_legacy_buckparts_filter_slugs;
 
   const legacy_mappings_look_correct: MappingReviewLegacySlugAssessmentV1[] = [];
@@ -185,7 +176,7 @@ function buildPlanRow(args: {
       oem_part_number: oem,
       reason: "",
     };
-    if (slugOemMatchesOfficial({ filterSlug, officialToken, filterOemBySlug: args.filterOemBySlug })) {
+    if (slugOemMatchesOfficial({ brandSlug, filterSlug, officialToken, filterOemBySlug: args.filterOemBySlug })) {
       assessment.reason = `OEM token ${oem} matches official ${officialToken} family in data/filters.csv`;
       legacy_mappings_look_correct.push(assessment);
     } else {

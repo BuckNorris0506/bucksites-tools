@@ -13,6 +13,11 @@ import {
   type MappingReviewReconciliationPlanRowV1,
   type RefrigeratorModelFirstMappingReviewReconciliationPlanV1,
 } from "./refrigerator-model-first-mapping-review-reconciliation-plan-v1";
+import { buildRefrigeratorModelFirstBatchResolverV1 } from "./refrigerator-model-first-batch-resolver-v1";
+import {
+  detectRefrigeratorModelFirstQaBatchPostApplyV1,
+  formatRefrigeratorModelFirstQaBatchPostApplyApplyPlanActionV1,
+} from "./refrigerator-model-first-qa-batch-post-apply-v1";
 
 export const REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_COMPAT_APPLY_PLAN_CONTRACT_V1 =
   "refrigerator_model_first_mapping_review_compat_apply_plan_v1" as const;
@@ -53,6 +58,15 @@ export type MappingReviewCompatApplyPlanInspectSummaryV1 = {
   buy_link_mutation_authorized: false;
   public_page_change_authorized: false;
   recommended_next_action: string;
+  batch_qa_cleanup_status?: "pending_pre_apply" | "applied_batch_complete";
+  batch_qa_cleanup_applied?: true;
+  removals_applied?: number;
+  additions_applied?: number;
+  keeps_verified?: number;
+  proven_model_count?: number;
+  remaining_mapping_review_count?: number;
+  samsung_marketing_token_cross_reference_resolved?: true;
+  public_page_confidence_upgrade_authorized: false;
 };
 
 export type RefrigeratorModelFirstMappingReviewCompatApplyPlanV1 = {
@@ -171,6 +185,13 @@ export function buildRefrigeratorModelFirstMappingReviewCompatApplyPlanV1(args: 
   const planned_compat_csv_row_additions = rows.flatMap((row) => row.planned_additions);
   const total_planned_keeps = rows.reduce((sum, row) => sum + row.planned_keeps.length, 0);
 
+  const resolver = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: args.rootDir,
+    manifestRelPath: args.manifestRelPath,
+    now: args.now,
+  });
+  const postApplyState = detectRefrigeratorModelFirstQaBatchPostApplyV1({ resolver });
+
   const inspect_summary: MappingReviewCompatApplyPlanInspectSummaryV1 = {
     recommended_jq_paths: { standalone_report: ".inspect_summary" },
     mapping_review_model_count: rows.length,
@@ -184,8 +205,25 @@ export function buildRefrigeratorModelFirstMappingReviewCompatApplyPlanV1(args: 
     supabase_update_authorized: false,
     buy_link_mutation_authorized: false,
     public_page_change_authorized: false,
-    recommended_next_action:
-      "BLOCKED: Founder approval required before any compatibility_mappings.csv apply. This artifact lists exact future row removals/additions only — nothing has been applied.",
+    public_page_confidence_upgrade_authorized: false,
+    recommended_next_action: postApplyState
+      ? formatRefrigeratorModelFirstQaBatchPostApplyApplyPlanActionV1(postApplyState)
+      : "BLOCKED: Founder approval required before any compatibility_mappings.csv apply. This artifact lists exact future row removals/additions only — nothing has been applied.",
+    ...(postApplyState
+      ? {
+          batch_qa_cleanup_status: "applied_batch_complete" as const,
+          batch_qa_cleanup_applied: true as const,
+          removals_applied: postApplyState.removals_applied,
+          additions_applied: postApplyState.additions_applied,
+          keeps_verified: postApplyState.keeps_verified,
+          proven_model_count: postApplyState.proven_model_count,
+          remaining_mapping_review_count: postApplyState.remaining_mapping_review_count,
+          samsung_marketing_token_cross_reference_resolved:
+            postApplyState.samsung_marketing_token_cross_reference_resolved,
+        }
+      : {
+          batch_qa_cleanup_status: "pending_pre_apply" as const,
+        }),
   };
 
   const proven_facts = [

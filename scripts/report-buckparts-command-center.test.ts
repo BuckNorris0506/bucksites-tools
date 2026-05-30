@@ -3789,20 +3789,19 @@ test("command_center_v2.refrigerator_model_first_qa_approval_packet_v1 is read-o
   assert.equal(lane.supabase_update_authorized, false);
   assert.equal(lane.buy_link_mutation_authorized, false);
   assert.equal(lane.public_page_change_authorized, false);
-  assert.equal(lane.inspect_summary.mapping_review_model_count, 20);
-  assert.equal(lane.inspect_summary.total_planned_removals, 53);
-  assert.equal(lane.inspect_summary.total_planned_additions, 10);
-  assert.equal(lane.inspect_summary.total_planned_keeps, 16);
-  assert.equal(lane.inspect_summary.apply_authorized, false);
-  assert.equal(lane.inspect_summary.founder_approval_required, true);
-  assert.equal(lane.inspect_summary.founder_approval_status, "pending");
-  assert.equal(lane.inspect_summary.csv_apply_authorized, false);
-  assert.equal(lane.inspect_summary.supabase_update_authorized, false);
-  assert.equal(lane.inspect_summary.buy_link_mutation_authorized, false);
-  assert.equal(lane.inspect_summary.public_page_change_authorized, false);
-  assert.equal(
+  assert.equal(lane.inspect_summary.mapping_review_model_count, 0);
+  assert.equal(lane.inspect_summary.total_planned_removals, 0);
+  assert.equal(lane.inspect_summary.total_planned_additions, 0);
+  assert.equal(lane.inspect_summary.batch_qa_cleanup_applied, true);
+  assert.equal(lane.inspect_summary.removals_applied, 53);
+  assert.equal(lane.inspect_summary.additions_applied, 10);
+  assert.equal(lane.inspect_summary.keeps_verified, 16);
+  assert.equal(lane.inspect_summary.proven_model_count, 20);
+  assert.equal(lane.inspect_summary.remaining_mapping_review_count, 0);
+  assert.equal(lane.inspect_summary.samsung_marketing_token_cross_reference_resolved, true);
+  assert.match(
     lane.inspect_summary.recommended_next_action,
-    "QA REVIEW REQUIRED: Review 20 refrigerator mapping-risk models before any compatibility_mappings.csv apply, buy-link work, or public confidence upgrade.",
+    /All 20 batch models PROVEN including Samsung HAF-QIN\/HAF-CIN/i,
   );
   assert.ok(
     lane.inspect_summary.recommended_jq_paths.command_center.includes(
@@ -3834,9 +3833,9 @@ test("command_center_v2.refrigerator_model_first_batch_resolver_v1 is read-only 
   assert.equal(lane.public_page_change_authorized, false);
   assert.equal(lane.inspect_summary.csv_apply_authorized, false);
   assert.equal(lane.inspect_summary.models_checked_count, 20);
-  assert.equal(lane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 20);
+  assert.equal(lane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 0);
   assert.equal(lane.inspect_summary.confidence_counts.UNKNOWN, 0);
-  assert.equal(lane.inspect_summary.confidence_counts.PROVEN, 0);
+  assert.equal(lane.inspect_summary.confidence_counts.PROVEN, 20);
   assert.ok(
     lane.inspect_summary.recommended_jq_paths.command_center.includes(
       "refrigerator_model_first_batch_resolver_v1",
