@@ -9,7 +9,11 @@ import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
 import { PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER } from "@/lib/catalog/public-category-hub";
-import { PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1 } from "@/lib/copy/customer-language-doctrine";
+import {
+  PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1,
+  PUBLIC_BANNED_BACKEND_JARGON_V1,
+  PUBLIC_TRUST_PAGE_REL_PATHS_V1,
+} from "@/lib/copy/customer-language-doctrine";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
@@ -281,11 +285,34 @@ describe("public merchant-priority copy guard", () => {
   });
 
   it("grant trust pages use homeowner language without internal acronyms", () => {
-    const paths = ["src/app/truth-policy/page.tsx", "src/app/wrong-part-prevention/page.tsx"];
+    const paths = [...PUBLIC_TRUST_PAGE_REL_PATHS_V1];
     const banned = /\b(OEM|SKU|CTA|PDP|SERP|direct_buyable|browser_truth|buy-gate|dispatch-run)\b/;
     for (const p of paths) {
       const src = readFileSync(rooted(p), "utf8");
       assert.ok(!banned.test(src), `${p}: internal jargon in public trust page`);
+      const lower = src.toLowerCase();
+      for (const phrase of PUBLIC_BANNED_BACKEND_JARGON_V1) {
+        assert.ok(
+          !lower.includes(phrase.toLowerCase()),
+          `${p}: banned backend jargon "${phrase}"`,
+        );
+      }
+      for (const phrase of PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1) {
+        assert.ok(
+          !lower.includes(phrase.toLowerCase()),
+          `${p}: banned backend homeowner phrase "${phrase}"`,
+        );
+      }
     }
+  });
+
+  it("wrong-part-prevention page uses homeowner prevention copy", () => {
+    const src = readFileSync(rooted("src/app/wrong-part-prevention/page.tsx"), "utf8");
+    assert.match(src, /Replacement filter shopping is confusing/i);
+    assert.match(src, /compare the filter code on your old filter or fridge label/i);
+    assert.match(src, /will not point you at a questionable part/i);
+    assert.match(src, /does not guarantee that every filter/i);
+    assert.match(src, /not a substitute for reading your old part/i);
+    assert.match(src, /one layer of help/i);
   });
 });

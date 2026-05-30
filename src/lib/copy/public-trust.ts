@@ -24,7 +24,7 @@ export const TRUTH_POLICY_PAGE_META_DESCRIPTION =
 
 /** Wrong-part prevention page meta — homeowner-facing prevention guide. */
 export const WRONG_PART_PREVENTION_PAGE_META_DESCRIPTION =
-  "Why replacement filter shopping is confusing, common wrong-part traps, and how BuckParts withholds unsafe buy paths.";
+  "Why replacement filter shopping is confusing, common wrong-part traps, and how BuckParts helps you compare your old filter before you buy.";
 
 /** Compare-before-buy checklist — reuse on panels or future standalone blocks. */
 export const COMPARE_BEFORE_BUY_CHECKLIST_LINES = [

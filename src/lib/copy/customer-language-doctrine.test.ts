@@ -12,6 +12,8 @@ import {
   NO_OEM_COLD_RULE_V1,
   OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
   PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1,
+  PUBLIC_BANNED_BACKEND_JARGON_V1,
+  PUBLIC_TRUST_PAGE_REL_PATHS_V1,
   UNIVERSAL_PAGE_TRUST_CONTRACT_REL_PATH,
   WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
 } from "@/lib/copy/customer-language-doctrine";
@@ -56,6 +58,32 @@ describe("customer language doctrine", () => {
       assert.match(md, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
     }
     assert.match(md, /probably fits \/ mostly true \/ good enough/i);
+  });
+
+  it("public trust pages avoid backend jargon (FULL truth / homeowner language)", () => {
+    for (const rel of PUBLIC_TRUST_PAGE_REL_PATHS_V1) {
+      const src = readFileSync(path.join(REPO_ROOT, rel), "utf8").toLowerCase();
+      for (const phrase of PUBLIC_BANNED_BACKEND_JARGON_V1) {
+        assert.ok(
+          !src.includes(phrase.toLowerCase()),
+          `${rel}: banned backend jargon "${phrase}"`,
+        );
+      }
+      for (const phrase of PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1) {
+        assert.ok(
+          !src.includes(phrase.toLowerCase()),
+          `${rel}: banned backend homeowner phrase "${phrase}"`,
+        );
+      }
+    }
+    const prevention = readFileSync(
+      path.join(REPO_ROOT, "src/app/wrong-part-prevention/page.tsx"),
+      "utf8",
+    );
+    assert.match(prevention, /compare the filter code on your old filter or fridge label/i);
+    assert.match(prevention, /treasure hunt/i);
+    assert.match(prevention, /does not guarantee that every filter/i);
+    assert.match(prevention, /not a substitute for reading your old part/i);
   });
 
   it("Waterdrop research draft exists and is marked not published", () => {

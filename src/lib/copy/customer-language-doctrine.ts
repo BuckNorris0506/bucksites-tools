@@ -5,7 +5,7 @@
  */
 
 /** Bump when doctrine or scan list changes meaningfully. */
-export const CUSTOMER_LANGUAGE_DOCTRINE_VERSION = 2;
+export const CUSTOMER_LANGUAGE_DOCTRINE_VERSION = 3;
 
 export const CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH =
   "docs/BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md" as const;
@@ -48,6 +48,31 @@ export const PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1 = [
   "Buy links are separate from fit proof",
   "No buy button until the evidence is clean",
   "Compatible filter confidence: proven / needs review / not safe yet",
+] as const;
+
+/**
+ * Backend/system jargon that must not appear in public page source (case-insensitive).
+ * Scanned on trust pages and key public copy entrypoints.
+ */
+export const PUBLIC_BANNED_BACKEND_JARGON_V1 = [
+  "structured data",
+  "repository",
+  "buying options hidden",
+  "unsafe buy path",
+  "No buy button yet",
+  "affiliate partnerships",
+  "listing evidence",
+  "search page",
+  "buy path",
+  "proof packet",
+  "confidence state",
+  "compat row",
+] as const;
+
+/** Public trust routes scanned for backend jargon (homeowner copy). */
+export const PUBLIC_TRUST_PAGE_REL_PATHS_V1 = [
+  "src/app/truth-policy/page.tsx",
+  "src/app/wrong-part-prevention/page.tsx",
 ] as const;
 
 export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED" | "LIVE";
