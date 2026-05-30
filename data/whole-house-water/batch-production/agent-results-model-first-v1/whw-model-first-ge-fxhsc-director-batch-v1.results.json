@@ -1,0 +1,51 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-ge-fxhsc-director-batch-v1",
+  "run_id": "whw-model-first-ge-fxhsc-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "ge",
+  "anchor_model_slug": "ge-whole-house-gxwh20s",
+  "anchor_filter_slug": "ge-fxhsc",
+  "filter_slug": "ge-fxhsc",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.585Z",
+  "checked_at": "2026-05-29T23:35:50.585Z",
+  "source_status": "UNKNOWN",
+  "model_rows": [
+    {
+      "model_slug": "ge-whole-house-gxwh20s",
+      "model_number": "FXHSC",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "FXHSC"
+      ],
+      "evidence_status": "BLOCKED",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "BLOCKED: committed compatibility_mappings.csv has 4 row(s) for ge-fxhsc but none with is_recommended=true — mapping chain ambiguous."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 0,
+    "BLOCKED": 1
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for ge-fxhsc; evidence_status=BLOCKED.",
+    "PROVEN: next_recommended_lane=mapping_review.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: No recommended housing→filter mapping in committed CSV; compat-only rows cannot prove official OEM fit."
+  ],
+  "unknown_facts": []
+}

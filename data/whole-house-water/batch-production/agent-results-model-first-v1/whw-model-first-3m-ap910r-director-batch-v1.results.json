@@ -1,0 +1,57 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-3m-ap910r-director-batch-v1",
+  "run_id": "whw-model-first-3m-ap910r-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "3m",
+  "anchor_model_slug": "3m-aquapure-ap903",
+  "anchor_filter_slug": "3m-ap910r",
+  "filter_slug": "3m-ap910r",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.584Z",
+  "checked_at": "2026-05-29T23:35:50.584Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "3m-aquapure-ap903",
+      "model_number": "AP910R",
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "manual_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "documented_filter_tokens": [
+        "AP910R"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping 3m-aquapure-ap903 → 3m-ap910r is_recommended=true; filters.csv documents AP910R for AP903/AP904-class systems. UNKNOWN: AP900-series official comparison-chart row for AP910R not verified in bounded repo read — not grinding AP903 manual hunt in this batch."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for 3m-ap910r; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Repo recommended mapping exists but official stamped-head documentation not captured in bounded batch."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for 3m-ap910r in this bounded batch."
+  ]
+}

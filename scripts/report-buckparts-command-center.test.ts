@@ -3852,6 +3852,27 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
+test("command_center_v2.whole_house_water_director_model_first_batch_v1 is read-only director model-first batch", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.whole_house_water_director_model_first_batch_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "whole_house_water_director_model_first_batch_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.batch_size, 10);
+  assert.equal(lane.source_batch_head_filter_slug, "3m-ap910r");
+  assert.equal(lane.evidence_status_counts.PASS, 0);
+  assert.equal(lane.whw_public_opening_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.ok(lane.filters_checked.length === 10);
+  assert.ok(lane.proven_facts.some((f) => f.includes("does not authorize") || f.includes("csv_apply_authorized=false")));
+});
+
 test("command_center_v2.sitemap_indexability_audit_v1 is read-only sitemap inventory audit", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

@@ -214,6 +214,7 @@ export function buildCommandCenterV2Report(input: {
   | "air_purifier_truth_spine_v1"
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
+  | "whole_house_water_director_model_first_batch_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
   | "marketing_intelligence_engine_v1"

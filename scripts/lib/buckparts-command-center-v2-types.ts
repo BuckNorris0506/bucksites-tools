@@ -20,6 +20,7 @@ import type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
 import type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
 import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
+import type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
@@ -911,6 +912,8 @@ export type CommandCenterV2Report = {
   sitemap_indexability_audit_v1: BuckpartsSitemapIndexabilityAuditV1;
   /** Read-only WHW multi-filter batch production director — not CSV apply or public opening authority. */
   whole_house_water_batch_production_director_v1: WholeHouseWaterBatchProductionDirectorV1;
+  /** Read-only WHW director MODEL_FIRST_READY batch evidence — not CSV apply authority. */
+  whole_house_water_director_model_first_batch_v1: WholeHouseWaterDirectorModelFirstBatchV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
   wedge_truth_spine_coverage_matrix_v1: WedgeTruthSpineCoverageMatrixV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
@@ -971,6 +974,7 @@ export type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-in
 export type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
 export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 export type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
+export type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 export type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
@@ -990,6 +994,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "air_purifier_truth_spine_v1"
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
+  | "whole_house_water_director_model_first_batch_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"

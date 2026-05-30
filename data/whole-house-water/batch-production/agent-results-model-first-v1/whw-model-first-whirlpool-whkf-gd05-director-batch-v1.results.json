@@ -1,0 +1,53 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-whirlpool-whkf-gd05-director-batch-v1",
+  "run_id": "whw-model-first-whirlpool-whkf-gd05-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "whirlpool",
+  "anchor_model_slug": "whirlpool-whkf-dwhbb",
+  "anchor_filter_slug": "whirlpool-whkf-gd05",
+  "filter_slug": "whirlpool-whkf-gd05",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.585Z",
+  "checked_at": "2026-05-29T23:35:50.585Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "whirlpool-whkf-dwhbb",
+      "model_number": "WHKF-GD05",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "WHKF-GD05"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping whirlpool-whkf-dwhbb → whirlpool-whkf-gd05 is_recommended=true; models.csv notes WHKF-GD05 + WHKF-WHPL on dual Big Blue installs. UNKNOWN: No official Whirlpool manual URL in repo; primary committed link is search placeholder."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for whirlpool-whkf-gd05; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Recommended mapping without official manual URL captured — search primary cannot prove fit."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for whirlpool-whkf-gd05 in this bounded batch."
+  ]
+}

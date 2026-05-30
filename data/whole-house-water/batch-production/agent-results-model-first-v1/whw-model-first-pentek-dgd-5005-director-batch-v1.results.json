@@ -1,0 +1,53 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-pentek-dgd-5005-director-batch-v1",
+  "run_id": "whw-model-first-pentek-dgd-5005-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "pentek",
+  "anchor_model_slug": "pentair-big-blue-housing-bb10",
+  "anchor_filter_slug": "pentek-dgd-5005",
+  "filter_slug": "pentek-dgd-5005",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.585Z",
+  "checked_at": "2026-05-29T23:35:50.585Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "pentair-big-blue-housing-bb10",
+      "model_number": "DGD-5005",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "DGD-5005"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping pentair-big-blue-housing-bb10 → pentek-dgd-5005 is_recommended=true; filters.csv documents BB10 fit. UNKNOWN: No official Pentair/Pentek product manual URL in repo; primary is Pentair site search placeholder — cannot PASS from row count alone."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for pentek-dgd-5005; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: No search-placeholder primary in committed CSV for this filter.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Standard BB10 cross-compat mapping exists but official OEM documentation not captured."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for pentek-dgd-5005 in this bounded batch."
+  ]
+}

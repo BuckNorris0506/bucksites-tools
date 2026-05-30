@@ -1,0 +1,264 @@
+{
+  "contract": "whole_house_water_director_model_first_batch_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "director_model_first_batch_v1",
+  "packet_id": "whw-director-model-first-batch-v1",
+  "source_director_contract": "whole_house_water_batch_production_director_v1",
+  "source_batch_head_filter_slug": "3m-ap910r",
+  "source_batch_head_packet_kind": "model_first_evidence",
+  "batch_size": 10,
+  "filters_checked": [
+    {
+      "batch_rank": 1,
+      "filter_slug": "3m-ap910r",
+      "brand_slug": "3m",
+      "oem_part_number": "AP910R",
+      "anchor_model_or_system_slug": "3m-aquapure-ap903",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping 3m-aquapure-ap903 → 3m-ap910r is_recommended=true; filters.csv documents AP910R for AP903/AP904-class systems. UNKNOWN: AP900-series official comparison-chart row for AP910R not verified in bounded repo read — not grinding AP903 manual hunt in this batch.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP910R",
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "status_reason": "Repo recommended mapping exists but official stamped-head documentation not captured in bounded batch.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-3m-ap910r-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 2,
+      "filter_slug": "3m-ap917hd-s",
+      "brand_slug": "3m",
+      "oem_part_number": "AP917HD-S",
+      "anchor_model_or_system_slug": "3m-aquapure-ap903",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping 3m-aquapure-ap903 → 3m-ap917hd-s is_recommended=true; filters.csv notes AP917HD-S for AP900-series sediment. UNKNOWN: Official stamped-head compatibility not verified in bounded batch.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.3m.com/3M/en_US/water-filtration-us/search/?Ntt=AP917HD-S",
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "status_reason": "Same AP903 anchor as AP910R; bounded repo read lacks official AP917HD-S fit proof.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-3m-ap917hd-s-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 3,
+      "filter_slug": "whirlpool-whkf-gd05",
+      "brand_slug": "whirlpool",
+      "oem_part_number": "WHKF-GD05",
+      "anchor_model_or_system_slug": "whirlpool-whkf-dwhbb",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping whirlpool-whkf-dwhbb → whirlpool-whkf-gd05 is_recommended=true; models.csv notes WHKF-GD05 + WHKF-WHPL on dual Big Blue installs. UNKNOWN: No official Whirlpool manual URL in repo; primary committed link is search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=WHKF-GD05"
+      ],
+      "status_reason": "Recommended mapping without official manual URL captured — search primary cannot prove fit.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-whirlpool-whkf-gd05-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 4,
+      "filter_slug": "ge-fxwpc",
+      "brand_slug": "ge",
+      "oem_part_number": "FXWPC",
+      "anchor_model_or_system_slug": "ge-whole-house-gxwh20s",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mappings ge-whole-house-gxwh20s/gxwh30c/gxwh35f/gxwh40f → ge-fxwpc are is_recommended=true. UNKNOWN: No official GE whole-house manual URL in repo; primary committed link is geapplianceparts search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=FXWPC"
+      ],
+      "status_reason": "Multiple recommended GE housing mappings but no official generation-sticker proof in bounded batch.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 4,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-ge-fxwpc-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 5,
+      "filter_slug": "springwell-cf1-sediment",
+      "brand_slug": "springwell",
+      "oem_part_number": "SW-CF1-SED",
+      "anchor_model_or_system_slug": null,
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping springwell-cf1-system → springwell-cf1-sediment is_recommended=true. UNKNOWN: No official SpringWell manual URL in repo; primary committed link is site search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.springwellwater.com/search?q=SW-CF1-SED"
+      ],
+      "status_reason": "Recommended mapping without official manual capture in bounded batch.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-springwell-cf1-sediment-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 6,
+      "filter_slug": "culligan-cw5-bb",
+      "brand_slug": "culligan",
+      "oem_part_number": "CW5-BB",
+      "anchor_model_or_system_slug": "culligan-housing-wh-hd-950-c",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping culligan-housing-wh-hd-950-c → culligan-cw5-bb is_recommended=true. UNKNOWN: No official Culligan manual URL in repo; primary is search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.culligan.com/search?q=CW5-BB"
+      ],
+      "status_reason": "Recommended mapping without official manual in bounded repo read.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-culligan-cw5-bb-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 7,
+      "filter_slug": "watts-w50pehd",
+      "brand_slug": "watts",
+      "oem_part_number": "W50PEHD",
+      "anchor_model_or_system_slug": "watts-w50whd-housing",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping watts-w50whd-housing → watts-w50pehd is_recommended=true; models.csv notes W50PEHD for W50WHD-class housings. UNKNOWN: No official Watts manual URL in repo; primary is search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.watts.com/search?q=W50PEHD"
+      ],
+      "status_reason": "Recommended mapping without official manual in bounded repo read.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-watts-w50pehd-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 8,
+      "filter_slug": "pentek-dgd-5005",
+      "brand_slug": "pentek",
+      "oem_part_number": "DGD-5005",
+      "anchor_model_or_system_slug": "pentair-big-blue-housing-bb10",
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping pentair-big-blue-housing-bb10 → pentek-dgd-5005 is_recommended=true; filters.csv documents BB10 fit. UNKNOWN: No official Pentair/Pentek product manual URL in repo; primary is Pentair site search placeholder — cannot PASS from row count alone.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.pentair.com/en-us/water-solutions/search.html#q=DGD-5005"
+      ],
+      "status_reason": "Standard BB10 cross-compat mapping exists but official OEM documentation not captured.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": false,
+      "recommended_mapping_count": 5,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-pentek-dgd-5005-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 9,
+      "filter_slug": "pentek-p5-slim",
+      "brand_slug": "pentek",
+      "oem_part_number": "P5",
+      "anchor_model_or_system_slug": null,
+      "evidence_status": "UNKNOWN",
+      "evidence_notes": "PARTIAL: committed mapping pentek-slim-housing-158115 → pentek-p5-slim is_recommended=true. UNKNOWN: No official Pentair slim-housing manual URL in repo; primary is search placeholder.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "data/whole-house-water/filters.csv",
+        "committed_primary:https://www.pentair.com/en-us/water-solutions/search.html#q=P5"
+      ],
+      "status_reason": "Recommended slim-housing mapping without official manual in bounded batch.",
+      "next_recommended_lane": "skip_for_now",
+      "search_placeholder_primary": false,
+      "recommended_mapping_count": 1,
+      "compat_only_mapping": false,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-pentek-p5-slim-director-batch-v1.results.json"
+    },
+    {
+      "batch_rank": 10,
+      "filter_slug": "ge-fxhsc",
+      "brand_slug": "ge",
+      "oem_part_number": "FXHSC",
+      "anchor_model_or_system_slug": "ge-whole-house-gxwh20s",
+      "evidence_status": "BLOCKED",
+      "evidence_notes": "BLOCKED: committed compatibility_mappings.csv has 4 row(s) for ge-fxhsc but none with is_recommended=true — mapping chain ambiguous.",
+      "source_refs": [
+        "data/whole-house-water/compatibility_mappings.csv",
+        "committed_primary:https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=FXHSC"
+      ],
+      "status_reason": "No recommended housing→filter mapping in committed CSV; compat-only rows cannot prove official OEM fit.",
+      "next_recommended_lane": "mapping_review",
+      "search_placeholder_primary": true,
+      "recommended_mapping_count": 0,
+      "compat_only_mapping": true,
+      "per_filter_artifact_rel": "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-model-first-ge-fxhsc-director-batch-v1.results.json"
+    }
+  ],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 9,
+    "BLOCKED": 1
+  },
+  "buyer_path_proof_targets": [],
+  "parked_filter_slugs": [
+    "3m-ap910r",
+    "3m-ap917hd-s",
+    "whirlpool-whkf-gd05",
+    "ge-fxwpc",
+    "springwell-cf1-sediment",
+    "culligan-cw5-bb",
+    "watts-w50pehd",
+    "pentek-dgd-5005",
+    "pentek-p5-slim",
+    "ge-fxhsc"
+  ],
+  "csv_apply_authorized": false,
+  "supabase_update_authorized": false,
+  "whw_public_opening_authorized": false,
+  "generated_at": "2026-05-29T23:35:50.557Z",
+  "checked_at": "2026-05-29T23:35:50.557Z",
+  "do_not_open_public": true,
+  "proven_facts": [
+    "PROVEN: Batch pulled 10 active model_first_evidence item(s) from whole_house_water_batch_production_director_v1; head 3m-ap910r.",
+    "PROVEN: evidence_status_counts PASS=0 FAIL=0 UNKNOWN=9 BLOCKED=1.",
+    "PROVEN: csv_apply_authorized=false; supabase_update_authorized=false; whw_public_opening_authorized=false.",
+    "PROVEN: whole-house-water launch state remains NOINDEX_UNPROVEN.",
+    "PROVEN: 3m-ap910r committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: 3m-ap917hd-s committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: whirlpool-whkf-gd05 committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: ge-fxwpc committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: springwell-cf1-sediment committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: culligan-cw5-bb committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: watts-w50pehd committed primary is search placeholder — cannot count as model-first PASS.",
+    "PROVEN: ge-fxhsc committed primary is search placeholder — cannot count as model-first PASS."
+  ],
+  "inferred_facts": [
+    "INFERRED: Multi-filter batch spans 10 director MODEL_FIRST_READY slots — not AP910R-only grinding.",
+    "INFERRED: No model-first PASS rows in this batch — buyer_path_proof targets empty until official docs captured.",
+    "INFERRED: 10 filter(s) parked (3m-ap910r, 3m-ap917hd-s, whirlpool-whkf-gd05, ge-fxwpc, springwell-cf1-sediment, …) — director should advance without re-grind."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether follow-up bounded packets will PASS model proof for AP910R/AP917HD-S with full AP903 official docs.",
+    "UNKNOWN: Whether Whirlpool/GE/Pentair official manuals yield PASS without generation sticker ambiguity.",
+    "UNKNOWN: Whether any retailer PDP in this batch family will pass browser_truth direct_buyable without wrong-family drift."
+  ],
+  "director_batch_cycle_sealed": true
+}

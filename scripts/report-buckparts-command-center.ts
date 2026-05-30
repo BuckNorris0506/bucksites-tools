@@ -85,6 +85,10 @@ import {
   buildWholeHouseWaterBatchProductionDirectorV1,
 } from "./lib/whole-house-water-batch-production-director-v1";
 import {
+  buildWholeHouseWaterDirectorModelFirstBatchUnknownV1,
+  buildWholeHouseWaterDirectorModelFirstBatchV1,
+} from "./lib/whole-house-water-director-model-first-batch-v1";
+import {
   buildWedgeTruthSpineCoverageMatrixUnknownV1,
   buildWedgeTruthSpineCoverageMatrixV1,
 } from "./lib/wedge-truth-spine-coverage-matrix-v1";
@@ -987,6 +991,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "air_purifier_truth_spine_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
+    | "whole_house_water_director_model_first_batch_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
@@ -1111,6 +1116,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "air_purifier_truth_spine_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
+    | "whole_house_water_director_model_first_batch_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_core,
@@ -1216,6 +1222,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "air_purifier_truth_spine_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
+    | "whole_house_water_director_model_first_batch_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_before_daily,
@@ -1389,6 +1396,22 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let whole_house_water_director_model_first_batch_v1;
+  try {
+    whole_house_water_director_model_first_batch_v1 = buildWholeHouseWaterDirectorModelFirstBatchV1({
+      rootDir,
+      now,
+      director: whole_house_water_batch_production_director_v1,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    whole_house_water_director_model_first_batch_v1 =
+      buildWholeHouseWaterDirectorModelFirstBatchUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
   let wedge_truth_spine_coverage_matrix_v1;
   try {
     wedge_truth_spine_coverage_matrix_v1 = buildWedgeTruthSpineCoverageMatrixV1({
@@ -1428,6 +1451,7 @@ export async function buildBuckpartsCommandCenterReport(
     air_purifier_truth_spine_v1,
     sitemap_indexability_audit_v1,
     whole_house_water_batch_production_director_v1,
+    whole_house_water_director_model_first_batch_v1,
     wedge_truth_spine_coverage_matrix_v1,
   };
 

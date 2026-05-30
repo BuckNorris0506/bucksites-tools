@@ -1,0 +1,53 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-culligan-cw5-bb-director-batch-v1",
+  "run_id": "whw-model-first-culligan-cw5-bb-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "culligan",
+  "anchor_model_slug": "culligan-housing-wh-hd-950-c",
+  "anchor_filter_slug": "culligan-cw5-bb",
+  "filter_slug": "culligan-cw5-bb",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.585Z",
+  "checked_at": "2026-05-29T23:35:50.585Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "culligan-housing-wh-hd-950-c",
+      "model_number": "CW5-BB",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "CW5-BB"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping culligan-housing-wh-hd-950-c → culligan-cw5-bb is_recommended=true. UNKNOWN: No official Culligan manual URL in repo; primary is search placeholder."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for culligan-cw5-bb; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Recommended mapping without official manual in bounded repo read."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for culligan-cw5-bb in this bounded batch."
+  ]
+}

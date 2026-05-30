@@ -1,0 +1,57 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-3m-ap917hd-s-director-batch-v1",
+  "run_id": "whw-model-first-3m-ap917hd-s-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "3m",
+  "anchor_model_slug": "3m-aquapure-ap903",
+  "anchor_filter_slug": "3m-ap917hd-s",
+  "filter_slug": "3m-ap917hd-s",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.584Z",
+  "checked_at": "2026-05-29T23:35:50.584Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "3m-aquapure-ap903",
+      "model_number": "AP917HD-S",
+      "official_source_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "manual_urls": [
+        "https://multimedia.3m.com/mws/media/2337401O/residential-aqua-pure-home-water-filter-comparison-chart.pdf"
+      ],
+      "documented_filter_tokens": [
+        "AP917HD-S"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping 3m-aquapure-ap903 → 3m-ap917hd-s is_recommended=true; filters.csv notes AP917HD-S for AP900-series sediment. UNKNOWN: Official stamped-head compatibility not verified in bounded batch."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for 3m-ap917hd-s; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Same AP903 anchor as AP910R; bounded repo read lacks official AP917HD-S fit proof."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for 3m-ap917hd-s in this bounded batch."
+  ]
+}

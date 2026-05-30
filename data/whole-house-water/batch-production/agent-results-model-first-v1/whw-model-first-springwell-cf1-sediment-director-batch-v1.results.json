@@ -1,0 +1,53 @@
+{
+  "contract": "whole_house_water_model_first_evidence_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_mode": "live_browser_model_first_v1",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "packet_id": "whw-model-first-springwell-cf1-sediment-director-batch-v1",
+  "run_id": "whw-model-first-springwell-cf1-sediment-director-batch-2026-05-29",
+  "queue_contract": "whole_house_water_model_first_easiest_proof_queue_v1",
+  "anchor_brand_slug": "springwell",
+  "anchor_model_slug": "springwell-cf1-sediment",
+  "anchor_filter_slug": "springwell-cf1-sediment",
+  "filter_slug": "springwell-cf1-sediment",
+  "read_only_artifact": true,
+  "do_not_open_public": true,
+  "generated_at": "2026-05-29T23:35:50.585Z",
+  "checked_at": "2026-05-29T23:35:50.585Z",
+  "source_status": "PARTIAL",
+  "model_rows": [
+    {
+      "model_slug": "springwell-cf1-sediment",
+      "model_number": "SW-CF1-SED",
+      "official_source_urls": [],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "SW-CF1-SED"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_SAFE_GATED_DIRECT_BUYABLE_IN_COMMITTED_CSV",
+      "notes": "PARTIAL: committed mapping springwell-cf1-system → springwell-cf1-sediment is_recommended=true. UNKNOWN: No official SpringWell manual URL in repo; primary committed link is site search placeholder."
+    }
+  ],
+  "candidate_buyer_paths": [],
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 1,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Director batch bounded read for springwell-cf1-sediment; evidence_status=UNKNOWN.",
+    "PROVEN: next_recommended_lane=skip_for_now.",
+    "PROVEN: Committed primary retailer link is manufacturer search placeholder — excluded from model-first PASS.",
+    "PROVEN: recommended_csv_mutation=null; no CSV apply authorized."
+  ],
+  "inferred_facts": [
+    "INFERRED: Recommended mapping without official manual capture in bounded batch."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official manual or stamped-head proof not captured for springwell-cf1-sediment in this bounded batch."
+  ]
+}

@@ -11,6 +11,10 @@ import {
 } from "@/lib/retailers/launch-buy-links";
 
 import { WHW_AP811_FILTER_SLUG_V1 } from "./whole-house-water-batch-buyer-path-proof-v1";
+import {
+  directorModelFirstBatchParkedFilterSlugsV1,
+  whwDirectorModelFirstBatchCycleCompleteV1,
+} from "./whole-house-water-director-model-first-batch-artifact-v1";
 import { WHW_AP810_FILTER_SLUG_V1 } from "./whole-house-water-safe-retailer-link-apply-plan-v1";
 import {
   buildWholeHouseWaterSafeCtaExpansionQueueV1,
@@ -212,10 +216,13 @@ function toDirectorItem(args: {
 function buildActiveBatchItems(args: {
   queue: WholeHouseWaterSafeCtaExpansionQueueV1;
   batchSize: 10 | 20;
+  rootDir: string;
 }): WhwBatchProductionDirectorItemV1[] {
-  const { queue, batchSize } = args;
+  const { queue, batchSize, rootDir } = args;
   const active: WhwBatchProductionDirectorItemV1[] = [];
   const seenSlugs = new Set<string>();
+  const directorBatchParked = directorModelFirstBatchParkedFilterSlugsV1({ rootDir });
+  const directorModelFirstBatchComplete = whwDirectorModelFirstBatchCycleCompleteV1({ rootDir });
 
   const tryAdd = (
     target: WhwSafeCtaExpansionTargetV1,
@@ -227,6 +234,12 @@ function buildActiveBatchItems(args: {
     if (active.length >= batchSize) return false;
     if (seenSlugs.has(target.filter_slug)) return false;
     if (shouldExcludeWhwFilterFromActiveDiscoveryV1(target)) return false;
+    if (
+      packetKind === "model_first_evidence" &&
+      directorBatchParked.has(target.filter_slug.trim().toLowerCase())
+    ) {
+      return false;
+    }
     if (
       packetKind === "buyer_path_proof" &&
       shouldParkWhwBuyerPathRetryV1(target)
@@ -267,10 +280,11 @@ function buildActiveBatchItems(args: {
   }
 
   for (const row of queue.top_10_model_first_ready) {
+    if (directorModelFirstBatchComplete) break;
     tryAdd(row, "model_first_evidence", row.next_action_hint);
   }
 
-  if (active.length < batchSize) {
+  if (active.length < batchSize && !directorModelFirstBatchComplete) {
     for (const row of queue.top_20_safe_cta_expansion_targets) {
       if (active.length >= batchSize) break;
       if (row.lane === "MODEL_FIRST_READY") {
@@ -541,7 +555,7 @@ export function buildWholeHouseWaterBatchProductionDirectorV1(args: {
     now: args.now,
   });
 
-  const activeItems = buildActiveBatchItems({ queue, batchSize });
+  const activeItems = buildActiveBatchItems({ queue, batchSize, rootDir: args.rootDir });
   const parked = buildParkedItems(queue);
   const groups = groupActiveItems(activeItems);
   groups.mapping_review = parked.mapping_review;
