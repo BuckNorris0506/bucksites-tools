@@ -3847,6 +3847,31 @@ test("command_center_v2.vacuum_bags_research_seed_packet_v1 is read-only vacuum 
   assert.ok(lane.inspect_summary.next_action.length > 0);
 });
 
+test("command_center_v2.vacuum_bags_oem_research_evidence_packet_v1 is read-only OEM evidence packet", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.vacuum_bags_oem_research_evidence_packet_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "vacuum_bags_oem_research_evidence_packet_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommendation, "NEEDS_MORE_OEM_EVIDENCE");
+  assert.equal(lane.source_seed_packet_contract, "vacuum_bags_research_seed_packet_v1");
+  assert.equal(lane.all_vacuum_bags_verified_claim, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.equal(lane.public_launch_authorized, false);
+  assert.equal(lane.sitemap_change_authorized, false);
+  assert.equal(lane.buy_gate_change_authorized, false);
+  assert.equal(lane.inspect_summary.families_checked_count, 4);
+  assert.equal(lane.inspect_summary.families_ready_for_truth_spine_seed_count, 0);
+  assert.ok(lane.family_evidence_rows.every((r) => r.evidence_status === "UNKNOWN"));
+});
+
 test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

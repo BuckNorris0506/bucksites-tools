@@ -215,6 +215,7 @@ export function buildCommandCenterV2Report(input: {
   | "air_purifier_batch_coverage_director_v1"
   | "vacuum_bags_wedge_feasibility_v1"
   | "vacuum_bags_research_seed_packet_v1"
+  | "vacuum_bags_oem_research_evidence_packet_v1"
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
   | "whole_house_water_director_model_first_batch_v1"
