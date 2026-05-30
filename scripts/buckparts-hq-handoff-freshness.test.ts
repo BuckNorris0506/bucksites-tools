@@ -320,9 +320,44 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "WHW safe CTA expansion BROWSER_TRUTH_READY lane",
   },
   {
-    id: "current_head_aec8b8c",
-    needle: "aec8b8c",
+    id: "current_head_afaf86d",
+    needle: "afaf86d",
     describe: "current HEAD / origin main checkpoint reference",
+  },
+  {
+    id: "grant_application_stopping_point_section",
+    needle: "## Grant application stopping point",
+    describe: "grant application stopping point handoff section",
+  },
+  {
+    id: "grant_stopping_no_product_expansion",
+    needle: "do not continue product expansion",
+    describe: "grant stopping point — no product expansion",
+  },
+  {
+    id: "vacuum_oem_evidence_packet",
+    needle: "vacuum_bags_oem_research_evidence_packet_v1",
+    describe: "Command Center vacuum OEM research evidence lane",
+  },
+  {
+    id: "vacuum_needs_more_oem_evidence",
+    needle: "NEEDS_MORE_OEM_EVIDENCE",
+    describe: "vacuum OEM evidence recommendation",
+  },
+  {
+    id: "families_ready_for_truth_spine_seed_count",
+    needle: "families_ready_for_truth_spine_seed_count",
+    describe: "vacuum truth spine seed readiness count field",
+  },
+  {
+    id: "admin_contact_email",
+    needle: "admin@buckparts.com",
+    describe: "official BuckParts contact email in handoff",
+  },
+  {
+    id: "kit_ready_for_jared_review",
+    needle: "kit_ready_for_jared_review",
+    describe: "grant application kit readiness flag",
   },
 ];
 

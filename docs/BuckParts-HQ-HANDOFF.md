@@ -6,22 +6,128 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`aec8b8c`** — Grant/Public Trust Pack v1 (see **Current stopping point — grant trust pack + WHW safe-CTA expansion** below). **Prior milestones remain documented below** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, etc.) — treat §4–§16 metric snapshots as **UNKNOWN** until re-run. **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`afaf86d`** — Grant application stopping point (see **Grant application stopping point** below). **Prior checkpoint `aec8b8c`** (grant trust pack + WHW safe-CTA expansion) is **superseded** — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run. **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Current stopping point — grant trust pack + WHW safe-CTA expansion (PROVEN through `aec8b8c`)
+## Grant application stopping point (PROVEN through `afaf86d`)
 
-**Read this section first** in a new HQ or implementation chat. Prior stopping-point blocks (fridge spine `7b09529`, UI motion `bbadce5`, etc.) remain **historical context** only unless re-proven by named commands.
+**Read this section first.** BuckParts is at a **grant-application stopping point** — **do not continue product expansion** (no new wedges, inventory CSVs, public opening, or coverage grinding) unless Jared explicitly redirects after grant work.
+
+**Operating truth source (PROVEN):** `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` JSON. HQ handoff is migration/context only.
+
+### Repo checkpoint (PROVEN — re-verify before grant submission)
+
+| Item | Value |
+|------|--------|
+| Branch | **`main`** |
+| HEAD / origin main | **`afaf86d`** — *Add vacuum bags OEM research evidence packet v1* |
+| Working tree | **Clean** at handoff refresh (no uncommitted product/operator mutations) |
+
+**PROVEN — verify checkpoint (copy/paste from repo root):**
+
+```bash
+git branch --show-current
+git rev-parse --short HEAD
+git rev-parse --short origin/main
+git status --short
+node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.vacuum_bags_oem_research_evidence_packet_v1.inspect_summary'
+```
+
+### Grant kit / public trust readiness (PROVEN from repo reports only)
+
+| Item | Status |
+|------|--------|
+| Grant readiness contract | **`buckparts_grant_readiness_v1`** — `read_only: true` |
+| Public trust routes | **`/truth-policy`** · **`/wrong-part-prevention`** — `truth_policy_route_present: true`, `wrong_part_prevention_route_present: true` |
+| Grant Application Kit docs | **All present:** `docs/grants/BuckParts-Grant-Application-Kit-v1.md`, `BuckParts-Grant-Answer-Bank-v1.md`, `BuckParts-Grant-Use-Of-Funds-v1.md`, `BuckParts-Grant-Truth-Claims-Register-v1.md` |
+| Kit readiness report | **`buckparts_grant_application_kit_readiness_v1`** — **`kit_ready_for_jared_review: true`** (re-run before submit) |
+| Ecommerce / affiliate overclaim risk (grant scan) | **`LOW`** / **`LOW`** — **not** permission to add storefront or savings copy |
+| Official BuckParts contact email | **`admin@buckparts.com`** — **PROVEN** in `src/app/about/page.tsx` and `src/app/privacy/page.tsx` (grant kit founder contact block still marks some bio/contact fields **UNKNOWN** — Jared to supply) |
+
+**PROVEN — inspect grant kit readiness (copy/paste):**
+
+```bash
+node --import tsx scripts/report-buckparts-grant-application-kit-readiness-v1.ts | jq '{
+  kit_ready_for_jared_review,
+  grant_doc_present,
+  ecommerce_positioning_risk,
+  affiliate_overclaim_risk
+}'
+```
+
+### Wedge / truth spine state (PROVEN — Command Center + wedge matrix; re-run before citing counts)
+
+| Wedge | Truth spine | Public launch | Notes |
+|-------|-------------|---------------|--------|
+| **Refrigerator water** | **`fridge_truth_spine_v1`** — **FORMAL_SPINE** | **`refrigerator_routes_live`** / indexable | Committed CSV spine on Command Center; do **not** claim all filters verified |
+| **Air purifier** | **`air_purifier_truth_spine_v1`** — **`formal_spine_status: PROVEN`** | **`LIVE`** | **PROVEN:** `safe_cta_count=10` on committed CSV (re-run spine report) |
+| **Whole-house water** | **No formal spine** — **PARTIAL_OPERATIONAL_PROOF** | **`NOINDEX_UNPROVEN`** | **`whw_public_opening_authorized: false`** — public opening **unauthorized** |
+| **Vacuum bags** | **No truth spine** — research lanes only | **`NOINDEX_UNPROVEN`** | See vacuum row below — **no inventory, no safe CTA, no launch** |
+
+**WHW safe-CTA wins (PROVEN direction — not public opening):**
+
+- **`3m-ap810`:** safe **`direct_buyable`** retailer row applied in committed CSV (**`381b5e6`** — see historical WHW block below).
+- **`3m-ap811`:** **`BROWSER_TRUTH_READY`** lane; WHW batch director reports **`ap811_browser_truth_capture_complete: true`** — still **`whw_public_opening_authorized: false`**.
+
+### Vacuum bags — research only (PROVEN at `afaf86d`)
+
+| Lane | Value |
+|------|--------|
+| Feasibility | **`vacuum_bags_wedge_feasibility_v1`** — **`NEEDS_RESEARCH_FIRST`** |
+| Seed packet | **`vacuum_bags_research_seed_packet_v1`** — **`RESEARCH_SEED_PACKET_READY`** |
+| OEM evidence packet | **`vacuum_bags_oem_research_evidence_packet_v1`** — **`NEEDS_MORE_OEM_EVIDENCE`** |
+| Bounded families checked | **4** (Miele GN, Miele FJM, Hoover Type Y, Kenmore Q) |
+| **`families_ready_for_truth_spine_seed_count`** | **`0`** |
+| Vacuum launch state | **`NOINDEX_UNPROVEN`** |
+| All mutation/opening gates | **`public_launch_authorized: false`**, **`csv_apply_authorized: false`**, **`supabase_update_authorized: false`**, **`sitemap_change_authorized: false`**, **`buy_gate_change_authorized: false`**, **`all_vacuum_bags_verified_claim: false`** |
+
+**Do not:** create vacuum product CSVs, claim model-to-bag fit, invent safe CTAs, seed **`vacuum_bags_truth_spine_v1`**, or open/index vacuum until dual OEM evidence exists in repo.
+
+### Sitemap / GSC / campaign readiness (PROVEN audit — mostly NOT_READY / UNKNOWN)
+
+| Item | Status |
+|------|--------|
+| Sitemap audit contract | **`buckparts_sitemap_indexability_audit_v1`** |
+| **`gsc_indexed_count`** | **`UNKNOWN`** (no fresh indexed count in repo artifacts) |
+| **`first_campaign_indexability_status`** | **`NOT_READY`** |
+| **`seventy_five_indexed_page_threshold_status`** | **`UNKNOWN`** |
+| Sitemap mutation authorized | **`false`** — audit is read-only |
+
+Re-run: `node --import tsx scripts/report-buckparts-sitemap-indexability-audit-v1.ts | jq '{gsc_indexed_count, first_campaign_indexability_status, seventy_five_indexed_page_threshold_status}'`
+
+### Do not do next (grant stopping point)
+
+- Do **not** continue **product expansion** (new wedges, vacuum inventory, WHW public opening, batch grinding, CSV apply, Supabase updates, buy-gate changes, sitemap edits).
+- Do **not** claim grant submitted, funded, revenue, customers, traction, social impact, indexed-page counts (unless re-proven from named reports), or “all verified.”
+- Do **not** treat **`kit_ready_for_jared_review: true`** as grant approval or funding.
+- Furnace filters / HVAC wedges remain **out of scope** (separate safety model — not in repo).
+
+### What this stopping point does NOT prove
+
+| Area | Status |
+|------|--------|
+| Grant application submitted or awarded | **UNKNOWN** |
+| Revenue, conversion, savings, or customer counts | **UNKNOWN** |
+| GSC indexed page count / 75-page campaign threshold | **UNKNOWN** or **NOT_READY** per sitemap audit |
+| All fridge or AP filters verified | **NOT claimed** |
+| Vacuum bag compatibility for any model | **NOT claimed** — OEM evidence **UNKNOWN** in repo |
+| WHW public launch timeline | **UNKNOWN** — opening **unauthorized** |
+
+---
+
+## Current stopping point — grant trust pack + WHW safe-CTA expansion (historical — superseded by `afaf86d`)
+
+**Superseded:** Use **Grant application stopping point (through `afaf86d`)** above first. This block retains **`aec8b8c`** grant-trust-pack + WHW safe-CTA context — still valid read-only inventory, not latest HEAD or next-move authority.
 
 ### Repo checkpoint (PROVEN)
 
 | Item | Value |
 |------|--------|
 | Branch | **`main`** |
-| HEAD / origin main | **`aec8b8c`** — *Add BuckParts grant readiness public trust pack* |
+| HEAD / origin main | **`aec8b8c`** — *Add BuckParts grant readiness public trust pack* — **superseded by `afaf86d`** |
 | Prior WHW commits (on main) | **`381b5e6`** — AP810 safe retailer link apply · **`0c1a0d4`** — AP811 buyer-path proof artifact |
 
 ### What BuckParts is (PROVEN doctrine — do not regress in grant or public copy)
