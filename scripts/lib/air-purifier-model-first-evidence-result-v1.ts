@@ -169,7 +169,7 @@ type RetailerLinkRow = {
   browser_truth_classification?: string;
 };
 
-type BatchV3HolmesRow = {
+type BatchV3FilterRow = {
   filter_slug?: string;
   candidate_url?: string;
   evidence_status?: string;
@@ -244,14 +244,14 @@ function loadBatchV3FilterRow(args: {
   filterSlug: string;
   readText: (p: string) => string;
   fileExists: (p: string) => boolean;
-}): BatchV3HolmesRow | null {
+}): BatchV3FilterRow | null {
   const rel =
     "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json";
   const abs = path.join(args.rootDir, rel);
   if (!args.fileExists(abs)) return null;
   try {
     const parsed = JSON.parse(args.readText(abs)) as {
-      candidate_results?: BatchV3HolmesRow[];
+      candidate_results?: BatchV3FilterRow[];
     };
     return parsed.candidate_results?.find((r) => r.filter_slug === args.filterSlug) ?? null;
   } catch {
@@ -433,6 +433,8 @@ export function buildModelFirstEvidenceResultV1(
 
   const documentedPart =
     filterRow?.name?.trim() || filterRow?.oem_part_number?.trim() || null;
+  const anchorBrandSlug = filterRow?.brand_slug?.trim() || null;
+  const anchorPartToken = filterRow?.oem_part_number?.trim() || deps.anchorFilterSlug;
 
   const model_rows: ModelFirstEvidenceModelRowV1[] = [];
 
@@ -441,7 +443,7 @@ export function buildModelFirstEvidenceResultV1(
     if (!model) {
       model_rows.push({
         model_slug: modelSlug,
-        brand_slug: "holmes",
+        brand_slug: anchorBrandSlug ?? "unknown",
         model_number: null,
         model_title: null,
         evidence_status: "BLOCKED",
@@ -471,8 +473,9 @@ export function buildModelFirstEvidenceResultV1(
       documented_filter_slug: deps.anchorFilterSlug,
       documented_filter_part: documentedPart,
       exact_filter_token_evidence:
-        "UNKNOWN: No per-model official Holmes support/manual URL in repo for this run (repo_truth_only_v1). " +
-        `Committed filter-first batch-v3 row for ${deps.anchorFilterSlug} did not prove exact HOLMES-HAPF30 token on a model page (family HAPF300 tokens on filter PDP only).`,
+        `UNKNOWN: No per-model official support/manual URL in repo for this run (repo_truth_only_v1). ` +
+        `Committed filter-first batch-v3 row for ${deps.anchorFilterSlug} did not prove exact ${anchorPartToken} token on a model page` +
+        (batchRow?.token_evidence ? ` (filter-slug batch token_evidence: ${batchRow.token_evidence}).` : " (filter-slug-level evidence only, if present)."),
       buyer_path_status: buyerPathStatus,
       add_to_cart_or_buy_button_found: batchRow?.add_to_cart_or_buy_button_found ?? null,
       why_status:
@@ -516,18 +519,26 @@ export function buildModelFirstEvidenceResultV1(
     ],
     inferred_facts: filterFirstCrossRef
       ? [
-          `INFERRED: Committed filter-first batch-v3 evidence for ${deps.anchorFilterSlug} may inform family (AER1) but does not satisfy per-model model-first proof.`,
+          `INFERRED: Committed filter-first batch-v3 evidence for ${deps.anchorFilterSlug} may inform filter-family context but does not satisfy per-model model-first proof.`,
         ]
       : [],
     unknown_facts: [
-      "UNKNOWN: Whether Holmes official model/support pages document HOLMES-HAPF30 for each checked unit (no per-model URLs in repo).",
+      `UNKNOWN: Whether official model/support pages document ${documentedPart ?? anchorPartToken} for filter ${deps.anchorFilterSlug} on each checked unit (no per-model URLs in repo).`,
       "UNKNOWN: Live purchase availability at retailers (not proven by this repo-only run).",
-      "UNKNOWN: Whether filter PDP https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html is the correct model-specific buyer path.",
+      ...(batchRow?.candidate_url
+        ? [
+            `UNKNOWN: Whether batch-v3 candidate URL ${batchRow.candidate_url} is the correct model-specific buyer path for ${deps.anchorFilterSlug}.`,
+          ]
+        : [
+            `UNKNOWN: Whether a verified buyer-path PDP exists for ${deps.anchorFilterSlug} beyond repo primary link classification (${buyerPathStatus}).`,
+          ]),
     ],
   };
 
   if (deps.writeResult) {
-    const rel = deps.resultRelPath ?? AP_MODEL_FIRST_HOLMES_HAPF30_RESULT_REL_V1;
+    const rel =
+      deps.resultRelPath ??
+      `${AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/ap-model-first-${deps.anchorFilterSlug}-v1.results.json`;
     const abs = path.join(deps.rootDir, rel);
     mkdirSync(path.dirname(abs), { recursive: true });
     writeFileSync(abs, `${JSON.stringify(report, null, 2)}\n`, "utf8");

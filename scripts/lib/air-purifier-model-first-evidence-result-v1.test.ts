@@ -12,6 +12,7 @@ import {
   AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_CONTRACT_V1,
   AIR_PURIFIER_MODEL_FIRST_EVIDENCE_RESULT_REPORT_NAME_V1,
   buildHolmesHapf30ModelFirstEvidenceFromQueueV1,
+  buildModelFirstEvidenceResultV1,
   isAllowedModelFirstEvidenceResultRelPathV1,
   liveBrowserBuyerPathMayRecommendCsvMutationV1,
   loadModelFirstEvidenceResultV1,
@@ -207,6 +208,33 @@ test("exact-token proof is required before PASS buyer path can recommend mutatio
     }),
     true,
   );
+});
+
+test("non-holmes anchor uses generic model-first wording", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const top = queue.top_candidates.find((c) => c.filter_slug === "shark-carbon-foam");
+  assert.ok(top);
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "shark-carbon-foam",
+    modelSlugs: top!.sample_model_slugs,
+    writeResult: false,
+  });
+
+  const blob = JSON.stringify(result);
+  assert.ok(!blob.includes("Holmes"));
+  assert.ok(!blob.includes("HOLMES-HAPF30"));
+  assert.ok(!blob.includes("holmesproducts.com"));
+  assert.ok(!blob.includes("AER1"));
+  assert.equal(result.anchor_filter_slug, "shark-carbon-foam");
+  assert.equal(result.evidence_status_counts.UNKNOWN, top!.sample_model_slugs.length);
+  for (const row of result.model_rows) {
+    assert.equal(row.brand_slug, "shark");
+    assert.ok(row.exact_filter_token_evidence.includes("shark-carbon-foam"));
+  }
 });
 
 test("holmes sample rows are built from completed/no-mutation fallback when top queue moved", () => {
