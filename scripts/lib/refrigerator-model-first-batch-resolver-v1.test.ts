@@ -124,13 +124,28 @@ test("manual-evidence Samsung models with multi-filter legacy maps are not PROVE
   }
 });
 
+test("manual-evidence GE GFE28G models with multi-filter legacy maps are not PROVEN from CSV alone", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  for (const slug of ["ge-gfe28gskss", "ge-gfe28gmkes", "ge-gfe28gynfs"]) {
+    const row = report.model_rows.find((r) => r.fridge_slug === slug);
+    assert.ok(row, slug);
+    assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
+    assert.equal(row!.official_filter_token_or_name, "RPWFE");
+    assert.ok(row!.current_legacy_buckparts_filter_slugs.length > 1);
+    assert.equal(row!.grouped_official_filter_family, "ge::RPWFE");
+  }
+});
+
 test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq consumers", () => {
   const report = buildRefrigeratorModelFirstBatchResolverV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
   const reviewRows = report.model_rows.filter((r) => r.confidence === "MAPPING_REVIEW_REQUIRED");
-  assert.equal(reviewRows.length, 10);
+  assert.equal(reviewRows.length, 13);
   for (const row of reviewRows) {
     assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
     assert.ok(row.official_filter_token_or_name);
@@ -143,7 +158,7 @@ test("models without official proof default to UNKNOWN", () => {
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
-  const row = report.model_rows.find((r) => r.fridge_slug === "ge-gfe28gskss");
+  const row = report.model_rows.find((r) => r.fridge_slug === "whirlpool-wrx735sdhz");
   assert.ok(row);
   assert.equal(row!.confidence, "UNKNOWN");
   assert.equal(row!.official_filter_token_or_name, null);
@@ -175,7 +190,7 @@ test("steering override is ready when mapping review or unknown rows remain", ()
   });
   assert.ok(override);
   assert.ok(override!.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
-  assert.match(override!.next_best_action, /Resolve 10 mapping-review models/);
-  assert.match(override!.next_best_action, /10 unknown refrigerator models/);
+  assert.match(override!.next_best_action, /Resolve 13 mapping-review models/);
+  assert.match(override!.next_best_action, /7 unknown refrigerator models/);
   assert.equal(override!.mutation_block_reasons.includes("csv_apply_authorized:false"), true);
 });

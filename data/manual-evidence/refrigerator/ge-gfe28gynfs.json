@@ -1,0 +1,50 @@
+{
+  "fridge_model_slug": "ge-gfe28gynfs",
+  "source_type": "manufacturer_support",
+  "source_url": "https://products.geappliances.com/appliance/gea-specs/GFE28GYNFS/parts",
+  "source_title": "GE GFE28GYNFS parts and matrix (Water Filter RPWFE)",
+  "source_host": "products.geappliances.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "GE RPWFE filters on French-door bottom-freezer models are typically in the upper left fresh-food compartment or behind the left door access panel.",
+  "replacement_steps_summary": "GE support guidance for RPWFE: open the filter door, remove the old cartridge, install the new RPWFE cartridge per holder color (blue or grey), then reset the filter indicator when prompted.",
+  "cautions": "GE recommends genuine RPWFE filters with RFID for leak detection; non-genuine filters may trigger leak-detected errors or disable the dispenser.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-ge-rpwfe-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 GE bundle for GFE28GYNFS — GFE28G family assigned to RPWFE in GE filter compatibility matrix; parts page lists RPWFE as model filter.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-specs/GFE28GYNFS/parts",
+      "source_title": "GE GFE28GYNFS parts and matrix (Water Filter RPWFE)",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.geappliances.com/appliance/GE-ENERGY-STAR-27-7-Cu-Ft-Fingerprint-Resistant-French-Door-Refrigerator-GFE28GYNFS",
+      "source_title": "GE GFE28GYNFS product page",
+      "source_host": "www.geappliances.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=18144",
+      "source_title": "RPWFE Advanced Filtration",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=19693",
+      "source_title": "Refrigerator RPWFE operation and troubleshooting",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    }
+  ]
+}

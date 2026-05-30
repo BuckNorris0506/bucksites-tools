@@ -1,0 +1,50 @@
+{
+  "fridge_model_slug": "ge-gfe28gmkes",
+  "source_type": "manufacturer_support",
+  "source_url": "https://products.geappliances.com/appliance/gea-specs/GFE28GMKES/support",
+  "source_title": "GE GFE28GMKES owner support (Water Filter RPWFE)",
+  "source_host": "products.geappliances.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "GE RPWFE filters on French-door bottom-freezer models are typically in the upper left fresh-food compartment or behind the left door access panel.",
+  "replacement_steps_summary": "GE support guidance for RPWFE: open the filter door, remove the old cartridge, install the new RPWFE cartridge per holder color (blue or grey), then reset the filter indicator when prompted.",
+  "cautions": "GE recommends genuine RPWFE filters with RFID for leak detection; non-genuine filters may trigger leak-detected errors or disable the dispenser.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-ge-rpwfe-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 GE bundle for GFE28GMKES — owner support documents Replace and Install the RPWFE Water Filter; GFE28G family in GE RPWFE compatibility matrix.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-specs/GFE28GMKES/support",
+      "source_title": "GE GFE28GMKES owner support (Water Filter RPWFE)",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-specs/GFE28GMKES/parts",
+      "source_title": "GE GFE28GMKES parts — RPWFE refrigerator water filter",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://products.geappliances.com/appliance/gea-support-search-content?contentId=19693",
+      "source_title": "Refrigerator RPWFE operation and troubleshooting",
+      "source_host": "products.geappliances.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.geappliances.com/appliance/GE-ENERGY-STAR-27-7-Cu-Ft-French-Door-Refrigerator-GFE28GMKES",
+      "source_title": "GE GFE28GMKES product page",
+      "source_host": "www.geappliances.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}
