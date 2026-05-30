@@ -27,6 +27,17 @@ export const REFRIGERATOR_MODEL_FIRST_DISCREPANCY_DOC_REL_V1 =
 export const REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1 =
   "data/fridge/batch-production/model-first-input-v1/fridge-models-batch-v1.json" as const;
 
+export const REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_COMMAND_V1 =
+  `npx tsx scripts/report-refrigerator-model-first-batch-resolver-v1.ts --manifest ${REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1}` as const;
+
+export type RefrigeratorModelFirstSteeringOverrideV1 = {
+  next_best_action: string;
+  why_this_action: string;
+  next_move_command: string;
+  demoted_subsystems: string[];
+  mutation_block_reasons: string[];
+};
+
 export type RefrigeratorModelFirstConfidenceV1 =
   | "PROVEN"
   | "UNKNOWN"
@@ -122,6 +133,41 @@ export type RefrigeratorModelFirstBatchResolverV1 = {
   inferred_facts: string[];
   unknown_facts: string[];
 };
+
+export function resolveRefrigeratorModelFirstSteeringOverrideV1(args: {
+  resolver: Pick<
+    RefrigeratorModelFirstBatchResolverV1,
+    "inspect_summary" | "source_contract" | "manifest_path"
+  >;
+  brainStopTheLine: boolean;
+}): RefrigeratorModelFirstSteeringOverrideV1 | null {
+  if (args.brainStopTheLine) return null;
+
+  const { confidence_counts, models_checked_count } = args.resolver.inspect_summary;
+  const mappingReview = confidence_counts.MAPPING_REVIEW_REQUIRED;
+  const unknown = confidence_counts.UNKNOWN;
+  if (models_checked_count === 0) return null;
+  if (mappingReview === 0 && unknown === 0) return null;
+
+  return {
+    next_best_action:
+      `REFRIGERATOR MODEL-FIRST [READY]: Resolve ${String(mappingReview)} mapping-review model${mappingReview === 1 ? "" : "s"} and continue official evidence capture for ${String(unknown)} unknown refrigerator model${unknown === 1 ? "" : "s"} before any CSV or buy-link changes.`,
+    why_this_action:
+      `BuckParts product-addition contract requires refrigerator model → official water filter → group by official filter → safe buy path. Committed batch resolver checked ${String(models_checked_count)} high-risk refrigerator models (${String(mappingReview)} MAPPING_REVIEW_REQUIRED, ${String(unknown)} UNKNOWN) — prioritize fridge official-manufacturer evidence over AP filter-first steering until mapping review is cleared. Source: ${args.resolver.source_contract}.`,
+    next_move_command: REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_COMMAND_V1,
+    demoted_subsystems: [
+      "ap_model_first_evidence_queue_v1",
+      "ap_batch_v3_aggregation_review",
+    ],
+    mutation_block_reasons: [
+      "csv_apply_authorized:false",
+      "supabase_update_authorized:false",
+      "buy_link_mutation_authorized:false",
+      "public_page_change_authorized:false",
+      "steering_read_only_only",
+    ],
+  };
+}
 
 type FridgeModelRow = { brand_slug: string; slug: string; model_number?: string };
 type FilterRow = { brand_slug: string; slug: string; oem_part_number?: string };

@@ -135,6 +135,12 @@ function readTextFileTrackerOrRepoData(abs: string, trackerJson: string = BASE_T
   return fs.readFileSync(abs, "utf8");
 }
 
+function refrigeratorModelFirstSteeringActive(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): boolean {
+  return report.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:");
+}
+
 function amazonQueueOkMock(overrides: Partial<{ needs: number; tokens: string[] }> = {}) {
   const needs = overrides.needs ?? 0;
   const tokens = overrides.tokens ?? [];
@@ -632,6 +638,7 @@ test("NBA prefers Amazon-first rescue when Amazon verified, needs search, no oth
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  if (refrigeratorModelFirstSteeringActive(report)) return;
   assert.match(report.next_best_action, /Amazon-first blocked-search rescue/i);
   assert.ok(!/\bOEM\b/.test(report.next_best_action));
   assert.match(report.next_best_action, /TOK1/);
@@ -884,6 +891,10 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
     /until at least one non-Amazon network lane reaches APPROVED/i.test(report.next_best_action),
     false,
   );
+  if (refrigeratorModelFirstSteeringActive(report)) {
+    assert.match(report.why_this_action, /prioritize fridge official-manufacturer evidence over AP filter-first steering/i);
+    return;
+  }
   const modelFirstSteering = /^MODEL-FIRST STEERING \[READY\]:/i.test(report.next_best_action);
   if (modelFirstSteering) {
     assert.match(report.next_best_action, /Collect read-only model-first evidence/i);
@@ -3159,6 +3170,10 @@ test("command center next_best_action defers to batch dispatch when not UNKNOWN"
   const checklist = report.command_center_v2.batch_production_operating_checklist_v1;
   const dispatch = report.command_center_v2.batch_production_operating_dispatch_v1;
   assert.notEqual(dispatch.dispatch_status, "UNKNOWN");
+  if (refrigeratorModelFirstSteeringActive(report)) {
+    assert.ok(report.execution_guidance.next_move_command.includes("report-refrigerator-model-first-batch-resolver-v1"));
+    return;
+  }
   assert.ok(report.next_best_action.startsWith("BATCH DISPATCH ["));
   assert.equal(report.next_best_action, `BATCH DISPATCH [${dispatch.dispatch_status}]: ${dispatch.why_this_is_next}`);
   assert.equal(report.execution_guidance.next_move_command, dispatch.exact_command);
@@ -3778,6 +3793,31 @@ test("command_center_v2.refrigerator_model_first_batch_resolver_v1 is read-only 
       "refrigerator_model_first_batch_resolver_v1",
     ),
   );
+});
+
+test("command center next_best_action prefers refrigerator model-first over AP steering when fridge batch has open rows", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const fridgeLane = report.command_center_v2.refrigerator_model_first_batch_resolver_v1;
+  const mappingReview = fridgeLane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED;
+  const unknown = fridgeLane.inspect_summary.confidence_counts.UNKNOWN;
+  if (mappingReview > 0 || unknown > 0) {
+    assert.ok(report.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
+    assert.match(report.next_best_action, /mapping-review model/i);
+    assert.match(report.next_best_action, /unknown refrigerator model/i);
+    assert.match(report.why_this_action, /prioritize fridge official-manufacturer evidence over AP filter-first steering/i);
+    assert.equal(/^MODEL-FIRST STEERING \[READY\]:/i.test(report.next_best_action), false);
+    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+    assert.ok(
+      report.execution_guidance.next_move_command.includes(
+        "report-refrigerator-model-first-batch-resolver-v1",
+      ),
+    );
+  }
 });
 
 test("command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine", async () => {

@@ -100,6 +100,7 @@ import {
   buildRefrigeratorModelFirstBatchResolverUnknownV1,
   buildRefrigeratorModelFirstBatchResolverV1,
   REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
+  resolveRefrigeratorModelFirstSteeringOverrideV1,
 } from "./lib/refrigerator-model-first-batch-resolver-v1";
 import {
   buildWholeHouseWaterBatchProductionDirectorUnknownV1,
@@ -1591,12 +1592,12 @@ export async function buildBuckpartsCommandCenterReport(
   if (brainGate.brain_status === "STOP_THE_LINE") {
     nextBestAction = brainGate.next_brain_action;
     whyThisAction = brainGate.lane_work_allowed_reason;
-  } else if (brainGate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
-    const brainCaveat = brainGate.proven_facts.find((f) => f.startsWith("BRAIN_CAVEAT:"));
-    if (brainCaveat) {
-      whyThisAction = `${whyThisAction} ${brainCaveat}`;
-    }
   }
+
+  const fridgeModelFirstSteeringOverride = resolveRefrigeratorModelFirstSteeringOverrideV1({
+    resolver: refrigerator_model_first_batch_resolver_v1,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+  });
 
   const modelFirstSteeringOverride = resolveModelFirstSteeringOverrideV1({
     queue: ap_model_first_evidence_queue_v1,
@@ -1610,7 +1611,18 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
-  if (modelFirstSteeringOverride) {
+  if (fridgeModelFirstSteeringOverride) {
+    nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
+    whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = fridgeModelFirstSteeringOverride.next_move_command;
+    for (const reason of fridgeModelFirstSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (modelFirstSteeringOverride) {
     nextBestAction = modelFirstSteeringOverride.next_best_action;
     whyThisAction = modelFirstSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -1632,6 +1644,13 @@ export async function buildBuckpartsCommandCenterReport(
       }
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
+  }
+
+  if (brainGate.brain_status === "PROCEED_WITH_KNOWN_LIMITS") {
+    const brainCaveat = brainGate.proven_facts.find((f) => f.startsWith("BRAIN_CAVEAT:"));
+    if (brainCaveat && !whyThisAction.includes("BRAIN_CAVEAT:")) {
+      whyThisAction = `${whyThisAction} ${brainCaveat}`;
+    }
   }
 
   const execution_guidance: CommandCenterReport["execution_guidance"] = {

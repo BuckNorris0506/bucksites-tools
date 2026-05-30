@@ -59,8 +59,18 @@ test("resolveModelFirstSteeringOverrideV1 returns override when steering primary
   }
 });
 
-test("command center next_best_action prefers model-first over batch aggregation when eligible", async () => {
+test("command center next_best_action prefers refrigerator model-first over AP when fridge batch has open rows", async () => {
   const report = await buildBuckpartsCommandCenterReport({ rootDir: REPO_ROOT });
+  const fridgeLane = report.command_center_v2.refrigerator_model_first_batch_resolver_v1;
+  const mappingReview = fridgeLane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED;
+  const unknown = fridgeLane.inspect_summary.confidence_counts.UNKNOWN;
+
+  if (mappingReview > 0 || unknown > 0) {
+    assert.ok(report.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
+    assert.equal(/^MODEL-FIRST STEERING \[READY\]:/i.test(report.next_best_action), false);
+    return;
+  }
+
   const queue = report.command_center_v2.ap_model_first_evidence_queue_v1;
   const dispatch = report.command_center_v2.batch_production_operating_dispatch_v1;
 

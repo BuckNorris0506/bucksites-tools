@@ -6,6 +6,7 @@ import test from "node:test";
 import {
   REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_CONTRACT_V1,
   buildRefrigeratorModelFirstBatchResolverV1,
+  resolveRefrigeratorModelFirstSteeringOverrideV1,
 } from "./refrigerator-model-first-batch-resolver-v1";
 
 const REPO_ROOT = process.cwd();
@@ -130,4 +131,20 @@ test("read-only resolver does not mutate product CSV or public routes", () => {
   for (const [p, content] of before.entries()) {
     assert.equal(readFileSync(path.join(REPO_ROOT, p), "utf8"), content);
   }
+});
+
+test("steering override is ready when mapping review or unknown rows remain", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const override = resolveRefrigeratorModelFirstSteeringOverrideV1({
+    resolver: report,
+    brainStopTheLine: false,
+  });
+  assert.ok(override);
+  assert.ok(override!.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
+  assert.match(override!.next_best_action, /Resolve 3 mapping-review models/);
+  assert.match(override!.next_best_action, /17 unknown refrigerator models/);
+  assert.equal(override!.mutation_block_reasons.includes("csv_apply_authorized:false"), true);
 });
