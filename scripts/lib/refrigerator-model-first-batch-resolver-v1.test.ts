@@ -1,0 +1,133 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import test from "node:test";
+
+import {
+  REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_CONTRACT_V1,
+  buildRefrigeratorModelFirstBatchResolverV1,
+} from "./refrigerator-model-first-batch-resolver-v1";
+
+const REPO_ROOT = process.cwd();
+
+const MANIFEST_REL =
+  "data/fridge/batch-production/model-first-input-v1/fridge-models-batch-v1.json";
+
+const FORBIDDEN_MUTATION_PATHS = [
+  "data/filters.csv",
+  "data/retailer_links.csv",
+  "data/fridge_models.csv",
+  "data/compatibility_mappings.csv",
+  "data/filter_aliases.csv",
+  "src/app/fridge/[slug]/page.tsx",
+  "src/lib/retailers/launch-buy-links.ts",
+];
+
+test("report is read_only true and data_mutation false", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  assert.equal(report.contract, REFRIGERATOR_MODEL_FIRST_BATCH_RESOLVER_CONTRACT_V1);
+  assert.equal(report.read_only, true);
+  assert.equal(report.data_mutation, false);
+});
+
+test("hard gates remain false", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  assert.equal(report.csv_apply_authorized, false);
+  assert.equal(report.supabase_update_authorized, false);
+  assert.equal(report.buy_link_mutation_authorized, false);
+  assert.equal(report.public_page_change_authorized, false);
+  assert.equal(report.inspect_summary.csv_apply_authorized, false);
+  assert.equal(report.inspect_summary.supabase_update_authorized, false);
+  assert.equal(report.inspect_summary.buy_link_mutation_authorized, false);
+  assert.equal(report.inspect_summary.public_page_change_authorized, false);
+});
+
+test("manifest models resolve from repo CSV hypothesis only", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  assert.equal(report.inspect_summary.models_checked_count, 20);
+  assert.ok(report.exact_repo_paths_read.includes("data/fridge_models.csv"));
+  assert.ok(report.exact_repo_paths_read.includes("data/compatibility_mappings.csv"));
+  assert.ok(report.exact_repo_paths_read.includes("data/filters.csv"));
+  assert.ok(report.exact_repo_paths_read.includes("data/retailer_links.csv"));
+  for (const row of report.model_rows) {
+    assert.equal(row.product_data_mutation_allowed, false);
+    assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
+  }
+});
+
+test("lg-lrfxs3106s is MAPPING_REVIEW_REQUIRED from discrepancy doc official LT1000P", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const row = report.model_rows.find((r) => r.fridge_slug === "lg-lrfxs3106s");
+  assert.ok(row);
+  assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
+  assert.equal(row!.official_filter_token_or_name, "LT1000P");
+  assert.deepEqual(row!.current_legacy_buckparts_filter_slugs.sort(), ["lt600p", "lt800p"]);
+  assert.equal(row!.grouped_official_filter_family, "lg::LT1000P");
+});
+
+test("manual-evidence LG models with multi-filter legacy maps are not PROVEN from CSV alone", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  for (const slug of ["lg-lfxs28968s", "lg-lfxs26973s"]) {
+    const row = report.model_rows.find((r) => r.fridge_slug === slug);
+    assert.ok(row, slug);
+    assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
+    assert.equal(row!.official_filter_token_or_name, "LT1000P");
+    assert.ok(row!.current_legacy_buckparts_filter_slugs.length > 1);
+    assert.equal(row!.grouped_official_filter_family, "lg::LT1000P");
+  }
+});
+
+test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq consumers", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const reviewRows = report.model_rows.filter((r) => r.confidence === "MAPPING_REVIEW_REQUIRED");
+  assert.equal(reviewRows.length, 3);
+  for (const row of reviewRows) {
+    assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
+    assert.ok(row.official_filter_token_or_name);
+    assert.ok(row.grouped_official_filter_family);
+  }
+});
+
+test("models without official proof default to UNKNOWN", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const row = report.model_rows.find((r) => r.fridge_slug === "samsung-rf28r7351sg");
+  assert.ok(row);
+  assert.equal(row!.confidence, "UNKNOWN");
+  assert.equal(row!.official_filter_token_or_name, null);
+});
+
+test("read-only resolver does not mutate product CSV or public routes", () => {
+  const before = new Map(
+    FORBIDDEN_MUTATION_PATHS.map((p) => [p, readFileSync(path.join(REPO_ROOT, p), "utf8")]),
+  );
+
+  buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+
+  for (const [p, content] of before.entries()) {
+    assert.equal(readFileSync(path.join(REPO_ROOT, p), "utf8"), content);
+  }
+});

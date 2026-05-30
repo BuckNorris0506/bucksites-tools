@@ -1,0 +1,193 @@
+{
+  "contract": "refrigerator_model_first_input_manifest_v1",
+  "read_only": true,
+  "batch_id": "fridge-model-first-batch-v1",
+  "source_contract": "docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md",
+  "models": [
+    {
+      "input_id": "lg-lrfxs3106s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LRFXS3106S",
+      "fridge_slug": "lg-lrfxs3106s",
+      "official_support_url_hint": "https://www.lg.com/us/refrigerators/lg-lrfxs3106s-french-door-refrigerator",
+      "legacy_csv_filter_slugs": ["lt600p", "lt800p"],
+      "selection_reason": "mapping_discrepancy_doc",
+      "research_notes": "docs/fridge-model-filter-mapping-discrepancies.md — official LG spec reports LT1000P; repo maps lt600p/lt800p."
+    },
+    {
+      "input_id": "lg-lfxs28968s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LFXS28968S",
+      "fridge_slug": "lg-lfxs28968s",
+      "official_support_url_hint": "https://www.lg.com/us/refrigerators/lg-lfxs28968s-french-3-door-refrigerator",
+      "selection_reason": "manual_evidence_plus_multi_filter",
+      "research_notes": "Committed manual evidence + six legacy filter slugs in CSV."
+    },
+    {
+      "input_id": "lg-lfxs26973s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LFXS26973S",
+      "fridge_slug": "lg-lfxs26973s",
+      "official_support_url_hint": "https://www.lg.com/us/support/product/lg-LFXS26973S.ASTCNA0",
+      "selection_reason": "manual_evidence_plus_multi_filter",
+      "research_notes": "Highest multi-filter count in LG cohort (six legacy slugs)."
+    },
+    {
+      "input_id": "lg-lrfvs3006s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LRFVS3006S",
+      "fridge_slug": "lg-lrfvs3006s",
+      "official_support_url_hint": "https://www.lg.com/us/support/product/lg-LRFVS3006S.ASTCNA0",
+      "selection_reason": "manual_evidence_plus_multi_filter",
+      "research_notes": "Manual evidence fixture exists; multi-filter legacy mapping."
+    },
+    {
+      "input_id": "lg-lfxc22596s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LFXC22596S",
+      "fridge_slug": "lg-lfxc22596s",
+      "selection_reason": "multi_filter_high_risk",
+      "research_notes": "Five legacy filter slugs — no committed manual evidence yet."
+    },
+    {
+      "input_id": "lg-lmxs28626s",
+      "brand_slug": "lg",
+      "brand_display": "LG",
+      "model_number": "LMXS28626S",
+      "fridge_slug": "lg-lmxs28626s",
+      "selection_reason": "multi_filter_high_risk",
+      "research_notes": "Five legacy filter slugs — no committed manual evidence yet."
+    },
+    {
+      "input_id": "samsung-rf28r7351sg",
+      "brand_slug": "samsung",
+      "brand_display": "Samsung",
+      "model_number": "RF28R7351SG",
+      "fridge_slug": "samsung-rf28r7351sg",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Four Samsung DA-family legacy slugs."
+    },
+    {
+      "input_id": "samsung-rf263beaesr",
+      "brand_slug": "samsung",
+      "brand_display": "Samsung",
+      "model_number": "RF263BEAESR",
+      "fridge_slug": "samsung-rf263beaesr",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Dual DA97 legacy mapping."
+    },
+    {
+      "input_id": "samsung-rf28nhedbsr",
+      "brand_slug": "samsung",
+      "brand_display": "Samsung",
+      "model_number": "RF28NHEDBSR",
+      "fridge_slug": "samsung-rf28nhedbsr",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Dual Samsung filter slug mapping."
+    },
+    {
+      "input_id": "samsung-rf28r7201sr",
+      "brand_slug": "samsung",
+      "brand_display": "Samsung",
+      "model_number": "RF28R7201SR",
+      "fridge_slug": "samsung-rf28r7201sr",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Samsung French-door cohort — multi-filter risk."
+    },
+    {
+      "input_id": "ge-gfe28gskss",
+      "brand_slug": "ge",
+      "brand_display": "GE",
+      "model_number": "GFE28GSKSS",
+      "fridge_slug": "ge-gfe28gskss",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "MWF vs MSWF dual mapping."
+    },
+    {
+      "input_id": "ge-gfe28gmkes",
+      "brand_slug": "ge",
+      "brand_display": "GE",
+      "model_number": "GFE28GMKES",
+      "fridge_slug": "ge-gfe28gmkes",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "MSWF vs RPWFE dual mapping."
+    },
+    {
+      "input_id": "ge-gfe28gynfs",
+      "brand_slug": "ge",
+      "brand_display": "GE",
+      "model_number": "GFE28GYNFS",
+      "fridge_slug": "ge-gfe28gynfs",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "RPWFE vs XWFE dual mapping."
+    },
+    {
+      "input_id": "whirlpool-wrx735sdhz",
+      "brand_slug": "whirlpool",
+      "brand_display": "Whirlpool",
+      "model_number": "WRX735SDHZ",
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "selection_reason": "multi_filter_high_risk",
+      "research_notes": "Seven legacy EveryDrop/Whirlpool filter slugs."
+    },
+    {
+      "input_id": "whirlpool-wrx986sihz",
+      "brand_slug": "whirlpool",
+      "brand_display": "Whirlpool",
+      "model_number": "WRX986SIHZ",
+      "fridge_slug": "whirlpool-wrx986sihz",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "EDR4 vs UKF8001 dual mapping."
+    },
+    {
+      "input_id": "whirlpool-wrf540cwhz",
+      "brand_slug": "whirlpool",
+      "brand_display": "Whirlpool",
+      "model_number": "WRF540CWHZ",
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Three legacy Whirlpool filter slugs."
+    },
+    {
+      "input_id": "whirlpool-wrs325sdhz",
+      "brand_slug": "whirlpool",
+      "brand_display": "Whirlpool",
+      "model_number": "WRS325SDHZ",
+      "fridge_slug": "whirlpool-wrs325sdhz",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Side-by-side Whirlpool cohort."
+    },
+    {
+      "input_id": "frigidaire-fghb2868pf",
+      "brand_slug": "frigidaire",
+      "brand_display": "Frigidaire",
+      "model_number": "FGHB2868PF",
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "selection_reason": "multi_filter_high_risk",
+      "research_notes": "Six legacy Frigidaire filter slugs — top filter-centric coverage in audit."
+    },
+    {
+      "input_id": "frigidaire-ffhb2740ps",
+      "brand_slug": "frigidaire",
+      "brand_display": "Frigidaire",
+      "model_number": "FFHB2740PS",
+      "fridge_slug": "frigidaire-ffhb2740ps",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "UltraWF vs Frigidaire OEM slug dual mapping."
+    },
+    {
+      "input_id": "frigidaire-fgsc2335tf",
+      "brand_slug": "frigidaire",
+      "brand_display": "Frigidaire",
+      "model_number": "FGSC2335TF",
+      "fridge_slug": "frigidaire-fgsc2335tf",
+      "selection_reason": "multi_filter_major_brand",
+      "research_notes": "Dual Frigidaire filter slug mapping."
+    }
+  ]
+}
