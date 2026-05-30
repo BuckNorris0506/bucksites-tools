@@ -3822,6 +3822,31 @@ test("command_center_v2.vacuum_bags_wedge_feasibility_v1 is read-only vacuum fea
   assert.ok(lane.proven_facts.some((f) => f.includes("sample")));
 });
 
+test("command_center_v2.vacuum_bags_research_seed_packet_v1 is read-only vacuum seed packet", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.vacuum_bags_research_seed_packet_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "vacuum_bags_research_seed_packet_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommendation, "RESEARCH_SEED_PACKET_READY");
+  assert.equal(lane.source_feasibility_contract, "vacuum_bags_wedge_feasibility_v1");
+  assert.equal(lane.all_vacuum_bags_verified_claim, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.equal(lane.public_launch_authorized, false);
+  assert.equal(lane.sitemap_change_authorized, false);
+  assert.equal(lane.buy_gate_change_authorized, false);
+  assert.ok(lane.first_seed_families.every((f) => f.planning_status === "candidate_only"));
+  assert.ok(lane.furnace_filters_out_of_scope.deferred);
+  assert.ok(lane.inspect_summary.next_action.length > 0);
+});
+
 test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
