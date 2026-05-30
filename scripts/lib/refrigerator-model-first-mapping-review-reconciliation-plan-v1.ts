@@ -147,7 +147,7 @@ function canonicalOfficialFilterSlug(args: {
   if (samsungCanonical) return samsungCanonical;
 
   const officialNorm = normalizeToken(args.officialToken);
-  for (const [slug, oem] of args.filterOemBySlug.entries()) {
+  for (const [slug, oem] of Array.from(args.filterOemBySlug.entries())) {
     if (normalizeToken(oem) === officialNorm) return slug;
   }
   return null;

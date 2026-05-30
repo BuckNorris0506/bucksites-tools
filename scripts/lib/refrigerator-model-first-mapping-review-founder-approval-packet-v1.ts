@@ -616,18 +616,19 @@ export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1(a
   now?: () => Date;
   packet?: RefrigeratorModelFirstMappingReviewFounderApprovalPacketV1;
 }): RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 {
+  const manifestRelPath = args.manifestRelPath ?? REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1;
   const packet =
     args.packet ??
     buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1({
       rootDir: args.rootDir,
-      manifestRelPath: args.manifestRelPath,
+      manifestRelPath,
       now: args.now,
     });
 
   const postApplyState = detectRefrigeratorModelFirstQaBatchPostApplyV1({
     resolver: buildRefrigeratorModelFirstBatchResolverV1({
       rootDir: args.rootDir,
-      manifestRelPath: args.manifestRelPath,
+      manifestRelPath,
       now: args.now,
     }),
   });

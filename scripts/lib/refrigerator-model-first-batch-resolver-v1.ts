@@ -566,7 +566,7 @@ export function buildRefrigeratorModelFirstBatchResolverV1(args: {
     if (!mappingByModel.has(modelSlug)) mappingByModel.set(modelSlug, []);
     mappingByModel.get(modelSlug)!.push(filterSlug);
   }
-  for (const slugs of mappingByModel.values()) {
+  for (const slugs of Array.from(mappingByModel.values())) {
     slugs.sort((a, b) => a.localeCompare(b));
   }
 
