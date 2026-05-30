@@ -79,6 +79,7 @@
     "buckparts:ga4:fetch": "tsx scripts/fetch-buckparts-ga4-trust-funnel-artifact.ts",
     "buckparts:live-site-smoke": "tsx scripts/live-site-smoke-artifact.ts",
     "buckparts:live-site-smoke:check": "tsx scripts/live-site-smoke-check.ts",
+    "buckparts:live": "tsx scripts/live-site-smoke-check.ts",
     "buckparts:operator-proof": "tsx scripts/buckparts-operator-proof.ts",
     "buckparts:proof:filter-purchase-option-order": "tsx scripts/proof-filter-purchase-option-order.ts",
     "buckparts:waterdrop-proof-slice-candidates": "tsx scripts/report-waterdrop-proof-slice-candidates.ts",

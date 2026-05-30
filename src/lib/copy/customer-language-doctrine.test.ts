@@ -6,8 +6,13 @@ import { describe, it } from "node:test";
 
 import {
   CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH,
+  FULL_TRUTH_OR_UNKNOWN_RULE_V1,
+  LIVE_SITE_SMOKE_CHECK_ALIAS_NPM_SCRIPT_V1,
+  LIVE_SITE_SMOKE_CHECK_NPM_SCRIPT_V1,
   NO_OEM_COLD_RULE_V1,
   OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
+  PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1,
+  UNIVERSAL_PAGE_TRUST_CONTRACT_REL_PATH,
   WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
 } from "@/lib/copy/customer-language-doctrine";
 
@@ -25,6 +30,16 @@ describe("customer language doctrine", () => {
     assert.match(md, /purchase options/i);
     assert.match(md, /Store links appear only after BuckParts checks the listing against the part number/i);
     assert.match(md, /avoid sending you to a bad match/i);
+    assert.match(md, /FULL truth or UNKNOWN/i);
+    assert.match(md, /Homeowner language only/i);
+    assert.match(md, /treasure hunt/i);
+    assert.match(md, /compare the filter code on your old filter or fridge label/i);
+    assert.match(md, new RegExp(LIVE_SITE_SMOKE_CHECK_NPM_SCRIPT_V1.replace(/:/g, "\\:")));
+    assert.match(md, new RegExp(LIVE_SITE_SMOKE_CHECK_ALIAS_NPM_SCRIPT_V1.replace(/:/g, "\\:")));
+    assert.equal(
+      FULL_TRUTH_OR_UNKNOWN_RULE_V1,
+      "Public BuckParts copy is FULL truth or UNKNOWN only — no mostly true, probably true, good enough, or partial-confidence homeowner claims.",
+    );
     assert.equal(
       OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
       "Replace manufacturer catalog/search rows with verified direct product pages where exact part-number proof exists.",
@@ -33,6 +48,14 @@ describe("customer language doctrine", () => {
     assert.ok(!/store shortcut/i.test(goUnavailable));
     const partTrust = readFileSync(path.join(REPO_ROOT, "src/lib/trust/part-trust.ts"), "utf8");
     assert.ok(!/store shortcut/i.test(partTrust));
+  });
+
+  it("universal trust contract bans backend QA phrases for homeowner copy", () => {
+    const md = readFileSync(path.join(REPO_ROOT, UNIVERSAL_PAGE_TRUST_CONTRACT_REL_PATH), "utf8");
+    for (const phrase of PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1) {
+      assert.match(md, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"));
+    }
+    assert.match(md, /probably fits \/ mostly true \/ good enough/i);
   });
 
   it("Waterdrop research draft exists and is marked not published", () => {

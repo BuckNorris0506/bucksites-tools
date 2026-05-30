@@ -20,6 +20,17 @@ Every public page should answer these questions when applicable:
 
 ### Universal banned phrases (public-facing)
 
+**Backend / QA leak (never homeowner-facing):**
+
+- Wrong-family mappings removed
+- Buy links are separate from fit proof
+- No buy button until the evidence is clean
+- Compatible filter confidence: proven / needs review / not safe yet
+- mapping review / resolver / confidence state / mutation / proof packet / compat row (as system jargon)
+- CTA / CSV / gates (as internal shorthand on public HTML)
+
+**Legacy / overclaim (existing contract):**
+
 - Published OEM-style
 - store links
 - store buttons
@@ -32,15 +43,16 @@ Every public page should answer these questions when applicable:
 - guaranteed
 - safe to buy
 - completely trust
+- probably fits / mostly true / good enough (partial confidence)
 
 ### Approved public language
 
-- buying options
+- buying options / purchase options
 - product page
-- compare the number on your old filter
+- compare the number on your old filter / compare the filter code on your old filter or fridge label
 - source-backed help
-- not enough information yet
-- we are not showing buying options yet
+- not enough information yet / we are not showing buying options yet
+- still trying to clear this up / treasure hunt / X marks the spot (sparingly, when no safe path exists)
 
 ## Page-State Taxonomy
 

@@ -9,6 +9,7 @@ import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
 import { PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER } from "@/lib/catalog/public-category-hub";
+import { PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1 } from "@/lib/copy/customer-language-doctrine";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function baseTrust(over: Partial<PartTrustSummary>): PartTrustSummary {
@@ -109,6 +110,12 @@ describe("public merchant-priority copy guard", () => {
       const src = readFileSync(rooted(p), "utf8");
       assert.ok(!/\bAmazon first\b/i.test(src), `${p}: Amazon-first`);
       assert.ok(!/\bprefer Amazon\b/i.test(src), `${p}: prefer Amazon`);
+      for (const phrase of PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1) {
+        assert.ok(
+          !src.toLowerCase().includes(phrase.toLowerCase()),
+          `${p}: banned backend homeowner phrase "${phrase}"`,
+        );
+      }
     }
   });
 
