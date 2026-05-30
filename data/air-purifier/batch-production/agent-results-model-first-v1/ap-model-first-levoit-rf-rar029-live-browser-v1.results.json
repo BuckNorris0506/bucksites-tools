@@ -1,0 +1,175 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-levoit-rf-rar029-live-browser-v1",
+  "run_id": "ap-model-first-levoit-rf-rar029-live-browser-2026-05-30",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "levoit-rf-rar029",
+  "filter_slug": "levoit-rf-rar029",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-30T06:00:00.000Z",
+  "checked_at": "2026-05-30T06:00:00.000Z",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "model_rows": [
+    {
+      "model_slug": "levoit-core-300",
+      "model_number": "Core 300",
+      "official_source_urls": [
+        "https://levoit.com/products/core300-p-air-purifier",
+        "https://levoit.com/products/core300-air-purifier-replacement-filter",
+        "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "https://levoit.com/cdn/shop/files/HEAPAPLVNUS0161Y_Core_300-p_Air_Purifier_manual_US_A2-241204_1.pdf",
+        "https://levoit.com/pages/user-manuals"
+      ],
+      "manual_urls": [
+        "https://levoit.com/cdn/shop/files/HEAPAPLVNUS0161Y_Core_300-p_Air_Purifier_manual_US_A2-241204_1.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Core 300-RF",
+        "Core 300-P-RF",
+        "HEACAFLVNUS0012A"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_ANCHOR_TOKEN",
+      "notes": "PROVEN: Legacy official filter PDP (Core 300-RF 3-Stage Original Filter) lists compatibility with Core 300, Core P350, Core 300-RAC. PROVEN: Current official Series Original Filter PDP documents Core 300-P 3-Stage Original Filter for Core 300-P / Core P350-P / Core 300-P-RAC. PROVEN: Tokens RAR029, RF-RAR029, and LEVOIT-RF-RAR029 not found on checked official Levoit pages. FAIL: Official replacement path is Core 300-RF / Core 300-P-RF, not BuckParts anchor levoit-rf-rar029."
+    },
+    {
+      "model_slug": "levoit-core-300s",
+      "model_number": "Core 300S",
+      "official_source_urls": [
+        "https://levoit.com/products/core-300s-p-smart-air-purifier",
+        "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "https://levoit.com/cdn/shop/files/HEAPAPLVSUS0073A_Core_300S-P_Smart_Air_Purifier_manual_US_A2-240918_4855d907-1d27-4231-ad1c-82899f56e370.pdf",
+        "https://levoit.com/pages/user-manuals"
+      ],
+      "manual_urls": [
+        "https://levoit.com/cdn/shop/files/HEAPAPLVSUS0073A_Core_300S-P_Smart_Air_Purifier_manual_US_A2-240918_4855d907-1d27-4231-ad1c-82899f56e370.pdf"
+      ],
+      "documented_filter_tokens": [
+        "Core 300-P-RF",
+        "Core 300-RF-PA",
+        "Core 300-RF-TX"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_ANCHOR_TOKEN",
+      "notes": "PROVEN: Official Core 300S-P manual (Core 300S series) documents Core 300-P-RF as the 3-Stage Original Filter replacement. PROVEN: RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 not on manual or checked levoit.com pages. FAIL: Per-model official proof maps Core 300S to Core 300-P-RF family, not anchor slug levoit-rf-rar029."
+    },
+    {
+      "model_slug": "levoit-core-300-rf",
+      "model_number": "Core 300-RF",
+      "official_source_urls": [
+        "https://levoit.com/products/core300-air-purifier-replacement-filter",
+        "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "https://levoit.com/search?q=300-RF",
+        "https://levoit.com/pages/user-manuals"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "Core 300-RF",
+        "Core 300-P-RF"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "FILTER_TOKEN_NOT_UNIT_MODEL_ON_OFFICIAL_SITE",
+      "notes": "PROVEN: 300-RF appears on levoit.com as a filter cartridge name (Core 300-RF / Core 300-P-RF), not as a standalone air purifier unit PDP in this pass. PROVEN: RAR029 not found. UNKNOWN: Whether BuckParts model Core 300-RF maps to a distinct official unit vs filter-nomenclature collision."
+    },
+    {
+      "model_slug": "levoit-core-300-rac",
+      "model_number": "Core 300-RAC",
+      "official_source_urls": [
+        "https://levoit.com/products/core300-air-purifier-replacement-filter",
+        "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "https://levoit.com/search?q=Core+300-RAC",
+        "https://levoit.com/pages/user-manuals"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "Core 300-RF",
+        "Core 300-P-RF",
+        "Core 300-P-RAC"
+      ],
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_ANCHOR_TOKEN",
+      "notes": "PROVEN: Legacy official filter PDP lists Core 300-RAC compatible with Core 300-RF cartridge. PROVEN: Current Series Original Filter PDP lists Core 300-P-RAC among compatible units for Core 300-P 3-Stage Original Filter. PROVEN: RAR029 / RF-RAR029 not found. FAIL: Official tokens are Core 300-RF / Core 300-P-RF, not levoit-rf-rar029."
+    },
+    {
+      "model_slug": "levoit-core-300-rwm",
+      "model_number": "Core 300-RWM",
+      "official_source_urls": [
+        "https://levoit.com/search?q=Core+300-RWM",
+        "https://levoit.com/pages/user-manuals",
+        "https://levoit.com/collections/core-air-purifier"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_OR_MANUAL_FOUND",
+      "notes": "PROVEN: levoit.com search for Core 300-RWM returned 0 products. PROVEN: RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 not found on checked official pages. UNKNOWN: Official replacement filter SKU for Core 300-RWM."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+      "retailer_or_source": "levoit_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP title Core 300 Series Original Filter; Shopify SKU HEACAFLVNUS0012A; UPC 817915026880; filter family Core 300-P-RF / Core 300-P 3-Stage Original Filter.",
+      "buyability_proof": "PROVEN: Add to cart visible; available=true; $29.99 on official levoit.com PDP during live browser pass.",
+      "wrong_family_risk": "PROVEN: Official buyable PDP does not match anchor levoit-rf-rar029 — RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 not on PDP; mapping review required.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://levoit.com/products/core300-air-purifier-replacement-filter",
+      "retailer_or_source": "levoit_official_legacy_filter_pdp",
+      "exact_token_proof": "PROVEN: Official legacy PDP token Core 300-RF 3-Stage Original Filter; lists Core 300 / Core P350 / Core 300-RAC compatibility.",
+      "buyability_proof": "PROVEN: Sold out on official legacy PDP during live browser pass — not safe direct buy.",
+      "wrong_family_risk": "PROVEN: Legacy token Core 300-RF does not match anchor levoit-rf-rar029 / RAR029 internal slug.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://levoit.com/cdn/shop/files/HEAPAPLVSUS0073A_Core_300S-P_Smart_Air_Purifier_manual_US_A2-240918_4855d907-1d27-4231-ad1c-82899f56e370.pdf",
+      "retailer_or_source": "levoit_official_manual_pdf",
+      "exact_token_proof": "PROVEN: Manual documents Core 300-P-RF, Core 300-RF-PA, Core 300-RF-TX replacement filters for Core 300S series.",
+      "buyability_proof": "UNKNOWN: Manual is reference-only; not a buy path.",
+      "wrong_family_risk": "PROVEN: Manual replacement tokens do not match anchor levoit-rf-rar029 — does not match anchor RAR029 naming.",
+      "status": "FAIL"
+    }
+  ],
+  "filter_first_cross_reference": {
+    "source_artifact_rel": "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json",
+    "filter_slug": "levoit-rf-rar029",
+    "evidence_status": "UNKNOWN",
+    "candidate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR029",
+    "browser_truth_classification": "official_search_zero_results",
+    "exact_token_found": false,
+    "add_to_cart_or_buy_button_found": false,
+    "token_evidence": "Live browser: levoit.com search?q=LEVOIT-RF-RAR029 and search?q=RAR029 returned 0 products.",
+    "buy_button_evidence": "Family buy path exists on Core 300 Series Original Filter PDP (Core 300-P-RF) but not tied to RAR029 token.",
+    "rejection_reason": "Official tokens Core 300-P-RF / Core 300-RF found; BuckParts RAR029 / levoit-rf-rar029 not proven on manufacturer pages.",
+    "applies_to": "filter_slug_only_not_per_model_pages"
+  },
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 3,
+    "UNKNOWN": 2,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Live-browser pass checked 5 queue sample models for anchor filter levoit-rf-rar029.",
+    "PROVEN: Official Levoit pages checked include Core 300 Series Original Filter PDP, legacy Core 300-RF filter PDP, Core 300-P unit PDP, Core 300S-P unit PDP, user-manuals index, Core 300-P manual PDF URL, Core 300S-P manual PDF, replacement-filter collection, and levoit.com searches for LEVOIT-RF-RAR029 / RAR029 / Core 300-RWM.",
+    "PROVEN: Official filter/part tokens found: Core 300-P-RF, Core 300-RF, Core 300-RF-PA, Core 300-RF-TX, HEACAFLVNUS0012A, UPC 817915026880.",
+    "PROVEN: Tokens RAR029, RF-RAR029, LEVOIT-RF-RAR029, and levoit-rf-rar029 not found on any checked official Levoit / levoit.com page.",
+    "PROVEN: recommended_csv_mutation is null — csv_apply_authorized=false; buy-link mutation not authorized.",
+    "PROVEN: MODEL_FILTER_MAPPING_REVIEW_REQUIRED — reconcile BuckParts anchor levoit-rf-rar029 to official Core 300-P-RF / Core 300-RF or split/demote the anchor."
+  ],
+  "inferred_facts": [
+    "INFERRED: Repo alias RF-RAR029 likely intended to map to official Core 300-RF / Core 300-P-RF cartridge family but lacks manufacturer token proof on levoit.com.",
+    "INFERRED: Repo OEM search-placeholder primary (levoit.com/search?q=LEVOIT-RF-RAR029) will remain zero-result until anchor naming is reconciled."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether Core 300-RF BuckParts model slug denotes a discontinued unit vs filter-nomenclature only.",
+    "UNKNOWN: Official Levoit presence and replacement filter for Core 300-RWM.",
+    "UNKNOWN: Whether levoit.com meta references Core 300S-P on Series Original Filter PDP override the narrower on-page compatibility list."
+  ]
+}
