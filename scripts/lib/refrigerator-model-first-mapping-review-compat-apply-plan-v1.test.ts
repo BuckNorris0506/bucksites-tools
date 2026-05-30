@@ -13,7 +13,7 @@ const REPO_ROOT = process.cwd();
 const MANIFEST_REL =
   "data/fridge/batch-production/model-first-input-v1/fridge-models-batch-v1.json";
 
-test("apply plan is blocked pending founder approval", () => {
+test("apply plan is blocked pending founder approval for all 20 models", () => {
   const plan = buildRefrigeratorModelFirstMappingReviewCompatApplyPlanV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
@@ -29,15 +29,19 @@ test("apply plan is blocked pending founder approval", () => {
   assert.equal(plan.supabase_update_authorized, false);
   assert.equal(plan.buy_link_mutation_authorized, false);
   assert.equal(plan.public_page_change_authorized, false);
+  assert.equal(plan.rows.length, 20);
+  assert.equal(plan.inspect_summary.mapping_review_model_count, 20);
   assert.match(plan.inspect_summary.recommended_next_action, /BLOCKED.*Founder approval/i);
+  for (const row of plan.rows) {
+    assert.equal(row.not_applied, true);
+  }
 });
 
-test("planned removals and additions match reconciliation plan for 3 LG models", () => {
+test("planned removals and additions match reconciliation plan across all brands", () => {
   const plan = buildRefrigeratorModelFirstMappingReviewCompatApplyPlanV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
-  assert.equal(plan.rows.length, 3);
 
   const lrfxs = plan.rows.find((r) => r.fridge_slug === "lg-lrfxs3106s");
   assert.ok(lrfxs);
@@ -48,19 +52,51 @@ test("planned removals and additions match reconciliation plan for 3 LG models",
   assert.deepEqual(lrfxs!.planned_additions.map((r) => r.csv_row_key), ["lg-lrfxs3106s,lt1000p"]);
   assert.equal(lrfxs!.planned_additions[0]!.exists_in_committed_csv, false);
 
-  for (const slug of ["lg-lfxs28968s", "lg-lfxs26973s"]) {
-    const row = plan.rows.find((r) => r.fridge_slug === slug);
-    assert.ok(row, slug);
-    assert.deepEqual(
-      row!.planned_removals.map((r) => r.filter_slug).sort(),
-      ["adq36006101", "adq74793502", "lt700p", "mdj64844601"],
-    );
-    assert.deepEqual(row!.planned_keeps.sort(), [`${slug},lt1000p`, `${slug},lt1000pc`].sort());
-    assert.deepEqual(row!.planned_additions, []);
-    for (const removal of row!.planned_removals) {
-      assert.equal(removal.exists_in_committed_csv, true);
-    }
-  }
+  const samsungQin = plan.rows.find((r) => r.fridge_slug === "samsung-rf28r7351sg");
+  assert.ok(samsungQin);
+  assert.deepEqual(
+    samsungQin!.planned_keeps.sort(),
+    ["samsung-rf28r7351sg,da97-17376a", "samsung-rf28r7351sg,da97-17376b"].sort(),
+  );
+  assert.deepEqual(samsungQin!.planned_additions, []);
+
+  const samsungCin = plan.rows.find((r) => r.fridge_slug === "samsung-rf263beaesr");
+  assert.ok(samsungCin);
+  assert.deepEqual(samsungCin!.planned_additions.map((r) => r.csv_row_key), [
+    "samsung-rf263beaesr,da29-00020b",
+  ]);
+
+  const ge = plan.rows.find((r) => r.fridge_slug === "ge-gfe28gskss");
+  assert.ok(ge);
+  assert.deepEqual(ge!.planned_additions.map((r) => r.csv_row_key), ["ge-gfe28gskss,rpwfe"]);
+
+  const whirlpool = plan.rows.find((r) => r.fridge_slug === "whirlpool-wrx735sdhz");
+  assert.ok(whirlpool);
+  assert.deepEqual(whirlpool!.planned_additions.map((r) => r.csv_row_key), [
+    "whirlpool-wrx735sdhz,edr4rxd1",
+  ]);
+
+  const frigidaire = plan.rows.find((r) => r.fridge_slug === "frigidaire-fghb2868pf");
+  assert.ok(frigidaire);
+  assert.deepEqual(frigidaire!.planned_additions.map((r) => r.csv_row_key), [
+    "frigidaire-fghb2868pf,eptwfu01",
+  ]);
+});
+
+test("inspect summary totals match flattened planned changes for all 20 models", () => {
+  const plan = buildRefrigeratorModelFirstMappingReviewCompatApplyPlanV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const totalKeeps = plan.rows.reduce((sum, row) => sum + row.planned_keeps.length, 0);
+  assert.equal(plan.inspect_summary.total_planned_removals, plan.planned_compat_csv_row_removals.length);
+  assert.equal(plan.inspect_summary.total_planned_additions, plan.planned_compat_csv_row_additions.length);
+  assert.equal(plan.inspect_summary.total_planned_keeps, totalKeeps);
+  assert.equal(plan.inspect_summary.total_planned_removals, 53);
+  assert.equal(plan.inspect_summary.total_planned_additions, 10);
+  assert.equal(plan.inspect_summary.total_planned_keeps, 16);
+  assert.equal(plan.inspect_summary.apply_authorized, false);
+  assert.equal(plan.inspect_summary.founder_approval_required, true);
 });
 
 test("apply plan does not mutate compatibility_mappings.csv", () => {

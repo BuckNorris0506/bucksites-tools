@@ -74,6 +74,7 @@ export type RefrigeratorModelFirstMappingReviewReconciliationPlanV1 = {
   source_resolver_batch_id: string;
   discrepancy_doc_path: typeof REFRIGERATOR_MODEL_FIRST_DISCREPANCY_DOC_REL_V1;
   exact_repo_paths_read: string[];
+  grouped_official_filter_families: MappingReviewReconciliationPlanFamilyGroupV1[];
   rows: MappingReviewReconciliationPlanRowV1[];
   csv_apply_authorized: false;
   supabase_update_authorized: false;
@@ -88,6 +89,27 @@ export type RefrigeratorModelFirstMappingReviewReconciliationPlanV1 = {
 type FilterRow = { slug: string; oem_part_number?: string };
 
 const FILTERS_CSV_REL_V1 = "data/filters.csv" as const;
+
+/** Samsung marketing tokens map to part-number slug families in data/filters.csv. */
+const OFFICIAL_TOKEN_FAMILY_FILTER_SLUGS_V1: Readonly<Record<string, readonly string[]>> = {
+  HAFQIN: ["da97-17376a", "da97-17376b"],
+  HAFCIN: ["da29-00020a", "da29-00020b"],
+};
+
+/** Preferred canonical slug when official token is a marketing alias (e.g. HAF-QIN → da97-17376b). */
+const OFFICIAL_TOKEN_CANONICAL_FILTER_SLUG_V1: Readonly<Record<string, string>> = {
+  HAFQIN: "da97-17376b",
+  HAFCIN: "da29-00020b",
+};
+
+export type MappingReviewReconciliationPlanFamilyGroupV1 = {
+  group_key: string;
+  official_filter_token_or_name: string;
+  model_slugs: string[];
+  total_proposed_removals: number;
+  total_proposed_keeps: number;
+  total_proposed_adds: number;
+};
 
 function readFiltersCsv(rootDir: string): Map<string, string> {
   const abs = path.join(rootDir, FILTERS_CSV_REL_V1);
@@ -110,9 +132,12 @@ function slugOemMatchesOfficial(args: {
   officialToken: string;
   filterOemBySlug: Map<string, string>;
 }): boolean {
+  const officialNorm = normalizeToken(args.officialToken);
+  const familySlugs = OFFICIAL_TOKEN_FAMILY_FILTER_SLUGS_V1[officialNorm];
+  if (familySlugs?.includes(args.filterSlug)) return true;
+
   const oem = args.filterOemBySlug.get(args.filterSlug) ?? args.filterSlug;
   const oemNorm = normalizeToken(oem);
-  const officialNorm = normalizeToken(args.officialToken);
   return (
     oemNorm === officialNorm ||
     oemNorm.startsWith(officialNorm) ||
@@ -129,6 +154,9 @@ function canonicalOfficialFilterSlug(args: {
   filterOemBySlug: Map<string, string>;
 }): string | null {
   const officialNorm = normalizeToken(args.officialToken);
+  const preset = OFFICIAL_TOKEN_CANONICAL_FILTER_SLUG_V1[officialNorm];
+  if (preset && args.filterOemBySlug.has(preset)) return preset;
+
   for (const [slug, oem] of args.filterOemBySlug.entries()) {
     if (normalizeToken(oem) === officialNorm) return slug;
   }
@@ -247,6 +275,28 @@ export function buildRefrigeratorModelFirstMappingReviewReconciliationPlanV1(arg
     buildPlanRow({ modelRow, filterOemBySlug }),
   );
 
+  const familyGroupMap = new Map<string, MappingReviewReconciliationPlanFamilyGroupV1>();
+  for (const row of rows) {
+    const brandSlug = row.fridge_slug.split("-")[0] ?? "unknown";
+    const groupKey = `${brandSlug}::${normalizeToken(row.official_filter_token_or_name)}`;
+    const existing = familyGroupMap.get(groupKey) ?? {
+      group_key: groupKey,
+      official_filter_token_or_name: row.official_filter_token_or_name,
+      model_slugs: [],
+      total_proposed_removals: 0,
+      total_proposed_keeps: 0,
+      total_proposed_adds: 0,
+    };
+    existing.model_slugs.push(row.fridge_slug);
+    existing.total_proposed_removals += row.proposed_future_compat_changes.remove_rows.length;
+    existing.total_proposed_keeps += row.proposed_future_compat_changes.keep_rows.length;
+    existing.total_proposed_adds += row.proposed_future_compat_changes.add_rows.length;
+    familyGroupMap.set(groupKey, existing);
+  }
+  const grouped_official_filter_families = Array.from(familyGroupMap.values()).sort((a, b) =>
+    a.group_key.localeCompare(b.group_key),
+  );
+
   const totalProposedRemovals = rows.reduce(
     (sum, row) => sum + row.proposed_future_compat_changes.remove_rows.length,
     0,
@@ -286,7 +336,9 @@ export function buildRefrigeratorModelFirstMappingReviewReconciliationPlanV1(arg
 
   const inferred_facts = [
     `INFERRED: total_proposed_removals=${String(totalProposedRemovals)}; total_proposed_keeps=${String(totalProposedKeeps)}; total_proposed_adds=${String(totalProposedAdds)}.`,
+    `INFERRED: grouped_official_filter_families_count=${String(grouped_official_filter_families.length)} across LG LT1000P, Samsung HAF-QIN/HAF-CIN, GE RPWFE, Whirlpool EDR*, Frigidaire EPTWFU01/ULTRAWF.`,
     "INFERRED: lt1000pc may be kept as LT1000P-family variant when OEM token matches official family prefix rules.",
+    "INFERRED: Samsung HAF-QIN/HAF-CIN reconcile via da97-17376* and da29-00020* slug families in data/filters.csv.",
   ];
 
   const unknown_facts =
@@ -294,6 +346,7 @@ export function buildRefrigeratorModelFirstMappingReviewReconciliationPlanV1(arg
       ? ["UNKNOWN: No mapping-review rows in source resolver output."]
       : [
           "UNKNOWN: Whether lt1000pc scented variant should remain alongside lt1000p after owner review — plan keeps both when OEM family matches.",
+          "UNKNOWN: Whether samsung da97-17376a vs da97-17376b both remain after owner review when either is present.",
           "UNKNOWN: Live Supabase compatibility_mappings vs committed CSV — plan is CSV-slug/OEM only.",
         ];
 
@@ -311,6 +364,7 @@ export function buildRefrigeratorModelFirstMappingReviewReconciliationPlanV1(arg
       FILTERS_CSV_REL_V1,
       REFRIGERATOR_MODEL_FIRST_DISCREPANCY_DOC_REL_V1,
     ],
+    grouped_official_filter_families,
     rows,
     csv_apply_authorized: false,
     supabase_update_authorized: false,
