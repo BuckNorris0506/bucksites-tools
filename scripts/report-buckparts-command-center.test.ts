@@ -3777,6 +3777,29 @@ test("command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine"
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP batch coverage director", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const director = report.command_center_v2.air_purifier_batch_coverage_director_v1;
+  assert.ok(director);
+  assert.equal(director.contract, "air_purifier_batch_coverage_director_v1");
+  assert.equal(director.read_only, true);
+  assert.equal(director.data_mutation, false);
+  assert.equal(director.source_truth_spine_contract, "air_purifier_truth_spine_v1");
+  assert.equal(director.inspect_summary.safe_cta_count, 10);
+  assert.equal(director.inspect_summary.zero_safe_buy_path_count, 45);
+  assert.equal(director.csv_apply_authorized, false);
+  assert.equal(director.supabase_update_authorized, false);
+  assert.equal(director.public_launch_change_authorized, false);
+  assert.equal(director.all_filters_verified_claim, false);
+  assert.ok(director.active_batch_item_count >= 2);
+  assert.ok(director.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
+});
+
 test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -3794,8 +3817,20 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.equal(lane.inspect_summary.whw_public_opening_authorized, false);
   assert.equal(lane.inspect_summary.csv_apply_authorized, false);
   assert.equal(lane.inspect_summary.ap810_in_active_batch, false);
-  assert.ok(lane.active_batch_item_count >= 2);
-  assert.ok(lane.inspect_summary.active_filter_slugs.length >= 2);
+  const whwDirectorBatchSealed = fs.existsSync(
+    path.join(
+      process.cwd(),
+      "data/whole-house-water/batch-production/agent-results-model-first-v1/whw-director-model-first-batch-v1.results.json",
+    ),
+  );
+  if (whwDirectorBatchSealed) {
+    assert.equal(lane.active_batch_item_count, 0);
+    assert.equal(lane.current_batch_head, null);
+    assert.equal(lane.inspect_summary.active_filter_slugs.length, 0);
+  } else {
+    assert.ok(lane.active_batch_item_count >= 2);
+    assert.ok(lane.inspect_summary.active_filter_slugs.length >= 2);
+  }
   assert.equal(lane.grind_avoidance.do_not_grind_single_filter, true);
   assert.equal(lane.grind_avoidance.park_unknowns_and_advance, true);
   assert.equal(lane.factory_rules.promote_only_pass_evidence, true);
@@ -3816,9 +3851,11 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
       assert.equal(lane.inspect_summary.ap811_is_founder_apply_head, false);
       assert.equal(lane.inspect_summary.ap811_is_browser_truth_head, false);
       assert.equal(lane.inspect_summary.ap811_browser_truth_capture_complete, true);
-      assert.ok(lane.current_batch_head);
-      assert.notEqual(lane.current_batch_head?.filter_slug, "3m-ap811");
-      assert.equal(lane.current_batch_head?.packet_kind, "model_first_evidence");
+      if (!whwDirectorBatchSealed) {
+        assert.ok(lane.current_batch_head);
+        assert.notEqual(lane.current_batch_head?.filter_slug, "3m-ap811");
+        assert.equal(lane.current_batch_head?.packet_kind, "model_first_evidence");
+      }
       assert.ok(
         lane.next_batch_items.skip_for_now.some((i) => i.filter_slug === "3m-ap811"),
       );
@@ -3848,7 +3885,11 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
     );
   }
   assert.equal(lane.inspect_summary.ap810_parked, true);
-  assert.ok(lane.next_batch_items.model_first_evidence.length >= 1);
+  if (whwDirectorBatchSealed) {
+    assert.equal(lane.next_batch_items.model_first_evidence.length, 0);
+  } else {
+    assert.ok(lane.next_batch_items.model_first_evidence.length >= 1);
+  }
   assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
