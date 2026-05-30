@@ -1,0 +1,182 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-shark-carbon-foam-live-browser-v1",
+  "run_id": "ap-model-first-shark-carbon-foam-live-browser-2026-05-30",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "shark-carbon-foam",
+  "filter_slug": "shark-carbon-foam",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-05-30T04:00:00.000Z",
+  "checked_at": "2026-05-30T04:00:00.000Z",
+  "source_status": "PARTIAL",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "model_rows": [
+    {
+      "model_slug": "shark-hp102",
+      "model_number": "HP102",
+      "official_source_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide",
+        "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP102",
+        "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+        "https://www.sharkclean.com/products/anti-allergen-true-hepa-nanoseal-filter-with-odor-lock-zidHE1FKPET"
+      ],
+      "manual_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide"
+      ],
+      "documented_filter_tokens": [
+        "HE1FKBAS",
+        "HE1FKPET",
+        "HE001REM",
+        "HE002REM"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_HEPA_CARTRIDGE_NOT_CARBON_FOAM_ANCHOR",
+      "notes": "PROVEN: Official HP102 unit PDP (Model HP102) lists HE1FKBAS Add to cart and HE1FKPET out of stock. PROVEN: HE1FKBAS and HE1FKPET filter PDPs list HP102 compatibility. PROVEN: Token SHARK-CARBON-FOAM not found on checked official Shark pages. UNKNOWN: Whether a separate carbon/foam consumable equals BuckParts anchor shark-carbon-foam vs integrated HEPA+carbon cartridges."
+    },
+    {
+      "model_slug": "shark-hp102pet",
+      "model_number": "HP102PET",
+      "official_source_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide",
+        "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP102PET",
+        "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+        "https://www.sharkclean.com/products/anti-allergen-true-hepa-nanoseal-filter-with-odor-lock-zidHE1FKPET"
+      ],
+      "manual_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide"
+      ],
+      "documented_filter_tokens": [
+        "HE1FKBAS",
+        "HE1FKPET"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "UNIT_PDP_NO_REPLACEMENT_FILTER_CROSSREF",
+      "notes": "PROVEN: Official HP102PET unit PDP (Model HP102PET) loaded. PROVEN: HP102PET not listed on fetched HE1FKBAS or HE1FKPET compatibility lists. PROVEN: SHARK-CARBON-FOAM not found on checked official pages. UNKNOWN: Official replacement filter SKU for HP102PET."
+    },
+    {
+      "model_slug": "shark-hp102petnc",
+      "model_number": "HP102PETNC",
+      "official_source_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide",
+        "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+        "https://www.sharkclean.com/products/anti-allergen-true-hepa-nanoseal-filter-with-odor-lock-zidHE1FKPET"
+      ],
+      "manual_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide"
+      ],
+      "documented_filter_tokens": [
+        "HE1FKBAS",
+        "HE1FKPET"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NO_OFFICIAL_UNIT_PDP_CHECKED",
+      "notes": "UNKNOWN: No official sharkclean.com unit PDP fetched for HP102PETNC in this pass. PROVEN: SHARK-CARBON-FOAM not found on checked official filter PDPs. UNKNOWN: Per-model manual or support proof for HP102PETNC."
+    },
+    {
+      "model_slug": "shark-hp132",
+      "model_number": "HP132",
+      "official_source_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide",
+        "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP132",
+        "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS"
+      ],
+      "manual_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide"
+      ],
+      "documented_filter_tokens": [
+        "HE1FKBAS"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "HE1FKBAS_COMPAT_ONLY_NO_UNIT_PDP",
+      "notes": "PROVEN: HE1FKBAS official filter PDP lists HP132 compatibility. PROVEN: sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP132 redirected to homepage (no unit PDP content). PROVEN: SHARK-CARBON-FOAM not found. UNKNOWN: Whether HP132 uses separate carbon/foam vs HE1FKBAS integrated cartridge for anchor shark-carbon-foam."
+    },
+    {
+      "model_slug": "shark-hp141",
+      "model_number": "HP141",
+      "official_source_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide",
+        "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP141",
+        "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+        "https://www.sharkclean.com/products/anti-allergen-true-hepa-nanoseal-filter-with-odor-lock-zidHE1FKPET"
+      ],
+      "manual_urls": [
+        "https://support.sharkclean.com/hc/en-us/articles/4546749380380-HP100-Series-Shark-Air-Purifier-Owner-s-Guide"
+      ],
+      "documented_filter_tokens": [
+        "HE1FKBAS",
+        "HE1FKPET"
+      ],
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "NOT_ON_FETCHED_FILTER_COMPAT_LISTS",
+      "notes": "PROVEN: HP141 not listed on fetched HE1FKBAS or HE1FKPET compatibility lists. PROVEN: zidHP141 URL redirected to homepage. PROVEN: SHARK-CARBON-FOAM not found on checked official pages. UNKNOWN: Official replacement filter for HP141."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+      "retailer_or_source": "shark_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP Model HE1FKBAS. PROVEN: Token SHARK-CARBON-FOAM not present on PDP.",
+      "buyability_proof": "PROVEN: Add to cart visible on HP102 unit accessory cross-link during live browser pass.",
+      "wrong_family_risk": "PROVEN: Official integrated HEPA cartridge HE1FKBAS does not match anchor shark-carbon-foam / SHARK-CARBON-FOAM internal slug — mapping review required.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.sharkclean.com/products/anti-allergen-true-hepa-nanoseal-filter-with-odor-lock-zidHE1FKPET",
+      "retailer_or_source": "shark_official_filter_pdp",
+      "exact_token_proof": "PROVEN: Official PDP Model HE1FKPET. PROVEN: SHARK-CARBON-FOAM not on PDP.",
+      "buyability_proof": "PROVEN: Out of stock / Notify me on official PDP and HP102 accessories (not safe direct buy).",
+      "wrong_family_risk": "PROVEN: Official HE1FKPET NanoSeal cartridge does not match anchor shark-carbon-foam — likely wrong-family vs BuckParts carbon/foam secondary mapping.",
+      "status": "FAIL"
+    },
+    {
+      "url": "https://www.sharkclean.com/products/shark-air-purifier-with-true-hepa-zidHP102",
+      "retailer_or_source": "shark_official_unit_pdp",
+      "exact_token_proof": "UNKNOWN: Unit PDP documents Model HP102 only; no SHARK-CARBON-FOAM token.",
+      "buyability_proof": "PROVEN: Unit PDP buyable; accessory HE1FKBAS Add to cart observed.",
+      "wrong_family_risk": "PROVEN: Unit page accessories reference HE1FKBAS/HE1FKPET/HE001REM/HE002REM — none match anchor shark-carbon-foam.",
+      "status": "FAIL"
+    }
+  ],
+  "filter_first_cross_reference": {
+    "source_artifact_rel": "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json",
+    "filter_slug": "shark-carbon-foam",
+    "evidence_status": "UNKNOWN",
+    "candidate_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+    "browser_truth_classification": "official_reference",
+    "exact_token_found": false,
+    "add_to_cart_or_buy_button_found": true,
+    "token_evidence": "Live browser: HE1FKBAS on official PDP; SHARK-CARBON-FOAM not proven.",
+    "buy_button_evidence": "HE1FKBAS Add to cart on HP102 accessories — buy path for HEPA cartridge, not anchor slug.",
+    "rejection_reason": "Official tokens HE1FKBAS/HE1FKPET found; BuckParts SHARK-CARBON-FOAM not found; anchor mapping review required.",
+    "applies_to": "filter_slug_only_not_per_model_pages"
+  },
+  "evidence_status_counts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "UNKNOWN": 5,
+    "BLOCKED": 0
+  },
+  "recommended_csv_mutation": null,
+  "proven_facts": [
+    "PROVEN: Live browser pass checked 5 queue sample models for anchor filter shark-carbon-foam.",
+    "PROVEN: Official Shark pages checked include support HP100 Series guide URL, HE1FKPET PDP, HE1FKBAS PDP, HP102 unit PDP, HP102PET unit PDP, and attempted HP132/HP141 unit URLs.",
+    "PROVEN: Official filter tokens found on checked pages: HE1FKPET, HE1FKBAS, HE001REM, HE002REM (accessories on HP102 page).",
+    "PROVEN: Token SHARK-CARBON-FOAM not found on any checked official Shark/SharkClean page.",
+    "PROVEN: Named Shark SKU 'Carbon / foam secondary cartridge' not found on checked official pages.",
+    "PROVEN: recommended_csv_mutation is null — csv_apply_authorized=false; buy-link mutation not authorized.",
+    "PROVEN: MODEL_FILTER_MAPPING_REVIEW_REQUIRED — official replacement path appears to be HE1FKBAS/HE1FKPET integrated cartridges while shark-carbon-foam is a BuckParts internal slug only."
+  ],
+  "inferred_facts": [
+    "INFERRED: BuckParts shark-carbon-foam may need remapping to shark-hepa-hp100 / HE1FKBAS family or demotion until separate carbon/foam OEM proof exists.",
+    "INFERRED: Repo compatibility_mappings shark-* → shark-carbon-foam rows are not supported by official SHARK-CARBON-FOAM token on manufacturer pages checked in this pass."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: HP100 Series owner guide static HTML content (support page timed out or JS-rendered in automated fetch).",
+    "UNKNOWN: Official replacement filter SKU for HP102PETNC and HP141.",
+    "UNKNOWN: Whether HE001REM or HE002REM accessories are the intended official carbon/foam layer vs integrated HE1FKBAS cartridge.",
+    "UNKNOWN: Safe direct-buy official PDP explicitly tied to anchor slug shark-carbon-foam."
+  ]
+}
