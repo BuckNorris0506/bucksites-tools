@@ -1,90 +1,77 @@
 # BuckParts Grant Use of Funds v1
 
-**Purpose:** Budget category definitions for grant applications. Amounts are **UNKNOWN** until Jared sets them per application.  
-**Principle:** Funds serve verification, trust, accessibility, and coverage—not ecommerce inventory or affiliate-first growth.
+**Repo checkpoint:** `ad25736`  
+**Rule:** Categories below are **definitions only**. Dollar amounts are **UNKNOWN** until Jared sets them per application.  
+**Principle:** Funds serve **verification, trust, measurement, and safe expansion**—not inventory, storefront positioning, or affiliate-first growth.
 
 ---
 
-## Category overview
+## Summary categories (grant application packet)
 
-| Category | ID | Primary purpose |
-|----------|-----|-----------------|
-| AI and tool credits | `ai_and_tool_credits` | LLM, IDE, and automation tools for verification workflows |
-| Browser verification | `browser_verification` | Live retailer page checks, truth capture, listing alignment |
-| Verification tools | `verification_tools` | Scripts, reports, proof pipelines (read-only contracts, gates) |
-| Coverage expansion | `coverage_expansion` | More models, filters, and mappings with evidence discipline |
-| Customer trust UX | `customer_trust_ux` | Plain-language pages, uncertainty labels, compare-before-buy flows |
-| Accessibility | `accessibility` | WCAG-oriented improvements, readable trust content |
-| Development capacity | `development_capacity` | Founder/engineering time to build and maintain trust infrastructure |
-| Marketing / education | `marketing_education` | Wrong-part prevention education—not hype or savings promises |
+| Category | ID | What it funds |
+|----------|-----|----------------|
+| **AI and tool credits** | `ai_and_tool_credits` | LLM, IDE, and automation subscriptions for verification assistance, copy review, script development, and operator workflows |
+| **Research time** | `research_time` | Bounded OEM manual/chart research, bag-code vs model-fit evidence capture, category feasibility (e.g. vacuum OEM packet follow-on)—**notes and artifacts, not ungated CSV rows** |
+| **Validation tooling** | `validation_tooling` | Read-only report contracts, Command Center lanes, buy-gate audits, batch-review pipelines (`read_only: true`, `data_mutation: false`) |
+| **Indexing and search measurement** | `indexing_search_measurement` | GSC artifact refresh, sitemap/indexability audits, search footprint measurement—**reporting only** until founder approves sitemap changes |
+| **Accessibility and content polish** | `accessibility_content_polish` | Plain-language trust copy, semantic HTML, focus/keyboard paths, readability on public trust and lookup pages |
+| **Safe category expansion** | `safe_category_expansion` | Evidence-disciplined growth: more model/filter mappings and safe buyer paths **where repo proof supports them**; launch-state discipline (`NOINDEX_UNPROVEN` until gates pass) |
 
 ---
 
 ## AI and tool credits (`ai_and_tool_credits`)
 
-**Would fund:** ChatGPT, Cursor, Codex, and related AI/tool subscriptions used for verification assistance, copy review, script development, and operator workflows.
+**Would fund:** ChatGPT, Cursor, Codex, and related tools used to **assist verification**—not to auto-publish buy paths or invent fit.
 
-**Would not fund:** Generating fake certainty, auto-opening buy paths without evidence, or bulk listing promotion without gates.
+**Would not fund:** Bulk listing promotion without gates, or generating false certainty.
 
-**Repo basis:** Operating cost categories referenced in grant readiness and public trust positioning (**INFERRED** from kit doctrine; no dollar amounts in repo).
-
----
-
-## Browser verification (`browser_verification`)
-
-**Would fund:** Time and infrastructure to fetch and evaluate retailer product pages—confirming part numbers, buyability, and wrong-family risk before showing buying options.
-
-**Repo basis:** **PROVEN** browser-truth fields and gates in `launch-buy-links`; WHW `3m-ap810` has committed `direct_buyable` capture notes; `3m-ap811` is `BROWSER_TRUTH_READY` for next capture step.
+**Repo basis:** **INFERRED** operating-cost category; no subscription dollar amounts in repo.
 
 ---
 
-## Verification tools (`verification_tools`)
+## Research time (`research_time`)
 
-**Would fund:** Read-only report scripts, proof contracts, batch-review lanes, and operator tooling that track proof states without mutating product data unsafely.
+**Would fund:** Founder/operator hours for **bounded OEM evidence research** (e.g. Miele GN/FJM, Hoover Type Y, Kenmore Q vacuum families), WHW browser-truth capture, and model-first evidence queues.
 
-**Repo basis:** **PROVEN** contracts such as `buckparts_grant_readiness_v1` and WHW buyer-path / expansion queue reports (`read_only: true`, `data_mutation: false`).
+**Would not fund:** Treating marketplace titles as fit proof, or applying CSV rows without founder approval lanes.
 
----
-
-## Coverage expansion (`coverage_expansion`)
-
-**Would fund:** Adding model/filter mappings and safe buyer paths where evidence supports them—category by category, with launch-state discipline.
-
-**Repo basis:** **PROVEN** refrigerator and air purifier `LIVE`; other wedges `NOINDEX_UNPROVEN`; WHW not publicly opened despite partial CSV proof.
+**Repo basis:** **PROVEN** vacuum OEM packet `NEEDS_MORE_OEM_EVIDENCE`; WHW `whw_public_opening_authorized: false`.
 
 ---
 
-## Customer trust UX (`customer_trust_ux`)
+## Validation tooling (`validation_tooling`)
 
-**Would fund:** Public trust pages, compare-before-buy guidance, original/compatible labels, and “no buy button yet” messaging.
+**Would fund:** Scripts and Command Center lanes such as `buckparts_grant_readiness_v1`, `fridge_truth_spine_v1`, `air_purifier_truth_spine_v1`, `vacuum_bags_oem_research_evidence_packet_v1`, WHW batch directors, and sitemap indexability audits.
 
-**Repo basis:** **PROVEN** `/truth-policy`, `/wrong-part-prevention`, and trust UI components in repo at `aec8b8c`.
-
----
-
-## Accessibility (`accessibility`)
-
-**Would fund:** Semantic HTML improvements, readable typography, keyboard/focus paths, and audit remediation on public trust and lookup pages.
-
-**Repo basis:** Listed as grant use-of-funds in readiness contract. Formal audit results: **UNKNOWN**.
+**Repo basis:** **PROVEN** read-only contracts with explicit `csv_apply_authorized: false` / `data_mutation: false` on research lanes.
 
 ---
 
-## Development capacity (`development_capacity`)
+## Indexing and search measurement (`indexing_search_measurement`)
 
-**Would fund:** Founder and engineering time to maintain truth-first architecture, gates, and public pages.
+**Would fund:** Refreshing GSC coverage artifacts, running `buckparts_sitemap_indexability_audit_v1`, and tracking progress toward **future** indexability goals—without mutating sitemap or launch state from grant narrative alone.
 
-**Repo basis:** **INFERRED** solo-founder scale from repo structure; headcount/payroll: **UNKNOWN**.
+**Repo basis:** **PROVEN** `gsc_indexed_count: UNKNOWN`, `first_campaign_indexability_status: NOT_READY` at checkpoint (re-run audit before citing).
+
+**Would not fund:** Claiming current campaign readiness or indexed-page counts without fresh artifacts.
 
 ---
 
-## Marketing / education (`marketing_education`)
+## Accessibility and content polish (`accessibility_content_polish`)
 
-**Would fund:** Educational content on wrong-part traps and compare-before-buy habits—plain homeowner language for grant-aligned outreach.
+**Would fund:** Trust page clarity (`/truth-policy`, `/wrong-part-prevention`), compare-before-buy guidance, uncertainty labels, and WCAG-oriented improvements on public lookup surfaces.
 
-**Would not fund:** Savings-guarantee ads, “shop now” ecommerce campaigns, or commission-first messaging.
+**Repo basis:** **PROVEN** trust routes exist; formal accessibility audit result: **UNKNOWN**.
 
-**Repo basis:** Wrong-part prevention page content (**PROVEN**); ad spend and channel performance: **UNKNOWN**.
+---
+
+## Safe category expansion (`safe_category_expansion`)
+
+**Would fund:** Expanding **verified** coverage in refrigerator and air purifier wedges; **partial** WHW proof advancement under `NOINDEX_UNPROVEN`; **research-only** vacuum path until OEM dual evidence exists.
+
+**Would not fund:** Opening whole-house water, vacuum, or other wedges publicly without truth spine + founder gates; furnace/HVAC filters (out of scope—separate safety model not in repo).
+
+**Repo basis:** **PROVEN** wedge matrix: fridge + AP **FORMAL_SPINE**; WHW **PARTIAL_OPERATIONAL_PROOF**; vacuum **SAMPLE_ONLY**.
 
 ---
 
@@ -93,21 +80,27 @@
 | Category | Year 1 request | Notes |
 |----------|----------------|-------|
 | AI and tool credits | $UNKNOWN | Itemize subscriptions if required |
-| Browser verification | $UNKNOWN | Hours × rate or vendor |
-| Verification tools | $UNKNOWN | Hosting, monitoring |
-| Coverage expansion | $UNKNOWN | Data/verification labor |
-| Customer trust UX | $UNKNOWN | Design/copy/engineering |
-| Accessibility | $UNKNOWN | Audit + remediation |
-| Development capacity | $UNKNOWN | Founder stipend / contract dev |
-| Marketing / education | $UNKNOWN | Educational only |
+| Research time | $UNKNOWN | Hours × rate |
+| Validation tooling | $UNKNOWN | Hosting, monitoring, report infra |
+| Indexing and search measurement | $UNKNOWN | GSC/measurement labor |
+| Accessibility and content polish | $UNKNOWN | Audit + remediation if applicable |
+| Safe category expansion | $UNKNOWN | Evidence capture labor only |
 | **Total** | **$UNKNOWN** | Jared to set |
 
 ---
 
-## What grant funds would not be used for
+## What grant funds would **not** be used for
 
-- Buying inventory or acting as a retailer
-- Opening whole-house water or other wedges publicly without proof and founder approval
-- Paying for affiliate link placement over fit evidence
-- Claiming verified coverage without repo proof
-- Inventing traction metrics for applications
+- Buying or holding inventory; acting as a retailer or marketplace  
+- Opening WHW, vacuum, or other **NOINDEX_UNPROVEN** wedges publicly without proof  
+- Paying for affiliate placement over fit evidence  
+- Inventing traction, revenue, customer, or indexed-page metrics for applications  
+- Do not claim all filters verified or promise specific savings amounts  
+
+---
+
+## Related docs
+
+- [Application packet](./BuckParts-GRANT-APPLICATION-PACKET-v1.md)  
+- [Do not claim](./BuckParts-GRANT-DO-NOT-CLAIM-v1.md)  
+- Prior kit variant: [BuckParts-Grant-Use-Of-Funds-v1.md](./BuckParts-Grant-Use-Of-Funds-v1.md)
