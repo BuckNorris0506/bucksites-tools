@@ -1,0 +1,42 @@
+{
+  "fridge_model_slug": "frigidaire-ffhb2740ps",
+  "source_type": "manufacturer_support",
+  "source_url": "https://support.frigidaire.com/Owner-Center/Product-Support/FFHB2740PS",
+  "source_title": "Frigidaire FFHB2740PS Owner Support (Water Filter ULTRAWF)",
+  "source_host": "support.frigidaire.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Frigidaire FFHB2740PS French-door models use a PureSource Ultra cartridge in the top-right fresh-food compartment.",
+  "replacement_steps_summary": "Frigidaire guidance for ULTRAWF: push to release the old filter, slide the new PureSource Ultra cartridge in until it locks, flush water, then reset the filter indicator.",
+  "cautions": "Frigidaire recommends genuine PureSource Ultra filters; ULTRAWF is not interchangeable with EPTWFU01 or WF3CB housings.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-frigidaire-ultrawf-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Frigidaire bundle for FFHB2740PS — Owner Support lists replacement filter ULTRAWF (PureSource Ultra).",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://support.frigidaire.com/Owner-Center/Product-Support/FFHB2740PS",
+      "source_title": "Frigidaire FFHB2740PS Owner Support (Water Filter ULTRAWF)",
+      "source_host": "support.frigidaire.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "source_title": "Frigidaire PureSource Ultra Water Filter ULTRAWF",
+      "source_host": "www.frigidaire.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+      "source_title": "Frigidaire Appliance Parts — Water Filter ULTRAWF",
+      "source_host": "www.frigidaireapplianceparts.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}

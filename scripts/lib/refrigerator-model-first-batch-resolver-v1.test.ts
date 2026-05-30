@@ -165,13 +165,34 @@ test("manual-evidence Whirlpool models with legacy map conflicts are not PROVEN 
   assert.equal(edr1!.grouped_official_filter_family, "whirlpool::EDR1RXD1");
 });
 
+test("manual-evidence Frigidaire models with legacy map conflicts are not PROVEN from CSV alone", () => {
+  const report = buildRefrigeratorModelFirstBatchResolverV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  const eptwfu01 = ["frigidaire-fghb2868pf", "frigidaire-fgsc2335tf"] as const;
+  for (const slug of eptwfu01) {
+    const row = report.model_rows.find((r) => r.fridge_slug === slug);
+    assert.ok(row, slug);
+    assert.equal(row!.confidence, "MAPPING_REVIEW_REQUIRED");
+    assert.equal(row!.official_filter_token_or_name, "EPTWFU01");
+    assert.ok(row!.current_legacy_buckparts_filter_slugs.length > 0);
+    assert.equal(row!.grouped_official_filter_family, "frigidaire::EPTWFU01");
+  }
+  const ultrawf = report.model_rows.find((r) => r.fridge_slug === "frigidaire-ffhb2740ps");
+  assert.ok(ultrawf);
+  assert.equal(ultrawf!.confidence, "MAPPING_REVIEW_REQUIRED");
+  assert.equal(ultrawf!.official_filter_token_or_name, "ULTRAWF");
+  assert.equal(ultrawf!.grouped_official_filter_family, "frigidaire::ULTRAWF");
+});
+
 test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq consumers", () => {
   const report = buildRefrigeratorModelFirstBatchResolverV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
   const reviewRows = report.model_rows.filter((r) => r.confidence === "MAPPING_REVIEW_REQUIRED");
-  assert.equal(reviewRows.length, 17);
+  assert.equal(reviewRows.length, 20);
   for (const row of reviewRows) {
     assert.ok(row.current_legacy_buckparts_filter_slugs.length > 0);
     assert.ok(row.official_filter_token_or_name);
@@ -179,15 +200,14 @@ test("MAPPING_REVIEW_REQUIRED rows expose legacy and official fields for jq cons
   }
 });
 
-test("models without official proof default to UNKNOWN", () => {
+test("batch v1 has no UNKNOWN rows once all manual evidence is committed", () => {
   const report = buildRefrigeratorModelFirstBatchResolverV1({
     rootDir: REPO_ROOT,
     manifestRelPath: MANIFEST_REL,
   });
-  const row = report.model_rows.find((r) => r.fridge_slug === "frigidaire-fghb2868pf");
-  assert.ok(row);
-  assert.equal(row!.confidence, "UNKNOWN");
-  assert.equal(row!.official_filter_token_or_name, null);
+  assert.equal(report.inspect_summary.confidence_counts.UNKNOWN, 0);
+  assert.equal(report.inspect_summary.confidence_counts.PROVEN, 0);
+  assert.equal(report.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 20);
 });
 
 test("read-only resolver does not mutate product CSV or public routes", () => {
@@ -216,7 +236,7 @@ test("steering override is ready when mapping review or unknown rows remain", ()
   });
   assert.ok(override);
   assert.ok(override!.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:"));
-  assert.match(override!.next_best_action, /Resolve 17 mapping-review models/);
-  assert.match(override!.next_best_action, /3 unknown refrigerator models/);
+  assert.match(override!.next_best_action, /Resolve 20 mapping-review models/);
+  assert.match(override!.next_best_action, /0 unknown refrigerator models/);
   assert.equal(override!.mutation_block_reasons.includes("csv_apply_authorized:false"), true);
 });

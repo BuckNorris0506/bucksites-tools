@@ -1,0 +1,42 @@
+{
+  "fridge_model_slug": "frigidaire-fghb2868pf",
+  "source_type": "manufacturer_support",
+  "source_url": "https://images.webfronts.com/cache/frgnscdfoeos.pdf",
+  "source_title": "Frigidaire FGHB2868 platform spec (Water Filter EPTWFU01)",
+  "source_host": "www.frigidaire.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Frigidaire FGHB2868 French-door models use a PureSource Ultra II cartridge in the top-right fresh-food compartment.",
+  "replacement_steps_summary": "Frigidaire guidance for EPTWFU01: remove the old filter, slide the new PureSource Ultra II cartridge in, push and twist until locked, flush several minutes, then reset the filter indicator.",
+  "cautions": "Frigidaire recommends genuine PureSource Ultra II filters; EPTWFU01 is not interchangeable with ULTRAWF or WF3CB housings.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-frigidaire-eptwfu01-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Frigidaire/Electrolux bundle for FGHB2868PF — FGHB2868T platform specification lists Water Filter Type PureSource Ultra II (EPTWFU01).",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://images.webfronts.com/cache/frgnscdfoeos.pdf",
+      "source_title": "Frigidaire FGHB2868 platform spec (Water Filter EPTWFU01)",
+      "source_host": "www.frigidaire.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+      "source_title": "Frigidaire PureSource Ultra II Water Filter EPTWFU01",
+      "source_host": "www.frigidaire.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+      "source_title": "Frigidaire Appliance Parts — Water Filter EPTWFU01",
+      "source_host": "www.frigidaireapplianceparts.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    }
+  ]
+}
