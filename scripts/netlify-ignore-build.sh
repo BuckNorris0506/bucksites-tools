@@ -55,7 +55,7 @@ is_non_runtime() {
     data/bulk/* | data/waterdrop/* | data/gsc/* | data/manual-evidence/*)
       return 0
       ;;
-    data/fridge-form-factor-evidence/* | data/affiliate/* | data/ops/*)
+    data/fridge-form-factor-evidence/* | data/fridge/batch-production/* | data/affiliate/* | data/ops/*)
       return 0
       ;;
     data/operator-blocked-fridge-non-amazon.json | data/EXPECTED_HEADERS.txt)

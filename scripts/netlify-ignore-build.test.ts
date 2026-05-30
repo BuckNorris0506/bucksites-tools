@@ -56,3 +56,23 @@ test("scripts-only change skips build (exit 0)", () => {
   const r = runDryRun(["scripts/report-buckparts-command-center.ts"]);
   assert.equal(r.status, 0, r.stderr);
 });
+
+test("fridge batch-production manifest skips build (exit 0)", () => {
+  const r = runDryRun([
+    "data/fridge/batch-production/model-first-input-v1/fridge-models-batch-v1.json",
+  ]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stderr, /SKIP/i);
+});
+
+test("data/compatibility_mappings.csv triggers build (exit 1)", () => {
+  const r = runDryRun(["data/compatibility_mappings.csv"]);
+  assert.equal(r.status, 1, r.stderr);
+  assert.match(r.stderr, /BUILD/i);
+});
+
+test("src/app/page.tsx triggers build (exit 1)", () => {
+  const r = runDryRun(["src/app/page.tsx"]);
+  assert.equal(r.status, 1, r.stderr);
+  assert.match(r.stderr, /BUILD/i);
+});
