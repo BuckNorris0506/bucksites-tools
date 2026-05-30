@@ -3769,6 +3769,53 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.refrigerator_model_first_qa_approval_packet_v1 is read-only QA wrong-purchase prevention lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.refrigerator_model_first_qa_approval_packet_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "refrigerator_model_first_qa_approval_packet_v1");
+  assert.equal(lane.packet_framing, "quality_assurance_wrong_purchase_prevention");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.apply_authorized, false);
+  assert.equal(lane.founder_approval_required, true);
+  assert.equal(lane.founder_approval_status, "pending");
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.equal(lane.buy_link_mutation_authorized, false);
+  assert.equal(lane.public_page_change_authorized, false);
+  assert.equal(lane.inspect_summary.mapping_review_model_count, 20);
+  assert.equal(lane.inspect_summary.total_planned_removals, 53);
+  assert.equal(lane.inspect_summary.total_planned_additions, 10);
+  assert.equal(lane.inspect_summary.total_planned_keeps, 16);
+  assert.equal(lane.inspect_summary.apply_authorized, false);
+  assert.equal(lane.inspect_summary.founder_approval_required, true);
+  assert.equal(lane.inspect_summary.founder_approval_status, "pending");
+  assert.equal(lane.inspect_summary.csv_apply_authorized, false);
+  assert.equal(lane.inspect_summary.supabase_update_authorized, false);
+  assert.equal(lane.inspect_summary.buy_link_mutation_authorized, false);
+  assert.equal(lane.inspect_summary.public_page_change_authorized, false);
+  assert.equal(
+    lane.inspect_summary.recommended_next_action,
+    "QA REVIEW REQUIRED: Review 20 refrigerator mapping-risk models before any compatibility_mappings.csv apply, buy-link work, or public confidence upgrade.",
+  );
+  assert.ok(
+    lane.inspect_summary.recommended_jq_paths.command_center.includes(
+      "refrigerator_model_first_qa_approval_packet_v1",
+    ),
+  );
+  assert.ok(
+    lane.draft_markdown_path.includes(
+      "data/fridge/batch-production/drafts/refrigerator-model-first-mapping-review-founder-approval-packet-v1.md",
+    ),
+  );
+});
+
 test("command_center_v2.refrigerator_model_first_batch_resolver_v1 is read-only model-first batch resolver", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -3787,7 +3834,9 @@ test("command_center_v2.refrigerator_model_first_batch_resolver_v1 is read-only 
   assert.equal(lane.public_page_change_authorized, false);
   assert.equal(lane.inspect_summary.csv_apply_authorized, false);
   assert.equal(lane.inspect_summary.models_checked_count, 20);
-  assert.equal(lane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 3);
+  assert.equal(lane.inspect_summary.confidence_counts.MAPPING_REVIEW_REQUIRED, 20);
+  assert.equal(lane.inspect_summary.confidence_counts.UNKNOWN, 0);
+  assert.equal(lane.inspect_summary.confidence_counts.PROVEN, 0);
   assert.ok(
     lane.inspect_summary.recommended_jq_paths.command_center.includes(
       "refrigerator_model_first_batch_resolver_v1",

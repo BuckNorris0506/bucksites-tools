@@ -6,8 +6,11 @@ import test from "node:test";
 import {
   REFRIGERATOR_MODEL_FIRST_FOUNDER_APPROVAL_DRAFT_ALLOWED_PREFIX_V1,
   REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1,
+  REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1,
   RefrigeratorFounderApprovalDraftPathErrorV1,
   buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1,
+  buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1,
+  formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1,
   readProductCsvSnapshotForFounderApprovalPacketTestV1,
   validateRefrigeratorFounderApprovalDraftOutputPathV1,
   writeRefrigeratorModelFirstMappingReviewFounderApprovalPacketDraftV1,
@@ -133,6 +136,23 @@ test("markdown frames packet as QA wrong-purchase prevention with authorization 
   assert.match(packet.markdown, /No compatibility_mappings\.csv apply is authorized/i);
   assert.match(packet.markdown, /not PASS \/ not PROVEN until CSV is reconciled/i);
   assert.equal(packet.explicit_warnings.length, 6);
+});
+
+test("command center lane surfaces QA inspect summary without authorizing apply", () => {
+  const lane = buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1({
+    rootDir: REPO_ROOT,
+    manifestRelPath: MANIFEST_REL,
+  });
+  assert.equal(
+    lane.contract,
+    REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1,
+  );
+  assert.equal(lane.packet_framing, "quality_assurance_wrong_purchase_prevention");
+  assert.equal(lane.apply_authorized, false);
+  assert.equal(
+    lane.inspect_summary.recommended_next_action,
+    formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1(20),
+  );
 });
 
 test("draft output path must be under fridge batch-production drafts", () => {

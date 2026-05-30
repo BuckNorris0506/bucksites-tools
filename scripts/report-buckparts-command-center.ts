@@ -97,6 +97,10 @@ import {
   buildFridgeTruthSpineV1,
 } from "./lib/fridge-truth-spine-v1";
 import {
+  buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneUnknownV1,
+  buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1,
+} from "./lib/refrigerator-model-first-mapping-review-founder-approval-packet-v1";
+import {
   buildRefrigeratorModelFirstBatchResolverUnknownV1,
   buildRefrigeratorModelFirstBatchResolverV1,
   REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
@@ -1011,6 +1015,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
+    | "refrigerator_model_first_qa_approval_packet_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1141,6 +1146,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
+    | "refrigerator_model_first_qa_approval_packet_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1252,6 +1258,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
+    | "refrigerator_model_first_qa_approval_packet_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1403,6 +1410,22 @@ export async function buildBuckpartsCommandCenterReport(
       manifestRelPath: REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
       reason: message,
     });
+  }
+
+  let refrigerator_model_first_qa_approval_packet_v1;
+  try {
+    refrigerator_model_first_qa_approval_packet_v1 =
+      buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1({
+        rootDir,
+        now,
+        manifestRelPath: REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    refrigerator_model_first_qa_approval_packet_v1 =
+      buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneUnknownV1({
+        reason: message,
+      });
   }
 
   let air_purifier_truth_spine_v1;
@@ -1561,6 +1584,7 @@ export async function buildBuckpartsCommandCenterReport(
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
     refrigerator_model_first_batch_resolver_v1,
+    refrigerator_model_first_qa_approval_packet_v1,
     air_purifier_truth_spine_v1,
     air_purifier_batch_coverage_director_v1,
     vacuum_bags_wedge_feasibility_v1,

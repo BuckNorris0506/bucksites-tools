@@ -22,6 +22,12 @@ import {
 export const REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1 =
   "refrigerator_model_first_mapping_review_founder_approval_packet_v1" as const;
 
+export const REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1 =
+  "refrigerator_model_first_qa_approval_packet_v1" as const;
+
+export const REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_REPORT_COMMAND_V1 =
+  `npx tsx scripts/report-refrigerator-model-first-mapping-review-founder-approval-packet-v1.ts --manifest ${REFRIGERATOR_MODEL_FIRST_DEFAULT_MANIFEST_REL_V1}` as const;
+
 export const REFRIGERATOR_MODEL_FIRST_FOUNDER_APPROVAL_DRAFT_ALLOWED_PREFIX_V1 =
   "data/fridge/batch-production/drafts/" as const;
 
@@ -68,6 +74,34 @@ export type FounderApprovalPacketInspectSummaryV1 = {
   supabase_update_authorized: false;
   buy_link_mutation_authorized: false;
   public_page_change_authorized: false;
+};
+
+export type RefrigeratorModelFirstQaApprovalPacketCommandCenterInspectSummaryV1 =
+  FounderApprovalPacketInspectSummaryV1 & {
+    recommended_jq_paths: {
+      command_center: ".command_center_v2.refrigerator_model_first_qa_approval_packet_v1.inspect_summary";
+      standalone_report: ".inspect_summary";
+    };
+    recommended_next_action: string;
+  };
+
+export type RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 = {
+  contract: typeof REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1;
+  classification: "non-runtime";
+  packet_framing: "quality_assurance_wrong_purchase_prevention";
+  read_only: true;
+  data_mutation: false;
+  apply_authorized: false;
+  founder_approval_required: true;
+  founder_approval_status: "pending";
+  csv_apply_authorized: false;
+  supabase_update_authorized: false;
+  buy_link_mutation_authorized: false;
+  public_page_change_authorized: false;
+  draft_markdown_path: typeof REFRIGERATOR_MODEL_FIRST_FOUNDER_APPROVAL_DEFAULT_DRAFT_REL_V1;
+  report_command: typeof REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_REPORT_COMMAND_V1;
+  source_packet_contract: typeof REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1;
+  inspect_summary: RefrigeratorModelFirstQaApprovalPacketCommandCenterInspectSummaryV1;
 };
 
 export type FounderApprovalPacketQaFramingV1 = {
@@ -467,6 +501,101 @@ export function writeRefrigeratorModelFirstMappingReviewFounderApprovalPacketDra
   writeFileSync(absolutePath, args.packet.markdown, "utf8");
 
   return { wrote: true, output_path: repoRelativePosix };
+}
+
+export function formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1(
+  mappingReviewModelCount: number,
+): string {
+  return (
+    `QA REVIEW REQUIRED: Review ${String(mappingReviewModelCount)} refrigerator mapping-risk models ` +
+    "before any compatibility_mappings.csv apply, buy-link work, or public confidence upgrade."
+  );
+}
+
+export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1(args: {
+  rootDir: string;
+  manifestRelPath?: string;
+  now?: () => Date;
+  packet?: RefrigeratorModelFirstMappingReviewFounderApprovalPacketV1;
+}): RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 {
+  const packet =
+    args.packet ??
+    buildRefrigeratorModelFirstMappingReviewFounderApprovalPacketV1({
+      rootDir: args.rootDir,
+      manifestRelPath: args.manifestRelPath,
+      now: args.now,
+    });
+
+  const mappingReviewModelCount = packet.inspect_summary.mapping_review_model_count;
+
+  return {
+    contract: REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1,
+    classification: "non-runtime",
+    packet_framing: "quality_assurance_wrong_purchase_prevention",
+    read_only: true,
+    data_mutation: false,
+    apply_authorized: false,
+    founder_approval_required: true,
+    founder_approval_status: "pending",
+    csv_apply_authorized: false,
+    supabase_update_authorized: false,
+    buy_link_mutation_authorized: false,
+    public_page_change_authorized: false,
+    draft_markdown_path: REFRIGERATOR_MODEL_FIRST_FOUNDER_APPROVAL_DEFAULT_DRAFT_REL_V1,
+    report_command: REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_REPORT_COMMAND_V1,
+    source_packet_contract: REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1,
+    inspect_summary: {
+      ...packet.inspect_summary,
+      recommended_jq_paths: {
+        command_center:
+          ".command_center_v2.refrigerator_model_first_qa_approval_packet_v1.inspect_summary",
+        standalone_report: ".inspect_summary",
+      },
+      recommended_next_action:
+        formatRefrigeratorModelFirstQaApprovalRecommendedNextActionV1(mappingReviewModelCount),
+    },
+  };
+}
+
+export function buildRefrigeratorModelFirstQaApprovalPacketCommandCenterLaneUnknownV1(args: {
+  reason: string;
+}): RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 {
+  return {
+    contract: REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_COMMAND_CENTER_CONTRACT_V1,
+    classification: "non-runtime",
+    packet_framing: "quality_assurance_wrong_purchase_prevention",
+    read_only: true,
+    data_mutation: false,
+    apply_authorized: false,
+    founder_approval_required: true,
+    founder_approval_status: "pending",
+    csv_apply_authorized: false,
+    supabase_update_authorized: false,
+    buy_link_mutation_authorized: false,
+    public_page_change_authorized: false,
+    draft_markdown_path: REFRIGERATOR_MODEL_FIRST_FOUNDER_APPROVAL_DEFAULT_DRAFT_REL_V1,
+    report_command: REFRIGERATOR_MODEL_FIRST_QA_APPROVAL_PACKET_REPORT_COMMAND_V1,
+    source_packet_contract: REFRIGERATOR_MODEL_FIRST_MAPPING_REVIEW_FOUNDER_APPROVAL_PACKET_CONTRACT_V1,
+    inspect_summary: {
+      mapping_review_model_count: 0,
+      total_planned_removals: 0,
+      total_planned_additions: 0,
+      total_planned_keeps: 0,
+      apply_authorized: false,
+      founder_approval_required: true,
+      founder_approval_status: "pending",
+      csv_apply_authorized: false,
+      supabase_update_authorized: false,
+      buy_link_mutation_authorized: false,
+      public_page_change_authorized: false,
+      recommended_jq_paths: {
+        command_center:
+          ".command_center_v2.refrigerator_model_first_qa_approval_packet_v1.inspect_summary",
+        standalone_report: ".inspect_summary",
+      },
+      recommended_next_action: `Fix refrigerator_model_first_qa_approval_packet_v1 build: ${args.reason}`,
+    },
+  };
 }
 
 export function readProductCsvSnapshotForFounderApprovalPacketTestV1(
