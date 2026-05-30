@@ -1,0 +1,50 @@
+{
+  "fridge_model_slug": "samsung-rf263beaesr",
+  "source_type": "manufacturer_support",
+  "source_url": "https://image-us.samsung.com/SamsungUS/samsungbusiness/samsung-builder/products/spec-sheets/spec_sheets_rf263beaesr.pdf",
+  "source_title": "Samsung RF263BEAESR spec sheet (Water Filter HAF-CIN / DA29-00020B)",
+  "source_host": "image-us.samsung.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Samsung support guidance varies by model — consult the user manual for internal filter housing location on French-door models with external water dispensers.",
+  "replacement_steps_summary": "Samsung support guidance for HAF-CIN filters: turn off water supply, rotate the old filter counterclockwise to unlock and remove, install the new filter clockwise until locked, then flush several gallons and reset the filter indicator.",
+  "cautions": "Samsung support recommends genuine Samsung water filters only and replacing approximately every six months or when the filter indicator prompts.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-samsung-haf-cin-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Samsung bundle for RF263BEAESR — builder spec lists Accessories Water Filter HAF-CIN; HAF-CIN accessory cartridge DA29-00020B.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://image-us.samsung.com/SamsungUS/samsungbusiness/samsung-builder/products/spec-sheets/spec_sheets_rf263beaesr.pdf",
+      "source_title": "Samsung RF263BEAESR spec sheet (Water Filter HAF-CIN / DA29-00020B)",
+      "source_host": "image-us.samsung.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/home-appliance-accessories/haf-cin-refrigerator-water-filter-sku-haf-cin-exp/",
+      "source_title": "Samsung HAF-CIN refrigerator water filter accessory",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/ca/support/model/RF263BEAESR/AA/",
+      "source_title": "Samsung RF263BEAESR product support page",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/support/answer/ANS10005090/",
+      "source_title": "How to replace the water filter in a Samsung refrigerator",
+      "source_host": "www.samsung.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    }
+  ]
+}

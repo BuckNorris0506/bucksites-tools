@@ -1,0 +1,50 @@
+{
+  "fridge_model_slug": "samsung-rf28nhedbsr",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.samsung.com/us/business/builder/our-appliances/refrigerators/4-door-french-door/28-cu--ft--4-door-french-door-with-21-5-in--connected-touch-screen-family-hub--refrigerator-rf28nhedbsg-aa/",
+  "source_title": "Samsung RF28NHEDBSR builder spec (Water Filter HAF-CIN / DA29-00020B)",
+  "source_host": "www.samsung.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Samsung Family Hub French-door models use an internal water filter — consult the user manual for housing access on this model family.",
+  "replacement_steps_summary": "Samsung support guidance for HAF-CIN filters: turn off water supply, rotate the old filter counterclockwise to unlock and remove, install the new filter clockwise until locked, then flush several gallons and reset the filter indicator.",
+  "cautions": "Samsung support recommends genuine Samsung water filters only and replacing approximately every six months or when the filter indicator prompts.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-samsung-haf-cin-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Samsung bundle for RF28NHEDBSR — builder product page lists Water Filter HAF-CIN; HAF-CIN compatible-models list includes RF28NHEDBSR/AC; cartridge DA29-00020B.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/business/builder/our-appliances/refrigerators/4-door-french-door/28-cu--ft--4-door-french-door-with-21-5-in--connected-touch-screen-family-hub--refrigerator-rf28nhedbsg-aa/",
+      "source_title": "Samsung RF28NHEDBSR builder spec (Water Filter HAF-CIN / DA29-00020B)",
+      "source_host": "www.samsung.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/ca/home-appliance-accessories/refrigerators-filter-haf-cin-haf-cin-exp/",
+      "source_title": "Samsung HAF-CIN compatible models (includes RF28NHEDBSR/AC)",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/ca/support/model/RF28NHEDBSR/AC/",
+      "source_title": "Samsung RF28NHEDBSR product support page",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/support/answer/ANS10005090/",
+      "source_title": "How to replace the water filter in a Samsung refrigerator",
+      "source_host": "www.samsung.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    }
+  ]
+}

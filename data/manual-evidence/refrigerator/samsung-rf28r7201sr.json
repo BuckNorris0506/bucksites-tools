@@ -1,0 +1,58 @@
+{
+  "fridge_model_slug": "samsung-rf28r7201sr",
+  "source_type": "manufacturer_support",
+  "source_url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+  "source_title": "Samsung RF28R7201SR official filter (Water Filter HAF-QIN / DA97-17376B)",
+  "source_host": "www.samsung.com",
+  "evidence_date": "2026-05-28",
+  "filter_location_text": "Samsung support guidance varies by model — consult the user manual for internal filter housing location on French-door models with external water dispensers.",
+  "replacement_steps_summary": "Samsung support guidance for HAF-QIN filters: turn off water supply, rotate the old filter counterclockwise to unlock and remove, install the new filter clockwise until locked, then flush several gallons and reset the filter indicator.",
+  "cautions": "Samsung support recommends genuine Samsung water filters only and replacing approximately every six months or when the filter indicator prompts.",
+  "confidence": "medium",
+  "extracted_by": "cursor-agent-model-first-samsung-haf-qin-2026-05-28",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Tier 1 Samsung bundle for RF28R7201SR — official Water Filter Finder lists RF28R7201 under HAF-QIN; accessory cartridge DA97-17376B.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+      "source_title": "Samsung RF28R7201SR official filter (Water Filter HAF-QIN / DA97-17376B)",
+      "source_host": "www.samsung.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+      "source_title": "Samsung HAF-QIN refrigerator water filter accessory",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://image-us.samsung.com/SamsungUS/samsungbusiness/samsung-builder/products/spec-sheets_093020/RF28R7201SR.pdf",
+      "source_title": "Samsung RF28R7201SR spec sheet",
+      "source_host": "image-us.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/refrigerators/french-door/28-cu-ft-4-door-french-door-refrigerator-in-fingerprint-resistant-stainless-steel-sku-rf28r7201sr-aa/",
+      "source_title": "Samsung RF28R7201SR product page",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/support/answer/ANS10005090/",
+      "source_title": "How to replace the water filter in a Samsung refrigerator",
+      "source_host": "www.samsung.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    }
+  ]
+}
