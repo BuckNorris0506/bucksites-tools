@@ -3800,6 +3800,28 @@ test("command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP 
   assert.ok(director.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
+test("command_center_v2.vacuum_bags_wedge_feasibility_v1 is read-only vacuum feasibility report", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json"),
+    readDir: () => [],
+    readTextFile: (p) => (p.endsWith("package.json") ? fs.readFileSync(p, "utf8") : BASE_TRACKER),
+  });
+  const lane = report.command_center_v2.vacuum_bags_wedge_feasibility_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "vacuum_bags_wedge_feasibility_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommendation, "NEEDS_RESEARCH_FIRST");
+  assert.equal(lane.all_vacuum_bags_verified_claim, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_update_authorized, false);
+  assert.equal(lane.public_launch_authorized, false);
+  assert.ok(lane.inspect_summary.architecture_reuse_score >= 7);
+  assert.ok(lane.furnace_filter_comparison.furnace_deferred_reason.includes("MERV"));
+  assert.ok(lane.proven_facts.some((f) => f.includes("sample")));
+});
+
 test("command_center_v2.whole_house_water_batch_production_director_v1 is read-only WHW batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

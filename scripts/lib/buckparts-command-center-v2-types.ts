@@ -18,6 +18,7 @@ import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-a
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { AirPurifierBatchCoverageDirectorV1 } from "./air-purifier-batch-coverage-director-v1";
 import type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
+import type { VacuumBagsWedgeFeasibilityV1 } from "./vacuum-bags-wedge-feasibility-v1";
 import type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
 import type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
@@ -911,6 +912,8 @@ export type CommandCenterV2Report = {
   air_purifier_truth_spine_v1: AirPurifierTruthSpineV1;
   /** Read-only AP multi-filter coverage director for zero-safe-buy-path expansion — not CSV apply authority. */
   air_purifier_batch_coverage_director_v1: AirPurifierBatchCoverageDirectorV1;
+  /** Read-only vacuum bags wedge feasibility + truth model — not inventory or launch authority. */
+  vacuum_bags_wedge_feasibility_v1: VacuumBagsWedgeFeasibilityV1;
   /** Read-only sitemap vs repo indexable inventory audit — not sitemap mutation authority. */
   sitemap_indexability_audit_v1: BuckpartsSitemapIndexabilityAuditV1;
   /** Read-only WHW multi-filter batch production director — not CSV apply or public opening authority. */
@@ -974,6 +977,7 @@ export type {
   PagePublishabilityTruthRowV1,
 } from "./buckparts-page-publishability-truth-v1";
 export type { BuckpartsSitemapIndexabilityAuditV1 } from "./buckparts-sitemap-indexability-audit-v1";
+export type { VacuumBagsWedgeFeasibilityV1 } from "./vacuum-bags-wedge-feasibility-v1";
 export type { AirPurifierBatchCoverageDirectorV1 } from "./air-purifier-batch-coverage-director-v1";
 export type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
 export type { FridgeTruthSpineV1 } from "./fridge-truth-spine-v1";
@@ -997,6 +1001,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_truth_spine_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"
+  | "vacuum_bags_wedge_feasibility_v1"
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
   | "whole_house_water_director_model_first_batch_v1"

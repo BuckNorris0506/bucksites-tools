@@ -73,6 +73,10 @@ import {
   buildBuckpartsSitemapIndexabilityAuditV1,
 } from "./lib/buckparts-sitemap-indexability-audit-v1";
 import {
+  buildVacuumBagsWedgeFeasibilityUnknownV1,
+  buildVacuumBagsWedgeFeasibilityV1,
+} from "./lib/vacuum-bags-wedge-feasibility-v1";
+import {
   buildAirPurifierBatchCoverageDirectorUnknownV1,
   buildAirPurifierBatchCoverageDirectorV1,
 } from "./lib/air-purifier-batch-coverage-director-v1";
@@ -994,6 +998,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
+    | "vacuum_bags_wedge_feasibility_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
@@ -1120,6 +1125,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
+    | "vacuum_bags_wedge_feasibility_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
@@ -1227,6 +1233,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
+    | "vacuum_bags_wedge_feasibility_v1"
     | "sitemap_indexability_audit_v1"
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
@@ -1388,6 +1395,20 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let vacuum_bags_wedge_feasibility_v1;
+  try {
+    vacuum_bags_wedge_feasibility_v1 = buildVacuumBagsWedgeFeasibilityV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    vacuum_bags_wedge_feasibility_v1 = buildVacuumBagsWedgeFeasibilityUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let sitemap_indexability_audit_v1;
   try {
     sitemap_indexability_audit_v1 = await buildBuckpartsSitemapIndexabilityAuditV1({
@@ -1472,6 +1493,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_truth_spine_v1,
     air_purifier_truth_spine_v1,
     air_purifier_batch_coverage_director_v1,
+    vacuum_bags_wedge_feasibility_v1,
     sitemap_indexability_audit_v1,
     whole_house_water_batch_production_director_v1,
     whole_house_water_director_model_first_batch_v1,
