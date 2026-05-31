@@ -251,6 +251,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Large Batch Coverage Factory summary projected into Command Center JSON during report generation (read-only); full buckparts_large_batch_coverage_factory_v1 remains on npm run buckparts:large-batch-coverage-factory.",
   },
+  "buckparts:fridge-buyer-path-owner-review-bridge": {
+    cc_json_path: "command_center_v2.fridge_buyer_path_owner_review_bridge_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_buyer_path_owner_review_bridge_v1.data_mutation'",
+    reason:
+      "Fridge buyer-path owner-review bridge projected into Command Center JSON during report generation (read-only); full fridge_buyer_path_owner_review_bridge_v1 remains on npm run buckparts:fridge-buyer-path-owner-review-bridge.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

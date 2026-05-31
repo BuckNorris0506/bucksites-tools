@@ -3186,6 +3186,50 @@ test("command_center_v2.large_batch_coverage_factory_summary_v1 is read-only Cod
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "buckparts_large-batch-coverage-factory"));
 });
 
+test("command_center_v2.fridge_buyer_path_owner_review_bridge_v1 is read-only owner-review lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.fridge_buyer_path_owner_review_bridge_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "fridge_buyer_path_owner_review_bridge_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.fridge_buyer_path_owner_review_bridge_v1",
+  );
+  assert.equal(lane.cohort_count, 14);
+  assert.equal(lane.owner_review_ready_count, 14);
+  assert.equal(lane.mutation_ready_count, 0);
+  assert.equal(lane.formal_batch_exists, false);
+  assert.equal(lane.top_cohort_slugs[0], "4396710");
+  assert.equal(lane.apply_mutation_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.retailer_links_mutation_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(lane.buy_link_mutation_authorized, false);
+  assert.match(lane.recommended_next_action, /no CSV/i);
+  assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_owner_review_bridge/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_fridge-buyer-path-owner-review-bridge",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.fridge_buyer_path_owner_review_bridge_v1",
+  );
+
+  const gate = report.command_center_v2.brain_integrity_gate_v1;
+  assert.ok(
+    !gate.partial_entries.some((e) => e.system_id === "buckparts_fridge-buyer-path-owner-review-bridge"),
+  );
+});
+
 test("command_center_v2.batch_production_operating_checklist_v1 is read-only batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
