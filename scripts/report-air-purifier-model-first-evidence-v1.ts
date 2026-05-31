@@ -126,6 +126,7 @@ function main(): void {
         data_mutation: result.data_mutation,
         evidence_status_counts: result.evidence_status_counts,
         recommended_csv_mutation: result.recommended_csv_mutation,
+        safe_apply_authorized: result.safe_apply_authorized,
         model_slugs_checked: result.model_slugs_checked,
       },
       null,

@@ -118,6 +118,8 @@ export type AirPurifierModelFirstEvidenceResultBaseV1 = {
   model_slugs_checked: string[];
   evidence_status_counts: Record<ModelFirstEvidenceRowStatusV1, number>;
   recommended_csv_mutation: null;
+  /** false unless evidence_status_counts.PASS > 0 and gates authorize CSV apply. */
+  safe_apply_authorized: boolean;
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
@@ -354,6 +356,18 @@ function validateModelSlugsCheckedSummary(
   );
 }
 
+function validateSafeApplyAuthorizedSummary(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  if (!hasStatusCounts(value)) return false;
+  if (!("safe_apply_authorized" in value) || value.safe_apply_authorized === undefined) {
+    return true;
+  }
+  if (typeof value.safe_apply_authorized !== "boolean") return false;
+  const counts = value.evidence_status_counts as Record<string, number>;
+  const passCount = typeof counts.PASS === "number" ? counts.PASS : 0;
+  return value.safe_apply_authorized === passCount > 0;
+}
+
 function validateRepoModelRows(rows: unknown): rows is ModelFirstEvidenceModelRowV1[] {
   if (!Array.isArray(rows)) return false;
   return rows.every((row) => {
@@ -417,6 +431,7 @@ export function validateModelFirstEvidenceResultV1(
   if (value.read_only !== true || value.data_mutation !== false) return false;
   if (value.recommended_csv_mutation !== null) return false;
   if (!hasStatusCounts(value)) return false;
+  if (!validateSafeApplyAuthorizedSummary(value)) return false;
 
   const mode = value.evidence_collection_mode ?? value.evidence_mode;
   if (mode === "repo_truth_only_v1") {
@@ -553,6 +568,7 @@ export function buildModelFirstEvidenceResultV1(
 
   const evidence_status_counts = countStatuses(model_rows);
   const model_slugs_checked = model_rows.map((row) => row.model_slug);
+  const safe_apply_authorized = evidence_status_counts.PASS > 0;
   const run_id = `ap-model-first-${now().toISOString().slice(0, 10)}`;
 
   const report: AirPurifierModelFirstRepoEvidenceResultV1 = {
@@ -577,11 +593,12 @@ export function buildModelFirstEvidenceResultV1(
     filter_first_cross_reference: filterFirstCrossRef,
     evidence_status_counts,
     recommended_csv_mutation: null,
+    safe_apply_authorized,
     proven_facts: [
       `PROVEN: ${String(model_rows.length)} model row(s) checked for anchor filter ${deps.anchorFilterSlug}.`,
       `PROVEN: All models map to ${deps.anchorFilterSlug} via data/air-purifier/compatibility_mappings.csv.`,
       `PROVEN: Repo primary buyer_path_status for linked filter is ${buyerPathStatus}.`,
-      "PROVEN: recommended_csv_mutation is null — no safe CSV apply authorized by this artifact.",
+      `PROVEN: recommended_csv_mutation=null; safe_apply_authorized=${String(safe_apply_authorized)}.`,
     ],
     inferred_facts: filterFirstCrossRef
       ? [

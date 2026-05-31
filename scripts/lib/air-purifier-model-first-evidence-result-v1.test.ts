@@ -286,6 +286,7 @@ test("rabbit-carbon-minusa2 repo-truth packet covers all compatibility-mapped mo
   assert.equal(result.evidence_status_counts.UNKNOWN, 8);
   assert.equal(result.evidence_status_counts.PASS, 0);
   assert.equal(result.recommended_csv_mutation, null);
+  assert.equal(result.safe_apply_authorized, false);
   for (const row of result.model_rows) {
     assert.equal(row.evidence_status, "UNKNOWN");
     assert.equal(row.documented_filter_slug, "rabbit-carbon-minusa2");
@@ -294,6 +295,54 @@ test("rabbit-carbon-minusa2 repo-truth packet covers all compatibility-mapped mo
   assert.ok(
     result.unknown_facts.some((f) =>
       f.includes("ap-model-first-rabbit-carbon-minusa2-live-browser-v1.results.json"),
+    ),
+  );
+});
+
+test("loadAllRepoModelSlugsForAnchorFilterV1 returns all 7 Coway Airmega 250 models for coway-airmega250-rf", () => {
+  const slugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "coway-airmega250-rf");
+  assert.equal(slugs.length, 7);
+  assert.deepEqual(slugs, [
+    "coway-airmega-150",
+    "coway-airmega-160",
+    "coway-airmega-240",
+    "coway-airmega-250",
+    "coway-airmega-250-graphite",
+    "coway-airmega-250s",
+    "coway-ap-2520f-p-",
+  ]);
+});
+
+test("coway-airmega250-rf repo-truth packet covers all compatibility-mapped models as UNKNOWN with safe_apply blocked", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const modelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "coway-airmega250-rf");
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "coway-airmega250-rf",
+    modelSlugs,
+    writeResult: false,
+  });
+  assert.equal(result.model_rows.length, 7);
+  assert.equal(result.model_slugs_checked.length, 7);
+  assert.deepEqual(result.model_slugs_checked, result.model_rows.map((r) => r.model_slug));
+  assert.equal(result.evidence_status_counts.UNKNOWN, 7);
+  assert.equal(result.evidence_status_counts.PASS, 0);
+  assert.equal(result.recommended_csv_mutation, null);
+  assert.equal(result.safe_apply_authorized, false);
+  assert.equal(result.filter_first_cross_reference?.evidence_status, "BLOCKED");
+  assert.equal(result.filter_first_cross_reference?.exact_token_found, false);
+  for (const row of result.model_rows) {
+    assert.equal(row.evidence_status, "UNKNOWN");
+    assert.equal(row.documented_filter_slug, "coway-airmega250-rf");
+    assert.equal(row.buyer_path_status, "SEARCH_PLACEHOLDER_PRIMARY");
+    assert.equal(row.official_model_source_urls.length, 0);
+  }
+  assert.ok(
+    result.unknown_facts.some((f) =>
+      f.includes("ap-model-first-coway-airmega250-rf-live-browser-v1.results.json"),
     ),
   );
 });
