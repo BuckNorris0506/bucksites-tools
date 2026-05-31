@@ -441,3 +441,54 @@ test("levoit-rf-rar040 repo-truth packet covers all compatibility-mapped models 
     ),
   );
 });
+
+test("loadAllRepoModelSlugsForAnchorFilterV1 returns all 6 Vornado carbon pad models for vornado-carbon-pad", () => {
+  const slugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "vornado-carbon-pad");
+  assert.equal(slugs.length, 6);
+  assert.deepEqual(slugs, [
+    "vornado-ac350",
+    "vornado-ac500",
+    "vornado-ac500b",
+    "vornado-ac550",
+    "vornado-ac550w",
+    "vornado-pc300",
+  ]);
+});
+
+test("vornado-carbon-pad repo-truth packet covers all compatibility-mapped models as UNKNOWN with safe_apply blocked", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const modelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "vornado-carbon-pad");
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "vornado-carbon-pad",
+    modelSlugs,
+    writeResult: false,
+  });
+  assert.equal(result.model_rows.length, 6);
+  assert.equal(result.model_slugs_checked.length, 6);
+  assert.deepEqual(result.model_slugs_checked, result.model_rows.map((r) => r.model_slug));
+  assert.equal(result.evidence_status_counts.UNKNOWN, 6);
+  assert.equal(result.evidence_status_counts.PASS, 0);
+  assert.equal(result.recommended_csv_mutation, null);
+  assert.equal(result.safe_apply_authorized, false);
+  assert.equal(result.filter_first_cross_reference?.evidence_status, "UNKNOWN");
+  assert.equal(result.filter_first_cross_reference?.exact_token_found, false);
+  assert.equal(
+    result.filter_first_cross_reference?.rejection_reason,
+    "Insufficient proof in repo truth for this candidate.",
+  );
+  for (const row of result.model_rows) {
+    assert.equal(row.evidence_status, "UNKNOWN");
+    assert.equal(row.documented_filter_slug, "vornado-carbon-pad");
+    assert.equal(row.buyer_path_status, "SEARCH_PLACEHOLDER_PRIMARY");
+    assert.equal(row.official_model_source_urls.length, 0);
+  }
+  assert.ok(
+    result.unknown_facts.some((f) =>
+      f.includes("ap-model-first-vornado-carbon-pad-live-browser-v1.results.json"),
+    ),
+  );
+});
