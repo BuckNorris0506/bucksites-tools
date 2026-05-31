@@ -3230,6 +3230,53 @@ test("command_center_v2.fridge_buyer_path_owner_review_bridge_v1 is read-only ow
   );
 });
 
+test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only lifecycle consolidation lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.universal_batch_lifecycle_truth_table_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "universal_batch_lifecycle_truth_table_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.universal_batch_lifecycle_truth_table_v1");
+  assert.equal(lane.lifecycle_states.length, 12);
+
+  const fridge = lane.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
+  assert.ok(fridge);
+  assert.ok(
+    fridge!.lifecycle_state === "apply_plan_owner_approved" ||
+      fridge!.alternate_lifecycle_states.includes("apply_readiness_unknown"),
+  );
+  assert.equal(fridge!.mutation_allowed, false);
+
+  const ap = lane.current_wedge_states.find((row) => row.wedge === "air_purifier");
+  assert.ok(ap);
+  if (report.command_center_v2.batch_run_registry_intake_v1.ap_run_registry_status === "PROVEN_CLOSED") {
+    assert.equal(ap!.lifecycle_state, "closed");
+  }
+
+  assert.ok(
+    lane.redundant_lanes_to_fold.includes("command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1"),
+  );
+  assert.equal(lane.inherited_lifecycle_mutation_policy.mutation_allowed, false);
+  assert.doesNotMatch(report.next_best_action, /universal_batch_lifecycle_truth_table/i);
+  assert.doesNotMatch(report.next_best_action, /^LIFECYCLE CONSOLIDATION \[/);
+  assert.notEqual(report.next_best_action, lane.recommended_next_action);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "universal_batch_lifecycle_truth_table",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.universal_batch_lifecycle_truth_table_v1",
+  );
+});
+
 test("command_center_v2.command_center_efficiency_truth_table_v1 is read-only efficiency audit lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

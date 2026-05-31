@@ -62,6 +62,7 @@ import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-efficiency-truth-table-v1";
+import { buildUniversalBatchLifecycleTruthTableV1 } from "./lib/universal-batch-lifecycle-truth-table-v1";
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
@@ -1084,6 +1085,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -1209,6 +1211,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "universal_batch_lifecycle_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1332,6 +1335,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "universal_batch_lifecycle_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1688,6 +1692,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "universal_batch_lifecycle_truth_table_v1"
     | "agent_control_plane_v1"
   > = {
     ...command_center_v2_before_demand,
@@ -1885,7 +1890,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "command_center_efficiency_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "command_center_efficiency_truth_table_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2012,11 +2017,25 @@ export async function buildBuckpartsCommandCenterReport(
     buckpartsScriptNames,
   });
 
+  const universal_batch_lifecycle_truth_table_v1 = buildUniversalBatchLifecycleTruthTableV1({
+    now,
+    efficiency_truth_table: command_center_efficiency_truth_table_v1,
+    batch_run_registry_intake: batch_run_registry_intake_report_v1,
+    fridge_apply_plan_proposal: fridge_buyer_path_batch_apply_plan_proposal_v1,
+    fridge_apply_plan_approval: fridge_buyer_path_batch_apply_plan_approval_v1,
+    command_center_steering: {
+      next_best_action: nextBestAction,
+      next_move_command: effectiveNextMoveCommand,
+    },
+    buckpartsScriptNames,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
     batch_run_registry_intake_v1,
     command_center_efficiency_truth_table_v1,
+    universal_batch_lifecycle_truth_table_v1,
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,
   };

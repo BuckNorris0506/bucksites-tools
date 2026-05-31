@@ -103,6 +103,19 @@ const CURATED_ENTRIES: EntrySeed[] = [
     reason: "Truth-quality sentinel built during Command Center report generation (read-only).",
   },
   {
+    system_id: "universal_batch_lifecycle_truth_table",
+    npm_script_or_path:
+      "scripts/lib/universal-batch-lifecycle-truth-table-v1.ts (projected during Command Center build)",
+    cc_json_path: "command_center_v2.universal_batch_lifecycle_truth_table_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.universal_batch_lifecycle_truth_table_v1.data_mutation'",
+    reason:
+      "Read-only universal batch lifecycle consolidation blueprint projected into Command Center JSON; diagnostic only — not an operational gate or apply authority.",
+  },
+  {
     system_id: "command_center_efficiency_truth_table",
     npm_script_or_path:
       "scripts/lib/command-center-efficiency-truth-table-v1.ts (projected during Command Center build)",
