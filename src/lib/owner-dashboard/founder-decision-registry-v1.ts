@@ -78,6 +78,14 @@ export type FounderDecisionRegistryFridgeBuyerPathBatchApprovalContextV1 = {
   proposed_batch_id: string;
 };
 
+/** Optional linkage: founder recorded a judgment for fridge buyer-path apply-plan approval (read-only planning). */
+export type FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1 = {
+  review_packet_contract: "fridge_buyer_path_batch_apply_plan_approval_v1";
+  founder_option_id: BatchProductionOwnerReviewRegistryFounderOptionIdV1;
+  source_apply_plan_artifact_rel_path: string;
+  planned_change_count: number;
+};
+
 export type FounderDecisionRegistryRowV1 = {
   decision_id: string;
   source_queue_row_id: string;
@@ -115,6 +123,12 @@ export type FounderDecisionRegistryRowV1 = {
    * `approve_for_next_planning_only` uses `read_only_agent` only — never `owner_mutation_approved`.
    */
   fridge_buyer_path_batch_approval_context_v1?: FounderDecisionRegistryFridgeBuyerPathBatchApprovalContextV1;
+  /**
+   * When set, records owner judgment for `fridge_buyer_path_batch_apply_plan_approval_v1` (planning-only).
+   * **PROVEN in validator:** `source_decision_packet_id` must be `fridge_buyer_path_batch_apply_plan_approval_v1:${source_apply_plan_artifact_rel_path}`;
+   * `approve_for_next_planning_only` uses `read_only_agent` only — never `owner_mutation_approved`.
+   */
+  fridge_buyer_path_batch_apply_plan_approval_context_v1?: FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1;
 };
 
 export type FounderDecisionRegistryDocumentV1 = {
@@ -161,6 +175,13 @@ export function isFridgeBuyerPathBatchApprovalRegistryRowV1(
   row: FounderDecisionRegistryRowV1,
 ): boolean {
   return row.fridge_buyer_path_batch_approval_context_v1 != null;
+}
+
+/** PROVEN: structural predicate for fridge buyer-path apply-plan approval decision rows. */
+export function isFridgeBuyerPathBatchApplyPlanApprovalRegistryRowV1(
+  row: FounderDecisionRegistryRowV1,
+): boolean {
+  return row.fridge_buyer_path_batch_apply_plan_approval_context_v1 != null;
 }
 
 function expectedBatchOwnerReviewSourceDecisionPacketId(batch_row_id: string): string {
@@ -226,6 +247,12 @@ export function expectedFridgeBuyerPathBatchApprovalSourceDecisionPacketId(
   return `fridge_buyer_path_batch_approval_v1:${proposed_batch_id.trim()}`;
 }
 
+export function expectedFridgeBuyerPathBatchApplyPlanApprovalSourceDecisionPacketId(
+  source_apply_plan_artifact_rel_path: string,
+): string {
+  return `fridge_buyer_path_batch_apply_plan_approval_v1:${source_apply_plan_artifact_rel_path.trim()}`;
+}
+
 function validateFridgeBuyerPathBatchApprovalContextV1(args: {
   ctx: FounderDecisionRegistryFridgeBuyerPathBatchApprovalContextV1;
   decision_status: FounderDecisionRegistryDecisionStatusV1;
@@ -275,6 +302,130 @@ function validateFridgeBuyerPathBatchApprovalContextV1(args: {
     }
   }
   return errors;
+}
+
+function validateFridgeBuyerPathBatchApplyPlanApprovalContextV1(args: {
+  ctx: FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1;
+  decision_status: FounderDecisionRegistryDecisionStatusV1;
+  allowed_next_scope: FounderDecisionRegistryAllowedNextScopeV1;
+  source_decision_packet_id: string;
+}): string[] {
+  const errors: string[] = [];
+  const { ctx, decision_status, allowed_next_scope, source_decision_packet_id } = args;
+  if (ctx.review_packet_contract !== "fridge_buyer_path_batch_apply_plan_approval_v1") {
+    errors.push(
+      'fridge_buyer_path_batch_apply_plan_approval_context_v1.review_packet_contract must be "fridge_buyer_path_batch_apply_plan_approval_v1"',
+    );
+  }
+  if (!isNonEmptyString(ctx.source_apply_plan_artifact_rel_path)) {
+    errors.push(
+      "fridge_buyer_path_batch_apply_plan_approval_context_v1.source_apply_plan_artifact_rel_path must be non-empty",
+    );
+  }
+  if (
+    typeof ctx.planned_change_count !== "number" ||
+    !Number.isInteger(ctx.planned_change_count) ||
+    ctx.planned_change_count < 1
+  ) {
+    errors.push(
+      "fridge_buyer_path_batch_apply_plan_approval_context_v1.planned_change_count must be a positive integer",
+    );
+  }
+  const expectedId = expectedFridgeBuyerPathBatchApplyPlanApprovalSourceDecisionPacketId(
+    ctx.source_apply_plan_artifact_rel_path,
+  );
+  if (source_decision_packet_id !== expectedId) {
+    errors.push(
+      `source_decision_packet_id must be "${expectedId}" when fridge_buyer_path_batch_apply_plan_approval_context_v1 is set (got ${JSON.stringify(source_decision_packet_id)})`,
+    );
+  }
+  const opt = ctx.founder_option_id;
+  if (opt === "approve_for_next_planning_only") {
+    if (decision_status !== "approved" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "fridge_buyer_path_batch_apply_plan_approval_context_v1.founder_option_id approve_for_next_planning_only requires decision_status approved and allowed_next_scope read_only_agent (does not grant mutation authority)",
+      );
+    }
+  } else if (opt === "reject") {
+    if (decision_status !== "rejected" || allowed_next_scope !== "none") {
+      errors.push(
+        "fridge_buyer_path_batch_apply_plan_approval_context_v1.founder_option_id reject requires decision_status rejected and allowed_next_scope none",
+      );
+    }
+  } else if (opt === "request_more_evidence") {
+    if (decision_status !== "needs_more_evidence" || allowed_next_scope !== "read_only_agent") {
+      errors.push(
+        "fridge_buyer_path_batch_apply_plan_approval_context_v1.founder_option_id request_more_evidence requires decision_status needs_more_evidence and allowed_next_scope read_only_agent",
+      );
+    }
+  } else if (opt === "defer") {
+    if (decision_status !== "deferred" || allowed_next_scope !== "none") {
+      errors.push(
+        "fridge_buyer_path_batch_apply_plan_approval_context_v1.founder_option_id defer requires decision_status deferred and allowed_next_scope none",
+      );
+    }
+  }
+  return errors;
+}
+
+function parseFridgeBuyerPathBatchApplyPlanApprovalContextV1(
+  raw: unknown,
+): { ok: true; ctx?: FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1 } | {
+  ok: false;
+  errors: string[];
+} {
+  if (raw === undefined || raw === null) {
+    return { ok: true };
+  }
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    return {
+      ok: false,
+      errors: ["fridge_buyer_path_batch_apply_plan_approval_context_v1 must be an object when present"],
+    };
+  }
+  const o = raw as Record<string, unknown>;
+  const errors: string[] = [];
+  const contract = o.review_packet_contract;
+  const opt = o.founder_option_id;
+  const source_apply_plan_artifact_rel_path = o.source_apply_plan_artifact_rel_path;
+  const planned_change_count = o.planned_change_count;
+  if (contract !== "fridge_buyer_path_batch_apply_plan_approval_v1") {
+    errors.push(
+      'fridge_buyer_path_batch_apply_plan_approval_context_v1.review_packet_contract must be "fridge_buyer_path_batch_apply_plan_approval_v1"',
+    );
+  }
+  if (typeof opt !== "string" || !BATCH_OWNER_REVIEW_OPTIONS.has(opt)) {
+    errors.push(
+      `fridge_buyer_path_batch_apply_plan_approval_context_v1.founder_option_id must be one of: ${BATCH_PRODUCTION_OWNER_REVIEW_REGISTRY_FOUNDER_OPTION_IDS_V1.join(", ")}`,
+    );
+  }
+  if (
+    typeof source_apply_plan_artifact_rel_path !== "string" ||
+    !source_apply_plan_artifact_rel_path.trim()
+  ) {
+    errors.push(
+      "fridge_buyer_path_batch_apply_plan_approval_context_v1.source_apply_plan_artifact_rel_path must be a non-empty string",
+    );
+  }
+  if (
+    typeof planned_change_count !== "number" ||
+    !Number.isInteger(planned_change_count) ||
+    planned_change_count < 1
+  ) {
+    errors.push(
+      "fridge_buyer_path_batch_apply_plan_approval_context_v1.planned_change_count must be a positive integer",
+    );
+  }
+  if (errors.length > 0) return { ok: false, errors };
+  return {
+    ok: true,
+    ctx: {
+      review_packet_contract: "fridge_buyer_path_batch_apply_plan_approval_v1",
+      founder_option_id: opt as BatchProductionOwnerReviewRegistryFounderOptionIdV1,
+      source_apply_plan_artifact_rel_path: (source_apply_plan_artifact_rel_path as string).trim(),
+      planned_change_count: planned_change_count as number,
+    },
+  };
 }
 
 function parseFridgeBuyerPathBatchApprovalContextV1(
@@ -543,10 +694,20 @@ export function validateFounderDecisionRegistryRowV1(
     fridgeBatchCtx = fridgeBatchParse.ctx;
   }
 
-  const contextCount = [codexCtx, batchCtx, fridgeBatchCtx].filter(Boolean).length;
+  let fridgeApplyPlanCtx: FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1 | undefined;
+  const fridgeApplyPlanParse = parseFridgeBuyerPathBatchApplyPlanApprovalContextV1(
+    o.fridge_buyer_path_batch_apply_plan_approval_context_v1,
+  );
+  if (!fridgeApplyPlanParse.ok) {
+    errors.push(...fridgeApplyPlanParse.errors);
+  } else if (fridgeApplyPlanParse.ctx) {
+    fridgeApplyPlanCtx = fridgeApplyPlanParse.ctx;
+  }
+
+  const contextCount = [codexCtx, batchCtx, fridgeBatchCtx, fridgeApplyPlanCtx].filter(Boolean).length;
   if (contextCount > 1) {
     errors.push(
-      "row must set at most one of codex_output_review_context_v1, batch_production_owner_review_context_v1, fridge_buyer_path_batch_approval_context_v1",
+      "row must set at most one of codex_output_review_context_v1, batch_production_owner_review_context_v1, fridge_buyer_path_batch_approval_context_v1, fridge_buyer_path_batch_apply_plan_approval_context_v1",
     );
   }
 
@@ -602,6 +763,17 @@ export function validateFounderDecisionRegistryRowV1(
     );
   }
 
+  if (fridgeApplyPlanCtx) {
+    errors.push(
+      ...validateFridgeBuyerPathBatchApplyPlanApprovalContextV1({
+        ctx: fridgeApplyPlanCtx,
+        decision_status,
+        allowed_next_scope,
+        source_decision_packet_id,
+      }),
+    );
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -622,6 +794,9 @@ export function validateFounderDecisionRegistryRowV1(
     ...(codexCtx ? { codex_output_review_context_v1: codexCtx } : {}),
     ...(batchCtx ? { batch_production_owner_review_context_v1: batchCtx } : {}),
     ...(fridgeBatchCtx ? { fridge_buyer_path_batch_approval_context_v1: fridgeBatchCtx } : {}),
+    ...(fridgeApplyPlanCtx
+      ? { fridge_buyer_path_batch_apply_plan_approval_context_v1: fridgeApplyPlanCtx }
+      : {}),
   };
   return { ok: true, row };
 }

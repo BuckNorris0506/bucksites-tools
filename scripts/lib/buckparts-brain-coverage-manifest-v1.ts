@@ -314,6 +314,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Read-only fridge buyer-path batch apply-plan proposal projected into Command Center JSON; full planned_changes on npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal.",
   },
+  "buckparts:fridge-buyer-path-batch-apply-plan-approval": {
+    cc_json_path: "command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1.data_mutation'",
+    reason:
+      "Fridge buyer-path apply-plan approval bridge projected into Command Center JSON (read-only); checklist and optional founder registry export via npm run buckparts:fridge-buyer-path-batch-apply-plan-approval.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

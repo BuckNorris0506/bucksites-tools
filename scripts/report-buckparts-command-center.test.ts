@@ -3327,6 +3327,49 @@ test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approva
   );
 });
 
+test("command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1 is read-only apply-plan approval lane", async () => {
+  const applyPlanAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+  );
+  if (!fs.existsSync(applyPlanAbs)) {
+    return;
+  }
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "fridge_buyer_path_batch_apply_plan_approval_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1",
+  );
+  assert.equal(lane.planned_change_count, 14);
+  assert.equal(lane.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(lane.owner_review_status, "OWNER_REVIEW_READY");
+  assert.equal(lane.approval_status, "awaiting_owner_approval");
+  assert.equal(lane.apply_mutation_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_batch_apply_plan_approval/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_fridge-buyer-path-batch-apply-plan-approval",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1",
+  );
+});
+
 test("command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1 is read-only apply-plan proposal lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
