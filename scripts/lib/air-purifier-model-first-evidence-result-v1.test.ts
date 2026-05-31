@@ -492,3 +492,48 @@ test("vornado-carbon-pad repo-truth packet covers all compatibility-mapped model
     ),
   );
 });
+
+test("loadAllRepoModelSlugsForAnchorFilterV1 returns all 5 Levoit Core 600 models for levoit-rf-rar060", () => {
+  const slugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "levoit-rf-rar060");
+  assert.equal(slugs.length, 5);
+  assert.deepEqual(slugs, [
+    "levoit-core-600",
+    "levoit-core-600s",
+    "levoit-core-650s",
+    "levoit-lap-c601s-wus",
+    "levoit-lap-c651s-wus",
+  ]);
+});
+
+test("levoit-rf-rar060 repo-truth packet covers all compatibility-mapped models as UNKNOWN with safe_apply blocked", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const modelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "levoit-rf-rar060");
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "levoit-rf-rar060",
+    modelSlugs,
+    writeResult: false,
+  });
+  assert.equal(result.model_rows.length, 5);
+  assert.equal(result.model_slugs_checked.length, 5);
+  assert.deepEqual(result.model_slugs_checked, result.model_rows.map((r) => r.model_slug));
+  assert.equal(result.evidence_status_counts.UNKNOWN, 5);
+  assert.equal(result.evidence_status_counts.PASS, 0);
+  assert.equal(result.recommended_csv_mutation, null);
+  assert.equal(result.safe_apply_authorized, false);
+  assert.equal(result.filter_first_cross_reference, null);
+  for (const row of result.model_rows) {
+    assert.equal(row.evidence_status, "UNKNOWN");
+    assert.equal(row.documented_filter_slug, "levoit-rf-rar060");
+    assert.equal(row.buyer_path_status, "SEARCH_PLACEHOLDER_PRIMARY");
+    assert.equal(row.official_model_source_urls.length, 0);
+  }
+  assert.ok(
+    result.unknown_facts.some((f) =>
+      f.includes("ap-model-first-levoit-rf-rar060-live-browser-v1.results.json"),
+    ),
+  );
+});
