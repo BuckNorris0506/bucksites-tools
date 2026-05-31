@@ -6,6 +6,7 @@ import { buildApModelFirstEvidenceQueueV1Report } from "./lib/ap-model-first-evi
 import {
   AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1,
   buildModelFirstEvidenceResultV1,
+  loadAllRepoModelSlugsForAnchorFilterV1,
 } from "./lib/air-purifier-model-first-evidence-result-v1";
 import type { ApModelFirstEvidenceQueueReportV1 } from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierModelFirstProductionLaneV1Report } from "./lib/air-purifier-model-first-production-lane-v1";
@@ -85,7 +86,9 @@ function main(): void {
     weakBuyerPathAudit: weak,
   });
 
-  const modelSlugs = resolveModelSlugsForAnchor(queue, anchorFilterSlug);
+  const queueModelSlugs = resolveModelSlugsForAnchor(queue, anchorFilterSlug);
+  const allRepoModelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(rootDir, anchorFilterSlug);
+  const modelSlugs = allRepoModelSlugs.length > 0 ? allRepoModelSlugs : queueModelSlugs;
 
   const result = buildModelFirstEvidenceResultV1({
     rootDir,
@@ -123,7 +126,7 @@ function main(): void {
         data_mutation: result.data_mutation,
         evidence_status_counts: result.evidence_status_counts,
         recommended_csv_mutation: result.recommended_csv_mutation,
-        model_slugs_checked: result.model_rows.map((r) => r.model_slug),
+        model_slugs_checked: result.model_slugs_checked,
       },
       null,
       2,

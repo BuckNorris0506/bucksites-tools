@@ -114,6 +114,8 @@ export type AirPurifierModelFirstEvidenceResultBaseV1 = {
   data_mutation: false;
   generated_at: string;
   source_status: "PROVEN" | "PARTIAL" | "UNKNOWN";
+  /** Stable top-level summary of model slugs represented in model_rows (same order as model_rows). */
+  model_slugs_checked: string[];
   evidence_status_counts: Record<ModelFirstEvidenceRowStatusV1, number>;
   recommended_csv_mutation: null;
   proven_facts: string[];
@@ -259,6 +261,40 @@ function loadBatchV3FilterRow(args: {
   }
 }
 
+type CompatibilityMappingRow = {
+  model_slug: string;
+  filter_slug: string;
+  is_recommended?: string;
+};
+
+/** All model slugs mapped to anchor filter in compatibility_mappings.csv (repo truth, sorted). */
+export function loadAllRepoModelSlugsForAnchorFilterV1(
+  rootDir: string,
+  anchorFilterSlug: string,
+  readText: (absPath: string) => string = defaultReadText,
+  fileExists: (absPath: string) => boolean = defaultFileExists,
+): string[] {
+  const rows = readCsv<CompatibilityMappingRow>(
+    rootDir,
+    "data/air-purifier/compatibility_mappings.csv",
+    readText,
+    fileExists,
+  );
+  const slugs = new Set<string>();
+  for (const row of rows) {
+    if (row.filter_slug !== anchorFilterSlug) continue;
+    const recommended = (row.is_recommended ?? "").trim().toLowerCase();
+    if (recommended === "false" || recommended === "0" || recommended === "no") continue;
+    const slug = row.model_slug?.trim();
+    if (slug) slugs.add(slug);
+  }
+  return Array.from(slugs).sort((a, b) => a.localeCompare(b));
+}
+
+export function modelFirstLiveBrowserResultRelPathV1(anchorFilterSlug: string): string {
+  return `${AP_MODEL_FIRST_EVIDENCE_RESULTS_DIR_REL_V1}/ap-model-first-${anchorFilterSlug}-live-browser-v1.results.json`;
+}
+
 function countStatuses(
   rows: Array<{ evidence_status: ModelFirstEvidenceRowStatusV1 }>,
 ): Record<ModelFirstEvidenceRowStatusV1, number> {
@@ -293,6 +329,28 @@ function hasStatusCounts(value: unknown): boolean {
     typeof counts.FAIL === "number" &&
     typeof counts.UNKNOWN === "number" &&
     typeof counts.BLOCKED === "number"
+  );
+}
+
+function sortedSlugList(slugs: string[]): string[] {
+  return slugs.slice().sort((a, b) => a.localeCompare(b));
+}
+
+function validateModelSlugsCheckedSummary(
+  value: unknown,
+  modelRows: Array<{ model_slug: string }>,
+): boolean {
+  if (!isRecord(value)) return false;
+  if (!("model_slugs_checked" in value) || value.model_slugs_checked === undefined) {
+    return true;
+  }
+  if (!Array.isArray(value.model_slugs_checked)) return false;
+  const checked = value.model_slugs_checked.filter((s): s is string => typeof s === "string");
+  if (checked.length !== value.model_slugs_checked.length) return false;
+  const expected = sortedSlugList(modelRows.map((row) => row.model_slug));
+  const actual = sortedSlugList(checked);
+  return (
+    actual.length === expected.length && actual.every((slug, index) => slug === expected[index])
   );
 }
 
@@ -362,12 +420,18 @@ export function validateModelFirstEvidenceResultV1(
 
   const mode = value.evidence_collection_mode ?? value.evidence_mode;
   if (mode === "repo_truth_only_v1") {
-    return validateRepoModelRows(value.model_rows);
+    if (!validateRepoModelRows(value.model_rows)) return false;
+    return validateModelSlugsCheckedSummary(value, value.model_rows as ModelFirstEvidenceModelRowV1[]);
   }
   if (mode === "live_browser_model_first_v1") {
     if (value.evidence_mode !== "live_browser_model_first_v1") return false;
     if (typeof value.checked_at !== "string" || typeof value.filter_slug !== "string") return false;
     if (!validateLiveBrowserModelRows(value.model_rows)) return false;
+    if (
+      !validateModelSlugsCheckedSummary(value, value.model_rows as ModelFirstLiveBrowserModelRowV1[])
+    ) {
+      return false;
+    }
     if (!validateCandidateBuyerPaths(value.candidate_buyer_paths)) return false;
     const paths = value.candidate_buyer_paths as ModelFirstCandidateBuyerPathV1[];
     if (paths.some((p) => p.status === "PASS" && !liveBrowserBuyerPathMayRecommendCsvMutationV1(p))) {
@@ -488,6 +552,7 @@ export function buildModelFirstEvidenceResultV1(
   }
 
   const evidence_status_counts = countStatuses(model_rows);
+  const model_slugs_checked = model_rows.map((row) => row.model_slug);
   const run_id = `ap-model-first-${now().toISOString().slice(0, 10)}`;
 
   const report: AirPurifierModelFirstRepoEvidenceResultV1 = {
@@ -507,6 +572,7 @@ export function buildModelFirstEvidenceResultV1(
       models.length > 0 && filterRow && primary ? "PROVEN" : batchRow ? "PARTIAL" : "PARTIAL",
     evidence_collection_mode: "repo_truth_only_v1",
     evidence_mode: "repo_truth_only_v1",
+    model_slugs_checked,
     model_rows,
     filter_first_cross_reference: filterFirstCrossRef,
     evidence_status_counts,
@@ -532,6 +598,7 @@ export function buildModelFirstEvidenceResultV1(
         : [
             `UNKNOWN: Whether a verified buyer-path PDP exists for ${deps.anchorFilterSlug} beyond repo primary link classification (${buyerPathStatus}).`,
           ]),
+      `UNKNOWN: Live browser model-first proof not captured in this artifact; next read-only path: ${modelFirstLiveBrowserResultRelPathV1(deps.anchorFilterSlug)}.`,
     ],
   };
 
@@ -556,6 +623,16 @@ export type CommittedModelFirstEvidenceResultsLoadV1 = {
   results: CommittedModelFirstEvidenceResultEntryV1[];
   invalid_result_files: string[];
 };
+
+/** model_slugs_checked when present; otherwise derived from model_rows (legacy artifacts). */
+export function modelFirstResultModelSlugsCheckedV1(
+  result: AirPurifierModelFirstEvidenceResultV1,
+): string[] {
+  if ("model_slugs_checked" in result && Array.isArray(result.model_slugs_checked)) {
+    return result.model_slugs_checked.filter((slug): slug is string => typeof slug === "string");
+  }
+  return result.model_rows.map((row) => row.model_slug);
+}
 
 export function modelFirstResultFilterSlugV1(
   result: AirPurifierModelFirstEvidenceResultV1,

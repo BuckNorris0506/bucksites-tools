@@ -14,6 +14,7 @@ import {
   buildHolmesHapf30ModelFirstEvidenceFromQueueV1,
   buildModelFirstEvidenceResultV1,
   isAllowedModelFirstEvidenceResultRelPathV1,
+  loadAllRepoModelSlugsForAnchorFilterV1,
   liveBrowserBuyerPathMayRecommendCsvMutationV1,
   loadModelFirstEvidenceResultV1,
   validateModelFirstEvidenceResultV1,
@@ -249,5 +250,50 @@ test("holmes sample rows are built from completed/no-mutation fallback when top 
   assert.deepEqual(
     result.model_rows.map((r) => r.model_slug).sort(),
     top!.sample_model_slugs.slice().sort(),
+  );
+});
+
+test("loadAllRepoModelSlugsForAnchorFilterV1 returns all 8 Rabbit MinusA2 models for rabbit-carbon-minusa2", () => {
+  const slugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "rabbit-carbon-minusa2");
+  assert.equal(slugs.length, 8);
+  assert.deepEqual(slugs, [
+    "rabbit-minusa2-germ",
+    "rabbit-minusa2-odor",
+    "rabbit-minusa2-pet",
+    "rabbit-minusa2-spa-780a",
+    "rabbit-minusa2-spa-780j",
+    "rabbit-minusa2-spa-780n",
+    "rabbit-minusa2-toxin",
+    "rabbit-minusa2-voc",
+  ]);
+});
+
+test("rabbit-carbon-minusa2 repo-truth packet covers all compatibility-mapped models as UNKNOWN", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const modelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "rabbit-carbon-minusa2");
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "rabbit-carbon-minusa2",
+    modelSlugs,
+    writeResult: false,
+  });
+  assert.equal(result.model_rows.length, 8);
+  assert.equal(result.model_slugs_checked.length, 8);
+  assert.deepEqual(result.model_slugs_checked, result.model_rows.map((r) => r.model_slug));
+  assert.equal(result.evidence_status_counts.UNKNOWN, 8);
+  assert.equal(result.evidence_status_counts.PASS, 0);
+  assert.equal(result.recommended_csv_mutation, null);
+  for (const row of result.model_rows) {
+    assert.equal(row.evidence_status, "UNKNOWN");
+    assert.equal(row.documented_filter_slug, "rabbit-carbon-minusa2");
+    assert.equal(row.official_model_source_urls.length, 0);
+  }
+  assert.ok(
+    result.unknown_facts.some((f) =>
+      f.includes("ap-model-first-rabbit-carbon-minusa2-live-browser-v1.results.json"),
+    ),
   );
 });
