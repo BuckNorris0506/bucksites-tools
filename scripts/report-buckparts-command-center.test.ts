@@ -3230,6 +3230,29 @@ test("command_center_v2.fridge_buyer_path_owner_review_bridge_v1 is read-only ow
   );
 });
 
+test("command_center_v2.owner_drift_detector_v1 is read-only drift detector lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.owner_drift_detector_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "owner_drift_detector_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.owner_drift_detector_v1");
+  assert.equal(lane.decision, "FINISH_CURRENT_FIRST");
+  assert.equal(lane.mutation_authorized, false);
+  assert.doesNotMatch(report.next_best_action, /owner_drift_detector/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_owner-drift-detector",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.owner_drift_detector_v1");
+});
+
 test("command_center_v2.fridge_buyer_path_batch_proposal_v1 is read-only batch proposal lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

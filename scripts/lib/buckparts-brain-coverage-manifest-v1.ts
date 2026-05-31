@@ -275,6 +275,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Fridge buyer-path batch proposal projected into Command Center JSON during report generation (read-only); full fridge_buyer_path_batch_proposal_v1 with proposed_rows remains on npm run buckparts:fridge-buyer-path-batch-proposal.",
   },
+  "buckparts:owner-drift-detector": {
+    cc_json_path: "command_center_v2.owner_drift_detector_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.owner_drift_detector_v1.data_mutation'",
+    reason:
+      "Owner drift detector projected into Command Center JSON during report generation (read-only); classify arbitrary ideas via npm run buckparts:owner-drift-detector -- --idea \"...\".",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

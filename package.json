@@ -87,6 +87,7 @@
     "buckparts:fridge-buyer-path-owner-review-bridge": "tsx scripts/report-fridge-buyer-path-owner-review-bridge-v1.ts",
     "buckparts:fridge-buyer-path-owner-review-packet": "tsx scripts/report-fridge-buyer-path-owner-review-packet-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
+    "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
     "buckparts:exa-fridge-water-discovery": "tsx scripts/report-exa-fridge-water-discovery-v1.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",

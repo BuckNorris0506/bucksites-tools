@@ -224,6 +224,7 @@ export function buildCommandCenterV2Report(input: {
   | "fridge_buyer_path_owner_review_bridge_v1"
   | "fridge_buyer_path_owner_review_packet_v1"
   | "fridge_buyer_path_batch_proposal_v1"
+  | "owner_drift_detector_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"

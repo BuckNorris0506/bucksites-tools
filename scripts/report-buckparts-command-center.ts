@@ -60,6 +60,7 @@ import {
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
+import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
 import { buildFridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-proposal-command-center-v1";
 import { buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-packet-command-center-v1";
@@ -1068,6 +1069,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "demand_to_coverage_next_lane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "owner_drift_detector_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -1187,6 +1189,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "owner_drift_detector_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1304,6 +1307,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "agent_control_plane_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "owner_drift_detector_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1634,6 +1638,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "next_execution_packet_summary_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
+    | "owner_drift_detector_v1"
     | "agent_control_plane_v1"
   > = {
     ...command_center_v2_before_demand,
@@ -1760,7 +1765,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -1848,8 +1853,19 @@ export async function buildBuckpartsCommandCenterReport(
     readTextFile,
   });
 
+  const owner_drift_detector_v1 = buildOwnerDriftDetectorCommandCenterLaneV1({
+    rootDir,
+    now,
+    next_best_action: nextBestAction,
+    fridge_batch_proposal: fridge_buyer_path_batch_proposal_v1,
+    fridge_owner_review_packet: fridge_buyer_path_owner_review_packet_v1,
+    batch_dispatch: batch_production_operating_dispatch_v1,
+    brain_manifest: command_center_v2.command_center_brain_coverage_manifest_v1,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
+    owner_drift_detector_v1,
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,
   };
