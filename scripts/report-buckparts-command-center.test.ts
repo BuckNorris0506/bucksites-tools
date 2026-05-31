@@ -3351,10 +3351,13 @@ test("command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1 is read-o
     assert.ok(lane.plan_status === "READY_FOR_OWNER_REVIEW" || lane.plan_status === "BLOCKED");
     if (lane.plan_status === "READY_FOR_OWNER_REVIEW") {
       assert.equal(lane.planned_change_count, 14);
-      assert.equal(lane.owner_review_status, "OWNER_REVIEW_BLOCKED");
-      assert.equal(lane.missing_affiliate_tag_count, 8);
+      assert.equal(lane.missing_affiliate_tag_count, 0);
       assert.equal(lane.duplicate_destination_group_count, 2);
-      assert.ok(lane.owner_review_risk_count >= 8);
+      assert.equal(
+        lane.duplicate_destination_group_review_status,
+        "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      );
+      assert.equal(lane.owner_review_status, "OWNER_REVIEW_READY");
     }
   }
   assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_batch_apply_plan_proposal/i);
@@ -3517,22 +3520,24 @@ test("command center next_best_action prefers apply-plan owner review over run-r
   });
   const planLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1;
   assert.equal(planLane.plan_status, "READY_FOR_OWNER_REVIEW");
-  assert.equal(planLane.owner_review_status, "OWNER_REVIEW_BLOCKED");
+  assert.equal(planLane.owner_review_status, "OWNER_REVIEW_READY");
   assert.equal(planLane.planned_change_count, 14);
-  assert.equal(planLane.missing_affiliate_tag_count, 8);
+  assert.equal(planLane.missing_affiliate_tag_count, 0);
   assert.equal(planLane.duplicate_destination_group_count, 2);
+  assert.equal(
+    planLane.duplicate_destination_group_review_status,
+    "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+  );
   assert.equal(planLane.apply_mutation_authorized, false);
 
   if (refrigeratorModelFirstSteeringActive(report)) {
     return;
   }
 
-  assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_RISK]:"));
+  assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_READY]:"));
   assert.match(report.next_best_action, /refrigerator_water apply-plan proposal is ready for owner review/i);
   assert.match(report.next_best_action, /14 planned changes/i);
-  assert.match(report.next_best_action, /8 missing tag=buckparts20-20 row\(s\)/i);
-  assert.match(report.next_best_action, /2 duplicate proposed_destination_url group\(s\)/i);
-  assert.match(report.next_best_action, /before any owner approval/i);
+  assert.doesNotMatch(report.next_best_action, /missing tag=buckparts20-20/i);
   assert.match(report.next_best_action, /mutation unauthorized/i);
   assert.equal(report.next_best_action.includes("apply-plan discovery"), false);
   assert.equal(

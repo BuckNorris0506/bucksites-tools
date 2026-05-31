@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
 
-import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./fridge-buyer-path-batch-apply-plan-steering-v1";
+import {
+  FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_DUPLICATE_DESTINATION_REVIEW_V1,
+  FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1,
+  FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1,
+  resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1,
+} from "./fridge-buyer-path-batch-apply-plan-steering-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 
 function laneFixture(
@@ -15,6 +20,7 @@ function laneFixture(
   | "recommended_next_action"
   | "missing_affiliate_tag_count"
   | "duplicate_destination_group_count"
+  | "duplicate_destination_group_review_status"
   | "apply_mutation_authorized"
   | "csv_apply_authorized"
   | "retailer_links_mutation_authorized"
@@ -33,6 +39,7 @@ function laneFixture(
     recommended_next_action: "Owner review only.",
     missing_affiliate_tag_count: 0,
     duplicate_destination_group_count: 0,
+    duplicate_destination_group_review_status: null,
     apply_mutation_authorized: false,
     csv_apply_authorized: false,
     retailer_links_mutation_authorized: false,
@@ -52,7 +59,11 @@ describe("fridge buyer-path batch apply-plan steering", () => {
       brainStopTheLine: false,
     });
     assert.ok(override);
-    assert.ok(override!.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_READY]:"));
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `BATCH APPLY-PLAN [${FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1}]:`,
+      ),
+    );
     assert.match(override!.next_best_action, /refrigerator_water apply-plan proposal is ready for owner review/i);
     assert.match(override!.next_best_action, /14 planned changes/i);
     assert.match(override!.next_best_action, /mutation unauthorized/i);
@@ -63,19 +74,45 @@ describe("fridge buyer-path batch apply-plan steering", () => {
     assert.equal(override!.next_best_action.includes("apply-plan discovery"), false);
   });
 
-  test("resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 surfaces monetization/link risks", () => {
+  test("resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 surfaces missing-tag risks", () => {
     const override = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
       applyPlanLane: laneFixture({
         owner_review_status: "OWNER_REVIEW_BLOCKED",
-        missing_affiliate_tag_count: 8,
+        missing_affiliate_tag_count: 2,
         duplicate_destination_group_count: 2,
+        duplicate_destination_group_review_status: "OWNER_REVIEW_REQUIRED",
       }),
       brainStopTheLine: false,
     });
     assert.ok(override);
-    assert.ok(override!.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_RISK]:"));
-    assert.match(override!.next_best_action, /8 missing tag=buckparts20-20 row\(s\)/i);
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `BATCH APPLY-PLAN [${FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1}]:`,
+      ),
+    );
+    assert.match(override!.next_best_action, /2 missing tag=buckparts20-20 row\(s\)/i);
     assert.match(override!.next_best_action, /2 duplicate proposed_destination_url group\(s\)/i);
+    assert.match(override!.next_best_action, /before any owner approval/i);
+  });
+
+  test("resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 surfaces duplicate destination review", () => {
+    const override = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
+      applyPlanLane: laneFixture({
+        owner_review_status: "OWNER_REVIEW_BLOCKED",
+        missing_affiliate_tag_count: 0,
+        duplicate_destination_group_count: 2,
+        duplicate_destination_group_review_status: "OWNER_REVIEW_REQUIRED",
+      }),
+      brainStopTheLine: false,
+    });
+    assert.ok(override);
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `BATCH APPLY-PLAN [${FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_DUPLICATE_DESTINATION_REVIEW_V1}]:`,
+      ),
+    );
+    assert.match(override!.next_best_action, /2 duplicate proposed_destination_url group\(s\)/i);
+    assert.doesNotMatch(override!.next_best_action, /missing tag=buckparts20-20/i);
     assert.match(override!.next_best_action, /before any owner approval/i);
   });
 

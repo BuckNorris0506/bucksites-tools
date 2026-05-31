@@ -12,6 +12,8 @@ import {
 
 export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1 = "OWNER_REVIEW_READY" as const;
 export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1 = "OWNER_REVIEW_RISK" as const;
+export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_DUPLICATE_DESTINATION_REVIEW_V1 =
+  "DUPLICATE_DESTINATION_REVIEW" as const;
 
 export type FridgeBuyerPathBatchApplyPlanSteeringOverrideV1 = {
   next_best_action: string;
@@ -23,6 +25,27 @@ export type FridgeBuyerPathBatchApplyPlanSteeringOverrideV1 = {
   mutation_block_reasons: string[];
 };
 
+export function resolveFridgeBuyerPathBatchApplyPlanSteeringPrefixV1(args: {
+  owner_review_status: FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1["owner_review_status"];
+  missing_affiliate_tag_count: number;
+  duplicate_destination_group_count: number;
+  duplicate_destination_group_review_status: FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1["duplicate_destination_group_review_status"];
+}): string {
+  if (args.missing_affiliate_tag_count > 0) {
+    return FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1;
+  }
+  if (
+    args.duplicate_destination_group_count > 0 &&
+    args.duplicate_destination_group_review_status === "OWNER_REVIEW_REQUIRED"
+  ) {
+    return FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_DUPLICATE_DESTINATION_REVIEW_V1;
+  }
+  if (args.owner_review_status === "OWNER_REVIEW_BLOCKED") {
+    return FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1;
+  }
+  return FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1;
+}
+
 export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
   applyPlanLane: Pick<
     FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
@@ -33,6 +56,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
     | "recommended_next_action"
     | "missing_affiliate_tag_count"
     | "duplicate_destination_group_count"
+    | "duplicate_destination_group_review_status"
     | "apply_mutation_authorized"
     | "csv_apply_authorized"
     | "retailer_links_mutation_authorized"
@@ -52,15 +76,25 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
 
   const path = args.applyPlanLane.plan_artifact_rel_path;
   const count = args.applyPlanLane.planned_change_count;
-  const steeringStatus =
-    args.applyPlanLane.owner_review_status === "OWNER_REVIEW_BLOCKED"
-      ? FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1
-      : FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1;
+  const steeringStatus = resolveFridgeBuyerPathBatchApplyPlanSteeringPrefixV1({
+    owner_review_status: args.applyPlanLane.owner_review_status,
+    missing_affiliate_tag_count: args.applyPlanLane.missing_affiliate_tag_count,
+    duplicate_destination_group_count: args.applyPlanLane.duplicate_destination_group_count,
+    duplicate_destination_group_review_status:
+      args.applyPlanLane.duplicate_destination_group_review_status,
+  });
 
-  const riskPhrase =
-    args.applyPlanLane.owner_review_status === "OWNER_REVIEW_BLOCKED"
-      ? ` Resolve ${String(args.applyPlanLane.missing_affiliate_tag_count)} missing ${FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1} row(s) and review ${String(args.applyPlanLane.duplicate_destination_group_count)} duplicate proposed_destination_url group(s) before any owner approval.`
-      : "";
+  let riskPhrase = "";
+  if (args.applyPlanLane.missing_affiliate_tag_count > 0) {
+    riskPhrase =
+      ` Resolve ${String(args.applyPlanLane.missing_affiliate_tag_count)} missing ${FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1} row(s) and review ${String(args.applyPlanLane.duplicate_destination_group_count)} duplicate proposed_destination_url group(s) before any owner approval.`;
+  } else if (
+    args.applyPlanLane.duplicate_destination_group_count > 0 &&
+    args.applyPlanLane.duplicate_destination_group_review_status === "OWNER_REVIEW_REQUIRED"
+  ) {
+    riskPhrase =
+      ` Review ${String(args.applyPlanLane.duplicate_destination_group_count)} duplicate proposed_destination_url group(s) before any owner approval.`;
+  }
 
   return {
     next_best_action:

@@ -32,6 +32,7 @@ export type FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 = {
   blocked_row_count: number;
   missing_affiliate_tag_count: number;
   duplicate_destination_group_count: number;
+  duplicate_destination_group_review_status: FridgeBuyerPathBatchApplyPlanProposalReportV1["duplicate_destination_group_review_status"];
   owner_review_risk_count: number;
   plan_artifact_rel_path: string;
   apply_mutation_authorized: false;
@@ -67,6 +68,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneFromR
     blocked_row_count: report.blocked_rows.length,
     missing_affiliate_tag_count: report.missing_affiliate_tag_count,
     duplicate_destination_group_count: report.duplicate_destination_group_count,
+    duplicate_destination_group_review_status: report.duplicate_destination_group_review_status,
     owner_review_risk_count: report.owner_review_risk_count,
     plan_artifact_rel_path: report.plan_artifact_rel_path,
     apply_mutation_authorized: false,

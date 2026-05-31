@@ -227,10 +227,17 @@ test("buildFridgeBuyerPathBatchApplyPlanProposalV1 on repo when planning registr
   assert.equal(report.csv_apply_authorized, false);
   if (report.plan_status === "READY_FOR_OWNER_REVIEW") {
     assert.equal(report.planned_change_count, 14);
-    assert.equal(report.owner_review_status, "OWNER_REVIEW_BLOCKED");
-    assert.equal(report.missing_affiliate_tag_count, 8);
+    assert.equal(report.missing_affiliate_tag_count, 0);
     assert.equal(report.duplicate_destination_group_count, 2);
-    assert.ok(report.owner_review_risk_count >= 8);
+    assert.equal(
+      report.duplicate_destination_group_review_status,
+      "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+    );
+    assert.equal(report.owner_review_status, "OWNER_REVIEW_READY");
+    const normalizedRows = report.planned_changes.filter(
+      (row) => row.affiliate_tag_normalization_applied,
+    );
+    assert.equal(normalizedRows.length, 8);
     assert.deepEqual(
       report.planned_changes.map((row) => row.slug).sort(),
       [...SLUGS].sort(),
@@ -239,7 +246,40 @@ test("buildFridgeBuyerPathBatchApplyPlanProposalV1 on repo when planning registr
       assert.equal(change.action, FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_ACTION_V1);
       assert.equal(change.mutation_authorized, false);
       assert.ok(Array.isArray(change.owner_review_risk_flags));
+      assert.ok(Array.isArray(change.owner_review_required_reasons));
     }
+  }
+});
+
+test("repo fixture applies safe Amazon affiliate tag normalization on 8 rows", () => {
+  const registryAbs = path.join(
+    REPO_ROOT,
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (!existsSync(registryAbs)) return;
+
+  const report = buildFridgeBuyerPathBatchApplyPlanProposalV1({ rootDir: REPO_ROOT });
+  if (report.plan_status !== "READY_FOR_OWNER_REVIEW") return;
+
+  const normalizedSlugs = new Set([
+    "da29-00019a",
+    "da97-15217d",
+    "lt1000p",
+    "lt1000pc",
+    "lt600p",
+    "lt700p",
+    "lt800p",
+    "mdj64844601",
+  ]);
+  const normalizedRows = report.planned_changes.filter((row) =>
+    normalizedSlugs.has(row.slug),
+  );
+  assert.equal(normalizedRows.length, 8);
+  for (const row of normalizedRows) {
+    assert.equal(row.affiliate_tag_normalization_applied, true);
+    assert.match(row.proposed_affiliate_url, /tag=buckparts20-20/);
+    assert.equal(row.affiliate_tag_status, "HAS_BUCKPARTS_TAG");
+    assert.equal(row.owner_review_required_reasons.length, 0);
   }
 });
 
@@ -259,12 +299,62 @@ test("repo fixture surfaces duplicate destination groups on shared Amazon PDP UR
   assert.equal(groupIds.size, 2);
 });
 
-test("missing Amazon buckparts tag blocks clean owner review status", () => {
+test("duplicate destination groups remain visible and are not silently accepted without evidence", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "fridge-apply-plan-dup-no-evidence-"));
+  writeFixtureTree(dir, {});
+  const sharedDest = "https://www.amazon.com/dp/B087PDLZL9";
+  const rows = SLUGS.map((slug) => proposalRow(slug));
+  rows[0] = proposalRow(rows[0]!.slug, { destinationUrl: sharedDest });
+  rows[1] = proposalRow(rows[1]!.slug, {
+    destinationUrl: sharedDest,
+    affiliateUrl: `${sharedDest}?tag=buckparts20-20`,
+  });
+
+  const report = buildFridgeBuyerPathBatchApplyPlanProposalV1({
+    rootDir: dir,
+    buildProposal: () => proposalFixture(rows),
+    buildApproval: () => approvalFixture(),
+    readText: (absPath) => {
+      if (
+        absPath.includes("amazon-4396710-live-outcome") ||
+        absPath.includes("amazon-4396841-live-outcome")
+      ) {
+        return JSON.stringify({
+          verdict: "LIVE_OUTCOME_RECORDED",
+          committed_live_row: {
+            destination_url: "https://www.amazon.com/dp/OTHERASIN1",
+            affiliate_url: "https://www.amazon.com/dp/OTHERASIN1?tag=buckparts20-20",
+          },
+        });
+      }
+      return readFileSync(absPath, "utf8");
+    },
+  });
+
+  assert.equal(report.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(report.duplicate_destination_group_count, 1);
+  assert.equal(report.duplicate_destination_group_review_status, "OWNER_REVIEW_REQUIRED");
+  assert.equal(report.owner_review_status, "OWNER_REVIEW_BLOCKED");
+  const dupRows = report.planned_changes.filter((row) => row.duplicate_destination_group_id != null);
+  assert.equal(dupRows.length, 2);
+  assert.ok(
+    dupRows.every((row) => row.duplicate_destination_group_review_status === "OWNER_REVIEW_REQUIRED"),
+  );
+  assert.ok(
+    dupRows.some((row) =>
+      row.owner_review_required_reasons.some((reason) =>
+        reason.includes("DUPLICATE_PROPOSED_DESTINATION_URL"),
+      ),
+    ),
+  );
+});
+
+test("conflicting Amazon affiliate tag blocks clean owner review status", () => {
   const dir = mkdtempSync(path.join(tmpdir(), "fridge-apply-plan-missing-tag-"));
   writeFixtureTree(dir, {});
   const rows = SLUGS.map((slug) => proposalRow(slug));
   rows[0] = proposalRow(rows[0]!.slug, {
-    affiliateUrl: "https://www.amazon.com/dp/B087PDLZL9",
+    affiliateUrl: "https://www.amazon.com/dp/B087PDLZL9?tag=otherpartner-20",
   });
 
   const report = buildFridgeBuyerPathBatchApplyPlanProposalV1({
@@ -277,8 +367,9 @@ test("missing Amazon buckparts tag blocks clean owner review status", () => {
   assert.equal(report.owner_review_status, "OWNER_REVIEW_BLOCKED");
   assert.equal(report.missing_affiliate_tag_count, 1);
   const row = report.planned_changes.find((change) => change.slug === rows[0]!.slug);
+  assert.equal(row?.affiliate_tag_normalization_applied, false);
   assert.equal(row?.affiliate_tag_status, "MISSING_BUCKPARTS_TAG");
-  assert.ok(row?.owner_review_risk_flags.includes("MISSING_BUCKPARTS_AFFILIATE_TAG"));
+  assert.ok(row?.owner_review_required_reasons.includes("MISSING_BUCKPARTS_AFFILIATE_TAG"));
 });
 
 test("temp fixture: READY_FOR_OWNER_REVIEW with planned_changes limited to batch slugs", () => {
