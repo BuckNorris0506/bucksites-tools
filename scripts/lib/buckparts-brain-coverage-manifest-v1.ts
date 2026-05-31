@@ -103,6 +103,19 @@ const CURATED_ENTRIES: EntrySeed[] = [
     reason: "Truth-quality sentinel built during Command Center report generation (read-only).",
   },
   {
+    system_id: "command_center_efficiency_truth_table",
+    npm_script_or_path:
+      "scripts/lib/command-center-efficiency-truth-table-v1.ts (projected during Command Center build)",
+    cc_json_path: "command_center_v2.command_center_efficiency_truth_table_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.command_center_efficiency_truth_table_v1.data_mutation'",
+    reason:
+      "Read-only efficiency / SOP truth table projected into Command Center JSON during report generation; diagnostic consolidation guidance only — not an operational gate.",
+  },
+  {
     system_id: "owner_gsc_external_demand",
     npm_script_or_path: "src/lib/owner-dashboard/load-command-center-report.ts",
     cc_json_path: null,

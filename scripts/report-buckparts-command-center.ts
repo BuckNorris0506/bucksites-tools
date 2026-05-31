@@ -61,6 +61,7 @@ import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-ope
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
+import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-efficiency-truth-table-v1";
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
@@ -1082,6 +1083,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "command_center_efficiency_truth_table_v1"
   > = {
     ...command_center_v2_base,
     external_measurement_freshness_v1,
@@ -1206,6 +1208,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "command_center_efficiency_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1328,6 +1331,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "command_center_efficiency_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
@@ -1683,6 +1687,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "command_center_efficiency_truth_table_v1"
     | "agent_control_plane_v1"
   > = {
     ...command_center_v2_before_demand,
@@ -1880,7 +1885,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "command_center_efficiency_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -1982,10 +1987,36 @@ export async function buildBuckpartsCommandCenterReport(
     batch_run_registry_intake_report_v1,
   );
 
+  const packageJsonForEfficiencyAudit = JSON.parse(
+    fileExists(path.join(rootDir, "package.json"))
+      ? readTextFile(path.join(rootDir, "package.json"))
+      : "{}",
+  ) as { scripts?: Record<string, string> };
+  const buckpartsScriptNames = Object.keys(packageJsonForEfficiencyAudit.scripts ?? {}).filter((name) =>
+    name.startsWith("buckparts:"),
+  );
+
+  const command_center_efficiency_truth_table_v1 = buildCommandCenterEfficiencyTruthTableV1({
+    now,
+    lanes: {
+      fridge_buyer_path_owner_review_bridge_v1,
+      fridge_buyer_path_owner_review_packet_v1,
+      fridge_buyer_path_batch_proposal_v1,
+      fridge_buyer_path_batch_approval_v1,
+      fridge_buyer_path_batch_apply_plan_proposal_v1,
+      fridge_buyer_path_batch_apply_plan_approval_v1,
+      batch_run_registry_intake_v1,
+      batch_production_operating_checklist_v1,
+      brain_consolidation_plan_v1: command_center_v2.brain_consolidation_plan_v1,
+    },
+    buckpartsScriptNames,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
     batch_run_registry_intake_v1,
+    command_center_efficiency_truth_table_v1,
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,
   };

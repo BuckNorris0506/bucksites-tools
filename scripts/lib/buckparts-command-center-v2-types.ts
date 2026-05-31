@@ -23,6 +23,7 @@ import type { AirPurifierWeakBuyerPathAuditReportV1 } from "./air-purifier-weak-
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
+import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { AirPurifierBatchCoverageDirectorV1 } from "./air-purifier-batch-coverage-director-v1";
 import type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
@@ -964,6 +965,8 @@ export type CommandCenterV2Report = {
   next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
   operating_map_summary_v1: OperatingMapSummaryV1;
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
+  /** Read-only efficiency / SOP truth table — consolidation diagnostic; not an operational gate. */
+  command_center_efficiency_truth_table_v1: CommandCenterEfficiencyTruthTableV1;
   /** Read-only semantic page/publishability truth for refrigerator filter pages (Cruise diagnostics). */
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
   /** Read-only refrigerator CSV / evidence / Supabase / public truth spine — not mutation authority. */
@@ -1047,6 +1050,7 @@ export type {
 export type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 export type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 export type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
+export type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
 export type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 export type {
   PagePublishabilityTruthSummaryV1,
@@ -1081,6 +1085,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_buyer_path_batch_apply_plan_approval_v1"
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
+  | "command_center_efficiency_truth_table_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"

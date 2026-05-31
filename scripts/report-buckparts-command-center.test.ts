@@ -3230,6 +3230,39 @@ test("command_center_v2.fridge_buyer_path_owner_review_bridge_v1 is read-only ow
   );
 });
 
+test("command_center_v2.command_center_efficiency_truth_table_v1 is read-only efficiency audit lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.command_center_efficiency_truth_table_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "command_center_efficiency_truth_table_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.command_center_efficiency_truth_table_v1");
+  assert.ok(lane.repeated_gate_count >= 1);
+  assert.ok(lane.consolidation_candidates.length >= 1);
+  const fridgeCandidate = lane.consolidation_candidates.find(
+    (candidate) => candidate.pattern_id === "fridge_buyer_path_micro_lane_chain",
+  );
+  assert.ok(fridgeCandidate);
+  assert.doesNotMatch(report.next_best_action, /command_center_efficiency_truth_table/i);
+  assert.doesNotMatch(report.next_best_action, /^EFFICIENCY AUDIT \[/);
+  assert.notEqual(report.next_best_action, lane.recommended_next_action);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "command_center_efficiency_truth_table",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.command_center_efficiency_truth_table_v1",
+  );
+});
+
 test("command_center_v2.owner_drift_detector_v1 is read-only drift detector lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

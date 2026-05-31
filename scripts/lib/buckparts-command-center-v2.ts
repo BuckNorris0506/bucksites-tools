@@ -229,6 +229,7 @@ export function buildCommandCenterV2Report(input: {
   | "fridge_buyer_path_batch_apply_plan_approval_v1"
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
+  | "command_center_efficiency_truth_table_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"
