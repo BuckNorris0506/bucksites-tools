@@ -60,3 +60,5 @@ skills-lock.json
 # BuckParts local operator input exports
 data/waterdrop/operator-input/local/
 data/waterdrop/operator-input/waterdrop-rakuten-links.v1.json
+
+.netlify/
