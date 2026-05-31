@@ -8,8 +8,11 @@ import type {
   FounderDecisionRegistryDecisionStatusV1,
   FounderDecisionRegistryRowV1,
 } from "./founder-decision-registry-v1";
+import type { BatchProductionOwnerReviewRegistryFounderOptionIdV1 } from "./founder-decision-registry-v1";
 import {
+  expectedFridgeBuyerPathBatchApprovalSourceDecisionPacketId,
   isCodexOutputReviewRegistryRowV1,
+  isFridgeBuyerPathBatchApprovalRegistryRowV1,
   isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
@@ -52,6 +55,21 @@ export type FounderDecisionRegistryCodexReviewDigestMatchV1 =
       codex_output_review_founder_option_id: CodexOutputReviewRegistryFounderOptionIdV1;
     };
 
+export type FounderDecisionRegistryFridgeBuyerPathBatchApprovalDigestMatchV1 =
+  | { kind: "NO_DIGEST_FRIDGE_BATCH_APPROVAL_CONTEXT" }
+  | { kind: "NO_REGISTRY_ROW_FOR_BATCH"; proposed_batch_id: string }
+  | {
+      kind: "MATCHED";
+      proposed_batch_id: string;
+      source_decision_packet_id: string;
+      registry_source: string;
+      decision_id: string;
+      decided_at: string;
+      decision_status: FounderDecisionRegistryDecisionStatusV1;
+      allowed_next_scope: FounderDecisionRegistryRowV1["allowed_next_scope"];
+      fridge_buyer_path_batch_approval_founder_option_id: BatchProductionOwnerReviewRegistryFounderOptionIdV1;
+    };
+
 export type FounderDecisionRegistryReadModelV1 = {
   contract: typeof FOUNDER_DECISION_REGISTRY_READ_MODEL_CONTRACT_V1;
   read_only: true;
@@ -72,8 +90,12 @@ export type FounderDecisionRegistryReadModelV1 = {
   rejected_findings_count: number;
   request_followup_readonly_count: number;
   deferred_review_count: number;
+  /** Rows with `fridge_buyer_path_batch_approval_context_v1` set (validated). */
+  fridge_buyer_path_batch_approval_decision_rows: number;
   /** Digest-only: when founder digest supplies Codex review `source_queue_row_id`, latest matching registry row (if any). */
   codex_output_review_digest_match: FounderDecisionRegistryCodexReviewDigestMatchV1;
+  /** When caller supplies fridge batch `proposed_batch_id`, latest matching registry row (if any). */
+  fridge_buyer_path_batch_approval_digest_match: FounderDecisionRegistryFridgeBuyerPathBatchApprovalDigestMatchV1;
   latest_decisions: FounderDecisionRegistryReadModelLatestDecisionV1[];
   proven_facts: string[];
   unknown_facts: string[];
@@ -107,6 +129,8 @@ export function buildFounderDecisionRegistryReadModelV1(
     reference_time_iso: string;
     /** When digest passes Codex Output Review `source_queue_row_id`, surface latest matching `codex_output_review_context_v1` row. */
     codex_output_review_digest_match?: { source_queue_row_id: string | null } | null;
+    /** When caller passes fridge buyer-path batch `proposed_batch_id`, surface latest matching approval row. */
+    fridge_buyer_path_batch_approval_digest_match?: { proposed_batch_id: string | null } | null;
   },
 ): FounderDecisionRegistryReadModelV1 {
   const generated_at = options.generated_at;
@@ -214,6 +238,14 @@ export function buildFounderDecisionRegistryReadModelV1(
     else if (opt === "defer_review") deferred_review_count++;
   }
 
+  let fridge_buyer_path_batch_approval_decision_rows = 0;
+  for (const { row } of validRecords) {
+    if (!isFridgeBuyerPathBatchApprovalRegistryRowV1(row) || !row.fridge_buyer_path_batch_approval_context_v1) {
+      continue;
+    }
+    fridge_buyer_path_batch_approval_decision_rows++;
+  }
+
   const matchOpt = options.codex_output_review_digest_match;
   let codex_output_review_digest_match: FounderDecisionRegistryCodexReviewDigestMatchV1 = {
     kind: "NO_DIGEST_CODEX_REVIEW_CONTEXT",
@@ -242,8 +274,54 @@ export function buildFounderDecisionRegistryReadModelV1(
     }
   }
 
+  const fridgeMatchOpt = options.fridge_buyer_path_batch_approval_digest_match;
+  let fridge_buyer_path_batch_approval_digest_match: FounderDecisionRegistryFridgeBuyerPathBatchApprovalDigestMatchV1 =
+    { kind: "NO_DIGEST_FRIDGE_BATCH_APPROVAL_CONTEXT" };
+  if (
+    fridgeMatchOpt != null &&
+    fridgeMatchOpt.proposed_batch_id != null &&
+    fridgeMatchOpt.proposed_batch_id.trim() !== ""
+  ) {
+    const batchId = fridgeMatchOpt.proposed_batch_id.trim();
+    const expectedPacketId = expectedFridgeBuyerPathBatchApprovalSourceDecisionPacketId(batchId);
+    const candidates = validRecords.filter((r) => {
+      const ctx = r.row.fridge_buyer_path_batch_approval_context_v1;
+      return (
+        isFridgeBuyerPathBatchApprovalRegistryRowV1(r.row) &&
+        ctx?.proposed_batch_id === batchId &&
+        r.row.source_decision_packet_id === expectedPacketId
+      );
+    });
+    if (candidates.length === 0) {
+      fridge_buyer_path_batch_approval_digest_match = {
+        kind: "NO_REGISTRY_ROW_FOR_BATCH",
+        proposed_batch_id: batchId,
+      };
+    } else {
+      const sortedF = [...candidates].sort(
+        (a, b) => Date.parse(b.row.decided_at) - Date.parse(a.row.decided_at),
+      );
+      const topF = sortedF[0]!;
+      const ctxF = topF.row.fridge_buyer_path_batch_approval_context_v1!;
+      fridge_buyer_path_batch_approval_digest_match = {
+        kind: "MATCHED",
+        proposed_batch_id: batchId,
+        source_decision_packet_id: topF.row.source_decision_packet_id,
+        registry_source: topF.source,
+        decision_id: topF.row.decision_id,
+        decided_at: topF.row.decided_at,
+        decision_status: topF.row.decision_status,
+        allowed_next_scope: topF.row.allowed_next_scope,
+        fridge_buyer_path_batch_approval_founder_option_id: ctxF.founder_option_id,
+      };
+    }
+  }
+
   proven_facts.push(
     `PROVEN: Codex Output Review-linked registry rows (codex_output_review_context_v1): ${codex_output_review_decision_rows} (by option — approve_readonly_findings=${approved_readonly_findings_count}, reject_findings=${rejected_findings_count}, request_followup_readonly=${request_followup_readonly_count}, defer_review=${deferred_review_count}).`,
+  );
+  proven_facts.push(
+    `PROVEN: Fridge buyer-path batch approval registry rows (fridge_buyer_path_batch_approval_context_v1): ${fridge_buyer_path_batch_approval_decision_rows}.`,
   );
   const sorted = [...validRecords].sort((a, b) => Date.parse(b.row.decided_at) - Date.parse(a.row.decided_at));
   const latest_decisions: FounderDecisionRegistryReadModelLatestDecisionV1[] = sorted.slice(0, 20).map((r) => ({
@@ -285,7 +363,9 @@ export function buildFounderDecisionRegistryReadModelV1(
     rejected_findings_count,
     request_followup_readonly_count,
     deferred_review_count,
+    fridge_buyer_path_batch_approval_decision_rows,
     codex_output_review_digest_match,
+    fridge_buyer_path_batch_approval_digest_match,
     latest_decisions,
     proven_facts,
     unknown_facts,
@@ -324,6 +404,7 @@ export function formatFounderDecisionRegistryReadModelDigestMarkdownV1(model: Fo
     `**PROVEN:** Active mutation-shaped approvals (**counted only**, not consumed by automation): \`${model.active_mutation_approvals}\`. Expired / review-due (time-gated) valid rows: \`${model.expired_or_review_due_rows}\`.`,
     `**PROVEN:** Scope labels — \`read_only_agent\`: \`${model.read_only_agent_rows}\`; \`human_external\`: \`${model.human_external_rows}\`.`,
     `**PROVEN:** \`codex_output_review_context_v1\` rows: \`${model.codex_output_review_decision_rows}\` — approve_readonly=\`${model.approved_readonly_findings_count}\`, reject=\`${model.rejected_findings_count}\`, request_followup_readonly=\`${model.request_followup_readonly_count}\`, defer=\`${model.deferred_review_count}\`.`,
+    `**PROVEN:** \`fridge_buyer_path_batch_approval_context_v1\` rows: \`${model.fridge_buyer_path_batch_approval_decision_rows}\`.`,
     "**PROVEN:** This read model does **not** instruct agents, CI, or Runner to act on registry decisions.",
     "",
     ...codexDigestLines,

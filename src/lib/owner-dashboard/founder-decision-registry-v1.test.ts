@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 import {
   FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
   founderRegistryRowGrantsMutatingRepoAuthority,
   isFounderRegistryRowActiveMutationApproval,
+  isFridgeBuyerPathBatchApprovalRegistryRowV1,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
@@ -261,4 +264,51 @@ test("fridge buyer-path batch approval context requires read_only_agent for plan
     assert.equal(v.row.allowed_next_scope, "read_only_agent");
     assert.notEqual(v.row.allowed_next_scope, "owner_mutation_approved");
   }
+});
+
+test("fridge buyer-path batch approval owner-decisions artifact validates as registry document", () => {
+  const artifactPath = path.join(
+    process.cwd(),
+    "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json",
+  );
+  const embedded = {
+    contract: FOUNDER_DECISION_REGISTRY_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    rows: [
+      {
+        decision_id: "decision-2026-05-31-fridge-buyer-path-batch-fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
+        source_queue_row_id: "queue-fridge-buyer-path-batch-proposal-v1",
+        source_decision_packet_id:
+          "fridge_buyer_path_batch_approval_v1:fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
+        decided_at: "2026-05-31T06:33:19.430Z",
+        decision_status: "approved",
+        owner_note: "Planning-only approval.",
+        allowed_next_scope: "read_only_agent",
+        evidence_required_before_mutation: false,
+        prohibited_actions_still_apply: ["No Supabase."],
+        fridge_buyer_path_batch_approval_context_v1: {
+          review_packet_contract: "fridge_buyer_path_batch_approval_v1",
+          founder_option_id: "approve_for_next_planning_only",
+          proposed_batch_id: "fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
+        },
+      },
+    ],
+  };
+  const parsed = existsSync(artifactPath)
+    ? (JSON.parse(readFileSync(artifactPath, "utf8")) as unknown)
+    : embedded;
+  const v = validateFounderDecisionRegistryDocumentV1(parsed);
+  assert.equal(v.ok, true);
+  if (!v.ok) return;
+  assert.equal(v.doc.rows.length, 1);
+  const row = v.doc.rows[0]!;
+  assert.ok(isFridgeBuyerPathBatchApprovalRegistryRowV1(row));
+  assert.equal(
+    row.source_decision_packet_id,
+    "fridge_buyer_path_batch_approval_v1:fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
+  );
+  assert.equal(row.allowed_next_scope, "read_only_agent");
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-05-31T12:00:00.000Z"), false);
+  assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-05-31T12:00:00.000Z"), false);
 });

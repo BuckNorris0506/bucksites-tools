@@ -16,9 +16,14 @@ import { scanFounderDecisionRegistryJsonFilesV1 } from "../src/lib/owner-dashboa
 export function runReportFounderDecisionRegistryV1(rootDir: string = process.cwd()): FounderDecisionRegistryReadModelV1 {
   const now = new Date().toISOString();
   const files = scanFounderDecisionRegistryJsonFilesV1(rootDir);
+  const proposedBatchId =
+    process.env.BUCKPARTS_FRIDGE_BUYER_PATH_BATCH_APPROVAL_PROPOSED_BATCH_ID?.trim() || null;
   return buildFounderDecisionRegistryReadModelV1(files, {
     generated_at: now,
     reference_time_iso: now,
+    fridge_buyer_path_batch_approval_digest_match: proposedBatchId
+      ? { proposed_batch_id: proposedBatchId }
+      : null,
   });
 }
 

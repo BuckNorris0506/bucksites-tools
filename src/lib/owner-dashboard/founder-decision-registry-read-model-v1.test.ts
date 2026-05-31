@@ -36,11 +36,13 @@ test("no file inputs yields valid zero-row read model with UNKNOWN filesystem fa
   assert.equal(m.invalid_rows, 0);
   assert.equal(m.active_mutation_approvals, 0);
   assert.equal(m.codex_output_review_decision_rows, 0);
+  assert.equal(m.fridge_buyer_path_batch_approval_decision_rows, 0);
   assert.equal(m.approved_readonly_findings_count, 0);
   assert.equal(m.rejected_findings_count, 0);
   assert.equal(m.request_followup_readonly_count, 0);
   assert.equal(m.deferred_review_count, 0);
   assert.equal(m.codex_output_review_digest_match.kind, "NO_DIGEST_CODEX_REVIEW_CONTEXT");
+  assert.equal(m.fridge_buyer_path_batch_approval_digest_match.kind, "NO_DIGEST_FRIDGE_BATCH_APPROVAL_CONTEXT");
   assert.ok(m.unknown_facts.some((u) => /UNKNOWN.*owner-decisions/i.test(u)));
 });
 
@@ -231,4 +233,64 @@ test("codex_output_review_context_v1 rows are counted and digest match surfaces 
   assert.match(md, /Latest matching row/);
   assert.match(md, /request_followup_readonly/);
   assert.match(md, /read visibility\*\* of owner judgment/i);
+});
+
+const FRIDGE_BATCH_PROPOSED_ID = "fridge-buyer-path-batch-proposal-v1-0fec4a7b623a";
+const FRIDGE_BATCH_PACKET_ID = `fridge_buyer_path_batch_approval_v1:${FRIDGE_BATCH_PROPOSED_ID}`;
+
+function fridgeBuyerPathBatchApprovalArtifactRow(): Record<string, unknown> {
+  return {
+    decision_id: `decision-2026-05-31-fridge-buyer-path-batch-${FRIDGE_BATCH_PROPOSED_ID}`,
+    source_queue_row_id: "queue-fridge-buyer-path-batch-proposal-v1",
+    source_decision_packet_id: FRIDGE_BATCH_PACKET_ID,
+    decided_at: "2026-05-31T06:33:19.430Z",
+    decision_status: "approved",
+    owner_note:
+      "Approved for next planning only for the 14-row refrigerator-water buyer-path batch. This approval does not authorize CSV mutation, retailer_links mutation, Supabase writes, public UI changes, buy-link apply, evidence writes, git commits, deploys, or Netlify API usage. Next step must create/prove the formal fridge batch planning/run-registry path and keep all apply/mutation gates false until separate proof exists.",
+    allowed_next_scope: "read_only_agent",
+    evidence_required_before_mutation: false,
+    prohibited_actions_still_apply: [
+      "Do not write to Supabase or run SQL that mutates database state.",
+      "Do not mutate retailer_links or other retailer catalog/link artifacts.",
+      "Do not create, delete, or overwrite production evidence JSON under data/evidence/.",
+      "Do not change affiliate program URLs, tracking parameters, or affiliate application state in-repo.",
+      "Do not run batch apply/mutation scripts or mutating npm targets from this approval alone.",
+      "approve_for_next_planning_only is planning/read-model scope only — not production mutation approval.",
+      "This approval row is not automation_input for Runner Step, queues, or mutation gates.",
+    ],
+    fridge_buyer_path_batch_approval_context_v1: {
+      review_packet_contract: "fridge_buyer_path_batch_approval_v1",
+      founder_option_id: "approve_for_next_planning_only",
+      proposed_batch_id: FRIDGE_BATCH_PROPOSED_ID,
+    },
+  };
+}
+
+test("fridge buyer-path batch approval artifact shape is counted and digest match surfaces packet id", () => {
+  const doc = validRowDoc([fridgeBuyerPathBatchApprovalArtifactRow()]);
+  const files: FounderDecisionRegistryReadModelFileInputV1[] = [
+    { source: "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json", parsed: doc },
+  ];
+  const m = buildFounderDecisionRegistryReadModelV1(files, {
+    generated_at: gen,
+    reference_time_iso: ref,
+    fridge_buyer_path_batch_approval_digest_match: { proposed_batch_id: FRIDGE_BATCH_PROPOSED_ID },
+  });
+  assert.equal(m.fridge_buyer_path_batch_approval_decision_rows, 1);
+  assert.equal(m.active_mutation_approvals, 0);
+  assert.equal(m.fridge_buyer_path_batch_approval_digest_match.kind, "MATCHED");
+  if (m.fridge_buyer_path_batch_approval_digest_match.kind === "MATCHED") {
+    assert.equal(
+      m.fridge_buyer_path_batch_approval_digest_match.source_decision_packet_id,
+      FRIDGE_BATCH_PACKET_ID,
+    );
+    assert.equal(m.fridge_buyer_path_batch_approval_digest_match.allowed_next_scope, "read_only_agent");
+    assert.equal(
+      m.fridge_buyer_path_batch_approval_digest_match.fridge_buyer_path_batch_approval_founder_option_id,
+      "approve_for_next_planning_only",
+    );
+  }
+  const latest = m.latest_decisions.find((row) => row.source_decision_packet_id === FRIDGE_BATCH_PACKET_ID);
+  assert.ok(latest);
+  assert.equal(latest!.allowed_next_scope, "read_only_agent");
 });
