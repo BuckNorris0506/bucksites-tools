@@ -40,6 +40,10 @@ import type {
 } from "./lib/buckparts-command-center-v2-types";
 import { loadOrRunLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
 import { buildDeployLiveSiteMonitorCommandCenterLaneFromMonitor } from "./lib/deploy-live-site-monitor-command-center-lane-v1";
+import {
+  buildDeployPublishQueueCommandCenterLaneV1,
+  loadNetlifyDeployMetadataV1,
+} from "./lib/deploy-publish-queue-command-center-lane-v1";
 import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 import {
   createConfidenceApprovalLookup,
@@ -560,6 +564,15 @@ export async function buildBuckpartsCommandCenterReport(
     monitor: liveSiteMonitor,
     artifact_source: liveSiteLoad.artifact_source,
   });
+  const netlify_deploy_metadata = loadNetlifyDeployMetadataV1({
+    rootDir,
+    fileExists,
+    readTextFile,
+  });
+  const deploy_publish_queue_v1 = buildDeployPublishQueueCommandCenterLaneV1({
+    deploy_live_site_monitor_v1,
+    netlify_deploy_metadata,
+  });
 
   const [
     commandSurface,
@@ -1036,6 +1049,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
     | "deploy_live_site_monitor_v1"
+    | "deploy_publish_queue_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1168,6 +1182,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
     | "deploy_live_site_monitor_v1"
+    | "deploy_publish_queue_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1281,6 +1296,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
     | "deploy_live_site_monitor_v1"
+    | "deploy_publish_queue_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1608,6 +1624,7 @@ export async function buildBuckpartsCommandCenterReport(
     refrigerator_model_first_batch_resolver_v1,
     refrigerator_model_first_qa_approval_packet_v1,
     deploy_live_site_monitor_v1,
+    deploy_publish_queue_v1,
     air_purifier_truth_spine_v1,
     air_purifier_batch_coverage_director_v1,
     vacuum_bags_wedge_feasibility_v1,

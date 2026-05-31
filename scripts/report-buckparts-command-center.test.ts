@@ -1382,6 +1382,28 @@ test("command_center_v2 deploy_live_site_monitor_v1 surfaces route, content, and
   }
 });
 
+test("command_center_v2 deploy_publish_queue_v1 defaults Netlify API unauthorized when live content OK", async () => {
+  const mon = liveSiteMonitorOkFixture();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: mon,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const queue = report.command_center_v2.deploy_publish_queue_v1;
+  assert.equal(queue.contract, "deploy_publish_queue_v1");
+  assert.equal(queue.read_only, true);
+  assert.equal(queue.data_mutation, false);
+  assert.equal(queue.netlify_api_call_authorized, false);
+  assert.equal(queue.publish_required, false);
+  assert.equal(queue.reason, "LIVE_CONTENT_OK");
+  assert.equal(
+    queue.recommended_jq_path,
+    ".command_center_v2.deploy_publish_queue_v1",
+  );
+});
+
 test("command_center_v2 deploy lane ATTENTION when route HTTP OK but content contract fails", async () => {
   const mon = liveSiteMonitorOkFixture({
     runtime_status: "ATTENTION",

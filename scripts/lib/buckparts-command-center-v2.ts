@@ -232,6 +232,7 @@ export function buildCommandCenterV2Report(input: {
   | "refrigerator_model_first_batch_resolver_v1"
   | "refrigerator_model_first_qa_approval_packet_v1"
   | "deploy_live_site_monitor_v1"
+  | "deploy_publish_queue_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"
   | "vacuum_bags_wedge_feasibility_v1"

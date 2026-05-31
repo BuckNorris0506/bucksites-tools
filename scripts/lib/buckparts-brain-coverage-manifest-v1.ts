@@ -160,10 +160,12 @@ const CURATED_ENTRIES: EntrySeed[] = [
 const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
   "buckparts:command-center": {
     system_id: "buckparts_command_center",
-    cc_json_path: "report_name=buckparts_command_center_v1; command_center_v2",
+    cc_json_path: "report_name=buckparts_command_center_v1; command_center_v2.deploy_publish_queue_v1",
     verdict: "CONNECTED",
-    validation_command: "npm run buckparts:command-center",
-    reason: "Canonical Command Center JSON stdout.",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.deploy_publish_queue_v1.netlify_api_call_authorized'",
+    reason:
+      "Canonical Command Center JSON stdout; includes read-only deploy_publish_queue_v1 Netlify API budget gate (never executes Netlify).",
   },
   "buckparts:command-surface": {
     cc_json_path: "ingested via buildBuckpartsCommandCenterReport → coverage_health, v1 summaries",

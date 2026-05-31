@@ -137,3 +137,5 @@ There is **no** `npm run buckparts:live` alias in older docs — use:
 | `npm run buckparts:operator-proof` | Local operator stack including live-site check via `live-site-smoke-check.ts` |
 
 Requires `NEXT_PUBLIC_SITE_URL` (production origin, no trailing slash) for live probes.
+
+**Netlify API is not routine validation.** Default deploy truth is public GET live smoke (`npm run buckparts:live`) plus trust content contracts in Command Center `deploy_live_site_monitor_v1`. Netlify API/CLI publish is a **budgeted owner exception** gated by read-only `command_center_v2.deploy_publish_queue_v1` (`netlify_api_call_authorized` defaults **false**; lane never executes Netlify).
