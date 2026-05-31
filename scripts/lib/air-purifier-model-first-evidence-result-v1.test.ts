@@ -346,3 +346,52 @@ test("coway-airmega250-rf repo-truth packet covers all compatibility-mapped mode
     ),
   );
 });
+
+test("loadAllRepoModelSlugsForAnchorFilterV1 returns all 6 GermGuardian FLT4100 models for gg-flt4100", () => {
+  const slugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "gg-flt4100");
+  assert.equal(slugs.length, 6);
+  assert.deepEqual(slugs, [
+    "gg-ac4100",
+    "gg-ac4150",
+    "gg-ac4175",
+    "gg-ac4225",
+    "gg-ac4230",
+    "gg-ac4820",
+  ]);
+});
+
+test("gg-flt4100 repo-truth packet covers all compatibility-mapped models as UNKNOWN with safe_apply blocked", () => {
+  const lane = buildAirPurifierModelFirstProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const weak = buildAirPurifierWeakBuyerPathAuditV1Report({ rootDir: REPO_ROOT });
+  const queue = buildApModelFirstEvidenceQueueV1Report({ modelFirstLane: lane, weakBuyerPathAudit: weak });
+  const modelSlugs = loadAllRepoModelSlugsForAnchorFilterV1(REPO_ROOT, "gg-flt4100");
+  const result = buildModelFirstEvidenceResultV1({
+    rootDir: REPO_ROOT,
+    queue,
+    anchorFilterSlug: "gg-flt4100",
+    modelSlugs,
+    writeResult: false,
+  });
+  assert.equal(result.model_rows.length, 6);
+  assert.equal(result.model_slugs_checked.length, 6);
+  assert.deepEqual(result.model_slugs_checked, result.model_rows.map((r) => r.model_slug));
+  assert.equal(result.evidence_status_counts.UNKNOWN, 6);
+  assert.equal(result.evidence_status_counts.PASS, 0);
+  assert.equal(result.recommended_csv_mutation, null);
+  assert.equal(result.safe_apply_authorized, false);
+  assert.equal(result.filter_first_cross_reference?.evidence_status, "UNKNOWN");
+  assert.equal(result.filter_first_cross_reference?.exact_token_found, false);
+  assert.equal(
+    result.filter_first_cross_reference?.rejection_reason,
+    "Insufficient proof in repo truth for this candidate.",
+  );
+  for (const row of result.model_rows) {
+    assert.equal(row.evidence_status, "UNKNOWN");
+    assert.equal(row.documented_filter_slug, "gg-flt4100");
+    assert.equal(row.buyer_path_status, "SEARCH_PLACEHOLDER_PRIMARY");
+    assert.equal(row.official_model_source_urls.length, 0);
+  }
+  assert.ok(
+    result.unknown_facts.some((f) => f.includes("ap-model-first-gg-flt4100-live-browser-v1.results.json")),
+  );
+});
