@@ -64,7 +64,7 @@ import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-de
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
-import { resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-approval-steering-v1";
+import { resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1, resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-approval-steering-v1";
 import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-steering-v1";
 import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
 import { buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
@@ -1773,6 +1773,12 @@ export async function buildBuckpartsCommandCenterReport(
       brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
     });
 
+  const fridgeApplyPlanApprovedPlanningSteeringOverride =
+    resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1({
+      approvalLane: command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1,
+      brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    });
+
   const fridgeApplyPlanSteeringOverride = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
     applyPlanLane: command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1,
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
@@ -1806,6 +1812,17 @@ export async function buildBuckpartsCommandCenterReport(
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = fridgeApplyPlanApprovalSteeringOverride.next_move_command;
     for (const reason of fridgeApplyPlanApprovalSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (fridgeApplyPlanApprovedPlanningSteeringOverride && batchDispatchOverride) {
+    nextBestAction = fridgeApplyPlanApprovedPlanningSteeringOverride.next_best_action;
+    whyThisAction = fridgeApplyPlanApprovedPlanningSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = fridgeApplyPlanApprovedPlanningSteeringOverride.next_move_command;
+    for (const reason of fridgeApplyPlanApprovedPlanningSteeringOverride.mutation_block_reasons) {
       if (!mutatingBlockedReasons.includes(reason)) {
         mutatingBlockedReasons.push(reason);
       }

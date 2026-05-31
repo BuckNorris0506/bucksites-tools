@@ -3351,16 +3351,30 @@ test("command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1 is read-o
   assert.equal(lane.planned_change_count, 14);
   assert.equal(lane.plan_status, "READY_FOR_OWNER_REVIEW");
   assert.equal(lane.owner_review_status, "OWNER_REVIEW_READY");
-  assert.equal(lane.approval_status, "awaiting_owner_approval");
+  assert.ok(
+    lane.approval_status === "awaiting_owner_approval" ||
+      lane.approval_status === "owner_approved_for_next_planning_only",
+  );
   assert.equal(lane.apply_mutation_authorized, false);
   assert.equal(lane.csv_apply_authorized, false);
   assert.equal(lane.evidence_write_authorized, false);
   assert.equal(lane.netlify_api_authorized, false);
-  assert.match(report.next_best_action, /requires owner approval/i);
-  assert.equal(
-    report.execution_guidance.next_move_command,
-    "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
-  );
+  if (lane.approval_status === "awaiting_owner_approval") {
+    assert.match(report.next_best_action, /requires owner approval/i);
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
+    );
+  } else if (lane.approval_status === "owner_approved_for_next_planning_only") {
+    assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [APPROVED_FOR_PLANNING]:"));
+    assert.match(report.next_best_action, /apply-readiness discovery/i);
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
+    );
+    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+    assert.equal(report.execution_guidance.mutating_blocked, true);
+  }
 
   const manifestEntry = findBrainManifestEntry(
     report,
@@ -3567,7 +3581,9 @@ test("command center next_best_action prefers apply-plan approval over apply-pla
   });
   const approvalLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1;
   const planLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1;
-  assert.equal(approvalLane.approval_status, "awaiting_owner_approval");
+  if (approvalLane.approval_status !== "awaiting_owner_approval") {
+    return;
+  }
   assert.equal(planLane.plan_status, "READY_FOR_OWNER_REVIEW");
   assert.equal(planLane.owner_review_status, "OWNER_REVIEW_READY");
   assert.equal(planLane.planned_change_count, 14);
@@ -3595,7 +3611,7 @@ test("command center next_best_action prefers apply-plan approval over apply-pla
   );
 });
 
-test("command center next_best_action prefers apply-plan proposal when approval is not awaiting_owner_approval", async () => {
+test("command center next_best_action prefers approved apply-plan planning over proposal when approval is owner_approved_for_next_planning_only", async () => {
   const applyPlanAbs = path.join(
     process.cwd(),
     "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
@@ -3619,7 +3635,65 @@ test("command center next_best_action prefers apply-plan proposal when approval 
     providers: baseProviders(),
   });
   const approvalLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1;
-  if (approvalLane.approval_status === "awaiting_owner_approval") {
+  if (approvalLane.approval_status !== "owner_approved_for_next_planning_only") {
+    return;
+  }
+  const planLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1;
+  assert.equal(planLane.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(planLane.owner_review_status, "OWNER_REVIEW_READY");
+  assert.equal(approvalLane.apply_mutation_authorized, false);
+
+  if (refrigeratorModelFirstSteeringActive(report)) {
+    return;
+  }
+
+  assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [APPROVED_FOR_PLANNING]:"));
+  assert.match(report.next_best_action, /approval is recorded for 14 planned changes/i);
+  assert.match(report.next_best_action, /apply-readiness discovery/i);
+  assert.match(report.next_best_action, /UNKNOWN: No dedicated post-approval apply-readiness npm command exists/i);
+  assert.doesNotMatch(report.next_best_action, /OWNER_REVIEW_READY/i);
+  assert.doesNotMatch(report.next_best_action, /OWNER_APPROVAL_REQUIRED/i);
+  assert.equal(
+    report.execution_guidance.next_move_command,
+    "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
+  );
+  assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.ok(
+    report.execution_guidance.mutating_block_reasons.some((reason) =>
+      reason.includes("UNKNOWN:no_dedicated_post_approval_apply_readiness_command"),
+    ),
+  );
+});
+
+test("command center next_best_action prefers apply-plan proposal when approval lane is absent or not steering-relevant", async () => {
+  const applyPlanAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+  );
+  const applyPlanApprovalAbs = path.join(
+    process.cwd(),
+    "data/owner-decisions/fridge-buyer-path-batch-apply-plan-approval-v1.json",
+  );
+  const fridgeRegistryAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (!fs.existsSync(applyPlanAbs) || !fs.existsSync(fridgeRegistryAbs)) {
+    return;
+  }
+  if (!fs.existsSync(applyPlanApprovalAbs)) {
+    return;
+  }
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const approvalLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1;
+  if (
+    approvalLane.approval_status === "awaiting_owner_approval" ||
+    approvalLane.approval_status === "owner_approved_for_next_planning_only"
+  ) {
     return;
   }
   const planLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1;
