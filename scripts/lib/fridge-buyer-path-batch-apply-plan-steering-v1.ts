@@ -4,12 +4,14 @@
  * Read-only; no mutation authorization.
  */
 
+import { FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
 import {
   FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_SOURCE_COMMAND_V1,
   type FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 
-export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_V1 = "OWNER_REVIEW_READY" as const;
+export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1 = "OWNER_REVIEW_READY" as const;
+export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1 = "OWNER_REVIEW_RISK" as const;
 
 export type FridgeBuyerPathBatchApplyPlanSteeringOverrideV1 = {
   next_best_action: string;
@@ -17,6 +19,7 @@ export type FridgeBuyerPathBatchApplyPlanSteeringOverrideV1 = {
   next_move_command: string;
   plan_artifact_rel_path: string;
   planned_change_count: number;
+  owner_review_status: FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1["owner_review_status"];
   mutation_block_reasons: string[];
 };
 
@@ -24,9 +27,12 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
   applyPlanLane: Pick<
     FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
     | "plan_status"
+    | "owner_review_status"
     | "planned_change_count"
     | "plan_artifact_rel_path"
     | "recommended_next_action"
+    | "missing_affiliate_tag_count"
+    | "duplicate_destination_group_count"
     | "apply_mutation_authorized"
     | "csv_apply_authorized"
     | "retailer_links_mutation_authorized"
@@ -46,18 +52,30 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
 
   const path = args.applyPlanLane.plan_artifact_rel_path;
   const count = args.applyPlanLane.planned_change_count;
+  const steeringStatus =
+    args.applyPlanLane.owner_review_status === "OWNER_REVIEW_BLOCKED"
+      ? FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_RISK_V1
+      : FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_READY_V1;
+
+  const riskPhrase =
+    args.applyPlanLane.owner_review_status === "OWNER_REVIEW_BLOCKED"
+      ? ` Resolve ${String(args.applyPlanLane.missing_affiliate_tag_count)} missing ${FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1} row(s) and review ${String(args.applyPlanLane.duplicate_destination_group_count)} duplicate proposed_destination_url group(s) before any owner approval.`
+      : "";
 
   return {
     next_best_action:
-      `BATCH APPLY-PLAN [${FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_STEERING_STATUS_V1}]: ` +
-      `refrigerator_water apply-plan proposal is ready for owner review (${String(count)} planned changes; artifact path ${path}). ` +
-      "Review plan only; mutation unauthorized. Do not apply CSV, retailer_links, Supabase, public UI, buy-link, evidence, deploy, or Netlify changes.",
+      `BATCH APPLY-PLAN [${steeringStatus}]: ` +
+      `refrigerator_water apply-plan proposal is ready for owner review (${String(count)} planned changes; artifact path ${path}).` +
+      riskPhrase +
+      " Review plan only; mutation unauthorized. Do not apply CSV, retailer_links, Supabase, public UI, buy-link, evidence, deploy, or Netlify changes.",
     why_this_action: args.applyPlanLane.recommended_next_action,
     next_move_command: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_SOURCE_COMMAND_V1,
     plan_artifact_rel_path: path,
     planned_change_count: count,
+    owner_review_status: args.applyPlanLane.owner_review_status,
     mutation_block_reasons: [
-      "fridge_buyer_path_batch_apply_plan_proposal_v1:plan_status=READY_FOR_OWNER_REVIEW",
+      `fridge_buyer_path_batch_apply_plan_proposal_v1:plan_status=${args.applyPlanLane.plan_status}`,
+      `fridge_buyer_path_batch_apply_plan_proposal_v1:owner_review_status=${args.applyPlanLane.owner_review_status}`,
       "fridge_buyer_path_batch_apply_plan_proposal_v1:apply_mutation_authorized=false",
       "fridge_buyer_path_batch_apply_plan_proposal_v1:csv_apply_authorized=false",
       "fridge_buyer_path_batch_apply_plan_proposal_v1:retailer_links_mutation_authorized=false",

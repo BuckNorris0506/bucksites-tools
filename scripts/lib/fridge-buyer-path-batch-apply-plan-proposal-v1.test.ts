@@ -46,15 +46,20 @@ const REPORT_SOURCE = readFileSync(
   "utf8",
 );
 
-function proposalRow(slug: string) {
+function proposalRow(slug: string, opts: { affiliateUrl?: string; destinationUrl?: string } = {}) {
+  const asin = slug.replace(/[^a-z0-9]/gi, "").slice(0, 10).toUpperCase() || "B087PDLZL9";
+  const destination =
+    opts.destinationUrl ?? `https://www.amazon.com/dp/TEST${asin}`;
+  const affiliate =
+    opts.affiliateUrl ?? `${destination}?tag=buckparts20-20`;
   return {
     proposal_rank: 1,
     slug,
     oem_token: slug.toUpperCase(),
     brand: "whirlpool",
     evidence_artifact_path: `data/evidence/amazon-${slug.toLowerCase()}-live-outcome.2026-05-04.json`,
-    destination_url: "https://www.amazon.com/dp/B087PDLZL9",
-    affiliate_url: "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+    destination_url: destination,
+    affiliate_url: affiliate,
     retailer_key: "amazon",
     retailer_name: "Amazon",
     browser_truth_classification: "direct_buyable",
@@ -222,6 +227,10 @@ test("buildFridgeBuyerPathBatchApplyPlanProposalV1 on repo when planning registr
   assert.equal(report.csv_apply_authorized, false);
   if (report.plan_status === "READY_FOR_OWNER_REVIEW") {
     assert.equal(report.planned_change_count, 14);
+    assert.equal(report.owner_review_status, "OWNER_REVIEW_BLOCKED");
+    assert.equal(report.missing_affiliate_tag_count, 8);
+    assert.equal(report.duplicate_destination_group_count, 2);
+    assert.ok(report.owner_review_risk_count >= 8);
     assert.deepEqual(
       report.planned_changes.map((row) => row.slug).sort(),
       [...SLUGS].sort(),
@@ -229,8 +238,47 @@ test("buildFridgeBuyerPathBatchApplyPlanProposalV1 on repo when planning registr
     for (const change of report.planned_changes) {
       assert.equal(change.action, FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_ACTION_V1);
       assert.equal(change.mutation_authorized, false);
+      assert.ok(Array.isArray(change.owner_review_risk_flags));
     }
   }
+});
+
+test("repo fixture surfaces duplicate destination groups on shared Amazon PDP URLs", () => {
+  const registryAbs = path.join(
+    REPO_ROOT,
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (!existsSync(registryAbs)) return;
+
+  const report = buildFridgeBuyerPathBatchApplyPlanProposalV1({ rootDir: REPO_ROOT });
+  if (report.plan_status !== "READY_FOR_OWNER_REVIEW") return;
+
+  const dupRows = report.planned_changes.filter((row) => row.duplicate_destination_group_id != null);
+  assert.ok(dupRows.length >= 4);
+  const groupIds = new Set(dupRows.map((row) => row.duplicate_destination_group_id));
+  assert.equal(groupIds.size, 2);
+});
+
+test("missing Amazon buckparts tag blocks clean owner review status", () => {
+  const dir = mkdtempSync(path.join(tmpdir(), "fridge-apply-plan-missing-tag-"));
+  writeFixtureTree(dir, {});
+  const rows = SLUGS.map((slug) => proposalRow(slug));
+  rows[0] = proposalRow(rows[0]!.slug, {
+    affiliateUrl: "https://www.amazon.com/dp/B087PDLZL9",
+  });
+
+  const report = buildFridgeBuyerPathBatchApplyPlanProposalV1({
+    rootDir: dir,
+    buildProposal: () => proposalFixture(rows),
+    buildApproval: () => approvalFixture(),
+  });
+
+  assert.equal(report.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(report.owner_review_status, "OWNER_REVIEW_BLOCKED");
+  assert.equal(report.missing_affiliate_tag_count, 1);
+  const row = report.planned_changes.find((change) => change.slug === rows[0]!.slug);
+  assert.equal(row?.affiliate_tag_status, "MISSING_BUCKPARTS_TAG");
+  assert.ok(row?.owner_review_risk_flags.includes("MISSING_BUCKPARTS_AFFILIATE_TAG"));
 });
 
 test("temp fixture: READY_FOR_OWNER_REVIEW with planned_changes limited to batch slugs", () => {
@@ -244,8 +292,11 @@ test("temp fixture: READY_FOR_OWNER_REVIEW with planned_changes limited to batch
   });
 
   assert.equal(report.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(report.owner_review_status, "OWNER_REVIEW_READY");
   assert.equal(report.planned_change_count, SLUGS.length);
   assert.equal(report.blocked_rows.length, 0);
+  assert.equal(report.missing_affiliate_tag_count, 0);
+  assert.equal(report.duplicate_destination_group_count, 0);
   assert.equal(report.apply_mutation_authorized, false);
 });
 

@@ -38,7 +38,24 @@ export const FRIDGE_RETAILER_LINKS_CSV_REL_V1 = "data/retailer_links.csv" as con
 export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_ACTION_V1 =
   "propose_replace_search_placeholder_with_verified_direct_buyable" as const;
 
+export const FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1 = "tag=buckparts20-20" as const;
+
+export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_OWNER_REVIEW_RISK_MISSING_TAG_V1 =
+  "MISSING_BUCKPARTS_AFFILIATE_TAG" as const;
+
+export const FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_OWNER_REVIEW_RISK_DUPLICATE_DEST_V1 =
+  "DUPLICATE_PROPOSED_DESTINATION_URL" as const;
+
 export type FridgeBuyerPathBatchApplyPlanStatusV1 = "READY_FOR_OWNER_REVIEW" | "BLOCKED";
+
+export type FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1 =
+  | "OWNER_REVIEW_READY"
+  | "OWNER_REVIEW_BLOCKED";
+
+export type FridgeBuyerPathBatchApplyPlanAffiliateTagStatusV1 =
+  | "HAS_BUCKPARTS_TAG"
+  | "MISSING_BUCKPARTS_TAG"
+  | "NON_AMAZON_OR_TAG_NOT_REQUIRED_UNKNOWN";
 
 export type FridgeBuyerPathBatchApplyPlanPlannedChangeV1 = {
   slug: string;
@@ -51,6 +68,9 @@ export type FridgeBuyerPathBatchApplyPlanPlannedChangeV1 = {
   evidence_artifact_path: string | null;
   action: typeof FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_ACTION_V1;
   mutation_authorized: false;
+  affiliate_tag_status: FridgeBuyerPathBatchApplyPlanAffiliateTagStatusV1;
+  duplicate_destination_group_id: string | null;
+  owner_review_risk_flags: string[];
 };
 
 export type FridgeBuyerPathBatchApplyPlanBlockedRowV1 = {
@@ -82,10 +102,14 @@ export type FridgeBuyerPathBatchApplyPlanProposalReportV1 =
     proposed_batch_id: string;
     run_id: string;
     plan_status: FridgeBuyerPathBatchApplyPlanStatusV1;
+    owner_review_status: FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1;
     plan_status_reasons: string[];
     planned_change_count: number;
     planned_changes: FridgeBuyerPathBatchApplyPlanPlannedChangeV1[];
     blocked_rows: FridgeBuyerPathBatchApplyPlanBlockedRowV1[];
+    missing_affiliate_tag_count: number;
+    duplicate_destination_group_count: number;
+    owner_review_risk_count: number;
     plan_artifact_rel_path: string;
     recommended_next_action: string;
     proven_facts: string[];
@@ -183,21 +207,151 @@ function slugSetsEqual(a: string[], b: string[]): boolean {
   return sa.length === sb.length && sa.every((slug, i) => slug === sb[i]);
 }
 
+export function isAmazonAffiliateUrlV1(affiliateUrl: string, retailerKey: string | null): boolean {
+  if (retailerKey?.trim().toLowerCase() === "amazon") return true;
+  try {
+    const host = new URL(affiliateUrl.trim()).hostname.toLowerCase();
+    return host === "amazon.com" || host.endsWith(".amazon.com");
+  } catch {
+    return affiliateUrl.toLowerCase().includes("amazon.com");
+  }
+}
+
+export function resolveAffiliateTagStatusV1(args: {
+  proposed_affiliate_url: string;
+  proposed_retailer_key: string | null;
+}): FridgeBuyerPathBatchApplyPlanAffiliateTagStatusV1 {
+  if (!isAmazonAffiliateUrlV1(args.proposed_affiliate_url, args.proposed_retailer_key)) {
+    return "NON_AMAZON_OR_TAG_NOT_REQUIRED_UNKNOWN";
+  }
+  return args.proposed_affiliate_url.includes(FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1)
+    ? "HAS_BUCKPARTS_TAG"
+    : "MISSING_BUCKPARTS_TAG";
+}
+
+export function buildDuplicateDestinationGroupIdMapV1(
+  destinationUrls: string[],
+): Map<string, string | null> {
+  const normalizedCounts = new Map<string, number>();
+  for (const url of destinationUrls) {
+    const key = url.trim();
+    normalizedCounts.set(key, (normalizedCounts.get(key) ?? 0) + 1);
+  }
+  const duplicateUrls = Array.from(normalizedCounts.entries())
+    .filter(([, count]) => count > 1)
+    .map(([url]) => url)
+    .sort((a, b) => a.localeCompare(b));
+
+  const groupIdByUrl = new Map<string, string | null>();
+  duplicateUrls.forEach((url, index) => {
+    groupIdByUrl.set(url, `dup-dest-${String(index + 1)}`);
+  });
+  for (const url of destinationUrls) {
+    const key = url.trim();
+    if (!groupIdByUrl.has(key)) {
+      groupIdByUrl.set(key, null);
+    }
+  }
+  return groupIdByUrl;
+}
+
+type PlannedChangeDraftV1 = Omit<
+  FridgeBuyerPathBatchApplyPlanPlannedChangeV1,
+  "affiliate_tag_status" | "duplicate_destination_group_id" | "owner_review_risk_flags"
+>;
+
+export function annotateOwnerReviewRisksV1(
+  drafts: PlannedChangeDraftV1[],
+): FridgeBuyerPathBatchApplyPlanPlannedChangeV1[] {
+  const groupIdByUrl = buildDuplicateDestinationGroupIdMapV1(
+    drafts.map((row) => row.proposed_destination_url),
+  );
+
+  return drafts.map((row) => {
+    const affiliate_tag_status = resolveAffiliateTagStatusV1({
+      proposed_affiliate_url: row.proposed_affiliate_url,
+      proposed_retailer_key: row.proposed_retailer_key,
+    });
+    const duplicate_destination_group_id =
+      groupIdByUrl.get(row.proposed_destination_url.trim()) ?? null;
+    const owner_review_risk_flags: string[] = [];
+    if (affiliate_tag_status === "MISSING_BUCKPARTS_TAG") {
+      owner_review_risk_flags.push(FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_OWNER_REVIEW_RISK_MISSING_TAG_V1);
+    }
+    if (duplicate_destination_group_id != null) {
+      owner_review_risk_flags.push(
+        FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_OWNER_REVIEW_RISK_DUPLICATE_DEST_V1,
+      );
+    }
+    return {
+      ...row,
+      affiliate_tag_status,
+      duplicate_destination_group_id,
+      owner_review_risk_flags,
+    };
+  });
+}
+
+export function summarizeOwnerReviewRiskCountsV1(
+  plannedChanges: FridgeBuyerPathBatchApplyPlanPlannedChangeV1[],
+): {
+  missing_affiliate_tag_count: number;
+  duplicate_destination_group_count: number;
+  owner_review_risk_count: number;
+  owner_review_status: FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1;
+} {
+  const missing_affiliate_tag_count = plannedChanges.filter(
+    (row) => row.affiliate_tag_status === "MISSING_BUCKPARTS_TAG",
+  ).length;
+  const duplicateGroupIds = new Set(
+    plannedChanges
+      .map((row) => row.duplicate_destination_group_id)
+      .filter((id): id is string => typeof id === "string" && id.length > 0),
+  );
+  const duplicate_destination_group_count = duplicateGroupIds.size;
+  const owner_review_risk_count = plannedChanges.reduce(
+    (sum, row) => sum + row.owner_review_risk_flags.length,
+    0,
+  );
+  const owner_review_status: FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1 =
+    missing_affiliate_tag_count > 0 || duplicate_destination_group_count > 0
+      ? "OWNER_REVIEW_BLOCKED"
+      : "OWNER_REVIEW_READY";
+
+  return {
+    missing_affiliate_tag_count,
+    duplicate_destination_group_count,
+    owner_review_risk_count,
+    owner_review_status,
+  };
+}
+
 function buildRecommendedNextActionV1(args: {
   planStatus: FridgeBuyerPathBatchApplyPlanStatusV1;
+  ownerReviewStatus: FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1;
   planArtifactRelPath: string;
   blockedCount: number;
+  missingAffiliateTagCount: number;
+  duplicateDestinationGroupCount: number;
 }): string {
-  if (args.planStatus === "READY_FOR_OWNER_REVIEW") {
+  if (args.planStatus === "BLOCKED") {
     return (
-      `Fridge buyer-path apply-plan proposal is READY_FOR_OWNER_REVIEW at \`${args.planArtifactRelPath}\` — ` +
-      "owner review only; no CSV, retailer_links, Supabase, public UI, buy-link, evidence, deploy, or Netlify mutation is authorized. " +
-      "Optional write via `npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal -- --plan-out <canonical-path>`."
+      `Fridge buyer-path apply-plan proposal is BLOCKED (${String(args.blockedCount)} row(s) or gate failure) — ` +
+      "repair blockers before any plan artifact write; mutation remains unauthorized."
+    );
+  }
+  if (args.ownerReviewStatus === "OWNER_REVIEW_BLOCKED") {
+    return (
+      `Fridge buyer-path apply-plan proposal is READY_FOR_OWNER_REVIEW with OWNER_REVIEW_BLOCKED monetization/link risks at \`${args.planArtifactRelPath}\` — ` +
+      `${String(args.missingAffiliateTagCount)} Amazon row(s) missing ${FRIDGE_BUYER_PATH_BATCH_BUCKPARTS_AMAZON_TAG_V1}; ` +
+      `${String(args.duplicateDestinationGroupCount)} duplicate proposed_destination_url group(s) require owner review. ` +
+      "Review plan only; mutation unauthorized. No CSV, retailer_links, Supabase, public UI, buy-link, evidence, deploy, or Netlify changes."
     );
   }
   return (
-    `Fridge buyer-path apply-plan proposal is BLOCKED (${String(args.blockedCount)} row(s) or gate failure) — ` +
-    "repair blockers before any plan artifact write; mutation remains unauthorized."
+    `Fridge buyer-path apply-plan proposal is READY_FOR_OWNER_REVIEW with clean owner-review status at \`${args.planArtifactRelPath}\` — ` +
+    "owner review only; no CSV, retailer_links, Supabase, public UI, buy-link, evidence, deploy, or Netlify mutation is authorized. " +
+    "Optional write via `npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal -- --plan-out <canonical-path>`."
   );
 }
 
@@ -272,7 +426,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
     ),
   );
 
-  const planned_changes: FridgeBuyerPathBatchApplyPlanPlannedChangeV1[] = [];
+  const planned_change_drafts: PlannedChangeDraftV1[] = [];
   const gatesPassed = plan_status_reasons.length === 0;
 
   if (gatesPassed) {
@@ -310,7 +464,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
         continue;
       }
 
-      planned_changes.push({
+      planned_change_drafts.push({
         slug: row.slug,
         oem_token: row.oem_token,
         current_committed_buyer_path_status: row.committed_buyer_path_status,
@@ -334,13 +488,23 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
     }
   }
 
+  const planned_changes =
+    plan_status_reasons.length === 0 && blocked_rows.length === 0
+      ? annotateOwnerReviewRisksV1(planned_change_drafts)
+      : [];
+  const riskSummary = summarizeOwnerReviewRiskCountsV1(planned_changes);
+
   const plan_status: FridgeBuyerPathBatchApplyPlanStatusV1 =
     plan_status_reasons.length > 0 || blocked_rows.length > 0 ? "BLOCKED" : "READY_FOR_OWNER_REVIEW";
+
+  const owner_review_status: FridgeBuyerPathBatchApplyPlanOwnerReviewStatusV1 =
+    plan_status === "BLOCKED" ? "OWNER_REVIEW_BLOCKED" : riskSummary.owner_review_status;
 
   if (plan_status === "READY_FOR_OWNER_REVIEW") {
     proven_facts.push(
       `PROVEN: planned_change_count=${String(planned_changes.length)} limited to run-registry proposed slugs.`,
       `PROVEN: run-registry validated at ${runRegistryRelPath}; approval_status=${approval.approval_status}.`,
+      `PROVEN: owner_review_status=${owner_review_status}; missing_affiliate_tag_count=${String(riskSummary.missing_affiliate_tag_count)}; duplicate_destination_group_count=${String(riskSummary.duplicate_destination_group_count)}.`,
     );
   } else {
     proven_facts.push(
@@ -362,15 +526,22 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
     proposed_batch_id: proposal.proposed_batch_id,
     run_id: runId,
     plan_status,
+    owner_review_status,
     plan_status_reasons,
     planned_change_count: planned_changes.length,
     planned_changes,
     blocked_rows,
+    missing_affiliate_tag_count: riskSummary.missing_affiliate_tag_count,
+    duplicate_destination_group_count: riskSummary.duplicate_destination_group_count,
+    owner_review_risk_count: riskSummary.owner_review_risk_count,
     plan_artifact_rel_path: planArtifactRelPath,
     recommended_next_action: buildRecommendedNextActionV1({
       planStatus: plan_status,
+      ownerReviewStatus: owner_review_status,
       planArtifactRelPath,
       blockedCount: blocked_rows.length,
+      missingAffiliateTagCount: riskSummary.missing_affiliate_tag_count,
+      duplicateDestinationGroupCount: riskSummary.duplicate_destination_group_count,
     }),
     proven_facts,
     unknown_facts,

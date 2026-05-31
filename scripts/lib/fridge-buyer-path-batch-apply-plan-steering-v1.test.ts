@@ -9,9 +9,12 @@ function laneFixture(
 ): Pick<
   FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
   | "plan_status"
+  | "owner_review_status"
   | "planned_change_count"
   | "plan_artifact_rel_path"
   | "recommended_next_action"
+  | "missing_affiliate_tag_count"
+  | "duplicate_destination_group_count"
   | "apply_mutation_authorized"
   | "csv_apply_authorized"
   | "retailer_links_mutation_authorized"
@@ -23,10 +26,13 @@ function laneFixture(
 > {
   return {
     plan_status: "READY_FOR_OWNER_REVIEW",
+    owner_review_status: "OWNER_REVIEW_READY",
     planned_change_count: 14,
     plan_artifact_rel_path:
       "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
     recommended_next_action: "Owner review only.",
+    missing_affiliate_tag_count: 0,
+    duplicate_destination_group_count: 0,
     apply_mutation_authorized: false,
     csv_apply_authorized: false,
     retailer_links_mutation_authorized: false,
@@ -55,6 +61,22 @@ describe("fridge buyer-path batch apply-plan steering", () => {
       "npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal",
     );
     assert.equal(override!.next_best_action.includes("apply-plan discovery"), false);
+  });
+
+  test("resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 surfaces monetization/link risks", () => {
+    const override = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
+      applyPlanLane: laneFixture({
+        owner_review_status: "OWNER_REVIEW_BLOCKED",
+        missing_affiliate_tag_count: 8,
+        duplicate_destination_group_count: 2,
+      }),
+      brainStopTheLine: false,
+    });
+    assert.ok(override);
+    assert.ok(override!.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_RISK]:"));
+    assert.match(override!.next_best_action, /8 missing tag=buckparts20-20 row\(s\)/i);
+    assert.match(override!.next_best_action, /2 duplicate proposed_destination_url group\(s\)/i);
+    assert.match(override!.next_best_action, /before any owner approval/i);
   });
 
   test("returns null when plan_status is BLOCKED", () => {

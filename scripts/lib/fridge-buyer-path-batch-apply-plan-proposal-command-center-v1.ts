@@ -25,10 +25,14 @@ export type FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 = {
   proposed_batch_id: string;
   run_id: string;
   plan_status: FridgeBuyerPathBatchApplyPlanProposalReportV1["plan_status"];
+  owner_review_status: FridgeBuyerPathBatchApplyPlanProposalReportV1["owner_review_status"];
   plan_status_reasons: string[];
   planned_change_count: number;
   planned_slugs: string[];
   blocked_row_count: number;
+  missing_affiliate_tag_count: number;
+  duplicate_destination_group_count: number;
+  owner_review_risk_count: number;
   plan_artifact_rel_path: string;
   apply_mutation_authorized: false;
   csv_apply_authorized: false;
@@ -56,10 +60,14 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneFromR
     proposed_batch_id: report.proposed_batch_id,
     run_id: report.run_id,
     plan_status: report.plan_status,
+    owner_review_status: report.owner_review_status,
     plan_status_reasons: report.plan_status_reasons,
     planned_change_count: report.planned_change_count,
     planned_slugs: report.planned_changes.map((row) => row.slug),
     blocked_row_count: report.blocked_rows.length,
+    missing_affiliate_tag_count: report.missing_affiliate_tag_count,
+    duplicate_destination_group_count: report.duplicate_destination_group_count,
+    owner_review_risk_count: report.owner_review_risk_count,
     plan_artifact_rel_path: report.plan_artifact_rel_path,
     apply_mutation_authorized: false,
     csv_apply_authorized: false,
