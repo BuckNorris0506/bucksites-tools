@@ -299,6 +299,13 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Universal batch run-registry intake projected into Command Center JSON (read-only); AP proven run + fridge planning gap via npm run buckparts:batch-run-registry-intake.",
   },
+  "buckparts:fridge-buyer-path-batch-run-registry": {
+    cc_json_path: null,
+    verdict: "PARTIAL",
+    validation_command: "npm run buckparts:fridge-buyer-path-batch-run-registry",
+    reason:
+      "Authors fridge_buyer_path_batch_planning_run_registry_v1 to stdout; explicit --registry-out writes under data/fridge/batch-production/run-registry/ only. Intake visibility via batch_run_registry_intake_v1.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

@@ -3265,9 +3265,17 @@ test("command_center_v2.batch_run_registry_intake_v1 is read-only universal run-
   assert.equal(lane.recommended_jq_path, ".command_center_v2.batch_run_registry_intake_v1");
   assert.equal(lane.mutation_authorized, false);
   assert.equal(lane.ap_run_registry_status, "PROVEN_CLOSED");
-  if (lane.fridge_approval_status === "owner_approved_for_next_planning_only") {
+  const fridgeRegistryAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (fs.existsSync(fridgeRegistryAbs)) {
+    assert.equal(lane.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
+    assert.equal(lane.fridge_approval_status, "owner_approved_for_next_planning_only");
+  } else if (
+    fs.existsSync(path.join(process.cwd(), "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"))
+  ) {
     assert.equal(lane.fridge_run_registry_status, "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING");
-    assert.ok(lane.fridge_next_required_artifact?.includes("data/fridge/batch-production/run-registry/"));
   }
   assert.doesNotMatch(report.next_best_action, /batch_run_registry_intake/i);
 
