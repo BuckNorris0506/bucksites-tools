@@ -28,6 +28,7 @@ import type { RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 } from "
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 import type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
+import type { DeployLiveSiteMonitorCommandCenterLaneV1 } from "./deploy-live-site-monitor-command-center-lane-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
 import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
@@ -247,7 +248,11 @@ export type LiveSiteSmokeContentContractResultV1 = {
 };
 
 export type LiveSiteMonitorRouteHttpStatusV1 = "OK" | "ATTENTION" | "UNKNOWN_CONFIG";
-export type LiveSiteMonitorContentContractStatusV1 = "OK" | "ATTENTION" | "UNKNOWN_CONFIG";
+export type LiveSiteMonitorContentContractStatusV1 =
+  | "OK"
+  | "ATTENTION"
+  | "UNKNOWN"
+  | "UNKNOWN_CONFIG";
 
 export type LiveSiteMonitorDeploySyncStatusV1 =
   | "MATCHES_ORIGIN_MAIN"
@@ -882,6 +887,8 @@ export type CommandCenterV2Report = {
   coverage_health: DecisionLane;
   recent_evidence: DecisionLane & { evidence_rollup: EvidenceRollup; evidence_inventory: EvidenceInventoryV1 };
   deploy_live_site_status: DecisionLane & { live_site_monitor: LiveSiteMonitorV1 | null };
+  /** jq-stable live-site smoke truth lane (route HTTP + trust content contracts + deploy sync). */
+  deploy_live_site_monitor_v1: DeployLiveSiteMonitorCommandCenterLaneV1;
   revenue_snapshot: RevenueSnapshotLane;
   /** Bounded read-only view of search demand gaps — not fit/buy proof. */
   demand_to_coverage_engine_v1: DemandToCoverageEngineV1;
@@ -1039,6 +1046,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_truth_spine_v1"
   | "refrigerator_model_first_batch_resolver_v1"
   | "refrigerator_model_first_qa_approval_packet_v1"
+  | "deploy_live_site_monitor_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"
   | "vacuum_bags_wedge_feasibility_v1"

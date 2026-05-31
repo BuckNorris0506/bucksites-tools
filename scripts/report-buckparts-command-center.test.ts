@@ -1299,10 +1299,17 @@ test("command_center_v2 deploy lane stays PLACEHOLDER when liveSiteMonitor is nu
   const d = report.command_center_v2.deploy_live_site_status;
   assert.equal(d.status, "PLACEHOLDER");
   assert.equal(d.live_site_monitor, null);
+  const lane = report.command_center_v2.deploy_live_site_monitor_v1;
+  assert.equal(lane.contract, "deploy_live_site_monitor_v1");
+  assert.equal(lane.inspect_summary.contract, "UNKNOWN");
+  assert.equal(lane.inspect_summary.runtime_status, "UNKNOWN");
+  assert.equal(lane.inspect_summary.route_http_status, "UNKNOWN");
+  assert.equal(lane.inspect_summary.content_contract_status, "UNKNOWN");
+  assert.equal(lane.inspect_summary.wrong_part_prevention, "UNKNOWN");
 });
 
-test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes ok", async () => {
-  const mon: LiveSiteMonitorV1 = {
+function liveSiteMonitorOkFixture(overrides: Partial<LiveSiteMonitorV1> = {}): LiveSiteMonitorV1 {
+  return {
     contract: "live_site_monitor_v1",
     checked_at: "2026-05-09T00:00:00.000Z",
     source: "test",
@@ -1324,7 +1331,11 @@ test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes 
         required_markers_ok: true,
         banned_phrases_absent: true,
         content_contract_ok: true,
-        required_markers_found: [],
+        required_markers_found: [
+          "how buckparts helps you avoid buying the wrong filter",
+          "treasure hunt",
+          "questionable part",
+        ],
         required_markers_missing: [],
         banned_phrases_found: [],
       },
@@ -1341,7 +1352,72 @@ test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes 
     deploy_sync_status: "UNKNOWN_DEPLOY_COMMIT",
     proven_facts: ["fixture"],
     unknown_facts: ["fixture unknown"],
+    ...overrides,
   };
+}
+
+test("command_center_v2 deploy_live_site_monitor_v1 surfaces route, content, and deploy sync separately", async () => {
+  const mon = liveSiteMonitorOkFixture();
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: mon,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.deploy_live_site_monitor_v1;
+  assert.equal(lane.contract, "deploy_live_site_monitor_v1");
+  assert.equal(lane.inspect_summary.contract, "live_site_monitor_v1");
+  assert.equal(lane.inspect_summary.runtime_status, "OK");
+  assert.equal(lane.inspect_summary.route_http_status, "OK");
+  assert.equal(lane.inspect_summary.content_contract_status, "OK");
+  assert.equal(lane.inspect_summary.deploy_sync_status, "UNKNOWN_DEPLOY_COMMIT");
+  assert.equal(lane.inspect_summary.target_base_url, "https://example.com");
+  assert.equal(lane.inspect_summary.checked_at, "2026-05-09T00:00:00.000Z");
+  assert.notEqual(lane.inspect_summary.wrong_part_prevention, "UNKNOWN");
+  if (lane.inspect_summary.wrong_part_prevention !== "UNKNOWN") {
+    assert.equal(lane.inspect_summary.wrong_part_prevention.path, "/wrong-part-prevention");
+    assert.equal(lane.inspect_summary.wrong_part_prevention.content_contract_ok, true);
+    assert.deepEqual(lane.inspect_summary.wrong_part_prevention.banned_phrases_found, []);
+  }
+});
+
+test("command_center_v2 deploy lane ATTENTION when route HTTP OK but content contract fails", async () => {
+  const mon = liveSiteMonitorOkFixture({
+    runtime_status: "ATTENTION",
+    route_http_status: "OK",
+    content_contract_status: "ATTENTION",
+    content_contracts: [
+      {
+        contract_id: "wrong_part_prevention_homeowner_v1",
+        path: "/wrong-part-prevention",
+        status_code: 200,
+        http_ok: true,
+        required_markers_ok: false,
+        banned_phrases_absent: false,
+        content_contract_ok: false,
+        required_markers_found: [],
+        required_markers_missing: ["treasure hunt"],
+        banned_phrases_found: ["structured data"],
+      },
+    ],
+  });
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: mon,
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  assert.equal(report.command_center_v2.deploy_live_site_status.status, "ATTENTION");
+  assert.equal(report.command_center_v2.deploy_live_site_status.blocker, "live_site_content_contract_failed");
+  assert.equal(report.command_center_v2.deploy_live_site_monitor_v1.inspect_summary.route_http_status, "OK");
+  assert.equal(report.command_center_v2.deploy_live_site_monitor_v1.inspect_summary.content_contract_status, "ATTENTION");
+  assert.equal(report.command_center_v2.deploy_live_site_monitor_v1.inspect_summary.runtime_status, "ATTENTION");
+});
+
+test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes ok", async () => {
+  const mon = liveSiteMonitorOkFixture();
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
     liveSiteMonitor: mon,

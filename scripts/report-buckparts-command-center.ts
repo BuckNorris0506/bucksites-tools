@@ -38,7 +38,8 @@ import type {
   LearningOutcomesReadModelV1,
   LiveSiteMonitorV1,
 } from "./lib/buckparts-command-center-v2-types";
-import { loadLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
+import { loadOrRunLiveSiteMonitorForCommandCenter } from "./lib/load-live-site-monitor-artifact";
+import { buildDeployLiveSiteMonitorCommandCenterLaneFromMonitor } from "./lib/deploy-live-site-monitor-command-center-lane-v1";
 import { buildEvidenceInventoryV1, rollupEvidenceDirectory } from "./lib/command-center-evidence-rollup";
 import {
   createConfidenceApprovalLookup,
@@ -316,6 +317,9 @@ type BuildOptions = {
   readDir?: (absolutePath: string) => string[];
   /** When set, skips disk/Supabase live-site monitor load (tests). */
   liveSiteMonitor?: LiveSiteMonitorV1 | null;
+  /** When true and artifact missing, run read-only inline smoke (CLI default). */
+  inlineLiveSiteSmokeFallback?: boolean;
+  env?: NodeJS.ProcessEnv;
   /** When set, skips live `search_gaps` read (tests). */
   demandToCoverageEngineLoader?: () => Promise<DemandToCoverageEngineV1>;
   /** When set, skips live `learning_outcomes` read (tests). */
@@ -538,6 +542,25 @@ export async function buildBuckpartsCommandCenterReport(
       return buildEvidenceToLearningOutcomesCandidateImportV1({ rootDir, fileExists, readDir, readTextFile, now });
     });
 
+  const liveSiteLoad =
+    options.liveSiteMonitor !== undefined
+      ? {
+          monitor: options.liveSiteMonitor,
+          artifact_source: "local_file" as const,
+        }
+      : await loadOrRunLiveSiteMonitorForCommandCenter({
+          rootDir,
+          fileExists,
+          readTextFile,
+          env: options.env,
+          inlineReadOnlyFallback: options.inlineLiveSiteSmokeFallback === true,
+        });
+  const liveSiteMonitor = liveSiteLoad.monitor;
+  const deploy_live_site_monitor_v1 = buildDeployLiveSiteMonitorCommandCenterLaneFromMonitor({
+    monitor: liveSiteMonitor,
+    artifact_source: liveSiteLoad.artifact_source,
+  });
+
   const [
     commandSurface,
     affiliateTracker,
@@ -547,7 +570,6 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireNextCandidates,
     amazonFirstBlocked,
     clickVisibility,
-    liveSiteMonitor,
     demandToCoverageEngine,
     learningOutcomesReadModel,
     evidenceToLearningOutcomesCandidateImport,
@@ -560,9 +582,6 @@ export async function buildBuckpartsCommandCenterReport(
     frigidaireNextBuilder(),
     amazonFirstBuilder(),
     clickEventsSnapshotRunner(),
-    options.liveSiteMonitor !== undefined
-      ? Promise.resolve(options.liveSiteMonitor)
-      : loadLiveSiteMonitorForCommandCenter({ rootDir, fileExists, readTextFile }),
     demandToCoverageLoader(),
     learningOutcomesReadModelLoader(),
     evidenceToLoCandidateLoader(),
@@ -1016,6 +1035,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
+    | "deploy_live_site_monitor_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1147,6 +1167,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
+    | "deploy_live_site_monitor_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1259,6 +1280,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
     | "refrigerator_model_first_qa_approval_packet_v1"
+    | "deploy_live_site_monitor_v1"
     | "air_purifier_truth_spine_v1"
     | "air_purifier_batch_coverage_director_v1"
     | "vacuum_bags_wedge_feasibility_v1"
@@ -1585,6 +1607,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_truth_spine_v1,
     refrigerator_model_first_batch_resolver_v1,
     refrigerator_model_first_qa_approval_packet_v1,
+    deploy_live_site_monitor_v1,
     air_purifier_truth_spine_v1,
     air_purifier_batch_coverage_director_v1,
     vacuum_bags_wedge_feasibility_v1,
@@ -1851,7 +1874,7 @@ export function stripEvidenceUncappedCandidatesForStdout(
 }
 
 export async function main(): Promise<void> {
-  const report = await buildBuckpartsCommandCenterReport();
+  const report = await buildBuckpartsCommandCenterReport({ inlineLiveSiteSmokeFallback: true });
   process.stdout.write(`${JSON.stringify(stripEvidenceUncappedCandidatesForStdout(report), null, 2)}\n`);
 }
 

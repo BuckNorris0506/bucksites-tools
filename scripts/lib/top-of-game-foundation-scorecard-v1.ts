@@ -372,8 +372,9 @@ export function buildTopOfGameFoundationScorecardV1(input: BuildTopOfGameFoundat
   if (dep.status === "OK" && dep.live_site_monitor !== null) {
     smokeStatus = "PROVEN";
     smokeBasis = [
-      "deploy_live_site_status.status is OK with live_site_monitor_v1 artifact attached (HTTP smoke JSON present).",
-      `Route probes: ${dep.live_site_monitor.routes.length}.`,
+      "deploy_live_site_status.status is OK with live_site_monitor_v1 artifact attached.",
+      `route_http_status=${dep.live_site_monitor.route_http_status}; content_contract_status=${dep.live_site_monitor.content_contract_status}; runtime_status=${dep.live_site_monitor.runtime_status}.`,
+      `Route probes: ${dep.live_site_monitor.routes.length}; trust content contracts: ${dep.live_site_monitor.content_contracts.length}.`,
     ];
     smokeNext =
       "Refresh smoke artifact on cadence; HTTP OK is not deploy API verification and does not prove affiliate payouts.";

@@ -220,10 +220,10 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason: "Writes artifact only; CC reads artifact via external_measurement_freshness_v1.",
   },
   "buckparts:live-site-smoke:check": {
-    cc_json_path: "command_center_v2.deploy_live_site_status",
-    verdict: "PARTIAL",
-    validation_command: "npm run buckparts:live-site-smoke:check",
-    reason: "Read-only check feeds deploy lane when artifact exists.",
+    cc_json_path: "command_center_v2.deploy_live_site_monitor_v1.inspect_summary",
+    verdict: "CONNECTED",
+    validation_command: "npm run buckparts:live",
+    reason: "Read-only check feeds deploy_live_site_monitor_v1 lane (inline on CLI when artifact missing).",
   },
   "buckparts:daily": {
     cc_json_path: "command_center_v2.daily_operator_summary_v1",

@@ -72,32 +72,50 @@ function buildDeployLiveSiteStatus(
       (r.status_code === "UNKNOWN" || (typeof r.status_code === "number" && r.status_code >= 500)),
   );
   const allHttpOk = mon.routes.length > 0 && mon.routes.every((r) => r.ok);
+  const routeHttpOk = mon.route_http_status === "OK" || (mon.route_http_status == null && allHttpOk);
+  const contentContractFailed =
+    mon.content_contract_status === "ATTENTION" ||
+    mon.content_contract_status === "UNKNOWN" ||
+    mon.content_contract_status === "UNKNOWN_CONFIG";
   const status: DecisionLane["status"] = networkOr5xx
     ? "BLOCKED"
-    : !allHttpOk || mon.runtime_status === "ATTENTION"
-      ? "ATTENTION"
-      : "OK";
+    : mon.runtime_status === "OK" && routeHttpOk && !contentContractFailed
+      ? "OK"
+      : "ATTENTION";
 
   const failedPaths = mon.routes.filter((r) => !r.ok).map((r) => `${r.path}:${String(r.status_code)}`);
+  const failedContent = mon.content_contracts
+    .filter((c) => !c.content_contract_ok)
+    .map((c) => `${c.path}:content_contract_failed`);
   const routeSummary = mon.routes.map((r) => `${r.path}:${String(r.status_code)}`);
+  const topItems =
+    failedPaths.length > 0
+      ? failedPaths.slice(0, 5)
+      : failedContent.length > 0
+        ? failedContent.slice(0, 5)
+        : routeSummary.slice(0, 5);
   return {
     status,
-    count: mon.routes.length,
-    top_items: failedPaths.length > 0 ? failedPaths.slice(0, 5) : routeSummary.slice(0, 5),
+    count: mon.routes.length + mon.content_contracts.length,
+    top_items: topItems,
     blocker:
       status === "OK"
         ? null
         : networkOr5xx
           ? "live_site_probe_network_or_5xx"
-          : "live_site_probe_http_not_ok",
+          : contentContractFailed
+            ? "live_site_content_contract_failed"
+            : "live_site_probe_http_not_ok",
     next_agent_action:
-      "Live-site lane is driven by live_site_monitor_v1 artifact only — refresh smoke JSON; never trigger Netlify deploys from this path.",
+      "Live-site lane is driven by live_site_monitor_v1 artifact or inline read-only smoke — refresh with `npm run buckparts:live`; never trigger Netlify deploys from this path.",
     next_owner_action:
-      mon.deploy_sync_status === "UNKNOWN_DEPLOY_COMMIT"
-        ? "Route health may be OK while deploy commit sync remains UNKNOWN until LIVE_SITE_DEPLOY_COMMIT is set with a proven production SHA."
-        : mon.deploy_sync_status === "DEPLOYED_COMMIT_DIFFERS"
-          ? "deployed_commit differs from origin/main — reconcile operator-injected SHA with git before assuming drift."
-          : "deployed_commit matches origin/main per operator-injected LIVE_SITE_DEPLOY_COMMIT — still not a Netlify API proof.",
+      contentContractFailed
+        ? "Production may be serving stale trust-page HTML — route HTTP OK is not enough; rerun `npm run buckparts:live` and verify content_contract_status before trusting deploy."
+        : mon.deploy_sync_status === "UNKNOWN_DEPLOY_COMMIT"
+          ? "Route/content smoke may be OK while deploy commit sync remains UNKNOWN until LIVE_SITE_DEPLOY_COMMIT is set with a proven production SHA."
+          : mon.deploy_sync_status === "DEPLOYED_COMMIT_DIFFERS"
+            ? "deployed_commit differs from origin/main — reconcile operator-injected SHA with git before assuming drift."
+            : "deployed_commit matches origin/main per operator-injected LIVE_SITE_DEPLOY_COMMIT — still not Netlify API proof; content_contract_status must also pass.",
     live_site_monitor: mon,
   };
 }
@@ -213,6 +231,7 @@ export function buildCommandCenterV2Report(input: {
   | "fridge_truth_spine_v1"
   | "refrigerator_model_first_batch_resolver_v1"
   | "refrigerator_model_first_qa_approval_packet_v1"
+  | "deploy_live_site_monitor_v1"
   | "air_purifier_truth_spine_v1"
   | "air_purifier_batch_coverage_director_v1"
   | "vacuum_bags_wedge_feasibility_v1"
