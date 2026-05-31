@@ -1,8 +1,14 @@
 import type {
+  LiveSiteMonitorContentContractStatusV1,
   LiveSiteMonitorDeploySyncStatusV1,
+  LiveSiteMonitorRouteHttpStatusV1,
   LiveSiteMonitorV1,
   LiveSiteSmokeRouteResultV1,
 } from "./buckparts-command-center-v2-types";
+import {
+  LIVE_SITE_TRUST_PAGE_CONTENT_CONTRACTS_V1,
+  probeLiveSiteTrustPageContentContract,
+} from "./live-site-trust-page-content-contract-v1";
 
 export const LIVE_SITE_MONITOR_CONTRACT = "live_site_monitor_v1" as const;
 
@@ -172,7 +178,8 @@ export function isLiveSiteMonitorV1(value: unknown): value is LiveSiteMonitorV1 
     o.contract === LIVE_SITE_MONITOR_CONTRACT &&
     typeof o.checked_at === "string" &&
     typeof o.target_base_url === "string" &&
-    Array.isArray(o.routes)
+    Array.isArray(o.routes) &&
+    (o.content_contracts === undefined || Array.isArray(o.content_contracts))
   );
 }
 
@@ -189,6 +196,7 @@ export async function buildLiveSiteMonitorArtifact(args: {
   const unknownFactsBase = [
     "Live-site smoke uses outbound GET only — it does not trigger Netlify deploys or call Netlify APIs.",
     "deployed_commit is never inferred from local HEAD; set LIVE_SITE_DEPLOY_COMMIT only when operator-proven.",
+    "deploy_sync_status does not prove live HTML content matches the injected commit — trust content_contracts must pass separately.",
     "Route markers are minimal HTML substring checks — false negatives remain possible.",
     "Only the primary live-site smoke target is probed in this read-only check; secondary domain health remains UNKNOWN unless it is selected as primary.",
   ];
@@ -206,6 +214,9 @@ export async function buildLiveSiteMonitorArtifact(args: {
       netlify_fallback_base_url: target.netlify_fallback_base_url,
       netlify_domain_checked: target.netlify_domain_checked,
       target_base_url: "UNKNOWN",
+      route_http_status: "UNKNOWN_CONFIG",
+      content_contract_status: "UNKNOWN_CONFIG",
+      content_contracts: [],
       runtime_status: "UNKNOWN_CONFIG",
       routes: [],
       local_head_commit: "UNKNOWN",
@@ -224,10 +235,24 @@ export async function buildLiveSiteMonitorArtifact(args: {
   provenFacts.push(`Target source: ${target.target_source}.`);
   provenFacts.push(`custom_domain_checked=${String(target.custom_domain_checked)}; netlify_domain_checked=${String(target.netlify_domain_checked)}.`);
   provenFacts.push(`Allowlisted paths: ${LIVE_SITE_SMOKE_ALLOWLISTED_PATHS.join(", ")}.`);
+  provenFacts.push(
+    `Trust content contracts: ${LIVE_SITE_TRUST_PAGE_CONTENT_CONTRACTS_V1.map((c) => c.path).join(", ")}.`,
+  );
 
   const routes: LiveSiteSmokeRouteResultV1[] = [];
   for (const p of LIVE_SITE_SMOKE_ALLOWLISTED_PATHS) {
     routes.push(await probeLiveSiteRoute({ fetchFn: args.fetchFn, baseUrl: base, path: p }));
+  }
+
+  const content_contracts = [];
+  for (const contract of LIVE_SITE_TRUST_PAGE_CONTENT_CONTRACTS_V1) {
+    content_contracts.push(
+      await probeLiveSiteTrustPageContentContract({
+        fetchFn: args.fetchFn,
+        baseUrl: base,
+        contract,
+      }),
+    );
   }
 
   const git = resolveGitCommitsSync({ cwd: args.cwd, execSync: args.execSync });
@@ -243,11 +268,24 @@ export async function buildLiveSiteMonitorArtifact(args: {
   const anyServerError = routes.some(
     (r) => typeof r.status_code === "number" && r.status_code >= 500,
   );
-  const runtime_status: LiveSiteMonitorV1["runtime_status"] = allHttpOk ? "OK" : "ATTENTION";
+  const route_http_status: LiveSiteMonitorRouteHttpStatusV1 = allHttpOk ? "OK" : "ATTENTION";
+  const allContentOk =
+    content_contracts.length > 0 && content_contracts.every((c) => c.content_contract_ok);
+  const content_contract_status: LiveSiteMonitorContentContractStatusV1 = allContentOk
+    ? "OK"
+    : "ATTENTION";
+  const runtime_status: LiveSiteMonitorV1["runtime_status"] =
+    route_http_status === "OK" && content_contract_status === "OK" ? "OK" : "ATTENTION";
 
   provenFacts.push(
-    `Recorded ${routes.length} GET probes at checked_at=${args.nowIso}; all_http_ok=${String(allHttpOk)}.`,
+    `Recorded ${routes.length} route GET probes and ${content_contracts.length} trust content contract probes at checked_at=${args.nowIso}.`,
   );
+  provenFacts.push(`route_http_status=${route_http_status}; content_contract_status=${content_contract_status}.`);
+  for (const c of content_contracts) {
+    provenFacts.push(
+      `content_contract ${c.path}: http_ok=${String(c.http_ok)} required_markers_ok=${String(c.required_markers_ok)} banned_phrases_absent=${String(c.banned_phrases_absent)} content_contract_ok=${String(c.content_contract_ok)}.`,
+    );
+  }
   if (git.local_head_commit !== "UNKNOWN") {
     provenFacts.push(`local HEAD (git rev-parse): ${git.local_head_commit}.`);
   }
@@ -276,6 +314,28 @@ export async function buildLiveSiteMonitorArtifact(args: {
       `One or more routes failed HTTP ok check or threw; anyServerError=${String(anyServerError)} — investigate before assuming site-wide outage.`,
     );
   }
+  if (!allContentOk) {
+    for (const c of content_contracts.filter((x) => !x.content_contract_ok)) {
+      if (!c.http_ok) {
+        unknown_facts.push(`Trust page ${c.path} failed HTTP ok (status=${String(c.status_code)}).`);
+      }
+      if (c.required_markers_missing.length > 0) {
+        unknown_facts.push(
+          `Trust page ${c.path} missing required markers: ${c.required_markers_missing.join(", ")}.`,
+        );
+      }
+      if (c.banned_phrases_found.length > 0) {
+        unknown_facts.push(
+          `Trust page ${c.path} still serves banned backend phrases: ${c.banned_phrases_found.join(", ")} — likely stale deploy HTML.`,
+        );
+      }
+    }
+  }
+  if (deployed_commit !== "UNKNOWN" && deploy_sync_status === "MATCHES_ORIGIN_MAIN" && !allContentOk) {
+    unknown_facts.push(
+      "LIVE_SITE_DEPLOY_COMMIT matches origin/main but trust content contract failed — production may be serving stale HTML despite operator SHA.",
+    );
+  }
   if (anyServerError) {
     unknown_facts.push("At least one route returned HTTP 5xx — treat as high-severity until cleared.");
   }
@@ -291,6 +351,9 @@ export async function buildLiveSiteMonitorArtifact(args: {
     netlify_fallback_base_url: target.netlify_fallback_base_url,
     netlify_domain_checked: target.netlify_domain_checked,
     target_base_url: base,
+    route_http_status,
+    content_contract_status,
+    content_contracts,
     runtime_status,
     routes,
     local_head_commit: git.local_head_commit,

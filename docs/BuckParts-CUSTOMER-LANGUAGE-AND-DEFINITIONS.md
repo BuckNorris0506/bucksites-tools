@@ -131,9 +131,9 @@ There is **no** `npm run buckparts:live` alias in older docs — use:
 
 | Command | Purpose |
 |---------|---------|
-| `npm run buckparts:live-site-smoke:check` | **Primary validation** — read-only GET probes; prints `LiveSiteMonitorV1` JSON to stdout |
+| `npm run buckparts:live-site-smoke:check` | **Primary validation** — read-only GET probes + trust-page content contracts; prints `LiveSiteMonitorV1` JSON (`route_http_status`, `content_contract_status`, `deploy_sync_status`) |
 | `npm run buckparts:live-site-smoke` | Writes `data/reports/buckparts-live-site-smoke.json` (+ optional Supabase durable row when configured) |
-| `npm run buckparts:live` | Alias → `buckparts:live-site-smoke:check` (same validation, shorter name) |
+| `npm run buckparts:live` | Alias → `buckparts:live-site-smoke:check` — exits nonzero when `runtime_status` is not OK (stale trust HTML fails even if routes return 200) |
 | `npm run buckparts:operator-proof` | Local operator stack including live-site check via `live-site-smoke-check.ts` |
 
 Requires `NEXT_PUBLIC_SITE_URL` (production origin, no trailing slash) for live probes.

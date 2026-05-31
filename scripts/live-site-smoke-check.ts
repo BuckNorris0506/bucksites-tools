@@ -35,6 +35,9 @@ export async function runLiveSiteSmokeCheck(
 export async function main(): Promise<void> {
   const artifact = await runLiveSiteSmokeCheck();
   process.stdout.write(`${JSON.stringify(artifact, null, 2)}\n`);
+  if (artifact.runtime_status !== "OK") {
+    process.exitCode = 1;
+  }
 }
 
 const THIS_FILE = fileURLToPath(import.meta.url);

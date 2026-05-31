@@ -12,6 +12,24 @@ import {
   probeLiveSiteRoute,
   resolveLiveSiteSmokeTargets,
 } from "./live-site-smoke";
+import {
+  fixtureGoodWrongPartPreventionHtml,
+} from "./live-site-trust-page-content-contract-v1";
+
+function mockFetchWithTrustPages(url: string, productBody?: string): Response {
+  if (url.includes("/wrong-part-prevention")) {
+    return new Response(fixtureGoodWrongPartPreventionHtml(), {
+      status: 200,
+      headers: { "content-type": "text/html" },
+    });
+  }
+  const body =
+    productBody ??
+    (url.endsWith("/fridge/lg-lfxs26973s") || url.endsWith("/filter/adq36006101")
+      ? `<html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`
+      : `<!DOCTYPE html><html><script>__NEXT_DATA__</script></html>`);
+  return new Response(body, { status: 200, headers: { "content-type": "text/html" } });
+}
 
 test("computeDeploySyncStatus UNKNOWN when deployed missing", () => {
   assert.equal(
@@ -108,13 +126,7 @@ test("runLiveSiteSmokeCheck does not write local live-site artifact", async () =
       },
       loadEnvFn: () => {},
       nowIso: "2026-05-09T12:00:00.000Z",
-      fetchFn: async (url: string) => {
-        const body =
-          url.endsWith("/fridge/lg-lfxs26973s") || url.endsWith("/filter/adq36006101")
-            ? `<html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`
-            : `<!DOCTYPE html><html><script>__NEXT_DATA__</script></html>`;
-        return new Response(body, { status: 200, headers: { "content-type": "text/html" } });
-      },
+      fetchFn: async (url: string) => mockFetchWithTrustPages(url),
       execSync: (cmd: string) => {
         if (cmd === "git rev-parse HEAD") return "localsha\n";
         if (cmd === "git rev-parse origin/main") return "originsha\n";
@@ -122,6 +134,9 @@ test("runLiveSiteSmokeCheck does not write local live-site artifact", async () =
       },
     });
     assert.equal(art.runtime_status, "OK");
+    assert.equal(art.route_http_status, "OK");
+    assert.equal(art.content_contract_status, "OK");
+    assert.equal(art.content_contracts.length, 1);
     assert.equal(existsSync(artifactPath), false);
   } finally {
     rmSync(tmpDir, { recursive: true, force: true });
@@ -140,11 +155,7 @@ test("buildLiveSiteMonitorArtifact probes routes and never infers deployed from 
   const calls: string[] = [];
   const fetchFn = async (url: string) => {
     calls.push(url);
-    const body =
-      url.endsWith("/fridge/lg-lfxs26973s") || url.endsWith("/filter/adq36006101")
-        ? `<html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`
-        : `<!DOCTYPE html><html><script>__NEXT_DATA__</script></html>`;
-    return new Response(body, { status: 200, headers: { "content-type": "text/html" } });
+    return mockFetchWithTrustPages(url);
   };
   const art = await buildLiveSiteMonitorArtifact({
     cwd: process.cwd(),
@@ -163,6 +174,9 @@ test("buildLiveSiteMonitorArtifact probes routes and never infers deployed from 
     },
   });
   assert.equal(art.runtime_status, "OK");
+  assert.equal(art.route_http_status, "OK");
+  assert.equal(art.content_contract_status, "OK");
+  assert.equal(art.content_contracts.length, 1);
   assert.equal(art.primary_target_base_url, "https://buckparts.com");
   assert.equal(art.target_base_url, "https://buckparts.com");
   assert.equal(art.target_source, "LIVE_SITE_SMOKE_TARGET_URL");
@@ -182,10 +196,11 @@ test("runLiveSiteSmokeCheck does not infer deployed commit from local HEAD", asy
     env: { NEXT_PUBLIC_SITE_URL: "https://example.com/" },
     loadEnvFn: () => {},
     nowIso: "2026-05-09T12:00:00.000Z",
-    fetchFn: async () =>
-      new Response(`<!DOCTYPE html><html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`, {
-        status: 200,
-      }),
+    fetchFn: async (url: string) =>
+      mockFetchWithTrustPages(
+        url,
+        `<!DOCTYPE html><html><script>__NEXT_DATA__</script>adq36006101 lg-lfxs26973s</html>`,
+      ),
     execSync: (cmd: string) => {
       if (cmd === "git rev-parse HEAD") return "localonly\n";
       if (cmd === "git rev-parse origin/main") return "originsha\n";
@@ -203,7 +218,7 @@ test("buildLiveSiteMonitorArtifact route failure yields ATTENTION artifact", asy
     if (url.endsWith("/filter/adq36006101")) {
       return new Response("missing", { status: 404 });
     }
-    return new Response(`<!DOCTYPE html><html><script>__NEXT_DATA__</script>adq36006101</html>`, { status: 200 });
+    return mockFetchWithTrustPages(url);
   };
   const art = await buildLiveSiteMonitorArtifact({
     cwd: process.cwd(),
@@ -230,7 +245,7 @@ test("runLiveSiteSmokeCheck represents route failure honestly", async () => {
       if (url.endsWith("/fridge/lg-lfxs26973s")) {
         return new Response("server error", { status: 503 });
       }
-      return new Response(`<!DOCTYPE html><html><script>__NEXT_DATA__</script>adq36006101</html>`, { status: 200 });
+      return mockFetchWithTrustPages(url);
     },
     execSync: () => {
       throw new Error("git");

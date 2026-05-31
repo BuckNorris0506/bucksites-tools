@@ -233,6 +233,22 @@ export type LiveSiteSmokeRouteResultV1 = {
   marker_found: boolean | "UNKNOWN";
 };
 
+export type LiveSiteSmokeContentContractResultV1 = {
+  contract_id: string;
+  path: string;
+  status_code: number | "UNKNOWN";
+  http_ok: boolean;
+  required_markers_ok: boolean;
+  banned_phrases_absent: boolean;
+  content_contract_ok: boolean;
+  required_markers_found: string[];
+  required_markers_missing: string[];
+  banned_phrases_found: string[];
+};
+
+export type LiveSiteMonitorRouteHttpStatusV1 = "OK" | "ATTENTION" | "UNKNOWN_CONFIG";
+export type LiveSiteMonitorContentContractStatusV1 = "OK" | "ATTENTION" | "UNKNOWN_CONFIG";
+
 export type LiveSiteMonitorDeploySyncStatusV1 =
   | "MATCHES_ORIGIN_MAIN"
   | "DEPLOYED_COMMIT_DIFFERS"
@@ -252,6 +268,12 @@ export type LiveSiteMonitorV1 = {
   netlify_domain_checked: boolean | "UNKNOWN";
   /** Backward-compatible alias for primary_target_base_url. */
   target_base_url: string;
+  /** HTTP status only for allowlisted product/route probes — not content correctness. */
+  route_http_status: LiveSiteMonitorRouteHttpStatusV1;
+  /** Trust-page HTML marker + banned-phrase contract — independent of deploy commit sync. */
+  content_contract_status: LiveSiteMonitorContentContractStatusV1;
+  content_contracts: LiveSiteSmokeContentContractResultV1[];
+  /** Overall: ATTENTION when route HTTP or trust content contract fails; never OK from deploy commit alone. */
   runtime_status: "OK" | "UNKNOWN_CONFIG" | "ATTENTION";
   routes: LiveSiteSmokeRouteResultV1[];
   local_head_commit: string | "UNKNOWN";

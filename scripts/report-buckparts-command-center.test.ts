@@ -1313,6 +1313,22 @@ test("command_center_v2 deploy lane OK when liveSiteMonitor artifact all routes 
     netlify_fallback_base_url: "UNKNOWN",
     netlify_domain_checked: "UNKNOWN",
     target_base_url: "https://example.com",
+    route_http_status: "OK",
+    content_contract_status: "OK",
+    content_contracts: [
+      {
+        contract_id: "wrong_part_prevention_homeowner_v1",
+        path: "/wrong-part-prevention",
+        status_code: 200,
+        http_ok: true,
+        required_markers_ok: true,
+        banned_phrases_absent: true,
+        content_contract_ok: true,
+        required_markers_found: [],
+        required_markers_missing: [],
+        banned_phrases_found: [],
+      },
+    ],
     runtime_status: "OK",
     routes: [
       { path: "/", status_code: 200, ok: true, latency_ms: 1, marker_found: true },
