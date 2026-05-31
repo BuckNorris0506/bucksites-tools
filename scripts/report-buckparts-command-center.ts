@@ -64,6 +64,7 @@ import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-de
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
+import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-steering-v1";
 import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
 import { buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
 import { buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
@@ -1753,6 +1754,11 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
+  const fridgeApplyPlanSteeringOverride = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
+    applyPlanLane: command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+  });
+
   if (fridgeModelFirstSteeringOverride) {
     nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
     whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
@@ -1770,6 +1776,17 @@ export async function buildBuckpartsCommandCenterReport(
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = modelFirstSteeringOverride.next_move_command;
     for (const reason of modelFirstSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (fridgeApplyPlanSteeringOverride && batchDispatchOverride) {
+    nextBestAction = fridgeApplyPlanSteeringOverride.next_best_action;
+    whyThisAction = fridgeApplyPlanSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = fridgeApplyPlanSteeringOverride.next_move_command;
+    for (const reason of fridgeApplyPlanSteeringOverride.mutation_block_reasons) {
       if (!mutatingBlockedReasons.includes(reason)) {
         mutatingBlockedReasons.push(reason);
       }

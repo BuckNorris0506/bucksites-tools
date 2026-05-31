@@ -3495,13 +3495,63 @@ test("command_center_v2.batch_production_operating_checklist_v1 is read-only bat
   assert.equal(lane.operating_decision.mutation_allowed, false);
 });
 
+test("command center next_best_action prefers apply-plan owner review over run-registry when plan is READY_FOR_OWNER_REVIEW", async () => {
+  const applyPlanAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+  );
+  const fridgeRegistryAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (!fs.existsSync(applyPlanAbs) || !fs.existsSync(fridgeRegistryAbs)) {
+    return;
+  }
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const planLane = report.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1;
+  assert.equal(planLane.plan_status, "READY_FOR_OWNER_REVIEW");
+  assert.equal(planLane.planned_change_count, 14);
+  assert.equal(planLane.apply_mutation_authorized, false);
+
+  if (refrigeratorModelFirstSteeringActive(report)) {
+    return;
+  }
+
+  assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [OWNER_REVIEW_READY]:"));
+  assert.match(report.next_best_action, /refrigerator_water apply-plan proposal is ready for owner review/i);
+  assert.match(report.next_best_action, /14 planned changes/i);
+  assert.match(report.next_best_action, /mutation unauthorized/i);
+  assert.equal(report.next_best_action.includes("apply-plan discovery"), false);
+  assert.equal(
+    report.execution_guidance.next_move_command,
+    "npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal",
+  );
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+});
+
 test("command center next_best_action prefers batch run-registry intake over closed-batch dispatch when planning registry is active", async () => {
+  const applyPlanAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+  );
   const fridgeRegistryAbs = path.join(
     process.cwd(),
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
   );
   if (!fs.existsSync(fridgeRegistryAbs)) {
     return;
+  }
+  if (fs.existsSync(applyPlanAbs)) {
+    const quick = await buildBuckpartsCommandCenterReport({ providers: baseProviders() });
+    if (
+      quick.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1.plan_status ===
+      "READY_FOR_OWNER_REVIEW"
+    ) {
+      return;
+    }
   }
 
   const report = await buildBuckpartsCommandCenterReport({
