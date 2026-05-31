@@ -3253,6 +3253,33 @@ test("command_center_v2.owner_drift_detector_v1 is read-only drift detector lane
   assert.equal(manifestEntry!.cc_json_path, "command_center_v2.owner_drift_detector_v1");
 });
 
+test("command_center_v2.batch_run_registry_intake_v1 is read-only universal run-registry intake lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.batch_run_registry_intake_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "batch_run_registry_intake_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.batch_run_registry_intake_v1");
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.ap_run_registry_status, "PROVEN_CLOSED");
+  if (lane.fridge_approval_status === "owner_approved_for_next_planning_only") {
+    assert.equal(lane.fridge_run_registry_status, "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING");
+    assert.ok(lane.fridge_next_required_artifact?.includes("data/fridge/batch-production/run-registry/"));
+  }
+  assert.doesNotMatch(report.next_best_action, /batch_run_registry_intake/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_batch-run-registry-intake",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.batch_run_registry_intake_v1");
+});
+
 test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -3267,7 +3294,16 @@ test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approva
     ".command_center_v2.fridge_buyer_path_batch_approval_v1",
   );
   assert.equal(lane.proposed_row_count, 14);
-  assert.equal(lane.approval_status, "awaiting_owner_approval");
+  const fridgeApprovalArtifact = path.join(
+    process.cwd(),
+    "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json",
+  );
+  assert.equal(
+    lane.approval_status,
+    fs.existsSync(fridgeApprovalArtifact)
+      ? "owner_approved_for_next_planning_only"
+      : "awaiting_owner_approval",
+  );
   assert.equal(lane.apply_mutation_authorized, false);
   assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_batch_approval/i);
 

@@ -291,6 +291,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Owner drift detector projected into Command Center JSON during report generation (read-only); classify arbitrary ideas via npm run buckparts:owner-drift-detector -- --idea \"...\".",
   },
+  "buckparts:batch-run-registry-intake": {
+    cc_json_path: "command_center_v2.batch_run_registry_intake_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.batch_run_registry_intake_v1.data_mutation'",
+    reason:
+      "Universal batch run-registry intake projected into Command Center JSON (read-only); AP proven run + fridge planning gap via npm run buckparts:batch-run-registry-intake.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",
