@@ -267,6 +267,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Fridge buyer-path owner review packet projected into Command Center JSON during report generation (read-only); full fridge_buyer_path_owner_review_packet_v1 with normalized committed_live_row rows remains on npm run buckparts:fridge-buyer-path-owner-review-packet.",
   },
+  "buckparts:fridge-buyer-path-batch-proposal": {
+    cc_json_path: "command_center_v2.fridge_buyer_path_batch_proposal_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_buyer_path_batch_proposal_v1.data_mutation'",
+    reason:
+      "Fridge buyer-path batch proposal projected into Command Center JSON during report generation (read-only); full fridge_buyer_path_batch_proposal_v1 with proposed_rows remains on npm run buckparts:fridge-buyer-path-batch-proposal.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",
