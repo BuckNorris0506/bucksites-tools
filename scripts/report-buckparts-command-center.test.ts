@@ -3455,10 +3455,53 @@ test("command_center_v2.batch_production_operating_checklist_v1 is read-only bat
   assert.equal(lane.operating_decision.mutation_allowed, false);
 });
 
-test("command center next_best_action defers to batch dispatch when not UNKNOWN", async () => {
+test("command center next_best_action prefers batch run-registry intake over closed-batch dispatch when planning registry is active", async () => {
+  const fridgeRegistryAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (!fs.existsSync(fridgeRegistryAbs)) {
+    return;
+  }
+
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
-    fileExists: (p) => p.endsWith("package.json") || p.includes("batch-production"),
+  });
+  const intake = report.command_center_v2.batch_run_registry_intake_v1;
+
+  assert.equal(intake.ap_run_registry_status, "PROVEN_CLOSED");
+  assert.equal(intake.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
+  assert.equal(intake.mutation_authorized, false);
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+
+  if (refrigeratorModelFirstSteeringActive(report)) {
+    return;
+  }
+
+  assert.ok(report.next_best_action.startsWith("BATCH RUN-REGISTRY [ACTIVE_PLANNING]:"));
+  assert.match(report.next_best_action, /refrigerator_water proven planning run-registry/i);
+  assert.match(report.next_best_action, /air_purifier PROVEN_CLOSED/i);
+  assert.match(report.next_best_action, /mutation unauthorized/i);
+  assert.equal(
+    report.next_best_action.includes("Closed batch with full apply/parity/closeout proof"),
+    false,
+  );
+  assert.equal(report.execution_guidance.next_move_command, "npm run buckparts:batch-run-registry-intake");
+});
+
+test("command center next_best_action defers to batch dispatch when not UNKNOWN", async () => {
+  const fridgeRegistryAbs = path.join(
+    process.cwd(),
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+  );
+  if (fs.existsSync(fridgeRegistryAbs)) {
+    return;
+  }
+
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) =>
+      p.endsWith("package.json") || p.includes("air-purifier/batch-production"),
     readDir: () => [],
     readTextFile: (p) => {
       if (p.endsWith("package.json")) return fs.readFileSync(p, "utf8");

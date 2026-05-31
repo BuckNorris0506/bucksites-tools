@@ -61,7 +61,9 @@ import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-ope
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
-import { buildBatchRunRegistryIntakeCommandCenterLaneV1 } from "./lib/batch-run-registry-intake-command-center-v1";
+import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
+import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
+import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
 import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
 import { buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
 import { buildFridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-proposal-command-center-v1";
@@ -1417,6 +1419,11 @@ export async function buildBuckpartsCommandCenterReport(
     { ap_batch_v3_run_instantiation: ap_batch_v3_run_instantiation_v1 },
   );
 
+  const batch_run_registry_intake_report_v1 = buildBatchRunRegistryIntakeReportV1({
+    rootDir,
+    now,
+  });
+
   const air_purifier_model_first_production_lane_v1 = buildAirPurifierModelFirstProductionLaneV1Report({
     rootDir,
     now,
@@ -1729,6 +1736,12 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
+  const batchRunRegistryIntakeSteeringOverride = resolveBatchRunRegistryIntakeSteeringOverrideV1({
+    intake: batch_run_registry_intake_report_v1,
+    dispatch: batch_production_operating_dispatch_v1,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+  });
+
   if (fridgeModelFirstSteeringOverride) {
     nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
     whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
@@ -1746,6 +1759,17 @@ export async function buildBuckpartsCommandCenterReport(
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = modelFirstSteeringOverride.next_move_command;
     for (const reason of modelFirstSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (batchRunRegistryIntakeSteeringOverride && batchDispatchOverride) {
+    nextBestAction = batchRunRegistryIntakeSteeringOverride.next_best_action;
+    whyThisAction = batchRunRegistryIntakeSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = batchRunRegistryIntakeSteeringOverride.next_move_command;
+    for (const reason of batchRunRegistryIntakeSteeringOverride.mutation_block_reasons) {
       if (!mutatingBlockedReasons.includes(reason)) {
         mutatingBlockedReasons.push(reason);
       }
@@ -1879,10 +1903,9 @@ export async function buildBuckpartsCommandCenterReport(
     brain_manifest: command_center_v2.command_center_brain_coverage_manifest_v1,
   });
 
-  const batch_run_registry_intake_v1 = buildBatchRunRegistryIntakeCommandCenterLaneV1({
-    rootDir,
-    now,
-  });
+  const batch_run_registry_intake_v1 = buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1(
+    batch_run_registry_intake_report_v1,
+  );
 
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
