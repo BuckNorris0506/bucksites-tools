@@ -306,6 +306,14 @@ const NPM_SCRIPT_OVERRIDES: Record<string, Partial<EntrySeed>> = {
     reason:
       "Authors fridge_buyer_path_batch_planning_run_registry_v1 to stdout; explicit --registry-out writes under data/fridge/batch-production/run-registry/ only. Intake visibility via batch_run_registry_intake_v1.",
   },
+  "buckparts:fridge-buyer-path-batch-apply-plan-proposal": {
+    cc_json_path: "command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1",
+    verdict: "CONNECTED",
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1.data_mutation'",
+    reason:
+      "Read-only fridge buyer-path batch apply-plan proposal projected into Command Center JSON; full planned_changes on npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal.",
+  },
   "buckparts:audit": {
     cc_json_path: "command_center_v2.system_contract_audit_summary_v1",
     verdict: "CONNECTED",

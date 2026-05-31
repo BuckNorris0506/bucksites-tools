@@ -8,6 +8,7 @@ import type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 import type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
 import type { OwnerDriftDetectorCommandCenterLaneV1 } from "./owner-drift-detector-command-center-v1";
 import type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
+import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 import type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
 import type { FridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-proposal-command-center-v1";
 import type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
@@ -949,6 +950,8 @@ export type CommandCenterV2Report = {
   fridge_buyer_path_batch_proposal_v1: FridgeBuyerPathBatchProposalCommandCenterLaneV1;
   /** Read-only fridge buyer-path batch owner approval bridge — planning-only; not apply authority. */
   fridge_buyer_path_batch_approval_v1: FridgeBuyerPathBatchApprovalCommandCenterLaneV1;
+  /** Read-only fridge buyer-path batch apply-plan proposal — owner review only; not CSV apply authority. */
+  fridge_buyer_path_batch_apply_plan_proposal_v1: FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1;
   /** Read-only owner drift detector — classifies new ideas before they hijack current execution; not mutation authority. */
   owner_drift_detector_v1: OwnerDriftDetectorCommandCenterLaneV1;
   /** Read-only universal batch run-registry intake — AP proven run + fridge planning gap; not mutation authority. */
@@ -1024,6 +1027,7 @@ export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-regi
 export type { OwnerDriftDetectorCommandCenterLaneV1 } from "./owner-drift-detector-command-center-v1";
 export type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
 export type { FridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-proposal-command-center-v1";
+export type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
 export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
@@ -1069,6 +1073,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_buyer_path_owner_review_packet_v1"
   | "fridge_buyer_path_batch_proposal_v1"
   | "fridge_buyer_path_batch_approval_v1"
+  | "fridge_buyer_path_batch_apply_plan_proposal_v1"
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
   | "system_contract_audit_summary_v1"
