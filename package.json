@@ -85,6 +85,7 @@
     "buckparts:waterdrop-proof-slice-candidates": "tsx scripts/report-waterdrop-proof-slice-candidates.ts",
     "buckparts:large-batch-coverage-factory": "tsx scripts/report-large-batch-coverage-factory.ts",
     "buckparts:fridge-buyer-path-owner-review-bridge": "tsx scripts/report-fridge-buyer-path-owner-review-bridge-v1.ts",
+    "buckparts:fridge-buyer-path-owner-review-packet": "tsx scripts/report-fridge-buyer-path-owner-review-packet-v1.ts",
     "buckparts:exa-fridge-water-discovery": "tsx scripts/report-exa-fridge-water-discovery-v1.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",

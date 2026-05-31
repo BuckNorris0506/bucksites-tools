@@ -3230,6 +3230,39 @@ test("command_center_v2.fridge_buyer_path_owner_review_bridge_v1 is read-only ow
   );
 });
 
+test("command_center_v2.fridge_buyer_path_owner_review_packet_v1 is read-only owner review packet lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.fridge_buyer_path_owner_review_packet_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "fridge_buyer_path_owner_review_packet_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.fridge_buyer_path_owner_review_packet_v1",
+  );
+  assert.equal(lane.cohort_count, 14);
+  assert.equal(lane.row_review_ready_count, 14);
+  assert.equal(lane.mutation_ready_count, 0);
+  assert.equal(lane.formal_batch_exists, false);
+  assert.equal(lane.top_cohort_slugs[0], "4396710");
+  assert.equal(lane.apply_mutation_authorized, false);
+  assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_owner_review_packet/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_fridge-buyer-path-owner-review-packet",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.fridge_buyer_path_owner_review_packet_v1",
+  );
+});
+
 test("command_center_v2.batch_production_operating_checklist_v1 is read-only batch director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

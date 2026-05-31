@@ -6,6 +6,7 @@ import type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-
 import type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
 import type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch-coverage-factory-summary-v1";
 import type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
+import type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
 import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 import type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
@@ -938,6 +939,8 @@ export type CommandCenterV2Report = {
   large_batch_coverage_factory_summary_v1: LargeBatchCoverageFactorySummaryV1;
   /** Read-only fridge publishable_amazon_candidate owner-review bridge — not mutation authority. */
   fridge_buyer_path_owner_review_bridge_v1: FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1;
+  /** Read-only fridge buyer-path owner review packet with normalized committed_live_row fields — not mutation authority. */
+  fridge_buyer_path_owner_review_packet_v1: FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1;
   system_contract_audit_summary_v1: SystemContractAuditSummaryV1;
   founder_decision_registry_summary_v1: FounderDecisionRegistrySummaryV1;
   next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
@@ -1005,6 +1008,7 @@ export type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-
 export type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
 export type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch-coverage-factory-summary-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
+export type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
 export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
@@ -1046,6 +1050,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "demand_work_queue_summary_v1"
   | "large_batch_coverage_factory_summary_v1"
   | "fridge_buyer_path_owner_review_bridge_v1"
+  | "fridge_buyer_path_owner_review_packet_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"
   | "next_execution_packet_summary_v1"
