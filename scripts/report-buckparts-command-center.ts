@@ -62,6 +62,7 @@ import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
+import { buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
 import { buildFridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-proposal-command-center-v1";
 import { buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-packet-command-center-v1";
 import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
@@ -1042,6 +1043,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_buyer_path_owner_review_bridge_v1"
     | "fridge_buyer_path_owner_review_packet_v1"
     | "fridge_buyer_path_batch_proposal_v1"
+    | "fridge_buyer_path_batch_approval_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1178,6 +1180,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_buyer_path_owner_review_bridge_v1"
     | "fridge_buyer_path_owner_review_packet_v1"
     | "fridge_buyer_path_batch_proposal_v1"
+    | "fridge_buyer_path_batch_approval_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1296,6 +1299,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_buyer_path_owner_review_bridge_v1"
     | "fridge_buyer_path_owner_review_packet_v1"
     | "fridge_buyer_path_batch_proposal_v1"
+    | "fridge_buyer_path_batch_approval_v1"
     | "system_contract_audit_summary_v1"
     | "founder_decision_registry_summary_v1"
     | "next_execution_packet_summary_v1"
@@ -1356,6 +1360,12 @@ export async function buildBuckpartsCommandCenterReport(
 
   const fridge_buyer_path_batch_proposal_v1 =
     buildFridgeBuyerPathBatchProposalCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+
+  const fridge_buyer_path_batch_approval_v1 =
+    buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1({
       rootDir,
       now,
     });
@@ -1648,6 +1658,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_buyer_path_owner_review_bridge_v1,
     fridge_buyer_path_owner_review_packet_v1,
     fridge_buyer_path_batch_proposal_v1,
+    fridge_buyer_path_batch_approval_v1,
     system_contract_audit_summary_v1,
     founder_decision_registry_summary_v1,
     operating_map_summary_v1,

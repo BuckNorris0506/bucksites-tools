@@ -3253,6 +3253,36 @@ test("command_center_v2.owner_drift_detector_v1 is read-only drift detector lane
   assert.equal(manifestEntry!.cc_json_path, "command_center_v2.owner_drift_detector_v1");
 });
 
+test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.fridge_buyer_path_batch_approval_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "fridge_buyer_path_batch_approval_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.fridge_buyer_path_batch_approval_v1",
+  );
+  assert.equal(lane.proposed_row_count, 14);
+  assert.equal(lane.approval_status, "awaiting_owner_approval");
+  assert.equal(lane.apply_mutation_authorized, false);
+  assert.doesNotMatch(report.next_best_action, /fridge_buyer_path_batch_approval/i);
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "buckparts_fridge-buyer-path-batch-approval",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(
+    manifestEntry!.cc_json_path,
+    "command_center_v2.fridge_buyer_path_batch_approval_v1",
+  );
+});
+
 test("command_center_v2.fridge_buyer_path_batch_proposal_v1 is read-only batch proposal lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

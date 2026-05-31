@@ -242,3 +242,23 @@ test("request_followup_readonly codex row requires needs_more_evidence + read_on
   });
   assert.equal(v.ok, true);
 });
+
+test("fridge buyer-path batch approval context requires read_only_agent for planning approve", () => {
+  const v = validateFounderDecisionRegistryRowV1({
+    ...minimalValidRow(),
+    decision_status: "approved",
+    allowed_next_scope: "read_only_agent",
+    source_decision_packet_id:
+      "fridge_buyer_path_batch_approval_v1:fridge-buyer-path-batch-proposal-v1-test",
+    fridge_buyer_path_batch_approval_context_v1: {
+      review_packet_contract: "fridge_buyer_path_batch_approval_v1",
+      founder_option_id: "approve_for_next_planning_only",
+      proposed_batch_id: "fridge-buyer-path-batch-proposal-v1-test",
+    },
+  });
+  assert.equal(v.ok, true);
+  if (v.ok) {
+    assert.equal(v.row.allowed_next_scope, "read_only_agent");
+    assert.notEqual(v.row.allowed_next_scope, "owner_mutation_approved");
+  }
+});
