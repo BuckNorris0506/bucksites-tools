@@ -11,6 +11,17 @@ export const FRIDGE_GUARDED_BATCH_CLOSEOUT_LEARNING_CC_JQ_PATH_V1 =
 export const FRIDGE_GUARDED_BATCH_CLOSEOUT_LEARNING_DIR_REL_V1 =
   "data/fridge/batch-production/closeout" as const;
 
+export type FridgeCloseoutLearningCandidateV1 = {
+  source_packet_path: string;
+  batch_digest: string;
+  learning_type: "validation_methodology" | "lifecycle" | "safety";
+  lesson_text: string;
+  evidence_basis: string;
+  recommended_destination: "learning_outcomes_candidate" | "lifecycle_rule_candidate";
+  owner_approval_required: true;
+  write_authorized: false;
+};
+
 export type FridgeGuardedBatchCloseoutLearningLaneV1 = {
   contract: typeof FRIDGE_GUARDED_BATCH_CLOSEOUT_LEARNING_LANE_CONTRACT_V1;
   read_only: true;
@@ -27,6 +38,9 @@ export type FridgeGuardedBatchCloseoutLearningLaneV1 = {
   latest_learning_lane_candidate: boolean | null;
   latest_recommended_next_lifecycle_state: string | null;
   captured_lessons: string[];
+  candidate_count: number;
+  latest_candidate_lesson: string | null;
+  candidate_learning_items: FridgeCloseoutLearningCandidateV1[];
   blockers: string[];
   next_agent_action: string;
   next_owner_action: string;
@@ -80,6 +94,9 @@ function buildEmptyLane(
     latest_learning_lane_candidate: null,
     latest_recommended_next_lifecycle_state: null,
     captured_lessons: [],
+    candidate_count: 0,
+    latest_candidate_lesson: null,
+    candidate_learning_items: [],
     blockers: status === "UNKNOWN" ? [reason] : [],
     next_agent_action:
       "Inspect fridge guarded batch closeout packets read-only; do not create learning_outcomes rows or mutate CSV/Supabase/evidence.",
@@ -92,6 +109,68 @@ function buildEmptyLane(
     ],
     unknown_facts: [reason],
   };
+}
+
+function deriveCandidateLearningItems(
+  packet: Record<string, unknown>,
+  sourcePacketPath: string,
+): FridgeCloseoutLearningCandidateV1[] {
+  const batchDigest = asString(packet.batch_digest);
+  if (!batchDigest) return [];
+
+  const candidates: FridgeCloseoutLearningCandidateV1[] = [];
+  const goLesson = asRecord(packet.go_first_hop_smoke_lesson) ?? {};
+  const postApply = asRecord(packet.post_apply_parity) ?? {};
+  const repeatWrite = asRecord(packet.repeat_write_lockout) ?? {};
+
+  const firstHopLesson =
+    asString(goLesson.learning_note) ??
+    "Retailer redirect smoke must validate BuckParts first-hop redirect only. Do not follow Amazon with curl -L; Amazon may return bot-dependent 500s unrelated to BuckParts.";
+  if (firstHopLesson) {
+    candidates.push({
+      source_packet_path: sourcePacketPath,
+      batch_digest: batchDigest,
+      learning_type: "validation_methodology",
+      lesson_text: firstHopLesson,
+      evidence_basis:
+        "Closeout packet go_first_hop_smoke_lesson records Amazon bot-dependent 500s after redirect as false failures outside BuckParts /go first-hop health.",
+      recommended_destination: "lifecycle_rule_candidate",
+      owner_approval_required: true,
+      write_authorized: false,
+    });
+  }
+
+  if (postApply.status === "APPLIED_PARITY_PROVEN" && postApply.lifecycle_state === "parity_verified") {
+    candidates.push({
+      source_packet_path: sourcePacketPath,
+      batch_digest: batchDigest,
+      learning_type: "lifecycle",
+      lesson_text:
+        "APPLIED_PARITY_PROVEN with lifecycle_state=parity_verified is a safe post-apply closeout state, not a failed pre-apply dry run.",
+      evidence_basis:
+        "Closeout packet post_apply_parity records status=APPLIED_PARITY_PROVEN, lifecycle_state=parity_verified, target_rows_match_after_row=true, and non_target_rows_unchanged=true.",
+      recommended_destination: "lifecycle_rule_candidate",
+      owner_approval_required: true,
+      write_authorized: false,
+    });
+  }
+
+  if (repeatWrite.status === "PROVEN" && repeatWrite.repeat_write_blocked === true) {
+    candidates.push({
+      source_packet_path: sourcePacketPath,
+      batch_digest: batchDigest,
+      learning_type: "safety",
+      lesson_text:
+        "Repeat guarded CSV writes must be blocked after post-apply parity is proven.",
+      evidence_basis:
+        "Closeout packet repeat_write_lockout records status=PROVEN, repeat_write_blocked=true, csv_apply_authorized=false, and mutation_authorized=false.",
+      recommended_destination: "lifecycle_rule_candidate",
+      owner_approval_required: true,
+      write_authorized: false,
+    });
+  }
+
+  return candidates;
 }
 
 export function buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1(
@@ -177,6 +256,9 @@ export function buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1(
   pushLesson(lessons, goLesson.learning_note);
   pushLesson(lessons, goLesson.false_failure_root_cause);
   pushLesson(lessons, learningFeed.reason);
+  const candidateLearningItems = packets.flatMap((entry) =>
+    deriveCandidateLearningItems(entry.packet, entry.relPath),
+  );
 
   return {
     contract: FRIDGE_GUARDED_BATCH_CLOSEOUT_LEARNING_LANE_CONTRACT_V1,
@@ -194,9 +276,13 @@ export function buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1(
     latest_learning_lane_candidate: asBoolean(learningFeed.command_center_learning_lane_candidate),
     latest_recommended_next_lifecycle_state: asString(nextLifecycle.recommended_next_lifecycle_state),
     captured_lessons: lessons,
+    candidate_count: candidateLearningItems.length,
+    latest_candidate_lesson:
+      candidateLearningItems[candidateLearningItems.length - 1]?.lesson_text ?? null,
+    candidate_learning_items: candidateLearningItems,
     blockers,
     next_agent_action:
-      "Use this lane as read-only closeout learning context only; do not create learning_outcomes rows or rerun --write-csv.",
+      "Use this lane as read-only closeout learning context only; review candidate_learning_items but do not create learning_outcomes rows or rerun --write-csv.",
     next_owner_action:
       "Review captured closeout lessons and, if desired, authorize a separate learning_outcomes or Command Center learning-lane write path.",
     proven_facts: [

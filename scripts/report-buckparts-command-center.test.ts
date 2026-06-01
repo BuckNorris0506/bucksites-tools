@@ -3581,6 +3581,16 @@ test("command_center_v2 surfaces fridge guarded batch closeout learning lane rea
   assert.equal(lane.latest_learning_lane_candidate, true);
   assert.equal(lane.latest_recommended_next_lifecycle_state, "closed");
   assert.ok(lane.captured_lessons.some((lesson) => lesson.includes("first-hop redirect only")));
+  assert.equal(lane.candidate_count, 3);
+  assert.equal(lane.latest_candidate_lesson, "Repeat guarded CSV writes must be blocked after post-apply parity is proven.");
+  assert.ok(
+    lane.candidate_learning_items.some((candidate) =>
+      candidate.learning_type === "validation_methodology" &&
+      candidate.lesson_text.includes("first-hop redirect only"),
+    ),
+  );
+  assert.ok(lane.candidate_learning_items.every((candidate) => candidate.owner_approval_required === true));
+  assert.ok(lane.candidate_learning_items.every((candidate) => candidate.write_authorized === false));
   assert.match(lane.next_agent_action, /do not create learning_outcomes rows/i);
   assert.doesNotMatch(JSON.stringify(lane), /insert into/i);
 });

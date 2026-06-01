@@ -35,6 +35,33 @@ test("fridge guarded closeout learning lane reads pushed packet and remains read
   assert.equal(lane.latest_learning_lane_candidate, true);
   assert.equal(lane.latest_recommended_next_lifecycle_state, "closed");
   assert.ok(lane.captured_lessons.some((lesson) => lesson.includes("first-hop redirect only")));
+  assert.equal(lane.candidate_count, 3);
+  assert.deepEqual(
+    lane.candidate_learning_items.map((candidate) => candidate.learning_type),
+    ["validation_methodology", "lifecycle", "safety"],
+  );
+  assert.ok(
+    lane.candidate_learning_items.some((candidate) =>
+      candidate.lesson_text.includes("first-hop redirect only"),
+    ),
+  );
+  assert.ok(
+    lane.candidate_learning_items.some((candidate) =>
+      candidate.lesson_text.includes("APPLIED_PARITY_PROVEN"),
+    ),
+  );
+  assert.ok(
+    lane.candidate_learning_items.some((candidate) =>
+      candidate.lesson_text.includes("Repeat guarded CSV writes must be blocked"),
+    ),
+  );
+  for (const candidate of lane.candidate_learning_items) {
+    assert.equal(candidate.source_packet_path, PACKET_REL_PATH);
+    assert.equal(candidate.batch_digest, "0fec4a7b623a");
+    assert.equal(candidate.owner_approval_required, true);
+    assert.equal(candidate.write_authorized, false);
+    assert.equal(candidate.recommended_destination, "lifecycle_rule_candidate");
+  }
   assert.ok(lane.next_agent_action.includes("do not create learning_outcomes rows"));
 });
 
@@ -49,6 +76,8 @@ test("fridge guarded closeout learning lane safely reports EMPTY when directory 
 
   assert.equal(lane.lane_status, "EMPTY");
   assert.equal(lane.packet_count, 0);
+  assert.equal(lane.candidate_count, 0);
+  assert.deepEqual(lane.candidate_learning_items, []);
   assert.equal(lane.latest_batch_digest, null);
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
@@ -70,6 +99,8 @@ test("fridge guarded closeout learning lane safely reports UNKNOWN when packets 
 
   assert.equal(lane.lane_status, "UNKNOWN");
   assert.equal(lane.packet_count, 0);
+  assert.equal(lane.candidate_count, 0);
+  assert.deepEqual(lane.candidate_learning_items, []);
   assert.ok(lane.blockers.some((blocker) => blocker.startsWith("unexpected_packet_contract:")));
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
