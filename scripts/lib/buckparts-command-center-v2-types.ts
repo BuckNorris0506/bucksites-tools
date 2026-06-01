@@ -12,6 +12,7 @@ import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from ".
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 import type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
 import type { FridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-proposal-command-center-v1";
+import type { FridgeGuardedBatchCloseoutLearningLaneV1 } from "./fridge-guarded-batch-closeout-learning-command-center-v1";
 import type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
 import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
@@ -964,6 +965,8 @@ export type CommandCenterV2Report = {
   owner_drift_detector_v1: OwnerDriftDetectorCommandCenterLaneV1;
   /** Read-only universal batch run-registry intake — AP proven run + fridge planning gap; not mutation authority. */
   batch_run_registry_intake_v1: BatchRunRegistryIntakeCommandCenterLaneV1;
+  /** Read-only fridge guarded batch closeout learning packets — not learning_outcomes writes. */
+  fridge_guarded_batch_closeout_learning_v1: FridgeGuardedBatchCloseoutLearningLaneV1;
   system_contract_audit_summary_v1: SystemContractAuditSummaryV1;
   founder_decision_registry_summary_v1: FounderDecisionRegistrySummaryV1;
   next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
@@ -1098,6 +1101,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_buyer_path_batch_apply_plan_approval_v1"
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
+  | "fridge_guarded_batch_closeout_learning_v1"
   | "command_center_efficiency_truth_table_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
   | "universal_batch_lifecycle_apply_execution_plan_v1"

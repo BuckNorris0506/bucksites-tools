@@ -3556,6 +3556,35 @@ test("command_center_v2.batch_run_registry_intake_v1 is read-only universal run-
   assert.equal(manifestEntry!.cc_json_path, "command_center_v2.batch_run_registry_intake_v1");
 });
 
+test("command_center_v2 surfaces fridge guarded batch closeout learning lane read-only", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+
+  const lane = report.command_center_v2.fridge_guarded_batch_closeout_learning_v1;
+  assert.equal(lane.contract, "fridge_guarded_batch_closeout_learning_command_center_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.fridge_guarded_batch_closeout_learning_v1");
+  assert.equal(lane.packet_count, 1);
+  assert.equal(lane.latest_batch_digest, "0fec4a7b623a");
+  assert.equal(lane.latest_post_apply_status, "APPLIED_PARITY_PROVEN");
+  assert.equal(lane.latest_lifecycle_state, "parity_verified");
+  assert.equal(lane.latest_repeat_write_lockout_status, "PROVEN");
+  assert.equal(lane.latest_learning_lane_candidate, true);
+  assert.equal(lane.latest_recommended_next_lifecycle_state, "closed");
+  assert.ok(lane.captured_lessons.some((lesson) => lesson.includes("first-hop redirect only")));
+  assert.match(lane.next_agent_action, /do not create learning_outcomes rows/i);
+  assert.doesNotMatch(JSON.stringify(lane), /insert into/i);
+});
+
 test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
