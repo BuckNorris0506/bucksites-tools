@@ -16,6 +16,11 @@ import {
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
+import {
+  UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1,
+  UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1,
+} from "./universal-batch-lifecycle-steering-v1";
 
 function lifecycleTableFixture() {
   return buildUniversalBatchLifecycleTruthTableV1({
@@ -285,6 +290,56 @@ describe("universal batch lifecycle steering v1", () => {
     assert.doesNotMatch(
       override!.mutation_block_reasons.join("\n"),
       /fridge_buyer_path_batch_apply_plan/,
+    );
+  });
+
+  test("steers guarded CSV apply executor DRY_RUN when mutation authorization is granted", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const override = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+      applyReadiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1,
+      },
+      applyExecutionPlan: {
+        execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1,
+        planned_change_count: 14,
+      },
+      mutationAuthorizationReview: {
+        mutation_authorization_review_status: "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY",
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
+        review_blockers: [],
+        apply_executor_ready: true,
+        mutation_authorized: true,
+        csv_apply_authorized: true,
+      },
+    });
+    assert.ok(override);
+    assert.equal(
+      override!.next_move_command,
+      UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1,
+    );
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1}]:`,
+      ),
+    );
+    assert.doesNotMatch(override!.next_best_action, /owner mutation approval still required/i);
+    assert.match(override!.next_best_action, /owner_mutation_approved row is active/i);
+    assert.match(override!.next_best_action, /No CSV mutation applied/i);
+    assert.ok(
+      override!.mutation_block_reasons.includes(
+        UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1,
+      ),
+    );
+    assert.ok(
+      !override!.mutation_block_reasons.some((reason) =>
+        reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
+      ),
     );
   });
 

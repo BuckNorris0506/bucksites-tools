@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -346,8 +346,7 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
       },
     });
     assert.equal(report.apply_executor_ready, true);
-    assert.equal(report.mutation_authorization_review_status, "BLOCKED");
-    assert.equal(report.mutation_authorized, false);
+    assert.equal(report.evidence_sufficiency_status, "PROVEN");
     assert.equal(report.evidence_sufficiency_rows.length, 14);
     assert.equal(report.evidence_sufficiency_counts.total, 14);
     assert.ok(
@@ -357,7 +356,11 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
     );
   });
 
-  test("repo reports apply_executor_ready true while mutation authorization remains BLOCKED", () => {
+  test("repo mutation authorization review reflects lifecycle owner decision registry when present", () => {
+    const ownerRegistryAbs = path.join(
+      REPO_ROOT,
+      "data/owner-decisions/lifecycle-mutation-authorization-review-v1.json",
+    );
     const report = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
       rootDir: REPO_ROOT,
       now: () => new Date("2026-06-01T05:00:00.000Z"),
@@ -373,7 +376,15 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
       },
     });
     assert.equal(report.apply_executor_ready, true);
-    assert.equal(report.mutation_authorization_review_status, "BLOCKED");
-    assert.equal(report.mutation_authorized, false);
+    if (existsSync(ownerRegistryAbs)) {
+      assert.equal(report.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");
+      assert.equal(report.mutation_authorized, true);
+      assert.equal(report.csv_apply_authorized, true);
+      assert.equal(report.review_blockers.length, 0);
+      assert.ok(report.authorized_decision_id);
+    } else {
+      assert.equal(report.mutation_authorization_review_status, "BLOCKED");
+      assert.equal(report.mutation_authorized, false);
+    }
   });
 });

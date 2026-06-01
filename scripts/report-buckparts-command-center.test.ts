@@ -3345,7 +3345,10 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
     assert.notEqual(applyReadiness.apply_readiness_status, "PROVEN");
   } else if (fridge?.lifecycle_state === "apply_readiness_ready") {
     assert.equal(applyReadiness.apply_readiness_status, "PROVEN");
-    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:"));
+    assert.ok(
+      report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:") ||
+        report.next_best_action.startsWith("LIFECYCLE [MUTATION_AUTHORIZED_FOR_GUARDED_APPLY]:"),
+    );
     if (applyExecutionPlan.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW") {
       assert.match(report.next_best_action, /execution plan is READY_FOR_MUTATION_AUTH_REVIEW/i);
       if (mutationAuthReview.mutation_authorization_review_status === "BLOCKED") {
@@ -3353,6 +3356,16 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
           report.execution_guidance.next_move_command,
           "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review",
         );
+      } else if (
+        mutationAuthReview.mutation_authorization_review_status ===
+          "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
+        mutationAuthReview.csv_apply_authorized === true
+      ) {
+        assert.equal(
+          report.execution_guidance.next_move_command,
+          "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor",
+        );
+        assert.doesNotMatch(report.next_best_action, /owner mutation approval still required/i);
       } else {
         assert.equal(
           report.execution_guidance.next_move_command,
@@ -3900,18 +3913,32 @@ test("command center next_best_action prefers approved apply-plan planning over 
   const mutationAuthReview =
     report.command_center_v2.universal_batch_lifecycle_mutation_authorization_review_v1;
   if (applyReadiness.apply_readiness_status === "PROVEN") {
-    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:"));
+    assert.ok(
+      report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:") ||
+        report.next_best_action.startsWith("LIFECYCLE [MUTATION_AUTHORIZED_FOR_GUARDED_APPLY]:"),
+    );
     assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes|apply-readiness is PROVEN/i);
     assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
     assert.equal(
       report.execution_guidance.next_move_command,
       mutationAuthReview.mutation_authorization_review_status === "BLOCKED"
         ? "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review"
-        : report.command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1.execution_plan_status ===
-            "READY_FOR_MUTATION_AUTH_REVIEW"
-          ? "npm run buckparts:universal-batch-lifecycle-apply-execution-plan"
-          : "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+        : mutationAuthReview.mutation_authorization_review_status ===
+              "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
+            mutationAuthReview.csv_apply_authorized === true
+          ? "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor"
+          : report.command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1
+                .execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW"
+            ? "npm run buckparts:universal-batch-lifecycle-apply-execution-plan"
+            : "npm run buckparts:universal-batch-lifecycle-apply-readiness",
     );
+    if (
+      mutationAuthReview.mutation_authorization_review_status ===
+        "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
+      mutationAuthReview.csv_apply_authorized === true
+    ) {
+      assert.doesNotMatch(report.next_best_action, /owner mutation approval still required/i);
+    }
   } else {
     assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
     assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes/i);

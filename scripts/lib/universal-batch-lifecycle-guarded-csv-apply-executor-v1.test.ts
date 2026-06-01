@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, test } from "node:test";
@@ -296,7 +296,11 @@ describe("mutation authorization review apply_executor_ready integration", () =>
     }
   });
 
-  test("repo mutation authorization review reports apply_executor_ready true while status remains BLOCKED", () => {
+  test("repo mutation authorization review reports apply_executor_ready with owner registry when present", () => {
+    const ownerRegistryAbs = path.join(
+      REPO_ROOT,
+      "data/owner-decisions/lifecycle-mutation-authorization-review-v1.json",
+    );
     const review = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
       rootDir: REPO_ROOT,
       now: () => new Date("2026-06-01T05:00:00.000Z"),
@@ -312,7 +316,12 @@ describe("mutation authorization review apply_executor_ready integration", () =>
       },
     });
     assert.equal(review.apply_executor_ready, true);
-    assert.equal(review.mutation_authorization_review_status, "BLOCKED");
-    assert.equal(review.csv_apply_authorized, false);
+    if (existsSync(ownerRegistryAbs)) {
+      assert.equal(review.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");
+      assert.equal(review.csv_apply_authorized, true);
+    } else {
+      assert.equal(review.mutation_authorization_review_status, "BLOCKED");
+      assert.equal(review.csv_apply_authorized, false);
+    }
   });
 });

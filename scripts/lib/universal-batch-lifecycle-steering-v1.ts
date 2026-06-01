@@ -10,6 +10,7 @@ import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./univer
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import type { UniversalBatchLifecycleMutationAuthorizationReviewReportV1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1 =
@@ -17,6 +18,25 @@ export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V
 
 export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1 =
   "APPLY_READINESS_READY" as const;
+
+export const UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1 =
+  "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" as const;
+
+export const UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1 =
+  "universal_batch_lifecycle_guarded_csv_apply_executor_v1:write_mode_not_implemented" as const;
+
+function isMutationAuthorizedForGuardedCsvApplyV1(
+  review?: Pick<
+    UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
+    "mutation_authorization_review_status" | "mutation_authorized" | "csv_apply_authorized"
+  > | null,
+): boolean {
+  return (
+    review?.mutation_authorization_review_status === "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
+    review.mutation_authorized === true &&
+    review.csv_apply_authorized === true
+  );
+}
 
 /** @deprecated Use UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 instead. */
 export const UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1 =
@@ -41,7 +61,11 @@ export function buildLifecycleOwnedMutatingBlockReasonsV1(args: {
   >;
   mutationAuthorizationReview?: Pick<
     UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
-    "mutation_authorization_review_status" | "review_blockers" | "apply_executor_ready" | "mutation_authorized"
+    | "mutation_authorization_review_status"
+    | "review_blockers"
+    | "apply_executor_ready"
+    | "mutation_authorized"
+    | "csv_apply_authorized"
   > | null;
 }): string[] {
   const oneTrueNextState = args.lifecycleTable.one_true_next_state_for_refrigerator_water;
@@ -60,16 +84,21 @@ export function buildLifecycleOwnedMutatingBlockReasonsV1(args: {
   ];
 
   const mutationAuthReview = args.mutationAuthorizationReview;
-  if (mutationAuthReview?.mutation_authorization_review_status === "BLOCKED") {
-    for (const blocker of mutationAuthReview.review_blockers) {
-      reasons.push(`mutation_authorization_review_v1:${blocker}`);
+  if (isMutationAuthorizedForGuardedCsvApplyV1(mutationAuthReview)) {
+    reasons.push(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1);
+    reasons.push("mutation_authorization_review_v1:guarded_csv_apply_not_invoked");
+  } else {
+    if (mutationAuthReview?.mutation_authorization_review_status === "BLOCKED") {
+      for (const blocker of mutationAuthReview.review_blockers) {
+        reasons.push(`mutation_authorization_review_v1:${blocker}`);
+      }
     }
-  }
-  if (mutationAuthReview?.apply_executor_ready === false) {
-    reasons.push("mutation_authorization_review_v1:apply_executor_ready=false");
-  }
-  if (mutationAuthReview?.mutation_authorized === false) {
-    reasons.push("mutation_authorization_review_v1:mutation_authorized=false");
+    if (mutationAuthReview?.apply_executor_ready === false) {
+      reasons.push("mutation_authorization_review_v1:apply_executor_ready=false");
+    }
+    if (mutationAuthReview?.mutation_authorized === false) {
+      reasons.push("mutation_authorization_review_v1:mutation_authorized=false");
+    }
   }
 
   return reasons;
@@ -138,6 +167,7 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     | "review_blockers"
     | "apply_executor_ready"
     | "mutation_authorized"
+    | "csv_apply_authorized"
   > | null;
 }): UniversalBatchLifecycleSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
@@ -160,12 +190,17 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     args.applyExecutionPlan?.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW";
   const mutationAuthReviewBlocked =
     args.mutationAuthorizationReview?.mutation_authorization_review_status === "BLOCKED";
+  const mutationAuthorizedForGuardedApply = isMutationAuthorizedForGuardedCsvApplyV1(
+    args.mutationAuthorizationReview,
+  );
   const applyExecutorReady = args.mutationAuthorizationReview?.apply_executor_ready === true;
   const next_move_command = mutationAuthReviewBlocked
     ? UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1
-    : executionPlanReady
-      ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1
-      : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
+    : mutationAuthorizedForGuardedApply
+      ? UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1
+      : executionPlanReady
+        ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1
+        : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
   const isProven =
     args.lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_ready" ||
     args.applyReadiness?.apply_readiness_status === "PROVEN";
@@ -176,19 +211,23 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   });
 
   if (isProven) {
+    const steeringStatus = mutationAuthorizedForGuardedApply
+      ? UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1
+      : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1;
     return {
       next_best_action:
-        `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1}]: ` +
+        `LIFECYCLE [${steeringStatus}]: ` +
         `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes.` +
         (executionPlanReady
           ? " Read-only execution plan is READY_FOR_MUTATION_AUTH_REVIEW."
           : "") +
-        (mutationAuthReviewBlocked
-          ? " Explicit mutation authorization review is still BLOCKED."
-          : "") +
-        (applyExecutorReady
-          ? " Guarded CSV apply executor is DRY_RUN_READY; owner mutation approval still required."
-          : " Mutation unauthorized; no apply executor exists."),
+        (mutationAuthorizedForGuardedApply
+          ? " Explicit owner_mutation_approved row is active for this execution plan. Guarded CSV apply is lifecycle-authorized for review only; no write-mode apply command exists in repo. Run read-only guarded CSV apply executor DRY_RUN verification. No CSV mutation applied."
+          : mutationAuthReviewBlocked
+            ? " Explicit mutation authorization review is still BLOCKED."
+            : applyExecutorReady
+              ? " Guarded CSV apply executor is DRY_RUN_READY; owner mutation approval still required."
+              : " Mutation unauthorized; no apply executor exists."),
       why_this_action: fridge.mapping_summary,
       next_move_command,
       lifecycle_state: fridge.lifecycle_state,
