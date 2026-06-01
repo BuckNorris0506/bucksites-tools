@@ -13,6 +13,7 @@ import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from ".
 import type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
 import type { FridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-proposal-command-center-v1";
 import type { FridgeGuardedBatchCloseoutLearningLaneV1 } from "./fridge-guarded-batch-closeout-learning-command-center-v1";
+import type { FridgeGuardedBatchLifecycleRuleProposalLaneV1 } from "./fridge-guarded-batch-lifecycle-rule-proposal-command-center-v1";
 import type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
 import type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 import type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
@@ -967,6 +968,8 @@ export type CommandCenterV2Report = {
   batch_run_registry_intake_v1: BatchRunRegistryIntakeCommandCenterLaneV1;
   /** Read-only fridge guarded batch closeout learning packets — not learning_outcomes writes. */
   fridge_guarded_batch_closeout_learning_v1: FridgeGuardedBatchCloseoutLearningLaneV1;
+  /** Read-only inactive lifecycle rule proposals from closeout learning candidates — not active rules. */
+  fridge_guarded_batch_lifecycle_rule_proposal_v1: FridgeGuardedBatchLifecycleRuleProposalLaneV1;
   system_contract_audit_summary_v1: SystemContractAuditSummaryV1;
   founder_decision_registry_summary_v1: FounderDecisionRegistrySummaryV1;
   next_execution_packet_summary_v1: NextExecutionPacketSummaryV1;
@@ -1051,6 +1054,7 @@ export type { FridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./fridge-b
 export type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 export type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-packet-command-center-v1";
+export type { FridgeGuardedBatchLifecycleRuleProposalLaneV1 } from "./fridge-guarded-batch-lifecycle-rule-proposal-command-center-v1";
 export type { FounderDecisionRegistrySummaryV1 } from "./buckparts-founder-decision-registry-summary-v1";
 export type { NextExecutionPacketSummaryV1 } from "./buckparts-next-execution-packet-summary-v1";
 export type { OperatingMapSummaryV1 } from "./buckparts-operating-map-summary-v1";
@@ -1102,6 +1106,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
   | "fridge_guarded_batch_closeout_learning_v1"
+  | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
   | "command_center_efficiency_truth_table_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
   | "universal_batch_lifecycle_apply_execution_plan_v1"

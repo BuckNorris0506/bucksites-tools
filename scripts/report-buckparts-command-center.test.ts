@@ -3595,6 +3595,39 @@ test("command_center_v2 surfaces fridge guarded batch closeout learning lane rea
   assert.doesNotMatch(JSON.stringify(lane), /insert into/i);
 });
 
+test("command_center_v2 surfaces fridge guarded batch lifecycle rule proposal lane read-only", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+
+  const lane = report.command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1;
+  assert.equal(lane.contract, "fridge_guarded_batch_lifecycle_rule_proposal_command_center_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1");
+  assert.equal(lane.source_candidate_count, 3);
+  assert.equal(lane.proposed_rule_count, 3);
+  assert.deepEqual(
+    lane.proposed_rules.map((rule) => rule.rule_id),
+    [
+      "go_first_hop_redirect_smoke_only",
+      "applied_parity_proven_is_closeout_state",
+      "block_repeat_guarded_csv_write_after_parity",
+    ],
+  );
+  assert.ok(lane.proposed_rules.every((rule) => rule.active === false));
+  assert.ok(lane.proposed_rules.every((rule) => rule.write_authorized === false));
+  assert.ok(lane.proposed_rules.every((rule) => rule.owner_approval_required === true));
+  assert.doesNotMatch(JSON.stringify(lane), /active\":true|write_authorized\":true/i);
+});
+
 test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

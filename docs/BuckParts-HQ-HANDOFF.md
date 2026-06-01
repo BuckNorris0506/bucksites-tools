@@ -799,6 +799,28 @@ npm run build
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local working artifacts only unless intentionally promoted |
 | Blocked rows `da29-00012b`, `adq75795101` passing owner-review gates | **NOT PROVEN** — remain excluded until facts satisfy review blockers |
 
+### Refrigerator water guarded batch lifecycle — closeout learning and rule proposals (current local state)
+
+**Current state:** refrigerator_water guarded batch closeout has advanced from one completed guarded CSV apply into read-only learning and inactive rule proposals. This is **self-learning proposal state only**, not enforcement.
+
+**PROVEN progression:**
+
+- Guarded CSV apply completed.
+- Post-apply parity proven (`APPLIED_PARITY_PROVEN`, `lifecycle_state=parity_verified`).
+- Repeat-write lockout proven after parity.
+- Closeout learning packet pushed.
+- Command Center closeout-learning lane pushed at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1`.
+- Closeout-to-learning candidate plan pushed; candidate list lives at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1.candidate_learning_items`.
+- Lifecycle rule proposal lane is implemented locally at `.command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1`.
+
+**Inactive proposed lifecycle rules (`proposed_rule_count: 3`):**
+
+- `go_first_hop_redirect_smoke_only`
+- `applied_parity_proven_is_closeout_state`
+- `block_repeat_guarded_csv_write_after_parity`
+
+**Limits / non-authority:** These are proposal-only rules (`active=false`, `write_authorized=false`, `owner_approval_required=true`). No active rule registry exists yet. No future planner/executor enforcement is proven yet. No `learning_outcomes` writes have happened. This state authorizes **no** Supabase, evidence, `retailer_links`, public UI, Netlify, deploy, owner-approval-row, or active-rule mutation.
+
 ### Reporting / Command Center completeness (NOT_PROVEN unless stated)
 
 Read-only inventory at this stop:
