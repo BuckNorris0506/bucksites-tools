@@ -1,0 +1,130 @@
+{
+  "contract": "fridge_buyer_path_batch_closeout_learning_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "netlify_api_authorized": false,
+  "deploy_authorized": false,
+  "generated_at": "2026-06-01T00:00:00.000Z",
+  "wedge": "refrigerator_water",
+  "batch_digest": "0fec4a7b623a",
+  "batch_id": "fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
+  "run_id": "fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+  "target_file": "data/retailer_links.csv",
+  "source_artifacts": {
+    "run_registry": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+    "apply_plan": "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+    "apply_execution_plan": "data/fridge/batch-production/apply-execution-plans/fridge-buyer-path-batch-apply-execution-plan-v1-0fec4a7b623a.json",
+    "guarded_executor_command": "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor",
+    "command_center_command": "node --import tsx scripts/report-buckparts-command-center.ts",
+    "go_first_hop_smoke_command": "node --import tsx scripts/report-buckparts-go-first-hop-smoke-v1.ts --base-url http://127.0.0.1:3012"
+  },
+  "commits_involved": [
+    {
+      "commit": "9b3f138",
+      "role": "batch planning or lifecycle predecessor for the refrigerator_water guarded CSV flow"
+    },
+    {
+      "commit": "a3ad8f4",
+      "role": "batch planning or lifecycle predecessor for the refrigerator_water guarded CSV flow"
+    },
+    {
+      "commit": "c753e0f",
+      "role": "post-apply parity recognition pushed; Command Center surfaces APPLIED_PARITY_PROVEN / parity_verified"
+    },
+    {
+      "commit": "ffee57a",
+      "role": "guarded CSV retailer_links batch applied and pushed"
+    },
+    {
+      "commit": "06d2902",
+      "role": "first-hop BuckParts /go redirect smoke added and pushed"
+    }
+  ],
+  "applied_slugs": [
+    "4396710",
+    "4396841",
+    "46-9002",
+    "8171413",
+    "da29-00019a",
+    "da97-15217d",
+    "edr1rxd1",
+    "edr2rxd1",
+    "lt1000p",
+    "lt1000pc",
+    "lt600p",
+    "lt700p",
+    "lt800p",
+    "mdj64844601"
+  ],
+  "post_apply_parity": {
+    "status": "APPLIED_PARITY_PROVEN",
+    "lifecycle_state": "parity_verified",
+    "target_rows_match_after_row": true,
+    "non_target_rows_unchanged": true,
+    "row_patch_count": 14,
+    "target_file": "data/retailer_links.csv"
+  },
+  "repeat_write_lockout": {
+    "status": "PROVEN",
+    "write_mode_available": false,
+    "csv_apply_authorized": false,
+    "mutation_authorized": false,
+    "repeat_write_blocked": true,
+    "recommended_operator_action": "Do not run --write-csv again for this batch."
+  },
+  "live_page_smoke_result_summary": {
+    "status": "PASS_WITH_FIRST_HOP_REDIRECT_SCOPE",
+    "summary": "Live BuckParts page and /go validation should be judged on BuckParts first-hop redirect behavior. Apparent failures from following redirects to Amazon are not BuckParts /go failures when the first-hop Location is correct.",
+    "go_first_hop_routes_ok": true,
+    "final_retailer_status_used_for_pass_fail": false
+  },
+  "go_first_hop_smoke_lesson": {
+    "learning_note": "Retailer redirect smoke must validate BuckParts first-hop redirect only. Do not follow Amazon with curl -L; Amazon may return bot-dependent 500s unrelated to BuckParts.",
+    "false_failure_root_cause": "Amazon bot-dependent 500s can occur when curl follows BuckParts redirects to Amazon. Those final Amazon statuses are outside BuckParts first-hop /go health.",
+    "required_validation_scope": "Validate first-hop BuckParts redirect status and Location only.",
+    "accepted_first_hop_statuses": [
+      302,
+      307,
+      308
+    ],
+    "expected_location_invariants": [
+      "Location contains the expected Amazon /dp/{ASIN}",
+      "Location contains tag=buckparts20-20 where expected"
+    ]
+  },
+  "next_recommended_lifecycle": {
+    "current_lifecycle_state": "parity_verified",
+    "recommended_next_lifecycle_state": "closed",
+    "closeout_registry_mutation_authorized_here": false,
+    "recommended_next_action": "Use this read-only packet as closeout proof. Only mark run-registry closeout_complete=true in a separate owner-authorized closeout mutation path."
+  },
+  "learning_feed_recommendation": {
+    "should_feed_future_learning_outcomes": true,
+    "command_center_learning_lane_candidate": true,
+    "learning_outcomes_write_authorized_here": false,
+    "recommended_destination": "Future learning_outcomes or Command Center learning lane, using an owner-approved read/write path.",
+    "reason": "This batch produced durable lifecycle lessons: post-apply parity must be recognized as safe closeout state, repeat writes must be blocked, and /go validation must stop at the BuckParts first hop."
+  },
+  "proven_facts": [
+    "The refrigerator_water guarded CSV batch digest is 0fec4a7b623a.",
+    "The guarded CSV batch contains exactly 14 target primary rows.",
+    "Post-apply lifecycle state is APPLIED_PARITY_PROVEN / parity_verified.",
+    "The repeat write path is locked out for this already-applied batch.",
+    "BuckParts /go health validation must not depend on final Amazon HTTP status after redirect."
+  ],
+  "unknown_facts": [
+    "This packet does not prove Amazon final-page bot behavior is stable.",
+    "This packet does not mark run-registry closeout_complete=true."
+  ],
+  "validation_commands": [
+    "node --import tsx --test scripts/lib/fridge-buyer-path-batch-closeout-learning-packet-v1.test.ts",
+    "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor",
+    "node --import tsx scripts/report-buckparts-command-center.ts",
+    "node --import tsx scripts/report-buckparts-go-first-hop-smoke-v1.ts --base-url http://127.0.0.1:3012",
+    "shasum -a 256 data/retailer_links.csv",
+    "git status --short"
+  ]
+}
