@@ -1,42 +1,42 @@
 filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at
-lt1000p,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=LT1000P,true,0,oem-parts-catalog,,,
-lt700p,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=LT700P,true,0,oem-parts-catalog,,,
-lt800p,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=LT800P,true,0,oem-parts-catalog,,,
-lt600p,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=LT600P,true,0,oem-parts-catalog,,,
+lt1000p,Amazon,https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000p-live-outcome.2026-05-03.json. Not applied.,2026-05-03
+lt700p,Amazon,https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt700p-live-outcome.2026-05-03.json. Not applied.,2026-05-03
+lt800p,Amazon,https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt800p-live-outcome.2026-05-03.json. Not applied.,2026-05-03
+lt600p,Amazon,https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt600p-live-outcome.2026-05-03.json. Not applied.,2026-05-03
 adq74793501,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ74793501,true,0,oem-parts-catalog,,,
 adq73613402,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ73613402,true,0,oem-parts-catalog,,,
 adq73613403,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ73613403,true,0,oem-parts-catalog,,,
 adq36006101,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ36006101,true,0,oem-parts-catalog,,,
-mdj64844601,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=MDJ64844601,true,0,oem-parts-catalog,,,
+mdj64844601,Amazon,https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-mdj64844601-live-outcome.2026-05-03.json. Not applied.,2026-05-03
 adq75795101,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ75795101,true,0,oem-parts-catalog,,,
-lt1000pc,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=LT1000PC,true,0,oem-parts-catalog,,,
+lt1000pc,Amazon,https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000pc-live-outcome.2026-05-03.json. Not applied.,2026-05-03
 adq74793502,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=ADQ74793502,true,0,oem-parts-catalog,,,
 da29-00020b,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-00020B,true,0,oem-parts-catalog,,,
 da97-17376b,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-17376B,true,0,oem-parts-catalog,,,
 da29-00003g,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-00003G,true,0,oem-parts-catalog,,,
 da97-08006b,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-08006B,true,0,oem-parts-catalog,,,
-da29-00019a,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-00019A,true,0,oem-parts-catalog,,,
+da29-00019a,Amazon,https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da29-00019a-live-outcome.2026-04-30.json. Not applied.,2026-04-30
 da29-10105j,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-10105J,true,0,oem-parts-catalog,,,
 da97-19467c,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-19467C,true,0,oem-parts-catalog,,,
-da97-15217d,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-15217D,true,0,oem-parts-catalog,,,
+da97-15217d,Amazon,https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da97-15217d-live-outcome.2026-05-03.json. Not applied.,2026-05-03
 da29-00020a,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-00020A,true,0,oem-parts-catalog,,,
 da97-06317a,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-06317A,true,0,oem-parts-catalog,,,
 da29-00012b,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA29-00012B,true,0,oem-parts-catalog,,,
 da97-17376a,OEM parts catalog (keyword lookup),https://www.repairclinic.com/Search?SearchTerm=DA97-17376A,true,0,oem-parts-catalog,,,
-edr1rxd1,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR1RXD1,true,0,oem-parts-catalog,,,
-edr2rxd1,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR2RXD1,true,0,oem-parts-catalog,,,
+edr1rxd1,Amazon,https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr1rxd1-live-outcome.2026-05-05.json. Not applied.,2026-05-05T01:20:00.000Z
+edr2rxd1,Amazon,https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr2rxd1-live-outcome.2026-05-05.json. Not applied.,2026-05-05T01:20:00.000Z
 edr3rxd1,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR3RXD1,true,0,oem-parts-catalog,,,
 edr4rxd1,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR4RXD1,true,0,oem-parts-catalog,,,
 mwf,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWF,true,0,oem-parts-catalog,,,
 ukf8001,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=UKF8001,true,0,oem-parts-catalog,,,
 w10413645a,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=W10413645A,true,0,oem-parts-catalog,,,
-4396841,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396841,true,0,oem-parts-catalog,,,
-4396710,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396710,true,0,oem-parts-catalog,,,
+4396841,Amazon,https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396841-live-outcome.2026-05-04.json. Not applied.,2026-05-04T18:00:00.000Z
+4396710,Amazon,https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396710-live-outcome.2026-05-04.json. Not applied.,2026-05-04T12:00:00.000Z
 4396508,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396508,true,0,oem-parts-catalog,,,
 4396395,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396395,true,0,oem-parts-catalog,,,
-8171413,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=8171413,true,0,oem-parts-catalog,,,
+8171413,Amazon,https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-8171413-live-outcome.2026-05-04.json. Not applied.,2026-05-04T22:00:00.000Z
 4396842,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396842,true,0,oem-parts-catalog,,,
-46-9002,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=46-9002,true,0,oem-parts-catalog,,,
+46-9002,Amazon,https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-46-9002-live-outcome.2026-05-04.json. Not applied.,2026-05-04T15:50:00.000Z
 mswf,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MSWF,true,0,oem-parts-catalog,,,
 rpwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE,true,0,oem-parts-catalog,,,
 xwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE,true,0,oem-parts-catalog,,,
