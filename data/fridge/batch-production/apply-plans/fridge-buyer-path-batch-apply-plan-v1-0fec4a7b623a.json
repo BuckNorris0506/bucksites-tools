@@ -3,13 +3,14 @@
   "report_name": "fridge_buyer_path_batch_apply_plan_proposal_v1",
   "read_only": true,
   "data_mutation": false,
-  "generated_at": "2026-05-31T15:00:32.148Z",
+  "generated_at": "2026-06-01T01:45:14.624Z",
   "wedge": "refrigerator_water",
   "source_run_registry_rel_path": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
   "source_proposal_contract": "fridge_buyer_path_batch_proposal_v1",
   "proposed_batch_id": "fridge-buyer-path-batch-proposal-v1-0fec4a7b623a",
   "run_id": "fridge-buyer-path-batch-run-v1-0fec4a7b623a",
   "plan_status": "READY_FOR_OWNER_REVIEW",
+  "owner_review_status": "OWNER_REVIEW_READY",
   "plan_status_reasons": [],
   "planned_change_count": 14,
   "planned_changes": [
@@ -23,7 +24,16 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-4396710-live-outcome.2026-05-04.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": "dup-dest-2",
+      "duplicate_destination_group_review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "owner_review_risk_flags": [
+        "DUPLICATE_PROPOSED_DESTINATION_URL"
+      ],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "4396841",
@@ -35,7 +45,16 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-4396841-live-outcome.2026-05-04.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": "dup-dest-2",
+      "duplicate_destination_group_review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "owner_review_risk_flags": [
+        "DUPLICATE_PROPOSED_DESTINATION_URL"
+      ],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "46-9002",
@@ -47,7 +66,14 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-46-9002-live-outcome.2026-05-04.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "8171413",
@@ -59,31 +85,52 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-8171413-live-outcome.2026-05-04.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "da29-00019a",
       "oem_token": "DA29-00019A",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B019HPTP3G",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B019HPTP3G",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-da29-00019a-live-outcome.2026-04-30.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B019HPTP3G affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "da97-15217d",
       "oem_token": "DA97-15217D",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B07BHZWSCQ",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-da97-15217d-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B07BHZWSCQ affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "edr1rxd1",
@@ -95,7 +142,14 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-edr1rxd1-live-outcome.2026-05-05.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "edr2rxd1",
@@ -107,82 +161,161 @@
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-edr2rxd1-live-outcome.2026-05-05.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": false,
+      "affiliate_tag_normalization_reason": null,
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "lt1000p",
       "oem_token": "LT1000P",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B07H9LHMR2",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-lt1000p-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B07H9LHMR2 affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": "dup-dest-1",
+      "duplicate_destination_group_review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "owner_review_risk_flags": [
+        "DUPLICATE_PROPOSED_DESTINATION_URL"
+      ],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "lt1000pc",
       "oem_token": "LT1000PC",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B07H9LHMR2",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-lt1000pc-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B07H9LHMR2 affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": "dup-dest-1",
+      "duplicate_destination_group_review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "owner_review_risk_flags": [
+        "DUPLICATE_PROPOSED_DESTINATION_URL"
+      ],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "lt600p",
       "oem_token": "LT600P",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B07VGD8Z5Z",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-lt600p-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B07VGD8Z5Z affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "lt700p",
       "oem_token": "LT700P",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B0042ACZU2",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B0042ACZU2",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-lt700p-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B0042ACZU2 affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "lt800p",
       "oem_token": "LT800P",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B00X3DWMS4",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-lt800p-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B00X3DWMS4 affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     },
     {
       "slug": "mdj64844601",
       "oem_token": "MDJ64844601",
       "current_committed_buyer_path_status": "SEARCH_PLACEHOLDER",
       "proposed_destination_url": "https://www.amazon.com/dp/B08HDD1PK1",
-      "proposed_affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1",
+      "proposed_affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
       "proposed_retailer_key": "amazon",
       "proposed_retailer_slug": "amazon",
       "evidence_artifact_path": "data/evidence/amazon-mdj64844601-live-outcome.2026-05-03.json",
       "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
-      "mutation_authorized": false
+      "mutation_authorized": false,
+      "affiliate_tag_normalization_applied": true,
+      "affiliate_tag_normalization_reason": "Appended tag=buckparts20-20 to Amazon /dp/B08HDD1PK1 affiliate URL without changing PDP ASIN.",
+      "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+      "duplicate_destination_group_id": null,
+      "duplicate_destination_group_review_status": null,
+      "owner_review_risk_flags": [],
+      "owner_review_required_reasons": []
     }
   ],
   "blocked_rows": [],
+  "missing_affiliate_tag_count": 0,
+  "duplicate_destination_group_count": 2,
+  "duplicate_destination_group_review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+  "duplicate_destination_groups": [
+    {
+      "duplicate_destination_group_id": "dup-dest-1",
+      "proposed_destination_url": "https://www.amazon.com/dp/B07H9LHMR2",
+      "slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "review_reason": "Every slug in duplicate proposed_destination_url group has committed_live_row evidence matching the shared Amazon PDP."
+    },
+    {
+      "duplicate_destination_group_id": "dup-dest-2",
+      "proposed_destination_url": "https://www.amazon.com/dp/B087PDLZL9",
+      "slugs": [
+        "4396710",
+        "4396841"
+      ],
+      "review_status": "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+      "review_reason": "Every slug in duplicate proposed_destination_url group has committed_live_row evidence matching the shared Amazon PDP."
+    }
+  ],
+  "owner_review_risk_count": 0,
   "plan_artifact_rel_path": "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
   "apply_mutation_authorized": false,
   "csv_apply_authorized": false,
