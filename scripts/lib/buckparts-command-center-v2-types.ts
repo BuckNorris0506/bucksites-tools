@@ -52,6 +52,7 @@ import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/o
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 
@@ -1027,6 +1028,8 @@ export type CommandCenterV2Report = {
   demand_to_coverage_next_lane_v1: DemandToCoverageNextLaneReportV1;
   /** Read-only owner-review packet for AP demand-selected batch candidate — does not start a batch. */
   air_purifier_demand_selected_batch_owner_review_v1: AirPurifierDemandSelectedBatchOwnerReviewLaneV1;
+  /** Read-only owner-review packet for RPWFE purchase-option rescue — no buy CTA authority. */
+  rpwfe_purchase_option_rescue_owner_review_v1: RpwfePurchaseOptionRescueOwnerReviewLaneV1;
   /** Read-only proposed ap-batch-v3 run descriptor from Command Center lane selection — not mutation authority. */
   ap_batch_v3_run_instantiation_v1?: ApBatchV3RunInstantiationV1;
   /** Read-only model-first AP production strategy lane — appliance model before filter-SKU rescue. */
@@ -1043,6 +1046,7 @@ export type CommandCenterV2Report = {
 
 export type { DemandToCoverageNextLaneReportV1 };
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 
 export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";

@@ -260,6 +260,7 @@ export function buildCommandCenterV2Report(input: {
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
   | "air_purifier_demand_selected_batch_owner_review_v1"
+  | "rpwfe_purchase_option_rescue_owner_review_v1"
   | "marketing_intelligence_engine_v1"
   | "agent_control_plane_v1"
   | "operator_digest_v1"

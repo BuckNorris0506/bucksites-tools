@@ -5023,6 +5023,49 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   assert.match(lane.next_agent_action, /do not start a batch/i);
 });
 
+test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-only owner packet", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "rpwfe_purchase_option_rescue_owner_review_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1");
+  assert.equal(lane.filter_slug, "rpwfe");
+  assert.equal(lane.public_route, "/filter/rpwfe");
+  assert.equal(lane.customer_visible_problem, true);
+  assert.equal(lane.current_public_state, "no_buy_options");
+  assert.equal(typeof lane.compatible_model_count, "number");
+  assert.ok(lane.compatible_model_count > 0);
+  assert.equal(lane.existing_retailer_row_status, "SEARCH_PLACEHOLDER_BLOCKED");
+  assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_DOC_NOT_APPLIED");
+  assert.equal(lane.compatible_waterdrop_path_status, "UNPROVEN_UNAUTHORIZED");
+  assert.equal(lane.candidate_waterdrop_product, "WD-F19C");
+  assert.equal(lane.safe_labeling_required, true);
+  assert.equal(lane.official_label_authorized, false);
+  assert.equal(lane.compatible_label_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.ok(lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
+  assert.ok(lane.blockers.includes("waterdrop_wd_f19c_evidence_not_proven"));
+  assert.ok(lane.blockers.includes("compatible_replacement_labeling_not_authorized"));
+  assert.ok(lane.blockers.includes("owner_rescue_approval_missing"));
+  assert.ok(lane.blockers.includes("csv_supabase_mutation_not_authorized"));
+  assert.match(lane.next_agent_action, /do not add buy links/i);
+});
+
 test("command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP batch coverage director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
