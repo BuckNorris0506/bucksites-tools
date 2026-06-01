@@ -335,6 +335,10 @@ function resolveOneTrueNextCommandForRefrigeratorWaterV1(args: {
     args.apply_execution_plan?.source_command ===
       UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1;
 
+  if (args.fridgeState.lifecycle_state === "parity_verified") {
+    return "node --import tsx scripts/report-buckparts-command-center.ts";
+  }
+
   if (
     args.fridgeState.lifecycle_state === "apply_readiness_ready" &&
     args.apply_readiness?.apply_readiness_status === "PROVEN" &&
@@ -387,6 +391,24 @@ function resolveRefrigeratorWaterState(
   proven_sources.push(`batch_run_registry_intake_v1.fridge_run_registry_status=${intake.fridge_run_registry_status}`);
 
   if (approval?.approval_status === "owner_approved_for_next_planning_only") {
+    if (
+      input.mutation_authorization_review?.mutation_authorization_review_status ===
+      "APPLIED_PARITY_PROVEN"
+    ) {
+      proven_sources.push(
+        "universal_batch_lifecycle_mutation_authorization_review_v1:mutation_authorization_review_status=APPLIED_PARITY_PROVEN",
+      );
+      return {
+        wedge: "refrigerator_water",
+        lifecycle_state: "parity_verified",
+        alternate_lifecycle_states: ["closed"],
+        mutation_allowed: false,
+        mapping_summary:
+          "Guarded CSV apply is already applied and target-row parity is proven. Repeat apply is blocked; next lifecycle work is read-only closeout validation.",
+        proven_mapping_sources: proven_sources,
+      };
+    }
+
     if (input.apply_readiness?.apply_readiness_status === "PROVEN") {
       proven_sources.push(
         "universal_batch_lifecycle_apply_readiness_v1:apply_readiness_status=PROVEN",
@@ -578,7 +600,9 @@ export function buildUniversalBatchLifecycleTruthTableV1(
   }
 
   const one_true_next_state_for_refrigerator_water: UniversalBatchLifecycleStateIdV1 =
-    fridgeState.lifecycle_state === "apply_readiness_ready"
+    fridgeState.lifecycle_state === "parity_verified"
+      ? "parity_verified"
+      : fridgeState.lifecycle_state === "apply_readiness_ready"
       ? "apply_readiness_ready"
       : fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown")
         ? "apply_readiness_unknown"
@@ -644,7 +668,9 @@ export function buildUniversalBatchLifecycleTruthTableV1(
   }
 
   const recommended_next_action =
-    "LIFECYCLE CONSOLIDATION [READ_ONLY]: Use universal_batch_lifecycle_truth_table_v1 as blueprint to fold fridge micro-lanes into lifecycle_state fields; do not add operational gates. refrigerator_water next state is apply_readiness_unknown (mutation unauthorized). air_purifier reference state is closed.";
+    fridgeState.lifecycle_state === "parity_verified"
+      ? "LIFECYCLE CONSOLIDATION [APPLIED_PARITY_PROVEN]: refrigerator_water guarded CSV apply is already applied with parity proven. Do not run write mode again; proceed with read-only post-apply closeout validation."
+      : "LIFECYCLE CONSOLIDATION [READ_ONLY]: Use universal_batch_lifecycle_truth_table_v1 as blueprint to fold fridge micro-lanes into lifecycle_state fields; do not add operational gates. refrigerator_water next state is apply_readiness_unknown (mutation unauthorized). air_purifier reference state is closed.";
 
   return {
     contract: UNIVERSAL_BATCH_LIFECYCLE_TRUTH_TABLE_CONTRACT_V1,

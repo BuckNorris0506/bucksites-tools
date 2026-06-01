@@ -38,6 +38,7 @@ export const UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_CC_JQ_PATH_
 
 export type UniversalBatchLifecycleMutationAuthorizationReviewStatusV1 =
   | "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY"
+  | "APPLIED_PARITY_PROVEN"
   | "BLOCKED";
 
 export type UniversalBatchLifecycleMutationAuthorizationReviewReportV1 = {
@@ -271,8 +272,21 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     fileExists,
     readText,
   });
+  const appliedParityProven = executorReadiness.executor_status === "APPLIED_PARITY_PROVEN";
   const apply_executor_ready = executorReadiness.apply_executor_ready;
-  if (!apply_executor_ready) {
+  if (appliedParityProven) {
+    for (let i = review_blockers.length - 1; i >= 0; i--) {
+      if (
+        review_blockers[i]!.startsWith("missing_active_owner_mutation_approval:") ||
+        review_blockers[i]!.startsWith("apply_executor_not_ready:")
+      ) {
+        review_blockers.splice(i, 1);
+      }
+    }
+    proven_facts.push(
+      `PROVEN: guarded CSV apply executor reports APPLIED_PARITY_PROVEN for ${String(executorReadiness.row_patch_count)} row patches; repeat apply is not authorized.`,
+    );
+  } else if (!apply_executor_ready) {
     for (const blocker of executorReadiness.executor_blockers) {
       review_blockers.push(`apply_executor_not_ready:${blocker}`);
     }
@@ -283,6 +297,7 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
   }
 
   const mutationAuthorized =
+    !appliedParityProven &&
     applyReadinessStatus === "PROVEN" &&
     applyExecutionPlanStatus === "READY_FOR_MUTATION_AUTH_REVIEW" &&
     apply_executor_ready &&
@@ -291,9 +306,13 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     review_blockers.length === 0;
 
   const mutation_authorization_review_status: UniversalBatchLifecycleMutationAuthorizationReviewStatusV1 =
-    mutationAuthorized ? "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" : "BLOCKED";
+    appliedParityProven
+      ? "APPLIED_PARITY_PROVEN"
+      : mutationAuthorized
+        ? "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY"
+        : "BLOCKED";
 
-  if (!mutationAuthorized) {
+  if (!mutationAuthorized && !appliedParityProven) {
     unknown_facts.push(
       "UNKNOWN: CSV write mode remains blocked until apply readiness, execution plan, guarded executor DRY_RUN readiness, evidence sufficiency, and explicit owner_mutation_approved row all validate.",
     );
@@ -329,7 +348,9 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     buy_link_mutation_authorized: false,
     evidence_write_authorized: false,
     netlify_api_authorized: false,
-    recommended_next_action: mutationAuthorized
+    recommended_next_action: appliedParityProven
+      ? `LIFECYCLE MUTATION AUTHORIZATION [APPLIED_PARITY_PROVEN]: CSV rows already match the guarded execution-plan after_row preview. Do not authorize another apply; proceed with post-apply validation and closeout.`
+      : mutationAuthorized
       ? `LIFECYCLE MUTATION AUTHORIZATION [AUTHORIZED]: explicit owner_mutation_approved row is active for this execution plan. CSV write remains blocked until guarded apply executor write mode is explicitly invoked with all preconditions met.`
       : evidenceSufficiency.evidence_sufficiency_status !== "PROVEN"
         ? `LIFECYCLE MUTATION AUTHORIZATION [BLOCKED]: evidence sufficiency is BLOCKED (${String(evidenceSufficiency.evidence_sufficiency_counts.insufficient)} insufficient of ${String(evidenceSufficiency.evidence_sufficiency_counts.total)} rows). Owner mutation approval alone cannot authorize guarded CSV apply. Run ${UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1} read-only.`

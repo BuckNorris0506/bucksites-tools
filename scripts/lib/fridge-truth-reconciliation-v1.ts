@@ -356,6 +356,12 @@ export function buildFridgeTruthReconciliationV1(args: {
     const hasEvidenceWin = slugsWithEvidenceWin.includes(slug);
     return weak === "SAFE_PRIMARY" && !hasEvidenceWin;
   });
+  const linkedSlugsWithCsvDirectBuyable = Array.from(mappingSlugs).filter((slug) =>
+    csvHasDirectBuyableRow(args.rootDir, slug),
+  );
+  const linkedSlugsWithEvidenceWinButNoCsvDirectBuyable = slugsWithEvidenceWin.filter(
+    (slug) => !csvHasDirectBuyableRow(args.rootDir, slug),
+  );
 
   const suspectedUnapplied: SuspectedUnappliedEvidenceRowV1[] = winArtifacts
     .filter((w) => w.filter_slug && mappingSlugs.has(w.filter_slug))
@@ -387,12 +393,13 @@ export function buildFridgeTruthReconciliationV1(args: {
   ).length;
 
   let rootCause: FridgeWinRootCauseHypothesisV1 = "E_UNKNOWN";
-  if (slugsWithEvidenceWin.length > 0 && csvTruthSummary.filters_with_direct_buyable_anywhere_count === 0) {
+  if (linkedSlugsWithEvidenceWinButNoCsvDirectBuyable.length > 0) {
     rootCause =
-      supabaseClaimCount >= slugsWithEvidenceWin.length / 2
+      supabaseClaimCount >= linkedSlugsWithEvidenceWinButNoCsvDirectBuyable.length / 2
         ? "B_EVIDENCE_APPLIED_SUPABASE_ONLY"
         : "A_EVIDENCE_NOT_APPLIED_TO_CSV";
   }
+  const mismatchCount = linkedSlugsWithEvidenceWinButNoCsvDirectBuyable.length;
 
   const exactRepoPathsRead = [
     ...csvAudit.exact_repo_paths_read,
@@ -427,11 +434,13 @@ export function buildFridgeTruthReconciliationV1(args: {
     },
     csv_vs_evidence_mismatch_summary: {
       linked_slugs_with_evidence_win_count: slugsWithEvidenceWin.length,
-      linked_slugs_with_csv_direct_buyable_count: 0,
-      mismatch_count: slugsWithEvidenceWin.length,
-      classification: "PROVEN",
+      linked_slugs_with_csv_direct_buyable_count: linkedSlugsWithCsvDirectBuyable.length,
+      mismatch_count: mismatchCount,
+      classification: mismatchCount === 0 ? "UNKNOWN" : "PROVEN",
       explanation:
-        "Committed data/retailer_links.csv has zero direct_buyable rows for linked filter slugs while evidence live-outcome artifacts document direct_buyable committed_live_row payloads for multiple linked slugs.",
+        mismatchCount === 0
+          ? "Committed data/retailer_links.csv now has direct_buyable rows for every linked filter slug with evidence win signals."
+          : `Committed data/retailer_links.csv has ${String(linkedSlugsWithCsvDirectBuyable.length)} linked direct_buyable slug(s), but ${String(mismatchCount)} evidence-win slug(s) still do not have a direct_buyable CSV row.`,
     },
     suspected_unapplied_evidence_rows: suspectedUnapplied,
     slugs_with_evidence_win_but_csv_placeholder: slugsWithEvidenceWinButCsvPlaceholder.sort(),
@@ -440,12 +449,14 @@ export function buildFridgeTruthReconciliationV1(args: {
     root_cause_hypothesis: rootCause,
     root_cause_summary:
       rootCause === "B_EVIDENCE_APPLIED_SUPABASE_ONLY"
-        ? "PROVEN: CSV export has 0 direct_buyable buyer paths for all 57 linked filters. INFERRED: Most live-outcome evidence files claim post-insert verification on Supabase/public.retailer_links, so prior fridge wins likely live in DB-only state until retailer_links.csv is refreshed from production."
+        ? "INFERRED: Some evidence-win slugs still lack direct_buyable CSV rows, and most remaining unapplied evidence files claim post-insert verification on Supabase/public.retailer_links."
         : rootCause === "A_EVIDENCE_NOT_APPLIED_TO_CSV"
           ? "PROVEN: Evidence artifacts document buyer-path wins that are absent from committed data/retailer_links.csv; wins were collected but not exported/applied to the repo CSV snapshot."
           : "UNKNOWN: Insufficient repo proof to choose a single root-cause hypothesis.",
     recommended_next_action:
-      "Read-only next step: run a Supabase-vs-CSV retailer_links diff for linked filter slugs with live-outcome evidence (ukf8001, lt1000p, edr1rxd1, etc.) before any CSV apply; do not mutate retailer_links.csv until founder approves export from live truth.",
+      mismatchCount === 0
+        ? "Read-only next step: use post-apply parity/closeout validation; no CSV apply is recommended by this reconciliation lane."
+        : "Read-only next step: run a Supabase-vs-CSV retailer_links diff for linked filter slugs with live-outcome evidence that still lack CSV direct_buyable rows; do not mutate retailer_links.csv from this report.",
     proven_facts: [
       `PROVEN: csv_truth_summary matches refrigerator_model_first_truth_audit_v1 (${csvTruthSummary.unique_linked_filter_slugs} linked filters, ${csvTruthSummary.linked_filters_with_safe_direct_buyable_primary} safe primaries, verdict ${csvTruthSummary.safe_buyer_path_verdict}).`,
       `PROVEN: data/retailer_links.csv direct_buyable anywhere count = ${csvTruthSummary.filters_with_direct_buyable_anywhere_count} for linked refrigerator filters.`,

@@ -92,6 +92,21 @@ function primaryCsvRow(slug: string): string {
   return `${slug},OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=${slug},true,0,oem-parts-catalog,,,`;
 }
 
+function appliedCsvRow(slug: string): string {
+  const after = executionPlanRowPatch(slug).after_row as Record<string, string>;
+  return [
+    after.filter_slug,
+    after.retailer_name,
+    after.affiliate_url,
+    after.is_primary,
+    after.sort_order,
+    after.retailer_key,
+    after.browser_truth_classification,
+    after.browser_truth_notes,
+    after.browser_truth_checked_at,
+  ].join(",");
+}
+
 function executionPlanRowPatch(slug: string): Record<string, unknown> {
   return {
     slug,
@@ -515,7 +530,7 @@ describe("universal_batch_lifecycle_guarded_csv_apply_executor_v1", () => {
         rootDir: root,
         mutationAuthorizationReview: blockedOwnerMutationReview(),
       });
-      assert.equal(report.executor_status, "DRY_RUN_READY");
+      assert.equal(report.executor_status, "PRE_APPLY_DRY_RUN_READY");
       assert.equal(report.apply_executor_ready, true);
       assert.equal(report.csv_write_authorized, false);
       assert.equal(report.write_mode_available, false);
@@ -547,14 +562,65 @@ describe("universal_batch_lifecycle_guarded_csv_apply_executor_v1", () => {
     }
   });
 
-  test("repo fixture validates DRY_RUN readiness against committed execution plan and CSV", () => {
+  test("post-apply fixture reports APPLIED_PARITY_PROVEN and blocks repeat write", () => {
+    const { root, cleanup } = writeTempFixture({
+      csvRows: SLUGS.map(appliedCsvRow),
+      extraCsvRows: ["untouched-slug,Keep retailer,https://example.com/keep,true,0,keep-key,,,"],
+    });
+    let writeCalls = 0;
+    try {
+      const report = buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1({
+        rootDir: root,
+        mutationAuthorizationReview: authorizedMutationReview(),
+        writeText: () => {
+          writeCalls += 1;
+        },
+      });
+      assert.equal(report.executor_status, "APPLIED_PARITY_PROVEN");
+      assert.equal(report.apply_executor_ready, false);
+      assert.equal(report.write_mode_available, false);
+      assert.equal(report.write_mode_invoked, false);
+      assert.equal(report.data_mutation, false);
+      assert.equal(report.post_write_validation?.validation_status, "PROVEN");
+      assert.equal(report.post_write_validation?.target_rows_match_after_row, true);
+      assert.equal(report.post_write_validation?.non_target_rows_unchanged, true);
+      assert.ok(report.write_mode_blockers.includes("csv_apply_already_applied: APPLIED_PARITY_PROVEN"));
+      assert.match(report.recommended_next_action, /APPLIED_PARITY_PROVEN/);
+
+      const writeAttempt = buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1({
+        rootDir: root,
+        writeCsv: true,
+        mutationAuthorizationReview: authorizedMutationReview(),
+        writeText: () => {
+          writeCalls += 1;
+        },
+      });
+      assert.equal(writeAttempt.write_mode_status, "BLOCKED");
+      assert.equal(writeAttempt.data_mutation, false);
+      assert.equal(writeCalls, 0);
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("repo fixture recognizes pre-apply readiness or post-apply parity against committed execution plan and CSV", () => {
     const readiness = assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1({
       rootDir: REPO_ROOT,
     });
-    assert.equal(readiness.apply_executor_ready, true);
-    assert.equal(readiness.executor_status, "DRY_RUN_READY");
+    assert.ok(
+      readiness.executor_status === "PRE_APPLY_DRY_RUN_READY" ||
+        readiness.executor_status === "APPLIED_PARITY_PROVEN",
+    );
+    assert.equal(
+      readiness.apply_executor_ready,
+      readiness.executor_status === "PRE_APPLY_DRY_RUN_READY",
+    );
     assert.equal(readiness.row_patch_count, 14);
     assert.equal(readiness.target_file, FRIDGE_RETAILER_LINKS_CSV_REL_V1);
+    if (readiness.executor_status === "APPLIED_PARITY_PROVEN") {
+      assert.equal(readiness.applied_parity_validation?.target_rows_match_after_row, true);
+      assert.equal(readiness.applied_parity_validation?.non_target_rows_unchanged, true);
+    }
   });
 
   test("lib/report avoid forbidden write/mutation imports", () => {
@@ -600,7 +666,7 @@ describe("mutation authorization review apply_executor_ready integration", () =>
     }
   });
 
-  test("repo mutation authorization review reports apply_executor_ready with owner registry when present", () => {
+  test("repo mutation authorization review reports pre-apply readiness or post-apply parity", () => {
     const ownerRegistryAbs = path.join(
       REPO_ROOT,
       "data/owner-decisions/lifecycle-mutation-authorization-review-v1.json",
@@ -619,11 +685,17 @@ describe("mutation authorization review apply_executor_ready integration", () =>
         planned_change_count: 14,
       },
     });
-    assert.equal(review.apply_executor_ready, true);
-    if (existsSync(ownerRegistryAbs)) {
+    if (review.mutation_authorization_review_status === "APPLIED_PARITY_PROVEN") {
+      assert.equal(review.apply_executor_ready, false);
+      assert.equal(review.mutation_authorized, false);
+      assert.equal(review.csv_apply_authorized, false);
+      assert.match(review.recommended_next_action, /APPLIED_PARITY_PROVEN/);
+    } else if (existsSync(ownerRegistryAbs)) {
+      assert.equal(review.apply_executor_ready, true);
       assert.equal(review.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");
       assert.equal(review.csv_apply_authorized, true);
     } else {
+      assert.equal(review.apply_executor_ready, true);
       assert.equal(review.mutation_authorization_review_status, "BLOCKED");
       assert.equal(review.csv_apply_authorized, false);
     }

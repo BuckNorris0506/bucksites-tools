@@ -25,6 +25,9 @@ export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1 
 export const UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1 =
   "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" as const;
 
+export const UNIVERSAL_BATCH_LIFECYCLE_APPLIED_PARITY_PROVEN_STEERING_STATUS_V1 =
+  "APPLIED_PARITY_PROVEN" as const;
+
 export const UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1 =
   "universal_batch_lifecycle_guarded_csv_apply_executor_v1:write_mode_not_invoked" as const;
 
@@ -43,6 +46,15 @@ function isMutationAuthorizedForGuardedCsvApplyV1(
     review.mutation_authorized === true &&
     review.csv_apply_authorized === true
   );
+}
+
+function isAppliedParityProvenV1(
+  review?: Pick<
+    UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
+    "mutation_authorization_review_status"
+  > | null,
+): boolean {
+  return review?.mutation_authorization_review_status === "APPLIED_PARITY_PROVEN";
 }
 
 /** @deprecated Use UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 instead. */
@@ -91,9 +103,12 @@ export function buildLifecycleOwnedMutatingBlockReasonsV1(args: {
   ];
 
   const mutationAuthReview = args.mutationAuthorizationReview;
+  const appliedParityProven = isAppliedParityProvenV1(mutationAuthReview);
   if (isMutationAuthorizedForGuardedCsvApplyV1(mutationAuthReview)) {
     reasons.push(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1);
     reasons.push("mutation_authorization_review_v1:guarded_csv_apply_not_invoked");
+  } else if (appliedParityProven) {
+    reasons.push("mutation_authorization_review_v1:APPLIED_PARITY_PROVEN");
   } else {
     if (mutationAuthReview?.mutation_authorization_review_status === "BLOCKED") {
       for (const blocker of mutationAuthReview.review_blockers) {
@@ -136,7 +151,7 @@ export function refrigeratorWaterShouldSteerUniversalBatchLifecycleV1(
 ): boolean {
   const fridge = lifecycleTable.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
   if (!fridge) return false;
-  if (fridge.lifecycle_state === "apply_readiness_ready") return true;
+  if (fridge.lifecycle_state === "apply_readiness_ready" || fridge.lifecycle_state === "parity_verified") return true;
   return refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1(lifecycleTable);
 }
 
@@ -197,11 +212,14 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     args.applyExecutionPlan?.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW";
   const mutationAuthReviewBlocked =
     args.mutationAuthorizationReview?.mutation_authorization_review_status === "BLOCKED";
+  const appliedParityProven = isAppliedParityProvenV1(args.mutationAuthorizationReview);
   const mutationAuthorizedForGuardedApply = isMutationAuthorizedForGuardedCsvApplyV1(
     args.mutationAuthorizationReview,
   );
   const applyExecutorReady = args.mutationAuthorizationReview?.apply_executor_ready === true;
-  const next_move_command = mutationAuthReviewBlocked
+  const next_move_command = appliedParityProven
+    ? "node --import tsx scripts/report-buckparts-command-center.ts"
+    : mutationAuthReviewBlocked
     ? UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1
     : mutationAuthorizedForGuardedApply
       ? UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1
@@ -209,6 +227,7 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
         ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1
         : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
   const isProven =
+    appliedParityProven ||
     args.lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_ready" ||
     args.applyReadiness?.apply_readiness_status === "PROVEN";
 
@@ -218,14 +237,18 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   });
 
   if (isProven) {
-    const steeringStatus = mutationAuthorizedForGuardedApply
+    const steeringStatus = appliedParityProven
+      ? UNIVERSAL_BATCH_LIFECYCLE_APPLIED_PARITY_PROVEN_STEERING_STATUS_V1
+      : mutationAuthorizedForGuardedApply
       ? UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1
       : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1;
     return {
       next_best_action:
-        `LIFECYCLE [${steeringStatus}]: ` +
-        `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes.` +
-        (executionPlanReady
+        appliedParityProven
+          ? `LIFECYCLE [${steeringStatus}]: refrigerator_water guarded CSV apply is already applied for ${String(count)} apply-plan changes with after_row parity proven. Do not run write mode again; proceed with read-only post-apply validation and closeout.`
+          : `LIFECYCLE [${steeringStatus}]: ` +
+            `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes.` +
+            (executionPlanReady
           ? " Read-only execution plan is READY_FOR_MUTATION_AUTH_REVIEW."
           : "") +
         (mutationAuthorizedForGuardedApply

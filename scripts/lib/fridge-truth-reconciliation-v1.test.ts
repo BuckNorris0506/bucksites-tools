@@ -52,7 +52,8 @@ test("does not claim live or supabase truth without direct proof", () => {
 
 test("csv vs evidence mismatch and root cause classifications are present", () => {
   const report = buildFridgeTruthReconciliationV1({ rootDir: REPO_ROOT });
-  assert.equal(report.csv_truth_summary.filters_with_direct_buyable_anywhere_count, 0);
+  assert.equal(report.csv_truth_summary.filters_with_direct_buyable_anywhere_count, 14);
+  assert.equal(report.csv_vs_evidence_mismatch_summary.linked_slugs_with_csv_direct_buyable_count, 14);
   assert.ok(report.csv_vs_evidence_mismatch_summary.mismatch_count > 0);
   assert.equal(report.csv_vs_evidence_mismatch_summary.classification, "PROVEN");
   assert.ok(

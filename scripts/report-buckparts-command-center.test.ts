@@ -3286,6 +3286,7 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   assert.ok(
     fridge!.lifecycle_state === "apply_plan_owner_approved" ||
       fridge!.lifecycle_state === "apply_readiness_ready" ||
+      fridge!.lifecycle_state === "parity_verified" ||
       fridge!.alternate_lifecycle_states.includes("apply_readiness_unknown"),
   );
   assert.equal(fridge!.mutation_allowed, false);
@@ -3343,6 +3344,24 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
     assert.doesNotMatch(report.execution_guidance.next_move_command, /UNKNOWN:/);
     assert.doesNotMatch(report.execution_guidance.next_move_command, /batch-apply-plan-approval/);
     assert.notEqual(applyReadiness.apply_readiness_status, "PROVEN");
+  } else if (fridge?.lifecycle_state === "parity_verified") {
+    assert.equal(lane.one_true_next_state_for_refrigerator_water, "parity_verified");
+    assert.equal(
+      mutationAuthReview.mutation_authorization_review_status,
+      "APPLIED_PARITY_PROVEN",
+    );
+    assert.match(report.next_best_action, /APPLIED_PARITY_PROVEN/);
+    assert.match(report.next_best_action, /Do not run write mode again/i);
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "node --import tsx scripts/report-buckparts-command-center.ts",
+    );
+    assert.equal(mutationAuthReview.apply_executor_ready, false);
+    assert.ok(
+      !report.execution_guidance.mutating_block_reasons.includes(
+        "mutation_authorization_review_v1:apply_executor_ready=false",
+      ),
+    );
   } else if (fridge?.lifecycle_state === "apply_readiness_ready") {
     assert.equal(applyReadiness.apply_readiness_status, "PROVEN");
     assert.ok(
@@ -3915,14 +3934,17 @@ test("command center next_best_action prefers approved apply-plan planning over 
   if (applyReadiness.apply_readiness_status === "PROVEN") {
     assert.ok(
       report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:") ||
-        report.next_best_action.startsWith("LIFECYCLE [MUTATION_AUTHORIZED_FOR_GUARDED_APPLY]:"),
+        report.next_best_action.startsWith("LIFECYCLE [MUTATION_AUTHORIZED_FOR_GUARDED_APPLY]:") ||
+        report.next_best_action.startsWith("LIFECYCLE [APPLIED_PARITY_PROVEN]:"),
     );
-    assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes|apply-readiness is PROVEN/i);
+    assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes|apply-readiness is PROVEN|after_row parity proven/i);
     assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
     assert.equal(
       report.execution_guidance.next_move_command,
       mutationAuthReview.mutation_authorization_review_status === "BLOCKED"
         ? "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review"
+        : mutationAuthReview.mutation_authorization_review_status === "APPLIED_PARITY_PROVEN"
+          ? "node --import tsx scripts/report-buckparts-command-center.ts"
         : mutationAuthReview.mutation_authorization_review_status ===
               "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
             mutationAuthReview.csv_apply_authorized === true
@@ -3964,7 +3986,10 @@ test("command center next_best_action prefers approved apply-plan planning over 
       report.execution_guidance.mutating_block_reasons.join("\n"),
       /fridge_buyer_path_batch_apply_plan/,
     );
-    if (mutationAuthReview.mutation_authorization_review_status === "BLOCKED") {
+    if (mutationAuthReview.mutation_authorization_review_status === "APPLIED_PARITY_PROVEN") {
+      assert.match(report.next_best_action, /APPLIED_PARITY_PROVEN/);
+      assert.equal(mutationAuthReview.apply_executor_ready, false);
+    } else if (mutationAuthReview.mutation_authorization_review_status === "BLOCKED") {
       assert.ok(
         report.execution_guidance.mutating_block_reasons.some((reason) =>
           reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
@@ -4708,13 +4733,13 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.equal(spine.contract, "fridge_truth_spine_v1");
   assert.equal(spine.read_only, true);
   assert.equal(spine.data_mutation, false);
-  assert.equal(spine.csv_truth.linked_filters_with_safe_direct_buyable_primary, 0);
-  assert.equal(spine.csv_truth.safe_buyer_path_verdict, "PROVEN_TRUE");
+  assert.equal(spine.csv_truth.linked_filters_with_safe_direct_buyable_primary, 14);
+  assert.equal(spine.csv_truth.safe_buyer_path_verdict, "UNKNOWN");
   assert.deepEqual(spine.supabase_csv_diff.evidence_only_slugs, ["4396508", "gswf"]);
   assert.equal(spine.public_truth.should_redo_fridge_products_now, "NO");
   assert.equal(spine.public_truth.public_truth_status, "PUBLIC_TRUTHFUL");
   if (spine.supabase_csv_diff.supabase_truth_status === "CHECKED") {
-    assert.equal(spine.supabase_csv_diff.supabase_has_win_csv_missing_count, 16);
+    assert.equal(spine.supabase_csv_diff.supabase_has_win_csv_missing_count, 2);
     assert.equal(spine.supabase_csv_diff.evidence_only_not_in_supabase_count, 2);
   }
   assert.ok(spine.recommended_next_action.toLowerCase().includes("do not apply"));

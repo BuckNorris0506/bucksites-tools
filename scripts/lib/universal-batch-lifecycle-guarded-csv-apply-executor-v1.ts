@@ -18,6 +18,7 @@ import {
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_APPROVED_SLUG_COUNT_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import {
   assessGuardedCsvWritePlanV1,
+  assessGuardedCsvAppliedParityV1,
   buildGuardedCsvWriteModeBlockersV1,
   executeGuardedCsvWriteModeV1,
   parseGuardedCsvApplyExecutorCliArgsV1,
@@ -31,6 +32,7 @@ export {
   UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_WRITE_CSV_FLAG_V1,
   parseGuardedCsvApplyExecutorCliArgsV1,
   assessGuardedCsvWritePlanV1,
+  assessGuardedCsvAppliedParityV1,
   executeGuardedCsvWriteModeV1,
   rowMatchesSnapshotV1,
 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
@@ -55,7 +57,10 @@ export const UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_P
 
 export type UniversalBatchLifecycleGuardedCsvApplyExecutorModeV1 = "DRY_RUN" | "WRITE_CSV";
 
-export type UniversalBatchLifecycleGuardedCsvApplyExecutorStatusV1 = "DRY_RUN_READY" | "BLOCKED";
+export type UniversalBatchLifecycleGuardedCsvApplyExecutorStatusV1 =
+  | "PRE_APPLY_DRY_RUN_READY"
+  | "APPLIED_PARITY_PROVEN"
+  | "BLOCKED";
 
 export type UniversalBatchLifecycleGuardedCsvApplyExecutorWriteModeStatusV1 =
   | "NOT_INVOKED"
@@ -76,6 +81,8 @@ export type UniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1 = {
   target_file: typeof FRIDGE_RETAILER_LINKS_CSV_REL_V1;
   row_patch_count: number;
   row_patch_slugs: string[];
+  applied_parity_proven: boolean;
+  applied_parity_validation: GuardedCsvPostWriteValidationV1 | null;
 };
 
 export type UniversalBatchLifecycleGuardedCsvApplyExecutorPostWriteValidationPlanV1 = {
@@ -266,6 +273,8 @@ export function assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1(
       target_file: FRIDGE_RETAILER_LINKS_CSV_REL_V1,
       row_patch_count: 0,
       row_patch_slugs: [],
+      applied_parity_proven: false,
+      applied_parity_validation: null,
     };
   }
 
@@ -283,6 +292,8 @@ export function assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1(
 
   const csvRows = loadFridgeRetailerLinksCsvRowsV1({ rootDir: input.rootDir, fileExists, readText });
   const csvBySlug = indexRetailerLinksBySlugV1(csvRows);
+  let beforeMismatchCount = 0;
+  let afterMatchCount = 0;
   for (const patch of loaded.doc.row_patch_preview) {
     const slugKey = normalizeSlug(patch.slug);
     const slugRows = csvBySlug.get(slugKey) ?? [];
@@ -293,22 +304,61 @@ export function assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1(
       executor_blockers.push(`csv_primary_row_missing: slug=${patch.slug}`);
       continue;
     }
+    if (beforeRowMatchesCsvV1(patch.after_row, primaryRow)) {
+      afterMatchCount += 1;
+      continue;
+    }
     if (!beforeRowMatchesCsvV1(patch.before_row, primaryRow)) {
+      beforeMismatchCount += 1;
       executor_blockers.push(`csv_before_row_mismatch: slug=${patch.slug}`);
     }
   }
+  if (
+    executor_blockers.length === 0 &&
+    afterMatchCount > 0 &&
+    afterMatchCount !== UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
+  ) {
+    executor_blockers.push(
+      `csv_apply_partially_already_applied: after_row_match_count=${String(afterMatchCount)} expected=${String(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1)}`,
+    );
+  }
 
+  const appliedParity =
+    executor_blockers.length === 0 &&
+    beforeMismatchCount === 0 &&
+    afterMatchCount === UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
+      ? assessGuardedCsvAppliedParityV1({
+          rootDir: input.rootDir,
+          rowPatches: loaded.doc.row_patch_preview,
+          fileExists,
+          readText,
+        })
+      : null;
+  const appliedParityProven = appliedParity?.validation_status === "PROVEN";
   const executor_status: UniversalBatchLifecycleGuardedCsvApplyExecutorStatusV1 =
-    executor_blockers.length === 0 ? "DRY_RUN_READY" : "BLOCKED";
+    appliedParityProven
+      ? "APPLIED_PARITY_PROVEN"
+      : executor_blockers.length === 0
+        ? "PRE_APPLY_DRY_RUN_READY"
+        : "BLOCKED";
 
   return {
-    apply_executor_ready: executor_status === "DRY_RUN_READY",
+    apply_executor_ready: executor_status === "PRE_APPLY_DRY_RUN_READY",
     executor_status,
     executor_blockers,
     source_execution_plan_artifact_rel_path: executionPlanRelPath,
     target_file: FRIDGE_RETAILER_LINKS_CSV_REL_V1,
     row_patch_count: loaded.doc.row_patch_preview.length,
     row_patch_slugs: sortedSlugSet(previewSlugs),
+    applied_parity_proven: appliedParityProven,
+    applied_parity_validation: appliedParity
+      ? {
+          validation_status: appliedParity.validation_status,
+          validation_blockers: appliedParity.validation_blockers,
+          target_rows_match_after_row: appliedParity.target_rows_match_after_row,
+          non_target_rows_unchanged: appliedParity.non_target_rows_unchanged,
+        }
+      : null,
   };
 }
 
@@ -350,6 +400,13 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
 
   const before_row_parity: UniversalBatchLifecycleGuardedCsvApplyExecutorBeforeRowParityV1[] =
     readiness.row_patch_slugs.map((slug) => {
+      if (readiness.applied_parity_proven) {
+        return {
+          slug,
+          parity_status: "BLOCKED",
+          blockers: [`csv_primary_row_already_applied: slug=${slug}`],
+        };
+      }
       const slugBlockers = readiness.executor_blockers.filter((blocker) =>
         blocker.endsWith(`slug=${slug}`),
       );
@@ -360,6 +417,7 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
       };
     });
   const beforeRowParityProven =
+    !readiness.applied_parity_proven &&
     before_row_parity.length === UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1 &&
     before_row_parity.every((row) => row.parity_status === "PROVEN");
 
@@ -369,8 +427,11 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     fileExists,
     readText,
   });
+  const appliedParity = readiness.applied_parity_validation;
+  const appliedParityProven = readiness.applied_parity_proven;
 
   const write_mode_available =
+    !appliedParityProven &&
     buildGuardedCsvWriteModeBlockersV1({
       writeCsvFlagPresent: true,
       requireCliFlag: false,
@@ -388,6 +449,9 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     beforeRowParityProven,
     writePlan,
   });
+  if (appliedParityProven) {
+    write_mode_blockers.push("csv_apply_already_applied: APPLIED_PARITY_PROVEN");
+  }
   const lifecycleCsvAuthorized =
     input.mutationAuthorizationReview?.mutation_authorization_review_status ===
       "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
@@ -437,8 +501,15 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
   ];
   if (readiness.apply_executor_ready) {
     proven_facts.push(
-      `PROVEN: executor_status=DRY_RUN_READY for ${String(readiness.row_patch_count)} row_patch_preview slugs.`,
+      `PROVEN: executor_status=PRE_APPLY_DRY_RUN_READY for ${String(readiness.row_patch_count)} row_patch_preview slugs.`,
     );
+  }
+  if (appliedParityProven) {
+    proven_facts.push(
+      `PROVEN: executor_status=APPLIED_PARITY_PROVEN for ${String(readiness.row_patch_count)} row_patch_preview slugs.`,
+    );
+    proven_facts.push("PROVEN: target primary rows match execution_plan.row_patch_preview.after_row.");
+    proven_facts.push("PROVEN: post-apply recognition blocks repeat guarded CSV apply.");
   }
   if (beforeRowParityProven) {
     proven_facts.push("PROVEN: before_row_parity=PROVEN for all 14 target slugs.");
@@ -450,7 +521,9 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
   }
 
   const unknown_facts =
-    writeCsv && !data_mutation
+    appliedParityProven
+      ? []
+      : writeCsv && !data_mutation
       ? ["UNKNOWN: write mode was requested but blocked; no CSV mutation occurred."]
       : writeCsv && data_mutation
         ? []
@@ -460,7 +533,9 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
 
   const recommended_next_action = writeCsv && data_mutation
     ? `LIFECYCLE GUARDED CSV APPLY EXECUTOR [WRITE_APPLIED]: applied ${String(writePlan.ok ? writePlan.row_patches.length : 0)} primary-row patches to ${FRIDGE_RETAILER_LINKS_CSV_REL_V1}. Post-write validation PROVEN.`
-    : write_mode_available && lifecycleCsvAuthorized
+    : appliedParityProven
+      ? `LIFECYCLE GUARDED CSV APPLY EXECUTOR [APPLIED_PARITY_PROVEN]: ${FRIDGE_RETAILER_LINKS_CSV_REL_V1} already matches the 14-row execution-plan after_row preview. Repeat write mode is blocked; proceed to post-apply validation and closeout.`
+      : write_mode_available && lifecycleCsvAuthorized
       ? `LIFECYCLE GUARDED CSV APPLY EXECUTOR [DRY_RUN_READY]: lifecycle authorizes guarded CSV apply for ${String(readiness.row_patch_count)} rows. Write mode is available but not invoked; no CSV mutation applied. Run ${UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1} read-only or ${UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_WRITE_SOURCE_COMMAND_V1} only when intentionally applying.`
       : readiness.apply_executor_ready
         ? `LIFECYCLE GUARDED CSV APPLY EXECUTOR [DRY_RUN_READY]: read-only dry-run validated ${String(readiness.row_patch_count)} row patches against ${FRIDGE_RETAILER_LINKS_CSV_REL_V1}. Write mode blocked (${String(write_mode_blockers.length)} blockers). No CSV mutation applied. Run ${UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1}.`
@@ -485,8 +560,11 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     csv_write_authorized: lifecycleCsvAuthorized && data_mutation,
     apply_mutation_authorized: lifecycleCsvAuthorized && data_mutation,
     source_execution_plan_artifact_rel_path: readiness.source_execution_plan_artifact_rel_path,
-    source_execution_plan_status:
-      readiness.apply_executor_ready ? "READY_FOR_MUTATION_AUTH_REVIEW" : "BLOCKED",
+    source_execution_plan_status: appliedParityProven
+      ? "APPLIED_PARITY_PROVEN"
+      : readiness.apply_executor_ready
+        ? "READY_FOR_MUTATION_AUTH_REVIEW"
+        : "BLOCKED",
     target_file: readiness.target_file,
     row_patch_count: readiness.row_patch_count,
     row_patch_slugs: readiness.row_patch_slugs,
@@ -511,7 +589,7 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
       "netlify_api_authorized=false",
     ],
     post_write_validation_plan: POST_WRITE_VALIDATION_PLAN_V1,
-    post_write_validation,
+    post_write_validation: post_write_validation ?? appliedParity,
     recommended_next_action,
     proven_facts,
     unknown_facts,

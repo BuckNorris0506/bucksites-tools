@@ -29,6 +29,7 @@ export type GuardedCsvWriteModeMutationAuthInputV1 = {
 
 export type GuardedCsvWriteModeReadinessInputV1 = {
   apply_executor_ready: boolean;
+  executor_status?: string;
   executor_blockers: string[];
 };
 
@@ -70,6 +71,14 @@ export type GuardedCsvPostWriteValidationV1 = {
   validation_blockers: string[];
   target_rows_match_after_row: boolean;
   non_target_rows_unchanged: boolean;
+};
+
+export type GuardedCsvAppliedParityAssessmentV1 = {
+  validation_status: "PROVEN" | "BLOCKED";
+  validation_blockers: string[];
+  target_rows_match_after_row: boolean;
+  non_target_rows_unchanged: boolean;
+  target_row_indices: number[];
 };
 
 export type ExecuteGuardedCsvWriteModeResultV1 =
@@ -243,6 +252,76 @@ export function assessGuardedCsvWritePlanV1(args: {
   };
 }
 
+export function assessGuardedCsvAppliedParityV1(args: {
+  rootDir: string;
+  rowPatches: readonly UniversalBatchLifecycleApplyExecutionPlanRowPatchV1[];
+  fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
+}): GuardedCsvAppliedParityAssessmentV1 {
+  const fileExists = args.fileExists ?? ((abs: string) => existsSync(abs));
+  const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+
+  const validation_blockers: string[] = [];
+  const csvRows = loadFridgeRetailerLinksCsvRowsV1({
+    rootDir: args.rootDir,
+    fileExists,
+    readText,
+  });
+  const csvBySlug = indexRetailerLinksBySlugV1(csvRows);
+  const targetRowIndices: number[] = [];
+  const usedIndices = new Set<number>();
+
+  for (const patch of args.rowPatches) {
+    const slugKey = normalizeSlug(patch.slug);
+    const slugRows = csvBySlug.get(slugKey) ?? [];
+    const primaries = slugRows.filter(
+      (row) => (row.is_primary ?? "").trim().toLowerCase() === "true",
+    );
+    if (primaries.length === 0) {
+      validation_blockers.push(`post_apply_primary_row_missing: slug=${patch.slug}`);
+      continue;
+    }
+    if (primaries.length > 1) {
+      validation_blockers.push(`post_apply_primary_row_duplicate: slug=${patch.slug} count=${String(primaries.length)}`);
+      continue;
+    }
+    const primary = primaries[0]!;
+    const rowIndex = csvRows.indexOf(primary);
+    if (rowIndex < 0) {
+      validation_blockers.push(`post_apply_primary_row_index_missing: slug=${patch.slug}`);
+      continue;
+    }
+    if (usedIndices.has(rowIndex)) {
+      validation_blockers.push(`post_apply_primary_row_index_collision: slug=${patch.slug} row_index=${String(rowIndex)}`);
+      continue;
+    }
+    usedIndices.add(rowIndex);
+    targetRowIndices.push(rowIndex);
+
+    if (!rowMatchesSnapshotV1(primary, patch.after_row)) {
+      validation_blockers.push(`post_apply_after_row_mismatch: slug=${patch.slug}`);
+    }
+  }
+
+  if (targetRowIndices.length !== EXPECTED_ROW_PATCH_COUNT_V1) {
+    validation_blockers.push(
+      `post_apply_row_patch_count_invalid: count=${String(targetRowIndices.length)} expected=${String(EXPECTED_ROW_PATCH_COUNT_V1)}`,
+    );
+  }
+
+  const target_rows_match_after_row =
+    validation_blockers.filter((blocker) => blocker.includes("after_row_mismatch")).length === 0 &&
+    targetRowIndices.length === EXPECTED_ROW_PATCH_COUNT_V1;
+
+  return {
+    validation_status: validation_blockers.length === 0 ? "PROVEN" : "BLOCKED",
+    validation_blockers,
+    target_rows_match_after_row,
+    non_target_rows_unchanged: validation_blockers.length === 0,
+    target_row_indices: targetRowIndices,
+  };
+}
+
 export function validateGuardedCsvPostWriteV1(args: {
   rowsAfterWrite: readonly RetailerLinkCsvRowV1[];
   writePlan: Extract<GuardedCsvWritePlanV1, { ok: true }>;
@@ -306,6 +385,9 @@ export function buildGuardedCsvWriteModeBlockersV1(args: {
   }
 
   if (!args.readiness.apply_executor_ready) {
+    if (args.readiness.executor_blockers.length === 0 && args.readiness.executor_status) {
+      blockers.push(`apply_executor_not_ready:executor_status=${args.readiness.executor_status}`);
+    }
     for (const blocker of args.readiness.executor_blockers) {
       blockers.push(`apply_executor_not_ready:${blocker}`);
     }
