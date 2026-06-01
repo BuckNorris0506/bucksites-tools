@@ -7,6 +7,10 @@
   "token": "DA97-15217D",
   "filter_slug": "da97-15217d",
   "final_amazon_cta_state_proven": true,
+  "browser_evidence": {
+    "asin": "B07BHZWSCQ",
+    "amazon_pdp_url_canonical": "https://www.amazon.com/dp/B07BHZWSCQ"
+  },
   "amazon_first_blocked_queue": {
     "needs_amazon_search_count": 36,
     "already_live_noop_count": 9,

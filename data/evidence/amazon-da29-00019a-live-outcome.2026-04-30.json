@@ -12,7 +12,8 @@
     "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G",
     "destination_url": "https://www.amazon.com/dp/B019HPTP3G",
     "browser_truth_classification": "direct_buyable",
-    "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE"
+    "browser_truth_buyable_subtype": "MULTIPACK_DIRECT_BUYABLE",
+    "browser_truth_notes": "Read-only post-commit verification 2026-04-30: committed live Amazon multipack row for DA29-00019A (ASIN B019HPTP3G); browser_truth_classification=direct_buyable per committed_live_row in this export."
   },
   "metrics_delta_after_commit": {
     "safe_cta_links": {
