@@ -24,11 +24,13 @@ import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
 export const DEMAND_TO_COVERAGE_NEXT_LANE_REPORT_NAME_V1 = "demand_to_coverage_next_lane_v1" as const;
+export const DEMAND_TO_COVERAGE_NEXT_LANE_CONTRACT_V1 = "demand_to_coverage_next_lane_v1" as const;
 
 export type DemandToCoverageSourceStatusV1 = "PROVEN" | "PARTIAL" | "UNKNOWN";
 export type DemandToCoverageRecommendationStatusV1 =
   | "RECOMMEND_REOPEN"
   | "CONTINUE_CURRENT_BATCH"
+  | "START_NEW_DEMAND_SELECTED_BATCH"
   | "UNKNOWN";
 
 export type DemandToCoverageNextLaneWedgeRowV1 = {
@@ -49,13 +51,20 @@ export type DemandToCoverageNextLaneWedgeRowV1 = {
 };
 
 export type DemandToCoverageNextLaneReportV1 = {
+  contract: typeof DEMAND_TO_COVERAGE_NEXT_LANE_CONTRACT_V1;
   report_name: typeof DEMAND_TO_COVERAGE_NEXT_LANE_REPORT_NAME_V1;
   read_only: true;
   data_mutation: false;
   generated_at: string;
+  runtime_status: DemandToCoverageSourceStatusV1;
   source_status: DemandToCoverageSourceStatusV1;
   recommended_wedge: HomekeepWedgeCatalog | "UNKNOWN";
   recommendation_status: DemandToCoverageRecommendationStatusV1;
+  recommended_next_action: string;
+  next_lane: string | null;
+  next_wedge: HomekeepWedgeCatalog | "UNKNOWN";
+  next_batch_candidate: string | null;
+  blockers: string[];
   proof_sources: string[];
   wedge_rows: DemandToCoverageNextLaneWedgeRowV1[];
   top_pages: GscArtifactTopEntry[];
@@ -68,6 +77,9 @@ export type DemandToCoverageNextLaneReportV1 = {
   };
   next_action: string;
   notes: string[];
+  proven_facts: string[];
+  inferred_facts: string[];
+  unknown_facts: string[];
 };
 
 const FRIDGE_WEDGE_ROOT_SEGMENTS = new Set(["fridge", "filter", "brand"]);
@@ -391,12 +403,19 @@ function recommendedActionForWedge(
   launch_state: VerticalLaunchState | "UNKNOWN",
 ): string {
   if (wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier && launch_state !== "LIVE") {
-    return "Produce an air purifier buyer-path coverage snapshot and top-20 queue before expanding fridge retailer_links batch.";
+    return "Return to the air_purifier closed-batch expansion loop: produce an air purifier buyer-path coverage snapshot and top-20 queue before any new batch decision.";
   }
   if (launch_state !== "LIVE") {
     return `Run wedge buyer-path coverage snapshot for ${wedge} (launch ${launch_state}) and queue top blocked OEM/search rows.`;
   }
-  return "Continue refrigerator-water buyer-path batch; refresh GSC+coverage join after each 5-row bite.";
+  return `Continue ${wedge} buyer-path coverage loop only if an open ${wedge} batch is proven; otherwise use demand score to choose the next batch candidate.`;
+}
+
+function nextLaneForWedge(wedge: HomekeepWedgeCatalog | "UNKNOWN"): string | null {
+  if (wedge === "UNKNOWN") return null;
+  if (wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier) return "air_purifier_buyer_path_coverage";
+  if (wedge === HOMEKEEP_WEDGE_CATALOG.refrigerator_water) return "refrigerator_water_buyer_path_coverage";
+  return `${wedge}_buyer_path_coverage`;
 }
 
 export function buildDemandToCoverageNextLaneUnknownV1(args: {
@@ -405,13 +424,20 @@ export function buildDemandToCoverageNextLaneUnknownV1(args: {
 }): DemandToCoverageNextLaneReportV1 {
   const now = args.now ?? (() => new Date());
   return {
+    contract: DEMAND_TO_COVERAGE_NEXT_LANE_CONTRACT_V1,
     report_name: DEMAND_TO_COVERAGE_NEXT_LANE_REPORT_NAME_V1,
     read_only: true,
     data_mutation: false,
     generated_at: now().toISOString(),
+    runtime_status: "UNKNOWN",
     source_status: "UNKNOWN",
     recommended_wedge: "UNKNOWN",
     recommendation_status: "UNKNOWN",
+    recommended_next_action: "Refresh GSC artifact (buckparts:gsc:fetch) and re-run demand-to-coverage next-lane report.",
+    next_lane: null,
+    next_wedge: "UNKNOWN",
+    next_batch_candidate: null,
+    blockers: [args.reason ?? "demand_to_coverage_next_lane_v1 build failed"],
     proof_sources: [],
     wedge_rows: [],
     top_pages: [],
@@ -424,6 +450,11 @@ export function buildDemandToCoverageNextLaneUnknownV1(args: {
     },
     next_action: "Refresh GSC artifact (buckparts:gsc:fetch) and re-run demand-to-coverage next-lane report.",
     notes: [args.reason ?? "UNKNOWN"],
+    proven_facts: [
+      "demand_to_coverage_next_lane_v1 is read_only=true and data_mutation=false.",
+    ],
+    inferred_facts: [],
+    unknown_facts: [args.reason ?? "UNKNOWN"],
   };
 }
 
@@ -559,22 +590,32 @@ export async function buildDemandToCoverageNextLaneV1Report(
   let recommended_wedge: HomekeepWedgeCatalog | "UNKNOWN" = "UNKNOWN";
   let next_action =
     "Refresh GSC artifact and re-run npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts";
+  const blockers: string[] = [];
+  const inferred_facts: string[] = [];
+  const unknown_facts: string[] = [];
 
   if (winner && gscResult.ok) {
     recommended_wedge = winner.wedge;
     const winnerLive = winner.launch_state === "LIVE";
-    const fridgeBatchActive = winner.wedge === HOMEKEEP_WEDGE_CATALOG.refrigerator_water;
     if (!winnerLive && typeof winner.impressions === "number" && winner.impressions > 0) {
       recommendation_status = "RECOMMEND_REOPEN";
       next_action = winner.recommended_action;
-    } else if (fridgeBatchActive || winnerLive) {
-      recommendation_status = "CONTINUE_CURRENT_BATCH";
+      inferred_facts.push(
+        `${winner.wedge} is the highest priority scored wedge and is not LIVE; recommendation returns to a closed/paused expansion loop rather than continuing a different wedge.`,
+      );
+    } else if (winnerLive) {
+      recommendation_status = "START_NEW_DEMAND_SELECTED_BATCH";
       next_action =
-        "Continue refrigerator-water 20-safe buyer-path batch; re-run demand-to-coverage next-lane after GSC refresh to confirm non-fridge wedges are not outpacing fridge work.";
+        `Start a demand-selected ${winner.wedge} buyer-path batch candidate only after owner approval; no open batch is proven by this report.`;
+      blockers.push("open_batch_not_proven");
+      unknown_facts.push("No active/open batch registry is read by demand_to_coverage_next_lane_v1.");
     } else {
       recommendation_status = "RECOMMEND_REOPEN";
       next_action = winner.recommended_action;
     }
+  } else {
+    blockers.push("scored_wedge_unavailable");
+    unknown_facts.push("No scored wedge winner was available from the current demand/coverage inputs.");
   }
 
   if (gscResult.ok) {
@@ -587,15 +628,42 @@ export async function buildDemandToCoverageNextLaneV1Report(
       .map((v) => `${v}=${VERTICAL_LAUNCH_STATES[v]}`)
       .join(", ")}.`,
   );
+  if (!gscResult.ok) {
+    blockers.push("gsc_artifact_unavailable");
+    unknown_facts.push(gscResult.reason);
+  }
+
+  const recommended_next_action = next_action;
+  const next_wedge = recommended_wedge;
+  const next_lane = nextLaneForWedge(recommended_wedge);
+  const next_batch_candidate =
+    recommended_wedge === "UNKNOWN" ? null : `${recommended_wedge}_demand_selected_batch_candidate`;
+  const proven_facts = [
+    "demand_to_coverage_next_lane_v1 is read_only=true and data_mutation=false.",
+    `Recommended wedge is ${recommended_wedge}.`,
+    `Recommendation status is ${recommendation_status}.`,
+  ];
+  if (winner) {
+    proven_facts.push(
+      `Winner row: ${winner.wedge} priority_score=${String(winner.priority_score)}; launch_state=${winner.launch_state}.`,
+    );
+  }
 
   return {
+    contract: DEMAND_TO_COVERAGE_NEXT_LANE_CONTRACT_V1,
     report_name: DEMAND_TO_COVERAGE_NEXT_LANE_REPORT_NAME_V1,
     read_only: true,
     data_mutation: false,
     generated_at: now().toISOString(),
+    runtime_status: source_status,
     source_status,
     recommended_wedge,
     recommendation_status,
+    recommended_next_action,
+    next_lane,
+    next_wedge,
+    next_batch_candidate,
+    blockers,
     proof_sources,
     wedge_rows,
     top_pages,
@@ -611,5 +679,8 @@ export async function buildDemandToCoverageNextLaneV1Report(
     },
     next_action,
     notes,
+    proven_facts,
+    inferred_facts,
+    unknown_facts,
   };
 }
