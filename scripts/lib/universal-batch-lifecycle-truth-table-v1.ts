@@ -6,6 +6,8 @@
 import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
 import { FRIDGE_BUYER_PATH_MICRO_LANE_KEYS_V1 } from "./command-center-efficiency-truth-table-v1";
 import type { BatchRunRegistryIntakeReportV1 } from "./batch-run-registry-intake-v1";
+import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_TRUTH_TABLE_CONTRACT_V1 =
   "universal_batch_lifecycle_truth_table_v1" as const;
@@ -289,6 +291,10 @@ export type BuildUniversalBatchLifecycleTruthTableInputV1 = {
     source_apply_plan_artifact_rel_path?: string;
     planned_change_count?: number;
   } | null;
+  apply_readiness?: Pick<
+    UniversalBatchLifecycleApplyReadinessReportV1,
+    "apply_readiness_status" | "apply_readiness_blockers" | "source_command"
+  > | null;
   command_center_steering?: {
     next_best_action?: string;
     next_move_command?: string;
@@ -321,13 +327,38 @@ function resolveRefrigeratorWaterState(
   proven_sources.push(`batch_run_registry_intake_v1.fridge_run_registry_status=${intake.fridge_run_registry_status}`);
 
   if (approval?.approval_status === "owner_approved_for_next_planning_only") {
+    if (input.apply_readiness?.apply_readiness_status === "PROVEN") {
+      proven_sources.push(
+        "universal_batch_lifecycle_apply_readiness_v1:apply_readiness_status=PROVEN",
+      );
+      return {
+        wedge: "refrigerator_water",
+        lifecycle_state: "apply_readiness_ready",
+        alternate_lifecycle_states: [],
+        mutation_allowed: false,
+        mapping_summary:
+          "Apply-readiness discovery PROVEN for committed apply-plan artifact. Mutation remains unauthorized until a separate future mutation authorization system exists.",
+        proven_mapping_sources: proven_sources,
+      };
+    }
+
+    const blockerSummary =
+      input.apply_readiness?.apply_readiness_status === "BLOCKED"
+        ? `Apply-readiness discovery BLOCKED (${String(input.apply_readiness.apply_readiness_blockers.length)} blockers).`
+        : "Apply-plan owner approval recorded (planning-only). Effective next lifecycle gap is apply_readiness_unknown because post-approval readiness is not proven.";
+
+    if (input.apply_readiness?.apply_readiness_status === "BLOCKED") {
+      proven_sources.push(
+        "universal_batch_lifecycle_apply_readiness_v1:apply_readiness_status=BLOCKED",
+      );
+    }
+
     return {
       wedge: "refrigerator_water",
       lifecycle_state: "apply_plan_owner_approved",
       alternate_lifecycle_states: ["apply_readiness_unknown"],
       mutation_allowed: false,
-      mapping_summary:
-        "Apply-plan owner approval recorded (planning-only). Effective next lifecycle gap is apply_readiness_unknown because post-approval readiness is not proven.",
+      mapping_summary: blockerSummary,
       proven_mapping_sources: proven_sources,
     };
   }
@@ -469,25 +500,32 @@ export function buildUniversalBatchLifecycleTruthTableV1(
     "lifecycle.inherited_lifecycle_mutation_policy.mutation_allowed=false until explicit out-of-band apply authorization",
   ];
 
-  const hasReadinessScript = hasPostApprovalReadinessScript(scriptNames);
+  const hasReadinessScript =
+    hasPostApprovalReadinessScript(scriptNames) ||
+    input.apply_readiness?.source_command === UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
   if (!hasReadinessScript) {
     unknowns_blocking_mutation.push(
       "UNKNOWN: No dedicated post-approval apply-readiness npm command in package.json",
     );
   }
-  if (fridgeState.lifecycle_state === "apply_plan_owner_approved") {
+  if (
+    fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown") &&
+    input.apply_readiness?.apply_readiness_status !== "PROVEN"
+  ) {
     unknowns_blocking_mutation.push(
       "apply_readiness_unknown: post-approval readiness not proven after owner_planning_approval",
     );
   }
 
   const one_true_next_state_for_refrigerator_water: UniversalBatchLifecycleStateIdV1 =
-    fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown")
-      ? "apply_readiness_unknown"
-      : fridgeState.lifecycle_state;
+    fridgeState.lifecycle_state === "apply_readiness_ready"
+      ? "apply_readiness_ready"
+      : fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown")
+        ? "apply_readiness_unknown"
+        : fridgeState.lifecycle_state;
 
   const one_true_next_command_for_refrigerator_water = hasReadinessScript
-    ? "UNKNOWN: dedicated apply-readiness command name not verified in this consolidation plan"
+    ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1
     : "UNKNOWN: No dedicated post-approval apply-readiness npm command; read-only fallback: npm run buckparts:fridge-buyer-path-batch-apply-plan-approval";
 
   const owner_steps_to_remove_or_demote = [

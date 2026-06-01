@@ -103,6 +103,18 @@ const CURATED_ENTRIES: EntrySeed[] = [
     reason: "Truth-quality sentinel built during Command Center report generation (read-only).",
   },
   {
+    system_id: "universal_batch_lifecycle_apply_readiness",
+    npm_script_or_path: "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+    cc_json_path: "command_center_v2.universal_batch_lifecycle_apply_readiness_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.universal_batch_lifecycle_apply_readiness_v1.data_mutation'",
+    reason:
+      "Read-only lifecycle-owned post-approval apply-readiness discovery for refrigerator_water; proves or blocks readiness without mutation authority.",
+  },
+  {
     system_id: "universal_batch_lifecycle_truth_table",
     npm_script_or_path:
       "scripts/lib/universal-batch-lifecycle-truth-table-v1.ts (projected during Command Center build)",

@@ -99,10 +99,19 @@ describe("universal_batch_lifecycle_truth_table_v1", () => {
     );
   });
 
-  test("refrigerator_water maps to apply_plan_owner_approved with apply_readiness_unknown gap", () => {
+  test("refrigerator_water maps to apply_plan_owner_approved with apply_readiness_unknown gap when readiness not proven", () => {
     const table = buildUniversalBatchLifecycleTruthTableV1({
       now: () => new Date("2026-05-28T00:00:00.000Z"),
       ...fridgeApprovedFixtures(),
+      apply_readiness: {
+        apply_readiness_status: "BLOCKED",
+        apply_readiness_blockers: ["amazon_affiliate_tags_present: missing tags"],
+        source_command: "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+      },
+      buckpartsScriptNames: [
+        "buckparts:fridge-buyer-path-batch-apply-plan-approval",
+        "buckparts:universal-batch-lifecycle-apply-readiness",
+      ],
     });
     const fridge = table.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
     assert.ok(fridge);
@@ -110,10 +119,30 @@ describe("universal_batch_lifecycle_truth_table_v1", () => {
     assert.ok(fridge!.alternate_lifecycle_states.includes("apply_readiness_unknown"));
     assert.equal(fridge!.mutation_allowed, false);
     assert.equal(table.one_true_next_state_for_refrigerator_water, "apply_readiness_unknown");
-    assert.match(table.one_true_next_command_for_refrigerator_water, /UNKNOWN|npm run buckparts:fridge-buyer-path-batch-apply-plan-approval/);
+    assert.equal(
+      table.one_true_next_command_for_refrigerator_water,
+      "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+    );
     assert.ok(
       table.unknowns_blocking_mutation.some((item) => item.includes("apply_readiness")),
     );
+  });
+
+  test("refrigerator_water maps to apply_readiness_ready when discovery is PROVEN", () => {
+    const table = buildUniversalBatchLifecycleTruthTableV1({
+      now: () => new Date("2026-05-28T00:00:00.000Z"),
+      ...fridgeApprovedFixtures(),
+      apply_readiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+      },
+      buckpartsScriptNames: ["buckparts:universal-batch-lifecycle-apply-readiness"],
+    });
+    const fridge = table.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
+    assert.ok(fridge);
+    assert.equal(fridge!.lifecycle_state, "apply_readiness_ready");
+    assert.equal(table.one_true_next_state_for_refrigerator_water, "apply_readiness_ready");
   });
 
   test("air_purifier maps to closed from proven closed run registry", () => {

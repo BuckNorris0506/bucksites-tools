@@ -10,8 +10,9 @@ import {
   resolveUniversalBatchLifecycleSteeringOverrideV1,
   shouldApplyUniversalBatchLifecycleSteeringV1,
   UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1,
-  UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1,
+  UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1,
 } from "./universal-batch-lifecycle-steering-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 
 function lifecycleTableFixture() {
   return buildUniversalBatchLifecycleTruthTableV1({
@@ -71,7 +72,6 @@ describe("universal batch lifecycle steering v1", () => {
       lifecycleTable,
       planned_change_count: 14,
       brainStopTheLine: false,
-      buckpartsScriptNames: ["buckparts:fridge-buyer-path-batch-apply-plan-approval"],
     });
     assert.ok(override);
     assert.ok(
@@ -82,7 +82,8 @@ describe("universal batch lifecycle steering v1", () => {
     assert.match(override!.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
     assert.match(override!.next_best_action, /apply readiness is not proven/i);
     assert.match(override!.next_best_action, /Mutation unauthorized/i);
-    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1);
+    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1);
+    assert.doesNotMatch(override!.next_move_command, /UNKNOWN:/);
     assert.doesNotMatch(override!.next_move_command, /batch-apply-plan-approval/);
     assert.ok(
       override!.mutation_block_reasons.some((reason) =>
@@ -181,6 +182,55 @@ describe("universal batch lifecycle steering v1", () => {
     assert.ok(proposalOverride);
     assert.ok(registryOverride);
     assert.ok(lifecycleOverride!.next_best_action.startsWith("LIFECYCLE ["));
+  });
+
+  test("steers APPLY_READINESS_READY when lifecycle table reports apply_readiness_ready", () => {
+    const lifecycleTable = buildUniversalBatchLifecycleTruthTableV1({
+      now: () => new Date("2026-05-28T00:00:00.000Z"),
+      efficiency_truth_table: {
+        consolidation_candidates: [],
+        keep_as_truth_fields: [],
+        remove_or_demote_candidates: [],
+        unknown_facts: [],
+        duplicate_steering_count: 3,
+      },
+      batch_run_registry_intake: {
+        ap_run_registry_status: "PROVEN_CLOSED",
+        fridge_run_registry_status: "PROVEN_PLANNING_RUN_REGISTRY",
+        wedges: [
+          {
+            wedge: "refrigerator_water",
+            run_registry_status: "PROVEN_PLANNING_RUN_REGISTRY",
+          },
+        ],
+      } as never,
+      fridge_apply_plan_approval: {
+        approval_status: "owner_approved_for_next_planning_only",
+      },
+      apply_readiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1,
+      },
+      buckpartsScriptNames: ["buckparts:universal-batch-lifecycle-apply-readiness"],
+    });
+    const override = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+      applyReadiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1,
+      },
+    });
+    assert.ok(override);
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1}]:`,
+      ),
+    );
+    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1);
   });
 
   test("returns null on brain stop-the-line", () => {

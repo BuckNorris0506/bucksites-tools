@@ -3263,6 +3263,13 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   );
   assert.equal(lane.inherited_lifecycle_mutation_policy.mutation_allowed, false);
 
+  const applyReadiness = report.command_center_v2.universal_batch_lifecycle_apply_readiness_v1;
+  assert.ok(applyReadiness);
+  assert.equal(applyReadiness.read_only, true);
+  assert.equal(applyReadiness.data_mutation, false);
+  assert.equal(applyReadiness.mutation_authorized, false);
+  assert.equal(applyReadiness.source_command, "npm run buckparts:universal-batch-lifecycle-apply-readiness");
+
   if (
     fridge?.lifecycle_state === "apply_plan_owner_approved" &&
     fridge.alternate_lifecycle_states.includes("apply_readiness_unknown")
@@ -3272,11 +3279,19 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
     assert.match(report.next_best_action, /apply readiness is not proven/i);
     assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
     assert.equal(report.execution_guidance.mutating_blocked, true);
-    assert.match(
+    assert.equal(
       report.execution_guidance.next_move_command,
-      /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
+      "npm run buckparts:universal-batch-lifecycle-apply-readiness",
     );
+    assert.doesNotMatch(report.execution_guidance.next_move_command, /UNKNOWN:/);
     assert.doesNotMatch(report.execution_guidance.next_move_command, /batch-apply-plan-approval/);
+    assert.notEqual(applyReadiness.apply_readiness_status, "PROVEN");
+  } else if (fridge?.lifecycle_state === "apply_readiness_ready") {
+    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:"));
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+    );
   } else {
     assert.doesNotMatch(report.next_best_action, /^LIFECYCLE CONSOLIDATION \[/);
     assert.notEqual(report.next_best_action, lane.recommended_next_action);
@@ -3291,6 +3306,17 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   assert.equal(
     manifestEntry!.cc_json_path,
     "command_center_v2.universal_batch_lifecycle_truth_table_v1",
+  );
+
+  const applyReadinessManifest = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "universal_batch_lifecycle_apply_readiness",
+  );
+  assert.ok(applyReadinessManifest);
+  assert.equal(applyReadinessManifest!.verdict, "CONNECTED");
+  assert.equal(
+    applyReadinessManifest!.cc_json_path,
+    "command_center_v2.universal_batch_lifecycle_apply_readiness_v1",
   );
 });
 
@@ -3476,10 +3502,11 @@ test("command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1 is read-o
     ) {
       assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
       assert.match(report.next_best_action, /apply readiness is not proven/i);
-      assert.match(
+      assert.equal(
         report.execution_guidance.next_move_command,
-        /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
+        "npm run buckparts:universal-batch-lifecycle-apply-readiness",
       );
+      assert.doesNotMatch(report.execution_guidance.next_move_command, /UNKNOWN:/);
       assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
       assert.equal(report.execution_guidance.mutating_blocked, true);
     }
@@ -3762,10 +3789,11 @@ test("command center next_best_action prefers approved apply-plan planning over 
   assert.doesNotMatch(report.next_best_action, /OWNER_REVIEW_READY/i);
   assert.doesNotMatch(report.next_best_action, /OWNER_APPROVAL_REQUIRED/i);
   assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
-  assert.match(
+  assert.equal(
     report.execution_guidance.next_move_command,
-    /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
+    "npm run buckparts:universal-batch-lifecycle-apply-readiness",
   );
+  assert.doesNotMatch(report.execution_guidance.next_move_command, /UNKNOWN:/);
   assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.ok(

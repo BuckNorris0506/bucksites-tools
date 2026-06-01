@@ -4,11 +4,17 @@
  * Read-only; no mutation authorization.
  */
 
+import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1 =
   "APPLY_READINESS_UNKNOWN" as const;
 
+export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1 =
+  "APPLY_READINESS_READY" as const;
+
+/** @deprecated Use UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 instead. */
 export const UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1 =
   "UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown" as const;
 
@@ -24,23 +30,17 @@ export type UniversalBatchLifecycleSteeringOverrideV1 = {
   mutation_block_reasons: string[];
 };
 
-function hasDedicatedPostApprovalApplyReadinessScript(scriptNames: readonly string[]): boolean {
-  return scriptNames.some((name) =>
-    /apply-readiness|post-approval-apply|batch-apply-readiness/i.test(name),
-  );
-}
-
 function lifecycleMutationBlockReasonsV1(
   lifecycleTable: Pick<
     UniversalBatchLifecycleTruthTableV1,
-    "inherited_lifecycle_mutation_policy" | "unknowns_blocking_mutation"
+    "inherited_lifecycle_mutation_policy" | "unknowns_blocking_mutation" | "one_true_next_state_for_refrigerator_water"
   >,
   extraReasons: string[] = [],
 ): string[] {
+  const oneTrueNextState = lifecycleTable.one_true_next_state_for_refrigerator_water;
   return [
     "universal_batch_lifecycle_truth_table_v1:mutation_authorized=false",
-    "universal_batch_lifecycle_truth_table_v1:lifecycle_state=apply_plan_owner_approved",
-    "universal_batch_lifecycle_truth_table_v1:one_true_next_state=apply_readiness_unknown",
+    `universal_batch_lifecycle_truth_table_v1:one_true_next_state=${oneTrueNextState}`,
     "inherited_lifecycle_mutation_policy.mutation_allowed=false",
     "inherited_lifecycle_mutation_policy.csv_apply_authorized=false",
     "inherited_lifecycle_mutation_policy.retailer_links_mutation_authorized=false",
@@ -71,6 +71,18 @@ export function refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1(
   return lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_unknown";
 }
 
+export function refrigeratorWaterShouldSteerUniversalBatchLifecycleV1(
+  lifecycleTable: Pick<
+    UniversalBatchLifecycleTruthTableV1,
+    "current_wedge_states" | "one_true_next_state_for_refrigerator_water"
+  >,
+): boolean {
+  const fridge = lifecycleTable.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
+  if (!fridge) return false;
+  if (fridge.lifecycle_state === "apply_readiness_ready") return true;
+  return refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1(lifecycleTable);
+}
+
 export function shouldApplyUniversalBatchLifecycleSteeringV1(args: {
   lifecycleOverride: UniversalBatchLifecycleSteeringOverrideV1 | null;
   demotableMicroLaneSteeringActive: boolean;
@@ -89,12 +101,15 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   >;
   planned_change_count: number;
   brainStopTheLine: boolean;
-  buckpartsScriptNames?: readonly string[];
+  applyReadiness?: Pick<
+    UniversalBatchLifecycleApplyReadinessReportV1,
+    "apply_readiness_status" | "apply_readiness_blockers" | "source_command"
+  > | null;
 }): UniversalBatchLifecycleSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
   if (args.lifecycleTable.mutation_authorized !== false) return null;
   if (args.lifecycleTable.inherited_lifecycle_mutation_policy.mutation_allowed !== false) return null;
-  if (!refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1(args.lifecycleTable)) return null;
+  if (!refrigeratorWaterShouldSteerUniversalBatchLifecycleV1(args.lifecycleTable)) return null;
 
   const fridge = args.lifecycleTable.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
   if (!fridge) return null;
@@ -107,17 +122,46 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   }
 
   const count = args.planned_change_count;
-  const scriptNames = args.buckpartsScriptNames ?? [];
-  const next_move_command = hasDedicatedPostApprovalApplyReadinessScript(scriptNames)
-    ? "UNKNOWN: dedicated apply-readiness npm script exists but does not resolve apply_readiness_unknown in this repo state"
-    : UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1;
+  const next_move_command = UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
+  const isProven =
+    args.lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_ready" ||
+    args.applyReadiness?.apply_readiness_status === "PROVEN";
+
+  if (isProven) {
+    return {
+      next_best_action:
+        `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1}]: ` +
+        `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes. ` +
+        "Mutation unauthorized; no apply executor exists.",
+      why_this_action: fridge.mapping_summary,
+      next_move_command,
+      lifecycle_state: fridge.lifecycle_state,
+      one_true_next_state: args.lifecycleTable.one_true_next_state_for_refrigerator_water,
+      wedge: "refrigerator_water",
+      planned_change_count: count,
+      demoted_steering_layers: [
+        "fridge_buyer_path_batch_apply_plan_approval_steering_v1:approved_planning",
+        "fridge_buyer_path_batch_apply_plan_approval_steering_v1:awaiting_owner_approval",
+        "fridge_buyer_path_batch_apply_plan_steering_v1",
+        "batch_run_registry_intake_steering_v1",
+        "batch_production_operating_dispatch_v1",
+      ],
+      mutation_block_reasons: lifecycleMutationBlockReasonsV1(args.lifecycleTable, [
+        "lifecycle_steering:apply_readiness_proven_mutation_still_blocked",
+      ]),
+    };
+  }
+
+  const blockerCount = args.applyReadiness?.apply_readiness_blockers.length ?? 0;
+  const blockerHint =
+    blockerCount > 0 ? ` Discovery report lists ${String(blockerCount)} blockers.` : "";
 
   return {
     next_best_action:
       `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1}]: ` +
-      `refrigerator_water has owner-approved planning for ${String(count)} apply-plan changes, but apply readiness is not proven. ` +
-      "Next step is to prove the missing read-only apply-readiness facts or explicitly mark the batch blocked. " +
-      "Mutation unauthorized.",
+      `refrigerator_water has owner-approved planning for ${String(count)} apply-plan changes, but apply readiness is not proven.` +
+      blockerHint +
+      " Run read-only apply-readiness discovery. Mutation unauthorized.",
     why_this_action: fridge.mapping_summary,
     next_move_command,
     lifecycle_state: fridge.lifecycle_state,
