@@ -1,0 +1,217 @@
+import assert from "node:assert/strict";
+import { describe, test } from "node:test";
+
+import { resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1 } from "./fridge-buyer-path-batch-apply-plan-approval-steering-v1";
+import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./fridge-buyer-path-batch-apply-plan-steering-v1";
+import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./batch-run-registry-intake-steering-v1";
+import { buildUniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
+import {
+  refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1,
+  resolveUniversalBatchLifecycleSteeringOverrideV1,
+  shouldApplyUniversalBatchLifecycleSteeringV1,
+  UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1,
+  UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1,
+} from "./universal-batch-lifecycle-steering-v1";
+
+function lifecycleTableFixture() {
+  return buildUniversalBatchLifecycleTruthTableV1({
+    now: () => new Date("2026-05-28T00:00:00.000Z"),
+    efficiency_truth_table: {
+      consolidation_candidates: [],
+      keep_as_truth_fields: [],
+      remove_or_demote_candidates: [],
+      unknown_facts: [],
+      duplicate_steering_count: 3,
+    },
+    batch_run_registry_intake: {
+      ap_run_registry_status: "PROVEN_CLOSED",
+      ap_run_registry_rel_path:
+        "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+      fridge_run_registry_status: "PROVEN_PLANNING_RUN_REGISTRY",
+      fridge_approval_status: "owner_approved_for_next_planning_only",
+      fridge_proposed_batch_id: "fridge-buyer-path-batch-v1-0fec4a7b623a",
+      wedges: [
+        {
+          wedge: "air_purifier",
+          run_registry_rel_path:
+            "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+          run_registry_status: "PROVEN_CLOSED",
+          closeout_complete: true,
+          run_id: "ap-batch-v2-proven-run-v1",
+        },
+        {
+          wedge: "refrigerator_water",
+          run_registry_rel_path:
+            "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+          run_registry_status: "PROVEN_PLANNING_RUN_REGISTRY",
+          closeout_complete: false,
+          run_id: "fridge-buyer-path-batch-v1-0fec4a7b623a",
+        },
+      ],
+    },
+    fridge_apply_plan_proposal: {
+      plan_status: "READY_FOR_OWNER_REVIEW",
+      owner_review_status: "OWNER_REVIEW_READY",
+      planned_change_count: 14,
+    },
+    fridge_apply_plan_approval: {
+      approval_status: "owner_approved_for_next_planning_only",
+      plan_status: "READY_FOR_OWNER_REVIEW",
+      owner_review_status: "OWNER_REVIEW_READY",
+      planned_change_count: 14,
+    },
+    buckpartsScriptNames: ["buckparts:fridge-buyer-path-batch-apply-plan-approval"],
+  });
+}
+
+describe("universal batch lifecycle steering v1", () => {
+  test("steers APPLY_READINESS_UNKNOWN for apply_plan_owner_approved with alternate apply_readiness_unknown", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const override = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+      buckpartsScriptNames: ["buckparts:fridge-buyer-path-batch-apply-plan-approval"],
+    });
+    assert.ok(override);
+    assert.ok(
+      override!.next_best_action.startsWith(
+        `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1}]:`,
+      ),
+    );
+    assert.match(override!.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
+    assert.match(override!.next_best_action, /apply readiness is not proven/i);
+    assert.match(override!.next_best_action, /Mutation unauthorized/i);
+    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_NO_APPLY_READINESS_COMMAND_V1);
+    assert.doesNotMatch(override!.next_move_command, /batch-apply-plan-approval/);
+    assert.ok(
+      override!.mutation_block_reasons.some((reason) =>
+        reason.includes("inherited_lifecycle_mutation_policy.mutation_allowed=false"),
+      ),
+    );
+  });
+
+  test("lifecycle steering beats apply-plan approved-planning micro-lane steering", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const lifecycleOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+    });
+    const microOverride = resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1({
+      approvalLane: {
+        approval_status: "owner_approved_for_next_planning_only",
+        plan_status: "READY_FOR_OWNER_REVIEW",
+        owner_review_status: "OWNER_REVIEW_READY",
+        planned_change_count: 14,
+        source_apply_plan_artifact_rel_path:
+          "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+        recommended_next_action: "Review.",
+        apply_mutation_authorized: false,
+        csv_apply_authorized: false,
+        retailer_links_mutation_authorized: false,
+        supabase_mutation_authorized: false,
+        public_ui_mutation_authorized: false,
+        buy_link_mutation_authorized: false,
+        evidence_write_authorized: false,
+        netlify_api_authorized: false,
+      },
+      brainStopTheLine: false,
+    });
+    assert.ok(lifecycleOverride);
+    assert.ok(microOverride);
+    assert.ok(lifecycleOverride!.next_best_action.startsWith("LIFECYCLE ["));
+    assert.ok(microOverride!.next_best_action.startsWith("BATCH APPLY-PLAN ["));
+    assert.notEqual(lifecycleOverride!.next_move_command, microOverride!.next_move_command);
+  });
+
+  test("lifecycle steering beats apply-plan proposal and run-registry micro-lane steering", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const lifecycleOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+    });
+    const proposalOverride = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
+      applyPlanLane: {
+        plan_status: "READY_FOR_OWNER_REVIEW",
+        owner_review_status: "OWNER_REVIEW_READY",
+        planned_change_count: 14,
+        plan_artifact_rel_path:
+          "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+        recommended_next_action: "Review plan.",
+        missing_affiliate_tag_count: 0,
+        duplicate_destination_group_count: 2,
+        duplicate_destination_group_review_status: "ACCEPTABLE_SHARED_DESTINATION_PROVEN",
+        apply_mutation_authorized: false,
+        csv_apply_authorized: false,
+        retailer_links_mutation_authorized: false,
+        supabase_mutation_authorized: false,
+        public_ui_mutation_authorized: false,
+        buy_link_mutation_authorized: false,
+        evidence_write_authorized: false,
+        netlify_api_authorized: false,
+      },
+      brainStopTheLine: false,
+    });
+    const registryOverride = resolveBatchRunRegistryIntakeSteeringOverrideV1({
+      intake: {
+        wedges: [
+          {
+            wedge: "refrigerator_water",
+            run_registry_rel_path:
+              "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+            run_registry_status: "PROVEN_PLANNING_RUN_REGISTRY",
+            closeout_complete: false,
+            run_id: "fridge-buyer-path-batch-v1-0fec4a7b623a",
+          },
+        ],
+        mutation_authorized: false,
+        recommended_next_action: "Continue intake.",
+        ap_run_registry_status: "PROVEN_CLOSED",
+      },
+      dispatch: {
+        dispatch_status: "CLOSED_BATCH",
+        selected_subsystem: "batch_production_operating_checklist_v1",
+        exact_command: "npm run buckparts:batch-production-operating-checklist",
+      } as never,
+      brainStopTheLine: false,
+    });
+    assert.ok(lifecycleOverride);
+    assert.ok(proposalOverride);
+    assert.ok(registryOverride);
+    assert.ok(lifecycleOverride!.next_best_action.startsWith("LIFECYCLE ["));
+  });
+
+  test("returns null on brain stop-the-line", () => {
+    const override = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable: lifecycleTableFixture(),
+      planned_change_count: 14,
+      brainStopTheLine: true,
+    });
+    assert.equal(override, null);
+  });
+
+  test("shouldApplyUniversalBatchLifecycleSteeringV1 requires demotable micro-lane steering", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const lifecycleOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+    });
+    assert.equal(
+      shouldApplyUniversalBatchLifecycleSteeringV1({
+        lifecycleOverride,
+        demotableMicroLaneSteeringActive: false,
+      }),
+      false,
+    );
+    assert.equal(
+      shouldApplyUniversalBatchLifecycleSteeringV1({
+        lifecycleOverride,
+        demotableMicroLaneSteeringActive: true,
+      }),
+      true,
+    );
+  });
+});

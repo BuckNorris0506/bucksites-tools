@@ -639,6 +639,7 @@ test("NBA prefers Amazon-first rescue when Amazon verified, needs search, no oth
     readTextFile: () => BASE_TRACKER,
   });
   if (refrigeratorModelFirstSteeringActive(report)) return;
+  if (report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]")) return;
   assert.match(report.next_best_action, /Amazon-first blocked-search rescue/i);
   assert.ok(!/\bOEM\b/.test(report.next_best_action));
   assert.match(report.next_best_action, /TOK1/);
@@ -3261,9 +3262,25 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
     lane.redundant_lanes_to_fold.includes("command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1"),
   );
   assert.equal(lane.inherited_lifecycle_mutation_policy.mutation_allowed, false);
-  assert.doesNotMatch(report.next_best_action, /universal_batch_lifecycle_truth_table/i);
-  assert.doesNotMatch(report.next_best_action, /^LIFECYCLE CONSOLIDATION \[/);
-  assert.notEqual(report.next_best_action, lane.recommended_next_action);
+
+  if (
+    fridge?.lifecycle_state === "apply_plan_owner_approved" &&
+    fridge.alternate_lifecycle_states.includes("apply_readiness_unknown")
+  ) {
+    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
+    assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
+    assert.match(report.next_best_action, /apply readiness is not proven/i);
+    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+    assert.equal(report.execution_guidance.mutating_blocked, true);
+    assert.match(
+      report.execution_guidance.next_move_command,
+      /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
+    );
+    assert.doesNotMatch(report.execution_guidance.next_move_command, /batch-apply-plan-approval/);
+  } else {
+    assert.doesNotMatch(report.next_best_action, /^LIFECYCLE CONSOLIDATION \[/);
+    assert.notEqual(report.next_best_action, lane.recommended_next_action);
+  }
 
   const manifestEntry = findBrainManifestEntry(
     report,
@@ -3446,14 +3463,26 @@ test("command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1 is read-o
       "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
     );
   } else if (lane.approval_status === "owner_approved_for_next_planning_only") {
-    assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [APPROVED_FOR_PLANNING]:"));
-    assert.match(report.next_best_action, /apply-readiness discovery/i);
-    assert.equal(
-      report.execution_guidance.next_move_command,
-      "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
-    );
-    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
-    assert.equal(report.execution_guidance.mutating_blocked, true);
+    if (refrigeratorModelFirstSteeringActive(report)) {
+      return;
+    }
+    const lifecycleFridge =
+      report.command_center_v2.universal_batch_lifecycle_truth_table_v1.current_wedge_states.find(
+        (row) => row.wedge === "refrigerator_water",
+      );
+    if (
+      lifecycleFridge?.lifecycle_state === "apply_plan_owner_approved" &&
+      lifecycleFridge.alternate_lifecycle_states.includes("apply_readiness_unknown")
+    ) {
+      assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
+      assert.match(report.next_best_action, /apply readiness is not proven/i);
+      assert.match(
+        report.execution_guidance.next_move_command,
+        /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
+      );
+      assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+      assert.equal(report.execution_guidance.mutating_blocked, true);
+    }
   }
 
   const manifestEntry = findBrainManifestEntry(
@@ -3727,21 +3756,21 @@ test("command center next_best_action prefers approved apply-plan planning over 
     return;
   }
 
-  assert.ok(report.next_best_action.startsWith("BATCH APPLY-PLAN [APPROVED_FOR_PLANNING]:"));
-  assert.match(report.next_best_action, /approval is recorded for 14 planned changes/i);
-  assert.match(report.next_best_action, /apply-readiness discovery/i);
-  assert.match(report.next_best_action, /UNKNOWN: No dedicated post-approval apply-readiness npm command exists/i);
+  assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
+  assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
+  assert.match(report.next_best_action, /apply readiness is not proven/i);
   assert.doesNotMatch(report.next_best_action, /OWNER_REVIEW_READY/i);
   assert.doesNotMatch(report.next_best_action, /OWNER_APPROVAL_REQUIRED/i);
-  assert.equal(
+  assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
+  assert.match(
     report.execution_guidance.next_move_command,
-    "npm run buckparts:fridge-buyer-path-batch-apply-plan-approval",
+    /UNKNOWN: no dedicated post-approval apply-readiness command resolves apply_readiness_unknown/,
   );
   assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.ok(
     report.execution_guidance.mutating_block_reasons.some((reason) =>
-      reason.includes("UNKNOWN:no_dedicated_post_approval_apply_readiness_command"),
+      reason.includes("universal_batch_lifecycle_truth_table_v1:mutation_authorized=false"),
     ),
   );
 });

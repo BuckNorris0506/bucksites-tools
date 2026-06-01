@@ -63,6 +63,7 @@ import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-b
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-efficiency-truth-table-v1";
 import { buildUniversalBatchLifecycleTruthTableV1 } from "./lib/universal-batch-lifecycle-truth-table-v1";
+import { resolveUniversalBatchLifecycleSteeringOverrideV1, shouldApplyUniversalBatchLifecycleSteeringV1 } from "./lib/universal-batch-lifecycle-steering-v1";
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
@@ -1748,6 +1749,45 @@ export async function buildBuckpartsCommandCenterReport(
   };
 
   const brainGate = command_center_v2.brain_integrity_gate_v1;
+
+  const packageJsonForLifecycleAudit = JSON.parse(
+    fileExists(path.join(rootDir, "package.json"))
+      ? readTextFile(path.join(rootDir, "package.json"))
+      : "{}",
+  ) as { scripts?: Record<string, string> };
+  const buckpartsScriptNamesForLifecycle = Object.keys(packageJsonForLifecycleAudit.scripts ?? {}).filter(
+    (name) => name.startsWith("buckparts:"),
+  );
+
+  const batch_run_registry_intake_v1 = buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1(
+    batch_run_registry_intake_report_v1,
+  );
+
+  const command_center_efficiency_truth_table_v1 = buildCommandCenterEfficiencyTruthTableV1({
+    now,
+    lanes: {
+      fridge_buyer_path_owner_review_bridge_v1,
+      fridge_buyer_path_owner_review_packet_v1,
+      fridge_buyer_path_batch_proposal_v1,
+      fridge_buyer_path_batch_approval_v1,
+      fridge_buyer_path_batch_apply_plan_proposal_v1,
+      fridge_buyer_path_batch_apply_plan_approval_v1,
+      batch_run_registry_intake_v1,
+      batch_production_operating_checklist_v1,
+      brain_consolidation_plan_v1: command_center_v2.brain_consolidation_plan_v1,
+    },
+    buckpartsScriptNames: buckpartsScriptNamesForLifecycle,
+  });
+
+  const universal_batch_lifecycle_truth_table_v1 = buildUniversalBatchLifecycleTruthTableV1({
+    now,
+    efficiency_truth_table: command_center_efficiency_truth_table_v1,
+    batch_run_registry_intake: batch_run_registry_intake_report_v1,
+    fridge_apply_plan_proposal: fridge_buyer_path_batch_apply_plan_proposal_v1,
+    fridge_apply_plan_approval: fridge_buyer_path_batch_apply_plan_approval_v1,
+    buckpartsScriptNames: buckpartsScriptNamesForLifecycle,
+  });
+
   if (brainGate.brain_status === "STOP_THE_LINE") {
     nextBestAction = brainGate.next_brain_action;
     whyThisAction = brainGate.lane_work_allowed_reason;
@@ -1794,6 +1834,23 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
+  const universalBatchLifecycleSteeringOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
+    lifecycleTable: universal_batch_lifecycle_truth_table_v1,
+    planned_change_count:
+      command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1.planned_change_count,
+    brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    buckpartsScriptNames: buckpartsScriptNamesForLifecycle,
+  });
+
+  const applyUniversalBatchLifecycleSteering = shouldApplyUniversalBatchLifecycleSteeringV1({
+    lifecycleOverride: universalBatchLifecycleSteeringOverride,
+    demotableMicroLaneSteeringActive:
+      fridgeApplyPlanApprovalSteeringOverride != null ||
+      fridgeApplyPlanApprovedPlanningSteeringOverride != null ||
+      fridgeApplyPlanSteeringOverride != null ||
+      batchRunRegistryIntakeSteeringOverride != null,
+  });
+
   if (fridgeModelFirstSteeringOverride) {
     nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
     whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
@@ -1811,6 +1868,17 @@ export async function buildBuckpartsCommandCenterReport(
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = modelFirstSteeringOverride.next_move_command;
     for (const reason of modelFirstSteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (applyUniversalBatchLifecycleSteering && universalBatchLifecycleSteeringOverride) {
+    nextBestAction = universalBatchLifecycleSteeringOverride.next_best_action;
+    whyThisAction = universalBatchLifecycleSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = universalBatchLifecycleSteeringOverride.next_move_command;
+    for (const reason of universalBatchLifecycleSteeringOverride.mutation_block_reasons) {
       if (!mutatingBlockedReasons.includes(reason)) {
         mutatingBlockedReasons.push(reason);
       }
@@ -1986,48 +2054,6 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_owner_review_packet: fridge_buyer_path_owner_review_packet_v1,
     batch_dispatch: batch_production_operating_dispatch_v1,
     brain_manifest: command_center_v2.command_center_brain_coverage_manifest_v1,
-  });
-
-  const batch_run_registry_intake_v1 = buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1(
-    batch_run_registry_intake_report_v1,
-  );
-
-  const packageJsonForEfficiencyAudit = JSON.parse(
-    fileExists(path.join(rootDir, "package.json"))
-      ? readTextFile(path.join(rootDir, "package.json"))
-      : "{}",
-  ) as { scripts?: Record<string, string> };
-  const buckpartsScriptNames = Object.keys(packageJsonForEfficiencyAudit.scripts ?? {}).filter((name) =>
-    name.startsWith("buckparts:"),
-  );
-
-  const command_center_efficiency_truth_table_v1 = buildCommandCenterEfficiencyTruthTableV1({
-    now,
-    lanes: {
-      fridge_buyer_path_owner_review_bridge_v1,
-      fridge_buyer_path_owner_review_packet_v1,
-      fridge_buyer_path_batch_proposal_v1,
-      fridge_buyer_path_batch_approval_v1,
-      fridge_buyer_path_batch_apply_plan_proposal_v1,
-      fridge_buyer_path_batch_apply_plan_approval_v1,
-      batch_run_registry_intake_v1,
-      batch_production_operating_checklist_v1,
-      brain_consolidation_plan_v1: command_center_v2.brain_consolidation_plan_v1,
-    },
-    buckpartsScriptNames,
-  });
-
-  const universal_batch_lifecycle_truth_table_v1 = buildUniversalBatchLifecycleTruthTableV1({
-    now,
-    efficiency_truth_table: command_center_efficiency_truth_table_v1,
-    batch_run_registry_intake: batch_run_registry_intake_report_v1,
-    fridge_apply_plan_proposal: fridge_buyer_path_batch_apply_plan_proposal_v1,
-    fridge_apply_plan_approval: fridge_buyer_path_batch_apply_plan_approval_v1,
-    command_center_steering: {
-      next_best_action: nextBestAction,
-      next_move_command: effectiveNextMoveCommand,
-    },
-    buckpartsScriptNames,
   });
 
   const command_center_v2_final: CommandCenterV2Report = {
