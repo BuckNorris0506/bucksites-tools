@@ -259,6 +259,7 @@ export function buildCommandCenterV2Report(input: {
   | "whole_house_water_director_model_first_batch_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
+  | "air_purifier_demand_selected_batch_owner_review_v1"
   | "marketing_intelligence_engine_v1"
   | "agent_control_plane_v1"
   | "operator_digest_v1"

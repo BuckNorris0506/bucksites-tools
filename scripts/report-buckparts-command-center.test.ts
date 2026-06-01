@@ -4981,6 +4981,48 @@ test("command_center_v2.air_purifier_truth_spine_v1 is read-only AP truth spine"
   assert.ok(spine.truth_first_notes.some((n) => n.includes("Affiliate links remain second")));
 });
 
+test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is read-only owner packet", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "air_purifier_demand_selected_batch_owner_review_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.air_purifier_demand_selected_batch_owner_review_v1");
+  assert.equal(lane.recommended_wedge, "air_purifier");
+  assert.equal(lane.source_recommendation_status, "START_NEW_DEMAND_SELECTED_BATCH");
+  assert.equal(lane.next_lane, "air_purifier_buyer_path_coverage");
+  assert.equal(lane.next_wedge, "air_purifier");
+  assert.equal(lane.next_batch_candidate, "air_purifier_demand_selected_batch_candidate");
+  assert.equal(lane.owner_approval_required, true);
+  assert.equal(lane.batch_start_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(typeof lane.demand_proof.air_purifier_impressions, "number");
+  assert.ok(lane.demand_proof.air_purifier_impressions > 0);
+  assert.equal(typeof lane.demand_proof.air_purifier_priority_score, "number");
+  assert.ok(lane.demand_proof.air_purifier_priority_score > 0);
+  assert.equal(lane.candidate_rows_status, "PROVEN");
+  assert.ok(lane.candidate_rows.length > 0);
+  assert.ok(lane.blockers.includes("open_batch_not_proven"));
+  assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
+  assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
+  assert.ok(lane.blockers.includes("evidence_collection_not_started"));
+  assert.match(lane.next_agent_action, /do not start a batch/i);
+});
+
 test("command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP batch coverage director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
