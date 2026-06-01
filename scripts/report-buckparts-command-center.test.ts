@@ -3371,8 +3371,9 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
             reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
           ),
         );
+        assert.equal(mutationAuthReview.apply_executor_ready, true);
         assert.ok(
-          report.execution_guidance.mutating_block_reasons.includes(
+          !report.execution_guidance.mutating_block_reasons.includes(
             "mutation_authorization_review_v1:apply_executor_ready=false",
           ),
         );
@@ -3942,8 +3943,9 @@ test("command center next_best_action prefers approved apply-plan planning over 
           reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
         ),
       );
+      assert.equal(mutationAuthReview.apply_executor_ready, true);
       assert.ok(
-        report.execution_guidance.mutating_block_reasons.includes(
+        !report.execution_guidance.mutating_block_reasons.includes(
           "mutation_authorization_review_v1:apply_executor_ready=false",
         ),
       );

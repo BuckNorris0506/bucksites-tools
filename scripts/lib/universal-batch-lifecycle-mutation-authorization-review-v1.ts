@@ -18,6 +18,7 @@ import {
   UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_CONTRACT_V1,
 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import { assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_CONTRACT_V1 =
   "universal_batch_lifecycle_mutation_authorization_review_v1" as const;
@@ -50,7 +51,7 @@ export type UniversalBatchLifecycleMutationAuthorizationReviewReportV1 = {
   authorization_expires_at: string | null;
   authorization_review_after: string | null;
   review_blockers: string[];
-  apply_executor_ready: false;
+  apply_executor_ready: boolean;
   apply_mutation_authorized: boolean;
   csv_apply_authorized: boolean;
   retailer_links_mutation_authorized: false;
@@ -194,12 +195,30 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
   }
 
   const mutationAuthorized = review_blockers.length === 0 && approvalRow != null;
+
+  const executorReadiness = assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1({
+    rootDir: input.rootDir,
+    executionPlanArtifactRelPath,
+    fileExists,
+    readText,
+  });
+  const apply_executor_ready = executorReadiness.apply_executor_ready;
+  if (!apply_executor_ready) {
+    for (const blocker of executorReadiness.executor_blockers) {
+      review_blockers.push(`apply_executor_not_ready:${blocker}`);
+    }
+  } else {
+    proven_facts.push(
+      `PROVEN: guarded CSV apply executor contract validates DRY_RUN readiness for ${String(executorReadiness.row_patch_count)} row patches.`,
+    );
+  }
+
   const mutation_authorization_review_status: UniversalBatchLifecycleMutationAuthorizationReviewStatusV1 =
     mutationAuthorized ? "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" : "BLOCKED";
 
   if (!mutationAuthorized) {
     unknown_facts.push(
-      "UNKNOWN: guarded CSV apply executor contract is not lifecycle-authorized in current repo state.",
+      "UNKNOWN: CSV write mode remains blocked until explicit owner_mutation_approved row authorizes guarded apply.",
     );
   }
 
@@ -221,7 +240,7 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     authorization_expires_at: approvalRow?.expires_at ?? null,
     authorization_review_after: approvalRow?.review_after ?? null,
     review_blockers,
-    apply_executor_ready: false,
+    apply_executor_ready,
     apply_mutation_authorized: mutationAuthorized,
     csv_apply_authorized: mutationAuthorized,
     retailer_links_mutation_authorized: false,
@@ -231,8 +250,10 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     evidence_write_authorized: false,
     netlify_api_authorized: false,
     recommended_next_action: mutationAuthorized
-      ? "LIFECYCLE MUTATION AUTHORIZATION [AUTHORIZED]: explicit owner_mutation_approved row is active for this execution plan. Apply remains blocked until a guarded CSV apply executor exists."
-      : `LIFECYCLE MUTATION AUTHORIZATION [BLOCKED]: explicit owner_mutation_approved row missing/invalid for ${executionPlanArtifactRelPath}. Run ${UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1} read-only.`,
+      ? `LIFECYCLE MUTATION AUTHORIZATION [AUTHORIZED]: explicit owner_mutation_approved row is active for this execution plan. CSV write remains blocked until guarded apply executor write mode is explicitly invoked with all preconditions met.`
+      : apply_executor_ready
+        ? `LIFECYCLE MUTATION AUTHORIZATION [BLOCKED]: guarded CSV apply executor is DRY_RUN_READY but explicit owner_mutation_approved row is missing/invalid for ${executionPlanArtifactRelPath}. Run ${UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1} read-only.`
+        : `LIFECYCLE MUTATION AUTHORIZATION [BLOCKED]: explicit owner_mutation_approved row missing/invalid and guarded CSV apply executor is not ready for ${executionPlanArtifactRelPath}. Run ${UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1} read-only.`,
     proven_facts,
     unknown_facts,
   };

@@ -160,6 +160,7 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     args.applyExecutionPlan?.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW";
   const mutationAuthReviewBlocked =
     args.mutationAuthorizationReview?.mutation_authorization_review_status === "BLOCKED";
+  const applyExecutorReady = args.mutationAuthorizationReview?.apply_executor_ready === true;
   const next_move_command = mutationAuthReviewBlocked
     ? UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1
     : executionPlanReady
@@ -185,7 +186,9 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
         (mutationAuthReviewBlocked
           ? " Explicit mutation authorization review is still BLOCKED."
           : "") +
-        " Mutation unauthorized; no apply executor exists.",
+        (applyExecutorReady
+          ? " Guarded CSV apply executor is DRY_RUN_READY; owner mutation approval still required."
+          : " Mutation unauthorized; no apply executor exists."),
       why_this_action: fridge.mapping_summary,
       next_move_command,
       lifecycle_state: fridge.lifecycle_state,
