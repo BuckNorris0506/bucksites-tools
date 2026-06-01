@@ -141,6 +141,27 @@ function refrigeratorModelFirstSteeringActive(
   return report.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:");
 }
 
+function lifecycleOwnsOwnerFacingExecutionGuidance(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): boolean {
+  return report.next_best_action.startsWith("LIFECYCLE [");
+}
+
+function assertLifecycleOwnedExecutionGuidanceBlocked(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): void {
+  assert.equal(report.execution_guidance.mutating_blocked, true);
+  assert.ok(
+    report.execution_guidance.mutating_block_reasons.some((reason) =>
+      reason.includes("universal_batch_lifecycle_truth_table_v1:mutation_authorized=false"),
+    ),
+  );
+  assert.doesNotMatch(
+    report.execution_guidance.mutating_block_reasons.join("\n"),
+    /fridge_buyer_path_batch_apply_plan/,
+  );
+}
+
 function amazonQueueOkMock(overrides: Partial<{ needs: number; tokens: string[] }> = {}) {
   const needs = overrides.needs ?? 0;
   const tokens = overrides.tokens ?? [];
@@ -693,6 +714,10 @@ test("execution_guidance marks mutating blocked when queue is UNKNOWN/missing ev
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  if (lifecycleOwnsOwnerFacingExecutionGuidance(report)) {
+    assertLifecycleOwnedExecutionGuidanceBlocked(report);
+    return;
+  }
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.equal(
     report.execution_guidance.mutating_block_reasons.some((r) =>
@@ -717,6 +742,10 @@ test("execution_guidance blocks mutation when command surface is CRITICAL", asyn
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  if (lifecycleOwnsOwnerFacingExecutionGuidance(report)) {
+    assertLifecycleOwnedExecutionGuidanceBlocked(report);
+    return;
+  }
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.equal(
     report.execution_guidance.mutating_block_reasons.includes(
@@ -749,6 +778,10 @@ test("execution_guidance blocks mutation when approved_count is zero", async () 
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  if (lifecycleOwnsOwnerFacingExecutionGuidance(report)) {
+    assertLifecycleOwnedExecutionGuidanceBlocked(report);
+    return;
+  }
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.equal(
     report.execution_guidance.mutating_block_reasons.includes(
@@ -767,6 +800,10 @@ test("execution_guidance safely represents missing flexoffers readiness file", a
     readDir: () => [],
     readTextFile: () => BASE_TRACKER,
   });
+  if (lifecycleOwnsOwnerFacingExecutionGuidance(report)) {
+    assertLifecycleOwnedExecutionGuidanceBlocked(report);
+    return;
+  }
   assert.equal(report.execution_guidance.mutating_blocked, true);
   assert.equal(
     report.execution_guidance.mutating_block_reasons.some((reason) =>
@@ -3324,6 +3361,22 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
       }
       assert.equal(applyExecutionPlan.planned_change_count, 14);
       assert.equal(applyExecutionPlan.row_patch_preview.length, 14);
+      assert.doesNotMatch(
+        report.execution_guidance.mutating_block_reasons.join("\n"),
+        /fridge_buyer_path_batch_apply_plan/,
+      );
+      if (mutationAuthReview.mutation_authorization_review_status === "BLOCKED") {
+        assert.ok(
+          report.execution_guidance.mutating_block_reasons.some((reason) =>
+            reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
+          ),
+        );
+        assert.ok(
+          report.execution_guidance.mutating_block_reasons.includes(
+            "mutation_authorization_review_v1:apply_executor_ready=false",
+          ),
+        );
+      }
     } else {
       assert.equal(
         report.execution_guidance.next_move_command,
@@ -3878,6 +3931,24 @@ test("command center next_best_action prefers approved apply-plan planning over 
       reason.includes("universal_batch_lifecycle_truth_table_v1:mutation_authorized=false"),
     ),
   );
+  if (applyReadiness.apply_readiness_status === "PROVEN") {
+    assert.doesNotMatch(
+      report.execution_guidance.mutating_block_reasons.join("\n"),
+      /fridge_buyer_path_batch_apply_plan/,
+    );
+    if (mutationAuthReview.mutation_authorization_review_status === "BLOCKED") {
+      assert.ok(
+        report.execution_guidance.mutating_block_reasons.some((reason) =>
+          reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
+        ),
+      );
+      assert.ok(
+        report.execution_guidance.mutating_block_reasons.includes(
+          "mutation_authorization_review_v1:apply_executor_ready=false",
+        ),
+      );
+    }
+  }
 });
 
 test("command center next_best_action prefers apply-plan proposal when approval lane is absent or not steering-relevant", async () => {

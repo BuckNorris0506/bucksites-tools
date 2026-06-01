@@ -1891,11 +1891,6 @@ export async function buildBuckpartsCommandCenterReport(
 
   const applyUniversalBatchLifecycleSteering = shouldApplyUniversalBatchLifecycleSteeringV1({
     lifecycleOverride: universalBatchLifecycleSteeringOverride,
-    demotableMicroLaneSteeringActive:
-      fridgeApplyPlanApprovalSteeringOverride != null ||
-      fridgeApplyPlanApprovedPlanningSteeringOverride != null ||
-      fridgeApplyPlanSteeringOverride != null ||
-      batchRunRegistryIntakeSteeringOverride != null,
   });
 
   if (fridgeModelFirstSteeringOverride) {
@@ -1925,11 +1920,8 @@ export async function buildBuckpartsCommandCenterReport(
     whyThisAction = universalBatchLifecycleSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = universalBatchLifecycleSteeringOverride.next_move_command;
-    for (const reason of universalBatchLifecycleSteeringOverride.mutation_block_reasons) {
-      if (!mutatingBlockedReasons.includes(reason)) {
-        mutatingBlockedReasons.push(reason);
-      }
-    }
+    mutatingBlockedReasons.length = 0;
+    mutatingBlockedReasons.push(...universalBatchLifecycleSteeringOverride.mutation_block_reasons);
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (fridgeApplyPlanApprovalSteeringOverride && batchDispatchOverride) {
     nextBestAction = fridgeApplyPlanApprovalSteeringOverride.next_best_action;

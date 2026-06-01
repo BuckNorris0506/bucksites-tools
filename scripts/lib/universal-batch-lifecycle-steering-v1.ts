@@ -34,15 +34,18 @@ export type UniversalBatchLifecycleSteeringOverrideV1 = {
   mutation_block_reasons: string[];
 };
 
-function lifecycleMutationBlockReasonsV1(
+export function buildLifecycleOwnedMutatingBlockReasonsV1(args: {
   lifecycleTable: Pick<
     UniversalBatchLifecycleTruthTableV1,
     "inherited_lifecycle_mutation_policy" | "unknowns_blocking_mutation" | "one_true_next_state_for_refrigerator_water"
-  >,
-  extraReasons: string[] = [],
-): string[] {
-  const oneTrueNextState = lifecycleTable.one_true_next_state_for_refrigerator_water;
-  return [
+  >;
+  mutationAuthorizationReview?: Pick<
+    UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
+    "mutation_authorization_review_status" | "review_blockers" | "apply_executor_ready" | "mutation_authorized"
+  > | null;
+}): string[] {
+  const oneTrueNextState = args.lifecycleTable.one_true_next_state_for_refrigerator_water;
+  const reasons = [
     "universal_batch_lifecycle_truth_table_v1:mutation_authorized=false",
     `universal_batch_lifecycle_truth_table_v1:one_true_next_state=${oneTrueNextState}`,
     "inherited_lifecycle_mutation_policy.mutation_allowed=false",
@@ -53,9 +56,23 @@ function lifecycleMutationBlockReasonsV1(
     "inherited_lifecycle_mutation_policy.buy_link_mutation_authorized=false",
     "inherited_lifecycle_mutation_policy.evidence_write_authorized=false",
     "inherited_lifecycle_mutation_policy.netlify_api_authorized=false",
-    ...lifecycleTable.unknowns_blocking_mutation.map((reason) => `unknowns_blocking_mutation:${reason}`),
-    ...extraReasons,
+    ...args.lifecycleTable.unknowns_blocking_mutation.map((reason) => `unknowns_blocking_mutation:${reason}`),
   ];
+
+  const mutationAuthReview = args.mutationAuthorizationReview;
+  if (mutationAuthReview?.mutation_authorization_review_status === "BLOCKED") {
+    for (const blocker of mutationAuthReview.review_blockers) {
+      reasons.push(`mutation_authorization_review_v1:${blocker}`);
+    }
+  }
+  if (mutationAuthReview?.apply_executor_ready === false) {
+    reasons.push("mutation_authorization_review_v1:apply_executor_ready=false");
+  }
+  if (mutationAuthReview?.mutation_authorized === false) {
+    reasons.push("mutation_authorization_review_v1:mutation_authorized=false");
+  }
+
+  return reasons;
 }
 
 export function refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1(
@@ -89,9 +106,10 @@ export function refrigeratorWaterShouldSteerUniversalBatchLifecycleV1(
 
 export function shouldApplyUniversalBatchLifecycleSteeringV1(args: {
   lifecycleOverride: UniversalBatchLifecycleSteeringOverrideV1 | null;
-  demotableMicroLaneSteeringActive: boolean;
+  /** @deprecated Micro-lane steering may still be computed for fallback diagnostics; lifecycle wins when override exists. */
+  demotableMicroLaneSteeringActive?: boolean;
 }): boolean {
-  return args.lifecycleOverride != null && args.demotableMicroLaneSteeringActive;
+  return args.lifecycleOverride != null;
 }
 
 export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
@@ -115,7 +133,11 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   > | null;
   mutationAuthorizationReview?: Pick<
     UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
-    "mutation_authorization_review_status" | "source_command"
+    | "mutation_authorization_review_status"
+    | "source_command"
+    | "review_blockers"
+    | "apply_executor_ready"
+    | "mutation_authorized"
   > | null;
 }): UniversalBatchLifecycleSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
@@ -147,6 +169,11 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     args.lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_ready" ||
     args.applyReadiness?.apply_readiness_status === "PROVEN";
 
+  const mutation_block_reasons = buildLifecycleOwnedMutatingBlockReasonsV1({
+    lifecycleTable: args.lifecycleTable,
+    mutationAuthorizationReview: args.mutationAuthorizationReview,
+  });
+
   if (isProven) {
     return {
       next_best_action:
@@ -172,9 +199,7 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
         "batch_run_registry_intake_steering_v1",
         "batch_production_operating_dispatch_v1",
       ],
-      mutation_block_reasons: lifecycleMutationBlockReasonsV1(args.lifecycleTable, [
-        "lifecycle_steering:apply_readiness_proven_mutation_still_blocked",
-      ]),
+      mutation_block_reasons,
     };
   }
 
@@ -201,8 +226,6 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
       "batch_run_registry_intake_steering_v1",
       "batch_production_operating_dispatch_v1",
     ],
-    mutation_block_reasons: lifecycleMutationBlockReasonsV1(args.lifecycleTable, [
-      "lifecycle_steering:demoted_micro_lane_owner_steps",
-    ]),
+    mutation_block_reasons,
   };
 }

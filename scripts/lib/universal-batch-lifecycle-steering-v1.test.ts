@@ -6,6 +6,7 @@ import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./fridge
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./batch-run-registry-intake-steering-v1";
 import { buildUniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 import {
+  buildLifecycleOwnedMutatingBlockReasonsV1,
   refrigeratorWaterHasApplyReadinessUnknownLifecycleGapV1,
   resolveUniversalBatchLifecycleSteeringOverrideV1,
   shouldApplyUniversalBatchLifecycleSteeringV1,
@@ -260,6 +261,11 @@ describe("universal batch lifecycle steering v1", () => {
       mutationAuthorizationReview: {
         mutation_authorization_review_status: "BLOCKED",
         source_command: UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
+        review_blockers: [
+          "missing_active_owner_mutation_approval: source_decision_packet_id=universal_batch_lifecycle_mutation_authorization_review_v1:data/fridge/batch-production/apply-execution-plans/fridge-buyer-path-batch-apply-execution-plan-v1-0fec4a7b623a.json",
+        ],
+        apply_executor_ready: false,
+        mutation_authorized: false,
       },
     });
     assert.ok(override);
@@ -268,6 +274,43 @@ describe("universal batch lifecycle steering v1", () => {
       UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
     );
     assert.match(override!.next_best_action, /authorization review is still BLOCKED/i);
+    assert.ok(
+      override!.mutation_block_reasons.some((reason) =>
+        reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
+      ),
+    );
+    assert.ok(
+      override!.mutation_block_reasons.includes("mutation_authorization_review_v1:apply_executor_ready=false"),
+    );
+    assert.doesNotMatch(
+      override!.mutation_block_reasons.join("\n"),
+      /fridge_buyer_path_batch_apply_plan/,
+    );
+  });
+
+  test("buildLifecycleOwnedMutatingBlockReasonsV1 excludes micro-lane mutation reasons", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const reasons = buildLifecycleOwnedMutatingBlockReasonsV1({
+      lifecycleTable,
+      mutationAuthorizationReview: {
+        mutation_authorization_review_status: "BLOCKED",
+        review_blockers: ["missing_active_owner_mutation_approval: source_decision_packet_id=test"],
+        apply_executor_ready: false,
+        mutation_authorized: false,
+      },
+    });
+    assert.ok(
+      reasons.some((reason) =>
+        reason.startsWith("universal_batch_lifecycle_truth_table_v1:mutation_authorized=false"),
+      ),
+    );
+    assert.ok(
+      reasons.some((reason) =>
+        reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
+      ),
+    );
+    assert.ok(reasons.includes("mutation_authorization_review_v1:apply_executor_ready=false"));
+    assert.doesNotMatch(reasons.join("\n"), /fridge_buyer_path_batch_apply_plan/);
   });
 
   test("returns null on brain stop-the-line", () => {
@@ -279,7 +322,7 @@ describe("universal batch lifecycle steering v1", () => {
     assert.equal(override, null);
   });
 
-  test("shouldApplyUniversalBatchLifecycleSteeringV1 requires demotable micro-lane steering", () => {
+  test("shouldApplyUniversalBatchLifecycleSteeringV1 when lifecycle override exists", () => {
     const lifecycleTable = lifecycleTableFixture();
     const lifecycleOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
       lifecycleTable,
@@ -288,15 +331,20 @@ describe("universal batch lifecycle steering v1", () => {
     });
     assert.equal(
       shouldApplyUniversalBatchLifecycleSteeringV1({
-        lifecycleOverride,
-        demotableMicroLaneSteeringActive: false,
+        lifecycleOverride: null,
       }),
       false,
     );
     assert.equal(
       shouldApplyUniversalBatchLifecycleSteeringV1({
         lifecycleOverride,
-        demotableMicroLaneSteeringActive: true,
+      }),
+      true,
+    );
+    assert.equal(
+      shouldApplyUniversalBatchLifecycleSteeringV1({
+        lifecycleOverride,
+        demotableMicroLaneSteeringActive: false,
       }),
       true,
     );
