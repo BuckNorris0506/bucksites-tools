@@ -8,6 +8,8 @@ import { FRIDGE_BUYER_PATH_MICRO_LANE_KEYS_V1 } from "./command-center-efficienc
 import type { BatchRunRegistryIntakeReportV1 } from "./batch-run-registry-intake-v1";
 import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_TRUTH_TABLE_CONTRACT_V1 =
   "universal_batch_lifecycle_truth_table_v1" as const;
@@ -295,12 +297,52 @@ export type BuildUniversalBatchLifecycleTruthTableInputV1 = {
     UniversalBatchLifecycleApplyReadinessReportV1,
     "apply_readiness_status" | "apply_readiness_blockers" | "source_command"
   > | null;
+  apply_execution_plan?: Pick<
+    UniversalBatchLifecycleApplyExecutionPlanReportV1,
+    "execution_plan_status" | "source_command" | "planned_change_count"
+  > | null;
   command_center_steering?: {
     next_best_action?: string;
     next_move_command?: string;
   };
   buckpartsScriptNames?: readonly string[];
 };
+
+function hasPostApprovalExecutionPlanScript(scriptNames: readonly string[]): boolean {
+  return scriptNames.some((name) =>
+    /apply-execution-plan|batch-apply-execution|lifecycle-apply-execution/i.test(name),
+  );
+}
+
+function resolveOneTrueNextCommandForRefrigeratorWaterV1(args: {
+  scriptNames: readonly string[];
+  apply_readiness?: BuildUniversalBatchLifecycleTruthTableInputV1["apply_readiness"];
+  apply_execution_plan?: BuildUniversalBatchLifecycleTruthTableInputV1["apply_execution_plan"];
+  fridgeState: UniversalBatchWedgeCurrentStateV1;
+}): string {
+  const hasReadinessScript =
+    hasPostApprovalReadinessScript(args.scriptNames) ||
+    args.apply_readiness?.source_command === UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
+  const hasExecutionPlanScript =
+    hasPostApprovalExecutionPlanScript(args.scriptNames) ||
+    args.apply_execution_plan?.source_command ===
+      UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1;
+
+  if (
+    args.fridgeState.lifecycle_state === "apply_readiness_ready" &&
+    args.apply_readiness?.apply_readiness_status === "PROVEN" &&
+    args.apply_execution_plan?.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW" &&
+    hasExecutionPlanScript
+  ) {
+    return UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1;
+  }
+
+  if (hasReadinessScript) {
+    return UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
+  }
+
+  return "UNKNOWN: No dedicated post-approval apply-readiness npm command; read-only fallback: npm run buckparts:fridge-buyer-path-batch-apply-plan-approval";
+}
 
 function hasPostApprovalReadinessScript(scriptNames: readonly string[]): boolean {
   return scriptNames.some((name) =>
@@ -524,9 +566,12 @@ export function buildUniversalBatchLifecycleTruthTableV1(
         ? "apply_readiness_unknown"
         : fridgeState.lifecycle_state;
 
-  const one_true_next_command_for_refrigerator_water = hasReadinessScript
-    ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1
-    : "UNKNOWN: No dedicated post-approval apply-readiness npm command; read-only fallback: npm run buckparts:fridge-buyer-path-batch-apply-plan-approval";
+  const one_true_next_command_for_refrigerator_water = resolveOneTrueNextCommandForRefrigeratorWaterV1({
+    scriptNames,
+    apply_readiness: input.apply_readiness,
+    apply_execution_plan: input.apply_execution_plan,
+    fridgeState,
+  });
 
   const owner_steps_to_remove_or_demote = [
     "Separate owner step: npm run buckparts:fridge-buyer-path-batch-proposal (fold into lifecycle_state owner_planning_approved)",

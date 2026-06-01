@@ -6,6 +6,8 @@
 
 import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1 =
@@ -105,6 +107,10 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     UniversalBatchLifecycleApplyReadinessReportV1,
     "apply_readiness_status" | "apply_readiness_blockers" | "source_command"
   > | null;
+  applyExecutionPlan?: Pick<
+    UniversalBatchLifecycleApplyExecutionPlanReportV1,
+    "execution_plan_status" | "source_command" | "planned_change_count"
+  > | null;
 }): UniversalBatchLifecycleSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
   if (args.lifecycleTable.mutation_authorized !== false) return null;
@@ -122,7 +128,11 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
   }
 
   const count = args.planned_change_count;
-  const next_move_command = UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
+  const executionPlanReady =
+    args.applyExecutionPlan?.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW";
+  const next_move_command = executionPlanReady
+    ? UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1
+    : UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1;
   const isProven =
     args.lifecycleTable.one_true_next_state_for_refrigerator_water === "apply_readiness_ready" ||
     args.applyReadiness?.apply_readiness_status === "PROVEN";
@@ -131,8 +141,11 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
     return {
       next_best_action:
         `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1}]: ` +
-        `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes. ` +
-        "Mutation unauthorized; no apply executor exists.",
+        `refrigerator_water apply-readiness is PROVEN for ${String(count)} apply-plan changes.` +
+        (executionPlanReady
+          ? " Read-only execution plan is READY_FOR_MUTATION_AUTH_REVIEW."
+          : "") +
+        " Mutation unauthorized; no apply executor exists.",
       why_this_action: fridge.mapping_summary,
       next_move_command,
       lifecycle_state: fridge.lifecycle_state,

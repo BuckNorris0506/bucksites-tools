@@ -3248,6 +3248,7 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   assert.ok(fridge);
   assert.ok(
     fridge!.lifecycle_state === "apply_plan_owner_approved" ||
+      fridge!.lifecycle_state === "apply_readiness_ready" ||
       fridge!.alternate_lifecycle_states.includes("apply_readiness_unknown"),
   );
   assert.equal(fridge!.mutation_allowed, false);
@@ -3270,6 +3271,16 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   assert.equal(applyReadiness.mutation_authorized, false);
   assert.equal(applyReadiness.source_command, "npm run buckparts:universal-batch-lifecycle-apply-readiness");
 
+  const applyExecutionPlan = report.command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1;
+  assert.ok(applyExecutionPlan);
+  assert.equal(applyExecutionPlan.read_only, true);
+  assert.equal(applyExecutionPlan.data_mutation, false);
+  assert.equal(applyExecutionPlan.mutation_authorized, false);
+  assert.equal(
+    applyExecutionPlan.source_command,
+    "npm run buckparts:universal-batch-lifecycle-apply-execution-plan",
+  );
+
   if (
     fridge?.lifecycle_state === "apply_plan_owner_approved" &&
     fridge.alternate_lifecycle_states.includes("apply_readiness_unknown")
@@ -3287,11 +3298,22 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
     assert.doesNotMatch(report.execution_guidance.next_move_command, /batch-apply-plan-approval/);
     assert.notEqual(applyReadiness.apply_readiness_status, "PROVEN");
   } else if (fridge?.lifecycle_state === "apply_readiness_ready") {
+    assert.equal(applyReadiness.apply_readiness_status, "PROVEN");
     assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:"));
-    assert.equal(
-      report.execution_guidance.next_move_command,
-      "npm run buckparts:universal-batch-lifecycle-apply-readiness",
-    );
+    if (applyExecutionPlan.execution_plan_status === "READY_FOR_MUTATION_AUTH_REVIEW") {
+      assert.match(report.next_best_action, /execution plan is READY_FOR_MUTATION_AUTH_REVIEW/i);
+      assert.equal(
+        report.execution_guidance.next_move_command,
+        "npm run buckparts:universal-batch-lifecycle-apply-execution-plan",
+      );
+      assert.equal(applyExecutionPlan.planned_change_count, 14);
+      assert.equal(applyExecutionPlan.row_patch_preview.length, 14);
+    } else {
+      assert.equal(
+        report.execution_guidance.next_move_command,
+        "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+      );
+    }
   } else {
     assert.doesNotMatch(report.next_best_action, /^LIFECYCLE CONSOLIDATION \[/);
     assert.notEqual(report.next_best_action, lane.recommended_next_action);
@@ -3317,6 +3339,17 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   assert.equal(
     applyReadinessManifest!.cc_json_path,
     "command_center_v2.universal_batch_lifecycle_apply_readiness_v1",
+  );
+
+  const applyExecutionPlanManifest = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "universal_batch_lifecycle_apply_execution_plan",
+  );
+  assert.ok(applyExecutionPlanManifest);
+  assert.equal(applyExecutionPlanManifest!.verdict, "CONNECTED");
+  assert.equal(
+    applyExecutionPlanManifest!.cc_json_path,
+    "command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1",
   );
 });
 
@@ -3783,16 +3816,30 @@ test("command center next_best_action prefers approved apply-plan planning over 
     return;
   }
 
-  assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
-  assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
-  assert.match(report.next_best_action, /apply readiness is not proven/i);
-  assert.doesNotMatch(report.next_best_action, /OWNER_REVIEW_READY/i);
-  assert.doesNotMatch(report.next_best_action, /OWNER_APPROVAL_REQUIRED/i);
-  assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
-  assert.equal(
-    report.execution_guidance.next_move_command,
-    "npm run buckparts:universal-batch-lifecycle-apply-readiness",
-  );
+  const applyReadiness = report.command_center_v2.universal_batch_lifecycle_apply_readiness_v1;
+  if (applyReadiness.apply_readiness_status === "PROVEN") {
+    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_READY]:"));
+    assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes|apply-readiness is PROVEN/i);
+    assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      report.command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1.execution_plan_status ===
+        "READY_FOR_MUTATION_AUTH_REVIEW"
+        ? "npm run buckparts:universal-batch-lifecycle-apply-execution-plan"
+        : "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+    );
+  } else {
+    assert.ok(report.next_best_action.startsWith("LIFECYCLE [APPLY_READINESS_UNKNOWN]:"));
+    assert.match(report.next_best_action, /owner-approved planning for 14 apply-plan changes/i);
+    assert.match(report.next_best_action, /apply readiness is not proven/i);
+    assert.doesNotMatch(report.next_best_action, /OWNER_REVIEW_READY/i);
+    assert.doesNotMatch(report.next_best_action, /OWNER_APPROVAL_REQUIRED/i);
+    assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
+    assert.equal(
+      report.execution_guidance.next_move_command,
+      "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+    );
+  }
   assert.doesNotMatch(report.execution_guidance.next_move_command, /UNKNOWN:/);
   assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
   assert.equal(report.execution_guidance.mutating_blocked, true);

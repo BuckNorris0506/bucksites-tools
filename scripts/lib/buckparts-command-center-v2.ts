@@ -231,6 +231,7 @@ export function buildCommandCenterV2Report(input: {
   | "batch_run_registry_intake_v1"
   | "command_center_efficiency_truth_table_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
+  | "universal_batch_lifecycle_apply_execution_plan_v1"
   | "universal_batch_lifecycle_truth_table_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"

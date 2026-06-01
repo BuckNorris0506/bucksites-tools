@@ -12,6 +12,7 @@ import {
   UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1,
   UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1,
 } from "./universal-batch-lifecycle-steering-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 
 function lifecycleTableFixture() {
@@ -223,6 +224,11 @@ describe("universal batch lifecycle steering v1", () => {
         apply_readiness_blockers: [],
         source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1,
       },
+      applyExecutionPlan: {
+        execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1,
+        planned_change_count: 14,
+      },
     });
     assert.ok(override);
     assert.ok(
@@ -230,7 +236,8 @@ describe("universal batch lifecycle steering v1", () => {
         `LIFECYCLE [${UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1}]:`,
       ),
     );
-    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1);
+    assert.match(override!.next_best_action, /execution plan is READY_FOR_MUTATION_AUTH_REVIEW/i);
+    assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1);
   });
 
   test("returns null on brain stop-the-line", () => {
