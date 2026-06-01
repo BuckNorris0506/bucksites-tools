@@ -1,0 +1,29 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-owner-mutation-approved-fridge-lifecycle-0fec4a7b623a-2026-06-01T06-19-15-234Z",
+      "source_queue_row_id": "queue-universal-batch-lifecycle-mutation-authorization-review-v1",
+      "source_decision_packet_id": "universal_batch_lifecycle_mutation_authorization_review_v1:data/fridge/batch-production/apply-execution-plans/fridge-buyer-path-batch-apply-execution-plan-v1-0fec4a7b623a.json",
+      "decided_at": "2026-06-01T06:19:15.234Z",
+      "decision_status": "approved",
+      "owner_note": "Jared approves owner_mutation_approved scope for this exact refrigerator_water 14-row lifecycle execution-plan packet only. This authorizes guarded CSV apply review for data/retailer_links.csv only after all lifecycle gates validate. No Supabase, public UI, evidence write, deploy, or Netlify API action is authorized.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "expires_at": null,
+      "review_after": null,
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate public UI files.",
+        "Do not create, delete, or overwrite production evidence JSON under data/evidence/.",
+        "Do not deploy.",
+        "Do not call the Netlify API.",
+        "Do not mutate any file except data/retailer_links.csv, and only through the guarded lifecycle CSV apply executor after all lifecycle preconditions validate.",
+        "Do not apply rows outside the exact 14-row execution-plan packet.",
+        "Do not change affiliate URLs beyond the exact execution-plan row_patch_preview after_row values."
+      ]
+    }
+  ]
+}
