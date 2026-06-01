@@ -10,7 +10,10 @@ import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./univer
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import type { UniversalBatchLifecycleMutationAuthorizationReviewReportV1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
-import { UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
+import {
+  UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1,
+  UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_WRITE_SOURCE_COMMAND_V1,
+} from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_UNKNOWN_STEERING_STATUS_V1 =
@@ -22,8 +25,12 @@ export const UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_READY_STEERING_STATUS_V1 
 export const UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZED_FOR_GUARDED_APPLY_STEERING_STATUS_V1 =
   "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" as const;
 
+export const UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1 =
+  "universal_batch_lifecycle_guarded_csv_apply_executor_v1:write_mode_not_invoked" as const;
+
+/** @deprecated Use UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1 */
 export const UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1 =
-  "universal_batch_lifecycle_guarded_csv_apply_executor_v1:write_mode_not_implemented" as const;
+  UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1;
 
 function isMutationAuthorizedForGuardedCsvApplyV1(
   review?: Pick<
@@ -85,7 +92,7 @@ export function buildLifecycleOwnedMutatingBlockReasonsV1(args: {
 
   const mutationAuthReview = args.mutationAuthorizationReview;
   if (isMutationAuthorizedForGuardedCsvApplyV1(mutationAuthReview)) {
-    reasons.push(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1);
+    reasons.push(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_INVOKED_REASON_V1);
     reasons.push("mutation_authorization_review_v1:guarded_csv_apply_not_invoked");
   } else {
     if (mutationAuthReview?.mutation_authorization_review_status === "BLOCKED") {
@@ -222,7 +229,7 @@ export function resolveUniversalBatchLifecycleSteeringOverrideV1(args: {
           ? " Read-only execution plan is READY_FOR_MUTATION_AUTH_REVIEW."
           : "") +
         (mutationAuthorizedForGuardedApply
-          ? " Explicit owner_mutation_approved row is active for this execution plan. Guarded CSV apply is lifecycle-authorized for review only; no write-mode apply command exists in repo. Run read-only guarded CSV apply executor DRY_RUN verification. No CSV mutation applied."
+          ? ` Explicit owner_mutation_approved row is active for this execution plan. Guarded CSV write mode is available via ${UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_WRITE_SOURCE_COMMAND_V1} but has not been invoked. Run read-only ${UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_SOURCE_COMMAND_V1} DRY_RUN verification first. No CSV mutation applied.`
           : mutationAuthReviewBlocked
             ? " Explicit mutation authorization review is still BLOCKED."
             : applyExecutorReady

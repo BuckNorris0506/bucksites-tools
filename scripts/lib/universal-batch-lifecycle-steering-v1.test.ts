@@ -333,9 +333,11 @@ describe("universal batch lifecycle steering v1", () => {
     assert.match(override!.next_best_action, /No CSV mutation applied/i);
     assert.ok(
       override!.mutation_block_reasons.includes(
-        UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_WRITE_MODE_NOT_IMPLEMENTED_REASON_V1,
+        "universal_batch_lifecycle_guarded_csv_apply_executor_v1:write_mode_not_invoked",
       ),
     );
+    assert.doesNotMatch(override!.next_best_action, /no write-mode apply command exists in repo/i);
+    assert.match(override!.next_best_action, /--write-csv/);
     assert.ok(
       !override!.mutation_block_reasons.some((reason) =>
         reason.startsWith("mutation_authorization_review_v1:missing_active_owner_mutation_approval:"),
