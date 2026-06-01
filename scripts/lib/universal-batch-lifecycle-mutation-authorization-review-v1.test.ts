@@ -11,8 +11,16 @@ import {
 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 
 import { FRIDGE_RETAILER_LINKS_CSV_REL_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
+import { FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
 
 const REPO_ROOT = process.cwd();
+const EVIDENCE_SUFFICIENCY_SOURCE = readFileSync(
+  path.join(
+    REPO_ROOT,
+    "scripts/lib/universal-batch-lifecycle-mutation-authorization-evidence-sufficiency-v1.ts",
+  ),
+  "utf8",
+);
 const LIB_SOURCE = readFileSync(
   path.join(REPO_ROOT, "scripts/lib/universal-batch-lifecycle-mutation-authorization-review-v1.ts"),
   "utf8",
@@ -110,8 +118,75 @@ function fixtureRegistryRow(ownerScope: "read_only_agent" | "owner_mutation_appr
   };
 }
 
-function withTempFixture(args: { ownerScope?: "read_only_agent" | "owner_mutation_approved" }) {
+function sufficientEvidenceArtifact(slug: string, token?: string): Record<string, unknown> {
+  const tokenLabel = token ?? slug;
+  return {
+    read_only: true,
+    data_mutation: false,
+    final_amazon_cta_state_proven: true,
+    exact_token_proof: `Seller-controlled PDP title includes literal ${tokenLabel}.`,
+    buyability_proof: "In Stock with Add to Cart and Buy Now visible on inspected PDP.",
+    committed_live_row: {
+      status: "approved",
+      browser_truth_classification: "direct_buyable",
+      browser_truth_notes: `${tokenLabel} appears on Amazon PDP ASIN B000TEST000; direct buyable evidence for ${slug}.`,
+      affiliate_url: "https://www.amazon.com/dp/B000TEST000?tag=buckparts20-20",
+    },
+  };
+}
+
+function fixtureApplyPlan(args?: {
+  slugs?: string[];
+  evidenceBySlug?: Record<string, Record<string, unknown>>;
+}): Record<string, unknown> {
+  const slugs = args?.slugs ?? SLUGS;
+  return {
+    contract: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1,
+    planned_change_count: slugs.length,
+    planned_changes: slugs.map((slug) => ({
+      slug,
+      oem_token: slug,
+      evidence_artifact_path: `data/evidence/amazon-${slug.toLowerCase()}-live-outcome.test-fixture.json`,
+      proposed_affiliate_url: "https://www.amazon.com/dp/B000TEST000?tag=buckparts20-20",
+      action: "propose_replace_search_placeholder_with_verified_direct_buyable",
+      mutation_authorized: false,
+    })),
+  };
+}
+
+function writeApplyPlanAndEvidence(args: {
+  root: string;
+  slugs?: string[];
+  evidenceBySlug?: Record<string, Record<string, unknown>>;
+}) {
+  const slugs = args.slugs ?? SLUGS;
+  const applyPlanAbs = path.join(args.root, APPLY_PLAN_REL);
+  mkdirSync(path.dirname(applyPlanAbs), { recursive: true });
+  writeFileSync(applyPlanAbs, JSON.stringify(fixtureApplyPlan(args)), "utf8");
+
+  for (const slug of slugs) {
+    const rel = `data/evidence/amazon-${slug.toLowerCase()}-live-outcome.test-fixture.json`;
+    const abs = path.join(args.root, rel);
+    mkdirSync(path.dirname(abs), { recursive: true });
+    writeFileSync(
+      abs,
+      JSON.stringify(args.evidenceBySlug?.[slug] ?? sufficientEvidenceArtifact(slug)),
+      "utf8",
+    );
+  }
+}
+
+function withTempFixture(args: {
+  ownerScope?: "read_only_agent" | "owner_mutation_approved";
+  slugs?: string[];
+  evidenceBySlug?: Record<string, Record<string, unknown>>;
+}) {
   const root = mkdtempSync(path.join(tmpdir(), "lifecycle-mutation-auth-review-"));
+  writeApplyPlanAndEvidence({
+    root,
+    slugs: args.slugs,
+    evidenceBySlug: args.evidenceBySlug,
+  });
   const execAbs = path.join(root, EXEC_PLAN_REL);
   mkdirSync(path.dirname(execAbs), { recursive: true });
   writeFileSync(execAbs, JSON.stringify(fixtureExecutionPlan()), "utf8");
@@ -171,7 +246,7 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
     }
   });
 
-  test("authorizes only when active owner_mutation_approved row exists", () => {
+  test("authorizes only when owner approval and evidence sufficiency both validate", () => {
     const { root, cleanup } = withTempFixture({ ownerScope: "owner_mutation_approved" });
     try {
       const report = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
@@ -192,6 +267,7 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
       assert.equal(report.mutation_authorized, true);
       assert.equal(report.apply_mutation_authorized, true);
       assert.equal(report.apply_executor_ready, true);
+      assert.equal(report.evidence_sufficiency_status, "PROVEN");
       assert.equal(report.csv_apply_authorized, true);
       assert.equal(
         report.source_command,
@@ -204,10 +280,81 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
     }
   });
 
+  test("stays BLOCKED when owner approval exists but one row has insufficient evidence", () => {
+    const { root, cleanup } = withTempFixture({
+      ownerScope: "owner_mutation_approved",
+      evidenceBySlug: {
+        "4396710": {
+          committed_live_row: {
+            browser_truth_classification: "likely_valid",
+          },
+        },
+      },
+    });
+    try {
+      const report = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
+        rootDir: root,
+        now: () => new Date("2026-06-01T04:00:00.000Z"),
+        applyReadiness: {
+          apply_readiness_status: "PROVEN",
+          source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+          planned_change_count: 14,
+        },
+        applyExecutionPlan: {
+          execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+          source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+          planned_change_count: 14,
+        },
+      });
+      assert.equal(report.mutation_authorization_review_status, "BLOCKED");
+      assert.equal(report.mutation_authorized, false);
+      assert.equal(report.csv_apply_authorized, false);
+      assert.ok(report.authorized_decision_id);
+      assert.equal(report.evidence_sufficiency_status, "BLOCKED");
+      assert.ok(report.evidence_sufficiency_counts.insufficient >= 1);
+      assert.ok(
+        report.review_blockers.some((b) =>
+          b.startsWith("evidence_insufficient: slug=4396710"),
+        ),
+      );
+    } finally {
+      cleanup();
+    }
+  });
+
   test("lib/report avoid forbidden write/mutation imports", () => {
     assert.doesNotMatch(LIB_SOURCE, /@netlify|@supabase|insertLearningOutcome/);
     assert.doesNotMatch(LIB_SOURCE, /writeFileSync|writeFile\(|createWriteStream/);
     assert.doesNotMatch(REPORT_SOURCE, /@netlify|@supabase|insertLearningOutcome/);
+    assert.doesNotMatch(EVIDENCE_SUFFICIENCY_SOURCE, /@netlify|@supabase|insertLearningOutcome/);
+    assert.doesNotMatch(EVIDENCE_SUFFICIENCY_SOURCE, /writeFileSync|writeFile\(|createWriteStream/);
+  });
+
+  test("repo reports evidence sufficiency classifications for all 14 planned rows", () => {
+    const report = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
+      rootDir: REPO_ROOT,
+      now: () => new Date("2026-06-01T05:00:00.000Z"),
+      applyReadiness: {
+        apply_readiness_status: "PROVEN",
+        source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+        planned_change_count: 14,
+      },
+      applyExecutionPlan: {
+        execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+        source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+        planned_change_count: 14,
+      },
+    });
+    assert.equal(report.apply_executor_ready, true);
+    assert.equal(report.mutation_authorization_review_status, "BLOCKED");
+    assert.equal(report.mutation_authorized, false);
+    assert.equal(report.evidence_sufficiency_rows.length, 14);
+    assert.equal(report.evidence_sufficiency_counts.total, 14);
+    assert.ok(
+      report.evidence_sufficiency_rows.every((row) =>
+        ["STRUCTURED_PROVEN", "LEGACY_ACCEPTABLE", "INSUFFICIENT"].includes(row.status),
+      ),
+    );
   });
 
   test("repo reports apply_executor_ready true while mutation authorization remains BLOCKED", () => {
