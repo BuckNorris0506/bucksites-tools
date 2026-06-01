@@ -145,6 +145,37 @@ describe("universal_batch_lifecycle_truth_table_v1", () => {
     assert.equal(table.one_true_next_state_for_refrigerator_water, "apply_readiness_ready");
   });
 
+  test("apply_readiness_ready points next command to lifecycle mutation authorization review when blocked", () => {
+    const table = buildUniversalBatchLifecycleTruthTableV1({
+      now: () => new Date("2026-05-28T00:00:00.000Z"),
+      ...fridgeApprovedFixtures(),
+      apply_readiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+      },
+      apply_execution_plan: {
+        execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+        source_command: "npm run buckparts:universal-batch-lifecycle-apply-execution-plan",
+        planned_change_count: 14,
+      },
+      mutation_authorization_review: {
+        mutation_authorization_review_status: "BLOCKED",
+        source_command: "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review",
+      },
+      buckpartsScriptNames: [
+        "buckparts:universal-batch-lifecycle-apply-readiness",
+        "buckparts:universal-batch-lifecycle-apply-execution-plan",
+        "buckparts:universal-batch-lifecycle-mutation-authorization-review",
+      ],
+    });
+    assert.equal(table.one_true_next_state_for_refrigerator_water, "apply_readiness_ready");
+    assert.equal(
+      table.one_true_next_command_for_refrigerator_water,
+      "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review",
+    );
+  });
+
   test("air_purifier maps to closed from proven closed run registry", () => {
     const table = buildUniversalBatchLifecycleTruthTableV1({
       now: () => new Date("2026-05-28T00:00:00.000Z"),

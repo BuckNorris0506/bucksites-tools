@@ -95,6 +95,7 @@
     "buckparts:fridge-buyer-path-batch-apply-plan-approval": "tsx scripts/report-fridge-buyer-path-batch-apply-plan-approval-v1.ts",
     "buckparts:universal-batch-lifecycle-apply-readiness": "tsx scripts/report-universal-batch-lifecycle-apply-readiness-v1.ts",
     "buckparts:universal-batch-lifecycle-apply-execution-plan": "tsx scripts/report-universal-batch-lifecycle-apply-execution-plan-v1.ts",
+    "buckparts:universal-batch-lifecycle-mutation-authorization-review": "tsx scripts/report-universal-batch-lifecycle-mutation-authorization-review-v1.ts",
     "buckparts:exa-fridge-water-discovery": "tsx scripts/report-exa-fridge-water-discovery-v1.ts",
     "buckparts:operating-map": "tsx scripts/report-buckparts-operating-map.ts",
     "buckparts:founder-digest": "tsx scripts/buckparts-founder-digest.ts",

@@ -27,6 +27,7 @@ import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-effic
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 import type { UniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-readiness-command-center-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-execution-plan-command-center-v1";
+import type { UniversalBatchLifecycleMutationAuthorizationReviewCommandCenterLaneV1 } from "./universal-batch-lifecycle-mutation-authorization-review-command-center-v1";
 import type { PagePublishabilityTruthSummaryV1 } from "./buckparts-page-publishability-truth-v1";
 import type { AirPurifierBatchCoverageDirectorV1 } from "./air-purifier-batch-coverage-director-v1";
 import type { AirPurifierTruthSpineV1 } from "./air-purifier-truth-spine-v1";
@@ -976,6 +977,8 @@ export type CommandCenterV2Report = {
   universal_batch_lifecycle_apply_readiness_v1: UniversalBatchLifecycleApplyReadinessCommandCenterLaneV1;
   /** Read-only universal batch lifecycle apply execution plan — lifecycle-owned preview; not mutation authority. */
   universal_batch_lifecycle_apply_execution_plan_v1: UniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1;
+  /** Read-only universal mutation authorization review for lifecycle apply path — no mutation side effects. */
+  universal_batch_lifecycle_mutation_authorization_review_v1: UniversalBatchLifecycleMutationAuthorizationReviewCommandCenterLaneV1;
   /** Read-only semantic page/publishability truth for refrigerator filter pages (Cruise diagnostics). */
   page_publishability_truth_summary_v1: PagePublishabilityTruthSummaryV1;
   /** Read-only refrigerator CSV / evidence / Supabase / public truth spine — not mutation authority. */
@@ -1098,6 +1101,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "command_center_efficiency_truth_table_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
   | "universal_batch_lifecycle_apply_execution_plan_v1"
+  | "universal_batch_lifecycle_mutation_authorization_review_v1"
   | "universal_batch_lifecycle_truth_table_v1"
   | "system_contract_audit_summary_v1"
   | "founder_decision_registry_summary_v1"

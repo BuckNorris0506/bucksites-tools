@@ -115,6 +115,18 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "Read-only lifecycle-owned apply execution plan preview for refrigerator_water when apply-readiness is PROVEN; no mutation authority.",
   },
   {
+    system_id: "universal_batch_lifecycle_mutation_authorization_review",
+    npm_script_or_path: "npm run buckparts:universal-batch-lifecycle-mutation-authorization-review",
+    cc_json_path: "command_center_v2.universal_batch_lifecycle_mutation_authorization_review_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.universal_batch_lifecycle_mutation_authorization_review_v1.data_mutation'",
+    reason:
+      "Read-only lifecycle-owned mutation authorization review using founder decision registry active owner_mutation_approved rows; no automatic apply authority.",
+  },
+  {
     system_id: "universal_batch_lifecycle_apply_readiness",
     npm_script_or_path: "npm run buckparts:universal-batch-lifecycle-apply-readiness",
     cc_json_path: "command_center_v2.universal_batch_lifecycle_apply_readiness_v1",

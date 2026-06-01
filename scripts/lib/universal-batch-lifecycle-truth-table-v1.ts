@@ -10,6 +10,8 @@ import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
+import type { UniversalBatchLifecycleMutationAuthorizationReviewReportV1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_TRUTH_TABLE_CONTRACT_V1 =
   "universal_batch_lifecycle_truth_table_v1" as const;
@@ -301,6 +303,10 @@ export type BuildUniversalBatchLifecycleTruthTableInputV1 = {
     UniversalBatchLifecycleApplyExecutionPlanReportV1,
     "execution_plan_status" | "source_command" | "planned_change_count"
   > | null;
+  mutation_authorization_review?: Pick<
+    UniversalBatchLifecycleMutationAuthorizationReviewReportV1,
+    "mutation_authorization_review_status" | "source_command"
+  > | null;
   command_center_steering?: {
     next_best_action?: string;
     next_move_command?: string;
@@ -318,6 +324,7 @@ function resolveOneTrueNextCommandForRefrigeratorWaterV1(args: {
   scriptNames: readonly string[];
   apply_readiness?: BuildUniversalBatchLifecycleTruthTableInputV1["apply_readiness"];
   apply_execution_plan?: BuildUniversalBatchLifecycleTruthTableInputV1["apply_execution_plan"];
+  mutation_authorization_review?: BuildUniversalBatchLifecycleTruthTableInputV1["mutation_authorization_review"];
   fridgeState: UniversalBatchWedgeCurrentStateV1;
 }): string {
   const hasReadinessScript =
@@ -327,6 +334,17 @@ function resolveOneTrueNextCommandForRefrigeratorWaterV1(args: {
     hasPostApprovalExecutionPlanScript(args.scriptNames) ||
     args.apply_execution_plan?.source_command ===
       UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1;
+
+  if (
+    args.fridgeState.lifecycle_state === "apply_readiness_ready" &&
+    args.apply_readiness?.apply_readiness_status === "PROVEN" &&
+    args.mutation_authorization_review?.mutation_authorization_review_status !==
+      "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" &&
+    args.mutation_authorization_review?.source_command ===
+      UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1
+  ) {
+    return UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1;
+  }
 
   if (
     args.fridgeState.lifecycle_state === "apply_readiness_ready" &&
@@ -570,6 +588,7 @@ export function buildUniversalBatchLifecycleTruthTableV1(
     scriptNames,
     apply_readiness: input.apply_readiness,
     apply_execution_plan: input.apply_execution_plan,
+    mutation_authorization_review: input.mutation_authorization_review,
     fridgeState,
   });
 

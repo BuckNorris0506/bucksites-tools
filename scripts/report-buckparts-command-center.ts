@@ -65,6 +65,7 @@ import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-e
 import { buildUniversalBatchLifecycleTruthTableV1 } from "./lib/universal-batch-lifecycle-truth-table-v1";
 import { buildUniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-apply-readiness-command-center-v1";
 import { buildUniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-apply-execution-plan-command-center-v1";
+import { buildUniversalBatchLifecycleMutationAuthorizationReviewCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-mutation-authorization-review-command-center-v1";
 import { resolveUniversalBatchLifecycleSteeringOverrideV1, shouldApplyUniversalBatchLifecycleSteeringV1 } from "./lib/universal-batch-lifecycle-steering-v1";
 import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
@@ -1090,6 +1091,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "command_center_efficiency_truth_table_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
+    | "universal_batch_lifecycle_mutation_authorization_review_v1"
     | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2_base,
@@ -1218,6 +1220,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "command_center_efficiency_truth_table_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
+    | "universal_batch_lifecycle_mutation_authorization_review_v1"
     | "universal_batch_lifecycle_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
@@ -1344,6 +1347,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "command_center_efficiency_truth_table_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
+    | "universal_batch_lifecycle_mutation_authorization_review_v1"
     | "universal_batch_lifecycle_truth_table_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
@@ -1703,6 +1707,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "command_center_efficiency_truth_table_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
+    | "universal_batch_lifecycle_mutation_authorization_review_v1"
     | "universal_batch_lifecycle_truth_table_v1"
     | "agent_control_plane_v1"
   > = {
@@ -1806,6 +1811,16 @@ export async function buildBuckpartsCommandCenterReport(
       readText: readTextFile,
     });
 
+  const universal_batch_lifecycle_mutation_authorization_review_v1 =
+    buildUniversalBatchLifecycleMutationAuthorizationReviewCommandCenterLaneV1({
+      rootDir,
+      now,
+      applyReadiness: universal_batch_lifecycle_apply_readiness_v1,
+      applyExecutionPlan: universal_batch_lifecycle_apply_execution_plan_v1,
+      fileExists,
+      readText: readTextFile,
+    });
+
   const universal_batch_lifecycle_truth_table_v1 = buildUniversalBatchLifecycleTruthTableV1({
     now,
     efficiency_truth_table: command_center_efficiency_truth_table_v1,
@@ -1814,6 +1829,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_apply_plan_approval: fridge_buyer_path_batch_apply_plan_approval_v1,
     apply_readiness: universal_batch_lifecycle_apply_readiness_v1,
     apply_execution_plan: universal_batch_lifecycle_apply_execution_plan_v1,
+    mutation_authorization_review: universal_batch_lifecycle_mutation_authorization_review_v1,
     buckpartsScriptNames: buckpartsScriptNamesForLifecycle,
   });
 
@@ -1870,6 +1886,7 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
     applyReadiness: universal_batch_lifecycle_apply_readiness_v1,
     applyExecutionPlan: universal_batch_lifecycle_apply_execution_plan_v1,
+    mutationAuthorizationReview: universal_batch_lifecycle_mutation_authorization_review_v1,
   });
 
   const applyUniversalBatchLifecycleSteering = shouldApplyUniversalBatchLifecycleSteeringV1({
@@ -1988,7 +2005,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "command_center_efficiency_truth_table_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "command_center_efficiency_truth_table_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2093,6 +2110,7 @@ export async function buildBuckpartsCommandCenterReport(
     command_center_efficiency_truth_table_v1,
     universal_batch_lifecycle_apply_readiness_v1,
     universal_batch_lifecycle_apply_execution_plan_v1,
+    universal_batch_lifecycle_mutation_authorization_review_v1,
     universal_batch_lifecycle_truth_table_v1,
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,

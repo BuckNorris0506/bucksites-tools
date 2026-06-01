@@ -14,6 +14,7 @@ import {
 } from "./universal-batch-lifecycle-steering-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
+import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 
 function lifecycleTableFixture() {
   return buildUniversalBatchLifecycleTruthTableV1({
@@ -238,6 +239,35 @@ describe("universal batch lifecycle steering v1", () => {
     );
     assert.match(override!.next_best_action, /execution plan is READY_FOR_MUTATION_AUTH_REVIEW/i);
     assert.equal(override!.next_move_command, UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1);
+  });
+
+  test("steers mutation-authorization review command when execution plan ready but authorization review blocked", () => {
+    const lifecycleTable = lifecycleTableFixture();
+    const override = resolveUniversalBatchLifecycleSteeringOverrideV1({
+      lifecycleTable,
+      planned_change_count: 14,
+      brainStopTheLine: false,
+      applyReadiness: {
+        apply_readiness_status: "PROVEN",
+        apply_readiness_blockers: [],
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_SOURCE_COMMAND_V1,
+      },
+      applyExecutionPlan: {
+        execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1,
+        planned_change_count: 14,
+      },
+      mutationAuthorizationReview: {
+        mutation_authorization_review_status: "BLOCKED",
+        source_command: UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
+      },
+    });
+    assert.ok(override);
+    assert.equal(
+      override!.next_move_command,
+      UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
+    );
+    assert.match(override!.next_best_action, /authorization review is still BLOCKED/i);
   });
 
   test("returns null on brain stop-the-line", () => {
