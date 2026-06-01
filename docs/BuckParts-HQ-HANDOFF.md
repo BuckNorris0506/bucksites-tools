@@ -799,7 +799,7 @@ npm run build
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local working artifacts only unless intentionally promoted |
 | Blocked rows `da29-00012b`, `adq75795101` passing owner-review gates | **NOT PROVEN** — remain excluded until facts satisfy review blockers |
 
-### Refrigerator water guarded batch lifecycle — closeout learning and rule proposals (current local state)
+### Refrigerator water guarded batch lifecycle — closeout learning and rule proposals (pushed/proven state)
 
 **Current state:** refrigerator_water guarded batch closeout has advanced from one completed guarded CSV apply into read-only learning and inactive rule proposals. This is **self-learning proposal state only**, not enforcement.
 
@@ -811,7 +811,7 @@ npm run build
 - Closeout learning packet pushed.
 - Command Center closeout-learning lane pushed at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1`.
 - Closeout-to-learning candidate plan pushed; candidate list lives at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1.candidate_learning_items`.
-- Lifecycle rule proposal lane is implemented locally at `.command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1`.
+- Lifecycle rule proposal lane is pushed/proven at `.command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1`.
 
 **Inactive proposed lifecycle rules (`proposed_rule_count: 3`):**
 
