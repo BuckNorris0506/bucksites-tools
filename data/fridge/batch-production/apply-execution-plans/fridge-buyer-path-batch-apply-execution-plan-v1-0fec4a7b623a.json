@@ -1,0 +1,1048 @@
+{
+  "contract": "universal_batch_lifecycle_apply_execution_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "recommended_jq_path": ".command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1",
+  "source_command": "npm run buckparts:universal-batch-lifecycle-apply-execution-plan",
+  "generated_at": "2026-06-01T02:14:23.880Z",
+  "wedge": "refrigerator_water",
+  "execution_plan_status": "READY_FOR_MUTATION_AUTH_REVIEW",
+  "source_apply_plan_artifact_rel_path": "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+  "source_apply_readiness_status": "PROVEN",
+  "planned_change_count": 14,
+  "target_file": "data/retailer_links.csv",
+  "row_patch_preview": [
+    {
+      "slug": "4396710",
+      "filter_slug": "4396710",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "4396710",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396710",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "4396710",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396710-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T12:00:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "4396841",
+      "filter_slug": "4396841",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "4396841",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396841",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "4396841",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396841-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T18:00:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "46-9002",
+      "filter_slug": "46-9002",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "46-9002",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=46-9002",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "46-9002",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-46-9002-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T15:50:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "8171413",
+      "filter_slug": "8171413",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "8171413",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=8171413",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "8171413",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-8171413-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T22:00:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "da29-00019a",
+      "filter_slug": "da29-00019a",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "da29-00019a",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=DA29-00019A",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "da29-00019a",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da29-00019a-live-outcome.2026-04-30.json. Not applied.",
+        "browser_truth_checked_at": "2026-04-30"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "da97-15217d",
+      "filter_slug": "da97-15217d",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "da97-15217d",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=DA97-15217D",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "da97-15217d",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da97-15217d-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "edr1rxd1",
+      "filter_slug": "edr1rxd1",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "edr1rxd1",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR1RXD1",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "edr1rxd1",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr1rxd1-live-outcome.2026-05-05.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-05T01:20:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "edr2rxd1",
+      "filter_slug": "edr2rxd1",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "edr2rxd1",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR2RXD1",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "edr2rxd1",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr2rxd1-live-outcome.2026-05-05.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-05T01:20:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt1000p",
+      "filter_slug": "lt1000p",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "lt1000p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT1000P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "lt1000p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt1000pc",
+      "filter_slug": "lt1000pc",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "lt1000pc",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT1000PC",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "lt1000pc",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000pc-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt600p",
+      "filter_slug": "lt600p",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "lt600p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT600P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "lt600p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt600p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt700p",
+      "filter_slug": "lt700p",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "lt700p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT700P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "lt700p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt700p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt800p",
+      "filter_slug": "lt800p",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "lt800p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT800P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "lt800p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt800p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "mdj64844601",
+      "filter_slug": "mdj64844601",
+      "action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+      "before_row": {
+        "filter_slug": "mdj64844601",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=MDJ64844601",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "mdj64844601",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-mdj64844601-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    }
+  ],
+  "rollback_patch_preview": [
+    {
+      "slug": "4396710",
+      "filter_slug": "4396710",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "4396710",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396710-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T12:00:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "4396710",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396710",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "4396841",
+      "filter_slug": "4396841",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "4396841",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B087PDLZL9?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-4396841-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T18:00:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "4396841",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396841",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "46-9002",
+      "filter_slug": "46-9002",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "46-9002",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-46-9002-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T15:50:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "46-9002",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=46-9002",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "8171413",
+      "filter_slug": "8171413",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "8171413",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B01CA0V1VE?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-8171413-live-outcome.2026-05-04.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-04T22:00:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "8171413",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=8171413",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "da29-00019a",
+      "filter_slug": "da29-00019a",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "da29-00019a",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B019HPTP3G?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da29-00019a-live-outcome.2026-04-30.json. Not applied.",
+        "browser_truth_checked_at": "2026-04-30"
+      },
+      "after_row": {
+        "filter_slug": "da29-00019a",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=DA29-00019A",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "da97-15217d",
+      "filter_slug": "da97-15217d",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "da97-15217d",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07BHZWSCQ?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-da97-15217d-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "da97-15217d",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=DA97-15217D",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "edr1rxd1",
+      "filter_slug": "edr1rxd1",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "edr1rxd1",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00UXG4WR8?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr1rxd1-live-outcome.2026-05-05.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-05T01:20:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "edr1rxd1",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR1RXD1",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "edr2rxd1",
+      "filter_slug": "edr2rxd1",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "edr2rxd1",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00VBP8QPO?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-edr2rxd1-live-outcome.2026-05-05.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-05T01:20:00.000Z"
+      },
+      "after_row": {
+        "filter_slug": "edr2rxd1",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR2RXD1",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt1000p",
+      "filter_slug": "lt1000p",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "lt1000p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "lt1000p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT1000P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt1000pc",
+      "filter_slug": "lt1000pc",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "lt1000pc",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07H9LHMR2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt1000pc-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "lt1000pc",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT1000PC",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt600p",
+      "filter_slug": "lt600p",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "lt600p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B07VGD8Z5Z?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt600p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "lt600p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT600P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt700p",
+      "filter_slug": "lt700p",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "lt700p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B0042ACZU2?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt700p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "lt700p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT700P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "lt800p",
+      "filter_slug": "lt800p",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "lt800p",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B00X3DWMS4?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-lt800p-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "lt800p",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=LT800P",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "slug": "mdj64844601",
+      "filter_slug": "mdj64844601",
+      "action": "rollback_restore_before_row",
+      "before_row": {
+        "filter_slug": "mdj64844601",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B08HDD1PK1?tag=buckparts20-20",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "amazon",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-mdj64844601-live-outcome.2026-05-03.json. Not applied.",
+        "browser_truth_checked_at": "2026-05-03"
+      },
+      "after_row": {
+        "filter_slug": "mdj64844601",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "affiliate_url": "https://www.repairclinic.com/Search?SearchTerm=MDJ64844601",
+        "is_primary": "true",
+        "sort_order": "0",
+        "retailer_key": "oem-parts-catalog",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "retailer_key",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    }
+  ],
+  "validation_plan": [
+    {
+      "step_id": "reverify_apply_readiness",
+      "command_or_test": "npm run buckparts:universal-batch-lifecycle-apply-readiness",
+      "purpose": "Confirm apply-readiness remains PROVEN immediately before any future apply authorization."
+    },
+    {
+      "step_id": "reverify_execution_plan",
+      "command_or_test": "npm run buckparts:universal-batch-lifecycle-apply-execution-plan",
+      "purpose": "Confirm row_patch_preview still matches committed apply-plan artifact and CSV before rows."
+    },
+    {
+      "step_id": "command_center_lifecycle_lane",
+      "command_or_test": "node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.universal_batch_lifecycle_apply_execution_plan_v1.execution_plan_status'",
+      "purpose": "Verify Command Center lifecycle lane still reports READY_FOR_MUTATION_AUTH_REVIEW."
+    },
+    {
+      "step_id": "fridge_truth_spine_tests",
+      "command_or_test": "node --import tsx --test scripts/lib/fridge-truth-reconciliation-v1.test.ts",
+      "purpose": "Run fridge truth-spine regression tests after any future CSV apply."
+    },
+    {
+      "step_id": "command_center_regression",
+      "command_or_test": "node --import tsx --test scripts/report-buckparts-command-center.test.ts",
+      "purpose": "Run Command Center regression suite after any future CSV apply."
+    }
+  ],
+  "rollback_plan": [
+    "Restore data/retailer_links.csv primary rows from rollback_patch_preview.before_row snapshots for the 14 target slugs only.",
+    "Do not revert unrelated retailer_links.csv rows outside the approved apply-plan slug set.",
+    "Re-run npm run buckparts:universal-batch-lifecycle-apply-readiness and npm run buckparts:universal-batch-lifecycle-apply-execution-plan read-only to confirm rollback parity.",
+    "Do not mutate Supabase, public UI, evidence, or deploy until parity is re-proven."
+  ],
+  "closeout_requirements": [
+    "Explicit future mutation authorization system must authorize csv_apply_authorized=true (not present in this repo state).",
+    "Dedicated apply executor must exist and remain scoped to data/retailer_links.csv for the 14 approved slugs only.",
+    "Post-apply parity audit across CSV, Supabase/public.retailer_links, and public buyer-path truth spine.",
+    "Run-registry closeout_complete=true only after parity_verified lifecycle state is proven."
+  ],
+  "execution_plan_blockers": [],
+  "apply_executor_available": false,
+  "apply_mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "buy_link_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false
+}
