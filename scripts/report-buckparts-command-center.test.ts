@@ -3628,6 +3628,46 @@ test("command_center_v2 surfaces fridge guarded batch lifecycle rule proposal la
   assert.doesNotMatch(JSON.stringify(lane), /active\":true|write_authorized\":true/i);
 });
 
+test("command_center_v2 surfaces fridge guarded batch lifecycle rule promotion plan lane read-only", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+
+  const lane = report.command_center_v2.fridge_guarded_batch_lifecycle_rule_promotion_plan_v1;
+  assert.equal(lane.contract, "fridge_guarded_batch_lifecycle_rule_promotion_plan_command_center_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.fridge_guarded_batch_lifecycle_rule_promotion_plan_v1");
+  assert.equal(lane.source_proposed_rule_count, 3);
+  assert.equal(lane.promotion_candidate_count, 3);
+  assert.equal(lane.owner_approval_required, true);
+  assert.equal(lane.promotion_authorized, false);
+  assert.equal(lane.active_rule_write_authorized, false);
+  assert.deepEqual(
+    lane.promotion_candidates.map((candidate) => candidate.rule_id),
+    [
+      "go_first_hop_redirect_smoke_only",
+      "applied_parity_proven_is_closeout_state",
+      "block_repeat_guarded_csv_write_after_parity",
+    ],
+  );
+  assert.ok(lane.promotion_candidates.every((candidate) => candidate.proposed_active_state === true));
+  assert.ok(lane.promotion_candidates.every((candidate) => candidate.active === false));
+  assert.ok(lane.promotion_candidates.every((candidate) => candidate.write_authorized === false));
+  assert.ok(lane.promotion_candidates.every((candidate) => candidate.promotion_authorized === false));
+  assert.ok(lane.blockers.includes("missing_owner_rule_promotion_approval"));
+  assert.ok(lane.blockers.includes("active_rule_registry_not_created"));
+  assert.ok(lane.blockers.includes("enforcement_not_wired"));
+  assert.doesNotMatch(JSON.stringify(lane), /active\":true|write_authorized\":true|promotion_authorized\":true/i);
+});
+
 test("command_center_v2.fridge_buyer_path_batch_approval_v1 is read-only approval bridge lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

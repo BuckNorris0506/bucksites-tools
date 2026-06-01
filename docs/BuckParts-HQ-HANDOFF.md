@@ -799,9 +799,9 @@ npm run build
 | `data/batch-production/drafts/*` as durable source of truth | **NOT PROVEN** — lane-local working artifacts only unless intentionally promoted |
 | Blocked rows `da29-00012b`, `adq75795101` passing owner-review gates | **NOT PROVEN** — remain excluded until facts satisfy review blockers |
 
-### Refrigerator water guarded batch lifecycle — closeout learning and rule proposals (pushed/proven state)
+### Refrigerator water guarded batch lifecycle — closeout learning, rule proposals, and promotion planning
 
-**Current state:** refrigerator_water guarded batch closeout has advanced from one completed guarded CSV apply into read-only learning and inactive rule proposals. This is **self-learning proposal state only**, not enforcement.
+**Current state:** refrigerator_water guarded batch closeout has advanced from one completed guarded CSV apply into read-only learning, inactive rule proposals, and local active-rule promotion planning. This is **self-learning approval-planning state only**, not enforcement.
 
 **PROVEN progression:**
 
@@ -812,6 +812,7 @@ npm run build
 - Command Center closeout-learning lane pushed at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1`.
 - Closeout-to-learning candidate plan pushed; candidate list lives at `.command_center_v2.fridge_guarded_batch_closeout_learning_v1.candidate_learning_items`.
 - Lifecycle rule proposal lane is pushed/proven at `.command_center_v2.fridge_guarded_batch_lifecycle_rule_proposal_v1`.
+- Lifecycle rule promotion plan lane is implemented locally at `.command_center_v2.fridge_guarded_batch_lifecycle_rule_promotion_plan_v1`.
 
 **Inactive proposed lifecycle rules (`proposed_rule_count: 3`):**
 
@@ -820,6 +821,8 @@ npm run build
 - `block_repeat_guarded_csv_write_after_parity`
 
 **Limits / non-authority:** These are proposal-only rules (`active=false`, `write_authorized=false`, `owner_approval_required=true`). No active rule registry exists yet. No future planner/executor enforcement is proven yet. No `learning_outcomes` writes have happened. This state authorizes **no** Supabase, evidence, `retailer_links`, public UI, Netlify, deploy, owner-approval-row, or active-rule mutation.
+
+**Local promotion-plan note:** `.command_center_v2.fridge_guarded_batch_lifecycle_rule_promotion_plan_v1` converts the three inactive proposed rules into owner-approval-ready promotion candidates (`proposed_active_state=true`) while keeping `promotion_authorized=false`, `active=false`, and `write_authorized=false`. Required blockers remain explicit: `missing_owner_rule_promotion_approval`, `active_rule_registry_not_created`, and `enforcement_not_wired`.
 
 ### Reporting / Command Center completeness (NOT_PROVEN unless stated)
 

@@ -231,6 +231,7 @@ export function buildCommandCenterV2Report(input: {
   | "batch_run_registry_intake_v1"
   | "fridge_guarded_batch_closeout_learning_v1"
   | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
+  | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
   | "command_center_efficiency_truth_table_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
   | "universal_batch_lifecycle_apply_execution_plan_v1"
