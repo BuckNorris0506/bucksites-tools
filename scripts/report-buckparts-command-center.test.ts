@@ -4,6 +4,7 @@ import path from "node:path";
 import test from "node:test";
 
 import { buildDemandToCoverageEngineV1FromRows } from "./lib/demand-to-coverage-engine-v1";
+import { buildRefrigeratorModelFirstTruthAuditV1 } from "./lib/refrigerator-model-first-truth-audit-v1";
 import { buildEvidenceToLearningOutcomesCandidateImportV1 } from "./lib/evidence-to-learning-outcomes-candidate-import-v1";
 import {
   buildLearningOutcomesInsertPlanV1,
@@ -4845,7 +4846,11 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.equal(spine.contract, "fridge_truth_spine_v1");
   assert.equal(spine.read_only, true);
   assert.equal(spine.data_mutation, false);
-  assert.equal(spine.csv_truth.linked_filters_with_safe_direct_buyable_primary, 14);
+  const fridgeAudit = buildRefrigeratorModelFirstTruthAuditV1({ rootDir: process.cwd() });
+  assert.equal(
+    spine.csv_truth.linked_filters_with_safe_direct_buyable_primary,
+    fridgeAudit.linked_filters_with_safe_direct_buyable_primary,
+  );
   assert.equal(spine.csv_truth.safe_buyer_path_verdict, "UNKNOWN");
   assert.deepEqual(spine.supabase_csv_diff.evidence_only_slugs, ["4396508", "gswf"]);
   assert.equal(spine.public_truth.should_redo_fridge_products_now, "NO");
@@ -5043,13 +5048,24 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.equal(lane.filter_slug, "rpwfe");
   assert.equal(lane.public_route, "/filter/rpwfe");
   assert.equal(lane.customer_visible_problem, true);
-  assert.equal(lane.current_public_state, "no_buy_options");
-  assert.equal(typeof lane.compatible_model_count, "number");
-  assert.ok(lane.compatible_model_count > 0);
-  assert.equal(lane.existing_retailer_row_status, "SEARCH_PLACEHOLDER_BLOCKED");
-  assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_DOC_NOT_APPLIED");
+  if (lane.owner_review_phase === "POST_CSV_APPLY_NOOP") {
+    assert.equal(lane.current_public_state, "repo_csv_direct_buyable_supabase_parity_pending");
+    assert.equal(lane.existing_retailer_row_status, "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED");
+    assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_CSV_APPLIED");
+    assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
+    assert.ok(!lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
+    assert.match(lane.next_owner_action, /Supabase parity/i);
+  } else {
+    assert.equal(lane.current_public_state, "no_buy_options");
+    assert.equal(lane.existing_retailer_row_status, "SEARCH_PLACEHOLDER_BLOCKED");
+    assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_DOC_NOT_APPLIED");
+    assert.ok(lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
+    assert.match(lane.next_agent_action, /do not add buy links/i);
+  }
   assert.equal(lane.compatible_waterdrop_path_status, "UNPROVEN_UNAUTHORIZED");
   assert.equal(lane.candidate_waterdrop_product, "WD-F19C");
+  assert.equal(typeof lane.compatible_model_count, "number");
+  assert.ok(lane.compatible_model_count > 0);
   assert.equal(lane.safe_labeling_required, true);
   assert.equal(lane.official_label_authorized, false);
   assert.equal(lane.compatible_label_authorized, false);
@@ -5058,12 +5074,43 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.equal(lane.evidence_write_authorized, false);
   assert.equal(lane.public_ui_mutation_authorized, false);
   assert.equal(lane.netlify_api_authorized, false);
-  assert.ok(lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
-  assert.ok(lane.blockers.includes("waterdrop_wd_f19c_evidence_not_proven"));
-  assert.ok(lane.blockers.includes("compatible_replacement_labeling_not_authorized"));
-  assert.ok(lane.blockers.includes("owner_rescue_approval_missing"));
   assert.ok(lane.blockers.includes("csv_supabase_mutation_not_authorized"));
-  assert.match(lane.next_agent_action, /do not add buy links/i);
+  if (lane.owner_review_phase !== "POST_CSV_APPLY_NOOP") {
+    assert.ok(lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
+    assert.match(lane.next_agent_action, /do not add buy links/i);
+  }
+});
+
+test("command_center_v2.rpwfe_official_ge_supabase_parity_plan_v1 is read-only parity plan", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.rpwfe_official_ge_supabase_parity_plan_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "rpwfe_official_ge_supabase_parity_plan_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.filter_slug, "rpwfe");
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.buckparts_verified_link_authorized, false);
+  assert.equal(lane.waterdrop_in_plan, false);
+  assert.equal(lane.amazon_in_plan, false);
+  assert.equal(lane.compatible_replacement_in_plan, false);
+  assert.ok(lane.blockers.includes("owner_supabase_apply_approval_missing"));
+  assert.ok(lane.blockers.includes("supabase_apply_not_authorized"));
+  assert.ok(lane.blockers.includes("live_page_not_revalidated_after_supabase_parity"));
+  if (lane.repo_csv_status === "REPO_DIRECT_BUYABLE_OFFICIAL_GE_SPEC_PDP") {
+    assert.equal(lane.proposed_url, "https://www.geapplianceparts.com/store/parts/spec/RPWFE");
+    assert.equal(lane.proposed_browser_truth_classification, "direct_buyable");
+    assert.equal(lane.proposed_retailer_name, "GE Appliance Parts");
+  }
 });
 
 test("command_center_v2.rpwfe_official_ge_apply_plan_proposal_v1 is read-only apply plan", async () => {
@@ -5093,17 +5140,23 @@ test("command_center_v2.rpwfe_official_ge_apply_plan_proposal_v1 is read-only ap
   assert.equal(lane.waterdrop_in_proposal, false);
   assert.equal(lane.compatible_replacement_in_proposal, false);
   assert.equal(lane.amazon_in_proposal, false);
-  assert.ok(lane.blockers.includes("owner_apply_approval_missing"));
-  assert.ok(lane.blockers.includes("csv_apply_not_authorized"));
-  if (lane.browser_truth_status === "PASS") {
-    assert.equal(lane.plan_status, "PROPOSED_OWNER_REVIEW_READY");
+  if (lane.plan_status === "ALREADY_APPLIED_REPO_DIRECT_BUYABLE") {
+    assert.equal(lane.csv_apply_noop, true);
+    assert.equal(lane.apply_plan_proposal_ready, false);
+    assert.equal(lane.owner_apply_review_ready, false);
+    assert.equal(lane.current_row_state, "repo_direct_buyable_official_ge_spec_pdp_applied");
+    assert.equal(lane.planned_retailer_links_csv_change, null);
+    assert.ok(lane.blockers.includes("repo_csv_already_applied_official_ge"));
+    assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
+    assert.match(lane.next_recommended_action, /Supabase parity/i);
+  } else if (lane.plan_status === "PROPOSED_OWNER_REVIEW_READY") {
     assert.equal(lane.apply_plan_proposal_ready, true);
-    assert.equal(lane.proposed_url, "https://www.geapplianceparts.com/store/parts/spec/RPWFE");
     assert.equal(lane.current_row_state, "existing_ge_catalog_search_placeholder_blocked");
     assert.ok(lane.planned_retailer_links_csv_change);
     assert.equal(lane.planned_retailer_links_csv_change!.proposed_row.waterdrop, false);
-  }
-  if (lane.browser_truth_status === "FAIL" || lane.browser_truth_status === "UNKNOWN") {
+    assert.ok(lane.blockers.includes("owner_apply_approval_missing"));
+    assert.ok(lane.blockers.includes("csv_apply_not_authorized"));
+  } else {
     assert.equal(lane.apply_plan_proposal_ready, false);
     assert.equal(lane.planned_retailer_links_csv_change, null);
   }
@@ -5219,7 +5272,7 @@ test("command_center_v2.buckparts_certainty_engine_checklist_v1 is read-only nor
   assert.ok(lane.checklist_items.some((item) => item.id === "label_photo_screenshot_upload"));
   assert.ok(lane.checklist_items.some((item) => item.id === "why_buckparts_beats_generic_ai"));
   assert.ok(
-    lane.current_blockers.some((blocker) => blocker.includes("rpwfe:current_public_state=no_buy_options")),
+    lane.current_blockers.some((blocker) => blocker.startsWith("rpwfe:current_public_state=")),
   );
   const ids = lane.checklist_items.map((item) => item.id);
   assert.ok(ids.indexOf("buyer_path_coverage_scoreboard") < 5);

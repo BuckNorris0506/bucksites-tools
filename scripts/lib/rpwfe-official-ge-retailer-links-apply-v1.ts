@@ -197,24 +197,26 @@ export function executeRpwfeOfficialGeRetailerLinksApplyV1(args: {
     nonTargetUnchanged = nonTargetHashBefore === nonTargetHashAfter;
 
     const applied = rowsReloaded[targetIndex]!;
-    postGate = buyLinkGateFailureKind(applied);
+    const appliedLink = { ...applied, affiliate_url: applied.affiliate_url ?? "" };
+    postGate = buyLinkGateFailureKind(appliedLink);
     postState = mapSignalsToRetailerLinkState({
       browserTruthClassification: applied.browser_truth_classification ?? null,
       gateFailureKind: postGate,
     });
-    postSafeCta = isDirectBuyableSafeCtaRow(applied);
+    postSafeCta = isDirectBuyableSafeCtaRow(appliedLink);
     if (!nonTargetUnchanged) blockers.push("non_target_rows_changed");
     if (applied.affiliate_url?.trim() !== RPWFE_OFFICIAL_GE_TARGET_URL_V1) {
       blockers.push("after_url_mismatch");
       applyStatus = "BLOCKED";
     }
   } else if (blockers.length === 0 && afterRow) {
-    postGate = buyLinkGateFailureKind(afterRow);
+    const afterLink = { ...afterRow, affiliate_url: afterRow.affiliate_url ?? "" };
+    postGate = buyLinkGateFailureKind(afterLink);
     postState = mapSignalsToRetailerLinkState({
       browserTruthClassification: afterRow.browser_truth_classification ?? null,
       gateFailureKind: postGate,
     });
-    postSafeCta = isDirectBuyableSafeCtaRow(afterRow);
+    postSafeCta = isDirectBuyableSafeCtaRow(afterLink);
   }
 
   const run: RpwfeOfficialGeRetailerLinksApplyRunV1 = {
@@ -288,14 +290,15 @@ export function validateRpwfeOfficialGeRetailerLinksApplyState(args: {
   });
   const rpwfeRows = rows.filter((r) => r.filter_slug?.trim().toLowerCase() === FILTER_SLUG);
   const primary = rpwfeRows.find((r) => r.retailer_key?.trim() === RETAILER_KEY) ?? null;
-  const gate = primary ? buyLinkGateFailureKind(primary) : "missing_row";
+  const primaryLink = primary ? { ...primary, affiliate_url: primary.affiliate_url ?? "" } : null;
+  const gate = primaryLink ? buyLinkGateFailureKind(primaryLink) : "missing_row";
   return {
-    ok: primary !== null && gate === null && isDirectBuyableSafeCtaRow(primary ?? { affiliate_url: "" }),
+    ok: primaryLink !== null && gate === null && isDirectBuyableSafeCtaRow(primaryLink),
     rpwfe_row_count: rpwfeRows.length,
     has_waterdrop: rpwfeRows.some((r) => /waterdrop|wd-f19c/i.test(JSON.stringify(r))),
     has_amazon: rpwfeRows.some((r) => (r.retailer_key ?? "").toLowerCase() === "amazon"),
     gate_failure_kind: typeof gate === "string" ? gate : gate,
-    is_direct_buyable_safe_cta: primary ? isDirectBuyableSafeCtaRow(primary) : false,
+    is_direct_buyable_safe_cta: primaryLink ? isDirectBuyableSafeCtaRow(primaryLink) : false,
     affiliate_url: primary?.affiliate_url?.trim() ?? null,
   };
 }

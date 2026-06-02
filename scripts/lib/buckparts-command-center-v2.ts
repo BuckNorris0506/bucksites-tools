@@ -264,6 +264,7 @@ export function buildCommandCenterV2Report(input: {
   | "rpwfe_verified_link_rescue_plan_v1"
   | "rpwfe_official_ge_browser_evidence_review_v1"
   | "rpwfe_official_ge_apply_plan_proposal_v1"
+  | "rpwfe_official_ge_supabase_parity_plan_v1"
   | "buckparts_certainty_engine_checklist_v1"
   | "operator_process_compression_v1"
   | "external_quality_signal_usefulness_v1"

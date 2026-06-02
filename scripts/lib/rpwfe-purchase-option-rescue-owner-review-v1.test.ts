@@ -19,6 +19,10 @@ const RETAILER_LINKS_CSV = `filter_slug,retailer_name,affiliate_url,is_primary,s
 rpwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE,true,0,oem-parts-catalog,,,
 `;
 
+const APPLIED_RETAILER_LINKS_CSV = `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at
+rpwfe,GE Appliance Parts,https://www.geapplianceparts.com/store/parts/spec/RPWFE,true,0,oem-parts-catalog,direct_buyable,RPWFE official GE guarded CSV apply v1,2026-06-02T14:23:08.624Z
+`;
+
 const RPWFE_DOC = `
 GE Appliance Parts spec PDP: https://www.geapplianceparts.com/store/parts/spec/RPWFE
 Proof: PROVEN Playwright direct_buyable with Add to Cart.
@@ -84,6 +88,26 @@ test("RPWFE purchase-option rescue owner-review lane is read-only and mutation-b
   assert.ok(lane.next_safe_evidence_packet_recommendations.some((p) => p.packet_id.includes("official_ge")));
   assert.ok(lane.next_safe_evidence_packet_recommendations.some((p) => p.packet_id.includes("waterdrop")));
   assert.match(lane.next_agent_action, /do not add buy links/i);
+});
+
+test("RPWFE owner-review lane reflects post-CSV-apply repo direct_buyable noop state", () => {
+  const reader = fixtureReader({
+    ...ALL_FILES,
+    "data/retailer_links.csv": APPLIED_RETAILER_LINKS_CSV,
+  });
+  const lane = buildRpwfePurchaseOptionRescueOwnerReviewLaneV1({
+    rootDir: "/fixture-root",
+    ...reader,
+  });
+
+  assert.equal(lane.owner_review_phase, "POST_CSV_APPLY_NOOP");
+  assert.equal(lane.current_public_state, "repo_csv_direct_buyable_supabase_parity_pending");
+  assert.equal(lane.existing_retailer_row_status, "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED");
+  assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_CSV_APPLIED");
+  assert.equal(lane.existing_retailer_row?.gate_failure_kind, null);
+  assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
+  assert.ok(!lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
+  assert.match(lane.next_owner_action, /Supabase parity/i);
 });
 
 test("RPWFE owner-review lane degrades safely when inputs are missing", () => {

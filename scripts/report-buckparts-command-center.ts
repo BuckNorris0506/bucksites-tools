@@ -62,6 +62,7 @@ import { buildRpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./lib/rpwfe-pur
 import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certainty-engine-checklist-v1";
 import { buildOperatorProcessCompressionLaneV1 } from "./lib/operator-process-compression-v1";
 import { buildExternalQualitySignalUsefulnessLaneV1 } from "./lib/external-quality-signal-usefulness-v1";
+import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
 import { buildRpwfeVerifiedLinkRescuePlanV1 } from "./lib/rpwfe-verified-link-rescue-plan-v1";
@@ -1100,6 +1101,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "rpwfe_verified_link_rescue_plan_v1"
     | "rpwfe_official_ge_browser_evidence_review_v1"
     | "rpwfe_official_ge_apply_plan_proposal_v1"
+    | "rpwfe_official_ge_supabase_parity_plan_v1"
     | "buckparts_certainty_engine_checklist_v1"
     | "operator_process_compression_v1"
     | "external_quality_signal_usefulness_v1"
@@ -1260,6 +1262,12 @@ export async function buildBuckpartsCommandCenterReport(
     browserEvidenceReview: rpwfe_official_ge_browser_evidence_review_v1,
   });
 
+  const rpwfe_official_ge_supabase_parity_plan_v1 = await buildRpwfeOfficialGeSupabaseParityPlanLaneV1({
+    rootDir,
+    fileExists,
+    readTextFile,
+  });
+
   const operator_process_compression_v1 = buildOperatorProcessCompressionLaneV1();
   const external_quality_signal_usefulness_v1 = buildExternalQualitySignalUsefulnessLaneV1({
     rootDir,
@@ -1325,6 +1333,7 @@ export async function buildBuckpartsCommandCenterReport(
     rpwfe_verified_link_rescue_plan_v1,
     rpwfe_official_ge_browser_evidence_review_v1,
     rpwfe_official_ge_apply_plan_proposal_v1,
+    rpwfe_official_ge_supabase_parity_plan_v1,
     buckparts_certainty_engine_checklist_v1,
     operator_process_compression_v1,
     external_quality_signal_usefulness_v1,

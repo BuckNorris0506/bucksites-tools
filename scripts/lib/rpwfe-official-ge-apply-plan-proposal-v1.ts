@@ -1,5 +1,5 @@
 /**
- * Read-only RPWFE official GE BuckParts Verified Link apply-plan proposal.
+ * Read-only RPWFE official GE apply-plan proposal.
  * Plans a single data/retailer_links.csv change only — does not mutate CSV, Supabase, or public UI.
  */
 
@@ -17,6 +17,11 @@ import {
   type RpwfeOfficialGeBrowserEvidenceArtifactV1,
 } from "./rpwfe-official-ge-browser-capture-v1";
 import type { RpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./rpwfe-official-ge-browser-evidence-review-v1";
+import {
+  isRpwfeRepoCsvOfficialGeDirectBuyableApplied,
+  rpwfeRepoCsvCurrentRowState,
+  type RpwfeRepoCsvRowLike,
+} from "./rpwfe-official-ge-repo-csv-state-v1";
 
 export const RPWFE_OFFICIAL_GE_APPLY_PLAN_PROPOSAL_CONTRACT_V1 =
   "rpwfe_official_ge_apply_plan_proposal_v1" as const;
@@ -31,14 +36,6 @@ const PROPOSED_RETAILER_NAME = "GE Appliance Parts" as const;
 const PROPOSED_RETAILER_KEY = "oem-parts-catalog" as const;
 const PROPOSED_CUSTOMER_LABEL = "BuckParts Verified Link" as const;
 const PROPOSED_LABEL_SUBTYPE = "official_manufacturer_official_ge" as const;
-
-type RetailerLinkRow = {
-  filter_slug?: string;
-  retailer_name?: string;
-  affiliate_url?: string;
-  is_primary?: string;
-  retailer_key?: string;
-};
 
 export type RpwfePlannedRetailerLinksCsvChangeV1 = {
   source_path: typeof RETAILER_LINKS_CSV_REL;
@@ -78,7 +75,11 @@ export type RpwfeOfficialGeApplyPlanProposalLaneV1 = {
   browser_evidence_artifact_path: typeof RPWFE_OFFICIAL_GE_ARTIFACT_REL_V1;
   browser_evidence_review_jq_path: ".command_center_v2.rpwfe_official_ge_browser_evidence_review_v1";
   browser_truth_status: "PASS" | "FAIL" | "UNKNOWN";
-  plan_status: "PROPOSED_OWNER_REVIEW_READY" | "NOT_READY";
+  plan_status:
+    | "PROPOSED_OWNER_REVIEW_READY"
+    | "ALREADY_APPLIED_REPO_DIRECT_BUYABLE"
+    | "NOT_READY";
+  csv_apply_noop: boolean;
   owner_apply_review_ready: boolean;
   apply_plan_proposal_ready: boolean;
   current_row_state: string;
@@ -101,18 +102,25 @@ export type RpwfeOfficialGeApplyPlanProposalLaneV1 = {
   next_recommended_action: string;
 };
 
-const BASE_BLOCKERS = [
+const PRE_APPLY_BLOCKERS = [
   "owner_apply_approval_missing",
   "csv_apply_not_authorized",
   "supabase_mutation_not_authorized",
   "public_ui_mutation_not_authorized",
 ] as const;
 
+const POST_APPLY_BLOCKERS = [
+  "repo_csv_already_applied_official_ge",
+  "csv_apply_not_authorized",
+  "supabase_parity_not_applied",
+  "live_page_not_revalidated_after_supabase_parity",
+] as const;
+
 function readRetailerLinkRow(args: {
   rootDir: string;
   fileExists: (abs: string) => boolean;
   readTextFile: (abs: string) => string;
-}): RetailerLinkRow | null {
+}): RpwfeRepoCsvRowLike | null {
   const abs = path.join(args.rootDir, RETAILER_LINKS_CSV_REL);
   if (!args.fileExists(abs)) return null;
   try {
@@ -120,45 +128,25 @@ function readRetailerLinkRow(args: {
       columns: true,
       skip_empty_lines: true,
       relax_column_count: true,
-    }) as RetailerLinkRow[];
-    return (
-      rows.find((r) => r.filter_slug?.trim().toLowerCase() === FILTER_SLUG) ?? null
-    );
+    }) as RpwfeRepoCsvRowLike[];
+    return rows.find((r) => r.filter_slug?.trim().toLowerCase() === FILTER_SLUG) ?? null;
   } catch {
     return null;
   }
 }
 
-function buildCurrentRowState(row: RetailerLinkRow | null): string {
-  if (!row) return "no_retailer_links_csv_row_proven_for_rpwfe";
-  const gate = buyLinkGateFailureKind({
-    retailer_key: row.retailer_key ?? null,
-    affiliate_url: row.affiliate_url ?? "",
-    browser_truth_classification: null,
-    browser_truth_buyable_subtype: null,
-  });
-  const state = mapSignalsToRetailerLinkState({
-    browserTruthClassification: null,
-    gateFailureKind: gate,
-  });
-  if (gate === "search_placeholder" || state === "BLOCKED_SEARCH_OR_DISCOVERY") {
-    return "existing_ge_catalog_search_placeholder_blocked";
-  }
-  return `retailer_link_state_${state}`;
-}
-
 function buildPlannedChange(
-  row: RetailerLinkRow | null,
+  row: RpwfeRepoCsvRowLike | null,
 ): RpwfePlannedRetailerLinksCsvChangeV1 | null {
   if (!row) return null;
   const gate = buyLinkGateFailureKind({
     retailer_key: row.retailer_key ?? null,
     affiliate_url: row.affiliate_url ?? "",
-    browser_truth_classification: null,
+    browser_truth_classification: row.browser_truth_classification ?? null,
     browser_truth_buyable_subtype: null,
   });
   const state = mapSignalsToRetailerLinkState({
-    browserTruthClassification: null,
+    browserTruthClassification: row.browser_truth_classification ?? null,
     gateFailureKind: gate,
   });
   const currentUrl = row.affiliate_url?.trim() || null;
@@ -218,23 +206,39 @@ export function buildRpwfeOfficialGeApplyPlanProposalLaneV1(args: {
   });
 
   const browserStatus = artifact?.browser_truth_status ?? "UNKNOWN";
-  const ready = proposalReady(artifact);
+  const evidenceReady = proposalReady(artifact);
   const retailerRow = readRetailerLinkRow({ rootDir: args.rootDir, fileExists, readTextFile });
-  const currentRowState = buildCurrentRowState(retailerRow);
-  const plannedChange = ready ? buildPlannedChange(retailerRow) : null;
+  const alreadyApplied = isRpwfeRepoCsvOfficialGeDirectBuyableApplied(retailerRow);
+  const currentRowState = rpwfeRepoCsvCurrentRowState(retailerRow);
 
-  const blockers: string[] = [...BASE_BLOCKERS];
-  if (!artifact) blockers.push("browser_evidence_artifact_missing");
-  if (browserStatus !== "PASS") blockers.push("official_ge_browser_truth_not_pass");
-  if (!retailerRow) blockers.push("retailer_links_csv_row_missing_for_rpwfe");
-
+  let planStatus: RpwfeOfficialGeApplyPlanProposalLaneV1["plan_status"] = "NOT_READY";
+  let applyReady = false;
+  let ownerReviewReady = false;
+  let plannedChange: RpwfePlannedRetailerLinksCsvChangeV1 | null = null;
+  let blockers: string[] = [];
   let next_recommended_action: string;
-  if (!ready) {
+
+  if (alreadyApplied) {
+    planStatus = "ALREADY_APPLIED_REPO_DIRECT_BUYABLE";
+    blockers = [...POST_APPLY_BLOCKERS];
     next_recommended_action =
-      "Do not apply: apply-plan proposal is not ready until official GE browser evidence PASS is on disk.";
-  } else {
+      "CSV apply is spent/no-op: repo rpwfe row is already direct_buyable official GE spec PDP. Next owner step is read-only Supabase parity review (.command_center_v2.rpwfe_official_ge_supabase_parity_plan_v1) — do not re-apply CSV.";
+  } else if (evidenceReady) {
+    planStatus = "PROPOSED_OWNER_REVIEW_READY";
+    applyReady = true;
+    ownerReviewReady = true;
+    plannedChange = buildPlannedChange(retailerRow);
+    blockers = [...PRE_APPLY_BLOCKERS];
+    if (!retailerRow) blockers.push("retailer_links_csv_row_missing_for_rpwfe");
     next_recommended_action =
       "Owner review this apply-plan proposal only. Explicit owner apply approval required before any data/retailer_links.csv mutation or BuckParts Verified Link authorization.";
+  } else {
+    blockers = [...PRE_APPLY_BLOCKERS];
+    if (!artifact) blockers.push("browser_evidence_artifact_missing");
+    if (browserStatus !== "PASS") blockers.push("official_ge_browser_truth_not_pass");
+    if (!retailerRow) blockers.push("retailer_links_csv_row_missing_for_rpwfe");
+    next_recommended_action =
+      "Do not apply: apply-plan proposal is not ready until official GE browser evidence PASS is on disk.";
   }
 
   return {
@@ -249,9 +253,10 @@ export function buildRpwfeOfficialGeApplyPlanProposalLaneV1(args: {
     browser_evidence_review_jq_path:
       ".command_center_v2.rpwfe_official_ge_browser_evidence_review_v1",
     browser_truth_status: browserStatus,
-    plan_status: ready ? "PROPOSED_OWNER_REVIEW_READY" : "NOT_READY",
-    owner_apply_review_ready: ready,
-    apply_plan_proposal_ready: ready,
+    plan_status: planStatus,
+    csv_apply_noop: alreadyApplied,
+    owner_apply_review_ready: ownerReviewReady,
+    apply_plan_proposal_ready: applyReady,
     current_row_state: currentRowState,
     proposed_retailer: PROPOSED_RETAILER_NAME,
     proposed_url: RPWFE_OFFICIAL_GE_TARGET_URL_V1,

@@ -44,6 +44,32 @@ const retailerCsv = `filter_slug,retailer_name,affiliate_url,is_primary,sort_ord
 rpwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE,true,0,oem-parts-catalog,,,
 `;
 
+const appliedRetailerCsv = `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at
+rpwfe,GE Appliance Parts,https://www.geapplianceparts.com/store/parts/spec/RPWFE,true,0,oem-parts-catalog,direct_buyable,RPWFE official GE guarded CSV apply v1,2026-06-02T14:23:08.624Z
+`;
+
+test("PASS browser artifact with applied repo CSV surfaces already_applied noop plan", () => {
+  const lane = buildRpwfeOfficialGeApplyPlanProposalLaneV1({
+    rootDir: "/tmp",
+    fileExists: (p) => p.includes("rpwfe-official-ge-browser-evidence") || p.includes("retailer_links"),
+    readTextFile: (p) => {
+      if (p.includes("rpwfe-official-ge-browser-evidence")) return JSON.stringify(passArtifact);
+      if (p.includes("retailer_links")) return appliedRetailerCsv;
+      return "";
+    },
+  });
+
+  assert.equal(lane.plan_status, "ALREADY_APPLIED_REPO_DIRECT_BUYABLE");
+  assert.equal(lane.csv_apply_noop, true);
+  assert.equal(lane.apply_plan_proposal_ready, false);
+  assert.equal(lane.owner_apply_review_ready, false);
+  assert.equal(lane.current_row_state, "repo_direct_buyable_official_ge_spec_pdp_applied");
+  assert.equal(lane.planned_retailer_links_csv_change, null);
+  assert.ok(lane.blockers.includes("repo_csv_already_applied_official_ge"));
+  assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
+  assert.match(lane.next_recommended_action, /Supabase parity/i);
+});
+
 test("PASS browser artifact creates owner-review-ready apply-plan proposal", () => {
   const lane = buildRpwfeOfficialGeApplyPlanProposalLaneV1({
     rootDir: "/tmp",

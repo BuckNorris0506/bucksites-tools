@@ -54,6 +54,7 @@ import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 import type { RpwfeOfficialGeApplyPlanProposalLaneV1 } from "./rpwfe-official-ge-apply-plan-proposal-v1";
+import type { RpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
 import type { RpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./rpwfe-official-ge-browser-evidence-review-v1";
 import type { RpwfeVerifiedLinkRescuePlanLaneV1 } from "./rpwfe-verified-link-rescue-plan-v1";
 import type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
@@ -1042,6 +1043,8 @@ export type CommandCenterV2Report = {
   rpwfe_official_ge_browser_evidence_review_v1: RpwfeOfficialGeBrowserEvidenceReviewLaneV1;
   /** Read-only RPWFE official GE retailer_links.csv apply-plan proposal — no CSV/Supabase/UI apply. */
   rpwfe_official_ge_apply_plan_proposal_v1: RpwfeOfficialGeApplyPlanProposalLaneV1;
+  /** Read-only RPWFE official GE Supabase parity plan — compares repo CSV to expected DB row; no Supabase writes. */
+  rpwfe_official_ge_supabase_parity_plan_v1: RpwfeOfficialGeSupabaseParityPlanLaneV1;
   /** Read-only BuckParts Certainty Engine north-star checklist — judges must-check-before-buy posture; not mutation authority. */
   buckparts_certainty_engine_checklist_v1: BuckpartsCertaintyEngineChecklistLaneV1;
   /** Read-only operator process compression — ship guard replaces repetitive commit/push copy-pastes. */
@@ -1065,6 +1068,7 @@ export type CommandCenterV2Report = {
 export type { DemandToCoverageNextLaneReportV1 };
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
+export type { RpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
 export type { RpwfeOfficialGeApplyPlanProposalLaneV1 } from "./rpwfe-official-ge-apply-plan-proposal-v1";
 export type { RpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./rpwfe-official-ge-browser-evidence-review-v1";
 export type { RpwfeVerifiedLinkRescuePlanLaneV1 } from "./rpwfe-verified-link-rescue-plan-v1";

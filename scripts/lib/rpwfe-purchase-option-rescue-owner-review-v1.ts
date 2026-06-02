@@ -12,6 +12,8 @@ import { parse } from "csv-parse/sync";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
+import { isRpwfeRepoCsvOfficialGeDirectBuyableApplied } from "./rpwfe-official-ge-repo-csv-state-v1";
+
 export const RPWFE_PURCHASE_OPTION_RESCUE_OWNER_REVIEW_CONTRACT_V1 =
   "rpwfe_purchase_option_rescue_owner_review_v1" as const;
 export const RPWFE_PURCHASE_OPTION_RESCUE_OWNER_REVIEW_CC_JQ_PATH_V1 =
@@ -50,11 +52,17 @@ type FilterRow = {
 
 export type RpwfeExistingRetailerRowStatusV1 =
   | "SEARCH_PLACEHOLDER_BLOCKED"
+  | "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED"
   | "NO_RETAILER_ROW_PROVEN"
   | "UNKNOWN";
 export type RpwfeOfficialGePathStatusV1 =
   | "PROVEN_IN_REPO_DOC_NOT_APPLIED"
+  | "PROVEN_IN_REPO_CSV_APPLIED"
   | "UNKNOWN";
+export type RpwfeOwnerReviewPhaseV1 = "PRE_APPLY_RESCUE" | "POST_CSV_APPLY_NOOP";
+export type RpwfeCurrentPublicStateV1 =
+  | "no_buy_options"
+  | "repo_csv_direct_buyable_supabase_parity_pending";
 export type RpwfeCompatibleWaterdropPathStatusV1 =
   | "UNPROVEN_UNAUTHORIZED"
   | "UNKNOWN";
@@ -67,7 +75,8 @@ export type RpwfePurchaseOptionRescueOwnerReviewLaneV1 = {
   filter_slug: typeof FILTER_SLUG;
   public_route: typeof PUBLIC_ROUTE;
   customer_visible_problem: true;
-  current_public_state: "no_buy_options";
+  owner_review_phase: RpwfeOwnerReviewPhaseV1;
+  current_public_state: RpwfeCurrentPublicStateV1;
   compatible_model_count: number | "UNKNOWN";
   existing_retailer_row_status: RpwfeExistingRetailerRowStatusV1;
   existing_retailer_row: {
@@ -91,14 +100,7 @@ export type RpwfePurchaseOptionRescueOwnerReviewLaneV1 = {
   public_ui_mutation_authorized: false;
   netlify_api_authorized: false;
   customer_trust_impact: string[];
-  blockers: [
-    "official_ge_direct_pdp_not_proven_or_not_applied",
-    "waterdrop_wd_f19c_evidence_not_proven",
-    "compatible_replacement_labeling_not_authorized",
-    "owner_rescue_approval_missing",
-    "csv_supabase_mutation_not_authorized",
-    ...string[],
-  ];
+  blockers: string[];
   next_safe_evidence_packet_recommendations: Array<{
     packet_id: string;
     status: "RECOMMENDED_READ_ONLY";
@@ -186,6 +188,19 @@ function resolveExistingRetailerRow(rows: RetailerLinkRow[] | null) {
     browserTruthClassification: row.browser_truth_classification ?? null,
     gateFailureKind: gate,
   });
+  if (isRpwfeRepoCsvOfficialGeDirectBuyableApplied(row)) {
+    return {
+      status: "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED" as const,
+      row: {
+        source_path: RETAILER_LINKS_CSV_REL,
+        retailer_name: row.retailer_name?.trim() || null,
+        retailer_key: row.retailer_key?.trim() || null,
+        affiliate_url: row.affiliate_url?.trim() || null,
+        gate_failure_kind: gate,
+        retailer_link_state: state,
+      },
+    };
+  }
   return {
     status: gate === "search_placeholder" || state === "BLOCKED_SEARCH_OR_DISCOVERY"
       ? ("SEARCH_PLACEHOLDER_BLOCKED" as const)
@@ -219,6 +234,7 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
   const filterExists =
     filtersRows?.some((row) => (row.slug ?? row.filter_slug)?.trim().toLowerCase() === FILTER_SLUG) ?? false;
   const retailer = resolveExistingRetailerRow(retailerRows);
+  const repoCsvApplied = retailer.status === "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED";
   const compatibleModelCount = getCompatibilityCount(compatibilityRows);
   const officialGeDocProven =
     Boolean(rescueDoc?.includes("https://www.geapplianceparts.com/store/parts/spec/RPWFE")) &&
@@ -231,14 +247,31 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
       /not in-repo browser proof yet/.test(waterdropDoc ?? ""));
 
   const blockers: RpwfePurchaseOptionRescueOwnerReviewLaneV1["blockers"] = [
-    "official_ge_direct_pdp_not_proven_or_not_applied",
+    ...(repoCsvApplied ? [] : ["official_ge_direct_pdp_not_proven_or_not_applied"]),
     "waterdrop_wd_f19c_evidence_not_proven",
     "compatible_replacement_labeling_not_authorized",
-    "owner_rescue_approval_missing",
+    ...(repoCsvApplied ? ["supabase_parity_not_applied"] : ["owner_rescue_approval_missing"]),
     "csv_supabase_mutation_not_authorized",
     ...(!filterExists ? ["rpwfe_filter_catalog_row_missing"] : []),
-    ...(retailer.status !== "SEARCH_PLACEHOLDER_BLOCKED" ? ["rpwfe_search_placeholder_row_not_proven"] : []),
+    ...(retailer.status === "SEARCH_PLACEHOLDER_BLOCKED"
+      ? []
+      : repoCsvApplied
+        ? []
+        : ["rpwfe_search_placeholder_row_not_proven"]),
+    ...(repoCsvApplied ? ["live_page_not_revalidated_after_supabase_parity"] : []),
   ];
+
+  const ownerReviewPhase: RpwfeOwnerReviewPhaseV1 = repoCsvApplied
+    ? "POST_CSV_APPLY_NOOP"
+    : "PRE_APPLY_RESCUE";
+  const currentPublicState: RpwfeCurrentPublicStateV1 = repoCsvApplied
+    ? "repo_csv_direct_buyable_supabase_parity_pending"
+    : "no_buy_options";
+  const officialGePathStatus: RpwfeOfficialGePathStatusV1 = repoCsvApplied
+    ? "PROVEN_IN_REPO_CSV_APPLIED"
+    : officialGeDocProven
+      ? "PROVEN_IN_REPO_DOC_NOT_APPLIED"
+      : "UNKNOWN";
 
   return {
     contract: RPWFE_PURCHASE_OPTION_RESCUE_OWNER_REVIEW_CONTRACT_V1,
@@ -248,11 +281,12 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
     filter_slug: FILTER_SLUG,
     public_route: PUBLIC_ROUTE,
     customer_visible_problem: true,
-    current_public_state: "no_buy_options",
+    owner_review_phase: ownerReviewPhase,
+    current_public_state: currentPublicState,
     compatible_model_count: compatibleModelCount,
     existing_retailer_row_status: retailer.status,
     existing_retailer_row: retailer.row,
-    official_ge_path_status: officialGeDocProven ? "PROVEN_IN_REPO_DOC_NOT_APPLIED" : "UNKNOWN",
+    official_ge_path_status: officialGePathStatus,
     official_ge_candidate_url: officialGeDocProven
       ? "https://www.geapplianceparts.com/store/parts/spec/RPWFE"
       : null,
@@ -266,11 +300,16 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
     evidence_write_authorized: false,
     public_ui_mutation_authorized: false,
     netlify_api_authorized: false,
-    customer_trust_impact: [
-      "RPWFE has many compatible refrigerator models but no customer-visible buy CTA.",
-      "The current no-buy state can make BuckParts look incomplete even though search-placeholder gating is correctly protecting trust.",
-      "Waterdrop-compatible replacement labeling must stay separate from official GE labeling.",
-    ],
+    customer_trust_impact: repoCsvApplied
+      ? [
+          "RPWFE repo CSV now has a direct_buyable official GE spec PDP row; live customer buy path still depends on Supabase parity and page revalidation.",
+          "Waterdrop-compatible replacement labeling must stay separate from official GE labeling.",
+        ]
+      : [
+          "RPWFE has many compatible refrigerator models but no customer-visible buy CTA.",
+          "The current no-buy state can make BuckParts look incomplete even though search-placeholder gating is correctly protecting trust.",
+          "Waterdrop-compatible replacement labeling must stay separate from official GE labeling.",
+        ],
     blockers,
     next_safe_evidence_packet_recommendations: [
       {
@@ -294,10 +333,10 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
     ],
     proven_facts: [
       "PROVEN: lane is read_only=true and data_mutation=false.",
-      `PROVEN: filter_slug=${FILTER_SLUG}; public_route=${PUBLIC_ROUTE}; current_public_state=no_buy_options.`,
+      `PROVEN: owner_review_phase=${ownerReviewPhase}; current_public_state=${currentPublicState}.`,
       `PROVEN: existing_retailer_row_status=${retailer.status}.`,
       `PROVEN: compatible_model_count=${String(compatibleModelCount)} from ${COMPATIBILITY_CSV_REL}.`,
-      `PROVEN: official_ge_path_status=${officialGeDocProven ? "PROVEN_IN_REPO_DOC_NOT_APPLIED" : "UNKNOWN"}.`,
+      `PROVEN: official_ge_path_status=${officialGePathStatus}.`,
       `PROVEN: compatible_waterdrop_path_status=${waterdropUnproven ? "UNPROVEN_UNAUTHORIZED" : "UNKNOWN"}.`,
     ],
     inferred_facts: [
@@ -314,9 +353,11 @@ export function buildRpwfePurchaseOptionRescueOwnerReviewLaneV1(
       "No new browser evidence is collected or written by this lane.",
       "No Waterdrop WD-F19C CTA is authorized by this lane.",
     ],
-    next_agent_action:
-      "Use this lane for owner review only; do not add buy links, write evidence, query/mutate Supabase, mutate data/retailer_links.csv, change public UI, call Netlify, deploy, create owner approval rows, apply rules, or start a batch.",
-    next_owner_action:
-      "Review whether to authorize a future read-only RPWFE evidence packet for official GE PDP proof and separate Waterdrop WD-F19C compatible-replacement proof; current lane authorizes no buy CTA.",
+    next_agent_action: repoCsvApplied
+      ? "Owner-review lane is post-CSV-apply noop for official GE CSV rescue. Use rpwfe_official_ge_supabase_parity_plan_v1 next; do not re-apply CSV, mutate Supabase, change public UI, or authorize Waterdrop/Amazon/compatible replacement."
+      : "Use this lane for owner review only; do not add buy links, write evidence, query/mutate Supabase, mutate data/retailer_links.csv, change public UI, call Netlify, deploy, create owner approval rows, apply rules, or start a batch.",
+    next_owner_action: repoCsvApplied
+      ? "Review read-only Supabase parity plan for rpwfe official GE only. CSV apply is already spent; next gated step is owner-authorized Supabase parity plus live /filter/rpwfe revalidation."
+      : "Review whether to authorize a future read-only RPWFE evidence packet for official GE PDP proof and separate Waterdrop WD-F19C compatible-replacement proof; current lane authorizes no buy CTA.",
   };
 }
