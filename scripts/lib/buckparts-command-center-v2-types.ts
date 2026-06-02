@@ -54,6 +54,8 @@ import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 import type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
+import type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";
+import type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-signal-usefulness-v1";
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 
@@ -1033,6 +1035,10 @@ export type CommandCenterV2Report = {
   rpwfe_purchase_option_rescue_owner_review_v1: RpwfePurchaseOptionRescueOwnerReviewLaneV1;
   /** Read-only BuckParts Certainty Engine north-star checklist — judges must-check-before-buy posture; not mutation authority. */
   buckparts_certainty_engine_checklist_v1: BuckpartsCertaintyEngineChecklistLaneV1;
+  /** Read-only operator process compression — ship guard replaces repetitive commit/push copy-pastes. */
+  operator_process_compression_v1: OperatorProcessCompressionLaneV1;
+  /** Read-only GitHub/Sentry usefulness audit — repo filesystem only; no external APIs. */
+  external_quality_signal_usefulness_v1: ExternalQualitySignalUsefulnessLaneV1;
   /** Read-only proposed ap-batch-v3 run descriptor from Command Center lane selection — not mutation authority. */
   ap_batch_v3_run_instantiation_v1?: ApBatchV3RunInstantiationV1;
   /** Read-only model-first AP production strategy lane — appliance model before filter-SKU rescue. */
@@ -1051,6 +1057,8 @@ export type { DemandToCoverageNextLaneReportV1 };
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 export type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
+export type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";
+export type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-signal-usefulness-v1";
 
 export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
