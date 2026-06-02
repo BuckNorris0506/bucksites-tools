@@ -4,10 +4,10 @@ import "./globals.css";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
 import { SiteShell } from "@/components/SiteShell";
 import {
-  SITE_DEFAULT_DESCRIPTION,
   SITE_DISPLAY_NAME,
 } from "@/lib/site-brand";
 import { buildDeployCommitRefForMetadata } from "@/lib/deploy/buckparts-deploy-identity-v1";
+import { buildSiteSocialMetadata } from "@/lib/site-social-metadata";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
 const geistSans = localFont({
@@ -22,24 +22,16 @@ const geistMono = localFont({
 });
 
 const siteName = SITE_DISPLAY_NAME;
-const siteDesc = SITE_DEFAULT_DESCRIPTION;
 const impactVerificationValue = "bd3fcd9a-5fb7-4016-b37d-afad3a592b71";
 
 const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 const deployCommitRef = buildDeployCommitRefForMetadata();
 
+const siteSocialMetadata = buildSiteSocialMetadata({ siteName });
+
 export const metadata: Metadata = {
   metadataBase: new URL(getRequiredSiteUrl()),
-  title: {
-    default: `${siteName} — Replacement filters & parts lookup`,
-    template: `%s · ${siteName}`,
-  },
-  description: siteDesc,
-  openGraph: {
-    siteName,
-    type: "website",
-    description: siteDesc,
-  },
+  ...siteSocialMetadata,
   ...(googleVerification
     ? { verification: { google: googleVerification } }
     : {}),

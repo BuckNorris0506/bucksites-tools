@@ -4,23 +4,23 @@ import { RecentSearches } from "@/components/RecentSearches";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { SearchForm } from "@/components/SearchForm";
 import { listBrowseFilters } from "@/lib/catalog/browse";
-import { homePageMetaDescription } from "@/lib/copy/public-trust";
+import {
+  SITE_SOCIAL_OG_DESCRIPTION,
+  SITE_SOCIAL_OG_TITLE,
+} from "@/lib/site-social-metadata";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
-const homeMetaTitle = `Replacement filters lookup · ${SITE_DISPLAY_NAME}`;
-const homeMetaDescription = homePageMetaDescription(SITE_DISPLAY_NAME);
-
 export const metadata: Metadata = {
-  title: homeMetaTitle,
-  description: homeMetaDescription,
+  title: SITE_SOCIAL_OG_TITLE,
+  description: SITE_SOCIAL_OG_DESCRIPTION,
   openGraph: {
-    title: homeMetaTitle,
-    description: homeMetaDescription,
+    title: SITE_SOCIAL_OG_TITLE,
+    description: SITE_SOCIAL_OG_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
-    title: homeMetaTitle,
-    description: homeMetaDescription,
+    title: SITE_SOCIAL_OG_TITLE,
+    description: SITE_SOCIAL_OG_DESCRIPTION,
   },
 };
 
