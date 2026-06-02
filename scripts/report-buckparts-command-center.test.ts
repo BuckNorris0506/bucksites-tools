@@ -5066,6 +5066,37 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.match(lane.next_agent_action, /do not add buy links/i);
 });
 
+test("command_center_v2.rpwfe_verified_link_rescue_plan_v1 is read-only rescue evidence plan", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.rpwfe_verified_link_rescue_plan_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "rpwfe_verified_link_rescue_plan_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.owner_approval_required, true);
+  assert.equal(lane.emergency_classification, "HIGH_DEMAND_NO_VERIFIED_LINK_TRUST_GAP");
+  assert.equal(lane.buckparts_verified_link_authorized, false);
+  assert.equal(lane.official_ge_candidate.path_type, "OFFICIAL_GE_MANUFACTURER");
+  assert.equal(lane.compatible_waterdrop_candidate.status, "UNPROVEN_UNAUTHORIZED");
+  assert.equal(lane.compatible_waterdrop_candidate.product_sku, "WD-F19C");
+  assert.equal(lane.visual_match_proof_needed.required, true);
+  assert.match(lane.electronic_filter_risk_plain_language, /electronic piece inside/i);
+  assert.ok(lane.prohibited_claims.some((c) => /official ge/i.test(c) && /waterdrop/i.test(c)));
+  assert.match(lane.why_this_matters_to_certainty_engine, /Certainty Engine/i);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+});
+
 test("command_center_v2.buckparts_certainty_engine_checklist_v1 is read-only north-star checklist", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
