@@ -59,6 +59,7 @@ import {
 } from "./lib/demand-to-coverage-next-lane-v1";
 import { buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./lib/air-purifier-demand-selected-batch-owner-review-v1";
 import { buildRpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./lib/rpwfe-purchase-option-rescue-owner-review-v1";
+import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certainty-engine-checklist-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
@@ -1091,6 +1092,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "demand_to_coverage_next_lane_v1"
     | "air_purifier_demand_selected_batch_owner_review_v1"
     | "rpwfe_purchase_option_rescue_owner_review_v1"
+    | "buckparts_certainty_engine_checklist_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
@@ -1216,6 +1218,16 @@ export async function buildBuckpartsCommandCenterReport(
 
   const page_publishability_truth_summary_v1 = await pagePublishabilityTruthLoader();
 
+  const buckparts_certainty_engine_checklist_v1 = buildBuckpartsCertaintyEngineChecklistV1({
+    rootDir,
+    fileExists,
+    readTextFile,
+    rpwfeOwnerReview: rpwfe_purchase_option_rescue_owner_review_v1,
+    apDemandSelectedOwnerReview: air_purifier_demand_selected_batch_owner_review_v1,
+    demandToCoverageNextLane: demand_to_coverage_next_lane_v1,
+    pagePublishabilityTruth: page_publishability_truth_summary_v1,
+  });
+
   const command_center_v2_before_daily: Omit<
     CommandCenterV2Report,
     | "daily_operator_summary_v1"
@@ -1271,6 +1283,7 @@ export async function buildBuckpartsCommandCenterReport(
     demand_to_coverage_next_lane_v1,
     air_purifier_demand_selected_batch_owner_review_v1,
     rpwfe_purchase_option_rescue_owner_review_v1,
+    buckparts_certainty_engine_checklist_v1,
   };
 
   const commandCenterShellForDaily = {

@@ -5066,6 +5066,58 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.match(lane.next_agent_action, /do not add buy links/i);
 });
 
+test("command_center_v2.buckparts_certainty_engine_checklist_v1 is read-only north-star checklist", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.buckparts_certainty_engine_checklist_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "buckparts_certainty_engine_checklist_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.buckparts_certainty_engine_checklist_v1",
+  );
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.equal(lane.buy_cta_authorized, false);
+  assert.equal(lane.buckparts_verified_link_authorized, false);
+  assert.ok(lane.checklist_item_count >= 39);
+  const first = lane.checklist_items[0]!;
+  assert.equal(first.id, "every_filter_has_buckparts_verified_link_or_safe_buyer_path");
+  assert.notEqual(first.status, "PROVEN");
+  assert.equal(lane.branded_term, "BuckParts Verified Link");
+  assert.match(lane.branded_term_definition ?? "", /checked against the part/i);
+  assert.match(lane.ai_vs_buckparts_positioning ?? "", /AI can suggest\. BuckParts verifies\./);
+  assert.equal(lane.customer_facing_terminology.branded_term, "BuckParts Verified Link");
+  assert.ok(lane.customer_facing_terminology.forbidden_customer_language.includes("buy button"));
+  assert.ok(lane.checklist_items.some((item) => item.id === "visual_match_proof"));
+  assert.ok(lane.checklist_items.some((item) => item.id === "label_photo_screenshot_upload"));
+  assert.ok(lane.checklist_items.some((item) => item.id === "why_buckparts_beats_generic_ai"));
+  assert.ok(
+    lane.current_blockers.some((blocker) => blocker.includes("rpwfe:current_public_state=no_buy_options")),
+  );
+  const ids = lane.checklist_items.map((item) => item.id);
+  assert.ok(ids.indexOf("buyer_path_coverage_scoreboard") < 5);
+  assert.ok(ids.indexOf("high_demand_no_buy_emergency_lane") < 5);
+  assert.ok(lane.marketing_plan.every_post_must_include_educational_component);
+  assert.equal(lane.login_and_email_stance.forced_login_before_value, false);
+  assert.ok(
+    lane.checklist_items.some((item) => item.id === "buckparts_seal_of_confidence_future_goal"),
+  );
+});
+
 test("command_center_v2.air_purifier_batch_coverage_director_v1 is read-only AP batch coverage director", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
