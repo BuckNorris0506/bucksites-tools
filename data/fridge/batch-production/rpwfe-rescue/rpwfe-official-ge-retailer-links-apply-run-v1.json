@@ -1,0 +1,73 @@
+{
+  "contract": "rpwfe_official_ge_retailer_links_apply_v1",
+  "generated_at": "2026-06-02T15:22:51.915Z",
+  "mode": "apply",
+  "data_mutation": true,
+  "owner_csv_apply_authorized": true,
+  "target_file": "data/retailer_links.csv",
+  "filter_slug": "rpwfe",
+  "apply_status": "APPLIED",
+  "target_changed_count": 1,
+  "non_target_rows_unchanged": true,
+  "browser_evidence_artifact_path": "data/fridge/batch-production/rpwfe-rescue/rpwfe-official-ge-browser-evidence-v1.json",
+  "proposed_customer_label": "BuckParts Verified Link",
+  "proposed_label_subtype": "official_manufacturer_official_ge",
+  "before_row": {
+    "filter_slug": "rpwfe",
+    "retailer_name": "OEM parts catalog (keyword lookup)",
+    "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE",
+    "is_primary": "true",
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "",
+    "browser_truth_notes": "",
+    "browser_truth_checked_at": ""
+  },
+  "after_row": {
+    "filter_slug": "rpwfe",
+    "retailer_name": "GE Appliance Parts",
+    "affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/RPWFE",
+    "is_primary": "true",
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_notes": "RPWFE official GE guarded CSV apply v1; browser evidence data/fridge/batch-production/rpwfe-rescue/rpwfe-official-ge-browser-evidence-v1.json; customer label BuckParts Verified Link (official_manufacturer_official_ge).",
+    "browser_truth_checked_at": "2026-06-02T14:23:08.624Z"
+  },
+  "before_url_was_blocked_search_placeholder": true,
+  "after_url_is_official_ge_spec_pdp": true,
+  "waterdrop_row_added": false,
+  "amazon_row_added": false,
+  "compatible_replacement_row_added": false,
+  "post_apply_gate_failure_kind": null,
+  "post_apply_retailer_link_state": "LIVE_DIRECT_BUYABLE",
+  "post_apply_is_direct_buyable_safe_cta": true,
+  "buckparts_verified_link_still_gated_by_safety_rules": false,
+  "buckparts_verified_link_blindly_authorized": false,
+  "blockers": [],
+  "changed_fields": [
+    "retailer_name",
+    "affiliate_url",
+    "browser_truth_classification",
+    "browser_truth_notes",
+    "browser_truth_checked_at"
+  ],
+  "rollback_row": {
+    "filter_slug": "rpwfe",
+    "retailer_name": "OEM parts catalog (keyword lookup)",
+    "affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE",
+    "is_primary": "true",
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "",
+    "browser_truth_notes": "",
+    "browser_truth_checked_at": ""
+  },
+  "non_rpwfe_row_hash_before": "c9309c0d4b3dda6dafe18010a5665eb07f39ec118165c0321fb77857aba6cc7f",
+  "non_rpwfe_row_hash_after": "c9309c0d4b3dda6dafe18010a5665eb07f39ec118165c0321fb77857aba6cc7f",
+  "notes": [
+    "Owner-authorized narrow apply: rpwfe oem-parts-catalog row only.",
+    "No Waterdrop, Amazon, or compatible-replacement rows added.",
+    "BuckParts Verified Link customer label is metadata in apply-run; live UI still uses existing gate rules."
+  ]
+}

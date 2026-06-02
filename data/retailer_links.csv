@@ -38,7 +38,7 @@ w10413645a,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/cat
 4396842,OEM parts catalog (keyword lookup),https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396842,true,0,oem-parts-catalog,,,
 46-9002,Amazon,https://www.amazon.com/dp/B01IDH3IPU?tag=buckparts20-20,true,0,amazon,direct_buyable,Lifecycle execution-plan preview: replace search placeholder with verified direct-buyable Amazon URL from data/evidence/amazon-46-9002-live-outcome.2026-05-04.json. Not applied.,2026-05-04T15:50:00.000Z
 mswf,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MSWF,true,0,oem-parts-catalog,,,
-rpwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=RPWFE,true,0,oem-parts-catalog,,,
+rpwfe,GE Appliance Parts,https://www.geapplianceparts.com/store/parts/spec/RPWFE,true,0,oem-parts-catalog,direct_buyable,RPWFE official GE guarded CSV apply v1; browser evidence data/fridge/batch-production/rpwfe-rescue/rpwfe-official-ge-browser-evidence-v1.json; customer label BuckParts Verified Link (official_manufacturer_official_ge).,2026-06-02T14:23:08.624Z
 xwfe,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE,true,0,oem-parts-catalog,,,
 xwf,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF,true,0,oem-parts-catalog,,,
 gswf,OEM parts catalog (keyword lookup),https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=GSWF,true,0,oem-parts-catalog,,,
