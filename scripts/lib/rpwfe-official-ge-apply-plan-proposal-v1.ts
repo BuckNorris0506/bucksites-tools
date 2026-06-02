@@ -22,6 +22,7 @@ import {
   rpwfeRepoCsvCurrentRowState,
   type RpwfeRepoCsvRowLike,
 } from "./rpwfe-official-ge-repo-csv-state-v1";
+import type { RpwfeProposedSupabaseParityStatusV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
 
 export const RPWFE_OFFICIAL_GE_APPLY_PLAN_PROPOSAL_CONTRACT_V1 =
   "rpwfe_official_ge_apply_plan_proposal_v1" as const;
@@ -116,6 +117,12 @@ const POST_APPLY_BLOCKERS = [
   "live_page_not_revalidated_after_supabase_parity",
 ] as const;
 
+const POST_SUPABASE_PARITY_BLOCKERS = [
+  "repo_csv_already_applied_official_ge",
+  "supabase_parity_already_applied",
+  "csv_apply_not_authorized",
+] as const;
+
 function readRetailerLinkRow(args: {
   rootDir: string;
   fileExists: (abs: string) => boolean;
@@ -195,6 +202,7 @@ export function buildRpwfeOfficialGeApplyPlanProposalLaneV1(args: {
   fileExists?: (abs: string) => boolean;
   readTextFile?: (abs: string) => string;
   browserEvidenceReview?: RpwfeOfficialGeBrowserEvidenceReviewLaneV1 | null;
+  supabaseParityStatus?: RpwfeProposedSupabaseParityStatusV1 | null;
 }): RpwfeOfficialGeApplyPlanProposalLaneV1 {
   const fileExists = args.fileExists ?? existsSync;
   const readTextFile = args.readTextFile ?? ((p: string) => readFileSync(p, "utf8"));
@@ -209,6 +217,7 @@ export function buildRpwfeOfficialGeApplyPlanProposalLaneV1(args: {
   const evidenceReady = proposalReady(artifact);
   const retailerRow = readRetailerLinkRow({ rootDir: args.rootDir, fileExists, readTextFile });
   const alreadyApplied = isRpwfeRepoCsvOfficialGeDirectBuyableApplied(retailerRow);
+  const supabaseParityApplied = args.supabaseParityStatus === "SUPABASE_MATCHES_REPO_CSV";
   const currentRowState = rpwfeRepoCsvCurrentRowState(retailerRow);
 
   let planStatus: RpwfeOfficialGeApplyPlanProposalLaneV1["plan_status"] = "NOT_READY";
@@ -220,9 +229,10 @@ export function buildRpwfeOfficialGeApplyPlanProposalLaneV1(args: {
 
   if (alreadyApplied) {
     planStatus = "ALREADY_APPLIED_REPO_DIRECT_BUYABLE";
-    blockers = [...POST_APPLY_BLOCKERS];
-    next_recommended_action =
-      "CSV apply is spent/no-op: repo rpwfe row is already direct_buyable official GE spec PDP. Next owner step is read-only Supabase parity review (.command_center_v2.rpwfe_official_ge_supabase_parity_plan_v1) — do not re-apply CSV.";
+    blockers = supabaseParityApplied ? [...POST_SUPABASE_PARITY_BLOCKERS] : [...POST_APPLY_BLOCKERS];
+    next_recommended_action = supabaseParityApplied
+      ? "CSV and Supabase apply are both spent/no-op for rpwfe official GE. Run read-only live /filter/rpwfe purchase-option proof only — do not re-apply CSV or Supabase."
+      : "CSV apply is spent/no-op: repo rpwfe row is already direct_buyable official GE spec PDP. Next owner step is read-only Supabase parity review (.command_center_v2.rpwfe_official_ge_supabase_parity_plan_v1) — do not re-apply CSV.";
   } else if (evidenceReady) {
     planStatus = "PROPOSED_OWNER_REVIEW_READY";
     applyReady = true;

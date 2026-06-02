@@ -1152,11 +1152,17 @@ export async function buildBuckpartsCommandCenterReport(
       fileExists,
       readTextFile,
     });
+  const rpwfe_official_ge_supabase_parity_plan_v1 = await buildRpwfeOfficialGeSupabaseParityPlanLaneV1({
+    rootDir,
+    fileExists,
+    readTextFile,
+  });
   const rpwfe_purchase_option_rescue_owner_review_v1 =
     buildRpwfePurchaseOptionRescueOwnerReviewLaneV1({
       rootDir,
       fileExists,
       readTextFile,
+      supabaseParityStatus: rpwfe_official_ge_supabase_parity_plan_v1.proposed_supabase_parity_status,
     });
 
   const owner_integrity_sentinel_v1 = buildOwnerIntegritySentinelV1({
@@ -1260,12 +1266,7 @@ export async function buildBuckpartsCommandCenterReport(
     fileExists,
     readTextFile,
     browserEvidenceReview: rpwfe_official_ge_browser_evidence_review_v1,
-  });
-
-  const rpwfe_official_ge_supabase_parity_plan_v1 = await buildRpwfeOfficialGeSupabaseParityPlanLaneV1({
-    rootDir,
-    fileExists,
-    readTextFile,
+    supabaseParityStatus: rpwfe_official_ge_supabase_parity_plan_v1.proposed_supabase_parity_status,
   });
 
   const operator_process_compression_v1 = buildOperatorProcessCompressionLaneV1();

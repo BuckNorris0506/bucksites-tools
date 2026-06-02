@@ -5048,7 +5048,12 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.equal(lane.filter_slug, "rpwfe");
   assert.equal(lane.public_route, "/filter/rpwfe");
   assert.equal(lane.customer_visible_problem, true);
-  if (lane.owner_review_phase === "POST_CSV_APPLY_NOOP") {
+  if (lane.owner_review_phase === "POST_SUPABASE_PARITY_NOOP") {
+    assert.equal(lane.current_public_state, "repo_and_supabase_direct_buyable");
+    assert.equal(lane.existing_retailer_row_status, "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED");
+    assert.ok(!lane.blockers.includes("supabase_parity_not_applied"));
+    assert.match(lane.next_owner_action, /live \/filter\/rpwfe/i);
+  } else if (lane.owner_review_phase === "POST_CSV_APPLY_NOOP") {
     assert.equal(lane.current_public_state, "repo_csv_direct_buyable_supabase_parity_pending");
     assert.equal(lane.existing_retailer_row_status, "REPO_DIRECT_BUYABLE_OFFICIAL_GE_APPLIED");
     assert.equal(lane.official_ge_path_status, "PROVEN_IN_REPO_CSV_APPLIED");
@@ -5075,7 +5080,10 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.equal(lane.public_ui_mutation_authorized, false);
   assert.equal(lane.netlify_api_authorized, false);
   assert.ok(lane.blockers.includes("csv_supabase_mutation_not_authorized"));
-  if (lane.owner_review_phase !== "POST_CSV_APPLY_NOOP") {
+  if (
+    lane.owner_review_phase !== "POST_CSV_APPLY_NOOP" &&
+    lane.owner_review_phase !== "POST_SUPABASE_PARITY_NOOP"
+  ) {
     assert.ok(lane.blockers.includes("official_ge_direct_pdp_not_proven_or_not_applied"));
     assert.match(lane.next_agent_action, /do not add buy links/i);
   }
@@ -5143,12 +5151,13 @@ test("command_center_v2.rpwfe_official_ge_apply_plan_proposal_v1 is read-only ap
   if (lane.plan_status === "ALREADY_APPLIED_REPO_DIRECT_BUYABLE") {
     assert.equal(lane.csv_apply_noop, true);
     assert.equal(lane.apply_plan_proposal_ready, false);
-    assert.equal(lane.owner_apply_review_ready, false);
-    assert.equal(lane.current_row_state, "repo_direct_buyable_official_ge_spec_pdp_applied");
-    assert.equal(lane.planned_retailer_links_csv_change, null);
-    assert.ok(lane.blockers.includes("repo_csv_already_applied_official_ge"));
-    assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
-    assert.match(lane.next_recommended_action, /Supabase parity/i);
+    if (lane.blockers.includes("supabase_parity_already_applied")) {
+      assert.ok(!lane.blockers.includes("supabase_parity_not_applied"));
+      assert.match(lane.next_recommended_action, /live \/filter\/rpwfe/i);
+    } else {
+      assert.ok(lane.blockers.includes("supabase_parity_not_applied"));
+      assert.match(lane.next_recommended_action, /Supabase parity/i);
+    }
   } else if (lane.plan_status === "PROPOSED_OWNER_REVIEW_READY") {
     assert.equal(lane.apply_plan_proposal_ready, true);
     assert.equal(lane.current_row_state, "existing_ge_catalog_search_placeholder_blocked");

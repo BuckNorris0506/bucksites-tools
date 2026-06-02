@@ -19,6 +19,7 @@ import {
   RPWFE_OFFICIAL_GE_TARGET_URL_V1,
 } from "./rpwfe-official-ge-browser-capture-v1";
 import { RPWFE_OFFICIAL_GE_RETAILER_LINKS_APPLY_RUN_REL_V1 } from "./rpwfe-official-ge-retailer-links-apply-v1";
+import { RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_RUN_REL_V1 } from "./rpwfe-official-ge-supabase-parity-apply-v1";
 import {
   loadFridgeRetailerLinksCsvRowsV1,
   type RetailerLinkCsvRowV1,
@@ -61,6 +62,7 @@ export type RpwfeOfficialGeSupabaseParityPlanLaneV1 = {
   proposed_browser_truth_classification: "direct_buyable" | null;
   evidence_artifact_path: typeof RPWFE_OFFICIAL_GE_ARTIFACT_REL_V1;
   csv_apply_run_artifact_path: typeof RPWFE_OFFICIAL_GE_RETAILER_LINKS_APPLY_RUN_REL_V1;
+  supabase_parity_apply_run_artifact_path: typeof RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_RUN_REL_V1;
   supabase_target_table: typeof SUPABASE_TABLE;
   live_supabase_truth_status: "CHECKED" | "UNKNOWN_DB_UNAVAILABLE";
   repo_csv_row: RetailerLinkCsvRowV1 | null;
@@ -210,7 +212,7 @@ export function buildRpwfeOfficialGeSupabaseParityPlanLaneFromInputsV1(args: {
       "Blocked: repo CSV is not a direct_buyable official GE spec PDP for rpwfe. Do not plan Supabase parity.";
   } else if (proposedStatus === "SUPABASE_MATCHES_REPO_CSV") {
     next_recommended_action =
-      "Repo CSV and live Supabase appear aligned for rpwfe. Owner must still approve explicit Supabase apply/revalidation workflow before treating live page as proven.";
+      "Repo CSV and live Supabase are aligned for rpwfe official GE. Run read-only live /filter/rpwfe purchase-option proof; this lane does not authorize further Supabase mutation.";
   } else if (proposedStatus === "UNKNOWN_LIVE_SUPABASE") {
     next_recommended_action =
       "Repo CSV is ready. Read live public.retailer_links for rpwfe (read-only) before owner Supabase apply — this lane does not mutate Supabase.";
@@ -233,6 +235,7 @@ export function buildRpwfeOfficialGeSupabaseParityPlanLaneFromInputsV1(args: {
     proposed_browser_truth_classification: preview ? "direct_buyable" : null,
     evidence_artifact_path: RPWFE_OFFICIAL_GE_ARTIFACT_REL_V1,
     csv_apply_run_artifact_path: RPWFE_OFFICIAL_GE_RETAILER_LINKS_APPLY_RUN_REL_V1,
+    supabase_parity_apply_run_artifact_path: RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_RUN_REL_V1,
     supabase_target_table: SUPABASE_TABLE,
     live_supabase_truth_status: liveStatus,
     repo_csv_row: args.repoCsvRow,
