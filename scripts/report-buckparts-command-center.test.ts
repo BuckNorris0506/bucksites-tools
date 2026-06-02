@@ -5066,6 +5066,49 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.match(lane.next_agent_action, /do not add buy links/i);
 });
 
+test("command_center_v2.rpwfe_official_ge_apply_plan_proposal_v1 is read-only apply plan", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.rpwfe_official_ge_apply_plan_proposal_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "rpwfe_official_ge_apply_plan_proposal_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.filter_slug, "rpwfe");
+  assert.equal(lane.public_route, "/filter/rpwfe");
+  assert.equal(lane.proposed_customer_label, "BuckParts Verified Link");
+  assert.equal(lane.buckparts_verified_link_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.equal(lane.waterdrop_in_proposal, false);
+  assert.equal(lane.compatible_replacement_in_proposal, false);
+  assert.equal(lane.amazon_in_proposal, false);
+  assert.ok(lane.blockers.includes("owner_apply_approval_missing"));
+  assert.ok(lane.blockers.includes("csv_apply_not_authorized"));
+  if (lane.browser_truth_status === "PASS") {
+    assert.equal(lane.plan_status, "PROPOSED_OWNER_REVIEW_READY");
+    assert.equal(lane.apply_plan_proposal_ready, true);
+    assert.equal(lane.proposed_url, "https://www.geapplianceparts.com/store/parts/spec/RPWFE");
+    assert.equal(lane.current_row_state, "existing_ge_catalog_search_placeholder_blocked");
+    assert.ok(lane.planned_retailer_links_csv_change);
+    assert.equal(lane.planned_retailer_links_csv_change!.proposed_row.waterdrop, false);
+  }
+  if (lane.browser_truth_status === "FAIL" || lane.browser_truth_status === "UNKNOWN") {
+    assert.equal(lane.apply_plan_proposal_ready, false);
+    assert.equal(lane.planned_retailer_links_csv_change, null);
+  }
+});
+
 test("command_center_v2.rpwfe_official_ge_browser_evidence_review_v1 is read-only browser evidence lane", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
