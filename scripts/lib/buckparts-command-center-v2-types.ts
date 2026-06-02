@@ -53,6 +53,7 @@ import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
+import type { RpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./rpwfe-official-ge-browser-evidence-review-v1";
 import type { RpwfeVerifiedLinkRescuePlanLaneV1 } from "./rpwfe-verified-link-rescue-plan-v1";
 import type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
 import type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";
@@ -1036,6 +1037,8 @@ export type CommandCenterV2Report = {
   rpwfe_purchase_option_rescue_owner_review_v1: RpwfePurchaseOptionRescueOwnerReviewLaneV1;
   /** Read-only RPWFE BuckParts Verified Link rescue evidence plan — no link apply or browser collection. */
   rpwfe_verified_link_rescue_plan_v1: RpwfeVerifiedLinkRescuePlanLaneV1;
+  /** Read-only RPWFE official GE browser evidence review — artifact parser only; no Verified Link apply. */
+  rpwfe_official_ge_browser_evidence_review_v1: RpwfeOfficialGeBrowserEvidenceReviewLaneV1;
   /** Read-only BuckParts Certainty Engine north-star checklist — judges must-check-before-buy posture; not mutation authority. */
   buckparts_certainty_engine_checklist_v1: BuckpartsCertaintyEngineChecklistLaneV1;
   /** Read-only operator process compression — ship guard replaces repetitive commit/push copy-pastes. */
@@ -1059,6 +1062,7 @@ export type CommandCenterV2Report = {
 export type { DemandToCoverageNextLaneReportV1 };
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
+export type { RpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./rpwfe-official-ge-browser-evidence-review-v1";
 export type { RpwfeVerifiedLinkRescuePlanLaneV1 } from "./rpwfe-verified-link-rescue-plan-v1";
 export type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
 export type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";

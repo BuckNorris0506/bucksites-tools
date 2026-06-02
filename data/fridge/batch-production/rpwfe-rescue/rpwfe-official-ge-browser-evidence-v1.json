@@ -1,0 +1,45 @@
+{
+  "contract": "rpwfe_official_ge_browser_evidence_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "filter_slug": "rpwfe",
+  "target_url": "https://www.geapplianceparts.com/store/parts/spec/RPWFE",
+  "checked_at": "2026-06-02T14:23:08.624Z",
+  "browser_truth_status": "PASS",
+  "direct_pdp_status": "PROVEN",
+  "exact_token_visible": true,
+  "official_manufacturer_path": true,
+  "direct_purchase_control_visible": true,
+  "evidence_summary": "PROVEN: GE Appliance Parts spec PDP for RPWFE with visible exact token and Add to Cart (or equivalent) on official manufacturer path.",
+  "captured_signals": {
+    "final_url": "https://www.geapplianceparts.com/store/parts/spec/RPWFE",
+    "page_title": "RPWFE | GE® RPWFE™ REFRIGERATOR WATER FILTER | GE Appliances Parts",
+    "h1_text": "GE® RPWFE™ REFRIGERATOR WATER FILTER",
+    "sku_line_sample": null,
+    "purchase_actions_visible": [
+      "Add to Cart"
+    ],
+    "classification": "direct_buyable",
+    "classification_notes": "purchase action: Add to Cart",
+    "text_sample_excerpt": "Skip to main content\n15% OFF + FREE SHIPPING on Parts & Accessories | Code: MEMORIAL26\n10% OFF + FREE SHIPPING on Water Filtration | Code: MAY26\nWhy buy genuine GE Appliances Parts?\nContact Us\nUS - Contact Us:\n1-877-959-8688\nCanada & International\nOrders\nCheck Parts Order Status\nReturns\nCanada & International\nAccount \n \nRepair Parts\nGE Repair Parts\nCafé Repair Parts\nMonogram Repair Parts\nHaier Repair Parts\nHotpoint Repair Parts\nWater Filters\nShop Replacement Water Filters\nRefrigeration\nIn-Line Refrigeration\nWhole House\nReverse Osmosis\nSingle & Dual\nKitchen & Bath\nOpal Ice Maker\nCulligan Refrigerator Filters\nFilter Finder\nWater Filtration Systems\nExplore Whole Home Filtration\nWhole House\nReverse Osmosis\nSingle & Dual Stage\nShop All Water Filtration Systems\nAccessories\nGriddles & Grates\nDrip",
+    "screenshot_path": "data/fridge/batch-production/rpwfe-rescue/screenshots/rpwfe-official-ge-spec-v1.png"
+  },
+  "blockers": [],
+  "prohibited_actions": [
+    "csv_apply",
+    "supabase_mutation",
+    "public_ui_mutation",
+    "netlify_deploy",
+    "buckparts_verified_link_apply",
+    "waterdrop_wd_f19c_capture",
+    "learning_outcomes_write"
+  ],
+  "buckparts_verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "netlify_api_authorized": false,
+  "waterdrop_in_scope": false,
+  "owner_review_ready": true,
+  "apply_plan_proposal_ready": true
+}

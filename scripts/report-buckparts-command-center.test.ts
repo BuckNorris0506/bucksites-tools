@@ -5066,6 +5066,45 @@ test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-onl
   assert.match(lane.next_agent_action, /do not add buy links/i);
 });
 
+test("command_center_v2.rpwfe_official_ge_browser_evidence_review_v1 is read-only browser evidence lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.rpwfe_official_ge_browser_evidence_review_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "rpwfe_official_ge_browser_evidence_review_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.filter_slug, "rpwfe");
+  assert.equal(lane.emergency_classification, "HIGH_DEMAND_NO_VERIFIED_LINK_TRUST_GAP");
+  assert.equal(lane.buckparts_verified_link_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.supabase_mutation_authorized, false);
+  assert.equal(lane.public_ui_mutation_authorized, false);
+  assert.equal(lane.netlify_api_authorized, false);
+  assert.equal(lane.waterdrop_in_scope, false);
+  assert.equal(
+    lane.artifact_path,
+    "data/fridge/batch-production/rpwfe-rescue/rpwfe-official-ge-browser-evidence-v1.json",
+  );
+  if (lane.browser_truth_status === "PASS") {
+    assert.equal(lane.official_ge_verified_link_candidate_status, "BROWSER_PROVEN_OWNER_REVIEW_READY");
+    assert.equal(lane.owner_review_ready, true);
+    assert.equal(lane.buckparts_verified_link_authorized, false);
+    assert.equal(lane.csv_apply_authorized, false);
+  }
+  if (lane.browser_truth_status === "FAIL" || lane.browser_truth_status === "UNKNOWN") {
+    assert.equal(lane.apply_plan_proposal_ready, false);
+  }
+});
+
 test("command_center_v2.rpwfe_verified_link_rescue_plan_v1 is read-only rescue evidence plan", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
