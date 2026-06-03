@@ -89,6 +89,47 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneFromR
   };
 }
 
+export function buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneUnknownV1(args: {
+  generated_at: string;
+  reason: string;
+}): FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 {
+  return {
+    contract: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    recommended_jq_path: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CC_JQ_PATH_V1,
+    generated_at: args.generated_at,
+    source_command: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_SOURCE_COMMAND_V1,
+    proposed_batch_id: "UNKNOWN",
+    run_id: "UNKNOWN",
+    plan_status: "BLOCKED",
+    owner_review_status: "OWNER_REVIEW_BLOCKED",
+    plan_status_reasons: [],
+    planned_change_count: 0,
+    planned_slugs: [],
+    blocked_row_count: 0,
+    missing_affiliate_tag_count: 0,
+    duplicate_destination_group_count: 0,
+    duplicate_destination_group_review_status: null,
+    owner_review_risk_count: 0,
+    plan_artifact_rel_path: "UNKNOWN",
+    apply_mutation_authorized: false,
+    csv_apply_authorized: false,
+    retailer_links_mutation_authorized: false,
+    supabase_mutation_authorized: false,
+    public_ui_mutation_authorized: false,
+    buy_link_mutation_authorized: false,
+    evidence_write_authorized: false,
+    netlify_api_authorized: false,
+    recommended_next_action:
+      "Fridge buyer-path batch apply-plan proposal did not build — restore repo CSV inputs or run npm run buckparts:fridge-buyer-path-batch-apply-plan-proposal locally. Lane is read-only.",
+    proven_facts: [
+      "PROVEN: Command Center caught fridge_buyer_path_batch_apply_plan_proposal_v1 build failure without throwing.",
+    ],
+    unknown_facts: [`UNKNOWN: fridge_buyer_path_batch_apply_plan_proposal_v1 failed: ${args.reason}`],
+  };
+}
+
 export function buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1(
   deps: BuildFridgeBuyerPathBatchApplyPlanProposalDepsV1,
 ): FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 {

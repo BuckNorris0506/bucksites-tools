@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
@@ -13,6 +14,7 @@ import {
   buildOwnerIntegritySentinelReport,
   buildOwnerSearchDemandAndGapsReport,
   buildOwnerQuarantinedFridgeModelsSummary,
+  loadCommandCenterReportForOwner,
   mapBatchProductionOwnerDecisionsLaneToNeuronConnectionLevel,
   mapSearchDemandAndGapsToNeuronConnectionLevel,
   mapClickVisibilityToNeuronConnectionLevel,
@@ -26,6 +28,7 @@ import type {
   ClickVisibilitySnapshot,
   PagePublishabilityTruthSummaryV1,
 } from "../../../scripts/lib/buckparts-command-center-v2-types";
+import type { LargeBatchCoverageFactorySummaryV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
@@ -71,6 +74,42 @@ function stubPublishabilityTruthSummary(
     sample_rows: [],
     proven_facts: ["fixture semantic lane"],
     unknown_facts: ["Per-page demand and click signals are UNKNOWN until search_gaps/click_events are joined by page key."],
+    ...overrides,
+  };
+}
+
+function stubLargeBatchCoverageFactorySummaryV1(
+  overrides: Partial<LargeBatchCoverageFactorySummaryV1> = {},
+): LargeBatchCoverageFactorySummaryV1 {
+  return {
+    report_name: "buckparts_large_batch_coverage_factory_summary_v1",
+    contract: "large_batch_coverage_factory_summary_v1",
+    read_only: true,
+    data_mutation: false,
+    mutation_ready: false,
+    generated_at: "2026-05-19T00:00:00.000Z",
+    runtime_status: "OK",
+    source_command: "npm run buckparts:large-batch-coverage-factory",
+    factory_report_name: "large_batch_coverage_factory_v1",
+    candidate_count: 0,
+    state_counts: {
+      existing_live_product: 0,
+      new_product_candidate: 0,
+      alias_collision_candidate: 0,
+      publishable_no_buy_page: 0,
+      publishable_amazon_candidate: 0,
+      publishable_waterdrop_candidate: 0,
+      evidence_needed: 0,
+      blocked_do_not_publish: 0,
+    },
+    blocked_counts: "UNKNOWN",
+    top_5_candidates: [],
+    next_owner_action: "fixture factory lane",
+    next_agent_action: "fixture factory lane",
+    expansion_blocker_summary: "fixture expansion blocker",
+    factory_failure_reason: null,
+    proven_facts: ["fixture large batch coverage factory summary"],
+    unknown_facts: [],
     ...overrides,
   };
 }
@@ -1966,6 +2005,7 @@ describe("owner integrity sentinel", () => {
           unknown_facts: [],
         },
         page_publishability_truth_summary_v1: stubPublishabilityTruthSummary({ unknown_join_count: 0 }),
+        large_batch_coverage_factory_summary_v1: stubLargeBatchCoverageFactorySummaryV1(),
         affiliate_readiness: { status: "OK", blocker: null },
         coverage_health: { status: "OK", blocker: null },
         amazon_rescue: {
@@ -1987,5 +2027,52 @@ describe("owner integrity sentinel", () => {
     assert.equal(summary.data_mutation, false);
     assert.ok(summary.recommended_next_action.length > 0);
     assert.ok(summary.remaining_owner_gates.some((g) => g.includes("NOT_CONNECTED")));
+  });
+});
+
+describe("loadCommandCenterReportForOwner partial repo root", () => {
+  it("returns ok:true and degrades fridge buyer-path lanes when data/filters.csv is missing", async () => {
+    const rootDir = mkdtempSync(join(tmpdir(), "bp-cc-partial-"));
+    const affiliateDir = join(rootDir, "data/affiliate");
+    mkdirSync(affiliateDir, { recursive: true });
+    cpSync(
+      join(process.cwd(), "data/affiliate/affiliate-application-tracker.json"),
+      join(affiliateDir, "affiliate-application-tracker.json"),
+    );
+    assert.equal(existsSync(join(rootDir, "data/filters.csv")), false);
+
+    const result = await loadCommandCenterReportForOwner(rootDir);
+    assert.equal(result.ok, true, result.ok ? undefined : result.message);
+
+    const cc = result.ok ? result.report.command_center_v2 : null;
+    assert.ok(cc);
+
+    const lanes = [
+      cc!.fridge_buyer_path_owner_review_bridge_v1,
+      cc!.fridge_buyer_path_owner_review_packet_v1,
+      cc!.fridge_buyer_path_batch_proposal_v1,
+      cc!.batch_run_registry_intake_v1,
+    ];
+
+    for (const lane of lanes) {
+      assert.equal(lane.read_only, true);
+      assert.equal(lane.data_mutation, false);
+      const facts = [...lane.proven_facts, ...lane.unknown_facts].join(" ");
+      assert.match(
+        facts,
+        /data\/filters\.csv|ENOENT/i,
+        `expected lane ${lane.contract ?? "batch_run_registry_intake_v1"} to mention missing filters.csv or ENOENT`,
+      );
+    }
+
+    assert.match(
+      cc!.fridge_buyer_path_owner_review_bridge_v1.unknown_facts.join(" "),
+      /fridge_buyer_path_owner_review_bridge_v1 failed/i,
+    );
+    assert.equal(cc!.large_batch_coverage_factory_summary_v1.runtime_status, "ATTENTION");
+    assert.match(
+      cc!.large_batch_coverage_factory_summary_v1.factory_failure_reason ?? "",
+      /data\/filters\.csv|ENOENT/i,
+    );
   });
 });

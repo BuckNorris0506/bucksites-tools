@@ -3,6 +3,7 @@
  */
 
 import {
+  AP_RUN_REGISTRY_DEFAULT_REL_V1,
   BATCH_RUN_REGISTRY_INTAKE_CONTRACT_V1,
   buildBatchRunRegistryIntakeReportV1,
   type BatchRunRegistryIntakeReportV1,
@@ -31,6 +32,50 @@ export function buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1(
       ...report.proven_facts,
       `PROVEN: Command Center lane ${BATCH_RUN_REGISTRY_INTAKE_CC_JQ_PATH_V1} is read-only projection; standalone stdout via ${BATCH_RUN_REGISTRY_INTAKE_SOURCE_COMMAND_V1}.`,
     ],
+  };
+}
+
+export function buildBatchRunRegistryIntakeReportUnknownV1(args: {
+  generated_at: string;
+  reason: string;
+  apRunRegistryRelPath?: string;
+}): BatchRunRegistryIntakeReportV1 {
+  const apRel = args.apRunRegistryRelPath ?? AP_RUN_REGISTRY_DEFAULT_REL_V1;
+  return {
+    contract: BATCH_RUN_REGISTRY_INTAKE_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    generated_at: args.generated_at,
+    wedges: [
+      {
+        wedge: "air_purifier",
+        run_registry_rel_path: null,
+        run_registry_status: "MISSING",
+        closeout_complete: null,
+        run_id: null,
+      },
+      {
+        wedge: "refrigerator_water",
+        run_registry_rel_path: null,
+        run_registry_status: "NO_OPEN_BATCH_PROPOSAL",
+        closeout_complete: null,
+        run_id: null,
+      },
+    ],
+    ap_run_registry_status: "MISSING",
+    ap_run_registry_rel_path: apRel,
+    fridge_run_registry_status: "NO_OPEN_BATCH_PROPOSAL",
+    fridge_approval_status: "UNKNOWN",
+    fridge_proposed_batch_id: null,
+    fridge_next_required_artifact: null,
+    mutation_authorized: false,
+    recommended_next_action:
+      "Batch run-registry intake did not build — restore repo CSV inputs or run npm run buckparts:batch-run-registry-intake locally. Lane is read-only.",
+    proven_facts: [
+      "PROVEN: Command Center caught batch_run_registry_intake_v1 build failure without throwing.",
+    ],
+    inferred_facts: [],
+    unknown_facts: [`UNKNOWN: batch_run_registry_intake_v1 failed: ${args.reason}`],
   };
 }
 

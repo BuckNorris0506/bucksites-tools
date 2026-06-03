@@ -80,7 +80,10 @@ import { buildUniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from ".
 import { buildUniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-apply-execution-plan-command-center-v1";
 import { buildUniversalBatchLifecycleMutationAuthorizationReviewCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-mutation-authorization-review-command-center-v1";
 import { resolveUniversalBatchLifecycleSteeringOverrideV1, shouldApplyUniversalBatchLifecycleSteeringV1 } from "./lib/universal-batch-lifecycle-steering-v1";
-import { buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1 } from "./lib/batch-run-registry-intake-command-center-v1";
+import {
+  buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1,
+  buildBatchRunRegistryIntakeReportUnknownV1,
+} from "./lib/batch-run-registry-intake-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-closeout-learning-command-center-v1";
 import { buildFridgeGuardedBatchLifecycleRuleProposalCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-lifecycle-rule-proposal-command-center-v1";
@@ -88,12 +91,30 @@ import { buildFridgeGuardedBatchLifecycleRulePromotionPlanCommandCenterLaneV1 } 
 import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run-registry-intake-steering-v1";
 import { resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1, resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-approval-steering-v1";
 import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-steering-v1";
-import { buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
-import { buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
-import { buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
-import { buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
-import { buildFridgeBuyerPathBatchProposalCommandCenterLaneV1 } from "./lib/fridge-buyer-path-batch-proposal-command-center-v1";
-import { buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1 } from "./lib/fridge-buyer-path-owner-review-packet-command-center-v1";
+import {
+  buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
+import {
+  buildFridgeBuyerPathBatchApprovalCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-batch-approval-command-center-v1";
+import {
+  buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
+import {
+  buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
+import {
+  buildFridgeBuyerPathBatchProposalCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathBatchProposalCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-batch-proposal-command-center-v1";
+import {
+  buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneUnknownV1,
+  buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1,
+} from "./lib/fridge-buyer-path-owner-review-packet-command-center-v1";
 import { buildFounderDecisionRegistrySummaryV1FromReport } from "./lib/buckparts-founder-decision-registry-summary-v1";
 import { buildNextExecutionPacketSummaryV1FromCommandCenterJson } from "./lib/buckparts-next-execution-packet-summary-v1";
 import { buildOperatingMapSummaryV1FromReport } from "./lib/buckparts-operating-map-summary-v1";
@@ -1485,41 +1506,95 @@ export async function buildBuckpartsCommandCenterReport(
     now,
   });
 
-  const fridge_buyer_path_owner_review_bridge_v1 =
-    buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1({
+  let fridge_buyer_path_owner_review_bridge_v1;
+  try {
+    fridge_buyer_path_owner_review_bridge_v1 = buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1({
       rootDir,
       now,
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_owner_review_bridge_v1 =
+      buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
 
-  const fridge_buyer_path_owner_review_packet_v1 =
-    buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1({
+  let fridge_buyer_path_owner_review_packet_v1;
+  try {
+    fridge_buyer_path_owner_review_packet_v1 = buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneV1({
       rootDir,
       now,
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_owner_review_packet_v1 =
+      buildFridgeBuyerPathOwnerReviewPacketCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
 
-  const fridge_buyer_path_batch_proposal_v1 =
-    buildFridgeBuyerPathBatchProposalCommandCenterLaneV1({
+  let fridge_buyer_path_batch_proposal_v1;
+  try {
+    fridge_buyer_path_batch_proposal_v1 = buildFridgeBuyerPathBatchProposalCommandCenterLaneV1({
       rootDir,
       now,
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_batch_proposal_v1 = buildFridgeBuyerPathBatchProposalCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
 
-  const fridge_buyer_path_batch_approval_v1 =
-    buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1({
+  let fridge_buyer_path_batch_approval_v1;
+  try {
+    fridge_buyer_path_batch_approval_v1 = buildFridgeBuyerPathBatchApprovalCommandCenterLaneV1({
       rootDir,
       now,
     });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_batch_approval_v1 = buildFridgeBuyerPathBatchApprovalCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
 
-  const fridge_buyer_path_batch_apply_plan_proposal_v1 =
-    buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1({
-      rootDir,
-      now,
-    });
+  let fridge_buyer_path_batch_apply_plan_proposal_v1;
+  try {
+    fridge_buyer_path_batch_apply_plan_proposal_v1 =
+      buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_batch_apply_plan_proposal_v1 =
+      buildFridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
 
-  const fridge_buyer_path_batch_apply_plan_approval_v1 =
-    buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1({
-      rootDir,
-      now,
-    });
+  let fridge_buyer_path_batch_apply_plan_approval_v1;
+  try {
+    fridge_buyer_path_batch_apply_plan_approval_v1 =
+      buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    fridge_buyer_path_batch_apply_plan_approval_v1 =
+      buildFridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
 
   const systemContractAuditFull = runBuckpartsSystemContractAudit({ rootDir });
   const system_contract_audit_summary_v1 = buildSystemContractAuditSummaryV1FromReport(systemContractAuditFull, {
@@ -1564,10 +1639,19 @@ export async function buildBuckpartsCommandCenterReport(
     { ap_batch_v3_run_instantiation: ap_batch_v3_run_instantiation_v1 },
   );
 
-  const batch_run_registry_intake_report_v1 = buildBatchRunRegistryIntakeReportV1({
-    rootDir,
-    now,
-  });
+  let batch_run_registry_intake_report_v1;
+  try {
+    batch_run_registry_intake_report_v1 = buildBatchRunRegistryIntakeReportV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    batch_run_registry_intake_report_v1 = buildBatchRunRegistryIntakeReportUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
 
   const air_purifier_model_first_production_lane_v1 = buildAirPurifierModelFirstProductionLaneV1Report({
     rootDir,
