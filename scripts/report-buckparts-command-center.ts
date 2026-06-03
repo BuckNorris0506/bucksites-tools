@@ -68,6 +68,10 @@ import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-off
 import { buildRpwfeVerifiedLinkRescuePlanV1 } from "./lib/rpwfe-verified-link-rescue-plan-v1";
 import { buildDailyOperatorSummaryV1FromReport } from "./lib/buckparts-daily-operator-summary-v1";
 import { buildDemandWorkQueueSummaryV1FromReport } from "./lib/buckparts-demand-work-queue-summary-v1";
+import {
+  buildAllProductSafeBuyerPathCensusUnknownV1,
+  buildAllProductSafeBuyerPathCensusV1Report,
+} from "./lib/all-product-safe-buyer-path-census-v1";
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-efficiency-truth-table-v1";
@@ -1581,6 +1585,22 @@ export async function buildBuckpartsCommandCenterReport(
     listDir: readDir,
   });
 
+  let all_product_safe_buyer_path_census_v1;
+  try {
+    all_product_safe_buyer_path_census_v1 = await buildAllProductSafeBuyerPathCensusV1Report({
+      rootDir,
+      now,
+      fileExists,
+      readText: readTextFile,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    all_product_safe_buyer_path_census_v1 = buildAllProductSafeBuyerPathCensusUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let ap_model_first_evidence_queue_v1;
   try {
     ap_model_first_evidence_queue_v1 = buildApModelFirstEvidenceQueueV1Report({
@@ -1830,6 +1850,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_batch_v3_run_instantiation_v1,
     air_purifier_model_first_production_lane_v1,
     air_purifier_weak_buyer_path_audit_v1,
+    all_product_safe_buyer_path_census_v1,
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,
     fridge_truth_spine_v1,
