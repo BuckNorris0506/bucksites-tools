@@ -1,0 +1,1003 @@
+{
+  "contract": "fridge_safe_link_rescue_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_first_hop_validation_status": "UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+  "generated_at": "2026-06-03T20:21:03.027Z",
+  "source_command": "npm run buckparts:fridge-safe-link-rescue-owner-review",
+  "exact_repo_paths_read": [
+    "data/filters.csv",
+    "data/compatibility_mappings.csv",
+    "data/retailer_links.csv",
+    "data/evidence/",
+    "https://buckparts.com/sitemap.xml"
+  ],
+  "live_scan": {
+    "sitemap_url": "https://buckparts.com/sitemap.xml",
+    "live_scan_status": "PROVEN",
+    "live_refrigerator_filter_pages_scanned": 57,
+    "live_with_go_cta_count": 31,
+    "live_without_go_cta_count": 26,
+    "never_requested_go_urls": true
+  },
+  "cohort_summary": {
+    "missing_safe_link_slug_count": 26,
+    "with_evidence_count": 5,
+    "apply_review_ready_count": 4,
+    "no_safe_pdp_count": 1,
+    "no_evidence_count": 21
+  },
+  "missing_safe_link_slugs": [
+    {
+      "rank": 1,
+      "rank_tier": 1,
+      "slug": "edr4rxd1",
+      "live_url": "https://buckparts.com/filter/edr4rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 2,
+      "rank_tier": 1,
+      "slug": "edr3rxd1",
+      "live_url": "https://buckparts.com/filter/edr3rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 3,
+      "rank_tier": 1,
+      "slug": "gswf",
+      "live_url": "https://buckparts.com/filter/gswf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 17,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 4,
+      "rank_tier": 1,
+      "slug": "4396508",
+      "live_url": "https://buckparts.com/filter/4396508",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+        "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; mutation_ready=false | data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json: verdict=UNKNOWN; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 16,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 5,
+      "rank_tier": 2,
+      "slug": "ultrawf",
+      "live_url": "https://buckparts.com/filter/ultrawf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 39,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 6,
+      "rank_tier": 2,
+      "slug": "frig-242086201",
+      "live_url": "https://buckparts.com/filter/frig-242086201",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 38,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 7,
+      "rank_tier": 2,
+      "slug": "eptwfu01",
+      "live_url": "https://buckparts.com/filter/eptwfu01",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 8,
+      "rank_tier": 2,
+      "slug": "xwfe",
+      "live_url": "https://buckparts.com/filter/xwfe",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 9,
+      "rank_tier": 2,
+      "slug": "fppwfu01",
+      "live_url": "https://buckparts.com/filter/fppwfu01",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 20,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 10,
+      "rank_tier": 2,
+      "slug": "wf2cb",
+      "live_url": "https://buckparts.com/filter/wf2cb",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 20,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 11,
+      "rank_tier": 2,
+      "slug": "frig-242017801",
+      "live_url": "https://buckparts.com/filter/frig-242017801",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 12,
+      "rank_tier": 2,
+      "slug": "frig-242294502",
+      "live_url": "https://buckparts.com/filter/frig-242294502",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 13,
+      "rank_tier": 2,
+      "slug": "purepour",
+      "live_url": "https://buckparts.com/filter/purepour",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 14,
+      "rank_tier": 2,
+      "slug": "wf3cb",
+      "live_url": "https://buckparts.com/filter/wf3cb",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 15,
+      "rank_tier": 2,
+      "slug": "wfcb",
+      "live_url": "https://buckparts.com/filter/wfcb",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 16,
+      "rank_tier": 2,
+      "slug": "w10413645a",
+      "live_url": "https://buckparts.com/filter/w10413645a",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 18,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 17,
+      "rank_tier": 2,
+      "slug": "xwf",
+      "live_url": "https://buckparts.com/filter/xwf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 18,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 18,
+      "rank_tier": 2,
+      "slug": "adq75795101",
+      "live_url": "https://buckparts.com/filter/adq75795101",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 17,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 19,
+      "rank_tier": 2,
+      "slug": "gswf2",
+      "live_url": "https://buckparts.com/filter/gswf2",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 17,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 20,
+      "rank_tier": 2,
+      "slug": "opfg3f",
+      "live_url": "https://buckparts.com/filter/opfg3f",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 15,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 21,
+      "rank_tier": 2,
+      "slug": "smartwater-mwfp",
+      "live_url": "https://buckparts.com/filter/smartwater-mwfp",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 15,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 22,
+      "rank_tier": 2,
+      "slug": "da97-17376a",
+      "live_url": "https://buckparts.com/filter/da97-17376a",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 13,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 23,
+      "rank_tier": 2,
+      "slug": "da97-19467c",
+      "live_url": "https://buckparts.com/filter/da97-19467c",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 10,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 24,
+      "rank_tier": 2,
+      "slug": "mswf",
+      "live_url": "https://buckparts.com/filter/mswf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 4,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 25,
+      "rank_tier": 2,
+      "slug": "pfmwf",
+      "live_url": "https://buckparts.com/filter/pfmwf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 3,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 26,
+      "rank_tier": 4,
+      "slug": "4396842",
+      "live_url": "https://buckparts.com/filter/4396842",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-4396842-owner-review-no-safe-pdp.2026-05-10.json",
+        "data/evidence/amazon-4396842-unknown-outcome.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-4396842-owner-review-no-safe-pdp.2026-05-10.json: verdict=NO_SAFE_PDP_FOUND_FROM_OWNER_BROWSER_SEARCH; mutation_ready=false | data/evidence/amazon-4396842-unknown-outcome.2026-05-04.json: verdict=UNKNOWN; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_no_safe_pdp_keep_blocked",
+      "owner_browser_review_required": true,
+      "model_link_count": 3,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug.",
+        "PROVEN: evidence records NO_SAFE_PDP — do not force a Verified Link without new browser proof."
+      ]
+    }
+  ],
+  "ranked_top_10": [
+    {
+      "rank": 1,
+      "rank_tier": 1,
+      "slug": "edr4rxd1",
+      "live_url": "https://buckparts.com/filter/edr4rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 2,
+      "rank_tier": 1,
+      "slug": "edr3rxd1",
+      "live_url": "https://buckparts.com/filter/edr3rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 3,
+      "rank_tier": 1,
+      "slug": "gswf",
+      "live_url": "https://buckparts.com/filter/gswf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 17,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 4,
+      "rank_tier": 1,
+      "slug": "4396508",
+      "live_url": "https://buckparts.com/filter/4396508",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+        "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; mutation_ready=false | data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json: verdict=UNKNOWN; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 16,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 5,
+      "rank_tier": 2,
+      "slug": "ultrawf",
+      "live_url": "https://buckparts.com/filter/ultrawf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 39,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 6,
+      "rank_tier": 2,
+      "slug": "frig-242086201",
+      "live_url": "https://buckparts.com/filter/frig-242086201",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 38,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 7,
+      "rank_tier": 2,
+      "slug": "eptwfu01",
+      "live_url": "https://buckparts.com/filter/eptwfu01",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 8,
+      "rank_tier": 2,
+      "slug": "xwfe",
+      "live_url": "https://buckparts.com/filter/xwfe",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 9,
+      "rank_tier": 2,
+      "slug": "fppwfu01",
+      "live_url": "https://buckparts.com/filter/fppwfu01",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 20,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 10,
+      "rank_tier": 2,
+      "slug": "wf2cb",
+      "live_url": "https://buckparts.com/filter/wf2cb",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 20,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    }
+  ],
+  "recommended_first_batch_of_5": [
+    {
+      "rank": 1,
+      "rank_tier": 1,
+      "slug": "edr4rxd1",
+      "live_url": "https://buckparts.com/filter/edr4rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 21,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 2,
+      "rank_tier": 1,
+      "slug": "edr3rxd1",
+      "live_url": "https://buckparts.com/filter/edr3rxd1",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json: verdict=UNKNOWN; browser_verdict=PASS_AS_AFTERMARKET_COMPATIBLE_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 19,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 3,
+      "rank_tier": 1,
+      "slug": "gswf",
+      "live_url": "https://buckparts.com/filter/gswf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; browser_verdict=PASS_OEM_DIRECT_BUYABLE; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 17,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 4,
+      "rank_tier": 1,
+      "slug": "4396508",
+      "live_url": "https://buckparts.com/filter/4396508",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [
+        "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+        "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json"
+      ],
+      "evidence_verdict_summary": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json: verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; mutation_ready=false | data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json: verdict=UNKNOWN; mutation_ready=false",
+      "likely_next_safe_buyer_path_type": "existing_evidence_apply_review_ready",
+      "owner_browser_review_required": false,
+      "model_link_count": 16,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: parseable evidence suggests apply-review-ready; live still lacks /go — likely Supabase/CSV parity gap.",
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    },
+    {
+      "rank": 5,
+      "rank_tier": 2,
+      "slug": "ultrawf",
+      "live_url": "https://buckparts.com/filter/ultrawf",
+      "live_page_exists": true,
+      "live_has_go_cta": false,
+      "repo_filter_exists": true,
+      "csv_retailer_row_state": "1 row(s), 0 safe gated, primary=oem-parts-catalog::none",
+      "browser_truth_classification": "",
+      "browser_truth_buyable_subtype": null,
+      "evidence_files_on_disk": [],
+      "evidence_verdict_summary": null,
+      "likely_next_safe_buyer_path_type": "official_manufacturer_pdp_or_support_needed",
+      "owner_browser_review_required": true,
+      "model_link_count": 39,
+      "mutation_authorized": false,
+      "verified_link_authorized": false,
+      "rescue_priority_notes": [
+        "PROVEN: committed CSV has zero launch-buy-links safe gated rows for this slug."
+      ]
+    }
+  ],
+  "recommended_next_action": "Start read-only owner browser/evidence collection on recommended_first_batch_of_5 only. Do not authorize Verified Links, CSV apply, Supabase writes, evidence mutation, or production /go clicks until separate owner apply-review packets exist.",
+  "proven_facts": [
+    "PROVEN: report is read_only=true; data_mutation=false; mutation_authorized=false; verified_link_authorized=false.",
+    "PROVEN: live scan reads public filter HTML and sitemap only; never requests production /go URLs.",
+    "PROVEN: classification uses committed data/filters.csv, data/retailer_links.csv, data/compatibility_mappings.csv, and data/evidence/ filenames.",
+    "PROVEN: production_go_first_hop_validation_status=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH.",
+    "PROVEN: live refrigerator filter pages scanned=57; with_go=31; without_go=26."
+  ],
+  "inferred_facts": [
+    "INFERRED: slugs with existing PASS_/EXACT_PDP evidence but no live /go likely need Supabase row + owner apply review — not new gate weakening.",
+    "INFERRED: slugs with CSV search-placeholder only and no evidence need official manufacturer or exact retailer PDP browser collection."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: per-slug live Supabase safe-CTA counts unless loaded by separate read-only parity scripts.",
+    "UNKNOWN: production /go redirect target without clicking /go (policy blocked)."
+  ]
+}
