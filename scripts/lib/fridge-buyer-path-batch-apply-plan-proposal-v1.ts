@@ -20,7 +20,7 @@ import {
   buildFridgeRunRegistryArtifactRelPathV1,
 } from "./fridge-buyer-path-batch-run-registry-v1";
 import {
-  loadFridgePlanningRunRegistryAtPathV1,
+  loadFridgeRunRegistryAtPathV1,
   resolveFridgeRunRegistryStatusV1,
 } from "./batch-run-registry-intake-v1";
 
@@ -708,7 +708,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
   const approval = buildApproval({ rootDir: deps.rootDir, now: deps.now });
   const planArtifactRelPath = buildFridgeApplyPlanArtifactRelPathV1(proposal.proposed_batch_id);
   const runRegistryRelPath = buildFridgeRunRegistryArtifactRelPathV1(proposal.proposed_batch_id);
-  const registryLoad = loadFridgePlanningRunRegistryAtPathV1({
+  const registryLoad = loadFridgeRunRegistryAtPathV1({
     rootDir: deps.rootDir,
     relPath: runRegistryRelPath,
     fileExists,
@@ -717,7 +717,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
   const registryResolved = resolveFridgeRunRegistryStatusV1({
     proposal,
     approval,
-    expectedRegistryLoad: registryLoad,
+    registryLoad,
   });
 
   const plan_status_reasons: string[] = [];
@@ -740,28 +740,33 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
       `run-registry status must be PROVEN_PLANNING_RUN_REGISTRY (got ${registryResolved.status})`,
     );
   }
-  if (!registryLoad.valid || !registryLoad.doc) {
+  if (!registryLoad.planning?.valid || !registryLoad.planning.doc) {
+    const parseErrors = [
+      ...(registryLoad.planning?.parse_errors ?? []),
+      ...(registryLoad.closed?.parse_errors ?? []),
+    ];
     plan_status_reasons.push(
       registryLoad.exists
-        ? `run-registry failed validation: ${registryLoad.parse_errors.join("; ")}`
+        ? `run-registry failed validation: ${parseErrors.join("; ")}`
         : `run-registry missing at ${runRegistryRelPath}`,
     );
   }
-  if (registryLoad.doc && registryLoad.doc.proposed_batch_id !== proposal.proposed_batch_id) {
+  const planningRegistry = registryLoad.planning?.doc ?? null;
+  if (planningRegistry && planningRegistry.proposed_batch_id !== proposal.proposed_batch_id) {
     plan_status_reasons.push(
-      `run-registry proposed_batch_id mismatch (registry=${registryLoad.doc.proposed_batch_id}; proposal=${proposal.proposed_batch_id})`,
+      `run-registry proposed_batch_id mismatch (registry=${planningRegistry.proposed_batch_id}; proposal=${proposal.proposed_batch_id})`,
     );
   }
   if (
-    registryLoad.doc &&
-    !slugSetsEqual(registryLoad.doc.proposed_slugs, proposal.proposed_rows.map((row) => row.slug))
+    planningRegistry &&
+    !slugSetsEqual(planningRegistry.proposed_slugs, proposal.proposed_rows.map((row) => row.slug))
   ) {
     plan_status_reasons.push("run-registry proposed_slugs must match proposal proposed_rows slug set");
   }
 
   const csvBySlug = loadRetailerLinksBySlugV1(deps.rootDir, fileExists, readText);
   const registrySlugs = new Set(
-    (registryLoad.doc?.proposed_slugs ?? proposal.proposed_rows.map((row) => row.slug)).map((s) =>
+    (planningRegistry?.proposed_slugs ?? proposal.proposed_rows.map((row) => row.slug)).map((s) =>
       s.trim().toLowerCase(),
     ),
   );
@@ -873,7 +878,7 @@ export function buildFridgeBuyerPathBatchApplyPlanProposalV1(
     );
   }
 
-  const runId = registryLoad.doc?.run_id ?? proposal.proposed_run_id;
+  const runId = planningRegistry?.run_id ?? registryLoad.closed?.doc?.run_id ?? proposal.proposed_run_id;
 
   return {
     contract: FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1,

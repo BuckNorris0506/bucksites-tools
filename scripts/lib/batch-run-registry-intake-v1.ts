@@ -17,10 +17,16 @@ import {
 } from "./fridge-buyer-path-batch-proposal-v1";
 import { FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1 } from "./fridge-buyer-path-owner-review-bridge-v1";
 import {
+  loadFridgeRunRegistryAtPathV1,
+  type FridgeRunRegistryLoadResultV1,
+} from "./fridge-buyer-path-batch-run-registry-closeout-v1";
+import {
   buildFridgeRunRegistryArtifactRelPathV1,
   type FridgeBuyerPathBatchPlanningRunRegistryDocumentV1,
   validateFridgeBuyerPathBatchPlanningRunRegistryDocumentV1,
 } from "./fridge-buyer-path-batch-run-registry-v1";
+
+export { loadFridgeRunRegistryAtPathV1 } from "./fridge-buyer-path-batch-run-registry-closeout-v1";
 
 export const BATCH_RUN_REGISTRY_INTAKE_CONTRACT_V1 = "batch_run_registry_intake_v1" as const;
 
@@ -39,6 +45,7 @@ export type ApRunRegistryStatusV1 =
 export type FridgeRunRegistryStatusV1 =
   | "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING"
   | "PROVEN_PLANNING_RUN_REGISTRY"
+  | "PROVEN_CLOSED"
   | "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY"
   | "AWAITING_OWNER_APPROVAL"
   | "NO_OPEN_BATCH_PROPOSAL";
@@ -171,33 +178,38 @@ export function loadFridgePlanningRunRegistryAtPathV1(args: {
   parse_errors: string[];
   doc: FridgeBuyerPathBatchPlanningRunRegistryDocumentV1 | null;
 } {
-  const fileExists = args.fileExists ?? defaultFileExists;
-  const readText = args.readText ?? defaultReadText;
-  const abs = path.join(args.rootDir, args.relPath);
-  if (!fileExists(abs)) {
+  const loaded = loadFridgeRunRegistryAtPathV1(args);
+  if (!loaded.exists) {
     return { exists: false, valid: false, parse_errors: [], doc: null };
   }
-  try {
-    const raw = JSON.parse(readText(abs)) as unknown;
-    const validated = validateFridgeBuyerPathBatchPlanningRunRegistryDocumentV1(raw);
-    if (!validated.ok) {
-      return { exists: true, valid: false, parse_errors: validated.errors, doc: null };
-    }
-    return { exists: true, valid: true, parse_errors: [], doc: validated.doc };
-  } catch (e) {
+  if (loaded.closed?.valid) {
     return {
       exists: true,
       valid: false,
-      parse_errors: [e instanceof Error ? e.message : String(e)],
+      parse_errors: ["registry is closed — planning contract no longer applies"],
       doc: null,
     };
   }
+  if (loaded.planning?.valid && loaded.planning.doc) {
+    return {
+      exists: true,
+      valid: true,
+      parse_errors: [],
+      doc: loaded.planning.doc,
+    };
+  }
+  return {
+    exists: true,
+    valid: false,
+    parse_errors: loaded.planning?.parse_errors ?? loaded.closed?.parse_errors ?? ["invalid registry"],
+    doc: null,
+  };
 }
 
 export function resolveFridgeRunRegistryStatusV1(args: {
   proposal: FridgeBuyerPathBatchProposalReportV1;
   approval: FridgeBuyerPathBatchApprovalReportV1;
-  expectedRegistryLoad: ReturnType<typeof loadFridgePlanningRunRegistryAtPathV1>;
+  registryLoad: FridgeRunRegistryLoadResultV1;
 }): {
   status: FridgeRunRegistryStatusV1;
   nextRequiredArtifact: string | null;
@@ -209,11 +221,14 @@ export function resolveFridgeRunRegistryStatusV1(args: {
     return { status: "NO_OPEN_BATCH_PROPOSAL", nextRequiredArtifact: null };
   }
 
-  const load = args.expectedRegistryLoad;
-  if (load.exists && load.valid) {
+  const load = args.registryLoad;
+  if (load.exists && load.closed?.valid) {
+    return { status: "PROVEN_CLOSED", nextRequiredArtifact };
+  }
+  if (load.exists && load.planning?.valid) {
     return { status: "PROVEN_PLANNING_RUN_REGISTRY", nextRequiredArtifact };
   }
-  if (load.exists && !load.valid) {
+  if (load.exists) {
     return { status: "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY", nextRequiredArtifact };
   }
 
@@ -233,16 +248,24 @@ export function buildBatchRunRegistryIntakeRecommendedNextActionV1(args: {
   fridgeNextRequiredArtifact: string | null;
   fridgeProposedBatchId: string | null;
 }): string {
+  if (args.fridgeStatus === "PROVEN_CLOSED") {
+    return (
+      "Fridge buyer-path batch run-registry closeout is recorded on disk (closeout_complete=true). " +
+      "Production /go first-hop remains UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH by policy. " +
+      "Verify with `npm run buckparts:batch-run-registry-intake`; no mutation from this lane."
+    );
+  }
   if (args.fridgeStatus === "PROVEN_PLANNING_RUN_REGISTRY") {
     return (
       "Fridge buyer-path planning run-registry is on disk and validated — next steps remain read-only (apply plan / CSV / Supabase gates still false). " +
+      "After APPLIED_PARITY_PROVEN, record closeout via `npm run buckparts:fridge-buyer-path-batch-run-registry-closeout`. " +
       "Verify with `npm run buckparts:batch-run-registry-intake`; no mutation from this lane."
     );
   }
   if (args.fridgeStatus === "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY" && args.fridgeNextRequiredArtifact) {
     return (
       `Fridge run-registry at expected path failed validation — treat as NOT mutation-ready. Repair \`${args.fridgeNextRequiredArtifact}\` ` +
-      "to contract fridge_buyer_path_batch_planning_run_registry_v1 with all mutation flags false and closeout_complete false."
+      "to a supported planning or closed run-registry contract with all mutation flags false."
     );
   }
   if (args.fridgeStatus === "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING" && args.fridgeNextRequiredArtifact) {
@@ -292,7 +315,7 @@ export function buildBatchRunRegistryIntakeReportV1(
   const listRunRegistryJson = deps.listRunRegistryJson ?? defaultListRunRegistryJson;
   const fridgeRegistryNames = listRunRegistryJson(fridgeRegistryDirAbs);
   const expectedRegistryRel = buildFridgeRunRegistryArtifactRelPathV1(proposal.proposed_batch_id);
-  const expectedRegistryLoad = loadFridgePlanningRunRegistryAtPathV1({
+  const registryLoad = loadFridgeRunRegistryAtPathV1({
     rootDir: deps.rootDir,
     relPath: expectedRegistryRel,
     fileExists,
@@ -302,7 +325,7 @@ export function buildBatchRunRegistryIntakeReportV1(
   const fridgeResolved = resolveFridgeRunRegistryStatusV1({
     proposal,
     approval,
-    expectedRegistryLoad,
+    registryLoad,
   });
 
   const proven_facts: string[] = [
@@ -318,18 +341,27 @@ export function buildBatchRunRegistryIntakeReportV1(
   if (apLoaded.run_id) {
     proven_facts.push(`PROVEN: AP run_id=${apLoaded.run_id}; closeout_complete=${String(apLoaded.closeout_complete)}.`);
   }
-  if (fridgeResolved.status === "PROVEN_PLANNING_RUN_REGISTRY" && expectedRegistryLoad.doc) {
+  if (fridgeResolved.status === "PROVEN_CLOSED" && registryLoad.closed?.doc) {
     proven_facts.push(
-      `PROVEN: Fridge planning run-registry validated at ${expectedRegistryRel}; stage=${expectedRegistryLoad.doc.stage}; closeout_complete=${String(expectedRegistryLoad.doc.closeout_complete)}.`,
+      `PROVEN: Fridge closed run-registry validated at ${expectedRegistryRel}; stage=${registryLoad.closed.doc.stage}; closeout_complete=true; production_go=${registryLoad.closed.doc.production_go_first_hop_validation_status}.`,
+    );
+  }
+  if (fridgeResolved.status === "PROVEN_PLANNING_RUN_REGISTRY" && registryLoad.planning?.doc) {
+    proven_facts.push(
+      `PROVEN: Fridge planning run-registry validated at ${expectedRegistryRel}; stage=${registryLoad.planning.doc.stage}; closeout_complete=${String(registryLoad.planning.doc.closeout_complete)}.`,
     );
   }
   if (fridgeResolved.status === "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY") {
     proven_facts.push(
       `PROVEN: Fridge run-registry at ${expectedRegistryRel} exists but failed validation — not mutation-ready.`,
     );
-    unknown_facts.push(
-      `UNKNOWN: Repair fridge run-registry validation errors: ${expectedRegistryLoad.parse_errors.join("; ")}.`,
-    );
+    const parseErrors = [
+      ...(registryLoad.planning?.parse_errors ?? []),
+      ...(registryLoad.closed?.parse_errors ?? []),
+    ];
+    if (parseErrors.length > 0) {
+      unknown_facts.push(`UNKNOWN: Repair fridge run-registry validation errors: ${parseErrors.join("; ")}.`);
+    }
   }
 
   const inferred_facts: string[] = [
@@ -338,7 +370,8 @@ export function buildBatchRunRegistryIntakeReportV1(
 
   if (
     fridgeResolved.nextRequiredArtifact &&
-    fridgeResolved.status !== "PROVEN_PLANNING_RUN_REGISTRY"
+    fridgeResolved.status !== "PROVEN_PLANNING_RUN_REGISTRY" &&
+    fridgeResolved.status !== "PROVEN_CLOSED"
   ) {
     proven_facts.push(`PROVEN: Fridge next_required_artifact=${fridgeResolved.nextRequiredArtifact}.`);
   }
@@ -355,14 +388,21 @@ export function buildBatchRunRegistryIntakeReportV1(
       wedge: "refrigerator_water",
       run_registry_rel_path:
         fridgeResolved.status === "PROVEN_PLANNING_RUN_REGISTRY" ||
+        fridgeResolved.status === "PROVEN_CLOSED" ||
         fridgeResolved.status === "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY"
           ? expectedRegistryRel
           : fridgeRegistryNames.length > 0
             ? `${FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1}/${fridgeRegistryNames[0]!}`
             : null,
       run_registry_status: fridgeResolved.status,
-      closeout_complete: expectedRegistryLoad.doc?.closeout_complete ?? null,
-      run_id: expectedRegistryLoad.doc?.run_id ?? proposal.proposed_batch_id,
+      closeout_complete:
+        registryLoad.closed?.doc?.closeout_complete ??
+        registryLoad.planning?.doc?.closeout_complete ??
+        null,
+      run_id:
+        registryLoad.closed?.doc?.run_id ??
+        registryLoad.planning?.doc?.run_id ??
+        proposal.proposed_batch_id,
     },
   ];
 

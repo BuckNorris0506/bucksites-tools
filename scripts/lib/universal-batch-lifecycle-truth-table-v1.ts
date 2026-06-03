@@ -12,6 +12,7 @@ import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./univer
 import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import type { UniversalBatchLifecycleMutationAuthorizationReviewReportV1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
 import { UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
+import { FRIDGE_BUYER_PATH_BATCH_CLOSEOUT_SOURCE_COMMAND_V1 } from "./fridge-buyer-path-batch-run-registry-closeout-v1";
 
 export const UNIVERSAL_BATCH_LIFECYCLE_TRUTH_TABLE_CONTRACT_V1 =
   "universal_batch_lifecycle_truth_table_v1" as const;
@@ -335,8 +336,12 @@ function resolveOneTrueNextCommandForRefrigeratorWaterV1(args: {
     args.apply_execution_plan?.source_command ===
       UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLAN_SOURCE_COMMAND_V1;
 
+  if (args.fridgeState.lifecycle_state === "closed") {
+    return "npm run buckparts:batch-run-registry-intake";
+  }
+
   if (args.fridgeState.lifecycle_state === "parity_verified") {
-    return "node --import tsx scripts/report-buckparts-command-center.ts";
+    return FRIDGE_BUYER_PATH_BATCH_CLOSEOUT_SOURCE_COMMAND_V1;
   }
 
   if (
@@ -389,6 +394,18 @@ function resolveRefrigeratorWaterState(
     proven_sources.push(`fridge_buyer_path_batch_apply_plan_proposal_v1.plan_status=${proposal.plan_status}`);
   }
   proven_sources.push(`batch_run_registry_intake_v1.fridge_run_registry_status=${intake.fridge_run_registry_status}`);
+
+  if (intake.fridge_run_registry_status === "PROVEN_CLOSED") {
+    return {
+      wedge: "refrigerator_water",
+      lifecycle_state: "closed",
+      alternate_lifecycle_states: [],
+      mutation_allowed: false,
+      mapping_summary:
+        "Fridge run-registry closeout recorded on disk (closeout_complete=true). Production /go first-hop validation remains UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH by policy.",
+      proven_mapping_sources: proven_sources,
+    };
+  }
 
   if (approval?.approval_status === "owner_approved_for_next_planning_only") {
     if (
@@ -600,13 +617,15 @@ export function buildUniversalBatchLifecycleTruthTableV1(
   }
 
   const one_true_next_state_for_refrigerator_water: UniversalBatchLifecycleStateIdV1 =
-    fridgeState.lifecycle_state === "parity_verified"
-      ? "parity_verified"
-      : fridgeState.lifecycle_state === "apply_readiness_ready"
-      ? "apply_readiness_ready"
-      : fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown")
-        ? "apply_readiness_unknown"
-        : fridgeState.lifecycle_state;
+    fridgeState.lifecycle_state === "closed"
+      ? "closed"
+      : fridgeState.lifecycle_state === "parity_verified"
+        ? "parity_verified"
+        : fridgeState.lifecycle_state === "apply_readiness_ready"
+          ? "apply_readiness_ready"
+          : fridgeState.alternate_lifecycle_states.includes("apply_readiness_unknown")
+            ? "apply_readiness_unknown"
+            : fridgeState.lifecycle_state;
 
   const one_true_next_command_for_refrigerator_water = resolveOneTrueNextCommandForRefrigeratorWaterV1({
     scriptNames,

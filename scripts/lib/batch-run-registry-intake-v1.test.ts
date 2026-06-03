@@ -141,7 +141,7 @@ test("resolveFridgeRunRegistryStatusV1 reports APPROVED_FOR_PLANNING_BUT_RUN_REG
   const resolved = resolveFridgeRunRegistryStatusV1({
     proposal: fridgeProposalFixture(),
     approval: fridgeApprovalFixture("owner_approved_for_next_planning_only"),
-    expectedRegistryLoad: { exists: false, valid: false, parse_errors: [], doc: null },
+    registryLoad: { exists: false, planning: null, closed: null },
   });
   assert.equal(resolved.status, "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING");
   assert.equal(resolved.nextRequiredArtifact, FRIDGE_REGISTRY_REL);
@@ -156,11 +156,10 @@ test("resolveFridgeRunRegistryStatusV1 reports PROVEN_PLANNING_RUN_REGISTRY when
   const resolved = resolveFridgeRunRegistryStatusV1({
     proposal: fridgeProposalFixture(),
     approval: fridgeApprovalFixture("owner_approved_for_next_planning_only"),
-    expectedRegistryLoad: {
+    registryLoad: {
       exists: true,
-      valid: true,
-      parse_errors: [],
-      doc: built.doc,
+      planning: { valid: true, parse_errors: [], doc: built.doc },
+      closed: null,
     },
   });
   assert.equal(resolved.status, "PROVEN_PLANNING_RUN_REGISTRY");
@@ -170,11 +169,14 @@ test("malformed fridge run-registry is MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY
   const resolved = resolveFridgeRunRegistryStatusV1({
     proposal: fridgeProposalFixture(),
     approval: fridgeApprovalFixture("owner_approved_for_next_planning_only"),
-    expectedRegistryLoad: {
+    registryLoad: {
       exists: true,
-      valid: false,
-      parse_errors: ["closeout_complete must be false"],
-      doc: null,
+      planning: {
+        valid: false,
+        parse_errors: ["closeout_complete must be false"],
+        doc: null,
+      },
+      closed: null,
     },
   });
   assert.equal(resolved.status, "MALFORMED_RUN_REGISTRY_NOT_MUTATION_READY");

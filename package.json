@@ -93,6 +93,7 @@
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
     "buckparts:batch-run-registry-intake": "tsx scripts/report-batch-run-registry-intake-v1.ts",
     "buckparts:fridge-buyer-path-batch-run-registry": "tsx scripts/report-fridge-buyer-path-batch-run-registry-v1.ts",
+    "buckparts:fridge-buyer-path-batch-run-registry-closeout": "tsx scripts/report-fridge-buyer-path-batch-run-registry-closeout-v1.ts",
     "buckparts:fridge-buyer-path-batch-apply-plan-proposal": "tsx scripts/report-fridge-buyer-path-batch-apply-plan-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-apply-plan-approval": "tsx scripts/report-fridge-buyer-path-batch-apply-plan-approval-v1.ts",
     "buckparts:universal-batch-lifecycle-apply-readiness": "tsx scripts/report-universal-batch-lifecycle-apply-readiness-v1.ts",

@@ -187,6 +187,28 @@ describe("universal_batch_lifecycle_truth_table_v1", () => {
     assert.equal(ap!.mutation_allowed, false);
   });
 
+  test("refrigerator_water maps to closed when fridge run-registry intake is PROVEN_CLOSED", () => {
+    const fixtures = fridgeApprovedFixtures();
+    const table = buildUniversalBatchLifecycleTruthTableV1({
+      now: () => new Date("2026-05-28T00:00:00.000Z"),
+      ...fixtures,
+      batch_run_registry_intake: {
+        ...fixtures.batch_run_registry_intake,
+        fridge_run_registry_status: "PROVEN_CLOSED",
+        wedges: fixtures.batch_run_registry_intake.wedges.map((row) =>
+          row.wedge === "refrigerator_water"
+            ? { ...row, run_registry_status: "PROVEN_CLOSED" as const, closeout_complete: true }
+            : row,
+        ),
+      },
+    });
+    const fridge = table.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
+    assert.ok(fridge);
+    assert.equal(fridge!.lifecycle_state, "closed");
+    assert.equal(table.one_true_next_state_for_refrigerator_water, "closed");
+    assert.equal(table.one_true_next_command_for_refrigerator_water, "npm run buckparts:batch-run-registry-intake");
+  });
+
   test("lists fridge micro-lanes under redundant_lanes_to_fold", () => {
     const table = buildUniversalBatchLifecycleTruthTableV1({
       now: () => new Date("2026-05-28T00:00:00.000Z"),
