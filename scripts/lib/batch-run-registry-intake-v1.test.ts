@@ -191,16 +191,10 @@ test("buildBatchRunRegistryIntakeReportV1 on repo when fridge planning registry 
   }
   const fridgeRegistryAbs = path.join(REPO_ROOT, FRIDGE_REGISTRY_REL);
   if (existsSync(fridgeRegistryAbs)) {
-    assert.equal(report.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
-    const load = loadFridgePlanningRunRegistryAtPathV1({
-      rootDir: REPO_ROOT,
-      relPath: FRIDGE_REGISTRY_REL,
-    });
-    assert.equal(load.valid, true);
-    if (load.doc) {
-      assert.equal(load.doc.apply_mutation_authorized, false);
-      assert.equal(load.doc.csv_apply_authorized, false);
-    }
+    assert.equal(report.fridge_run_registry_status, "PROVEN_CLOSED");
+    const fridgeRow = report.wedges.find((row) => row.wedge === "refrigerator_water");
+    assert.equal(fridgeRow?.run_registry_status, "PROVEN_CLOSED");
+    assert.equal(fridgeRow?.closeout_complete, true);
   } else if (existsSync(path.join(REPO_ROOT, "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"))) {
     assert.equal(report.fridge_run_registry_status, "APPROVED_FOR_PLANNING_BUT_RUN_REGISTRY_MISSING");
   }
