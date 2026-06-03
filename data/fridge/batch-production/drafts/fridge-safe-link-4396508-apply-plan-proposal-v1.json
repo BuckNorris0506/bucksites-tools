@@ -1,0 +1,181 @@
+{
+  "contract": "fridge_safe_link_4396508_apply_plan_proposal_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "buy_link_mutation_authorized": false,
+  "production_go_first_hop_validation_status": "UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+  "generated_at": "2026-06-03T23:34:21.555Z",
+  "source_command": "npm run buckparts:fridge-safe-link-4396508-apply-plan-proposal",
+  "target_slug": "4396508",
+  "wedge": "refrigerator_water",
+  "exact_repo_paths_read": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json",
+    "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+    "data/retailer_links.csv",
+    "data/filters.csv",
+    "data/affiliate/affiliate-application-tracker.json",
+    "scripts/lib/amazon-asin-reuse-policy.ts",
+    "scripts/lib/fridge-buyer-path-batch-apply-plan-proposal-v1.ts",
+    "src/lib/retailers/launch-buy-links.ts"
+  ],
+  "source_rescue_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
+  "source_first4_apply_review_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json",
+  "live_state": {
+    "live_url": "https://buckparts.com/filter/4396508",
+    "live_has_go_cta": false,
+    "live_has_go_cta_source": "fridge_safe_link_rescue_owner_review_v1",
+    "live_page_exists": true,
+    "production_go_clicked": false
+  },
+  "current_csv_state": {
+    "retailer_row_count": 1,
+    "safe_gated_count": 0,
+    "primary_retailer_key": "oem-parts-catalog",
+    "primary_affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396508",
+    "primary_is_primary": true,
+    "browser_truth_classification": "",
+    "summary": "1 row(s), 0 safe gated, primary=oem-parts-catalog:search_placeholder"
+  },
+  "evidence_files_read": [
+    "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+    "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json"
+  ],
+  "evidence_verdict_summary": "verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; asin=B00NXPKBQ2; product_attribution=aftermarket_compatible; mutation_ready=false; asin_collision=EXACT_PDP_PROVEN_NO_COLLISION",
+  "apply_plan_ready": true,
+  "apply_plan_applied": false,
+  "proposed_action": "propose_replace_search_placeholder_with_verified_direct_buyable",
+  "proposed_retailer_link_row_fields": [
+    {
+      "field": "filter_slug",
+      "proposed_value": "4396508",
+      "proof_status": "PROVEN",
+      "proof_source": "data/filters.csv + evidence.filter_slug"
+    },
+    {
+      "field": "retailer_name",
+      "proposed_value": "Amazon",
+      "proof_status": "INFERRED",
+      "proof_source": "repo CSV convention for amazon.com /dp/ rows"
+    },
+    {
+      "field": "affiliate_url",
+      "proposed_value": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+      "proof_status": "PROVEN",
+      "proof_source": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json.affiliate_url_candidate"
+    },
+    {
+      "field": "is_primary",
+      "proposed_value": true,
+      "proof_status": "PROVEN",
+      "proof_source": "data/retailer_links.csv current row"
+    },
+    {
+      "field": "sort_order",
+      "proposed_value": 0,
+      "proof_status": "PROVEN",
+      "proof_source": "data/retailer_links.csv current row"
+    },
+    {
+      "field": "retailer_key",
+      "proposed_value": "amazon",
+      "proof_status": "INFERRED",
+      "proof_source": "amazon.com /dp/ URL in evidence"
+    },
+    {
+      "field": "browser_truth_classification",
+      "proposed_value": null,
+      "proof_status": "UNKNOWN",
+      "proof_source": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json unknowns: does not prove runtime browser_truth classification"
+    },
+    {
+      "field": "browser_truth_buyable_subtype",
+      "proposed_value": null,
+      "proof_status": "UNKNOWN",
+      "proof_source": "not present in evidence; do not infer without owner classification review"
+    },
+    {
+      "field": "browser_truth_notes",
+      "proposed_value": "Owner browser screenshot showed seller-controlled product title with literal 4396508 on canonical Amazon PDP https://www.amazon.com/dp/B00NXPKBQ2. Owner browser screenshot showed buy box, price, In Stock, Add to Cart, and Buy Now visible on the single-pack PDP. product_attribution=aftermarket_compatible evidence=data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+      "proof_status": "PROVEN",
+      "proof_source": "evidence exact_token_proof + buyability_proof + product_attribution"
+    },
+    {
+      "field": "browser_truth_checked_at",
+      "proposed_value": "2026-05-10",
+      "proof_status": "PROVEN",
+      "proof_source": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json.generated_at"
+    }
+  ],
+  "proposed_retailer_link_row_unknown_fields": [
+    "browser_truth_classification",
+    "browser_truth_buyable_subtype",
+    "supabase.link_id",
+    "supabase.status",
+    "supabase.source",
+    "supabase.destination_url",
+    "production_go_first_hop_outcome"
+  ],
+  "amazon_asin_reuse_policy_classification": "EXACT_PDP_PROVEN_NO_COLLISION",
+  "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+  "blockers_before_apply": [
+    "mutation_authorized=false",
+    "verified_link_authorized=false",
+    "csv_apply_authorized=false",
+    "supabase_mutation_authorized=false",
+    "owner_apply_plan_approval_not_recorded",
+    "owner_batch_run_registry_for_safe_link_rescue_not_created",
+    "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+    "evidence.mutation_ready=false",
+    "committed CSV still search-placeholder (oem-parts-catalog); zero safe gated rows",
+    "runtime browser_truth_classification UNKNOWN until owner sets classification on apply",
+    "2-pack and 3-pack variants seen in evidence are not proven safe by primary evidence file"
+  ],
+  "owner_approval_needed_next": [
+    "Review proposed Amazon aftermarket-compatible single-pack PDP for exact token 4396508.",
+    "Confirm browser_truth_classification and browser_truth_buyable_subtype before any guarded apply executor.",
+    "Record explicit owner approval for a future single-slug CSV/Supabase apply plan — this proposal does not authorize apply.",
+    "Require fresh read-only precheck immediately before any mutation: npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens 4396508",
+    "Do not click production /go until a separate no-click or local validation policy exists."
+  ],
+  "rollback_revert_plan": [
+    "If a future guarded apply writes CSV/Supabase and post-apply validation fails, revert committed data/retailer_links.csv row for filter_slug=4396508 to:",
+    "  retailer_name=\"OEM parts catalog (keyword lookup)\"",
+    "  affiliate_url=\"https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396508\"",
+    "  retailer_key=\"oem-parts-catalog\"",
+    "  browser_truth_classification=\"\"",
+    "If Supabase row was inserted, delete or disable the inserted retailer_links row only after owner-confirmed rollback packet.",
+    "Re-run read-only parity diff (fridge-supabase-vs-csv) and live HTML scan (no /go clicks) to confirm /go CTA state returns to pre-apply baseline.",
+    "Do not delete evidence artifacts; rollback is data-path only."
+  ],
+  "proven_facts": [
+    "PROVEN: proposal is read_only=true; data_mutation=false; mutation_authorized=false; verified_link_authorized=false.",
+    "PROVEN: target_slug=4396508 only — no other slugs in planned_changes.",
+    "PROVEN: live_has_go_cta=false sourced from data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json; production /go not clicked.",
+    "PROVEN: committed CSV has one oem-parts-catalog search-placeholder row with zero launch-buy-links safe gated rows.",
+    "PROVEN: evidence data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; asin=B00NXPKBQ2; filter_id=063a6122-c85f-4332-92c0-0d8e53dc5d4c.",
+    "PROVEN: evidence asin_collision_reuse_check reports zero reuse for B00NXPKBQ2.",
+    "PROVEN: Amazon Associates affiliate tracker status=APPROVED (data/affiliate/affiliate-application-tracker.json).",
+    "PROVEN: affiliate_url_candidate includes tag=buckparts20-20.",
+    "PROVEN: filters.csv row exists brand=whirlpool oem=4396508."
+  ],
+  "inferred_facts": [
+    "INFERRED: proposed retailer_name=Amazon follows repo CSV convention for amazon.com /dp/ affiliate rows.",
+    "INFERRED: future apply would replace search placeholder with evidence-backed Amazon /dp/B00NXPKBQ2 — not authorized by this proposal.",
+    "INFERRED: live PDP uses Supabase at runtime; CSV-only apply without Supabase parity would not surface /go CTA."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: runtime browser_truth_classification and browser_truth_buyable_subtype for a future row (explicit in evidence unknowns).",
+    "UNKNOWN: production /go first-hop outcome without clicking /go.",
+    "UNKNOWN: live Supabase retailer_links state for filter_id at proposal generation time.",
+    "UNKNOWN: whether 2-pack/3-pack variants are safe buyer paths."
+  ],
+  "recommended_next_action": "Owner review this single-slug apply-plan proposal. If approved, record owner decision and create a separate guarded apply executor packet — do not mutate CSV, Supabase, evidence, or authorize Verified Links from this artifact alone."
+}
