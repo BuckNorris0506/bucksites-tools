@@ -3285,7 +3285,8 @@ test("command_center_v2.universal_batch_lifecycle_truth_table_v1 is read-only li
   const fridge = lane.current_wedge_states.find((row) => row.wedge === "refrigerator_water");
   assert.ok(fridge);
   assert.ok(
-    fridge!.lifecycle_state === "apply_plan_owner_approved" ||
+    fridge!.lifecycle_state === "closed" ||
+      fridge!.lifecycle_state === "apply_plan_owner_approved" ||
       fridge!.lifecycle_state === "apply_readiness_ready" ||
       fridge!.lifecycle_state === "parity_verified" ||
       fridge!.alternate_lifecycle_states.includes("apply_readiness_unknown"),
@@ -3539,8 +3540,19 @@ test("command_center_v2.batch_run_registry_intake_v1 is read-only universal run-
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
   );
   if (fs.existsSync(fridgeRegistryAbs)) {
-    assert.equal(lane.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
-    assert.equal(lane.fridge_approval_status, "owner_approved_for_next_planning_only");
+    const registry = JSON.parse(fs.readFileSync(fridgeRegistryAbs, "utf8")) as {
+      closeout_complete?: boolean;
+      contract?: string;
+    };
+    if (
+      registry.closeout_complete === true ||
+      registry.contract === "fridge_buyer_path_batch_closed_run_registry_v1"
+    ) {
+      assert.equal(lane.fridge_run_registry_status, "PROVEN_CLOSED");
+    } else {
+      assert.equal(lane.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
+      assert.equal(lane.fridge_approval_status, "owner_approved_for_next_planning_only");
+    }
   } else if (
     fs.existsSync(path.join(process.cwd(), "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"))
   ) {
@@ -3969,6 +3981,20 @@ test("command center next_best_action prefers apply-plan approval over apply-pla
   if (!fs.existsSync(applyPlanAbs) || !fs.existsSync(fridgeRegistryAbs)) {
     return;
   }
+  try {
+    const registry = JSON.parse(fs.readFileSync(fridgeRegistryAbs, "utf8")) as {
+      closeout_complete?: boolean;
+      contract?: string;
+    };
+    if (
+      registry.closeout_complete === true ||
+      registry.contract === "fridge_buyer_path_batch_closed_run_registry_v1"
+    ) {
+      return;
+    }
+  } catch {
+    return;
+  }
 
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -4019,6 +4045,20 @@ test("command center next_best_action prefers approved apply-plan planning over 
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
   );
   if (!fs.existsSync(applyPlanAbs) || !fs.existsSync(fridgeRegistryAbs)) {
+    return;
+  }
+  try {
+    const registry = JSON.parse(fs.readFileSync(fridgeRegistryAbs, "utf8")) as {
+      closeout_complete?: boolean;
+      contract?: string;
+    };
+    if (
+      registry.closeout_complete === true ||
+      registry.contract === "fridge_buyer_path_batch_closed_run_registry_v1"
+    ) {
+      return;
+    }
+  } catch {
     return;
   }
   if (!fs.existsSync(applyPlanApprovalAbs)) {
@@ -4165,11 +4205,7 @@ test("command center next_best_action prefers apply-plan proposal when approval 
   assert.equal(report.execution_guidance.mutating_blocked, true);
 });
 
-test("command center next_best_action prefers batch run-registry intake over closed-batch dispatch when planning registry is active", async () => {
-  const applyPlanAbs = path.join(
-    process.cwd(),
-    "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
-  );
+test("command center next_best_action prefers demand-selected batch when refrigerator_water lifecycle is closed", async () => {
   const fridgeRegistryAbs = path.join(
     process.cwd(),
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
@@ -4177,23 +4213,34 @@ test("command center next_best_action prefers batch run-registry intake over clo
   if (!fs.existsSync(fridgeRegistryAbs)) {
     return;
   }
-  if (fs.existsSync(applyPlanAbs)) {
-    const quick = await buildBuckpartsCommandCenterReport({ providers: baseProviders() });
-    if (
-      quick.command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1.plan_status ===
-      "READY_FOR_OWNER_REVIEW"
-    ) {
-      return;
-    }
+  let registry: { closeout_complete?: boolean; contract?: string };
+  try {
+    registry = JSON.parse(fs.readFileSync(fridgeRegistryAbs, "utf8")) as typeof registry;
+  } catch {
+    return;
+  }
+  if (
+    registry.closeout_complete !== true &&
+    registry.contract !== "fridge_buyer_path_batch_closed_run_registry_v1"
+  ) {
+    return;
   }
 
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
   });
   const intake = report.command_center_v2.batch_run_registry_intake_v1;
+  const lifecycle = report.command_center_v2.universal_batch_lifecycle_truth_table_v1;
+  const demand = report.command_center_v2.demand_to_coverage_next_lane_v1;
+  const fridgeLifecycle = lifecycle.current_wedge_states.find(
+    (row) => row.wedge === "refrigerator_water",
+  );
 
-  assert.equal(intake.ap_run_registry_status, "PROVEN_CLOSED");
-  assert.equal(intake.fridge_run_registry_status, "PROVEN_PLANNING_RUN_REGISTRY");
+  assert.equal(intake.fridge_run_registry_status, "PROVEN_CLOSED");
+  assert.equal(fridgeLifecycle?.lifecycle_state, "closed");
+  assert.equal(demand.runtime_status, "PROVEN");
+  assert.equal(demand.recommendation_status, "START_NEW_DEMAND_SELECTED_BATCH");
+  assert.equal(demand.recommended_wedge, "air_purifier");
   assert.equal(intake.mutation_authorized, false);
   assert.equal(report.execution_guidance.mutating_blocked, true);
 
@@ -4201,15 +4248,31 @@ test("command center next_best_action prefers batch run-registry intake over clo
     return;
   }
 
-  assert.ok(report.next_best_action.startsWith("BATCH RUN-REGISTRY [ACTIVE_PLANNING]:"));
-  assert.match(report.next_best_action, /refrigerator_water proven planning run-registry/i);
-  assert.match(report.next_best_action, /air_purifier PROVEN_CLOSED/i);
+  assert.ok(
+    report.next_best_action.startsWith("DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]:"),
+  );
+  assert.match(report.next_best_action, /refrigerator_water batch lifecycle is closed/i);
+  assert.match(report.next_best_action, /air_purifier/i);
   assert.match(report.next_best_action, /mutation unauthorized/i);
+  assert.doesNotMatch(report.next_best_action, /BATCH APPLY-PLAN \[APPROVED_FOR_PLANNING\]/);
+  assert.doesNotMatch(report.next_best_action, /BATCH RUN-REGISTRY \[ACTIVE_PLANNING\]:.*refrigerator_water/i);
   assert.equal(
-    report.next_best_action.includes("Closed batch with full apply/parity/closeout proof"),
+    report.execution_guidance.next_move_command,
+    "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+  );
+  assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+  assert.equal(
+    report.command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1.apply_mutation_authorized,
     false,
   );
-  assert.equal(report.execution_guidance.next_move_command, "npm run buckparts:batch-run-registry-intake");
+  assert.equal(
+    report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.batch_start_authorized,
+    false,
+  );
+  assert.equal(
+    report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.csv_apply_authorized,
+    false,
+  );
 });
 
 test("command center next_best_action defers to batch dispatch when not UNKNOWN", async () => {

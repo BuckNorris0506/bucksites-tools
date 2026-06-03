@@ -92,6 +92,10 @@ import { resolveBatchRunRegistryIntakeSteeringOverrideV1 } from "./lib/batch-run
 import { resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1, resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-approval-steering-v1";
 import { resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1 } from "./lib/fridge-buyer-path-batch-apply-plan-steering-v1";
 import {
+  isRefrigeratorWaterLifecycleClosedV1,
+  resolveDemandToCoverageNextLaneAfterFridgeCloseoutSteeringOverrideV1,
+} from "./lib/refrigerator-water-closed-lifecycle-command-center-steering-v1";
+import {
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
@@ -2086,22 +2090,36 @@ export async function buildBuckpartsCommandCenterReport(
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
   });
 
+  const refrigeratorWaterLifecycleClosed = isRefrigeratorWaterLifecycleClosedV1(
+    universal_batch_lifecycle_truth_table_v1,
+  );
+
+  const demandToCoverageAfterFridgeCloseoutSteeringOverride =
+    resolveDemandToCoverageNextLaneAfterFridgeCloseoutSteeringOverrideV1({
+      demandLane: demand_to_coverage_next_lane_v1,
+      lifecycleTable: universal_batch_lifecycle_truth_table_v1,
+      brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    });
+
   const fridgeApplyPlanApprovalSteeringOverride =
     resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1({
       approvalLane: command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1,
       applyPlanProposalLane: command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1,
       brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+      refrigeratorWaterLifecycleClosed,
     });
 
   const fridgeApplyPlanApprovedPlanningSteeringOverride =
     resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1({
       approvalLane: command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1,
       brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+      refrigeratorWaterLifecycleClosed,
     });
 
   const fridgeApplyPlanSteeringOverride = resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1({
     applyPlanLane: command_center_v2.fridge_buyer_path_batch_apply_plan_proposal_v1,
     brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    refrigeratorWaterLifecycleClosed,
   });
 
   const universalBatchLifecycleSteeringOverride = resolveUniversalBatchLifecycleSteeringOverrideV1({
@@ -2139,6 +2157,16 @@ export async function buildBuckpartsCommandCenterReport(
         mutatingBlockedReasons.push(reason);
       }
     }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (demandToCoverageAfterFridgeCloseoutSteeringOverride) {
+    nextBestAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.next_best_action;
+    whyThisAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = demandToCoverageAfterFridgeCloseoutSteeringOverride.next_move_command;
+    mutatingBlockedReasons.length = 0;
+    mutatingBlockedReasons.push(
+      ...demandToCoverageAfterFridgeCloseoutSteeringOverride.mutation_block_reasons,
+    );
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (applyUniversalBatchLifecycleSteering && universalBatchLifecycleSteeringOverride) {
     nextBestAction = universalBatchLifecycleSteeringOverride.next_best_action;

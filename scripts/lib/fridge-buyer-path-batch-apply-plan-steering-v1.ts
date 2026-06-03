@@ -47,6 +47,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringPrefixV1(args: {
 }
 
 export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
+  refrigeratorWaterLifecycleClosed?: boolean;
   applyPlanLane: Pick<
     FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1,
     | "plan_status"
@@ -69,6 +70,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanSteeringOverrideV1(args: {
   brainStopTheLine: boolean;
 }): FridgeBuyerPathBatchApplyPlanSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
+  if (args.refrigeratorWaterLifecycleClosed === true) return null;
   if (args.applyPlanLane.plan_status !== "READY_FOR_OWNER_REVIEW") return null;
   if (args.applyPlanLane.planned_change_count < 1) return null;
   if (args.applyPlanLane.apply_mutation_authorized !== false) return null;

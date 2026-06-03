@@ -85,6 +85,8 @@ function approvalLaneMutationBlockReasonsV1(
 }
 
 export function resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOverrideV1(args: {
+  /** When true, refrigerator_water lifecycle is closed — stale apply-plan steering must not win. */
+  refrigeratorWaterLifecycleClosed?: boolean;
   approvalLane: Pick<
     FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1,
     | "approval_status"
@@ -105,6 +107,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOver
   brainStopTheLine: boolean;
 }): FridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
+  if (args.refrigeratorWaterLifecycleClosed === true) return null;
   if (args.approvalLane.approval_status !== "owner_approved_for_next_planning_only") return null;
   if (args.approvalLane.planned_change_count < 1) return null;
   if (!approvalLaneMutationFlagsFalse(args.approvalLane)) return null;
@@ -131,6 +134,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanApprovedPlanningSteeringOver
 }
 
 export function resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1(args: {
+  refrigeratorWaterLifecycleClosed?: boolean;
   approvalLane: Pick<
     FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1,
     | "approval_status"
@@ -155,6 +159,7 @@ export function resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1(a
   brainStopTheLine: boolean;
 }): FridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1 | null {
   if (args.brainStopTheLine) return null;
+  if (args.refrigeratorWaterLifecycleClosed === true) return null;
   if (args.approvalLane.approval_status !== "awaiting_owner_approval") return null;
   if (args.approvalLane.plan_status !== "READY_FOR_OWNER_REVIEW") return null;
   if (args.approvalLane.owner_review_status !== "OWNER_REVIEW_READY") return null;
