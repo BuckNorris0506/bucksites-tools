@@ -1,5 +1,11 @@
 import React from "react";
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import {
+  BUCKPARTS_VERIFIED_LINK_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+  BUCKPARTS_VERIFIED_LINK_ALTERNATES_LABEL,
+  buckpartsVerifiedLinksHiddenCountNote,
+} from "@/lib/copy/buckparts-verified-link-copy";
 import { primaryStoreLinkBuyCheckFootnote } from "@/lib/copy/public-trust";
 import {
   buyLinkGateFailureKind,
@@ -33,7 +39,7 @@ function firstSuppressedOemCatalogFootnoteLink(links: BuyLinkRow[]): BuyLinkRow 
 export function TieredBuyLinks({
   links,
   goBase = "/go",
-  primaryCtaLabel = "Buy replacement",
+  primaryCtaLabel = BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
   buyPathSortContext,
 }: {
   links: BuyLinkRow[];
@@ -49,9 +55,7 @@ export function TieredBuyLinks({
 
   if (!realLinks.length) {
     return (
-      <p className="text-sm text-bp-muted">
-        No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.
-      </p>
+      <p className="text-sm text-bp-muted">{BUCKPARTS_VERIFIED_LINK_NONE_YET}</p>
     );
   }
 
@@ -95,7 +99,7 @@ export function TieredBuyLinks({
       {alternates.length > 0 && (
         <div className="flex flex-col gap-2 border-t border-bp-border pt-3">
           <p className="text-xs font-medium text-bp-muted">
-            Other options
+            {BUCKPARTS_VERIFIED_LINK_ALTERNATES_LABEL}
           </p>
           <ul className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
             {alternates.map((link) => (
@@ -115,7 +119,7 @@ export function TieredBuyLinks({
           </ul>
           {hiddenCount > 0 && (
             <p className="text-xs text-bp-muted">
-              +{hiddenCount} more buying option{hiddenCount !== 1 ? "s" : ""} not shown.
+              {buckpartsVerifiedLinksHiddenCountNote(hiddenCount)}
             </p>
           )}
         </div>
@@ -127,7 +131,7 @@ export function TieredBuyLinks({
             Brand parts reference
           </p>
           <p className="mt-1 text-xs text-bp-muted">
-            Opens the manufacturer site for reference. This is not the same as a buying option
+            Opens the manufacturer site for reference. This is not a BuckParts Verified Link
             above—use it to double-check fit if you need to.
           </p>
           <a

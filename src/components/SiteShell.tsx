@@ -113,8 +113,8 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
             </Link>
           </nav>
           <p className="max-w-2xl text-center">
-            Check your part number first. Buying options appear only when we can match the product
-            page to the filter number.
+            Check your part number first. A BuckParts Verified Link appears only when we can match the
+            retailer product page to the filter number—not every filter has one.
           </p>
         </div>
       </footer>

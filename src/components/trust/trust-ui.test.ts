@@ -90,7 +90,7 @@ describe("trust UI (server render)", () => {
     );
     assert.ok(html.includes("2026-05-04"));
     assert.ok(
-      html.includes("Shown after BuckParts checks the product page against this filter number"),
+      html.includes("Shown as a BuckParts Verified Link after we checked the product page"),
     );
     assert.ok(!html.includes("buy-link"));
     assert.ok(!html.includes("store links"));
@@ -236,21 +236,18 @@ describe("public merchant-priority copy guard", () => {
     }
   });
 
-  it("global shell footer avoids store links/buttons wording", () => {
+  it("global shell footer uses BuckParts Verified Link wording", () => {
     const src = readFileSync(rooted("src/components/SiteShell.tsx"), "utf8");
     assert.ok(!/store links/i.test(src));
     assert.ok(!/store buttons/i.test(src));
-    assert.ok(
-      /Buying options appear only when we can match the product\s+page to the filter number\./m.test(
-        src,
-      ),
-    );
+    assert.ok(src.includes("BuckParts Verified Link"));
+    assert.ok(/not every filter has one/i.test(src));
   });
 
-  it("go-unavailable page uses purchase-options wording (no store shortcut)", () => {
+  it("go-unavailable page uses BuckParts Verified Link wording", () => {
     const src = readFileSync(rooted("src/app/go-unavailable/page.tsx"), "utf8");
     assert.ok(!/store shortcut/i.test(src));
-    assert.match(src, /purchase option/i);
+    assert.match(src, /BuckParts Verified Link/i);
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 

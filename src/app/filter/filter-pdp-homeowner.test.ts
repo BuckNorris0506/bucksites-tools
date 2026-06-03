@@ -76,7 +76,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     assert.ok(html.includes("If you’re not sure, check your owner’s manual or a refrigerator model page below."));
     assert.ok(
       html.includes(
-        "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.",
+        "When a BuckParts Verified Link appears below, we checked that retailer product page against this part number. Compare it with your old filter before ordering.",
       ),
     );
     assert.ok(!html.includes("data-filter-visual="));
@@ -103,7 +103,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
         goBase: "/go",
         primaryCtaLabel: "Buy at",
         suppressMessage:
-          "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.",
+          "No BuckParts Verified Link yet for this filter number. We haven’t found a retailer product page we’re comfortable showing.",
         gateSuppressionSummary: {
           hadSearchPlaceholderRows: true,
           hadIndirectDiscoveryRows: false,
@@ -116,7 +116,7 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     assert.ok(!html.includes('href="/go/'));
     assert.ok(
       html.includes(
-        "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.",
+        "No BuckParts Verified Link yet for this filter number. We haven’t found a retailer product page we’re comfortable showing.",
       ),
     );
     for (const rx of bannedInPublicFilterHtml) {
@@ -151,12 +151,12 @@ describe("refrigerator filter PDP homeowner trust copy", () => {
     assert.ok(html.includes("2026-05-04"));
   });
 
-  it("vertical filter default suppress message uses listing-evidence wording", () => {
+  it("vertical filter default suppress message uses verified-link wording", () => {
     const src = readFileSync(
       join(process.cwd(), "src/components/vertical/VerticalFilterPageContent.tsx"),
       "utf8",
     );
-    assert.ok(/listing evidence checked against this part number/i.test(src));
-    assert.ok(!/verified a retailer listing/i.test(src));
+    assert.ok(src.includes("BUCKPARTS_VERIFIED_LINK_SUPPRESS_DEFAULT"));
+    assert.ok(!/store button/i.test(src));
   });
 });

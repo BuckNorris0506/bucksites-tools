@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { FridgeModelFilterSection } from "@/components/fridge/FridgeModelFilterSection";
+import { BUCKPARTS_VERIFIED_LINK_PLURAL } from "@/lib/copy/buckparts-verified-link-copy";
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 
@@ -78,8 +79,7 @@ describe("FridgeModelFilterSection", () => {
     assert.equal(/\bOption\s*2\b/i.test(html), false);
     assert.ok(html.includes("LT1000P"));
     assert.ok(html.includes("Open filter details"));
-    assert.ok(html.includes("Open reviewed listing"));
-    assert.ok(html.includes("Buying options (secondary"));
+    assert.ok(html.includes(BUCKPARTS_VERIFIED_LINK_PLURAL));
     assert.ok(html.includes('href="/go/'));
     assert.ok(!html.includes("Do not pick by order"));
   });

@@ -6,6 +6,10 @@
  */
 
 import type { OemOrCompatible } from "@/lib/trust/part-trust";
+import {
+  BUCKPARTS_VERIFIED_LINK_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE,
+} from "@/lib/copy/buckparts-verified-link-copy";
 
 export { CUSTOMER_UX_DOCTRINE_VERSION } from "./customer-ux-doctrine";
 
@@ -44,8 +48,8 @@ export function partIdentityPillLabel(oemOrCompatible: OemOrCompatible): string 
 /** Third bullet under “Why this fits” / link gate outcome. */
 export function buyPathStoreLinksBullet(buyerPathIsSuppress: boolean): string {
   return buyerPathIsSuppress
-    ? "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number."
-    : "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.";
+    ? BUCKPARTS_VERIFIED_LINK_NONE_YET
+    : BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE;
 }
 
 /** Gate hints when inventory exists but rows fail gating (TrustAwareBuySection). */
@@ -54,7 +58,7 @@ export function buyPathGateHintSearchPlaceholder(): string {
 }
 
 export function buyPathGateHintMissingBrowserTruth(): string {
-  return "Some listings are still being reviewed before we show a buying option.";
+  return "Some listings are still being reviewed before we show a BuckParts Verified Link.";
 }
 
 export function buyPathGateHintUnsafeBrowserTruth(): string {
@@ -75,5 +79,5 @@ export function formatBuyLinkCheckedYyyyMmDd(isoDateTime: string): string | null
 export function primaryStoreLinkBuyCheckFootnote(isoDateTime: string): string | null {
   const d = formatBuyLinkCheckedYyyyMmDd(isoDateTime);
   if (!d) return null;
-  return `Shown after BuckParts checks the product page against this filter number (${d}).`;
+  return `Shown as a BuckParts Verified Link after we checked the product page against this filter number (${d}).`;
 }

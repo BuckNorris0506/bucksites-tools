@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { ModelTruthPanel } from "@/components/trust/ModelTruthPanel";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { BuckPartsVerifiedLinksSection } from "@/components/trust/BuckPartsVerifiedLinksSection";
 import { Prose } from "@/components/Prose";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
 import {
@@ -14,6 +15,7 @@ import {
   sharedFilterIntervalLabel,
 } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
+import { BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX } from "@/lib/copy/buckparts-verified-link-copy";
 
 export type VerticalModelFilterRow = {
   id: string;
@@ -139,33 +141,37 @@ export function VerticalModelPageContent({
                     hasPrimaryPartNotes={primaryTrustBuy.hasPrimaryPartNotes}
                   />
                   <div className="mt-5">
-                    <TrustAwareBuySection
-                      trust={primaryTrustBuy.trust}
-                      links={primaryTrustBuy.retailerLinks}
+                    <BuckPartsVerifiedLinksSection>
+                      <TrustAwareBuySection
+                        trust={primaryTrustBuy.trust}
+                        links={primaryTrustBuy.retailerLinks}
+                        goBase={goBase}
+                        primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
+                        suppressMessage={primaryTrustBuy.buySuppressMessage}
+                        gateSuppressionSummary={primaryTrustBuy.gateSuppressionSummary ?? undefined}
+                        buyPathSortContext={buyPathSortContextForFilter(
+                          primary.slug,
+                          primary.name,
+                          primary.oem_part_number,
+                        )}
+                      />
+                    </BuckPartsVerifiedLinksSection>
+                  </div>
+                </>
+              ) : (
+                <div className="mt-5">
+                  <BuckPartsVerifiedLinksSection>
+                    <TieredBuyLinks
+                      links={primary.retailer_links}
                       goBase={goBase}
-                      primaryCtaLabel="Buy replacement at"
-                      suppressMessage={primaryTrustBuy.buySuppressMessage}
-                      gateSuppressionSummary={primaryTrustBuy.gateSuppressionSummary ?? undefined}
+                      primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
                       buyPathSortContext={buyPathSortContextForFilter(
                         primary.slug,
                         primary.name,
                         primary.oem_part_number,
                       )}
                     />
-                  </div>
-                </>
-              ) : (
-                <div className="mt-5">
-                  <TieredBuyLinks
-                    links={primary.retailer_links}
-                    goBase={goBase}
-                    primaryCtaLabel="Buy replacement at"
-                    buyPathSortContext={buyPathSortContextForFilter(
-                      primary.slug,
-                      primary.name,
-                      primary.oem_part_number,
-                    )}
-                  />
+                  </BuckPartsVerifiedLinksSection>
                 </div>
               )}
 
@@ -178,7 +184,7 @@ export function VerticalModelPageContent({
                 </Link>
                 <span className="text-neutral-500 dark:text-neutral-400">
                   {" "}
-                  (notes, compatible models, buying options when listed)
+                  (notes, compatible models, BuckParts Verified Links when listed)
                 </span>
               </p>
             </div>

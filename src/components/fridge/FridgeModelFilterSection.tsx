@@ -3,14 +3,19 @@ import React from "react";
 import { FridgeTrustFunnelLink } from "@/components/analytics/FridgeTrustFunnelLink";
 import { Prose } from "@/components/Prose";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { BuckPartsVerifiedLinksSection } from "@/components/trust/BuckPartsVerifiedLinksSection";
 import type { FridgeMappedFilterRow } from "@/lib/data/fridges";
 import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
 import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
+import {
+  BUCKPARTS_VERIFIED_LINK_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+  BUCKPARTS_VERIFIED_LINK_PLURAL,
+} from "@/lib/copy/buckparts-verified-link-copy";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
-const FRIDGE_MODEL_FILTER_BUY_SUPPRESS =
-  "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
+const FRIDGE_MODEL_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_NONE_YET;
 
 function intervalLabel(months: number | null | undefined): string | null {
   if (months == null || months <= 0) return null;
@@ -47,9 +52,9 @@ export function FridgeModelFilterSection({
       <div className="space-y-3">
         <h2 className="text-xl font-semibold text-bp-text">Full detail for each number</h2>
         <p className="max-w-prose text-base leading-relaxed text-bp-muted">
-          Same numbers as the chips above—here with notes and buying options.{" "}
+          Same numbers as the chips above—here with notes and {BUCKPARTS_VERIFIED_LINK_PLURAL.toLowerCase()}.{" "}
           <strong className="font-medium text-bp-text">Not a ranked list.</strong> Open filter
-          details before using any buying option.
+          details before using any verified link.
         </p>
       </div>
 
@@ -143,20 +148,17 @@ export function FridgeModelFilterSection({
                 ) : null}
 
                 <div className="mt-6 rounded-2xl border border-bp-border bg-bp-trust-soft/35 p-5">
-                  <p className="text-xs font-medium text-bp-muted">
-                    Buying options (secondary—only after this number matches what you need)
-                  </p>
-                  <div className="mt-4">
+                  <BuckPartsVerifiedLinksSection>
                     <TrustAwareBuySection
                       trust={trustSummary}
                       links={f.retailer_links}
                       goBase="/go"
-                      primaryCtaLabel="Open reviewed listing"
+                      primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
                       suppressMessage={FRIDGE_MODEL_FILTER_BUY_SUPPRESS}
                       gateSuppressionSummary={f.buy_path_gate_suppression}
                       buyPathSortContext={buyPathSortContext}
                     />
-                  </div>
+                  </BuckPartsVerifiedLinksSection>
                 </div>
               </li>
             );

@@ -12,6 +12,10 @@ import {
   FRIDGE_HOMEOWNER_WHY_REPLACEMENT_MATTERS,
 } from "@/lib/copy/fridge-homeowner-help";
 import { COMPARE_BEFORE_BUY_CHECKLIST_LINES } from "@/lib/copy/public-trust";
+import {
+  BUCKPARTS_VERIFIED_LINK_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE,
+} from "@/lib/copy/buckparts-verified-link-copy";
 import { FridgeTrustFunnelDetails } from "@/components/analytics/FridgeTrustFunnelDetails";
 import { FridgeModelConnectedFilterChips } from "@/components/fridge/FridgeModelConnectedFilterChips";
 import type { FridgeTrustFunnelPayload } from "@/lib/analytics/fridge-trust-funnel";
@@ -117,12 +121,9 @@ function FridgeHomeownerHelpCollapsible({
 
 function storeStatusSentence(status: VisualMatchStorePlainStatus): string {
   if (status === "options_after_checks") {
-    return "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.";
+    return BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE;
   }
-  if (status === "buttons_hidden_pending_checks") {
-    return "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
-  }
-  return "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
+  return BUCKPARTS_VERIFIED_LINK_NONE_YET;
 }
 
 /**

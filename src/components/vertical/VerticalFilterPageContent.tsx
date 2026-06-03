@@ -3,17 +3,21 @@ import type { BuyLinkRow } from "@/components/BuyLinks";
 import { PartTruthPanel } from "@/components/trust/PartTruthPanel";
 import { OfficialProductReferenceLinks } from "@/components/trust/OfficialProductReferenceLinks";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { BuckPartsVerifiedLinksSection } from "@/components/trust/BuckPartsVerifiedLinksSection";
 import { Prose } from "@/components/Prose";
 import {
   buyPathSortContextForFilter,
   type BuyPathGateSuppressionSummary,
 } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
+import {
+  BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+  BUCKPARTS_VERIFIED_LINK_SUPPRESS_DEFAULT,
+} from "@/lib/copy/buckparts-verified-link-copy";
 import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 
-const DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE =
-  "We are not showing a store button yet because we do not have enough listing evidence checked against this part number yet. Compare the part and model numbers to your old part or manual, then try search again if you still need a match.";
+const DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE = BUCKPARTS_VERIFIED_LINK_SUPPRESS_DEFAULT;
 
 export type VerticalFilterModelRow = {
   id: string;
@@ -133,15 +137,12 @@ export function VerticalFilterPageContent({
         />
 
         <div className="mt-6 border-t border-bp-border pt-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-bp-muted">
-            Where to buy
-          </p>
-          <div className="mt-3">
+          <BuckPartsVerifiedLinksSection>
             <TrustAwareBuySection
               trust={trustSummary}
               links={retailerLinks}
               goBase={goBase}
-              primaryCtaLabel="Buy this part at"
+              primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
               suppressMessage={buySuppressMessage ?? DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE}
               gateSuppressionSummary={gateSuppressionSummary ?? undefined}
               buyPathSortContext={buyPathSortContext}
@@ -149,7 +150,7 @@ export function VerticalFilterPageContent({
             {officialReferenceLinks && officialReferenceLinks.length > 0 ? (
               <OfficialProductReferenceLinks links={officialReferenceLinks} />
             ) : null}
-          </div>
+          </BuckPartsVerifiedLinksSection>
         </div>
       </div>
 

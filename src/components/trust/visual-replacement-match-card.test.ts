@@ -82,7 +82,7 @@ describe("VisualReplacementMatchCard", () => {
     assert.ok(html.includes("Compare this number to the one printed on your old filter."));
     assert.ok(
       html.includes(
-        "Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.",
+        "When a BuckParts Verified Link appears below, we checked that retailer product page against this part number. Compare it with your old filter before ordering.",
       ),
     );
     assert.ok(!html.includes("data-filter-visual="));

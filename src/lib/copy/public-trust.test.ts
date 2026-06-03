@@ -35,16 +35,17 @@ describe("public-trust copy", () => {
     assert.equal(partIdentityPillLabel("unknown"), "Part identity");
   });
 
-  it("buyPathStoreLinksBullet reflects suppress vs show with homeowner-safe wording", () => {
-    assert.match(buyPathStoreLinksBullet(true), /No buying options yet/i);
+  it("buyPathStoreLinksBullet reflects suppress vs show with verified-link wording", () => {
+    assert.match(buyPathStoreLinksBullet(true), /No BuckParts Verified Link yet/i);
     assert.match(
       buyPathStoreLinksBullet(false),
-      /Buying options are shown only when the product page matches this filter number/i,
+      /When a BuckParts Verified Link appears below/i,
     );
     assert.ok(!/buy-link/i.test(buyPathStoreLinksBullet(true)));
     assert.ok(!/buy-link/i.test(buyPathStoreLinksBullet(false)));
     assert.ok(!/store buttons/i.test(buyPathStoreLinksBullet(true)));
     assert.ok(!/store links/i.test(buyPathStoreLinksBullet(false)));
+    assert.ok(!/buy button/i.test(buyPathStoreLinksBullet(true)));
   });
 
   it("formatBuyLinkCheckedYyyyMmDd returns UTC date or null", () => {
@@ -55,7 +56,7 @@ describe("public-trust copy", () => {
   it("primaryStoreLinkBuyCheckFootnote includes date with product-page check phrasing", () => {
     const f = primaryStoreLinkBuyCheckFootnote("2026-05-04T21:55:01.775Z");
     assert.ok(f?.includes("2026-05-04"));
-    assert.ok(f?.includes("Shown after BuckParts checks the product page against this filter number"));
+    assert.ok(f?.includes("Shown as a BuckParts Verified Link after we checked the product page"));
     assert.ok(f && !/buy-link/i.test(f));
     assert.ok(f && !/store links/i.test(f));
     assert.ok(f && !/store buttons/i.test(f));

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
+import { BuckPartsVerifiedLinksSection } from "@/components/trust/BuckPartsVerifiedLinksSection";
 import {
   deriveFridgeFilterStorePlainStatus,
   VisualReplacementMatchCard,
@@ -15,6 +16,10 @@ import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
+import {
+  BUCKPARTS_VERIFIED_LINK_NONE_YET,
+  BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
+} from "@/lib/copy/buckparts-verified-link-copy";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -23,8 +28,7 @@ export const dynamic = "force-dynamic";
 
 type Props = { params: { slug: string } };
 
-const FRIDGE_FILTER_BUY_SUPPRESS =
-  "No buying options yet. We haven’t found a product page we’re comfortable showing for this filter number.";
+const FRIDGE_FILTER_BUY_SUPPRESS = BUCKPARTS_VERIFIED_LINK_NONE_YET;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const filter = await getFilterBySlug(params.slug);
@@ -124,18 +128,17 @@ export default async function FilterPage({ params }: Props) {
           ) : null}
 
           <div className={publicNotes ? "mt-7 border-t border-bp-border pt-7" : ""}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">Buying options</p>
-            <div className="mt-3">
+            <BuckPartsVerifiedLinksSection>
               <TrustAwareBuySection
                 trust={trustSummary}
                 links={filter.retailer_links}
                 goBase="/go"
-                primaryCtaLabel="Buy this part at"
+                primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
                 suppressMessage={FRIDGE_FILTER_BUY_SUPPRESS}
                 gateSuppressionSummary={filter.buy_path_gate_suppression}
                 buyPathSortContext={buyPathSortContext}
               />
-            </div>
+            </BuckPartsVerifiedLinksSection>
           </div>
         </div>
 

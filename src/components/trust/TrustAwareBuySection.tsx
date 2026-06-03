@@ -2,6 +2,9 @@ import React from "react";
 import type { BuyLinkRow } from "@/components/BuyLinks";
 import { TieredBuyLinks } from "@/components/TieredBuyLinks";
 import {
+  BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE,
+} from "@/lib/copy/buckparts-verified-link-copy";
+import {
   buyPathGateHintMissingBrowserTruth,
   buyPathGateHintSearchPlaceholder,
   buyPathGateHintUnsafeBrowserTruth,
@@ -73,7 +76,7 @@ export function TrustAwareBuySection({
     <div className="space-y-3">
       {trust.buyer_path_state === "show_caution_buy" && (
         <p className="rounded-lg border border-bp-caution/35 bg-bp-caution-soft px-3 py-2.5 text-sm leading-relaxed text-bp-caution">
-          Buying options are shown only when the product page matches this filter number. Compare it with your old filter before ordering.
+          {BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE}
         </p>
       )}
       <TieredBuyLinks

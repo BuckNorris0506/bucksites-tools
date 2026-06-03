@@ -102,7 +102,7 @@ export function buildPartPageTrust(args: PartPageTrustArgs): PartTrustSummary {
     preferred_winner_link,
     replacement_reasoning_summary:
       args.modelsCount > 0
-        ? `${args.oemPartNumber} matches models linked on this page. Buying options are shown only when BuckParts has listing evidence checked against this part number.`
+        ? `${args.oemPartNumber} matches models linked on this page. A BuckParts Verified Link appears only when our checks clear for this part number—not every filter has one.`
         : `${args.oemPartNumber} does not have model links on this page yet. Compare the part number in your manual or on your current filter before you buy.`,
     buyer_path_state,
   };
