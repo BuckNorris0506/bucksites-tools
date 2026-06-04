@@ -22,7 +22,7 @@ export async function SiteShell({ children }: { children: React.ReactNode }) {
                 <span aria-hidden className="grid h-8 w-8 shrink-0 place-items-center sm:h-9 sm:w-9">
                   <svg
                     viewBox="0 0 48 48"
-                    className="h-8 w-8 text-bp-trust sm:h-9 sm:w-9"
+                    className="h-8 w-8 text-bp-logo sm:h-9 sm:w-9"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >

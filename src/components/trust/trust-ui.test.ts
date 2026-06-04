@@ -251,20 +251,20 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(!/avoid sending you to a bad match/i.test(src));
   });
 
-  it("homepage uses final purchase-options copy (customer language doctrine)", () => {
+  it("homepage uses FOH hero copy and purchase-options doctrine below the fold", () => {
     const src = readFileSync(rooted("src/app/page.tsx"), "utf8");
+    const searchForm = readFileSync(rooted("src/components/SearchForm.tsx"), "utf8");
     assert.ok(!/store shortcut/i.test(src));
+    assert.ok(src.includes("Wrong Buck."));
+    assert.ok(src.includes("Right Parts"));
     assert.ok(
       src.includes(
-        "BuckParts shows what matched, what to compare, and whether purchase options are available after listing checks.",
+        "BuckParts checks replacement-filter links before it points you anywhere.",
       ),
     );
-    assert.ok(src.includes("Purchase options"));
-    assert.ok(
-      src.includes(
-        "Store links appear only after BuckParts checks the listing against the part number.",
-      ),
-    );
+    assert.ok(searchForm.includes("Look it up"));
+    assert.ok(src.includes("Free to use · No account needed."));
+    assert.ok(src.includes("We only show a place to buy once the checks clear."));
     assert.ok(src.includes("Shop only after checks pass"));
     assert.ok(
       src.includes(

@@ -7,28 +7,24 @@
  * See docs/BuckParts-CUSTOMER-UX-DOCTRINE.md for product tone; CSS custom properties here are implementation-only.
  */
 :root {
-  /* Page + surfaces */
-  --bp-bg: #f6f4f0;
+  --bp-bg: #f7f8fa;            /* was #f6f4f0 */
   --bp-surface: #ffffff;
-  --bp-border: #e2ddd4;
+  --bp-border: #e6e8ec;        /* was #e2ddd4 */
   --bp-text: #0f172a;
   --bp-muted: #64748b;
-  /* Authority / trust accent (slate-blue) */
   --bp-trust: #172554;
   --bp-trust-soft: #e8eef8;
-  /* Caution / no-buy */
-  --bp-caution: #b45309;
-  --bp-caution-soft: #fff7e6;
-  /* High-confidence only */
-  --bp-success: #3f6212;
-  --bp-success-soft: #eff6e4;
-  /* Hard block / error */
-  --bp-block: #7f1d1d;
-  --bp-block-soft: #fef2f2;
-  /* Inline OEM / model number chip (monospace + frame) */
-  --bp-code-bg: #f1f0ec;
-  --bp-code-border: #d6d3cb;
-
+  --bp-caution: #b7791f;       /* was #b45309 */
+  --bp-caution-soft: #fbf3e0;  /* was #fff7e6 */
+  --bp-success: #15803d;       /* was #3f6212 */
+  --bp-success-soft: #e7f3ec;  /* was #eff6e4 */
+  --bp-block: #b42318;         /* was #7f1d1d */
+  --bp-block-soft: #fbece9;    /* was #fef2f2 */
+  --bp-code-bg: #f1f3f6;       /* was #f1f0ec */
+  --bp-code-border: #dfe3e8;   /* was #d6d3cb */
+  --bp-action: #d24a22;        /* NEW — ember, action/highlight only */
+  --bp-action-press: #b8421c;  /* NEW — ember button bg (AA white text) */
+  --bp-logo: #172554;          /* NEW — LOCKED, decoupled from trust */
   --background: var(--bp-bg);
   --foreground: var(--bp-text);
 }
@@ -50,6 +46,9 @@
     --bp-block-soft: #450a0a;
     --bp-code-bg: #1e293b;
     --bp-code-border: #334155;
+    --bp-action: #f06a3d;
+    --bp-action-press: #d24a22;
+    --bp-logo: #3b82f6;   /* preserves prior dark logo color (was text-bp-trust) */
 
     --background: var(--bp-bg);
     --foreground: var(--bp-text);
@@ -233,3 +232,7 @@ body {
     text-wrap: balance;
   }
 }
+
+@keyframes bp-hook-resolve { from { color: var(--bp-muted); } to { color: var(--bp-trust); } }
+.bp-hook-resolve { color: var(--bp-trust); animation: bp-hook-resolve .42s cubic-bezier(.22,1,.36,1) .2s both; }
+@media (prefers-reduced-motion: reduce) { .bp-hook-resolve { animation: none; color: var(--bp-trust); } }

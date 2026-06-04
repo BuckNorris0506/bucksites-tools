@@ -9,7 +9,6 @@ export function SearchForm({
   actionPath = "/search",
 }: {
   initialQuery?: string;
-  /** Path without query string, e.g. `/air-purifier/search` */
   actionPath?: string;
 }) {
   const router = useRouter();
@@ -26,24 +25,22 @@ export function SearchForm({
 
   return (
     <form onSubmit={onSubmit} className="flex w-full flex-col gap-3 sm:flex-row sm:items-stretch">
-      <label htmlFor="search-q" className="sr-only">
-        Model or filter part number
-      </label>
+      <label htmlFor="search-q" className="sr-only">Model or filter part number</label>
       <input
         id="search-q"
         name="q"
         type="search"
         autoComplete="off"
-        placeholder="Search by model number or part number"
+        placeholder="Model number, part number, or the code on your old filter"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        className="min-h-14 flex-1 rounded-md border border-neutral-300 bg-white px-4 text-base text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
+        className="min-h-14 flex-1 rounded-xl border border-bp-border bg-bp-surface px-4 text-base text-bp-text shadow-sm placeholder:text-bp-muted focus:border-bp-text focus:outline-none focus:ring-2 focus:ring-bp-trust/30"
       />
       <button
         type="submit"
-        className="bp-btn-press min-h-14 shrink-0 rounded-md bg-neutral-900 px-6 text-base font-semibold text-white hover:bg-neutral-800 dark:bg-neutral-100 dark:text-neutral-900 dark:hover:bg-white"
+        className="bp-btn-press min-h-14 shrink-0 rounded-xl bg-bp-action-press px-6 text-base font-semibold text-white transition-colors hover:bg-bp-action focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bp-action"
       >
-        Search
+        Look it up
       </button>
     </form>
   );

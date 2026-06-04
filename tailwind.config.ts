@@ -29,6 +29,9 @@ const config: Config = {
           "success-soft": "var(--bp-success-soft)",
           block: "var(--bp-block)",
           "block-soft": "var(--bp-block-soft)",
+          action: "var(--bp-action)",
+          "action-press": "var(--bp-action-press)",
+          logo: "var(--bp-logo)",
           code: {
             bg: "var(--bp-code-bg)",
             border: "var(--bp-code-border)",
