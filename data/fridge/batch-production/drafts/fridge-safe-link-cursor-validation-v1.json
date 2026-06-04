@@ -1,9 +1,9 @@
 {
   "contract": "buckparts_cursor_validation_packet_v1",
-  "validation_id": "0beab4f0-9ec8-4574-8f13-6e13233fac2f",
+  "validation_id": "607d9f4f-11a2-4e0b-9fb9-8bfefe89c61e",
   "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
   "ingest_id": "ebfd1834-8a37-4d33-9bd0-2a43d2652e46",
-  "validated_at": "2026-06-04T17:01:05.900Z",
+  "validated_at": "2026-06-04T17:29:02.054Z",
   "validation_status": "VALIDATION_PARTIAL",
   "failure_code": null,
   "commands_run": [
@@ -50,69 +50,69 @@
         "slug": "adq75795101",
         "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL appropriate for adq75795101"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL"
       },
       {
         "slug": "da97-19467c",
         "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED"
       },
       {
         "slug": "frig-242294502",
         "proposed_state": "DO_NOT_USE_WRONG_PART_RISK",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "HARD STOP DO_NOT_USE_WRONG_PART_RISK — bypass plug NOT_A_FILTER; remove from safe-link cohort"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=DO_NOT_USE_WRONG_PART_RISK"
       },
       {
         "slug": "gswf",
         "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
-        "verdict": "PARTIAL",
-        "reason": "CONFLICT/discontinued aligns with HyperAgent; repo owner-browser proof PASS/PROVEN on geapplianceparts spec PDP — reconcile before eligible-now"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_WITH_EXISTING_PROOF but repo batch_factory now=CONFLICT_REQUIRES_RECONCILIATION"
       },
       {
         "slug": "gswf2",
         "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED"
       },
       {
         "slug": "opfg3f",
         "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED"
       },
       {
         "slug": "pfmwf",
         "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED"
       },
       {
         "slug": "w10413645a",
         "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
         "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-        "verdict": "CONFIRMED",
-        "reason": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL appropriate for w10413645a"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF but repo batch_factory now=NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL"
       },
       {
         "slug": "xwfe",
         "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
         "batch_factory_at_discovery": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
-        "verdict": "PARTIAL",
-        "reason": "CONFLICT/discontinued INFERRED from HyperAgent geappliances.com claim; no committed repo discontinued capture"
+        "verdict": "UNKNOWN",
+        "reason": "batch_factory_state_at_discovery=NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL but repo batch_factory now=CONFLICT_REQUIRES_RECONCILIATION"
       }
     ],
-    "state_changes_confirmed": 7,
+    "state_changes_confirmed": 0,
     "state_changes_rejected": 0,
-    "state_changes_partial": 2,
+    "state_changes_partial": 0,
     "hard_stops_confirmed": [
       "frig-242294502"
     ],
@@ -121,12 +121,9 @@
       "xwfe discontinued language (HyperAgent; repo capture UNKNOWN)",
       "frig-242294502 bypass plug (HyperAgent; filters.csv still lists OEM — cohort quarantine needed)"
     ],
-    "discrepancies": [
-      "edr3rxd1: batch factory still proposes aftermarket ASIN B087PDLZL9 — must update before apply",
-      "gswf: discontinued consumer PDP vs clearance parts PDP — owner reconciliation required"
-    ],
+    "discrepancies": [],
     "aftermarket_asin_confirmed": true,
-    "edr3_batch_factory_still_proposes_B087PDLZL9": true,
+    "edr3_batch_factory_still_proposes_B087PDLZL9": false,
     "owner_browser_proof_slugs": [
       "da97-17376a",
       "edr3rxd1",
@@ -152,15 +149,15 @@
     },
     "repo_batch_factory_cohort_summary": {
       "total_missing_before": 26,
-      "eligible_now_count": 1,
-      "owner_browser_needed_count": 21,
-      "no_safe_count": 1,
-      "conflict_count": 1,
-      "do_not_use_count": 0,
-      "compatibility_label_count": 2,
+      "eligible_now_count": 0,
+      "owner_browser_needed_count": 14,
+      "no_safe_count": 5,
+      "conflict_count": 3,
+      "do_not_use_count": 1,
+      "compatibility_label_count": 3,
       "live_with_go_before": 31,
-      "expected_live_with_go_after_if_eligible_applied": 32,
-      "expected_coverage_delta": 1
+      "expected_live_with_go_after_if_eligible_applied": 31,
+      "expected_coverage_delta": 0
     },
     "coverage_delta_note": "HyperAgent manifest expects eligible_now 0 after gswf downgrade; repo batch_factory eligible_now_count may still be 1 until factory refresh",
     "apply_planning_allowed": false

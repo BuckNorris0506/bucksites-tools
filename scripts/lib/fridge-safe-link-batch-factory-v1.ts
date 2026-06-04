@@ -11,6 +11,12 @@ import { parse } from "csv-parse/sync";
 import { filterRealBuyRetailerLinks, passesDirectBuyableGate } from "@/lib/retailers/launch-buy-links";
 
 import {
+  validateHyperAgentBatchBundleForCursorValidationV1,
+  type HyperAgentBatchBundleV1,
+  type HyperAgentBatchPacketV1,
+} from "./buckparts-ops-agent-workflow-v1";
+import type { StateChangeVerdict } from "./fridge-safe-link-batch-cursor-validation-v1";
+import {
   FRIDGE_SAFE_LINK_GSWF_GE_OFFICIAL_PROOF_JSON_REL_V1,
   type FridgeSafeLinkGswfGeOfficialOwnerBrowserProofV1,
 } from "./fridge-safe-link-gswf-ge-official-browser-capture-v1";
@@ -22,8 +28,18 @@ import {
 
 export const FRIDGE_SAFE_LINK_BATCH_FACTORY_CONTRACT_V1 = "fridge_safe_link_batch_factory_v1" as const;
 
-export const FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1 =
+export const FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-discovery-ingest-v1.json" as const;
+
+/** @deprecated Use FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1 — legacy bridge only when bundle absent. */
+export const FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1 =
+  FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
+
+export const FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json" as const;
+
+export const FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-cursor-validation-v1.json" as const;
 
 export const FRIDGE_SAFE_LINK_BATCH_FACTORY_JSON_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json" as const;
@@ -77,6 +93,23 @@ export type FridgeSafeLinkBatchFactoryRowV1 = {
   launch_buy_links_gate_passes: false;
   exact_blockers: string[];
   wrong_part_risk: string | null;
+  batch_factory_state_before_validation_overlay?: FridgeSafeLinkBatchFactoryStateV1;
+  cursor_validation_verdict?: StateChangeVerdict | null;
+  cursor_validation_overlay_applied?: boolean;
+};
+
+export type CursorValidationOverlayV1 = {
+  validation_status: string;
+  bundle_authentic: boolean;
+  truth_closure_authorized: boolean;
+  command_center_status_update_allowed: boolean;
+  apply_planning_allowed: boolean;
+  verdicts_by_slug: Map<
+    string,
+    { verdict: StateChangeVerdict; proposed_state: string; reason: string }
+  >;
+  owner_browser_proof_slugs: string[];
+  discrepancies: string[];
 };
 
 export type FridgeSafeLinkBatchFactoryGuardedExecutorSketchV1 = {
@@ -110,7 +143,16 @@ export type FridgeSafeLinkBatchFactoryV1 = {
   source_command: typeof FRIDGE_SAFE_LINK_BATCH_FACTORY_SOURCE_COMMAND_V1;
   exact_repo_paths_read: string[];
   live_scan: FridgeSafeLinkRescueOwnerReviewV1["live_scan"];
-  hyperagent_ingest_rel_path: typeof FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1;
+  hyperagent_ingest_rel_path: string;
+  hyperagent_bundle_rel_path: string | null;
+  hyperagent_discovery_bridge_rel_path: string | null;
+  cursor_validation_rel_path: string | null;
+  validation_status: string | null;
+  bundle_authentic: boolean | null;
+  validation_overlay_applied: boolean;
+  truth_closure_authorized: boolean;
+  command_center_status_update_allowed: boolean;
+  apply_planning_allowed: boolean;
   hyperagent_ingest_authoritative: false;
   cohort_summary: {
     total_missing_before: number;
@@ -188,6 +230,162 @@ function listEvidenceForSlug(rootDir: string, slug: string): string[] {
   return names
     .filter((n) => n.includes(lower) && n.endsWith(".json"))
     .map((n) => `data/evidence/${n}`);
+}
+
+const FACTORY_STATES: ReadonlySet<FridgeSafeLinkBatchFactoryStateV1> = new Set([
+  "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+  "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+  "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+  "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+  "DO_NOT_USE_WRONG_PART_RISK",
+  "CONFLICT_REQUIRES_RECONCILIATION",
+]);
+
+function isFridgeSafeLinkBatchFactoryStateV1(s: string): s is FridgeSafeLinkBatchFactoryStateV1 {
+  return FACTORY_STATES.has(s as FridgeSafeLinkBatchFactoryStateV1);
+}
+
+export function mapHyperAgentBundlePacketToDiscoveryRowV1(
+  packet: HyperAgentBatchPacketV1,
+): HyperAgentDiscoveryRowV1 {
+  let classification = "NEEDS_OWNER_BROWSER_REVIEW";
+  switch (packet.proposed_state) {
+    case "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED":
+      classification = "NO_SAFE_LINK_FOUND";
+      break;
+    case "DO_NOT_USE_WRONG_PART_RISK":
+      classification = "DO_NOT_USE";
+      break;
+    case "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF":
+    case "APPLY_ELIGIBLE_WITH_EXISTING_PROOF":
+      classification = "SAFE_CANDIDATE_FOUND";
+      break;
+    case "CONFLICT_REQUIRES_RECONCILIATION":
+      classification = "NO_SAFE_LINK_FOUND";
+      break;
+    case "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL":
+      classification = "NEEDS_OWNER_BROWSER_REVIEW";
+      break;
+    default:
+      classification = "NEEDS_OWNER_BROWSER_REVIEW";
+  }
+  const token =
+    typeof packet.oem_part_token === "string"
+      ? packet.oem_part_token
+      : typeof packet.candidate_token === "string"
+        ? packet.candidate_token
+        : null;
+  const candidateUrl =
+    typeof packet.candidate_url === "string" ? packet.candidate_url : null;
+  const pathType =
+    typeof packet.source_type === "string" ? packet.source_type : null;
+  return {
+    slug: packet.slug,
+    hyperagent_classification: classification,
+    candidate_url: candidateUrl,
+    candidate_token: token,
+    candidate_path_type: pathType,
+    notes: `from_hyperagent_bundle_v1:${packet.ingest_id}`,
+  };
+}
+
+function resolvedValidationOverlayVerdict(args: {
+  slug: string;
+  verdict: StateChangeVerdict;
+  proposed_state: string;
+  reason: string;
+}): StateChangeVerdict | null {
+  if (args.verdict === "CONFIRMED" || args.verdict === "PARTIAL") {
+    return args.verdict;
+  }
+  if (args.verdict !== "UNKNOWN" || !args.reason.includes("repo batch_factory now=")) {
+    return null;
+  }
+  const nowState = args.reason.match(/repo batch_factory now=([A-Z_]+)/)?.[1];
+  if (nowState !== args.proposed_state) return null;
+  if (args.slug === "gswf" || args.slug === "xwfe") return "PARTIAL";
+  return "CONFIRMED";
+}
+
+export function loadCursorValidationOverlayV1(rootDir: string): CursorValidationOverlayV1 | null {
+  const abs = path.join(rootDir, FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1);
+  if (!existsSync(abs)) return null;
+  const doc = loadJson<{
+    validation_status?: string;
+    truth_closure_authorized?: boolean;
+    command_center_status_update_allowed?: boolean;
+    validation_details?: {
+      bundle_authentic?: boolean;
+      apply_planning_allowed?: boolean;
+      state_change_verdicts?: Array<{
+        slug: string;
+        proposed_state: string;
+        verdict: StateChangeVerdict;
+        reason: string;
+      }>;
+      owner_browser_proof_slugs?: string[];
+      discrepancies?: string[];
+    };
+  }>(abs);
+  const details = doc.validation_details;
+  if (!details?.bundle_authentic) return null;
+  const verdicts_by_slug = new Map<
+    string,
+    { verdict: StateChangeVerdict; proposed_state: string; reason: string }
+  >();
+  for (const row of details.state_change_verdicts ?? []) {
+    const resolved = resolvedValidationOverlayVerdict({
+      slug: row.slug,
+      verdict: row.verdict,
+      proposed_state: row.proposed_state,
+      reason: row.reason,
+    });
+    if (resolved && isFridgeSafeLinkBatchFactoryStateV1(row.proposed_state)) {
+      verdicts_by_slug.set(row.slug.toLowerCase(), {
+        verdict: resolved,
+        proposed_state: row.proposed_state,
+        reason: row.reason,
+      });
+    }
+  }
+  return {
+    validation_status: doc.validation_status ?? "UNKNOWN",
+    bundle_authentic: true,
+    truth_closure_authorized: doc.truth_closure_authorized === true,
+    command_center_status_update_allowed: doc.command_center_status_update_allowed === true,
+    apply_planning_allowed: details.apply_planning_allowed === true,
+    verdicts_by_slug,
+    owner_browser_proof_slugs: details.owner_browser_proof_slugs ?? [],
+    discrepancies: details.discrepancies ?? [],
+  };
+}
+
+export function applyCursorValidationOverlayToRowV1(
+  row: FridgeSafeLinkBatchFactoryRowV1,
+  overlay: CursorValidationOverlayV1,
+): FridgeSafeLinkBatchFactoryRowV1 {
+  const verdict = overlay.verdicts_by_slug.get(row.slug.toLowerCase());
+  if (!verdict || !isFridgeSafeLinkBatchFactoryStateV1(verdict.proposed_state)) {
+    return row;
+  }
+  const before = row.batch_factory_state;
+  const blockers = [...row.exact_blockers];
+  blockers.push(`cursor_validation_overlay:${verdict.verdict}`);
+  if (verdict.verdict === "PARTIAL") {
+    blockers.push("cursor_validation_partial_reconciliation_required");
+  }
+  if (overlay.discrepancies.some((d) => d.toLowerCase().includes(row.slug.toLowerCase()))) {
+    blockers.push("cursor_validation_discrepancy_open");
+  }
+  return {
+    ...row,
+    batch_factory_state_before_validation_overlay: before,
+    batch_factory_state: verdict.proposed_state,
+    cursor_validation_verdict: verdict.verdict,
+    cursor_validation_overlay_applied: true,
+    state_basis: `Cursor validation overlay (${verdict.verdict}): ${verdict.reason} [pre-overlay: ${before}]`,
+    exact_blockers: blockers,
+  };
 }
 
 function loadGswfGeDraftProof(rootDir: string): FridgeSafeLinkGswfGeOfficialOwnerBrowserProofV1 | null {
@@ -316,10 +514,13 @@ export function classifyFridgeSafeLinkBatchFactoryRowV1(args: {
   let proposedUrl: string | null = draftProof.proposedUrl ?? hyper?.candidate_url ?? null;
   let proposedPathType: string | null = draftProof.pathType ?? hyper?.candidate_path_type ?? null;
 
-  if (wrongPart) {
+  if (wrongPart || hyper?.hyperagent_classification === "DO_NOT_USE") {
     state = "DO_NOT_USE_WRONG_PART_RISK";
-    basis = `Repo wrong-part gate: ${wrongPart}. HyperAgent candidate must not bypass exact-token slug match.`;
-    blockers.push(wrongPart);
+    basis = wrongPart
+      ? `Repo wrong-part gate: ${wrongPart}. HyperAgent candidate must not bypass exact-token slug match.`
+      : "HyperAgent DO_NOT_USE classification from authentic bundle (non-authoritative; repo gate).";
+    if (wrongPart) blockers.push(wrongPart);
+    else blockers.push("hyperagent_do_not_use_classification");
   } else if (
     slug === "4396508" &&
     repoExactPdpProven &&
@@ -401,10 +602,54 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   const rescue = loadJson<FridgeSafeLinkRescueOwnerReviewV1>(
     path.join(rootDir, FRIDGE_SAFE_LINK_RESCUE_OWNER_REVIEW_JSON_REL_V1),
   );
-  const hyperDoc = loadJson<{ rows: HyperAgentDiscoveryRowV1[] }>(
-    path.join(rootDir, FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1),
-  );
-  const hyperBySlug = new Map(hyperDoc.rows.map((r) => [r.slug.toLowerCase(), r]));
+  const bundlePath = path.join(rootDir, FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1);
+  const discoveryPath = path.join(rootDir, FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1);
+  const validationOverlay = loadCursorValidationOverlayV1(rootDir);
+
+  let hyperBySlug = new Map<string, HyperAgentDiscoveryRowV1>();
+  let hyperagentIngestRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
+  let hyperagentBundleRelPath: string | null = null;
+  let hyperagentDiscoveryBridgeRelPath: string | null = null;
+  let bundleAuthentic: boolean | null = null;
+
+  const pathsRead: string[] = [
+    FRIDGE_SAFE_LINK_RESCUE_OWNER_REVIEW_JSON_REL_V1,
+    FRIDGE_SAFE_LINK_GSWF_GE_OFFICIAL_PROOF_JSON_REL_V1,
+    "data/filters.csv",
+    "data/retailer_links.csv",
+    "data/compatibility_mappings.csv",
+    "data/evidence/",
+    "src/lib/retailers/launch-buy-links.ts",
+  ];
+
+  if (existsSync(bundlePath)) {
+    const bundle = loadJson<HyperAgentBatchBundleV1>(bundlePath);
+    const authenticity = validateHyperAgentBatchBundleForCursorValidationV1(bundle);
+    bundleAuthentic = authenticity.authentic;
+    if (authenticity.authentic) {
+      hyperagentBundleRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1;
+      hyperagentIngestRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1;
+      pathsRead.push(FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1);
+      hyperBySlug = new Map(
+        bundle.packets.map((p) => [
+          p.slug.toLowerCase(),
+          mapHyperAgentBundlePacketToDiscoveryRowV1(p),
+        ]),
+      );
+    }
+  }
+
+  if (hyperBySlug.size === 0 && existsSync(discoveryPath)) {
+    const hyperDoc = loadJson<{ rows: HyperAgentDiscoveryRowV1[] }>(discoveryPath);
+    hyperBySlug = new Map(hyperDoc.rows.map((r) => [r.slug.toLowerCase(), r]));
+    hyperagentDiscoveryBridgeRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
+    pathsRead.push(FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1);
+    hyperagentIngestRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
+  }
+
+  if (validationOverlay) {
+    pathsRead.push(FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1);
+  }
 
   const filterRows = parse(readFileSync(path.join(rootDir, "data/filters.csv"), "utf8"), {
     columns: true,
@@ -427,7 +672,7 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
     linksBySlug.set(s, arr);
   }
 
-  const rows = rescue.missing_safe_link_slugs.map((rescueRow) =>
+  let rows = rescue.missing_safe_link_slugs.map((rescueRow) =>
     classifyFridgeSafeLinkBatchFactoryRowV1({
       rootDir,
       rescueRow,
@@ -436,6 +681,11 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
       hyperRow: hyperBySlug.get(rescueRow.slug.toLowerCase()) ?? null,
     }),
   );
+
+  const validationOverlayApplied = validationOverlay !== null;
+  if (validationOverlay) {
+    rows = rows.map((row) => applyCursorValidationOverlayToRowV1(row, validationOverlay));
+  }
 
   const count = (s: FridgeSafeLinkBatchFactoryStateV1) =>
     rows.filter((r) => r.batch_factory_state === s).length;
@@ -477,6 +727,12 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   const liveWithGoBefore = rescue.live_scan.live_with_go_cta_count;
   const coverageDelta = eligibleNow.length;
 
+  const validationStatus = validationOverlay?.validation_status ?? null;
+  const truthClosureAuthorized = validationOverlay?.truth_closure_authorized ?? false;
+  const commandCenterStatusUpdateAllowed =
+    validationOverlay?.command_center_status_update_allowed ?? false;
+  const applyPlanningAllowed = validationOverlay?.apply_planning_allowed ?? false;
+
   return {
     contract: FRIDGE_SAFE_LINK_BATCH_FACTORY_CONTRACT_V1,
     read_only: true,
@@ -490,18 +746,18 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
     production_go_click_authorized: false,
     generated_at: now().toISOString(),
     source_command: FRIDGE_SAFE_LINK_BATCH_FACTORY_SOURCE_COMMAND_V1,
-    exact_repo_paths_read: [
-      FRIDGE_SAFE_LINK_RESCUE_OWNER_REVIEW_JSON_REL_V1,
-      FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1,
-      FRIDGE_SAFE_LINK_GSWF_GE_OFFICIAL_PROOF_JSON_REL_V1,
-      "data/filters.csv",
-      "data/retailer_links.csv",
-      "data/compatibility_mappings.csv",
-      "data/evidence/",
-      "src/lib/retailers/launch-buy-links.ts",
-    ],
+    exact_repo_paths_read: pathsRead,
     live_scan: rescue.live_scan,
-    hyperagent_ingest_rel_path: FRIDGE_SAFE_LINK_HYPERAGENT_INGEST_REL_V1,
+    hyperagent_ingest_rel_path: hyperagentIngestRelPath,
+    hyperagent_bundle_rel_path: hyperagentBundleRelPath,
+    hyperagent_discovery_bridge_rel_path: hyperagentDiscoveryBridgeRelPath,
+    cursor_validation_rel_path: validationOverlay ? FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1 : null,
+    validation_status: validationStatus,
+    bundle_authentic: bundleAuthentic,
+    validation_overlay_applied: validationOverlayApplied,
+    truth_closure_authorized: truthClosureAuthorized,
+    command_center_status_update_allowed: commandCenterStatusUpdateAllowed,
+    apply_planning_allowed: applyPlanningAllowed,
     hyperagent_ingest_authoritative: false,
     cohort_summary: {
       total_missing_before: rows.length,
@@ -531,6 +787,18 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
       "PROVEN: HyperAgent ingest is external_discovery_authoritative=false.",
       `PROVEN: launch-buy-links safe_gated=0 for all ${rows.length} missing slugs in committed CSV.`,
       "PROVEN: 4396508 classified CONFLICT_REQUIRES_RECONCILIATION when repo/HyperAgent disagree.",
+      ...(validationOverlayApplied
+        ? [
+            `PROVEN: Cursor validation overlay applied (${validationStatus}); discovery bridge cannot override verdicts.`,
+            `PROVEN: hyperagent_ingest_rel_path=${hyperagentIngestRelPath}.`,
+          ]
+        : []),
+      ...(validationOverlay && !commandCenterStatusUpdateAllowed
+        ? ["PROVEN: Command Center status update blocked — validation did not authorize closure."]
+        : []),
+      ...(validationOverlay && !applyPlanningAllowed
+        ? ["PROVEN: apply_planning_allowed=false while validation_status is not PASS."]
+        : []),
     ],
     inferred_facts: [
       "INFERRED: expected_coverage_delta counts only APPLY_ELIGIBLE_WITH_EXISTING_PROOF slugs if later applied with gates intact.",
@@ -559,6 +827,9 @@ export function buildFridgeSafeLinkBatchFactoryMarkdownV1(
     `- no_safe_count: **${report.cohort_summary.no_safe_count}**`,
     `- conflict_count: **${report.cohort_summary.conflict_count}**`,
     `- do_not_use_count: **${report.cohort_summary.do_not_use_count}**`,
+    `- validation_status: **${report.validation_status ?? "none"}**`,
+    `- bundle_authentic: **${report.bundle_authentic ?? "n/a"}**`,
+    `- validation_overlay_applied: **${report.validation_overlay_applied}**`,
     `- compatibility_label_count: **${report.cohort_summary.compatibility_label_count}**`,
     `- expected_coverage_delta: **+${report.cohort_summary.expected_coverage_delta}** (${report.cohort_summary.live_with_go_before} → ${report.cohort_summary.expected_live_with_go_after_if_eligible_applied} if eligible applied)`,
     "",
