@@ -1,0 +1,192 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "0beab4f0-9ec8-4574-8f13-6e13233fac2f",
+  "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+  "ingest_id": "ebfd1834-8a37-4d33-9bd0-2a43d2652e46",
+  "validated_at": "2026-06-04T17:01:05.900Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "commands_run": [
+    "node --import tsx scripts/run-fridge-safe-link-cursor-validation-v1.ts",
+    "validateHyperAgentBatchBundleForCursorValidationV1",
+    "runFridgeBatchRepoCrossCheckV1",
+    "resolveFridgeHyperAgentBundleProvenanceV1"
+  ],
+  "bundle_provenance": {
+    "bundle_source": "chat_transcript_reconstruction",
+    "bundle_source_claim": "PROVEN",
+    "byte_for_byte_hyperagent_export_match": "UNKNOWN",
+    "validation_scope": "authenticity_and_repo_cross_check_only",
+    "command_center_closure_implied": false,
+    "sidecar_rel": "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.provenance.json",
+    "notes": [
+      "Mission Control buckparts_hyperagent_batch_bundle_v1 JSON from Cursor agent transcript user message; no separate owner-uploaded HyperAgent export file path was found in repo at validation time",
+      "PROVEN: bundle provenance sidecar at data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.provenance.json"
+    ]
+  },
+  "validation_scope": "authenticity_and_repo_cross_check_only",
+  "command_center_closure_implied": false,
+  "batch_factory_artifacts": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.provenance.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-gswf-ge-official-owner-browser-proof-v1.json",
+    "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json",
+    "data/filters.csv",
+    "data/retailer_links.csv"
+  ],
+  "truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "validation_details": {
+    "total_slugs_validated": 26,
+    "packet_count": 26,
+    "bundle_authentic": true,
+    "all_truth_closure_claimed_false": true,
+    "state_change_verdicts": [
+      {
+        "slug": "adq75795101",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL appropriate for adq75795101"
+      },
+      {
+        "slug": "da97-19467c",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+      },
+      {
+        "slug": "frig-242294502",
+        "proposed_state": "DO_NOT_USE_WRONG_PART_RISK",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "HARD STOP DO_NOT_USE_WRONG_PART_RISK — bypass plug NOT_A_FILTER; remove from safe-link cohort"
+      },
+      {
+        "slug": "gswf",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+        "verdict": "PARTIAL",
+        "reason": "CONFLICT/discontinued aligns with HyperAgent; repo owner-browser proof PASS/PROVEN on geapplianceparts spec PDP — reconcile before eligible-now"
+      },
+      {
+        "slug": "gswf2",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+      },
+      {
+        "slug": "opfg3f",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+      },
+      {
+        "slug": "pfmwf",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "HyperAgent NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED consistent with token/identity findings; batch_factory should reclass"
+      },
+      {
+        "slug": "w10413645a",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "verdict": "CONFIRMED",
+        "reason": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL appropriate for w10413645a"
+      },
+      {
+        "slug": "xwfe",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "batch_factory_at_discovery": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "verdict": "PARTIAL",
+        "reason": "CONFLICT/discontinued INFERRED from HyperAgent geappliances.com claim; no committed repo discontinued capture"
+      }
+    ],
+    "state_changes_confirmed": 7,
+    "state_changes_rejected": 0,
+    "state_changes_partial": 2,
+    "hard_stops_confirmed": [
+      "frig-242294502"
+    ],
+    "new_findings_confirmed": [
+      "edr3rxd1 B087PDLZL9 aftermarket (repo evidence PROVEN)",
+      "xwfe discontinued language (HyperAgent; repo capture UNKNOWN)",
+      "frig-242294502 bypass plug (HyperAgent; filters.csv still lists OEM — cohort quarantine needed)"
+    ],
+    "discrepancies": [
+      "edr3rxd1: batch factory still proposes aftermarket ASIN B087PDLZL9 — must update before apply",
+      "gswf: discontinued consumer PDP vs clearance parts PDP — owner reconciliation required"
+    ],
+    "aftermarket_asin_confirmed": true,
+    "edr3_batch_factory_still_proposes_B087PDLZL9": true,
+    "owner_browser_proof_slugs": [
+      "da97-17376a",
+      "edr3rxd1",
+      "edr4rxd1",
+      "eptwfu01",
+      "fppwfu01",
+      "frig-242017801",
+      "frig-242086201",
+      "mswf",
+      "purepour",
+      "smartwater-mwfp",
+      "ultrawf",
+      "wf2cb",
+      "wf3cb",
+      "wfcb"
+    ],
+    "manifest_proposed_state_summary": {
+      "CONFLICT_REQUIRES_RECONCILIATION": 3,
+      "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL": 3,
+      "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED": 5,
+      "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF": 14,
+      "DO_NOT_USE_WRONG_PART_RISK": 1
+    },
+    "repo_batch_factory_cohort_summary": {
+      "total_missing_before": 26,
+      "eligible_now_count": 1,
+      "owner_browser_needed_count": 21,
+      "no_safe_count": 1,
+      "conflict_count": 1,
+      "do_not_use_count": 0,
+      "compatibility_label_count": 2,
+      "live_with_go_before": 31,
+      "expected_live_with_go_after_if_eligible_applied": 32,
+      "expected_coverage_delta": 1
+    },
+    "coverage_delta_note": "HyperAgent manifest expects eligible_now 0 after gswf downgrade; repo batch_factory eligible_now_count may still be 1 until factory refresh",
+    "apply_planning_allowed": false
+  },
+  "proven_facts": [
+    "PROVEN: bundle authenticity gate PASS (26 UUID packets, full Mission Control bodies)",
+    "PROVEN: manifest.truth_closure_claimed=false on all packets",
+    "PROVEN: manifest_id ebfd1834-8a37-4d33-9bd0-2a43d2652e46 task_id 0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+    "PROVEN: bundle_source=chat_transcript_reconstruction per committed provenance sidecar",
+    "PROVEN: command_center_closure_implied=false — validation does not authorize Command Center closure",
+    "PROVEN: edr3rxd1 B087PDLZL9 aftermarket per data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json",
+    "PROVEN: gswf owner-browser draft proof on geapplianceparts spec PDP"
+  ],
+  "unknown_facts": [
+    "UNKNOWN: byte_for_byte_hyperagent_export_match — replace bundle with fresh HyperAgent export to prove",
+    "UNKNOWN: HyperAgent external retailer quotes — not independently re-fetched in this validation run",
+    "UNKNOWN: geappliances.com discontinued page text for gswf/xwfe — not in committed repo captures",
+    "UNKNOWN: B00UB441HS OEM ASIN for edr3rxd1 — cited by HyperAgent, not in repo evidence files read"
+  ],
+  "owner_next_steps": [
+    "Refresh fridge-safe-link-batch-factory-v1 binding to this bundle (read-only regen)",
+    "Quarantine frig-242294502 from water-filter safe-link cohort",
+    "Owner reconcile gswf discontinued vs clearance PDP proof",
+    "Owner browser-proof batch for APPLY_ELIGIBLE slugs (14) — no Verified Link until proofs",
+    "Fix edr3rxd1 batch-factory candidate — drop B087PDLZL9",
+    "No CSV/Supabase/evidence mutation from this packet"
+  ],
+  "doctrine_doc": "docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md"
+}

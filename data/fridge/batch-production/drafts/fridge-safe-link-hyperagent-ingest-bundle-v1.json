@@ -1,0 +1,1786 @@
+{
+  "contract": "buckparts_hyperagent_batch_bundle_v1",
+  "manifest": {
+    "contract": "buckparts_hyperagent_batch_manifest_v1",
+    "manifest_id": "ebfd1834-8a37-4d33-9bd0-2a43d2652e46",
+    "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+    "created_at": "2026-06-04T05:32:11.447633+00:00",
+    "mission_type": "SAFE_LINK_BATCH",
+    "cohort_key": "refrigerator_water_missing_safe_link",
+    "one_product_exception": null,
+    "total_slugs": 26,
+    "discovery_status": "DISCOVERY_COMPLETE",
+    "truth_closure_claimed": false,
+    "proposed_state_summary": {
+      "CONFLICT_REQUIRES_RECONCILIATION": 3,
+      "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL": 3,
+      "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED": 5,
+      "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF": 14,
+      "DO_NOT_USE_WRONG_PART_RISK": 1
+    },
+    "state_changes_from_batch_factory": 9,
+    "state_changed_slugs": [
+      "gswf",
+      "xwfe",
+      "gswf2",
+      "opfg3f",
+      "pfmwf",
+      "frig-242294502",
+      "w10413645a",
+      "adq75795101",
+      "da97-19467c"
+    ],
+    "hard_stops": [
+      "frig-242294502"
+    ],
+    "specialists_run": [
+      "Discovery",
+      "TruthRisk"
+    ],
+    "specialists_not_run": [
+      "Marketing",
+      "DesignFOH",
+      "StrategyHQ"
+    ],
+    "specialists_not_run_reason": "No public content, UI, or business-decision scope in this mission.",
+    "batch_factory_source": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+    "batch_factory_generated_at": "2026-06-04T01:49:24.921Z",
+    "expected_coverage_delta_batch_factory": 1,
+    "expected_coverage_delta_after_discovery": 0,
+    "coverage_delta_note": "gswf (the sole APPLY_ELIGIBLE_WITH_EXISTING_PROOF slug) has been downgraded to CONFLICT due to confirmed OEM discontinuation. Near-term eligible-now count drops from 1 to 0. However, 14 slugs remain APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF with new candidate URLs found by Discovery — potential +14 /go links if owner browser proof is obtained.",
+    "read_only": true,
+    "data_mutation": false,
+    "not_authorized": [
+      "retailer_links_csv_mutation",
+      "supabase_mutation",
+      "evidence_mutation",
+      "deploy",
+      "verified_link_authorization",
+      "go_click"
+    ],
+    "slug_index": [
+      {
+        "slug": "gswf",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "state_changed": true
+      },
+      {
+        "slug": "xwfe",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "state_changed": true
+      },
+      {
+        "slug": "xwf",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "state_changed": false
+      },
+      {
+        "slug": "gswf2",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "state_changed": true
+      },
+      {
+        "slug": "opfg3f",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "state_changed": true
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "mswf",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "pfmwf",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "state_changed": true
+      },
+      {
+        "slug": "ultrawf",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "frig-242086201",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "eptwfu01",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "fppwfu01",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "wf2cb",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "frig-242017801",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "frig-242294502",
+        "proposed_state": "DO_NOT_USE_WRONG_PART_RISK",
+        "state_changed": true
+      },
+      {
+        "slug": "purepour",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "wf3cb",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "wfcb",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "edr4rxd1",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "edr3rxd1",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "w10413645a",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "state_changed": true
+      },
+      {
+        "slug": "4396508",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "state_changed": false
+      },
+      {
+        "slug": "4396842",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "state_changed": false
+      },
+      {
+        "slug": "adq75795101",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "state_changed": true
+      },
+      {
+        "slug": "da97-17376a",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "state_changed": false
+      },
+      {
+        "slug": "da97-19467c",
+        "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+        "state_changed": true
+      }
+    ]
+  },
+  "packets": [
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "95be937b-761e-483c-b59e-9d4143293ee0",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "4396508",
+      "oem_part_token": "4396508",
+      "brand": "whirlpool",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "CONFLICT_REQUIRES_RECONCILIATION",
+      "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_DISCONTINUED",
+      "identity_note": "Successor is EDR5RXD1 (EveryDrop Filter 5)",
+      "discontinued": true,
+      "supersession_chain": [
+        "4396508",
+        "EDR5RXD1"
+      ],
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "Discontinued. Any current 4396508 listings are aftermarket or legacy inventory, not Whirlpool OEM.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "DiscountFilterStore: 'Availability: Discontinued. For increased performance, consider upgrading to the EveryDrop EDR5RXD1 filter.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for 4396508"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for 4396508"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (DiscountFilterStore): '4396508 — Availability: Discontinued. This item is no longer available.'",
+        "PROVEN (DiscountFilterStore): 'Consider upgrading to the EveryDrop EDR5RXD1 filter'"
+      ],
+      "inferred_facts": [
+        "INFERRED: Repo Amazon evidence for 4396508 may reference aftermarket listings, not OEM",
+        "INFERRED: Prior HyperAgent NO_SAFE_LINK_FOUND was correct"
+      ],
+      "unknown_facts": [
+        "Whether whirlpool.com redirects 4396508 searches to EDR5RXD1"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "2a103afd-cbc7-4b89-ad84-bee8c8188213",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "4396842",
+      "oem_part_token": "4396842",
+      "brand": "whirlpool",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_DISCONTINUED",
+      "identity_note": "Successor is EDR3RXD1/EDR3RXD1B (EveryDrop Filter 3)",
+      "discontinued": true,
+      "supersession_chain": [
+        "4396842",
+        "4396841",
+        "EDR3RXD1",
+        "EDR3RXD1B"
+      ],
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "Discontinued. EDR3RXD1B is the correct OEM successor.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "AMResupply: 'This filter has been discontinued and will be replaced by EDR3RXD1B when gone.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for 4396842"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for 4396842"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (DiscountFilterStore, AMResupply): 4396842 confirmed discontinued",
+        "PROVEN (AMResupply): 'Will be replaced by EDR3RXD1B when gone'",
+        "PROVEN: Both repo and prior HyperAgent agreed no safe link exists"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "068a4ff9-fb2c-41c3-86cb-16ea132a55f4",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "adq75795101",
+      "oem_part_token": "ADQ75795101",
+      "brand": "lg",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "ADQ75795101 is specifically the 3-pack bundle code (LT500P3), not a single filter token. Owner must decide if slug targets 3-pack or single filter (LT500P/ADQ72910911).",
+      "identity_status": "ALTERNATE_PART_NUMBER",
+      "identity_note": "ADQ75795101 = LT500P3 (3-pack). Single filter = LT500P (ADQ72910911/5231JA2002A)",
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "Routing single-filter buyers to 3-pack listing is a mismatch. The underlying LT500P filter is active.",
+      "candidate_url": "https://www.lg.com/us/appliances-accessories/lg-lt500p3-refrigerator-water-filter",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [],
+      "evidence_snippet": "LG.com: 'Model LT500P3 (Part No. ADQ72910912 / ADQ75795101)' — this is the 3-pack page. Single filter is LT500P.",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for ADQ75795101"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for ADQ75795101"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (lg.com LT500P3): 'Model LT500P3 (Part No. ADQ72910912 / ADQ75795101)' — 3-pack",
+        "PROVEN (lg.com LT500P): Single filter at $54.99 with active Add to Cart",
+        "PROVEN (lg.com LT500P): Single-filter part numbers: ADQ72910911, 5231JA2002A, ADQ72910901"
+      ],
+      "inferred_facts": [
+        "INFERRED: Retailer 'discontinued' labels likely reflect their own inventory, not LG manufacturing status"
+      ],
+      "unknown_facts": [
+        "Whether slug intends 3-pack or single filter link target"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "eb22fb03-8361-4d8a-8f54-1dfaa051eb09",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "da97-17376a",
+      "oem_part_token": "DA97-17376A",
+      "brand": "samsung",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "SUPERSEDED",
+      "identity_note": "DA97-17376A superseded by DA97-17376B revision. Same physical filter, B is current production.",
+      "discontinued": true,
+      "supersession_chain": [
+        "DA97-17376A",
+        "DA97-17376B"
+      ],
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "A and B revisions are functionally identical. Safe to route A buyers to B listings.",
+      "candidate_url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/DA97-17376B-Refrigerator-HAF-QIN-EXP-packaging/dp/B071NFVVNG",
+          "type": "amazon_pdp"
+        },
+        {
+          "url": "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+          "type": "authorized_retailer_pdp"
+        }
+      ],
+      "evidence_snippet": "Samsung.com: 'HAF-QIN Refrigerator Water Filter — $44.99'; Research: 'DA97-17376A and B are the same functional filter.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for DA97-17376A"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for DA97-17376A"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (OKS Supply, WaterFilters.NET): DA97-17376A and B are same HAF-QIN filter; B is current",
+        "PROVEN (samsung.com): HAF-QIN/EXP page live at $44.99",
+        "PROVEN: 'B suffix represents a production iteration, not a change in compatibility'"
+      ],
+      "inferred_facts": [
+        "INFERRED: Samsung's catalog and Amazon show DA97-17376B as primary listing; A suffix retired from production"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "12829965-15d5-4c92-8dfe-8dbde1b42560",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "da97-19467c",
+      "oem_part_token": "DA97-19467C",
+      "brand": "samsung",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "ZERO search results across all sources. Part number not confirmed to exist in any Samsung parts catalog, retail channel, or cross-reference database. May be misformatted or data entry error.",
+      "identity_status": "UNKNOWN_TOKEN",
+      "identity_note": null,
+      "discontinued": null,
+      "supersession_chain": null,
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "Part number not validated by any Samsung source. Cannot safely route buyers.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "Zero results across samsung.com, Amazon, Home Depot, and all parts databases searched.",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for DA97-19467C"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for DA97-19467C"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN: Zero results for DA97-19467C across all discovery sources",
+        "PROVEN: Samsung.com water filter page lists only HAF-CIN, HAF-QIN, HAF-CUIN families — DA97-19467C does not appear"
+      ],
+      "inferred_facts": [
+        "INFERRED: DA97-19467C may be OCR error, misformat, or regional/non-US part number"
+      ],
+      "unknown_facts": [
+        "Whether DA97-19467C exists in Samsung's internal database",
+        "Whether the correct number is DA97-19467A or DA97-19467B or something else entirely"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "539bf9a0-0380-40bd-996f-bdd16266cfd6",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "brand": "whirlpool",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": [
+        "4396710",
+        "4396841",
+        "W10193691",
+        "EDR3RXD1"
+      ],
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "CRITICAL: Prior repo Amazon candidate B087PDLZL9 is AFTERMARKET (Waterdrop brand), NOT OEM. Must be disqualified. Genuine OEM Amazon ASIN is B00UB441HS.",
+      "candidate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+          "type": "amazon_pdp",
+          "note": "Confirmed genuine OEM EveryDrop Filter 3"
+        }
+      ],
+      "evidence_snippet": "Amazon B087PDLZL9 = Waterdrop brand (aftermarket). Amazon B00UB441HS = 'EveryDrop by Whirlpool Ice and Water Refrigerator Filter 3, EDR3RXD1' (genuine OEM).",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for EDR3RXD1"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for EDR3RXD1"
+        }
+      ],
+      "conflicts": [
+        {
+          "type": "wrong_amazon_asin",
+          "detail": "Prior repo candidate ASIN B087PDLZL9 is Waterdrop aftermarket. Correct OEM ASIN is B00UB441HS.",
+          "severity": "HIGH",
+          "action_required": "Replace B087PDLZL9 with B00UB441HS or whirlpool.com PDP in repo"
+        }
+      ],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (whirlpool.com): Live PDP confirmed — EveryDrop Filter 3",
+        "PROVEN (Amazon B00UB441HS): 'EveryDrop by Whirlpool — EDR3RXD1 — Is Discontinued By Manufacturer: No'",
+        "PROVEN: B087PDLZL9 is aftermarket Waterdrop brand, NOT Whirlpool/EveryDrop OEM"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "7fe41790-de5d-4c0e-bf55-15a27590f536",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "brand": "whirlpool",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Active EveryDrop Filter 4. Confirmed OEM.",
+      "candidate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+          "type": "amazon_pdp",
+          "note": "Confirmed genuine OEM EveryDrop"
+        },
+        {
+          "url": "https://www.amazon.com/dp/B00UXG4WR4",
+          "type": "amazon_pdp",
+          "note": "Prior repo candidate — page returned boilerplate on crawl; needs re-check"
+        }
+      ],
+      "evidence_snippet": "Whirlpool.com: 'everydrop Refrigerator Water Filter 4 - EDR4RXD1 — NSF certified to reduce 31 contaminants.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for EDR4RXD1"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for EDR4RXD1"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (whirlpool.com): Live PDP — 'everydrop Refrigerator Water Filter 4 - EDR4RXD1'",
+        "PROVEN (Amazon B00UB38V2A): Confirmed genuine OEM EveryDrop listing"
+      ],
+      "inferred_facts": [
+        "INFERRED: Prior ASIN B00UXG4WR4 may be a variant or redirected listing; B00UB38V2A is the confirmed safe candidate"
+      ],
+      "unknown_facts": [
+        "Current status of ASIN B00UXG4WR4"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "8420531d-b3f6-44cb-9439-926eb786e076",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "eptwfu01",
+      "oem_part_token": "EPTWFU01",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Active PureSource Ultra II filter. Not interchangeable with ULTRAWF (different model range).",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-EPTWFU01-Water-Filtration-Filter/dp/B01BKWSHHE",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Frigidaire: 'PureSource Ultra II Water and Ice Refrigerator Filter'; Home Depot: 'Model #EPTWFU01 — Premium genuine water filter.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for EPTWFU01"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for EPTWFU01"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.com): Live PDP confirmed — PureSource Ultra II",
+        "PROVEN (Home Depot): Confirmed at $48.99 — Model #EPTWFU01"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "7fd4197a-0b6f-4beb-969f-9acfed26c15d",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "fppwfu01",
+      "oem_part_token": "FPPWFU01",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "PurePour PWF-1 filter. Active OEM. PPWFU01 likely same product (see slug 16).",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Frigidaire: 'PurePour PWF-1 Water and Ice Refrigerator Filter'; Amazon: 'Frigidaire FPPWFU01 PurePour PWF-1 — 30K+ bought in past month.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for FPPWFU01"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for FPPWFU01"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.com): Live PDP confirmed — PurePour PWF-1",
+        "PROVEN (Amazon B08V6JB9R7): 'Frigidaire FPPWFU01 PurePour PWF-1 — Manufacturer: Electrolux — 30K+ bought in past month'"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": [
+        "Whether FPPWFU01 and PPWFU01 are precisely identical SKUs"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "f3e3d07e-e2a8-4029-ac11-af9ed63316db",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "frig-242017801",
+      "oem_part_token": "242017801",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "ALTERNATE_PART_NUMBER",
+      "identity_note": "242017801 is alternate part number for ULTRAWF (PureSource Ultra)",
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Confirmed alternate for ULTRAWF. Safe link target is ULTRAWF PDP.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [],
+      "evidence_snippet": "Multiple OEM parts databases: '242017801 directly replaces / is alternate for ULTRAWF PureSource Ultra.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for 242017801"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for 242017801"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (PartSelect, DDApplianceParts, ThriftyApplianceParts): 242017801 = ULTRAWF",
+        "PROVEN (WaterFilters.NET): 242017801 in ULTRAWF cross-reference list"
+      ],
+      "inferred_facts": [
+        "INFERRED: 242017801 was original engineering part number; ULTRAWF is consumer-facing marketing token"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "5d5ad743-7dc3-4b12-bc11-8d8c2145a4fb",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "frig-242086201",
+      "oem_part_token": "242086201",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "ALTERNATE_PART_NUMBER",
+      "identity_note": "242086201 is alternate part number for WF3CB (PureSource 3)",
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Confirmed alternate for WF3CB. Safe link target is WF3CB PDP.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [],
+      "evidence_snippet": "Multiple parts databases: '242086201 is an alternate part number for the WF3CB PureSource 3 filter.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for 242086201"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for 242086201"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (AppliancePartsGroup, AppliancePartsPros): 242086201 = alternate part number for WF3CB",
+        "PROVEN (WaterFilters.NET): Both 242086201 and 242086203 listed as WF3CB cross-references"
+      ],
+      "inferred_facts": [
+        "INFERRED: One-digit discrepancy (201 vs 203) is a red herring — both map to WF3CB"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "2963e4a1-023d-4a7f-a656-8c453522ea08",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "frig-242294502",
+      "oem_part_token": "242294502",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "DO_NOT_USE_WRONG_PART_RISK",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "HARD STOP: 242294502 is a WATER FILTER BYPASS PLUG, NOT a water filter. Confirmed by AppliancePartsPros, ParkAveAppliance, D&S Appliances, PureFilters. Must be removed from water filter link campaign.",
+      "identity_status": "NOT_A_FILTER",
+      "identity_note": "This is a water filter bypass plug for PureSource 3 WF3CB. Performs NO filtration.",
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "BYPASS PLUG — allows unfiltered water when no filter installed. NOT a water filter. Category error in slug list.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "AppliancePartsPros: 'Water Filter Bypass Plug 242294502 — this unit does not perform any filtration.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for 242294502"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for 242294502"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (AppliancePartsPros): 'Water Filter Bypass Plug — this unit does not perform any filtration'",
+        "PROVEN (ParkAveAppliance): 'Water Filter Bypass for PureSource 3 WF3CB — Not a water filter'",
+        "PROVEN (D&S Appliances): 'designed for homes with whole-house filtration — Not a water filter'",
+        "PROVEN (PartSelect): Listed under 'Bypass Filter' category"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "6ad2b2bf-684f-436d-9ea2-3a56964b3ab9",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "gswf",
+      "oem_part_token": "GSWF",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "GE consumer PDP shows 'This model is no longer being manufactured.' Clearance inventory only. Discontinued status confirmed by multiple retailers.",
+      "identity_status": "CONFIRMED_DISCONTINUED",
+      "identity_note": null,
+      "discontinued": true,
+      "supersession_chain": null,
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "Discontinued filter for older GE top/bottom-freezer models. Aftermarket-only supply increases counterfeit risk.",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-GSWF/202214654",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/General-Electric-Refrigerator-Certified-Impurities/dp/B0002GTTRC",
+          "type": "amazon_pdp",
+          "note": "Old ASIN, verify seller is GE OEM"
+        }
+      ],
+      "evidence_snippet": "geappliances.com: 'This model is no longer being manufactured'; geapplianceparts.com: '$44.99 Add to Cart'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for GSWF"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for GSWF"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (geappliances.com): 'This model is no longer being manufactured'",
+        "PROVEN (geapplianceparts.com): Still shows Add to Cart at $44.99 — clearance inventory",
+        "PROVEN (shallotteelectric.com, freshwatersystems.com): Confirmed discontinued",
+        "PROVEN (GE support doc): GSWF is non-interchangeable with MWF/MSWF families"
+      ],
+      "inferred_facts": [
+        "INFERRED: GE is drawing down clearance stock only; no ongoing manufacturing"
+      ],
+      "unknown_facts": [
+        "Exact date manufacturing ceased",
+        "Remaining clearance inventory volume"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "69dec18f-f08e-4f4b-8a27-3bbe811bd64e",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "gswf2",
+      "oem_part_token": "GSWF2",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "GSWF2 is not a validated GE OEM standalone part number. Likely a packaging variant code. Additionally, GSWF itself is confirmed discontinued.",
+      "identity_status": "UNKNOWN_TOKEN",
+      "identity_note": null,
+      "discontinued": null,
+      "supersession_chain": null,
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "Not a real GE OEM standalone part token. GE's multi-pack nomenclature uses GSWF3PK, not GSWF2.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "GE official 3-pack is GSWF3PK. No 'GSWF2' in GE parts catalog.",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for GSWF2"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for GSWF2"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (geapplianceparts.com): GE page returned 504 timeout; GSWF3PK exists as official 3-pack",
+        "PROVEN: No 'GSWF2' in GE's own accessories listing"
+      ],
+      "inferred_facts": [
+        "INFERRED: GSWF2 is a retailer-specific or regional packaging code, not an OEM primary token"
+      ],
+      "unknown_facts": [
+        "Origin of the GSWF2 slug token in BuckParts data"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "a931b7b0-1d7a-480d-ae1d-45bbacb2ebbe",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "mswf",
+      "oem_part_token": "MSWF",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Standalone cylindrical filter for specific GE side-by-side models. No supersession confusion.",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/MSWF-Refrigerator-Water-Filter-Pack/dp/B00126NABC",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "GE: 'MSWF Refrigerator Water Filter — $44.99 — Compatible with select GE side-by-side refrigerators.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for MSWF"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for MSWF"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (GE parts landing page): MSWF listed as current active filter with 'Shop MSWF Filters'",
+        "PROVEN (geapplianceparts.com): Live PDP at $44.99",
+        "PROVEN: MSWF is NOT interchangeable with GSWF"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "747e0062-90ee-44f1-aa64-f2c9c6535bf4",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "opfg3f",
+      "oem_part_token": "OPFG3F",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "OPFG3F is a Zuma Filters aftermarket code (OPFG-RF300), not a GE OEM part number. geapplianceparts.com returns no results.",
+      "identity_status": "UNKNOWN_TOKEN",
+      "identity_note": null,
+      "discontinued": null,
+      "supersession_chain": null,
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "Aftermarket cross-reference code from Zuma Filters. GE does not recognize OPFG3F. OEM equivalent is MWFP.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "GE parts site: 'No Search Results Found.' Zuma Filters: 'not affiliated with or authorized by GE.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for OPFG3F"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for OPFG3F"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (geapplianceparts.com): 'No Search Results Found' for OPFG3F",
+        "PROVEN (Zuma Filters): OPFG-RF300/OPFG3F is Zuma brand; disclaimer: 'not affiliated with or authorized by GE'"
+      ],
+      "inferred_facts": [
+        "INFERRED: Slug was created from aftermarket cross-reference data; OEM need maps to MWFP"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "b144acd2-1c66-44f2-ad44-ca6b06763316",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "pfmwf",
+      "oem_part_token": "PFMWF",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "PFMWF not found in any GE OEM source. geapplianceparts.com returns no results. May be retired legacy Profile-branded token.",
+      "identity_status": "UNKNOWN_TOKEN",
+      "identity_note": null,
+      "discontinued": null,
+      "supersession_chain": null,
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "No OEM documentation validates PFMWF as a GE part number.",
+      "candidate_url": null,
+      "source_type": null,
+      "alt_candidates": [],
+      "evidence_snippet": "GE parts site: 'No Search Results Found.' No OEM documentation found for PFMWF.",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for PFMWF"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for PFMWF"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (geapplianceparts.com): 'No Search Results Found' for PFMWF",
+        "PROVEN: No GE OEM documentation uses PFMWF in any discoverable source"
+      ],
+      "inferred_facts": [
+        "INFERRED: PFMWF may be legacy GE Profile-branded MWF token; likely maps to MWFP"
+      ],
+      "unknown_facts": [
+        "Whether PFMWF ever appeared in GE's official parts catalog"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "8c21fc76-14c8-41d2-b54b-1635d3e22f39",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "purepour",
+      "oem_part_token": "PPWFU01",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "ALTERNATE_PART_NUMBER",
+      "identity_note": "PPWFU01 maps to same Frigidaire PDP as FPPWFU01 (PurePour PWF-1). Likely same SKU.",
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Maps to FPPWFU01 PurePour PWF-1. Possible duplicate of slug fppwfu01.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Frigidaire PDP for FPPWFU01 is the PurePour PWF-1. Searching PPWFU01 leads to same page.",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for PPWFU01"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for PPWFU01"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.com): FPPWFU01 PDP is the landing page for PurePour PWF-1",
+        "PROVEN: Searching PPWFU01 surfaces FPPWFU01 PDP"
+      ],
+      "inferred_facts": [
+        "INFERRED: PPWFU01 and FPPWFU01 are the same product; 'F' prefix = Frigidaire brand variant"
+      ],
+      "unknown_facts": [
+        "Whether PPWFU01 has its own distinct Frigidaire OEM PDP"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "00b5df77-ec06-4ded-bced-0ee6a92a7693",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": [
+        "GWF",
+        "HWF",
+        "MWFA",
+        "MWF",
+        "MWFP"
+      ],
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "MWFP fully interchangeable with all prior MWF-family filters. No RFID gate.",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp",
+          "type": "authorized_retailer_pdp"
+        }
+      ],
+      "evidence_snippet": "GE: 'MWFP is the improved replacement version of MWF. Fully interchangeable with MWF, MWFA, GWF, HWF.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for MWFP"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for MWFP"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (GE doc): 'The MWF filter has been replaced by the MWFP. The label on the MWFP will read MWF.'",
+        "PROVEN (geapplianceparts.com): Live PDP at $49.99",
+        "PROVEN (AppliancePartsPros): In stock as genuine OEM",
+        "PROVEN: MWFP NOT interchangeable with GSWF, MSWF, XWFE, or RPWFE families"
+      ],
+      "inferred_facts": [
+        "INFERRED: MWFP is the terminal OEM token for this filter family"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "568b4733-9b14-422a-9943-7d1762612964",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Well-established active PureSource Ultra filter. 242017801 is confirmed alternate part number.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.lowes.com/pd/Frigidaire-PureSource-Ultra-6-Month-Refrigerator-Water-Filter/3091843",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-FBA_ULTRAWF-Filter-inches-White/dp/B002JAKRAM",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Frigidaire.com: 'PureSource Ultra Water and Ice Refrigerator Filter White-ULTRAWF'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for ULTRAWF"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for ULTRAWF"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.com): Live PDP confirmed — PureSource Ultra Water and Ice Refrigerator Filter",
+        "PROVEN (multiple retailers): In stock as genuine OEM"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "fc86f4fd-dcd2-41be-be98-1aa0855784d2",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "w10413645a",
+      "oem_part_token": "W10413645A",
+      "brand": "whirlpool",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "W10413645A is a superseded legacy part number. Current OEM replacement is EDR2RXD1 (EveryDrop Filter 2). No standalone W10413645A PDP found.",
+      "identity_status": "SUPERSEDED",
+      "identity_note": "W10413645A superseded by EDR2RXD1 (EveryDrop Filter 2)",
+      "discontinued": true,
+      "supersession_chain": [
+        "W10413645A",
+        "EDR2RXD1"
+      ],
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "EDR2RXD1 is backward-compatible with all W10413645A applications. Risk only if link labels W10413645A without supersession note.",
+      "candidate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-2-edr2rxd1-pack-of-1.edr2rxd1.html",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [],
+      "evidence_snippet": "DiscountFilterStore: 'The new EDR2RXD1 EveryDrop Filter 2 replaces the Whirlpool W10413645A with the same functionality.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for W10413645A"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for W10413645A"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (DiscountFilterStore, WaterFilters.NET): W10413645A superseded by EDR2RXD1",
+        "PROVEN: EDR2RXD1 is full backward-compatible replacement"
+      ],
+      "inferred_facts": [
+        "INFERRED: No OEM source maintains W10413645A as standalone current product"
+      ],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "b0a332af-f868-4d19-a050-625ef2fa5880",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "wf2cb",
+      "oem_part_token": "WF2CB",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "PureSource 2. Not interchangeable with WF3CB (different fridge models). Frigidaire.com PDP URL inferred from pattern, not confirmed live.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-WF2CB-PureSource2-Filtration-System/dp/B0032JTS5E",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Home Depot: 'Pure Source 2-Water Filter for Frigidaire Refrigerators — Model #WF2CB — $24.94.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for WF2CB"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for WF2CB"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (Home Depot): WF2CB confirmed at $24.94 — Model #WF2CB",
+        "PROVEN: WF2CB = PureSource 2, physically distinct from WF3CB"
+      ],
+      "inferred_facts": [
+        "INFERRED: Frigidaire.com PDP URL follows confirmed pattern (ULTRAWF, WF3CB, EPTWFU01 all match)"
+      ],
+      "unknown_facts": [
+        "Whether frigidaire.com currently hosts a live WF2CB PDP"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "54985175-dd72-49b7-9dd6-520ec4739b44",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "wf3cb",
+      "oem_part_token": "WF3CB",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "LOW",
+      "wrong_part_detail": "Primary OEM PureSource 3 token. Active and well-established.",
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+          "type": "authorized_retailer_pdp"
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-WF3CB-Puresource-Replacement-Filter/dp/B0045LLC7K",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Frigidaire: 'PureSource 3 Water and Ice Refrigerator Filter White-WF3CB — $36 — Genuine Replacement Part: Yes.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for WF3CB"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for WF3CB"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.com): Live PDP at $36 — PureSource 3",
+        "PROVEN: Alternate parts 242086201, 242069601, 242294501 all map to WF3CB"
+      ],
+      "inferred_facts": [],
+      "unknown_facts": []
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "454b5615-a87f-4bbb-b22b-8e383f674ee8",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "wfcb",
+      "oem_part_token": "WFCB",
+      "brand": "frigidaire",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "CONFIRMED_ACTIVE",
+      "identity_note": null,
+      "discontinued": false,
+      "supersession_chain": null,
+      "wrong_part_risk": "MEDIUM",
+      "wrong_part_detail": "PureSource Plus for legacy rear-filter pre-2001 models. Buyers with newer fridges may incorrectly order.",
+      "candidate_url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+      "source_type": "authorized_retailer_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "type": "official_manufacturer_spec_pdp",
+          "note": "URL inferred from pattern; frigidaire.ca confirmed live at $51.99"
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-PureSource-WFCB-Water-Filter/dp/B000PSC0QE",
+          "type": "amazon_pdp"
+        }
+      ],
+      "evidence_snippet": "Home Depot: 'PureSource Plus Water Filter — Model #WFCB — $24.94 — NSF & WQA certified — 1,093 reviews.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for WFCB"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for WFCB"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (frigidaire.ca): WFCB = PureSource Plus, active OEM at $51.99",
+        "PROVEN (Home Depot): WFCB available at $24.94",
+        "PROVEN: 'Not discontinued — remains in active production' per ExaAnswer research"
+      ],
+      "inferred_facts": [
+        "INFERRED: Low-volume but genuinely active SKU for legacy installed base"
+      ],
+      "unknown_facts": [
+        "Whether US frigidaire.com has active buyable WFCB PDP"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "56cf1967-eda3-408d-8fda-40175ae446c8",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "xwf",
+      "oem_part_token": "XWF",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_changed_from_batch_factory": false,
+      "state_change_reason": null,
+      "identity_status": "SUPERSEDED",
+      "identity_note": null,
+      "discontinued": true,
+      "supersession_chain": [
+        "XWF",
+        "XWFE"
+      ],
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "XWF NOT forward-compatible with RFID-sensing fridges. Installing XWF in post-2019 GE fridge triggers ERR, deactivates water valve.",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [],
+      "evidence_snippet": "GE: 'In 2020, the XWF was replaced by the new XWFE. The XWF is not forward compatible with newer models.'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for XWF"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for XWF"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (GE doc): 'In 2020, the XWF was replaced by the new XWFE'",
+        "PROVEN (GE doc): 'The XWF is not forward compatible with newer models'",
+        "PROVEN (Home Depot): XWF listed at $33.28 as separate SKU"
+      ],
+      "inferred_facts": [
+        "INFERRED: XWF inventory at retailers is legacy stock draining",
+        "INFERRED: With XWFE now also end-of-life, XWF-using fridges face uncertain OEM filter future"
+      ],
+      "unknown_facts": [
+        "Whether any OEM GE source still sells XWF as standalone buyable item",
+        "Whether a successor to both XWF/XWFE is being released"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "eaccfc79-09a5-41b8-8b4f-ad40ea0f359f",
+      "task_id": "0d6c0f26-25cc-4a4e-95ab-d5e78d148664",
+      "slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "brand": "ge",
+      "created_at": "2026-06-04T05:32:11.447633+00:00",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "batch_factory_state_at_discovery": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_changed_from_batch_factory": true,
+      "state_change_reason": "NEW FINDING: GE consumer PDP now shows 'This model is no longer being manufactured.' XWFE has RFID chip — critical for newer GE fridges. End-of-life status is urgent.",
+      "identity_status": "CONFIRMED_DISCONTINUED",
+      "identity_note": null,
+      "discontinued": true,
+      "supersession_chain": [
+        "XWF",
+        "XWFE"
+      ],
+      "wrong_part_risk": "HIGH",
+      "wrong_part_detail": "RFID chip required for post-2019 GE fridges. Without XWFE or its bypass plug (WR17X33825), fridge displays ERR and deactivates water valve entirely.",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "source_type": "official_manufacturer_spec_pdp",
+      "alt_candidates": [
+        {
+          "url": "https://www.amazon.com/GE-Appliances-XWFE-Refrigerator-Filter/dp/B0882ZJ48W",
+          "type": "amazon_pdp"
+        },
+        {
+          "url": "https://www.homedepot.com/p/GE-Genuine-XWFE-Refrigerator-Water-Filter-for-GE-XWFE/312928339",
+          "type": "authorized_retailer_pdp"
+        }
+      ],
+      "evidence_snippet": "GE: 'XWFE replaces XWF — Compatible with all refrigerators using XWF'; NOW: 'This model is no longer being manufactured'",
+      "specialist_outputs": [
+        {
+          "specialist": "Discovery",
+          "summary": "Searched for OEM buyer-path candidates for XWFE"
+        },
+        {
+          "specialist": "TruthRisk",
+          "summary": "Verified identity, supersession, wrong-part risk, discontinued status for XWFE"
+        }
+      ],
+      "conflicts": [],
+      "read_only": true,
+      "data_mutation": false,
+      "not_authorized": [
+        "retailer_links_csv_mutation",
+        "supabase_mutation",
+        "evidence_mutation",
+        "deploy",
+        "verified_link_authorization",
+        "go_click"
+      ],
+      "proven_facts": [
+        "PROVEN (geappliances.com): 'This model is no longer being manufactured' — clearance/out of stock",
+        "PROVEN (geapplianceparts.com): $54.99 Add-to-Cart still appears",
+        "PROVEN (GE doc): XWFE replaces XWF; backward compatible with all XWF fridges",
+        "PROVEN (GE doc): XWF NOT forward-compatible with RFID-sensing fridges",
+        "PROVEN (GE doc): Without valid XWFE or bypass plug, fridge displays ERR"
+      ],
+      "inferred_facts": [
+        "INFERRED: GE may be transitioning to a new successor filter (unknown)"
+      ],
+      "unknown_facts": [
+        "Whether a successor to XWFE exists or is announced",
+        "Remaining clearance inventory volume"
+      ]
+    }
+  ],
+  "packet_count": 26
+}

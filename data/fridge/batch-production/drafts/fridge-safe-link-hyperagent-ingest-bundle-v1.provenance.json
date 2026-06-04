@@ -1,0 +1,11 @@
+{
+  "contract": "bucksites_hyperagent_ingest_bundle_provenance_v1",
+  "bundle_rel": "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json",
+  "bundle_source": "chat_transcript_reconstruction",
+  "reconstruction_detail": "Mission Control buckparts_hyperagent_batch_bundle_v1 JSON from Cursor agent transcript user message; no separate owner-uploaded HyperAgent export file path was found in repo at validation time",
+  "transcript_ref": "agent-transcripts/a723f7da-f155-4ca1-81e2-f04711697f8e",
+  "byte_for_byte_hyperagent_export_match": "UNKNOWN",
+  "validation_scope": "authenticity_and_repo_cross_check_only",
+  "command_center_closure_implied": false,
+  "recorded_at": "2026-05-31T00:00:00.000Z"
+}
