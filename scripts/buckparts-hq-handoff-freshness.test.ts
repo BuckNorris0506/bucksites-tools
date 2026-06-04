@@ -434,6 +434,11 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "buckparts_command_center_status_update_packet_v1",
     describe: "Command Center status update packet contract id",
   },
+  {
+    id: "full_hyperagent_packet_bodies_required",
+    needle: "FULL_HYPERAGENT_PACKET_BODIES_REQUIRED",
+    describe: "Cursor validation rejects stub/materialized HyperAgent bundles",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

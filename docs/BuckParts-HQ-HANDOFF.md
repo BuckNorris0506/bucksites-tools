@@ -97,6 +97,8 @@ If a move helps **one product only** and does **not** create reusable batch mach
 
 **Full contracts:** `docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md` · **guards/tests:** `scripts/lib/buckparts-ops-agent-workflow-v1.ts`
 
+**HyperAgent ingest:** Cursor validation requires full Mission Control packet bodies at `data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json`. Stub/materialized/repo-join bundles fail with `FULL_HYPERAGENT_PACKET_BODIES_REQUIRED` (see `scripts/DEV_ONLY-materialize-fridge-hyperagent-ingest-bundle-v1.ts` — **INVALID_FOR_TRUTH_VALIDATION**).
+
 Required pipeline (no stage skipping):
 
 ```

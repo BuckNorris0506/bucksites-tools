@@ -124,6 +124,36 @@ HyperAgent output — **discovery input only**.
 
 ---
 
+## Packet: `buckparts_hyperagent_batch_bundle_v1` (Mission Control export — required for Cursor validation)
+
+Full cohort ingest from HyperAgent / Mission Control. **Cursor validation must reject stubbed, materialized, or repo-reconstructed bundles.**
+
+| Requirement | Rule |
+|-------------|------|
+| `contract` | `buckparts_hyperagent_batch_bundle_v1` |
+| `manifest.contract` | `buckparts_hyperagent_batch_manifest_v1` |
+| `packet_count` | **26** (= `manifest.total_slugs`) |
+| Per-slug packets | One **full** `buckparts_hyperagent_ingest_packet_v1` per cohort slug |
+| `ingest_id` | Non-empty UUID per packet (not `materialized-*`) |
+| `read_only` / `truth_closure_claimed` | `true` / `false` on every packet |
+| `discovery_status` | `DISCOVERY_*` only (not batch-factory closure states) |
+| `batch_factory_state_at_discovery` | Required on every packet |
+| `proposed_state` | Required even when unchanged |
+| Provenance | **No** `materialized_from_manifest`, `packet_body_source` ∈ {stub, materialized, synthetic, repo_join, cursor_synthesis, dev_only} |
+| Specialist bodies | Non-stub `specialist_outputs` (Discovery + TruthRisk with real summaries) |
+| Fact arrays | `proven_facts`, `inferred_facts`, `unknown_facts` arrays present |
+| `identity_status` | Required on every packet |
+
+**Canonical path:** `data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json`
+
+**DEV_ONLY stub (INVALID_FOR_TRUTH_VALIDATION):** `scripts/DEV_ONLY-materialize-fridge-hyperagent-ingest-bundle-v1.ts` → `data/fridge/batch-production/drafts/DEV_ONLY-fridge-safe-link-hyperagent-ingest-bundle-stub-v1.json`
+
+**Cursor validation failure:** `FULL_HYPERAGENT_PACKET_BODIES_REQUIRED` → `validation_status: VALIDATION_FAIL`, `state_changes_confirmed: 0`, `command_center_status_update_allowed: false`.
+
+**Guards:** `validateHyperAgentBatchBundleForCursorValidationV1()` in `scripts/lib/buckparts-ops-agent-workflow-v1.ts`
+
+---
+
 ## Packet: `buckparts_cursor_validation_packet_v1`
 
 Repo validation — **only** closure authority.
@@ -147,7 +177,7 @@ Repo validation — **only** closure authority.
 }
 ```
 
-**Rules:** `truth_closure_authorized` may be **true** only when `validation_status` is `VALIDATION_PASS` and all referenced gates passed. Batch factory outputs may inform classification but do not replace this packet.
+**Rules:** `truth_closure_authorized` may be **true** only when `validation_status` is `VALIDATION_PASS` and all referenced gates passed. Batch factory outputs may inform classification but do not replace this packet. **`VALIDATION_FAIL` with `failure_code: FULL_HYPERAGENT_PACKET_BODIES_REQUIRED`** blocks all state-change confirmation and Command Center status updates.
 
 ---
 
