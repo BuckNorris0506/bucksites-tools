@@ -93,6 +93,37 @@ Before giving Jared any next step, first ask:
 
 If a move helps **one product only** and does **not** create reusable batch machinery, **stop** and propose batch/factory instead — unless Jared explicitly approves a one-off proof.
 
+## Ops-agent workflow v1 (doctrine — packet contracts in repo)
+
+**Full contracts:** `docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md` · **guards/tests:** `scripts/lib/buckparts-ops-agent-workflow-v1.ts`
+
+Required pipeline (no stage skipping):
+
+```
+Command Center → Mission Control Orchestrator → Task Queue → HyperAgent specialists
+  → Structured ingest packet → Cursor/repo (gates, tests, batch factory)
+  → Validation result → Command Center status update → Permanent repo tool (if repeat)
+```
+
+| Stage | Role |
+|-------|------|
+| **Command Center** | Repo-owned **truth board and task source** (`npm run buckparts:command-center`) |
+| **Mission Control** | **Request classifier and dispatcher** — routes specialists; does **not** close truth |
+| **Task Queue** | **Structured work packets** (`buckparts_command_center_task_packet_v1`) |
+| **HyperAgent** | **Parallel discovery / source-finding only** — not apply, not Verified Link |
+| **Structured ingest** | **`buckparts_hyperagent_ingest_packet_v1`** — discovery input until repo validates |
+| **Cursor / repo** | **Validation, gates, tests, batch factory, safe-apply planning** |
+| **Validation result** | **`buckparts_cursor_validation_packet_v1`** — **only** path to task closure |
+| **CC status update** | **`buckparts_command_center_status_update_packet_v1`** — **repo-validated only** (requires `validation_id`) |
+| **Permanent tool** | Any **repeated owner-relay** step must become a script/lane/test — not chat-only |
+
+**Rules (PROVEN policy; orchestration implementation UNKNOWN):**
+
+- HyperAgent uses **discovery/workflow statuses** (`DISCOVERY_OPEN`, `DISCOVERY_COMPLETE`, `DISCOVERY_BLOCKED`) — **not** truth-closure statuses (`APPLY_ELIGIBLE_*`, `PROVEN`, `VALIDATION_PASS`, etc.).
+- **Command Center completion requires repo validation** — HyperAgent prose alone cannot close a lane or task.
+- **Safe-link coverage missions are batch-first by default** — use `scripts/report-fridge-safe-link-batch-factory-v1.ts` / rescue cohort machinery; single-slug work requires `one_product_exception` ∈ **TEST** | **PROOF** | **DEBUG** | **BLOCKER_RECONCILIATION**.
+- Aligns with **Efficiency Contract** §4 — batch/reusable machinery over one-product loops.
+
 ### 5. HyperAgent operating model
 
 | Role | Owner |

@@ -331,7 +331,7 @@ const REQUIRED_TERMS: RequiredTerm[] = [
   },
   {
     id: "grant_stopping_no_product_expansion",
-    needle: "do not continue product expansion",
+    needle: "continue **product expansion**",
     describe: "grant stopping point — no product expansion",
   },
   {
@@ -378,6 +378,61 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     id: "hq_handoff_vs_operating_truth_header",
     needle: "HQ handoff vs operating truth",
     describe: "HQ handoff vs operating truth header",
+  },
+  {
+    id: "ops_agent_workflow_section",
+    needle: "## Ops-agent workflow v1",
+    describe: "ops-agent workflow doctrine section in HQ handoff",
+  },
+  {
+    id: "ops_agent_workflow_doc",
+    needle: "BuckParts-OPS-AGENT-WORKFLOW-V1.md",
+    describe: "ops-agent workflow packet contract doc pointer",
+  },
+  {
+    id: "mission_control_orchestrator",
+    needle: "Mission Control Orchestrator",
+    describe: "Mission Control dispatcher in ops pipeline",
+  },
+  {
+    id: "hyperagent_discovery_not_closure",
+    needle: "discovery/workflow statuses",
+    describe: "HyperAgent statuses are discovery not truth closure",
+  },
+  {
+    id: "cc_completion_requires_validation",
+    needle: "Command Center completion requires repo validation",
+    describe: "CC closure requires repo validation doctrine",
+  },
+  {
+    id: "safe_link_batch_first",
+    needle: "batch-first by default",
+    describe: "safe-link missions batch-first default",
+  },
+  {
+    id: "one_product_exceptions",
+    needle: "BLOCKER_RECONCILIATION",
+    describe: "one-product safe-link exception tokens",
+  },
+  {
+    id: "command_center_task_packet",
+    needle: "buckparts_command_center_task_packet_v1",
+    describe: "Command Center task packet contract id",
+  },
+  {
+    id: "hyperagent_ingest_packet",
+    needle: "buckparts_hyperagent_ingest_packet_v1",
+    describe: "HyperAgent ingest packet contract id",
+  },
+  {
+    id: "cursor_validation_packet",
+    needle: "buckparts_cursor_validation_packet_v1",
+    describe: "Cursor validation packet contract id",
+  },
+  {
+    id: "cc_status_update_packet",
+    needle: "buckparts_command_center_status_update_packet_v1",
+    describe: "Command Center status update packet contract id",
   },
 ];
 
