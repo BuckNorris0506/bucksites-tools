@@ -1,0 +1,232 @@
+{
+  "contract": "fridge_safe_link_hyperagent_discovery_ingest_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "external_discovery_source": "hyperagent",
+  "external_discovery_authoritative": false,
+  "ingest_note": "Temporary bridge ingest — HyperAgent discovery is external input only; repo gates decide Verified Link eligibility. Replace with automated ingest when available.",
+  "generated_at": "2026-06-04T02:00:00.000Z",
+  "wedge": "refrigerator_water",
+  "live_scan_reference": {
+    "live_refrigerator_filter_pages": 57,
+    "live_with_go_cta_count": 31,
+    "live_without_go_cta_count": 26,
+    "source": "hyperagent_live_site_audit_2026-06-03"
+  },
+  "hyperagent_classification_values": [
+    "SAFE_CANDIDATE_FOUND",
+    "NEEDS_OWNER_BROWSER_REVIEW",
+    "NO_SAFE_LINK_FOUND",
+    "DO_NOT_USE"
+  ],
+  "rows": [
+    {
+      "slug": "edr4rxd1",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "candidate_url": "https://www.amazon.com/dp/B00UXG4WR4",
+      "candidate_token": "EDR4RXD1",
+      "candidate_path_type": "amazon_pdp",
+      "notes": "HyperAgent reported Amazon OEM candidate; repo has separate evidence file."
+    },
+    {
+      "slug": "edr3rxd1",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "candidate_url": "https://www.amazon.com/dp/B087PDLZL9",
+      "candidate_token": "EDR3RXD1",
+      "candidate_path_type": "amazon_pdp",
+      "notes": "HyperAgent reported Amazon aftermarket candidate; shared-ASIN policy review required in repo."
+    },
+    {
+      "slug": "gswf",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "candidate_token": "GSWF",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": "HyperAgent reported official GE spec PDP with exact token and add-to-cart."
+    },
+    {
+      "slug": "4396508",
+      "hyperagent_classification": "NO_SAFE_LINK_FOUND",
+      "candidate_url": null,
+      "candidate_token": "4396508",
+      "candidate_path_type": null,
+      "notes": "HyperAgent: discontinued; only non-priority allfilters.com; conflicts with repo Amazon evidence."
+    },
+    {
+      "slug": "4396842",
+      "hyperagent_classification": "NO_SAFE_LINK_FOUND",
+      "candidate_url": null,
+      "candidate_token": "4396842",
+      "candidate_path_type": null,
+      "notes": "HyperAgent: no defensible exact-token PDP; aligns with repo no-safe-pdp evidence."
+    },
+    {
+      "slug": "xwf",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "candidate_token": "XWF",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": "XWF/XWFE supersession — verify RFID shell vs non-RFID before any link."
+    },
+    {
+      "slug": "xwfe",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "candidate_token": "XWFE",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": "XWF/XWFE supersession — do not cross-promote XWF listing for XWFE slug."
+    },
+    {
+      "slug": "gswf2",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+      "candidate_token": "GSWF2",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": "Separate slug from gswf — requires distinct exact-token proof."
+    },
+    {
+      "slug": "ultrawf",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.frigidaire.com/en/parts-and-accessories",
+      "candidate_token": "ULTRAWF",
+      "candidate_path_type": "manufacturer_support",
+      "notes": "HyperAgent: manufacturer path discovery only."
+    },
+    {
+      "slug": "mswf",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "candidate_token": "MSWF",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": null
+    },
+    {
+      "slug": "smartwater-mwfp",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "candidate_token": "MWFP",
+      "candidate_path_type": "official_manufacturer_spec_pdp",
+      "notes": null
+    },
+    {
+      "slug": "wf2cb",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "WF2CB",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "wf3cb",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "WF3CB",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "wfcb",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "WFCB",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "fppwfu01",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "FPPWFU01",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "eptwfu01",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "EPTWFU01",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "pfmwf",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "PFMWF",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "adq75795101",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "ADQ75795101",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "da97-17376a",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "DA97-17376A",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "da97-19467c",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "DA97-19467C",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "frig-242086201",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "242086201",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "frig-242017801",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "242017801",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "frig-242294502",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "242294502",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "purepour",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "PUREPOUR",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "opfg3f",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "OPFG3F",
+      "candidate_path_type": null,
+      "notes": null
+    },
+    {
+      "slug": "w10413645a",
+      "hyperagent_classification": "NEEDS_OWNER_BROWSER_REVIEW",
+      "candidate_url": null,
+      "candidate_token": "W10413645A",
+      "candidate_path_type": null,
+      "notes": null
+    }
+  ]
+}
