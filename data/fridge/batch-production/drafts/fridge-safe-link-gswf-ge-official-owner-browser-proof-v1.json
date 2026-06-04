@@ -1,0 +1,62 @@
+{
+  "contract": "fridge_safe_link_gswf_ge_official_owner_browser_proof_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "filter_slug": "gswf",
+  "oem_part_token": "GSWF",
+  "target_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+  "path_type": "official_manufacturer_spec_pdp",
+  "checked_at": "2026-06-04T01:27:55.473Z",
+  "capture_method": "playwright_headless",
+  "http_load_result": "PROVEN",
+  "browser_truth_status": "PASS",
+  "direct_pdp_status": "PROVEN",
+  "exact_token_gswf_proven": true,
+  "current_direct_buyability_proven": true,
+  "official_manufacturer_path_proven": true,
+  "gswf2_conflation_blocked": false,
+  "gswf2_conflation_notes": "no GSWF2 primary identity detected on GSWF spec URL",
+  "ge_pdp_proof_result": "PROVEN",
+  "evidence_summary": "PROVEN: GE Appliance Parts spec PDP for GSWF with visible exact token and Add to Cart on official manufacturer path.",
+  "captured_signals": {
+    "final_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+    "page_title": "GSWF | GE® GSWF REFRIGERATOR WATER FILTER | GE Appliances Parts",
+    "h1_text": "GE® GSWF REFRIGERATOR WATER FILTER",
+    "purchase_actions_visible": [
+      "Add to Cart"
+    ],
+    "classification": "direct_buyable",
+    "classification_notes": "purchase action: Add to Cart",
+    "text_sample_excerpt": "Skip to main content\n15% OFF + FREE SHIPPING on Parts & Accessories | Code: MEMORIAL26\n10% OFF + FREE SHIPPING on Water Filtration | Code: MAY26\nWhy buy genuine GE Appliances Parts?\nContact Us\nUS - Contact Us:\n1-877-959-8688\nCanada & International\nOrders\nCheck Parts Order Status\nReturns\nCanada & International\nAccount \n \nRepair Parts\nGE Repair Parts\nCafé Repair Parts\nMonogram Repair Parts\nHaier Repair Parts\nHotpoint Repair Parts\nWater Filters\nShop Replacement Water Filters\nRefrigeration\nIn-Line Refrigeration\nWhole House\nReverse Osmosis\nSingle & Dual\nKitchen & Bath\nOpal Ice Maker\nCulligan Refrigerator Filters\nFilter Finder\nWater Filtration Systems\nExplore Whole Home Filtration\nWhole House\nReverse Osmosis\nSingle & Dual Stage\nShop All Water Filtration Systems\nAccessories\nGriddles & Grates\nDrip",
+    "screenshot_path": "data/fridge/batch-production/drafts/screenshots/fridge-safe-link-gswf-ge-official-spec-v1.png",
+    "navigation_error": null
+  },
+  "blockers": [],
+  "owner_browser_checklist": [
+    "Verify captured final URL matches /store/parts/spec/GSWF.",
+    "Owner confirms literal GSWF in product identity matches filter slug gswf.",
+    "Owner confirms Add to Cart path is single-pack GSWF, not GSWF2.",
+    "Do not apply CSV/Supabase/Verified Link from this draft alone."
+  ],
+  "apply_plan_proposal_justified": false,
+  "recommended_next_action": "Owner review this draft proof packet. A separate read-only apply-plan proposal may be drafted next — still no CSV/Supabase/Verified Link apply without explicit owner authorization.",
+  "proven_facts": [
+    "PROVEN: draft proof packet is read_only=true; all mutation flags false.",
+    "PROVEN: capture targeted https://www.geapplianceparts.com/store/parts/spec/GSWF only.",
+    "PROVEN: playwright capture_method=completed.",
+    "PROVEN: final URL is direct spec PDP path.",
+    "PROVEN: literal GSWF visible in page title or h1.",
+    "PROVEN: purchase actions visible: Add to Cart"
+  ],
+  "unknown_facts": [
+    "UNKNOWN: production /go first-hop without clicking /go.",
+    "UNKNOWN: live Supabase retailer_links parity."
+  ]
+}

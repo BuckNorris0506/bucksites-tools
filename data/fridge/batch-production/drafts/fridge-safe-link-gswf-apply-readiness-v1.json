@@ -1,0 +1,128 @@
+{
+  "contract": "fridge_safe_link_gswf_apply_readiness_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "production_go_first_hop_validation_status": "UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+  "generated_at": "2026-06-04T01:09:31.789Z",
+  "source_command": "npm run buckparts:fridge-safe-link-gswf-apply-readiness",
+  "target_slug": "gswf",
+  "oem_part_token": "GSWF",
+  "apply_readiness_verdict": "READY_FOR_OWNER_BROWSER_PROOF",
+  "apply_readiness_verdict_basis": "Dated owner-browser evidence + fresh precheck OWNER_REVIEW_ELIGIBLE support fresh owner browser re-verification before any apply-plan draft; committed CSV has zero safe-gated rows and browser_truth fields are unset.",
+  "exact_repo_paths_read": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json",
+    "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json",
+    "data/filters.csv",
+    "data/retailer_links.csv",
+    "data/filter_aliases.csv",
+    "src/lib/retailers/launch-buy-links.ts"
+  ],
+  "source_rescue_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
+  "source_first4_apply_review_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json",
+  "live_state": {
+    "live_url": "https://buckparts.com/filter/gswf",
+    "live_has_go_cta": false,
+    "live_has_go_cta_source": "fridge_safe_link_rescue_owner_review_v1",
+    "live_page_exists": true,
+    "production_go_clicked": false
+  },
+  "filters_csv": {
+    "brand_slug": "ge",
+    "slug": "gswf",
+    "oem_part_number": "GSWF",
+    "name": "GE GSWF"
+  },
+  "retailer_links_csv": {
+    "row_count": 1,
+    "safe_gated_count": 0,
+    "primary_retailer_key": "oem-parts-catalog",
+    "primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=GSWF",
+    "browser_truth_classification": "",
+    "browser_truth_buyable_subtype": null,
+    "passes_direct_buyable_gate": false
+  },
+  "sibling_slug_note": {
+    "gswf2_slug": "gswf2",
+    "gswf2_oem": "GSWF2",
+    "conflation_risk": true,
+    "separate_exact_token_proof_required": true
+  },
+  "evidence_summary": {
+    "primary_evidence_rel_path": "data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json",
+    "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+    "browser_verdict": "PASS_OEM_DIRECT_BUYABLE",
+    "mutation_ready": false,
+    "asin": "B0002GTTRC",
+    "canonical_url": "https://www.amazon.com/dp/B0002GTTRC",
+    "affiliate_url_candidate": "https://www.amazon.com/dp/B0002GTTRC?tag=buckparts20-20",
+    "product_attribution": "oem_official",
+    "screenshot_file_committed": false,
+    "evidence_generated_at": "2026-05-18T19:01:04.000Z",
+    "filter_id_at_evidence_time": null
+  },
+  "amazon_token_precheck": {
+    "command": "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens GSWF",
+    "precheck_run_at": "2026-06-04T01:09:31.762Z",
+    "resolved_filter_id": "2169cdfe-b8b7-4787-9258-5235c7fb9912",
+    "asin_reuse_policy_classification": "EXACT_PDP_PROVEN_NO_COLLISION",
+    "asin_reuse_policy_status": "OWNER_REVIEW_ELIGIBLE",
+    "asin_reuse_policy_asin": "B0002GTTRC",
+    "asin_reuse_policy_mutation_ready": false,
+    "existing_amazon_row_count": 0,
+    "approved_amazon_row_count": 0,
+    "live_direct_buyable_amazon_row_count": 0,
+    "insert_plan_hint": "OWNER_REVIEW (exact PDP proof present; mutation still requires owner-approved insert plan + runtime gates)"
+  },
+  "launch_buy_links_gate": {
+    "requires_browser_truth_classification": "direct_buyable",
+    "requires_buyable_subtype_not_blocked_unsafe": true,
+    "committed_csv_passes_gate": false,
+    "evidence_browser_verdict": "PASS_OEM_DIRECT_BUYABLE",
+    "evidence_maps_to_committed_csv": false
+  },
+  "stale_first4_row_note": "PROVEN: fridge-safe-link-rescue-first4-apply-review-v1.json (generated earlier) listed gswf as owner_apply_review_ready=false with amazon_asin_reuse_policy_classification=HUMAN_BROWSER_VERIFICATION_REQUIRED because evidence precheck fields were UNKNOWN_UNTIL_RUN at evidence authoring; fresh precheck run in this session may differ.",
+  "remaining_blockers": [
+    "mutation_authorized=false",
+    "verified_link_authorized=false",
+    "csv_apply_authorized=false",
+    "supabase_mutation_authorized=false",
+    "evidence_write_authorized=false",
+    "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+    "committed CSV has zero launch-buy-links safe gated rows",
+    "committed browser_truth_classification not direct_buyable",
+    "evidence.mutation_ready=false",
+    "gswf2_slug_exists_separate_exact_token_proof_required",
+    "4396508_lane_blocked_do_not_conflate",
+    "evidence.screenshot_file_committed=false",
+    "evidence.filter_id was null at evidence authoring — precheck now resolves filter_id"
+  ],
+  "proven_facts": [
+    "PROVEN: packet is read_only=true; all mutation authorization flags false.",
+    "PROVEN: target_slug=gswf only.",
+    "PROVEN: filters.csv row ge/gswf oem=GSWF.",
+    "PROVEN: committed CSV has one oem-parts-catalog search-placeholder row with zero safe gated rows.",
+    "PROVEN: live_has_go_cta=false from rescue packet; production /go not clicked.",
+    "PROVEN: evidence data/evidence/amazon-gswf-owner-review-pdp-evidence.2026-05-18.json verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; browser_verdict=PASS_OEM_DIRECT_BUYABLE; asin=B0002GTTRC; product_attribution=oem_official.",
+    "PROVEN: launch-buy-links gate requires browser_truth_classification=direct_buyable — committed CSV field is empty.",
+    "PROVEN: gswf2 slug exists separately in filters.csv — do not conflate with GSWF."
+  ],
+  "inferred_facts": [
+    "INFERRED: rescue packet labels gswf existing_evidence_apply_review_ready because parseable evidence exists; live /go absence likely CSV/Supabase parity gap.",
+    "INFERRED: evidence browser_verdict PASS_OEM_DIRECT_BUYABLE suggests future browser_truth_classification=direct_buyable on apply — not authorized or committed by this packet."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: current live Amazon PDP buyability/discontinuation for B0002GTTRC (evidence dated 2026-05-18; precheck does not live-fetch Amazon).",
+    "UNKNOWN: production /go first-hop outcome without clicking /go.",
+    "UNKNOWN: live Supabase retailer_links state for filter_id.",
+    "UNKNOWN: whether B0002GTTRC single-pack PDP remains distinct from GSWF2 housing listings without fresh owner browser check."
+  ],
+  "recommended_next_action": "Owner fresh US-browser re-verification of single-pack https://www.amazon.com/dp/B0002GTTRC — confirm literal GSWF in seller-controlled title, buyability, and no GSWF2 conflation; then rerun npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens GSWF before any apply-plan draft. Do not mutate CSV/Supabase/evidence; do not click production /go."
+}
