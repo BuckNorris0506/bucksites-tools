@@ -15,6 +15,7 @@ import {
   classifyWithHyperAgentCandidate,
   writeFridgeSafeLinkBatchFactoryDraftsV1,
 } from "./fridge-safe-link-batch-factory-v1";
+import { FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1 } from "./fridge-safe-link-owner-browser-proof-batch-validation-v1";
 
 const LIB_SOURCE = readFileSync(
   path.join(process.cwd(), "scripts/lib/fridge-safe-link-batch-factory-v1.ts"),
@@ -59,14 +60,19 @@ describe("fridge-safe-link-batch-factory-v1", () => {
     assert.ok(report.rows.every((r) => r.launch_buy_links_gate_passes === false));
   });
 
-  test("reads validated bundle and validation packet when present", () => {
+  test("reads validated bundle and both validation packets when present", () => {
     const report = buildFridgeSafeLinkBatchFactoryV1({ rootDir: process.cwd() });
     assert.ok(report.exact_repo_paths_read.includes(FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1));
     assert.ok(report.exact_repo_paths_read.includes(FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1));
+    assert.ok(
+      report.exact_repo_paths_read.includes(FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1),
+    );
     assert.equal(report.hyperagent_ingest_rel_path, FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1);
     assert.equal(report.hyperagent_bundle_rel_path, FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1);
     assert.equal(report.bundle_authentic, true);
     assert.equal(report.validation_overlay_applied, true);
+    assert.equal(report.owner_browser_proof_overlay_applied, true);
+    assert.equal(report.owner_browser_proof_bundle_authentic, true);
     assert.equal(report.validation_status, "VALIDATION_PARTIAL");
   });
 
@@ -106,30 +112,100 @@ describe("fridge-safe-link-batch-factory-v1", () => {
     assert.ok(report.cohort_summary.no_safe_count >= 5);
   });
 
-  test("owner-browser cohort matches validated remaining list (14)", () => {
+  test("14-slug owner-browser-proof overlay supersedes stale factory states for cohort", () => {
     const report = buildFridgeSafeLinkBatchFactoryV1({ rootDir: process.cwd() });
-    assert.equal(report.cohort_summary.owner_browser_needed_count, 14);
-    const ownerSlugs = report.rows
-      .filter((r) => r.batch_factory_state === "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF")
+    assert.equal(report.cohort_summary.owner_browser_proof_candidate_count, 7);
+    assert.equal(report.cohort_summary.owner_browser_needed_count, 7);
+    assert.equal(report.cohort_summary.compatibility_label_count, 8);
+    assert.equal(report.cohort_summary.conflict_count, 5);
+
+    const discoverySlugs = report.rows
+      .filter((r) => r.owner_browser_proof_slug_verdict === "DISCOVERY_CANDIDATES_OK")
       .map((r) => r.slug)
       .sort();
-    const expected = [
-      "da97-17376a",
+    assert.deepEqual(discoverySlugs, [
       "edr3rxd1",
       "edr4rxd1",
       "eptwfu01",
       "fppwfu01",
-      "frig-242017801",
-      "frig-242086201",
-      "mswf",
-      "purepour",
-      "smartwater-mwfp",
       "ultrawf",
-      "wf2cb",
       "wf3cb",
       "wfcb",
-    ];
-    assert.deepEqual(ownerSlugs, expected);
+    ]);
+
+    const ownerBrowserLabelSlugs = report.rows
+      .filter(
+        (r) =>
+          r.owner_browser_proof_validation_overlay_applied &&
+          r.batch_factory_state === "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      )
+      .map((r) => r.slug)
+      .sort();
+    assert.deepEqual(ownerBrowserLabelSlugs, [
+      "da97-17376a",
+      "frig-242017801",
+      "mswf",
+      "smartwater-mwfp",
+      "wf2cb",
+    ]);
+
+    const legacyLabelSlugs = report.rows
+      .filter(
+        (r) =>
+          !r.owner_browser_proof_validation_overlay_applied &&
+          r.batch_factory_state === "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      )
+      .map((r) => r.slug)
+      .sort();
+    assert.deepEqual(legacyLabelSlugs, ["adq75795101", "w10413645a", "xwf"]);
+  });
+
+  test("purepour and frig-242086201 become CONFLICT_REQUIRES_RECONCILIATION from owner-browser overlay", () => {
+    const report = buildFridgeSafeLinkBatchFactoryV1({ rootDir: process.cwd() });
+    const purepour = report.rows.find((r) => r.slug === "purepour");
+    const frig = report.rows.find((r) => r.slug === "frig-242086201");
+    assert.equal(purepour?.batch_factory_state, "CONFLICT_REQUIRES_RECONCILIATION");
+    assert.equal(frig?.batch_factory_state, "CONFLICT_REQUIRES_RECONCILIATION");
+    assert.equal(purepour?.owner_browser_proof_slug_verdict, "BLOCKED_CONFLICT");
+    assert.equal(frig?.owner_browser_proof_slug_verdict, "BLOCKED_CONFLICT");
+    assert.ok(
+      purepour?.exact_blockers.some((b) => b.includes("owner_browser_proof_conflict_blocked")),
+    );
+  });
+
+  test("edr3rxd1 B087PDLZL9 cannot appear as OEM proposed candidate", () => {
+    const report = buildFridgeSafeLinkBatchFactoryV1({ rootDir: process.cwd() });
+    const edr3 = report.rows.find((r) => r.slug === "edr3rxd1");
+    assert.ok(edr3);
+    assert.ok(
+      edr3.exact_blockers.some((b) => b.includes("B087PDLZL9")),
+      "blocker must reference B087 exclusion",
+    );
+    assert.ok(
+      !(edr3.proposed_candidate_url ?? "").includes("B087PDLZL9"),
+      "proposed URL must not be B087",
+    );
+    assert.ok(
+      !(edr3.owner_browser_proof_candidates ?? []).some((u) => u.includes("B087PDLZL9")),
+    );
+    assert.ok(
+      (edr3.rejected_owner_browser_proof_candidates ?? []).some((u) =>
+        u.includes("B087PDLZL9"),
+      ),
+    );
+  });
+
+  test("DISCOVERY_CANDIDATES_OK does not authorize apply planning", () => {
+    const report = buildFridgeSafeLinkBatchFactoryV1({ rootDir: process.cwd() });
+    assert.equal(report.apply_planning_allowed, false);
+    assert.equal(report.cohort_summary.eligible_now_count, 0);
+    for (const row of report.rows.filter((r) => r.owner_browser_proof_slug_verdict === "DISCOVERY_CANDIDATES_OK")) {
+      assert.equal(row.batch_factory_state, "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF");
+      assert.ok(
+        row.exact_blockers.some((b) => b.includes("owner_browser_proof_required_not_apply_ready")),
+      );
+      assert.ok(!report.proposed_first_batch_rows.some((r) => r.slug === row.slug));
+    }
   });
 
   test("partial rows are blocked reconciliation not eligible apply", () => {
@@ -197,6 +273,7 @@ describe("fridge-safe-link-batch-factory-v1", () => {
         FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1,
         FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1,
         FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1,
+        FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1,
         "data/filters.csv",
         "data/retailer_links.csv",
         "data/compatibility_mappings.csv",
@@ -246,6 +323,7 @@ describe("fridge-safe-link-batch-factory-v1", () => {
         FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1,
         FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1,
         FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1,
+        FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1,
         "data/filters.csv",
         "data/retailer_links.csv",
         "data/compatibility_mappings.csv",

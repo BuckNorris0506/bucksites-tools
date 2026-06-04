@@ -17,6 +17,11 @@ import {
 } from "./buckparts-ops-agent-workflow-v1";
 import type { StateChangeVerdict } from "./fridge-safe-link-batch-cursor-validation-v1";
 import {
+  FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_EXPECTED_SLUGS_V1,
+  type SlugVerdictV1,
+} from "./fridge-safe-link-owner-browser-proof-batch-validation-v1";
+import {
   FRIDGE_SAFE_LINK_GSWF_GE_OFFICIAL_PROOF_JSON_REL_V1,
   type FridgeSafeLinkGswfGeOfficialOwnerBrowserProofV1,
 } from "./fridge-safe-link-gswf-ge-official-browser-capture-v1";
@@ -96,6 +101,34 @@ export type FridgeSafeLinkBatchFactoryRowV1 = {
   batch_factory_state_before_validation_overlay?: FridgeSafeLinkBatchFactoryStateV1;
   cursor_validation_verdict?: StateChangeVerdict | null;
   cursor_validation_overlay_applied?: boolean;
+  batch_factory_state_before_owner_browser_proof_overlay?: FridgeSafeLinkBatchFactoryStateV1;
+  owner_browser_proof_slug_verdict?: SlugVerdictV1 | null;
+  owner_browser_proof_validation_overlay_applied?: boolean;
+  owner_browser_proof_candidates?: string[];
+  rejected_owner_browser_proof_candidates?: string[];
+};
+
+export type OwnerBrowserProofSlugOverlayRowV1 = {
+  verdict: SlugVerdictV1;
+  proposed_state: FridgeSafeLinkBatchFactoryStateV1;
+  reason: string;
+  strongest_candidates: string[];
+  rejected_candidates: string[];
+};
+
+export type OwnerBrowserProofValidationOverlayV1 = {
+  validation_status: string;
+  bundle_authentic: boolean;
+  truth_closure_authorized: boolean;
+  command_center_status_update_allowed: boolean;
+  apply_planning_allowed: boolean;
+  verified_link_authorized: boolean;
+  slug_verdicts_by_slug: Map<string, OwnerBrowserProofSlugOverlayRowV1>;
+  edr3_b087_excluded_as_oem: boolean;
+  purepour_remains_blocked: boolean;
+  frig_242086201_remains_blocked: boolean;
+  discrepancies: string[];
+  discovery_candidate_slugs: string[];
 };
 
 export type CursorValidationOverlayV1 = {
@@ -147,9 +180,12 @@ export type FridgeSafeLinkBatchFactoryV1 = {
   hyperagent_bundle_rel_path: string | null;
   hyperagent_discovery_bridge_rel_path: string | null;
   cursor_validation_rel_path: string | null;
+  owner_browser_proof_validation_rel_path: string | null;
   validation_status: string | null;
   bundle_authentic: boolean | null;
+  owner_browser_proof_bundle_authentic: boolean | null;
   validation_overlay_applied: boolean;
+  owner_browser_proof_overlay_applied: boolean;
   truth_closure_authorized: boolean;
   command_center_status_update_allowed: boolean;
   apply_planning_allowed: boolean;
@@ -158,6 +194,7 @@ export type FridgeSafeLinkBatchFactoryV1 = {
     total_missing_before: number;
     eligible_now_count: number;
     owner_browser_needed_count: number;
+    owner_browser_proof_candidate_count: number;
     no_safe_count: number;
     conflict_count: number;
     do_not_use_count: number;
@@ -388,6 +425,149 @@ export function applyCursorValidationOverlayToRowV1(
   };
 }
 
+const EDR3_AFTERMARKET_ASIN_B087 = "B087PDLZL9";
+
+const OWNER_BROWSER_PROOF_COHORT_SLUGS = new Set<string>(
+  FRIDGE_OWNER_BROWSER_PROOF_EXPECTED_SLUGS_V1.map((s) => s.toLowerCase()),
+);
+
+function isAftermarketExcludedCandidateUrlV1(url: string): boolean {
+  return url.toUpperCase().includes(EDR3_AFTERMARKET_ASIN_B087);
+}
+
+export function loadOwnerBrowserProofValidationOverlayV1(
+  rootDir: string,
+): OwnerBrowserProofValidationOverlayV1 | null {
+  const abs = path.join(rootDir, FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1);
+  if (!existsSync(abs)) return null;
+  const doc = loadJson<{
+    validation_status?: string;
+    truth_closure_authorized?: boolean;
+    command_center_status_update_allowed?: boolean;
+    verified_link_authorized?: boolean;
+    validation_details?: {
+      bundle_authentic?: boolean;
+      apply_planning_allowed?: boolean;
+      slug_verdicts?: Array<{
+        slug: string;
+        verdict: SlugVerdictV1;
+        proposed_state: string;
+        reason: string;
+        strongest_owner_browser_proof_candidates?: string[];
+        rejected_or_risky_candidates?: string[];
+      }>;
+      edr3_b087_excluded_as_oem?: boolean;
+      purepour_remains_blocked?: boolean;
+      frig_242086201_remains_blocked?: boolean;
+      discrepancies?: string[];
+    };
+  }>(abs);
+  const details = doc.validation_details;
+  if (!details?.bundle_authentic) return null;
+
+  const slug_verdicts_by_slug = new Map<string, OwnerBrowserProofSlugOverlayRowV1>();
+  const discovery_candidate_slugs: string[] = [];
+
+  for (const row of details.slug_verdicts ?? []) {
+    if (!isFridgeSafeLinkBatchFactoryStateV1(row.proposed_state)) continue;
+    slug_verdicts_by_slug.set(row.slug.toLowerCase(), {
+      verdict: row.verdict,
+      proposed_state: row.proposed_state,
+      reason: row.reason,
+      strongest_candidates: row.strongest_owner_browser_proof_candidates ?? [],
+      rejected_candidates: row.rejected_or_risky_candidates ?? [],
+    });
+    if (
+      row.verdict === "DISCOVERY_CANDIDATES_OK" &&
+      row.proposed_state === "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF"
+    ) {
+      discovery_candidate_slugs.push(row.slug);
+    }
+  }
+
+  return {
+    validation_status: doc.validation_status ?? "UNKNOWN",
+    bundle_authentic: true,
+    truth_closure_authorized: doc.truth_closure_authorized === true,
+    command_center_status_update_allowed: doc.command_center_status_update_allowed === true,
+    apply_planning_allowed: details.apply_planning_allowed === true,
+    verified_link_authorized: doc.verified_link_authorized === true,
+    slug_verdicts_by_slug,
+    edr3_b087_excluded_as_oem: details.edr3_b087_excluded_as_oem === true,
+    purepour_remains_blocked: details.purepour_remains_blocked === true,
+    frig_242086201_remains_blocked: details.frig_242086201_remains_blocked === true,
+    discrepancies: details.discrepancies ?? [],
+    discovery_candidate_slugs,
+  };
+}
+
+export function applyOwnerBrowserProofValidationOverlayToRowV1(
+  row: FridgeSafeLinkBatchFactoryRowV1,
+  overlay: OwnerBrowserProofValidationOverlayV1,
+): FridgeSafeLinkBatchFactoryRowV1 {
+  if (!OWNER_BROWSER_PROOF_COHORT_SLUGS.has(row.slug.toLowerCase())) {
+    return row;
+  }
+  const verdict = overlay.slug_verdicts_by_slug.get(row.slug.toLowerCase());
+  if (!verdict) return row;
+
+  const before = row.batch_factory_state;
+  const blockers = [...row.exact_blockers];
+  blockers.push(`owner_browser_proof_validation_overlay:${verdict.verdict}`);
+  blockers.push("discovery_candidates_only_not_verified_link");
+
+  if (verdict.verdict === "DISCOVERY_CANDIDATES_OK") {
+    blockers.push("owner_browser_proof_required_not_apply_ready");
+  }
+  if (verdict.verdict === "BLOCKED_CONFLICT") {
+    blockers.push("owner_browser_proof_conflict_blocked");
+  }
+  if (verdict.verdict === "BLOCKED_LABEL_REQUIRED") {
+    blockers.push("owner_browser_proof_label_required_before_apply");
+  }
+  if (overlay.discrepancies.some((d) => d.toLowerCase().includes(row.slug.toLowerCase()))) {
+    blockers.push("owner_browser_proof_discrepancy_vs_prior_factory");
+  }
+
+  const safeCandidates = verdict.strongest_candidates.filter(
+    (url) => !isAftermarketExcludedCandidateUrlV1(url),
+  );
+  const proposedUrl = safeCandidates[0] ?? null;
+
+  if (row.slug === "edr3rxd1") {
+    blockers.push("aftermarket_asin_B087PDLZL9_excluded_from_oem");
+    if (!overlay.edr3_b087_excluded_as_oem) {
+      blockers.push("edr3_b087_oem_exclusion_not_confirmed_by_validation");
+    }
+    if (
+      (row.proposed_candidate_url ?? "").toUpperCase().includes(EDR3_AFTERMARKET_ASIN_B087) ||
+      (row.hyperagent_candidate_url ?? "").toUpperCase().includes(EDR3_AFTERMARKET_ASIN_B087)
+    ) {
+      blockers.push("edr3_proposed_candidate_must_not_use_B087PDLZL9");
+    }
+  }
+
+  if (row.slug === "purepour" && !overlay.purepour_remains_blocked) {
+    blockers.push("purepour_conflict_block_not_confirmed_by_validation");
+  }
+  if (row.slug === "frig-242086201" && !overlay.frig_242086201_remains_blocked) {
+    blockers.push("frig_242086201_conflict_block_not_confirmed_by_validation");
+  }
+
+  return {
+    ...row,
+    batch_factory_state_before_owner_browser_proof_overlay: before,
+    batch_factory_state: verdict.proposed_state,
+    owner_browser_proof_slug_verdict: verdict.verdict,
+    owner_browser_proof_validation_overlay_applied: true,
+    owner_browser_proof_candidates: safeCandidates,
+    rejected_owner_browser_proof_candidates: verdict.rejected_candidates,
+    state_basis: `Owner-browser-proof validation overlay (${verdict.verdict}): ${verdict.reason} [pre-overlay: ${before}]`,
+    proposed_candidate_url: proposedUrl ?? row.proposed_candidate_url,
+    exact_blockers: blockers,
+  };
+}
+
 function loadGswfGeDraftProof(rootDir: string): FridgeSafeLinkGswfGeOfficialOwnerBrowserProofV1 | null {
   const abs = path.join(rootDir, FRIDGE_SAFE_LINK_GSWF_GE_OFFICIAL_PROOF_JSON_REL_V1);
   if (!existsSync(abs)) return null;
@@ -605,6 +785,7 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   const bundlePath = path.join(rootDir, FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1);
   const discoveryPath = path.join(rootDir, FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1);
   const validationOverlay = loadCursorValidationOverlayV1(rootDir);
+  const ownerBrowserProofOverlay = loadOwnerBrowserProofValidationOverlayV1(rootDir);
 
   let hyperBySlug = new Map<string, HyperAgentDiscoveryRowV1>();
   let hyperagentIngestRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
@@ -650,6 +831,12 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   if (validationOverlay) {
     pathsRead.push(FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1);
   }
+  if (ownerBrowserProofOverlay) {
+    pathsRead.push(FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1);
+    pathsRead.push(
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.json",
+    );
+  }
 
   const filterRows = parse(readFileSync(path.join(rootDir, "data/filters.csv"), "utf8"), {
     columns: true,
@@ -683,8 +870,14 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   );
 
   const validationOverlayApplied = validationOverlay !== null;
+  const ownerBrowserProofOverlayApplied = ownerBrowserProofOverlay !== null;
   if (validationOverlay) {
     rows = rows.map((row) => applyCursorValidationOverlayToRowV1(row, validationOverlay));
+  }
+  if (ownerBrowserProofOverlay) {
+    rows = rows.map((row) =>
+      applyOwnerBrowserProofValidationOverlayToRowV1(row, ownerBrowserProofOverlay),
+    );
   }
 
   const count = (s: FridgeSafeLinkBatchFactoryStateV1) =>
@@ -692,6 +885,11 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
 
   const eligibleNow = rows.filter(
     (r) => r.batch_factory_state === "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+  );
+  const ownerBrowserProofCandidates = rows.filter(
+    (r) =>
+      r.owner_browser_proof_validation_overlay_applied === true &&
+      r.owner_browser_proof_slug_verdict === "DISCOVERY_CANDIDATES_OK",
   );
   const ownerBrowserNeeded = rows.filter(
     (r) => r.batch_factory_state === "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
@@ -727,11 +925,20 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   const liveWithGoBefore = rescue.live_scan.live_with_go_cta_count;
   const coverageDelta = eligibleNow.length;
 
-  const validationStatus = validationOverlay?.validation_status ?? null;
-  const truthClosureAuthorized = validationOverlay?.truth_closure_authorized ?? false;
+  const validationStatus =
+    validationOverlay?.validation_status ??
+    ownerBrowserProofOverlay?.validation_status ??
+    null;
+  const truthClosureAuthorized =
+    (validationOverlay?.truth_closure_authorized ?? false) &&
+    (ownerBrowserProofOverlay?.truth_closure_authorized ?? false);
   const commandCenterStatusUpdateAllowed =
-    validationOverlay?.command_center_status_update_allowed ?? false;
-  const applyPlanningAllowed = validationOverlay?.apply_planning_allowed ?? false;
+    (validationOverlay?.command_center_status_update_allowed ?? false) &&
+    (ownerBrowserProofOverlay?.command_center_status_update_allowed ?? false);
+  const applyPlanningAllowed =
+    (validationOverlay?.apply_planning_allowed ?? false) &&
+    (ownerBrowserProofOverlay?.apply_planning_allowed ?? false);
+  const ownerBrowserProofBundleAuthentic = ownerBrowserProofOverlay?.bundle_authentic ?? null;
 
   return {
     contract: FRIDGE_SAFE_LINK_BATCH_FACTORY_CONTRACT_V1,
@@ -752,9 +959,14 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
     hyperagent_bundle_rel_path: hyperagentBundleRelPath,
     hyperagent_discovery_bridge_rel_path: hyperagentDiscoveryBridgeRelPath,
     cursor_validation_rel_path: validationOverlay ? FRIDGE_SAFE_LINK_CURSOR_VALIDATION_REL_V1 : null,
+    owner_browser_proof_validation_rel_path: ownerBrowserProofOverlay
+      ? FRIDGE_OWNER_BROWSER_PROOF_CURSOR_VALIDATION_REL_V1
+      : null,
     validation_status: validationStatus,
     bundle_authentic: bundleAuthentic,
+    owner_browser_proof_bundle_authentic: ownerBrowserProofBundleAuthentic,
     validation_overlay_applied: validationOverlayApplied,
+    owner_browser_proof_overlay_applied: ownerBrowserProofOverlayApplied,
     truth_closure_authorized: truthClosureAuthorized,
     command_center_status_update_allowed: commandCenterStatusUpdateAllowed,
     apply_planning_allowed: applyPlanningAllowed,
@@ -763,6 +975,7 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
       total_missing_before: rows.length,
       eligible_now_count: eligibleNow.length,
       owner_browser_needed_count: ownerBrowserNeeded.length,
+      owner_browser_proof_candidate_count: ownerBrowserProofCandidates.length,
       no_safe_count: count("NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED"),
       conflict_count: count("CONFLICT_REQUIRES_RECONCILIATION"),
       do_not_use_count: count("DO_NOT_USE_WRONG_PART_RISK"),
@@ -779,7 +992,9 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
     recommended_next_action:
       eligibleNow.length > 0
         ? "Owner review batch factory proposed_first_batch_rows. Draft read-only batch apply-plan for eligible slugs only — still no CSV/Supabase/Verified Link apply until separate owner authorization. Continue owner-browser proof for owner_browser_needed rows."
-        : "No slug is APPLY_ELIGIBLE_WITH_EXISTING_PROOF yet — continue owner-browser proof packets before batch apply-plan.",
+        : ownerBrowserProofCandidates.length > 0
+          ? `${ownerBrowserProofCandidates.length} slug(s) have owner-browser-proof discovery candidates only — capture fresh owner browser proof before any apply-plan. ${count("NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL")} label-required and ${count("CONFLICT_REQUIRES_RECONCILIATION")} conflict slug(s) remain blocked.`
+          : "No slug is APPLY_ELIGIBLE_WITH_EXISTING_PROOF yet — continue owner-browser proof packets before batch apply-plan.",
     proven_facts: [
       "PROVEN: batch factory is read_only=true; all mutation authorization flags false.",
       `PROVEN: rescue cohort missing_safe_link_slug_count=${rows.length}.`,
@@ -789,14 +1004,31 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
       "PROVEN: 4396508 classified CONFLICT_REQUIRES_RECONCILIATION when repo/HyperAgent disagree.",
       ...(validationOverlayApplied
         ? [
-            `PROVEN: Cursor validation overlay applied (${validationStatus}); discovery bridge cannot override verdicts.`,
+            `PROVEN: 26-slug Cursor validation overlay applied (${validationOverlay?.validation_status}); discovery bridge cannot override verdicts.`,
             `PROVEN: hyperagent_ingest_rel_path=${hyperagentIngestRelPath}.`,
           ]
         : []),
-      ...(validationOverlay && !commandCenterStatusUpdateAllowed
+      ...(ownerBrowserProofOverlayApplied
+        ? [
+            `PROVEN: 14-slug owner-browser-proof validation overlay applied (${ownerBrowserProofOverlay?.validation_status}); discovery candidates are not Verified Links.`,
+            `PROVEN: owner_browser_proof_candidate_count=${ownerBrowserProofCandidates.length} (DISCOVERY_CANDIDATES_OK only).`,
+            ...(ownerBrowserProofOverlay?.edr3_b087_excluded_as_oem
+              ? ["PROVEN: edr3rxd1 B087PDLZL9 excluded as OEM — aftermarket only."]
+              : []),
+            ...(ownerBrowserProofOverlay?.purepour_remains_blocked
+              ? ["PROVEN: purepour remains CONFLICT_REQUIRES_RECONCILIATION until FPPWFU01 vs FPPWFU02 repo-proven."]
+              : []),
+            ...(ownerBrowserProofOverlay?.frig_242086201_remains_blocked
+              ? [
+                  "PROVEN: frig-242086201 remains CONFLICT_REQUIRES_RECONCILIATION until 242086201=WF3CB/242086203 repo-proven.",
+                ]
+              : []),
+          ]
+        : []),
+      ...(!commandCenterStatusUpdateAllowed
         ? ["PROVEN: Command Center status update blocked — validation did not authorize closure."]
         : []),
-      ...(validationOverlay && !applyPlanningAllowed
+      ...(!applyPlanningAllowed
         ? ["PROVEN: apply_planning_allowed=false while validation_status is not PASS."]
         : []),
     ],
@@ -824,12 +1056,15 @@ export function buildFridgeSafeLinkBatchFactoryMarkdownV1(
     `- total_missing_before: **${report.cohort_summary.total_missing_before}**`,
     `- eligible_now_count: **${report.cohort_summary.eligible_now_count}**`,
     `- owner_browser_needed_count: **${report.cohort_summary.owner_browser_needed_count}**`,
+    `- owner_browser_proof_candidate_count: **${report.cohort_summary.owner_browser_proof_candidate_count}**`,
     `- no_safe_count: **${report.cohort_summary.no_safe_count}**`,
     `- conflict_count: **${report.cohort_summary.conflict_count}**`,
     `- do_not_use_count: **${report.cohort_summary.do_not_use_count}**`,
     `- validation_status: **${report.validation_status ?? "none"}**`,
     `- bundle_authentic: **${report.bundle_authentic ?? "n/a"}**`,
+    `- owner_browser_proof_bundle_authentic: **${report.owner_browser_proof_bundle_authentic ?? "n/a"}**`,
     `- validation_overlay_applied: **${report.validation_overlay_applied}**`,
+    `- owner_browser_proof_overlay_applied: **${report.owner_browser_proof_overlay_applied}**`,
     `- compatibility_label_count: **${report.cohort_summary.compatibility_label_count}**`,
     `- expected_coverage_delta: **+${report.cohort_summary.expected_coverage_delta}** (${report.cohort_summary.live_with_go_before} → ${report.cohort_summary.expected_live_with_go_after_if_eligible_applied} if eligible applied)`,
     "",
@@ -857,6 +1092,21 @@ export function buildFridgeSafeLinkBatchFactoryMarkdownV1(
   for (const r of report.blocked_rows) {
     lines.push(`- **${r.slug}** — ${r.batch_factory_state}: ${r.state_basis}`);
   }
+
+  const ownerBrowserCandidates = report.rows.filter(
+    (r) => r.owner_browser_proof_slug_verdict === "DISCOVERY_CANDIDATES_OK",
+  );
+  lines.push("", "## Owner-browser-proof discovery candidates (not apply-ready)", "");
+  if (ownerBrowserCandidates.length === 0) {
+    lines.push("_None._", "");
+  } else {
+    for (const r of ownerBrowserCandidates) {
+      const top = r.owner_browser_proof_candidates?.[0] ?? r.proposed_candidate_url ?? "UNKNOWN";
+      lines.push(`- **${r.slug}** → ${top}`);
+    }
+    lines.push("");
+  }
+
   lines.push("", report.recommended_next_action, "");
   return lines.join("\n");
 }

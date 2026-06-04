@@ -9,7 +9,7 @@
   "evidence_write_authorized": false,
   "netlify_api_authorized": false,
   "production_go_click_authorized": false,
-  "generated_at": "2026-06-04T17:19:37.077Z",
+  "generated_at": "2026-06-04T21:35:30.409Z",
   "source_command": "npm run buckparts:fridge-safe-link-batch-factory",
   "exact_repo_paths_read": [
     "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
@@ -20,7 +20,9 @@
     "data/evidence/",
     "src/lib/retailers/launch-buy-links.ts",
     "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json",
-    "data/fridge/batch-production/drafts/fridge-safe-link-cursor-validation-v1.json"
+    "data/fridge/batch-production/drafts/fridge-safe-link-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.json"
   ],
   "live_scan": {
     "sitemap_url": "https://buckparts.com/sitemap.xml",
@@ -34,9 +36,12 @@
   "hyperagent_bundle_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json",
   "hyperagent_discovery_bridge_rel_path": null,
   "cursor_validation_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-cursor-validation-v1.json",
+  "owner_browser_proof_validation_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
   "validation_status": "VALIDATION_PARTIAL",
   "bundle_authentic": true,
+  "owner_browser_proof_bundle_authentic": true,
   "validation_overlay_applied": true,
+  "owner_browser_proof_overlay_applied": true,
   "truth_closure_authorized": false,
   "command_center_status_update_allowed": false,
   "apply_planning_allowed": false,
@@ -44,11 +49,12 @@
   "cohort_summary": {
     "total_missing_before": 26,
     "eligible_now_count": 0,
-    "owner_browser_needed_count": 14,
+    "owner_browser_needed_count": 7,
+    "owner_browser_proof_candidate_count": 7,
     "no_safe_count": 5,
-    "conflict_count": 3,
+    "conflict_count": 5,
     "do_not_use_count": 1,
-    "compatibility_label_count": 3,
+    "compatibility_label_count": 8,
     "live_with_go_before": 31,
     "expected_live_with_go_after_if_eligible_applied": 31,
     "expected_coverage_delta": 0
@@ -61,7 +67,7 @@
       "live_url": "https://buckparts.com/filter/edr4rxd1",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "Repo evidence or HyperAgent candidate present — fresh owner browser proof required before batch apply.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [
         "data/evidence/amazon-edr4rxd1-oem-pdp-evidence.2026-05-04.json"
       ],
@@ -81,9 +87,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+        "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+        "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+        "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "edr3rxd1",
@@ -92,7 +111,7 @@
       "live_url": "https://buckparts.com/filter/edr3rxd1",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "Repo evidence or HyperAgent candidate present — fresh owner browser proof required before batch apply.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [
         "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json"
       ],
@@ -112,9 +131,24 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready",
+        "aftermarket_asin_B087PDLZL9_excluded_from_oem"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+        "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+        "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620"
+      ],
+      "rejected_owner_browser_proof_candidates": [
+        "https://www.amazon.com/dp/B087PDLZL9 (url_type=unsafe_or_irrelevant oem_or_compatible=aftermarket_excluded)"
+      ]
     },
     {
       "slug": "gswf",
@@ -192,7 +226,7 @@
       "live_url": "https://buckparts.com/filter/ultrawf",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -210,9 +244,20 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "frig-242086201",
@@ -220,8 +265,8 @@
       "brand_slug": "frigidaire",
       "live_url": "https://buckparts.com/filter/frig-242086201",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_CONFLICT): 242086201 vs 242086203 / WF3CB equivalence not repo-proven [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -239,9 +284,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_CONFLICT",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_conflict_blocked",
+        "owner_browser_proof_discrepancy_vs_prior_factory"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "eptwfu01",
@@ -250,7 +308,7 @@
       "live_url": "https://buckparts.com/filter/eptwfu01",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -268,9 +326,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+        "https://applianceparts.lowes.com/lowes-appliance-part/wci/eptwfu01",
+        "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "xwfe",
@@ -313,7 +384,7 @@
       "live_url": "https://buckparts.com/filter/fppwfu01",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -331,9 +402,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+        "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+        "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "wf2cb",
@@ -341,8 +425,8 @@
       "brand_slug": "frigidaire",
       "live_url": "https://buckparts.com/filter/wf2cb",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): Legacy/supersession compatibility label required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -360,9 +444,21 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+        "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+        "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "frig-242017801",
@@ -370,15 +466,15 @@
       "brand_slug": "frigidaire",
       "live_url": "https://buckparts.com/filter/frig-242017801",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): 242017801 = ULTRAWF alias/canonical decision required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
       "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
       "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
       "hyperagent_used_for_state": false,
-      "proposed_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "proposed_candidate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
       "proposed_path_type": "official_manufacturer_spec_pdp",
       "csv_safe_gated_count": 0,
       "csv_primary_is_search_placeholder": false,
@@ -389,9 +485,21 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+        "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "frig-242294502",
@@ -432,15 +540,15 @@
       "brand_slug": "frigidaire",
       "live_url": "https://buckparts.com/filter/purepour",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_CONFLICT): FPPWFU01 vs FPPWFU02 mapping unresolved — owner must resolve before any apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
       "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
       "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
       "hyperagent_used_for_state": false,
-      "proposed_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+      "proposed_candidate_url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
       "proposed_path_type": "official_manufacturer_spec_pdp",
       "csv_safe_gated_count": 0,
       "csv_primary_is_search_placeholder": false,
@@ -451,9 +559,24 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_CONFLICT",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_conflict_blocked",
+        "owner_browser_proof_discrepancy_vs_prior_factory"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html",
+        "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01"
+      ],
+      "rejected_owner_browser_proof_candidates": [
+        "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01 (not direct buyable page_type=direct_product_page)"
+      ]
     },
     {
       "slug": "wf3cb",
@@ -462,7 +585,7 @@
       "live_url": "https://buckparts.com/filter/wf3cb",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -480,9 +603,21 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "wfcb",
@@ -491,7 +626,7 @@
       "live_url": "https://buckparts.com/filter/wfcb",
       "live_has_go_cta": false,
       "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "state_basis": "Owner-browser-proof validation overlay (DISCOVERY_CANDIDATES_OK): Owner browser proof required — discovery candidates only, not Verified Link [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -509,9 +644,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:DISCOVERY_CANDIDATES_OK",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_required_not_apply_ready"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+        "https://www.frigidaire.ca/Filters--Accessories/Filters/Water-Filters/WFCB/",
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+        "https://www.ifixit.com/products/frigidaire-puresource-plus-water-and-ice-refrigerator-filter-wfcb"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "w10413645a",
@@ -680,8 +828,8 @@
       "brand_slug": "ge",
       "live_url": "https://buckparts.com/filter/smartwater-mwfp",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): EOL/discontinued label handling required per bundle discontinued findings [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -699,9 +847,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+        "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201",
+        "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "da97-17376a",
@@ -709,8 +870,8 @@
       "brand_slug": "samsung",
       "live_url": "https://buckparts.com/filter/da97-17376a",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): DA97-17376A → DA97-17376B supersession label required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -728,9 +889,21 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+        "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+        "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "da97-19467c",
@@ -771,8 +944,8 @@
       "brand_slug": "ge",
       "live_url": "https://buckparts.com/filter/mswf",
       "live_has_go_cta": false,
-      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
-      "state_basis": "HyperAgent discovery candidate — owner browser proof required; repo gates not satisfied.",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): EOL/discontinued label handling required per bundle discontinued findings [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
       "repo_evidence_files": [],
       "repo_evidence_verdict": null,
       "repo_draft_proof_files": [],
@@ -790,9 +963,22 @@
         "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
         "zero_launch_buy_links_safe_gated_rows",
         "committed_csv_browser_truth_not_direct_buyable",
-        "owner_browser_proof_required"
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
       ],
-      "wrong_part_risk": null
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+        "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF",
+        "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+        "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "pfmwf",
@@ -932,6 +1118,48 @@
       "wrong_part_risk": null
     },
     {
+      "slug": "frig-242086201",
+      "oem_part_token": "242086201",
+      "brand_slug": "frigidaire",
+      "live_url": "https://buckparts.com/filter/frig-242086201",
+      "live_has_go_cta": false,
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_CONFLICT): 242086201 vs 242086203 / WF3CB equivalence not repo-proven [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": false,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_CONFLICT",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_conflict_blocked",
+        "owner_browser_proof_discrepancy_vs_prior_factory"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+      ],
+      "rejected_owner_browser_proof_candidates": []
+    },
+    {
       "slug": "xwfe",
       "oem_part_token": "XWFE",
       "brand_slug": "ge",
@@ -966,6 +1194,88 @@
       "cursor_validation_overlay_applied": true
     },
     {
+      "slug": "wf2cb",
+      "oem_part_token": "WF2CB",
+      "brand_slug": "frigidaire",
+      "live_url": "https://buckparts.com/filter/wf2cb",
+      "live_has_go_cta": false,
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): Legacy/supersession compatibility label required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": false,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+        "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+        "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb"
+      ],
+      "rejected_owner_browser_proof_candidates": []
+    },
+    {
+      "slug": "frig-242017801",
+      "oem_part_token": "242017801",
+      "brand_slug": "frigidaire",
+      "live_url": "https://buckparts.com/filter/frig-242017801",
+      "live_has_go_cta": false,
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): 242017801 = ULTRAWF alias/canonical decision required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": false,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+        "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801"
+      ],
+      "rejected_owner_browser_proof_candidates": []
+    },
+    {
       "slug": "frig-242294502",
       "oem_part_token": "242294502",
       "brand_slug": "frigidaire",
@@ -997,6 +1307,50 @@
       "batch_factory_state_before_validation_overlay": "DO_NOT_USE_WRONG_PART_RISK",
       "cursor_validation_verdict": "CONFIRMED",
       "cursor_validation_overlay_applied": true
+    },
+    {
+      "slug": "purepour",
+      "oem_part_token": "PPWFU01",
+      "brand_slug": "frigidaire",
+      "live_url": "https://buckparts.com/filter/purepour",
+      "live_has_go_cta": false,
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_CONFLICT): FPPWFU01 vs FPPWFU02 mapping unresolved — owner must resolve before any apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": false,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_CONFLICT",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_conflict_blocked",
+        "owner_browser_proof_discrepancy_vs_prior_factory"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html",
+        "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01"
+      ],
+      "rejected_owner_browser_proof_candidates": [
+        "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01 (not direct buyable page_type=direct_product_page)"
+      ]
     },
     {
       "slug": "w10413645a",
@@ -1160,6 +1514,89 @@
       "cursor_validation_overlay_applied": true
     },
     {
+      "slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "brand_slug": "ge",
+      "live_url": "https://buckparts.com/filter/smartwater-mwfp",
+      "live_has_go_cta": false,
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): EOL/discontinued label handling required per bundle discontinued findings [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": true,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+        "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201",
+        "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp"
+      ],
+      "rejected_owner_browser_proof_candidates": []
+    },
+    {
+      "slug": "da97-17376a",
+      "oem_part_token": "DA97-17376A",
+      "brand_slug": "samsung",
+      "live_url": "https://buckparts.com/filter/da97-17376a",
+      "live_has_go_cta": false,
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): DA97-17376A → DA97-17376B supersession label required before apply [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": true,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+        "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+        "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677"
+      ],
+      "rejected_owner_browser_proof_candidates": []
+    },
+    {
       "slug": "da97-19467c",
       "oem_part_token": "DA97-19467C",
       "brand_slug": "samsung",
@@ -1191,6 +1628,48 @@
       "batch_factory_state_before_validation_overlay": "NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED",
       "cursor_validation_verdict": "CONFIRMED",
       "cursor_validation_overlay_applied": true
+    },
+    {
+      "slug": "mswf",
+      "oem_part_token": "MSWF",
+      "brand_slug": "ge",
+      "live_url": "https://buckparts.com/filter/mswf",
+      "live_has_go_cta": false,
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "state_basis": "Owner-browser-proof validation overlay (BLOCKED_LABEL_REQUIRED): EOL/discontinued label handling required per bundle discontinued findings [pre-overlay: APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF]",
+      "repo_evidence_files": [],
+      "repo_evidence_verdict": null,
+      "repo_draft_proof_files": [],
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "hyperagent_candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "hyperagent_used_for_state": false,
+      "proposed_candidate_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "proposed_path_type": "official_manufacturer_spec_pdp",
+      "csv_safe_gated_count": 0,
+      "csv_primary_is_search_placeholder": true,
+      "launch_buy_links_gate_passes": false,
+      "exact_blockers": [
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+        "zero_launch_buy_links_safe_gated_rows",
+        "committed_csv_browser_truth_not_direct_buyable",
+        "owner_browser_proof_required",
+        "owner_browser_proof_validation_overlay:BLOCKED_LABEL_REQUIRED",
+        "discovery_candidates_only_not_verified_link",
+        "owner_browser_proof_label_required_before_apply"
+      ],
+      "wrong_part_risk": null,
+      "batch_factory_state_before_owner_browser_proof_overlay": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_slug_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_validation_overlay_applied": true,
+      "owner_browser_proof_candidates": [
+        "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+        "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF",
+        "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+        "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf"
+      ],
+      "rejected_owner_browser_proof_candidates": []
     },
     {
       "slug": "pfmwf",
@@ -1270,7 +1749,7 @@
     "planned_changes": [],
     "note": "Read-only sketch only — not an authorized executor run. Owner batch apply-plan approval required before any guarded CSV apply."
   },
-  "recommended_next_action": "No slug is APPLY_ELIGIBLE_WITH_EXISTING_PROOF yet — continue owner-browser proof packets before batch apply-plan.",
+  "recommended_next_action": "7 slug(s) have owner-browser-proof discovery candidates only — capture fresh owner browser proof before any apply-plan. 8 label-required and 5 conflict slug(s) remain blocked.",
   "proven_facts": [
     "PROVEN: batch factory is read_only=true; all mutation authorization flags false.",
     "PROVEN: rescue cohort missing_safe_link_slug_count=26.",
@@ -1278,8 +1757,13 @@
     "PROVEN: HyperAgent ingest is external_discovery_authoritative=false.",
     "PROVEN: launch-buy-links safe_gated=0 for all 26 missing slugs in committed CSV.",
     "PROVEN: 4396508 classified CONFLICT_REQUIRES_RECONCILIATION when repo/HyperAgent disagree.",
-    "PROVEN: Cursor validation overlay applied (VALIDATION_PARTIAL); discovery bridge cannot override verdicts.",
+    "PROVEN: 26-slug Cursor validation overlay applied (VALIDATION_PARTIAL); discovery bridge cannot override verdicts.",
     "PROVEN: hyperagent_ingest_rel_path=data/fridge/batch-production/drafts/fridge-safe-link-hyperagent-ingest-bundle-v1.json.",
+    "PROVEN: 14-slug owner-browser-proof validation overlay applied (VALIDATION_PARTIAL); discovery candidates are not Verified Links.",
+    "PROVEN: owner_browser_proof_candidate_count=7 (DISCOVERY_CANDIDATES_OK only).",
+    "PROVEN: edr3rxd1 B087PDLZL9 excluded as OEM — aftermarket only.",
+    "PROVEN: purepour remains CONFLICT_REQUIRES_RECONCILIATION until FPPWFU01 vs FPPWFU02 repo-proven.",
+    "PROVEN: frig-242086201 remains CONFLICT_REQUIRES_RECONCILIATION until 242086201=WF3CB/242086203 repo-proven.",
     "PROVEN: Command Center status update blocked — validation did not authorize closure.",
     "PROVEN: apply_planning_allowed=false while validation_status is not PASS."
   ],
