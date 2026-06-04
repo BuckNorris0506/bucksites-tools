@@ -4,6 +4,8 @@ import { join } from "node:path";
 import test from "node:test";
 
 import {
+  SITE_OG_CARD_HOOK_WRONG,
+  SITE_OG_CARD_SUPPORT_LINE,
   SITE_SOCIAL_OG_DESCRIPTION,
   SITE_SOCIAL_OG_IMAGE_ALT,
   SITE_SOCIAL_OG_IMAGE_HEIGHT,
@@ -40,6 +42,8 @@ test("sitewide social metadata uses lookup-first copy without ecommerce claims",
   assert.equal(combined.includes("every filter"), false);
   assert.equal(combined.includes("ecommerce"), false);
   assert.equal(combined.includes("online store"), false);
+  assert.ok(SITE_SOCIAL_OG_IMAGE_ALT.includes(SITE_OG_CARD_HOOK_WRONG));
+  assert.ok(SITE_SOCIAL_OG_IMAGE_ALT.includes(SITE_OG_CARD_SUPPORT_LINE));
 });
 
 test("sitewide social metadata references OG and Twitter image routes", () => {
