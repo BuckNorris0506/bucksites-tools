@@ -6,15 +6,150 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center` and `npm run buckparts:command-surface` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`afaf86d`** — Grant application stopping point (see **Grant application stopping point** below). **Prior checkpoint `aec8b8c`** (grant trust pack + WHW safe-CTA expansion) is **superseded** — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run. **Older business metrics** in §4–§16 may still cite **`2026-05-03`** / **`9229144`** unless re-run — treat stale numbers as **UNKNOWN** until refreshed.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`f9af2fe`** — FOH refresh + fridge safe-link batch factory (see **Current stopping point — FOH + safe-link batch factory** below). **Prior checkpoint `afaf86d`** (grant application pack) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
 ---
 
-## Grant application stopping point (PROVEN through `afaf86d`)
+## Current stopping point — FOH + safe-link batch factory (PROVEN through `f9af2fe`)
 
-**Read this section first.** BuckParts is at a **grant-application stopping point** — **do not continue product expansion** (no new wedges, inventory CSVs, public opening, or coverage grinding) unless Jared explicitly redirects after grant work.
+**Read this section first** for HQ / Cursor / HyperAgent pickup (unless Jared explicitly redirects back to grant-only work in **Grant application stopping point** below).
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+```bash
+git status --short
+git log --oneline -8
+git rev-parse HEAD
+git rev-parse origin/main
+git merge-base --is-ancestor f9af2fe origin/main && echo "f9af2fe on origin/main"
+```
+
+| Item | Value |
+|------|--------|
+| Branch | **`main`** |
+| HEAD | **`f9af2fea4d20f9d7b8c85dbeaebd57882ef77789`** (`f9af2fe`) |
+| `origin/main` | **`f9af2fe`** — **same as HEAD** at handoff refresh |
+| Working tree | **Clean** at handoff refresh (`git status --short` empty) |
+
+**Recent commits on `main` / `origin/main` (PROVEN):**
+
+| SHA | Subject | On `origin/main`? |
+|-----|---------|-------------------|
+| **`f9af2fe`** | Add fridge safe link batch factory | **PROVEN** — not local-only |
+| **`a0884a2`** | Add GSWF GE official safe link proof packet | **PROVEN** |
+| **`8eaa8ac`** | Refresh BuckParts front of house first slice | **PROVEN** |
+
+Do **not** claim any commit is pushed unless `git rev-parse HEAD` equals `git rev-parse origin/main` (or `git branch -r --contains <sha>` includes `origin/main`).
+
+### 2. Front-of-house / site look
+
+| Claim | Status |
+|-------|--------|
+| FOH refresh is accepted direction; pre-FOH warm-beige homepage look is **stale** | **PROVEN** in-repo — `8eaa8ac` Option C tokens + homepage hero (`Wrong Buck.` / `Right Parts.`) in `src/app/page.tsx` |
+| FOH did **not** touch buyer-path gates, `/go`, Supabase, `data/retailer_links.csv`, or `data/evidence/**` | **PROVEN** — slice limited to `globals.css`, `tailwind.config.ts`, `SearchForm.tsx`, `SiteShell.tsx` (logo class only), `page.tsx`, `StatusLegend.tsx`, `marketing/*` cards |
+| Logo SVG geometry unchanged | **PROVEN** — `SiteShell.tsx` path `d` values unchanged; `text-bp-logo` decouples logo from trust token |
+| Filter/product pages still need future polish; gate logic stays separate | **INFERRED** — token refresh cascades; `TrustAwareBuySection` / `launch-buy-links` unchanged |
+| Live homepage shows FOH markers after push | **UNKNOWN in repo** — no FOH-specific string in committed `data/reports/*` live-smoke artifacts at handoff refresh; operator-reported PASS after push. Re-prove: `npm run buckparts:live-site-smoke:check` and manual GET `/` for `Wrong Buck.` / `Look it up` |
+
+**Visual QA (local, not committed):** screenshots under `/tmp/buckparts-foh-qa-v1/` — illustrative `VerifiedLinkCard` / `NoVerifiedLinkCard` on homepage only; **not** buyer-path gates.
+
+### 3. Safe-link coverage truth (PROVEN — batch factory artifact)
+
+**Source:** `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` → `data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json` (generated `2026-06-04T01:49:24.921Z`).
+
+| Metric | Value |
+|--------|--------|
+| `live_refrigerator_filter_pages_scanned` | **57** |
+| `live_with_go_cta_count` | **31** |
+| `live_without_go_cta_count` | **26** |
+| `total_missing_before` (rescue cohort) | **26** |
+| `expected_coverage_delta` (if eligible applied later) | **+1** only (`31` → `32`) |
+| `owner_browser_needed_count` | **21** |
+
+**Do not claim** live coverage improved from GSWF proof. **`a0884a2`** adds draft proof only — **no** Verified Link authorized or applied.
+
+| Slug / lane | State (PROVEN in batch factory) |
+|-------------|----------------------------------|
+| **GSWF** | **`APPLY_ELIGIBLE_WITH_EXISTING_PROOF`** — draft `data/fridge/batch-production/drafts/fridge-safe-link-gswf-ge-official-owner-browser-proof-v1.json`; **not live** |
+| **4396508** | **`CONFLICT_REQUIRES_RECONCILIATION`** — lane **stopped/quarantined**; repo vs HyperAgent conflict unresolved |
+| **4396842** | **`NO_SAFE_LINK_FOUND_KEEP_SUPPRESSED`** |
+| **XWF / XWFE** | **`NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL`** — no Verified Link until compatibility/supersession labeling |
+
+**Expected future delta:** **+1** live `/go` only if **gswf** later passes guarded CSV + Supabase parity + **explicit owner authorization** — not from proof packet alone.
+
+### 4. Efficiency Contract (required operating rule)
+
+Before giving Jared any next step, first ask:
+
+1. Does this move increase **live safe buyer paths** or build **reusable machinery** that increases many soon?
+2. Is this **batch** or **one-product copy/paste**?
+3. Does this **reduce** Jared’s future workload or **create more** owner relay?
+4. Is **HyperAgent** used for parallel discovery where strongest?
+5. Is **Cursor/repo** used for truth gates, classification, batch planning, and safe apply where strongest?
+6. What is **expected coverage delta**?
+7. What is the **smallest correct durable batch system**?
+
+If a move helps **one product only** and does **not** create reusable batch machinery, **stop** and propose batch/factory instead — unless Jared explicitly approves a one-off proof.
+
+### 5. HyperAgent operating model
+
+| Role | Owner |
+|------|--------|
+| Parallel discovery swarm | **HyperAgent** — external discovery, candidate sources, image/source discovery, marketing drafts, Mission Control orchestration |
+| Repo truth + gates | **Cursor/repo** — classification, batch factory, tests, validation, guarded apply **planning** |
+| HyperAgent findings | **Discovery input only** until repo gates validate |
+
+**Mission Control direction (INFERRED — HQ policy, not yet implemented in repo):**
+
+- One orchestrator agent classifies requests first, runs only needed specialists, outputs **one consolidated document**.
+- Specialist roster: Discovery, Truth & Risk, Repo-Ingest Planner, Marketing, Design/FOH, Strategy/HQ.
+- Trigger: **on demand** in chat.
+- Output: **consolidated doc**.
+- Slack/schedule: **later**, not now.
+
+### 6. Skills / tools context
+
+HyperAgent skills noted (operator-added): **Vignelli Canon Design System**, **Data-Viz / NYT truth-safe**, **Airtable Ops Board**.
+
+| Effect on BuckParts workflows | Status |
+|--------------------------------|--------|
+| Validated in-repo BuckParts workflow | **UNKNOWN** until used in a gated repo report |
+
+### 7. Current hard guardrails (unchanged)
+
+Unless **explicit owner approval** exists for that specific action:
+
+- No production mutation
+- No Supabase mutation
+- No `data/retailer_links.csv` mutation
+- No `data/evidence/**` mutation
+- No deploy
+- No `/go` click
+- No BuckParts Verified Link authorization
+
+### 8. Best next strategic direction
+
+- **Stop** one-slug proof loops unless proving a **reusable new lane**.
+- Next safe-link work: **batch proof capture / batch apply planning** for the **21** `APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF` rows — **not** another single-slug apply lane.
+- Goal: move many missing links through **HyperAgent discovery → Cursor batch factory → guarded apply** (owner-authorized only).
+
+**Re-prove batch factory:**
+
+```bash
+node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts | jq '{
+  cohort_summary,
+  proposed_first_batch_rows,
+  expected_coverage_delta
+}'
+```
+
+---
+
+## Grant application stopping point (historical — superseded by `f9af2fe` for next-move)
+
+**Superseded for next-move authority.** BuckParts was at a **grant-application stopping point** at **`afaf86d`** — retain for grant submission context only unless Jared redirects back to grant work.
 
 **Operating truth source (PROVEN):** `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` JSON. HQ handoff is migration/context only.
 
