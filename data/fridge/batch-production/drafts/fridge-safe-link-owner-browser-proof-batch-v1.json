@@ -1,0 +1,1322 @@
+{
+  "contract": "buckparts_hyperagent_batch_bundle_v1",
+  "bundle_id": "80626f13-4373-46a9-8e08-f1c09e5dbf2d",
+  "created_at": "2026-06-04T18:48:55.591616+00:00",
+  "mission_type": "SAFE_LINK_BROWSER_PROOF_BATCH",
+  "repo_checkpoint": "700d37b",
+  "read_only": true,
+  "truth_closure_claimed": false,
+  "command_center_closure_claimed": false,
+  "apply_planning_authorized": false,
+  "verified_link_authorized": false,
+  "packet_count": 14,
+  "not_authorized": [
+    "supabase_mutation",
+    "retailer_links_csv_mutation",
+    "evidence_mutation",
+    "deploy",
+    "go_click",
+    "verified_link_authorization",
+    "command_center_task_closure"
+  ],
+  "manifest": {
+    "contract": "buckparts_hyperagent_batch_manifest_v1",
+    "manifest_id": "d1a91d52-af99-41f7-8398-8c316c245665",
+    "mission_type": "SAFE_LINK_BROWSER_PROOF_BATCH",
+    "repo_checkpoint": "700d37b",
+    "created_at": "2026-06-04T18:48:55.591616+00:00",
+    "total_slugs": 14,
+    "cohort_slugs": [
+      "edr4rxd1",
+      "edr3rxd1",
+      "ultrawf",
+      "frig-242086201",
+      "eptwfu01",
+      "fppwfu01",
+      "wf2cb",
+      "frig-242017801",
+      "purepour",
+      "wf3cb",
+      "wfcb",
+      "smartwater-mwfp",
+      "da97-17376a",
+      "mswf"
+    ],
+    "state_distribution": {
+      "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF": 7,
+      "CONFLICT_REQUIRES_RECONCILIATION": 2,
+      "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL": 5
+    },
+    "expected_coverage_delta_if_cursor_validates": "Up to +6 near-term if the 6 APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF slugs pass owner browser proof and Cursor validation. Up to +14 total if all slugs (including those needing labels or reconciliation) are eventually resolved and applied. This is a discovery-side estimate only, not an authoritative coverage projection.",
+    "command_center_closure_claimed": false
+  },
+  "packets": [
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "f7d0d396-d2bb-4649-9cf8-c4176d54c792",
+      "slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "brand_slug": "whirlpool",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Multiple OEM candidate URLs found across Whirlpool.com, Amazon, Home Depot, and Lowes. Whirlpool.com PDP confirmed live but temporarily out of stock at crawl time. Amazon ASIN B00UB38V2A confirmed OEM EveryDrop by Whirlpool. Aftermarket Waterdrop ASIN B0CX166FSF identified and excluded. KitchenAid and Maytag companion brand PDPs also found (same Whirlpool Corp product)."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Brand confirmed as Whirlpool/EveryDrop across all sources. Aftermarket ASIN correctly excluded. Primary risk is whirlpool.com temporary out-of-stock status requiring owner browser proof. Strongest retail candidates are Amazon B00UB38V2A, HD /205738810, and Lowes /50352232."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "everydrop Refrigerator Water Filter 4 - EDR4RXD1 (Pack of 1), 1-Pack $36.99, Temporarily out of stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "EveryDrop by Whirlpool, EDR4RXD1, Single-Pack, Brand: EveryDrop by Whirlpool",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #205738810, Model #EDR4RXD1, Brand: EveryDrop, 2604 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Model #EDR4RXD1, Brand: everydrop, $59.99",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "EDR4RXD1 is EveryDrop Filter 4 by Whirlpool Corporation",
+        "Amazon ASIN B00UB38V2A brand is EveryDrop by Whirlpool",
+        "Aftermarket ASIN B0CX166FSF is Waterdrop brand, excluded",
+        "Home Depot Internet #205738810 is OEM EDR4RXD1",
+        "Lowes price $59.99 confirmed"
+      ],
+      "inferred_facts": [
+        "Whirlpool.com out-of-stock status is temporary, PDP itself is live",
+        "KitchenAid and Maytag PDPs are the same product under companion brands"
+      ],
+      "unknown_facts": [
+        "Current whirlpool.com stock status at time of owner browser proof",
+        "Current whirlpool.com price"
+      ],
+      "risks_summary": "Low overall risk. OEM identity clear. Primary concern is whirlpool.com temporary OOS. Multiple strong retail alternatives available.",
+      "recommended_browser_proof_urls": [
+        "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+        "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "0cf459fb-b48d-4466-b223-cd0edc6eef9d",
+      "slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "brand_slug": "whirlpool",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "OEM candidate URLs found across Whirlpool.com, Amazon, and Home Depot. Whirlpool.com PDP confirmed live but temporarily out of stock. Amazon ASIN B00UB441HS confirmed OEM EveryDrop by Whirlpool at $49.98 with high sales velocity (5K+ bought/week). CRITICAL: Amazon ASIN B087PDLZL9 is AFTERMARKET Waterdrop brand — flagged and excluded from all OEM candidate lists. Home Depot /302727620 confirmed at $59.99."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Aftermarket ASIN B087PDLZL9 hard exclusion required — highest-priority risk for this slug. Whirlpool.com temporarily OOS mirrors edr4rxd1 pattern. Amazon B00UB441HS is the strongest OEM candidate with high sales velocity. No Lowes direct PDP confirmed."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "everydrop Refrigerator Water Filter 3 - EDR3RXD1, NSF certified to reduce 73 contaminants, Temporarily out of stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "EveryDrop by Whirlpool, EDR3RXD1, $49.98, 4.7 stars 33958 ratings, 5K+ bought in past week, Is Discontinued By Manufacturer: No",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #302727620, Model #EDR3RXD1, Brand: Whirlpool, $59.99, 494 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/dp/B087PDLZL9",
+          "url_type": "unsafe_or_irrelevant",
+          "oem_or_compatible": "aftermarket_excluded",
+          "evidence_snippet": "AFTERMARKET Waterdrop brand — NOT OEM EveryDrop. Hard exclusion per mission brief and prior batch discovery.",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "HIGH",
+            "unavailable_or_discontinued_risk": "NONE",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "EDR3RXD1 is EveryDrop Filter 3 by Whirlpool Corporation",
+        "Amazon ASIN B00UB441HS is OEM EveryDrop by Whirlpool at $49.98",
+        "Amazon ASIN B087PDLZL9 is AFTERMARKET Waterdrop brand — hard exclusion required",
+        "Home Depot /302727620 is OEM at $59.99"
+      ],
+      "inferred_facts": [
+        "Whirlpool.com OOS status is temporary",
+        "No Lowes direct PDP exists for EDR3RXD1"
+      ],
+      "unknown_facts": [
+        "Current whirlpool.com stock and price",
+        "Lowes direct PDP URL"
+      ],
+      "risks_summary": "CRITICAL risk on ASIN B087PDLZL9 aftermarket exclusion. OEM identity otherwise clean. Whirlpool.com temporarily OOS. Amazon B00UB441HS is highest-confidence OEM candidate.",
+      "recommended_browser_proof_urls": [
+        "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+        "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "b73655c9-9745-4f7a-9375-a1b3e6aa39d4",
+      "slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_OPEN",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com PDP URL confirmed at /en/p/.../ULTRAWF but returned 504 timeout (not 404). 2-pack variant also found. Amazon ASIN B002JAKRAM branded Frigidaire Original but CAPTCHA blocked. Home Depot /203618461 confirmed with 2676 reviews but 0 in-store stock. Lowes category page found but no direct /pd/ PDP URL. Alternate part number 242017801 = ULTRAWF confirmed."
+        },
+        "truth_risk": {
+          "summary": "OEM identity INFERRED (no clean full-content manufacturer page retrieved). Home Depot 2676 reviews is strong OEM signal. Primary risks: frigidaire.com 504 timeout means mfr page not cleanly confirmed; Amazon CAPTCHA blocked; Lowes PDP gap. Owner browser proof required to resolve frigidaire.com page status."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "PureSource Ultra Water and Ice Refrigerator Filter White-ULTRAWF, URL confirmed but page returned 504 timeout",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-FBA_ULTRAWF-Filter-inches-White/dp/B002JAKRAM",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "FRIGIDAIRE ULTRAWF Pure Source Ultra Water Filter, Original, White — CAPTCHA blocked at crawl",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #203618461, Model #ULTRAWF, Brand: Frigidaire, 2676 reviews, 0 in store stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "Home Depot /203618461 is OEM Frigidaire ULTRAWF listing with 2676 reviews",
+        "242017801 = ULTRAWF confirmed"
+      ],
+      "inferred_facts": [
+        "Frigidaire.com PDP exists (504 not 404)",
+        "Amazon ASIN B002JAKRAM is likely OEM"
+      ],
+      "unknown_facts": [
+        "Frigidaire.com US price and stock",
+        "Whether ULTRAWF has been superseded by EPTWFU01",
+        "Lowes direct PDP URL"
+      ],
+      "risks_summary": "Medium risk. OEM identity strong but not cleanly confirmed via manufacturer page. Multiple crawl failures. Owner browser proof critical.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "31d4ff6d-5f9e-47c4-8af1-a07571e314c3",
+      "slug": "frig-242086201",
+      "oem_part_token": "242086201 (WF3CB)",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_OPEN",
+      "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com WF3CB PDP confirmed live at $36 with Add to Cart. However, alternate part numbers on PDP list 242086203 but NOT 242086201 specifically. Lowes /1003164400 confirmed WF3CB at $52.99. Home Depot /313853978 uses HD-specific SKU HDWF3CB. Amazon ASIN B0045LLC7K CAPTCHA blocked."
+        },
+        "truth_risk": {
+          "summary": "OEM identity INFERRED. WF3CB PDP exists and is live, but the slug's part number 242086201 does not appear in the manufacturer's alternate part list (242086203 appears instead). This creates a reconciliation requirement — likely revision variants of the same filter but exact equivalence not confirmed. Lowes is the cleanest confirmed OEM link."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "PureSource 3 Water and Ice Filter WF3CB, $36, Alt parts: 242069601, 242069603, 242086203, 242294501 — note 242086201 NOT listed",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "MEDIUM",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Item #661176, Model #WF3CB, Brand: Frigidaire, $52.99, 1k+ bought last week",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #313853978, Model #HDWF3CB (HD SKU for WF3CB), Brand: Frigidaire",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "Frigidaire.com WF3CB PDP live at $36",
+        "Lowes WF3CB listing at $52.99 with 1k+ bought/week",
+        "242086203 listed as alternate on frigidaire.com (but NOT 242086201)"
+      ],
+      "inferred_facts": [
+        "242086201 and 242086203 are likely revision variants of WF3CB",
+        "HD HDWF3CB is the same physical filter as WF3CB"
+      ],
+      "unknown_facts": [
+        "Whether 242086201 and 242086203 are confirmed interchangeable",
+        "Amazon ASIN B0045LLC7K OEM status"
+      ],
+      "risks_summary": "Part number discrepancy (242086201 vs 242086203) is the primary risk. WF3CB product itself is clearly available. Reconciliation needed before apply.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "e7b376fb-7ff7-4725-915f-5087cb03af5e",
+      "slug": "eptwfu01",
+      "oem_part_token": "EPTWFU01",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com PDP URL confirmed, support page cross-references price $54.99 with Add to Cart link. Home Depot /304492642 confirmed. Lowes applianceparts $68.22, In Stock. Amazon newer ASIN B0CXKH95V1 (Frigidaire) and older B01BKWSHHE found. 2-pack variant also available."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Strongest Frigidaire slug in the batch. Multiple clean confirmed PDPs. Minor risk on older Amazon ASIN B01BKWSHHE supersession. Frigidaire.com price sourced via cross-reference, direct PDP crawl needed for current confirmation."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "PureSource Ultra II Water and Ice Refrigerator Filter, $54.99 per support cross-reference",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #304492642, Model #EPTWFU01, Brand: Frigidaire, premium genuine water filter",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/eptwfu01",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Part Number EPTWFU01, Brand: ELECTROLUX, Price: $68.22, In Stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire EPTWFU01 PureSource Ultra II, ASIN B0CXKH95V1, newer Frigidaire listing",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "EPTWFU01 is Frigidaire PureSource Ultra II",
+        "Home Depot /304492642 confirmed OEM",
+        "Lowes applianceparts $68.22, In Stock",
+        "Amazon ASIN B0CXKH95V1 is Frigidaire"
+      ],
+      "inferred_facts": [
+        "Frigidaire.com PDP is live at $54.99",
+        "ASIN B01BKWSHHE is legacy, superseded by B0CXKH95V1"
+      ],
+      "unknown_facts": [
+        "Frigidaire.com direct PDP current price via clean browser load"
+      ],
+      "risks_summary": "Low risk overall. Strongest Frigidaire slug. Multiple confirmed OEM PDPs.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+        "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "e9dae92c-5c4c-4887-ac6b-7718ec56022c",
+      "slug": "fppwfu01",
+      "oem_part_token": "FPPWFU01",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_OPEN",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com PDP URL confirmed but timed out (504). Home Depot /319137659 (HDFPPWFU01) explicitly states 'This is the same filter FPPWFU01.' Lowes /5013265821 confirmed but CURRENTLY UNAVAILABLE at crawl. Amazon ASIN B08V6JB9R7 confirmed Frigidaire at $47 with 30K+ bought/month."
+        },
+        "truth_risk": {
+          "summary": "OEM identity INFERRED (manufacturer page timed out). HD explicit equivalence statement is strong. Amazon confirmed and in stock. Lowes unavailability is a concern. Frigidaire.com needs browser proof."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "PurePour Water and Ice Refrigerator Filter PWF-1, URL confirmed but 504 timeout",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #319137659, HDFPPWFU01, 'This is the same filter FPPWFU01'",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire FPPWFU01 PurePour PWF-1, $47.00, In Stock, 8951 ratings, 30K+ bought/month",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Model #FPPWFU01, $42.07, CURRENTLY UNAVAILABLE at crawl",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "HIGH",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "HD /319137659 explicitly states 'This is the same filter FPPWFU01'",
+        "Amazon ASIN B08V6JB9R7 is Frigidaire FPPWFU01 at $47",
+        "Lowes $42.07 but CURRENTLY UNAVAILABLE at crawl"
+      ],
+      "inferred_facts": [
+        "Frigidaire.com PDP exists (504 not 404)",
+        "HD /317964823 is likely a purchasable PDP for FPPWFU01"
+      ],
+      "unknown_facts": [
+        "Frigidaire.com US price and stock",
+        "Whether Lowes restocks"
+      ],
+      "risks_summary": "Medium risk. Manufacturer page unconfirmed. Strong retail alternatives via Amazon and Home Depot.",
+      "recommended_browser_proof_urls": [
+        "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+        "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "a07da714-3c49-4774-a0b3-cc257e8c1467",
+      "slug": "wf2cb",
+      "oem_part_token": "WF2CB",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_OPEN",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com PDP URL found but 504 timeout. Cross-confirmed by support page linking to frigidaire.com/product/WF2CB. Frigidaire.ca live at $61.99 CAD. Home Depot /202535261 confirmed but notes 'for refrigerators produced before 2010.' Lowes applianceparts $61.24, In Stock. Amazon ASIN B0032JTS5E CAPTCHA blocked."
+        },
+        "truth_risk": {
+          "summary": "OEM identity INFERRED (manufacturer page timed out). Legacy product line for pre-2010 fridges. Obsolescence risk is the primary concern. Lowes applianceparts In Stock is a positive counterweight. Needs compatibility/supersession label before apply."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "URL confirmed but 504 timeout. Support page links to frigidaire.com/product/WF2CB",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #202535261, Model #WF2CB, for refrigerators produced before 2010, 0 in store stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Part Number WF2CB, Brand: ELECTROLUX, Price $61.24, In Stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.amazon.com/Frigidaire-WF2CB-PureSource2-Filtration-System/dp/B0032JTS5E",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire WF2CB PureSource 2, CAPTCHA blocked, older ASIN",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "Home Depot /202535261 Model #WF2CB, 'for refrigerators produced before 2010'",
+        "Lowes applianceparts WF2CB $61.24, In Stock",
+        "Frigidaire.ca WF2CB live at $61.99 CAD",
+        "Alternate part numbers: 240396401, 240396403, 240396404, 241968503, 242007901"
+      ],
+      "inferred_facts": [
+        "Frigidaire.com US PDP exists (504 not 404)",
+        "Amazon ASIN B0032JTS5E is likely OEM"
+      ],
+      "unknown_facts": [
+        "Frigidaire.com US price and active-catalog status",
+        "Whether WF2CB has an active successor for post-2010 models",
+        "Amazon ASIN B0032JTS5E OEM status and fulfillment"
+      ],
+      "risks_summary": "High legacy/obsolescence risk. Pre-2010 product line. Needs compatibility/supersession label before any apply action.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+        "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "e3268acc-d3cc-459f-b791-a65a5d259dcf",
+      "slug": "frig-242017801",
+      "oem_part_token": "242017801 (ULTRAWF)",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "242017801 = ULTRAWF confirmed (PROVEN). Same physical product as slug 'ultrawf.' Frigidaireapplianceparts.com ULTRAWF in-stock at $59.99, Ships Tomorrow. Home Depot /203618461 confirmed with 2676 reviews. allfilters.com explicitly lists 242017801 at $53.99. Amazon ASIN B002JAKRAM CAPTCHA blocked."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN via 242017801 = ULTRAWF equivalence. Primary risk is catalog architecture — this slug and 'ultrawf' resolve to the same physical filter. Needs a compatibility/supersession label to indicate canonical slug vs alternate part number. Multiple strong OEM sources."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "OEM Part #ULTRAWF, $59.99, In Stock, Ships Tomorrow, replaces 242294401, 241791601",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #203618461, Model #ULTRAWF, Brand: Frigidaire, 2676 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire 242017801 Water Filter (OEM), $53.99, explicitly lists 242017801 in URL",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "242017801 = ULTRAWF (confirmed by PartSelect, DDApplianceParts, allfilters.com)",
+        "Frigidaireapplianceparts.com ULTRAWF $59.99, In Stock",
+        "Home Depot /203618461 Frigidaire ULTRAWF, 2676 reviews"
+      ],
+      "inferred_facts": [
+        "Amazon ASIN B002JAKRAM maps to ULTRAWF",
+        "This slug and 'ultrawf' refer to the same physical product"
+      ],
+      "unknown_facts": [
+        "Whether repo intends this slug as canonical or alias redirect to 'ultrawf'"
+      ],
+      "risks_summary": "Needs catalog architecture decision. Same product as ultrawf. Multiple strong OEM sources. Label required before apply.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "803e7d95-6972-426d-baa1-cd379216a604",
+      "slug": "purepour",
+      "oem_part_token": "FPPWFU01 (PurePour PWF-1, INFERRED)",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_BLOCKED",
+      "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "PurePour is PROVEN as Frigidaire brand. Two current non-interchangeable SKUs exist: FPPWFU01 (PWF-1, standard) and FPPWFU02 (PWF-2 Connect, smart). Slug 'purepour' is ambiguous between them. Amazon ASIN B08V6JB9R7 for FPPWFU01 confirmed at $47 with 30K+ bought/month. Frigidaire.ca FPPWFU01 at $74.99 CAD. AJ Madison FPPWFU01 at $69. Frigidaire.com US PDP timed out."
+        },
+        "truth_risk": {
+          "summary": "CRITICAL — Slug 'purepour' is ambiguous between FPPWFU01 and FPPWFU02, which are NOT interchangeable. Wrong mapping causes wrong-part risk. Discovery BLOCKED until repo owner resolves mapping. If FPPWFU01 is intended, strong candidates exist (Amazon, AJ Madison, frigidaire.ca). If FPPWFU02 is intended, different URLs are needed."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire FPPWFU01 PurePour PWF-1, $47.00, 30K+ bought/month — IF slug maps to FPPWFU01",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "HIGH",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire PurePour WF-1, CAD $74.99, Add to Cart — IF slug maps to FPPWFU01",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "HIGH",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire FPPWFU01 PurePour, $69.00, Only 5 left, Authorized Dealer",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "HIGH",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "PurePour is a Frigidaire brand name",
+        "FPPWFU01 (PWF-1) and FPPWFU02 (PWF-2 Connect) are both current, NOT interchangeable",
+        "Amazon ASIN B08V6JB9R7 is Frigidaire FPPWFU01 at $47"
+      ],
+      "inferred_facts": [
+        "Slug 'purepour' most likely maps to FPPWFU01 (PWF-1)"
+      ],
+      "unknown_facts": [
+        "Repo owner's intended mapping — FPPWFU01 only, FPPWFU02 only, or both",
+        "Frigidaire.com US PDP status"
+      ],
+      "risks_summary": "CRITICAL wrong-part disambiguation risk. BLOCKED until owner resolves FPPWFU01 vs FPPWFU02 mapping. Cannot safely apply without this decision.",
+      "recommended_browser_proof_urls": [
+        "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "635fcadb-0439-4988-9ae1-8474294acc2c",
+      "slug": "wf3cb",
+      "oem_part_token": "WF3CB",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Frigidaire.com WF3CB PDP PROVEN live at $36 with Add to Cart and Subscribe & Save. Lowes /1003164400 confirmed at $52.99, 1k+ bought/week. Home Depot /313853978 (HDWF3CB). AppliancePartsPros $73.25, In Stock. DiscountFilterStore $54.50, explicitly confirms genuine Frigidaire OEM."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Strongest Frigidaire slug. Manufacturer PDP cleanly confirmed with price and cart. Multiple retailers confirmed. Alternate part numbers are metadata concerns, not blockers for this slug."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "PureSource 3 WF3CB, $36, Add to Cart, Subscribe & Save 25%, NSF 42/53/401",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Model #WF3CB, Brand: Frigidaire, $52.99, 1k+ bought last week, Frigidaire Genuine Filters seal",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #313853978, Model #HDWF3CB (HD SKU for WF3CB), Brand: Frigidaire, 2380 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "LOW",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "Frigidaire.com WF3CB live at $36 with Add to Cart",
+        "Lowes WF3CB $52.99, 1k+ bought/week",
+        "DiscountFilterStore explicitly confirms genuine Frigidaire PureSource3 WF3CB"
+      ],
+      "inferred_facts": [
+        "Amazon ASIN B0045LLC7K maps to WF3CB (CAPTCHA blocked)"
+      ],
+      "unknown_facts": [
+        "Amazon listing price and seller identity"
+      ],
+      "risks_summary": "Low risk. Cleanest Frigidaire slug with manufacturer PDP fully confirmed at $36.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "c9552a49-5066-4056-bd11-3a41ca71d16e",
+      "slug": "wfcb",
+      "oem_part_token": "WFCB",
+      "brand_slug": "frigidaire",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Home Depot /308000660 confirmed at $24.94 with 1093 reviews (PROVEN). Frigidaire.ca WFCB PDP at $51.99 CAD (PROVEN). Frigidaire.com US PDP URL confirmed but 504 timeout. Amazon ASIN B0CC2TCJ57 found with 'OEM' in title but seller unclear. Shore Appliances $33 OEM. iFixit $53.99 genuine Electrolux."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN via multiple sources (frigidaire.ca, HD, Shore, iFixit). Older filter line with long revision history. Frigidaire.com US 504 is likely crawl artifact. HD at $24.94 is strong confirmed candidate. Owner browser proof needed for frigidaire.com US."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #308000660, Model #WFCB, Brand: Frigidaire, $24.94, 1093 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.frigidaire.ca/Filters--Accessories/Filters/Water-Filters/WFCB/",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Frigidaire PureSource Plus WFCB, CAD $51.99, Add to Cart, NSF 42/53",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "URL confirmed but 504 timeout — requires owner browser proof",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.ifixit.com/products/frigidaire-puresource-plus-water-and-ice-refrigerator-filter-wfcb",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "$53.99, genuine Electrolux part, Ready to ship, 220+ compatible models",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "Home Depot /308000660 is Frigidaire WFCB at $24.94",
+        "Frigidaire.ca WFCB $51.99 CAD, Add to Cart",
+        "iFixit confirms genuine Electrolux part",
+        "Shore Appliances $33 OEM"
+      ],
+      "inferred_facts": [
+        "Frigidaire.com US PDP exists (504 not 404)",
+        "Amazon ASIN B0CC2TCJ57 is OEM (title claim)"
+      ],
+      "unknown_facts": [
+        "Frigidaire.com US price and stock",
+        "Amazon seller identity for ASIN B0CC2TCJ57"
+      ],
+      "risks_summary": "Medium risk due to legacy product line and manufacturer page timeout. Strong retail coverage via HD and iFixit.",
+      "recommended_browser_proof_urls": [
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+        "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "bfebdb85-bc75-4a76-baed-e97be1056328",
+      "slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "brand_slug": "ge",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "GE Appliance Parts PDP confirmed at $49.99 with Add to Cart. geappliances.com consumer site says 'no longer being manufactured' and 'Temporarily out of stock' (PROVEN EOL). Home Depot /204635201 shows model MWF (not MWFP) at $38.10. Lowes applianceparts $84.60, In Stock. AppliancePartsPros $53.75, In Stock. iFixit $70.99 genuine GE. Supersession chain GWF/HWF/MWFA/MWF -> MWFP PROVEN."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Critical EOL signal from geappliances.com — product no longer manufactured. Conflict between geappliances.com (EOL/OOS) and geapplianceparts.com (in-stock). Home Depot model MWF (not MWFP) is a label mismatch. Needs EOL and compatibility/supersession label before apply."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "GE MWF REFRIGERATOR WATER FILTER MWFP, $49.99, Add to Cart, NSF 42/53",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Model #MWFP, $49.99 Sale Clearance, 'no longer being manufactured,' Temporarily out of stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "HIGH",
+            "search_page_not_buyable_risk": "MEDIUM"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #204635201, Model #MWF (NOT MWFP), Brand: GE, $38.10, 0 in store",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "MEDIUM",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Part Number MWFP, Brand: GENERAL ELECTRIC, $84.60, In Stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "GE Appliance Parts MWFP $49.99, Add to Cart",
+        "geappliances.com says 'no longer being manufactured'",
+        "Supersession chain GWF/HWF/MWFA/MWF -> MWFP confirmed",
+        "Lowes applianceparts $84.60 In Stock",
+        "AppliancePartsPros $53.75 In Stock"
+      ],
+      "inferred_facts": [
+        "HD model MWF listing may ship MWFP stock",
+        "EOL may be temporary supply gap vs permanent discontinuation"
+      ],
+      "unknown_facts": [
+        "Whether MWFP manufacturing has fully ceased",
+        "Amazon OEM ASIN for MWFP"
+      ],
+      "risks_summary": "High EOL risk. Product obtainable today but manufacturing ceased per GE consumer site. Needs EOL + supersession labels before apply.",
+      "recommended_browser_proof_urls": [
+        "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "85ea368f-a09e-4505-a903-89ffbd958add",
+      "slug": "da97-17376a",
+      "oem_part_token": "DA97-17376A (superseded by DA97-17376B)",
+      "brand_slug": "samsung",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "Samsung.com HAF-QIN PDP confirmed at $44.99 with Add to Cart. HAF-QIN/EXP is the consumer model name for DA97-17376B cartridge (PROVEN via Samsung spec pages). Home Depot /302029386 confirmed at $36.19, explicitly states 'Replacement Cartridge DA97-17376B.' Lowes /1000225677 found but Akamai-blocked. No independent DA97-17376A listing exists at any retailer."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Slug references the superseded A revision. Physical product (DA97-17376B / HAF-QIN) is in-stock and actively sold. Needs supersession label (A -> B) before apply. Once labeled, this is a strong candidate. Compatible Waterdrop replacement flagged and excluded."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "HAF-QIN Refrigerator Water Filter, $44.99, Add to cart, Subscribe & Save available",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "MEDIUM",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #302029386, Samsung Genuine HAF-QINS, $36.19, 'Replacement Cartridge DA97-17376B', 1663 reviews",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Samsung HAF-QINS, URL confirmed but Akamai-blocked at crawl",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "LOW",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "DA97-17376A superseded by DA97-17376B (same physical filter)",
+        "Samsung.com HAF-QIN $44.99 with Add to Cart",
+        "Home Depot explicitly states 'Replacement Cartridge DA97-17376B'",
+        "HAF-QIN/EXP = DA97-17376B cartridge confirmed via Samsung spec pages"
+      ],
+      "inferred_facts": [
+        "Lowes HAF-QINS listing is active but Akamai-blocked at crawl",
+        "No retailer independently lists DA97-17376A"
+      ],
+      "unknown_facts": [
+        "Lowes price and stock",
+        "Whether any retailer still lists DA97-17376A as distinct SKU"
+      ],
+      "risks_summary": "Low technical risk. Needs supersession label (A -> B) for correct routing. Product actively sold and available once labeled.",
+      "recommended_browser_proof_urls": [
+        "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+        "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "35e4add1-3ede-486a-a74b-874f9e3e0d63",
+      "slug": "mswf",
+      "oem_part_token": "MSWF",
+      "brand_slug": "ge",
+      "read_only": true,
+      "truth_closure_claimed": false,
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "specialist_outputs": {
+        "discovery": {
+          "summary": "GE Appliance Parts PDP confirmed at $44.99 with Add to Cart and SmartOrder subscription. geappliances.com says 'no longer being manufactured' (PROVEN EOL). Home Depot /100614870 at $36.99 but 0 in-store stock. Sears PartsDirect $65.35, In Stock, GenuineOEM. No Lowes PDP found. Amazon ASIN B00126NABC CAPTCHA blocked."
+        },
+        "truth_risk": {
+          "summary": "OEM identity PROVEN. Same EOL pattern as MWFP — geappliances.com confirms end of manufacturing. geapplianceparts.com still sells with SmartOrder subscription (continuity signal). Needs EOL label before apply. Compatible Mist replacement flagged and excluded."
+        }
+      },
+      "candidate_urls": [
+        {
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "GE MSWF REFRIGERATOR WATER FILTER, $44.99, Add to Cart, SmartOrder subscription available, NSF 42/53",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF",
+          "url_type": "official_manufacturer_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Model #MSWF, $44.99 Sale Clearance, 'no longer being manufactured'",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "LOW",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "HIGH",
+            "search_page_not_buyable_risk": "MEDIUM"
+          }
+        },
+        {
+          "url": "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "Internet #100614870, Model #MSWF, Brand: GE, $36.99, 0 in store stock",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "MEDIUM",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        },
+        {
+          "url": "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf",
+          "url_type": "retailer_direct_pdp",
+          "oem_or_compatible": "OEM",
+          "evidence_snippet": "G.E. SmartWater MSWF, $65.35, In Stock, GenuineOEM badge",
+          "page_type": "direct_product_page",
+          "risks": {
+            "wrong_part_risk": "NONE",
+            "supersession_risk": "NONE",
+            "compatible_not_oem_risk": "NONE",
+            "unavailable_or_discontinued_risk": "LOW",
+            "search_page_not_buyable_risk": "NONE"
+          }
+        }
+      ],
+      "proven_facts": [
+        "GE Appliance Parts MSWF $44.99, Add to Cart, SmartOrder available",
+        "geappliances.com says 'no longer being manufactured'",
+        "Home Depot $36.99 but 0 in-store stock",
+        "Sears PartsDirect $65.35, In Stock, GenuineOEM"
+      ],
+      "inferred_facts": [
+        "SmartOrder availability may indicate ongoing supply arrangement despite EOL",
+        "Amazon ASIN B00126NABC maps to MSWF"
+      ],
+      "unknown_facts": [
+        "Whether Lowes carries MSWF",
+        "Whether manufacturing has fully ceased",
+        "Amazon OEM status"
+      ],
+      "risks_summary": "High EOL risk (same pattern as MWFP). Obtainable today but manufacturing ceased. Needs EOL label before apply.",
+      "recommended_browser_proof_urls": [
+        "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+        "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF"
+      ],
+      "created_at": "2026-06-04T18:48:55.591616+00:00"
+    }
+  ]
+}

@@ -1,0 +1,852 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "ae68b043-74e1-4b11-8e9d-4ba50cf68efe",
+  "mission_type": "SAFE_LINK_BROWSER_PROOF_BATCH",
+  "cohort_key": "refrigerator_water_owner_browser_needed",
+  "bundle_id": "80626f13-4373-46a9-8e08-f1c09e5dbf2d",
+  "manifest_id": "d1a91d52-af99-41f7-8398-8c316c245665",
+  "validated_at": "2026-06-04T21:15:47.342Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "commands_run": [
+    "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts",
+    "validateOwnerBrowserProofBatchIntegrityV1",
+    "runOwnerBrowserProofBatchValidationV1"
+  ],
+  "bundle_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.json",
+  "provenance_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.provenance.json",
+  "validation_scope": "owner_browser_proof_discovery_validation_only",
+  "command_center_closure_implied": false,
+  "truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "verified_link_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "validation_details": {
+    "packet_count": 14,
+    "bundle_authentic": true,
+    "integrity_errors": [],
+    "synthetic_packet_slugs": [],
+    "slug_verdicts": [
+      {
+        "slug": "edr4rxd1",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+          "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+          "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+          "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "edr3rxd1",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+          "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+          "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620"
+        ],
+        "rejected_or_risky_candidates": [
+          "https://www.amazon.com/dp/B087PDLZL9 (url_type=unsafe_or_irrelevant oem_or_compatible=aftermarket_excluded)"
+        ]
+      },
+      {
+        "slug": "ultrawf",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "frig-242086201",
+        "verdict": "BLOCKED_CONFLICT",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "242086201 vs 242086203 / WF3CB equivalence not repo-proven",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+          "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "eptwfu01",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+          "https://applianceparts.lowes.com/lowes-appliance-part/wci/eptwfu01",
+          "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "fppwfu01",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+          "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+          "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "wf2cb",
+        "verdict": "BLOCKED_LABEL_REQUIRED",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Legacy/supersession compatibility label required before apply",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+          "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+          "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "frig-242017801",
+        "verdict": "BLOCKED_LABEL_REQUIRED",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "242017801 = ULTRAWF alias/canonical decision required before apply",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+          "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+          "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "purepour",
+        "verdict": "BLOCKED_CONFLICT",
+        "proposed_state": "CONFLICT_REQUIRES_RECONCILIATION",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "FPPWFU01 vs FPPWFU02 mapping unresolved — owner must resolve before any apply",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html",
+          "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01"
+        ],
+        "rejected_or_risky_candidates": [
+          "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01 (not direct buyable page_type=direct_product_page)"
+        ]
+      },
+      {
+        "slug": "wf3cb",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+          "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "wfcb",
+        "verdict": "DISCOVERY_CANDIDATES_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "Owner browser proof required — discovery candidates only, not Verified Link",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+          "https://www.frigidaire.ca/Filters--Accessories/Filters/Water-Filters/WFCB/",
+          "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "https://www.ifixit.com/products/frigidaire-puresource-plus-water-and-ice-refrigerator-filter-wfcb"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "verdict": "BLOCKED_LABEL_REQUIRED",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "EOL/discontinued label handling required per bundle discontinued findings",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+          "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201",
+          "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "da97-17376a",
+        "verdict": "BLOCKED_LABEL_REQUIRED",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "DA97-17376A → DA97-17376B supersession label required before apply",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+          "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+          "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677"
+        ],
+        "rejected_or_risky_candidates": []
+      },
+      {
+        "slug": "mswf",
+        "verdict": "BLOCKED_LABEL_REQUIRED",
+        "proposed_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+        "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "reason": "EOL/discontinued label handling required per bundle discontinued findings",
+        "strongest_owner_browser_proof_candidates": [
+          "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+          "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF",
+          "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+          "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf"
+        ],
+        "rejected_or_risky_candidates": []
+      }
+    ],
+    "candidate_url_verdicts": [
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.amazon.com/dp/B087PDLZL9",
+        "url_type": "unsafe_or_irrelevant",
+        "oem_or_compatible": "aftermarket_excluded",
+        "verdict": "REJECTED_RISKY_OR_AFTERMARKET",
+        "reason": "url_type=unsafe_or_irrelevant oem_or_compatible=aftermarket_excluded"
+      },
+      {
+        "slug": "ultrawf",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "ultrawf",
+        "url": "https://www.amazon.com/Frigidaire-FBA_ULTRAWF-Filter-inches-White/dp/B002JAKRAM",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "UNKNOWN_CAPTCHA_OR_UNVERIFIED",
+        "reason": "Amazon CAPTCHA blocked at crawl; no matching repo evidence ASIN"
+      },
+      {
+        "slug": "ultrawf",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/eptwfu01",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://www.amazon.com/Frigidaire-WF2CB-PureSource2-Filtration-System/dp/B0032JTS5E",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "UNKNOWN_CAPTCHA_OR_UNVERIFIED",
+        "reason": "Amazon CAPTCHA blocked at crawl; no matching repo evidence ASIN"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "NOT_DIRECT_BUYABLE",
+        "reason": "not direct buyable page_type=direct_product_page"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.frigidaire.ca/Filters--Accessories/Filters/Water-Filters/WFCB/",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.ifixit.com/products/frigidaire-puresource-plus-water-and-ice-refrigerator-filter-wfcb",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF",
+        "url_type": "official_manufacturer_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — official_manufacturer_pdp"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf",
+        "url_type": "retailer_direct_pdp",
+        "oem_or_compatible": "OEM",
+        "verdict": "ACCEPTABLE_OWNER_BROWSER_CANDIDATE",
+        "reason": "discovery candidate only — retailer_direct_pdp"
+      }
+    ],
+    "strongest_owner_browser_proof_candidates": [
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-4-edr4rxd1-pack-of-1.edr4rxd1.html"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810"
+      },
+      {
+        "slug": "edr4rxd1",
+        "url": "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.everydrop-refrigerator-water-filter-3-edr3rxd1-pack-of-1.edr3rxd1.html"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS"
+      },
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620"
+      },
+      {
+        "slug": "ultrawf",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF"
+      },
+      {
+        "slug": "ultrawf",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+      },
+      {
+        "slug": "frig-242086201",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/eptwfu01"
+      },
+      {
+        "slug": "eptwfu01",
+        "url": "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7"
+      },
+      {
+        "slug": "fppwfu01",
+        "url": "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF2CB"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://www.homedepot.com/p/Frigidaire-Pure-Source-2-Water-Filter-for-Frigidaire-Refrigerators-WF2CB/202535261"
+      },
+      {
+        "slug": "wf2cb",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/wci/wf2cb"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461"
+      },
+      {
+        "slug": "frig-242017801",
+        "url": "https://www.allfilters.com/refrigeratorfilters/frigidaire/242017801"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.ajmadison.com/cgi-bin/ajmadison/FPPWFU01.html"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+      },
+      {
+        "slug": "wf3cb",
+        "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.frigidaire.ca/Filters--Accessories/Filters/Water-Filters/WFCB/"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB"
+      },
+      {
+        "slug": "wfcb",
+        "url": "https://www.ifixit.com/products/frigidaire-puresource-plus-water-and-ice-refrigerator-filter-wfcb"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.geappliances.com/appliance/GE-MWF-REFRIGERATOR-WATER-FILTER-MWFP"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://www.homedepot.com/p/GE-Genuine-MWF-Refrigerator-Water-Filter-for-GE-MWF/204635201"
+      },
+      {
+        "slug": "smartwater-mwfp",
+        "url": "https://applianceparts.lowes.com/lowes-appliance-part/geh/mwfp"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.homedepot.com/p/Samsung-Genuine-HAF-QINS-Water-Filter-for-Samsung-Refrigerators-HAF-QINS/302029386"
+      },
+      {
+        "slug": "da97-17376a",
+        "url": "https://www.lowes.com/pd/Samsung-6-Month-Refrigerator-Water-Filter/1000225677"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.geapplianceparts.com/store/parts/spec/MSWF"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.geappliances.com/appliance/GE-MSWF-REFRIGERATOR-WATER-FILTER-MSWF"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.homedepot.com/p/GE-Refrigerator-Water-Filter-MSWF/100614870"
+      },
+      {
+        "slug": "mswf",
+        "url": "https://www.searspartsdirect.com/product/13tuuehwnt-0046-363/id-mswf"
+      }
+    ],
+    "rejected_or_risky_candidates": [
+      {
+        "slug": "edr3rxd1",
+        "url": "https://www.amazon.com/dp/B087PDLZL9",
+        "reason": "url_type=unsafe_or_irrelevant oem_or_compatible=aftermarket_excluded"
+      },
+      {
+        "slug": "purepour",
+        "url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPPWFU01",
+        "reason": "not direct buyable page_type=direct_product_page"
+      }
+    ],
+    "edr3_b087_excluded_as_oem": true,
+    "edr3_b087_present_as_aftermarket_only": true,
+    "purepour_remains_blocked": true,
+    "frig_242086201_remains_blocked": true,
+    "discrepancies": [
+      "frig-242086201: batch_factory owner-browser-needed vs bundle CONFLICT_REQUIRES_RECONCILIATION",
+      "purepour: batch_factory still owner-browser-needed; bundle marks CONFLICT"
+    ],
+    "apply_planning_allowed": false
+  },
+  "proven_facts": [
+    "PROVEN: validation is read_only; no CSV/Supabase/evidence mutation authorized",
+    "PROVEN: independent 14-slug SAFE_LINK_BROWSER_PROOF_BATCH path — not 26-slug SAFE_LINK_BATCH proof",
+    "PROVEN: repo evidence data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json lists B087PDLZL9 as aftermarket_compatible",
+    "PROVEN: bundle lists B087PDLZL9 as unsafe_or_irrelevant/aftermarket_excluded — not OEM"
+  ],
+  "unknown_facts": [
+    "UNKNOWN: byte_for_byte_hyperagent_export_match per provenance sidecar",
+    "UNKNOWN: live retailer/manufacturer pages — not re-fetched in this validation run",
+    "UNKNOWN: Amazon CAPTCHA-blocked ASINs unless repo evidence exists",
+    "UNKNOWN: purepour FPPWFU01 vs FPPWFU02 owner mapping in repo",
+    "UNKNOWN: frig-242086201 242086203 interchange proof in repo"
+  ],
+  "doctrine_doc": "docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md"
+}
