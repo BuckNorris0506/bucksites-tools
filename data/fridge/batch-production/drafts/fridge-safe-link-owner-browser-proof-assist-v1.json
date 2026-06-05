@@ -1,0 +1,980 @@
+{
+  "contract": "buckparts_hyperagent_batch_bundle_v1",
+  "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
+  "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
+  "generated_at": "2026-06-05T03:22:46.245176+00:00",
+  "generated_by": "hyperagent_mission_control",
+  "mission_control_thread": "cmq0cdq4c00n80dad60wp8tgs",
+  "manifest": {
+    "contract": "buckparts_hyperagent_batch_manifest_v1",
+    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
+    "cohort_key": "refrigerator_water_owner_browser_proof_candidates",
+    "total_slugs": 7,
+    "generated_at": "2026-06-05T03:22:46.245176+00:00",
+    "generated_by": "hyperagent_mission_control",
+    "mission_control_thread": "cmq0cdq4c00n80dad60wp8tgs",
+    "repo": "BuckNorris0506/bucksites-tools",
+    "repo_checkpoint": "305bc34",
+    "truth_closure_claimed": false,
+    "command_center_closure_claimed": false,
+    "read_only": true,
+    "apply_planning_authorized": false,
+    "verified_link_authorized": false,
+    "not_authorized": [
+      "supabase_mutation",
+      "retailer_links_csv_mutation",
+      "evidence_mutation",
+      "deploy",
+      "go_click",
+      "verified_link_authorization",
+      "command_center_closure",
+      "truth_closure"
+    ],
+    "state_distribution": {
+      "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF": 7,
+      "total": 7
+    },
+    "expected_coverage_delta_if_all_pass": "+7 (discovery-side estimate only \u2014 pending Cursor validation + owner browser proof)",
+    "session_priority_order": [
+      {
+        "slug": "wf3cb",
+        "risk": "LOW",
+        "reason": "Cleanest slug, frigidaire.com PDP live at $36"
+      },
+      {
+        "slug": "eptwfu01",
+        "risk": "LOW",
+        "reason": "Strongest Frigidaire slug, all retailers available"
+      },
+      {
+        "slug": "edr4rxd1",
+        "risk": "LOW-MEDIUM",
+        "reason": "Straightforward EveryDrop check"
+      },
+      {
+        "slug": "wfcb",
+        "risk": "MEDIUM",
+        "reason": "HD and iFixit clean but Amazon unverified, older line"
+      },
+      {
+        "slug": "ultrawf",
+        "risk": "MEDIUM",
+        "reason": "CAPTCHA and 504 concerns, HD strong"
+      },
+      {
+        "slug": "edr3rxd1",
+        "risk": "HIGH",
+        "reason": "B087PDLZL9 aftermarket trap \u2014 do when alert"
+      },
+      {
+        "slug": "fppwfu01",
+        "risk": "HIGH",
+        "reason": "FPPWFU02 non-interchangeable confusion risk"
+      }
+    ]
+  },
+  "packets": [
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "fe72ad7c-00ea-47ce-a04b-da4c2dd78aef",
+      "slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "brand_slug": "whirlpool",
+      "product_line": "EveryDrop Filter 4",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+          "asin": "B00UB38V2A",
+          "price": "$50.80",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 brand field EveryDrop by Whirlpool, Amazon's Choice, 30K+ bought/month",
+          "stock": "PROVEN in stock",
+          "notes": "Verify sold-by field in browser \u2014 should be Amazon.com or EveryDrop by Whirlpool"
+        },
+        {
+          "priority": 2,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+          "price": "UNKNOWN \u2014 Akamai blocked crawler",
+          "oem_signal": "PROVEN \u2014 Internet #205738810, Model #EDR4RXD1, EveryDrop brand, 2604 reviews",
+          "stock": "UNKNOWN",
+          "notes": "Confirm price and stock in browser"
+        },
+        {
+          "priority": 3,
+          "retailer": "Whirlpool.com",
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "price": "$59.99 list / $36.99 subscription",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 manufacturer direct, Genuine Filter warning",
+          "stock": "PROVEN temporarily out of stock \u2014 check if restocked",
+          "notes": "OOS as of last crawl. Owner should check restock status."
+        },
+        {
+          "priority": 4,
+          "retailer": "Lowes",
+          "url": "https://www.lowes.com/pd/50352232",
+          "price": "$59.99 (prior data)",
+          "price_evidence": "PROVEN (prior mission)",
+          "oem_signal": "INFERRED \u2014 not re-verified this session",
+          "stock": "UNKNOWN",
+          "notes": "Not re-crawled; prior data only"
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains EDR4RXD1",
+          "Brand field shows EveryDrop or Whirlpool \u2014 NOT third-party",
+          "Product references Filter 4 or EveryDrop Filter 4",
+          "Genuine or OEM text visible in title/description/brand area",
+          "Image shows white cylindrical filter with EveryDrop/purple branding",
+          "Price in $45-$70 range",
+          "No compatible-with / replacement-for / fits language in title",
+          "If Amazon: Brand table field says EveryDrop or Whirlpool",
+          "If HD/Lowes: manufacturer listed as Whirlpool or EveryDrop",
+          "Single filter, not aftermarket multi-pack"
+        ],
+        "pass_criteria": "All 10 checklist items confirmed. Page unambiguously shows genuine EveryDrop Filter 4 (EDR4RXD1).",
+        "fail_criteria": [
+          "Brand is not EveryDrop or Whirlpool",
+          "Part number EDR4RXD1 not visible",
+          "Price below $35 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "Non-EveryDrop branding on filter image",
+          "OOS with no product details visible = INCONCLUSIVE"
+        ],
+        "recommended_screenshot_names": [
+          "edr4rxd1-amazon-pdp-brand-2026-06-04.png",
+          "edr4rxd1-homedepot-pdp-brand-2026-06-04.png",
+          "edr4rxd1-whirlpool-pdp-oos-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "LOW-MEDIUM",
+          "notes": "EveryDrop filters are heavily counterfeited on Amazon. Confirm sold-by field. No known aftermarket ASINs flagged for this slug yet."
+        },
+        "slug_specific_checks": {
+          "sold_by_field": null
+        }
+      },
+      "urls_to_avoid": [],
+      "proven_facts": [
+        "EDR4RXD1 = EveryDrop Filter 4 by Whirlpool Corp",
+        "Amazon B00UB38V2A is OEM EveryDrop at $50.80, in stock",
+        "Whirlpool.com PDP exists but is temporarily OOS",
+        "HD 205738810 confirmed with 2604 reviews"
+      ],
+      "inferred_facts": [
+        "Whirlpool.com OOS is transient, not permanent discontinuation",
+        "Lowes listing still active at $59.99"
+      ],
+      "unknown_facts": [
+        "Whether whirlpool.com has restocked since last crawl",
+        "Current HD 205738810 price (Akamai blocked)",
+        "Whether additional aftermarket ASINs exist for this slug"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "c59a996c-3f09-497c-bf99-5529338de424",
+      "slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "brand_slug": "whirlpool",
+      "product_line": "EveryDrop Filter 3",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620",
+          "price": "$59.99 / $53.99 at 2+",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Whirlpool brand, Model #EDR3RXD1, NSF certified, 494 reviews",
+          "stock": "PROVEN active",
+          "notes": "Strongest verified candidate for this slug"
+        },
+        {
+          "priority": 2,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+          "asin": "B00UB441HS",
+          "price": "$49.98 (prior data \u2014 re-verify in browser)",
+          "price_evidence": "PROVEN (prior mission)",
+          "oem_signal": "PROVEN \u2014 long-standing EveryDrop OEM listing",
+          "stock": "UNKNOWN \u2014 re-verify",
+          "notes": "CRITICAL: Confirm ASIN is B00UB441HS, NOT B087PDLZL9"
+        },
+        {
+          "priority": 3,
+          "retailer": "Whirlpool.com",
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "price": "UNKNOWN",
+          "oem_signal": "INFERRED \u2014 URL pattern matches confirmed Filter 4 URL",
+          "stock": "UNKNOWN \u2014 may be OOS like Filter 4",
+          "notes": "Check in browser for OOS status"
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains EDR3RXD1",
+          "Brand field shows EveryDrop or Whirlpool \u2014 NOT Waterdrop",
+          "Product references Filter 3 or EveryDrop Filter 3",
+          "Genuine or OEM text visible",
+          "Image shows standard EveryDrop Filter 3 form factor",
+          "Price in $45-$65 range",
+          "No compatible-with / replacement-for / fits language in title",
+          "If Amazon: Brand field says EveryDrop or Whirlpool (NOT Waterdrop)",
+          "If Amazon: ASIN is B00UB441HS \u2014 NOT B087PDLZL9",
+          "If HD: manufacturer is Whirlpool or EveryDrop",
+          "Single filter, not aftermarket multi-pack",
+          "CRITICAL: ASIN in URL is NOT B087PDLZL9"
+        ],
+        "pass_criteria": "All 12 checklist items confirmed. Page unambiguously shows genuine EveryDrop Filter 3 (EDR3RXD1).",
+        "fail_criteria": [
+          "HARD FAIL: URL contains or resolves to Amazon ASIN B087PDLZL9",
+          "Brand says Waterdrop anywhere on the page",
+          "Brand is not EveryDrop or Whirlpool",
+          "Part number EDR3RXD1 not visible",
+          "Price below $35 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "Waterdrop branding or non-EveryDrop packaging in image"
+        ],
+        "recommended_screenshot_names": [
+          "edr3rxd1-amazon-pdp-brand-asin-2026-06-04.png",
+          "edr3rxd1-homedepot-pdp-brand-2026-06-04.png",
+          "edr3rxd1-whirlpool-pdp-oos-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "HIGH",
+          "notes": "HIGH RISK: Amazon B087PDLZL9 is PROVEN Waterdrop aftermarket. The Waterdrop product uses EDR3RXD1 as a compatibility keyword, appearing in search results for the genuine part. Owner MUST verify ASIN before accepting any Amazon link. Additional aftermarket ASINs may exist (UNKNOWN)."
+        },
+        "slug_specific_checks": {
+          "asin_confirmed_B00UB441HS": null,
+          "no_B087PDLZL9": null
+        }
+      },
+      "urls_to_avoid": [
+        {
+          "url": "https://www.amazon.com/dp/B087PDLZL9",
+          "retailer": "Amazon",
+          "reason": "Waterdrop aftermarket filter \u2014 NOT genuine EveryDrop Filter 3",
+          "evidence_level": "PROVEN",
+          "action": "HARD_DO_NOT_USE"
+        },
+        {
+          "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-3-EDR3RXD1/205738809",
+          "retailer": "Home Depot",
+          "reason": "Price anomaly \u2014 $34.24 vs $59.99 market price. Inspect before use.",
+          "evidence_level": "INFERRED_RISK",
+          "action": "INSPECT_PRICE_ANOMALY"
+        }
+      ],
+      "proven_facts": [
+        "EDR3RXD1 = EveryDrop Filter 3 by Whirlpool Corp",
+        "Amazon B087PDLZL9 is AFTERMARKET Waterdrop brand \u2014 hard exclusion",
+        "Amazon B00UB441HS is the correct OEM ASIN",
+        "HD 302727620 confirmed at $59.99, active, 494 reviews",
+        "NEW: HD 205738809 at $34.24 \u2014 price anomaly needs inspection"
+      ],
+      "inferred_facts": [
+        "Whirlpool.com EDR3RXD1 PDP exists (URL pattern matches Filter 4)",
+        "HD 205738809 low price may indicate clearance or older listing"
+      ],
+      "unknown_facts": [
+        "Whirlpool.com EDR3RXD1 OOS status",
+        "Whether HD 205738809 at $34.24 is legitimate or a data anomaly",
+        "Whether additional aftermarket ASINs exist beyond B087PDLZL9"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "02391d76-2ac8-4f46-9012-8ca9062736de",
+      "slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "brand_slug": "frigidaire",
+      "product_line": "PureSource Ultra",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "frigidaireapplianceparts.com",
+          "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+          "price": "$59.99",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Frigidaire OEM Part #ULTRAWF, 4.9 stars/70 reviews, replaces WMULTRAWF/242294401/241791601",
+          "stock": "PROVEN \u2014 In Stock, ships tomorrow",
+          "notes": "NEW candidate \u2014 authorized Frigidaire parts distributor (RepairClinic)"
+        },
+        {
+          "priority": 2,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+          "price": "UNKNOWN \u2014 Akamai blocked",
+          "oem_signal": "PROVEN \u2014 Frigidaire ULTRAWF PureSource Ultra, 2676 reviews",
+          "stock": "UNKNOWN",
+          "notes": "Confirm price and stock in browser"
+        },
+        {
+          "priority": 3,
+          "retailer": "Frigidaire.com",
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "price": "UNKNOWN \u2014 JS-rendered page, content not extractable by crawler",
+          "oem_signal": "PROVEN \u2014 manufacturer direct, URL confirmed in Exa index",
+          "stock": "UNKNOWN \u2014 verify in browser",
+          "notes": "Prior crawl returned 504, current crawl returns near-empty. Page is JS/SPA-rendered."
+        },
+        {
+          "priority": 4,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/dp/B002JAKRAM",
+          "asin": "B002JAKRAM",
+          "price": "UNKNOWN \u2014 CAPTCHA blocked",
+          "oem_signal": "INFERRED \u2014 long-standing Frigidaire ULTRAWF ASIN",
+          "stock": "UNKNOWN",
+          "notes": "CAPTCHA may block. Mark INCONCLUSIVE if so."
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains ULTRAWF",
+          "Brand field shows Frigidaire or Electrolux",
+          "Product references PureSource Ultra",
+          "Genuine/OEM/Frigidaire branding visible",
+          "Image shows standard PureSource Ultra filter form factor (blue/white)",
+          "Price in $40-$65 range",
+          "No compatible-with / replacement-for language in title",
+          "If page shows 242017801, that is ACCEPTABLE (same part)",
+          "If Amazon: verify CAPTCHA not blocking content",
+          "If frigidaire.com: verify page actually loads",
+          "Single filter, not aftermarket multi-pack"
+        ],
+        "pass_criteria": "All checklist items confirmed. Page shows genuine Frigidaire PureSource Ultra (ULTRAWF) with clear OEM branding.",
+        "fail_criteria": [
+          "Brand is not Frigidaire or Electrolux",
+          "Part number ULTRAWF or 242017801 not visible",
+          "Price below $30 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "Non-Frigidaire branding in image",
+          "CAPTCHA blocks Amazon content = INCONCLUSIVE",
+          "frigidaire.com returns 504 = INCONCLUSIVE"
+        ],
+        "recommended_screenshot_names": [
+          "ultrawf-frigidaireparts-pdp-brand-2026-06-04.png",
+          "ultrawf-homedepot-pdp-brand-2026-06-04.png",
+          "ultrawf-frigidaire-pdp-status-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "MEDIUM",
+          "notes": "MEDIUM RISK: frigidaire.com and Amazon both have crawler access issues. ULTRAWF is a popular filter with many aftermarket clones. Be vigilant for brands like Glacier Fresh, Pureline, FilterLogic."
+        },
+        "slug_specific_checks": {
+          "no_captcha_blocking": null,
+          "alt_part_242017801_acceptable": null
+        }
+      },
+      "urls_to_avoid": [],
+      "proven_facts": [
+        "ULTRAWF = Frigidaire PureSource Ultra",
+        "242017801 = ULTRAWF (confirmed equivalent)",
+        "frigidaireapplianceparts.com at $59.99, in stock (NEW candidate)",
+        "HD 203618461 confirmed with 2676 reviews",
+        "frigidaire.com PDP exists but JS-rendered"
+      ],
+      "inferred_facts": [
+        "frigidaire.com page is accessible in real browser despite crawler issues",
+        "Whirlpool OOS pattern is transient"
+      ],
+      "unknown_facts": [
+        "frigidaire.com ULTRAWF actual price and stock in browser",
+        "HD 203618461 current price",
+        "Amazon B002JAKRAM current status past CAPTCHA"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "5145e081-0a96-4567-9113-28f8cf7bc4fb",
+      "slug": "eptwfu01",
+      "oem_part_token": "EPTWFU01",
+      "brand_slug": "frigidaire",
+      "product_line": "PureSource Ultra II",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "frigidaireapplianceparts.com",
+          "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+          "price": "$59.99",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Frigidaire OEM Part #EPTWFU01, 4.9 stars/30 reviews, replaces WMEPTWFU01/5304520985/5304519147/807946701",
+          "stock": "PROVEN \u2014 In Stock, ships today by 8 PM ET",
+          "notes": "NEW candidate \u2014 authorized Frigidaire parts distributor (RepairClinic)"
+        },
+        {
+          "priority": 2,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
+          "price": "See Low Price in Cart (dynamic pricing)",
+          "price_evidence": "PROVEN \u2014 dynamic cart pricing",
+          "oem_signal": "PROVEN \u2014 Frigidaire brand, Model #EPTWFU01, 1173-1179 reviews, 119 Q&A",
+          "stock": "PROVEN \u2014 Store 0 in stock; online may differ",
+          "notes": "Click Add to Cart to reveal actual price"
+        },
+        {
+          "priority": 3,
+          "retailer": "Frigidaire.com",
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "price": "UNKNOWN US / $71.99 CAD (frigidaire.ca)",
+          "oem_signal": "PROVEN \u2014 manufacturer direct, frigidaire.ca confirms NSF 42/53/401, Genuine Replacement: Yes",
+          "stock": "UNKNOWN US",
+          "notes": "JS-rendered page; verify in browser"
+        },
+        {
+          "priority": 4,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1",
+          "asin": "B0CXKH95V1",
+          "price": "UNKNOWN US / ~$83 CAD per filter (2-pack $166.65 CAD)",
+          "oem_signal": "PROVEN \u2014 Frigidaire brand, Genuine Filters, NSF/WQA, first available March 2024, 4.7 stars/231 reviews (CA)",
+          "stock": "UNKNOWN US \u2014 CAPTCHA on US page",
+          "notes": "Verify US price and sold-by in browser"
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains EPTWFU01",
+          "Brand field shows Frigidaire or Electrolux",
+          "Product references PureSource Ultra II (note the II)",
+          "Genuine/OEM/Frigidaire branding visible",
+          "Image shows standard PureSource Ultra II form factor",
+          "Price in $55-$75 range",
+          "No compatible-with / replacement-for language in title",
+          "Product is Ultra II \u2014 NOT Ultra (that is ULTRAWF, different slug)",
+          "If Amazon: Brand field says Frigidaire or Electrolux",
+          "Single filter, not aftermarket multi-pack"
+        ],
+        "pass_criteria": "All 10 checklist items confirmed. Page shows genuine Frigidaire PureSource Ultra II (EPTWFU01).",
+        "fail_criteria": [
+          "Brand is not Frigidaire or Electrolux",
+          "Part number EPTWFU01 not visible",
+          "Page shows ULTRAWF instead of EPTWFU01 (wrong filter)",
+          "Price below $40 (aftermarket signal)",
+          "Compatible/replacement/fits language in title"
+        ],
+        "recommended_screenshot_names": [
+          "eptwfu01-frigidaireparts-pdp-brand-2026-06-04.png",
+          "eptwfu01-homedepot-pdp-brand-2026-06-04.png",
+          "eptwfu01-frigidaire-pdp-status-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "LOW",
+          "notes": "LOW RISK: Strongest Frigidaire slug. Main confusion risk is between EPTWFU01 (Ultra II) and ULTRAWF (Ultra) \u2014 different filters for different models. Confirm page says Ultra II or EPTWFU01."
+        },
+        "slug_specific_checks": {
+          "ultra_ii_not_ultra": null
+        }
+      },
+      "urls_to_avoid": [],
+      "proven_facts": [
+        "EPTWFU01 = Frigidaire PureSource Ultra II",
+        "frigidaireapplianceparts.com at $59.99, in stock, ships today (NEW)",
+        "HD 304492642 confirmed active, 1173+ reviews",
+        "frigidaire.ca confirms NSF 42/53/401, Genuine Replacement: Yes"
+      ],
+      "inferred_facts": [
+        "Lowest-risk Frigidaire slug \u2014 all retailers have live PDPs",
+        "US frigidaire.com page likely accessible in browser despite crawler issues"
+      ],
+      "unknown_facts": [
+        "frigidaire.com US price and stock",
+        "Amazon B0CXKH95V1 US price and sold-by entity"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "af1ba6c7-9306-430a-9eca-7a70619fa40a",
+      "slug": "fppwfu01",
+      "oem_part_token": "FPPWFU01",
+      "brand_slug": "frigidaire",
+      "product_line": "PurePour PWF-1",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/Frigidaire-FPPWFU01-PurePour-PWF-1-Filter/dp/B08V6JB9R7",
+          "asin": "B08V6JB9R7",
+          "price": "$47.00 / $44.65 S&S 5% / $42.30 S&S 10%",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Frigidaire FPPWFU01 PurePour PWF-1, sold by Amazon.com directly",
+          "stock": "PROVEN \u2014 In Stock",
+          "notes": "Sold by Amazon.com (not third-party). No FPPWFU02 cross-contamination."
+        },
+        {
+          "priority": 2,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Frigidaire-Water-and-Ice-Refrigerator-Filter-PWF-1-HDFPPWFU01/319137659",
+          "price": "See Low Price in Cart",
+          "price_evidence": "PROVEN \u2014 dynamic cart pricing",
+          "oem_signal": "PROVEN \u2014 Model #HDFPPWFU01, explicitly states 'This is the same filter FPPWFU01', NSF/WQA certified",
+          "stock": "PROVEN active page; 0 local store stock (online may differ)",
+          "notes": "Explicit FPPWFU01 cross-reference text on page = very clean candidate"
+        },
+        {
+          "priority": 3,
+          "retailer": "Frigidaire.com",
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/FPPWFU01",
+          "price": "UNKNOWN \u2014 JS-rendered",
+          "oem_signal": "PROVEN \u2014 manufacturer direct, PurePour Water and Ice Refrigerator Filter PWF-1 title in Exa index",
+          "stock": "UNKNOWN \u2014 verify in browser",
+          "notes": "URL resolves in Exa index but content JS-rendered"
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains FPPWFU01",
+          "Brand field shows Frigidaire or Electrolux",
+          "Product references PurePour and specifically PWF-1 (NOT PWF-2 or PWF-2 Connect)",
+          "Genuine/OEM/Frigidaire branding visible",
+          "Image shows standard PurePour PWF-1 form factor",
+          "Price in $40-$60 range",
+          "No compatible-with / replacement-for language in title",
+          "CRITICAL: Page does NOT show FPPWFU02 anywhere \u2014 check title, description, specs, breadcrumbs",
+          "CRITICAL: Page does NOT say PWF-2 or PWF-2 Connect anywhere",
+          "CRITICAL: If HD, model number is HDFPPWFU01 \u2014 NOT HDFPPWFU02",
+          "If Amazon (B08V6JB9R7): Brand field says Frigidaire",
+          "Single filter, not aftermarket multi-pack"
+        ],
+        "pass_criteria": "All 12 checklist items confirmed, with special emphasis on items 8-10. Page unambiguously shows FPPWFU01 / PurePour PWF-1.",
+        "fail_criteria": [
+          "HARD FAIL: Page shows FPPWFU02, PWF-2, or PWF-2 Connect anywhere",
+          "Brand is not Frigidaire or Electrolux",
+          "Part number FPPWFU01 not visible",
+          "Price below $30 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "HD model shows HDFPPWFU02 instead of HDFPPWFU01"
+        ],
+        "recommended_screenshot_names": [
+          "fppwfu01-amazon-pdp-brand-partnumber-2026-06-04.png",
+          "fppwfu01-homedepot-pdp-model-2026-06-04.png",
+          "fppwfu01-frigidaire-pdp-status-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "HIGH",
+          "notes": "HIGH RISK: FPPWFU01 (PWF-1) and FPPWFU02 (PWF-2 Connect) are PROVEN NOT interchangeable. These are physically different filters. Retailers may list them adjacently. Owner must confirm the EXACT part number. Discovery confirmed NO FPPWFU02 cross-contamination in current candidate URLs."
+        },
+        "slug_specific_checks": {
+          "no_fppwfu02_on_page": null,
+          "no_pwf2_connect_on_page": null
+        }
+      },
+      "urls_to_avoid": [
+        {
+          "identifier": "Any URL showing FPPWFU02 / PWF-2 / PWF-2 Connect",
+          "retailer": "Any",
+          "reason": "FPPWFU01 and FPPWFU02 are NOT interchangeable (PROVEN)",
+          "action": "HARD_FAIL"
+        },
+        {
+          "url": "https://www.lowes.com/pd/Frigidaire-6-Month-Push-In-Refrigerator-Water-Filter-Frigidaire-PurePour/5013265821",
+          "retailer": "Lowes",
+          "reason": "Currently unavailable (PROVEN). Do not use until restocked.",
+          "action": "HOLD"
+        }
+      ],
+      "proven_facts": [
+        "FPPWFU01 = Frigidaire PurePour PWF-1",
+        "FPPWFU01 and FPPWFU02 (PWF-2 Connect) are NOT interchangeable",
+        "Amazon B08V6JB9R7 at $47, sold by Amazon.com, in stock",
+        "HD 319137659 explicitly states 'This is the same filter FPPWFU01'",
+        "Lowes /5013265821 currently unavailable",
+        "No FPPWFU02 cross-contamination found in any candidate URL"
+      ],
+      "inferred_facts": [
+        "frigidaire.com PDP accessible in browser despite crawler issues"
+      ],
+      "unknown_facts": [
+        "frigidaire.com FPPWFU01 price and stock in browser",
+        "Whether Lowes will restock"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "cd7fc0ef-7942-4969-85c3-108f2a93eaca",
+      "slug": "wf3cb",
+      "oem_part_token": "WF3CB",
+      "brand_slug": "frigidaire",
+      "product_line": "PureSource 3",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "Frigidaire.com",
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "price": "$36 (regular $47.99, promo Save $11.99)",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 manufacturer direct, full content rendered, anti-counterfeit messaging, Genuine Filters seal, NSF 42/53/401, WQA",
+          "stock": "PROVEN active with purchase path",
+          "notes": "GOLD STANDARD: Only frigidaire.com page that fully renders. Best OEM reference URL."
+        },
+        {
+          "priority": 2,
+          "retailer": "Lowes",
+          "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+          "price": "$52.99",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Frigidaire genuine filters, NSF 42/53/401, WQA, berry design with Genuine Filters seal",
+          "stock": "PROVEN \u2014 available, 1k+ bought last week",
+          "notes": "Status IMPROVED from prior data \u2014 now confirmed active with sales volume"
+        },
+        {
+          "priority": 3,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+          "price": "See Low Price in Cart",
+          "price_evidence": "PROVEN \u2014 dynamic cart pricing",
+          "oem_signal": "PROVEN \u2014 Frigidaire brand, Model HDWF3CB, 2380-2390 reviews",
+          "stock": "PROVEN active page; 0 local store stock",
+          "notes": "Most-reviewed Frigidaire filter listing on HD"
+        },
+        {
+          "priority": 4,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/dp/B0045LLC7K",
+          "asin": "B0045LLC7K",
+          "price": "UNKNOWN \u2014 CAPTCHA blocked",
+          "oem_signal": "INFERRED \u2014 long-standing ASIN",
+          "stock": "UNKNOWN",
+          "notes": "CAPTCHA may block. Mark INCONCLUSIVE if so."
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains WF3CB",
+          "Brand field shows Frigidaire or Electrolux",
+          "Product references PureSource 3",
+          "Genuine/OEM/Frigidaire branding visible",
+          "Image shows standard PureSource 3 form factor",
+          "Price in $30-$55 range",
+          "No compatible-with / replacement-for language in title",
+          "If page shows 242086201, that is ACCEPTABLE (same part)",
+          "If Amazon: verify CAPTCHA not blocking content",
+          "If HD: model is HDWF3CB",
+          "Single filter, not aftermarket multi-pack"
+        ],
+        "pass_criteria": "All checklist items confirmed. Page shows genuine Frigidaire PureSource 3 (WF3CB).",
+        "fail_criteria": [
+          "Brand is not Frigidaire or Electrolux",
+          "Part number WF3CB or 242086201 not visible",
+          "Price below $25 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "Non-Frigidaire branding in image",
+          "Amazon CAPTCHA blocks content = INCONCLUSIVE"
+        ],
+        "recommended_screenshot_names": [
+          "wf3cb-frigidaire-pdp-price-2026-06-04.png",
+          "wf3cb-lowes-pdp-price-2026-06-04.png",
+          "wf3cb-homedepot-pdp-model-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "LOW",
+          "notes": "LOW RISK: Cleanest Frigidaire slug. frigidaire.com PDP is the gold standard \u2014 fully rendered at $36 with anti-counterfeit messaging. Multiple retailers confirm OEM identity. Alt part 242086201 is PROVEN equivalent."
+        },
+        "slug_specific_checks": {
+          "no_captcha_blocking": null,
+          "alt_part_242086201_acceptable": null
+        }
+      },
+      "urls_to_avoid": [],
+      "proven_facts": [
+        "WF3CB = Frigidaire PureSource 3",
+        "242086201 = WF3CB (confirmed equivalent)",
+        "frigidaire.com PDP fully renders at $36 with purchase path",
+        "Lowes /1003164400 at $52.99, active with 1k+ bought/week",
+        "HD /313853978 confirmed active with 2380+ reviews",
+        "frigidaire.com explicitly warns about counterfeits and promotes Genuine Filters seal"
+      ],
+      "inferred_facts": [
+        "Amazon B0045LLC7K is likely OEM but CAPTCHA prevents verification"
+      ],
+      "unknown_facts": [
+        "Amazon B0045LLC7K current price and status past CAPTCHA"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    },
+    {
+      "contract": "buckparts_hyperagent_ingest_packet_v1",
+      "ingest_id": "70de6fb3-cf32-4d51-bdd5-31fc14d19ab2",
+      "slug": "wfcb",
+      "oem_part_token": "WFCB",
+      "brand_slug": "frigidaire",
+      "product_line": "PureSource Plus",
+      "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "discovery_status": "DISCOVERY_COMPLETE",
+      "truth_closure_claimed": false,
+      "read_only": true,
+      "candidate_urls": [
+        {
+          "priority": 1,
+          "retailer": "Home Depot",
+          "url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
+          "price": "$24.94",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Frigidaire brand, Model WFCB, NSF/WQA, 1093 reviews",
+          "stock": "PROVEN active, fully rendered",
+          "notes": "Lowest OEM price found. Best verified US candidate."
+        },
+        {
+          "priority": 2,
+          "retailer": "Warners' Stellian (authorized dealer)",
+          "url": "https://www.warnersstellian.com/product/10012/frigidaire-wfcb",
+          "price": "$34.99",
+          "price_evidence": "PROVEN",
+          "oem_signal": "PROVEN \u2014 Genuine Replacement Part: Yes, Genuine Filters seal, NSF 42/53, WQA, Country of Origin: USA",
+          "stock": "PROVEN \u2014 Stocked in Warehouse",
+          "notes": "NEW candidate \u2014 authorized Frigidaire retailer. Carries full Frigidaire filter line."
+        },
+        {
+          "priority": 3,
+          "retailer": "Frigidaire.com",
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "price": "UNKNOWN \u2014 persistent 504 timeout",
+          "oem_signal": "PROVEN \u2014 manufacturer direct URL",
+          "stock": "UNKNOWN \u2014 504 persists",
+          "notes": "504 confirmed in both prior and current crawls. May work in browser, may not."
+        },
+        {
+          "priority": 4,
+          "retailer": "Amazon",
+          "url": "https://www.amazon.com/dp/B0CC2TCJ57",
+          "asin": "B0CC2TCJ57",
+          "price": "UNKNOWN",
+          "oem_signal": "UNKNOWN \u2014 ASIN unverified, not confirmed as OEM",
+          "stock": "UNKNOWN \u2014 CAPTCHA",
+          "notes": "CAUTION: This ASIN is UNVERIFIED. Must prove itself in browser. Also try B000PSC0QE (older ASIN)."
+        }
+      ],
+      "browser_proof_worksheet": {
+        "visual_checklist": [
+          "Page title or heading contains WFCB",
+          "Brand field shows Frigidaire or Electrolux",
+          "Product references PureSource Plus",
+          "Genuine/OEM/Frigidaire branding visible",
+          "Image shows standard PureSource Plus form factor",
+          "Price in $20-$55 range",
+          "No compatible-with / replacement-for language in title",
+          "If Amazon B0CC2TCJ57: be EXTRA cautious \u2014 verify Brand field says Frigidaire",
+          "If HD /308000660: price ~$24.94",
+          "If frigidaire.ca: note price in CAD (expected)",
+          "If iFixit: verify it says Genuine Electrolux",
+          "Single filter, not aftermarket multi-pack",
+          "Check for discontinued/superseded/replaced language"
+        ],
+        "pass_criteria": "All applicable checklist items confirmed. Page shows genuine Frigidaire PureSource Plus (WFCB) with OEM branding.",
+        "fail_criteria": [
+          "Brand is not Frigidaire or Electrolux",
+          "Part number WFCB not visible",
+          "Price below $15 (aftermarket signal)",
+          "Compatible/replacement/fits language in title",
+          "Non-Frigidaire branding in image",
+          "Amazon B0CC2TCJ57 brand NOT Frigidaire = FAIL",
+          "frigidaire.com returns 504 = INCONCLUSIVE"
+        ],
+        "recommended_screenshot_names": [
+          "wfcb-homedepot-pdp-price-2026-06-04.png",
+          "wfcb-warnersstellian-pdp-genuine-2026-06-04.png",
+          "wfcb-frigidaire-pdp-status-2026-06-04.png",
+          "wfcb-amazon-pdp-brand-unverified-2026-06-04.png"
+        ],
+        "wrong_part_risk": {
+          "level": "MEDIUM",
+          "notes": "MEDIUM RISK: Amazon B0CC2TCJ57 is UNVERIFIED. WFCB is an older product line with potential supersession risk. allfilters.com confirms WFCB superseded WF1CB, but no evidence WFCB itself has been superseded (INFERRED low immediate risk). Wide price range ($24.94-$53.99) across OEM sources is unusual \u2014 document the price you see."
+        },
+        "slug_specific_checks": {
+          "supersession_mentioned": null,
+          "amazon_asin_verified": null
+        }
+      },
+      "urls_to_avoid": [
+        {
+          "url": "https://www.frigidaire.ca/...",
+          "retailer": "frigidaire.ca",
+          "reason": "Canadian domain \u2014 incorrect for US customers",
+          "action": "AVOID_FOR_US_SAFE_LINK"
+        }
+      ],
+      "proven_facts": [
+        "WFCB = Frigidaire PureSource Plus",
+        "HD /308000660 at $24.94, active, 1093 reviews",
+        "NEW: Warners' Stellian at $34.99, stocked, Genuine Replacement: Yes",
+        "frigidaire.com WFCB page returns 504 (persistent across crawls)",
+        "WFCB superseded WF1CB (confirmed by allfilters.com)"
+      ],
+      "inferred_facts": [
+        "WFCB itself has NOT been superseded (low immediate supersession risk)",
+        "Wide price range across OEM sources is unusual but not a risk signal",
+        "Amazon B000PSC0QE is the well-established older ASIN for WFCB"
+      ],
+      "unknown_facts": [
+        "Amazon B0CC2TCJ57 OEM status",
+        "Whether WFCB will be superseded in the future",
+        "frigidaire.com WFCB page status in browser (may work despite 504 for crawler)"
+      ],
+      "expected_repo_intake_fields": [
+        "slug",
+        "url",
+        "retailer",
+        "screenshot_path",
+        "pass_fail",
+        "visual_confirmations",
+        "timestamp",
+        "notes"
+      ]
+    }
+  ],
+  "do_not_use": [
+    {
+      "slug": "edr3rxd1",
+      "url": "https://www.amazon.com/dp/B087PDLZL9",
+      "retailer": "Amazon",
+      "reason": "Waterdrop aftermarket filter \u2014 NOT genuine EveryDrop Filter 3",
+      "evidence_level": "PROVEN",
+      "brand_on_page": "Waterdrop",
+      "action": "HARD_DO_NOT_USE"
+    }
+  ],
+  "caution_list": [
+    {
+      "slug": "wfcb",
+      "url": "https://www.amazon.com/dp/B0CC2TCJ57",
+      "retailer": "Amazon",
+      "concern": "ASIN unverified \u2014 OEM status UNKNOWN",
+      "evidence_level": "UNKNOWN",
+      "action": "VERIFY_IN_BROWSER_BEFORE_ACCEPTING"
+    },
+    {
+      "slug": "edr3rxd1",
+      "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-3-EDR3RXD1/205738809",
+      "retailer": "Home Depot",
+      "concern": "Price anomaly \u2014 $34.24 vs $59.99 market price. May be clearance or old listing.",
+      "evidence_level": "INFERRED_RISK",
+      "action": "INSPECT_PRICE_ANOMALY_IN_BROWSER"
+    },
+    {
+      "slug": "ultrawf",
+      "url": "https://www.amazon.com/dp/B002JAKRAM",
+      "retailer": "Amazon",
+      "concern": "CAPTCHA may block content verification",
+      "evidence_level": "PROVEN_CAPTCHA",
+      "action": "ATTEMPT_THEN_MARK_INCONCLUSIVE_IF_BLOCKED"
+    },
+    {
+      "slug": "wf3cb",
+      "url": "https://www.amazon.com/dp/B0045LLC7K",
+      "retailer": "Amazon",
+      "concern": "CAPTCHA may block content verification",
+      "evidence_level": "INFERRED_CAPTCHA",
+      "action": "ATTEMPT_THEN_MARK_INCONCLUSIVE_IF_BLOCKED"
+    },
+    {
+      "slug": "fppwfu01",
+      "identifier": "Any URL showing FPPWFU02 / PWF-2 / PWF-2 Connect",
+      "retailer": "Any",
+      "concern": "FPPWFU01 and FPPWFU02 are NOT interchangeable \u2014 PROVEN",
+      "evidence_level": "PROVEN",
+      "action": "HARD_FAIL_IF_FPPWFU02_APPEARS"
+    }
+  ],
+  "not_authorized": [
+    "supabase_mutation",
+    "retailer_links_csv_mutation",
+    "evidence_mutation",
+    "deploy",
+    "go_click",
+    "verified_link_authorization",
+    "command_center_closure",
+    "truth_closure"
+  ],
+  "read_only": true,
+  "truth_closure_claimed": false,
+  "command_center_closure_claimed": false
+}

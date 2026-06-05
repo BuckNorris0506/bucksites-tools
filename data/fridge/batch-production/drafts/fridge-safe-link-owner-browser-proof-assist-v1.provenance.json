@@ -1,0 +1,14 @@
+{
+  "contract": "bucksites_hyperagent_ingest_bundle_provenance_v1",
+  "bundle_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-assist-v1.json",
+  "bundle_source": "pasted_or_uploaded_hyperagent_json",
+  "intake_copy_source": "/Users/jaredbuckman/Downloads/fe6ef680-90f5-42f9-8341-dfcff0446381.json",
+  "byte_for_byte_hyperagent_export_match": "UNKNOWN",
+  "byte_for_byte_intake_copy_match": "PROVEN",
+  "validation_scope": "owner_browser_proof_assist_bundle_intake_only",
+  "command_center_closure_implied": false,
+  "apply_planning_implied": false,
+  "verified_link_authorization_implied": false,
+  "truth_closure_implied": false,
+  "recorded_at": "2026-06-05T03:45:00.000Z"
+}

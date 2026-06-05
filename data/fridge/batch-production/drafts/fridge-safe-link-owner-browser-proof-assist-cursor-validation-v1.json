@@ -1,0 +1,123 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "327da784-c360-4dc4-bd29-bd927c6046c0",
+  "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
+  "cohort_key": "refrigerator_water_owner_browser_proof_candidates",
+  "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
+  "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+  "validated_at": "2026-06-05T03:59:19.491Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "apply_planning_allowed": false,
+  "validation_scope": "owner_browser_proof_assist_bundle_intake_only",
+  "command_center_closure_implied": false,
+  "bundle_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-assist-v1.json",
+  "provenance_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-assist-v1.provenance.json",
+  "commands_run": [
+    "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-assist-cursor-validation-v1.ts",
+    "validateOwnerBrowserProofAssistBundleIntegrityV1",
+    "runOwnerBrowserProofAssistValidationV1"
+  ],
+  "validation_details": {
+    "packet_count": 7,
+    "bundle_authentic": true,
+    "integrity_errors": [],
+    "integrity_warnings": [
+      "packet_count missing at bundle top level; using packets.length"
+    ],
+    "synthetic_packet_slugs": [],
+    "slug_verdicts": [
+      {
+        "slug": "edr4rxd1",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 4,
+        "urls_to_avoid_count": 0,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "edr3rxd1",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 3,
+        "urls_to_avoid_count": 2,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "ultrawf",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 4,
+        "urls_to_avoid_count": 0,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "eptwfu01",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 4,
+        "urls_to_avoid_count": 0,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "fppwfu01",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 3,
+        "urls_to_avoid_count": 2,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "wf3cb",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 4,
+        "urls_to_avoid_count": 0,
+        "has_browser_proof_worksheet": true
+      },
+      {
+        "slug": "wfcb",
+        "verdict": "DISCOVERY_ASSIST_OK",
+        "proposed_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+        "discovery_status": "DISCOVERY_COMPLETE",
+        "reason": "proposed_state=APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF; owner browser proof assist only",
+        "candidate_url_count": 4,
+        "urls_to_avoid_count": 1,
+        "has_browser_proof_worksheet": true
+      }
+    ],
+    "edr3_b087_excluded_as_oem": true,
+    "edr3_b087_in_do_not_use": true,
+    "edr3_b087_in_urls_to_avoid_only": true,
+    "authorization_flags_all_false": true
+  },
+  "proven_facts": [
+    "PROVEN: validation is read_only; no CSV/Supabase/evidence mutation authorized",
+    "PROVEN: independent 7-slug OWNER_BROWSER_PROOF_ASSIST path — not 14-slug SAFE_LINK_BROWSER_PROOF_BATCH",
+    "PROVEN: bundle.do_not_use lists B087PDLZL9 with HARD_DO_NOT_USE",
+    "PROVEN: repo evidence amazon-edr3rxd1-aftermarket-pdp-evidence lists B087PDLZL9 as aftermarket",
+    "PROVEN: edr3rxd1 urls_to_avoid lists B087PDLZL9 as HARD_DO_NOT_USE"
+  ],
+  "unknown_facts": [
+    "UNKNOWN: byte_for_byte_hyperagent_export_match per provenance sidecar",
+    "UNKNOWN: live retailer/manufacturer pages — not re-fetched in this intake validation run"
+  ],
+  "doctrine_doc": "docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md"
+}
