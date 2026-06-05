@@ -61,8 +61,8 @@ test("sitewide social metadata references OG and Twitter image routes", () => {
 
 test("OG/Twitter image route files exist in App Router", () => {
   const root = process.cwd();
-  assert.ok(existsSync(join(root, "src/app/opengraph-image.tsx")));
-  assert.ok(existsSync(join(root, "src/app/twitter-image.tsx")));
+  assert.ok(existsSync(join(root, "src/app/opengraph-image.png")));
+  assert.ok(existsSync(join(root, "src/app/twitter-image.png")));
 });
 
 test("homepage metadata aligns with sitewide social defaults", async () => {
