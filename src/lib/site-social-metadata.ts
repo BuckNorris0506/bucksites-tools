@@ -8,7 +8,7 @@ export const SITE_SOCIAL_OG_TITLE =
 export const SITE_SOCIAL_OG_DESCRIPTION =
   "Look up refrigerator, air purifier, and water filter replacements. BuckParts checks fit evidence and safe buying paths before showing a BuckParts Verified Link.";
 
-/** App Router generated OG image route (see src/app/opengraph-image.tsx). */
+/** App Router static OG image (see src/app/opengraph-image.png). */
 export const SITE_SOCIAL_OG_IMAGE_PATH = "/opengraph-image";
 
 export const SITE_SOCIAL_OG_IMAGE_WIDTH = 1200;
@@ -23,6 +23,13 @@ export const SITE_OG_CARD_BUYER_PATH_LINE =
 
 export const SITE_SOCIAL_OG_IMAGE_ALT =
   `BuckParts social preview: ${SITE_OG_CARD_HOOK_WRONG} ${SITE_OG_CARD_HOOK_RIGHT}. ${SITE_OG_CARD_SUPPORT_LINE} ${SITE_OG_CARD_BUYER_PATH_LINE}`;
+
+export const SITE_SOCIAL_OG_IMAGE = {
+  url: SITE_SOCIAL_OG_IMAGE_PATH,
+  width: SITE_SOCIAL_OG_IMAGE_WIDTH,
+  height: SITE_SOCIAL_OG_IMAGE_HEIGHT,
+  alt: SITE_SOCIAL_OG_IMAGE_ALT,
+} as const;
 
 export type BuildSiteSocialMetadataArgs = {
   siteUrl?: string;
@@ -50,14 +57,7 @@ export function buildSiteSocialMetadata(
       type: "website",
       siteName,
       url: "/",
-      images: [
-        {
-          url: SITE_SOCIAL_OG_IMAGE_PATH,
-          width: SITE_SOCIAL_OG_IMAGE_WIDTH,
-          height: SITE_SOCIAL_OG_IMAGE_HEIGHT,
-          alt: SITE_SOCIAL_OG_IMAGE_ALT,
-        },
-      ],
+      images: [SITE_SOCIAL_OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",

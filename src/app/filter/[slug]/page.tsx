@@ -15,6 +15,10 @@ import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
+import {
+  SITE_SOCIAL_OG_IMAGE,
+  SITE_SOCIAL_OG_IMAGE_PATH,
+} from "@/lib/site-social-metadata";
 import { publicFacingRefrigeratorFilterNotes } from "@/lib/copy/fridge-filter-notes-public";
 import {
   BUCKPARTS_VERIFIED_LINK_NONE_YET,
@@ -46,10 +50,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     hasDemandSignal: null,
   });
   const title = `${filter.oem_part_number} refrigerator filter`;
+  const description = `Part ${filter.oem_part_number} refrigerator water filter — compatible models and replacement timing.`;
+  const ogTitle = `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}`;
   return {
     title,
-    description: `Part ${filter.oem_part_number} refrigerator water filter — compatible models and replacement timing.`,
-    openGraph: { title: `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}` },
+    description,
+    openGraph: {
+      title: ogTitle,
+      description,
+      images: [SITE_SOCIAL_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description,
+      images: [SITE_SOCIAL_OG_IMAGE_PATH],
+    },
     robots: getRobotsFromPageState(pageState),
   };
 }
