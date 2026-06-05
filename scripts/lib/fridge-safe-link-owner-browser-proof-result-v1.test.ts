@@ -1,0 +1,65 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, test } from "node:test";
+
+import {
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
+  loadOwnerBrowserProofResultWf3cbV1,
+  proveWf3cbOwnerBrowserProofPassV1,
+  validateOwnerBrowserProofResultV1,
+} from "./fridge-safe-link-owner-browser-proof-result-v1";
+
+const LIB_SOURCE = readFileSync(
+  path.join(process.cwd(), "scripts/lib/fridge-safe-link-owner-browser-proof-result-v1.ts"),
+  "utf8",
+);
+
+describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
+  test("wf3cb draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {
+    const result = loadOwnerBrowserProofResultWf3cbV1(process.cwd());
+    const validation = validateOwnerBrowserProofResultV1(result);
+    assert.equal(validation.valid, true, validation.errors.join("; "));
+    assert.equal(result.slug, "wf3cb");
+    assert.equal(result.verdict, "PASS_BROWSER_PROOF");
+    assert.equal(result.oem_part_token, "WF3CB");
+
+    const summary = proveWf3cbOwnerBrowserProofPassV1(result);
+    assert.equal(summary.pass_verdict, true);
+    assert.equal(summary.proof_url_count, 3);
+    assert.equal(summary.amazon_unverified, true);
+
+    assert.ok(
+      result.owner_proof_urls.every((u) => !u.url.includes("B087PDLZL9")),
+      "wf3cb proof must not include edr3 DO_NOT_USE ASIN",
+    );
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("frigidaire.com")),
+      "official manufacturer URL required",
+    );
+  });
+
+  test("wf3cb result uses PROVEN labels for owner-observed browser proof", () => {
+    const result = loadOwnerBrowserProofResultWf3cbV1(process.cwd());
+    for (const row of result.owner_proof_urls) {
+      assert.ok(row.proven_observations && row.proven_observations.length > 0, row.url);
+      assert.ok(row.proven_observations.every((o) => o.startsWith("PROVEN:")), row.url);
+    }
+    assert.ok((result.unknown_facts ?? []).some((f) => f.includes("Amazon")));
+    assert.ok((result.unknown_facts ?? []).some((f) => f.includes("screenshot")));
+  });
+
+  test("lib does not authorize mutation or /go", () => {
+    assert.ok(!LIB_SOURCE.includes("buckparts.com/go"));
+    assert.ok(!LIB_SOURCE.includes("/go/"));
+    assert.ok(!LIB_SOURCE.includes('writeFileSync(path.join(args.rootDir, "data/retailer_links.csv")'));
+    assert.ok(!LIB_SOURCE.includes('writeFileSync(path.join(args.rootDir, "data/evidence/'));
+  });
+
+  test("artifact path matches expected draft location", () => {
+    assert.equal(
+      FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+    );
+  });
+});
