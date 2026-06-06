@@ -1,0 +1,17 @@
+{
+  "contract": "bucksites_hyperagent_ingest_bundle_provenance_v1",
+  "bundle_rel": "data/fridge/batch-production/drafts/fridge-amazon-affiliate-link-audit-assist-v1.json",
+  "bundle_source": "pasted_or_uploaded_hyperagent_json",
+  "intake_copy_source": "/Users/jaredbuckman/Downloads/42d89c3d-97a3-4018-b78e-6207734bc7ea.json",
+  "consolidated_markdown_source": "/Users/jaredbuckman/Downloads/amazon-affiliate-link-audit-discovery-mission-7-slug-fridge-cohort-consolidated.md",
+  "thread_context_source": "/Users/jaredbuckman/Downloads/thread-context (3).md",
+  "byte_for_byte_hyperagent_export_match": "UNKNOWN",
+  "byte_for_byte_intake_copy_match": "PROVEN",
+  "validation_scope": "amazon_affiliate_link_audit_discovery_intake_only",
+  "command_center_closure_implied": false,
+  "apply_planning_implied": false,
+  "verified_link_authorization_implied": false,
+  "affiliate_link_generation_as_production_truth_implied": false,
+  "truth_closure_implied": false,
+  "recorded_at": "2026-06-06T03:45:00.000Z"
+}

@@ -1,0 +1,147 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "2dca31f6-2e08-40fb-a5c4-5a55bfd2bcb0",
+  "mission_type": "AMAZON_AFFILIATE_LINK_AUDIT_DISCOVERY",
+  "cohort_key": "refrigerator_water_fridge_7slug_browser_proof",
+  "mission_id": "fridge-amazon-affiliate-link-audit-assist-v1",
+  "validated_at": "2026-06-06T03:48:00.554Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "apply_planning_allowed": false,
+  "affiliate_link_generation_as_production_truth_authorized": false,
+  "validation_scope": "amazon_affiliate_link_audit_discovery_intake_only",
+  "command_center_closure_implied": false,
+  "bundle_rel_path": "data/fridge/batch-production/drafts/fridge-amazon-affiliate-link-audit-assist-v1.json",
+  "provenance_rel_path": "data/fridge/batch-production/drafts/fridge-amazon-affiliate-link-audit-assist-v1.provenance.json",
+  "commands_run": [
+    "node --import tsx scripts/run-fridge-amazon-affiliate-link-audit-cursor-validation-v1.ts",
+    "validateAmazonAffiliateLinkAuditBundleIntegrityV1",
+    "runAmazonAffiliateLinkAuditValidationV1"
+  ],
+  "validation_details": {
+    "slug_count": 7,
+    "bundle_authentic": true,
+    "integrity_errors": [],
+    "integrity_warnings": [
+      "AUDIT_STALE_FOR_ULTRAWF_OWNER_PROOF: HyperAgent audit marks ultrawf B002JAKRAM INCONCLUSIVE / no owner proof, but a newer owner browser session exists in fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json showing Amazon B002JAKRAM as a candidate. That newer owner proof must be recorded in a separate ultrawf owner-browser-proof result artifact reconciliation before any Amazon validation or link planning."
+    ],
+    "slug_verdicts": [
+      {
+        "slug": "wf3cb",
+        "safety_verdict": "HOLD",
+        "best_amazon_asin": "B0045LLC7K",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": true,
+        "pass_candidate": false
+      },
+      {
+        "slug": "eptwfu01",
+        "safety_verdict": "HOLD",
+        "best_amazon_asin": "B0CXKH95V1",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": true,
+        "pass_candidate": false
+      },
+      {
+        "slug": "edr4rxd1",
+        "safety_verdict": "PASS_CANDIDATE",
+        "best_amazon_asin": "B00UB38V2A",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": false,
+        "pass_candidate": true
+      },
+      {
+        "slug": "wfcb",
+        "safety_verdict": "PASS_CANDIDATE",
+        "best_amazon_asin": "B0CC2TCJ57",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": false,
+        "pass_candidate": true
+      },
+      {
+        "slug": "ultrawf",
+        "safety_verdict": "INCONCLUSIVE",
+        "best_amazon_asin": "B002JAKRAM",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": true,
+        "pass_candidate": false
+      },
+      {
+        "slug": "edr3rxd1",
+        "safety_verdict": "HOLD",
+        "best_amazon_asin": "B00UB441HS",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": true,
+        "pass_candidate": false
+      },
+      {
+        "slug": "fppwfu01",
+        "safety_verdict": "HOLD",
+        "best_amazon_asin": "B08V6JB9R7",
+        "affiliate_tag_status": "MISSING",
+        "expected_affiliate_tag": "buckparts20-20",
+        "mutation_blocked": true,
+        "pass_candidate": false
+      }
+    ],
+    "all_expected_slugs_present": true,
+    "no_extra_slugs": true,
+    "b087_do_not_use_only": true,
+    "b087_in_do_not_use_table": true,
+    "authorization_blocks_mutation": true,
+    "affiliate_tag_expected_but_not_production_authorized": true,
+    "amazon_rows_in_csv_zero_for_cohort": true,
+    "pass_candidates_confirmed": true,
+    "blocked_slugs_confirmed": true,
+    "ultrawf_stale_warning_emitted": true,
+    "ultrawf_stale_warning_code": "AUDIT_STALE_FOR_ULTRAWF_OWNER_PROOF",
+    "ultrawf_stale_warning_reason": "HyperAgent audit marks ultrawf B002JAKRAM INCONCLUSIVE / no owner proof, but a newer owner browser session exists in fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json showing Amazon B002JAKRAM as a candidate. That newer owner proof must be recorded in a separate ultrawf owner-browser-proof result artifact reconciliation before any Amazon validation or link planning.",
+    "protected_paths_unchanged": [
+      {
+        "rel_path": "data/retailer_links.csv",
+        "exists": true,
+        "sha256": "2667d640b6e5f972fd7b4f3710a142bc2a9127f7955becbc0509ad87d3a13f75",
+        "mtime_ms": 1780413771919.59
+      },
+      {
+        "rel_path": "data/filters.csv",
+        "exists": true,
+        "sha256": "95ce51160c0840bb64773a8e1a2d17d820ed7c9310ed13ac049b6de38f9c8ad8",
+        "mtime_ms": 1775881604201.833
+      },
+      {
+        "rel_path": "data/compatibility_mappings.csv",
+        "exists": true,
+        "sha256": "e696b2002a6caca345503a7592199fd8af9aab0ae686544cb87d22a066f0199b",
+        "mtime_ms": 1780175307790.9773
+      }
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: validation is read_only; no CSV/Supabase/evidence mutation authorized",
+    "PROVEN: HyperAgent Amazon affiliate audit is discovery input only — not production truth",
+    "PROVEN: VALIDATION_PASS is not claimed by this intake validation layer",
+    "PROVEN: validation is read_only; no CSV/Supabase/evidence mutation authorized",
+    "PROVEN: HyperAgent audit is discovery input only — not production affiliate truth",
+    "PROVEN: do_not_use_table lists edr3rxd1 B087PDLZL9 as Waterdrop aftermarket HARD_DO_NOT_USE",
+    "PROVEN: edr3rxd1 slug audit blocked_asins includes B087PDLZL9 HARD_DO_NOT_USE",
+    "PROVEN: repo retailer_links.csv has 0 Amazon rows for the 7-slug cohort (read-only check)",
+    "PROVEN: cohort affiliate_tag_status is MISSING with expected tag buckparts20-20 on all slug audits"
+  ],
+  "unknown_facts": [
+    "UNKNOWN: byte_for_byte_hyperagent_export_match per provenance sidecar",
+    "UNKNOWN: live Amazon PDP state — not re-fetched in this intake validation run"
+  ],
+  "doctrine_doc": "docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md"
+}
