@@ -4,8 +4,13 @@ import path from "node:path";
 import { describe, test } from "node:test";
 
 import {
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
+  loadOwnerBrowserProofResultArtifactsV1,
+  loadOwnerBrowserProofResultEptwfu01V1,
   loadOwnerBrowserProofResultWf3cbV1,
+  proveEptwfu01OwnerBrowserProofPassV1,
   proveWf3cbOwnerBrowserProofPassV1,
   validateOwnerBrowserProofResultV1,
 } from "./fridge-safe-link-owner-browser-proof-result-v1";
@@ -61,5 +66,55 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
       FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
       "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
     );
+    assert.equal(
+      FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+    );
+  });
+
+  test("eptwfu01 draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {
+    const result = loadOwnerBrowserProofResultEptwfu01V1(process.cwd());
+    const validation = validateOwnerBrowserProofResultV1(result);
+    assert.equal(validation.valid, true, validation.errors.join("; "));
+    assert.equal(result.slug, "eptwfu01");
+    assert.equal(result.verdict, "PASS_BROWSER_PROOF");
+    assert.equal(result.oem_part_token, "EPTWFU01");
+    assert.equal(result.verified_link_authorized, false);
+
+    const summary = proveEptwfu01OwnerBrowserProofPassV1(result);
+    assert.equal(summary.pass_verdict, true);
+    assert.equal(summary.proof_url_count, 3);
+    assert.equal(summary.amazon_hold_single_filter, true);
+
+    assert.ok(
+      result.owner_proof_urls.every((u) => !u.url.includes("B087PDLZL9")),
+      "must not include edr3 DO_NOT_USE ASIN",
+    );
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("frigidaire.com")),
+      "official manufacturer URL required",
+    );
+    assert.ok(result.not_authorized?.includes("VALIDATION_PASS"));
+  });
+
+  test("eptwfu01 result uses PROVEN labels for owner-observed browser proof", () => {
+    const result = loadOwnerBrowserProofResultEptwfu01V1(process.cwd());
+    for (const row of result.owner_proof_urls) {
+      assert.ok(row.proven_observations && row.proven_observations.length > 0, row.url);
+      assert.ok(row.proven_observations.every((o) => o.startsWith("PROVEN:")), row.url);
+    }
+    assert.ok((result.unverified_candidates ?? []).some((c) => c.url?.includes("B0CXKH95V1")));
+    assert.ok((result.unknown_facts ?? []).some((f) => f.includes("single-pack")));
+  });
+
+  test("all draft result artifacts validate independently", () => {
+    const artifacts = loadOwnerBrowserProofResultArtifactsV1(process.cwd());
+    assert.equal(artifacts.length, FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1.length);
+    const slugs = new Set(artifacts.map((a) => a.slug));
+    assert.equal(slugs.size, artifacts.length, "slug collision across result artifacts");
+    for (const result of artifacts) {
+      const validation = validateOwnerBrowserProofResultV1(result);
+      assert.equal(validation.valid, true, `${result.slug}: ${validation.errors.join("; ")}`);
+    }
   });
 });
