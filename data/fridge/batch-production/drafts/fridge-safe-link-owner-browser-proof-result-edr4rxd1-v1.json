@@ -1,0 +1,137 @@
+{
+  "contract": "fridge_safe_link_owner_browser_proof_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "production_go_click_authorized": false,
+  "command_center_closure_authorized": false,
+  "truth_closure_authorized": false,
+  "apply_planning_authorized": false,
+  "slug": "edr4rxd1",
+  "oem_part_token": "EDR4RXD1",
+  "brand_slug": "whirlpool",
+  "product_line": "EveryDrop Filter 4",
+  "verdict": "PASS_BROWSER_PROOF",
+  "checked_at": "2026-06-05T22:00:00.000Z",
+  "capture_method": "owner_browser_visual_inspection",
+  "verified_by": "owner",
+  "mission_context": {
+    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
+    "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
+    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
+    "assist_validation_status": "VALIDATION_PARTIAL"
+  },
+  "live_buckparts_url": "https://buckparts.com/filter/edr4rxd1",
+  "owner_proof_urls": [
+    {
+      "priority": 1,
+      "retailer": "Amazon",
+      "url": "https://www.amazon.com/EveryDrop-Whirlpool-Refrigerator-Filter-Packaging/dp/B00UB38V2A",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Acceptable Amazon PDP proof; main listing is EveryDrop/Whirlpool single-pack.",
+      "proven_observations": [
+        "PROVEN: Product title says everydrop by Whirlpool Ice and Water Refrigerator Filter 4, EDR4RXD1, Single-Pack.",
+        "PROVEN: Price shown $50.80.",
+        "PROVEN: In Stock.",
+        "PROVEN: Ships from and sold by Amazon.com.",
+        "PROVEN: Image shows EveryDrop Filter 4 green packaging and single white cylindrical filter."
+      ],
+      "inferred_observations": [
+        "INFERRED: Sponsored banner above page shows Waterdrop aftermarket ad, but main PDP is EveryDrop/Whirlpool per owner assessment."
+      ],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 2,
+      "retailer": "Home Depot",
+      "url": "https://www.homedepot.com/p/EveryDrop-Ice-and-Refrigerator-Water-Filter-4-EDR4RXD1/205738810",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Acceptable retailer PDP proof.",
+      "proven_observations": [
+        "PROVEN: Product title says Ice and Refrigerator Water Filter 4.",
+        "PROVEN: Model # EDR4RXD1 visible near top.",
+        "PROVEN: Price shown $59.99.",
+        "PROVEN: Add to Cart visible.",
+        "PROVEN: EveryDrop product image and Filter 4 packaging visible."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 3,
+      "retailer": "Whirlpool.com",
+      "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+      "path_type": "official_manufacturer_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Official manufacturer proof URL.",
+      "proven_observations": [
+        "PROVEN: Whirlpool official page.",
+        "PROVEN: Product title says everydrop Refrigerator Water Filter 4 - EDR4RXD1 (Pack of 1).",
+        "PROVEN: Model: EDR4RXD1.",
+        "PROVEN: Price shown $48.00.",
+        "PROVEN: Add To Cart visible.",
+        "PROVEN: Key features include Genuine Filter warning against non-genuine EveryDrop filters."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 4,
+      "retailer": "Lowes",
+      "url": "https://www.lowes.com/pd/everydrop-Filter-4-6-Month-Refrigerator-Water-Filter/50352232?idProductFound=false&idExtracted=true",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Acceptable retailer PDP proof; owner used corrected Lowe's URL.",
+      "proven_observations": [
+        "PROVEN: Product title says everydrop Twist-in Refrigerator Water Filter Filter 4.",
+        "PROVEN: Model # EDR4RXD1.",
+        "PROVEN: Price shown $59.99.",
+        "PROVEN: Shop everydrop link visible.",
+        "PROVEN: 1k+ bought last week visible.",
+        "PROVEN: One Time Purchase and subscription options visible.",
+        "PROVEN: Product image shows EveryDrop Filter 4 packaging and filter."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    }
+  ],
+  "unverified_candidates": [],
+  "not_authorized": [
+    "retailer_links_csv_mutation",
+    "filters_csv_mutation",
+    "compatibility_mappings_csv_mutation",
+    "data/evidence_mutation",
+    "supabase_mutation",
+    "production_go_click",
+    "verified_link_authorization",
+    "command_center_closure",
+    "truth_closure",
+    "VALIDATION_PASS",
+    "live_link_mutation_from_this_result_alone"
+  ],
+  "proven_facts": [
+    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug edr4rxd1.",
+    "PROVEN: Amazon, Home Depot, Whirlpool.com, and Lowe's PDPs loaded and show EDR4RXD1 / EveryDrop Filter 4 OEM signals per owner screenshot review.",
+    "PROVEN: draft result artifact is read_only=true with all mutation flags false."
+  ],
+  "inferred_facts": [
+    "INFERRED: Amazon sponsored Waterdrop banner above main PDP does not change EveryDrop/Whirlpool identity on the primary listing per owner assessment."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band; paths not recorded here.",
+    "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone.",
+    "UNKNOWN: production /go first-hop without clicking /go."
+  ],
+  "recommended_next_action": "Continue remaining OWNER_BROWSER_PROOF_ASSIST session slugs. A separate read-only apply-plan proposal may be drafted later — still no CSV/Supabase/Verified Link apply without explicit owner authorization."
+}

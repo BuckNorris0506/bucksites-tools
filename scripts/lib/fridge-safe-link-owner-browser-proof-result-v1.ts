@@ -17,10 +17,14 @@ export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1 =
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json" as const;
 
+export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json" as const;
+
 /** Draft owner browser proof result artifacts (read-only intake; no mutation). */
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1 = [
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
 ] as const;
 
 export type OwnerBrowserProofResultUrlRowV1 = {
@@ -124,6 +128,15 @@ export function loadOwnerBrowserProofResultEptwfu01V1(
   );
 }
 
+export function loadOwnerBrowserProofResultEdr4rxd1V1(
+  rootDir: string = process.cwd(),
+): OwnerBrowserProofResultV1 {
+  return loadJson<OwnerBrowserProofResultV1>(
+    rootDir,
+    FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
+  );
+}
+
 export function loadOwnerBrowserProofResultArtifactsV1(
   rootDir: string = process.cwd(),
 ): OwnerBrowserProofResultV1[] {
@@ -156,6 +169,21 @@ export function proveEptwfu01OwnerBrowserProofPassV1(result: OwnerBrowserProofRe
     proof_url_count: result.owner_proof_urls.length,
     amazon_hold_single_filter: (result.unverified_candidates ?? []).some((c) =>
       (c.url ?? "").includes("B0CXKH95V1"),
+    ),
+  };
+}
+
+export function proveEdr4rxd1OwnerBrowserProofPassV1(result: OwnerBrowserProofResultV1): {
+  pass_verdict: boolean;
+  proof_url_count: number;
+  amazon_pass_single_pack: boolean;
+} {
+  return {
+    pass_verdict: result.slug === "edr4rxd1" && result.verdict === "PASS_BROWSER_PROOF",
+    proof_url_count: result.owner_proof_urls.length,
+    amazon_pass_single_pack: result.owner_proof_urls.some(
+      (u) =>
+        (u.url ?? "").includes("B00UB38V2A") && u.browser_proof_status === "PASS",
     ),
   };
 }
