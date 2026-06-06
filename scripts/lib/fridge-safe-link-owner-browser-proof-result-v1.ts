@@ -20,11 +20,15 @@ export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1 =
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json" as const;
 
+export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json" as const;
+
 /** Draft owner browser proof result artifacts (read-only intake; no mutation). */
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1 = [
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
 ] as const;
 
 export type OwnerBrowserProofResultUrlRowV1 = {
@@ -54,6 +58,20 @@ export type OwnerBrowserProofResultV1 = {
   verdict: string;
   owner_proof_urls: OwnerBrowserProofResultUrlRowV1[];
   unverified_candidates?: Array<{ url?: string; status?: string; reason?: string }>;
+  hold_candidates?: OwnerBrowserProofResultUrlRowV1[];
+  amazon_pass_candidates?: Array<
+    OwnerBrowserProofResultUrlRowV1 & { assessment?: string }
+  >;
+  failed_candidates?: Array<
+    OwnerBrowserProofResultUrlRowV1 & { action?: string; assessment?: string }
+  >;
+  urls_to_avoid?: Array<{
+    retailer?: string;
+    url?: string;
+    action?: string;
+    reason?: string;
+    evidence_level?: string;
+  }>;
   not_authorized?: string[];
   proven_facts?: string[];
   inferred_facts?: string[];
@@ -137,6 +155,15 @@ export function loadOwnerBrowserProofResultEdr4rxd1V1(
   );
 }
 
+export function loadOwnerBrowserProofResultWfcbV1(
+  rootDir: string = process.cwd(),
+): OwnerBrowserProofResultV1 {
+  return loadJson<OwnerBrowserProofResultV1>(
+    rootDir,
+    FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
+  );
+}
+
 export function loadOwnerBrowserProofResultArtifactsV1(
   rootDir: string = process.cwd(),
 ): OwnerBrowserProofResultV1[] {
@@ -184,6 +211,24 @@ export function proveEdr4rxd1OwnerBrowserProofPassV1(result: OwnerBrowserProofRe
     amazon_pass_single_pack: result.owner_proof_urls.some(
       (u) =>
         (u.url ?? "").includes("B00UB38V2A") && u.browser_proof_status === "PASS",
+    ),
+  };
+}
+
+export function proveWfcbOwnerBrowserProofPassV1(result: OwnerBrowserProofResultV1): {
+  pass_verdict: boolean;
+  pass_proof_url_count: number;
+  hold_out_of_stock_count: number;
+  amazon_pass_candidate_count: number;
+  swift_green_excluded: boolean;
+} {
+  return {
+    pass_verdict: result.slug === "wfcb" && result.verdict === "PASS_BROWSER_PROOF",
+    pass_proof_url_count: result.owner_proof_urls.length,
+    hold_out_of_stock_count: (result.hold_candidates ?? []).length,
+    amazon_pass_candidate_count: (result.amazon_pass_candidates ?? []).length,
+    swift_green_excluded: (result.failed_candidates ?? []).some((c) =>
+      (c.proven_observations ?? []).some((o) => o.includes("Swift Green")),
     ),
   };
 }

@@ -7,13 +7,16 @@ import {
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   loadOwnerBrowserProofResultArtifactsV1,
   loadOwnerBrowserProofResultEdr4rxd1V1,
   loadOwnerBrowserProofResultEptwfu01V1,
+  loadOwnerBrowserProofResultWfcbV1,
   loadOwnerBrowserProofResultWf3cbV1,
   proveEdr4rxd1OwnerBrowserProofPassV1,
   proveEptwfu01OwnerBrowserProofPassV1,
+  proveWfcbOwnerBrowserProofPassV1,
   proveWf3cbOwnerBrowserProofPassV1,
   validateOwnerBrowserProofResultV1,
 } from "./fridge-safe-link-owner-browser-proof-result-v1";
@@ -76,6 +79,10 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
     assert.equal(
       FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
       "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+    );
+    assert.equal(
+      FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json",
     );
   });
 
@@ -148,6 +155,51 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
     const amazon = result.owner_proof_urls.find((u) => u.url.includes("B00UB38V2A"));
     assert.ok(amazon?.inferred_observations?.some((o) => o.includes("Waterdrop")));
     assert.ok((result.unknown_facts ?? []).some((f) => f.includes("screenshot")));
+  });
+
+  test("wfcb draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {
+    const result = loadOwnerBrowserProofResultWfcbV1(process.cwd());
+    const validation = validateOwnerBrowserProofResultV1(result);
+    assert.equal(validation.valid, true, validation.errors.join("; "));
+    assert.equal(result.slug, "wfcb");
+    assert.equal(result.verdict, "PASS_BROWSER_PROOF");
+    assert.equal(result.oem_part_token, "WFCB");
+    assert.equal(result.verified_link_authorized, false);
+    assert.equal(result.apply_planning_authorized, false);
+
+    const summary = proveWfcbOwnerBrowserProofPassV1(result);
+    assert.equal(summary.pass_verdict, true);
+    assert.equal(summary.pass_proof_url_count, 2);
+    assert.equal(summary.hold_out_of_stock_count, 1);
+    assert.equal(summary.amazon_pass_candidate_count, 1);
+    assert.equal(summary.swift_green_excluded, true);
+
+    assert.ok(result.not_authorized?.includes("VALIDATION_PASS"));
+    assert.ok(result.not_authorized?.includes("amazon_affiliate_tag_mutation"));
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("warnersstellian.com")),
+    );
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("frigidaire.com")),
+    );
+    const hdHold = result.hold_candidates?.[0];
+    assert.equal(hdHold?.browser_proof_status, "PASS_IDENTITY_BUT_HOLD_OUT_OF_STOCK");
+    assert.ok((hdHold?.proven_observations ?? []).some((o) => o.includes("Out of Stock")));
+  });
+
+  test("wfcb result uses PROVEN labels and excludes Swift Green Amazon listing", () => {
+    const result = loadOwnerBrowserProofResultWfcbV1(process.cwd());
+    for (const row of result.owner_proof_urls) {
+      assert.ok(row.proven_observations && row.proven_observations.length > 0, row.url);
+      assert.ok(row.proven_observations.every((o) => o.startsWith("PROVEN:")), row.url);
+    }
+    const amazonPass = result.amazon_pass_candidates?.[0];
+    assert.equal(amazonPass?.browser_proof_status, "PASS_BROWSER_PROOF_AMAZON_CANDIDATE");
+    assert.ok((amazonPass?.proven_observations ?? []).some((o) => o.includes("Amazon.com")));
+    const swiftGreen = result.failed_candidates?.[0];
+    assert.equal(swiftGreen?.action, "DO_NOT_USE");
+    assert.ok((swiftGreen?.proven_observations ?? []).some((o) => o.includes("Swift Green")));
+    assert.ok((result.recommended_next_action ?? "").includes("affiliate tag"));
   });
 
   test("all draft result artifacts validate independently", () => {
