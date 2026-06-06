@@ -1,0 +1,152 @@
+{
+  "contract": "fridge_safe_link_owner_browser_proof_result_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "production_go_click_authorized": false,
+  "command_center_closure_authorized": false,
+  "truth_closure_authorized": false,
+  "apply_planning_authorized": false,
+  "slug": "ultrawf",
+  "oem_part_token": "ULTRAWF",
+  "brand_slug": "frigidaire",
+  "product_line": "PureSource Ultra",
+  "verdict": "PASS_BROWSER_PROOF",
+  "checked_at": "2026-06-06T02:00:00.000Z",
+  "capture_method": "owner_browser_visual_inspection",
+  "verified_by": "owner",
+  "mission_context": {
+    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
+    "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
+    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
+    "assist_validation_status": "VALIDATION_PARTIAL"
+  },
+  "live_buckparts_url": "https://buckparts.com/filter/ultrawf",
+  "owner_proof_urls": [
+    {
+      "priority": 1,
+      "retailer": "frigidaireapplianceparts.com",
+      "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+      "path_type": "authorized_parts_distributor_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Strong authorized Frigidaire parts distributor proof URL.",
+      "proven_observations": [
+        "PROVEN: Page title/heading shows Frigidaire Water Filter ULTRAWF.",
+        "PROVEN: Item #1534529.",
+        "PROVEN: Frigidaire OEM Part #ULTRAWF.",
+        "PROVEN: PureSource Ultra description visible.",
+        "PROVEN: Price shown $59.99.",
+        "PROVEN: In Stock.",
+        "PROVEN: Add to Cart visible.",
+        "PROVEN: Genuine OEM Part badge visible.",
+        "PROVEN: Single filter/product image matches Frigidaire PureSource Ultra packaging."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 2,
+      "retailer": "Home Depot",
+      "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Acceptable retailer PDP proof.",
+      "proven_observations": [
+        "PROVEN: Title shows Refrigerator Filter for Frigidaire ULTRAWF PureSource Ultra.",
+        "PROVEN: Model # ULTRAWF visible.",
+        "PROVEN: Frigidaire brand/store visible.",
+        "PROVEN: Price shown $59.99.",
+        "PROVEN: Pickup/delivery available.",
+        "PROVEN: Add to Cart visible.",
+        "PROVEN: Product image matches Frigidaire PureSource Ultra packaging."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 3,
+      "retailer": "Frigidaire.com",
+      "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "path_type": "official_manufacturer_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Official manufacturer proof URL.",
+      "proven_observations": [
+        "PROVEN: Official Frigidaire page loaded.",
+        "PROVEN: Title shows PureSource Ultra Water and Ice Refrigerator Filter.",
+        "PROVEN: ULTRAWF visible.",
+        "PROVEN: Price shown $48.",
+        "PROVEN: Frigidaire/PureSource Ultra packaging visible.",
+        "PROVEN: Add subscription visible.",
+        "PROVEN: 1 Pack selected."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    }
+  ],
+  "amazon_pass_candidates": [
+    {
+      "retailer": "Amazon",
+      "url": "https://www.amazon.com/dp/B002JAKRAM",
+      "browser_proof_status": "PASS_BROWSER_PROOF_AMAZON_CANDIDATE",
+      "assessment": "Owner browser proof input only — include in later Amazon affiliate audit; do not mutate affiliate links from this result alone.",
+      "proven_observations": [
+        "PROVEN: Title shows FRIGIDAIRE ULTRAWF Pure Source Ultra Water Filter, Original, White, 1 Count.",
+        "PROVEN: Frigidaire store visible.",
+        "PROVEN: Price shown $56.00.",
+        "PROVEN: In Stock.",
+        "PROVEN: Ships from and sold by Amazon.",
+        "PROVEN: Prime visible.",
+        "PROVEN: Single count / 1 Count."
+      ],
+      "inferred_observations": [
+        "INFERRED: Amazon candidate should be included in later Amazon affiliate audit."
+      ],
+      "unknown_observations": [
+        "UNKNOWN: Affiliate tag status on this Amazon URL.",
+        "UNKNOWN: Whether current repo retailer_links.csv already has this Amazon URL for slug ultrawf."
+      ],
+      "screenshot_paths": []
+    }
+  ],
+  "unverified_candidates": [],
+  "not_authorized": [
+    "retailer_links_csv_mutation",
+    "filters_csv_mutation",
+    "compatibility_mappings_csv_mutation",
+    "data/evidence_mutation",
+    "supabase_mutation",
+    "production_go_click",
+    "verified_link_authorization",
+    "command_center_closure",
+    "truth_closure",
+    "VALIDATION_PASS",
+    "live_link_mutation_from_this_result_alone",
+    "amazon_affiliate_tag_mutation"
+  ],
+  "proven_facts": [
+    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug ultrawf.",
+    "PROVEN: frigidaireapplianceparts.com, Home Depot, and Frigidaire.com PDPs loaded and show ULTRAWF / PureSource Ultra OEM signals per owner screenshot review.",
+    "PROVEN: Amazon B002JAKRAM shows Frigidaire ULTRAWF single-count listing sold by Amazon per owner session.",
+    "PROVEN: draft result artifact is read_only=true with all mutation flags false."
+  ],
+  "inferred_facts": [
+    "INFERRED: Prior crawler 504/CAPTCHA concerns for Frigidaire.com and Amazon are superseded for this owner browser session on the checked URLs.",
+    "INFERRED: Amazon B002JAKRAM should be included in later Amazon affiliate tag audit."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: BuckParts affiliate tag status on Amazon B002JAKRAM.",
+    "UNKNOWN: Whether retailer_links.csv or Supabase already references Amazon B002JAKRAM for ultrawf.",
+    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band; paths not recorded here.",
+    "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone.",
+    "UNKNOWN: production /go first-hop without clicking /go."
+  ],
+  "recommended_next_action": "Continue remaining OWNER_BROWSER_PROOF_ASSIST session slugs (edr3rxd1, fppwfu01). TODO: Audit accepted Amazon candidate B002JAKRAM for BuckParts affiliate tag enforcement separately — do not perform affiliate or retailer_links mutation in this intake step. Still no CSV/Supabase/Verified Link apply without explicit owner authorization."
+}

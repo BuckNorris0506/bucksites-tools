@@ -7,15 +7,18 @@ import {
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   loadOwnerBrowserProofResultArtifactsV1,
   loadOwnerBrowserProofResultEdr4rxd1V1,
   loadOwnerBrowserProofResultEptwfu01V1,
+  loadOwnerBrowserProofResultUltrawfV1,
   loadOwnerBrowserProofResultWfcbV1,
   loadOwnerBrowserProofResultWf3cbV1,
   proveEdr4rxd1OwnerBrowserProofPassV1,
   proveEptwfu01OwnerBrowserProofPassV1,
+  proveUltrawfOwnerBrowserProofPassV1,
   proveWfcbOwnerBrowserProofPassV1,
   proveWf3cbOwnerBrowserProofPassV1,
   validateOwnerBrowserProofResultV1,
@@ -83,6 +86,10 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
     assert.equal(
       FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
       "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json",
+    );
+    assert.equal(
+      FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
     );
   });
 
@@ -200,6 +207,45 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
     assert.equal(swiftGreen?.action, "DO_NOT_USE");
     assert.ok((swiftGreen?.proven_observations ?? []).some((o) => o.includes("Swift Green")));
     assert.ok((result.recommended_next_action ?? "").includes("affiliate tag"));
+  });
+
+  test("ultrawf draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {
+    const result = loadOwnerBrowserProofResultUltrawfV1(process.cwd());
+    const validation = validateOwnerBrowserProofResultV1(result);
+    assert.equal(validation.valid, true, validation.errors.join("; "));
+    assert.equal(result.slug, "ultrawf");
+    assert.equal(result.verdict, "PASS_BROWSER_PROOF");
+    assert.equal(result.oem_part_token, "ULTRAWF");
+    assert.equal(result.verified_link_authorized, false);
+
+    const summary = proveUltrawfOwnerBrowserProofPassV1(result);
+    assert.equal(summary.pass_verdict, true);
+    assert.equal(summary.proof_url_count, 3);
+    assert.equal(summary.amazon_pass_candidate_asin, true);
+
+    assert.ok(result.not_authorized?.includes("VALIDATION_PASS"));
+    assert.ok(result.not_authorized?.includes("amazon_affiliate_tag_mutation"));
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("frigidaireapplianceparts.com")),
+    );
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("frigidaire.com")),
+    );
+    const amazon = result.amazon_pass_candidates?.[0];
+    assert.equal(amazon?.browser_proof_status, "PASS_BROWSER_PROOF_AMAZON_CANDIDATE");
+    assert.ok((amazon?.url ?? "").includes("B002JAKRAM"));
+  });
+
+  test("ultrawf result uses PROVEN labels for owner-observed browser proof", () => {
+    const result = loadOwnerBrowserProofResultUltrawfV1(process.cwd());
+    for (const row of result.owner_proof_urls) {
+      assert.ok(row.proven_observations && row.proven_observations.length > 0, row.url);
+      assert.ok(row.proven_observations.every((o) => o.startsWith("PROVEN:")), row.url);
+    }
+    const amazon = result.amazon_pass_candidates?.[0];
+    assert.ok((amazon?.proven_observations ?? []).every((o) => o.startsWith("PROVEN:")));
+    assert.ok((amazon?.unknown_observations ?? []).some((o) => o.includes("Affiliate tag")));
+    assert.ok((result.recommended_next_action ?? "").includes("affiliate"));
   });
 
   test("all draft result artifacts validate independently", () => {

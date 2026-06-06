@@ -23,12 +23,16 @@ export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1 =
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json" as const;
 
+export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json" as const;
+
 /** Draft owner browser proof result artifacts (read-only intake; no mutation). */
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1 = [
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
 ] as const;
 
 export type OwnerBrowserProofResultUrlRowV1 = {
@@ -164,6 +168,15 @@ export function loadOwnerBrowserProofResultWfcbV1(
   );
 }
 
+export function loadOwnerBrowserProofResultUltrawfV1(
+  rootDir: string = process.cwd(),
+): OwnerBrowserProofResultV1 {
+  return loadJson<OwnerBrowserProofResultV1>(
+    rootDir,
+    FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
+  );
+}
+
 export function loadOwnerBrowserProofResultArtifactsV1(
   rootDir: string = process.cwd(),
 ): OwnerBrowserProofResultV1[] {
@@ -229,6 +242,20 @@ export function proveWfcbOwnerBrowserProofPassV1(result: OwnerBrowserProofResult
     amazon_pass_candidate_count: (result.amazon_pass_candidates ?? []).length,
     swift_green_excluded: (result.failed_candidates ?? []).some((c) =>
       (c.proven_observations ?? []).some((o) => o.includes("Swift Green")),
+    ),
+  };
+}
+
+export function proveUltrawfOwnerBrowserProofPassV1(result: OwnerBrowserProofResultV1): {
+  pass_verdict: boolean;
+  proof_url_count: number;
+  amazon_pass_candidate_asin: boolean;
+} {
+  return {
+    pass_verdict: result.slug === "ultrawf" && result.verdict === "PASS_BROWSER_PROOF",
+    proof_url_count: result.owner_proof_urls.length,
+    amazon_pass_candidate_asin: (result.amazon_pass_candidates ?? []).some((c) =>
+      (c.url ?? "").includes("B002JAKRAM"),
     ),
   };
 }
