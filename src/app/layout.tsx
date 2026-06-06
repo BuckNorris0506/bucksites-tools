@@ -6,7 +6,9 @@ import { SiteShell } from "@/components/SiteShell";
 import {
   SITE_DISPLAY_NAME,
 } from "@/lib/site-brand";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { buildDeployCommitRefForMetadata } from "@/lib/deploy/buckparts-deploy-identity-v1";
+import { buildSiteWideJsonLdGraph } from "@/lib/seo/structured-data";
 import { buildSiteSocialMetadata } from "@/lib/site-social-metadata";
 import { getRequiredSiteUrl } from "@/lib/site-url/get-required-site-url";
 
@@ -28,6 +30,7 @@ const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 const deployCommitRef = buildDeployCommitRefForMetadata();
 
 const siteSocialMetadata = buildSiteSocialMetadata({ siteName });
+const siteWideJsonLd = buildSiteWideJsonLdGraph();
 
 export const metadata: Metadata = {
   metadataBase: new URL(getRequiredSiteUrl()),
@@ -51,6 +54,7 @@ export default function RootLayout({
         {deployCommitRef ? (
           <meta name="buckparts-deploy-commit" content={deployCommitRef} />
         ) : null}
+        <JsonLdScript data={siteWideJsonLd} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}

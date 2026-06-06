@@ -9,9 +9,18 @@ import {
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
+import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { Prose } from "@/components/Prose";
 import { getFilterBySlug } from "@/lib/data/filters";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
+import {
+  canonicalAlternatesForIndexablePath,
+  isIndexablePageState,
+} from "@/lib/seo/canonical";
+import {
+  buildRefrigeratorFilterProductJsonLd,
+  refrigeratorFilterMetadataDescription,
+} from "@/lib/seo/structured-data";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
@@ -50,7 +59,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     hasDemandSignal: null,
   });
   const title = `${filter.oem_part_number} refrigerator filter`;
-  const description = `Part ${filter.oem_part_number} refrigerator water filter — compatible models and replacement timing.`;
+  const description = refrigeratorFilterMetadataDescription(filter.oem_part_number);
   const ogTitle = `${filter.oem_part_number} · ${SITE_DISPLAY_NAME}`;
   return {
     title,
@@ -67,6 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [SITE_SOCIAL_OG_IMAGE_PATH],
     },
     robots: getRobotsFromPageState(pageState),
+    ...canonicalAlternatesForIndexablePath(`/filter/${params.slug}`, pageState),
   };
 }
 
@@ -96,6 +106,26 @@ export default async function FilterPage({ params }: Props) {
   });
 
   const publicNotes = publicFacingRefrigeratorFilterNotes(filter.notes);
+  const usefulFilterIds = await loadRefrigeratorUsefulFilterIds();
+  const filterPageState = classifyPageState({
+    isIndexable: usefulFilterIds.has(filter.id),
+    validCtaCount: filter.retailer_links.length,
+    buyerPathState:
+      filter.fridge_models.length > 0 && filter.retailer_links.length > 0
+        ? "show_buy"
+        : "suppress_buy",
+    hasDemandSignal: null,
+  });
+  const filterProductJsonLd = isIndexablePageState(filterPageState)
+    ? buildRefrigeratorFilterProductJsonLd({
+        slug: filter.slug,
+        oemPartNumber: filter.oem_part_number,
+        name: filter.name,
+        brandName: filter.brand.name,
+        description: refrigeratorFilterMetadataDescription(filter.oem_part_number),
+      })
+    : null;
+
   const filterTrustState =
     trustSummary.buyer_path_state === "suppress_buy" ? "suppress_buy" : "show_buy";
   const filterTelemetryBase = {
@@ -191,6 +221,7 @@ export default async function FilterPage({ params }: Props) {
           )}
         </section>
       </article>
+      {filterProductJsonLd ? <JsonLdScript data={filterProductJsonLd} /> : null}
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getBrandBySlug } from "@/lib/data/brands";
 import { listFiltersByBrand } from "@/lib/data/filters";
 import { listFridgeModelsByBrand } from "@/lib/data/fridges";
+import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${brand.name} water filters`,
     description: `Refrigerator models and water filter numbers for ${brand.name}.`,
     openGraph: { title: `${brand.name} · ${SITE_DISPLAY_NAME}` },
+    ...canonicalAlternatesForPath(`/brand/${params.slug}`),
   };
 }
 

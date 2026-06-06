@@ -10,6 +10,7 @@ import { getFridgeBySlug } from "@/lib/data/fridges";
 import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
 import { getFridgeModelReviewOverride } from "@/lib/fridge/fridge-model-review-overrides";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
+import { canonicalAlternatesForIndexablePath } from "@/lib/seo/canonical";
 import { classifyPageState } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 
@@ -54,6 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `Compatible water filters and replacement schedule for ${fridge.brand.name} model ${fridge.model_number}.`,
     openGraph: { title: `${fridge.model_number} · ${fridge.brand.name}` },
     robots: getRobotsFromPageState(pageState),
+    ...canonicalAlternatesForIndexablePath(`/fridge/${params.slug}`, pageState),
   };
 }
 
