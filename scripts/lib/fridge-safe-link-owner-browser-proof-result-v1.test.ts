@@ -5,17 +5,20 @@ import { describe, test } from "node:test";
 
 import {
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR3RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   loadOwnerBrowserProofResultArtifactsV1,
+  loadOwnerBrowserProofResultEdr3rxd1V1,
   loadOwnerBrowserProofResultEdr4rxd1V1,
   loadOwnerBrowserProofResultEptwfu01V1,
   loadOwnerBrowserProofResultUltrawfV1,
   loadOwnerBrowserProofResultWfcbV1,
   loadOwnerBrowserProofResultWf3cbV1,
+  proveEdr3rxd1OwnerBrowserProofPassV1,
   proveEdr4rxd1OwnerBrowserProofPassV1,
   proveEptwfu01OwnerBrowserProofPassV1,
   proveUltrawfOwnerBrowserProofPassV1,
@@ -80,6 +83,10 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
       "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
     );
     assert.equal(
+      FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR3RXD1_REL_V1,
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+    );
+    assert.equal(
       FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
       "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
     );
@@ -126,6 +133,84 @@ describe("fridge-safe-link-owner-browser-proof-result-v1", () => {
     }
     assert.ok((result.unverified_candidates ?? []).some((c) => c.url?.includes("B0CXKH95V1")));
     assert.ok((result.unknown_facts ?? []).some((f) => f.includes("single-pack")));
+  });
+
+  test("edr3rxd1 draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {
+    const result = loadOwnerBrowserProofResultEdr3rxd1V1(process.cwd());
+    const validation = validateOwnerBrowserProofResultV1(result);
+    assert.equal(validation.valid, true, validation.errors.join("; "));
+    assert.equal(result.slug, "edr3rxd1");
+    assert.equal(result.verdict, "PASS_BROWSER_PROOF");
+    assert.equal(result.oem_part_token, "EDR3RXD1");
+    assert.equal(result.verified_link_authorized, false);
+    assert.equal(result.data_mutation, false);
+    assert.equal(result.mutation_authorized, false);
+    assert.equal(result.supabase_mutation_authorized, false);
+    assert.equal(result.evidence_write_authorized, false);
+    assert.equal(result.production_go_click_authorized, false);
+    assert.equal(result.command_center_closure_authorized, false);
+
+    const summary = proveEdr3rxd1OwnerBrowserProofPassV1(result);
+    assert.equal(summary.pass_verdict, true);
+    assert.equal(summary.whirlpool_proof_count, 1);
+    assert.equal(summary.home_depot_held_not_buyable, true);
+    assert.equal(summary.amazon_pass_with_buckparts_tag, true);
+    assert.equal(summary.b087_hard_excluded, true);
+
+    assert.ok(result.not_authorized?.includes("VALIDATION_PASS"));
+    assert.ok(result.not_authorized?.includes("retailer_links_csv_mutation"));
+    assert.ok(result.not_authorized?.includes("supabase_mutation"));
+    assert.ok(result.not_authorized?.includes("production_go_click"));
+    assert.ok(result.not_authorized?.includes("data/evidence_mutation"));
+    assert.ok(result.not_authorized?.includes("command_center_closure"));
+
+    assert.ok(
+      result.owner_proof_urls.some((u) => u.url.includes("whirlpool.com")),
+      "official manufacturer URL required",
+    );
+    assert.ok(
+      result.owner_proof_urls.every((u) => !u.url.includes("B087PDLZL9")),
+      "B087 must not be in owner_proof_urls",
+    );
+    assert.ok(
+      (result.amazon_pass_candidates ?? []).every((u) => !u.url.includes("B087PDLZL9")),
+      "B087 must not be in amazon_pass_candidates",
+    );
+
+    const hdHold = result.hold_candidates?.[0];
+    assert.equal(hdHold?.browser_proof_status, "PASS_IDENTITY_BUT_HOLD_NOT_BUYABLE");
+    assert.ok(
+      (hdHold?.proven_observations ?? []).some((o) => o.includes("Pickup and delivery are unavailable")),
+    );
+    assert.ok(
+      !(result.owner_proof_urls ?? []).some((u) => u.url.includes("302727620")),
+      "Home Depot must not be in buyable owner_proof_urls",
+    );
+
+    const amazon = result.amazon_pass_candidates?.[0];
+    assert.equal(amazon?.browser_proof_status, "PASS_BROWSER_PROOF_AMAZON_CANDIDATE");
+    assert.ok((amazon?.url ?? "").includes("B00UB441HS"));
+    assert.ok((amazon?.url ?? "").includes("tag=buckparts20-20"));
+
+    const b087Avoid = result.urls_to_avoid?.find((u) => (u.url ?? "").includes("B087PDLZL9"));
+    assert.equal(b087Avoid?.action, "HARD_DO_NOT_USE");
+  });
+
+  test("edr3rxd1 result uses PROVEN labels and preserves B087 HARD_DO_NOT_USE guard", () => {
+    const result = loadOwnerBrowserProofResultEdr3rxd1V1(process.cwd());
+    for (const row of result.owner_proof_urls) {
+      assert.ok(row.proven_observations && row.proven_observations.length > 0, row.url);
+      assert.ok(row.proven_observations.every((o) => o.startsWith("PROVEN:")), row.url);
+    }
+    const amazon = result.amazon_pass_candidates?.[0];
+    assert.ok((amazon?.proven_observations ?? []).every((o) => o.startsWith("PROVEN:")));
+    assert.ok(
+      (amazon?.proven_observations ?? []).some((o) => o.includes("tag=buckparts20-20")),
+    );
+    const hdHold = result.hold_candidates?.[0];
+    assert.ok((hdHold?.proven_observations ?? []).every((o) => o.startsWith("PROVEN:")));
+    assert.ok((result.proven_facts ?? []).some((f) => f.includes("B087PDLZL9")));
+    assert.ok((result.recommended_next_action ?? "").includes("B087PDLZL9"));
   });
 
   test("edr4rxd1 draft result loads and validates as read-only PASS_BROWSER_PROOF", () => {

@@ -17,6 +17,9 @@ export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1 =
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json" as const;
 
+export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR3RXD1_REL_V1 =
+  "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json" as const;
+
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json" as const;
 
@@ -30,6 +33,7 @@ export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1 =
 export const FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1 = [
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WF3CB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EPTWFU01_REL_V1,
+  FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR3RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR4RXD1_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_WFCB_REL_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
@@ -150,6 +154,15 @@ export function loadOwnerBrowserProofResultEptwfu01V1(
   );
 }
 
+export function loadOwnerBrowserProofResultEdr3rxd1V1(
+  rootDir: string = process.cwd(),
+): OwnerBrowserProofResultV1 {
+  return loadJson<OwnerBrowserProofResultV1>(
+    rootDir,
+    FRIDGE_OWNER_BROWSER_PROOF_RESULT_EDR3RXD1_REL_V1,
+  );
+}
+
 export function loadOwnerBrowserProofResultEdr4rxd1V1(
   rootDir: string = process.cwd(),
 ): OwnerBrowserProofResultV1 {
@@ -210,6 +223,41 @@ export function proveEptwfu01OwnerBrowserProofPassV1(result: OwnerBrowserProofRe
     amazon_hold_single_filter: (result.unverified_candidates ?? []).some((c) =>
       (c.url ?? "").includes("B0CXKH95V1"),
     ),
+  };
+}
+
+export function proveEdr3rxd1OwnerBrowserProofPassV1(result: OwnerBrowserProofResultV1): {
+  pass_verdict: boolean;
+  whirlpool_proof_count: number;
+  home_depot_held_not_buyable: boolean;
+  amazon_pass_with_buckparts_tag: boolean;
+  b087_hard_excluded: boolean;
+} {
+  const proofUrls = [
+    ...result.owner_proof_urls,
+    ...(result.amazon_pass_candidates ?? []),
+    ...(result.hold_candidates ?? []),
+  ];
+  return {
+    pass_verdict: result.slug === "edr3rxd1" && result.verdict === "PASS_BROWSER_PROOF",
+    whirlpool_proof_count: result.owner_proof_urls.length,
+    home_depot_held_not_buyable: (result.hold_candidates ?? []).some(
+      (c) =>
+        (c.url ?? "").includes("302727620") &&
+        (c.browser_proof_status ?? "").includes("HOLD") &&
+        (c.proven_observations ?? []).some((o) => o.toLowerCase().includes("unavailable")),
+    ),
+    amazon_pass_with_buckparts_tag: (result.amazon_pass_candidates ?? []).some(
+      (c) =>
+        (c.url ?? "").includes("B00UB441HS") &&
+        (c.url ?? "").includes("tag=buckparts20-20"),
+    ),
+    b087_hard_excluded:
+      !proofUrls.some((c) => (c.url ?? "").includes("B087PDLZL9")) &&
+      (result.urls_to_avoid ?? []).some(
+        (u) =>
+          (u.url ?? "").includes("B087PDLZL9") && u.action === "HARD_DO_NOT_USE",
+      ),
   };
 }
 
