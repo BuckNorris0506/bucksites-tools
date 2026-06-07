@@ -1,0 +1,2 @@
+fridge_slug,expected_filter_slugs,forbidden_filter_slugs,official_marketing_token,draft_md_relpath,evidence_json_relpath
+samsung-rf28r7351sr,da97-17376b,da29-00020b|da29-00012b,HAF-QIN,data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md,data/manual-evidence/refrigerator/samsung-rf28r7351sr.json
