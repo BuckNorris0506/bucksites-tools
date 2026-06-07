@@ -18,6 +18,15 @@ const REVIEW_OVERRIDES: Record<string, FridgeModelReviewOverride> = {
       "We're reviewing this model before recommending a replacement filter. Filter information for this model conflicts across sources, so no buying options appear yet.",
     internal_evidence_doc: "docs/fridge-model-filter-mapping-discrepancies.md",
   },
+  "samsung-rf28r7351sr": {
+    fridge_model_slug: "samsung-rf28r7351sr",
+    reason: "FILTER_MAPPING_CONFLICT",
+    public_status: "owner_review_required",
+    public_message:
+      "We're reviewing filter mappings for this Samsung model before recommending a replacement cartridge. Catalog rows for this model currently point at the wrong filter family, so no buying options appear yet.",
+    internal_evidence_doc:
+      "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+  },
 };
 
 export function listFridgeModelReviewOverrides(): FridgeModelReviewOverride[] {

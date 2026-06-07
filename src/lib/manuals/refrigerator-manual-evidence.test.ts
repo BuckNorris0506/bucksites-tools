@@ -129,6 +129,19 @@ describe("refrigerator-manual-evidence", () => {
     )}`);
   });
 
+  it("fixture for samsung-rf28r7351sr validates as public-ready multi-source Tier 1 bundle", async () => {
+    const raw = await readFile(
+      "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+      "utf8",
+    );
+    const record = JSON.parse(raw) as RefrigeratorManualEvidenceRecord;
+    const r = validateRefrigeratorManualEvidencePublicReady(record);
+    assert.equal(r.ok, true, `expected fixture to be public-ready, got errors: ${r.errors.join(
+      "; ",
+    )}`);
+    assert.equal(record.fridge_model_slug, "samsung-rf28r7351sr");
+  });
+
   it("fixture for lg-lfxs28968s validates as public-ready multi-source Tier 1 bundle", async () => {
     const raw = await readFile(
       "data/manual-evidence/refrigerator/lg-lfxs28968s.json",

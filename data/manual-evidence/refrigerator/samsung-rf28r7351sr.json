@@ -1,0 +1,50 @@
+{
+  "fridge_model_slug": "samsung-rf28r7351sr",
+  "source_type": "manufacturer_support",
+  "source_url": "https://image-us.samsung.com/SamsungUS/samsung/us/home-appliance/pdf/rf28r7351-refrigerator/RF28R7351SR.pdf",
+  "source_title": "Samsung RF28R7351SR spec sheet (Water Filter HAF-QIN / DA97-17376B)",
+  "source_host": "image-us.samsung.com",
+  "evidence_date": "2026-06-06",
+  "filter_location_text": "Samsung support guidance varies by model — consult the user manual for internal filter housing location on French-door models with external water dispensers.",
+  "replacement_steps_summary": "Samsung support guidance for HAF-QIN filters: turn off water supply, rotate the old filter counterclockwise to unlock and remove, install the new filter clockwise until locked, then flush several gallons and reset the filter indicator.",
+  "cautions": "Samsung support recommends genuine Samsung water filters only and replacing approximately every six months or when the filter indicator prompts. Samsung documents separate HAF-QIN and HAF-CIN filter families for different refrigerator lines; a HAF-CIN (DA29-00020B) cartridge is a different family and may not fit where HAF-QIN is required — using the wrong family can risk damage to the filter housing or water path. Compare the marketing name and OEM number on your old filter before ordering.",
+  "confidence": "medium",
+  "extracted_by": "cursor-page-1-draft-samsung-rf28r7351sr-2026-06-06",
+  "operator_reviewed": true,
+  "copied_image_allowed": false,
+  "notes": "Page 1 draft bundle for samsung-rf28r7351sr — Tier 1 Samsung sources for RF28R7351SR and HAF-QIN/DA97-17376B. BuckParts compatibility_mappings.csv still maps this slug to wrong-family rows (da29-00020b, da29-00012b) pending owner reconciliation; live slug quarantined via fridge-model-review-overrides.",
+  "sources": [
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://image-us.samsung.com/SamsungUS/samsung/us/home-appliance/pdf/rf28r7351-refrigerator/RF28R7351SR.pdf",
+      "source_title": "Samsung RF28R7351SR spec sheet",
+      "source_host": "image-us.samsung.com",
+      "evidence_role": "filter_specification",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+      "source_title": "Samsung Water Filter Finder (RF28R7351 family / HAF-QIN)",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+      "source_title": "Samsung HAF-QIN refrigerator water filter accessory",
+      "source_host": "www.samsung.com",
+      "evidence_role": "model_support_context",
+      "source_tier": 1
+    },
+    {
+      "source_type": "manufacturer_support",
+      "source_url": "https://www.samsung.com/us/support/answer/ANS10005090/",
+      "source_title": "How to replace the water filter in a Samsung refrigerator",
+      "source_host": "www.samsung.com",
+      "evidence_role": "replacement_process_guidance",
+      "source_tier": 1
+    }
+  ]
+}
