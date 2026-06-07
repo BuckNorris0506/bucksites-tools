@@ -1,12 +1,106 @@
 # BuckParts HQ — Agent Handoff
 
+## Current stopping point — SEO Phase 1 + RF28R7351SR Page Factory v1 (PROVEN through `a070797`)
+
+**Read this section first** for current HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`a070797f907f78b0d2a6157fa65a3339d8c4e54d`** |
+| Latest commit | **`a070797`** — `Remove RF28R7351SR quarantine after HAF-QIN parity proof` |
+| Working tree | **Clean** at handoff refresh |
+
+**Recent relevant commits:**
+
+| SHA | Subject | Status |
+|-----|---------|--------|
+| `a070797` | Remove RF28R7351SR quarantine after HAF-QIN parity proof | **PROVEN pushed** |
+| `f07c8c6` | Fix RF28R7351SR compat test after commit | **PROVEN pushed** |
+| `21b23ed` | Reconcile RF28R7351SR HAF-QIN compatibility mapping | **PROVEN pushed** |
+| `2fed919` | Add RF28R7351SR page factory draft evidence | **PROVEN pushed** |
+| `d4bbf0b` | Add SEO Phase 1 canonical and JSON-LD foundation | **PROVEN pushed** |
+
+### 2. SEO Phase 1 foundation (PROVEN)
+
+**PROVEN:** SEO Phase 1 canonical + safe JSON-LD foundation is implemented, validated, pushed, and smoke-tested.
+
+**Primary commit:** `d4bbf0b`.
+
+**Files added / changed:** `src/lib/seo/canonical.ts`, `src/lib/seo/structured-data.ts`, `src/components/seo/JsonLdScript.tsx`, SEO tests, and metadata wiring in:
+- `src/app/layout.tsx`
+- `src/app/fridge/[slug]/page.tsx`
+- `src/app/filter/[slug]/page.tsx`
+- `src/app/brand/[slug]/page.tsx`
+
+**Guardrails proven:** no buyer-path mutation, no `/go` mutation, no `data/retailer_links.csv` mutation, no Supabase mutation, no visible copy rewrite, no sitemap mutation, no ProductGroup schema, no `offers` / `price` / `availability` / `aggregateRating` / `review` / `seller` schema keys.
+
+### 3. RF28R7351SR Page Factory v1 (PROVEN)
+
+**PROVEN:** First page-factory target `samsung-rf28r7351sr` was moved from research packet to repo evidence, compatibility reconciliation, Supabase parity, quarantine removal, local production proof, and live proof.
+
+**Repo truth now:**
+- `data/compatibility_mappings.csv` maps `samsung-rf28r7351sr` only to `da97-17376b`.
+- `data/manual-evidence/refrigerator/samsung-rf28r7351sr.json` exists and validates as public-ready.
+- `data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md` exists as owner-reviewable draft/evidence context.
+- `samsung-rf28r7351sr` is absent from `src/lib/fridge/fridge-model-review-overrides.ts`.
+
+**Supabase truth proven during operator session:**
+- Supabase maps `samsung-rf28r7351sr` only to `da97-17376b`.
+- Stale Supabase mappings to `da29-00020b` and `da29-00012b` were removed.
+- RF28R7351SR quarantine was removed only after CSV + Supabase parity proof.
+
+**Live proof:** live curl proof passed for `https://buckparts.com/fridge/samsung-rf28r7351sr`.
+- Contains `RF28R7351SR`, `da97-17376b`, `DA97-17376B`, `HAF-QIN`, and canonical.
+- Does not contain `DA29-00012B`, old owner-review/quarantine copy, or old wrong-family quarantine copy.
+- `DA29-00020B` was absent on live proof; local proof showed it only in caution/warning context, not as a mapped/recommended filter.
+- `go_href_count=1`; proof did not click `/go`.
+
+### 4. Seed/import lessons (PROVEN)
+
+**PROVEN:** `npm run seed:import` upserts `compatibility_mappings` but does **not** prune stale DB rows removed from CSV. Removed compatibility rows can remain in Supabase unless explicitly cleaned up or a prune path is used.
+
+**PROVEN:** `npm run seed:import` can fail when Supabase `retailer_links` has DB↔CSV parity drift. In this lane, failures were caused by:
+- duplicate DB rows sharing `(filter_id, affiliate_url)` for GE MWF,
+- Amazon DB rows using untagged ASIN URLs while CSV used tagged `?tag=buckparts20-20` URLs,
+- unique constraint `retailer_links_filter_retailer_key_unique` blocking insert when DB had `retailer_key=amazon` with an untagged URL.
+
+**PROVEN fix pattern used:** read-only DB triage first, then owner-approved targeted Supabase cleanup/update, then rerun `npm run seed:import`, then prove Supabase parity before removing public quarantine.
+
+**Required future rule:** before relying on `npm run seed:import` for page-factory mapping work, run a DB↔CSV parity preflight for:
+1. target model compatibility rows,
+2. removed/stale DB compatibility rows,
+3. retailer-link duplicate `(filter_id, affiliate_url)` rows,
+4. retailer-key URL parity conflicts, especially Amazon tagged vs untagged URLs.
+
+**Do not repeat:** do not remove a public quarantine based on CSV-only proof. Required gate is **CSV exact mapping + successful seed/import or targeted Supabase parity + local/live page proof**.
+
+### 5. Next operating lane (INFERRED)
+
+**Recommended next:** build the repeatable Page Factory checklist/tooling so the next model page does not rediscover these failures manually.
+
+**Do not start the next model page as raw mutation until HQ has a documented preflight/checklist that distinguishes:**
+- repo evidence ready,
+- CSV reconciled,
+- Supabase parity proven,
+- quarantine removed,
+- local proof passed,
+- live proof passed,
+- HQ handoff updated.
+
+---
+
+
+
 **How to use:** Paste this whole file into a new ChatGPT / Cursor chat when picking up BuckParts work.
 
 **Canonical truth map:** `docs/BuckParts-TRUTH-MAP.md` is the primary source-of-truth navigation index for policy/runtime/measurement/operator files.
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`f9af2fe`** — FOH refresh + fridge safe-link batch factory (see **Current stopping point — FOH + safe-link batch factory** below). **Prior checkpoint `afaf86d`** (grant application pack) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`a070797`** — SEO Phase 1 + RF28R7351SR Page Factory v1 completion (see **Current stopping point — FOH + safe-link batch factory** below). **Prior checkpoint `afaf86d`** (grant application pack) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
