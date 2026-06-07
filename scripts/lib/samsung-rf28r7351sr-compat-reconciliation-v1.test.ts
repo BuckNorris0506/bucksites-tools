@@ -71,19 +71,24 @@ test("samsung-rf28r7351sr quarantine remains active after Step 2a CSV reconcile"
   assert.equal(isFridgeModelUnderOwnerReview(MODEL_SLUG), true);
 });
 
-test("compatibility_mappings.csv diff is exactly the scoped samsung-rf28r7351sr change", () => {
-  const diff = execSync(`git diff -- "${COMPAT_CSV}"`, { encoding: "utf8" });
-  const srLines = diff
-    .split("\n")
-    .filter((line) => line.includes("samsung-rf28r7351sr") && (line.startsWith("+") || line.startsWith("-")));
-  assert.deepEqual(srLines.sort(), [
-    "-samsung-rf28r7351sr,da29-00012b",
-    "-samsung-rf28r7351sr,da29-00020b",
-    "+samsung-rf28r7351sr,da97-17376b",
-  ].sort());
+test("committed compatibility_mappings.csv matches reconciled samsung-rf28r7351sr mapping with clean working tree", () => {
+  const workingTreeDiff = execSync(`git diff -- "${COMPAT_CSV}"`, { encoding: "utf8" }).trim();
+  assert.equal(
+    workingTreeDiff,
+    "",
+    "compatibility_mappings.csv must have no uncommitted changes after Step 2a commit",
+  );
+
+  const committed = execSync(`git show HEAD:"${COMPAT_CSV}"`, { encoding: "utf8" });
+  const slugs = modelFilterSlugs(parseCompatRows(committed), MODEL_SLUG);
+  assert.deepEqual(slugs, [TARGET_FILTER]);
+
+  for (const removed of REMOVED_FILTERS) {
+    assert.ok(!slugs.includes(removed), `committed CSV must not map ${MODEL_SLUG} to ${removed}`);
+  }
 });
 
-test("Step 2a leaves buyer-path go retailer and supabase paths untouched", () => {
+test("working tree leaves buyer-path go retailer and supabase paths untouched", () => {
   const protectedPaths = [
     "src/app/go/[linkId]/route.ts",
     "data/retailer_links.csv",
@@ -92,8 +97,8 @@ test("Step 2a leaves buyer-path go retailer and supabase paths untouched", () =>
   ];
   for (const rel of protectedPaths) {
     const diff = execSync(`git diff -- "${rel}"`, { encoding: "utf8" }).trim();
-    assert.equal(diff, "", `${rel} must not be modified in Step 2a`);
+    assert.equal(diff, "", `${rel} must have no uncommitted changes`);
   }
   const supabaseDiff = execSync("git diff -- supabase/", { encoding: "utf8" }).trim();
-  assert.equal(supabaseDiff, "", "supabase/ must not be modified in Step 2a");
+  assert.equal(supabaseDiff, "", "supabase/ must have no uncommitted changes");
 });
