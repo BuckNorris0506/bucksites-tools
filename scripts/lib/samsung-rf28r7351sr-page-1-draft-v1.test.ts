@@ -16,10 +16,9 @@ const DRAFT_PATH =
   "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md";
 const EVIDENCE_PATH = "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json";
 
-const PROTECTED_PATHS = [
+const PROTECTED_PATHS_NO_COMPAT = [
   "src/app/go/[linkId]/route.ts",
   "data/retailer_links.csv",
-  "data/compatibility_mappings.csv",
   "src/components/trust/TrustAwareBuySection.tsx",
   "src/lib/retailers/launch-buy-links.ts",
 ];
@@ -64,11 +63,12 @@ test("page 1 draft omits banned purchase and guarantee language", async () => {
   }
 });
 
-test("page 1 draft documents Step 1 gates — no compat apply or buy links", async () => {
+test("page 1 draft documents Step 2a gates — repo CSV reconciled, seed and quarantine pending", async () => {
   const draft = await readFile(DRAFT_PATH, "utf8");
   assert.ok(/compatibility_mappings\.csv/.test(draft));
-  assert.ok(/NO/i.test(draft));
   assert.ok(/quarantine/i.test(draft));
+  assert.ok(/seed:import|Supabase parity/i.test(draft));
+  assert.ok(/da97-17376b/i.test(draft));
 });
 
 test("samsung-rf28r7351sr live slug is quarantined for wrong-family mappings", () => {
@@ -78,11 +78,11 @@ test("samsung-rf28r7351sr live slug is quarantined for wrong-family mappings", (
   assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), true);
 });
 
-test("page 1 Step 1 leaves protected buyer-path and data paths untouched", () => {
-  for (const rel of PROTECTED_PATHS) {
+test("page 1 leaves protected buyer-path paths untouched (excluding scoped compat CSV)", () => {
+  for (const rel of PROTECTED_PATHS_NO_COMPAT) {
     const diff = execSync(`git diff -- "${rel}"`, { encoding: "utf8" }).trim();
-    assert.equal(diff, "", `${rel} must not be modified in Step 1`);
+    assert.equal(diff, "", `${rel} must not be modified`);
   }
   const supabaseDiff = execSync("git diff -- supabase/", { encoding: "utf8" }).trim();
-  assert.equal(supabaseDiff, "", "supabase/ must not be modified in Step 1");
+  assert.equal(supabaseDiff, "", "supabase/ must not be modified");
 });

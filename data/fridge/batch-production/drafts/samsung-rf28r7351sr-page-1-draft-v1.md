@@ -4,7 +4,7 @@
 
 **Target route (when reconciled):** `/fridge/samsung-rf28r7351sr`
 
-**Draft status:** Step 1 only — evidence fixture + copy draft + live quarantine until `data/compatibility_mappings.csv` is reconciled.
+**Draft status:** Step 2a complete in repo — `data/compatibility_mappings.csv` reconciled to `da97-17376b`; quarantine + `seed:import` + live proof remain pending before publication.
 
 **Evidence fixture:** `data/manual-evidence/refrigerator/samsung-rf28r7351sr.json`
 
@@ -51,7 +51,7 @@ Samsung maintains **separate** refrigerator water filter families. For this mode
 
 **Cautious wrong-family note:** Installing a **HAF-CIN (DA29-00020B)** cartridge where **HAF-QIN** is required may not seat correctly and **can risk damage** to the filter housing or water path. Compare the label on your old filter before buying.
 
-**PROVEN:** Samsung cross-reference module and current wrong compat rows for `samsung-rf28r7351sr` → `da29-00020b` / `da29-00012b` in `data/compatibility_mappings.csv` (pending removal on apply).
+**PROVEN:** Samsung cross-reference module. Repo CSV reconciled (Step 2a): `samsung-rf28r7351sr` → `da97-17376b` only. Supabase parity and live page proof still pending.
 
 ---
 
@@ -120,8 +120,8 @@ Samsung support recommends **genuine Samsung water filters** for refrigerators t
 
 | Gate | Status |
 | --- | --- |
-| `compatibility_mappings.csv` apply | **NO** — pending owner reconciliation |
-| `seed:import` / Supabase | **NO** |
+| `compatibility_mappings.csv` repo reconcile (Step 2a) | **YES** — `da97-17376b` only |
+| `seed:import` / Supabase parity | **NO** — pending owner Step 2b |
 | `retailer_links.csv` mutation | **NO** |
 | Buy / outbound purchase links | **NO** |
 | Public publish readiness | **NO** — quarantine active on live slug |

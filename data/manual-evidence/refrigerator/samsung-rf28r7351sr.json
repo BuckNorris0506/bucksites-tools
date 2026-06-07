@@ -12,7 +12,7 @@
   "extracted_by": "cursor-page-1-draft-samsung-rf28r7351sr-2026-06-06",
   "operator_reviewed": true,
   "copied_image_allowed": false,
-  "notes": "Page 1 draft bundle for samsung-rf28r7351sr — Tier 1 Samsung sources for RF28R7351SR and HAF-QIN/DA97-17376B. BuckParts compatibility_mappings.csv still maps this slug to wrong-family rows (da29-00020b, da29-00012b) pending owner reconciliation; live slug quarantined via fridge-model-review-overrides.",
+  "notes": "Page 1 draft bundle for samsung-rf28r7351sr — Tier 1 Samsung sources for RF28R7351SR and HAF-QIN/DA97-17376B. Repo compatibility_mappings.csv reconciled to da97-17376b (Step 2a); seed import and live proof pending; live slug remains quarantined via fridge-model-review-overrides until Step 2c.",
   "sources": [
     {
       "source_type": "manufacturer_support",
