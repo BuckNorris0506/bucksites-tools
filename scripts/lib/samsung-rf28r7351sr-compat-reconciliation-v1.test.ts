@@ -64,11 +64,10 @@ test("manual evidence for samsung-rf28r7351sr still validates as public-ready", 
   assert.equal(r.ok, true, r.errors.join("; "));
 });
 
-test("samsung-rf28r7351sr quarantine remains active after Step 2a CSV reconcile", () => {
-  const override = getFridgeModelReviewOverride(MODEL_SLUG);
-  assert.ok(override);
-  assert.equal(override.reason, "FILTER_MAPPING_CONFLICT");
-  assert.equal(isFridgeModelUnderOwnerReview(MODEL_SLUG), true);
+test("samsung-rf28r7351sr quarantine is removed after Step 2C parity proof", () => {
+  const override = getFridgeModelReviewOverride("samsung-rf28r7351sr");
+  assert.equal(override, null);
+  assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), false);
 });
 
 test("committed compatibility_mappings.csv matches reconciled samsung-rf28r7351sr mapping with clean working tree", () => {

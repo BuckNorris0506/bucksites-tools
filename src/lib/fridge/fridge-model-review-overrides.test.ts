@@ -23,19 +23,9 @@ describe("fridge-model-review-overrides", () => {
     assert.equal(isFridgeModelUnderOwnerReview("lg-lrfxs3106s"), true);
   });
 
-  it("detects samsung-rf28r7351sr wrong-family mapping quarantine", () => {
-    const override = getFridgeModelReviewOverride("samsung-rf28r7351sr");
-    assert.ok(override);
-    assert.equal(override.fridge_model_slug, "samsung-rf28r7351sr");
-    assert.equal(override.reason, "FILTER_MAPPING_CONFLICT");
-    assert.equal(override.public_status, "owner_review_required");
-    assert.ok(override.public_message.includes("wrong filter family"));
-    assert.ok(override.public_message.includes("no buying options appear yet"));
-    assert.equal(
-      override.internal_evidence_doc,
-      "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
-    );
-    assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), true);
+  it("does not quarantine samsung-rf28r7351sr after HAF-QIN mapping reconciliation", () => {
+    assert.equal(getFridgeModelReviewOverride("samsung-rf28r7351sr"), null);
+    assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), false);
   });
 
   it("does not flag non-quarantined model", () => {

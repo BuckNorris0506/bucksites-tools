@@ -71,11 +71,10 @@ test("page 1 draft documents Step 2a gates — repo CSV reconciled, seed and qua
   assert.ok(/da97-17376b/i.test(draft));
 });
 
-test("samsung-rf28r7351sr live slug is quarantined for wrong-family mappings", () => {
+test("samsung-rf28r7351sr quarantine is removed after CSV and Supabase parity proof", () => {
   const override = getFridgeModelReviewOverride("samsung-rf28r7351sr");
-  assert.ok(override);
-  assert.equal(override.reason, "FILTER_MAPPING_CONFLICT");
-  assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), true);
+  assert.equal(override, null);
+  assert.equal(isFridgeModelUnderOwnerReview("samsung-rf28r7351sr"), false);
 });
 
 test("page 1 leaves protected buyer-path paths untouched (excluding scoped compat CSV)", () => {
