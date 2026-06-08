@@ -1,0 +1,449 @@
+{
+  "contract": "proven_cohort_page_factory_manifest_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T05:35:00.057Z",
+  "source_audit_contract": "model_filter_correctness_audit_v1",
+  "source_audit_path": "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+  "clone_anchor_slug": "samsung-rf28r7351sr",
+  "proven_correct_slug_count": 15,
+  "eligible_for_owner_review_count": 8,
+  "already_registered_count": 1,
+  "cohort_rows": [
+    {
+      "fridge_slug": "frigidaire-ffhb2740ps",
+      "model_number": "FFHB2740PS",
+      "brand_slug": "frigidaire",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "ultrawf"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/frigidaire-ffhb2740ps.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "frigidaire-ffhb2740ps",
+        "expected_filter_slugs": "ultrawf",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "ULTRAWF",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/frigidaire-ffhb2740ps-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/frigidaire-ffhb2740ps.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pf",
+      "model_number": "FGHB2868PF",
+      "brand_slug": "frigidaire",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "eptwfu01"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/frigidaire-fghb2868pf.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "frigidaire-fghb2868pf",
+        "expected_filter_slugs": "eptwfu01",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EPTWFU01",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/frigidaire-fghb2868pf-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/frigidaire-fghb2868pf.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf",
+      "model_number": "FGSC2335TF",
+      "brand_slug": "frigidaire",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "eptwfu01"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "frigidaire-fgsc2335tf",
+        "expected_filter_slugs": "eptwfu01",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EPTWFU01",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/frigidaire-fgsc2335tf-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "ge-gfe28gmkes",
+      "model_number": "GFE28GMKES",
+      "brand_slug": "ge",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/ge-gfe28gmkes.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "ge-gfe28gmkes",
+        "expected_filter_slugs": "rpwfe",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "RPWFE",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/ge-gfe28gmkes-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/ge-gfe28gmkes.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "ge-gfe28gskss",
+      "model_number": "GFE28GSKSS",
+      "brand_slug": "ge",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/ge-gfe28gskss.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "ge-gfe28gskss",
+        "expected_filter_slugs": "rpwfe",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "RPWFE",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/ge-gfe28gskss-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/ge-gfe28gskss.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "ge-gfe28gynfs",
+      "model_number": "GFE28GYNFS",
+      "brand_slug": "ge",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "rpwfe"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/ge-gfe28gynfs.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "ge-gfe28gynfs",
+        "expected_filter_slugs": "rpwfe",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "RPWFE",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/ge-gfe28gynfs-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/ge-gfe28gynfs.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf263beaesr",
+      "model_number": "RF263BEAESR",
+      "brand_slug": "samsung",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "da29-00020b"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/samsung-rf263beaesr.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "samsung-rf263beaesr",
+        "expected_filter_slugs": "da29-00020b",
+        "forbidden_filter_slugs": "da97-17376a|da97-17376b",
+        "official_marketing_token": "HAF-CIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf263beaesr-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf263beaesr.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf28nhedbsr",
+      "model_number": "RF28NHEDBSR",
+      "brand_slug": "samsung",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "da29-00020b"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/samsung-rf28nhedbsr.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "samsung-rf28nhedbsr",
+        "expected_filter_slugs": "da29-00020b",
+        "forbidden_filter_slugs": "da97-17376a|da97-17376b",
+        "official_marketing_token": "HAF-CIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf28nhedbsr-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf28nhedbsr.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201sr",
+      "model_number": "RF28R7201SR",
+      "brand_slug": "samsung",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "da97-17376b"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/samsung-rf28r7201sr.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "samsung-rf28r7201sr",
+        "expected_filter_slugs": "da97-17376b",
+        "forbidden_filter_slugs": "da29-00020b|da29-00012b",
+        "official_marketing_token": "HAF-QIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf28r7201sr-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf28r7201sr.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sg",
+      "model_number": "RF28R7351SG",
+      "brand_slug": "samsung",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/samsung-rf28r7351sg.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "samsung-rf28r7351sg",
+        "expected_filter_slugs": "da97-17376a|da97-17376b",
+        "forbidden_filter_slugs": "da29-00020b|da29-00012b",
+        "official_marketing_token": "HAF-QIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf28r7351sg-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf28r7351sg.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sr",
+      "model_number": "RF28R7351SR",
+      "brand_slug": "samsung",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "da97-17376b"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+      "manual_evidence_public_ready": true,
+      "already_in_page_factory_registry": true,
+      "registry_target": {
+        "fridge_slug": "samsung-rf28r7351sr",
+        "expected_filter_slugs": [
+          "da97-17376b"
+        ],
+        "forbidden_filter_slugs": [
+          "da29-00020b",
+          "da29-00012b"
+        ],
+        "official_marketing_token": "HAF-QIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      },
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "samsung-rf28r7351sr",
+        "expected_filter_slugs": "da97-17376b",
+        "forbidden_filter_slugs": "da29-00020b|da29-00012b",
+        "official_marketing_token": "HAF-QIN",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      },
+      "quality_gate_status": {
+        "artifact_path": "data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351sr-quality-gate-v1.json",
+        "quality_classification": "INDEXABLE_NO_BUY_LINK",
+        "publication_authorized": true,
+        "recommended_robots_index": true,
+        "recommended_sitemap_include": true
+      },
+      "eligible_for_owner_review": true,
+      "blockers": []
+    },
+    {
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "model_number": "WRF540CWHZ",
+      "brand_slug": "whirlpool",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "whirlpool-wrf540cwhz",
+        "expected_filter_slugs": "edr4rxd1",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EDR4RXD1",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/whirlpool-wrf540cwhz-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "whirlpool-wrs325sdhz",
+      "model_number": "WRS325SDHZ",
+      "brand_slug": "whirlpool",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr1rxd1"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/whirlpool-wrs325sdhz.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "whirlpool-wrs325sdhz",
+        "expected_filter_slugs": "edr1rxd1",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EDR1RXD1",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/whirlpool-wrs325sdhz-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/whirlpool-wrs325sdhz.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "model_number": "WRX735SDHZ",
+      "brand_slug": "whirlpool",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/whirlpool-wrx735sdhz.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "whirlpool-wrx735sdhz",
+        "expected_filter_slugs": "edr4rxd1",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EDR4RXD1",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/whirlpool-wrx735sdhz-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/whirlpool-wrx735sdhz.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    },
+    {
+      "fridge_slug": "whirlpool-wrx986sihz",
+      "model_number": "WRX986SIHZ",
+      "brand_slug": "whirlpool",
+      "audit_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "manual_evidence_path": "data/manual-evidence/refrigerator/whirlpool-wrx986sihz.json",
+      "manual_evidence_public_ready": false,
+      "already_in_page_factory_registry": false,
+      "registry_target": null,
+      "recommended_registry_row_proposal": {
+        "fridge_slug": "whirlpool-wrx986sihz",
+        "expected_filter_slugs": "edr2rxd1",
+        "forbidden_filter_slugs": "",
+        "official_marketing_token": "EDR2RXD1",
+        "draft_md_relpath": "data/fridge/batch-production/drafts/whirlpool-wrx986sihz-page-1-draft-v1.md",
+        "evidence_json_relpath": "data/manual-evidence/refrigerator/whirlpool-wrx986sihz.json"
+      },
+      "quality_gate_status": null,
+      "eligible_for_owner_review": false,
+      "blockers": [
+        "manual_evidence:filter_location_text requires at least one Tier 1 replacement/video source",
+        "manual_evidence:replacement_steps_summary requires at least one Tier 1 replacement/video source",
+        "manual_evidence:cautions requires at least one Tier 1 replacement/reset source"
+      ]
+    }
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "cohort_rows": ".cohort_rows",
+      "eligible_for_owner_review_count": ".eligible_for_owner_review_count"
+    },
+    "recommended_next_action": "Owner review: run read-only page-factory evidence-clone + quality-gate batch against proven-cohort manifest slugs before any registry CSV apply."
+  },
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/page-factory-targets-v1.csv",
+    "data/fridge/batch-production/page-factory/quality-gate-v1",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator"
+  ],
+  "proven_facts": [
+    "PROVEN: proven_correct_slug_count=15 sourced from data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json.",
+    "PROVEN: eligible_for_owner_review_count=8.",
+    "PROVEN: already_registered_count=1 in data/fridge/batch-production/page-factory-targets-v1.csv.",
+    "PROVEN: Read-only manifest — no compat, registry, Supabase, sitemap, robots, or page mutations."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live Supabase compat/registry rows vs committed CSV — manifest is repo-file truth only."
+  ]
+}
