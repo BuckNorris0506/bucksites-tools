@@ -49,6 +49,7 @@ test("v0.1 preflight report contract and repo gates for samsung-rf28r7351sr", as
   assert.equal(gateStatus(report, "compat_csv_exact_mapping").status, "PASS");
   assert.equal(gateStatus(report, "compat_csv_forbidden_absent").status, "PASS");
   assert.equal(gateStatus(report, "exact_token_alignment").status, "PASS");
+  assert.equal(gateStatus(report, "learned_failure_guards_clear").status, "PASS");
   assert.equal(gateStatus(report, "quarantine_state_observed").status, "PASS");
   assert.equal(gateStatus(report, "retailer_link_csv_gates_observed").status, "WARN");
 

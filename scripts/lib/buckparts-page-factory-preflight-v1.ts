@@ -20,7 +20,14 @@ import {
   filterRealBuyRetailerLinks,
 } from "@/lib/retailers/launch-buy-links";
 
+import {
+  deriveLearnedFailurePublicationImpactV1,
+  evaluatePerSlugLearnedFailureGuardsV1,
+} from "./learned-failure-guards-v1";
 import { legacyFilterSlugsMatchOfficialTokenV1 } from "./refrigerator-model-first-samsung-marketing-token-cross-reference-v1";
+import { MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1 } from "./model-filter-correctness-audit-v1";
+import { DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1 } from "./dangerous-mapping-remediation-plan-v1";
+import { HAF_QIN_WILDCARD_EXPANSION_REVIEW_JSON_REL_V1 } from "./samsung-haf-qin-wildcard-expansion-review-v1";
 
 export const BUCKPARTS_PAGE_FACTORY_PREFLIGHT_CONTRACT_V1 =
   "buckparts_page_factory_preflight_v1" as const;
@@ -306,6 +313,34 @@ function evaluateExactTokenAlignment(args: {
   );
 }
 
+function evaluateLearnedFailureGuardsClear(args: {
+  rootDir: string;
+  fridgeSlug: string;
+}): PageFactoryPreflightGateV1 {
+  const perSlug = evaluatePerSlugLearnedFailureGuardsV1({
+    rootDir: args.rootDir,
+    fridgeSlug: args.fridgeSlug,
+  });
+  const impact = deriveLearnedFailurePublicationImpactV1(perSlug);
+
+  return gate(
+    "learned_failure_guards_clear",
+    impact.preflight_status,
+    impact.blockers,
+    [
+      MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1,
+      DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1,
+      HAF_QIN_WILDCARD_EXPANSION_REVIEW_JSON_REL_V1,
+    ],
+    {
+      aggregate_verdict: perSlug.aggregate_verdict,
+      classification: perSlug.classification,
+      mapped_filter_slugs: perSlug.mapped_filter_slugs,
+      single_filter_family_verdict: perSlug.single_filter_family.verdict,
+    },
+  );
+}
+
 function evaluateQuarantineStateObserved(args: {
   target: PageFactoryTargetV1;
 }): PageFactoryPreflightGateV1 {
@@ -564,6 +599,10 @@ export async function buildPageFactoryPreflightReportV1(
     evaluateCompatCsvExactMapping({ rootDir: args.rootDir, target }),
     evaluateCompatCsvForbiddenAbsent({ rootDir: args.rootDir, target }),
     evaluateExactTokenAlignment({ rootDir: args.rootDir, target, brandSlug }),
+    evaluateLearnedFailureGuardsClear({
+      rootDir: args.rootDir,
+      fridgeSlug: target.fridge_slug,
+    }),
     evaluateQuarantineStateObserved({ target }),
     evaluateRetailerLinkCsvGatesObserved({ rootDir: args.rootDir, target }),
     await evaluateSupabaseCompatParity({

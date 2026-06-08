@@ -59,6 +59,7 @@ test("samsung-rf28r7351sr is INDEXABLE_NO_BUY_LINK with publication authorized",
   assert.equal(report.recommended_robots.index, true);
   assert.equal(gateStatus(report, "model_existence_confirmed").status, "PASS");
   assert.equal(gateStatus(report, "model_specific_evidence").status, "PASS");
+  assert.equal(gateStatus(report, "learned_failure_guards_clear").status, "PASS");
   assert.equal(gateStatus(report, "buyer_path").status, "WARN");
   assert.ok(report.preflight_gates && report.preflight_gates.length > 0);
 });
@@ -87,7 +88,42 @@ test("samsung-rf27t5501sr is BLOCKED", async () => {
   assert.equal(report.quality_classification, "BLOCKED");
   assert.equal(report.publication_authorized, false);
   assert.equal(gateStatus(report, "wrong_part_risk").status, "BLOCKED");
+  assert.equal(gateStatus(report, "learned_failure_guards_clear").status, "BLOCKED");
   assert.equal(gateStatus(report, "compat_proof_forbidden_absent").status, "BLOCKED");
+});
+
+test("lg-lfxs28968s is BLOCKED via learned failure LG LT generation mix", async () => {
+  const report = await buildPageQualityGateReportV1({
+    rootDir: ROOT,
+    fridgeSlug: "lg-lfxs28968s",
+  });
+
+  assert.equal(report.quality_classification, "BLOCKED");
+  assert.equal(report.publication_authorized, false);
+  assert.equal(report.recommended_robots.index, false);
+  assert.equal(gateStatus(report, "learned_failure_guards_clear").status, "BLOCKED");
+  assert.ok(
+    gateStatus(report, "learned_failure_guards_clear").blockers.some((blocker) =>
+      blocker.includes("lg_lt_generation_mix"),
+    ),
+  );
+});
+
+test("ge-gfe28gskww is BLOCKED via learned failure XWF/XWFE mix", async () => {
+  const report = await buildPageQualityGateReportV1({
+    rootDir: ROOT,
+    fridgeSlug: "ge-gfe28gskww",
+  });
+
+  assert.equal(report.quality_classification, "BLOCKED");
+  assert.equal(report.publication_authorized, false);
+  assert.equal(report.recommended_robots.index, false);
+  assert.equal(gateStatus(report, "learned_failure_guards_clear").status, "BLOCKED");
+  assert.ok(
+    gateStatus(report, "learned_failure_guards_clear").blockers.some((blocker) =>
+      blocker.includes("ge_xwf_xwfe_mix"),
+    ),
+  );
 });
 
 test("deriveQualityIndexRecommendations maps INDEXABLE_VERIFIED to buy-ready", () => {

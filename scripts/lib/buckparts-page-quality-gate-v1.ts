@@ -34,6 +34,12 @@ import {
   type PageFactoryPreflightGateV1,
   type PageFactoryTargetV1,
 } from "./buckparts-page-factory-preflight-v1";
+import {
+  deriveLearnedFailurePublicationImpactV1,
+  evaluatePerSlugLearnedFailureGuardsV1,
+} from "./learned-failure-guards-v1";
+import { MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1 } from "./model-filter-correctness-audit-v1";
+import { DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1 } from "./dangerous-mapping-remediation-plan-v1";
 import { legacyFilterSlugsMatchOfficialTokenV1 } from "./refrigerator-model-first-samsung-marketing-token-cross-reference-v1";
 import {
   HAF_CIN_CANONICAL_FILTER_SLUGS_V1,
@@ -560,6 +566,41 @@ function evaluateCompatProof(args: {
   ];
 }
 
+function evaluateLearnedFailureGuardsClear(args: {
+  rootDir: string;
+  fridgeSlug: string;
+}): PageQualityGateV1 {
+  const perSlug = evaluatePerSlugLearnedFailureGuardsV1({
+    rootDir: args.rootDir,
+    fridgeSlug: args.fridgeSlug,
+  });
+  const impact = deriveLearnedFailurePublicationImpactV1(perSlug);
+
+  const status: PageQualityGateStatusV1 =
+    impact.quality_gate_status === "PASS"
+      ? "PASS"
+      : impact.quality_gate_status === "WARN"
+        ? "WARN"
+        : "BLOCKED";
+
+  return gate(
+    "learned_failure_guards_clear",
+    status,
+    impact.blockers,
+    [
+      MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1,
+      DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1,
+      HAF_QIN_WILDCARD_EXPANSION_REVIEW_JSON_REL_V1,
+    ],
+    {
+      aggregate_verdict: perSlug.aggregate_verdict,
+      classification: perSlug.classification,
+      mapped_filter_slugs: perSlug.mapped_filter_slugs,
+      single_filter_family_verdict: perSlug.single_filter_family.verdict,
+    },
+  );
+}
+
 function evaluateWrongPartRisk(args: {
   target: PageFactoryTargetV1;
   wildcard_row: CatalogSlugRowV1 | null;
@@ -892,11 +933,13 @@ export function classifyPageQualityV1(input: {
   const modelExistence = input.gates.find((g) => g.gate_id === "model_existence_confirmed");
   const modelEvidence = input.gates.find((g) => g.gate_id === "model_specific_evidence");
   const wrongPart = input.gates.find((g) => g.gate_id === "wrong_part_risk");
+  const learnedFailure = input.gates.find((g) => g.gate_id === "learned_failure_guards_clear");
   const quarantine = input.gates.find((g) => g.gate_id === "quarantine_state");
 
   if (
     blockedGate ||
     wrongPart?.status === "BLOCKED" ||
+    learnedFailure?.status === "BLOCKED" ||
     quarantine?.status === "BLOCKED" ||
     input.clone_status === "BLOCKED"
   ) {
@@ -906,7 +949,8 @@ export function classifyPageQualityV1(input: {
   if (
     input.clone_status === "NEEDS_TARGET_EVIDENCE" ||
     modelExistence?.status !== "PASS" ||
-    modelEvidence?.status !== "PASS"
+    modelEvidence?.status !== "PASS" ||
+    learnedFailure?.status === "WARN"
   ) {
     return "NOINDEX_REVIEW";
   }
@@ -915,6 +959,7 @@ export function classifyPageQualityV1(input: {
     "compat_proof_exact_mapping",
     "compat_proof_forbidden_absent",
     "compat_proof_token_alignment",
+    "learned_failure_guards_clear",
     "source_transparency",
     "homeowner_guidance",
     "internal_link_context",
@@ -1043,6 +1088,10 @@ export async function buildPageQualityGateReportV1(
       strict: target_source === "page_factory_registry",
     }),
     evaluateWrongPartRisk({ target, wildcard_row, rootDir: args.rootDir }),
+    evaluateLearnedFailureGuardsClear({
+      rootDir: args.rootDir,
+      fridgeSlug: target.fridge_slug,
+    }),
     evaluateSourceTransparency({ rootDir: args.rootDir, target }),
     evaluateBuyerPath({ rootDir: args.rootDir, target }),
     evaluateHomeownerGuidance({ rootDir: args.rootDir, target }),
