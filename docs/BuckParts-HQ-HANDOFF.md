@@ -1,8 +1,146 @@
 # BuckParts HQ — Agent Handoff
 
-## Current stopping point — Page Factory preflight v1
+## Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (PROVEN through `2199578`)
 
-**Read this section first** for current HQ / Cursor / HyperAgent pickup.
+**Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`21995787ec62106ed8431f4fcc419ad085649720`** |
+| Latest commit | **`2199578`** — `Add EDR4RXD1 owner review packet` |
+| Working tree | **Clean** at handoff refresh (`git status --short` empty) |
+
+**Recent control-plane commits on `main` / `origin/main` (PROVEN):**
+
+| SHA | Subject |
+|-----|---------|
+| **`2199578`** | Add EDR4RXD1 owner review packet |
+| **`8ae438f`** | Tighten command center evidence action semantics |
+| **`0f463b6`** | Add EDR4RXD1 HyperAgent validation packet |
+| **`4c043b9`** | Add read-only family reconciliation lane |
+| **`2d5c2ab`** | Wire family pre-research screen into command center |
+| **`5b12e1b`** | Add family pre-research risk screen |
+| **`2e9f6d3`** | Add Frigidaire FPPWFU01 contamination guard |
+| **`8ba2115`** | Add command center control graph rollup |
+| **`820d5dd`** | Add calibrated anchor integrity audit |
+| **`70b2efb`** | Export per-slug learned failure guard impact |
+| **`2e2f022`** | Add read-only evidence leverage prioritization |
+
+### 2. Command Center control graph rollup (PROVEN)
+
+**Operating truth:** `npm run buckparts:command-center` → `command_center_v2.command_center_control_graph_rollup_v1` (`command_center_control_graph_rollup_v1`, `read_only`, `data_mutation: false`).
+
+**Connected read-only lanes (repo truth only — no mutation authorized):**
+
+| Lane | npm alias | Contract / artifact |
+|------|-----------|---------------------|
+| Control graph rollup | `buckparts:command-center` | `command_center_control_graph_rollup_v1` |
+| Anchor integrity audit (calibrated) | `buckparts:anchor-integrity-audit` | `anchor_integrity_audit_v1` → `data/fridge/batch-production/audits/anchor-integrity-audit-v1.json` |
+| Learned failure guards (+ EPTWFU01/FPPWFU01 contamination) | `buckparts:learned-failure-guards` | `learned_failure_guards_v1` |
+| Evidence leverage (+ contamination penalty) | `buckparts:evidence-leverage-prioritization` | live build in rollup |
+| Family pre-research risk screen | `buckparts:family-pre-research-risk-screen` | pre-research screen before HyperAgent |
+| Family reconciliation | `buckparts:family-reconciliation` | `family_reconciliation_v1` |
+| EDR4RXD1 Cursor validation | *(read draft)* | `buckparts_cursor_validation_packet_v1` → `data/fridge/batch-production/drafts/edr4rxd1-evidence-batch-cursor-validation-v1.json` |
+| EDR4RXD1 owner review packet | `buckparts:edr4rxd1-owner-review-packet` | `edr4rxd1_owner_review_packet_v1` |
+
+**Re-run before citing live steering:**
+
+```bash
+npm run buckparts:command-center | jq '.command_center_v2.command_center_control_graph_rollup_v1.next_best_action'
+npm run buckparts:edr4rxd1-owner-review-packet
+```
+
+### 3. Frozen Frigidaire families (PROVEN — Command Center `FREEZE` tier)
+
+| Family | Freeze reason (repo truth) |
+|--------|----------------------------|
+| **`filter::frigidaire::eptwfu01`** | Anchor integrity **sibling-family conflict** on primary anchor (`frigidaire-fghb2868pf`, `frigidaire-fgsc2335tf`) — clone expansion frozen until resolved |
+| **`filter::frigidaire::fppwfu01`** | **Prefix contamination / zero proven anchor** — evidence scaling frozen until prefix/sibling contamination resolved |
+
+### 4. WF2CB pre-research block (PROVEN)
+
+**PROVEN:** `filter::frigidaire::wf2cb` is **blocked from full-family HyperAgent dispatch** — pre-research risk screen **HIGH** / `NEEDS_REPO_RECONCILIATION_FIRST`.
+
+**PROVEN:** Command Center allows only an **optional 5-slug conflict-free research slice** (`frigidaire-cfse2333tb`, `frigidaire-ffhb2860ts`, `frigidaire-fgsc2345tf`, `frigidaire-fpru19f8re`, `frigidaire-frfs2623as`) — **not full-family scaling**.
+
+### 5. EDR4RXD1 — bounded evidence research only (PROVEN)
+
+**PROVEN:** `filter::whirlpool::edr4rxd1` is **`BOUNDED_EVIDENCE_RESEARCH` only** — **not safe for scaling**.
+
+| Field | Value |
+|-------|-------|
+| `safety_tier` | **`BOUNDED_EVIDENCE_RESEARCH`** (not `SAFE_EVIDENCE`) |
+| `safe_for_scaling` | **`false`** |
+| `safe_for_bounded_research` | **`true`** |
+| `recommended_action_scope` | **`BOUNDED_RESEARCH_ONLY`** |
+| `requires_owner_review_before_mutation` | **`true`** |
+| `family_reconciliation_severity` | **`MEDIUM`** |
+| HyperAgent batch validation | **`VALIDATION_PARTIAL`** (`edr4rxd1-evidence-batch-cursor-validation-v1.json`) |
+
+**PROVEN:** Command Center `next_best_action` ends with bounded research language for EDR4RXD1 — **not full-family scaling**, **no compat mutation**, **no evidence promotion without owner-reviewed manual evidence**; family reconciliation remains **MEDIUM**; HyperAgent validation **partial**.
+
+**Do not read `BOUNDED_EVIDENCE_RESEARCH` as permission to scale the full edr4rxd1 unlock cohort.**
+
+### 6. EDR4RXD1 owner review packet (PROVEN)
+
+**PROVEN:** Read-only owner review packet exists: `edr4rxd1_owner_review_packet_v1`.
+
+**Draft artifacts (optional `--write-artifacts`):**
+- `data/fridge/batch-production/drafts/edr4rxd1-owner-review-packet-v1.json`
+- `data/fridge/batch-production/drafts/edr4rxd1-owner-review-packet-v1.md`
+
+**Owner action buckets (repo truth from validation + packet):**
+
+| Bucket | Slugs |
+|--------|-------|
+| **Evidence promotion candidate** (existing PROVEN_CORRECT only) | `whirlpool-wrf540cwhz` |
+| **Browser proof targets** | `whirlpool-wrf535sdhz`, `whirlpool-wrf540cwhm` |
+| **Compat review candidates** | `whirlpool-wrf535smhb`, `whirlpool-wrf736sdam`, `whirlpool-wrf757sdfz`, `whirlpool-wrf757sihz`, `whirlpool-wrf767sdam`, `whirlpool-wrs315sdhv` |
+| **No-action rows** | 8 HyperAgent closure claims rejected for automatic repo truth closure (see packet JSON) |
+
+**INFERRED:** `whirlpool-wrf535sibz` appears in family-reconciliation owner context but is **absent** from the HyperAgent validation batch — **not** a browser-proof target in the EDR4RXD1 owner review packet.
+
+### 7. Mutation guardrails (PROVEN)
+
+**PROVEN:** All lanes above are **read-only**. **`mutation_authorized=false`** on control graph rollup, validation packet, and owner review packet.
+
+**Not authorized without explicit owner approval:**
+- `data/compatibility_mappings.csv` edits
+- `data/manual-evidence/**` writes
+- Supabase mutations
+- sitemap / robots / public page changes
+- `data/retailer_links.csv` / buyer-path changes
+- HQ handoff does **not** authorize apply work by itself
+
+**HyperAgent `DISCOVERY_COMPLETE` is not repo truth closure.** Command Center completion requires repo validation (`buckparts_cursor_validation_packet_v1`).
+
+### 8. Do not do next (at this stopping point)
+
+- Do **not** scale **`filter::whirlpool::edr4rxd1`** as a full family — Command Center explicitly forbids full-family scaling.
+- Do **not** auto-apply HyperAgent WRONG_PART_RISK compat removals — repo `wrong_part_risk_count=0` for the batch slugs.
+- Do **not** unfreeze **`filter::frigidaire::eptwfu01`** or **`filter::frigidaire::fppwfu01`** without anchor/contamination owner proof.
+- Do **not** dispatch full-family HyperAgent on **`filter::frigidaire::wf2cb`** — optional 5-slug slice only.
+- Do **not** treat **`VALIDATION_PARTIAL`** or owner review packet buckets as mutation authorization.
+
+### 9. Validation (PROVEN before this handoff update)
+
+```bash
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+node --import tsx --test scripts/lib/command-center-control-graph-rollup-v1.test.ts
+node --import tsx --test scripts/lib/edr4rxd1-owner-review-packet-v1.test.ts
+npm run buckparts:command-center | jq '.command_center_v2.command_center_control_graph_rollup_v1.next_best_action'
+npm run buckparts:edr4rxd1-owner-review-packet
+npm run lint
+```
+
+---
+
+## Current stopping point — Page Factory preflight v1 (historical — superseded by `2199578`)
+
+**Superseded for next-move authority.** Retained for RF28R7351SR / preflight context only.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -150,7 +288,7 @@
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`a070797`** — SEO Phase 1 + RF28R7351SR Page Factory v1 completion (see **Current stopping point — FOH + safe-link batch factory** below). **Prior checkpoint `afaf86d`** (grant application pack) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`2199578`** — Command Center control graph + EDR4RXD1 bounded evidence research (see **Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research** at top). **Prior checkpoint `9116a74`** (Page Factory preflight v1) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (RF28R7351SR **`a070797`**, grant pack **`afaf86d`**, fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -799,9 +937,9 @@ npx tsx scripts/report-fridge-command-center-and-public-truth-audit-v1.ts
 
 ---
 
-## Current stopping point / chat migration state (historical — superseded by `aec8b8c`)
+## Current stopping point / chat migration state (historical — superseded by `2199578`)
 
-**Superseded:** Use **Current stopping point — grant trust pack + WHW safe-CTA expansion (through `aec8b8c`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
+**Superseded:** Use **Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (through `2199578`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
 
 **Command Center is the operating brain** — fridge truth is on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval.
 

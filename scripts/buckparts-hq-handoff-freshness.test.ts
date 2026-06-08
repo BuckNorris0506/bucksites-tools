@@ -435,6 +435,51 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "Command Center status update packet contract id",
   },
   {
+    id: "control_graph_head_2199578",
+    needle: "2199578",
+    describe: "Command Center control graph + EDR4RXD1 stopping point HEAD reference",
+  },
+  {
+    id: "control_graph_rollup_contract",
+    needle: "command_center_control_graph_rollup_v1",
+    describe: "Command Center control graph rollup lane contract",
+  },
+  {
+    id: "bounded_evidence_research_tier",
+    needle: "BOUNDED_EVIDENCE_RESEARCH",
+    describe: "EDR4RXD1 bounded evidence research safety tier",
+  },
+  {
+    id: "edr4rxd1_owner_review_packet",
+    needle: "edr4rxd1_owner_review_packet_v1",
+    describe: "EDR4RXD1 owner review packet contract",
+  },
+  {
+    id: "edr4rxd1_not_safe_for_scaling",
+    needle: "safe_for_scaling",
+    describe: "EDR4RXD1 safe_for_scaling=false doctrine in handoff",
+  },
+  {
+    id: "eptwfu01_frozen_anchor",
+    needle: "filter::frigidaire::eptwfu01",
+    describe: "EPTWFU01 frozen family anchor conflict",
+  },
+  {
+    id: "fppwfu01_frozen_contamination",
+    needle: "filter::frigidaire::fppwfu01",
+    describe: "FPPWFU01 frozen prefix contamination family",
+  },
+  {
+    id: "wf2cb_not_full_family",
+    needle: "not full-family scaling",
+    describe: "WF2CB / EDR4RXD1 not full-family scaling doctrine",
+  },
+  {
+    id: "family_reconciliation_v1",
+    needle: "family_reconciliation_v1",
+    describe: "family reconciliation v1 contract reference",
+  },
+  {
     id: "full_hyperagent_packet_bodies_required",
     needle: "FULL_HYPERAGENT_PACKET_BODIES_REQUIRED",
     describe: "Cursor validation rejects stub/materialized HyperAgent bundles",
