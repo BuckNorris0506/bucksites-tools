@@ -64,7 +64,58 @@ test("next_best_action freezes contaminated families and does not recommend FPPW
   const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
   assert.ok(safeRank);
   assert.notEqual(safeRank!.family_key, "filter::frigidaire::fppwfu01");
-  assert.equal(safeRank!.family_key, "filter::frigidaire::wf2cb");
+  assert.notEqual(safeRank!.family_key, "filter::frigidaire::wf2cb");
+  assert.equal(
+    safeRank!.family_key,
+    rollup.pre_research_risk_screen_summary.highest_safe_screened_family_key,
+  );
+});
+
+test("pre-research risk screen blocks wf2cb from SAFE_EVIDENCE and surfaces summary", () => {
+  const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
+  assert.ok(rollup.pre_research_risk_screen_summary.screened_family_count > 0);
+  assert.ok(rollup.pre_research_risk_screen_summary.blocked_family_count > 0);
+
+  const wf2cbBlocked = rollup.pre_research_risk_screen_summary.top_blocked_families.find(
+    (row) => row.family_key === "filter::frigidaire::wf2cb",
+  );
+  assert.ok(wf2cbBlocked);
+  assert.equal(wf2cbBlocked!.contamination_risk, "HIGH");
+  assert.equal(wf2cbBlocked!.recommendation, "NEEDS_REPO_RECONCILIATION_FIRST");
+
+  const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
+  assert.ok(safeRank);
+  assert.notEqual(safeRank!.family_key, "filter::frigidaire::wf2cb");
+
+  const wf2cbReconciliation = rollup.next_best_action_ranked.find(
+    (item) =>
+      item.safety_tier === "PRE_RESEARCH_RECONCILIATION" &&
+      item.family_key === "filter::frigidaire::wf2cb",
+  );
+  assert.ok(wf2cbReconciliation);
+  assert.match(wf2cbReconciliation!.action, /not full-family scaling/i);
+  assert.doesNotMatch(
+    rollup.next_best_action,
+    /prioritize `filter::frigidaire::wf2cb`.*highest safe/i,
+  );
+});
+
+test("next_best_action does not recommend full-family HyperAgent dispatch for HIGH-risk families", () => {
+  const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
+  const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
+  assert.ok(safeRank);
+
+  for (const blocked of rollup.pre_research_risk_screen_summary.top_blocked_families) {
+    if (blocked.contamination_risk !== "HIGH") continue;
+    assert.notEqual(safeRank!.family_key, blocked.family_key);
+    const reconciliation = rollup.next_best_action_ranked.find(
+      (item) =>
+        item.safety_tier === "PRE_RESEARCH_RECONCILIATION" &&
+        item.family_key === blocked.family_key,
+    );
+    assert.ok(reconciliation, `${blocked.family_key} must have reconciliation rank`);
+    assert.match(reconciliation!.action, /Block full-family HyperAgent dispatch/i);
+  }
 });
 
 test("summaries reflect committed audit artifacts", () => {

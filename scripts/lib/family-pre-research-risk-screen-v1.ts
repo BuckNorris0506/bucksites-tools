@@ -14,12 +14,13 @@ import {
   type AnchorHealthSummaryV1,
   type AnchorIntegrityAuditV1,
 } from "./anchor-integrity-audit-v1";
-import { buildCommandCenterControlGraphRollupV1 } from "./command-center-control-graph-rollup-v1";
 import {
+  buildEvidenceLeveragePrioritizationV1,
   EVIDENCE_LEVERAGE_PRIORITIZATION_CONTRACT_V1,
   EVIDENCE_LEVERAGE_PRIORITIZATION_JSON_REL_V1,
   type EvidenceLeverageFamilyRowV1,
   type EvidenceLeveragePrioritizationV1,
+  type EvidenceLeverageTargetV1,
 } from "./evidence-leverage-prioritization-v1";
 import {
   buildFrigidaireModelLineSiblingIndexV1,
@@ -355,13 +356,64 @@ function buildResearchBatch(args: {
   return { batch_size: batch_slugs.length, batch_slugs };
 }
 
-export function resolveDefaultFamilyKey(args: { rootDir: string; now?: () => Date }): string {
-  const rollup = buildCommandCenterControlGraphRollupV1(args);
-  const familyKey = rollup.evidence_leverage_summary.highest_safe_non_frozen_family_key;
-  if (!familyKey) {
-    throw new Error("Command Center has no highest_safe_non_frozen_family_key");
+function isLeverageTargetSafeBeforePreResearchScreen(
+  target: EvidenceLeverageTargetV1,
+): boolean {
+  if (target.wrong_part_risk_count > 0 || target.blocked_count > 0) return false;
+  if (target.currently_proven_count === 0 && (target.prefix_contamination_count ?? 0) > 0) {
+    return false;
   }
-  return familyKey;
+  return true;
+}
+
+export function isFamilyFrozenByControlGraphV1(args: {
+  familyKey: string;
+  anchorAudit: AnchorIntegrityAuditV1;
+  leverage: EvidenceLeveragePrioritizationV1;
+}): boolean {
+  if (
+    args.anchorAudit.families_with_disputed_or_watchlist_primary_anchor.includes(args.familyKey)
+  ) {
+    return true;
+  }
+
+  const family =
+    args.leverage.filter_families.find((row) => row.family_key === args.familyKey) ??
+    args.leverage.model_families.find((row) => row.family_key === args.familyKey);
+  if (!family) return false;
+
+  return (
+    family.family_kind === "filter" &&
+    family.currently_proven_count === 0 &&
+    (family.prefix_contamination_count ?? 0) > 0
+  );
+}
+
+export function resolveDefaultFamilyKey(args: { rootDir: string; now?: () => Date }): string {
+  const leverage = buildEvidenceLeveragePrioritizationV1(args);
+  const anchorAudit = readJsonFile<AnchorIntegrityAuditV1>(
+    args.rootDir,
+    ANCHOR_INTEGRITY_AUDIT_JSON_REL_V1,
+  );
+  if (anchorAudit.contract !== ANCHOR_INTEGRITY_AUDIT_CONTRACT_V1) {
+    throw new Error("Anchor integrity audit contract mismatch");
+  }
+
+  for (const target of leverage.top_50_highest_leverage_evidence_targets) {
+    if (
+      isFamilyFrozenByControlGraphV1({
+        familyKey: target.family_key,
+        anchorAudit,
+        leverage,
+      })
+    ) {
+      continue;
+    }
+    if (!isLeverageTargetSafeBeforePreResearchScreen(target)) continue;
+    return target.family_key;
+  }
+
+  throw new Error("No highest safe non-frozen family key found in evidence leverage prioritization");
 }
 
 export function buildFamilyPreResearchRiskScreenV1(args: {
@@ -454,10 +506,11 @@ export function buildFamilyPreResearchRiskScreenV1(args: {
     anchorAudit,
   });
 
-  const rollup = buildCommandCenterControlGraphRollupV1(args);
-  const frozen = rollup.frozen_family_summary.frozen_families.some(
-    (row) => row.family_key === family_key,
-  );
+  const frozen = isFamilyFrozenByControlGraphV1({
+    familyKey: family_key,
+    anchorAudit,
+    leverage,
+  });
   const anchorSiblingConflict = anchorAudit.anchor_rows.some(
     (row) =>
       row.anchor_family === family_key && row.checks.sibling_family_conflict_detected,
@@ -499,8 +552,8 @@ export function buildFamilyPreResearchRiskScreenV1(args: {
 
   const inferred_facts = [
     frozen
-      ? `INFERRED: Command Center frozen_family_summary includes ${family_key} — HyperAgent evidence scaling should not proceed.`
-      : `INFERRED: ${family_key} is not in Command Center frozen_family_summary.`,
+      ? `INFERRED: ${family_key} is frozen by anchor integrity or prefix-contamination control graph — HyperAgent evidence scaling should not proceed.`
+      : `INFERRED: ${family_key} is not frozen by anchor integrity or prefix-contamination control graph.`,
     conflictedSlugs.size > 0
       ? `INFERRED: ${String(conflictedSlugs.size)} unlock slugs share Frigidaire model-line siblings mapped to other water-filter families (${FRIGIDAIRE_WATER_FILTER_FAMILIES_V1.join(", ")}).`
       : "INFERRED: No Frigidaire model-line sibling cross-family conflicts detected in unlock cohort.",

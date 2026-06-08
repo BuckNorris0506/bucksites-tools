@@ -40,6 +40,12 @@ import {
   type ModelFilterCorrectnessAuditV1,
 } from "./model-filter-correctness-audit-v1";
 import {
+  buildFamilyPreResearchRiskScreenV1,
+  type ContaminationRiskV1,
+  type FamilyPreResearchRiskScreenV1,
+  type PreResearchRecommendationV1,
+} from "./family-pre-research-risk-screen-v1";
+import {
   PAGE_FACTORY_BATCH_QA_DIRECTOR_ARTIFACT_DIR_REL_V1,
   PAGE_FACTORY_BATCH_QA_DIRECTOR_CONTRACT_V1,
   type PageFactoryBatchQaDirectorReportV1,
@@ -115,6 +121,19 @@ export type EvidenceLeverageSummaryV1 = {
   }>;
 };
 
+export type PreResearchRiskScreenSummaryV1 = {
+  screened_family_count: number;
+  blocked_family_count: number;
+  top_blocked_families: Array<{
+    family_key: string;
+    contamination_risk: ContaminationRiskV1;
+    recommendation: PreResearchRecommendationV1;
+    current_unlock_score: number;
+    sibling_conflict_count: number;
+  }>;
+  highest_safe_screened_family_key: string | null;
+};
+
 export type PageFactoryQualitySummaryV1 = {
   quality_gate_artifact_count: number;
   quality_classification_counts: Record<string, number>;
@@ -135,7 +154,12 @@ export type EducationOpportunitySummaryV1 = {
 export type ControlGraphNextBestActionRankedItemV1 = {
   rank: number;
   action: string;
-  safety_tier: "FREEZE" | "SAFE_EVIDENCE" | "DANGEROUS_REMEDIATION" | "PAGE_FACTORY";
+  safety_tier:
+    | "FREEZE"
+    | "PRE_RESEARCH_RECONCILIATION"
+    | "SAFE_EVIDENCE"
+    | "DANGEROUS_REMEDIATION"
+    | "PAGE_FACTORY";
   leverage_score: number;
   family_key: string | null;
   blocked_by_frozen_families: string[];
@@ -155,6 +179,7 @@ export type CommandCenterControlGraphRollupV1 = {
   anchor_integrity_summary: AnchorIntegritySummaryV1;
   frozen_family_summary: FrozenFamilySummaryV1;
   evidence_leverage_summary: EvidenceLeverageSummaryV1;
+  pre_research_risk_screen_summary: PreResearchRiskScreenSummaryV1;
   page_factory_quality_summary: PageFactoryQualitySummaryV1;
   education_opportunity_summary: EducationOpportunitySummaryV1 | null;
   next_best_action: string;
@@ -233,6 +258,77 @@ function pickHighestSafeNonFrozenFamily(args: {
   return null;
 }
 
+type PreResearchScreeningResultV1 = {
+  summary: PreResearchRiskScreenSummaryV1;
+  safeScreenedTarget: EvidenceLeverageTargetV1 | null;
+  blockedLeverageTargets: Array<{
+    target: EvidenceLeverageTargetV1;
+    screen: FamilyPreResearchRiskScreenV1;
+  }>;
+};
+
+function isPreResearchScreenableTarget(target: EvidenceLeverageTargetV1): boolean {
+  return target.family_key.startsWith("filter::");
+}
+
+function buildPreResearchRiskScreenSummary(args: {
+  rootDir: string;
+  now?: () => Date;
+  leverage: EvidenceLeveragePrioritizationV1;
+  frozenFamilies: Set<string>;
+}): PreResearchScreeningResultV1 {
+  const blockedLeverageTargets: PreResearchScreeningResultV1["blockedLeverageTargets"] = [];
+  let safeScreenedTarget: EvidenceLeverageTargetV1 | null = null;
+  let screened_family_count = 0;
+
+  for (const target of args.leverage.top_50_highest_leverage_evidence_targets) {
+    if (args.frozenFamilies.has(target.family_key)) continue;
+    if (!isSafeLeverageTarget(target)) continue;
+    if (!isPreResearchScreenableTarget(target)) continue;
+
+    screened_family_count += 1;
+    const screen = buildFamilyPreResearchRiskScreenV1({
+      rootDir: args.rootDir,
+      familyKey: target.family_key,
+      now: args.now,
+    });
+
+    if (screen.recommendation !== "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH") {
+      blockedLeverageTargets.push({ target, screen });
+      continue;
+    }
+
+    if (!safeScreenedTarget) {
+      safeScreenedTarget = target;
+    }
+  }
+
+  const top_blocked_families = [...blockedLeverageTargets]
+    .sort(
+      (a, b) =>
+        b.target.estimated_factory_unlock_score - a.target.estimated_factory_unlock_score,
+    )
+    .slice(0, 5)
+    .map(({ target, screen }) => ({
+      family_key: target.family_key,
+      contamination_risk: screen.contamination_risk,
+      recommendation: screen.recommendation,
+      current_unlock_score: target.estimated_factory_unlock_score,
+      sibling_conflict_count: screen.sibling_conflict_count,
+    }));
+
+  return {
+    summary: {
+      screened_family_count,
+      blocked_family_count: blockedLeverageTargets.length,
+      top_blocked_families,
+      highest_safe_screened_family_key: safeScreenedTarget?.family_key ?? null,
+    },
+    safeScreenedTarget,
+    blockedLeverageTargets,
+  };
+}
+
 function buildFrozenFamilySummary(
   anchor: AnchorIntegrityAuditInputV1,
   leverage: EvidenceLeveragePrioritizationV1,
@@ -291,7 +387,11 @@ function buildFrozenFamilySummary(
 function buildNextBestActionRanked(args: {
   frozenFamilies: FrozenFamilySummaryV1;
   anchor: AnchorIntegrityAuditInputV1;
-  safeTarget: EvidenceLeverageTargetV1 | null;
+  safeScreenedTarget: EvidenceLeverageTargetV1 | null;
+  blockedLeverageTargets: Array<{
+    target: EvidenceLeverageTargetV1;
+    screen: FamilyPreResearchRiskScreenV1;
+  }>;
   badMapping: BadMappingCorrectionBatchRunnerV1;
 }): ControlGraphNextBestActionRankedItemV1[] {
   const ranked: ControlGraphNextBestActionRankedItemV1[] = [];
@@ -327,15 +427,52 @@ function buildNextBestActionRanked(args: {
     });
   }
 
-  if (args.safeTarget) {
+  const blockedAboveSafe = args.blockedLeverageTargets.filter(
+    (entry) =>
+      !args.safeScreenedTarget ||
+      entry.target.estimated_factory_unlock_score >
+        args.safeScreenedTarget.estimated_factory_unlock_score,
+  );
+
+  for (const blocked of blockedAboveSafe.slice(0, 3)) {
+    const sliceLabel =
+      blocked.screen.exact_slug_batch_for_research.length > 0
+        ? `${String(blocked.screen.recommended_hyperagent_batch_size)}-slug conflict-free research slice (${blocked.screen.exact_slug_batch_for_research.join(", ")}) — not full-family scaling`
+        : "no conflict-free slug slice available — reconcile repo signals before HyperAgent dispatch";
+
     ranked.push({
       rank: ranked.length + 1,
-      action: args.safeTarget.recommended_action,
+      action: `Block full-family HyperAgent dispatch for \`${blocked.screen.family_key}\` — pre-research risk screen ${blocked.screen.contamination_risk}/${blocked.screen.recommendation}. Optional ${sliceLabel}.`,
+      safety_tier: "PRE_RESEARCH_RECONCILIATION",
+      leverage_score: blocked.target.estimated_factory_unlock_score,
+      family_key: blocked.screen.family_key,
+      blocked_by_frozen_families: frozenKeys,
+      why: `Evidence leverage ranks ${blocked.screen.family_key} highly, but pre-research risk screen blocks full-family scaling (${String(blocked.screen.sibling_conflict_count)} sibling conflicts, ${blocked.screen.learned_failure_block_count} learned-failure blocks).`,
+    });
+  }
+
+  if (args.safeScreenedTarget) {
+    ranked.push({
+      rank: ranked.length + 1,
+      action: args.safeScreenedTarget.recommended_action,
       safety_tier: "SAFE_EVIDENCE",
-      leverage_score: args.safeTarget.estimated_factory_unlock_score,
-      family_key: args.safeTarget.family_key,
-      blocked_by_frozen_families: frozenKeys.filter((key) => key !== args.safeTarget!.family_key),
-      why: `Highest safe evidence-leverage family not frozen (score=${String(args.safeTarget.estimated_factory_unlock_score)}, gap=${args.safeTarget.evidence_gap_type}).`,
+      leverage_score: args.safeScreenedTarget.estimated_factory_unlock_score,
+      family_key: args.safeScreenedTarget.family_key,
+      blocked_by_frozen_families: frozenKeys.filter(
+        (key) => key !== args.safeScreenedTarget!.family_key,
+      ),
+      why: `Highest evidence-leverage filter family passing pre-research risk screen (score=${String(args.safeScreenedTarget.estimated_factory_unlock_score)}, gap=${args.safeScreenedTarget.evidence_gap_type}).`,
+    });
+  } else if (blockedAboveSafe[0]) {
+    const topBlocked = blockedAboveSafe[0]!;
+    ranked.push({
+      rank: ranked.length + 1,
+      action: `No filter family passes pre-research risk screen for full-family HyperAgent scaling. Reconcile ${topBlocked.screen.family_key} prefix/sibling conflicts or run dangerous-mapping remediation before evidence batches.`,
+      safety_tier: "PRE_RESEARCH_RECONCILIATION",
+      leverage_score: topBlocked.target.estimated_factory_unlock_score,
+      family_key: topBlocked.screen.family_key,
+      blocked_by_frozen_families: frozenKeys,
+      why: "All non-frozen leverage candidates fail pre-research risk screen — full-family evidence scaling is blocked.",
     });
   }
 
@@ -356,18 +493,37 @@ function buildNextBestActionRanked(args: {
 
 function buildPrimaryNextBestAction(
   ranked: ControlGraphNextBestActionRankedItemV1[],
-  safeTarget: EvidenceLeverageTargetV1 | null,
+  safeScreenedTarget: EvidenceLeverageTargetV1 | null,
 ): string {
   const freezeAction = ranked.find((item) => item.safety_tier === "FREEZE");
-  if (freezeAction && safeTarget) {
-    return `${freezeAction.action} Then prioritize \`${safeTarget.family_key}\` — highest safe evidence-leverage family not frozen.`;
+  const reconciliationActions = ranked.filter(
+    (item) => item.safety_tier === "PRE_RESEARCH_RECONCILIATION",
+  );
+  const topReconciliation = reconciliationActions[0];
+
+  if (freezeAction && safeScreenedTarget) {
+    const reconciliationNote = topReconciliation
+      ? ` ${topReconciliation.action}`
+      : "";
+    return `${freezeAction.action}${reconciliationNote} Then prioritize \`${safeScreenedTarget.family_key}\` — highest safe pre-research-screened evidence-leverage family.`;
   }
+
+  if (freezeAction && topReconciliation) {
+    return `${freezeAction.action} ${topReconciliation.action}`;
+  }
+
   if (freezeAction) {
     return freezeAction.action;
   }
-  if (safeTarget) {
-    return safeTarget.recommended_action;
+
+  if (safeScreenedTarget) {
+    return safeScreenedTarget.recommended_action;
   }
+
+  if (topReconciliation) {
+    return topReconciliation.action;
+  }
+
   return "All control-graph freeze gates clear — proceed with highest safe evidence-leverage target subject to page quality gates.";
 }
 
@@ -501,6 +657,14 @@ export function buildCommandCenterControlGraphRollupV1(args: {
     leverage,
     frozenFamilies: frozenFamilySet,
   });
+  const preResearchScreening = buildPreResearchRiskScreenSummary({
+    rootDir: args.rootDir,
+    now: args.now,
+    leverage,
+    frozenFamilies: frozenFamilySet,
+  });
+  const pre_research_risk_screen_summary = preResearchScreening.summary;
+  const safeScreenedTarget = preResearchScreening.safeScreenedTarget;
   const topLeverage = leverage.top_50_highest_leverage_evidence_targets[0] ?? null;
   const topSafeNonFrozenFamilies = leverage.top_50_highest_leverage_evidence_targets
     .filter((target) => !frozenFamilySet.has(target.family_key) && isSafeLeverageTarget(target))
@@ -577,10 +741,14 @@ export function buildCommandCenterControlGraphRollupV1(args: {
   const next_best_action_ranked = buildNextBestActionRanked({
     frozenFamilies: frozen_family_summary,
     anchor: anchorIntegrity,
-    safeTarget: safeNonFrozen,
+    safeScreenedTarget,
+    blockedLeverageTargets: preResearchScreening.blockedLeverageTargets,
     badMapping,
   });
-  const next_best_action = buildPrimaryNextBestAction(next_best_action_ranked, safeNonFrozen);
+  const next_best_action = buildPrimaryNextBestAction(
+    next_best_action_ranked,
+    safeScreenedTarget,
+  );
 
   return {
     contract: COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CONTRACT_V1,
@@ -595,6 +763,7 @@ export function buildCommandCenterControlGraphRollupV1(args: {
     anchor_integrity_summary,
     frozen_family_summary,
     evidence_leverage_summary,
+    pre_research_risk_screen_summary,
     page_factory_quality_summary,
     education_opportunity_summary,
     next_best_action,
@@ -617,6 +786,7 @@ export function buildCommandCenterControlGraphRollupV1(args: {
       `PROVEN: anchor_integrity healthy=${String(anchor_integrity_summary.healthy_count)} watchlist=${String(anchor_integrity_summary.watchlist_count)} disputed=${String(anchor_integrity_summary.disputed_count)} sibling_conflict_disputed=${String(anchor_integrity_summary.sibling_conflict_disputed_count)}.`,
       `PROVEN: frozen_family_count=${String(frozen_family_summary.frozen_family_count)}.`,
       `PROVEN: highest_safe_non_frozen_family=${evidence_leverage_summary.highest_safe_non_frozen_family_key ?? "none"}.`,
+      `PROVEN: highest_safe_screened_family=${pre_research_risk_screen_summary.highest_safe_screened_family_key ?? "none"} pre_research_blocked=${String(pre_research_risk_screen_summary.blocked_family_count)}.`,
       `PROVEN: quality_gate_artifact_count=${String(page_factory_quality_summary.quality_gate_artifact_count)} batch_qa_director_artifact_count=${String(page_factory_quality_summary.batch_qa_director_artifact_count)}.`,
       "PROVEN: Read-only control-graph rollup — no compat, evidence, Supabase, sitemap, robots, page, or HQ handoff mutations.",
     ],
