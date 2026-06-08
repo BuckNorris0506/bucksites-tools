@@ -1,0 +1,1694 @@
+{
+  "contract": "samsung_haf_qin_wildcard_expansion_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "catalog_row_creation_allowed": false,
+  "generated_at": "2026-06-08T00:56:58.558Z",
+  "review_status": "READY_FOR_OWNER_REVIEW",
+  "gates": [
+    {
+      "gate_id": "hyperagent_candidates_csv_readable",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge/batch-production/hyperagent/haf-qin-candidates-v1.csv"
+      ],
+      "observed": {
+        "candidate_row_count": 109
+      }
+    },
+    {
+      "gate_id": "samsung_catalog_loaded",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge_models.csv"
+      ],
+      "observed": {
+        "samsung_catalog_count": 100
+      }
+    },
+    {
+      "gate_id": "compat_mappings_loaded",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv"
+      ],
+      "observed": {
+        "samsung_compat_slug_count": 100
+      }
+    },
+    {
+      "gate_id": "fridge_aliases_loaded",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge_model_aliases.csv"
+      ]
+    },
+    {
+      "gate_id": "samsung_cross_reference_loaded",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/filters.csv"
+      ]
+    },
+    {
+      "gate_id": "wildcard_expansion_rules_applied",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge/batch-production/hyperagent/haf-qin-candidates-v1.csv"
+      ],
+      "observed": {
+        "suffix_double_star_enabled": true,
+        "inline_star_supported": false
+      }
+    },
+    {
+      "gate_id": "catalog_mutation_disabled",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge/batch-production/hyperagent/haf-qin-candidates-v1.csv",
+        "data/fridge_models.csv",
+        "data/fridge_model_aliases.csv",
+        "data/compatibility_mappings.csv",
+        "data/filters.csv",
+        "data/fridge/batch-production/page-factory-targets-v1.csv",
+        "scripts/lib/refrigerator-model-first-samsung-marketing-token-cross-reference-v1.ts"
+      ],
+      "observed": {
+        "catalog_row_creation_allowed": false
+      }
+    }
+  ],
+  "exact_repo_paths_read": [
+    "data/fridge/batch-production/hyperagent/haf-qin-candidates-v1.csv",
+    "data/fridge_models.csv",
+    "data/fridge_model_aliases.csv",
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/page-factory-targets-v1.csv",
+    "scripts/lib/refrigerator-model-first-samsung-marketing-token-cross-reference-v1.ts"
+  ],
+  "wildcard_expansion_rules_v1": {
+    "suffix_double_star_enabled": true,
+    "inline_star_supported": false,
+    "catalog_row_creation": false
+  },
+  "inspect_summary": {
+    "candidate_pattern_count": 109,
+    "unique_model_number_count": 109,
+    "supported_pattern_count": 103,
+    "wildcard_unsupported_pattern_count": 6,
+    "no_catalog_match_pattern_count": 82,
+    "has_catalog_match_pattern_count": 21,
+    "matched_catalog_slug_count": 43,
+    "catalog_slug_bucket_counts": {
+      "COVERED": 8,
+      "CANDIDATE_REVIEW": 8,
+      "REVIEW_DA29_CONFLICT": 26,
+      "BLOCKED_HAF_CIN_CANONICAL": 1
+    },
+    "pattern_bucket_counts": {
+      "WILDCARD_UNSUPPORTED": 6,
+      "NO_CATALOG_MATCH": 82,
+      "HAS_CATALOG_MATCH": 21
+    },
+    "covered_with_da29_warning_count": 2
+  },
+  "pattern_rows": [
+    {
+      "model_number_pattern": "BRF365200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "BRF425200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF18A5101**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf18a5101sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF20A5101**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf20a5101sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF22A4221**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF22R7351**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF22R7551**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23A9071**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23A9671**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23A9675**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23A9771**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23B7671**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23BB8200**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf23bb8200ql"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23BB8600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23BB8900**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf23bb8900ql"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF23CB99008M**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Product Page (CA)"
+    },
+    {
+      "model_number_pattern": "RF23DB9600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23DB9700**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23DB9750**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23DB9900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23M8070**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf23m8070sg",
+        "samsung-rf23m8070sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23M8090**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23M8570**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf23m8570sg"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23M8590**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf23m8590sg",
+        "samsung-rf23m8590sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23M8960**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23R6201**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF23R6301**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF24BB6200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF24BB6600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF24BB6900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF24R7201**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF25C5151**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Product Page (CA)"
+    },
+    {
+      "model_number_pattern": "RF25C5551**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF25C5A01**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF26CG7400**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF27CG5010**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF27CG5100**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF27CG5400**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF27CG5900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF27CG5B10**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF27CG5B30**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF27T5201**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf27t5201sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF27T5241**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF27T5501**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf27t5501sg",
+        "samsung-rf27t5501sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF28R6201**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r6201sg",
+        "samsung-rf28r6201sr",
+        "samsung-rf28r6201sw",
+        "samsung-rf28r6201ww"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R6202**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R6221**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R6222**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R6241**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r6241sb",
+        "samsung-rf28r6241sg",
+        "samsung-rf28r6241sr",
+        "samsung-rf28r6241sw"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R6301**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r6301sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R7201**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r7201sg",
+        "samsung-rf28r7201sr",
+        "samsung-rf28r7201ww"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R7351**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r7351sg",
+        "samsung-rf28r7351sr",
+        "samsung-rf28r7351sw",
+        "samsung-rf28r7351ww"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28R7551**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28r7551sg",
+        "samsung-rf28r7551sr",
+        "samsung-rf28r7551sw",
+        "samsung-rf28r7551ww"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28T5001**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28t5001sb",
+        "samsung-rf28t5001sg",
+        "samsung-rf28t5001sr",
+        "samsung-rf28t5001ww"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF28T5021**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28t5021sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF28T5101**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28t5101sg",
+        "samsung-rf28t5101sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF28T5F01**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rf28t5f01sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF29A9071**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29A9671**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29A9675**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29A9771**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29BB8200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29BB8600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29BB8900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF29DB9600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF29DB9700**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF29DB9750**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF29DB9900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF30BB6200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF30BB6600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF30BB6602**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF30BB6900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF31CG5100**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF31CG7200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF31CG7400**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF32CG5300**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF32CG5400**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF32CG5900**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RF32CG5B10**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF32CG5B30**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF32CG5D00**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF70F23*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF70F29*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF70H25*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF70H30*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF80H25*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF80H30*E*",
+      "pattern_bucket": "WILDCARD_UNSUPPORTED",
+      "expansion_rule": "unsupported",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F23AE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F23BE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F23EE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F29AE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F29BE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RF90F29EE**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RM70F22N**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RM80F22W**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RM80F23V**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS22T5201**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rs22t5201sg",
+        "samsung-rs22t5201sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS22T5561**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RS23A500A**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS23CB7600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder + Product Page"
+    },
+    {
+      "model_number_pattern": "RS25H5111**",
+      "pattern_bucket": "HAS_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [
+        "samsung-rs25h5111sr"
+      ],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS27T5200**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS27T5201**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS27T5202**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS27T5561**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS28A500A**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS28A5F61**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS28CB7600**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    },
+    {
+      "model_number_pattern": "RS70H27S**",
+      "pattern_bucket": "NO_CATALOG_MATCH",
+      "expansion_rule": "suffix_double_star",
+      "matched_catalog_slugs": [],
+      "hyperagent_classification": "PASS_CANDIDATE",
+      "source_type": "Filter Finder Tool"
+    }
+  ],
+  "catalog_slug_rows": [
+    {
+      "fridge_slug": "samsung-rf18a5101sr",
+      "model_number": "RF18A5101SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da29-00003g",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF18A5101**"
+      ],
+      "page_factory_target": false,
+      "warnings": [
+        "DA29_COMPAT_PRESENT"
+      ],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf20a5101sr",
+      "model_number": "RF20A5101SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00020a",
+        "da97-15217d"
+      ],
+      "matched_patterns": [
+        "RF20A5101**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23bb8200ql",
+      "model_number": "RF23BB8200QL",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-15217d"
+      ],
+      "matched_patterns": [
+        "RF23BB8200**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23bb8900ql",
+      "model_number": "RF23BB8900QL",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF23BB8900**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23m8070sg",
+      "model_number": "RF23M8070SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF23M8070**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23m8070sr",
+      "model_number": "RF23M8070SR",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF23M8070**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23m8570sg",
+      "model_number": "RF23M8570SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00003g"
+      ],
+      "matched_patterns": [
+        "RF23M8570**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23m8590sg",
+      "model_number": "RF23M8590SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF23M8590**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf23m8590sr",
+      "model_number": "RF23M8590SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da29-00003g",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF23M8590**"
+      ],
+      "page_factory_target": false,
+      "warnings": [
+        "DA29_COMPAT_PRESENT"
+      ],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "model_number": "RF27T5201SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF27T5201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sg",
+      "model_number": "RF27T5501SG",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-19467c"
+      ],
+      "matched_patterns": [
+        "RF27T5501**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "model_number": "RF27T5501SR",
+      "bucket": "BLOCKED_HAF_CIN_CANONICAL",
+      "compat_filter_slugs": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "matched_patterns": [
+        "RF27T5501**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201sg",
+      "model_number": "RF28R6201SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a",
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF28R6201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201sr",
+      "model_number": "RF28R6201SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00003g",
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF28R6201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201sw",
+      "model_number": "RF28R6201SW",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-15217d"
+      ],
+      "matched_patterns": [
+        "RF28R6201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201ww",
+      "model_number": "RF28R6201WW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF28R6201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sb",
+      "model_number": "RF28R6241SB",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF28R6241**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sg",
+      "model_number": "RF28R6241SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF28R6241**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sr",
+      "model_number": "RF28R6241SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00020a",
+        "da97-06317a"
+      ],
+      "matched_patterns": [
+        "RF28R6241**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sw",
+      "model_number": "RF28R6241SW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF28R6241**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "model_number": "RF28R6301SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF28R6301**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201sg",
+      "model_number": "RF28R7201SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF28R7201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201sr",
+      "model_number": "RF28R7201SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF28R7201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201ww",
+      "model_number": "RF28R7201WW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a",
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF28R7201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sg",
+      "model_number": "RF28R7351SG",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF28R7351**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sr",
+      "model_number": "RF28R7351SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF28R7351**"
+      ],
+      "page_factory_target": true,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sw",
+      "model_number": "RF28R7351SW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00020a",
+        "da97-06317a"
+      ],
+      "matched_patterns": [
+        "RF28R7351**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351ww",
+      "model_number": "RF28R7351WW",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF28R7351**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551sg",
+      "model_number": "RF28R7551SG",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF28R7551**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551sr",
+      "model_number": "RF28R7551SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a",
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF28R7551**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551sw",
+      "model_number": "RF28R7551SW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00003g"
+      ],
+      "matched_patterns": [
+        "RF28R7551**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551ww",
+      "model_number": "RF28R7551WW",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00020a"
+      ],
+      "matched_patterns": [
+        "RF28R7551**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001sb",
+      "model_number": "RF28T5001SB",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-19467c"
+      ],
+      "matched_patterns": [
+        "RF28T5001**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001sg",
+      "model_number": "RF28T5001SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00003g"
+      ],
+      "matched_patterns": [
+        "RF28T5001**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001sr",
+      "model_number": "RF28T5001SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RF28T5001**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001ww",
+      "model_number": "RF28T5001WW",
+      "bucket": "CANDIDATE_REVIEW",
+      "compat_filter_slugs": [
+        "da97-08006b"
+      ],
+      "matched_patterns": [
+        "RF28T5001**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5021sr",
+      "model_number": "RF28T5021SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00020a"
+      ],
+      "matched_patterns": [
+        "RF28T5021**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sg",
+      "model_number": "RF28T5101SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RF28T5101**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "model_number": "RF28T5101SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF28T5101**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rf28t5f01sr",
+      "model_number": "RF28T5F01SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-00019a"
+      ],
+      "matched_patterns": [
+        "RF28T5F01**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "model_number": "RS22T5201SG",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RS22T5201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sr",
+      "model_number": "RS22T5201SR",
+      "bucket": "COVERED",
+      "compat_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "matched_patterns": [
+        "RS22T5201**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": true
+    },
+    {
+      "fridge_slug": "samsung-rs25h5111sr",
+      "model_number": "RS25H5111SR",
+      "bucket": "REVIEW_DA29_CONFLICT",
+      "compat_filter_slugs": [
+        "da29-10105j"
+      ],
+      "matched_patterns": [
+        "RS25H5111**"
+      ],
+      "page_factory_target": false,
+      "warnings": [],
+      "legacy_slugs_match_haf_qin_family": false
+    }
+  ],
+  "proven_facts": [
+    "hyperagent_candidate_rows=109",
+    "samsung_catalog_rows=100",
+    "matched_catalog_slug_rows=43",
+    "catalog_row_creation_allowed=false"
+  ],
+  "unknown_facts": []
+}
