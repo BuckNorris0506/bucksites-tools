@@ -75,6 +75,7 @@ import {
 import { buildLargeBatchCoverageFactorySummaryV1 } from "./lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildOwnerDriftDetectorCommandCenterLaneV1 } from "./lib/owner-drift-detector-command-center-v1";
 import { buildCommandCenterEfficiencyTruthTableV1 } from "./lib/command-center-efficiency-truth-table-v1";
+import { buildCommandCenterControlGraphRollupV1 } from "./lib/command-center-control-graph-rollup-v1";
 import { buildUniversalBatchLifecycleTruthTableV1 } from "./lib/universal-batch-lifecycle-truth-table-v1";
 import { buildUniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-apply-readiness-command-center-v1";
 import { buildUniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./lib/universal-batch-lifecycle-apply-execution-plan-command-center-v1";
@@ -1142,6 +1143,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "command_center_control_graph_rollup_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
     | "universal_batch_lifecycle_mutation_authorization_review_v1"
@@ -1333,6 +1335,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "command_center_control_graph_rollup_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
     | "universal_batch_lifecycle_mutation_authorization_review_v1"
@@ -1472,6 +1475,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "command_center_control_graph_rollup_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
     | "universal_batch_lifecycle_mutation_authorization_review_v1"
@@ -1914,6 +1918,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
     | "command_center_efficiency_truth_table_v1"
+    | "command_center_control_graph_rollup_v1"
     | "universal_batch_lifecycle_apply_readiness_v1"
     | "universal_batch_lifecycle_apply_execution_plan_v1"
     | "universal_batch_lifecycle_mutation_authorization_review_v1"
@@ -2003,6 +2008,11 @@ export async function buildBuckpartsCommandCenterReport(
     buildFridgeGuardedBatchLifecycleRulePromotionPlanCommandCenterLaneV1(
       fridge_guarded_batch_lifecycle_rule_proposal_v1,
     );
+
+  const command_center_control_graph_rollup_v1 = buildCommandCenterControlGraphRollupV1({
+    rootDir,
+    now,
+  });
 
   const command_center_efficiency_truth_table_v1 = buildCommandCenterEfficiencyTruthTableV1({
     now,
@@ -2250,7 +2260,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2356,6 +2366,7 @@ export async function buildBuckpartsCommandCenterReport(
     fridge_guarded_batch_lifecycle_rule_proposal_v1,
     fridge_guarded_batch_lifecycle_rule_promotion_plan_v1,
     command_center_efficiency_truth_table_v1,
+    command_center_control_graph_rollup_v1,
     universal_batch_lifecycle_apply_readiness_v1,
     universal_batch_lifecycle_apply_execution_plan_v1,
     universal_batch_lifecycle_mutation_authorization_review_v1,

@@ -27,6 +27,7 @@ import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-prod
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
 import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
+import type { CommandCenterControlGraphRollupV1 } from "./command-center-control-graph-rollup-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 import type { UniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-readiness-command-center-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-execution-plan-command-center-v1";
@@ -989,6 +990,8 @@ export type CommandCenterV2Report = {
   brain_consolidation_plan_v1: BrainConsolidationPlanV1;
   /** Read-only efficiency / SOP truth table — consolidation diagnostic; not an operational gate. */
   command_center_efficiency_truth_table_v1: CommandCenterEfficiencyTruthTableV1;
+  /** Read-only control-plane rollup — mapping, guards, anchor integrity, leverage, page QA; not mutation authority. */
+  command_center_control_graph_rollup_v1: CommandCenterControlGraphRollupV1;
   /** Read-only universal batch lifecycle consolidation blueprint — not an operational gate. */
   universal_batch_lifecycle_truth_table_v1: UniversalBatchLifecycleTruthTableV1;
   /** Read-only universal batch lifecycle apply-readiness discovery — lifecycle-owned; not mutation authority. */
@@ -1151,6 +1154,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
   | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
   | "command_center_efficiency_truth_table_v1"
+  | "command_center_control_graph_rollup_v1"
   | "universal_batch_lifecycle_apply_readiness_v1"
   | "universal_batch_lifecycle_apply_execution_plan_v1"
   | "universal_batch_lifecycle_mutation_authorization_review_v1"
