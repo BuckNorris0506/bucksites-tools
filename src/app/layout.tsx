@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { AnalyticsScripts } from "@/components/AnalyticsScripts";
+import { GrowScripts } from "@/components/GrowScripts";
 import { SiteShell } from "@/components/SiteShell";
 import {
   SITE_DISPLAY_NAME,
@@ -60,6 +61,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <AnalyticsScripts />
+        <GrowScripts />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
