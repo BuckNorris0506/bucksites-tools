@@ -1,0 +1,291 @@
+{
+  "contract": "page_factory_batch_qa_director_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T04:49:51.492Z",
+  "batch_id": "haf-qin-qa-director-fixture-v1",
+  "manifest_path": "data/fridge/batch-production/page-factory/evidence-clone-batch-v1/haf-qin-qa-director-fixture-v1-manifest-v1.json",
+  "pair_count": 3,
+  "quality_gate_input_mode": "mixed",
+  "buckets": [
+    {
+      "classification": "VERIFIED",
+      "count": 1,
+      "percentage": 33.3,
+      "top_blockers": [],
+      "affected_slugs": [
+        "samsung-rf28r7351sr"
+      ]
+    },
+    {
+      "classification": "NOINDEX_REVIEW",
+      "count": 0,
+      "percentage": 0,
+      "top_blockers": [],
+      "affected_slugs": []
+    },
+    {
+      "classification": "BLOCKED",
+      "count": 0,
+      "percentage": 0,
+      "top_blockers": [],
+      "affected_slugs": []
+    },
+    {
+      "classification": "WRONG_PART_RISK",
+      "count": 1,
+      "percentage": 33.3,
+      "top_blockers": [
+        "compat_proof_exact_mapping: csv compat slugs [\"da29-00012b\",\"da29-00020b\"] !== expected [\"da97-17376b\"]",
+        "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00012b",
+        "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00020b",
+        "compat_proof_token_alignment: legacy filter slugs [\"da29-00012b\",\"da29-00020b\"] do not align with official_marketing_token HAF-QIN",
+        "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json"
+      ],
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "classification": "NEEDS_EVIDENCE",
+      "count": 1,
+      "percentage": 33.3,
+      "top_blockers": [
+        "clone_status: NEEDS_TARGET_EVIDENCE",
+        "compat_proof_exact_mapping: csv compat slugs [\"da97-08006b\"] !== expected [\"da97-17376b\"]",
+        "compat_proof_token_alignment: legacy filter slugs [\"da97-08006b\"] do not align with official_marketing_token HAF-QIN",
+        "duplicate_thin_content: no model-specific evidence — finish-variant thin-content risk",
+        "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json"
+      ],
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    }
+  ],
+  "per_slug": [
+    {
+      "fridge_slug": "samsung-rf28r7351sr",
+      "batch_qa_classification": "VERIFIED",
+      "quality_classification": "INDEXABLE_NO_BUY_LINK",
+      "publication_authorized": true,
+      "quality_gate_source": "artifact",
+      "quality_gate_artifact_path": "data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351sr-quality-gate-v1.json",
+      "top_blockers": []
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351ww",
+      "batch_qa_classification": "NEEDS_EVIDENCE",
+      "quality_classification": "NOINDEX_REVIEW",
+      "publication_authorized": false,
+      "quality_gate_source": "artifact",
+      "quality_gate_artifact_path": "data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351ww-quality-gate-v1.json",
+      "top_blockers": [
+        "model_existence_confirmed: no official manufacturer recognition or model-specific Tier-1 evidence for RF28R7351WW; wildcard CANDIDATE_REVIEW alone is insufficient",
+        "model_specific_evidence: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+        "compat_proof_exact_mapping: csv compat slugs [\"da97-08006b\"] !== expected [\"da97-17376b\"]",
+        "compat_proof_token_alignment: legacy filter slugs [\"da97-08006b\"] do not align with official_marketing_token HAF-QIN",
+        "source_transparency: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+        "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+        "duplicate_thin_content: no model-specific evidence — finish-variant thin-content risk",
+        "clone_status: NEEDS_TARGET_EVIDENCE"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "batch_qa_classification": "WRONG_PART_RISK",
+      "quality_classification": "BLOCKED",
+      "publication_authorized": false,
+      "quality_gate_source": "live_build",
+      "quality_gate_artifact_path": null,
+      "top_blockers": [
+        "model_existence_confirmed: manufacturer recognition blocked: wildcard bucket BLOCKED_HAF_CIN_CANONICAL for samsung-rf27t5501sr",
+        "model_specific_evidence: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+        "compat_proof_exact_mapping: csv compat slugs [\"da29-00012b\",\"da29-00020b\"] !== expected [\"da97-17376b\"]",
+        "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00020b",
+        "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00012b",
+        "compat_proof_token_alignment: legacy filter slugs [\"da29-00012b\",\"da29-00020b\"] do not align with official_marketing_token HAF-QIN",
+        "wrong_part_risk: wildcard bucket BLOCKED_HAF_CIN_CANONICAL for samsung-rf27t5501sr",
+        "wrong_part_risk: HAF-CIN wrong-family compat present: da29-00020b, da29-00012b",
+        "source_transparency: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+        "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json"
+      ]
+    }
+  ],
+  "batch_publication_readiness_score": 33.3,
+  "batch_risk_score": 33.3,
+  "top_20_blockers_by_frequency": [
+    {
+      "blocker": "clone_status: NEEDS_TARGET_EVIDENCE",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "compat_proof_exact_mapping: csv compat slugs [\"da29-00012b\",\"da29-00020b\"] !== expected [\"da97-17376b\"]",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "compat_proof_exact_mapping: csv compat slugs [\"da97-08006b\"] !== expected [\"da97-17376b\"]",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00012b",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "compat_proof_forbidden_absent: forbidden filter still mapped in CSV: da29-00020b",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "compat_proof_token_alignment: legacy filter slugs [\"da29-00012b\",\"da29-00020b\"] do not align with official_marketing_token HAF-QIN",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "compat_proof_token_alignment: legacy filter slugs [\"da97-08006b\"] do not align with official_marketing_token HAF-QIN",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "duplicate_thin_content: no model-specific evidence — finish-variant thin-content risk",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "homeowner_guidance: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "model_existence_confirmed: manufacturer recognition blocked: wildcard bucket BLOCKED_HAF_CIN_CANONICAL for samsung-rf27t5501sr",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "model_existence_confirmed: no official manufacturer recognition or model-specific Tier-1 evidence for RF28R7351WW; wildcard CANDIDATE_REVIEW alone is insufficient",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "model_specific_evidence: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "model_specific_evidence: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "source_transparency: missing evidence file: data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "source_transparency: missing evidence file: data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf28r7351ww"
+      ]
+    },
+    {
+      "blocker": "wrong_part_risk: HAF-CIN wrong-family compat present: da29-00020b, da29-00012b",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    },
+    {
+      "blocker": "wrong_part_risk: wildcard bucket BLOCKED_HAF_CIN_CANONICAL for samsung-rf27t5501sr",
+      "count": 1,
+      "affected_slugs": [
+        "samsung-rf27t5501sr"
+      ]
+    }
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "buckets": ".buckets",
+      "batch_publication_readiness_score": ".batch_publication_readiness_score",
+      "batch_risk_score": ".batch_risk_score"
+    },
+    "batch_id": "haf-qin-qa-director-fixture-v1",
+    "pair_count": 3,
+    "bucket_counts": {
+      "VERIFIED": 1,
+      "NOINDEX_REVIEW": 0,
+      "BLOCKED": 0,
+      "WRONG_PART_RISK": 1,
+      "NEEDS_EVIDENCE": 1
+    },
+    "publication_authorized_count": 1,
+    "recommended_next_action": "Resolve 1 WRONG_PART_RISK slug(s) before any batch publication (samsung-rf27t5501sr)."
+  },
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+    "data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json",
+    "data/fridge/batch-production/page-factory-targets-v1.csv",
+    "data/fridge/batch-production/page-factory/evidence-clone-batch-v1/haf-qin-qa-director-fixture-v1-manifest-v1.json",
+    "data/fridge/batch-production/page-factory/quality-gate-v1",
+    "data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351sr-quality-gate-v1.json",
+    "data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351ww-quality-gate-v1.json",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator/samsung-rf27t5501sr.json",
+    "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+    "data/manual-evidence/refrigerator/samsung-rf28r7351ww.json",
+    "data/retailer_links.csv",
+    "src/lib/fridge/fridge-model-review-overrides.ts",
+    "src/lib/page-state/page-state-meta.ts",
+    "src/lib/page-state/page-state.ts"
+  ],
+  "proven_facts": [
+    "PROVEN: read-only batch QA director for 3 slug(s) from data/fridge/batch-production/page-factory/evidence-clone-batch-v1/haf-qin-qa-director-fixture-v1-manifest-v1.json.",
+    "PROVEN: quality_gate_input_mode=mixed (2 artifact, 1 live_build).",
+    "PROVEN: batch_publication_readiness_score=33.3; batch_risk_score=33.3.",
+    "PROVEN: Does not mutate pages, sitemap, robots, retailer links, Supabase, or publication state."
+  ],
+  "unknown_facts": []
+}
