@@ -8,6 +8,7 @@ import {
   LEARNED_FAILURE_GUARDS_CONTRACT_V1,
   evaluateAllLearnedFailureGuardsV1,
   evaluateConfusionFamilyGuardsV1,
+  evaluateFrigidaireProvenAnchorSiblingDriftGuardV1,
   writeLearnedFailureGuardsArtifactsV1,
 } from "./learned-failure-guards-v1";
 import {
@@ -126,6 +127,74 @@ test("Frigidaire FPPWFU01/FPPWFU02 synthetic co-map BLOCKS placeholder guard", (
   );
   assert.ok(guard);
   assert.equal(guard.verdict, "BLOCK");
+});
+
+test("Frigidaire ULTRAWF + EPTWFU01 synthetic co-map BLOCKS mix guard", () => {
+  const guards = evaluateConfusionFamilyGuardsV1({
+    brandSlug: "frigidaire",
+    mappedFilterSlugs: ["ultrawf", "eptwfu01"],
+  });
+  assert.equal(
+    guards.find((entry) => entry.guard_id === "frigidaire_ultrawf_vs_eptwfu01_mix")?.verdict,
+    "BLOCK",
+  );
+});
+
+test("Frigidaire EPTWFU01 + WF3CB synthetic co-map BLOCKS mix guard", () => {
+  const guards = evaluateConfusionFamilyGuardsV1({
+    brandSlug: "frigidaire",
+    mappedFilterSlugs: ["eptwfu01", "wf3cb"],
+  });
+  assert.equal(
+    guards.find((entry) => entry.guard_id === "frigidaire_eptwfu01_vs_wf3cb_mix")?.verdict,
+    "BLOCK",
+  );
+});
+
+test("frigidaire-fghb2868pf WARNs proven anchor sibling drift without BLOCK", () => {
+  const report = evaluateAllLearnedFailureGuardsV1({ rootDir: ROOT, now: FIXED_NOW });
+  const row = slugGuard(report, "frigidaire-fghb2868pf");
+  assert.equal(guardVerdict(row, "frigidaire_proven_anchor_sibling_drift"), "WARN");
+  assert.equal(row.aggregate_verdict, "WARN");
+  assert.ok(
+    row.confusion_family_guards
+      .find((guard) => guard.guard_id === "frigidaire_proven_anchor_sibling_drift")
+      ?.detail.includes("fghb2868pf2"),
+  );
+});
+
+test("fghb2868pf2 ultrawf sibling triggers sibling_drift WARN on fghb2868pf anchor", () => {
+  const drift = evaluateFrigidaireProvenAnchorSiblingDriftGuardV1({
+    auditRow: {
+      fridge_slug: "frigidaire-fghb2868pf",
+      model_number: "FGHB2868PF",
+      brand_slug: "frigidaire",
+      mapped_filter_slugs: ["eptwfu01"],
+      classification: "PROVEN_CORRECT",
+      evidence_status: "PROVEN_MANUAL_EVIDENCE",
+      per_filter_proof: [],
+      evidence_paths: [],
+      blockers: [],
+      recommended_action: "",
+    },
+    frigidaireSiblingRows: [
+      {
+        fridge_slug: "frigidaire-fghb2868pf2",
+        model_number: "FGHB2868PF2",
+        brand_slug: "frigidaire",
+        mapped_filter_slugs: ["ultrawf", "wf3cb"],
+        classification: "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        evidence_status: "NONE",
+        per_filter_proof: [],
+        evidence_paths: [],
+        blockers: [],
+        recommended_action: "",
+      },
+    ],
+  });
+  assert.equal(drift.guard_id, "frigidaire_proven_anchor_sibling_drift");
+  assert.equal(drift.verdict, "WARN");
+  assert.ok(drift.detail.includes("fghb2868pf2"));
 });
 
 test("read-only guard blocks compat, retailer links, sitemap, robots, Supabase, HQ handoff writes", () => {

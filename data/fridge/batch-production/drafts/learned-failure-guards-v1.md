@@ -1,6 +1,6 @@
 # Learned failure guards v1
 
-- generated_at: **2026-06-08T06:19:24.977Z**
+- generated_at: **2026-06-08T12:00:00.000Z**
 - total_catalog_models: **500**
 - dangerous_count_regression: **PASS**
 - dangerous_slugs_all_blocked: **true**
@@ -15,6 +15,9 @@
 - `ge_xwf_xwfe_mix`: **4**
 - `ge_rpwfe_legacy_mix`: **3**
 - `frigidaire_fppwfu01_vs_fppwfu02`: **0**
+- `frigidaire_ultrawf_vs_eptwfu01_mix`: **0**
+- `frigidaire_eptwfu01_vs_wf3cb_mix`: **0**
+- `frigidaire_proven_anchor_sibling_drift`: **0**
 
 ## Recommended next action
 

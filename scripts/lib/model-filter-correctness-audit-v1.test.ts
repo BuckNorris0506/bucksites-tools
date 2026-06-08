@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
+import { hasModelSpecificPublicReadyEvidenceV1 } from "./buckparts-page-factory-evidence-clone-v1";
 import {
   MODEL_FILTER_CORRECTNESS_AUDIT_ALLOWED_WRITE_REL_PATHS_V1,
   MODEL_FILTER_CORRECTNESS_AUDIT_CONTRACT_V1,
@@ -125,4 +126,25 @@ test("top 50 risk pages and confusion summary are populated", () => {
   assert.equal(report.top_50_risk_pages.length, 50);
   assert.ok(report.confusion_family_summary.lg_lt_generation_mixes > 0);
   assert.ok(report.factory_scaling.dangerous > 0);
+});
+
+test("model_specific_filter_specification_requires_model_number — PROVEN_CORRECT gap on fghb2868pf", () => {
+  const report = buildModelFilterCorrectnessAuditV1({ rootDir: ROOT });
+  const anchor = rowForSlug(report, "frigidaire-fghb2868pf");
+  assert.equal(anchor.classification, "PROVEN_CORRECT");
+  assert.equal(
+    hasModelSpecificPublicReadyEvidenceV1(ROOT, "frigidaire-fghb2868pf", "FGHB2868PF"),
+    false,
+    "generic platform-spec title must not count as model-specific filter_specification proof",
+  );
+});
+
+test("model_specific_filter_specification_requires_model_number — samsung-rf28r7351sr passes", () => {
+  const report = buildModelFilterCorrectnessAuditV1({ rootDir: ROOT });
+  const row = rowForSlug(report, "samsung-rf28r7351sr");
+  assert.equal(row.classification, "PROVEN_CORRECT");
+  assert.equal(
+    hasModelSpecificPublicReadyEvidenceV1(ROOT, "samsung-rf28r7351sr", "RF28R7351SR"),
+    true,
+  );
 });

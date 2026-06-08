@@ -1,0 +1,825 @@
+{
+  "contract": "anchor_integrity_audit_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T15:06:46.256Z",
+  "anchor_health_summary": {
+    "healthy_count": 5,
+    "watchlist_count": 9,
+    "disputed_count": 1,
+    "sibling_conflict_disputed_count": 1,
+    "total_anchor_count": 15
+  },
+  "highest_risk_anchors": [
+    {
+      "anchor_slug": "frigidaire-fghb2868pf",
+      "anchor_family": "filter::frigidaire::eptwfu01",
+      "anchor_health": "DISPUTED",
+      "model_number": "FGHB2868PF",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": false,
+        "source_title_contains_exact_model_number": false,
+        "learned_failure_guards_status": "WARN",
+        "sibling_family_conflict_detected": true,
+        "evidence_clone_dependency_count": 33,
+        "proven_models_depending_on_anchor": 33,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "sibling_family_conflict_detected",
+        "filter_specification_model_proof_missing"
+      ],
+      "clone_families": [
+        "filter::frigidaire::eptwfu01",
+        "model::frigidaire::FGHB286"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7351sg",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "WATCHLIST",
+      "model_number": "RF28R7351SG",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 31,
+        "proven_models_depending_on_anchor": 31,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::samsung::da97-17376a",
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "frigidaire-fgsc2335tf",
+      "anchor_family": "filter::frigidaire::eptwfu01",
+      "anchor_health": "WATCHLIST",
+      "model_number": "FGSC2335TF",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "WARN",
+        "sibling_family_conflict_detected": true,
+        "evidence_clone_dependency_count": 30,
+        "proven_models_depending_on_anchor": 30,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "sibling_family_conflict_detected",
+        "manual_evidence_not_public_ready",
+        "learned_failure_guards_warn"
+      ],
+      "clone_families": [
+        "filter::frigidaire::eptwfu01",
+        "model::frigidaire::FGSC233"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gynfs",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "WATCHLIST",
+      "model_number": "GFE28GYNFS",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gmkes",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "HEALTHY",
+      "model_number": "GFE28GMKES",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gskss",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "HEALTHY",
+      "model_number": "GFE28GSKSS",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrx735sdhz",
+      "anchor_family": "filter::whirlpool::edr4rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRX735SDHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 24,
+        "proven_models_depending_on_anchor": 24,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready",
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr4rxd1",
+        "model::whirlpool::WRX735"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrf540cwhz",
+      "anchor_family": "filter::whirlpool::edr4rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRF540CWHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": false,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 22,
+        "proven_models_depending_on_anchor": 22,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "filter_specification_model_proof_missing",
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr4rxd1",
+        "model::whirlpool::WRF540"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28nhedbsr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "WATCHLIST",
+      "model_number": "RF28NHEDBSR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrx986sihz",
+      "anchor_family": "filter::whirlpool::edr2rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRX986SIHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr2rxd1",
+        "model::whirlpool::WRX986"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7201sr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF28R7201SR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7351sr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF28R7351SR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 2,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "frigidaire-ffhb2740ps",
+      "anchor_family": "model::frigidaire::FFHB274",
+      "anchor_health": "WATCHLIST",
+      "model_number": "FFHB2740PS",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 9,
+        "proven_models_depending_on_anchor": 9,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "model::frigidaire::FFHB274"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrs325sdhz",
+      "anchor_family": "model::whirlpool::WRS325",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRS325SDHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 8,
+        "proven_models_depending_on_anchor": 8,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "model::whirlpool::WRS325"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf263beaesr",
+      "anchor_family": "model::samsung::RF263",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF263BEAESR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 6,
+        "proven_models_depending_on_anchor": 6,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF263"
+      ]
+    }
+  ],
+  "anchor_rows": [
+    {
+      "anchor_slug": "frigidaire-ffhb2740ps",
+      "anchor_family": "model::frigidaire::FFHB274",
+      "anchor_health": "WATCHLIST",
+      "model_number": "FFHB2740PS",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 9,
+        "proven_models_depending_on_anchor": 9,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "model::frigidaire::FFHB274"
+      ]
+    },
+    {
+      "anchor_slug": "frigidaire-fghb2868pf",
+      "anchor_family": "filter::frigidaire::eptwfu01",
+      "anchor_health": "DISPUTED",
+      "model_number": "FGHB2868PF",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": false,
+        "source_title_contains_exact_model_number": false,
+        "learned_failure_guards_status": "WARN",
+        "sibling_family_conflict_detected": true,
+        "evidence_clone_dependency_count": 33,
+        "proven_models_depending_on_anchor": 33,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "sibling_family_conflict_detected",
+        "filter_specification_model_proof_missing"
+      ],
+      "clone_families": [
+        "filter::frigidaire::eptwfu01",
+        "model::frigidaire::FGHB286"
+      ]
+    },
+    {
+      "anchor_slug": "frigidaire-fgsc2335tf",
+      "anchor_family": "filter::frigidaire::eptwfu01",
+      "anchor_health": "WATCHLIST",
+      "model_number": "FGSC2335TF",
+      "brand_slug": "frigidaire",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "WARN",
+        "sibling_family_conflict_detected": true,
+        "evidence_clone_dependency_count": 30,
+        "proven_models_depending_on_anchor": 30,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "sibling_family_conflict_detected",
+        "manual_evidence_not_public_ready",
+        "learned_failure_guards_warn"
+      ],
+      "clone_families": [
+        "filter::frigidaire::eptwfu01",
+        "model::frigidaire::FGSC233"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gmkes",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "HEALTHY",
+      "model_number": "GFE28GMKES",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gskss",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "HEALTHY",
+      "model_number": "GFE28GSKSS",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "ge-gfe28gynfs",
+      "anchor_family": "filter::ge::rpwfe",
+      "anchor_health": "WATCHLIST",
+      "model_number": "GFE28GYNFS",
+      "brand_slug": "ge",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 26,
+        "proven_models_depending_on_anchor": 26,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::ge::rpwfe",
+        "model::ge::GFE28"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf263beaesr",
+      "anchor_family": "model::samsung::RF263",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF263BEAESR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 6,
+        "proven_models_depending_on_anchor": 6,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF263"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28nhedbsr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "WATCHLIST",
+      "model_number": "RF28NHEDBSR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7201sr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF28R7201SR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7351sg",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "WATCHLIST",
+      "model_number": "RF28R7351SG",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 31,
+        "proven_models_depending_on_anchor": 31,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::samsung::da97-17376a",
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "samsung-rf28r7351sr",
+      "anchor_family": "model::samsung::RF28",
+      "anchor_health": "HEALTHY",
+      "model_number": "RF28R7351SR",
+      "brand_slug": "samsung",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 2,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "all_anchor_integrity_checks_pass"
+      ],
+      "clone_families": [
+        "model::samsung::RF28"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrf540cwhz",
+      "anchor_family": "filter::whirlpool::edr4rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRF540CWHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": false,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 22,
+        "proven_models_depending_on_anchor": 22,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "filter_specification_model_proof_missing",
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr4rxd1",
+        "model::whirlpool::WRF540"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrs325sdhz",
+      "anchor_family": "model::whirlpool::WRS325",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRS325SDHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 8,
+        "proven_models_depending_on_anchor": 8,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "model::whirlpool::WRS325"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrx735sdhz",
+      "anchor_family": "filter::whirlpool::edr4rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRX735SDHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": false,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 24,
+        "proven_models_depending_on_anchor": 24,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready",
+        "support_page_missing"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr4rxd1",
+        "model::whirlpool::WRX735"
+      ]
+    },
+    {
+      "anchor_slug": "whirlpool-wrx986sihz",
+      "anchor_family": "filter::whirlpool::edr2rxd1",
+      "anchor_health": "WATCHLIST",
+      "model_number": "WRX986SIHZ",
+      "brand_slug": "whirlpool",
+      "checks": {
+        "support_page_present": true,
+        "manual_evidence_present": true,
+        "model_specific_filter_proof_present": true,
+        "source_title_contains_exact_model_number": true,
+        "learned_failure_guards_status": "PASS",
+        "sibling_family_conflict_detected": false,
+        "evidence_clone_dependency_count": 21,
+        "proven_models_depending_on_anchor": 21,
+        "evidence_age_days": 11,
+        "disputed_by_external_research_flag": false
+      },
+      "health_reasons": [
+        "manual_evidence_not_public_ready"
+      ],
+      "clone_families": [
+        "filter::whirlpool::edr2rxd1",
+        "model::whirlpool::WRX986"
+      ]
+    }
+  ],
+  "families_with_disputed_or_watchlist_primary_anchor": [
+    "filter::frigidaire::eptwfu01"
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "anchor_health_summary": ".anchor_health_summary",
+      "highest_risk_anchors": ".highest_risk_anchors",
+      "anchor_rows": ".anchor_rows"
+    },
+    "recommended_next_action": "Freeze evidence-clone families with sibling-conflict DISPUTED primary anchors (frigidaire-fghb2868pf) until owner browser proof closes anchor integrity gaps."
+  },
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "data/fridge/batch-production/audits/learned-failure-guards-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/page-factory/proven-cohort-manifest-v1/proven-cohort-page-factory-manifest-v1.json",
+    "data/manual-evidence/refrigerator/*.json"
+  ],
+  "proven_facts": [
+    "PROVEN: total_anchor_count=15 from evidence-leverage proven_anchor_slugs ∪ proven-cohort PROVEN_CORRECT.",
+    "PROVEN: healthy=5 watchlist=9 disputed=1 sibling_conflict_disputed=1.",
+    "PROVEN: Read-only anchor trust audit — no compat, evidence, Supabase, sitemap, robots, or page mutations."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: disputed_by_external_research_flag requires committed external-research ingest artifacts (not in repo inputs).",
+    "UNKNOWN: Live manufacturer support pages vs committed manual-evidence URLs at audit time."
+  ]
+}

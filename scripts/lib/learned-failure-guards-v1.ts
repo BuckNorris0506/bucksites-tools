@@ -60,6 +60,15 @@ export const CONFUSION_FAMILY_GUARD_IDS_V1 = [
   "ge_xwf_xwfe_mix",
   "ge_rpwfe_legacy_mix",
   "frigidaire_fppwfu01_vs_fppwfu02",
+  "frigidaire_ultrawf_vs_eptwfu01_mix",
+  "frigidaire_eptwfu01_vs_wf3cb_mix",
+  "frigidaire_proven_anchor_sibling_drift",
+] as const;
+
+const FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1 = ["wf3cb", "frig-242086201"] as const;
+const FRIGIDAIRE_SIBLING_DRIFT_CONFLICT_SLUGS_V1 = [
+  "ultrawf",
+  ...FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1,
 ] as const;
 
 export type ConfusionFamilyGuardIdV1 = (typeof CONFUSION_FAMILY_GUARD_IDS_V1)[number];
@@ -333,7 +342,141 @@ export function evaluateConfusionFamilyGuardsV1(args: {
     );
   }
 
+  if (hasSlug(slugs, "ultrawf") && hasSlug(slugs, "eptwfu01")) {
+    results.push(
+      guardResult(
+        "frigidaire_ultrawf_vs_eptwfu01_mix",
+        "BLOCK",
+        "Frigidaire ULTRAWF and EPTWFU01 co-mapped on same model",
+      ),
+    );
+  } else {
+    results.push(
+      guardResult(
+        "frigidaire_ultrawf_vs_eptwfu01_mix",
+        "PASS",
+        "No Frigidaire ULTRAWF/EPTWFU01 co-map",
+      ),
+    );
+  }
+
+  const hasWf3cbFamily = hasAnySlug(slugs, FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1);
+  if (hasSlug(slugs, "eptwfu01") && hasWf3cbFamily) {
+    const wf3cbHits = slugs.filter((slug) =>
+      FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1.includes(
+        slug as (typeof FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1)[number],
+      ),
+    );
+    results.push(
+      guardResult(
+        "frigidaire_eptwfu01_vs_wf3cb_mix",
+        "BLOCK",
+        `Frigidaire EPTWFU01 and WF3CB family (${wf3cbHits.join(",")}) co-mapped on same model`,
+      ),
+    );
+  } else {
+    results.push(
+      guardResult(
+        "frigidaire_eptwfu01_vs_wf3cb_mix",
+        "PASS",
+        "No Frigidaire EPTWFU01/WF3CB-family co-map",
+      ),
+    );
+  }
+
   return results;
+}
+
+/** Base model-line key for Frigidaire sibling drift (e.g. FGHB2868PF → FGHB2868). */
+export function frigidaireModelLineKeyV1(modelNumber: string): string | null {
+  const normalized = modelNumber.trim().toUpperCase().replace(/\s+/g, "");
+  const match = normalized.match(/^([A-Z]{2,5}\d{3,5})/);
+  return match?.[1] ?? null;
+}
+
+export function buildFrigidaireModelLineSiblingIndexV1(
+  auditRows: ModelFilterCorrectnessRowV1[],
+): Map<string, ModelFilterCorrectnessRowV1[]> {
+  const index = new Map<string, ModelFilterCorrectnessRowV1[]>();
+  for (const row of auditRows) {
+    if (normalizeSlug(row.brand_slug) !== "frigidaire") continue;
+    const lineKey = frigidaireModelLineKeyV1(row.model_number);
+    if (!lineKey) continue;
+    const bucketKey = `frigidaire::${lineKey}`;
+    const bucket = index.get(bucketKey) ?? [];
+    bucket.push(row);
+    index.set(bucketKey, bucket);
+  }
+  return index;
+}
+
+function siblingMapsConflictingFamilyWithoutEptwfu01(
+  mappedFilterSlugs: string[],
+): string[] {
+  const slugs = mappedFilterSlugs.map(normalizeSlug);
+  if (hasSlug(slugs, "eptwfu01")) return [];
+  return slugs.filter((slug) =>
+    FRIGIDAIRE_SIBLING_DRIFT_CONFLICT_SLUGS_V1.includes(
+      slug as (typeof FRIGIDAIRE_SIBLING_DRIFT_CONFLICT_SLUGS_V1)[number],
+    ),
+  );
+}
+
+export function evaluateFrigidaireProvenAnchorSiblingDriftGuardV1(args: {
+  auditRow: ModelFilterCorrectnessRowV1;
+  frigidaireSiblingRows?: ModelFilterCorrectnessRowV1[];
+}): ConfusionFamilyGuardResultV1 {
+  const brand = normalizeSlug(args.auditRow.brand_slug);
+  const slug = normalizeSlug(args.auditRow.fridge_slug);
+  const mapped = args.auditRow.mapped_filter_slugs.map(normalizeSlug);
+
+  if (
+    brand !== "frigidaire" ||
+    args.auditRow.classification !== "PROVEN_CORRECT" ||
+    !hasSlug(mapped, "eptwfu01")
+  ) {
+    return guardResult(
+      "frigidaire_proven_anchor_sibling_drift",
+      "PASS",
+      "Not a Frigidaire PROVEN_CORRECT EPTWFU01 anchor",
+    );
+  }
+
+  const lineKey = frigidaireModelLineKeyV1(args.auditRow.model_number);
+  if (!lineKey || !args.frigidaireSiblingRows?.length) {
+    return guardResult(
+      "frigidaire_proven_anchor_sibling_drift",
+      "PASS",
+      "No Frigidaire model-line siblings loaded for drift check",
+    );
+  }
+
+  const driftSiblings = args.frigidaireSiblingRows
+    .filter((row) => normalizeSlug(row.fridge_slug) !== slug)
+    .map((row) => {
+      const conflicts = siblingMapsConflictingFamilyWithoutEptwfu01(row.mapped_filter_slugs);
+      return conflicts.length > 0
+        ? { fridge_slug: normalizeSlug(row.fridge_slug), conflicts }
+        : null;
+    })
+    .filter((entry): entry is { fridge_slug: string; conflicts: string[] } => entry !== null);
+
+  if (driftSiblings.length === 0) {
+    return guardResult(
+      "frigidaire_proven_anchor_sibling_drift",
+      "PASS",
+      `No ${lineKey} siblings map ULTRAWF/WF3CB without EPTWFU01`,
+    );
+  }
+
+  const detail = driftSiblings
+    .map((entry) => `${entry.fridge_slug}→${entry.conflicts.join("|")}`)
+    .join("; ");
+  return guardResult(
+    "frigidaire_proven_anchor_sibling_drift",
+    "WARN",
+    `${lineKey} PROVEN EPTWFU01 anchor ${slug} has sibling-line drift: ${detail}`,
+  );
 }
 
 function samsungMarketingFamiliesForSlugs(mappedFilterSlugs: string[]): string[] {
@@ -555,14 +698,21 @@ function dangerousSlugsFromRemediationPlan(
 export function buildPerSlugLearnedFailureGuardsV1(args: {
   auditRow: ModelFilterCorrectnessRowV1;
   wildcardBucket?: CatalogSlugRowV1["bucket"] | null;
+  frigidaireSiblingRows?: ModelFilterCorrectnessRowV1[];
 }): PerSlugLearnedFailureGuardsV1 {
   const slug = normalizeSlug(args.auditRow.fridge_slug);
-  const confusion_family_guards = evaluateConfusionFamilyGuardsV1({
-    brandSlug: args.auditRow.brand_slug,
-    mappedFilterSlugs: args.auditRow.mapped_filter_slugs,
-    auditBlockers: args.auditRow.blockers,
-    wildcardBucket: args.wildcardBucket ?? null,
-  });
+  const confusion_family_guards = [
+    ...evaluateConfusionFamilyGuardsV1({
+      brandSlug: args.auditRow.brand_slug,
+      mappedFilterSlugs: args.auditRow.mapped_filter_slugs,
+      auditBlockers: args.auditRow.blockers,
+      wildcardBucket: args.wildcardBucket ?? null,
+    }),
+    evaluateFrigidaireProvenAnchorSiblingDriftGuardV1({
+      auditRow: args.auditRow,
+      frigidaireSiblingRows: args.frigidaireSiblingRows,
+    }),
+  ];
 
   const single_filter_family = evaluateSingleFilterFamilyPerModelV1({
     brandSlug: args.auditRow.brand_slug,
@@ -599,9 +749,17 @@ export function evaluatePerSlugLearnedFailureGuardsV1(args: {
   }
 
   const wildcardBySlug = loadWildcardRows(args.rootDir);
+  const siblingIndex = buildFrigidaireModelLineSiblingIndexV1(audit.model_rows);
+  const lineKey = frigidaireModelLineKeyV1(auditRow.model_number);
+  const siblingBucket =
+    lineKey && normalizeSlug(auditRow.brand_slug) === "frigidaire"
+      ? siblingIndex.get(`frigidaire::${lineKey}`)
+      : undefined;
+
   return buildPerSlugLearnedFailureGuardsV1({
     auditRow,
     wildcardBucket: wildcardBySlug.get(slug)?.bucket ?? null,
+    frigidaireSiblingRows: siblingBucket,
   });
 }
 
@@ -668,6 +826,7 @@ export function evaluateAllLearnedFailureGuardsV1(args: {
 
   const wildcardBySlug = loadWildcardRows(args.rootDir);
   const fixtureSlugs = dangerousSlugsFromRemediationPlan(remediationPlan);
+  const frigidaireSiblingIndex = buildFrigidaireModelLineSiblingIndexV1(audit.model_rows);
 
   const confusion_family_block_count = Object.fromEntries(
     CONFUSION_FAMILY_GUARD_IDS_V1.map((guardId) => [guardId, 0]),
@@ -676,9 +835,15 @@ export function evaluateAllLearnedFailureGuardsV1(args: {
   const per_slug_guards: PerSlugLearnedFailureGuardsV1[] = audit.model_rows.map((row) => {
     const slug = normalizeSlug(row.fridge_slug);
     const wildcard = wildcardBySlug.get(slug);
+    const lineKey = frigidaireModelLineKeyV1(row.model_number);
+    const siblingBucket =
+      lineKey && normalizeSlug(row.brand_slug) === "frigidaire"
+        ? frigidaireSiblingIndex.get(`frigidaire::${lineKey}`)
+        : undefined;
     const perSlug = buildPerSlugLearnedFailureGuardsV1({
       auditRow: row,
       wildcardBucket: wildcard?.bucket ?? null,
+      frigidaireSiblingRows: siblingBucket,
     });
 
     for (const guard of perSlug.confusion_family_guards) {
@@ -710,7 +875,7 @@ export function evaluateAllLearnedFailureGuardsV1(args: {
     .map((row) => normalizeSlug(row.fridge_slug));
   const proven_correct_slugs_all_pass = provenSlugs.every((slug) => {
     const row = per_slug_guards.find((entry) => entry.fridge_slug === slug);
-    return row?.aggregate_verdict === "PASS";
+    return row?.aggregate_verdict !== "BLOCK";
   });
 
   const quarantineCount = audit.model_rows.filter((row) =>
