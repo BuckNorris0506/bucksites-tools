@@ -1,0 +1,399 @@
+{
+  "contract": "buckparts_page_quality_gate_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T04:20:04.756Z",
+  "fridge_slug": "samsung-rf28r7351sr",
+  "target_source": "page_factory_registry",
+  "registry_source": "data/fridge/batch-production/page-factory-targets-v1.csv",
+  "quality_classification": "INDEXABLE_NO_BUY_LINK",
+  "publication_authorized": true,
+  "recommended_page_state": "INDEXABLE_BUY_SUPPRESSED_TRUST",
+  "recommended_robots": {
+    "index": true,
+    "follow": true
+  },
+  "recommended_sitemap_include": true,
+  "gates": [
+    {
+      "gate_id": "model_existence_confirmed",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge_models.csv",
+        "data/fridge/batch-production/page-factory-targets-v1.csv",
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      ],
+      "observed": {
+        "recognition_path": "page_factory_registry",
+        "model_number": "RF28R7351SR",
+        "has_model_specific_evidence": true
+      }
+    },
+    {
+      "gate_id": "model_specific_evidence",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      ],
+      "observed": {
+        "public_ready": true,
+        "model_specific_filter_specification": true
+      }
+    },
+    {
+      "gate_id": "compat_proof_exact_mapping",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv",
+        "data/filters.csv"
+      ],
+      "observed": {
+        "actual_filter_slugs": [
+          "da97-17376b"
+        ],
+        "expected_filter_slugs": [
+          "da97-17376b"
+        ],
+        "strict": true
+      }
+    },
+    {
+      "gate_id": "compat_proof_forbidden_absent",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv",
+        "data/filters.csv"
+      ],
+      "observed": {
+        "forbidden_filter_slugs": [
+          "da29-00020b",
+          "da29-00012b"
+        ],
+        "actual_filter_slugs": [
+          "da97-17376b"
+        ]
+      }
+    },
+    {
+      "gate_id": "compat_proof_token_alignment",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv",
+        "data/filters.csv"
+      ],
+      "observed": {
+        "brand_slug": "samsung",
+        "official_marketing_token": "HAF-QIN",
+        "legacy_filter_slugs": [
+          "da97-17376b"
+        ],
+        "aligned": true,
+        "strict": true
+      }
+    },
+    {
+      "gate_id": "wrong_part_risk",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv",
+        "data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json"
+      ],
+      "observed": {
+        "wildcard_bucket": "COVERED",
+        "actual_filter_slugs": [
+          "da97-17376b"
+        ],
+        "forbidden_haf_cin_present": false
+      }
+    },
+    {
+      "gate_id": "source_transparency",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      ],
+      "observed": {
+        "source_count": 4,
+        "tier1_source_count": 4,
+        "source_urls": [
+          "https://image-us.samsung.com/SamsungUS/samsung/us/home-appliance/pdf/rf28r7351-refrigerator/RF28R7351SR.pdf",
+          "https://www.samsung.com/us/home-appliances/refrigerators/water-filters/find-your-water-filter/",
+          "https://www.samsung.com/us/home-appliance-accessories/haf-qin-refrigerator-water-filter-sku-haf-qin-exp/",
+          "https://www.samsung.com/us/support/answer/ANS10005090/"
+        ]
+      }
+    },
+    {
+      "gate_id": "buyer_path",
+      "status": "WARN",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/retailer_links.csv"
+      ],
+      "observed": {
+        "verified_buy_link_count": 0,
+        "buyer_path_state": "suppress_buy",
+        "filters": [
+          {
+            "filter_slug": "da97-17376b",
+            "row_count": 1,
+            "verified_buy_count": 0
+          }
+        ]
+      }
+    },
+    {
+      "gate_id": "homeowner_guidance",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      ],
+      "observed": {
+        "has_filter_location_text": true,
+        "has_replacement_steps_summary": true,
+        "has_cautions": true
+      }
+    },
+    {
+      "gate_id": "duplicate_thin_content",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json",
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json"
+      ],
+      "observed": {
+        "evidence_fingerprint": "373ff255cc0014b5",
+        "sibling_matches": [],
+        "has_model_specific_evidence": true
+      }
+    },
+    {
+      "gate_id": "internal_link_context",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge_models.csv",
+        "data/filters.csv",
+        "data/compatibility_mappings.csv"
+      ],
+      "observed": {
+        "brand_slug": "samsung",
+        "mapped_filter_slugs": [
+          "da97-17376b"
+        ],
+        "fridge_route": "/fridge/samsung-rf28r7351sr",
+        "filter_routes": [
+          "/filter/da97-17376b"
+        ],
+        "reset_help_route": "/help/reset-water-filter-light/samsung"
+      }
+    },
+    {
+      "gate_id": "quarantine_state",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "src/lib/fridge/fridge-model-review-overrides.ts"
+      ],
+      "observed": {
+        "under_owner_review": false,
+        "override_reason": null
+      }
+    },
+    {
+      "gate_id": "index_decision",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "src/lib/page-state/page-state.ts",
+        "src/lib/page-state/page-state-meta.ts"
+      ],
+      "observed": {
+        "note": "derived from quality_classification"
+      }
+    }
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "command_center": ".command_center_v2.buckparts_page_quality_gate_v1.inspect_summary"
+    },
+    "fridge_slug": "samsung-rf28r7351sr",
+    "quality_classification": "INDEXABLE_NO_BUY_LINK",
+    "publication_authorized": true,
+    "recommended_page_state": "INDEXABLE_BUY_SUPPRESSED_TRUST",
+    "recommended_robots": {
+      "index": true,
+      "follow": true
+    },
+    "recommended_sitemap_include": true,
+    "clone_status": null,
+    "preflight_status": "READY_FOR_OWNER_REVIEW",
+    "verified_buy_link_count": 0,
+    "quality_gate_status_counts": {
+      "PASS": 12,
+      "WARN": 1,
+      "BLOCKED": 0,
+      "UNKNOWN": 0
+    },
+    "top_blockers": [],
+    "recommended_next_action": "Owner may publish trust-gated indexable page without buy CTA; keep wrong-family warnings visible."
+  },
+  "clone_packet": null,
+  "preflight_gates": [
+    {
+      "gate_id": "repo_evidence_ready",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+        "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+        "data/fridge_models.csv"
+      ],
+      "observed": {
+        "brand_slug": "samsung"
+      }
+    },
+    {
+      "gate_id": "compat_csv_exact_mapping",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv",
+        "data/filters.csv"
+      ],
+      "observed": {
+        "actual_filter_slugs": [
+          "da97-17376b"
+        ],
+        "expected_filter_slugs": [
+          "da97-17376b"
+        ]
+      }
+    },
+    {
+      "gate_id": "compat_csv_forbidden_absent",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/compatibility_mappings.csv"
+      ],
+      "observed": {
+        "forbidden_filter_slugs": [
+          "da29-00020b",
+          "da29-00012b"
+        ],
+        "actual_filter_slugs": [
+          "da97-17376b"
+        ]
+      }
+    },
+    {
+      "gate_id": "exact_token_alignment",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/filters.csv",
+        "data/fridge/batch-production/page-factory-targets-v1.csv"
+      ],
+      "observed": {
+        "brand_slug": "samsung",
+        "official_marketing_token": "HAF-QIN",
+        "legacy_filter_slugs": [
+          "da97-17376b"
+        ],
+        "aligned": true
+      }
+    },
+    {
+      "gate_id": "quarantine_state_observed",
+      "status": "PASS",
+      "blockers": [],
+      "proof_paths_read": [
+        "src/lib/fridge/fridge-model-review-overrides.ts"
+      ],
+      "observed": {
+        "under_owner_review": false,
+        "override_present": false,
+        "override_reason": null
+      }
+    },
+    {
+      "gate_id": "retailer_link_csv_gates_observed",
+      "status": "WARN",
+      "blockers": [],
+      "proof_paths_read": [
+        "data/retailer_links.csv"
+      ],
+      "observed": {
+        "filters": [
+          {
+            "filter_slug": "da97-17376b",
+            "row_count": 1,
+            "primary_retailer_key": "oem-parts-catalog",
+            "primary_gate_failure_kind": "search_placeholder",
+            "filter_real_buy_row_count": 0,
+            "has_direct_buyable_anywhere": false
+          }
+        ]
+      }
+    },
+    {
+      "gate_id": "supabase_compat_parity",
+      "status": "UNKNOWN",
+      "blockers": [],
+      "proof_paths_read": [],
+      "observed": {
+        "check_supabase": false,
+        "reason": "pass --check-supabase to evaluate"
+      }
+    },
+    {
+      "gate_id": "local_page_proof",
+      "status": "UNKNOWN",
+      "blockers": [],
+      "proof_paths_read": [],
+      "observed": {
+        "reason": "pass --base-url to evaluate"
+      }
+    },
+    {
+      "gate_id": "live_page_proof",
+      "status": "UNKNOWN",
+      "blockers": [],
+      "proof_paths_read": [],
+      "observed": {
+        "reason": "pass --live-base-url to evaluate"
+      }
+    }
+  ],
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/samsung-rf28r7351sr-page-1-draft-v1.md",
+    "data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json",
+    "data/fridge/batch-production/page-factory-targets-v1.csv",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+    "data/retailer_links.csv",
+    "src/lib/fridge/fridge-model-review-overrides.ts",
+    "src/lib/page-state/page-state-meta.ts",
+    "src/lib/page-state/page-state.ts"
+  ],
+  "proven_facts": [
+    "PROVEN: read-only quality gate for samsung-rf28r7351sr (page_factory_registry).",
+    "PROVEN: publication_authorized=true."
+  ],
+  "unknown_facts": []
+}
