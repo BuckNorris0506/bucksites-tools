@@ -63,9 +63,18 @@ export const CONFUSION_FAMILY_GUARD_IDS_V1 = [
   "frigidaire_ultrawf_vs_eptwfu01_mix",
   "frigidaire_eptwfu01_vs_wf3cb_mix",
   "frigidaire_proven_anchor_sibling_drift",
+  "frigidaire_fppwfu01_prefix_family_contamination",
 ] as const;
 
 const FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1 = ["wf3cb", "frig-242086201"] as const;
+export const FRIGIDAIRE_FPPWFU01_CONFLICTING_SIBLING_SLUGS_V1 = [
+  "ultrawf",
+  "eptwfu01",
+  "wf3cb",
+  "frig-242086201",
+  "wf2cb",
+  "wfcb",
+] as const;
 const FRIGIDAIRE_SIBLING_DRIFT_CONFLICT_SLUGS_V1 = [
   "ultrawf",
   ...FRIGIDAIRE_WF3CB_FAMILY_SLUGS_V1,
@@ -479,6 +488,87 @@ export function evaluateFrigidaireProvenAnchorSiblingDriftGuardV1(args: {
   );
 }
 
+function siblingMapsConflictingFamilyWithoutFppwfu01(
+  mappedFilterSlugs: string[],
+): string[] {
+  const slugs = mappedFilterSlugs.map(normalizeSlug);
+  if (slugs.length === 1 && slugs[0] === "fppwfu01") return [];
+  return slugs.filter((slug) =>
+    FRIGIDAIRE_FPPWFU01_CONFLICTING_SIBLING_SLUGS_V1.includes(
+      slug as (typeof FRIGIDAIRE_FPPWFU01_CONFLICTING_SIBLING_SLUGS_V1)[number],
+    ),
+  );
+}
+
+export function evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1(args: {
+  auditRow: ModelFilterCorrectnessRowV1;
+  frigidaireSiblingRows?: ModelFilterCorrectnessRowV1[];
+}): ConfusionFamilyGuardResultV1 {
+  const brand = normalizeSlug(args.auditRow.brand_slug);
+  const slug = normalizeSlug(args.auditRow.fridge_slug);
+  const mapped = args.auditRow.mapped_filter_slugs.map(normalizeSlug);
+
+  if (brand !== "frigidaire" || !hasSlug(mapped, "fppwfu01")) {
+    return guardResult(
+      "frigidaire_fppwfu01_prefix_family_contamination",
+      "PASS",
+      "Not a Frigidaire slug mapped to FPPWFU01",
+    );
+  }
+
+  const lineKey = frigidaireModelLineKeyV1(args.auditRow.model_number);
+  if (!lineKey || !args.frigidaireSiblingRows?.length) {
+    return guardResult(
+      "frigidaire_fppwfu01_prefix_family_contamination",
+      "PASS",
+      "No Frigidaire model-line siblings loaded for FPPWFU01 contamination check",
+    );
+  }
+
+  const conflictingSiblings = args.frigidaireSiblingRows
+    .filter((row) => normalizeSlug(row.fridge_slug) !== slug)
+    .map((row) => {
+      const conflicts = siblingMapsConflictingFamilyWithoutFppwfu01(row.mapped_filter_slugs);
+      if (conflicts.length === 0) return null;
+      return {
+        fridge_slug: normalizeSlug(row.fridge_slug),
+        conflicts,
+        proven: row.classification === "PROVEN_CORRECT",
+      };
+    })
+    .filter(
+      (entry): entry is { fridge_slug: string; conflicts: string[]; proven: boolean } =>
+        entry !== null,
+    );
+
+  if (conflictingSiblings.length === 0) {
+    return guardResult(
+      "frigidaire_fppwfu01_prefix_family_contamination",
+      "PASS",
+      `No ${lineKey} siblings map conflicting families without FPPWFU01`,
+    );
+  }
+
+  const provenConflict = conflictingSiblings.find((entry) => entry.proven);
+  const detail = conflictingSiblings
+    .map((entry) => `${entry.fridge_slug}→${entry.conflicts.join("|")}`)
+    .join("; ");
+
+  if (provenConflict) {
+    return guardResult(
+      "frigidaire_fppwfu01_prefix_family_contamination",
+      "BLOCK",
+      `${lineKey} FPPWFU01 map ${slug} conflicts with PROVEN_CORRECT sibling ${provenConflict.fridge_slug} (${provenConflict.conflicts.join("|")})`,
+    );
+  }
+
+  return guardResult(
+    "frigidaire_fppwfu01_prefix_family_contamination",
+    "WARN",
+    `${lineKey} FPPWFU01 map ${slug} has sibling-line contamination: ${detail}`,
+  );
+}
+
 function samsungMarketingFamiliesForSlugs(mappedFilterSlugs: string[]): string[] {
   const families = new Set<string>();
   for (const slug of mappedFilterSlugs.map(normalizeSlug)) {
@@ -709,6 +799,10 @@ export function buildPerSlugLearnedFailureGuardsV1(args: {
       wildcardBucket: args.wildcardBucket ?? null,
     }),
     evaluateFrigidaireProvenAnchorSiblingDriftGuardV1({
+      auditRow: args.auditRow,
+      frigidaireSiblingRows: args.frigidaireSiblingRows,
+    }),
+    evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1({
       auditRow: args.auditRow,
       frigidaireSiblingRows: args.frigidaireSiblingRows,
     }),

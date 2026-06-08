@@ -9,6 +9,7 @@ import {
   evaluateAllLearnedFailureGuardsV1,
   evaluateConfusionFamilyGuardsV1,
   evaluateFrigidaireProvenAnchorSiblingDriftGuardV1,
+  evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1,
   writeLearnedFailureGuardsArtifactsV1,
 } from "./learned-failure-guards-v1";
 import {
@@ -195,6 +196,75 @@ test("fghb2868pf2 ultrawf sibling triggers sibling_drift WARN on fghb2868pf anch
   assert.equal(drift.guard_id, "frigidaire_proven_anchor_sibling_drift");
   assert.equal(drift.verdict, "WARN");
   assert.ok(drift.detail.includes("fghb2868pf2"));
+});
+
+test("frigidaire-fghb2868td BLOCKs FPPWFU01 prefix contamination against proven EPTWFU01 sibling", () => {
+  const report = evaluateAllLearnedFailureGuardsV1({ rootDir: ROOT, now: FIXED_NOW });
+  const row = slugGuard(report, "frigidaire-fghb2868td");
+  assert.equal(
+    guardVerdict(row, "frigidaire_fppwfu01_prefix_family_contamination"),
+    "BLOCK",
+  );
+});
+
+test("frigidaire-fgsc2335td2 BLOCKs FPPWFU01 prefix contamination against proven EPTWFU01 sibling", () => {
+  const report = evaluateAllLearnedFailureGuardsV1({ rootDir: ROOT, now: FIXED_NOW });
+  const row = slugGuard(report, "frigidaire-fgsc2335td2");
+  assert.equal(
+    guardVerdict(row, "frigidaire_fppwfu01_prefix_family_contamination"),
+    "BLOCK",
+  );
+});
+
+test("frigidaire-ffhb2740ps2 BLOCKs FPPWFU01 prefix contamination against proven ULTRAWF sibling", () => {
+  const report = evaluateAllLearnedFailureGuardsV1({ rootDir: ROOT, now: FIXED_NOW });
+  const row = slugGuard(report, "frigidaire-ffhb2740ps2");
+  assert.equal(
+    guardVerdict(row, "frigidaire_fppwfu01_prefix_family_contamination"),
+    "BLOCK",
+  );
+});
+
+test("frigidaire-frss2333as PASSes FPPWFU01 prefix contamination with no sibling line", () => {
+  const report = evaluateAllLearnedFailureGuardsV1({ rootDir: ROOT, now: FIXED_NOW });
+  const row = slugGuard(report, "frigidaire-frss2333as");
+  assert.equal(
+    guardVerdict(row, "frigidaire_fppwfu01_prefix_family_contamination"),
+    "PASS",
+  );
+});
+
+test("evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1 unit fixture", () => {
+  const guard = evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1({
+    auditRow: {
+      fridge_slug: "frigidaire-ffhb2740ps2",
+      model_number: "FFHB2740PS2",
+      brand_slug: "frigidaire",
+      mapped_filter_slugs: ["fppwfu01"],
+      classification: "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      evidence_status: "NONE",
+      per_filter_proof: [],
+      blockers: [],
+      recommended_action: "",
+      risk_score: 0,
+    },
+    frigidaireSiblingRows: [
+      {
+        fridge_slug: "frigidaire-ffhb2740ps",
+        model_number: "FFHB2740PS",
+        brand_slug: "frigidaire",
+        mapped_filter_slugs: ["ultrawf"],
+        classification: "PROVEN_CORRECT",
+        evidence_status: "NONE",
+        per_filter_proof: [],
+        blockers: [],
+        recommended_action: "",
+        risk_score: 0,
+      },
+    ],
+  });
+  assert.equal(guard.guard_id, "frigidaire_fppwfu01_prefix_family_contamination");
+  assert.equal(guard.verdict, "BLOCK");
 });
 
 test("read-only guard blocks compat, retailer links, sitemap, robots, Supabase, HQ handoff writes", () => {

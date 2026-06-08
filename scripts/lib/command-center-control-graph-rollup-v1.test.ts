@@ -27,32 +27,44 @@ test("contract and read-only flags", () => {
   assert.equal(rollup.recommended_jq_path, COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CC_JQ_PATH_V1);
 });
 
-test("frozen family summary matches anchor integrity sibling-conflict freeze list", () => {
+test("frozen family summary includes eptwfu01 anchor freeze and fppwfu01 contamination freeze", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
-  assert.deepEqual(
-    rollup.frozen_family_summary.frozen_families.map((row) => row.family_key),
-    ["filter::frigidaire::eptwfu01"],
+  const frozenKeys = rollup.frozen_family_summary.frozen_families.map((row) => row.family_key);
+  assert.deepEqual(frozenKeys, [
+    "filter::frigidaire::eptwfu01",
+    "filter::frigidaire::fppwfu01",
+  ]);
+  assert.equal(rollup.frozen_family_summary.frozen_family_count, 2);
+
+  const fppwfu01Freeze = rollup.frozen_family_summary.frozen_families.find(
+    (row) => row.family_key === "filter::frigidaire::fppwfu01",
   );
-  assert.equal(rollup.frozen_family_summary.frozen_family_count, 1);
+  assert.equal(fppwfu01Freeze?.freeze_reason, "prefix_contamination_zero_proven_anchor");
+  assert.ok((fppwfu01Freeze?.prefix_contamination_count ?? 0) > 0);
 });
 
-test("next_best_action freezes eptwfu01 then prioritizes highest safe non-frozen leverage family", () => {
+test("next_best_action freezes contaminated families and does not recommend FPPWFU01 as safe evidence", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
   assert.match(rollup.next_best_action, /filter::frigidaire::eptwfu01/);
   assert.match(rollup.next_best_action, /anchor integrity is resolved/i);
-  assert.equal(
+  assert.notEqual(
     rollup.evidence_leverage_summary.highest_safe_non_frozen_family_key,
     "filter::frigidaire::fppwfu01",
   );
-  assert.match(rollup.next_best_action, /filter::frigidaire::fppwfu01/);
+  assert.equal(
+    rollup.evidence_leverage_summary.highest_safe_non_frozen_family_key,
+    "filter::frigidaire::wf2cb",
+  );
+  assert.doesNotMatch(rollup.next_best_action, /filter::frigidaire::fppwfu01.*highest safe/i);
 
-  const freezeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "FREEZE");
+  const freezeRanks = rollup.next_best_action_ranked.filter((item) => item.safety_tier === "FREEZE");
+  assert.ok(freezeRanks.some((item) => item.family_key === "filter::frigidaire::eptwfu01"));
+  assert.ok(freezeRanks.some((item) => item.family_key === "filter::frigidaire::fppwfu01"));
+
   const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
-  assert.ok(freezeRank);
   assert.ok(safeRank);
-  assert.equal(freezeRank!.rank, 1);
-  assert.equal(safeRank!.family_key, "filter::frigidaire::fppwfu01");
-  assert.ok(safeRank!.rank > freezeRank!.rank);
+  assert.notEqual(safeRank!.family_key, "filter::frigidaire::fppwfu01");
+  assert.equal(safeRank!.family_key, "filter::frigidaire::wf2cb");
 });
 
 test("summaries reflect committed audit artifacts", () => {

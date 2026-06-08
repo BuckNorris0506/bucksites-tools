@@ -25,8 +25,7 @@ import {
   type DangerousMappingRemediationPlanV1,
 } from "./dangerous-mapping-remediation-plan-v1";
 import {
-  EVIDENCE_LEVERAGE_PRIORITIZATION_CONTRACT_V1,
-  EVIDENCE_LEVERAGE_PRIORITIZATION_JSON_REL_V1,
+  buildEvidenceLeveragePrioritizationV1,
   type EvidenceLeveragePrioritizationV1,
   type EvidenceLeverageTargetV1,
 } from "./evidence-leverage-prioritization-v1";
@@ -98,6 +97,7 @@ export type FrozenFamilySummaryV1 = {
     family_key: string;
     freeze_reason: string;
     primary_anchor_slugs: string[];
+    prefix_contamination_count?: number;
   }>;
 };
 
@@ -214,7 +214,11 @@ function loadJsonDir<T extends { contract: string }>(
 }
 
 function isSafeLeverageTarget(target: EvidenceLeverageTargetV1): boolean {
-  return target.wrong_part_risk_count === 0 && target.blocked_count === 0;
+  if (target.wrong_part_risk_count > 0 || target.blocked_count > 0) return false;
+  if (target.currently_proven_count === 0 && (target.prefix_contamination_count ?? 0) > 0) {
+    return false;
+  }
+  return true;
 }
 
 function pickHighestSafeNonFrozenFamily(args: {
@@ -233,9 +237,18 @@ function buildFrozenFamilySummary(
   anchor: AnchorIntegrityAuditInputV1,
   leverage: EvidenceLeveragePrioritizationV1,
 ): FrozenFamilySummaryV1 {
-  const frozenKeys = anchor.families_with_disputed_or_watchlist_primary_anchor;
   const allFamilies = [...leverage.filter_families, ...leverage.model_families];
-  const frozen_families = frozenKeys.map((familyKey) => {
+  const frozenByKey = new Map<
+    string,
+    {
+      family_key: string;
+      freeze_reason: string;
+      primary_anchor_slugs: string[];
+      prefix_contamination_count?: number;
+    }
+  >();
+
+  for (const familyKey of anchor.families_with_disputed_or_watchlist_primary_anchor) {
     const family = allFamilies.find((row) => row.family_key === familyKey);
     const anchorSlugs = anchor.anchor_rows
       .filter(
@@ -243,12 +256,31 @@ function buildFrozenFamilySummary(
           row.anchor_family === familyKey && row.checks.sibling_family_conflict_detected,
       )
       .map((row) => row.anchor_slug);
-    return {
+    frozenByKey.set(familyKey, {
       family_key: familyKey,
       freeze_reason: "sibling_family_conflict_detected_on_primary_anchor",
       primary_anchor_slugs: family?.proven_anchor_slugs ?? anchorSlugs,
-    };
-  });
+    });
+  }
+
+  for (const family of allFamilies) {
+    if (
+      family.family_kind === "filter" &&
+      family.currently_proven_count === 0 &&
+      (family.prefix_contamination_count ?? 0) > 0
+    ) {
+      frozenByKey.set(family.family_key, {
+        family_key: family.family_key,
+        freeze_reason: "prefix_contamination_zero_proven_anchor",
+        primary_anchor_slugs: family.proven_anchor_slugs,
+        prefix_contamination_count: family.prefix_contamination_count,
+      });
+    }
+  }
+
+  const frozen_families = [...frozenByKey.values()].sort((a, b) =>
+    a.family_key.localeCompare(b.family_key),
+  );
 
   return {
     frozen_family_count: frozen_families.length,
@@ -273,14 +305,25 @@ function buildNextBestActionRanked(args: {
           row.checks.sibling_family_conflict_detected,
       )
       .map((row) => row.anchor_slug);
+
+    const action =
+      frozen.freeze_reason === "prefix_contamination_zero_proven_anchor"
+        ? `Freeze \`${frozen.family_key}\` evidence scaling until prefix/sibling contamination is resolved (${String(frozen.prefix_contamination_count ?? 0)} contaminated slugs).`
+        : `Freeze \`${frozen.family_key}\` clone expansion until anchor integrity is resolved (${disputedAnchors.join(", ") || "sibling-conflict primary anchor"}).`;
+
+    const why =
+      frozen.freeze_reason === "prefix_contamination_zero_proven_anchor"
+        ? "Zero-proven filter family has prefix/sibling contamination — factory unlock score discounted and family excluded from safe evidence scaling."
+        : "Anchor integrity audit flags sibling-family conflict on primary anchor — evidence clone scaling is unsafe until owner browser proof closes the gap.";
+
     ranked.push({
       rank: ranked.length + 1,
-      action: `Freeze \`${frozen.family_key}\` clone expansion until anchor integrity is resolved (${disputedAnchors.join(", ") || "sibling-conflict primary anchor"}).`,
+      action,
       safety_tier: "FREEZE",
       leverage_score: 0,
       family_key: frozen.family_key,
       blocked_by_frozen_families: [],
-      why: "Anchor integrity audit flags sibling-family conflict on primary anchor — evidence clone scaling is unsafe until owner browser proof closes the gap.",
+      why,
     });
   }
 
@@ -347,10 +390,10 @@ export function buildCommandCenterControlGraphRollupV1(args: {
     args.rootDir,
     "data/fridge/batch-production/audits/anchor-integrity-audit-v1.json",
   );
-  const leverage = readJsonFile<EvidenceLeveragePrioritizationV1>(
-    args.rootDir,
-    EVIDENCE_LEVERAGE_PRIORITIZATION_JSON_REL_V1,
-  );
+  const leverage = buildEvidenceLeveragePrioritizationV1({
+    rootDir: args.rootDir,
+    now: args.now,
+  });
   const badMapping = readJsonFile<BadMappingCorrectionBatchRunnerV1>(
     args.rootDir,
     BAD_MAPPING_CORRECTION_BATCH_RUNNER_JSON_REL_V1,
@@ -368,9 +411,6 @@ export function buildCommandCenterControlGraphRollupV1(args: {
   }
   if (anchorIntegrity.contract !== ANCHOR_INTEGRITY_AUDIT_CONTRACT_V1) {
     throw new Error("Anchor integrity audit contract mismatch");
-  }
-  if (leverage.contract !== EVIDENCE_LEVERAGE_PRIORITIZATION_CONTRACT_V1) {
-    throw new Error("Evidence leverage prioritization contract mismatch");
   }
   if (badMapping.contract !== BAD_MAPPING_CORRECTION_BATCH_RUNNER_CONTRACT_V1) {
     throw new Error("Bad mapping correction batch runner contract mismatch");
@@ -563,13 +603,15 @@ export function buildCommandCenterControlGraphRollupV1(args: {
       MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1,
       LEARNED_FAILURE_GUARDS_JSON_REL_V1,
       "data/fridge/batch-production/audits/anchor-integrity-audit-v1.json",
-      EVIDENCE_LEVERAGE_PRIORITIZATION_JSON_REL_V1,
       BAD_MAPPING_CORRECTION_BATCH_RUNNER_JSON_REL_V1,
       DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1,
       `${PAGE_QUALITY_GATE_ARTIFACT_DIR_REL_V1}/*.json`,
       `${PAGE_FACTORY_BATCH_QA_DIRECTOR_ARTIFACT_DIR_REL_V1}/*.json`,
       "data/compatibility_mappings.csv",
-    ].sort(),
+      ...leverage.exact_repo_paths_read,
+    ]
+      .filter((value, index, array) => array.indexOf(value) === index)
+      .sort(),
     proven_facts: [
       `PROVEN: dangerous_model_count=${String(dangerous_mapping_summary.dangerous_model_count)} from committed remediation plan.`,
       `PROVEN: anchor_integrity healthy=${String(anchor_integrity_summary.healthy_count)} watchlist=${String(anchor_integrity_summary.watchlist_count)} disputed=${String(anchor_integrity_summary.disputed_count)} sibling_conflict_disputed=${String(anchor_integrity_summary.sibling_conflict_disputed_count)}.`,

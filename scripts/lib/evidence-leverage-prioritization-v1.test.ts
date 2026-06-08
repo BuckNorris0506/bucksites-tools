@@ -57,16 +57,43 @@ test("top unlock targets reproducible", () => {
   assert.equal(top3[0]?.estimated_factory_unlock_score, 2110);
   assert.equal(top3[0]?.evidence_gap_type, "EVIDENCE_CLONE_FROM_FAMILY_ANCHOR");
 
-  assert.equal(top3[1]?.family_key, "filter::frigidaire::fppwfu01");
+  const fppwfu01 = report.filter_families.find(
+    (row) => row.family_key === "filter::frigidaire::fppwfu01",
+  );
+  assert.ok(fppwfu01);
+  assert.equal(fppwfu01!.currently_proven_count, 0);
+  assert.ok(fppwfu01!.prefix_contamination_count > 0);
+  assert.equal(fppwfu01!.zero_proven_anchor_penalty_applied, true);
+  assert.ok(fppwfu01!.estimated_factory_unlock_score < 2000);
+
+  assert.equal(top3[1]?.family_key, "filter::frigidaire::wf2cb");
   assert.equal(top3[1]?.models_unlocked_if_completed, 20);
   assert.equal(top3[1]?.estimated_factory_unlock_score, 2000);
 
-  assert.equal(top3[2]?.family_key, "filter::frigidaire::wf2cb");
-  assert.equal(top3[2]?.models_unlocked_if_completed, 20);
-  assert.equal(top3[2]?.estimated_factory_unlock_score, 2000);
+  assert.equal(top3[2]?.family_key, "filter::frigidaire::frig-242017801");
+  assert.equal(top3[2]?.models_unlocked_if_completed, 19);
+  assert.equal(top3[2]?.estimated_factory_unlock_score, 1900);
 
   assert.equal(report.top_20_filters_by_page_unlock_potential[0]?.family_key, "filter::frigidaire::eptwfu01");
   assert.equal(report.top_20_model_families_by_page_unlock_potential[0]?.family_key, "model::samsung::RF28");
+});
+
+test("filter::frigidaire::fppwfu01 is not highest safe non-frozen family after contamination penalty", () => {
+  const report = buildEvidenceLeveragePrioritizationV1({ rootDir: ROOT, now: FIXED_NOW });
+  const fppwfu01 = report.filter_families.find(
+    (row) => row.family_key === "filter::frigidaire::fppwfu01",
+  );
+  assert.ok(fppwfu01);
+  assert.ok(fppwfu01!.prefix_contamination_count >= 8);
+  assert.equal(fppwfu01!.zero_proven_anchor_penalty_applied, true);
+
+  const safeTargets = report.top_50_highest_leverage_evidence_targets.filter(
+    (row) =>
+      row.wrong_part_risk_count === 0 &&
+      row.blocked_count === 0 &&
+      !(row.currently_proven_count === 0 && row.prefix_contamination_count > 0),
+  );
+  assert.notEqual(safeTargets[0]?.family_key, "filter::frigidaire::fppwfu01");
 });
 
 test("cumulative unlock counts valid", () => {

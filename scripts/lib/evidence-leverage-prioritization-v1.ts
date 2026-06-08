@@ -20,6 +20,11 @@ import {
   type ModelFilterCorrectnessRowV1,
 } from "./model-filter-correctness-audit-v1";
 import {
+  buildFrigidaireModelLineSiblingIndexV1,
+  evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1,
+  frigidaireModelLineKeyV1,
+} from "./learned-failure-guards-v1";
+import {
   PROVEN_COHORT_PAGE_FACTORY_MANIFEST_CONTRACT_V1,
   PROVEN_COHORT_PAGE_FACTORY_MANIFEST_JSON_REL_V1,
   type ProvenCohortPageFactoryManifestV1,
@@ -65,6 +70,9 @@ export type EvidenceLeverageFamilyRowV1 = {
   proven_anchor_slugs: string[];
   representative_slugs: string[];
   unlock_slugs: string[];
+  prefix_contamination_count: number;
+  prefix_contamination_slug_examples: string[];
+  zero_proven_anchor_penalty_applied: boolean;
 };
 
 export type EvidenceLeverageTargetV1 = EvidenceLeverageFamilyRowV1 & {
@@ -130,6 +138,8 @@ const MANUAL_EVIDENCE_DIR_REL_V1 = "data/manual-evidence/refrigerator";
 const WRONG_PART_PENALTY_V1 = 30;
 const UNLOCK_WEIGHT_V1 = 100;
 const PROVEN_ANCHOR_BONUS_V1 = 5;
+const ZERO_PROVEN_PREFIX_CONTAMINATION_BASE_PENALTY_V1 = 500;
+const ZERO_PROVEN_PREFIX_CONTAMINATION_PER_SLUG_PENALTY_V1 = 80;
 
 function normalizeSlug(value: string): string {
   return value.trim().toLowerCase();
@@ -298,19 +308,77 @@ function deriveEvidenceGapType(family: MutableFamilyAccumulator): EvidenceGapTyp
   return "OFFICIAL_FILTER_TOKEN_PROOF_MISSING";
 }
 
-function estimateFactoryUnlockScore(family: MutableFamilyAccumulator): number {
-  return (
-    family.unlock_slugs.size * UNLOCK_WEIGHT_V1 +
-    family.proven_slugs.size * PROVEN_ANCHOR_BONUS_V1 -
-    family.wrong_part_slugs.size * WRONG_PART_PENALTY_V1 -
-    family.blocked_slugs.size * WRONG_PART_PENALTY_V1 * 2
-  );
+function estimateFactoryUnlockScore(args: {
+  family: MutableFamilyAccumulator;
+  prefix_contamination_count: number;
+}): { score: number; zero_proven_anchor_penalty_applied: boolean } {
+  let score =
+    args.family.unlock_slugs.size * UNLOCK_WEIGHT_V1 +
+    args.family.proven_slugs.size * PROVEN_ANCHOR_BONUS_V1 -
+    args.family.wrong_part_slugs.size * WRONG_PART_PENALTY_V1 -
+    args.family.blocked_slugs.size * WRONG_PART_PENALTY_V1 * 2;
+
+  let zero_proven_anchor_penalty_applied = false;
+  if (args.family.proven_slugs.size === 0 && args.prefix_contamination_count > 0) {
+    score -=
+      ZERO_PROVEN_PREFIX_CONTAMINATION_BASE_PENALTY_V1 +
+      args.prefix_contamination_count * ZERO_PROVEN_PREFIX_CONTAMINATION_PER_SLUG_PENALTY_V1;
+    zero_proven_anchor_penalty_applied = true;
+  }
+
+  return { score: Math.max(0, score), zero_proven_anchor_penalty_applied };
 }
 
-function finalizeFamilyRow(family: MutableFamilyAccumulator): EvidenceLeverageFamilyRowV1 {
+function prefixContaminationForFamily(args: {
+  family: MutableFamilyAccumulator;
+  auditBySlug: Map<string, ModelFilterCorrectnessRowV1>;
+  siblingIndex: Map<string, ModelFilterCorrectnessRowV1[]>;
+}): { prefix_contamination_count: number; prefix_contamination_slug_examples: string[] } {
+  const contaminated: string[] = [];
+
+  for (const slug of args.family.unlock_slugs) {
+    const row = args.auditBySlug.get(slug);
+    if (!row) continue;
+    const lineKey = frigidaireModelLineKeyV1(row.model_number);
+    const siblingBucket =
+      lineKey && normalizeSlug(row.brand_slug) === "frigidaire"
+        ? args.siblingIndex.get(`frigidaire::${lineKey}`)
+        : undefined;
+    const guard = evaluateFrigidaireFppwfu01PrefixFamilyContaminationGuardV1({
+      auditRow: row,
+      frigidaireSiblingRows: siblingBucket,
+    });
+    if (guard.verdict === "WARN" || guard.verdict === "BLOCK") {
+      contaminated.push(slug);
+    }
+  }
+
+  const prefix_contamination_slug_examples = [...contaminated].sort((a, b) =>
+    a.localeCompare(b),
+  ).slice(0, 5);
+
+  return {
+    prefix_contamination_count: contaminated.length,
+    prefix_contamination_slug_examples,
+  };
+}
+
+function finalizeFamilyRow(
+  family: MutableFamilyAccumulator,
+  args: {
+    auditBySlug: Map<string, ModelFilterCorrectnessRowV1>;
+    siblingIndex: Map<string, ModelFilterCorrectnessRowV1[]>;
+  },
+): EvidenceLeverageFamilyRowV1 {
   const unlock_slugs = [...family.unlock_slugs].sort((a, b) => a.localeCompare(b));
   const proven_anchor_slugs = [...family.proven_slugs].sort((a, b) => a.localeCompare(b));
   const representative_slugs = unlock_slugs.slice(0, 5);
+  const { prefix_contamination_count, prefix_contamination_slug_examples } =
+    prefixContaminationForFamily({ family, ...args });
+  const { score, zero_proven_anchor_penalty_applied } = estimateFactoryUnlockScore({
+    family,
+    prefix_contamination_count,
+  });
 
   return {
     family_kind: family.family_kind,
@@ -321,10 +389,13 @@ function finalizeFamilyRow(family: MutableFamilyAccumulator): EvidenceLeverageFa
     wrong_part_risk_count: family.wrong_part_slugs.size,
     blocked_count: family.blocked_slugs.size,
     evidence_gap_type: deriveEvidenceGapType(family),
-    estimated_factory_unlock_score: estimateFactoryUnlockScore(family),
+    estimated_factory_unlock_score: score,
     proven_anchor_slugs,
     representative_slugs,
     unlock_slugs,
+    prefix_contamination_count,
+    prefix_contamination_slug_examples,
+    zero_proven_anchor_penalty_applied,
   };
 }
 
@@ -464,11 +535,17 @@ export function buildEvidenceLeveragePrioritizationV1(args: {
     provenCohortBySlug,
   });
 
+  const auditBySlug = new Map(
+    audit.model_rows.map((row) => [normalizeSlug(row.fridge_slug), row] as const),
+  );
+  const siblingIndex = buildFrigidaireModelLineSiblingIndexV1(audit.model_rows);
+  const finalizeArgs = { auditBySlug, siblingIndex };
+
   const filter_families = sortFamilies(
-    [...filterFamilies.values()].map((family) => finalizeFamilyRow(family)),
+    [...filterFamilies.values()].map((family) => finalizeFamilyRow(family, finalizeArgs)),
   );
   const model_families = sortFamilies(
-    [...modelFamilies.values()].map((family) => finalizeFamilyRow(family)),
+    [...modelFamilies.values()].map((family) => finalizeFamilyRow(family, finalizeArgs)),
   );
 
   const allFamilies = [...filter_families, ...model_families];
