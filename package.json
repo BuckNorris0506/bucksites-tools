@@ -95,6 +95,7 @@
     "buckparts:fridge-safe-link-gswf-ge-official-proof": "tsx scripts/report-fridge-safe-link-gswf-ge-official-proof-v1.ts",
     "buckparts:fridge-safe-link-batch-factory": "tsx scripts/report-fridge-safe-link-batch-factory-v1.ts",
     "buckparts:page-factory-preflight": "tsx scripts/report-buckparts-page-factory-preflight-v1.ts",
+    "buckparts:samsung-haf-qin-wildcard-expansion-review": "tsx scripts/report-samsung-haf-qin-wildcard-expansion-review-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",

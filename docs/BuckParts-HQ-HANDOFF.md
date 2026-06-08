@@ -1,8 +1,58 @@
 # BuckParts HQ — Agent Handoff
 
-## Current stopping point — SEO Phase 1 + RF28R7351SR Page Factory v1 (PROVEN through `a070797`)
+## Current stopping point — Page Factory preflight v1
 
 **Read this section first** for current HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`9116a742a9aaa7680d924ebc3566c30da16eff84`** |
+| Latest commit | **`9116a74`** — `Add read-only page factory preflight v1` |
+| Working tree | **Clean** at handoff refresh |
+
+### 2. Page Factory preflight v0.1 (PROVEN)
+
+**PROVEN:** Read-only Page Factory preflight v0.1 is implemented. The tool reports gate status from repo truth only; it does **not** authorize mutation.
+
+**New files:**
+- `data/fridge/batch-production/page-factory-targets-v1.csv`
+- `scripts/lib/buckparts-page-factory-preflight-v1.ts`
+- `scripts/report-buckparts-page-factory-preflight-v1.ts`
+- `scripts/lib/buckparts-page-factory-preflight-v1.test.ts`
+
+**`package.json` npm alias:**
+- `buckparts:page-factory-preflight` → `tsx scripts/report-buckparts-page-factory-preflight-v1.ts`
+
+**Validated:**
+- `node --import tsx --test scripts/lib/buckparts-page-factory-preflight-v1.test.ts`
+- `npm run buckparts:page-factory-preflight -- --fridge-slug samsung-rf28r7351sr`
+- `npm run lint`
+
+**First registry target:** `samsung-rf28r7351sr` → expected filter `da97-17376b`; forbidden `da29-00020b`, `da29-00012b`; official marketing token `HAF-QIN`.
+
+**v0.1 UNKNOWN gates (not evaluated or not implemented yet):**
+- `supabase_compat_parity` — UNKNOWN unless `--check-supabase` is passed
+- `local_page_proof` — UNKNOWN unless `--base-url` is passed (curl proof not implemented in v0.1)
+- `live_page_proof` — UNKNOWN unless `--live-base-url` is passed (curl proof not implemented in v0.1)
+
+**Observed WARN (not a mutation blocker):** `retailer_link_csv_gates_observed` is **WARN** for `da97-17376b` because CSV primary is `search_placeholder` and has no `direct_buyable` row.
+
+**Mutation guardrails:** `mutation_authorized=false` and `mutation_blocked_until_owner_approval=true` on every report. Passing preflight does **not** authorize CSV, Supabase, quarantine, buyer-path, or `/go` changes.
+
+### 3. Next operating lane (INFERRED)
+
+**Recommended next:** extend preflight v0.1 with `--check-supabase` compat parity proof, local/live curl proof, and the next Page Factory target row — only after owner approval for any apply lane.
+
+**Do not start the next model page as raw mutation until preflight reports `READY_FOR_OWNER_REVIEW` on repo gates and owner explicitly approves apply work.**
+
+---
+
+## Current stopping point — SEO Phase 1 + RF28R7351SR Page Factory v1 (PROVEN through `a070797`)
+
+**Historical context** — retained for RF28R7351SR lane proof and seed/import lessons.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
