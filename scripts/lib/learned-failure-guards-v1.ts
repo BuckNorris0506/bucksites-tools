@@ -23,6 +23,7 @@ import {
   MODEL_FILTER_CORRECTNESS_AUDIT_JSON_REL_V1,
   type ModelFilterCorrectnessAuditV1,
   type ModelFilterCorrectnessClassificationV1,
+  type ModelFilterCorrectnessRowV1,
 } from "./model-filter-correctness-audit-v1";
 import {
   SAMSUNG_REFRIGERATOR_MARKETING_TOKEN_FAMILIES_V1,
@@ -85,6 +86,12 @@ export type PerSlugLearnedFailureGuardsV1 = {
   confusion_family_guards: ConfusionFamilyGuardResultV1[];
   single_filter_family: SingleFilterFamilyGuardResultV1;
   aggregate_verdict: GuardVerdictV1;
+};
+
+export type LearnedFailurePublicationImpactV1 = {
+  preflight_status: "PASS" | "BLOCKED";
+  quality_gate_status: "PASS" | "WARN" | "BLOCKED";
+  blockers: string[];
 };
 
 export type DangerousCountRegressionResultV1 = {
@@ -545,6 +552,95 @@ function dangerousSlugsFromRemediationPlan(
     .sort((a, b) => a.localeCompare(b));
 }
 
+export function buildPerSlugLearnedFailureGuardsV1(args: {
+  auditRow: ModelFilterCorrectnessRowV1;
+  wildcardBucket?: CatalogSlugRowV1["bucket"] | null;
+}): PerSlugLearnedFailureGuardsV1 {
+  const slug = normalizeSlug(args.auditRow.fridge_slug);
+  const confusion_family_guards = evaluateConfusionFamilyGuardsV1({
+    brandSlug: args.auditRow.brand_slug,
+    mappedFilterSlugs: args.auditRow.mapped_filter_slugs,
+    auditBlockers: args.auditRow.blockers,
+    wildcardBucket: args.wildcardBucket ?? null,
+  });
+
+  const single_filter_family = evaluateSingleFilterFamilyPerModelV1({
+    brandSlug: args.auditRow.brand_slug,
+    mappedFilterSlugs: args.auditRow.mapped_filter_slugs,
+    confusionGuards: confusion_family_guards,
+    classification: args.auditRow.classification,
+  });
+
+  const aggregate_verdict = worstVerdict([
+    ...confusion_family_guards.map((guard) => guard.verdict),
+    single_filter_family.verdict,
+  ]);
+
+  return {
+    fridge_slug: slug,
+    brand_slug: normalizeSlug(args.auditRow.brand_slug),
+    classification: args.auditRow.classification,
+    mapped_filter_slugs: [...args.auditRow.mapped_filter_slugs].sort(),
+    confusion_family_guards,
+    single_filter_family,
+    aggregate_verdict,
+  };
+}
+
+export function evaluatePerSlugLearnedFailureGuardsV1(args: {
+  rootDir: string;
+  fridgeSlug: string;
+}): PerSlugLearnedFailureGuardsV1 {
+  const audit = loadAuditReport(args.rootDir);
+  const slug = normalizeSlug(args.fridgeSlug);
+  const auditRow = audit.model_rows.find((row) => normalizeSlug(row.fridge_slug) === slug);
+  if (!auditRow) {
+    throw new Error(`learned_failure_guards: missing audit row for ${slug}`);
+  }
+
+  const wildcardBySlug = loadWildcardRows(args.rootDir);
+  return buildPerSlugLearnedFailureGuardsV1({
+    auditRow,
+    wildcardBucket: wildcardBySlug.get(slug)?.bucket ?? null,
+  });
+}
+
+export function deriveLearnedFailurePublicationImpactV1(
+  perSlug: PerSlugLearnedFailureGuardsV1,
+): LearnedFailurePublicationImpactV1 {
+  const blockers: string[] = [];
+
+  for (const guard of perSlug.confusion_family_guards) {
+    if (guard.verdict !== "PASS") {
+      blockers.push(`${guard.guard_id}: ${guard.detail}`);
+    }
+  }
+
+  if (perSlug.single_filter_family.verdict !== "PASS") {
+    blockers.push(`single_filter_family: ${perSlug.single_filter_family.detail}`);
+  }
+
+  const preflight_status: LearnedFailurePublicationImpactV1["preflight_status"] =
+    perSlug.aggregate_verdict === "PASS" ? "PASS" : "BLOCKED";
+
+  let quality_gate_status: LearnedFailurePublicationImpactV1["quality_gate_status"] = "PASS";
+  if (
+    perSlug.aggregate_verdict === "BLOCK" ||
+    perSlug.classification === "WRONG_PART_RISK" ||
+    perSlug.classification === "BLOCKED"
+  ) {
+    quality_gate_status = "BLOCKED";
+  } else if (perSlug.aggregate_verdict === "WARN") {
+    quality_gate_status = "WARN";
+  }
+
+  return {
+    preflight_status,
+    quality_gate_status,
+    blockers,
+  };
+}
+
 export function evaluateAllLearnedFailureGuardsV1(args: {
   rootDir: string;
   now?: () => Date;
@@ -580,40 +676,18 @@ export function evaluateAllLearnedFailureGuardsV1(args: {
   const per_slug_guards: PerSlugLearnedFailureGuardsV1[] = audit.model_rows.map((row) => {
     const slug = normalizeSlug(row.fridge_slug);
     const wildcard = wildcardBySlug.get(slug);
-    const confusion_family_guards = evaluateConfusionFamilyGuardsV1({
-      brandSlug: row.brand_slug,
-      mappedFilterSlugs: row.mapped_filter_slugs,
-      auditBlockers: row.blockers,
+    const perSlug = buildPerSlugLearnedFailureGuardsV1({
+      auditRow: row,
       wildcardBucket: wildcard?.bucket ?? null,
     });
 
-    for (const guard of confusion_family_guards) {
+    for (const guard of perSlug.confusion_family_guards) {
       if (guard.verdict === "BLOCK") {
         confusion_family_block_count[guard.guard_id] += 1;
       }
     }
 
-    const single_filter_family = evaluateSingleFilterFamilyPerModelV1({
-      brandSlug: row.brand_slug,
-      mappedFilterSlugs: row.mapped_filter_slugs,
-      confusionGuards: confusion_family_guards,
-      classification: row.classification,
-    });
-
-    const aggregate_verdict = worstVerdict([
-      ...confusion_family_guards.map((guard) => guard.verdict),
-      single_filter_family.verdict,
-    ]);
-
-    return {
-      fridge_slug: slug,
-      brand_slug: normalizeSlug(row.brand_slug),
-      classification: row.classification,
-      mapped_filter_slugs: [...row.mapped_filter_slugs].sort(),
-      confusion_family_guards,
-      single_filter_family,
-      aggregate_verdict,
-    };
+    return perSlug;
   });
 
   const dangerous_count_regression = evaluateDangerousCountRegressionV1({
