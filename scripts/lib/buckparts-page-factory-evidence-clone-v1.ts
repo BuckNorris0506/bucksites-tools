@@ -338,7 +338,7 @@ function buildRequiredTargetProof(targetModelNumber: string): RequiredTargetProo
   ];
 }
 
-function targetHasPublicReadyEvidence(
+export function hasModelSpecificPublicReadyEvidenceV1(
   rootDir: string,
   targetSlug: string,
   targetModelNumber: string,
@@ -506,7 +506,7 @@ export function buildPageFactoryEvidenceCloneReportV1(
     cloneStatus = "BLOCKED";
   } else if (
     targetCatalog.model_number &&
-    targetHasPublicReadyEvidence(rootDir, targetSlug, targetCatalog.model_number)
+    hasModelSpecificPublicReadyEvidenceV1(rootDir, targetSlug, targetCatalog.model_number)
   ) {
     cloneStatus = "READY_TO_DRAFT";
   } else {
