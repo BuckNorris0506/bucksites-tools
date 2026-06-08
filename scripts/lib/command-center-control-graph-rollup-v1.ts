@@ -9,6 +9,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import { ANCHOR_INTEGRITY_AUDIT_CONTRACT_V1 } from "./anchor-integrity-audit-v1";
+import { CURSOR_VALIDATION_PACKET_CONTRACT_V1 } from "./buckparts-ops-agent-workflow-v1";
 import {
   BAD_MAPPING_CORRECTION_BATCH_RUNNER_CONTRACT_V1,
   BAD_MAPPING_CORRECTION_BATCH_RUNNER_JSON_REL_V1,
@@ -45,6 +46,13 @@ import {
   type FamilyPreResearchRiskScreenV1,
   type PreResearchRecommendationV1,
 } from "./family-pre-research-risk-screen-v1";
+import {
+  buildFamilyReconciliationV1,
+  FAMILY_RECONCILIATION_CONTRACT_V1,
+  FAMILY_RECONCILIATION_JSON_REL_V1,
+  type FamilyReconciliationV1,
+  type ReconciliationSeverityV1,
+} from "./family-reconciliation-v1";
 import {
   PAGE_FACTORY_BATCH_QA_DIRECTOR_ARTIFACT_DIR_REL_V1,
   PAGE_FACTORY_BATCH_QA_DIRECTOR_CONTRACT_V1,
@@ -151,15 +159,27 @@ export type EducationOpportunitySummaryV1 = {
   top_opportunity_titles: string[];
 };
 
+export type RecommendedActionScopeV1 =
+  | "FULL_FAMILY_SCALING"
+  | "BOUNDED_RESEARCH_ONLY"
+  | "FREEZE_NO_DISPATCH"
+  | "DANGEROUS_REMEDIATION_ONLY";
+
 export type ControlGraphNextBestActionRankedItemV1 = {
   rank: number;
   action: string;
   safety_tier:
     | "FREEZE"
     | "PRE_RESEARCH_RECONCILIATION"
+    | "BOUNDED_EVIDENCE_RESEARCH"
     | "SAFE_EVIDENCE"
     | "DANGEROUS_REMEDIATION"
     | "PAGE_FACTORY";
+  recommended_action_scope: RecommendedActionScopeV1;
+  requires_owner_review_before_mutation: boolean;
+  safe_for_scaling: boolean;
+  safe_for_bounded_research: boolean;
+  family_reconciliation_severity: ReconciliationSeverityV1 | null;
   leverage_score: number;
   family_key: string | null;
   blocked_by_frozen_families: string[];
@@ -261,11 +281,144 @@ function pickHighestSafeNonFrozenFamily(args: {
 type PreResearchScreeningResultV1 = {
   summary: PreResearchRiskScreenSummaryV1;
   safeScreenedTarget: EvidenceLeverageTargetV1 | null;
+  safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null;
   blockedLeverageTargets: Array<{
     target: EvidenceLeverageTargetV1;
     screen: FamilyPreResearchRiskScreenV1;
   }>;
 };
+
+function loadFamilyReconciliationReport(args: {
+  rootDir: string;
+  now?: () => Date;
+}): FamilyReconciliationV1 {
+  const abs = path.join(args.rootDir, FAMILY_RECONCILIATION_JSON_REL_V1);
+  if (existsSync(abs)) {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as FamilyReconciliationV1;
+    if (parsed.contract === FAMILY_RECONCILIATION_CONTRACT_V1) {
+      return parsed;
+    }
+  }
+  return buildFamilyReconciliationV1(args);
+}
+
+function loadHyperAgentValidationByFamily(rootDir: string): Map<
+  string,
+  { validation_status: string; validation_partial: boolean }
+> {
+  const byFamily = new Map<string, { validation_status: string; validation_partial: boolean }>();
+  const draftsDir = path.join(rootDir, "data/fridge/batch-production/drafts");
+  if (!existsSync(draftsDir)) return byFamily;
+
+  for (const file of readdirSync(draftsDir)) {
+    if (!file.endsWith(".json") || !file.includes("cursor-validation")) continue;
+    try {
+      const parsed = JSON.parse(
+        readFileSync(path.join(draftsDir, file), "utf8"),
+      ) as {
+        contract?: string;
+        validation_status?: string;
+        validation_details?: { family_key?: string };
+      };
+      if (parsed.contract !== CURSOR_VALIDATION_PACKET_CONTRACT_V1) continue;
+      const familyKey = parsed.validation_details?.family_key;
+      if (!familyKey) continue;
+      byFamily.set(familyKey, {
+        validation_status: parsed.validation_status ?? "UNKNOWN",
+        validation_partial: parsed.validation_status === "VALIDATION_PARTIAL",
+      });
+    } catch {
+      // skip malformed packets
+    }
+  }
+
+  return byFamily;
+}
+
+function reconciliationSeverityForFamily(
+  reconciliation: FamilyReconciliationV1,
+  familyKey: string,
+): ReconciliationSeverityV1 {
+  return (
+    reconciliation.family_rows.find((row) => row.family_key === familyKey)?.severity ??
+    "NONE"
+  );
+}
+
+function isReconciliationSafeForScaling(severity: ReconciliationSeverityV1): boolean {
+  return severity === "NONE" || severity === "LOW";
+}
+
+function deriveEvidenceActionPolicy(args: {
+  screen: FamilyPreResearchRiskScreenV1;
+  reconciliationSeverity: ReconciliationSeverityV1;
+  hyperagentValidationPartial: boolean;
+}): {
+  safe_for_scaling: boolean;
+  safe_for_bounded_research: boolean;
+  recommended_action_scope: RecommendedActionScopeV1;
+  requires_owner_review_before_mutation: boolean;
+} {
+  const preResearchLow = args.screen.contamination_risk === "LOW";
+  const noBlocks = args.screen.learned_failure_block_count === 0;
+  const preResearchAllowsBatch =
+    args.screen.recommendation === "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH";
+
+  const safe_for_bounded_research = preResearchLow && noBlocks && preResearchAllowsBatch;
+
+  const safe_for_scaling =
+    safe_for_bounded_research &&
+    isReconciliationSafeForScaling(args.reconciliationSeverity) &&
+    !args.hyperagentValidationPartial;
+
+  return {
+    safe_for_scaling,
+    safe_for_bounded_research,
+    recommended_action_scope: safe_for_scaling
+      ? "FULL_FAMILY_SCALING"
+      : "BOUNDED_RESEARCH_ONLY",
+    requires_owner_review_before_mutation: !safe_for_scaling,
+  };
+}
+
+function buildBoundedEvidenceAction(args: {
+  familyKey: string;
+  reconciliationSeverity: ReconciliationSeverityV1;
+  hyperagentValidationPartial: boolean;
+}): string {
+  const validationNote = args.hyperagentValidationPartial
+    ? "; HyperAgent validation partial"
+    : "";
+  return `Run bounded evidence research only for \`${args.familyKey}\` — not full-family scaling, no compat mutation, no evidence promotion without owner-reviewed manual evidence; family reconciliation remains ${args.reconciliationSeverity}${validationNote}.`;
+}
+
+function buildEvidenceActionWhy(args: {
+  screen: FamilyPreResearchRiskScreenV1;
+  reconciliationSeverity: ReconciliationSeverityV1;
+  hyperagentValidationPartial: boolean;
+  policy: ReturnType<typeof deriveEvidenceActionPolicy>;
+}): string {
+  if (args.policy.safe_for_scaling) {
+    return `Highest evidence-leverage filter family passing pre-research risk screen and family reconciliation ${args.reconciliationSeverity} (score=${String(args.screen.current_unlock_score)}, gap=evidence-leverage).`;
+  }
+
+  const caveats: string[] = [];
+  if (!isReconciliationSafeForScaling(args.reconciliationSeverity)) {
+    caveats.push(`family reconciliation ${args.reconciliationSeverity}`);
+  }
+  if (args.hyperagentValidationPartial) {
+    caveats.push("HyperAgent validation partial");
+  }
+  if (caveats.length > 0) {
+    return `pre-research ${args.screen.contamination_risk}, but ${caveats.join(" and ")}.`;
+  }
+
+  if (args.screen.learned_failure_warn_count > 0) {
+    return `pre-research ${args.screen.contamination_risk} with learned-failure WARN=${String(args.screen.learned_failure_warn_count)} — bounded evidence research only; not safe for full-family scaling.`;
+  }
+
+  return `pre-research ${args.screen.contamination_risk} — bounded evidence research only; not safe for full-family scaling.`;
+}
 
 function isPreResearchScreenableTarget(target: EvidenceLeverageTargetV1): boolean {
   return target.family_key.startsWith("filter::");
@@ -279,6 +432,7 @@ function buildPreResearchRiskScreenSummary(args: {
 }): PreResearchScreeningResultV1 {
   const blockedLeverageTargets: PreResearchScreeningResultV1["blockedLeverageTargets"] = [];
   let safeScreenedTarget: EvidenceLeverageTargetV1 | null = null;
+  let safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null = null;
   let screened_family_count = 0;
 
   for (const target of args.leverage.top_50_highest_leverage_evidence_targets) {
@@ -300,6 +454,7 @@ function buildPreResearchRiskScreenSummary(args: {
 
     if (!safeScreenedTarget) {
       safeScreenedTarget = target;
+      safeScreenedTargetScreen = screen;
     }
   }
 
@@ -325,6 +480,7 @@ function buildPreResearchRiskScreenSummary(args: {
       highest_safe_screened_family_key: safeScreenedTarget?.family_key ?? null,
     },
     safeScreenedTarget,
+    safeScreenedTargetScreen,
     blockedLeverageTargets,
   };
 }
@@ -388,14 +544,40 @@ function buildNextBestActionRanked(args: {
   frozenFamilies: FrozenFamilySummaryV1;
   anchor: AnchorIntegrityAuditInputV1;
   safeScreenedTarget: EvidenceLeverageTargetV1 | null;
+  safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null;
   blockedLeverageTargets: Array<{
     target: EvidenceLeverageTargetV1;
     screen: FamilyPreResearchRiskScreenV1;
   }>;
   badMapping: BadMappingCorrectionBatchRunnerV1;
+  reconciliation: FamilyReconciliationV1;
+  hyperagentValidationByFamily: Map<
+    string,
+    { validation_status: string; validation_partial: boolean }
+  >;
 }): ControlGraphNextBestActionRankedItemV1[] {
   const ranked: ControlGraphNextBestActionRankedItemV1[] = [];
   const frozenKeys = args.frozenFamilies.frozen_families.map((row) => row.family_key);
+  const freezeFields = {
+    recommended_action_scope: "FREEZE_NO_DISPATCH" as const,
+    requires_owner_review_before_mutation: true,
+    safe_for_scaling: false,
+    safe_for_bounded_research: false,
+    family_reconciliation_severity: null,
+  };
+  const reconciliationBlockFields = {
+    recommended_action_scope: "BOUNDED_RESEARCH_ONLY" as const,
+    requires_owner_review_before_mutation: true,
+    safe_for_scaling: false,
+    safe_for_bounded_research: false,
+  };
+  const dangerousFields = {
+    recommended_action_scope: "DANGEROUS_REMEDIATION_ONLY" as const,
+    requires_owner_review_before_mutation: true,
+    safe_for_scaling: false,
+    safe_for_bounded_research: false,
+    family_reconciliation_severity: null,
+  };
 
   for (const frozen of args.frozenFamilies.frozen_families) {
     const disputedAnchors = args.anchor.anchor_rows
@@ -424,6 +606,7 @@ function buildNextBestActionRanked(args: {
       family_key: frozen.family_key,
       blocked_by_frozen_families: [],
       why,
+      ...freezeFields,
     });
   }
 
@@ -448,20 +631,59 @@ function buildNextBestActionRanked(args: {
       family_key: blocked.screen.family_key,
       blocked_by_frozen_families: frozenKeys,
       why: `Evidence leverage ranks ${blocked.screen.family_key} highly, but pre-research risk screen blocks full-family scaling (${String(blocked.screen.sibling_conflict_count)} sibling conflicts, ${blocked.screen.learned_failure_block_count} learned-failure blocks).`,
+      ...reconciliationBlockFields,
+      family_reconciliation_severity: reconciliationSeverityForFamily(
+        args.reconciliation,
+        blocked.screen.family_key,
+      ),
     });
   }
 
-  if (args.safeScreenedTarget) {
+  if (args.safeScreenedTarget && args.safeScreenedTargetScreen) {
+    const reconciliationSeverity = reconciliationSeverityForFamily(
+      args.reconciliation,
+      args.safeScreenedTarget.family_key,
+    );
+    const validation = args.hyperagentValidationByFamily.get(
+      args.safeScreenedTarget.family_key,
+    );
+    const hyperagentValidationPartial = validation?.validation_partial ?? false;
+    const policy = deriveEvidenceActionPolicy({
+      screen: args.safeScreenedTargetScreen,
+      reconciliationSeverity,
+      hyperagentValidationPartial,
+    });
+    const safety_tier = policy.safe_for_scaling
+      ? "SAFE_EVIDENCE"
+      : "BOUNDED_EVIDENCE_RESEARCH";
+    const action = policy.safe_for_scaling
+      ? args.safeScreenedTarget.recommended_action
+      : buildBoundedEvidenceAction({
+          familyKey: args.safeScreenedTarget.family_key,
+          reconciliationSeverity,
+          hyperagentValidationPartial,
+        });
+
     ranked.push({
       rank: ranked.length + 1,
-      action: args.safeScreenedTarget.recommended_action,
-      safety_tier: "SAFE_EVIDENCE",
+      action,
+      safety_tier,
+      recommended_action_scope: policy.recommended_action_scope,
+      requires_owner_review_before_mutation: policy.requires_owner_review_before_mutation,
+      safe_for_scaling: policy.safe_for_scaling,
+      safe_for_bounded_research: policy.safe_for_bounded_research,
+      family_reconciliation_severity: reconciliationSeverity,
       leverage_score: args.safeScreenedTarget.estimated_factory_unlock_score,
       family_key: args.safeScreenedTarget.family_key,
       blocked_by_frozen_families: frozenKeys.filter(
         (key) => key !== args.safeScreenedTarget!.family_key,
       ),
-      why: `Highest evidence-leverage filter family passing pre-research risk screen (score=${String(args.safeScreenedTarget.estimated_factory_unlock_score)}, gap=${args.safeScreenedTarget.evidence_gap_type}).`,
+      why: buildEvidenceActionWhy({
+        screen: args.safeScreenedTargetScreen,
+        reconciliationSeverity,
+        hyperagentValidationPartial,
+        policy,
+      }),
     });
   } else if (blockedAboveSafe[0]) {
     const topBlocked = blockedAboveSafe[0]!;
@@ -473,6 +695,11 @@ function buildNextBestActionRanked(args: {
       family_key: topBlocked.screen.family_key,
       blocked_by_frozen_families: frozenKeys,
       why: "All non-frozen leverage candidates fail pre-research risk screen — full-family evidence scaling is blocked.",
+      ...reconciliationBlockFields,
+      family_reconciliation_severity: reconciliationSeverityForFamily(
+        args.reconciliation,
+        topBlocked.screen.family_key,
+      ),
     });
   }
 
@@ -485,6 +712,7 @@ function buildNextBestActionRanked(args: {
       family_key: null,
       blocked_by_frozen_families: frozenKeys,
       why: "Dangerous-mapping correction runner queues HyperAgent research for WRONG_PART_RISK slugs — lower safety tier than proven-cohort evidence leverage.",
+      ...dangerousFields,
     });
   }
 
@@ -493,19 +721,27 @@ function buildNextBestActionRanked(args: {
 
 function buildPrimaryNextBestAction(
   ranked: ControlGraphNextBestActionRankedItemV1[],
-  safeScreenedTarget: EvidenceLeverageTargetV1 | null,
 ): string {
   const freezeAction = ranked.find((item) => item.safety_tier === "FREEZE");
   const reconciliationActions = ranked.filter(
     (item) => item.safety_tier === "PRE_RESEARCH_RECONCILIATION",
   );
   const topReconciliation = reconciliationActions[0];
+  const evidenceAction = ranked.find(
+    (item) =>
+      item.safety_tier === "BOUNDED_EVIDENCE_RESEARCH" ||
+      item.safety_tier === "SAFE_EVIDENCE",
+  );
 
-  if (freezeAction && safeScreenedTarget) {
+  if (freezeAction && evidenceAction) {
     const reconciliationNote = topReconciliation
       ? ` ${topReconciliation.action}`
       : "";
-    return `${freezeAction.action}${reconciliationNote} Then prioritize \`${safeScreenedTarget.family_key}\` — highest safe pre-research-screened evidence-leverage family.`;
+    const followOn =
+      evidenceAction.safety_tier === "BOUNDED_EVIDENCE_RESEARCH"
+        ? evidenceAction.action
+        : `Then prioritize \`${evidenceAction.family_key}\` — highest safe pre-research-screened evidence-leverage family.`;
+    return `${freezeAction.action}${reconciliationNote} ${followOn}`;
   }
 
   if (freezeAction && topReconciliation) {
@@ -516,8 +752,8 @@ function buildPrimaryNextBestAction(
     return freezeAction.action;
   }
 
-  if (safeScreenedTarget) {
-    return safeScreenedTarget.recommended_action;
+  if (evidenceAction) {
+    return evidenceAction.action;
   }
 
   if (topReconciliation) {
@@ -665,6 +901,11 @@ export function buildCommandCenterControlGraphRollupV1(args: {
   });
   const pre_research_risk_screen_summary = preResearchScreening.summary;
   const safeScreenedTarget = preResearchScreening.safeScreenedTarget;
+  const familyReconciliation = loadFamilyReconciliationReport({
+    rootDir: args.rootDir,
+    now: args.now,
+  });
+  const hyperagentValidationByFamily = loadHyperAgentValidationByFamily(args.rootDir);
   const topLeverage = leverage.top_50_highest_leverage_evidence_targets[0] ?? null;
   const topSafeNonFrozenFamilies = leverage.top_50_highest_leverage_evidence_targets
     .filter((target) => !frozenFamilySet.has(target.family_key) && isSafeLeverageTarget(target))
@@ -742,13 +983,13 @@ export function buildCommandCenterControlGraphRollupV1(args: {
     frozenFamilies: frozen_family_summary,
     anchor: anchorIntegrity,
     safeScreenedTarget,
+    safeScreenedTargetScreen: preResearchScreening.safeScreenedTargetScreen,
     blockedLeverageTargets: preResearchScreening.blockedLeverageTargets,
     badMapping,
+    reconciliation: familyReconciliation,
+    hyperagentValidationByFamily,
   });
-  const next_best_action = buildPrimaryNextBestAction(
-    next_best_action_ranked,
-    safeScreenedTarget,
-  );
+  const next_best_action = buildPrimaryNextBestAction(next_best_action_ranked);
 
   return {
     contract: COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CONTRACT_V1,
@@ -774,6 +1015,7 @@ export function buildCommandCenterControlGraphRollupV1(args: {
       "data/fridge/batch-production/audits/anchor-integrity-audit-v1.json",
       BAD_MAPPING_CORRECTION_BATCH_RUNNER_JSON_REL_V1,
       DANGEROUS_MAPPING_REMEDIATION_PLAN_JSON_REL_V1,
+      FAMILY_RECONCILIATION_JSON_REL_V1,
       `${PAGE_QUALITY_GATE_ARTIFACT_DIR_REL_V1}/*.json`,
       `${PAGE_FACTORY_BATCH_QA_DIRECTOR_ARTIFACT_DIR_REL_V1}/*.json`,
       "data/compatibility_mappings.csv",

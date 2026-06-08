@@ -6,6 +6,7 @@ import {
   buildCommandCenterControlGraphRollupV1,
   COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CONTRACT_V1,
   COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CC_JQ_PATH_V1,
+  type ControlGraphNextBestActionRankedItemV1,
 } from "./command-center-control-graph-rollup-v1";
 
 const ROOT = process.cwd();
@@ -16,6 +17,17 @@ const LIB_SOURCE = readFileSync(
 const REPORT_SOURCE = readFileSync("scripts/report-buckparts-command-center.ts", "utf8");
 
 const FIXED_NOW = () => new Date("2026-06-08T12:00:00.000Z");
+const EDR4RXD1_FAMILY = "filter::whirlpool::edr4rxd1";
+
+function findEvidenceRank(
+  ranked: ControlGraphNextBestActionRankedItemV1[],
+): ControlGraphNextBestActionRankedItemV1 | undefined {
+  return ranked.find(
+    (item) =>
+      item.safety_tier === "BOUNDED_EVIDENCE_RESEARCH" ||
+      item.safety_tier === "SAFE_EVIDENCE",
+  );
+}
 
 test("contract and read-only flags", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
@@ -61,17 +73,17 @@ test("next_best_action freezes contaminated families and does not recommend FPPW
   assert.ok(freezeRanks.some((item) => item.family_key === "filter::frigidaire::eptwfu01"));
   assert.ok(freezeRanks.some((item) => item.family_key === "filter::frigidaire::fppwfu01"));
 
-  const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
-  assert.ok(safeRank);
-  assert.notEqual(safeRank!.family_key, "filter::frigidaire::fppwfu01");
-  assert.notEqual(safeRank!.family_key, "filter::frigidaire::wf2cb");
+  const evidenceRank = findEvidenceRank(rollup.next_best_action_ranked);
+  assert.ok(evidenceRank);
+  assert.notEqual(evidenceRank!.family_key, "filter::frigidaire::fppwfu01");
+  assert.notEqual(evidenceRank!.family_key, "filter::frigidaire::wf2cb");
   assert.equal(
-    safeRank!.family_key,
+    evidenceRank!.family_key,
     rollup.pre_research_risk_screen_summary.highest_safe_screened_family_key,
   );
 });
 
-test("pre-research risk screen blocks wf2cb from SAFE_EVIDENCE and surfaces summary", () => {
+test("pre-research risk screen blocks wf2cb from bounded evidence research rank and surfaces summary", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
   assert.ok(rollup.pre_research_risk_screen_summary.screened_family_count > 0);
   assert.ok(rollup.pre_research_risk_screen_summary.blocked_family_count > 0);
@@ -83,9 +95,9 @@ test("pre-research risk screen blocks wf2cb from SAFE_EVIDENCE and surfaces summ
   assert.equal(wf2cbBlocked!.contamination_risk, "HIGH");
   assert.equal(wf2cbBlocked!.recommendation, "NEEDS_REPO_RECONCILIATION_FIRST");
 
-  const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
-  assert.ok(safeRank);
-  assert.notEqual(safeRank!.family_key, "filter::frigidaire::wf2cb");
+  const evidenceRank = findEvidenceRank(rollup.next_best_action_ranked);
+  assert.ok(evidenceRank);
+  assert.notEqual(evidenceRank!.family_key, "filter::frigidaire::wf2cb");
 
   const wf2cbReconciliation = rollup.next_best_action_ranked.find(
     (item) =>
@@ -100,14 +112,47 @@ test("pre-research risk screen blocks wf2cb from SAFE_EVIDENCE and surfaces summ
   );
 });
 
+test("EDR4RXD1 is bounded evidence research only — not safe for scaling", () => {
+  const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
+  assert.equal(
+    rollup.pre_research_risk_screen_summary.highest_safe_screened_family_key,
+    EDR4RXD1_FAMILY,
+  );
+
+  const edr4Rank = rollup.next_best_action_ranked.find(
+    (item) => item.family_key === EDR4RXD1_FAMILY,
+  );
+  assert.ok(edr4Rank);
+  assert.equal(edr4Rank!.safety_tier, "BOUNDED_EVIDENCE_RESEARCH");
+  assert.equal(edr4Rank!.recommended_action_scope, "BOUNDED_RESEARCH_ONLY");
+  assert.equal(edr4Rank!.requires_owner_review_before_mutation, true);
+  assert.equal(edr4Rank!.safe_for_scaling, false);
+  assert.equal(edr4Rank!.safe_for_bounded_research, true);
+  assert.equal(edr4Rank!.family_reconciliation_severity, "MEDIUM");
+  assert.match(edr4Rank!.why, /pre-research LOW, but family reconciliation MEDIUM and HyperAgent validation partial/i);
+  assert.match(edr4Rank!.action, /bounded evidence research only/i);
+  assert.match(edr4Rank!.action, /not full-family scaling/i);
+  assert.match(edr4Rank!.action, /no compat mutation/i);
+  assert.match(edr4Rank!.action, /no evidence promotion without owner-reviewed manual evidence/i);
+  assert.match(edr4Rank!.action, /family reconciliation remains MEDIUM/i);
+
+  assert.match(rollup.next_best_action, /bounded evidence research only/i);
+  assert.match(rollup.next_best_action, /filter::whirlpool::edr4rxd1/);
+  assert.doesNotMatch(rollup.next_best_action, /highest safe pre-research-screened evidence-leverage family/i);
+  assert.doesNotMatch(
+    rollup.next_best_action,
+    /prioritize `filter::whirlpool::edr4rxd1`.*full-family scaling/i,
+  );
+});
+
 test("next_best_action does not recommend full-family HyperAgent dispatch for HIGH-risk families", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
-  const safeRank = rollup.next_best_action_ranked.find((item) => item.safety_tier === "SAFE_EVIDENCE");
-  assert.ok(safeRank);
+  const evidenceRank = findEvidenceRank(rollup.next_best_action_ranked);
+  assert.ok(evidenceRank);
 
   for (const blocked of rollup.pre_research_risk_screen_summary.top_blocked_families) {
     if (blocked.contamination_risk !== "HIGH") continue;
-    assert.notEqual(safeRank!.family_key, blocked.family_key);
+    assert.notEqual(evidenceRank!.family_key, blocked.family_key);
     const reconciliation = rollup.next_best_action_ranked.find(
       (item) =>
         item.safety_tier === "PRE_RESEARCH_RECONCILIATION" &&
