@@ -1,0 +1,501 @@
+fridge_slug,model_number,mapped_filter_slugs,classification,evidence_paths,blockers,recommended_action
+frigidaire-cfse2333tb,CFSE2333TB,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-crss2623as,CRSS2623AS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740lb,FFHB2740LB,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740pe,FFHB2740PE,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740ps,FFHB2740PS,ultrawf,PROVEN_CORRECT,data/manual-evidence/refrigerator/frigidaire-ffhb2740ps.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+frigidaire-ffhb2740ps2,FFHB2740PS2,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740ps3,FFHB2740PS3,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740ps4,FFHB2740PS4,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740ps5,FFHB2740PS5,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740td,FFHB2740TD,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740td2,FFHB2740TD2,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2740tw,FFHB2740TW,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750td,FFHB2750TD,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750te,FFHB2750TE,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750ts,FFHB2750TS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750ts2,FFHB2750TS2,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750tw,FFHB2750TW,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2750us,FFHB2750US,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhb2860ts,FFHB2860TS,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhd2250te,FFHD2250TE,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhd2250ts,FFHD2250TS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhd2250tw,FFHD2250TW,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhn2740pe,FFHN2740PE,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhn2740ps,FFHN2740PS,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffhn2740tw,FFHN2740TW,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffht1621qs,FFHT1621QS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffht1821qs,FFHT1821QS,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffht2021qs,FFHT2021QS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffsc2323ts,FFSC2323TS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffsc2323tw,FFSC2323TW,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2315ts,FFSS2315TS,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2515ts,FFSS2515TS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615lb,FFSS2615LB,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615lb2,FFSS2615LB2,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615ps,FFSS2615PS,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615td,FFSS2615TD,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615te,FFSS2615TE,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615te2,FFSS2615TE2,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615ts,FFSS2615TS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615ts2,FFSS2615TS2,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615ts3,FFSS2615TS3,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615ts4,FFSS2615TS4,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615tw,FFSS2615TW,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2615tw2,FFSS2615TW2,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-ffss2625ts,FFSS2625TS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2866lf,FGHB2866LF,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2866pe,FGHB2866PE,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2866pf,FGHB2866PF,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2866pf2,FGHB2866PF2,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2866ps,FGHB2866PS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868lf,FGHB2868LF,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pe,FGHB2868PE,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pe2,FGHB2868PE2,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pf,FGHB2868PF,eptwfu01,PROVEN_CORRECT,data/manual-evidence/refrigerator/frigidaire-fghb2868pf.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+frigidaire-fghb2868pf2,FGHB2868PF2,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pf3,FGHB2868PF3,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pf4,FGHB2868PF4,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868pf5,FGHB2868PF5,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868ps,FGHB2868PS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghb2868td,FGHB2868TD,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghd2365tf,FGHD2365TF,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghd2368tf,FGHD2368TF,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fghn2868pf,FGHN2868PF,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335lb,FGSC2335LB,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335td,FGSC2335TD,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335td2,FGSC2335TD2,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335te,FGSC2335TE,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335te3,FGSC2335TE3,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335tf,FGSC2335TF,eptwfu01,PROVEN_CORRECT,data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+frigidaire-fgsc2335tf2,FGSC2335TF2,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335tf3,FGSC2335TF3,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335tf4,FGSC2335TF4,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335ts,FGSC2335TS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335tw,FGSC2335TW,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2335tw2,FGSC2335TW2,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fgsc2345tf,FGSC2345TF,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fpru19f8re,FPRU19F8RE,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-fpru19f8rf,FPRU19F8RF,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frfs2613as,FRFS2613AS,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frfs2623as,FRFS2623AS,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frfs2823as,FRFS2823AS,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frfs2823aw,FRFS2823AW,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frss2333as,FRSS2333AS,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frss2623as,FRSS2623AS,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-frss2623aw,FRSS2623AW,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663ad,GLRSF2663AD,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663af,GLRSF2663AF,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663af2,GLRSF2663AF2,eptwfu01|frig-242294502,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663af3,GLRSF2663AF3,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663af4,GLRSF2663AF4,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-glrsf2663as,GLRSF2663AS,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfc2353af,GRFC2353AF,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfc2353as,GRFC2353AS,frig-242086201|ultrawf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfs2633af,GRFS2633AF,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfs2833af,GRFS2833AF,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfs2873af,GRFS2873AF,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-grfs2873as,GRFS2873AS,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-lfhb2741pe,LFHB2741PE,fppwfu01,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-lfhb2741pf,LFHB2741PF,frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+frigidaire-lfhb2741ps,LFHB2741PS,wf2cb,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cfe28tshss,CFE28TSHSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cfe29uskss,CFE29USKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cwe19tslss,CWE19TSLSS,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cwe23sshbb,CWE23SSHBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cwe23sshss,CWE23SSHSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cwe23sshww,CWE23SSHWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-cye22tp2ms1,CYE22TP2MS1,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gde21eskss,GDE21ESKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfd28gslbb,GFD28GSLBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfd28gslss,GFD28GSLSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfd28gslww,GFD28GSLWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe24jgkbb,GFE24JGKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe24jgkbww,GFE24JGKBWW,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe24jgkww,GFE24JGKWW,gswf|gswf2|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe24jskfss,GFE24JSKFSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe26jymkbb,GFE26JYMKBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe26jymkfs,GFE26JYMKFS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe26jymkww,GFE26JYMKWW,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe27jmkes,GFE27JMKES,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gelds,GFE28GELDS,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28ggkww,GFE28GGKWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gmkbb,GFE28GMKBB,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gmkes,GFE28GMKES,rpwfe,PROVEN_CORRECT,data/manual-evidence/refrigerator/ge-gfe28gmkes.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+ge-gfe28gmkww,GFE28GMKWW,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gskbb,GFE28GSKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gskes,GFE28GSKES,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gskss,GFE28GSKSS,rpwfe,PROVEN_CORRECT,data/manual-evidence/refrigerator/ge-gfe28gskss.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+ge-gfe28gskww,GFE28GSKWW,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-gfe28gynbb,GFE28GYNBB,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28gynes,GFE28GYNES,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-gfe28gynfs,GFE28GYNFS,rpwfe,PROVEN_CORRECT,data/manual-evidence/refrigerator/ge-gfe28gynfs.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+ge-gfe28gynww,GFE28GYNWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28hmkbb,GFE28HMKBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28hmkes,GFE28HMKES,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28hmkww,GFE28HMKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gfe28hskss,GFE28HSKSS,gswf|gswf2|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gie18gsnarss,GIE18GSNARSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gie21gsnerss,GIE21GSNERSS,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-gne25jmkbb,GNE25JMKBB,opfg3f|pfmwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne25jmkes,GNE25JMKES,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne25jmkww,GNE25JMKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne25jskss,GNE25JSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27esmss,GNE27ESMSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27fskss,GNE27FSKSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27fsnss,GNE27FSNSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jmkbs,GNE27JMKBS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jsmbb,GNE27JSMBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jsmss,GNE27JSMSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jsmww,GNE27JSMWW,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jstss,GNE27JSTSS,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jymbb,GNE27JYMBB,opfg3f|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jymfs,GNE27JYMFS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne27jymww,GNE27JYMWW,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne29gskbb,GNE29GSKBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne29gskss,GNE29GSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne29gskww,GNE29GSKWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gne29gymkfs,GNE29GYMKFS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gsc25frshss,GSC25FRSHSS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gse25gshss,GSE25GSHSS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gse25hskss,GSE25HSKSS,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gse26gshess,GSE26GSHESS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss20eshbb,GSS20ESHBB,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss20eshss,GSS20ESHSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss23gskbb,GSS23GSKBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss23gskss,GSS23GSKSS,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss23gskww,GSS23GSKWW,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss23hshss,GSS23HSHSS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gmkbb,GSS25GMKBB,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gmkes,GSS25GMKES,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gmkww,GSS25GMKWW,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gshbb,GSS25GSHBB,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gshss,GSS25GSHSS,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25gshww,GSS25GSHWW,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25iynfs,GSS25IYNFS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gss25lslss,GSS25LSLSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gte18gsnrss,GTE18GSNRSS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22gskbb,GYE22GSKBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22gskss,GYE22GSKSS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22gskww,GYE22GSKWW,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22hskbb,GYE22HSKBB,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22hskss,GYE22HSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-gye22hskww,GYE22HSKWW,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-pfe28kblts,PFE28KBLTS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kelds,PFE28KELDS,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28klyss,PFE28KLYSS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kmkbb,PFE28KMKBB,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kmkes,PFE28KMKES,rpwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kmkww,PFE28KMKWW,gswf|gswf2|xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kskbb,PFE28KSKBB,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-pfe28kskss,PFE28KSKSS,mswf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kskww,PFE28KSKWW,mwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kynbb,PFE28KYNBB,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kynfs,PFE28KYNFS,xwfe,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pfe28kynww,PFE28KYNWW,xwf|xwfe,WRONG_PART_RISK,,confusion:XWF vs XWFE (GE RFID shell mismatch),Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-pvd28bslss,PVD28BSLSS,opfg3f|smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pvd28bymfs,PVD28BYMFS,gswf|gswf2,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pvd28bynfs,PVD28BYNFS,xwf,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pwe23kmkes,PWE23KMKES,rpwfe|xwfe,WRONG_PART_RISK,,confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+ge-pwe23kskss,PWE23KSKSS,opfg3f,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+ge-pye22pynfs,PYE22PYNFS,smartwater-mwfp,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfcc22426s,LFCC22426S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfcc23596s,LFCC23596S,lt800p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfcc24596s,LFCC24596S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfcc25426s,LFCC25426S,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfcs22520d,LFCS22520D,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfcs22520s,LFCS22520S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfcs23520s,LFCS23520S,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfds22520b,LFDS22520B,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfds22520s,LFDS22520S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfx31945st,LFX31945ST,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc22526d,LFXC22526D,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxc22526s,LFXC22526S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxc22536s,LFXC22536S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc22546s,LFXC22546S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc22596b,LFXC22596B,lt800p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc22596d,LFXC22596D,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxc22596s,LFXC22596S,lt1000p|lt1000pc,WRONG_PART_RISK,data/manual-evidence/refrigerator/lg-lfxc22596s.json,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxc22696s,LFXC22696S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc23596s,LFXC23596S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc24726s,LFXC24726S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc24773s,LFXC24773S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc24796d,LFXC24796D,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxc24796s,LFXC24796S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxc24896s,LFXC24896S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs24663s,LFXS24663S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs24673s,LFXS24673S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26566s,LFXS26566S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26596d,LFXS26596D,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26596s,LFXS26596S,adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc,lt700p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs26973b,LFXS26973B,lt700p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26973d,LFXS26973D,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs26973m,LFXS26973M,lt700p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26973s,LFXS26973S,lt1000p|lt1000pc,WRONG_PART_RISK,data/manual-evidence/refrigerator/lg-lfxs26973s.json,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs26983s,LFXS26983S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs26996s,LFXS26996S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs27196s,LFXS27196S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs27596s,LFXS27596S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28566b,LFXS28566B,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs28566d,LFXS28566D,lt700p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28566m,LFXS28566M,adq73613402|adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28566s,LFXS28566S,adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc,lt700p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs28573s,LFXS28573S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28596b,LFXS28596B,lt800p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28596m,LFXS28596M,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28596s,LFXS28596S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs28696s,LFXS28696S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28968b,LFXS28968B,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28968d,LFXS28968D,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs28968s,LFXS28968S,lt1000p|lt1000pc,WRONG_PART_RISK,data/manual-evidence/refrigerator/lg-lfxs28968s.json,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs28973s,LFXS28973S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28991d,LFXS28991D,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs28991s,LFXS28991S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs29566s,LFXS29566S,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs29766d,LFXS29766D,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs29766s,LFXS29766S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs30766d,LFXS30766D,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs30766s,LFXS30766S,adq74793501|adq75795101|lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs30773s,LFXS30773S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lfxs30796d,LFXS30796D,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs30796s,LFXS30796S,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lfxs30896s,LFXS30896S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmws27626d,LMWS27626D,lt700p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmws27626s,LMWS27626S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lmws27673s,LMWS27673S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxc24796s,LMXC24796S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxc28626s,LMXC28626S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs28626d,LMXS28626D,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs28626m,LMXS28626M,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs28626s,LMXS28626S,lt1000p|lt1000pc,WRONG_PART_RISK,data/manual-evidence/refrigerator/lg-lmxs28626s.json,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lmxs28726s,LMXS28726S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs29626s,LMXS29626S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs30773s,LMXS30773S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs30786s,LMXS30786S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs30796d,LMXS30796D,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lmxs30796s,LMXS30796S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lmxs30896s,LMXS30896S,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfvc2406s,LRFVC2406S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfvs3006d,LRFVS3006D,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfvs3006s,LRFVS3006S,lt1000p|lt1000pc,WRONG_PART_RISK,data/manual-evidence/refrigerator/lg-lrfvs3006s.json,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lrfws3006s,LRFWS3006S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxc2416s,LRFXC2416S,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs2503b,LRFXS2503B,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lrfxs2503d,LRFXS2503D,adq74793501|adq75795101,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs2503s,LRFXS2503S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs2503w,LRFXS2503W,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs3106b,LRFXS3106B,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs3106d,LRFXS3106D,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrfxs3106s,LRFXS3106S,lt1000p,BLOCKED,docs/fridge-model-filter-mapping-discrepancies.md|src/lib/fridge/fridge-model-review-overrides.ts,quarantine:FILTER_MAPPING_CONFLICT,Resolve quarantine override before factory scaling.
+lg-lrfxs3106w,LRFXS3106W,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lrmvc2306d,LRMVC2306D,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lrmvc2306s,LRMVC2306S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lrmvc2406s,LRMVC2406S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrsos2706s,LRSOS2706S,lt600p,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrsxc2306s,LRSXC2306S,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrsxs2706d,LRSXS2706D,adq73613402,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lrsxs2706s,LRSXS2706S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lsxs26366d,LSXS26366D,adq73613403,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+lg-lsxs26366s,LSXS26366S,adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lsxs27366s,LSXS27366S,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+lg-lupxs3186n,LUPXS3186N,lt600p|lt800p,WRONG_PART_RISK,,"confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf18a5101sr,RF18A5101SR,da29-00003g|da97-17376a|da97-17376b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,"wildcard:DA29_COMPAT_PRESENT|confusion:Samsung DA29 (da29-00003g) + DA97 (da97-17376a,da97-17376b) co-mapped",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf18hfenbsr,RF18HFENBSR,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf18hfenbww,RF18HFENBWW,da29-00020a|da97-15217d,WRONG_PART_RISK,,confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf20a5101sr,RF20A5101SR,da29-00020a|da97-15217d,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf22k9381sg,RF22K9381SG,da29-00019a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22k9381sr,RF22K9381SR,da29-00019a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22k9381ww,RF22K9381WW,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22k9581sg,RF22K9581SG,da29-00019a|da29-10105j,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22k9581sr,RF22K9581SR,da29-00020a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22k9582sg,RF22K9582SG,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22kredbsg,RF22KREDBSG,da29-10105j,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22m9581sg,RF22M9581SG,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22n9781sg,RF22N9781SG,da97-15217d|da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22npedbsg,RF22NPEDBSG,da29-00020a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf22npedbsr,RF22NPEDBSR,da29-00020a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23a8771sr,RF23A8771SR,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23bb8200ql,RF23BB8200QL,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23bb8900ql,RF23BB8900QL,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23j9011sg,RF23J9011SG,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23j9011sr,RF23J9011SR,da29-00019a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23j9011ww,RF23J9011WW,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23m8070sg,RF23M8070SG,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf23m8070sr,RF23M8070SR,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf23m8570sg,RF23M8570SG,da29-00003g,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf23m8590sg,RF23M8590SG,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf23m8590sr,RF23M8590SR,da29-00003g|da97-17376a|da97-17376b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,"wildcard:DA29_COMPAT_PRESENT|confusion:Samsung DA29 (da29-00003g) + DA97 (da97-17376a,da97-17376b) co-mapped",Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf24bb8900ql,RF24BB8900QL,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf24fsedbsr,RF24FSEDBSR,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf24fsedsr,RF24FSEDSR,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf260beaesg,RF260BEAESG,da29-00003g|da97-08006b,WRONG_PART_RISK,,confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf260beaesp,RF260BEAESP,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf260beaesr,RF260BEAESR,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf260beaeww,RF260BEAEWW,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263beaesg,RF263BEAESG,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263beaesp,RF263BEAESP,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263beaesr,RF263BEAESR,da29-00020b,PROVEN_CORRECT,data/manual-evidence/refrigerator/samsung-rf263beaesr.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+samsung-rf263beaeww,RF263BEAEWW,da29-00019a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263teaesg,RF263TEAESG,da29-00019a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263teaesr,RF263TEAESR,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf263teaeww,RF263TEAEWW,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf265beaesg,RF265BEAESG,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf265beaesr,RF265BEAESR,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf26hfendsr,RF26HFENDSR,da97-15217d|da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf26j7500sr,RF26J7500SR,da29-10105j|da97-19467c,WRONG_PART_RISK,,confusion:Samsung DA29 (da29-10105j) + DA97 (da97-19467c) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf27t5201sr,RF27T5201SR,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf27t5501sg,RF27T5501SG,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf27t5501sr,RF27T5501SR,da29-00012b|da29-00020b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:BLOCKED_HAF_CIN_CANONICAL,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28hmedbsg,RF28HMEDBSG,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28hmedbsr,RF28HMEDBSR,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9070sg,RF28K9070SG,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9070sr,RF28K9070SR,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9070sw,RF28K9070SW,da29-00019a|da97-08006b,WRONG_PART_RISK,,confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28k9071sg,RF28K9071SG,da29-00019a|da29-10105j,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9380sg,RF28K9380SG,da29-00012b|da29-00020b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9380sr,RF28K9380SR,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28k9380sw,RF28K9380SW,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28nhedbsr,RF28NHEDBSR,da29-00020b,PROVEN_CORRECT,data/manual-evidence/refrigerator/samsung-rf28nhedbsr.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+samsung-rf28nhedbww,RF28NHEDBWW,da29-00020a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r6201sg,RF28R6201SG,da29-00019a|da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6201sr,RF28R6201SR,da29-00003g|da97-08006b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6201sw,RF28R6201SW,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r6201ww,RF28R6201WW,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6241sb,RF28R6241SB,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6241sg,RF28R6241SG,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6241sr,RF28R6241SR,da29-00020a|da97-06317a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00020a) + DA97 (da97-06317a) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6241sw,RF28R6241SW,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6251sr,RF28R6251SR,da29-00003g,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r6301sr,RF28R6301SR,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r6351sr,RF28R6351SR,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r7201sg,RF28R7201SG,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7201sr,RF28R7201SR,da97-17376b,PROVEN_CORRECT,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json|data/manual-evidence/refrigerator/samsung-rf28r7201sr.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+samsung-rf28r7201ww,RF28R7201WW,da29-00019a|da97-08006b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7351sg,RF28R7351SG,da97-17376a|da97-17376b,PROVEN_CORRECT,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json|data/manual-evidence/refrigerator/samsung-rf28r7351sg.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+samsung-rf28r7351sr,RF28R7351SR,da97-17376b,PROVEN_CORRECT,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json|data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351sr-quality-gate-v1.json|data/manual-evidence/refrigerator/samsung-rf28r7351sr.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+samsung-rf28r7351sw,RF28R7351SW,da29-00020a|da97-06317a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00020a) + DA97 (da97-06317a) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7351ww,RF28R7351WW,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json|data/fridge/batch-production/page-factory/quality-gate-v1/samsung-rf28r7351ww-quality-gate-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r7551sg,RF28R7551SG,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Wildcard COVERED with canonical HAF-QIN slug — add Tier-1 manual evidence before factory scaling.
+samsung-rf28r7551sr,RF28R7551SR,da29-00019a|da97-08006b,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT|confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7551sw,RF28R7551SW,da29-00003g,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7551ww,RF28R7551WW,da29-00020a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28r7552sr,RF28R7552SR,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r7581sg,RF28R7581SG,da29-10105j,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r7581sr,RF28R7581SR,da29-10105j,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28r7581sw,RF28R7581SW,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28t5001sb,RF28T5001SB,da97-19467c,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28t5001sg,RF28T5001SG,da29-00003g,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28t5001sr,RF28T5001SR,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Wildcard COVERED with canonical HAF-QIN slug — add Tier-1 manual evidence before factory scaling.
+samsung-rf28t5001ww,RF28T5001WW,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rf28t5021sr,RF28T5021SR,da29-00020a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28t5101sg,RF28T5101SG,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28t5101sr,RF28T5101SR,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf28t5f01sr,RF28T5F01SR,da29-00019a,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rf30bb8600ql,RF30BB8600QL,da29-00003g|da97-08006b,WRONG_PART_RISK,,confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rs22h5000sr,RS22H5000SR,da29-00020a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rs22t5201sg,RS22T5201SG,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rs22t5201sr,RS22T5201SR,da97-17376a|da97-17376b,LIKELY_CORRECT_NEEDS_EVIDENCE,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,,Wildcard COVERED with canonical HAF-QIN slug — add Tier-1 manual evidence before factory scaling.
+samsung-rs25h5000sr,RS25H5000SR,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rs25h5111sr,RS25H5111SR,da29-10105j,WRONG_PART_RISK,data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json,wildcard:REVIEW_DA29_CONFLICT,Remove wrong-family compat rows or capture model-specific proof for the correct family only.
+samsung-rs25j500dsr,RS25J500DSR,da97-08006b,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+samsung-rs25j500dww,RS25J500DWW,da97-15217d,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535sdam,WRF535SDAM,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535sdhz,WRF535SDHZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535sibz,WRF535SIBZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535sihz,WRF535SIHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535smhb,WRF535SMHB,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535smhm,WRF535SMHM,edr2rxd1|edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535smhz,WRF535SMHZ,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf535swhz,WRF535SWHZ,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cmbz,WRF540CMBZ,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cmhz,WRF540CMHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cwbz,WRF540CWBZ,4396841|4396842|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cwhb,WRF540CWHB,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cwhm,WRF540CWHM,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf540cwhz,WRF540CWHZ,edr4rxd1,PROVEN_CORRECT,data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+whirlpool-wrf540sihz,WRF540SIHZ,edr2rxd1|edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf554chhz,WRF554CHHZ,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdam,WRF555SDAM,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdfm,WRF555SDFM,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdfz,WRF555SDFZ,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdhb,WRF555SDHB,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdhv,WRF555SDHV,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sdhz,WRF555SDHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sibz,WRF555SIBZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf555sihz,WRF555SIHZ,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf736sdam,WRF736SDAM,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf756sdhz,WRF756SDHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdam,WRF757SDAM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdfz,WRF757SDFZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdhb,WRF757SDHB,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdhm,WRF757SDHM,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdhv,WRF757SDHV,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sdhz,WRF757SDHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sibz,WRF757SIBZ,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sihv,WRF757SIHV,4396395|4396508|4396710|46-9002|8171413|edr1rxd1|edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf757sihz,WRF757SIHZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sdam,WRF767SDAM,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sdhb,WRF767SDHB,ukf8001|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sdhm,WRF767SDHM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sdhv,WRF767SDHV,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sdhz,WRF767SDHZ,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf767sihz,WRF767SIHZ,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf954cihz,WRF954CIHZ,edr2rxd1|edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrf991bohz,WRF991BOHZ,4396395|4396508|4396710|46-9002|8171413|edr1rxd1|edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs312snam,WRS312SNAM,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs312snhz,WRS312SNHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sdam,WRS315SDAM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sdhb,WRS315SDHB,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sdhm,WRS315SDHM,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sdhv,WRS315SDHV,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sdhz,WRS315SDHZ,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sibz,WRS315SIBZ,4396841|4396842|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315sihz,WRS315SIHZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs315snhm,WRS315SNHM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs321sdam,WRS321SDAM,4396841|4396842|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs321snam,WRS321SNAM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325fdam,WRS325FDAM,ukf8001|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sdam,WRS325SDAM,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sdhb,WRS325SDHB,edr3rxd1|edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sdhm,WRS325SDHM,4396395|4396508|4396710|46-9002|8171413|edr1rxd1|edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sdhv,WRS325SDHV,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sdhz,WRS325SDHZ,edr1rxd1,PROVEN_CORRECT,data/manual-evidence/refrigerator/whirlpool-wrs325sdhz.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+whirlpool-wrs325sibz,WRS325SIBZ,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325sihz,WRS325SIHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs325snhz,WRS325SNHZ,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs555sihz,WRS555SIHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571ciam,WRS571CIAM,edr3rxd1|edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571cihb,WRS571CIHB,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571cihm,WRS571CIHM,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571cihv,WRS571CIHV,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571cihz,WRS571CIHZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571sdam,WRS571SDAM,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571sdhz,WRS571SDHZ,edr3rxd1|edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571sibz,WRS571SIBZ,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs571sihz,WRS571SIHZ,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588aimw,WRS588AIMW,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fiam,WRS588FIAM,ukf8001|w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fidm,WRS588FIDM,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fihb,WRS588FIHB,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fihm,WRS588FIHM,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fihv,WRS588FIHV,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588fihz,WRS588FIHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588sibm,WRS588SIBM,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588sibw,WRS588SIBW,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs588sihz,WRS588SIHZ,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrs970cidm,WRS970CIDM,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdam,WRX735SDAM,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdav,WRX735SDAV,4396395|4396508|4396710|46-9002|8171413|edr1rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdbm,WRX735SDBM,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdhb,WRX735SDHB,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdhm,WRX735SDHM,w10413645a,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdhv,WRX735SDHV,edr3rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sdhz,WRX735SDHZ,edr4rxd1,PROVEN_CORRECT,data/manual-evidence/refrigerator/whirlpool-wrx735sdhz.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+whirlpool-wrx735sibz,WRX735SIBZ,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx735sihz,WRX735SIHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx986sdhz,WRX986SDHZ,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx986sihb,WRX986SIHB,ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx986sihv,WRX986SIHV,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx986sihw,WRX986SIHW,edr2rxd1,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.
+whirlpool-wrx986sihz,WRX986SIHZ,edr2rxd1,PROVEN_CORRECT,data/manual-evidence/refrigerator/whirlpool-wrx986sihz.json,,Safe for factory scaling subject to page quality gate and buy-path gates.
+whirlpool-wrx988sibw,WRX988SIBW,edr4rxd1|ukf8001,LIKELY_CORRECT_NEEDS_EVIDENCE,,,Capture official manufacturer filter_specification evidence before scaling.

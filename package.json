@@ -99,6 +99,7 @@
     "buckparts:page-factory-evidence-clone": "tsx scripts/report-buckparts-page-factory-evidence-clone-v1.ts",
     "buckparts:page-quality-gate": "tsx scripts/report-buckparts-page-quality-gate-v1.ts",
     "buckparts:page-factory-batch-qa-director": "tsx scripts/report-buckparts-page-factory-batch-qa-director-v1.ts",
+    "buckparts:model-filter-correctness-audit": "tsx scripts/report-model-filter-correctness-audit-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
