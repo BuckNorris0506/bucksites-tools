@@ -1,0 +1,228 @@
+{
+  "contract": "family_reconciliation_owner_review_packet_v1",
+  "packet_id": "2708fe9a2cb010fc",
+  "family_key": "filter::frigidaire::wf2cb",
+  "target_filter_slug": "wf2cb",
+  "severity": "HIGH",
+  "title": "Family reconciliation — filter::frigidaire::wf2cb",
+  "summary": "13 model-line conflicts across 20 unlock slugs for wf2cb.",
+  "owner_checklist": [
+    "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+    "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+    "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+    "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+  ],
+  "slug_rows": [
+    {
+      "fridge_slug": "frigidaire-ffhb2740ps5",
+      "model_number": "FFHB2740PS5",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-ffhb2740lb",
+      "conflicting_filter_slugs": [
+        "frig-242086201",
+        "ultrawf",
+        "wf3cb",
+        "wfcb"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2740tw",
+      "model_number": "FFHB2740TW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-ffhb2740lb",
+      "conflicting_filter_slugs": [
+        "frig-242086201",
+        "ultrawf",
+        "wf3cb",
+        "wfcb"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-ffhb2750te",
+      "model_number": "FFHB2750TE",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-ffhb2750td",
+      "conflicting_filter_slugs": [
+        "eptwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-ffss2615te2",
+      "model_number": "FFSS2615TE2",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-ffss2615lb",
+      "conflicting_filter_slugs": [
+        "frig-242086201",
+        "ultrawf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2866lf",
+      "model_number": "FGHB2866LF",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-fghb2866pe",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2866pf",
+      "model_number": "FGHB2866PF",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-fghb2866pe",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-fghb2868pe",
+      "model_number": "FGHB2868PE",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-fghb2868lf",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf3",
+      "model_number": "FGSC2335TF3",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-fgsc2335lb",
+      "conflicting_filter_slugs": [
+        "frig-242086201",
+        "ultrawf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-fgsc2335tf4",
+      "model_number": "FGSC2335TF4",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-fgsc2335lb",
+      "conflicting_filter_slugs": [
+        "frig-242086201",
+        "ultrawf"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-glrsf2663af",
+      "model_number": "GLRSF2663AF",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-glrsf2663ad",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-glrsf2663af4",
+      "model_number": "GLRSF2663AF4",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-glrsf2663ad",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-glrsf2663as",
+      "model_number": "GLRSF2663AS",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-glrsf2663ad",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "frigidaire-lfhb2741ps",
+      "model_number": "LFHB2741PS",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "wf2cb"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "frigidaire-lfhb2741pe",
+      "conflicting_filter_slugs": [
+        "fppwfu01"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    }
+  ],
+  "signals": {
+    "anchor_frozen": false,
+    "prefix_contamination_count": 0,
+    "pre_research_recommendation": "NEEDS_REPO_RECONCILIATION_FIRST",
+    "hyperagent_compat_review_count": 0,
+    "learned_failure_block_count": 0
+  }
+}

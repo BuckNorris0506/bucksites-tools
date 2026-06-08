@@ -1,0 +1,298 @@
+{
+  "contract": "family_reconciliation_owner_review_packet_v1",
+  "packet_id": "e06d910c7b9bd724",
+  "family_key": "filter::whirlpool::edr4rxd1",
+  "target_filter_slug": "edr4rxd1",
+  "severity": "MEDIUM",
+  "title": "Family reconciliation — filter::whirlpool::edr4rxd1",
+  "summary": "16 model-line conflicts across 18 unlock slugs for edr4rxd1.",
+  "owner_checklist": [
+    "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+    "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+    "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+    "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+  ],
+  "slug_rows": [
+    {
+      "fridge_slug": "whirlpool-wrf535sdhz",
+      "model_number": "WRF535SDHZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf535sdam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "recommended_owner_action": "NEEDS_OWNER_BROWSER_PROOF"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535sibz",
+      "model_number": "WRF535SIBZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf535sdam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535smhb",
+      "model_number": "WRF535SMHB",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf535sdam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf540cwhm",
+      "model_number": "WRF540CWHM",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf540cmbz",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "recommended_owner_action": "NEEDS_OWNER_BROWSER_PROOF"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "model_number": "WRF540CWHZ",
+      "repo_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf540cmbz",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "recommended_owner_action": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdfz",
+      "model_number": "WRF757SDFZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf757sdam",
+      "conflicting_filter_slugs": [
+        "4396395",
+        "4396508",
+        "4396710",
+        "46-9002",
+        "8171413",
+        "edr1rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihz",
+      "model_number": "WRF757SIHZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf757sdam",
+      "conflicting_filter_slugs": [
+        "4396395",
+        "4396508",
+        "4396710",
+        "46-9002",
+        "8171413",
+        "edr1rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdam",
+      "model_number": "WRF767SDAM",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrf767sdhb",
+      "conflicting_filter_slugs": [
+        "w10413645a"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdhv",
+      "model_number": "WRS315SDHV",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrs315sdam",
+      "conflicting_filter_slugs": [
+        "4396395",
+        "4396508",
+        "4396710",
+        "46-9002",
+        "8171413",
+        "edr1rxd1"
+      ],
+      "hyperagent_cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sihz",
+      "model_number": "WRS315SIHZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrs315sdam",
+      "conflicting_filter_slugs": [
+        "4396395",
+        "4396508",
+        "4396710",
+        "46-9002",
+        "8171413",
+        "edr1rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihb",
+      "model_number": "WRS571CIHB",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrs571ciam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571cihz",
+      "model_number": "WRS571CIHZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrs571ciam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs571sdam",
+      "model_number": "WRS571SDAM",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrs571ciam",
+      "conflicting_filter_slugs": [
+        "edr3rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sdhz",
+      "model_number": "WRX735SDHZ",
+      "repo_classification": "PROVEN_CORRECT",
+      "mapped_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrx735sdam",
+      "conflicting_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx735sibz",
+      "model_number": "WRX735SIBZ",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrx735sdam",
+      "conflicting_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "whirlpool-wrx986sihv",
+      "model_number": "WRX986SIHV",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "whirlpool-wrx986sihw",
+      "conflicting_filter_slugs": [
+        "edr2rxd1"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    }
+  ],
+  "signals": {
+    "anchor_frozen": false,
+    "prefix_contamination_count": 0,
+    "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
+    "hyperagent_compat_review_count": 6,
+    "learned_failure_block_count": 0
+  }
+}

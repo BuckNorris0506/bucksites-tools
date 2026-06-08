@@ -107,6 +107,7 @@
     "buckparts:learned-failure-guards": "tsx scripts/report-learned-failure-guards-v1.ts",
     "buckparts:anchor-integrity-audit": "tsx scripts/report-anchor-integrity-audit-v1.ts",
     "buckparts:family-pre-research-risk-screen": "tsx scripts/report-family-pre-research-risk-screen-v1.ts",
+    "buckparts:family-reconciliation": "tsx scripts/report-family-reconciliation-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",

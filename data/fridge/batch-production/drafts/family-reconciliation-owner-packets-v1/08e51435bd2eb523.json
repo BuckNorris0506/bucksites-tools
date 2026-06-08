@@ -1,0 +1,193 @@
+{
+  "contract": "family_reconciliation_owner_review_packet_v1",
+  "packet_id": "08e51435bd2eb523",
+  "family_key": "filter::samsung::da97-08006b",
+  "target_filter_slug": "da97-08006b",
+  "severity": "MEDIUM",
+  "title": "Family reconciliation — filter::samsung::da97-08006b",
+  "summary": "11 model-line conflicts across 11 unlock slugs for da97-08006b.",
+  "owner_checklist": [
+    "Confirm model-line sibling mappings in data/compatibility_mappings.csv before evidence scaling.",
+    "Resolve alias/co-map WARN rows before promoting LIKELY_CORRECT slugs to PROVEN_CORRECT.",
+    "Capture owner-browser Tier-1 filter_specification proof for any slug kept in this family.",
+    "Do not apply HyperAgent compat removals until owner review closes NEEDS_COMPAT_REVIEW rows."
+  ],
+  "slug_rows": [
+    {
+      "fridge_slug": "samsung-rf22k9582sg",
+      "model_number": "RF22K9582SG",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf22k9381sg",
+      "conflicting_filter_slugs": [
+        "da29-00019a"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf22m9581sg",
+      "model_number": "RF22M9581SG",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf22k9381sg",
+      "conflicting_filter_slugs": [
+        "da29-00019a"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf23bb8900ql",
+      "model_number": "RF23BB8900QL",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf23a8771sr",
+      "conflicting_filter_slugs": [
+        "da97-19467c"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf23m8070sr",
+      "model_number": "RF23M8070SR",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf23a8771sr",
+      "conflicting_filter_slugs": [
+        "da97-19467c"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf260beaesr",
+      "model_number": "RF260BEAESR",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf260beaesg",
+      "conflicting_filter_slugs": [
+        "da29-00003g"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf263beaesg",
+      "model_number": "RF263BEAESG",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf263beaesp",
+      "conflicting_filter_slugs": [
+        "da97-15217d"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf28r6351sr",
+      "model_number": "RF28R6351SR",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf28hmedbsg",
+      "conflicting_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351ww",
+      "model_number": "RF28R7351WW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf28hmedbsg",
+      "conflicting_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf28r7581sw",
+      "model_number": "RF28R7581SW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf28hmedbsg",
+      "conflicting_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001ww",
+      "model_number": "RF28T5001WW",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rf28hmedbsg",
+      "conflicting_filter_slugs": [
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    },
+    {
+      "fridge_slug": "samsung-rs25j500dsr",
+      "model_number": "RS25J500DSR",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "mapped_filter_slugs": [
+        "da97-08006b"
+      ],
+      "conflict_type": "model_line_filter_split",
+      "conflicting_sibling_slug": "samsung-rs25h5000sr",
+      "conflicting_filter_slugs": [
+        "da97-15217d"
+      ],
+      "hyperagent_cursor_row_state": null,
+      "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
+    }
+  ],
+  "signals": {
+    "anchor_frozen": false,
+    "prefix_contamination_count": 0,
+    "pre_research_recommendation": "SAFE_FOR_HYPERAGENT_EVIDENCE_BATCH",
+    "hyperagent_compat_review_count": 0,
+    "learned_failure_block_count": 0
+  }
+}
