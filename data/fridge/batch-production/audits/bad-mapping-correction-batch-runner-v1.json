@@ -1,0 +1,2581 @@
+{
+  "contract": "bad_mapping_correction_batch_runner_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_blocked_until_owner_approval": true,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T05:58:26.211Z",
+  "source_remediation_plan_contract": "dangerous_mapping_remediation_plan_v1",
+  "source_remediation_plan_path": "data/fridge/batch-production/audits/dangerous-mapping-remediation-plan-v1.json",
+  "source_audit_contract": "model_filter_correctness_audit_v1",
+  "source_audit_path": "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+  "dangerous_slug_count": 76,
+  "correction_packets": [
+    {
+      "fridge_slug": "ge-gfe28gskww",
+      "model_number": "GFE28GSKWW",
+      "current_mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for GFE28GSKWW (ge-gfe28gskww). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: xwf|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ]
+    },
+    {
+      "fridge_slug": "ge-gfe28gynes",
+      "model_number": "GFE28GYNES",
+      "current_mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for GFE28GYNES (ge-gfe28gynes). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: xwf|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ]
+    },
+    {
+      "fridge_slug": "ge-gie21gsnerss",
+      "model_number": "GIE21GSNERSS",
+      "current_mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for GIE21GSNERSS (ge-gie21gsnerss). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: xwf|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ]
+    },
+    {
+      "fridge_slug": "ge-gye22hskww",
+      "model_number": "GYE22HSKWW",
+      "current_mapped_filter_slugs": [
+        "rpwfe",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for GYE22HSKWW (ge-gye22hskww). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: rpwfe|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+      ]
+    },
+    {
+      "fridge_slug": "ge-pfe28kskbb",
+      "model_number": "PFE28KSKBB",
+      "current_mapped_filter_slugs": [
+        "rpwfe",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for PFE28KSKBB (ge-pfe28kskbb). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: rpwfe|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+      ]
+    },
+    {
+      "fridge_slug": "ge-pfe28kynww",
+      "model_number": "PFE28KYNWW",
+      "current_mapped_filter_slugs": [
+        "xwf",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for PFE28KYNWW (ge-pfe28kynww). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: xwf|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:XWF vs XWFE (GE RFID shell mismatch)"
+      ]
+    },
+    {
+      "fridge_slug": "ge-pwe23kmkes",
+      "model_number": "PWE23KMKES",
+      "current_mapped_filter_slugs": [
+        "rpwfe",
+        "xwfe"
+      ],
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official GE spec for PWE23KMKES (ge-pwe23kmkes). Identify whether filter uses RFID shell (XWFE/RPWFE) or legacy shell (XWF/MWF). Current repo co-maps: rpwfe|xwfe.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one of xwf, xwfe, rpwfe, or mwf remains based on RFID vs legacy proof",
+        "No XWF vs XWFE or RPWFE mixed-family blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:GE RPWFE mixed with legacy MWF/XWF/XWFE family"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfcc22426s",
+      "model_number": "LFCC22426S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFCC22426S (lg-lfcc22426s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfcc25426s",
+      "model_number": "LFCC25426S",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFCC25426S (lg-lfcc25426s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfcs22520s",
+      "model_number": "LFCS22520S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFCS22520S (lg-lfcs22520s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfcs23520s",
+      "model_number": "LFCS23520S",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFCS23520S (lg-lfcs23520s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfds22520s",
+      "model_number": "LFDS22520S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFDS22520S (lg-lfds22520s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxc22526d",
+      "model_number": "LFXC22526D",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXC22526D (lg-lfxc22526d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxc22526s",
+      "model_number": "LFXC22526S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXC22526S (lg-lfxc22526s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxc22596d",
+      "model_number": "LFXC22596D",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXC22596D (lg-lfxc22596d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxc22596s",
+      "model_number": "LFXC22596S",
+      "current_mapped_filter_slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXC22596S (lg-lfxc22596s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt1000p|lt1000pc. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxc24796d",
+      "model_number": "LFXC24796D",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXC24796D (lg-lfxc24796d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs26596s",
+      "model_number": "LFXS26596S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "lt700p",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS26596S (lg-lfxs26596s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc,lt700p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs26973d",
+      "model_number": "LFXS26973D",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS26973D (lg-lfxs26973d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs26973s",
+      "model_number": "LFXS26973S",
+      "current_mapped_filter_slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS26973S (lg-lfxs26973s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt1000p|lt1000pc. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28566b",
+      "model_number": "LFXS28566B",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28566B (lg-lfxs28566b). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28566s",
+      "model_number": "LFXS28566S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "lt700p",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28566S (lg-lfxs28566s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc,lt700p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28596s",
+      "model_number": "LFXS28596S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28596S (lg-lfxs28596s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28968d",
+      "model_number": "LFXS28968D",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28968D (lg-lfxs28968d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28968s",
+      "model_number": "LFXS28968S",
+      "current_mapped_filter_slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28968S (lg-lfxs28968s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt1000p|lt1000pc. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs28991s",
+      "model_number": "LFXS28991S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS28991S (lg-lfxs28991s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs29566s",
+      "model_number": "LFXS29566S",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS29566S (lg-lfxs29566s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs30796d",
+      "model_number": "LFXS30796D",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS30796D (lg-lfxs30796d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lfxs30796s",
+      "model_number": "LFXS30796S",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LFXS30796S (lg-lfxs30796s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lmws27626s",
+      "model_number": "LMWS27626S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LMWS27626S (lg-lmws27626s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lmxs28626s",
+      "model_number": "LMXS28626S",
+      "current_mapped_filter_slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LMXS28626S (lg-lmxs28626s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt1000p|lt1000pc. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lmxs30796s",
+      "model_number": "LMXS30796S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LMXS30796S (lg-lmxs30796s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrfvs3006s",
+      "model_number": "LRFVS3006S",
+      "current_mapped_filter_slugs": [
+        "lt1000p",
+        "lt1000pc"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRFVS3006S (lg-lrfvs3006s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt1000p|lt1000pc. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrfxs2503b",
+      "model_number": "LRFXS2503B",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRFXS2503B (lg-lrfxs2503b). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrfxs3106s",
+      "model_number": "LRFXS3106S",
+      "current_mapped_filter_slugs": [
+        "lt1000p"
+      ],
+      "root_cause_group": "quarantined_models",
+      "current_classification": "BLOCKED",
+      "required_hyperagent_evidence_query": "Reconcile official LG filter token for LRFXS3106S (lg-lrfxs3106s) against docs/fridge-model-filter-mapping-discrepancies.md LT1000P claim. Current repo maps: lt1000p.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Owner signs discrepancy reconciliation for lg-lrfxs3106s",
+        "Quarantine override cleared only after owner-approved mapping"
+      ],
+      "suspected_correct_filter_family": "lg::LT1000P",
+      "allowed_correction_action": "keep_quarantine",
+      "workflow_phase": "maintain_quarantine",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "quarantine:FILTER_MAPPING_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrfxs3106w",
+      "model_number": "LRFXS3106W",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRFXS3106W (lg-lrfxs3106w). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306d",
+      "model_number": "LRMVC2306D",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRMVC2306D (lg-lrmvc2306d). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrmvc2306s",
+      "model_number": "LRMVC2306S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRMVC2306S (lg-lrmvc2306s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lrsxs2706s",
+      "model_number": "LRSXS2706S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LRSXS2706S (lg-lrsxs2706s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lsxs26366s",
+      "model_number": "LSXS26366S",
+      "current_mapped_filter_slugs": [
+        "adq36006101",
+        "adq74793502",
+        "lt1000p",
+        "lt1000pc",
+        "mdj64844601"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LSXS26366S (lg-lsxs26366s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt1000p,lt1000pc"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lsxs27366s",
+      "model_number": "LSXS27366S",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LSXS27366S (lg-lsxs27366s). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "lg-lupxs3186n",
+      "model_number": "LUPXS3186N",
+      "current_mapped_filter_slugs": [
+        "lt600p",
+        "lt800p"
+      ],
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official LG product/spec page for refrigerator LUPXS3186N (lg-lupxs3186n). Report exactly one LT cartridge OEM (LT1000P, LT1000PC, LT700P, LT600P, LT800P, or ADQ variant). Current repo co-maps multiple LT generations: lt600p|lt800p. Do not copy filter from a sibling model without model-specific proof.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Exactly one LT-generation slug remains after split_mapping",
+        "No Multiple LG LT filter generations co-mapped blocker after re-audit"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Multiple LG LT filter generations co-mapped: lt600p,lt800p"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf18a5101sr",
+      "model_number": "RF18A5101SR",
+      "current_mapped_filter_slugs": [
+        "da29-00003g",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF18A5101SR (samsung-rf18a5101sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g|da97-17376a|da97-17376b. Wildcard bucket: COVERED; matched patterns: RF18A5101**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:DA29_COMPAT_PRESENT",
+        "confusion:Samsung DA29 (da29-00003g) + DA97 (da97-17376a,da97-17376b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf18hfenbww",
+      "model_number": "RF18HFENBWW",
+      "current_mapped_filter_slugs": [
+        "da29-00020a",
+        "da97-15217d"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF18HFENBWW (samsung-rf18hfenbww). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a|da97-15217d. No wildcard review row — require model-specific official page. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf20a5101sr",
+      "model_number": "RF20A5101SR",
+      "current_mapped_filter_slugs": [
+        "da29-00020a",
+        "da97-15217d"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF20A5101SR (samsung-rf20a5101sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a|da97-15217d. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF20A5101**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00020a) + DA97 (da97-15217d) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf23m8070sg",
+      "model_number": "RF23M8070SG",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF23M8070SG (samsung-rf23m8070sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF23M8070**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf23m8570sg",
+      "model_number": "RF23M8570SG",
+      "current_mapped_filter_slugs": [
+        "da29-00003g"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF23M8570SG (samsung-rf23m8570sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF23M8570**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf23m8590sg",
+      "model_number": "RF23M8590SG",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF23M8590SG (samsung-rf23m8590sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF23M8590**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf23m8590sr",
+      "model_number": "RF23M8590SR",
+      "current_mapped_filter_slugs": [
+        "da29-00003g",
+        "da97-17376a",
+        "da97-17376b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF23M8590SR (samsung-rf23m8590sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g|da97-17376a|da97-17376b. Wildcard bucket: COVERED; matched patterns: RF23M8590**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:DA29_COMPAT_PRESENT",
+        "confusion:Samsung DA29 (da29-00003g) + DA97 (da97-17376a,da97-17376b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf260beaesg",
+      "model_number": "RF260BEAESG",
+      "current_mapped_filter_slugs": [
+        "da29-00003g",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF260BEAESG (samsung-rf260beaesg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g|da97-08006b. No wildcard review row — require model-specific official page. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf26j7500sr",
+      "model_number": "RF26J7500SR",
+      "current_mapped_filter_slugs": [
+        "da29-10105j",
+        "da97-19467c"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF26J7500SR (samsung-rf26j7500sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j|da97-19467c. No wildcard review row — require model-specific official page. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Samsung DA29 (da29-10105j) + DA97 (da97-19467c) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "model_number": "RF27T5201SR",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF27T5201SR (samsung-rf27t5201sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF27T5201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "model_number": "RF27T5501SR",
+      "current_mapped_filter_slugs": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "root_cause_group": "samsung_haf_cin_canonical_blockers",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Confirm official Samsung filter for RF27T5501SR (samsung-rf27t5501sr) is HAF-CIN / DA29-00020B only. Prove whether da29-00012b is wrong-family for this slug. Current repo compat maps: da29-00012b|da29-00020b.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official proof confirms HAF-CIN / DA29-00020B",
+        "da29-00012b absent from corrected mapping",
+        "legacyFilterSlugsMatchOfficialTokenV1 passes for samsung::HAFCIN"
+      ],
+      "suspected_correct_filter_family": "samsung::HAFCIN",
+      "allowed_correction_action": "remove_mapping",
+      "workflow_phase": "owner_compat_review",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": true,
+      "immediate_surgical_candidate": true,
+      "blockers": [
+        "wildcard:BLOCKED_HAF_CIN_CANONICAL"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28k9070sw",
+      "model_number": "RF28K9070SW",
+      "current_mapped_filter_slugs": [
+        "da29-00019a",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28K9070SW (samsung-rf28k9070sw). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a|da97-08006b. No wildcard review row — require model-specific official page. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201sg",
+      "model_number": "RF28R6201SG",
+      "current_mapped_filter_slugs": [
+        "da29-00019a",
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6201SG (samsung-rf28r6201sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a|da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201sr",
+      "model_number": "RF28R6201SR",
+      "current_mapped_filter_slugs": [
+        "da29-00003g",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6201SR (samsung-rf28r6201sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g|da97-08006b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6201ww",
+      "model_number": "RF28R6201WW",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6201WW (samsung-rf28r6201ww). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sb",
+      "model_number": "RF28R6241SB",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6241SB (samsung-rf28r6241sb). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6241**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sg",
+      "model_number": "RF28R6241SG",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6241SG (samsung-rf28r6241sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6241**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sr",
+      "model_number": "RF28R6241SR",
+      "current_mapped_filter_slugs": [
+        "da29-00020a",
+        "da97-06317a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6241SR (samsung-rf28r6241sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a|da97-06317a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6241**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00020a) + DA97 (da97-06317a) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6241sw",
+      "model_number": "RF28R6241SW",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6241SW (samsung-rf28r6241sw). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6241**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "model_number": "RF28R6301SR",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6301SR (samsung-rf28r6301sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6301**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201sg",
+      "model_number": "RF28R7201SG",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7201SG (samsung-rf28r7201sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7201ww",
+      "model_number": "RF28R7201WW",
+      "current_mapped_filter_slugs": [
+        "da29-00019a",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7201WW (samsung-rf28r7201ww). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a|da97-08006b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7351sw",
+      "model_number": "RF28R7351SW",
+      "current_mapped_filter_slugs": [
+        "da29-00020a",
+        "da97-06317a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7351SW (samsung-rf28r7351sw). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a|da97-06317a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7351**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00020a) + DA97 (da97-06317a) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551sr",
+      "model_number": "RF28R7551SR",
+      "current_mapped_filter_slugs": [
+        "da29-00019a",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7551SR (samsung-rf28r7551sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a|da97-08006b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7551**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT",
+        "confusion:Samsung DA29 (da29-00019a) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551sw",
+      "model_number": "RF28R7551SW",
+      "current_mapped_filter_slugs": [
+        "da29-00003g"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7551SW (samsung-rf28r7551sw). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7551**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r7551ww",
+      "model_number": "RF28R7551WW",
+      "current_mapped_filter_slugs": [
+        "da29-00020a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R7551WW (samsung-rf28r7551ww). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R7551**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5001sg",
+      "model_number": "RF28T5001SG",
+      "current_mapped_filter_slugs": [
+        "da29-00003g"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5001SG (samsung-rf28t5001sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5001**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5021sr",
+      "model_number": "RF28T5021SR",
+      "current_mapped_filter_slugs": [
+        "da29-00020a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5021SR (samsung-rf28t5021sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00020a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5021**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sg",
+      "model_number": "RF28T5101SG",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5101SG (samsung-rf28t5101sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5101**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "model_number": "RF28T5101SR",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5101SR (samsung-rf28t5101sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5101**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5f01sr",
+      "model_number": "RF28T5F01SR",
+      "current_mapped_filter_slugs": [
+        "da29-00019a"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5F01SR (samsung-rf28t5f01sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5F01**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf30bb8600ql",
+      "model_number": "RF30BB8600QL",
+      "current_mapped_filter_slugs": [
+        "da29-00003g",
+        "da97-08006b"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF30BB8600QL (samsung-rf30bb8600ql). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00003g|da97-08006b. No wildcard review row — require model-specific official page. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "confusion:Samsung DA29 (da29-00003g) + DA97 (da97-08006b) co-mapped"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "model_number": "RS22T5201SG",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RS22T5201SG (samsung-rs22t5201sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RS22T5201**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rs25h5111sr",
+      "model_number": "RS25H5111SR",
+      "current_mapped_filter_slugs": [
+        "da29-10105j"
+      ],
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "current_classification": "WRONG_PART_RISK",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RS25H5111SR (samsung-rs25h5111sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RS25H5111**. Do not infer from sibling models or wildcard expansion alone.",
+      "evidence_acceptance_criteria": [
+        "Source is official manufacturer product/spec/support page for the exact model number",
+        "Captured filter token matches a single catalog slug in data/filters.csv",
+        "Manual evidence JSON records filter_specification source with model slug match",
+        "Official token resolves to samsung::HAFQIN (da97-17376a|da97-17376b) OR samsung::HAFCIN (da29-00020b) per cross-reference module",
+        "Post-correction mapping contains only slugs from one proven Samsung marketing-token family",
+        "Re-run model_filter_correctness_audit_v1 — confusion blockers cleared for slug"
+      ],
+      "suspected_correct_filter_family": "UNKNOWN",
+      "allowed_correction_action": "noindex_until_proven",
+      "workflow_phase": "hyperagent_research",
+      "mutation_authorized": false,
+      "owner_approval_required": true,
+      "mutation_ready": false,
+      "immediate_surgical_candidate": false,
+      "blockers": [
+        "wildcard:REVIEW_DA29_CONFLICT"
+      ]
+    }
+  ],
+  "hyperagent_research_batch_groups": [
+    {
+      "batch_group_id": "hyperagent-lg-lt-generation-co-maps-adq36006101-adq74793502-lt1000p-lt1000pc-mdj64844601",
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "mapped_filter_pattern": "adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601",
+      "slug_count": 15,
+      "fridge_slugs": [
+        "lg-lfcc22426s",
+        "lg-lfcs22520s",
+        "lg-lfds22520s",
+        "lg-lfxc22526s",
+        "lg-lfxc24796d",
+        "lg-lfxs26973d",
+        "lg-lfxs28596s",
+        "lg-lfxs28968d",
+        "lg-lfxs28991s",
+        "lg-lfxs30796d",
+        "lg-lmws27626s",
+        "lg-lmxs30796s",
+        "lg-lrmvc2306s",
+        "lg-lrsxs2706s",
+        "lg-lsxs26366s"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — LG LT generation research batch.\nBatch ID: hyperagent-lg-lt-generation-co-maps-adq36006101-adq74793502-lt1000p-lt1000pc-mdj64844601.\nMapped pattern: adq36006101|adq74793502|lt1000p|lt1000pc|mdj64844601.\nModels (15): LFCC22426S, LFCS22520S, LFDS22520S, LFXC22526S, LFXC24796D, LFXS26973D, LFXS28596S, LFXS28968D, LFXS28991S, LFXS30796D, LMWS27626S, LMXS30796S, LRMVC2306S, LRSXS2706S, LSXS26366S.\nSlugs: lg-lfcc22426s, lg-lfcs22520s, lg-lfds22520s, lg-lfxc22526s, lg-lfxc24796d, lg-lfxs26973d, lg-lfxs28596s, lg-lfxs28968d, lg-lfxs28991s, lg-lfxs30796d, lg-lmws27626s, lg-lmxs30796s, lg-lrmvc2306s, lg-lrsxs2706s, lg-lsxs26366s.\nFor each model, find the official LG product/spec page and extract exactly one LT cartridge OEM.\nCurrent repo co-maps multiple LT generations — identify the single correct token per model.\nDo not infer from sibling models. Output filter_specification evidence per slug."
+    },
+    {
+      "batch_group_id": "hyperagent-lg-lt-generation-co-maps-lt600p-lt800p",
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "mapped_filter_pattern": "lt600p|lt800p",
+      "slug_count": 12,
+      "fridge_slugs": [
+        "lg-lfcc25426s",
+        "lg-lfcs23520s",
+        "lg-lfxc22526d",
+        "lg-lfxc22596d",
+        "lg-lfxs28566b",
+        "lg-lfxs29566s",
+        "lg-lfxs30796s",
+        "lg-lrfxs2503b",
+        "lg-lrfxs3106w",
+        "lg-lrmvc2306d",
+        "lg-lsxs27366s",
+        "lg-lupxs3186n"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — LG LT generation research batch.\nBatch ID: hyperagent-lg-lt-generation-co-maps-lt600p-lt800p.\nMapped pattern: lt600p|lt800p.\nModels (12): LFCC25426S, LFCS23520S, LFXC22526D, LFXC22596D, LFXS28566B, LFXS29566S, LFXS30796S, LRFXS2503B, LRFXS3106W, LRMVC2306D, LSXS27366S, LUPXS3186N.\nSlugs: lg-lfcc25426s, lg-lfcs23520s, lg-lfxc22526d, lg-lfxc22596d, lg-lfxs28566b, lg-lfxs29566s, lg-lfxs30796s, lg-lrfxs2503b, lg-lrfxs3106w, lg-lrmvc2306d, lg-lsxs27366s, lg-lupxs3186n.\nFor each model, find the official LG product/spec page and extract exactly one LT cartridge OEM.\nCurrent repo co-maps multiple LT generations — identify the single correct token per model.\nDo not infer from sibling models. Output filter_specification evidence per slug."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-10105j",
+      "slug_count": 8,
+      "fridge_slugs": [
+        "samsung-rf23m8070sg",
+        "samsung-rf27t5201sr",
+        "samsung-rf28r6201ww",
+        "samsung-rf28r6241sw",
+        "samsung-rf28r7201sg",
+        "samsung-rf28t5101sg",
+        "samsung-rs22t5201sg",
+        "samsung-rs25h5111sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j.\nMapped pattern: da29-10105j.\nModels (8): RF23M8070SG, RF27T5201SR, RF28R6201WW, RF28R6241SW, RF28R7201SG, RF28T5101SG, RS22T5201SG, RS25H5111SR.\nSlugs: samsung-rf23m8070sg, samsung-rf27t5201sr, samsung-rf28r6201ww, samsung-rf28r6241sw, samsung-rf28r7201sg, samsung-rf28t5101sg, samsung-rs22t5201sg, samsung-rs25h5111sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00019a",
+      "slug_count": 6,
+      "fridge_slugs": [
+        "samsung-rf23m8590sg",
+        "samsung-rf28r6241sb",
+        "samsung-rf28r6241sg",
+        "samsung-rf28r6301sr",
+        "samsung-rf28t5101sr",
+        "samsung-rf28t5f01sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a.\nMapped pattern: da29-00019a.\nModels (6): RF23M8590SG, RF28R6241SB, RF28R6241SG, RF28R6301SR, RF28T5101SR, RF28T5F01SR.\nSlugs: samsung-rf23m8590sg, samsung-rf28r6241sb, samsung-rf28r6241sg, samsung-rf28r6301sr, samsung-rf28t5101sr, samsung-rf28t5f01sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-lg-lt-generation-co-maps-lt1000p-lt1000pc",
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "mapped_filter_pattern": "lt1000p|lt1000pc",
+      "slug_count": 5,
+      "fridge_slugs": [
+        "lg-lfxc22596s",
+        "lg-lfxs26973s",
+        "lg-lfxs28968s",
+        "lg-lmxs28626s",
+        "lg-lrfvs3006s"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — LG LT generation research batch.\nBatch ID: hyperagent-lg-lt-generation-co-maps-lt1000p-lt1000pc.\nMapped pattern: lt1000p|lt1000pc.\nModels (5): LFXC22596S, LFXS26973S, LFXS28968S, LMXS28626S, LRFVS3006S.\nSlugs: lg-lfxc22596s, lg-lfxs26973s, lg-lfxs28968s, lg-lmxs28626s, lg-lrfvs3006s.\nFor each model, find the official LG product/spec page and extract exactly one LT cartridge OEM.\nCurrent repo co-maps multiple LT generations — identify the single correct token per model.\nDo not infer from sibling models. Output filter_specification evidence per slug."
+    },
+    {
+      "batch_group_id": "hyperagent-ge-xwf-xwfe-rpwfe-legacy-mixes-xwf-xwfe",
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "mapped_filter_pattern": "xwf|xwfe",
+      "slug_count": 4,
+      "fridge_slugs": [
+        "ge-gfe28gskww",
+        "ge-gfe28gynes",
+        "ge-gie21gsnerss",
+        "ge-pfe28kynww"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — GE RFID vs legacy shell research batch.\nBatch ID: hyperagent-ge-xwf-xwfe-rpwfe-legacy-mixes-xwf-xwfe.\nMapped pattern: xwf|xwfe.\nModels (4): GFE28GSKWW, GFE28GYNES, GIE21GSNERSS, PFE28KYNWW.\nSlugs: ge-gfe28gskww, ge-gfe28gynes, ge-gie21gsnerss, ge-pfe28kynww.\nFor each model, find the official GE spec and determine RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell.\nOutput one proven filter slug per model for post-research split_mapping."
+    },
+    {
+      "batch_group_id": "hyperagent-ge-xwf-xwfe-rpwfe-legacy-mixes-rpwfe-xwfe",
+      "root_cause_group": "ge_xwf_xwfe_rpwfe_legacy_mixes",
+      "mapped_filter_pattern": "rpwfe|xwfe",
+      "slug_count": 3,
+      "fridge_slugs": [
+        "ge-gye22hskww",
+        "ge-pfe28kskbb",
+        "ge-pwe23kmkes"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — GE RFID vs legacy shell research batch.\nBatch ID: hyperagent-ge-xwf-xwfe-rpwfe-legacy-mixes-rpwfe-xwfe.\nMapped pattern: rpwfe|xwfe.\nModels (3): GYE22HSKWW, PFE28KSKBB, PWE23KMKES.\nSlugs: ge-gye22hskww, ge-pfe28kskbb, ge-pwe23kmkes.\nFor each model, find the official GE spec and determine RFID (XWFE/RPWFE) vs legacy (XWF/MWF) shell.\nOutput one proven filter slug per model for post-research split_mapping."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00003g",
+      "slug_count": 3,
+      "fridge_slugs": [
+        "samsung-rf23m8570sg",
+        "samsung-rf28r7551sw",
+        "samsung-rf28t5001sg"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g.\nMapped pattern: da29-00003g.\nModels (3): RF23M8570SG, RF28R7551SW, RF28T5001SG.\nSlugs: samsung-rf23m8570sg, samsung-rf28r7551sw, samsung-rf28t5001sg.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g-da97-08006b",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00003g|da97-08006b",
+      "slug_count": 3,
+      "fridge_slugs": [
+        "samsung-rf260beaesg",
+        "samsung-rf28r6201sr",
+        "samsung-rf30bb8600ql"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g-da97-08006b.\nMapped pattern: da29-00003g|da97-08006b.\nModels (3): RF260BEAESG, RF28R6201SR, RF30BB8600QL.\nSlugs: samsung-rf260beaesg, samsung-rf28r6201sr, samsung-rf30bb8600ql.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a-da97-08006b",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00019a|da97-08006b",
+      "slug_count": 3,
+      "fridge_slugs": [
+        "samsung-rf28k9070sw",
+        "samsung-rf28r7201ww",
+        "samsung-rf28r7551sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a-da97-08006b.\nMapped pattern: da29-00019a|da97-08006b.\nModels (3): RF28K9070SW, RF28R7201WW, RF28R7551SR.\nSlugs: samsung-rf28k9070sw, samsung-rf28r7201ww, samsung-rf28r7551sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-lg-lt-generation-co-maps-adq36006101-adq74793502-lt1000p-lt1000pc-lt700p-mdj64844601",
+      "root_cause_group": "lg_lt_generation_co_maps",
+      "mapped_filter_pattern": "adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601",
+      "slug_count": 2,
+      "fridge_slugs": [
+        "lg-lfxs26596s",
+        "lg-lfxs28566s"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — LG LT generation research batch.\nBatch ID: hyperagent-lg-lt-generation-co-maps-adq36006101-adq74793502-lt1000p-lt1000pc-lt700p-mdj64844601.\nMapped pattern: adq36006101|adq74793502|lt1000p|lt1000pc|lt700p|mdj64844601.\nModels (2): LFXS26596S, LFXS28566S.\nSlugs: lg-lfxs26596s, lg-lfxs28566s.\nFor each model, find the official LG product/spec page and extract exactly one LT cartridge OEM.\nCurrent repo co-maps multiple LT generations — identify the single correct token per model.\nDo not infer from sibling models. Output filter_specification evidence per slug."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g-da97-17376a-da97-17376b",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00003g|da97-17376a|da97-17376b",
+      "slug_count": 2,
+      "fridge_slugs": [
+        "samsung-rf18a5101sr",
+        "samsung-rf23m8590sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00003g-da97-17376a-da97-17376b.\nMapped pattern: da29-00003g|da97-17376a|da97-17376b.\nModels (2): RF18A5101SR, RF23M8590SR.\nSlugs: samsung-rf18a5101sr, samsung-rf23m8590sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00020a",
+      "slug_count": 2,
+      "fridge_slugs": [
+        "samsung-rf28r7551ww",
+        "samsung-rf28t5021sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a.\nMapped pattern: da29-00020a.\nModels (2): RF28R7551WW, RF28T5021SR.\nSlugs: samsung-rf28r7551ww, samsung-rf28t5021sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a-da97-06317a",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00020a|da97-06317a",
+      "slug_count": 2,
+      "fridge_slugs": [
+        "samsung-rf28r6241sr",
+        "samsung-rf28r7351sw"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a-da97-06317a.\nMapped pattern: da29-00020a|da97-06317a.\nModels (2): RF28R6241SR, RF28R7351SW.\nSlugs: samsung-rf28r6241sr, samsung-rf28r7351sw.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a-da97-15217d",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00020a|da97-15217d",
+      "slug_count": 2,
+      "fridge_slugs": [
+        "samsung-rf18hfenbww",
+        "samsung-rf20a5101sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00020a-da97-15217d.\nMapped pattern: da29-00020a|da97-15217d.\nModels (2): RF18HFENBWW, RF20A5101SR.\nSlugs: samsung-rf18hfenbww, samsung-rf20a5101sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a-da29-10105j",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-00019a|da29-10105j",
+      "slug_count": 1,
+      "fridge_slugs": [
+        "samsung-rf28r6201sg"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-00019a-da29-10105j.\nMapped pattern: da29-00019a|da29-10105j.\nModels (1): RF28R6201SG.\nSlugs: samsung-rf28r6201sg.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    },
+    {
+      "batch_group_id": "hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j-da97-19467c",
+      "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
+      "mapped_filter_pattern": "da29-10105j|da97-19467c",
+      "slug_count": 1,
+      "fridge_slugs": [
+        "samsung-rf26j7500sr"
+      ],
+      "workflow_phase": "hyperagent_research",
+      "compat_edit_authorized": false,
+      "hyperagent_research_prompt": "BuckParts BAD_MAPPING_CORRECTION_BATCH — Samsung DA29/DA97 research batch.\nBatch ID: hyperagent-samsung-haf-qin-da29-da97-conflicts-da29-10105j-da97-19467c.\nMapped pattern: da29-10105j|da97-19467c.\nModels (1): RF26J7500SR.\nSlugs: samsung-rf26j7500sr.\nFor each model, find the official Samsung support/spec page and extract:\n1) Water filter marketing token (HAF-QIN or HAF-CIN)\n2) Exact DA97 or DA29 OEM part number\n3) Source URL and page title\nReject wildcard-only inference. Cross-check against samsung::HAFQIN (da97-17376a/b) and samsung::HAFCIN (da29-00020b) repo-proven families.\nOutput: one evidence row per slug suitable for data/manual-evidence/refrigerator/{slug}.json filter_specification source."
+    }
+  ],
+  "recommended_first_batch_slugs": [
+    "samsung-rf23m8070sg",
+    "samsung-rf23m8590sg",
+    "samsung-rf27t5201sr",
+    "samsung-rf27t5501sr",
+    "samsung-rf28r6201ww",
+    "samsung-rf28r6241sb",
+    "samsung-rf28r6241sg",
+    "samsung-rf28r6241sw",
+    "samsung-rf28r6301sr",
+    "samsung-rf28r7201sg",
+    "samsung-rf28t5101sg",
+    "samsung-rf28t5101sr",
+    "samsung-rf28t5f01sr",
+    "samsung-rs22t5201sg",
+    "samsung-rs25h5111sr"
+  ],
+  "post_hyperagent_validation_checklist": [
+    "Manual evidence JSON exists at data/manual-evidence/refrigerator/{slug}.json with matching fridge_model_slug",
+    "At least one source has evidence_role=filter_specification citing official manufacturer page",
+    "Extracted OEM token maps to exactly one slug in data/filters.csv",
+    "Proposed corrected mapping uses only slugs from one repo-proven filter family",
+    "Re-run model_filter_correctness_audit_v1 — slug no longer WRONG_PART_RISK or BLOCKED",
+    "For Samsung: legacyFilterSlugsMatchOfficialTokenV1 passes when marketing token is HAF-QIN or HAF-CIN",
+    "Owner approval packet filed before any compatibility_mappings.csv edit",
+    "No Supabase, sitemap, robots, or public page mutation from this runner"
+  ],
+  "classification_promotion_criteria": [
+    {
+      "from_classification": "WRONG_PART_RISK",
+      "to_classification": "PROVEN_CORRECT",
+      "criteria": [
+        "Official manufacturer filter_specification evidence exists for fridge_slug",
+        "legacyFilterSlugsMatchOfficialTokenV1 passes for brand and corrected mapped_filter_slugs",
+        "model_filter_correctness_audit_v1 reports zero confusion/wildcard wrong-family blockers for slug",
+        "validateRefrigeratorManualEvidencePublicReady passes when page-factory scaling is intended"
+      ]
+    },
+    {
+      "from_classification": "WRONG_PART_RISK",
+      "to_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "criteria": [
+        "Corrected mapping contains exactly one filter-family slug with no co-map blockers",
+        "Official filter token captured but manual evidence public-ready Tier-1 gaps remain",
+        "model_filter_correctness_audit_v1 classification is no longer WRONG_PART_RISK",
+        "Page factory scaling still blocked until public-ready evidence completes"
+      ]
+    },
+    {
+      "from_classification": "BLOCKED",
+      "to_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "criteria": [
+        "Quarantine override cleared by owner after mapping reconciliation",
+        "Single proven filter slug mapped with no wrong-family blockers",
+        "Discrepancy doc reconciled when quarantine reason was FILTER_MAPPING_CONFLICT"
+      ]
+    },
+    {
+      "from_classification": "BLOCKED",
+      "to_classification": "PROVEN_CORRECT",
+      "criteria": [
+        "Quarantine cleared and official proof aligns with corrected mapping",
+        "All PROVEN_CORRECT promotion criteria for WRONG_PART_RISK also satisfied"
+      ]
+    }
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "correction_packets": ".correction_packets",
+      "hyperagent_research_batch_groups": ".hyperagent_research_batch_groups",
+      "recommended_first_batch_slugs": ".recommended_first_batch_slugs"
+    },
+    "recommended_next_action": "Run HyperAgent on recommended_first_batch_slugs (surgical samsung-rf27t5501sr + Samsung da29-10105j/da29-00019a research batches), validate against post_hyperagent_validation_checklist, then owner-review compat edits."
+  },
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filter_aliases.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/audits/dangerous-mapping-remediation-plan-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/hyperagent/haf-qin-candidates-v1.csv",
+    "data/fridge/batch-production/hyperagent/haf-qin-wildcard-expansion-review-v1.json",
+    "data/fridge_model_aliases.csv",
+    "data/manual-evidence/refrigerator",
+    "scripts/lib/refrigerator-model-first-samsung-marketing-token-cross-reference-v1.ts"
+  ],
+  "proven_facts": [
+    "PROVEN: dangerous_slug_count=76 from data/fridge/batch-production/audits/dangerous-mapping-remediation-plan-v1.json.",
+    "PROVEN: immediate_surgical_candidate_count=1 (samsung-rf27t5501sr HAF-CIN canonical).",
+    "PROVEN: hyperagent_research_batch_groups=17 with compat_edit_authorized=false.",
+    "PROVEN: recommended_first_batch_slugs=15 slugs.",
+    "PROVEN: Read-only correction runner — mutation_authorized=false on all packets."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: HyperAgent capture quality until post_hyperagent_validation_checklist is run per slug.",
+    "UNKNOWN: Live Supabase compat rows vs committed CSV during correction workflow."
+  ]
+}
