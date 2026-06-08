@@ -1,5 +1,3 @@
-import Script from "next/script";
-
 /** BuckParts production Grow Faves site id (Mediavine dashboard). */
 export const GROW_FAVES_DEFAULT_SITE_ID_V1 =
   "U2l0ZToyZDhhODA4NS1hYzY4LTQ2ZWEtODcwZi1kOTJmYTM2ZGMyMjI=" as const;
@@ -18,18 +16,17 @@ export function resolveGrowFavesSiteId(): string | null {
   return null;
 }
 
-function buildGrowInitializerSnippet(siteId: string): string {
+export function buildGrowInitializerSnippet(siteId: string): string {
   return `!(function(){window.growMe||((window.growMe=function(e){window.growMe._.push(e);}),(window.growMe._=[]));var e=document.createElement("script");(e.type="text/javascript"),(e.src="https://faves.grow.me/main.js"),(e.defer=!0),e.setAttribute("data-grow-faves-site-id","${siteId}");var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t);})();`;
 }
 
+/** Plain `<head>` initializer for Grow portal scanners (not next/script). */
 export function GrowScripts() {
   const siteId = resolveGrowFavesSiteId();
   if (!siteId) return null;
 
   return (
-    <Script
-      id="grow-me-initializer"
-      strategy="afterInteractive"
+    <script
       data-grow-initializer=""
       dangerouslySetInnerHTML={{ __html: buildGrowInitializerSnippet(siteId) }}
     />

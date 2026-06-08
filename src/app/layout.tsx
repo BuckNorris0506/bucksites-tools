@@ -56,12 +56,12 @@ export default function RootLayout({
           <meta name="buckparts-deploy-commit" content={deployCommitRef} />
         ) : null}
         <JsonLdScript data={siteWideJsonLd} />
+        <GrowScripts />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <AnalyticsScripts />
-        <GrowScripts />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
