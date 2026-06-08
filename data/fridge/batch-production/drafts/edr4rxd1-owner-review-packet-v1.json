@@ -1,0 +1,370 @@
+{
+  "contract": "edr4rxd1_owner_review_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-08T22:04:15.462Z",
+  "source_command": "npm run buckparts:edr4rxd1-owner-review-packet",
+  "validation_status": "VALIDATION_PARTIAL",
+  "family_key": "filter::whirlpool::edr4rxd1",
+  "family_reconciliation_severity": "MEDIUM",
+  "safe_for_scaling": false,
+  "safe_for_bounded_research": true,
+  "owner_review_required": true,
+  "command_center_action_scope": "BOUNDED_RESEARCH_ONLY",
+  "evidence_promotion_candidates": [
+    {
+      "fridge_slug": "whirlpool-wrf540cwhz",
+      "hyperagent_claim": "PROVEN / APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_row_state": "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_verdict": "CONFIRMED",
+      "repo_classification": "PROVEN_CORRECT",
+      "repo_learned_failure_aggregate": "PASS",
+      "repo_compat_maps_edr4rxd1": true,
+      "repo_manual_evidence_path": "data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json",
+      "mapped_filter_slugs": [
+        "edr4rxd1"
+      ],
+      "reason": "Repo already PROVEN_CORRECT with Tier-1 manual evidence and PASS guards before HyperAgent batch; HyperAgent rediscovery is consistent but adds no new repo closure.",
+      "recommended_owner_action": "Confirm existing operator-reviewed manual evidence only — HyperAgent rediscovery adds no automatic repo promotion.",
+      "mutation_authorized": false
+    }
+  ],
+  "browser_proof_targets": [
+    {
+      "fridge_slug": "whirlpool-wrf535sdhz",
+      "hyperagent_claim": "PROVEN / APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "cursor_verdict": "REJECTED_AS_PROVEN",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "repo_manual_evidence_path": null,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "No committed manual-evidence JSON; HyperAgent EveryDrop filter-finder claim is not repo proof. single_filter_family WARN (edr4rxd1+ukf8001 co-map). Owner must capture Tier-1 filter_specification with operator_reviewed before PROVEN_CORRECT.",
+      "recommended_owner_action": "Capture Tier-1 filter_specification with operator_reviewed browser proof before PROVEN_CORRECT promotion.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrf540cwhm",
+      "hyperagent_claim": "PROVEN / APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "cursor_verdict": "REJECTED_AS_PROVEN",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "repo_manual_evidence_path": null,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "HyperAgent cites WRF540CWHW platform page, not exact WRF540CWHM repo slug evidence. No manual-evidence fixture. Family anchor wrf540cwhz exists for clone path, but this slug has no existing proof — APPLY_ELIGIBLE_WITH_EXISTING_PROOF label rejected.",
+      "recommended_owner_action": "Capture Tier-1 filter_specification with operator_reviewed browser proof before PROVEN_CORRECT promotion.",
+      "mutation_authorized": false
+    }
+  ],
+  "compat_review_candidates": [
+    {
+      "fridge_slug": "whirlpool-wrf535smhb",
+      "hyperagent_claim": "WRONG_PART_RISK / NONE filter / NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo does not classify WRONG_PART_RISK (wrong_part_risk_count=0 for family). Series heterogeneity and HyperAgent no-dispenser claim warrant compat supersession review — not automatic removal.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrf736sdam",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1 (W10413645A)",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "HyperAgent manual PDF claim not in repo evidence. No committed sibling line in audit to corroborate EDR2RXD1 — compat review required before reclassifying or removing edr4rxd1 map.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdfz",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo WRF757 suffix heterogeneity supports HyperAgent Filter-2 direction. HyperAgent used owners-center sibling URLs — exact-model proof UNKNOWN in repo.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihz",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Same WRF757 series split as sdfz; repo sibling maps align with HyperAgent EDR2RXD1 direction but compat CSV still lists edr4rxd1.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdam",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo WRF767 suffix maps Filter-2 token on SDHB sibling; HyperAgent platform/sibling evidence not committed — compat review before removal from edr4rxd1 family.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdhv",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR1RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Strong repo series signal that WRS315 suffixes split Filter 1 vs 2 vs 4; WRS325SDHZ is PROVEN edr1rxd1 in repo. HyperAgent EDR1RXD1 claim plausible but not repo-closed.",
+      "recommended_owner_action": "Owner compat review required before edr4rxd1 map removal or supersession relabel — HyperAgent WRONG_PART_RISK is not repo closure.",
+      "mutation_authorized": false
+    }
+  ],
+  "no_action_rows": [
+    {
+      "fridge_slug": "whirlpool-wrf535sdhz",
+      "hyperagent_claim": "PROVEN / APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "cursor_verdict": "REJECTED_AS_PROVEN",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "repo_manual_evidence_path": null,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "No committed manual-evidence JSON; HyperAgent EveryDrop filter-finder claim is not repo proof. single_filter_family WARN (edr4rxd1+ukf8001 co-map). Owner must capture Tier-1 filter_specification with operator_reviewed before PROVEN_CORRECT.",
+      "recommended_owner_action": "Reject HyperAgent PROVEN closure — repo has no committed manual-evidence JSON for this slug.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_PROVEN_REJECTED"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf540cwhm",
+      "hyperagent_claim": "PROVEN / APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
+      "cursor_row_state": "NEEDS_OWNER_BROWSER_PROOF",
+      "cursor_verdict": "REJECTED_AS_PROVEN",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "repo_manual_evidence_path": null,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "HyperAgent cites WRF540CWHW platform page, not exact WRF540CWHM repo slug evidence. No manual-evidence fixture. Family anchor wrf540cwhz exists for clone path, but this slug has no existing proof — APPLY_ELIGIBLE_WITH_EXISTING_PROOF label rejected.",
+      "recommended_owner_action": "Reject HyperAgent PROVEN closure — repo has no committed manual-evidence JSON for this slug.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_PROVEN_REJECTED"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf535smhb",
+      "hyperagent_claim": "WRONG_PART_RISK / NONE filter / NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo does not classify WRONG_PART_RISK (wrong_part_risk_count=0 for family). Series heterogeneity and HyperAgent no-dispenser claim warrant compat supersession review — not automatic removal.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_NOT_REPO_CLOSURE"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf736sdam",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1 (W10413645A)",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "HyperAgent manual PDF claim not in repo evidence. No committed sibling line in audit to corroborate EDR2RXD1 — compat review required before reclassifying or removing edr4rxd1 map.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_UNKNOWN_SUPPORT"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sdfz",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo WRF757 suffix heterogeneity supports HyperAgent Filter-2 direction. HyperAgent used owners-center sibling URLs — exact-model proof UNKNOWN in repo.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_NOT_REPO_CLOSURE"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf757sihz",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Same WRF757 series split as sdfz; repo sibling maps align with HyperAgent EDR2RXD1 direction but compat CSV still lists edr4rxd1.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_NOT_REPO_CLOSURE"
+    },
+    {
+      "fridge_slug": "whirlpool-wrf767sdam",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR2RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Repo WRF767 suffix maps Filter-2 token on SDHB sibling; HyperAgent platform/sibling evidence not committed — compat review before removal from edr4rxd1 family.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_NOT_REPO_CLOSURE"
+    },
+    {
+      "fridge_slug": "whirlpool-wrs315sdhv",
+      "hyperagent_claim": "WRONG_PART_RISK / EDR1RXD1",
+      "cursor_row_state": "NEEDS_COMPAT_REVIEW",
+      "cursor_verdict": "DIRECTIONALLY_SUPPORTED_NOT_REPO_WRONG_PART_RISK",
+      "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+      "repo_learned_failure_aggregate": "WARN",
+      "repo_compat_maps_edr4rxd1": true,
+      "mapped_filter_slugs": [
+        "edr4rxd1",
+        "ukf8001"
+      ],
+      "reason": "Strong repo series signal that WRS315 suffixes split Filter 1 vs 2 vs 4; WRS325SDHZ is PROVEN edr1rxd1 in repo. HyperAgent EDR1RXD1 claim plausible but not repo-closed.",
+      "recommended_owner_action": "Do not auto-remove edr4rxd1 compat map from HyperAgent WRONG_PART_RISK claim alone.",
+      "mutation_authorized": false,
+      "rejection_kind": "HYPERAGENT_WRONG_PART_NOT_REPO_CLOSURE"
+    }
+  ],
+  "owner_checklist": [
+    "Command Center ranks filter::whirlpool::edr4rxd1 as BOUNDED_EVIDENCE_RESEARCH only — safe_for_scaling=false; do not run full-family evidence scaling.",
+    "Family reconciliation severity remains MEDIUM — resolve model-line conflicts before treating HyperAgent batch as closure.",
+    "Review 1 evidence promotion candidate(s) only where repo already has PROVEN_CORRECT manual evidence (whirlpool-wrf540cwhz).",
+    "Capture owner-browser Tier-1 filter_specification proof for 2 slug(s) before any PROVEN_CORRECT promotion.",
+    "Run owner compat review for 6 series-split slug(s) before removing edr4rxd1 from compatibility_mappings.csv.",
+    "Leave 8 HyperAgent closure claim(s) unchanged until owner review — repo rejected automatic truth closure.",
+    "Do not apply HyperAgent WRONG_PART_RISK removals while model-filter-correctness-audit wrong_part_risk_count=0 for this batch.",
+    "Resolve edr4rxd1+ukf8001 learned-failure WARN on unlock slugs before evidence scaling beyond bounded research.",
+    "No compat CSV edits, manual-evidence writes, Supabase mutations, sitemap/robots/page changes, or HQ handoff updates from this packet."
+  ],
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/fridge/batch-production/audits/learned-failure-guards-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/drafts/edr4rxd1-evidence-batch-cursor-validation-v1.json",
+    "data/manual-evidence/refrigerator/frigidaire-ffhb2740ps.json",
+    "data/manual-evidence/refrigerator/frigidaire-fghb2868pf.json",
+    "data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json",
+    "data/manual-evidence/refrigerator/ge-gfe28gmkes.json",
+    "data/manual-evidence/refrigerator/ge-gfe28gskss.json",
+    "data/manual-evidence/refrigerator/ge-gfe28gynfs.json",
+    "data/manual-evidence/refrigerator/lg-lfxc22596s.json",
+    "data/manual-evidence/refrigerator/lg-lfxs26973s.json",
+    "data/manual-evidence/refrigerator/lg-lfxs28968s.json",
+    "data/manual-evidence/refrigerator/lg-lmxs28626s.json",
+    "data/manual-evidence/refrigerator/lg-lrfvs3006s.json",
+    "data/manual-evidence/refrigerator/samsung-rf263beaesr.json",
+    "data/manual-evidence/refrigerator/samsung-rf28nhedbsr.json",
+    "data/manual-evidence/refrigerator/samsung-rf28r7201sr.json",
+    "data/manual-evidence/refrigerator/samsung-rf28r7351sg.json",
+    "data/manual-evidence/refrigerator/samsung-rf28r7351sr.json",
+    "data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json",
+    "data/manual-evidence/refrigerator/whirlpool-wrs325sdhz.json",
+    "data/manual-evidence/refrigerator/whirlpool-wrx735sdhz.json",
+    "data/manual-evidence/refrigerator/whirlpool-wrx986sihz.json"
+  ],
+  "proven_facts": [
+    "PROVEN: filter::whirlpool::edr4rxd1 family has currently_proven_count=2 anchors whirlpool-wrf540cwhz and whirlpool-wrx735sdhz in evidence-leverage-prioritization-v1.json.",
+    "PROVEN: whirlpool-wrf540cwhz is PROVEN_CORRECT with data/manual-evidence/refrigerator/whirlpool-wrf540cwhz.json and learned-failure aggregate PASS.",
+    "PROVEN: All 9 HyperAgent batch slugs except wrf540cwhz are LIKELY_CORRECT_NEEDS_EVIDENCE in model-filter-correctness-audit-v1.json.",
+    "PROVEN: filter::whirlpool::edr4rxd1 wrong_part_risk_count=0 — repo does not label any of the 6 HyperAgent WRONG_PART slugs as WRONG_PART_RISK.",
+    "PROVEN: data/compatibility_mappings.csv maps edr4rxd1 on all 9 batch slugs (6 wrong-part candidates still co-mapped edr4rxd1+often ukf8001).",
+    "PROVEN: 8/9 batch slugs have learned-failure aggregate WARN from edr4rxd1+ukf8001 single_filter_family — HyperAgent claimed PASS on all 3 PROVEN slugs is repo-inaccurate for sdhz/cwhm.",
+    "PROVEN: Read-only validation — no compat, manual-evidence, Supabase, sitemap, robots, or page mutations performed.",
+    "PROVEN: validation_status=VALIDATION_PARTIAL for filter::whirlpool::edr4rxd1.",
+    "PROVEN: family_reconciliation_severity=MEDIUM from data/fridge/batch-production/audits/family-reconciliation-v1.json.",
+    "PROVEN: evidence_promotion_candidates=1 browser_proof_targets=2 compat_review_candidates=6 no_action_rows=8.",
+    "PROVEN: Read-only packet build — no compat, manual-evidence, Supabase, sitemap, robots, page, retailer-link, or HQ handoff mutations."
+  ],
+  "inferred_facts": [
+    "INFERRED: HyperAgent EDR4RXD1 batch is directionally stronger than Frigidaire FPPWFU01 — Whirlpool WRF/WRS suffix splits in repo compat align with 5/6 wrong-part claims.",
+    "INFERRED: whirlpool-wrf535sdhz and whirlpool-wrf540cwhm are reasonable owner-browser-proof targets after resolving ukf8001 co-map WARN.",
+    "INFERRED: Six edr4rxd1 removals should go through owner compat review — not automatic WRONG_PART_RISK audit reclassification from HyperAgent alone.",
+    "INFERRED: whirlpool-wrf535sibz is absent from HyperAgent validation batch — excluded from browser_proof_targets despite family-reconciliation context.",
+    "INFERRED: Owner should treat this packet as the bounded-research action list — not a full-family scaling authorization."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live EveryDrop filter-finder, whirlpool.com, and manual PDF content cited by HyperAgent — not fetched or stored in repo during this validation.",
+    "UNKNOWN: whirlpool-wrf736sdam EDR2RXD1 claim — no repo sibling line to corroborate (single WRF736 catalog row).",
+    "UNKNOWN: Exact-model vs platform-level proof sufficiency for WRF757/WRF767 HyperAgent sibling URL strategy under repo Tier-1 manual-evidence schema."
+  ]
+}
