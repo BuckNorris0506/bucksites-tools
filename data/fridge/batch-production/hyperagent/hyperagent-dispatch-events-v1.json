@@ -33,6 +33,17 @@
       "dispatched_at": "2026-06-09T04:12:15.147Z",
       "task_id": null,
       "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
+    },
+    {
+      "event_id": "frig-242086201-bounded-evidence-slice-da419e42",
+      "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::frigidaire::frig-242086201",
+      "queue_item_id": "e9da65b8a02782b0",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "scope_key": "filter::frigidaire::frig-242086201",
+      "slug_batch_fingerprint": "983520bf3e9355d3",
+      "dispatched_at": "2026-06-09T14:34:15.479Z",
+      "task_id": null,
+      "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
     }
   ]
 }
