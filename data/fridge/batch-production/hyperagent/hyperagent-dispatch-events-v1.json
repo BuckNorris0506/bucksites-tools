@@ -1,0 +1,16 @@
+{
+  "contract": "hyperagent_dispatch_events_v1",
+  "events": [
+    {
+      "event_id": "samsung-bad-mapping-batch-001",
+      "dedup_key": "BAD_MAPPING_RESEARCH:bad_mapping:samsung-rf23m8070sg,samsung-rf23m8590sg,samsung-rf27t5201sr",
+      "queue_item_id": "6221c29967994612",
+      "mission_type": "BAD_MAPPING_RESEARCH",
+      "scope_key": "bad_mapping:samsung-rf23m8070sg,samsung-rf23m8590sg,samsung-rf27t5201sr",
+      "slug_batch_fingerprint": "ddfa9a8b3d2a8774",
+      "dispatched_at": "2026-06-08T12:00:00.000Z",
+      "task_id": null,
+      "operator_note": "HyperAgent already ran samsung-bad-mapping-batch-001. Dispatch blocking only — not discovery complete, not validated, not truth closure."
+    }
+  ]
+}
