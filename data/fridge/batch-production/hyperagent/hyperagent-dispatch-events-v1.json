@@ -44,6 +44,17 @@
       "dispatched_at": "2026-06-09T14:34:15.479Z",
       "task_id": null,
       "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
+    },
+    {
+      "event_id": "edr2rxd1-bounded-evidence-slice-62ac6eaa",
+      "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::whirlpool::edr2rxd1",
+      "queue_item_id": "3015ad03fe3721ad",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "scope_key": "filter::whirlpool::edr2rxd1",
+      "slug_batch_fingerprint": "80e66efd3928c381",
+      "dispatched_at": "2026-06-09T19:59:27.977Z",
+      "task_id": null,
+      "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
     }
   ]
 }
