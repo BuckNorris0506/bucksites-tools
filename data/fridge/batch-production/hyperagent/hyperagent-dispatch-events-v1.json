@@ -11,6 +11,17 @@
       "dispatched_at": "2026-06-08T12:00:00.000Z",
       "task_id": null,
       "operator_note": "HyperAgent already ran samsung-bad-mapping-batch-001. Dispatch blocking only — not discovery complete, not validated, not truth closure."
+    },
+    {
+      "event_id": "wf2cb-bounded-evidence-slice-001",
+      "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::frigidaire::wf2cb",
+      "queue_item_id": "526132ccd97d2f69",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "scope_key": "filter::frigidaire::wf2cb",
+      "slug_batch_fingerprint": "3dee7c689245fef6",
+      "dispatched_at": "2026-06-08T21:45:00.000Z",
+      "task_id": null,
+      "operator_note": "HyperAgent already ran wf2cb-bounded-evidence-slice-001 manually. Dispatch blocking only — not discovery complete, not validated, not truth closure."
     }
   ]
 }

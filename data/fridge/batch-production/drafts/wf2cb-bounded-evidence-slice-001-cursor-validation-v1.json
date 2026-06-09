@@ -1,0 +1,286 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "d7e4b821-9c3a-4f18-a602-wf2cbslice01",
+  "task_id": null,
+  "ingest_id": "b0a332af-f868-4d19-a050-625ef2fa5880",
+  "validated_at": "2026-06-09T00:15:00.000Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "validation_scope": "hyperagent_wf2cb_bounded_evidence_slice_001_repo_cross_check_v1",
+  "commands_run": [
+    "read /Users/jaredbuckman/Downloads/d41d4d41-7c8c-452b-ae90-970c425bfbea.json",
+    "write data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-hyperagent-ingest-packet-v1.json",
+    "read data/compatibility_mappings.csv",
+    "read data/filters.csv",
+    "read data/filter_aliases.csv",
+    "read data/fridge_models.csv",
+    "read data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "read data/fridge/batch-production/audits/learned-failure-guards-v1.json",
+    "read data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "read data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json",
+    "npm run lint",
+    "npx tsx --test scripts/lib/hyperagent-work-queue-v1.test.ts scripts/lib/hyperagent-dispatch-registry-v1.test.ts scripts/lib/hyperagent-orchestrator-v0.test.ts"
+  ],
+  "bundle_provenance": {
+    "bundle_source": "owner_downloads_hyperagent_deliverable",
+    "bundle_source_claim": "PROVEN",
+    "hyperagent_json_path": "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-hyperagent-ingest-packet-v1.json",
+    "hyperagent_json_source_download": "/Users/jaredbuckman/Downloads/d41d4d41-7c8c-452b-ae90-970c425bfbea.json",
+    "hyperagent_json_exists": true,
+    "byte_for_byte_hyperagent_export_in_repo": true,
+    "validation_scope": "repo_truth_cross_check_only",
+    "command_center_closure_implied": false,
+    "notes": [
+      "Ingest copied from Downloads d41d4d41-7c8c-452b-ae90-970c425bfbea.json — mission_id frigidaire-wf2cb-evidence-slice-001 (orchestrator used wf2cb-bounded-evidence-slice-001 filename convention)",
+      "HyperAgent WRONG_PART_CONFIRMED labels rejected for repo closure — audit classifies all 5 slugs LIKELY_CORRECT_NEEDS_EVIDENCE not WRONG_PART_RISK",
+      "Zero exact-model Frigidaire manufacturer filter_specification rows in batch — no VALIDATION_PASS_READY_FOR_OWNER_REVIEW rows",
+      "2 data-quality defect rows block per-slug evidence closure (dryer slug + model-number typo slug)"
+    ]
+  },
+  "batch_factory_artifacts": [
+    "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-hyperagent-ingest-packet-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/audits/learned-failure-guards-v1.json",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/filter_aliases.csv",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json"
+  ],
+  "truth_closure_authorized": false,
+  "repo_truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "owner_review_required": true,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "validation_details": {
+    "batch_id": "wf2cb-bounded-evidence-slice-001",
+    "mission_type": "BOUNDED_EVIDENCE_SLICE",
+    "family_key": "filter::frigidaire::wf2cb",
+    "slug_count": 5,
+    "ingest_packet_contract_checks": {
+      "packet_found": true,
+      "packet_type_buckparts_hyperagent_ingest_packet_v1": true,
+      "mission_type_BOUNDED_EVIDENCE_SLICE": true,
+      "family_key_filter_frigidaire_wf2cb": true,
+      "discovery_status_DISCOVERY_COMPLETE": true,
+      "truth_closure_claimed_false": true,
+      "mutation_authorized_false": true,
+      "read_only_true": true,
+      "data_mutation_false": true,
+      "verdict": "VALIDATION_PASS"
+    },
+    "repo_baseline_checks": {
+      "all_5_slugs_in_fridge_models_csv": true,
+      "all_5_packet_current_maps_match_compat_csv": true,
+      "all_5_repo_classification_LIKELY_CORRECT_NEEDS_EVIDENCE": true,
+      "all_5_repo_wrong_part_risk": false,
+      "manual_evidence_fixture_count_in_batch": 0,
+      "sibling_manual_evidence_supporting_direction": {
+        "slug": "frigidaire-fgsc2345tf",
+        "sibling_slug": "frigidaire-fgsc2335tf",
+        "sibling_evidence_path": "data/manual-evidence/refrigerator/frigidaire-fgsc2335tf.json",
+        "sibling_filter": "eptwfu01",
+        "exact_model_closure_for_batch_slug": false
+      },
+      "discovered_eptwfu01_maps_to_repo_filter_slug": true,
+      "discovered_fppwfu01_maps_to_repo_filter_slug": true,
+      "family_reconciliation_conflict_count": 13,
+      "family_reconciliation_severity": "HIGH",
+      "hyperagent_summary_repo_audit_drift": "Packet summary claims wrong_part_confirmed=5 but repo audit classifies all 5 as LIKELY_CORRECT_NEEDS_EVIDENCE with evidence_status=NONE"
+    },
+    "data_quality_alerts_cross_check": {
+      "frigidaire-cfse2333tb_NOT_A_REFRIGERATOR": {
+        "hyperagent_alert": "CRITICAL — Crosley dryer not refrigerator",
+        "repo_has_slug_in_fridge_models_csv": true,
+        "repo_maps_wf2cb": true,
+        "cursor_assessment": "Catalog integrity defect — filter research inapplicable until slug suppressed or corrected"
+      },
+      "frigidaire-frfs2623as_MODEL_NUMBER_TYPO": {
+        "hyperagent_alert": "HIGH — FRFS2623AS not in Frigidaire sources; likely FRSS2623AS",
+        "repo_has_both_slugs": true,
+        "frfs2623as_repo_maps": ["wf2cb"],
+        "frss2623as_repo_maps": ["wf3cb", "ultrawf", "wfcb", "purepour", "frig-242086201", "frig-242017801"],
+        "frss2623as_maps_fppwfu01": false,
+        "cursor_assessment": "Evidence cited for FRSS2623AS cannot close frigidaire-frfs2623as slug without owner catalog reconciliation"
+      },
+      "frigidaire-fpru19f8re_ambiguous_filter": {
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "discovered_token": "AMBIGUOUS",
+        "sibling_fpru19f8rf_maps_eptwfu01": true,
+        "cursor_assessment": "Filter vs no-filter unresolved — physical inspection or exact-model spec required"
+      },
+      "frigidaire-ffhb2860ts_EPTWFU01_vs_ULTRAWF": {
+        "hyperagent_discovered": "eptwfu01",
+        "hyperagent_conflict": "AppliancePartsPros lists both ULTRAWF and EPTWFU01",
+        "repo_sibling_ffhb2750te_maps_wf2cb": true,
+        "repo_sibling_ffhb2750td_maps_eptwfu01": true,
+        "cursor_assessment": "Wrong-family direction supported; exact filter token needs owner browser proof on Frigidaire exact-model page"
+      },
+      "frigidaire-fgsc2345tf_sibling_inferred_EPTWFU01": {
+        "hyperagent_source": "Frigidaire.ca FGSC2335TF sibling + AppliancePartsPros direct",
+        "repo_sibling_fgsc2335tf_maps_eptwfu01": true,
+        "repo_sibling_has_manual_evidence": true,
+        "exact_fgsc2345tf_frigidaire_page": "HyperAgent reports page not available",
+        "cursor_assessment": "Strong sibling direction; exact-model manufacturer proof still missing for FGSC2345TF"
+      }
+    },
+    "evidence_row_separation": {
+      "exact_official_manufacturer_evidence_rows": {
+        "count": 0,
+        "slugs": [],
+        "notes": "No batch slug has Tier-1 filter_specification on exact model number — HyperAgent Frigidaire.ca citations are sibling models or inaccessible pages"
+      },
+      "third_party_direct_parts_rows": {
+        "count": 3,
+        "slugs": [
+          "frigidaire-cfse2333tb",
+          "frigidaire-ffhb2860ts",
+          "frigidaire-fgsc2345tf"
+        ],
+        "notes": "Primary sources are AppliancePartsPros parts listings — discovery only, not repo proof"
+      },
+      "sibling_inferred_rows": {
+        "count": 3,
+        "slugs": [
+          "frigidaire-ffhb2860ts",
+          "frigidaire-fgsc2345tf",
+          "frigidaire-frfs2623as"
+        ],
+        "notes": "FFHB2750 line, FGSC2335 line, FRSS2623AS typo-assumption — must not become repo truth without exact-slug proof"
+      },
+      "data_quality_defect_rows": {
+        "count": 2,
+        "slugs": [
+          "frigidaire-cfse2333tb",
+          "frigidaire-frfs2623as"
+        ],
+        "notes": "NOT_A_REFRIGERATOR dryer slug and MODEL_NUMBER_TYPO — reconcile catalog before compat or evidence work"
+      },
+      "owner_browser_required_rows": {
+        "count": 5,
+        "slugs": [
+          "frigidaire-cfse2333tb",
+          "frigidaire-ffhb2860ts",
+          "frigidaire-fgsc2345tf",
+          "frigidaire-fpru19f8re",
+          "frigidaire-frfs2623as"
+        ],
+        "notes": "All rows require owner action — cfse2333tb/frfs2623as need catalog fix first; others need exact-model Tier-1 capture or physical inspection"
+      }
+    },
+    "pass_count": 0,
+    "partial_count": 3,
+    "fail_count": 2,
+    "row_verdicts": [
+      {
+        "fridge_slug": "frigidaire-cfse2333tb",
+        "packet_current_mapped_filter_slugs": ["wf2cb"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "NOT_APPLICABLE",
+        "data_quality_alert": "NOT_A_REFRIGERATOR",
+        "evidence_category": "data_quality_defect_row",
+        "hyperagent_confidence": "PROVEN",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_FAIL",
+        "reason": "CFSE2333TB is a dryer per HyperAgent third-party parts taxonomy — not a refrigerator filter candidate. Repo incorrectly lists slug in fridge_models.csv with wf2cb map. Suppress or correct catalog before any filter compat edit; if intended CRSE233TB refrigerator, filter family is WF3CB not WF2CB."
+      },
+      {
+        "fridge_slug": "frigidaire-ffhb2860ts",
+        "packet_current_mapped_filter_slugs": ["wf2cb"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "EPTWFU01",
+        "resolved_repo_filter_slug": "eptwfu01",
+        "data_quality_alert": "EPTWFU01_vs_ULTRAWF_conflict",
+        "evidence_category": "third_party_direct_parts_row",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "DISCOVERY_COMPLETE",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "WF2CB wrong-family directionally supported (French Door form factor). Discovery is AppliancePartsPros-only with ULTRAWF co-listing; FFHB2750 sibling line splits wf2cb vs eptwfu01 in repo. Owner must capture Tier-1 filter_specification on exact FFHB2860TS Frigidaire page."
+      },
+      {
+        "fridge_slug": "frigidaire-fgsc2345tf",
+        "packet_current_mapped_filter_slugs": ["wf2cb"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "EPTWFU01",
+        "resolved_repo_filter_slug": "eptwfu01",
+        "evidence_category": "sibling_inferred_row",
+        "repo_sibling_signal": "frigidaire-fgsc2335tf maps eptwfu01; manual-evidence on sibling PROVEN",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "DISCOVERY_COMPLETE",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "EPTWFU01 direction aligns with repo sibling fgsc2335tf and committed sibling manual-evidence, but HyperAgent cites FGSC2335TF not exact FGSC2345TF and reports exact support page unavailable. Sibling inference cannot close fgsc2345tf without exact-model manufacturer proof."
+      },
+      {
+        "fridge_slug": "frigidaire-fpru19f8re",
+        "packet_current_mapped_filter_slugs": ["wf2cb"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "AMBIGUOUS",
+        "data_quality_alert": "ambiguous_filter_no_filter",
+        "evidence_category": "owner_browser_required_row",
+        "repo_sibling_signal": "frigidaire-fpru19f8rf maps eptwfu01",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "WF2CB physically incompatible with Professional upright form factor — directionally wrong map. Filter presence ambiguous (spec page vs manual conflict). Owner physical inspection or exact-model Frigidaire spec required before compat removal or FPPWFU01 addition."
+      },
+      {
+        "fridge_slug": "frigidaire-frfs2623as",
+        "packet_current_mapped_filter_slugs": ["wf2cb"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "FPPWFU01",
+        "resolved_repo_filter_slug": "fppwfu01",
+        "data_quality_alert": "MODEL_NUMBER_TYPO_likely_FRSS2623AS",
+        "evidence_category": "data_quality_defect_row",
+        "repo_typo_sibling": "frigidaire-frss2623as exists separately with multi-filter co-map mess",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_FAIL",
+        "reason": "HyperAgent evidence targets FRSS2623AS on Frigidaire.ca — a distinct repo slug with different compat maps (wf3cb|ultrawf|wfcb|purepour|frig-*). FRFS2623AS is not validated in any Frigidaire source. Owner must confirm rating-plate model and reconcile duplicate/typo slugs before applying FPPWFU01 discovery."
+      }
+    ],
+    "recommended_owner_action": "Do not mutate compat CSV, evidence JSON, Supabase, or pages. First reconcile 2 catalog defects: suppress or retarget frigidaire-cfse2333tb (dryer), and resolve frigidaire-frfs2623as vs frigidaire-frss2623as typo/duplicate. Then owner-browser Tier-1 filter_specification capture on exact-model Frigidaire pages for ffhb2860ts (resolve EPTWFU01 vs ULTRAWF), fgsc2345tf (exact FGSC2345TF not FGSC2335TF sibling), and fpru19f8re (filter hardware present or absent). Hold wf2cb removals until post-validation checklist passes per slug. Promote filter::frigidaire::wf2cb full-family audit to HIGH priority — bounded slice confirms systematic wrong-family contamination across form factors.",
+    "wf2cb_full_family_audit_priority_recommendation": {
+      "promote_to_higher_priority": true,
+      "priority_level": "HIGH",
+      "rationale": [
+        "All 5 bounded-slice slugs map wf2cb but span incompatible form factors (French Door, Gallery counter-depth, Professional upright, side-by-side, dryer)",
+        "family-reconciliation-v1 reports 13 model-line conflicts across 20 wf2cb unlock slugs at HIGH severity",
+        "Pre-research risk screen blocks full-family HyperAgent dispatch — bounded slice still surfaces catalog defects and wrong-family pattern",
+        "0/20 wf2cb family slugs have PROVEN manual evidence in repo",
+        "HyperAgent systematic_findings.wf2cb_family_contamination aligns with repo sibling-line splits (FFHB2750, FGSC2335, FRSS lines)"
+      ],
+      "recommended_next_step": "Run family-reconciliation owner-review packet for filter::frigidaire::wf2cb before any wide compat remediation; keep HyperAgent dispatch bounded until catalog defects cleared"
+    },
+    "proposed_next_cursor_step": "Build wf2cb-bounded-evidence-slice-001-owner-review-packet-v1 for PARTIAL rows after catalog defect resolution; queue owner-browser-proof assist for ffhb2860ts EPTWFU01 vs ULTRAWF and fpru19f8re filter-presence check"
+  },
+  "proven_facts": [
+    "PROVEN: Ingest packet contract passes — buckparts_hyperagent_ingest_packet_v1, BOUNDED_EVIDENCE_SLICE, family_key=filter::frigidaire::wf2cb, DISCOVERY_COMPLETE, truth_closure_claimed=false, mutation_authorized=false, read_only=true, data_mutation=false.",
+    "PROVEN: 5/5 slugs exist in fridge_models.csv; 5/5 packet current_mapped_filters=[wf2cb] match compatibility_mappings.csv.",
+    "PROVEN: 5/5 slugs classified LIKELY_CORRECT_NEEDS_EVIDENCE in model-filter-correctness-audit-v1 — repo does not pre-classify WRONG_PART_RISK for this batch.",
+    "PROVEN: 0/5 batch slugs have committed manual-evidence JSON.",
+    "PROVEN: EPTWFU01→eptwfu01 and FPPWFU01→fppwfu01 resolve via filters.csv and filter_aliases.csv.",
+    "PROVEN: Repo sibling frigidaire-fgsc2335tf maps eptwfu01 with operator-reviewed manual-evidence — supports EPTWFU01 direction for FGSC line but not exact FGSC2345TF closure.",
+    "PROVEN: family-reconciliation-v1 severity HIGH with 13 model-line conflicts for filter::frigidaire::wf2cb.",
+    "PROVEN: Read-only validation — no protected repo mutations performed.",
+    "PROVEN: npm run lint clean; hyperagent-work-queue, hyperagent-dispatch-registry, hyperagent-orchestrator-v0 tests pass."
+  ],
+  "inferred_facts": [
+    "INFERRED: HyperAgent wrong-part direction for wf2cb on French Door/Gallery/Professional/upright form factors aligns with physical incompatibility narrative — repo audit has not elevated to WRONG_PART_RISK pending evidence.",
+    "INFERRED: WF2CB family acts as catch-all default for Frigidaire slugs lacking proof — bounded slice supports full-family audit promotion.",
+    "INFERRED: frigidaire-frfs2623as may be data-entry duplicate of frigidaire-frss2623as given FRFS prefix absence in manufacturer sources."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether CFSE2333TB was intended as Crosley CRSE233TB refrigerator (WF3CB family).",
+    "UNKNOWN: FFHB2860TS production variant — EPTWFU01 vs ULTRAWF until owner exact-model capture.",
+    "UNKNOWN: FPRU19F8RE built-in water filtration hardware presence.",
+    "UNKNOWN: Live Supabase compat rows vs committed CSV."
+  ]
+}

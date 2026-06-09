@@ -1,0 +1,143 @@
+{
+  "packet_type": "buckparts_hyperagent_ingest_packet_v1",
+  "mission_id": "frigidaire-wf2cb-evidence-slice-001",
+  "mission_type": "BOUNDED_EVIDENCE_SLICE",
+  "family_key": "filter::frigidaire::wf2cb",
+  "generated_at": "2026-06-08T21:45:00.000Z",
+  "discovery_status": "DISCOVERY_COMPLETE",
+  "truth_closure_claimed": false,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "not_authorized": [
+    "supabase_mutation",
+    "retailer_links_csv_mutation",
+    "compatibility_mappings_csv_mutation",
+    "evidence_mutation",
+    "deploy",
+    "go_click",
+    "verified_link_authorization",
+    "commit"
+  ],
+  "slug_count": 5,
+  "summary": {
+    "wrong_part_confirmed": 5,
+    "correct": 0,
+    "ambiguous": 0,
+    "insufficient_evidence": 0,
+    "needs_owner_review": 4,
+    "discovery_complete": 1,
+    "data_quality_alerts": 2,
+    "not_a_refrigerator": 1,
+    "model_number_typo": 1,
+    "no_filter_possible": 1,
+    "discovered_eptwfu01": 2,
+    "discovered_fppwfu01": 1,
+    "discovered_no_filter": 1,
+    "discovered_ambiguous": 1
+  },
+  "data_quality_alerts": [
+    {
+      "slug": "frigidaire-cfse2333tb",
+      "alert": "NOT_A_REFRIGERATOR",
+      "detail": "CFSE2333TB is a Crosley-branded front-load dryer, not a refrigerator. Confirmed by AppliancePartsPros (dryer heating elements, belts, thermostats). Possibly confused with Crosley refrigerator CRSE233TB which uses WF3CB.",
+      "severity": "CRITICAL"
+    },
+    {
+      "slug": "frigidaire-frfs2623as",
+      "alert": "MODEL_NUMBER_TYPO",
+      "detail": "FRFS2623AS does not exist in any Frigidaire source. Likely intended model is FRSS2623AS (26 cu ft side-by-side). FRFS is not a valid Frigidaire model prefix.",
+      "severity": "HIGH"
+    }
+  ],
+  "candidate_rows": [
+    {
+      "slug": "frigidaire-cfse2333tb",
+      "model_number": "CFSE2333TB",
+      "current_mapped_filters": ["wf2cb"],
+      "discovered_oem_filter_token": "NOT_APPLICABLE",
+      "discovered_oem_filter_part_number": "NOT_APPLICABLE",
+      "source_url": "https://www.appliancepartspros.com/search.aspx?q=CFSE2333TB",
+      "source_title": "Parts For CFSE2333TB - AppliancePartsPros.com",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "PROVEN",
+      "conflicts": "CRITICAL: CFSE2333TB is a dryer, not a refrigerator. AppliancePartsPros returns dryer parts (heating element 134792700, drive belt 134719300, thermal fuse 137032600). No water filter exists for this appliance. Possibly confused with Crosley refrigerator CRSE233TB (PureSource 3 / WF3CB).",
+      "notes": "CFSE2333TB is a Crosley-branded (Frigidaire sub-brand) front-load dryer. The slug must be suppressed or corrected. If intended model is CRSE233TB, the correct filter would be WF3CB, not WF2CB."
+    },
+    {
+      "slug": "frigidaire-ffhb2860ts",
+      "model_number": "FFHB2860TS",
+      "current_mapped_filters": ["wf2cb"],
+      "discovered_oem_filter_token": "eptwfu01",
+      "discovered_oem_filter_part_number": "EPTWFU01",
+      "source_url": "https://www.appliancepartspros.com/search.aspx?q=FFHB2860TS",
+      "source_title": "Parts For FFHB2860TS - AppliancePartsPros.com",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "DISCOVERY_COMPLETE",
+      "confidence": "INFERRED",
+      "conflicts": "AppliancePartsPros lists both ULTRAWF and EPTWFU01 for this model — may indicate transitional production run. Official Frigidaire filter lineup PDF lists sibling FFHB2750TS under EPTWFU01. ExaAnswer confirms EPTWFU01. Direct Frigidaire support page was inaccessible.",
+      "notes": "FFHB2860TS is a Frigidaire French Door Bottom-Mount. FFHB prefix definitively places it in French Door category. WF2CB (rear push-in for older side-by-sides) is physically incompatible. Best evidence points to EPTWFU01. ULTRAWF also possible for older production runs."
+    },
+    {
+      "slug": "frigidaire-fgsc2345tf",
+      "model_number": "FGSC2345TF",
+      "current_mapped_filters": ["wf2cb"],
+      "discovered_oem_filter_token": "eptwfu01",
+      "discovered_oem_filter_part_number": "EPTWFU01",
+      "source_url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FGSC2335TF",
+      "source_title": "Product Support: Frigidaire Gallery FGSC2335TF (sibling model) | Frigidaire.ca",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "DISCOVERY_COMPLETE",
+      "confidence": "INFERRED",
+      "conflicts": "Direct Frigidaire support page for exact model FGSC2345TF returned 'page not available'. Evidence from sibling FGSC2335TF on Frigidaire Canada which explicitly states 'REPLACEMENT FILTER FOR THIS MODEL: Frigidaire PureSource Ultra II Water and Ice Refrigerator Filter EPTWFU01'. AppliancePartsPros also lists EPTWFU01 for FGSC2345TF directly.",
+      "notes": "FGSC2345TF is a Frigidaire Gallery Side-by-Side Counter-Depth. Despite being side-by-side, this newer Gallery model uses EPTWFU01 (internal drop-in), NOT the older rear-push-in WF2CB. Official Frigidaire filter PDF also lists FGSC2335TF/FGSC2335TD under EPTWFU01."
+    },
+    {
+      "slug": "frigidaire-fpru19f8re",
+      "model_number": "FPRU19F8RE",
+      "current_mapped_filters": ["wf2cb"],
+      "discovered_oem_filter_token": "AMBIGUOUS",
+      "discovered_oem_filter_part_number": "FPPWFU01 if water filtration present; none confirmed for RE generation",
+      "source_url": "https://www.frigidaire.ca/Owner-Centre/Product-Support/FPRU19F8RF",
+      "source_title": "Frigidaire Professional FPRU19F8RF (discontinued sibling) | Frigidaire.ca",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "INFERRED",
+      "conflicts": "Frigidaire.ca product page for sibling FPRU19F8RF shows NO water filter in specs — only air filter (PAULTRA) in accessories. Sears PartsDirect for variant FPRU19F8RFE lists only air filter (EAFCBF). However, a user manual indexed at manua.ls under FPRU19F8RF includes FPPWFU01 filter sections — possibly a manual-indexing error with the newer FPRU19F8WF. No direct page found for FPRU19F8RE.",
+      "notes": "FPRU19F8RE is a Frigidaire Professional 19 cu ft single-door all-refrigerator (upright, no freezer). WF2CB is definitively wrong — it's a rear push-in filter for side-by-sides, physically incompatible with this form factor. The older RF/RE generation may not have water filtration at all. If it does, the correct filter would be FPPWFU01 (PurePour). Physical inspection required."
+    },
+    {
+      "slug": "frigidaire-frfs2623as",
+      "model_number": "FRFS2623AS",
+      "current_mapped_filters": ["wf2cb"],
+      "discovered_oem_filter_token": "fppwfu01",
+      "discovered_oem_filter_part_number": "FPPWFU01",
+      "source_url": "https://www.frigidaire.ca/Kitchen/Refrigerators/Side-By-Side-Refrigerators/FRSS2623AS/",
+      "source_title": "Frigidaire FRSS2623AS 26 Cu. Ft. Side by Side Refrigerator | Frigidaire.ca",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "INFERRED",
+      "conflicts": "MODEL NUMBER DISCREPANCY: FRFS2623AS does not exist in any source. All evidence is for FRSS2623AS. If the intended model is FRSS2623AS, FPPWFU01 is definitively correct per Frigidaire.ca product page, PartSelect, and FiltersFast. FRFS is not a recognized Frigidaire prefix.",
+      "notes": "Assuming intended model is FRSS2623AS (26 cu ft side-by-side with PurePour filter feature), FPPWFU01 is the correct OEM filter. WF2CB is wrong — it's a rear push-in filter; FRSS2623AS uses ceiling-mounted internal FPPWFU01. Owner review needed to confirm actual model number on physical appliance."
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: All 5 current WF2CB mappings are WRONG_PART_CONFIRMED by external evidence.",
+    "PROVEN: CFSE2333TB is a dryer, not a refrigerator — confirmed by AppliancePartsPros parts listing (dryer components only).",
+    "PROVEN: WF2CB (PureSource 2) is a rear-mounted push-in filter for older side-by-side/top-mount models and is physically incompatible with French Door, Gallery Counter-Depth, and Professional Upright form factors.",
+    "PROVEN: FRFS2623AS does not appear in any Frigidaire source — all sources return FRSS2623AS (likely model number typo in repo).",
+    "PROVEN: This packet is discovery input only — no repo truth closure claimed, no mutation authorized."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether FPRU19F8RE has built-in water filtration hardware (conflicting signals between spec page and manual).",
+    "UNKNOWN: Whether FFHB2860TS uses EPTWFU01 or ULTRAWF — both listed by AppliancePartsPros, possibly a transitional production model.",
+    "UNKNOWN: Whether FRFS2623AS is a distinct model from FRSS2623AS or a data entry error.",
+    "UNKNOWN: Whether CFSE2333TB was intended to be CRSE233TB (Crosley refrigerator, WF3CB) in the original data."
+  ],
+  "systematic_findings": {
+    "wf2cb_family_contamination": "WF2CB is being applied as a default/catch-all filter for Frigidaire models regardless of form factor or generation. The 5 models in this slice span French Door (FFHB), Gallery Counter-Depth Side-by-Side (FGSC), Professional Upright (FPRU), standard Side-by-Side (FRSS), and a dryer (CFSE). None of them should use WF2CB. This suggests systematic mis-mapping in the WF2CB family — the full family likely requires a repo-wide audit.",
+    "actual_correct_filters_breakdown": "EPTWFU01: 2 models (French Door + Gallery Counter-Depth), FPPWFU01: 1-2 models (Side-by-Side + possibly Professional Upright), NOT_APPLICABLE: 1 (dryer), AMBIGUOUS: 1 (Professional Upright — may not have filter)."
+  },
+  "post_hyperagent_validation_checklist_status": "NOT_YET_RUN — requires Cursor/repo validation before any compat edits"
+}
