@@ -1,0 +1,138 @@
+{
+  "packet_type": "buckparts_hyperagent_ingest_packet_v1",
+  "mission_id": "frigidaire-242017801-evidence-slice-001",
+  "mission_type": "BOUNDED_EVIDENCE_SLICE",
+  "family_key": "filter::frigidaire::frig-242017801",
+  "scope_key": "filter::frigidaire::frig-242017801",
+  "queue_item_id": "ada897261219ce09",
+  "generated_at": "2026-06-09T14:00:00.000Z",
+  "discovery_status": "DISCOVERY_COMPLETE",
+  "truth_closure_claimed": false,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "not_authorized": [
+    "supabase_mutation",
+    "retailer_links_csv_mutation",
+    "compatibility_mappings_csv_mutation",
+    "filters_csv_mutation",
+    "fridge_models_csv_mutation",
+    "evidence_mutation",
+    "manual_evidence_mutation",
+    "deploy",
+    "go_click",
+    "verified_link_authorization",
+    "commit",
+    "sitemap_mutation",
+    "robots_mutation",
+    "page_mutation"
+  ],
+  "slug_count": 4,
+  "summary": {
+    "discovery_complete": 1,
+    "needs_owner_review": 3,
+    "correct_multi_mapping": 0,
+    "fppwfu01_confirmed": 1,
+    "ultrawf_likely": 1,
+    "phantom_model_numbers": 2,
+    "data_quality_alerts": 2
+  },
+  "token_identity_resolution": {
+    "finding": "242017801 = ULTRAWF (PureSource Ultra)",
+    "confidence": "PROVEN",
+    "evidence": "allfilters.com installation instructions explicitly say 'How to Replace the Frigidaire ULTRAWF PureSource Ultra' for part 242017801. speedyapplianceparts.com cross-reference list confirms: 'Directly Replaces: ULTRAWF, 242017800, 242017801, 242017805'. PartSelect model page for 242017801 lists Manufacturer #: ULTRAWF.",
+    "implication": "The repo token frig-242017801 is a duplicate of ultrawf. These should be consolidated in the repo — 242017801 is an OEM housing/cartridge number for the same physical filter marketed as ULTRAWF / PureSource Ultra."
+  },
+  "data_quality_alerts": [
+    {
+      "slug": "frigidaire-grfs2633af",
+      "alert": "PHANTOM_MODEL_NUMBER",
+      "detail": "GRFS2633AF does not exist on Frigidaire US, Frigidaire CA, PartSelect, AppliancePartsPros, RepairClinic, Home Depot, AJ Madison, or any other source. Zero search results. Only web hit is BuckParts' own page reflecting its repo data.",
+      "severity": "HIGH"
+    },
+    {
+      "slug": "frigidaire-grfs2833af",
+      "alert": "PHANTOM_MODEL_NUMBER_LIKELY_TYPO",
+      "detail": "GRFS2833AF does not exist in any database. The closest confirmed model is GRFS2853AF (28 cu ft Gallery French Door, uses FPPWFU01). Possible digit transposition: 2833 vs 2853.",
+      "severity": "HIGH"
+    }
+  ],
+  "candidate_rows": [
+    {
+      "slug": "frigidaire-fghd2365tf",
+      "model_number": "FGHD2365TF",
+      "current_mapped_filters": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+      "discovered_oem_filter_token": "ultrawf",
+      "discovered_oem_filter_part_number": "ULTRAWF (= 242017801)",
+      "source_url": "https://www.partselect.com/Models/242017801/",
+      "source_title": "PartSelect: Frigidaire 242017801 Parts — Manufacturer #: ULTRAWF, PartSelect #: PS2364646",
+      "match_status": "AMBIGUOUS",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "INFERRED",
+      "conflicts": "ExaAnswer notes possible production-run ambiguity between ULTRAWF and EPTWFU01. However, official Frigidaire EPTWFU01 compatibility PDF does NOT list FGHD2365TF (lists FGHD2368TF/TD instead). Same-era Gallery French Door models all use ULTRAWF. No direct Frigidaire support page accessible (504 error, model likely discontinued).",
+      "notes": "FGHD2365TF is a Frigidaire Gallery French Door counter-depth bottom-freezer (~21.7 cu ft). Strong circumstantial evidence points to ULTRAWF: not in EPTWFU01 list, precedes the 2368 transition point, same-era Gallery FDs use ULTRAWF. The 242017801 token IS ULTRAWF (proven). Of the 6 mapped filters, only ultrawf (= frig-242017801) is plausible. wf3cb, frig-242086201, wfcb, and purepour are definitively wrong for this French Door model. Owner review needed to confirm ULTRAWF vs EPTWFU01."
+    },
+    {
+      "slug": "frigidaire-frfs2613as",
+      "model_number": "FRFS2613AS",
+      "current_mapped_filters": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+      "discovered_oem_filter_token": "purepour",
+      "discovered_oem_filter_part_number": "FPPWFU01",
+      "source_url": "https://www.frigidaire.com/owner-center/product-support/",
+      "source_title": "Frigidaire filter compatibility PDF (FRFS family mapped to FPPWFU01); ExaAnswer confirmed FPPWFU01 for side-by-side",
+      "match_status": "WRONG_PART_CONFIRMED",
+      "terminal_state": "DISCOVERY_COMPLETE",
+      "confidence": "PROVEN",
+      "conflicts": "None. All evidence consistent: FRFS is a side-by-side product line using FPPWFU01 (PurePour, ceiling-mounted push-to-lock). Official Frigidaire filter PDF lists FRFS-series under FPPWFU01. No source suggests any other filter for this model.",
+      "notes": "FRFS2613AS is a Frigidaire side-by-side (~25.5 cu ft). Of the 6 mapped filters, only purepour/fppwfu01 is correct. ultrawf and 242017801 are French Door filters; wf3cb is an older push-button side-by-side filter; wfcb is a very old inline filter; 242086201 is a different OEM housing. All 5 other mappings must be removed."
+    },
+    {
+      "slug": "frigidaire-grfs2633af",
+      "model_number": "GRFS2633AF",
+      "current_mapped_filters": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+      "discovered_oem_filter_token": null,
+      "discovered_oem_filter_part_number": null,
+      "source_url": "Multiple official sources — all 404/not-found (frigidaire.com, frigidaire.ca, PartSelect, AppliancePartsPros, RepairClinic, Home Depot, AJ Madison)",
+      "source_title": "Model not found in any public database",
+      "match_status": "INSUFFICIENT_EVIDENCE",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "UNKNOWN",
+      "conflicts": "Model GRFS2633AF does not exist in any publicly accessible appliance database. Zero search results across all major sources. GRFS prefix is confirmed as French Door (not side-by-side as initially assumed) — the only confirmed GRFS model is GRFS2853AF which uses FPPWFU01.",
+      "notes": "If this is a real model (perhaps unreleased or Canadian-market), the likely filter is FPPWFU01 based on GRFS family pattern. If it is a data-entry error, verify intended model number. The entire 6-filter multi-mapping is wrong for any modern GRFS French Door — only purepour/fppwfu01 is plausible for this generation. Slug may need suppression pending model verification."
+    },
+    {
+      "slug": "frigidaire-grfs2833af",
+      "model_number": "GRFS2833AF",
+      "current_mapped_filters": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+      "discovered_oem_filter_token": null,
+      "discovered_oem_filter_part_number": null,
+      "source_url": "Multiple official sources — all 404/not-found (frigidaire.com, frigidaire.ca, PartSelect, AppliancePartsPros, RepairClinic)",
+      "source_title": "Model not found in any public database",
+      "match_status": "INSUFFICIENT_EVIDENCE",
+      "terminal_state": "NEEDS_OWNER_REVIEW",
+      "confidence": "UNKNOWN",
+      "conflicts": "Model GRFS2833AF does not exist in any database. Closest confirmed model is GRFS2853AF (28 cu ft Gallery French Door, uses FPPWFU01). Possible digit transposition: 2833 vs 2853. ExaAnswer returned only GRFS2853AF as a documented GRFS model.",
+      "notes": "If this is a typo for GRFS2853AF, the correct filter is fppwfu01 (FPPWFU01), confirmed by PartSelect (PS16218782) and fitsyourfridge.com for GRFS2853AF. Owner should verify whether 2833 should be 2853 before mapping update. The 6-filter multi-mapping is wrong for any GRFS French Door model."
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: 242017801 = ULTRAWF (PureSource Ultra) — cross-reference confirmed by allfilters.com, speedyapplianceparts.com, and PartSelect.",
+    "PROVEN: FRFS2613AS uses FPPWFU01 (PurePour) — confirmed by Frigidaire filter compatibility PDF and ExaAnswer.",
+    "PROVEN: GRFS2633AF and GRFS2833AF do not exist in any publicly accessible appliance database.",
+    "PROVEN: GRFS prefix is French Door (not side-by-side) — confirmed by GRFS2853AF product description.",
+    "PROVEN: All 4 slugs have incorrect 6-filter multi-mappings — a refrigerator uses one filter, not six.",
+    "PROVEN: This packet is discovery input only — no repo truth closure claimed, no mutation authorized."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether FGHD2365TF uses ULTRAWF or EPTWFU01 — production-run ambiguity flagged, EPTWFU01 PDF excludes this model but includes nearby FGHD2368TF.",
+    "UNKNOWN: Whether GRFS2633AF is a real model, an unreleased model, or a data-entry error.",
+    "UNKNOWN: Whether GRFS2833AF is a typo for GRFS2853AF (digit transposition 2833 vs 2853).",
+    "UNKNOWN: What 242086201 corresponds to as a marketing-name filter (not resolved in this slice)."
+  ],
+  "systematic_findings": {
+    "multi_mapping_problem": "All 19 models in the frig-242017801 family are mapped to 6 filters simultaneously. This is a systematic data quality issue — bulk-import or cross-reference expansion without dedup. Each model uses exactly one filter. The 6 mappings include filters from 4 different physical form factors (rear push-in, internal push-button, internal twist-in, ceiling-mounted push-to-lock) — at most one can be correct per model.",
+    "token_consolidation_needed": "frig-242017801 and ultrawf are the same physical filter. The repo should consolidate these tokens to prevent double-mapping. Similarly, 242086201 likely corresponds to another known filter and should be identified and consolidated.",
+    "grfs_prefix_correction": "The pre-research risk screen described GRFS as side-by-side, but discovery confirms GRFS is French Door (Gallery series). This affects family reconciliation logic."
+  },
+  "post_hyperagent_validation_checklist_status": "NOT_YET_RUN — requires Cursor/repo validation before any compat edits"
+}

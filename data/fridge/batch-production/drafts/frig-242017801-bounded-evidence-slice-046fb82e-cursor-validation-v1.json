@@ -1,0 +1,257 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "f4e8b12a-9d3c-4a18-b602-frig242017801",
+  "task_id": null,
+  "ingest_id": null,
+  "validated_at": "2026-06-09T15:00:00.000Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "validation_scope": "hyperagent_frig_242017801_bounded_evidence_slice_046fb82e_repo_cross_check_v1",
+  "commands_run": [
+    "read /Users/jaredbuckman/Downloads/71a13db0-2987-4653-bd00-fea541909ca3.json",
+    "write data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-ingest-packet-v1.json",
+    "read data/compatibility_mappings.csv",
+    "read data/filters.csv",
+    "read data/filter_aliases.csv",
+    "read data/fridge_models.csv",
+    "read data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "read data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "read data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "read data/fridge/batch-production/hyperagent/outbox/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-mission-packet-v0.json",
+    "npm run lint"
+  ],
+  "bundle_provenance": {
+    "bundle_source": "owner_downloads_hyperagent_deliverable",
+    "bundle_source_claim": "PROVEN",
+    "hyperagent_json_path": "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-ingest-packet-v1.json",
+    "hyperagent_json_source_download": "/Users/jaredbuckman/Downloads/71a13db0-2987-4653-bd00-fea541909ca3.json",
+    "hyperagent_json_exists": true,
+    "byte_for_byte_hyperagent_export_in_repo": true,
+    "validation_scope": "repo_truth_cross_check_only",
+    "command_center_closure_implied": false,
+    "notes": [
+      "Ingest copied from Downloads 71a13db0-2987-4653-bd00-fea541909ca3.json — mission_id frigidaire-242017801-evidence-slice-001",
+      "HyperAgent PROVEN labels on family PDF / third-party rows rejected for repo closure — no exact-model Frigidaire filter_specification rows",
+      "2/4 slugs fail validation as phantom/typo catalog defects — compat work blocked until model verification",
+      "Token identity 242017801=ULTRAWF is external discovery + repo duplicate slugs — consolidation not performed in this validation"
+    ]
+  },
+  "batch_factory_artifacts": [
+    "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-ingest-packet-v1.json",
+    "data/fridge/batch-production/hyperagent/outbox/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-mission-packet-v0.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/filter_aliases.csv",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator"
+  ],
+  "truth_closure_authorized": false,
+  "repo_truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "owner_review_required": true,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "validation_details": {
+    "batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+    "mission_type": "BOUNDED_EVIDENCE_SLICE",
+    "family_key": "filter::frigidaire::frig-242017801",
+    "queue_item_id": "ada897261219ce09",
+    "slug_count": 4,
+    "ingest_packet_contract_checks": {
+      "packet_found": true,
+      "packet_type_buckparts_hyperagent_ingest_packet_v1": true,
+      "mission_type_BOUNDED_EVIDENCE_SLICE": true,
+      "family_key_filter_frigidaire_frig_242017801": true,
+      "queue_item_id_ada897261219ce09": true,
+      "discovery_status_DISCOVERY_COMPLETE": true,
+      "truth_closure_claimed_false": true,
+      "mutation_authorized_false": true,
+      "read_only_true": true,
+      "data_mutation_false": true,
+      "verdict": "VALIDATION_PASS"
+    },
+    "repo_baseline_checks": {
+      "all_4_slugs_in_fridge_models_csv": true,
+      "all_4_packet_current_maps_match_compat_csv": true,
+      "all_4_repo_classification_LIKELY_CORRECT_NEEDS_EVIDENCE": true,
+      "all_4_repo_wrong_part_risk": false,
+      "all_4_multi_mapped_6_filters": true,
+      "manual_evidence_fixture_count_in_batch": 0,
+      "family_reconciliation_conflict_count": 15,
+      "family_reconciliation_severity": "HIGH",
+      "evidence_leverage_unlock_score": 1900,
+      "hyperagent_summary_repo_audit_drift": "Packet marks frfs2613as DISCOVERY_COMPLETE/PROVEN FPPWFU01 but evidence is family PDF inference — repo audit classifies all 4 as LIKELY_CORRECT_NEEDS_EVIDENCE with evidence_status=NONE"
+    },
+    "token_identity_cross_check": {
+      "claim": "242017801 = ULTRAWF (PureSource Ultra)",
+      "hyperagent_confidence": "PROVEN",
+      "repo_ultrawf_slug": "ultrawf",
+      "repo_frig_242017801_slug": "frig-242017801",
+      "filters_csv_ultrawf_oem": "ULTRAWF",
+      "filters_csv_frig_242017801_oem": "242017801",
+      "filter_aliases_ultrawf": ["ULTRAWF", "PureSource Ultra", "ULTRA WF"],
+      "filter_aliases_frig_242017801": ["242017801"],
+      "cross_alias_between_ultrawf_and_frig_242017801_in_repo": false,
+      "both_tokens_co_mapped_on_all_4_batch_slugs": true,
+      "cursor_assessment": "Repo models 242017801 and ULTRAWF as separate catalog slugs with parallel compat co-maps — external cross-reference discovery only; no repo alias consolidation performed. Recommend separate owner-review lane for token consolidation, not auto-merge.",
+      "consolidation_performed": false
+    },
+    "data_quality_alerts_cross_check": {
+      "frigidaire-grfs2633af_PHANTOM_MODEL": {
+        "hyperagent_alert": "PHANTOM_MODEL_NUMBER — zero public database hits",
+        "repo_has_slug_in_fridge_models_csv": true,
+        "repo_maps_6_filters_including_frig_242017801": true,
+        "cursor_assessment": "Catalog integrity defect — filter research inapplicable until owner confirms model exists or suppresses slug"
+      },
+      "frigidaire-grfs2833af_PHANTOM_TYPO": {
+        "hyperagent_alert": "PHANTOM_MODEL_NUMBER_LIKELY_TYPO — closest GRFS2853AF",
+        "repo_has_slug_in_fridge_models_csv": true,
+        "repo_has_grfs2853af_slug": false,
+        "cursor_assessment": "Likely digit transposition 2833→2853 per HyperAgent; do not retarget slug without owner rating-plate proof — separate catalog reconciliation required"
+      }
+    },
+    "grfs_prefix_reconciliation_logic": {
+      "hyperagent_claim": "GRFS prefix is French Door (Gallery), not side-by-side",
+      "evidence": "GRFS2853AF documented as 28 cu ft Gallery French Door (external only — not in repo catalog)",
+      "repo_grfs2853af_slug": false,
+      "family_pre_research_screen_artifact_in_repo": false,
+      "cursor_assessment": "HyperAgent corrects assumed form-factor for GRFS line — affects reconciliation heuristics but does not authorize compat edits. Repo still lists phantom GRFS2633AF/GRFS2833AF with 6-filter co-maps."
+    },
+    "evidence_row_separation": {
+      "exact_official_manufacturer_evidence_rows": {
+        "count": 0,
+        "slugs": [],
+        "notes": "No batch slug has Tier-1 filter_specification on exact model number from Frigidaire manufacturer surface"
+      },
+      "third_party_direct_parts_rows": {
+        "count": 1,
+        "slugs": ["frigidaire-fghd2365tf"],
+        "notes": "PartSelect 242017801 model page — third-party; supports token identity not exact FGHD2365TF manufacturer proof"
+      },
+      "sibling_family_inferred_rows": {
+        "count": 1,
+        "slugs": ["frigidaire-frfs2613as"],
+        "notes": "Frigidaire filter compatibility PDF maps FRFS family to FPPWFU01 — family-level inference, not exact FRFS2613AS page"
+      },
+      "token_identity_rows": {
+        "count": 1,
+        "scope": "242017801=ULTRAWF external cross-reference",
+        "repo_status": "duplicate_catalog_slugs_not_consolidated"
+      },
+      "phantom_typo_model_rows": {
+        "count": 2,
+        "slugs": ["frigidaire-grfs2633af", "frigidaire-grfs2833af"],
+        "notes": "Models absent from public databases; repo catalog rows exist with 6-filter co-maps"
+      },
+      "owner_browser_required_rows": {
+        "count": 4,
+        "slugs": [
+          "frigidaire-fghd2365tf",
+          "frigidaire-frfs2613as",
+          "frigidaire-grfs2633af",
+          "frigidaire-grfs2833af"
+        ],
+        "notes": "All rows require owner action — phantom slugs need catalog fix; others need exact-model Tier-1 capture or ULTRAWF vs EPTWFU01 resolution"
+      }
+    },
+    "pass_count": 0,
+    "partial_count": 2,
+    "fail_count": 2,
+    "row_verdicts": [
+      {
+        "fridge_slug": "frigidaire-fghd2365tf",
+        "packet_current_mapped_filter_slugs": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "ULTRAWF",
+        "resolved_repo_filter_slug": "ultrawf",
+        "token_identity_note": "242017801=ULTRAWF per external cross-ref; repo co-maps ultrawf and frig-242017801 separately",
+        "ambiguity_alert": "ULTRAWF_vs_EPTWFU01_production_run",
+        "evidence_category": "third_party_direct_parts_row",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "ULTRAWF/242017801 directionally plausible for Gallery French Door FGHD2365TF, but primary source is PartSelect 242017801 page (third-party). EPTWFU01 ambiguity unresolved — official EPTWFU01 PDF lists FGHD2368TF/TD not FGHD2365TF. No exact-model Frigidaire filter_specification in repo or batch. Owner must capture Tier-1 proof before any compat reduction from 6 co-maps."
+      },
+      {
+        "fridge_slug": "frigidaire-frfs2613as",
+        "packet_current_mapped_filter_slugs": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": "FPPWFU01",
+        "resolved_repo_filter_slug": "purepour",
+        "evidence_category": "sibling_family_inferred_row",
+        "hyperagent_confidence": "PROVEN",
+        "hyperagent_terminal_state": "DISCOVERY_COMPLETE",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "HyperAgent PROVEN rejected for repo closure — evidence is Frigidaire family-level filter PDF + ExaAnswer, not exact FRFS2613AS manufacturer filter_specification. Directionally supports FPPWFU01/purepour over 5 wrong-family co-maps, but PARTIAL only until owner-browser Tier-1 capture on exact model."
+      },
+      {
+        "fridge_slug": "frigidaire-grfs2633af",
+        "packet_current_mapped_filter_slugs": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": null,
+        "data_quality_alert": "PHANTOM_MODEL_NUMBER",
+        "evidence_category": "phantom_typo_model_row",
+        "hyperagent_confidence": "UNKNOWN",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_FAIL",
+        "reason": "GRFS2633AF not found in Frigidaire US/CA, PartSelect, or major parts databases per HyperAgent; repo incorrectly lists slug with 6-filter co-map. GRFS line is French Door per external GRFS2853AF reference — FPPWFU01 would be plausible only if model is real. Suppress or verify catalog before filter compat work."
+      },
+      {
+        "fridge_slug": "frigidaire-grfs2833af",
+        "packet_current_mapped_filter_slugs": ["wf3cb", "ultrawf", "frig-242086201", "wfcb", "purepour", "frig-242017801"],
+        "repo_compat_match": true,
+        "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+        "discovered_token": null,
+        "data_quality_alert": "PHANTOM_MODEL_NUMBER_LIKELY_TYPO",
+        "likely_intended_model_external": "GRFS2853AF",
+        "repo_has_grfs2853af_slug": false,
+        "evidence_category": "phantom_typo_model_row",
+        "hyperagent_confidence": "UNKNOWN",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_FAIL",
+        "reason": "GRFS2833AF not in any database; HyperAgent cites GRFS2853AF (FPPWFU01) as closest match — possible 2833→2853 transposition. Do not retarget slug to GRFS2853AF without owner rating-plate proof. Repo typo/phantom reconciliation required before compat edits."
+      }
+    ],
+    "recommended_owner_action": "Do not mutate compat CSV, evidence JSON, Supabase, or pages. First reconcile 2 phantom/typo catalog rows (grfs2633af, grfs2833af). Then owner-browser Tier-1 filter_specification on exact Frigidaire pages for fghd2365tf (resolve ULTRAWF vs EPTWFU01) and frfs2613as (confirm FPPWFU01 on exact model, not family PDF alone). Open separate owner-review lane for 242017801/ULTRAWF token consolidation — repo keeps duplicate slugs with parallel co-maps. Hold all 6-filter co-map removals until post-validation checklist passes per slug.",
+    "alias_consolidation_lane_recommendation": {
+      "recommend_separate_owner_review_lane": true,
+      "lane_title": "frigidaire-242017801-ultrawf-token-consolidation-owner-review-v1",
+      "rationale": [
+        "Repo has distinct filters.csv rows for ultrawf (ULTRAWF) and frig-242017801 (242017801)",
+        "filter_aliases.csv aliases 242017801 to frig-242017801 but does not cross-alias ultrawf",
+        "All 4 batch slugs co-map both slugs plus 4 other filters — duplicate token amplifies multi-map noise",
+        "HyperAgent external cross-reference supports identity claim but repo consolidation is a catalog/alias decision requiring owner approval",
+        "This validation does not merge tokens or edit filters.csv"
+      ],
+      "recommended_next_step": "File token-consolidation owner-review packet after bounded-slice catalog defects cleared — do not auto-consolidate during compat remediation"
+    },
+    "proposed_next_cursor_step": "Extend refrigerator-truth-repair-owner-review-v1 with frig-242017801 bounded slice rows after catalog defect resolution; queue owner-browser-proof assist for fghd2365tf ULTRAWF vs EPTWFU01"
+  },
+  "proven_facts": [
+    "PROVEN: Ingest packet contract passes — buckparts_hyperagent_ingest_packet_v1, BOUNDED_EVIDENCE_SLICE, family_key=filter::frigidaire::frig-242017801, queue_item_id=ada897261219ce09, DISCOVERY_COMPLETE, truth_closure_claimed=false, mutation_authorized=false, read_only=true, data_mutation=false.",
+    "PROVEN: 4/4 slugs exist in fridge_models.csv; 4/4 packet current_mapped_filters match compatibility_mappings.csv (6 filters each).",
+    "PROVEN: 4/4 slugs classified LIKELY_CORRECT_NEEDS_EVIDENCE in model-filter-correctness-audit-v1 — repo does not pre-classify WRONG_PART_RISK for this batch.",
+    "PROVEN: 0/4 batch slugs have committed manual-evidence JSON.",
+    "PROVEN: filters.csv contains separate rows ultrawf (ULTRAWF) and frig-242017801 (242017801); filter_aliases.csv links 242017801→frig-242017801 only.",
+    "PROVEN: family-reconciliation-v1 severity HIGH with 15 model-line conflicts for filter::frigidaire::frig-242017801.",
+    "PROVEN: Read-only validation — no protected repo mutations performed."
+  ],
+  "inferred_facts": [
+    "INFERRED: External 242017801=ULTRAWF cross-reference aligns with repo co-mapping both ultrawf and frig-242017801 on same slugs — duplicate catalog modeling, not proven exact-model closure.",
+    "INFERRED: FRFS2613as FPPWFU01 direction from family PDF is plausible for side-by-side line but cannot close exact slug without manufacturer page on FRFS2613AS.",
+    "INFERRED: GRFS2833AF may be typo for undocumented GRFS2853AF — repo has no GRFS2853AF slug to validate retarget."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether FGHD2365TF uses ULTRAWF or EPTWFU01 until owner exact-model capture.",
+    "UNKNOWN: Whether GRFS2633AF is real, unreleased, or data-entry error.",
+    "UNKNOWN: Whether GRFS2833AF rating plate reads GRFS2853AF or another model.",
+    "UNKNOWN: Live Supabase compat rows vs committed CSV."
+  ]
+}
