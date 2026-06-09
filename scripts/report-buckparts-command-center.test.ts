@@ -3569,6 +3569,26 @@ test("command_center_v2.batch_run_registry_intake_v1 is read-only universal run-
   assert.equal(manifestEntry!.cc_json_path, "command_center_v2.batch_run_registry_intake_v1");
 });
 
+test("command_center_v2.mission_factory_registry_v1 is read-only mission lifecycle registry lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.mission_factory_registry_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "mission_factory_registry_command_center_lane_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.mission_factory_registry_v1");
+  assert.equal(lane.registry_rel_path, "data/mission-factory/mission-registry-v1.json");
+  assert.ok(typeof lane.total_missions === "number");
+  assert.ok(lane.missions_by_state);
+  assert.ok(lane.missions_by_type);
+  assert.ok(lane.missions_by_wedge);
+  assert.ok(lane.queue_generator_v1);
+  assert.equal(lane.queue_generator_v1.queue_depth_target_min, 15);
+});
+
 test("command_center_v2 surfaces fridge guarded batch closeout learning lane read-only", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
@@ -4919,7 +4939,8 @@ test("command_center_v2.fridge_truth_spine_v1 is read-only refrigerator truth sp
   assert.equal(spine.public_truth.should_redo_fridge_products_now, "NO");
   assert.equal(spine.public_truth.public_truth_status, "PUBLIC_TRUTHFUL");
   if (spine.supabase_csv_diff.supabase_truth_status === "CHECKED") {
-    assert.equal(spine.supabase_csv_diff.supabase_has_win_csv_missing_count, 2);
+    // 4 = 4396710 + 4396841 (B087 CSV rows removed in 26a4d2a; Supabase wins remain) + da29-00020b + ukf8001.
+    assert.equal(spine.supabase_csv_diff.supabase_has_win_csv_missing_count, 4);
     assert.equal(spine.supabase_csv_diff.evidence_only_not_in_supabase_count, 2);
   }
   assert.ok(spine.recommended_next_action.toLowerCase().includes("do not apply"));

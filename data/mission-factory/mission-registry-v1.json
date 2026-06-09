@@ -1,0 +1,9 @@
+{
+  "contract": "mission_factory_registry_v1",
+  "schema_version": "1.0",
+  "read_only": false,
+  "data_mutation": true,
+  "mutation_authorized": false,
+  "created_at": "2026-06-09T00:00:00.000Z",
+  "missions": []
+}

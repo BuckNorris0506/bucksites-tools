@@ -85,6 +85,10 @@ import {
   buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1,
   buildBatchRunRegistryIntakeReportUnknownV1,
 } from "./lib/batch-run-registry-intake-command-center-v1";
+import {
+  buildMissionFactoryRegistryCommandCenterLaneV1,
+  buildMissionFactoryRegistryCommandCenterLaneUnknownV1,
+} from "./lib/mission-factory-registry-command-center-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-closeout-learning-command-center-v1";
 import { buildFridgeGuardedBatchLifecycleRuleProposalCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-lifecycle-rule-proposal-command-center-v1";
@@ -1139,6 +1143,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "mission_factory_registry_v1"
     | "fridge_guarded_batch_closeout_learning_v1"
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
@@ -1331,6 +1336,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "mission_factory_registry_v1"
     | "fridge_guarded_batch_closeout_learning_v1"
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
@@ -1471,6 +1477,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "mission_factory_registry_v1"
     | "fridge_guarded_batch_closeout_learning_v1"
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
@@ -1914,6 +1921,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
     | "batch_run_registry_intake_v1"
+    | "mission_factory_registry_v1"
     | "fridge_guarded_batch_closeout_learning_v1"
     | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
     | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
@@ -1992,6 +2000,19 @@ export async function buildBuckpartsCommandCenterReport(
   const batch_run_registry_intake_v1 = buildBatchRunRegistryIntakeCommandCenterLaneFromReportV1(
     batch_run_registry_intake_report_v1,
   );
+
+  let mission_factory_registry_v1;
+  try {
+    mission_factory_registry_v1 = buildMissionFactoryRegistryCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+  } catch (error) {
+    mission_factory_registry_v1 = buildMissionFactoryRegistryCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: error instanceof Error ? error.message : String(error),
+    });
+  }
 
   const fridge_guarded_batch_closeout_learning_v1 =
     buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1({
@@ -2260,7 +2281,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "mission_factory_registry_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2362,6 +2383,7 @@ export async function buildBuckpartsCommandCenterReport(
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
     batch_run_registry_intake_v1,
+    mission_factory_registry_v1,
     fridge_guarded_batch_closeout_learning_v1,
     fridge_guarded_batch_lifecycle_rule_proposal_v1,
     fridge_guarded_batch_lifecycle_rule_promotion_plan_v1,

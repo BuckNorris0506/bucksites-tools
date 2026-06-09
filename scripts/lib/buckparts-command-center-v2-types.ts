@@ -26,7 +26,7 @@ import type { AirPurifierWeakBuyerPathAuditReportV1 } from "./air-purifier-weak-
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
-import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
+import type { MissionFactoryRegistryCommandCenterLaneV1 } from "./mission-factory-registry-command-center-v1";
 import type { CommandCenterControlGraphRollupV1 } from "./command-center-control-graph-rollup-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 import type { UniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-readiness-command-center-v1";
@@ -977,6 +977,8 @@ export type CommandCenterV2Report = {
   owner_drift_detector_v1: OwnerDriftDetectorCommandCenterLaneV1;
   /** Read-only universal batch run-registry intake — AP proven run + fridge planning gap; not mutation authority. */
   batch_run_registry_intake_v1: BatchRunRegistryIntakeCommandCenterLaneV1;
+  /** Read-only mission factory registry — HyperAgent discovery lifecycle tracking; not dispatch authority. */
+  mission_factory_registry_v1: MissionFactoryRegistryCommandCenterLaneV1;
   /** Read-only fridge guarded batch closeout learning packets — not learning_outcomes writes. */
   fridge_guarded_batch_closeout_learning_v1: FridgeGuardedBatchCloseoutLearningLaneV1;
   /** Read-only inactive lifecycle rule proposals from closeout learning candidates — not active rules. */
@@ -1150,6 +1152,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "fridge_buyer_path_batch_apply_plan_approval_v1"
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
+  | "mission_factory_registry_v1"
   | "fridge_guarded_batch_closeout_learning_v1"
   | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
   | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
