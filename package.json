@@ -124,6 +124,7 @@
     "buckparts:batch-run-registry-intake": "tsx scripts/report-batch-run-registry-intake-v1.ts",
     "buckparts:mission-factory-registry": "tsx scripts/report-mission-factory-registry-v1.ts",
     "buckparts:mission-factory-queue": "tsx scripts/report-mission-factory-queue-v1.ts",
+    "buckparts:mission-factory-orchestrator": "tsx scripts/report-mission-factory-orchestrator-v1.ts",
     "buckparts:fridge-buyer-path-batch-run-registry": "tsx scripts/report-fridge-buyer-path-batch-run-registry-v1.ts",
     "buckparts:fridge-buyer-path-batch-run-registry-closeout": "tsx scripts/report-fridge-buyer-path-batch-run-registry-closeout-v1.ts",
     "buckparts:fridge-buyer-path-batch-apply-plan-proposal": "tsx scripts/report-fridge-buyer-path-batch-apply-plan-proposal-v1.ts",

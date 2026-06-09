@@ -26,6 +26,7 @@ import type { AirPurifierWeakBuyerPathAuditReportV1 } from "./air-purifier-weak-
 import type { BatchProductionOperatingChecklistV1 } from "./buckparts-batch-production-operating-checklist-v1";
 import type { BatchProductionOperatingDispatchV1 } from "./buckparts-batch-production-operating-dispatch-v1";
 import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-audit-summary-v1";
+import type { MissionFactoryOrchestratorCommandCenterLaneV1 } from "./mission-factory-orchestrator-command-center-v1";
 import type { MissionFactoryRegistryCommandCenterLaneV1 } from "./mission-factory-registry-command-center-v1";
 import type { CommandCenterControlGraphRollupV1 } from "./command-center-control-graph-rollup-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
@@ -979,6 +980,8 @@ export type CommandCenterV2Report = {
   batch_run_registry_intake_v1: BatchRunRegistryIntakeCommandCenterLaneV1;
   /** Read-only mission factory registry — HyperAgent discovery lifecycle tracking; not dispatch authority. */
   mission_factory_registry_v1: MissionFactoryRegistryCommandCenterLaneV1;
+  /** Read-only mission factory orchestrator — automated dispatch preview; confirm-orchestrate required to write. */
+  mission_factory_orchestrator_v1: MissionFactoryOrchestratorCommandCenterLaneV1;
   /** Read-only fridge guarded batch closeout learning packets — not learning_outcomes writes. */
   fridge_guarded_batch_closeout_learning_v1: FridgeGuardedBatchCloseoutLearningLaneV1;
   /** Read-only inactive lifecycle rule proposals from closeout learning candidates — not active rules. */
@@ -1153,6 +1156,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
   | "mission_factory_registry_v1"
+  | "mission_factory_orchestrator_v1"
   | "fridge_guarded_batch_closeout_learning_v1"
   | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
   | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"

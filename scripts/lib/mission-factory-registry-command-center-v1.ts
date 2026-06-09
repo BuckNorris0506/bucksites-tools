@@ -78,7 +78,7 @@ export function buildMissionFactoryRegistryCommandCenterLaneV1(args: {
       ? `Queue depth ${String(queue_generator_v1.queue_depth_after_preview)} below target min ${String(queue_generator_v1.queue_depth_target_min)} — run ${MISSION_FACTORY_QUEUE_GENERATOR_SOURCE_COMMAND_V1} -- --write-registry after review.`
       : ttlExpiredActive.length > 0
         ? `Run npm run buckparts:mission-factory-registry -- --enforce-ttl for ${String(ttlExpiredActive.length)} overdue mission(s).`
-        : "Mission factory queue within target band — await V1.2 orchestrator for DISPATCH_READY transitions.";
+        : "Mission factory queue within target band — run npm run buckparts:mission-factory-orchestrator for dispatch preview.";
 
   return {
     ...report,

@@ -3589,6 +3589,29 @@ test("command_center_v2.mission_factory_registry_v1 is read-only mission lifecyc
   assert.equal(lane.queue_generator_v1.queue_depth_target_min, 15);
 });
 
+test("command_center_v2.mission_factory_orchestrator_v1 is read-only orchestrator lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+  });
+  const lane = report.command_center_v2.mission_factory_orchestrator_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "mission_factory_orchestrator_command_center_lane_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.mission_factory_orchestrator_v1");
+  assert.equal(lane.current_parallel_limit, 1);
+  assert.ok(typeof lane.active_dispatch_count === "number");
+  assert.ok(typeof lane.available_dispatch_slots === "number");
+  assert.ok(lane.missions_by_lane);
+  assert.equal(typeof lane.missions_by_lane.queued, "number");
+  assert.equal(typeof lane.missions_by_lane.dispatch_ready, "number");
+  assert.equal(typeof lane.missions_by_lane.dispatched, "number");
+  assert.equal(typeof lane.missions_by_lane.ingest_received, "number");
+  assert.equal(typeof lane.missions_by_lane.blocked, "number");
+  assert.equal(typeof lane.missions_by_lane.expired, "number");
+});
+
 test("command_center_v2 surfaces fridge guarded batch closeout learning lane read-only", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

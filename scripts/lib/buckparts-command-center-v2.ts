@@ -230,6 +230,7 @@ export function buildCommandCenterV2Report(input: {
   | "owner_drift_detector_v1"
   | "batch_run_registry_intake_v1"
   | "mission_factory_registry_v1"
+  | "mission_factory_orchestrator_v1"
   | "fridge_guarded_batch_closeout_learning_v1"
   | "fridge_guarded_batch_lifecycle_rule_proposal_v1"
   | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1"
