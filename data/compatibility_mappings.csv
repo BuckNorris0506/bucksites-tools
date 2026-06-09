@@ -118,7 +118,6 @@ samsung-rf28r7351sg,da97-17376b
 samsung-rf23j9011sg,da29-00003g
 samsung-rs25j500dsr,da97-08006b
 samsung-rf22k9381sg,da29-00019a
-samsung-rf27t5501sr,da29-00020b
 samsung-rf18hfenbsr,da97-17376b
 samsung-rf28k9380sr,da29-00003g
 samsung-rf260beaesr,da97-08006b
@@ -153,7 +152,6 @@ samsung-rf265beaesg,da29-00003g
 samsung-rf23m8070sr,da97-08006b
 samsung-rf28r6201sg,da29-00019a
 samsung-rf28r6201sg,da29-10105j
-samsung-rs22t5201sg,da29-10105j
 samsung-rf260beaesp,da97-19467c
 samsung-rf263beaesp,da97-15217d
 samsung-rf22k9581sr,da29-00020a
@@ -162,7 +160,6 @@ samsung-rf23m8590sr,da29-00003g
 samsung-rf28k9380sw,da29-00003g
 samsung-rf28r7351ww,da97-08006b
 samsung-rf263beaeww,da29-00019a
-samsung-rf27t5201sr,da29-10105j
 samsung-rf22n9781sg,da97-19467c
 samsung-rf22n9781sg,da97-15217d
 samsung-rf23bb8200ql,da97-15217d
@@ -190,7 +187,6 @@ samsung-rf28hmedbsr,da97-17376b
 samsung-rf30bb8600ql,da29-00003g
 samsung-rf30bb8600ql,da97-08006b
 samsung-rf23bb8900ql,da97-08006b
-samsung-rf28r6301sr,da29-00019a
 samsung-rf28r7581sr,da29-10105j
 samsung-rf23a8771sr,da97-19467c
 samsung-rf20a5101sr,da97-15217d
@@ -209,7 +205,6 @@ samsung-rf18a5101sr,da97-17376b
 samsung-rf18a5101sr,da29-00003g
 samsung-rf23m8570sg,da29-00003g
 samsung-rf22k9582sg,da97-08006b
-samsung-rf28t5101sr,da29-00019a
 samsung-rf28t5101sg,da29-10105j
 samsung-rf26hfendsr,da97-19467c
 samsung-rf26hfendsr,da97-15217d
@@ -687,7 +682,6 @@ lg-lfxs30896s,adq75795101
 lg-lmxs28726s,adq75795101
 lg-lmws27673s,adq75795101
 lg-lrfws3006s,adq75795101
-samsung-rf27t5501sr,da29-00012b
 samsung-rf28k9380sg,da29-00012b
 samsung-rf28r7351sg,da97-17376a
 samsung-rf18hfenbsr,da97-17376a
@@ -922,3 +916,8 @@ whirlpool-wrx986sihz,edr2rxd1
 whirlpool-wrf540cwhz,edr4rxd1
 whirlpool-wrs325sdhz,edr1rxd1
 frigidaire-fghb2868pf,eptwfu01
+samsung-rf27t5201sr,da97-17376b
+samsung-rf27t5501sr,da97-17376b
+samsung-rf28r6301sr,da97-17376b
+samsung-rf28t5101sr,da97-17376b
+samsung-rs22t5201sg,da97-17376b
