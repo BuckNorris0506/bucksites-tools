@@ -1,0 +1,197 @@
+{
+  "contract": "samsung_pass_repair_guarded_apply_v1",
+  "mode": "dry_run",
+  "data_mutation": false,
+  "apply_status": "DRY_RUN_READY",
+  "blocked_reasons": [],
+  "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+  "owner_approval_rel_path": "data/owner-decisions/samsung-pass-repair-owner-approval-v1.json",
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "owner_approval_decision_id": "decision-2026-06-09-samsung-pass-repair-approve_apply_plan",
+  "owner_approval_valid": true,
+  "planned_slug_count": 5,
+  "planned_removals": 6,
+  "planned_additions": 5,
+  "applied_removals": [
+    "samsung-rf27t5201sr,da29-10105j",
+    "samsung-rf27t5501sr,da29-00012b",
+    "samsung-rf27t5501sr,da29-00020b",
+    "samsung-rf28r6301sr,da29-00019a",
+    "samsung-rf28t5101sr,da29-00019a",
+    "samsung-rs22t5201sg,da29-10105j"
+  ],
+  "applied_additions": [
+    "samsung-rf27t5201sr,da97-17376b",
+    "samsung-rf27t5501sr,da97-17376b",
+    "samsung-rf28r6301sr,da97-17376b",
+    "samsung-rf28t5101sr,da97-17376b",
+    "samsung-rs22t5201sg,da97-17376b"
+  ],
+  "row_results": [
+    {
+      "csv_row_key": "samsung-rf27t5201sr,da29-10105j",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf27t5501sr,da29-00012b",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf27t5501sr,da29-00020b",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf28r6301sr,da29-00019a",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf28t5101sr,da29-00019a",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rs22t5201sg,da29-10105j",
+      "operation": "remove",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf27t5201sr,da97-17376b",
+      "operation": "add",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf27t5501sr,da97-17376b",
+      "operation": "add",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf28r6301sr,da97-17376b",
+      "operation": "add",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rf28t5101sr,da97-17376b",
+      "operation": "add",
+      "status": "planned"
+    },
+    {
+      "csv_row_key": "samsung-rs22t5201sg,da97-17376b",
+      "operation": "add",
+      "status": "planned"
+    }
+  ],
+  "before_after_diff": [
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "before_mappings": [
+        "da29-10105j"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-10105j"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "before_mappings": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "before_mappings": [
+        "da29-00019a"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00019a"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "before_mappings": [
+        "da29-00019a"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00019a"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ]
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "before_mappings": [
+        "da29-10105j"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-10105j"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ]
+    }
+  ],
+  "csv_row_count_before": 923,
+  "csv_row_count_after": 922,
+  "untouched_slug_row_keys_count": 917,
+  "rollback_instructions": [
+    "To rollback this Samsung PASS guarded apply, reverse the CSV row edits on data/compatibility_mappings.csv only:",
+    "REMOVE rollback row: samsung-rf27t5201sr,da97-17376b (undo planned addition)",
+    "REMOVE rollback row: samsung-rf27t5501sr,da97-17376b (undo planned addition)",
+    "REMOVE rollback row: samsung-rf28r6301sr,da97-17376b (undo planned addition)",
+    "REMOVE rollback row: samsung-rf28t5101sr,da97-17376b (undo planned addition)",
+    "REMOVE rollback row: samsung-rs22t5201sg,da97-17376b (undo planned addition)",
+    "ADD rollback row: samsung-rf27t5201sr,da29-10105j (restore planned removal)",
+    "ADD rollback row: samsung-rf27t5501sr,da29-00012b (restore planned removal)",
+    "ADD rollback row: samsung-rf27t5501sr,da29-00020b (restore planned removal)",
+    "ADD rollback row: samsung-rf28r6301sr,da29-00019a (restore planned removal)",
+    "ADD rollback row: samsung-rf28t5101sr,da29-00019a (restore planned removal)",
+    "ADD rollback row: samsung-rs22t5201sg,da29-10105j (restore planned removal)",
+    "Re-run dry-run after rollback to confirm before_mappings match the apply plan again.",
+    "Rollback does not mutate Supabase, filters.csv, fridge_models.csv, manual evidence, pages, retailer links, sitemap/robots, or HQ handoff."
+  ],
+  "generated_at": "2026-06-09T17:12:20.110Z",
+  "proven_facts": [
+    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false.",
+    "PROVEN: planned_removals=6; planned_additions=5; planned_slug_count=5.",
+    "PROVEN: owner_approval_valid=true; decision_id=decision-2026-06-09-samsung-pass-repair-approve_apply_plan.",
+    "PROVEN: untouched_slug_row_keys_count=917 (non-planned rows preserved in dry-run/apply simulation).",
+    "PROVEN: before_mappings matched apply plan; simulated after_mappings match planned targets."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether live Supabase compatibility_mappings matches committed CSV after apply.",
+    "UNKNOWN: Whether post-apply manual-evidence or page updates are needed for the 5 slugs."
+  ]
+}
