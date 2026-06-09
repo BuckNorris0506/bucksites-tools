@@ -108,6 +108,8 @@
     "buckparts:anchor-integrity-audit": "tsx scripts/report-anchor-integrity-audit-v1.ts",
     "buckparts:family-pre-research-risk-screen": "tsx scripts/report-family-pre-research-risk-screen-v1.ts",
     "buckparts:family-reconciliation": "tsx scripts/report-family-reconciliation-v1.ts",
+    "buckparts:refrigerator-truth-scoreboard": "tsx scripts/report-refrigerator-truth-scoreboard-v1.ts",
+    "buckparts:refrigerator-truth-repair-owner-review": "tsx scripts/report-refrigerator-truth-repair-owner-review-v1.ts",
     "buckparts:hyperagent-work-queue": "tsx scripts/report-hyperagent-work-queue-v1.ts",
     "buckparts:hyperagent-dispatch-registry": "tsx scripts/report-hyperagent-dispatch-registry-v1.ts",
     "buckparts:hyperagent-orchestrator-v0": "tsx scripts/dispatch-hyperagent-orchestrator-v0.ts",

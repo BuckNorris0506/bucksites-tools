@@ -1,0 +1,465 @@
+{
+  "contract": "refrigerator_truth_repair_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "owner_review_required": true,
+  "repo_truth_closure_authorized": false,
+  "truth_closure_authorized": false,
+  "generated_at": "2026-06-09T14:16:16.908Z",
+  "source_command": "npm run buckparts:refrigerator-truth-repair-owner-review",
+  "source_validation_packets": [
+    {
+      "batch_id": "samsung-bad-mapping-batch-001",
+      "rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "validation_status": "VALIDATION_PARTIAL",
+      "mission_type": "BAD_MAPPING_RESEARCH",
+      "slug_count": 15,
+      "repo_truth_closure_authorized": false
+    },
+    {
+      "batch_id": "wf2cb-bounded-evidence-slice-001",
+      "rel_path": "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-cursor-validation-v1.json",
+      "validation_status": "VALIDATION_PARTIAL",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "slug_count": 5,
+      "repo_truth_closure_authorized": false
+    }
+  ],
+  "repair_groups": [
+    {
+      "repair_group": "samsung_pass_ready",
+      "batch_id": "samsung-bad-mapping-batch-001",
+      "slug_count": 5,
+      "slug_rows": [
+        {
+          "fridge_slug": "samsung-rf27t5201sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_pass_ready",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+          "evidence_tier": "samsung_authored_evidence_row",
+          "recommended_owner_action": "Owner-review apply candidate only — propose replace_mapping to da97-17376b after explicit approval. Not auto-applied; no apply plan in this packet.",
+          "proposed_mutation_type": "replace_mapping",
+          "mutation_authorized": false,
+          "reason": "Samsung Canada official HAF-QIN page lists RF27T5201SR/AA; token resolves to repo-proven samsung::HAFQIN family. Ready for owner-review compat correction packet — not auto-applied."
+        },
+        {
+          "fridge_slug": "samsung-rf27t5501sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_pass_ready",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00012b",
+            "da29-00020b"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+          "evidence_tier": "samsung_authored_evidence_row",
+          "recommended_owner_action": "Owner-review apply candidate only — propose split_mapping to da97-17376b after explicit approval. Not auto-applied; no apply plan in this packet.",
+          "proposed_mutation_type": "split_mapping",
+          "mutation_authorized": false,
+          "reason": "Samsung Canada official page lists RF27T5501SR/AC; surgical HAF-CIN co-map removal candidate. Owner must approve da29-00012b|da29-00020b removal and da97-17376b addition."
+        },
+        {
+          "fridge_slug": "samsung-rf28r6301sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_pass_ready",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+          "evidence_tier": "samsung_authored_evidence_row",
+          "recommended_owner_action": "Owner-review apply candidate only — propose replace_mapping to da97-17376b after explicit approval. Not auto-applied; no apply plan in this packet.",
+          "proposed_mutation_type": "replace_mapping",
+          "mutation_authorized": false,
+          "reason": "Samsung US business spec PDF (image-us.samsung.com) lists RF28R6301SR with Accessories Water Filter: HAF-QIN."
+        },
+        {
+          "fridge_slug": "samsung-rf28t5101sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_pass_ready",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+          "evidence_tier": "samsung_authored_evidence_row",
+          "recommended_owner_action": "Owner-review apply candidate only — propose replace_mapping to da97-17376b after explicit approval. Not auto-applied; no apply plan in this packet.",
+          "proposed_mutation_type": "replace_mapping",
+          "mutation_authorized": false,
+          "reason": "Samsung Canada official spec sheet PDF (images.homedepot.ca) states Water Filter: HAF-QIN for RF28T5101SR."
+        },
+        {
+          "fridge_slug": "samsung-rs22t5201sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_pass_ready",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+          "evidence_tier": "samsung_authored_evidence_row",
+          "recommended_owner_action": "Owner-review apply candidate only — propose replace_mapping to da97-17376b after explicit approval. Not auto-applied; no apply plan in this packet.",
+          "proposed_mutation_type": "replace_mapping",
+          "mutation_authorized": false,
+          "reason": "Samsung US official spec PDF lists RS22T5201SG with Accessories Water Filter: HAF-QIN — newer RS platform uses square HAF-QIN not legacy HAF-CIN."
+        }
+      ]
+    },
+    {
+      "repair_group": "samsung_partial_needs_browser_proof",
+      "batch_id": "samsung-bad-mapping-batch-001",
+      "slug_count": 10,
+      "slug_rows": [
+        {
+          "fridge_slug": "samsung-rf23m8070sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "Wrong-part direction aligns with repo WRONG_PART_RISK; primary source is Filters Fast (third-party). HyperAgent PROVEN rejected — owner browser proof on Samsung exact-model page required before manual-evidence commit."
+        },
+        {
+          "fridge_slug": "samsung-rf23m8590sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "DA29-00019A cross-generation wrong-family confirmed by repo audit; discovery is third-party-only."
+        },
+        {
+          "fridge_slug": "samsung-rf28r6201ww",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "RedStag compatibility guide is third-party; platform-family inference for WW color suffix not Samsung exact-model proof."
+        },
+        {
+          "fridge_slug": "samsung-rf28r6241sb",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "inferred_color_variant_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "INFERRED from RF28R6241 base model on third-party table — must not become repo truth without exact-model Samsung proof."
+        },
+        {
+          "fridge_slug": "samsung-rf28r6241sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "inferred_color_variant_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "INFERRED color-variant row — same as RF28R6241SB."
+        },
+        {
+          "fridge_slug": "samsung-rf28r6241sw",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "inferred_color_variant_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "INFERRED color-variant row — third-party source, no Samsung exact-model listing for SW suffix."
+        },
+        {
+          "fridge_slug": "samsung-rf28r7201sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "Primary cited URL is Filters Fast; packet notes Samsung US page but source_url is third-party. Minor co-map conflict noted for da29-00020b on Filters Fast."
+        },
+        {
+          "fridge_slug": "samsung-rf28t5101sg",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "Appliances Distributors dealer page — third-party; SG color suffix needs exact-model Samsung proof."
+        },
+        {
+          "fridge_slug": "samsung-rf28t5f01sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-00019a"
+          ],
+          "validated_target_filter_slug": "da97-17376b",
+          "discovered_token": "HAF-QIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_only_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "Authorized dealer spec table (mrgsgs.com) — third-party; Family Hub variant needs Samsung exact-model confirmation."
+        },
+        {
+          "fridge_slug": "samsung-rs25h5111sr",
+          "source_batch_id": "samsung-bad-mapping-batch-001",
+          "repair_group": "samsung_partial_needs_browser_proof",
+          "repo_classification": "WRONG_PART_RISK",
+          "current_mapped_filter_slugs": [
+            "da29-10105j"
+          ],
+          "validated_target_filter_slug": "da29-00020b",
+          "discovered_token": "HAF-CIN",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "rs25h5111sr_conflict_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Samsung exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "capture_manual_evidence",
+          "mutation_authorized": false,
+          "reason": "Wrong-part on da29-10105j directionally supported; HAF-CIN vs HAF-QIN unresolved without Samsung-authored spec. RS25 sibling line maps da97-15217d on other suffixes — highest reconciliation risk in batch. Owner browser proof mandatory."
+        }
+      ]
+    },
+    {
+      "repair_group": "wf2cb_data_quality_defects",
+      "batch_id": "wf2cb-bounded-evidence-slice-001",
+      "slug_count": 1,
+      "slug_rows": [
+        {
+          "fridge_slug": "frigidaire-frfs2623as",
+          "source_batch_id": "wf2cb-bounded-evidence-slice-001",
+          "repair_group": "wf2cb_data_quality_defects",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "wf2cb"
+          ],
+          "validated_target_filter_slug": "fppwfu01",
+          "discovered_token": "FPPWFU01",
+          "validation_verdict": "VALIDATION_FAIL",
+          "evidence_tier": "data_quality_defect_row",
+          "recommended_owner_action": "Resolve catalog typo/duplicate slug before compat or evidence work — not apply-ready.",
+          "proposed_mutation_type": "catalog_reconcile_typo",
+          "mutation_authorized": false,
+          "reason": "HyperAgent evidence targets FRSS2623AS on Frigidaire.ca — a distinct repo slug with different compat maps (wf3cb|ultrawf|wfcb|purepour|frig-*). FRFS2623AS is not validated in any Frigidaire source. Owner must confirm rating-plate model and reconcile duplicate/typo slugs before applying FPPWFU01 discovery."
+        }
+      ]
+    },
+    {
+      "repair_group": "wf2cb_partial_needs_browser_proof",
+      "batch_id": "wf2cb-bounded-evidence-slice-001",
+      "slug_count": 3,
+      "slug_rows": [
+        {
+          "fridge_slug": "frigidaire-ffhb2860ts",
+          "source_batch_id": "wf2cb-bounded-evidence-slice-001",
+          "repair_group": "wf2cb_partial_needs_browser_proof",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "wf2cb"
+          ],
+          "validated_target_filter_slug": "eptwfu01",
+          "discovered_token": "EPTWFU01",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_direct_parts_row",
+          "recommended_owner_action": "Owner-browser Tier-1 filter_specification or physical inspection required — WF2CB map held until validation PASS exists.",
+          "proposed_mutation_type": "owner_browser_proof",
+          "mutation_authorized": false,
+          "reason": "WF2CB wrong-family directionally supported (French Door form factor). Discovery is AppliancePartsPros-only with ULTRAWF co-listing; FFHB2750 sibling line splits wf2cb vs eptwfu01 in repo. Owner must capture Tier-1 filter_specification on exact FFHB2860TS Frigidaire page."
+        },
+        {
+          "fridge_slug": "frigidaire-fgsc2345tf",
+          "source_batch_id": "wf2cb-bounded-evidence-slice-001",
+          "repair_group": "wf2cb_partial_needs_browser_proof",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "wf2cb"
+          ],
+          "validated_target_filter_slug": "eptwfu01",
+          "discovered_token": "EPTWFU01",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "sibling_inferred_row",
+          "recommended_owner_action": "Owner-browser Tier-1 filter_specification or physical inspection required — WF2CB map held until validation PASS exists.",
+          "proposed_mutation_type": "owner_browser_proof",
+          "mutation_authorized": false,
+          "reason": "EPTWFU01 direction aligns with repo sibling fgsc2335tf and committed sibling manual-evidence, but HyperAgent cites FGSC2335TF not exact FGSC2345TF and reports exact support page unavailable. Sibling inference cannot close fgsc2345tf without exact-model manufacturer proof."
+        },
+        {
+          "fridge_slug": "frigidaire-fpru19f8re",
+          "source_batch_id": "wf2cb-bounded-evidence-slice-001",
+          "repair_group": "wf2cb_partial_needs_browser_proof",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "wf2cb"
+          ],
+          "validated_target_filter_slug": null,
+          "discovered_token": "AMBIGUOUS",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "owner_browser_required_row",
+          "recommended_owner_action": "Owner-browser Tier-1 filter_specification or physical inspection required — WF2CB map held until validation PASS exists.",
+          "proposed_mutation_type": "owner_browser_proof",
+          "mutation_authorized": false,
+          "reason": "WF2CB physically incompatible with Professional upright form factor — directionally wrong map. Filter presence ambiguous (spec page vs manual conflict). Owner physical inspection or exact-model Frigidaire spec required before compat removal or FPPWFU01 addition."
+        }
+      ]
+    },
+    {
+      "repair_group": "phantom_or_non_refrigerator_models",
+      "batch_id": "wf2cb-bounded-evidence-slice-001",
+      "slug_count": 1,
+      "slug_rows": [
+        {
+          "fridge_slug": "frigidaire-cfse2333tb",
+          "source_batch_id": "wf2cb-bounded-evidence-slice-001",
+          "repair_group": "phantom_or_non_refrigerator_models",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "wf2cb"
+          ],
+          "validated_target_filter_slug": null,
+          "discovered_token": "NOT_APPLICABLE",
+          "validation_verdict": "VALIDATION_FAIL",
+          "evidence_tier": "data_quality_defect_row",
+          "recommended_owner_action": "Catalog integrity review — suppress or retarget non-refrigerator slug before any filter compat work.",
+          "proposed_mutation_type": "catalog_suppress_slug",
+          "mutation_authorized": false,
+          "reason": "CFSE2333TB is a dryer per HyperAgent third-party parts taxonomy — not a refrigerator filter candidate. Repo incorrectly lists slug in fridge_models.csv with wf2cb map. Suppress or correct catalog before any filter compat edit; if intended CRSE233TB refrigerator, filter family is WF3CB not WF2CB."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "apply_candidate_count": 5,
+    "browser_proof_required_count": 13,
+    "phantom_or_suppression_review_count": 2,
+    "no_action_count": 0,
+    "total_slug_rows": 20
+  },
+  "scoreboard_impact_estimate": {
+    "scoreboard_source_contract": "refrigerator_truth_scoreboard_v1",
+    "baseline_wrong_part_risk_count": 75,
+    "estimated_wrong_part_risk_reduction_if_owner_approved": 5,
+    "estimated_wrong_part_risk_count_after_apply": 70,
+    "baseline_multi_mapped_count": 212,
+    "estimated_multi_mapped_reduction_if_owner_approved": 1,
+    "estimated_multi_mapped_count_after_apply": 211,
+    "baseline_phantom_model_count": 15,
+    "phantom_or_suppression_review_slug_count": 2,
+    "estimated_phantom_model_reduction_if_owner_approved": 2,
+    "estimated_phantom_model_count_after_catalog_review": 13,
+    "notes": [
+      "Impact estimate assumes owner-approved samsung_pass_ready compat corrections only — no automatic apply.",
+      "PARTIAL rows excluded from wrong_part_risk reduction until VALIDATION_PASS_READY_FOR_OWNER_REVIEW.",
+      "Catalog suppression for phantom_or_non_refrigerator_models may change total_refrigerator_model_count separately.",
+      "Apply candidates mapping da29-10105j: 2 slug(s)."
+    ]
+  },
+  "owner_checklist": [
+    "repo_truth_closure_authorized=false — this packet does not close repo truth.",
+    "No apply plan in this lane — owner must approve a separate compat apply packet before CSV edits.",
+    "Review 5 samsung_pass_ready apply candidate(s) — owner approval required; mutation_authorized=false everywhere.",
+    "Queue owner-browser proof for 13 slug(s) — PARTIAL verdicts are not apply-ready.",
+    "Resolve 2 catalog integrity slug(s) before compat or evidence scaling.",
+    "Do not mutate compatibility_mappings.csv, filters.csv, fridge_models.csv, manual-evidence JSON, Supabase, pages, sitemap/robots, retailer links, or HQ handoff from this packet.",
+    "WF2CB bounded slice rows remain owner-review until validation PASS exists — hold wf2cb removals.",
+    "Samsung PASS-ready rows may be grouped as owner-review apply candidates only — not applied automatically."
+  ],
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-cursor-validation-v1.json",
+    "scripts/lib/refrigerator-truth-scoreboard-v1.ts"
+  ],
+  "proven_facts": [
+    "PROVEN: Loaded 20 slug rows from Samsung bad-mapping batch 001 and WF2CB bounded slice 001 cursor validation packets.",
+    "PROVEN: apply_candidate_count=5 (samsung_pass_ready only).",
+    "PROVEN: browser_proof_required_count=13 (PARTIAL verdict rows).",
+    "PROVEN: phantom_or_suppression_review_count=2 catalog integrity rows.",
+    "PROVEN: repo_truth_closure_authorized=false preserved on packet and source validation artifacts.",
+    "PROVEN: estimated_wrong_part_risk_reduction_if_owner_approved=5 from samsung_pass_ready cohort.",
+    "PROVEN: Read-only owner-review packet — no compat, evidence, Supabase, page, retailer-link, sitemap, robots, or HQ handoff mutations."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live Supabase compat rows vs committed CSV when owner executes approved repairs.",
+    "UNKNOWN: Whether PARTIAL Samsung rows upgrade to PASS after owner Tier-1 capture.",
+    "UNKNOWN: Catalog suppression outcome for frigidaire-cfse2333tb — suppress vs retarget CRSE233TB refrigerator.",
+    "UNKNOWN: Whether frigidaire-frfs2623as merges into frigidaire-frss2623as or remains a distinct slug."
+  ]
+}
