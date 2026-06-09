@@ -1,0 +1,41 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-06-09-samsung-pass-repair-approve_apply_plan",
+      "source_queue_row_id": "queue-samsung-pass-repair-compat",
+      "source_decision_packet_id": "samsung_pass_repair_owner_approval_packet_v1",
+      "decided_at": "2026-06-09T17:02:17.000Z",
+      "decision_status": "approved",
+      "owner_note": "Approve 5-row Samsung PASS HAF-QIN compatibility correction plan (da97-17376b). Authorize proceeding to a separate guarded apply executor only — no compatibility_mappings.csv or Supabase apply from this registry row.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not mutate compatibility_mappings.csv from this approval row alone.",
+        "Do not mutate filters.csv, fridge_models.csv, or filter_aliases.csv.",
+        "Do not write or overwrite manual-evidence JSON under data/manual-evidence/.",
+        "Do not mutate Supabase compatibility_mappings or other production database state.",
+        "Do not mutate retailer_links.csv, public fridge pages, sitemap, or robots.",
+        "Do not mutate HQ handoff artifacts.",
+        "approve_apply_plan authorizes proceeding toward a guarded apply executor — not automatic CSV/Supabase apply.",
+        "This approval row is not automation_input for Runner Step, queues, or mutation gates."
+      ],
+      "samsung_pass_repair_owner_approval_context_v1": {
+        "review_packet_contract": "samsung_pass_repair_owner_approval_packet_v1",
+        "founder_option_id": "approve_apply_plan",
+        "option_id": "approve_apply_plan",
+        "source_decision_packet_id": "samsung_pass_repair_owner_approval_packet_v1",
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+        "approved_slug_count": 5,
+        "planned_slug_count": 5,
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-06-09T17:02:17.000Z"
+      }
+    }
+  ]
+}
