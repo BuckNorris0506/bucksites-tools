@@ -6,6 +6,7 @@ import {
   buildCommandCenterControlGraphRollupV1,
   COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CONTRACT_V1,
   COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CC_JQ_PATH_V1,
+  MAX_PARALLEL_EVIDENCE_TARGETS_V1,
   type ControlGraphNextBestActionRankedItemV1,
 } from "./command-center-control-graph-rollup-v1";
 
@@ -19,15 +20,65 @@ const REPORT_SOURCE = readFileSync("scripts/report-buckparts-command-center.ts",
 const FIXED_NOW = () => new Date("2026-06-08T12:00:00.000Z");
 const EDR4RXD1_FAMILY = "filter::whirlpool::edr4rxd1";
 
-function findEvidenceRank(
+function findEvidenceRanks(
   ranked: ControlGraphNextBestActionRankedItemV1[],
-): ControlGraphNextBestActionRankedItemV1 | undefined {
-  return ranked.find(
+): ControlGraphNextBestActionRankedItemV1[] {
+  return ranked.filter(
     (item) =>
       item.safety_tier === "BOUNDED_EVIDENCE_RESEARCH" ||
       item.safety_tier === "SAFE_EVIDENCE",
   );
 }
+
+function findEvidenceRank(
+  ranked: ControlGraphNextBestActionRankedItemV1[],
+): ControlGraphNextBestActionRankedItemV1 | undefined {
+  return findEvidenceRanks(ranked)[0];
+}
+
+test("next_best_action_ranked surfaces up to MAX_PARALLEL_EVIDENCE_TARGETS safe/bounded evidence families", () => {
+  const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
+  const evidenceRanks = findEvidenceRanks(rollup.next_best_action_ranked);
+
+  assert.ok(evidenceRanks.length > 1, "expected multiple parallel evidence targets");
+  assert.equal(evidenceRanks.length, MAX_PARALLEL_EVIDENCE_TARGETS_V1);
+  assert.equal(MAX_PARALLEL_EVIDENCE_TARGETS_V1, 5);
+
+  const familyKeys = evidenceRanks.map((item) => item.family_key);
+  assert.equal(new Set(familyKeys).size, familyKeys.length, "evidence families must be unique");
+
+  assert.equal(
+    evidenceRanks[0]!.family_key,
+    rollup.pre_research_risk_screen_summary.highest_safe_screened_family_key,
+  );
+
+  for (const item of evidenceRanks) {
+    assert.ok(item.family_key);
+    assert.notEqual(item.family_key, "filter::frigidaire::fppwfu01");
+    assert.notEqual(item.family_key, "filter::frigidaire::eptwfu01");
+    assert.notEqual(item.family_key, "filter::frigidaire::wf2cb");
+  }
+
+  for (let index = 1; index < evidenceRanks.length; index += 1) {
+    assert.ok(
+      evidenceRanks[index - 1]!.leverage_score >= evidenceRanks[index]!.leverage_score,
+      "evidence targets should remain leverage-ordered",
+    );
+  }
+});
+
+test("frozen families remain excluded from parallel evidence ranks", () => {
+  const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });
+  const frozenKeys = rollup.frozen_family_summary.frozen_families.map((row) => row.family_key);
+  const evidenceRanks = findEvidenceRanks(rollup.next_best_action_ranked);
+
+  for (const frozenKey of frozenKeys) {
+    assert.ok(
+      !evidenceRanks.some((item) => item.family_key === frozenKey),
+      `${frozenKey} must not appear in evidence ranks`,
+    );
+  }
+});
 
 test("contract and read-only flags", () => {
   const rollup = buildCommandCenterControlGraphRollupV1({ rootDir: ROOT, now: FIXED_NOW });

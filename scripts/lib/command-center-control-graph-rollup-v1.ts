@@ -62,6 +62,9 @@ import {
 export const COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CONTRACT_V1 =
   "command_center_control_graph_rollup_v1" as const;
 
+/** Max SAFE_EVIDENCE / BOUNDED_EVIDENCE_RESEARCH targets surfaced in next_best_action_ranked. */
+export const MAX_PARALLEL_EVIDENCE_TARGETS_V1 = 5;
+
 export const COMMAND_CENTER_CONTROL_GRAPH_ROLLUP_CC_JQ_PATH_V1 =
   ".command_center_v2.command_center_control_graph_rollup_v1" as const;
 
@@ -280,6 +283,10 @@ function pickHighestSafeNonFrozenFamily(args: {
 
 type PreResearchScreeningResultV1 = {
   summary: PreResearchRiskScreenSummaryV1;
+  safeScreenedTargets: Array<{
+    target: EvidenceLeverageTargetV1;
+    screen: FamilyPreResearchRiskScreenV1;
+  }>;
   safeScreenedTarget: EvidenceLeverageTargetV1 | null;
   safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null;
   blockedLeverageTargets: Array<{
@@ -431,8 +438,7 @@ function buildPreResearchRiskScreenSummary(args: {
   frozenFamilies: Set<string>;
 }): PreResearchScreeningResultV1 {
   const blockedLeverageTargets: PreResearchScreeningResultV1["blockedLeverageTargets"] = [];
-  let safeScreenedTarget: EvidenceLeverageTargetV1 | null = null;
-  let safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null = null;
+  const safeScreenedTargets: PreResearchScreeningResultV1["safeScreenedTargets"] = [];
   let screened_family_count = 0;
 
   for (const target of args.leverage.top_50_highest_leverage_evidence_targets) {
@@ -452,11 +458,13 @@ function buildPreResearchRiskScreenSummary(args: {
       continue;
     }
 
-    if (!safeScreenedTarget) {
-      safeScreenedTarget = target;
-      safeScreenedTargetScreen = screen;
+    if (safeScreenedTargets.length < MAX_PARALLEL_EVIDENCE_TARGETS_V1) {
+      safeScreenedTargets.push({ target, screen });
     }
   }
+
+  const safeScreenedTarget = safeScreenedTargets[0]?.target ?? null;
+  const safeScreenedTargetScreen = safeScreenedTargets[0]?.screen ?? null;
 
   const top_blocked_families = [...blockedLeverageTargets]
     .sort(
@@ -479,6 +487,7 @@ function buildPreResearchRiskScreenSummary(args: {
       top_blocked_families,
       highest_safe_screened_family_key: safeScreenedTarget?.family_key ?? null,
     },
+    safeScreenedTargets,
     safeScreenedTarget,
     safeScreenedTargetScreen,
     blockedLeverageTargets,
@@ -543,8 +552,10 @@ function buildFrozenFamilySummary(
 function buildNextBestActionRanked(args: {
   frozenFamilies: FrozenFamilySummaryV1;
   anchor: AnchorIntegrityAuditInputV1;
-  safeScreenedTarget: EvidenceLeverageTargetV1 | null;
-  safeScreenedTargetScreen: FamilyPreResearchRiskScreenV1 | null;
+  safeScreenedTargets: Array<{
+    target: EvidenceLeverageTargetV1;
+    screen: FamilyPreResearchRiskScreenV1;
+  }>;
   blockedLeverageTargets: Array<{
     target: EvidenceLeverageTargetV1;
     screen: FamilyPreResearchRiskScreenV1;
@@ -610,11 +621,13 @@ function buildNextBestActionRanked(args: {
     });
   }
 
+  const highestSafeUnlockScore =
+    args.safeScreenedTargets[0]?.target.estimated_factory_unlock_score ?? 0;
+
   const blockedAboveSafe = args.blockedLeverageTargets.filter(
     (entry) =>
-      !args.safeScreenedTarget ||
-      entry.target.estimated_factory_unlock_score >
-        args.safeScreenedTarget.estimated_factory_unlock_score,
+      args.safeScreenedTargets.length === 0 ||
+      entry.target.estimated_factory_unlock_score > highestSafeUnlockScore,
   );
 
   for (const blocked of blockedAboveSafe.slice(0, 3)) {
@@ -639,17 +652,17 @@ function buildNextBestActionRanked(args: {
     });
   }
 
-  if (args.safeScreenedTarget && args.safeScreenedTargetScreen) {
+  for (const { target: safeScreenedTarget, screen: safeScreenedTargetScreen } of args.safeScreenedTargets) {
     const reconciliationSeverity = reconciliationSeverityForFamily(
       args.reconciliation,
-      args.safeScreenedTarget.family_key,
+      safeScreenedTarget.family_key,
     );
     const validation = args.hyperagentValidationByFamily.get(
-      args.safeScreenedTarget.family_key,
+      safeScreenedTarget.family_key,
     );
     const hyperagentValidationPartial = validation?.validation_partial ?? false;
     const policy = deriveEvidenceActionPolicy({
-      screen: args.safeScreenedTargetScreen,
+      screen: safeScreenedTargetScreen,
       reconciliationSeverity,
       hyperagentValidationPartial,
     });
@@ -657,9 +670,9 @@ function buildNextBestActionRanked(args: {
       ? "SAFE_EVIDENCE"
       : "BOUNDED_EVIDENCE_RESEARCH";
     const action = policy.safe_for_scaling
-      ? args.safeScreenedTarget.recommended_action
+      ? safeScreenedTarget.recommended_action
       : buildBoundedEvidenceAction({
-          familyKey: args.safeScreenedTarget.family_key,
+          familyKey: safeScreenedTarget.family_key,
           reconciliationSeverity,
           hyperagentValidationPartial,
         });
@@ -673,19 +686,21 @@ function buildNextBestActionRanked(args: {
       safe_for_scaling: policy.safe_for_scaling,
       safe_for_bounded_research: policy.safe_for_bounded_research,
       family_reconciliation_severity: reconciliationSeverity,
-      leverage_score: args.safeScreenedTarget.estimated_factory_unlock_score,
-      family_key: args.safeScreenedTarget.family_key,
+      leverage_score: safeScreenedTarget.estimated_factory_unlock_score,
+      family_key: safeScreenedTarget.family_key,
       blocked_by_frozen_families: frozenKeys.filter(
-        (key) => key !== args.safeScreenedTarget!.family_key,
+        (key) => key !== safeScreenedTarget.family_key,
       ),
       why: buildEvidenceActionWhy({
-        screen: args.safeScreenedTargetScreen,
+        screen: safeScreenedTargetScreen,
         reconciliationSeverity,
         hyperagentValidationPartial,
         policy,
       }),
     });
-  } else if (blockedAboveSafe[0]) {
+  }
+
+  if (args.safeScreenedTargets.length === 0 && blockedAboveSafe[0]) {
     const topBlocked = blockedAboveSafe[0]!;
     ranked.push({
       rank: ranked.length + 1,
@@ -900,7 +915,6 @@ export function buildCommandCenterControlGraphRollupV1(args: {
     frozenFamilies: frozenFamilySet,
   });
   const pre_research_risk_screen_summary = preResearchScreening.summary;
-  const safeScreenedTarget = preResearchScreening.safeScreenedTarget;
   const familyReconciliation = loadFamilyReconciliationReport({
     rootDir: args.rootDir,
     now: args.now,
@@ -982,8 +996,7 @@ export function buildCommandCenterControlGraphRollupV1(args: {
   const next_best_action_ranked = buildNextBestActionRanked({
     frozenFamilies: frozen_family_summary,
     anchor: anchorIntegrity,
-    safeScreenedTarget,
-    safeScreenedTargetScreen: preResearchScreening.safeScreenedTargetScreen,
+    safeScreenedTargets: preResearchScreening.safeScreenedTargets,
     blockedLeverageTargets: preResearchScreening.blockedLeverageTargets,
     badMapping,
     reconciliation: familyReconciliation,

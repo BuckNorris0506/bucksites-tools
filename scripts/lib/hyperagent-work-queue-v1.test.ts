@@ -91,6 +91,19 @@ test("EDR4RXD1 is owner-review-ready via registry and excluded from next_eligibl
   assert.notEqual(queue.next_eligible_item?.family_key, EDR4RXD1_FAMILY_KEY_V1);
 });
 
+test("parallel evidence targets enqueue multiple eligible HyperAgent candidates when top family is owner-review-ready", () => {
+  const queue = buildHyperAgentWorkQueueV1({ rootDir: ROOT, now: FIXED_NOW });
+  const evidenceEligible = queue.items.filter(
+    (item) =>
+      item.eligible_now &&
+      (item.safety_tier === "SAFE_EVIDENCE" ||
+        item.safety_tier === "BOUNDED_EVIDENCE_RESEARCH"),
+  );
+
+  assert.ok(evidenceEligible.length > 1, "expected multiple eligible evidence dispatch candidates");
+  assert.notEqual(queue.next_eligible_item?.family_key, EDR4RXD1_FAMILY_KEY_V1);
+});
+
 test("next_eligible_item is highest-value research still needing HyperAgent", () => {
   const queue = buildHyperAgentWorkQueueV1({ rootDir: ROOT, now: FIXED_NOW });
   assert.ok(queue.next_eligible_item, "expected a next HyperAgent dispatch candidate");
