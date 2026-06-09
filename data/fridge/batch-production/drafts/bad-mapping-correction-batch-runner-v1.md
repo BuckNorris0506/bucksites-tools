@@ -1,6 +1,6 @@
 # Bad mapping correction batch runner v1
 
-- generated_at: **2026-06-08T05:58:26.211Z**
+- generated_at: **2026-06-09T17:26:52.403Z**
 - dangerous_slug_count: **76**
 - recommended_first_batch: **15** slugs
 

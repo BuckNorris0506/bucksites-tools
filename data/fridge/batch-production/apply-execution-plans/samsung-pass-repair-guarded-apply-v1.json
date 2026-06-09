@@ -119,7 +119,7 @@
     "Re-run dry-run after rollback to confirm before_mappings match the apply plan again.",
     "Rollback does not mutate Supabase, filters.csv, fridge_models.csv, manual evidence, pages, retailer links, sitemap/robots, or HQ handoff."
   ],
-  "generated_at": "2026-06-09T17:17:50.783Z",
+  "generated_at": "2026-06-09T17:23:06.390Z",
   "proven_facts": [
     "PROVEN: mode=dry_run; apply_status=BLOCKED; data_mutation=false.",
     "PROVEN: planned_removals=6; planned_additions=5; planned_slug_count=5.",

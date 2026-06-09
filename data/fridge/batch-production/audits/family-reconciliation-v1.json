@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T12:00:00.000Z",
+  "generated_at": "2026-06-09T17:26:51.887Z",
   "families_screened": 41,
   "families_with_conflicts": 37,
   "severity_counts": {
@@ -14,7 +14,7 @@
     "LOW": 0,
     "NONE": 4
   },
-  "hyperagent_validation_packets_loaded": 5,
+  "hyperagent_validation_packets_loaded": 8,
   "ranked_reconciliation_backlog": [
     {
       "rank": 1,
@@ -51,9 +51,9 @@
       "family_key": "filter::samsung::da29-00019a",
       "target_filter_slug": "da29-00019a",
       "severity": "CRITICAL",
-      "reconciliation_score": 4390,
+      "reconciliation_score": 4396,
       "model_line_conflict_count": 7,
-      "estimated_factory_unlock_score": 400,
+      "estimated_factory_unlock_score": 460,
       "owner_review_packet_id": "5a1fd5ad2f9176c3"
     },
     {
@@ -61,9 +61,9 @@
       "family_key": "filter::samsung::da29-00012b",
       "target_filter_slug": "da29-00012b",
       "severity": "CRITICAL",
-      "reconciliation_score": 4057,
+      "reconciliation_score": 4060,
       "model_line_conflict_count": 1,
-      "estimated_factory_unlock_score": 70,
+      "estimated_factory_unlock_score": 100,
       "owner_review_packet_id": "d3e8e48dad137460"
     },
     {
@@ -361,9 +361,9 @@
       "family_key": "filter::samsung::da29-10105j",
       "target_filter_slug": "da29-10105j",
       "severity": "MEDIUM",
-      "reconciliation_score": 2153,
+      "reconciliation_score": 2159,
       "model_line_conflict_count": 3,
-      "estimated_factory_unlock_score": 30,
+      "estimated_factory_unlock_score": 90,
       "owner_review_packet_id": "5184af46d6862b3f"
     },
     {
@@ -6001,7 +6001,7 @@
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "samsung-rf27t5201sr",
           "conflicting_filter_slugs": [
-            "da29-10105j"
+            "da97-17376b"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
@@ -6281,7 +6281,7 @@
           "conflict_type": "model_line_filter_split",
           "conflicting_sibling_slug": "samsung-rs22t5201sg",
           "conflicting_filter_slugs": [
-            "da29-10105j"
+            "da97-17376b"
           ],
           "hyperagent_cursor_row_state": null,
           "recommended_owner_action": "NEEDS_COMPAT_REVIEW"
@@ -7176,7 +7176,7 @@
       "model_line_conflict_count": 7,
       "proven_anchor_slugs": [],
       "unlock_slug_count": 7,
-      "estimated_factory_unlock_score": 400,
+      "estimated_factory_unlock_score": 460,
       "owner_review_packet_id": "5a1fd5ad2f9176c3"
     },
     {
@@ -7246,7 +7246,7 @@
       "model_line_conflict_count": 3,
       "proven_anchor_slugs": [],
       "unlock_slug_count": 3,
-      "estimated_factory_unlock_score": 30,
+      "estimated_factory_unlock_score": 90,
       "owner_review_packet_id": "5184af46d6862b3f"
     },
     {
@@ -7280,7 +7280,7 @@
       "model_line_conflict_count": 1,
       "proven_anchor_slugs": [],
       "unlock_slug_count": 1,
-      "estimated_factory_unlock_score": 70,
+      "estimated_factory_unlock_score": 100,
       "owner_review_packet_id": "d3e8e48dad137460"
     },
     {
@@ -7295,19 +7295,6 @@
       "unlock_slug_count": 0,
       "estimated_factory_unlock_score": 10,
       "owner_review_packet_id": "855c0e16c6ade429"
-    },
-    {
-      "family_key": "filter::samsung::da97-17376b",
-      "target_filter_slug": "da97-17376b",
-      "severity": "NONE",
-      "model_line_conflict_count": 0,
-      "proven_anchor_slugs": [
-        "samsung-rf28r7201sr",
-        "samsung-rf28r7351sr"
-      ],
-      "unlock_slug_count": 0,
-      "estimated_factory_unlock_score": 10,
-      "owner_review_packet_id": "d5c764d518d08600"
     },
     {
       "family_key": "filter::lg::adq36006101",
@@ -7328,6 +7315,19 @@
       "unlock_slug_count": 0,
       "estimated_factory_unlock_score": 0,
       "owner_review_packet_id": "3f4ef3567e17160a"
+    },
+    {
+      "family_key": "filter::samsung::da97-17376b",
+      "target_filter_slug": "da97-17376b",
+      "severity": "NONE",
+      "model_line_conflict_count": 0,
+      "proven_anchor_slugs": [
+        "samsung-rf28r7201sr",
+        "samsung-rf28r7351sr"
+      ],
+      "unlock_slug_count": 0,
+      "estimated_factory_unlock_score": 0,
+      "owner_review_packet_id": "d5c764d518d08600"
     }
   ],
   "exact_repo_paths_read": [
@@ -7341,12 +7341,15 @@
     "data/fridge/batch-production/drafts/fridge-amazon-affiliate-link-audit-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/fridge-safe-link-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-assist-cursor-validation-v1.json",
-    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-cursor-validation-v1.json"
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+    "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-cursor-validation-v1.json"
   ],
   "proven_facts": [
     "PROVEN: families_screened=41 filter families from data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json.",
     "PROVEN: families_with_model_line_conflicts=37.",
-    "PROVEN: hyperagent_validation_packets_loaded=5 from drafts/*cursor-validation*.json.",
+    "PROVEN: hyperagent_validation_packets_loaded=8 from drafts/*cursor-validation*.json.",
     "PROVEN: ranked_reconciliation_backlog=37 families require owner review (severity != NONE).",
     "PROVEN: Read-only reconciliation lane — no compat, evidence, Supabase, page, or retailer mutations."
   ],

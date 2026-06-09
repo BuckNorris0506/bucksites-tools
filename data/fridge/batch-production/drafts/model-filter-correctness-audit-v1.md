@@ -1,6 +1,6 @@
 # Model filter correctness audit v1
 
-- generated_at: **2026-06-08T05:13:00.095Z**
+- generated_at: **2026-06-09T17:26:44.996Z**
 - total_models: **500**
 - factory_scaling.safe: **15**
 - factory_scaling.needs_evidence: **409**

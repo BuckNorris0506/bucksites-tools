@@ -1,6 +1,6 @@
 # Evidence leverage prioritization v1
 
-- generated_at: **2026-06-08T12:00:00.000Z**
+- generated_at: **2026-06-09T17:26:51.593Z**
 - total_catalog_models: **500**
 - total_unlockable_model_count: **416**
 - source_audit: **data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json**
@@ -547,16 +547,16 @@
 - wrong_part_risk_count: **1**
 - recommended_action: Capture official manufacturer filter proof for model::ge::GYE22 to unlock 5 LIKELY_CORRECT models.
 
-### #50 model::lg::LFXS285
+### #50 filter::samsung::da29-00019a
 
-- family_kind: `model`
-- evidence_gap_type: `OFFICIAL_FILTER_TOKEN_PROOF_MISSING`
-- models_unlocked_if_completed: **5**
-- estimated_factory_unlock_score: **410**
+- family_kind: `filter`
+- evidence_gap_type: `WRONG_PART_RISK_RECONCILE`
+- models_unlocked_if_completed: **7**
+- estimated_factory_unlock_score: **460**
 - currently_proven_count: **0**
-- currently_unproven_count: **5**
-- wrong_part_risk_count: **3**
-- recommended_action: Capture official manufacturer filter proof for model::lg::LFXS285 to unlock 5 LIKELY_CORRECT models.
+- currently_unproven_count: **7**
+- wrong_part_risk_count: **8**
+- recommended_action: Reconcile compat mapping for filter::samsung::da29-00019a before evidence investment — 8 models carry wrong-part risk.
 
 ## Cumulative unlock curve
 

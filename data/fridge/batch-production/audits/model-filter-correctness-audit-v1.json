@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T05:13:00.095Z",
+  "generated_at": "2026-06-09T17:26:44.996Z",
   "total_models": 500,
   "models_with_compat_mapping": 500,
   "models_without_compat_mapping": 0,
@@ -13353,15 +13353,15 @@
       "model_number": "RF27T5201SR",
       "brand_slug": "samsung",
       "mapped_filter_slugs": [
-        "da29-10105j"
+        "da97-17376b"
       ],
       "classification": "WRONG_PART_RISK",
       "evidence_status": "WILDCARD_REVIEW_DA29_CONFLICT",
       "per_filter_proof": [
         {
-          "filter_slug": "da29-10105j",
+          "filter_slug": "da97-17376b",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "DA29-10105J",
+          "oem_part_number": "DA97-17376B",
           "notes": []
         }
       ],
@@ -13409,27 +13409,16 @@
       "model_number": "RF27T5501SR",
       "brand_slug": "samsung",
       "mapped_filter_slugs": [
-        "da29-00012b",
-        "da29-00020b"
+        "da97-17376b"
       ],
       "classification": "WRONG_PART_RISK",
       "evidence_status": "WILDCARD_BLOCKED_HAF_CIN_CANONICAL",
       "per_filter_proof": [
         {
-          "filter_slug": "da29-00012b",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "DA29-00012B",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
-        },
-        {
-          "filter_slug": "da29-00020b",
-          "proof_status": "WRONG_FAMILY_RISK",
-          "oem_part_number": "DA29-00020B",
-          "notes": [
-            "included in wrong-family / confusion-family blocker set"
-          ]
+          "filter_slug": "da97-17376b",
+          "proof_status": "NEEDS_EVIDENCE",
+          "oem_part_number": "DA97-17376B",
+          "notes": []
         }
       ],
       "evidence_paths": [
@@ -13439,7 +13428,7 @@
         "wildcard:BLOCKED_HAF_CIN_CANONICAL"
       ],
       "recommended_action": "Remove wrong-family compat rows or capture model-specific proof for the correct family only.",
-      "risk_score": 109,
+      "risk_score": 107,
       "quality_gate_artifact_path": null,
       "quality_gate_recommended_robots_index": null,
       "quality_gate_publication_authorized": null
@@ -14055,15 +14044,15 @@
       "model_number": "RF28R6301SR",
       "brand_slug": "samsung",
       "mapped_filter_slugs": [
-        "da29-00019a"
+        "da97-17376b"
       ],
       "classification": "WRONG_PART_RISK",
       "evidence_status": "WILDCARD_REVIEW_DA29_CONFLICT",
       "per_filter_proof": [
         {
-          "filter_slug": "da29-00019a",
+          "filter_slug": "da97-17376b",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "DA29-00019A",
+          "oem_part_number": "DA97-17376B",
           "notes": []
         }
       ],
@@ -14756,15 +14745,15 @@
       "model_number": "RF28T5101SR",
       "brand_slug": "samsung",
       "mapped_filter_slugs": [
-        "da29-00019a"
+        "da97-17376b"
       ],
       "classification": "WRONG_PART_RISK",
       "evidence_status": "WILDCARD_REVIEW_DA29_CONFLICT",
       "per_filter_proof": [
         {
-          "filter_slug": "da29-00019a",
+          "filter_slug": "da97-17376b",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "DA29-00019A",
+          "oem_part_number": "DA97-17376B",
           "notes": []
         }
       ],
@@ -14877,15 +14866,15 @@
       "model_number": "RS22T5201SG",
       "brand_slug": "samsung",
       "mapped_filter_slugs": [
-        "da29-10105j"
+        "da97-17376b"
       ],
       "classification": "WRONG_PART_RISK",
       "evidence_status": "WILDCARD_REVIEW_DA29_CONFLICT",
       "per_filter_proof": [
         {
-          "filter_slug": "da29-10105j",
+          "filter_slug": "da97-17376b",
           "proof_status": "NEEDS_EVIDENCE",
-          "oem_part_number": "DA29-10105J",
+          "oem_part_number": "DA97-17376B",
           "notes": []
         }
       ],

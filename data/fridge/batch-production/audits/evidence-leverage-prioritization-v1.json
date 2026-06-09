@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T12:00:00.000Z",
+  "generated_at": "2026-06-09T17:26:51.593Z",
   "source_audit_contract": "model_filter_correctness_audit_v1",
   "source_audit_path": "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
   "source_proven_cohort_contract": "proven_cohort_page_factory_manifest_v1",
@@ -1042,10 +1042,10 @@
       "models_unlocked_if_completed": 7,
       "currently_proven_count": 0,
       "currently_unproven_count": 7,
-      "wrong_part_risk_count": 10,
+      "wrong_part_risk_count": 8,
       "blocked_count": 0,
       "evidence_gap_type": "WRONG_PART_RISK_RECONCILE",
-      "estimated_factory_unlock_score": 400,
+      "estimated_factory_unlock_score": 460,
       "proven_anchor_slugs": [],
       "representative_slugs": [
         "samsung-rf22k9381sg",
@@ -1233,10 +1233,10 @@
       "models_unlocked_if_completed": 3,
       "currently_proven_count": 0,
       "currently_unproven_count": 3,
-      "wrong_part_risk_count": 9,
+      "wrong_part_risk_count": 7,
       "blocked_count": 0,
       "evidence_gap_type": "WRONG_PART_RISK_RECONCILE",
-      "estimated_factory_unlock_score": 30,
+      "estimated_factory_unlock_score": 90,
       "proven_anchor_slugs": [],
       "representative_slugs": [
         "samsung-rf22kredbsg",
@@ -1304,10 +1304,10 @@
       "models_unlocked_if_completed": 1,
       "currently_proven_count": 0,
       "currently_unproven_count": 1,
-      "wrong_part_risk_count": 1,
+      "wrong_part_risk_count": 0,
       "blocked_count": 0,
-      "evidence_gap_type": "WRONG_PART_RISK_RECONCILE",
-      "estimated_factory_unlock_score": 70,
+      "evidence_gap_type": "OFFICIAL_FILTER_TOKEN_PROOF_MISSING",
+      "estimated_factory_unlock_score": 100,
       "proven_anchor_slugs": [],
       "representative_slugs": [
         "samsung-rf28k9380sg"
@@ -1332,26 +1332,6 @@
       "proven_anchor_slugs": [
         "samsung-rf263beaesr",
         "samsung-rf28nhedbsr"
-      ],
-      "representative_slugs": [],
-      "unlock_slugs": [],
-      "prefix_contamination_count": 0,
-      "prefix_contamination_slug_examples": [],
-      "zero_proven_anchor_penalty_applied": false
-    },
-    {
-      "family_kind": "filter",
-      "family_key": "filter::samsung::da97-17376b",
-      "models_unlocked_if_completed": 0,
-      "currently_proven_count": 2,
-      "currently_unproven_count": 0,
-      "wrong_part_risk_count": 0,
-      "blocked_count": 0,
-      "evidence_gap_type": "ALREADY_FACTORY_ELIGIBLE",
-      "estimated_factory_unlock_score": 10,
-      "proven_anchor_slugs": [
-        "samsung-rf28r7201sr",
-        "samsung-rf28r7351sr"
       ],
       "representative_slugs": [],
       "unlock_slugs": [],
@@ -1387,6 +1367,26 @@
       "evidence_gap_type": "BLOCKED_QUARANTINE",
       "estimated_factory_unlock_score": 0,
       "proven_anchor_slugs": [],
+      "representative_slugs": [],
+      "unlock_slugs": [],
+      "prefix_contamination_count": 0,
+      "prefix_contamination_slug_examples": [],
+      "zero_proven_anchor_penalty_applied": false
+    },
+    {
+      "family_kind": "filter",
+      "family_key": "filter::samsung::da97-17376b",
+      "models_unlocked_if_completed": 0,
+      "currently_proven_count": 2,
+      "currently_unproven_count": 0,
+      "wrong_part_risk_count": 5,
+      "blocked_count": 0,
+      "evidence_gap_type": "WRONG_PART_RISK_RECONCILE",
+      "estimated_factory_unlock_score": 0,
+      "proven_anchor_slugs": [
+        "samsung-rf28r7201sr",
+        "samsung-rf28r7351sr"
+      ],
       "representative_slugs": [],
       "unlock_slugs": [],
       "prefix_contamination_count": 0,
@@ -6766,36 +6766,38 @@
       "recommended_action": "Capture official manufacturer filter proof for model::ge::GYE22 to unlock 5 LIKELY_CORRECT models."
     },
     {
-      "family_kind": "model",
-      "family_key": "model::lg::LFXS285",
-      "models_unlocked_if_completed": 5,
+      "family_kind": "filter",
+      "family_key": "filter::samsung::da29-00019a",
+      "models_unlocked_if_completed": 7,
       "currently_proven_count": 0,
-      "currently_unproven_count": 5,
-      "wrong_part_risk_count": 3,
+      "currently_unproven_count": 7,
+      "wrong_part_risk_count": 8,
       "blocked_count": 0,
-      "evidence_gap_type": "OFFICIAL_FILTER_TOKEN_PROOF_MISSING",
-      "estimated_factory_unlock_score": 410,
+      "evidence_gap_type": "WRONG_PART_RISK_RECONCILE",
+      "estimated_factory_unlock_score": 460,
       "proven_anchor_slugs": [],
       "representative_slugs": [
-        "lg-lfxs28566d",
-        "lg-lfxs28566m",
-        "lg-lfxs28573s",
-        "lg-lfxs28596b",
-        "lg-lfxs28596m"
+        "samsung-rf22k9381sg",
+        "samsung-rf22k9381sr",
+        "samsung-rf22k9581sg",
+        "samsung-rf23j9011sr",
+        "samsung-rf263beaeww"
       ],
       "unlock_slugs": [
-        "lg-lfxs28566d",
-        "lg-lfxs28566m",
-        "lg-lfxs28573s",
-        "lg-lfxs28596b",
-        "lg-lfxs28596m"
+        "samsung-rf22k9381sg",
+        "samsung-rf22k9381sr",
+        "samsung-rf22k9581sg",
+        "samsung-rf23j9011sr",
+        "samsung-rf263beaeww",
+        "samsung-rf263teaesg",
+        "samsung-rf28k9071sg"
       ],
       "prefix_contamination_count": 0,
       "prefix_contamination_slug_examples": [],
       "zero_proven_anchor_penalty_applied": false,
       "rank": 50,
-      "target_key": "model::model::lg::LFXS285::OFFICIAL_FILTER_TOKEN_PROOF_MISSING",
-      "recommended_action": "Capture official manufacturer filter proof for model::lg::LFXS285 to unlock 5 LIKELY_CORRECT models."
+      "target_key": "filter::filter::samsung::da29-00019a::WRONG_PART_RISK_RECONCILE",
+      "recommended_action": "Reconcile compat mapping for filter::samsung::da29-00019a before evidence investment — 8 models carry wrong-part risk."
     }
   ],
   "top_20_filters_by_page_unlock_potential": [

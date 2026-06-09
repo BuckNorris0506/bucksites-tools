@@ -4,7 +4,7 @@
   "data_mutation": false,
   "mutation_blocked_until_owner_approval": true,
   "mutation_authorized": false,
-  "generated_at": "2026-06-08T05:58:26.211Z",
+  "generated_at": "2026-06-09T17:26:52.403Z",
   "source_remediation_plan_contract": "dangerous_mapping_remediation_plan_v1",
   "source_remediation_plan_path": "data/fridge/batch-production/audits/dangerous-mapping-remediation-plan-v1.json",
   "source_audit_contract": "model_filter_correctness_audit_v1",
@@ -1510,7 +1510,7 @@
       ],
       "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
       "current_classification": "WRONG_PART_RISK",
-      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF27T5201SR (samsung-rf27t5201sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF27T5201**. Do not infer from sibling models or wildcard expansion alone.",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF27T5201SR (samsung-rf27t5201sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da97-17376b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF27T5201**. Do not infer from sibling models or wildcard expansion alone.",
       "evidence_acceptance_criteria": [
         "Source is official manufacturer product/spec/support page for the exact model number",
         "Captured filter token matches a single catalog slug in data/filters.csv",
@@ -1539,7 +1539,7 @@
       ],
       "root_cause_group": "samsung_haf_cin_canonical_blockers",
       "current_classification": "WRONG_PART_RISK",
-      "required_hyperagent_evidence_query": "Confirm official Samsung filter for RF27T5501SR (samsung-rf27t5501sr) is HAF-CIN / DA29-00020B only. Prove whether da29-00012b is wrong-family for this slug. Current repo compat maps: da29-00012b|da29-00020b.",
+      "required_hyperagent_evidence_query": "Confirm official Samsung filter for RF27T5501SR (samsung-rf27t5501sr) is HAF-CIN / DA29-00020B only. Prove whether da29-00012b is wrong-family for this slug. Current repo compat maps: da97-17376b.",
       "evidence_acceptance_criteria": [
         "Source is official manufacturer product/spec/support page for the exact model number",
         "Captured filter token matches a single catalog slug in data/filters.csv",
@@ -1797,7 +1797,7 @@
       ],
       "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
       "current_classification": "WRONG_PART_RISK",
-      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6301SR (samsung-rf28r6301sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6301**. Do not infer from sibling models or wildcard expansion alone.",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28R6301SR (samsung-rf28r6301sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da97-17376b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28R6301**. Do not infer from sibling models or wildcard expansion alone.",
       "evidence_acceptance_criteria": [
         "Source is official manufacturer product/spec/support page for the exact model number",
         "Captured filter token matches a single catalog slug in data/filters.csv",
@@ -2083,7 +2083,7 @@
       ],
       "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
       "current_classification": "WRONG_PART_RISK",
-      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5101SR (samsung-rf28t5101sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-00019a. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5101**. Do not infer from sibling models or wildcard expansion alone.",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RF28T5101SR (samsung-rf28t5101sr). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da97-17376b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RF28T5101**. Do not infer from sibling models or wildcard expansion alone.",
       "evidence_acceptance_criteria": [
         "Source is official manufacturer product/spec/support page for the exact model number",
         "Captured filter token matches a single catalog slug in data/filters.csv",
@@ -2168,7 +2168,7 @@
       ],
       "root_cause_group": "samsung_haf_qin_da29_da97_conflicts",
       "current_classification": "WRONG_PART_RISK",
-      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RS22T5201SG (samsung-rs22t5201sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da29-10105j. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RS22T5201**. Do not infer from sibling models or wildcard expansion alone.",
+      "required_hyperagent_evidence_query": "Find official Samsung support/spec page for refrigerator model RS22T5201SG (samsung-rs22t5201sg). Report exact water filter marketing token (HAF-QIN or HAF-CIN) and DA97/DA29 OEM part number. Current repo compat maps: da97-17376b. Wildcard bucket: REVIEW_DA29_CONFLICT; matched patterns: RS22T5201**. Do not infer from sibling models or wildcard expansion alone.",
       "evidence_acceptance_criteria": [
         "Source is official manufacturer product/spec/support page for the exact model number",
         "Captured filter token matches a single catalog slug in data/filters.csv",
