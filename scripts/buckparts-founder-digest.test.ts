@@ -217,6 +217,7 @@ test("buildFounderDigestMarkdownV1 includes required sections", () => {
       generated_at: "2026-05-14T11:00:00.000Z",
       system_health_status: "WARNING",
       next_best_action: "Do the next safe thing.",
+      control_graph_next_best_action: null,
       next_owner_action: "Jared: approve ledger.",
       next_move_mode: "READ_ONLY",
       mutating_blocked: true,
@@ -333,6 +334,7 @@ test("delegated CI build note", () => {
       generated_at: "t",
       system_health_status: "OK",
       next_best_action: "a",
+      control_graph_next_best_action: null,
       next_owner_action: "o",
       next_move_mode: "READ_ONLY",
       mutating_blocked: false,
@@ -370,4 +372,51 @@ test("sliceCommandCenterForFounderDigest maps deploy monitor", () => {
   assert.equal(slice.live_site_runtime_status, "OK");
   assert.equal(slice.route_health_one_liner, "1/2 OK");
   assert.equal(slice.amazon_rescue_next_agent_action, "Agent act");
+});
+
+test("sliceCommandCenterForFounderDigest extracts control graph next_best_action", () => {
+  const slice = sliceCommandCenterForFounderDigest({
+    report_name: "buckparts_command_center_v1",
+    generated_at: "t0",
+    system_health_summary: { status: "OK" },
+    next_best_action: "DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]: air_purifier",
+    known_unknowns: [],
+    execution_guidance: { next_move_mode: "READ_ONLY", mutating_blocked: false, mutating_block_reasons: [] },
+    command_center_v2: {
+      command_center_control_graph_rollup_v1: {
+        next_best_action:
+          "Run bounded evidence research only for `filter::whirlpool::edr4rxd1` — not full-family scaling.",
+      },
+    },
+  } as Parameters<typeof sliceCommandCenterForFounderDigest>[0]);
+  assert.equal(slice.next_best_action, "DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]: air_purifier");
+  assert.match(slice.control_graph_next_best_action ?? "", /bounded evidence research only/i);
+});
+
+test("buildFounderDigestMarkdownV1 surfaces control graph next action separately from root steering", () => {
+  const md = buildFounderDigestMarkdownV1({
+    generated_at: "2026-06-08T12:00:00.000Z",
+    build: { ran: true, ok: true },
+    compare_note: "UNKNOWN",
+    command_center: {
+      report_name: "buckparts_command_center_v1",
+      generated_at: "2026-06-08T11:00:00.000Z",
+      system_health_status: "OK",
+      next_best_action: "DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]: air_purifier",
+      control_graph_next_best_action:
+        "Run bounded evidence research only for `filter::whirlpool::edr4rxd1` — not full-family scaling.",
+      next_owner_action: "Owner act",
+      next_move_mode: "READ_ONLY",
+      mutating_blocked: false,
+      mutating_block_reasons: [],
+      deploy_lane_status: "OK",
+      live_site_runtime_status: "OK",
+      route_health_one_liner: "3/3 OK",
+      amazon_rescue_next_agent_action: "",
+      known_unknowns_sample: [],
+    },
+  });
+  assert.match(md, /Control graph next action \(batch production\):.*bounded evidence research only/i);
+  assert.match(md, /Root steering next_best_action:.*DEMAND-TO-COVERAGE/i);
+  assert.doesNotMatch(md, /^## Command Center next action\n\*\*next_best_action:\*\* DEMAND/m);
 });

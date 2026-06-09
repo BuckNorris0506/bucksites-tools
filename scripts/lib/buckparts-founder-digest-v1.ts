@@ -25,7 +25,10 @@ export type FounderDigestCommandCenterSliceV1 = {
   report_name: string;
   generated_at: string;
   system_health_status: string;
+  /** Root Command Center steering (`report.next_best_action` / `operator_digest_v1`). */
   next_best_action: string;
+  /** Fridge batch-production control graph lane when present on the same snapshot. */
+  control_graph_next_best_action: string | null;
   next_owner_action: string;
   next_move_mode: string;
   mutating_blocked: boolean;
@@ -106,7 +109,15 @@ export function buildFounderDigestMarkdownV1(input: FounderDigestInputV1): strin
     smokeLine,
     "",
     "## Command Center next action",
-    `**next_best_action:** ${cc.next_best_action}`,
+    ...(cc.control_graph_next_best_action
+      ? [
+          `**Control graph next action (batch production):** ${cc.control_graph_next_best_action}`,
+          "",
+          `**Root steering next_best_action:** ${cc.next_best_action}`,
+          "",
+          "**PROVEN:** Root steering may differ from control graph when demand-to-coverage or batch-lifecycle overrides apply; use control graph for fridge freeze/bounded-research stopping point.",
+        ]
+      : [`**next_best_action:** ${cc.next_best_action}`]),
     "",
     ...(input.founder_action_queue_digest_markdown
       ? [
@@ -264,6 +275,15 @@ export function sliceCommandCenterForFounderDigest(
 
   const ku = Array.isArray(cc.known_unknowns) ? cc.known_unknowns.filter((s): s is string => typeof s === "string") : [];
 
+  const controlGraph =
+    v2 &&
+    typeof v2 === "object" &&
+    typeof (v2 as { command_center_control_graph_rollup_v1?: { next_best_action?: string } })
+      .command_center_control_graph_rollup_v1?.next_best_action === "string"
+      ? (v2 as { command_center_control_graph_rollup_v1: { next_best_action: string } })
+          .command_center_control_graph_rollup_v1.next_best_action
+      : null;
+
   return {
     report_name: typeof cc.report_name === "string" ? cc.report_name : "UNKNOWN",
     generated_at: typeof cc.generated_at === "string" ? cc.generated_at : "UNKNOWN",
@@ -272,6 +292,7 @@ export function sliceCommandCenterForFounderDigest(
         ? String((cc.system_health_summary as { status?: string }).status ?? "UNKNOWN")
         : "UNKNOWN",
     next_best_action: typeof cc.next_best_action === "string" ? cc.next_best_action : "UNKNOWN",
+    control_graph_next_best_action: controlGraph,
     next_owner_action: nextOwner,
     next_move_mode: nextMove,
     mutating_blocked: mutBlocked,
