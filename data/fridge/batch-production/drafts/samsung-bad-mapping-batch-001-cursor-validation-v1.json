@@ -1,0 +1,338 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "c8f2a91e-4d6b-4a1f-9e03-samsungbadmap02",
+  "task_id": null,
+  "ingest_id": null,
+  "validated_at": "2026-06-08T23:45:00.000Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "validation_scope": "hyperagent_samsung_bad_mapping_batch_001_repo_cross_check_v2",
+  "commands_run": [
+    "read data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-hyperagent-ingest-packet-v1.json",
+    "read data/compatibility_mappings.csv",
+    "read data/filters.csv",
+    "read data/filter_aliases.csv",
+    "read data/fridge_models.csv",
+    "read data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "read data/fridge/batch-production/audits/bad-mapping-correction-batch-runner-v1.json",
+    "read data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "read scripts/lib/refrigerator-model-first-samsung-marketing-token-cross-reference-v1.ts",
+    "npm run lint",
+    "npx tsx --test scripts/lib/hyperagent-work-queue-v1.test.ts scripts/lib/hyperagent-dispatch-registry-v1.test.ts scripts/lib/buckparts-ops-agent-workflow-v1.test.ts"
+  ],
+  "bundle_provenance": {
+    "bundle_source": "repo_committed_hyperagent_ingest",
+    "bundle_source_claim": "PROVEN",
+    "hyperagent_json_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-hyperagent-ingest-packet-v1.json",
+    "hyperagent_json_exists": true,
+    "byte_for_byte_hyperagent_export_in_repo": true,
+    "validation_scope": "repo_truth_cross_check_only",
+    "command_center_closure_implied": false,
+    "notes": [
+      "Replaces prior MISSING_HYPERAGENT_INGEST_PACKET VALIDATION_FAIL",
+      "HyperAgent PROVEN labels on third-party-only rows rejected as repo truth — directionally supported only",
+      "INFERRED color-variant rows cannot become repo truth without exact-model Samsung proof or manual-evidence fixture"
+    ]
+  },
+  "batch_factory_artifacts": [
+    "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-hyperagent-ingest-packet-v1.json",
+    "data/fridge/batch-production/audits/bad-mapping-correction-batch-runner-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/compatibility_mappings.csv",
+    "data/filters.csv",
+    "data/filter_aliases.csv",
+    "data/fridge_models.csv",
+    "data/manual-evidence/refrigerator",
+    "scripts/lib/refrigerator-model-first-samsung-marketing-token-cross-reference-v1.ts"
+  ],
+  "truth_closure_authorized": false,
+  "repo_truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "owner_review_required": true,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "validation_details": {
+    "batch_id": "samsung-bad-mapping-batch-001",
+    "mission_type": "BAD_MAPPING_RESEARCH",
+    "slug_count": 15,
+    "ingest_packet_contract_checks": {
+      "packet_found": true,
+      "packet_type_buckparts_hyperagent_ingest_packet_v1": true,
+      "mission_type_BAD_MAPPING_RESEARCH": true,
+      "discovery_status_DISCOVERY_COMPLETE": true,
+      "truth_closure_claimed_false": true,
+      "mutation_authorized_false": true,
+      "read_only_true": true,
+      "data_mutation_false": true,
+      "verdict": "VALIDATION_PASS"
+    },
+    "repo_baseline_checks": {
+      "all_15_slugs_in_fridge_models_csv": true,
+      "all_15_packet_current_maps_match_compat_csv": true,
+      "all_15_classification_WRONG_PART_RISK": true,
+      "manual_evidence_fixture_count_in_batch": 0,
+      "discovered_haf_qin_maps_to_da97_17376b": true,
+      "discovered_haf_cin_maps_to_da29_00020b": true,
+      "alias_validation_gaps": [],
+      "da29_10105j_repo_wide_mapping_count": 15,
+      "da29_10105j_in_this_batch": 8,
+      "da29_00019a_cross_generation_contamination_count_in_batch": 6,
+      "hyperagent_summary_internal_drift": "Packet summary claims wrong_family_da29_00019a_count=5 but candidate_rows show 6 da29-00019a maps"
+    },
+    "evidence_row_separation": {
+      "samsung_authored_evidence_rows": {
+        "count": 5,
+        "slugs": [
+          "samsung-rf27t5201sr",
+          "samsung-rf27t5501sr",
+          "samsung-rf28r6301sr",
+          "samsung-rf28t5101sr",
+          "samsung-rs22t5201sg"
+        ],
+        "notes": "Samsung.com or Samsung-hosted PDF with exact-model or explicit variant listing"
+      },
+      "third_party_only_rows": {
+        "count": 6,
+        "slugs": [
+          "samsung-rf23m8070sg",
+          "samsung-rf23m8590sg",
+          "samsung-rf28r6201ww",
+          "samsung-rf28r7201sg",
+          "samsung-rf28t5101sg",
+          "samsung-rf28t5f01sr"
+        ],
+        "notes": "Discovery only — HyperAgent PROVEN label rejected for repo closure"
+      },
+      "inferred_color_variant_rows": {
+        "count": 3,
+        "slugs": [
+          "samsung-rf28r6241sb",
+          "samsung-rf28r6241sg",
+          "samsung-rf28r6241sw"
+        ],
+        "notes": "confidence=INFERRED from RF28R6241 base model — must not become repo truth without exact-model proof"
+      },
+      "rs25h5111sr_conflict_row": {
+        "slug": "samsung-rs25h5111sr",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "discovered_direction": "HAF-CIN / DA29-00020B",
+        "repo_current_map": "da29-10105j",
+        "repo_sibling_signal": "RS25 siblings RS25H5000SR/RS25J500DWW map da97-15217d per family-reconciliation-v1",
+        "source_conflict": "HyperAgent cites HAF-CIN vs HAF-QIN on SEO filter sites; no Samsung-authored spec sheet",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW"
+      }
+    },
+    "pass_count": 5,
+    "partial_count": 10,
+    "fail_count": 0,
+    "row_verdicts": [
+      {
+        "fridge_slug": "samsung-rf23m8070sg",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "Wrong-part direction aligns with repo WRONG_PART_RISK; primary source is Filters Fast (third-party). HyperAgent PROVEN rejected — owner browser proof on Samsung exact-model page required before manual-evidence commit."
+      },
+      {
+        "fridge_slug": "samsung-rf23m8590sg",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "DA29-00019A cross-generation wrong-family confirmed by repo audit; discovery is third-party-only."
+      },
+      {
+        "fridge_slug": "samsung-rf27t5201sr",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "samsung_authored_evidence_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "reason": "Samsung Canada official HAF-QIN page lists RF27T5201SR/AA; token resolves to repo-proven samsung::HAFQIN family. Ready for owner-review compat correction packet — not auto-applied."
+      },
+      {
+        "fridge_slug": "samsung-rf27t5501sr",
+        "packet_current_mapped_filter_slugs": ["da29-00012b", "da29-00020b"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "samsung_authored_evidence_row",
+        "immediate_surgical_candidate": true,
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "reason": "Samsung Canada official page lists RF27T5501SR/AC; surgical HAF-CIN co-map removal candidate. Owner must approve da29-00012b|da29-00020b removal and da97-17376b addition."
+      },
+      {
+        "fridge_slug": "samsung-rf28r6201ww",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "RedStag compatibility guide is third-party; platform-family inference for WW color suffix not Samsung exact-model proof."
+      },
+      {
+        "fridge_slug": "samsung-rf28r6241sb",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "inferred_color_variant_row",
+        "hyperagent_confidence": "INFERRED",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "INFERRED from RF28R6241 base model on third-party table — must not become repo truth without exact-model Samsung proof."
+      },
+      {
+        "fridge_slug": "samsung-rf28r6241sg",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "inferred_color_variant_row",
+        "hyperagent_confidence": "INFERRED",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "INFERRED color-variant row — same as RF28R6241SB."
+      },
+      {
+        "fridge_slug": "samsung-rf28r6241sw",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "inferred_color_variant_row",
+        "hyperagent_confidence": "INFERRED",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "INFERRED color-variant row — third-party source, no Samsung exact-model listing for SW suffix."
+      },
+      {
+        "fridge_slug": "samsung-rf28r6301sr",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "samsung_authored_evidence_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "reason": "Samsung US business spec PDF (image-us.samsung.com) lists RF28R6301SR with Accessories Water Filter: HAF-QIN."
+      },
+      {
+        "fridge_slug": "samsung-rf28r7201sg",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "Primary cited URL is Filters Fast; packet notes Samsung US page but source_url is third-party. Minor co-map conflict noted for da29-00020b on Filters Fast."
+      },
+      {
+        "fridge_slug": "samsung-rf28t5101sg",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "Appliances Distributors dealer page — third-party; SG color suffix needs exact-model Samsung proof."
+      },
+      {
+        "fridge_slug": "samsung-rf28t5101sr",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "samsung_authored_evidence_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "reason": "Samsung Canada official spec sheet PDF (images.homedepot.ca) states Water Filter: HAF-QIN for RF28T5101SR."
+      },
+      {
+        "fridge_slug": "samsung-rf28t5f01sr",
+        "packet_current_mapped_filter_slugs": ["da29-00019a"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "third_party_only_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "Authorized dealer spec table (mrgsgs.com) — third-party; Family Hub variant needs Samsung exact-model confirmation."
+      },
+      {
+        "fridge_slug": "samsung-rs22t5201sg",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "resolved_repo_filter_slug": "da97-17376b",
+        "evidence_category": "samsung_authored_evidence_row",
+        "hyperagent_confidence": "PROVEN",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "reason": "Samsung US official spec PDF lists RS22T5201SG with Accessories Water Filter: HAF-QIN — newer RS platform uses square HAF-QIN not legacy HAF-CIN."
+      },
+      {
+        "fridge_slug": "samsung-rs25h5111sr",
+        "packet_current_mapped_filter_slugs": ["da29-10105j"],
+        "repo_compat_match": true,
+        "discovered_token": "HAF-CIN",
+        "discovered_part_number": "DA29-00020B",
+        "resolved_repo_filter_slug": "da29-00020b",
+        "evidence_category": "rs25h5111sr_conflict_row",
+        "hyperagent_confidence": "INFERRED",
+        "hyperagent_terminal_state": "NEEDS_OWNER_REVIEW",
+        "cursor_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+        "reason": "Wrong-part on da29-10105j directionally supported; HAF-CIN vs HAF-QIN unresolved without Samsung-authored spec. RS25 sibling line maps da97-15217d on other suffixes — highest reconciliation risk in batch. Owner browser proof mandatory."
+      }
+    ],
+    "recommended_owner_action": "File owner-review compat correction packet for 5 PASS rows (Samsung-authored HAF-QIN→da97-17376b). Prioritize surgical samsung-rf27t5501sr (remove da29-00012b|da29-00020b). Hold 10 PARTIAL rows until owner captures Tier-1 manual-evidence filter_specification on exact-model Samsung pages. Resolve RS25H5111SR with owner browser proof before any compat edit. No CSV/Supabase mutation until post_hyperagent_validation_checklist passes per slug.",
+    "proposed_next_cursor_step": "Build samsung-bad-mapping-batch-001-owner-review-packet-v1 for the 5 PASS rows; queue owner-browser-proof assist for 10 PARTIAL rows and RS25H5111SR conflict."
+  },
+  "proven_facts": [
+    "PROVEN: Ingest packet contract flags pass — buckparts_hyperagent_ingest_packet_v1, BAD_MAPPING_RESEARCH, DISCOVERY_COMPLETE, truth_closure_claimed=false, mutation_authorized=false, read_only=true, data_mutation=false.",
+    "PROVEN: 15/15 slugs in fridge_models.csv; 15/15 packet current_mapped_filters match compatibility_mappings.csv.",
+    "PROVEN: 15/15 slugs WRONG_PART_RISK in model-filter-correctness-audit-v1.",
+    "PROVEN: HAF-QIN→da97-17376b and HAF-CIN→da29-00020b resolve via filter_aliases.csv and filters.csv — no alias validation gaps.",
+    "PROVEN: da29-10105j repo-wide mapping count=15 in audit; 8/15 in this batch.",
+    "PROVEN: 6/15 batch slugs map da29-00019a (cross-generation contamination cohort).",
+    "PROVEN: 5 rows have Samsung-authored exact-model or variant-listed evidence suitable for owner-review (not auto-apply).",
+    "PROVEN: 0/15 batch slugs have committed manual-evidence JSON — HyperAgent discovery cannot close repo truth.",
+    "PROVEN: Read-only validation — no protected repo mutations.",
+    "PROVEN: npm run lint clean; hyperagent-work-queue, hyperagent-dispatch-registry, buckparts-ops-agent-workflow tests 26/26 pass."
+  ],
+  "inferred_facts": [
+    "INFERRED: HyperAgent systematic DA29-10105J phantom-token narrative directionally aligns with repo — token appears on 15 audit rows but lacks manual-evidence or Samsung proof anywhere in repo.",
+    "INFERRED: 14/15 discovered corrections point to HAF-QIN/da97-17376b; RS25H5111SR is the sole HAF-CIN candidate with unresolved source conflict."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live Supabase compat rows vs committed CSV.",
+    "UNKNOWN: RS25H5111SR production variants — HAF-CIN vs HAF-QIN until owner browser proof.",
+    "UNKNOWN: Whether third-party PASS-adjacent rows (e.g. rf28r7201sg Samsung US page cited in notes) would upgrade to PASS after owner captures primary source URL in manual-evidence."
+  ]
+}
