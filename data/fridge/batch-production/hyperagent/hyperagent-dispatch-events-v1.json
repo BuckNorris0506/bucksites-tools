@@ -55,6 +55,17 @@
       "dispatched_at": "2026-06-09T19:59:27.977Z",
       "task_id": null,
       "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
+    },
+    {
+      "event_id": "gswf-bounded-evidence-slice-5a735d4a",
+      "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::ge::gswf",
+      "queue_item_id": "bd9f2dccb72a7d1d",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "scope_key": "filter::ge::gswf",
+      "slug_batch_fingerprint": "83f0e7daf2b46547",
+      "dispatched_at": "2026-06-09T23:20:51.993Z",
+      "task_id": null,
+      "operator_note": "mission_factory:MF-2026-0003 orchestrator_v1.2 discovery only"
     }
   ]
 }

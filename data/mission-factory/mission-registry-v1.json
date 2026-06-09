@@ -5,5 +5,684 @@
   "data_mutation": true,
   "mutation_authorized": false,
   "created_at": "2026-06-09T00:00:00.000Z",
-  "missions": []
+  "missions": [
+    {
+      "mission_id": "MF-2026-0001",
+      "mission_type": "EVIDENCE_SCALING",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 3,
+      "target_family": "filter::whirlpool::edr4rxd1",
+      "target_slugs": [
+        "whirlpool-wrf535sdhz",
+        "whirlpool-wrf535sibz",
+        "whirlpool-wrf535smhb",
+        "whirlpool-wrf540cwhm",
+        "whirlpool-wrf540cwhz",
+        "whirlpool-wrf736sdam",
+        "whirlpool-wrf757sdfz",
+        "whirlpool-wrf757sihz",
+        "whirlpool-wrf767sdam",
+        "whirlpool-wrs315sdhv",
+        "whirlpool-wrs315sihz",
+        "whirlpool-wrs571cihb",
+        "whirlpool-wrs571cihz",
+        "whirlpool-wrs571sdam",
+        "whirlpool-wrx735sdhz",
+        "whirlpool-wrx735sibz",
+        "whirlpool-wrx986sihv",
+        "whirlpool-wrx988sibw"
+      ],
+      "source_reference": "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "EVIDENCE_SCALING:refrigerator:filter::whirlpool::edr4rxd1"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0002",
+      "mission_type": "EVIDENCE_SCALING",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 3,
+      "target_family": "filter::whirlpool::edr2rxd1",
+      "target_slugs": [
+        "whirlpool-wrf535smhm",
+        "whirlpool-wrf540sihz",
+        "whirlpool-wrf554chhz",
+        "whirlpool-wrf555sdam",
+        "whirlpool-wrf757sdhb",
+        "whirlpool-wrf767sdhz",
+        "whirlpool-wrf954cihz",
+        "whirlpool-wrs315sdhb",
+        "whirlpool-wrs315sdhz",
+        "whirlpool-wrs325snhz",
+        "whirlpool-wrs571cihm",
+        "whirlpool-wrs571sibz",
+        "whirlpool-wrs588sibm",
+        "whirlpool-wrs588sibw",
+        "whirlpool-wrx735sdam",
+        "whirlpool-wrx735sdhb",
+        "whirlpool-wrx986sihw",
+        "whirlpool-wrx986sihz"
+      ],
+      "source_reference": "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "EVIDENCE_SCALING:refrigerator:filter::whirlpool::edr2rxd1"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0003",
+      "mission_type": "EVIDENCE_SCALING",
+      "wedge": "refrigerator",
+      "state": "DISPATCHED",
+      "priority": 3,
+      "target_family": "filter::ge::gswf",
+      "target_slugs": [
+        "ge-cwe23sshww",
+        "ge-gfe24jgkww",
+        "ge-gfe27jmkes",
+        "ge-gfe28gmkbb",
+        "ge-gfe28gskes",
+        "ge-gfe28hmkww",
+        "ge-gfe28hskss",
+        "ge-gne25jmkww",
+        "ge-gne27jstss",
+        "ge-gsc25frshss",
+        "ge-gse25hskss",
+        "ge-gse26gshess",
+        "ge-gte18gsnrss",
+        "ge-gye22gskww",
+        "ge-pfe28kmkww",
+        "ge-pfe28kynbb",
+        "ge-pvd28bymfs"
+      ],
+      "source_reference": "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "EVIDENCE_SCALING:refrigerator:filter::ge::gswf"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        },
+        {
+          "from_state": "DISPATCH_READY",
+          "to_state": "DISPATCHED",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:52.136Z",
+          "reason": "hyperagent_dispatch_recorded",
+          "metadata": {
+            "hyperagent_mission_id": "gswf-bounded-evidence-slice-5a735d4a",
+            "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::ge::gswf",
+            "queue_item_id": "bd9f2dccb72a7d1d",
+            "mission_packet_json_rel_path": "data/fridge/batch-production/hyperagent/outbox/gswf-bounded-evidence-slice-5a735d4a-hyperagent-mission-packet-v0.json",
+            "mission_packet_md_rel_path": "data/fridge/batch-production/hyperagent/outbox/gswf-bounded-evidence-slice-5a735d4a-hyperagent-mission-packet-v0.md",
+            "ingest_packet_rel_path_hint": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
+            "dispatch_event_id": "gswf-bounded-evidence-slice-5a735d4a"
+          }
+        }
+      ],
+      "current_actor": "hyperagent",
+      "ttl_expires_at": "2026-06-11T23:20:52.136Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0004",
+      "mission_type": "EVIDENCE_SCALING",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 3,
+      "target_family": "filter::ge::opfg3f",
+      "target_slugs": [
+        "ge-cwe19tslss",
+        "ge-gfe24jgkbb",
+        "ge-gfe28gelds",
+        "ge-gfe28gskbb",
+        "ge-gfe28hmkbb",
+        "ge-gne25jmkbb",
+        "ge-gne25jskss",
+        "ge-gne27jmkbs",
+        "ge-gne27jymbb",
+        "ge-gne29gskss",
+        "ge-gss20eshbb",
+        "ge-gss23gskww",
+        "ge-gye22hskss",
+        "ge-pvd28bslss",
+        "ge-pwe23kskss"
+      ],
+      "source_reference": "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "EVIDENCE_SCALING:refrigerator:filter::ge::opfg3f"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0005",
+      "mission_type": "EVIDENCE_SCALING",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 3,
+      "target_family": "filter::ge::xwfe",
+      "target_slugs": [
+        "ge-cfe28tshss",
+        "ge-cye22tp2ms1",
+        "ge-gfd28gslss",
+        "ge-gfd28gslww",
+        "ge-gfe28ggkww",
+        "ge-gfe28gmkww",
+        "ge-gne25jmkes",
+        "ge-gne27fskss",
+        "ge-gne27jsmbb",
+        "ge-gne29gskbb",
+        "ge-gse25gshss",
+        "ge-gss23gskbb",
+        "ge-gye22hskbb",
+        "ge-pfe28kynfs"
+      ],
+      "source_reference": "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "EVIDENCE_SCALING:refrigerator:filter::ge::xwfe"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0006",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::242017801",
+      "target_slugs": [
+        "frig-242017801"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::242017801"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0007",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::242086201",
+      "target_slugs": [
+        "frig-242086201"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::242086201"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0008",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::242294502",
+      "target_slugs": [
+        "frig-242294502"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::242294502"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0009",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::eptwfu01",
+      "target_slugs": [
+        "eptwfu01"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::eptwfu01"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0010",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::fppwfu01",
+      "target_slugs": [
+        "fppwfu01"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::fppwfu01"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0011",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::ppwfu01",
+      "target_slugs": [
+        "purepour"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::ppwfu01"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0012",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::ultrawf",
+      "target_slugs": [
+        "ultrawf"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::ultrawf"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0013",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::wf2cb",
+      "target_slugs": [
+        "wf2cb"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.594Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.594Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::wf2cb"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0014",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::wf3cb",
+      "target_slugs": [
+        "wf3cb"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.595Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.595Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::wf3cb"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    },
+    {
+      "mission_id": "MF-2026-0015",
+      "mission_type": "SAFE_LINK_COVERAGE",
+      "wedge": "refrigerator",
+      "state": "DISPATCH_READY",
+      "priority": 4,
+      "target_family": "filter::frigidaire::wfcb",
+      "target_slugs": [
+        "wfcb"
+      ],
+      "source_reference": "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+      "created_at": "2026-06-09T23:20:51.595Z",
+      "state_history": [
+        {
+          "from_state": "QUEUED",
+          "to_state": "QUEUED",
+          "actor": "queue_generator",
+          "timestamp": "2026-06-09T23:20:51.595Z",
+          "reason": "queue_generator_v1_candidate",
+          "metadata": {
+            "dedup_key": "SAFE_LINK_COVERAGE:refrigerator:filter::frigidaire::wfcb"
+          }
+        },
+        {
+          "from_state": "QUEUED",
+          "to_state": "DISPATCH_READY",
+          "actor": "mission_factory_orchestrator_v1",
+          "timestamp": "2026-06-09T23:20:51.994Z",
+          "reason": "orchestrator_promote_queued_to_dispatch_ready",
+          "metadata": {
+            "orchestrator_version": "v1.2"
+          }
+        }
+      ],
+      "current_actor": "orchestrator",
+      "ttl_expires_at": "2026-06-10T23:20:51.994Z",
+      "audit_phase_at_creation": 0,
+      "result": null
+    }
+  ]
 }
