@@ -22,6 +22,17 @@
       "dispatched_at": "2026-06-08T21:45:00.000Z",
       "task_id": null,
       "operator_note": "HyperAgent already ran wf2cb-bounded-evidence-slice-001 manually. Dispatch blocking only — not discovery complete, not validated, not truth closure."
+    },
+    {
+      "event_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+      "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::frigidaire::frig-242017801",
+      "queue_item_id": "ada897261219ce09",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "scope_key": "filter::frigidaire::frig-242017801",
+      "slug_batch_fingerprint": "1d40e4aa3509053a",
+      "dispatched_at": "2026-06-09T04:12:15.147Z",
+      "task_id": null,
+      "operator_note": "Orchestrator v0 loop iteration 1 — discovery only, not validated, not truth closure."
     }
   ]
 }

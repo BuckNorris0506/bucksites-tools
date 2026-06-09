@@ -1,0 +1,71 @@
+{
+  "contract": "hyperagent_mission_packet_v0",
+  "orchestrator_version": "v0",
+  "loop_iteration": 1,
+  "loop_halt_after_dispatch": true,
+  "halt_condition": "DISPATCH_RECORDED",
+  "mission_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+  "queue_item_id": "ada897261219ce09",
+  "dedup_key": "BOUNDED_EVIDENCE_SLICE:filter::frigidaire::frig-242017801",
+  "slug_batch_fingerprint": "1d40e4aa3509053a",
+  "mission_type": "BOUNDED_EVIDENCE_SLICE",
+  "family_key": "filter::frigidaire::frig-242017801",
+  "scope_key": "filter::frigidaire::frig-242017801",
+  "slug_batch": [
+    "frigidaire-fghd2365tf",
+    "frigidaire-frfs2613as",
+    "frigidaire-grfs2633af",
+    "frigidaire-grfs2833af"
+  ],
+  "discovery_status": "DISCOVERY_OPEN",
+  "truth_closure_claimed": false,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "not_authorized": [
+    "supabase_mutation",
+    "retailer_links_csv_mutation",
+    "compatibility_mappings_csv_mutation",
+    "filters_csv_mutation",
+    "fridge_models_csv_mutation",
+    "evidence_mutation",
+    "deploy",
+    "go_click",
+    "verified_link_authorization",
+    "truth_closure",
+    "commit"
+  ],
+  "named_skill_used": [
+    "buildHyperAgentWorkQueueV1",
+    "buildHyperAgentDispatchRegistryV1",
+    "isHyperAgentRedispatchBlockedV1",
+    "hyperAgentDedupKeyV1",
+    "hyperAgentSlugBatchFingerprintV1",
+    "buildBoundedEvidenceSlicePromptV0",
+    "buildCopyPastePromptV0"
+  ],
+  "copy_paste_prompt": "BuckParts HYPERAGENT_ORCHESTRATOR_V0 — BOUNDED_EVIDENCE_SLICE\nfamily_key: filter::frigidaire::frig-242017801\nmission_type: BOUNDED_EVIDENCE_SLICE\nscope_key: filter::frigidaire::frig-242017801\nqueue_item_id: ada897261219ce09\nIMPORTANT: Full-family HyperAgent scaling is BLOCKED for this family.\nRun BOUNDED RESEARCH ONLY on the exact slug batch below.\nSlug batch (4):\n- frigidaire-fghd2365tf\n- frigidaire-frfs2613as\n- frigidaire-grfs2633af\n- frigidaire-grfs2833af\nRequirements:\n- Find official manufacturer filter_specification evidence for each exact model slug\n- Output deliverable contract buckparts_hyperagent_ingest_packet_v1 with candidate_rows per slug\n- Set discovery_status=DISCOVERY_COMPLETE on the ingest packet when research is done\n- truth_closure_claimed=false on the ingest packet\n- mutation_authorized=false — no compatibility_mappings.csv, filters.csv, fridge_models.csv, manual-evidence JSON, Supabase, pages, sitemap, robots, or retailer link edits\n- Terminal state per row required (DISCOVERY_COMPLETE | DISCOVERY_BLOCKED | NEEDS_OWNER_REVIEW)\n- Official manufacturer pages are highest-confidence; third-party sources are discovery input only\n- INFERRED or color-variant extrapolation must not be presented as repo truth\nRepo context: Evidence leverage ranks filter::frigidaire::frig-242017801 highly, but pre-research risk screen blocks full-family scaling (15 sibling conflicts, 0 learned-failure blocks).\nQueue title: Block full-family HyperAgent dispatch for `filter::frigidaire::frig-242017801` — pre-research risk screen HIGH/NEEDS_REPO_RECONCILIATION_FIRST. Optional 4-slug conflict-free research slice (frigidaire-fghd2365tf, frigidaire-frfs2613as, frigidaire-grfs2633af, frigidaire-grfs2833af) — not full-family scaling.",
+  "deliverable_contract": "buckparts_hyperagent_ingest_packet_v1",
+  "deliverable_rel_path_hint": "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-hyperagent-ingest-packet-v1.json",
+  "repo_context_paths": [
+    "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/hyperagent/hyperagent-dispatch-events-v1.json",
+    "docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md",
+    "scripts/lib/family-pre-research-risk-screen-v1.ts"
+  ],
+  "generated_at": "2026-06-09T04:12:15.147Z",
+  "proven_facts": [
+    "PROVEN: loop_iteration=1 — single iteration, no scheduler.",
+    "PROVEN: mission derived from hyperagent_work_queue_v1 queue_item_id=ada897261219ce09.",
+    "PROVEN: dedup_key=BOUNDED_EVIDENCE_SLICE:filter::frigidaire::frig-242017801.",
+    "PROVEN: slug_batch_fingerprint=1d40e4aa3509053a.",
+    "PROVEN: halt_condition=DISPATCH_RECORDED.",
+    "PROVEN: Orchestrator v0 emits discovery mission only — no truth closure."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: HyperAgent in-flight status until operator records DISPATCHED event.",
+    "UNKNOWN: Live Supabase vs committed CSV at dispatch time."
+  ]
+}
