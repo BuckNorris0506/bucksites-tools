@@ -1,0 +1,71 @@
+{
+  "contract": "samsung_pass_repair_apply_closeout_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-09T18:07:03.116Z",
+  "source_command": "npm run buckparts:samsung-pass-repair-apply-closeout",
+  "git_head_sha": "c447b9e3adf697517905be9559130d4045bd32d3",
+  "apply_execution_commit_sha": "89bed805e161a720662a1e40bb8f1352f92e49bd",
+  "apply_execution_commit_message": "Apply Samsung pass repair compatibility mappings",
+  "apply_execution_status": "APPLIED",
+  "guarded_apply_report_rel_path": "data/fridge/batch-production/apply-execution-plans/samsung-pass-repair-guarded-apply-v1.json",
+  "guarded_apply_report_apply_status": "BLOCKED",
+  "guarded_apply_report_mode": "dry_run",
+  "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+  "apply_plan_consumed": true,
+  "rerun_apply_should_block": true,
+  "owner_approval_rel_path": "data/owner-decisions/samsung-pass-repair-owner-approval-v1.json",
+  "owner_approval_decision_id": "decision-2026-06-09-samsung-pass-repair-approve_apply_plan",
+  "owner_approval_valid": true,
+  "csv_verification": {
+    "target_csv_rel_path": "data/compatibility_mappings.csv",
+    "intended_da97_17376b_mappings_present": true,
+    "removed_mappings_absent": true,
+    "present_da97_17376b_row_keys": [
+      "samsung-rf27t5201sr,da97-17376b",
+      "samsung-rf27t5501sr,da97-17376b",
+      "samsung-rf28r6301sr,da97-17376b",
+      "samsung-rf28t5101sr,da97-17376b",
+      "samsung-rs22t5201sg,da97-17376b"
+    ],
+    "absent_removed_row_keys": [
+      "samsung-rf27t5201sr,da29-10105j",
+      "samsung-rf27t5501sr,da29-00012b",
+      "samsung-rf27t5501sr,da29-00020b",
+      "samsung-rf28r6301sr,da29-00019a",
+      "samsung-rf28t5101sr,da29-00019a",
+      "samsung-rs22t5201sg,da29-10105j"
+    ],
+    "still_present_removed_row_keys": [],
+    "missing_da97_17376b_row_keys": []
+  },
+  "scoreboard_counts_after_refresh": {
+    "multi_mapped_count": 211,
+    "phantom_model_count": 13,
+    "wrong_part_risk_count": 75,
+    "matches_expected": true
+  },
+  "closeout_verification_passed": true,
+  "verification_blockers": [],
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/fridge/batch-production/apply-execution-plans/samsung-pass-repair-guarded-apply-v1.json",
+    "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+    "data/owner-decisions/samsung-pass-repair-owner-approval-v1.json",
+    "scripts/lib/refrigerator-truth-scoreboard-v1.ts"
+  ],
+  "proven_facts": [
+    "PROVEN: apply_execution_status=APPLIED via git commit 89bed805e161a720662a1e40bb8f1352f92e49bd + CSV parity.",
+    "PROVEN: guarded_apply_report on disk shows apply_status=BLOCKED (post-apply re-run blocks because before_mappings no longer match).",
+    "PROVEN: rerun_apply_should_block=true; apply_plan_consumed=true.",
+    "PROVEN: 5 da97-17376b row keys present; 6 removed row keys absent.",
+    "PROVEN: owner_approval_valid=true; decision_id=decision-2026-06-09-samsung-pass-repair-approve_apply_plan.",
+    "PROVEN: scoreboard after refresh — multi_mapped=211, phantom_model=13, wrong_part_risk=75.",
+    "PROVEN: Read-only closeout — no compatibility_mappings.csv or product data mutation performed."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether live Supabase compatibility_mappings matches committed CSV.",
+    "UNKNOWN: Whether wrong_part_risk_count will drop before Tier-1 manual evidence capture on the 5 Samsung slugs."
+  ]
+}
