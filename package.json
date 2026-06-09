@@ -108,6 +108,7 @@
     "buckparts:anchor-integrity-audit": "tsx scripts/report-anchor-integrity-audit-v1.ts",
     "buckparts:family-pre-research-risk-screen": "tsx scripts/report-family-pre-research-risk-screen-v1.ts",
     "buckparts:family-reconciliation": "tsx scripts/report-family-reconciliation-v1.ts",
+    "buckparts:hyperagent-work-queue": "tsx scripts/report-hyperagent-work-queue-v1.ts",
     "buckparts:edr4rxd1-owner-review-packet": "tsx scripts/report-edr4rxd1-owner-review-packet-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
