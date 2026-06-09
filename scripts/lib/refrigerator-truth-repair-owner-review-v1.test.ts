@@ -10,6 +10,7 @@ import {
   REFRIGERATOR_TRUTH_REPAIR_OWNER_REVIEW_CONTRACT_V1,
   REFRIGERATOR_TRUTH_REPAIR_OWNER_REVIEW_JSON_REL_V1,
   REFRIGERATOR_TRUTH_REPAIR_OWNER_REVIEW_MD_REL_V1,
+  FRIG_242017801_CURSOR_VALIDATION_JSON_REL_V1,
   SAMSUNG_BAD_MAPPING_CURSOR_VALIDATION_JSON_REL_V1,
   WF2CB_CURSOR_VALIDATION_JSON_REL_V1,
   writeRefrigeratorTruthRepairOwnerReviewArtifactsV1,
@@ -55,17 +56,22 @@ test("contract and read-only flags", () => {
   assert.equal(packet.truth_closure_authorized, false);
 });
 
-test("packet reads both validation files", () => {
+test("packet reads all three validation files", () => {
   const packet = buildRefrigeratorTruthRepairOwnerReviewV1({ rootDir: ROOT, now: FIXED_NOW });
-  assert.equal(packet.source_validation_packets.length, 2);
+  assert.equal(packet.source_validation_packets.length, 3);
   assert.equal(
     packet.source_validation_packets[0]?.rel_path,
     SAMSUNG_BAD_MAPPING_CURSOR_VALIDATION_JSON_REL_V1,
   );
   assert.equal(packet.source_validation_packets[1]?.rel_path, WF2CB_CURSOR_VALIDATION_JSON_REL_V1);
-  assert.equal(packet.summary.total_slug_rows, 20);
+  assert.equal(
+    packet.source_validation_packets[2]?.rel_path,
+    FRIG_242017801_CURSOR_VALIDATION_JSON_REL_V1,
+  );
+  assert.equal(packet.summary.total_slug_rows, 24);
   assert.ok(packet.exact_repo_paths_read.includes(SAMSUNG_BAD_MAPPING_CURSOR_VALIDATION_JSON_REL_V1));
   assert.ok(packet.exact_repo_paths_read.includes(WF2CB_CURSOR_VALIDATION_JSON_REL_V1));
+  assert.ok(packet.exact_repo_paths_read.includes(FRIG_242017801_CURSOR_VALIDATION_JSON_REL_V1));
 });
 
 test("Samsung 5 PASS rows become owner-review apply candidates", () => {
@@ -96,7 +102,7 @@ test("Samsung 10 PARTIAL rows stay browser-proof required", () => {
     assert.ok(row.recommended_owner_action.includes("not apply-ready"));
     assert.equal(row.mutation_authorized, false);
   }
-  assert.equal(packet.summary.browser_proof_required_count, 13);
+  assert.equal(packet.summary.browser_proof_required_count, 15);
 });
 
 test("WF2CB data-quality defect rows are not apply-ready", () => {
@@ -119,6 +125,47 @@ test("WF2CB data-quality defect rows are not apply-ready", () => {
     wf2cbPartial.every((row) => row.validation_verdict === "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW"),
   );
   assert.ok(wf2cbPartial.every((row) => row.proposed_mutation_type === "owner_browser_proof"));
+});
+
+test("Frigidaire 242017801 PARTIAL and phantom rows stay owner-review only", () => {
+  const packet = buildRefrigeratorTruthRepairOwnerReviewV1({ rootDir: ROOT, now: FIXED_NOW });
+  const partialRows = groupRows(packet, "frig_242017801_partial_needs_browser_proof");
+  assert.equal(partialRows.length, 2);
+  const partialSlugs = partialRows.map((row) => row.fridge_slug).sort();
+  assert.deepEqual(partialSlugs, ["frigidaire-fghd2365tf", "frigidaire-frfs2613as"]);
+  for (const row of partialRows) {
+    assert.equal(row.validation_verdict, "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW");
+    assert.equal(row.proposed_mutation_type, "owner_browser_proof");
+    assert.ok(row.recommended_owner_action.includes("not apply-ready"));
+    assert.equal(row.mutation_authorized, false);
+  }
+
+  const phantomRows = groupRows(packet, "frig_242017801_phantom_typo_models");
+  assert.equal(phantomRows.length, 2);
+  const phantomSlugs = phantomRows.map((row) => row.fridge_slug).sort();
+  assert.deepEqual(phantomSlugs, ["frigidaire-grfs2633af", "frigidaire-grfs2833af"]);
+  for (const row of phantomRows) {
+    assert.equal(row.validation_verdict, "VALIDATION_FAIL");
+    assert.equal(row.mutation_authorized, false);
+    assert.ok(
+      row.proposed_mutation_type === "catalog_suppress_slug" ||
+        row.proposed_mutation_type === "catalog_reconcile_typo",
+    );
+  }
+
+  assert.equal(packet.summary.phantom_or_suppression_review_count, 4);
+  assert.equal(packet.summary.apply_candidate_count, 5);
+});
+
+test("242017801=ULTRAWF token identity surfaced as separate owner-review concern", () => {
+  const packet = buildRefrigeratorTruthRepairOwnerReviewV1({ rootDir: ROOT, now: FIXED_NOW });
+  assert.equal(packet.token_identity_owner_review_concerns.length, 1);
+  const concern = packet.token_identity_owner_review_concerns[0];
+  assert.equal(concern?.concern_id, "242017801_ultrawf_duplicate_token");
+  assert.ok(concern?.claim.includes("242017801"));
+  assert.equal(concern?.consolidation_authorized, false);
+  assert.equal(concern?.consolidation_performed, false);
+  assert.ok(concern?.recommended_owner_action.includes("do not merge"));
 });
 
 test("mutation_authorized=false everywhere", () => {
@@ -182,5 +229,5 @@ test("scoreboard impact estimate references baseline counts", () => {
   assert.equal(impact.estimated_wrong_part_risk_count_after_apply, 70);
   assert.equal(impact.estimated_multi_mapped_reduction_if_owner_approved, 1);
   assert.equal(impact.estimated_phantom_model_reduction_if_owner_approved, 2);
-  assert.equal(impact.phantom_or_suppression_review_slug_count, 2);
+  assert.equal(impact.phantom_or_suppression_review_slug_count, 4);
 });

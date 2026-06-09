@@ -1,6 +1,6 @@
 # Refrigerator truth repair owner review v1
 
-Generated: 2026-06-09T14:16:16.908Z
+Generated: 2026-06-09T14:27:56.374Z
 
 ## Status
 
@@ -16,10 +16,10 @@ Generated: 2026-06-09T14:16:16.908Z
 | Metric | Count |
 | --- | ---: |
 | apply_candidate_count | 5 |
-| browser_proof_required_count | 13 |
-| phantom_or_suppression_review_count | 2 |
+| browser_proof_required_count | 15 |
+| phantom_or_suppression_review_count | 4 |
 | no_action_count | 0 |
-| total_slug_rows | 20 |
+| total_slug_rows | 24 |
 
 ## Scoreboard impact estimate (if owner-approved)
 
@@ -34,11 +34,24 @@ Generated: 2026-06-09T14:16:16.908Z
 - repo_truth_closure_authorized=false — this packet does not close repo truth.
 - No apply plan in this lane — owner must approve a separate compat apply packet before CSV edits.
 - Review 5 samsung_pass_ready apply candidate(s) — owner approval required; mutation_authorized=false everywhere.
-- Queue owner-browser proof for 13 slug(s) — PARTIAL verdicts are not apply-ready.
-- Resolve 2 catalog integrity slug(s) before compat or evidence scaling.
+- Queue owner-browser proof for 15 slug(s) — PARTIAL verdicts are not apply-ready.
+- Resolve 4 catalog integrity slug(s) before compat or evidence scaling.
 - Do not mutate compatibility_mappings.csv, filters.csv, fridge_models.csv, manual-evidence JSON, Supabase, pages, sitemap/robots, retailer links, or HQ handoff from this packet.
 - WF2CB bounded slice rows remain owner-review until validation PASS exists — hold wf2cb removals.
+- Frigidaire 242017801 bounded slice rows remain owner-review — 0 PASS rows; hold 6-filter co-map removals.
+- 242017801=ULTRAWF token identity is a separate owner-review concern — do not consolidate filters.csv or aliases without approval.
 - Samsung PASS-ready rows may be grouped as owner-review apply candidates only — not applied automatically.
+
+## Token identity owner-review concerns
+
+### 242017801_ultrawf_duplicate_token
+
+- claim: **242017801 = ULTRAWF (PureSource Ultra)**
+- repo slugs: `ultrawf` + `frig-242017801`
+- cross_alias_in_repo: **false**
+- consolidation_authorized: **false**
+- separate_lane: `frigidaire-242017801-ultrawf-token-consolidation-owner-review-v1`
+- action: Separate owner-review lane for 242017801/ULTRAWF token consolidation — do not merge filters.csv rows or aliases without explicit owner approval.
 
 ## samsung_pass_ready (5)
 
@@ -74,4 +87,14 @@ Generated: 2026-06-09T14:16:16.908Z
 ## phantom_or_non_refrigerator_models (1)
 
 - `frigidaire-cfse2333tb` — VALIDATION_FAIL; maps `wf2cb` → target `none`; catalog_suppress_slug; mutation_authorized=false
+
+## frig_242017801_partial_needs_browser_proof (2)
+
+- `frigidaire-fghd2365tf` — VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW; maps `frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb` → target `ultrawf`; owner_browser_proof; mutation_authorized=false
+- `frigidaire-frfs2613as` — VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW; maps `frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb` → target `purepour`; owner_browser_proof; mutation_authorized=false
+
+## frig_242017801_phantom_typo_models (2)
+
+- `frigidaire-grfs2633af` — VALIDATION_FAIL; maps `frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb` → target `none`; catalog_suppress_slug; mutation_authorized=false
+- `frigidaire-grfs2833af` — VALIDATION_FAIL; maps `frig-242017801|frig-242086201|purepour|ultrawf|wf3cb|wfcb` → target `none`; catalog_reconcile_typo; mutation_authorized=false
 

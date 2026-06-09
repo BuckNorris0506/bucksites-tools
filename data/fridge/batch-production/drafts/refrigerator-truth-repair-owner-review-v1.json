@@ -6,7 +6,7 @@
   "owner_review_required": true,
   "repo_truth_closure_authorized": false,
   "truth_closure_authorized": false,
-  "generated_at": "2026-06-09T14:16:16.908Z",
+  "generated_at": "2026-06-09T14:27:56.374Z",
   "source_command": "npm run buckparts:refrigerator-truth-repair-owner-review",
   "source_validation_packets": [
     {
@@ -23,6 +23,14 @@
       "validation_status": "VALIDATION_PARTIAL",
       "mission_type": "BOUNDED_EVIDENCE_SLICE",
       "slug_count": 5,
+      "repo_truth_closure_authorized": false
+    },
+    {
+      "batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+      "rel_path": "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-cursor-validation-v1.json",
+      "validation_status": "VALIDATION_PARTIAL",
+      "mission_type": "BOUNDED_EVIDENCE_SLICE",
+      "slug_count": 4,
       "repo_truth_closure_authorized": false
     }
   ],
@@ -402,15 +410,138 @@
           "reason": "CFSE2333TB is a dryer per HyperAgent third-party parts taxonomy — not a refrigerator filter candidate. Repo incorrectly lists slug in fridge_models.csv with wf2cb map. Suppress or correct catalog before any filter compat edit; if intended CRSE233TB refrigerator, filter family is WF3CB not WF2CB."
         }
       ]
+    },
+    {
+      "repair_group": "frig_242017801_partial_needs_browser_proof",
+      "batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+      "slug_count": 2,
+      "slug_rows": [
+        {
+          "fridge_slug": "frigidaire-fghd2365tf",
+          "source_batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+          "repair_group": "frig_242017801_partial_needs_browser_proof",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "frig-242017801",
+            "frig-242086201",
+            "purepour",
+            "ultrawf",
+            "wf3cb",
+            "wfcb"
+          ],
+          "validated_target_filter_slug": "ultrawf",
+          "discovered_token": "ULTRAWF",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "third_party_direct_parts_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Frigidaire exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "owner_browser_proof",
+          "mutation_authorized": false,
+          "reason": "ULTRAWF/242017801 directionally plausible for Gallery French Door FGHD2365TF, but primary source is PartSelect 242017801 page (third-party). EPTWFU01 ambiguity unresolved — official EPTWFU01 PDF lists FGHD2368TF/TD not FGHD2365TF. No exact-model Frigidaire filter_specification in repo or batch. Owner must capture Tier-1 proof before any compat reduction from 6 co-maps."
+        },
+        {
+          "fridge_slug": "frigidaire-frfs2613as",
+          "source_batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+          "repair_group": "frig_242017801_partial_needs_browser_proof",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "frig-242017801",
+            "frig-242086201",
+            "purepour",
+            "ultrawf",
+            "wf3cb",
+            "wfcb"
+          ],
+          "validated_target_filter_slug": "purepour",
+          "discovered_token": "FPPWFU01",
+          "validation_verdict": "VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW",
+          "evidence_tier": "sibling_family_inferred_row",
+          "recommended_owner_action": "Hold compat edits — capture Tier-1 Frigidaire exact-model filter_specification before any mapping change. PARTIAL verdict is not apply-ready.",
+          "proposed_mutation_type": "owner_browser_proof",
+          "mutation_authorized": false,
+          "reason": "HyperAgent PROVEN rejected for repo closure — evidence is Frigidaire family-level filter PDF + ExaAnswer, not exact FRFS2613AS manufacturer filter_specification. Directionally supports FPPWFU01/purepour over 5 wrong-family co-maps, but PARTIAL only until owner-browser Tier-1 capture on exact model."
+        }
+      ]
+    },
+    {
+      "repair_group": "frig_242017801_phantom_typo_models",
+      "batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+      "slug_count": 2,
+      "slug_rows": [
+        {
+          "fridge_slug": "frigidaire-grfs2633af",
+          "source_batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+          "repair_group": "frig_242017801_phantom_typo_models",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "frig-242017801",
+            "frig-242086201",
+            "purepour",
+            "ultrawf",
+            "wf3cb",
+            "wfcb"
+          ],
+          "validated_target_filter_slug": null,
+          "discovered_token": null,
+          "validation_verdict": "VALIDATION_FAIL",
+          "evidence_tier": "phantom_typo_model_row",
+          "recommended_owner_action": "Catalog integrity review — suppress phantom slug or reconcile typo before any filter compat work — not apply-ready.",
+          "proposed_mutation_type": "catalog_suppress_slug",
+          "mutation_authorized": false,
+          "reason": "GRFS2633AF not found in Frigidaire US/CA, PartSelect, or major parts databases per HyperAgent; repo incorrectly lists slug with 6-filter co-map. GRFS line is French Door per external GRFS2853AF reference — FPPWFU01 would be plausible only if model is real. Suppress or verify catalog before filter compat work."
+        },
+        {
+          "fridge_slug": "frigidaire-grfs2833af",
+          "source_batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+          "repair_group": "frig_242017801_phantom_typo_models",
+          "repo_classification": "LIKELY_CORRECT_NEEDS_EVIDENCE",
+          "current_mapped_filter_slugs": [
+            "frig-242017801",
+            "frig-242086201",
+            "purepour",
+            "ultrawf",
+            "wf3cb",
+            "wfcb"
+          ],
+          "validated_target_filter_slug": null,
+          "discovered_token": null,
+          "validation_verdict": "VALIDATION_FAIL",
+          "evidence_tier": "phantom_typo_model_row",
+          "recommended_owner_action": "Catalog integrity review — suppress phantom slug or reconcile typo before any filter compat work — not apply-ready.",
+          "proposed_mutation_type": "catalog_reconcile_typo",
+          "mutation_authorized": false,
+          "reason": "GRFS2833AF not in any database; HyperAgent cites GRFS2853AF (FPPWFU01) as closest match — possible 2833→2853 transposition. Do not retarget slug to GRFS2853AF without owner rating-plate proof. Repo typo/phantom reconciliation required before compat edits."
+        }
+      ]
     }
   ],
   "summary": {
     "apply_candidate_count": 5,
-    "browser_proof_required_count": 13,
-    "phantom_or_suppression_review_count": 2,
+    "browser_proof_required_count": 15,
+    "phantom_or_suppression_review_count": 4,
     "no_action_count": 0,
-    "total_slug_rows": 20
+    "total_slug_rows": 24
   },
+  "token_identity_owner_review_concerns": [
+    {
+      "concern_id": "242017801_ultrawf_duplicate_token",
+      "source_batch_id": "frig-242017801-bounded-evidence-slice-046fb82e",
+      "claim": "242017801 = ULTRAWF (PureSource Ultra)",
+      "repo_ultrawf_slug": "ultrawf",
+      "repo_frig_242017801_slug": "frig-242017801",
+      "cross_alias_in_repo": false,
+      "consolidation_performed": false,
+      "consolidation_authorized": false,
+      "recommended_owner_action": "Separate owner-review lane for 242017801/ULTRAWF token consolidation — do not merge filters.csv rows or aliases without explicit owner approval.",
+      "separate_lane_title": "frigidaire-242017801-ultrawf-token-consolidation-owner-review-v1",
+      "rationale": [
+        "Repo has distinct filters.csv rows for ultrawf (ULTRAWF) and frig-242017801 (242017801)",
+        "filter_aliases.csv aliases 242017801 to frig-242017801 but does not cross-alias ultrawf",
+        "All 4 batch slugs co-map both slugs plus 4 other filters — duplicate token amplifies multi-map noise",
+        "HyperAgent external cross-reference supports identity claim but repo consolidation is a catalog/alias decision requiring owner approval",
+        "This validation does not merge tokens or edit filters.csv"
+      ]
+    }
+  ],
   "scoreboard_impact_estimate": {
     "scoreboard_source_contract": "refrigerator_truth_scoreboard_v1",
     "baseline_wrong_part_risk_count": 75,
@@ -420,7 +551,7 @@
     "estimated_multi_mapped_reduction_if_owner_approved": 1,
     "estimated_multi_mapped_count_after_apply": 211,
     "baseline_phantom_model_count": 15,
-    "phantom_or_suppression_review_slug_count": 2,
+    "phantom_or_suppression_review_slug_count": 4,
     "estimated_phantom_model_reduction_if_owner_approved": 2,
     "estimated_phantom_model_count_after_catalog_review": 13,
     "notes": [
@@ -434,24 +565,28 @@
     "repo_truth_closure_authorized=false — this packet does not close repo truth.",
     "No apply plan in this lane — owner must approve a separate compat apply packet before CSV edits.",
     "Review 5 samsung_pass_ready apply candidate(s) — owner approval required; mutation_authorized=false everywhere.",
-    "Queue owner-browser proof for 13 slug(s) — PARTIAL verdicts are not apply-ready.",
-    "Resolve 2 catalog integrity slug(s) before compat or evidence scaling.",
+    "Queue owner-browser proof for 15 slug(s) — PARTIAL verdicts are not apply-ready.",
+    "Resolve 4 catalog integrity slug(s) before compat or evidence scaling.",
     "Do not mutate compatibility_mappings.csv, filters.csv, fridge_models.csv, manual-evidence JSON, Supabase, pages, sitemap/robots, retailer links, or HQ handoff from this packet.",
     "WF2CB bounded slice rows remain owner-review until validation PASS exists — hold wf2cb removals.",
+    "Frigidaire 242017801 bounded slice rows remain owner-review — 0 PASS rows; hold 6-filter co-map removals.",
+    "242017801=ULTRAWF token identity is a separate owner-review concern — do not consolidate filters.csv or aliases without approval.",
     "Samsung PASS-ready rows may be grouped as owner-review apply candidates only — not applied automatically."
   ],
   "exact_repo_paths_read": [
     "data/compatibility_mappings.csv",
     "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+    "data/fridge/batch-production/drafts/frig-242017801-bounded-evidence-slice-046fb82e-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
     "data/fridge/batch-production/drafts/wf2cb-bounded-evidence-slice-001-cursor-validation-v1.json",
     "scripts/lib/refrigerator-truth-scoreboard-v1.ts"
   ],
   "proven_facts": [
-    "PROVEN: Loaded 20 slug rows from Samsung bad-mapping batch 001 and WF2CB bounded slice 001 cursor validation packets.",
-    "PROVEN: apply_candidate_count=5 (samsung_pass_ready only).",
-    "PROVEN: browser_proof_required_count=13 (PARTIAL verdict rows).",
-    "PROVEN: phantom_or_suppression_review_count=2 catalog integrity rows.",
+    "PROVEN: Loaded 24 slug rows from Samsung bad-mapping, WF2CB, and Frigidaire 242017801 bounded-slice cursor validation packets.",
+    "PROVEN: apply_candidate_count=5 (samsung_pass_ready only — no new PASS rows from 242017801).",
+    "PROVEN: browser_proof_required_count=15 (PARTIAL verdict rows across all batches).",
+    "PROVEN: phantom_or_suppression_review_count=4 catalog integrity rows.",
+    "PROVEN: token_identity_owner_review_concerns=1 (242017801=ULTRAWF duplicate token — consolidation not applied).",
     "PROVEN: repo_truth_closure_authorized=false preserved on packet and source validation artifacts.",
     "PROVEN: estimated_wrong_part_risk_reduction_if_owner_approved=5 from samsung_pass_ready cohort.",
     "PROVEN: Read-only owner-review packet — no compat, evidence, Supabase, page, retailer-link, sitemap, robots, or HQ handoff mutations."
@@ -460,6 +595,8 @@
     "UNKNOWN: Live Supabase compat rows vs committed CSV when owner executes approved repairs.",
     "UNKNOWN: Whether PARTIAL Samsung rows upgrade to PASS after owner Tier-1 capture.",
     "UNKNOWN: Catalog suppression outcome for frigidaire-cfse2333tb — suppress vs retarget CRSE233TB refrigerator.",
-    "UNKNOWN: Whether frigidaire-frfs2623as merges into frigidaire-frss2623as or remains a distinct slug."
+    "UNKNOWN: Whether frigidaire-frfs2623as merges into frigidaire-frss2623as or remains a distinct slug.",
+    "UNKNOWN: Whether GRFS2633AF is real or GRFS2833AF is typo for GRFS2853AF until owner rating-plate proof.",
+    "UNKNOWN: Whether 242017801/ULTRAWF alias consolidation will be owner-approved in a separate lane."
   ]
 }
