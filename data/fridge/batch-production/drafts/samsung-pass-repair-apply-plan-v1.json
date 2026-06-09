@@ -1,0 +1,271 @@
+{
+  "contract": "samsung_pass_repair_apply_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "owner_approval_required": true,
+  "apply_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "generated_at": "2026-06-09T16:51:48.553Z",
+  "source_command": "npm run buckparts:samsung-pass-repair-apply-plan",
+  "source_owner_review_packet": {
+    "contract": "refrigerator_truth_repair_owner_review_v1",
+    "rel_path": "data/fridge/batch-production/drafts/refrigerator-truth-repair-owner-review-v1.json",
+    "repair_group": "samsung_pass_ready",
+    "slug_count": 5
+  },
+  "source_validation_packet": {
+    "batch_id": "samsung-bad-mapping-batch-001",
+    "rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json"
+  },
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "planned_rows": [
+    {
+      "fridge_slug": "samsung-rf27t5201sr",
+      "operation": "replace_mapping",
+      "before_mappings": [
+        "da29-10105j"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-10105j"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ],
+      "target_filter_slug": "da97-17376b",
+      "repo_classification": "WRONG_PART_RISK",
+      "validation_basis": {
+        "source_batch_id": "samsung-bad-mapping-batch-001",
+        "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "evidence_category": "samsung_authored_evidence_row",
+        "reason": "Samsung Canada official HAF-QIN page lists RF27T5201SR/AA; token resolves to repo-proven samsung::HAFQIN family. Ready for owner-review compat correction packet — not auto-applied."
+      },
+      "mutation_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "samsung-rf27t5501sr",
+      "operation": "split_mapping",
+      "before_mappings": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00012b",
+        "da29-00020b"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ],
+      "target_filter_slug": "da97-17376b",
+      "repo_classification": "WRONG_PART_RISK",
+      "validation_basis": {
+        "source_batch_id": "samsung-bad-mapping-batch-001",
+        "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "evidence_category": "samsung_authored_evidence_row",
+        "reason": "Samsung Canada official page lists RF27T5501SR/AC; surgical HAF-CIN co-map removal candidate. Owner must approve da29-00012b|da29-00020b removal and da97-17376b addition."
+      },
+      "mutation_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "samsung-rf28r6301sr",
+      "operation": "replace_mapping",
+      "before_mappings": [
+        "da29-00019a"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00019a"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ],
+      "target_filter_slug": "da97-17376b",
+      "repo_classification": "WRONG_PART_RISK",
+      "validation_basis": {
+        "source_batch_id": "samsung-bad-mapping-batch-001",
+        "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "evidence_category": "samsung_authored_evidence_row",
+        "reason": "Samsung US business spec PDF (image-us.samsung.com) lists RF28R6301SR with Accessories Water Filter: HAF-QIN."
+      },
+      "mutation_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "samsung-rf28t5101sr",
+      "operation": "replace_mapping",
+      "before_mappings": [
+        "da29-00019a"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-00019a"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ],
+      "target_filter_slug": "da97-17376b",
+      "repo_classification": "WRONG_PART_RISK",
+      "validation_basis": {
+        "source_batch_id": "samsung-bad-mapping-batch-001",
+        "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "evidence_category": "samsung_authored_evidence_row",
+        "reason": "Samsung Canada official spec sheet PDF (images.homedepot.ca) states Water Filter: HAF-QIN for RF28T5101SR."
+      },
+      "mutation_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "samsung-rs22t5201sg",
+      "operation": "replace_mapping",
+      "before_mappings": [
+        "da29-10105j"
+      ],
+      "after_mappings": [
+        "da97-17376b"
+      ],
+      "removed_filter_slugs": [
+        "da29-10105j"
+      ],
+      "added_filter_slugs": [
+        "da97-17376b"
+      ],
+      "target_filter_slug": "da97-17376b",
+      "repo_classification": "WRONG_PART_RISK",
+      "validation_basis": {
+        "source_batch_id": "samsung-bad-mapping-batch-001",
+        "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+        "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+        "discovered_token": "HAF-QIN",
+        "discovered_part_number": "DA97-17376B",
+        "evidence_category": "samsung_authored_evidence_row",
+        "reason": "Samsung US official spec PDF lists RS22T5201SG with Accessories Water Filter: HAF-QIN — newer RS platform uses square HAF-QIN not legacy HAF-CIN."
+      },
+      "mutation_authorized": false,
+      "not_applied": true
+    }
+  ],
+  "removed_filter_slugs": [
+    "da29-00012b",
+    "da29-00019a",
+    "da29-00020b",
+    "da29-10105j"
+  ],
+  "added_filter_slugs": [
+    "da97-17376b"
+  ],
+  "validation_basis": [
+    {
+      "source_batch_id": "samsung-bad-mapping-batch-001",
+      "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "discovered_token": "HAF-QIN",
+      "discovered_part_number": "DA97-17376B",
+      "evidence_category": "samsung_authored_evidence_row",
+      "reason": "Samsung Canada official HAF-QIN page lists RF27T5201SR/AA; token resolves to repo-proven samsung::HAFQIN family. Ready for owner-review compat correction packet — not auto-applied."
+    },
+    {
+      "source_batch_id": "samsung-bad-mapping-batch-001",
+      "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "discovered_token": "HAF-QIN",
+      "discovered_part_number": "DA97-17376B",
+      "evidence_category": "samsung_authored_evidence_row",
+      "reason": "Samsung Canada official page lists RF27T5501SR/AC; surgical HAF-CIN co-map removal candidate. Owner must approve da29-00012b|da29-00020b removal and da97-17376b addition."
+    },
+    {
+      "source_batch_id": "samsung-bad-mapping-batch-001",
+      "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "discovered_token": "HAF-QIN",
+      "discovered_part_number": "DA97-17376B",
+      "evidence_category": "samsung_authored_evidence_row",
+      "reason": "Samsung US business spec PDF (image-us.samsung.com) lists RF28R6301SR with Accessories Water Filter: HAF-QIN."
+    },
+    {
+      "source_batch_id": "samsung-bad-mapping-batch-001",
+      "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "discovered_token": "HAF-QIN",
+      "discovered_part_number": "DA97-17376B",
+      "evidence_category": "samsung_authored_evidence_row",
+      "reason": "Samsung Canada official spec sheet PDF (images.homedepot.ca) states Water Filter: HAF-QIN for RF28T5101SR."
+    },
+    {
+      "source_batch_id": "samsung-bad-mapping-batch-001",
+      "source_validation_rel_path": "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "discovered_token": "HAF-QIN",
+      "discovered_part_number": "DA97-17376B",
+      "evidence_category": "samsung_authored_evidence_row",
+      "reason": "Samsung US official spec PDF lists RS22T5201SG with Accessories Water Filter: HAF-QIN — newer RS platform uses square HAF-QIN not legacy HAF-CIN."
+    }
+  ],
+  "risk_notes": [
+    "owner_approval_required=true — this artifact is a read-only apply plan only; nothing has been applied.",
+    "mutation_authorized=false on every planned row — separate owner-approved apply executor required for CSV/Supabase writes.",
+    "Only 5 of 15 Samsung bad-mapping batch rows are VALIDATION_PASS — remaining 10 PARTIAL rows are excluded from this plan.",
+    "Planned removals include repo-proven phantom filter slug(s): da29-10105j.",
+    "Live Supabase compatibility_mappings may differ from committed CSV at apply time — re-validate before execution.",
+    "No manual-evidence JSON commits, page updates, retailer-link changes, sitemap/robots edits, or HQ handoff in this plan.",
+    "Target filter da97-17376b is HAF-QIN family — wrong-family DA29 co-maps are the intended removal set."
+  ],
+  "expected_scoreboard_delta": {
+    "scoreboard_source_contract": "refrigerator_truth_scoreboard_v1",
+    "baseline_wrong_part_risk_count": 75,
+    "estimated_wrong_part_risk_reduction_if_owner_approved": 5,
+    "estimated_wrong_part_risk_count_after_apply": 70,
+    "baseline_multi_mapped_count": 212,
+    "estimated_multi_mapped_reduction_if_owner_approved": 1,
+    "estimated_multi_mapped_count_after_apply": 211,
+    "baseline_phantom_model_count": 15,
+    "estimated_phantom_model_reduction_if_owner_approved": 2,
+    "estimated_phantom_model_count_after_catalog_review": 13,
+    "planned_compat_row_removals": 6,
+    "planned_compat_row_additions": 5
+  },
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filter_aliases.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/refrigerator-truth-repair-owner-review-v1.json",
+    "data/fridge/batch-production/drafts/samsung-bad-mapping-batch-001-cursor-validation-v1.json"
+  ],
+  "proven_facts": [
+    "PROVEN: 5 samsung_pass_ready rows planned from data/fridge/batch-production/drafts/refrigerator-truth-repair-owner-review-v1.json.",
+    "PROVEN: All planned rows have cursor_verdict=VALIDATION_PASS_READY_FOR_OWNER_REVIEW in Samsung validation packet.",
+    "PROVEN: Target filter da97-17376b exists in filters.csv and filter_aliases.csv.",
+    "PROVEN: planned_compat_row_removals=6; planned_compat_row_additions=5.",
+    "PROVEN: mutation_authorized=false; owner_approval_required=true; csv_apply_authorized=false.",
+    "PROVEN: Read-only apply plan — no compatibility_mappings.csv or Supabase mutation performed."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: When owner will approve this Samsung PASS compat apply packet.",
+    "UNKNOWN: Whether live Supabase compatibility_mappings matches committed CSV at apply time.",
+    "UNKNOWN: Whether post-apply manual-evidence capture is needed for page confidence upgrades."
+  ]
+}
