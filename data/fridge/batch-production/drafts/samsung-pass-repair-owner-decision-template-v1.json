@@ -1,0 +1,49 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "template_only": true,
+  "not_consumed_by_automation": true,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "template_for_packet_contract": "samsung_pass_repair_owner_approval_packet_v1",
+  "source_decision_packet_id": "samsung_pass_repair_owner_approval_packet_v1",
+  "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+  "allowed_founder_option_ids": [
+    "approve_apply_plan",
+    "reject_apply_plan",
+    "defer_apply_plan",
+    "request_more_proof"
+  ],
+  "row_template": {
+    "decision_id": "REPLACE_WITH_STABLE_ID",
+    "source_queue_row_id": "queue-samsung-pass-repair-compat",
+    "source_decision_packet_id": "samsung_pass_repair_owner_approval_packet_v1",
+    "decided_at": "REPLACE_WITH_ISO8601",
+    "decision_status": "REPLACE_WITH approved|rejected|deferred|needs_more_evidence",
+    "owner_note": "REPLACE_WITH_FOUNDER_NOTE — required non-empty when allowed_next_scope is owner_mutation_approved",
+    "allowed_next_scope": "REPLACE_WITH none|read_only_agent|owner_mutation_approved",
+    "evidence_required_before_mutation": true,
+    "prohibited_actions_still_apply": [
+      "Do not mutate compatibility_mappings.csv from this approval packet alone.",
+      "Do not mutate filters.csv, fridge_models.csv, or filter_aliases.csv.",
+      "Do not write or overwrite manual-evidence JSON under data/manual-evidence/.",
+      "Do not mutate Supabase compatibility_mappings or other production database state.",
+      "Do not mutate retailer_links.csv, public fridge pages, sitemap, or robots.",
+      "Do not mutate HQ handoff artifacts.",
+      "approve_apply_plan authorizes proceeding toward a guarded apply executor — not automatic CSV/Supabase apply.",
+      "This approval packet is not automation_input for Runner Step, queues, or mutation gates."
+    ],
+    "samsung_pass_repair_owner_approval_context_v1": {
+      "review_packet_contract": "samsung_pass_repair_owner_approval_packet_v1",
+      "founder_option_id": "REPLACE_WITH approve_apply_plan|reject_apply_plan|defer_apply_plan|request_more_proof",
+      "apply_plan_rel_path": "data/fridge/batch-production/drafts/samsung-pass-repair-apply-plan-v1.json",
+      "planned_slug_count": 5
+    }
+  },
+  "notes": [
+    "Template only — not consumed by repo automation.",
+    "Copy row_template into data/owner-decisions/*.json rows[] after filling REPLACE_WITH placeholders.",
+    "See docs/BuckParts-FOUNDER-DECISION-REGISTRY.md for founder_decision_registry_v1 row semantics.",
+    "PROVEN: Approving this owner approval packet records founder intent only. It does not apply planned compatibility_mappings.csv changes, mutate filters.csv, fridge_models.csv, manual evidence, Supabase, pages, sitemap/robots, retailer links, or HQ handoff. A separate guarded apply executor with explicit owner_mutation_approved registry row and apply authorization is still required before any CSV or Supabase mutation."
+  ]
+}
