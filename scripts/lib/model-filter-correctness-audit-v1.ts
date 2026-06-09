@@ -476,7 +476,7 @@ function wrongFamilySlugSet(mappedFilterSlugs: string[], blockers: string[]): Se
   const slugs = new Set(mappedFilterSlugs);
   const risky = new Set<string>();
   if (blockers.some((b) => b.includes("HAF-QIN (DA97) vs HAF-CIN (DA29)"))) {
-    for (const slug of slugs) {
+    for (const slug of Array.from(slugs)) {
       if (
         HAF_QIN_SLUGS_V1.includes(slug as (typeof HAF_QIN_SLUGS_V1)[number]) ||
         HAF_CIN_CANONICAL_FILTER_SLUGS_V1.includes(slug as (typeof HAF_CIN_CANONICAL_FILTER_SLUGS_V1)[number])
@@ -494,12 +494,12 @@ function wrongFamilySlugSet(mappedFilterSlugs: string[], blockers: string[]): Se
     if (slugs.has("fppwfu02")) risky.add("fppwfu02");
   }
   if (blockers.some((b) => b.includes("Multiple LG LT filter generations"))) {
-    for (const slug of slugs) {
+    for (const slug of Array.from(slugs)) {
       if (/^lt\d/.test(slug)) risky.add(slug);
     }
   }
   if (blockers.some((b) => b.startsWith("confusion:Samsung DA29"))) {
-    for (const slug of slugs) {
+    for (const slug of Array.from(slugs)) {
       if (slug.startsWith("da29-") || slug.startsWith("da97-")) risky.add(slug);
     }
   }
@@ -566,7 +566,7 @@ function classifyModelRow(args: {
       classification: "UNKNOWN",
       evidence_status: "NONE",
       per_filter_proof: [],
-      evidence_paths: [...evidencePaths],
+      evidence_paths: Array.from(evidencePaths),
       blockers,
       recommended_action: "Add compatibility mapping after official manufacturer filter proof.",
       risk_score: computeRiskScore({
@@ -718,7 +718,7 @@ function classifyModelRow(args: {
     classification,
     evidence_status: evidenceStatus,
     per_filter_proof,
-    evidence_paths: [...evidencePaths].sort(),
+    evidence_paths: Array.from(evidencePaths).sort(),
     blockers,
     recommended_action,
     risk_score: computeRiskScore({
@@ -818,8 +818,8 @@ export function buildModelFilterCorrectnessAuditV1(args: {
     if (!mappingByModel.has(modelSlug)) mappingByModel.set(modelSlug, []);
     mappingByModel.get(modelSlug)!.push(filterSlug);
   }
-  for (const [slug, slugs] of mappingByModel.entries()) {
-    mappingByModel.set(slug, [...new Set(slugs)].sort());
+  for (const [slug, slugs] of Array.from(mappingByModel.entries())) {
+    mappingByModel.set(slug, Array.from(new Set(slugs)).sort());
   }
 
   const manualBySlug = loadManualEvidenceBySlug(args.rootDir);

@@ -336,7 +336,7 @@ function prefixContaminationForFamily(args: {
 }): { prefix_contamination_count: number; prefix_contamination_slug_examples: string[] } {
   const contaminated: string[] = [];
 
-  for (const slug of args.family.unlock_slugs) {
+  for (const slug of Array.from(args.family.unlock_slugs)) {
     const row = args.auditBySlug.get(slug);
     if (!row) continue;
     const lineKey = frigidaireModelLineKeyV1(row.model_number);
@@ -370,8 +370,8 @@ function finalizeFamilyRow(
     siblingIndex: Map<string, ModelFilterCorrectnessRowV1[]>;
   },
 ): EvidenceLeverageFamilyRowV1 {
-  const unlock_slugs = [...family.unlock_slugs].sort((a, b) => a.localeCompare(b));
-  const proven_anchor_slugs = [...family.proven_slugs].sort((a, b) => a.localeCompare(b));
+  const unlock_slugs = Array.from(family.unlock_slugs).sort((a, b) => a.localeCompare(b));
+  const proven_anchor_slugs = Array.from(family.proven_slugs).sort((a, b) => a.localeCompare(b));
   const representative_slugs = unlock_slugs.slice(0, 5);
   const { prefix_contamination_count, prefix_contamination_slug_examples } =
     prefixContaminationForFamily({ family, ...args });
@@ -542,10 +542,10 @@ export function buildEvidenceLeveragePrioritizationV1(args: {
   const finalizeArgs = { auditBySlug, siblingIndex };
 
   const filter_families = sortFamilies(
-    [...filterFamilies.values()].map((family) => finalizeFamilyRow(family, finalizeArgs)),
+    Array.from(filterFamilies.values()).map((family) => finalizeFamilyRow(family, finalizeArgs)),
   );
   const model_families = sortFamilies(
-    [...modelFamilies.values()].map((family) => finalizeFamilyRow(family, finalizeArgs)),
+    Array.from(modelFamilies.values()).map((family) => finalizeFamilyRow(family, finalizeArgs)),
   );
 
   const allFamilies = [...filter_families, ...model_families];

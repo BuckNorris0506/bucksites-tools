@@ -14,7 +14,7 @@ import {
   PAGE_QUALITY_GATE_ARTIFACT_DIR_REL_V1,
   resolveBatchManifestPathV1,
   type PageQualityGateBatchManifestV1,
-  type PageQualityGateClassificationV1,
+  type PageQualityClassificationV1,
   type PageQualityGateReportV1,
 } from "./buckparts-page-quality-gate-v1";
 
@@ -51,7 +51,7 @@ export type BatchQaBlockerFrequencyV1 = {
 export type BatchQaSlugRowV1 = {
   fridge_slug: string;
   batch_qa_classification: BatchQaClassificationV1;
-  quality_classification: PageQualityGateClassificationV1;
+  quality_classification: PageQualityClassificationV1;
   publication_authorized: boolean;
   quality_gate_source: "artifact" | "live_build";
   quality_gate_artifact_path: string | null;
@@ -263,7 +263,9 @@ function buildBucketSummaries(args: {
     const count = counts[classification];
     const percentage =
       args.pairCount > 0 ? Math.round((count / args.pairCount) * 1000) / 10 : 0;
-    const top_blockers = [...(blockersByBucket.get(classification) ?? new Map()).entries()]
+    const top_blockers = Array.from(
+      (blockersByBucket.get(classification) ?? new Map()).entries(),
+    )
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .slice(0, 5)
       .map(([blocker]) => blocker);
@@ -292,13 +294,13 @@ function buildBlockerFrequency(args: {
     }
   }
 
-  return [...freq.entries()]
+  return Array.from(freq.entries())
     .sort((a, b) => b[1].count - a[1].count || a[0].localeCompare(b[0]))
     .slice(0, args.limit)
     .map(([blocker, { count, slugs }]) => ({
       blocker,
       count,
-      affected_slugs: [...slugs].sort(),
+      affected_slugs: Array.from(slugs).sort(),
     }));
 }
 
@@ -456,7 +458,7 @@ export async function buildPageFactoryBatchQaDirectorReportV1(
         riskScore: batch_risk_score,
       }),
     },
-    exact_repo_paths_read: [...exactPaths].sort(),
+    exact_repo_paths_read: Array.from(exactPaths).sort(),
     proven_facts: [
       `PROVEN: read-only batch QA director for ${String(pair_count)} slug(s) from ${manifestRel}.`,
       `PROVEN: quality_gate_input_mode=${quality_gate_input_mode} (${String(artifactCount)} artifact, ${String(liveBuildCount)} live_build).`,

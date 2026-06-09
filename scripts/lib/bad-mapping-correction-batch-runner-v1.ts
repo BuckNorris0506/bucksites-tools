@@ -380,7 +380,7 @@ function buildHyperAgentBatchGroups(
     byKey.set(key, group);
   }
 
-  return [...byKey.entries()]
+  return Array.from(byKey.entries())
     .map(([key, groupPackets]) => {
       const sorted = [...groupPackets].sort((a, b) =>
         a.fridge_slug.localeCompare(b.fridge_slug),
@@ -436,7 +436,7 @@ function buildRecommendedFirstBatch(packets: BadMappingCorrectionPacketV1[]): st
     }
   }
 
-  return [...selected].sort((a, b) => a.localeCompare(b));
+  return Array.from(selected).sort((a, b) => a.localeCompare(b));
 }
 
 function buildPromotionCriteria(): ClassificationPromotionCriteriaV1[] {

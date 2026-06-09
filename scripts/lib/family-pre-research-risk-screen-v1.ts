@@ -217,11 +217,13 @@ function buildBrandPrefixClusters(args: {
     clusters.set(lineKey, bucket);
   }
 
-  return [...clusters.entries()]
+  return Array.from(clusters.entries())
     .map(([model_line_prefix, bucket]) => ({
       model_line_prefix,
       slug_count: bucket.slug_count,
-      sibling_conflict_filter_families: [...bucket.families].sort((a, b) => a.localeCompare(b)),
+      sibling_conflict_filter_families: Array.from(bucket.families).sort((a, b) =>
+        a.localeCompare(b),
+      ),
     }))
     .sort((a, b) => a.model_line_prefix.localeCompare(b.model_line_prefix));
 }

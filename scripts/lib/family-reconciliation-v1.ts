@@ -213,8 +213,8 @@ function buildFilterAliasGroups(rootDir: string): Map<string, Set<string>> {
     bucket.add(alias);
     groups.set(canonical, bucket);
   }
-  for (const [canonical, members] of groups) {
-    for (const member of members) {
+  for (const [canonical, members] of Array.from(groups)) {
+    for (const member of Array.from(members)) {
       groups.set(member, members);
     }
     groups.set(canonical, members);

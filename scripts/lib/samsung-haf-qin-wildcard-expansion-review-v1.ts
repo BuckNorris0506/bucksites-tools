@@ -178,7 +178,7 @@ export function matchCatalogSlugsForPatternV1(
   const rx = suffixDoubleStarRegexV1(pattern);
   if (!rx) return [];
   const hits = catalog.filter((entry) => rx.test(entry.model_number_normalized)).map((e) => e.fridge_slug);
-  return [...new Set(hits)].sort();
+  return Array.from(new Set(hits)).sort();
 }
 
 function classifyCatalogSlugBucketV1(args: {
@@ -238,7 +238,7 @@ function loadSamsungCatalogV1(rootDir: string): SamsungCatalogEntryV1[] {
     }
   }
 
-  return [...bySlug.values()].sort((a, b) => a.fridge_slug.localeCompare(b.fridge_slug));
+  return Array.from(bySlug.values()).sort((a, b) => a.fridge_slug.localeCompare(b.fridge_slug));
 }
 
 function loadCompatByFridgeSlugV1(rootDir: string): Map<string, string[]> {
@@ -256,8 +256,8 @@ function loadCompatByFridgeSlugV1(rootDir: string): Map<string, string[]> {
     map.set(fridgeSlug, set);
   }
   const out = new Map<string, string[]>();
-  for (const [slug, set] of map) {
-    out.set(slug, [...set].sort());
+  for (const [slug, set] of Array.from(map)) {
+    out.set(slug, Array.from(set).sort());
   }
   return out;
 }
@@ -445,7 +445,7 @@ export function buildSamsungHafQinWildcardExpansionReviewV1(
   const catalogSlugRows: CatalogSlugRowV1[] = [];
   const catalogBucketCounts = emptyCatalogBucketCountsV1();
 
-  for (const [fridge_slug, patterns] of [...slugToPatterns.entries()].sort((a, b) =>
+  for (const [fridge_slug, patterns] of Array.from(slugToPatterns.entries()).sort((a, b) =>
     a[0].localeCompare(b[0]),
   )) {
     const entry = catalogBySlug.get(fridge_slug);
@@ -459,7 +459,7 @@ export function buildSamsungHafQinWildcardExpansionReviewV1(
       model_number: entry.model_number,
       bucket,
       compat_filter_slugs: compatFilterSlugs,
-      matched_patterns: [...patterns].sort(),
+      matched_patterns: Array.from(patterns).sort(),
       page_factory_target: pageFactoryTargets.has(fridge_slug),
       warnings,
       legacy_slugs_match_haf_qin_family: legacyFilterSlugsMatchOfficialTokenV1({

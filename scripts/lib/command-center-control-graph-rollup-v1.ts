@@ -530,7 +530,7 @@ function buildFrozenFamilySummary(
     }
   }
 
-  const frozen_families = [...frozenByKey.values()].sort((a, b) =>
+  const frozen_families = Array.from(frozenByKey.values()).sort((a, b) =>
     a.family_key.localeCompare(b.family_key),
   );
 

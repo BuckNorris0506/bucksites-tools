@@ -274,7 +274,7 @@ function evidenceNeededForModel(
   if (row.blockers.some((blocker) => blocker.startsWith("confusion:Samsung DA29"))) {
     base.push("Resolve DA29+DA97 co-map: retain only repo-proven single family after official proof");
   }
-  return [...new Set(base)];
+  return Array.from(new Set(base));
 }
 
 function safestActionForGroup(rootCause: RootCauseGroupV1): SafestRemediationActionV1 {
@@ -321,14 +321,14 @@ function dominantMappedPatterns(rows: DangerousModelRemediationRowV1[]): string[
     const pattern = [...row.mapped_filter_slugs].sort().join("|");
     counts.set(pattern, (counts.get(pattern) ?? 0) + 1);
   }
-  return [...counts.entries()]
+  return Array.from(counts.entries())
     .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
     .map(([pattern, count]) => `${pattern} (${String(count)})`);
 }
 
 function groupSuspectedFamily(rows: DangerousModelRemediationRowV1[]): string {
   const families = new Set(rows.map((row) => row.suspected_correct_filter_family));
-  if (families.size === 1) return [...families][0]!;
+  if (families.size === 1) return Array.from(families)[0]!;
   if (families.has("UNKNOWN")) return "UNKNOWN";
   return "MIXED";
 }

@@ -361,7 +361,7 @@ export function buildEdr4rxd1OwnerReviewPacketV1(args: {
       compatCount: compat_review_candidates.length,
       noActionCount: no_action_rows.length,
     }),
-    exact_repo_paths_read: [...pathsRead].sort(),
+    exact_repo_paths_read: Array.from(pathsRead).sort(),
     proven_facts,
     inferred_facts,
     unknown_facts,

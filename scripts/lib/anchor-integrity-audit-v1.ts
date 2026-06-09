@@ -268,7 +268,7 @@ function collectProvenAnchorSlugs(args: {
       anchors.add(normalizeSlug(row.fridge_slug));
     }
   }
-  return [...anchors].sort((a, b) => a.localeCompare(b));
+  return Array.from(anchors).sort((a, b) => a.localeCompare(b));
 }
 
 function buildCloneFamilyIndex(
@@ -286,10 +286,10 @@ function buildCloneFamilyIndex(
     }
   }
   return new Map(
-    [...index.entries()].map(([slug, bucket]) => [
+    Array.from(index.entries()).map(([slug, bucket]) => [
       slug,
       {
-        families: [...bucket.families].sort(),
+        families: Array.from(bucket.families).sort((a, b) => a.localeCompare(b)),
         dependentUnprovenCount: bucket.dependentUnprovenCount,
       },
     ]),
@@ -494,8 +494,8 @@ export function buildAnchorIntegrityAuditV1(args: {
     return a.anchor_slug.localeCompare(b.anchor_slug);
   });
 
-  const families_with_disputed_or_watchlist_primary_anchor = [
-    ...new Set(
+  const families_with_disputed_or_watchlist_primary_anchor = Array.from(
+    new Set(
       anchor_rows
         .filter(
           (row) =>
@@ -503,7 +503,7 @@ export function buildAnchorIntegrityAuditV1(args: {
         )
         .map((row) => row.anchor_family as string),
     ),
-  ].sort();
+  ).sort();
 
   const siblingConflictDisputedAnchors = anchor_rows.filter(
     (row) =>

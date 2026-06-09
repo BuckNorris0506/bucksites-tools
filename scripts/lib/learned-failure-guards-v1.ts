@@ -590,7 +590,7 @@ function samsungMarketingFamiliesForSlugs(mappedFilterSlugs: string[]): string[]
       families.add(`samsung::DA97::${slug}`);
     }
   }
-  return [...families].sort();
+  return Array.from(families).sort();
 }
 
 export function evaluateSingleFilterFamilyPerModelV1(args: {

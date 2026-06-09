@@ -537,7 +537,7 @@ export function buildPageFactoryEvidenceCloneReportV1(
     required_target_proof: requiredTargetProof,
     blockers,
     warnings,
-    exact_repo_paths_read: [...exactRepoPathsRead].sort(),
+    exact_repo_paths_read: Array.from(exactRepoPathsRead).sort(),
     proven_facts: provenFacts,
     unknown_facts: unknownFacts,
   };
