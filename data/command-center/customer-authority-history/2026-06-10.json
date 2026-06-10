@@ -1,0 +1,33 @@
+{
+  "contract": "customer_authority_history_snapshot_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "snapshot_generated_at": "2026-06-10T22:35:19.767Z",
+  "snapshot_date_utc": "2026-06-10",
+  "source_command": "npm run buckparts:command-center -- --write-authority-history",
+  "source_lanes": [
+    "customer_authority_score_v1",
+    "customer_steering_comparison_v1",
+    "customer_closure_report_v1",
+    "next_best_action"
+  ],
+  "captures": {
+    "authority_score_100": 64,
+    "authority_mode": "AUTHORITY_GATED_ACTIVE",
+    "authority_claim_permitted": true,
+    "customer_action": "TRUST STOP-THE-LINE: Resolve HIGH wrong-part-risk exposure before discovery (top opportunity: catalog-gap-blueair-f4max-411-gsc-slug).",
+    "customer_tier": 0,
+    "blocks_discovery": true,
+    "factory_next_best_action": "DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]: refrigerator_water batch lifecycle is closed on disk (run-registry closeout_complete=true). Next read-only expansion work is demand-selected air_purifier buyer-path batch planning (candidate air_purifier_demand_selected_batch_candidate) via air_purifier_buyer_path_coverage. Mutation unauthorized. Stale refrigerator_water apply-plan approval/proposal/readiness steering is suppressed. all_product_safe_buyer_path_census_v1 / Amazon-first rescue queue remain backlog only — not the top active batch lifecycle action.",
+    "conflicts_with_factory": true,
+    "customer_visible_closures_count": 12,
+    "closure_confidence": "PROVEN",
+    "all_wedge_coverage_percent": 20.2,
+    "marketing_high_risk_opportunity_count": 17
+  },
+  "proven_facts": [
+    "PROVEN: customer_authority_history_snapshot_v1 is derived from existing Command Center lanes only."
+  ],
+  "unknown_facts": []
+}
