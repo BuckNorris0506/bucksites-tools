@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -28,12 +28,34 @@ const ROOT = process.cwd();
 const LIB_SOURCE = readFileSync("scripts/lib/mission-factory-registry-v1.ts", "utf8");
 const FIXED_NOW = () => new Date("2026-06-09T12:00:00.000Z");
 
+function withIsolatedRegistryRoot(run: (registryRoot: string) => void): void {
+  const tmp = mkdtempSync(path.join(tmpdir(), "mf-registry-"));
+  try {
+    const registryRoot = path.join(tmp, "registry-root");
+    mkdirSync(registryRoot, { recursive: true });
+    saveMissionFactoryRegistryV1(registryRoot, loadMissionFactoryRegistryV1(registryRoot));
+    run(registryRoot);
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
 test("initial committed registry document validates", () => {
   const doc = loadMissionFactoryRegistryV1(ROOT);
   assert.equal(doc.contract, MISSION_FACTORY_REGISTRY_CONTRACT_V1);
   assert.equal(doc.schema_version, "1.0");
   assert.equal(doc.mutation_authorized, false);
-  assert.deepEqual(doc.missions, []);
+
+  const validated = validateMissionFactoryRegistryDocumentV1(doc);
+  assert.equal(validated.ok, true);
+
+  assert.ok(doc.missions.length >= 1, "committed registry is seeded with missions");
+  assert.equal(doc.missions.length, 15);
+
+  const gswfMission = getMissionFactoryRegistryEntryV1(doc, "MF-2026-0003");
+  assert.ok(gswfMission);
+  assert.equal(gswfMission!.state, "DISCOVERY_COMPLETE");
+  assert.equal(gswfMission!.target_family, "filter::ge::gswf");
 });
 
 test("registry CRUD create read query", () => {
@@ -77,7 +99,8 @@ test("registry CRUD create read query", () => {
 });
 
 test("state transition enforcement blocks invalid transitions", () => {
-  let doc = loadMissionFactoryRegistryV1(ROOT);
+  withIsolatedRegistryRoot((registryRoot) => {
+  let doc = loadMissionFactoryRegistryV1(registryRoot);
   const created = createMissionFactoryRegistryEntryV1({
     doc,
     now: FIXED_NOW,
@@ -121,10 +144,12 @@ test("state transition enforcement blocks invalid transitions", () => {
   assert.equal(good.entry.state_history.length, 2);
   assert.equal(good.entry.state_history[1]!.from_state, "QUEUED");
   assert.equal(good.entry.state_history[1]!.to_state, "DISPATCH_READY");
+  });
 });
 
 test("TTL expiration transitions QUEUED to EXPIRED and DISPATCH_READY to QUEUED", () => {
-  let doc = loadMissionFactoryRegistryV1(ROOT);
+  withIsolatedRegistryRoot((registryRoot) => {
+  let doc = loadMissionFactoryRegistryV1(registryRoot);
   const queued = createMissionFactoryRegistryEntryV1({
     doc,
     now: () => new Date("2026-06-01T00:00:00.000Z"),
@@ -184,10 +209,12 @@ test("TTL expiration transitions QUEUED to EXPIRED and DISPATCH_READY to QUEUED"
     (row) => row.from_state === "DISPATCH_READY" && row.to_state === "QUEUED",
   );
   assert.ok(requeue);
+  });
 });
 
 test("deduplication rejects second active mission for same type+family+wedge", () => {
-  let doc = loadMissionFactoryRegistryV1(ROOT);
+  withIsolatedRegistryRoot((registryRoot) => {
+  let doc = loadMissionFactoryRegistryV1(registryRoot);
   const first = createMissionFactoryRegistryEntryV1({
     doc,
     now: FIXED_NOW,
@@ -224,10 +251,12 @@ test("deduplication rejects second active mission for same type+family+wedge", (
   });
   assert.equal(second.ok, false);
   assert.match(second.error ?? "", /deduplication blocked/);
+  });
 });
 
 test("mission history records multi-step lifecycle", () => {
-  let doc = loadMissionFactoryRegistryV1(ROOT);
+  withIsolatedRegistryRoot((registryRoot) => {
+  let doc = loadMissionFactoryRegistryV1(registryRoot);
   const created = createMissionFactoryRegistryEntryV1({
     doc,
     now: FIXED_NOW,
@@ -295,6 +324,7 @@ test("mission history records multi-step lifecycle", () => {
   assert.ok(finalMission);
   assert.equal(finalMission!.state_history.length, 9);
   assert.equal(finalMission!.state, "CLOSED");
+  });
 });
 
 test("command center lane renders registry summary", () => {
@@ -329,6 +359,11 @@ test("validateMissionFactoryRegistryDocumentV1 enforces schema", () => {
 
 test("report builds from committed registry", () => {
   const report = buildMissionFactoryRegistryReportV1({ rootDir: ROOT, now: FIXED_NOW });
-  assert.equal(report.total_missions, 0);
-  assert.equal(report.active_mission_count, 0);
+  assert.equal(report.total_missions, 15);
+  assert.equal(report.active_mission_count, 15);
+  assert.equal(report.missions_by_state.DISCOVERY_COMPLETE, 1);
+  const gswfMission = report.active_missions.find((row) => row.mission_id === "MF-2026-0003");
+  assert.ok(gswfMission);
+  assert.equal(gswfMission!.state, "DISCOVERY_COMPLETE");
+  assert.equal(gswfMission!.target_family, "filter::ge::gswf");
 });

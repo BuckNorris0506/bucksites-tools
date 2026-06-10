@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -27,11 +27,9 @@ const ROOT = process.cwd();
 const LIB_SOURCE = readFileSync("scripts/lib/mission-factory-queue-generator-v1.ts", "utf8");
 const FIXED_NOW = () => new Date("2026-06-09T12:00:00.000Z");
 
-function seedRegistry(tmp: string): void {
-  const src = path.join(ROOT, MISSION_FACTORY_REGISTRY_JSON_REL_V1);
-  const dest = path.join(tmp, MISSION_FACTORY_REGISTRY_JSON_REL_V1);
-  mkdirSync(path.dirname(dest), { recursive: true });
-  writeFileSync(dest, readFileSync(src, "utf8"), "utf8");
+function seedEmptyRegistry(rootDir: string): void {
+  mkdirSync(path.dirname(path.join(rootDir, MISSION_FACTORY_REGISTRY_JSON_REL_V1)), { recursive: true });
+  saveMissionFactoryRegistryV1(rootDir, loadMissionFactoryRegistryV1(rootDir));
 }
 
 test("generates evidence scaling candidates from control graph + leverage", () => {
@@ -63,7 +61,7 @@ test("priority ordering ranks evidence scaling before safe link coverage", () =>
 test("deduplication blocks second active mission with same type+family+wedge", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "mf-queue-dedup-"));
   try {
-    seedRegistry(tmp);
+    seedEmptyRegistry(tmp);
     let doc = loadMissionFactoryRegistryV1(tmp);
     const evidence = generateEvidenceScalingQueueCandidatesV1({ rootDir: ROOT, now: FIXED_NOW });
     const first = evidence[0]!;
@@ -96,7 +94,7 @@ test("deduplication blocks second active mission with same type+family+wedge", (
 test("queue depth management fills to min depth 15 on empty registry dry-run", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "mf-queue-depth-"));
   try {
-    seedRegistry(tmp);
+    seedEmptyRegistry(tmp);
     const { report } = runMissionFactoryQueueGeneratorV1({
       rootDir: ROOT,
       registryRootDir: tmp,
@@ -116,7 +114,7 @@ test("queue depth management fills to min depth 15 on empty registry dry-run", (
 test("queue depth management pauses at max depth 25", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "mf-queue-max-"));
   try {
-    seedRegistry(tmp);
+    seedEmptyRegistry(tmp);
     let doc = loadMissionFactoryRegistryV1(tmp);
     const evidence = generateEvidenceScalingQueueCandidatesV1({ rootDir: ROOT, now: FIXED_NOW });
     const safeLink = generateSafeLinkCoverageQueueCandidatesV1({ rootDir: ROOT, now: FIXED_NOW });
@@ -158,7 +156,7 @@ test("queue depth management pauses at max depth 25", () => {
 test("TTL expiration marks stale QUEUED missions before generation", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "mf-queue-ttl-"));
   try {
-    seedRegistry(tmp);
+    seedEmptyRegistry(tmp);
     let doc = loadMissionFactoryRegistryV1(tmp);
     const created = createMissionFactoryRegistryEntryV1({
       doc,
@@ -195,7 +193,7 @@ test("TTL expiration marks stale QUEUED missions before generation", () => {
 test("write-registry persists generated QUEUED missions", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "mf-queue-write-"));
   try {
-    seedRegistry(tmp);
+    seedEmptyRegistry(tmp);
     const { report } = runMissionFactoryQueueGeneratorV1({
       rootDir: ROOT,
       registryRootDir: tmp,
@@ -218,7 +216,8 @@ test("command center lane includes queue generator preview", () => {
   assert.ok(lane.queue_generator_v1);
   assert.equal(lane.queue_generator_v1.queue_depth_target_min, MISSION_FACTORY_QUEUE_MIN_DEPTH_V1);
   assert.equal(lane.queue_generator_v1.queue_depth_target_max, MISSION_FACTORY_QUEUE_MAX_DEPTH_V1);
-  assert.equal(lane.queue_generator_v1.missions_added_preview, MISSION_FACTORY_QUEUE_MIN_DEPTH_V1);
+  assert.equal(lane.queue_generator_v1.queue_depth_before, 14);
+  assert.equal(lane.queue_generator_v1.missions_added_preview, 1);
   assert.equal(lane.queue_generator_v1.generation_mode, "filling_to_min_depth");
 });
 

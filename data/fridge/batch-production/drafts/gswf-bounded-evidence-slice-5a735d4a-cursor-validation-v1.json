@@ -1,0 +1,173 @@
+{
+  "contract": "buckparts_cursor_validation_packet_v1",
+  "validation_id": "a8f3c2e1-7b4d-4a91-9e02-gswf5a735d4a",
+  "task_id": null,
+  "ingest_id": "64b7fed7-164c-4a51-8384-d737f9dd330c",
+  "mission_factory_id": "MF-2026-0003",
+  "validated_at": "2026-06-09T23:55:00.000Z",
+  "validation_status": "VALIDATION_PARTIAL",
+  "failure_code": null,
+  "validation_scope": "hyperagent_gswf_bounded_evidence_slice_5a735d4a_repo_cross_check_v1",
+  "commands_run": [
+    "read /Users/jaredbuckman/Downloads/64b7fed7-164c-4a51-8384-d737f9dd330c.json",
+    "write data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
+    "read data/compatibility_mappings.csv",
+    "read data/fridge/batch-production/audits/model-filter-correctness-audit-v1.csv",
+    "read data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "read data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "read data/fridge/batch-production/hyperagent/outbox/gswf-bounded-evidence-slice-5a735d4a-hyperagent-mission-packet-v0.json",
+    "read data/mission-factory/mission-registry-v1.json"
+  ],
+  "bundle_provenance": {
+    "bundle_source": "owner_downloads_hyperagent_deliverable",
+    "bundle_source_claim": "PROVEN",
+    "hyperagent_json_path": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
+    "hyperagent_json_source_download": "/Users/jaredbuckman/Downloads/64b7fed7-164c-4a51-8384-d737f9dd330c.json",
+    "hyperagent_json_exists": true,
+    "byte_for_byte_hyperagent_export_in_repo": true,
+    "validation_scope": "repo_truth_cross_check_only",
+    "command_center_closure_implied": false,
+    "notes": [
+      "Ingest uses contract=buckparts_hyperagent_ingest_packet_v1 (HyperAgent export field name; repo ingest fixtures often use packet_type — semantically equivalent).",
+      "HyperAgent reports 100% WRONG_PART vs GSWF family; repo audit still classifies all 17 as LIKELY_CORRECT_NEEDS_EVIDENCE — discovery input only, no compat mutation.",
+      "13/17 rows have PROVEN OEM-level wrong-part evidence strong enough for owner repair review; 3 platform-inferred rows stay PARTIAL; 1 no-dispenser row FAILs compat work."
+    ]
+  },
+  "batch_factory_artifacts": [
+    "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
+    "data/fridge/batch-production/hyperagent/outbox/gswf-bounded-evidence-slice-5a735d4a-hyperagent-mission-packet-v0.json",
+    "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.csv",
+    "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+    "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+    "data/compatibility_mappings.csv",
+    "data/mission-factory/mission-registry-v1.json"
+  ],
+  "truth_closure_authorized": false,
+  "repo_truth_closure_authorized": false,
+  "command_center_status_update_allowed": false,
+  "owner_review_required": true,
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "apply_plan_authorized": false,
+  "validation_details": {
+    "batch_id": "gswf-bounded-evidence-slice-5a735d4a",
+    "mission_type": "BOUNDED_EVIDENCE_SLICE",
+    "family_key": "filter::ge::gswf",
+    "mission_factory_id": "MF-2026-0003",
+    "queue_item_id": "bd9f2dccb72a7d1d",
+    "slug_count": 17,
+    "ingest_packet_contract_checks": {
+      "packet_found": true,
+      "contract_buckparts_hyperagent_ingest_packet_v1": true,
+      "mission_type_BOUNDED_EVIDENCE_SLICE": true,
+      "family_key_filter_ge_gswf": true,
+      "discovery_status_DISCOVERY_COMPLETE": true,
+      "truth_closure_claimed_false": true,
+      "mutation_authorized_false": true,
+      "read_only_true": true,
+      "data_mutation_false": true,
+      "candidate_row_count_17": true,
+      "verdict": "VALIDATION_PASS"
+    },
+    "repo_baseline_checks": {
+      "all_17_slugs_in_fridge_models_csv": true,
+      "all_17_mapped_to_gswf_in_compat_csv": true,
+      "all_17_repo_classification_LIKELY_CORRECT_NEEDS_EVIDENCE": true,
+      "all_17_repo_wrong_part_risk_flag": false,
+      "family_reconciliation_severity_repo": "MEDIUM",
+      "family_reconciliation_model_line_conflict_count": 13,
+      "evidence_leverage_unlock_score": 1700,
+      "hyperagent_vs_repo_audit_drift": "HyperAgent PROVEN/INFERRED wrong-part labels for all 17; repo audit still LIKELY_CORRECT_NEEDS_EVIDENCE pending owner proof — Cursor accepts HyperAgent as discovery input only"
+    },
+    "answers": {
+      "all_17_currently_mapped_to_gswf_in_repo": true,
+      "exact_oem_proven_row_count": 13,
+      "inferred_platform_row_count": 3,
+      "owner_review_repair_candidate_count": 13,
+      "browser_proof_required_row_count": 3,
+      "no_filter_catalog_suppression_count": 1
+    },
+    "learned_failure_guard_candidates_ge_architecture": [
+      {
+        "guard_id": "ge_gswf_cylindrical_housing_incompatible_modern_french_door",
+        "pattern": "GSWF twist-lock cylindrical SmartWater housing is incompatible with RPWFE RFID French-door / Profile platforms (GFE28, PFE28, GYE22, CWE23, GFE28HSK).",
+        "proposed_action": "Block GSWF co-map on RPWFE-confirmed prefixes without owner override."
+      },
+      {
+        "guard_id": "ge_gswf_incompatible_mwf_xwfe_push_in_housing",
+        "pattern": "GSWF incompatible with MWF/XWFE push-in upper-right housing used on GNE25, GNE27, GSE25, GSE26, GFE24, PVD28 families.",
+        "proposed_action": "Route GNE/GSE prefixes to MWF/XWFE family reconciliation, not GSWF scaling."
+      },
+      {
+        "guard_id": "ge_prefix_rpwfe_routing_gfe28_pfe28",
+        "pattern": "GFE28* and PFE28* Profile/French-door lines document RPWFE on OEM surfaces — never GSWF.",
+        "proposed_action": "Pre-research screen should freeze GSWF scaling when unlock batch is majority GFE28/PFE28 slugs."
+      },
+      {
+        "guard_id": "ge_prefix_xwfe_routing_pvd28_gfe24",
+        "pattern": "PVD28* and select GFE24* lines document XWFE exclusively on OEM product/parts pages.",
+        "proposed_action": "Separate bounded-evidence batches by XWFE vs RPWFE vs MWF before family mapping."
+      },
+      {
+        "guard_id": "ge_no_dispenser_top_freezer_no_filter_mapping",
+        "pattern": "GTE18GSNRSS-class basic top-freezer models with no water dispenser must not carry any filter compat row.",
+        "proposed_action": "Catalog suppression guard — remove all filter mappings when OEM confirms no filtration hardware."
+      },
+      {
+        "guard_id": "ge_gswf_discontinued_legacy_family",
+        "pattern": "HyperAgent discovery: GSWF discontinued/clearance; GE 2022 Buying Guide lists GSWF only for UNC15N/UCC15N compact units.",
+        "proposed_action": "Owner decision: mark GSWF as legacy/discontinued family before rebuilding genuine GTS/GTH/PTS/PDS mappings."
+      }
+    ],
+    "repair_review_summary": {
+      "headline": "TOTAL_FAMILY_CONTAMINATION — 17/17 slugs wrongly co-mapped to gswf in committed CSV; 13 rows ready for owner wrong-part repair review, 3 need platform browser proof, 1 requires no-filter suppression.",
+      "recommended_owner_actions": [
+        "Review 13 VALIDATION_PASS rows for surgical gswf removal and remap to RPWFE / MWF / XWFE / smartwater-mwfp as documented per slug.",
+        "Capture owner-browser Tier-1 proof for 3 PARTIAL platform-inferred rows before compat edits.",
+        "Suppress ge-gte18gsnrss from all filter mappings — no water dispenser per OEM product page.",
+        "Escalate filter::ge::gswf family reconciliation from MEDIUM to CRITICAL before any apply plan.",
+        "Evaluate GSWF legacy/discontinued status — do not scale evidence on a filter GE no longer manufactures."
+      ],
+      "apply_plan_built": false
+    },
+    "pass_count": 13,
+    "partial_count": 3,
+    "fail_count": 1,
+    "row_verdicts": [
+      {"fridge_slug":"ge-cwe23sshww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE OEM parts page confirms RPWFE for exact model — strong wrong-part proof vs GSWF cylindrical housing."},
+      {"fridge_slug":"ge-gfe24jgkww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2","smartwater-mwfp"],"hyperagent_actual_filter":"XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE OEM parts page + retailer spec confirm XWFE/MWF family — GSWF incompatible."},
+      {"fridge_slug":"ge-gfe27jmkes","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE OEM spec PDF names XWF/XWFE filtration for exact model line."},
+      {"fridge_slug":"ge-gfe28gmkbb","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE OEM spec PDF + 2022 Buying Guide confirm RPWFE for GFE28G platform."},
+      {"fridge_slug":"ge-gfe28gskes","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE OEM parts page + support + spec PDF triangulate RPWFE."},
+      {"fridge_slug":"ge-gfe28hmkww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","hyperagent_source_type":"OEM_ADJACENT","cursor_verdict":"VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW","reason":"RPWFE inferred from same-platform HMK variant retailer/OEM-adjacent specs — owner browser on exact GFE28HMKWW required before repair."},
+      {"fridge_slug":"ge-gfe28hskss","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2","smartwater-mwfp"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE support page for exact model links RPWFE install article."},
+      {"fridge_slug":"ge-gne25jmkww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"MWF/XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE support article explicitly names GNE25 prefix in MWF/XWFE family."},
+      {"fridge_slug":"ge-gne27jstss","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2","xwf"],"hyperagent_actual_filter":"MWF/XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE support + spec PDF confirm XWFE for GNE27 platform; repo already co-maps xwf."},
+      {"fridge_slug":"ge-gsc25frshss","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"MWF","hyperagent_evidence_confidence":"INFERRED","hyperagent_source_type":"OEM_PLATFORM_INFERENCE","cursor_verdict":"VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW","reason":"MWF inferred from GSS25 side-by-side platform — discontinued model lacks direct OEM page; browser proof required."},
+      {"fridge_slug":"ge-gse25hskss","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2","xwf"],"hyperagent_actual_filter":"MWF/XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE support article explicitly names GSE25 prefix in MWF/XWFE family."},
+      {"fridge_slug":"ge-gse26gshess","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"MWF","hyperagent_evidence_confidence":"INFERRED","hyperagent_source_type":"OEM_PLATFORM_INFERENCE","cursor_verdict":"VALIDATION_PARTIAL_NEEDS_OWNER_REVIEW","reason":"MWF inferred from GSE25 successor platform — owner browser on exact GSE26GSHESS required."},
+      {"fridge_slug":"ge-gte18gsnrss","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"NONE — no water dispenser","hyperagent_evidence_confidence":"PROVEN","hyperagent_evidence_label":"PROVEN_NO_FILTER","cursor_verdict":"VALIDATION_FAIL","reason":"GE product page confirms no water dispenser/filtration — all filter mappings including gswf must be suppressed."},
+      {"fridge_slug":"ge-gye22gskww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE support for same-platform GYE22HSKSS confirms RPWFE."},
+      {"fridge_slug":"ge-pfe28kmkww","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2","xwf"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE Profile OEM parts + spec PDF confirm RPWFE RFID filter."},
+      {"fridge_slug":"ge-pfe28kynbb","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"RPWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE 2022 Buying Guide + spec PDF confirm RPWFE for PFE28K platform."},
+      {"fridge_slug":"ge-pvd28bymfs","repo_mapped_to_gswf":true,"repo_compat_filter_slugs":["gswf","gswf2"],"hyperagent_actual_filter":"XWFE","hyperagent_evidence_confidence":"PROVEN","cursor_verdict":"VALIDATION_PASS_READY_FOR_OWNER_REVIEW","reason":"GE product page, parts page, owner manual, and buying guide quadruple-confirm XWFE."}
+    ]
+  },
+  "mission_factory_registry_action": {
+    "mission_id": "MF-2026-0003",
+    "requested_transition": "DISPATCHED -> DISCOVERY_COMPLETE",
+    "transition_authorized_by_ingest_contract": true,
+    "registry_mutation_only": true
+  },
+  "proven_facts": [
+    "PROVEN: Ingest contract valid with discovery_status=DISCOVERY_COMPLETE, truth_closure_claimed=false, mutation_authorized=false, 17 candidate_rows.",
+    "PROVEN: All 17 mission slugs map to gswf in data/compatibility_mappings.csv.",
+    "PROVEN: Repo audit classifies all 17 as LIKELY_CORRECT_NEEDS_EVIDENCE — HyperAgent wrong-part discovery does not auto-close repo truth.",
+    "PROVEN: Cursor validation 13 PASS / 3 PARTIAL / 1 FAIL — no apply plan built."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether owner will mark GSWF family discontinued before rebuild.",
+    "UNKNOWN: Live Supabase compat state vs committed CSV for these 17 slugs."
+  ]
+}

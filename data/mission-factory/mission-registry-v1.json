@@ -122,7 +122,7 @@
       "mission_id": "MF-2026-0003",
       "mission_type": "EVIDENCE_SCALING",
       "wedge": "refrigerator",
-      "state": "DISPATCHED",
+      "state": "DISCOVERY_COMPLETE",
       "priority": 3,
       "target_family": "filter::ge::gswf",
       "target_slugs": [
@@ -182,10 +182,26 @@
             "ingest_packet_rel_path_hint": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
             "dispatch_event_id": "gswf-bounded-evidence-slice-5a735d4a"
           }
+        },
+        {
+          "from_state": "DISPATCHED",
+          "to_state": "DISCOVERY_COMPLETE",
+          "actor": "cursor_validation_v1",
+          "timestamp": "2026-06-10T04:59:39.091Z",
+          "reason": "hyperagent_ingest_validated_discovery_complete",
+          "metadata": {
+            "ingest_packet_rel_path": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-hyperagent-ingest-packet-v1.json",
+            "cursor_validation_rel_path": "data/fridge/batch-production/drafts/gswf-bounded-evidence-slice-5a735d4a-cursor-validation-v1.json",
+            "validation_status": "VALIDATION_PARTIAL",
+            "pass_count": 13,
+            "partial_count": 3,
+            "fail_count": 1,
+            "ingest_received": true
+          }
         }
       ],
       "current_actor": "hyperagent",
-      "ttl_expires_at": "2026-06-11T23:20:52.136Z",
+      "ttl_expires_at": "2026-06-11T04:59:39.091Z",
       "audit_phase_at_creation": 0,
       "result": null
     },
