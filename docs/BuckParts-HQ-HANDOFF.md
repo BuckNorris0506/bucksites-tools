@@ -1,5 +1,7 @@
 # BuckParts HQ — Agent Handoff
 
+> **Strategic Initiatives Registry:** long-term strategic capabilities (NOT roadmap items, NOT active projects, NOT tasks) are preserved in `docs/strategic-initiatives/BP-STRATEGIC-INITIATIVES-REGISTRY.md` (BP-SI-001 – BP-SI-008). All are PARKED; none authorize work without an explicit founder activation decision.
+
 ## Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (PROVEN through `2199578`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
