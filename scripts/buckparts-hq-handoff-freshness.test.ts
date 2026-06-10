@@ -435,9 +435,39 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "Command Center status update packet contract id",
   },
   {
+    id: "customer_reality_head_9245206",
+    needle: "9245206",
+    describe: "Customer Reality Command Center stopping point HEAD reference",
+  },
+  {
+    id: "customer_reality_scoreboard_v1",
+    needle: "customer_reality_scoreboard_v1",
+    describe: "Customer Reality scoreboard lane contract",
+  },
+  {
+    id: "customer_steering_comparison_v1",
+    needle: "customer_steering_comparison_v1",
+    describe: "Customer steering comparison lane contract",
+  },
+  {
+    id: "customer_closure_report_v1",
+    needle: "customer_closure_report_v1",
+    describe: "Customer closure report lane contract",
+  },
+  {
+    id: "customer_authority_score_v1",
+    needle: "customer_authority_score_v1",
+    describe: "Customer authority score lane contract",
+  },
+  {
+    id: "customer_reality_no_nba_replacement",
+    needle: "replaces_next_best_action: false",
+    describe: "Customer Reality does not replace factory NBA doctrine",
+  },
+  {
     id: "control_graph_head_2199578",
     needle: "2199578",
-    describe: "Command Center control graph + EDR4RXD1 stopping point HEAD reference",
+    describe: "Historical control graph + EDR4RXD1 checkpoint reference",
   },
   {
     id: "control_graph_rollup_contract",

@@ -2,9 +2,146 @@
 
 > **Strategic Initiatives Registry:** long-term strategic capabilities (NOT roadmap items, NOT active projects, NOT tasks) are preserved in `docs/strategic-initiatives/BP-STRATEGIC-INITIATIVES-REGISTRY.md` (BP-SI-001 – BP-SI-008). All are PARKED; none authorize work without an explicit founder activation decision.
 
-## Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (PROVEN through `2199578`)
+## Current stopping point — Customer Reality Command Center (PROVEN through `9245206`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`92452069082ada4fc4b25dae6c89c47847420cf3`** |
+| Latest commit | **`9245206`** — `Add customer authority score lane` |
+| Working tree | **Clean** at handoff refresh (`git status --short` empty) |
+| Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
+
+**Customer Reality stack on `main` / `origin/main` (PROVEN — newest first):**
+
+| SHA | Subject |
+|-----|---------|
+| **`9245206`** | Add customer authority score lane |
+| **`b728d6a`** | Fix partial repo owner dashboard fixture test |
+| **`6992f2f`** | Add authority-gated customer reality dashboard section |
+| **`190373e`** | Add customer closure report lane |
+| **`b50f306`** | Add customer steering comparison lane |
+| **`7da5b10`** | Add Customer Reality Scoreboard Slice 1 and unblock production build |
+| **`8bd1b40`** | Add customer reality command center architecture and buyer-test docs |
+
+### 2. Customer Reality Command Center lanes (PROVEN — read-only; `replaces_next_best_action: false`)
+
+**Operating truth:** `npm run buckparts:command-center` → `scripts/report-buckparts-command-center.ts` → `command_center_v2` Customer Reality lanes below. Root **`next_best_action`** remains **factory-primary** — Customer Reality does **not** replace NBA yet.
+
+| Slice | Contract | jq path | Builder / test |
+|-------|----------|---------|----------------|
+| 1 | `customer_reality_scoreboard_v1` | `.command_center_v2.customer_reality_scoreboard_v1` | `scripts/lib/customer-reality-scoreboard-v1.ts` · `customer-reality-scoreboard-v1.test.ts` |
+| 2 | `customer_steering_comparison_v1` | `.command_center_v2.customer_steering_comparison_v1` | `scripts/lib/customer-steering-comparison-v1.ts` · `customer-steering-comparison-v1.test.ts` |
+| 3 | `customer_closure_report_v1` | `.command_center_v2.customer_closure_report_v1` | `scripts/lib/customer-closure-report-v1.ts` · `customer-closure-report-v1.test.ts` |
+| 5a | `customer_authority_score_v1` | `.command_center_v2.customer_authority_score_v1` | `scripts/lib/customer-authority-score-v1.ts` · `customer-authority-score-v1.test.ts` |
+| Gates (shared) | `customer-authority-gates-v1` | *(logic only)* | `scripts/lib/customer-authority-gates-v1.ts` — used by authority score + owner dashboard |
+
+**Re-run before citing live steering or scores:**
+
+```bash
+npm run buckparts:command-center | jq '.command_center_v2.customer_reality_scoreboard_v1.recommended_next_customer_action_dry_run'
+npm run buckparts:command-center | jq '.command_center_v2.customer_steering_comparison_v1.comparison'
+npm run buckparts:command-center | jq '.command_center_v2.customer_closure_report_v1.customer_visible_closures_count'
+npm run buckparts:command-center | jq '.command_center_v2.customer_authority_score_v1'
+npm run buckparts:command-center | jq '.next_best_action'
+```
+
+**INFERRED at handoff refresh (re-run `jq` before citing):** point-in-time `customer_authority_score_v1` may show `authority_mode=AUTHORITY_GATED_ACTIVE` when tier-0 trust stop-the-line + `blocks_discovery` gates are PROVEN; numeric `authority_score_100` is a simple v1 composite — **not** a validated Customer Maturity Score.
+
+**PROVEN — Slice 5a retrospective honesty:** `customer_authority_score_v1.retrospective.trend_measurable=false`, `steering_history_logged=false`, `closure_registry_present=false`. No append-only closure registry or CC JSON archive is wired yet (`data/command-center/customer-closures/` **not implemented**).
+
+### 3. Owner Dashboard — authority-gated Customer Reality UI (PROVEN — Slice 4)
+
+**PROVEN:** `/ownerdashboard/[secret]` renders a collapsible **Customer Reality · authority-gated visibility** section after Founder Control Plane — visibility-only by default; claims steering authority only when gates are PROVEN.
+
+| File | Role |
+|------|------|
+| `src/app/ownerdashboard/[secret]/page.tsx` | `CustomerRealityAuthorityGatedSection` UI |
+| `src/lib/owner-dashboard/customer-reality-authority-gated-v1.ts` | `buildCustomerRealityAuthorityGatedModelV1` (imports shared gates from `scripts/lib/customer-authority-gates-v1.ts`) |
+| `src/lib/owner-dashboard/customer-reality-authority-gated-v1.test.ts` | Gate + model unit tests |
+| `src/lib/owner-dashboard/load-command-center-report.test.ts` | Partial-repo fixture test fix (`b728d6a`) |
+
+**PROVEN:** Dashboard shows `dry_run_only` and `replaces_next_best_action=false`; factory `next_best_action` stays primary unless authority gates are PROVEN on the snapshot.
+
+### 4. Architecture + buyer-test docs (PROVEN)
+
+| Artifact | Path |
+|----------|------|
+| Customer Reality architecture spec | `docs/command-center/BuckParts-COMMAND-CENTER-CUSTOMER-REALITY-ARCHITECTURE-V1.md` |
+| Catalog contamination 7-day buyer test | `docs/business-development/catalog-contamination-audit/BUCKPARTS-CATALOG-CONTAMINATION-AUDIT-7-DAY-BUYER-TEST.md` |
+| GSWF sample contamination audit | `docs/business-development/catalog-contamination-audit/GSWF-SAMPLE-CATALOG-CONTAMINATION-AUDIT.md` |
+| Audit #2 exports (supporting) | `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) |
+
+### 5. Strategic initiatives + long-term capability map (PARKED — not authorized)
+
+**PROVEN registry:** `docs/strategic-initiatives/BP-STRATEGIC-INITIATIVES-REGISTRY.md` (BP-SI-001 – BP-SI-008). All **PARKED**; none authorize work without explicit founder activation.
+
+| Theme | Registry / handoff status |
+|-------|---------------------------|
+| **BuckResearch / BuckParts-specific research agent** | **PROVEN** as BP-SI-001 — specialized replacement-part research using BuckParts verification rubric, evidence contracts, OEM/retailer source rules, wrong-part-prevention doctrine; intended to reduce HyperAgent dependency over time |
+| Failure database | BP-SI-002 |
+| Visual repair / scanner AI | BP-SI-003 + BP-SI-007 (BuckParts Scanner) |
+| Digital twin of the house | BP-SI-004 |
+| Homeowner memory system | BP-SI-005 |
+| Home repair agent / operating system | BP-SI-008 (capstone) |
+| Failure prediction network | BP-SI-006 |
+| **Catalog contamination audit / buyer test** | **PROVEN** docs in `docs/business-development/catalog-contamination-audit/` — commercial validation lane, not runtime |
+| **Fitment truth graph / negative wrongness corpus** | **INFERRED** strategic direction — not a separate registry ID yet; aligns with control-graph mapping audits + wrong-part doctrine |
+| **Compatibility infrastructure / institutional truth layer** | **INFERRED** — Mission Factory + evidence lanes + certainty checklist as partial foundation; full institutional layer **UNKNOWN** |
+
+### 6. Current doctrine (PROVEN policy — not yet NBA replacement)
+
+1. **Do not force Customer Reality to the top by UI opinion alone.** Slice 4 is authority-**gated** visibility — not hierarchy override.
+2. **Customer Reality must earn authority** through gates, closure proof, `customer_authority_score_v1`, and (future) longitudinal outcome evidence.
+3. **Factory `next_best_action` remains unchanged** until retrospective proof supports replacement (`replaces_next_best_action: false` on all Customer Reality lanes).
+4. **HyperAgent `DISCOVERY_COMPLETE` is not customer-visible closure.** Use `customer_closure_report_v1` proof chain (closeout + census + mission PROMOTED).
+
+### 7. Next correct lane (INFERRED — founder-approved sequencing)
+
+**Do not replace NBA yet.**
+
+**Next likely work — Phase 5b retrospective authority / snapshot logging (not implemented):**
+- Archive customer steering recommendations (`customer_steering_comparison_v1` + dry-run)
+- Archive factory NBA (`next_best_action` + `command_center_control_graph_rollup_v1.next_best_action`)
+- Archive closure outcomes (`customer_closure_report_v1` + per-slug proof)
+- Measure whether customer steering predicts better customer-visible outcomes than factory steering over time
+- Only then consider architecture-spec Slice 5 NBA replacement
+
+**UNKNOWN:** schedule/cadence for `buckparts:command-surface:snapshot` and CC JSON archiving — blueprint recommends daily archive; **not enforced in repo**.
+
+### 8. Factory control plane — retained context (PROVEN; superseded for next-move)
+
+Command Center control graph, frozen Frigidaire families, EDR4RXD1 bounded evidence, and HyperAgent dispatch lanes **remain operational** — see **Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (historical — superseded by `9245206`)** below. Factory NBA and control-graph NBA may **differ** from customer dry-run (`customer_steering_comparison_v1.comparison.conflicts_with_next_best_action`).
+
+### 9. Do not do next (at this stopping point)
+
+- Do **not** promote `recommended_next_customer_action_dry_run` to replace root `next_best_action` — no retrospective validation logged yet.
+- Do **not** implement `data/command-center/customer-closures/` append-only registry or steering history **without** an explicit slice plan (Phase 5b).
+- Do **not** treat `customer_authority_score_v1` as Customer Maturity Score or deploy-gating score — v1 composite is point-in-time only.
+- Do **not** mutate product data, CSVs, Supabase, evidence, retailer links, sitemap/robots, or pages from Customer Reality lanes (all `data_mutation: false`).
+- Do **not** scale **`filter::whirlpool::edr4rxd1`** as a full family or unfreeze **`filter::frigidaire::eptwfu01`** / **`fppwfu01`** without owner proof (factory control plane guardrails still apply).
+
+### 10. Validation (PROVEN before this handoff update)
+
+```bash
+npm run lint
+npm run build
+npx tsx --test scripts/report-buckparts-command-center.test.ts
+npx tsx --test src/lib/owner-dashboard/load-command-center-report.test.ts
+npx tsx --test scripts/lib/customer-authority-score-v1.test.ts
+npx tsx --test src/lib/owner-dashboard/customer-reality-authority-gated-v1.test.ts
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+---
+
+## Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (historical — superseded by `9245206`)
+
+**Superseded for next-move authority.** Retained for factory control-plane / HyperAgent / frozen-family context. Customer Reality lanes above are the current executive stopping point.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -15,7 +152,7 @@
 | Latest commit | **`2199578`** — `Add EDR4RXD1 owner review packet` |
 | Working tree | **Clean** at handoff refresh (`git status --short` empty) |
 
-**Recent control-plane commits on `main` / `origin/main` (PROVEN):**
+**Recent control-plane commits on `main` / `origin/main` (PROVEN at `2199578` checkpoint):**
 
 | SHA | Subject |
 |-----|---------|
@@ -290,7 +427,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`2199578`** — Command Center control graph + EDR4RXD1 bounded evidence research (see **Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research** at top). **Prior checkpoint `9116a74`** (Page Factory preflight v1) is **superseded** for next-move authority — retained as historical context only. **Prior milestones** (RF28R7351SR **`a070797`**, grant pack **`afaf86d`**, fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat §4–§16 metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`9245206`** — Customer Reality Command Center (Slices 1–5a + authority-gated dashboard; see **Current stopping point — Customer Reality Command Center** at top). **Prior checkpoint `2199578`** (control graph + EDR4RXD1) is **superseded** for next-move authority — retained as historical context. **Prior milestones** (`9116a74` Page Factory preflight, RF28R7351SR **`a070797`**, grant pack **`afaf86d`**, fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -939,9 +1076,9 @@ npx tsx scripts/report-fridge-command-center-and-public-truth-audit-v1.ts
 
 ---
 
-## Current stopping point / chat migration state (historical — superseded by `2199578`)
+## Current stopping point / chat migration state (historical — superseded by `9245206`)
 
-**Superseded:** Use **Current stopping point — Command Center control graph + EDR4RXD1 bounded evidence research (through `2199578`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
+**Superseded:** Use **Current stopping point — Customer Reality Command Center (through `9245206`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
 
 **Command Center is the operating brain** — fridge truth is on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval.
 
