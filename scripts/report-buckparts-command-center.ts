@@ -63,6 +63,10 @@ import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certai
 import { buildOperatorProcessCompressionLaneV1 } from "./lib/operator-process-compression-v1";
 import { buildExternalQualitySignalUsefulnessLaneV1 } from "./lib/external-quality-signal-usefulness-v1";
 import { buildCustomerRealityScoreboardV1 } from "./lib/customer-reality-scoreboard-v1";
+import {
+  buildCustomerSteeringComparisonV1,
+  type FactorySteeringOverrideSourceV1,
+} from "./lib/customer-steering-comparison-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -2189,7 +2193,10 @@ export async function buildBuckpartsCommandCenterReport(
     lifecycleOverride: universalBatchLifecycleSteeringOverride,
   });
 
+  let steeringOverrideSource: FactorySteeringOverrideSourceV1 = "root_resolve";
+
   if (fridgeModelFirstSteeringOverride) {
+    steeringOverrideSource = "refrigerator_model_first";
     nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
     whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2201,6 +2208,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (modelFirstSteeringOverride) {
+    steeringOverrideSource = "model_first";
     nextBestAction = modelFirstSteeringOverride.next_best_action;
     whyThisAction = modelFirstSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2212,6 +2220,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (demandToCoverageAfterFridgeCloseoutSteeringOverride) {
+    steeringOverrideSource = "demand_to_coverage";
     nextBestAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.next_best_action;
     whyThisAction = demandToCoverageAfterFridgeCloseoutSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2222,6 +2231,7 @@ export async function buildBuckpartsCommandCenterReport(
     );
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (applyUniversalBatchLifecycleSteering && universalBatchLifecycleSteeringOverride) {
+    steeringOverrideSource = "universal_batch_lifecycle";
     nextBestAction = universalBatchLifecycleSteeringOverride.next_best_action;
     whyThisAction = universalBatchLifecycleSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2230,6 +2240,7 @@ export async function buildBuckpartsCommandCenterReport(
     mutatingBlockedReasons.push(...universalBatchLifecycleSteeringOverride.mutation_block_reasons);
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (fridgeApplyPlanApprovalSteeringOverride && batchDispatchOverride) {
+    steeringOverrideSource = "fridge_apply_plan_approval";
     nextBestAction = fridgeApplyPlanApprovalSteeringOverride.next_best_action;
     whyThisAction = fridgeApplyPlanApprovalSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2241,6 +2252,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (fridgeApplyPlanApprovedPlanningSteeringOverride && batchDispatchOverride) {
+    steeringOverrideSource = "fridge_apply_plan_approved_planning";
     nextBestAction = fridgeApplyPlanApprovedPlanningSteeringOverride.next_best_action;
     whyThisAction = fridgeApplyPlanApprovedPlanningSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2252,6 +2264,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (fridgeApplyPlanSteeringOverride && batchDispatchOverride) {
+    steeringOverrideSource = "fridge_apply_plan_proposal";
     nextBestAction = fridgeApplyPlanSteeringOverride.next_best_action;
     whyThisAction = fridgeApplyPlanSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2263,6 +2276,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (batchRunRegistryIntakeSteeringOverride && batchDispatchOverride) {
+    steeringOverrideSource = "batch_run_registry_intake";
     nextBestAction = batchRunRegistryIntakeSteeringOverride.next_best_action;
     whyThisAction = batchRunRegistryIntakeSteeringOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2274,6 +2288,7 @@ export async function buildBuckpartsCommandCenterReport(
     }
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (batchDispatchOverride) {
+    steeringOverrideSource = "batch_dispatch";
     nextBestAction = batchDispatchOverride.next_best_action;
     whyThisAction = batchDispatchOverride.why_this_action;
     effectiveNextMoveMode = "READ_ONLY";
@@ -2417,6 +2432,14 @@ export async function buildBuckpartsCommandCenterReport(
     rescueDeltaTrendSummary: rescueDeltaTrendSummary,
   });
 
+  const customer_steering_comparison_v1 = buildCustomerSteeringComparisonV1({
+    generated_at: now().toISOString(),
+    next_customer_action_dry_run: customer_reality_scoreboard_v1.recommended_next_customer_action_dry_run,
+    next_best_action: nextBestAction,
+    why_this_action: whyThisAction,
+    steering_override_source: steeringOverrideSource,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2435,6 +2458,7 @@ export async function buildBuckpartsCommandCenterReport(
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,
     customer_reality_scoreboard_v1,
+    customer_steering_comparison_v1,
   };
 
   return {

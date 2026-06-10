@@ -404,6 +404,21 @@ test("command center is read_only true and data_mutation false", async () => {
     report.next_best_action,
     "dry-run must not replace next_best_action string",
   );
+  const csc = report.command_center_v2.customer_steering_comparison_v1;
+  assert.equal(csc.contract, "customer_steering_comparison_v1");
+  assert.equal(csc.read_only, true);
+  assert.equal(csc.data_mutation, false);
+  assert.equal(csc.mutation_authorized, false);
+  assert.equal(csc.dry_run_only, true);
+  assert.equal(csc.replaces_next_best_action, false);
+  assert.equal(
+    csc.next_customer_action_dry_run.action,
+    crs.recommended_next_customer_action_dry_run.action,
+  );
+  assert.equal(csc.factory_steering.next_best_action, report.next_best_action);
+  assert.equal(typeof csc.comparison.conflicts_with_next_best_action, "boolean");
+  assert.ok(csc.source_lanes.includes("customer_reality_scoreboard_v1"));
+  assert.ok(csc.source_lanes.includes("next_best_action"));
 });
 
 test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {

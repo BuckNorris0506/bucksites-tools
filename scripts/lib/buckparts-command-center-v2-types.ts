@@ -1076,6 +1076,8 @@ export type CommandCenterV2Report = {
   agent_control_plane_v1: BuckpartsAgentControlPlaneV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
+  /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */
+  customer_steering_comparison_v1?: import("./customer-steering-comparison-v1").CustomerSteeringComparisonV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
@@ -1089,6 +1091,7 @@ export type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certai
 export type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";
 export type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-signal-usefulness-v1";
 export type { CustomerRealityScoreboardV1 } from "./customer-reality-scoreboard-v1";
+export type { CustomerSteeringComparisonV1 } from "./customer-steering-comparison-v1";
 
 export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";
