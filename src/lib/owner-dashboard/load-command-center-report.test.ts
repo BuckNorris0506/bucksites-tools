@@ -1519,6 +1519,22 @@ describe("owner integrity sentinel", () => {
     assert.equal(sentinel.action_confidence, "SAFE_TO_RECOMMEND");
   });
 
+  it("rendered owner-dashboard output includes customer reality authority-gated visibility markers", () => {
+    const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
+    assert.ok(src.includes("customer-reality-authority-gated-v1"));
+    assert.ok(src.includes("customer-reality-scoreboard-v1"));
+    assert.ok(src.includes("customer-steering-comparison-v1"));
+    assert.ok(src.includes("customer-closure-report-v1"));
+    assert.ok(src.includes("buyer-trust-surface-template-v1"));
+    assert.ok(src.includes("CustomerRealityAuthorityGatedSection"));
+    assert.ok(src.includes("buildCustomerRealityAuthorityGatedModelV1"));
+    assert.ok(src.includes("replaces_next_best_action=false"));
+    assert.ok(src.includes("Factory NBA (primary)"));
+    assert.ok(src.includes("report.next_best_action"));
+    assert.ok(src.includes("BatchProductionOwnerDecisionsLaneSection"));
+    assert.ok(src.includes('data-testid="batch-production-operating-checklist"'));
+  });
+
   it("rendered owner-dashboard output includes Integrity Sentinel and sentinel contract includes all five provider names", () => {
     const src = readFileSync(join(process.cwd(), "src/app/ownerdashboard/[secret]/page.tsx"), "utf8");
     assert.ok(src.includes("Top-of-Game Foundation"));

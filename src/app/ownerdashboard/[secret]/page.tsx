@@ -57,6 +57,13 @@ import {
   type LayerSixReadinessSummaryV1,
 } from "@/lib/owner-dashboard/layer-six-readiness-summary-v1";
 import type { SemiCruiseStatusSummaryV1 } from "@/lib/owner-dashboard/semi-cruise-status-summary-v1";
+import {
+  buildCustomerRealityAuthorityGatedModelV1,
+  type CustomerRealityAuthorityGatedModelV1,
+} from "@/lib/owner-dashboard/customer-reality-authority-gated-v1";
+import type { CustomerClosureReportV1 } from "../../../../scripts/lib/customer-closure-report-v1";
+import type { CustomerRealityScoreboardV1 } from "../../../../scripts/lib/customer-reality-scoreboard-v1";
+import type { CustomerSteeringComparisonV1 } from "../../../../scripts/lib/customer-steering-comparison-v1";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -377,6 +384,224 @@ function FounderControlPlaneSection({ model }: { model: FounderControlPlaneModel
         Notification wiring (Slack, email) for CI jobs is not shown here — treat as UNKNOWN unless configured outside this repo.
       </p>
     </ExecutiveSection>
+  );
+}
+
+function AuthorityModePill({ mode }: { mode: CustomerRealityAuthorityGatedModelV1["authority_mode"] }) {
+  const tone =
+    mode === "AUTHORITY_GATED_ACTIVE"
+      ? "bg-red-900/25 text-red-950 ring-red-800/40 dark:text-red-200"
+      : mode === "ADVISORY_COMPARE"
+        ? "bg-amber-900/20 text-amber-900 ring-amber-700/40 dark:text-amber-200"
+        : "bg-slate-200 text-slate-800 ring-slate-400/40 dark:bg-slate-800 dark:text-slate-200";
+  const label =
+    mode === "AUTHORITY_GATED_ACTIVE"
+      ? "Authority gates active (advisory)"
+      : mode === "ADVISORY_COMPARE"
+        ? "Compare both (visibility)"
+        : "Visibility only (dry-run)";
+  return (
+    <span
+      className={`inline-flex max-w-full items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ring-1 ring-inset ${tone}`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function BuyerTrustSurfaceTemplatePanel({
+  template,
+}: {
+  template: CustomerRealityAuthorityGatedModelV1["trust_surface_template"];
+}) {
+  return (
+    <div
+      data-testid="buyer-trust-surface-template-v1"
+      className="rounded-md border border-slate-200 bg-slate-50/90 p-3 dark:border-slate-700 dark:bg-slate-900/60"
+    >
+      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        Buyer trust surface template (reusable PDP pattern)
+      </p>
+      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <FieldBlock label="Certainty status" value={template.certainty_status} />
+        <FieldBlock label="Verified path status" value={template.verified_path_status} />
+        <FieldBlock label="Wrong-part risk" value={template.wrong_part_risk} />
+        <FieldBlock label="Evidence basis" value={template.evidence_basis} />
+        <FieldBlock label="Why not buy" value={template.why_not_buy ?? "—"} />
+        <FieldBlock label="Why safe" value={template.why_safe ?? "—"} />
+        <FieldBlock label="Closure proof" value={template.closure_proof ?? "UNKNOWN — no PROVEN customer-visible closure in this snapshot."} />
+      </div>
+    </div>
+  );
+}
+
+function CustomerRealityAuthorityGatedSection({
+  model,
+  scoreboard,
+  steering,
+  closure,
+}: {
+  model: CustomerRealityAuthorityGatedModelV1;
+  scoreboard: CustomerRealityScoreboardV1 | null | undefined;
+  steering: CustomerSteeringComparisonV1 | null | undefined;
+  closure: CustomerClosureReportV1 | null | undefined;
+}) {
+  const defaultOpen = model.authority_mode === "AUTHORITY_GATED_ACTIVE";
+  return (
+    <details
+      open={defaultOpen}
+      data-testid="customer-reality-authority-gated-v1"
+      className="group rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950"
+    >
+      <summary className="cursor-pointer select-none list-none px-4 py-3 outline-none marker:hidden [&::-webkit-details-marker]:hidden">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 inline-block translate-y-px text-slate-400 transition-transform group-open:rotate-90">
+            ▸
+          </span>
+          <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            Customer Reality · authority-gated visibility
+          </span>
+          <AuthorityModePill mode={model.authority_mode} />
+        </div>
+        <p className="mt-1 pl-5 text-xs leading-snug text-slate-600 dark:text-slate-400">
+          Dry-run lanes only. Factory <code className="font-mono text-[11px]">next_best_action</code> is unchanged.
+          Customer steering earns advisory prominence only when lane gates are PROVEN.
+        </p>
+      </summary>
+      <div className="space-y-5 border-t border-slate-200 px-4 py-4 dark:border-slate-700">
+        <p
+          className={`rounded-md border px-3 py-2 text-xs leading-relaxed ${
+            model.authority_claim_permitted
+              ? "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800/50 dark:bg-amber-950/30 dark:text-amber-100"
+              : "border-slate-200 bg-slate-50 text-slate-700 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-300"
+          }`}
+        >
+          {model.authority_claim_permitted
+            ? "Authority gates are PROVEN for this snapshot. Customer dry-run is advisory — it does not replace factory next_best_action or Founder Action Queue steering."
+            : model.why_factory_remains_primary}
+        </p>
+        <ul className="list-inside list-disc space-y-1 text-xs text-slate-700 dark:text-slate-300">
+          {model.authority_gate_reasons.map((reason) => (
+            <li key={reason}>{reason}</li>
+          ))}
+        </ul>
+
+        <div data-testid="customer-steering-comparison-v1" className="space-y-3">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            Steering comparison (dry-run)
+          </p>
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <div className="rounded-md border border-blue-200 bg-blue-50/60 p-3 dark:border-blue-900/40 dark:bg-blue-950/20">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-blue-800 dark:text-blue-300">
+                Factory NBA (primary)
+              </p>
+              <p className="mt-1 text-sm font-medium leading-snug text-slate-900 dark:text-slate-100">
+                {model.factory_next_best_action}
+              </p>
+              {model.steering_override_source ? (
+                <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                  Override source: {model.steering_override_source}
+                </p>
+              ) : null}
+            </div>
+            <div className="rounded-md border border-violet-200 bg-violet-50/50 p-3 dark:border-violet-900/40 dark:bg-violet-950/20">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-violet-800 dark:text-violet-300">
+                Customer dry-run action
+              </p>
+              <p className="mt-1 text-sm font-medium leading-snug text-slate-900 dark:text-slate-100">
+                {model.customer_dry_run_action ?? "UNKNOWN"}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                dry_run_only · replaces_next_best_action=false
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <FieldBlock
+              label="Conflict"
+              value={model.conflicts_with_factory === null ? "UNKNOWN" : String(model.conflicts_with_factory)}
+            />
+            <FieldBlock label="Customer tier" value={model.customer_tier === null ? "UNKNOWN" : String(model.customer_tier)} />
+            <FieldBlock
+              label="Blocks discovery"
+              value={model.blocks_discovery === null ? "UNKNOWN" : String(model.blocks_discovery)}
+            />
+            <FieldBlock
+              label="Founder review primary"
+              value={model.recommended_primary_for_founder_review ?? "UNKNOWN"}
+            />
+          </div>
+          {model.why_customer_may_outrank_factory ? (
+            <FieldBlock label="Why customer may outrank factory" value={model.why_customer_may_outrank_factory} />
+          ) : null}
+          {steering?.factory_steering.why_this_action ? (
+            <FieldBlock label="Why factory NBA" value={steering.factory_steering.why_this_action} />
+          ) : null}
+        </div>
+
+        {scoreboard ? (
+          <div data-testid="customer-reality-scoreboard-v1" className="space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              Customer reality scoreboard
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <FieldBlock label="Verified buyer paths" value={scoreboard.verified_buyer_path_coverage.summary} />
+              <FieldBlock label="Certainty visibility" value={scoreboard.certainty_visibility_status.summary} />
+              <FieldBlock label="Wrong-part exposure" value={scoreboard.wrong_part_exposure_status.summary} />
+              <FieldBlock label="Repair closure" value={scoreboard.repair_closure_status.summary} />
+              <FieldBlock label="Search failures" value={scoreboard.search_failure_status.summary} />
+              <FieldBlock label="Commission truth" value={scoreboard.commission_truth_status.summary} />
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500">customer_reality_scoreboard_v1: not present.</p>
+        )}
+
+        {closure ? (
+          <div data-testid="customer-closure-report-v1" className="space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              Customer closure report
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <FieldBlock
+                label="Customer-visible closures"
+                value={String(closure.customer_visible_closures_count)}
+              />
+              <FieldBlock label="Closure confidence" value={closure.closure_confidence} />
+              <FieldBlock
+                label="Discovery without closure"
+                value={String(closure.discovery_without_closure_ratio)}
+              />
+              <FieldBlock
+                label="Pages upgraded this week"
+                value={closure.pages_upgraded_this_week_status.summary}
+              />
+            </div>
+            {closure.customer_visible_shipments.filter((s) => s.customer_visible).length > 0 ? (
+              <FieldBlock
+                label="Proven customer-visible slugs (sample)"
+                value={
+                  <ul className="list-inside list-disc text-xs">
+                    {closure.customer_visible_shipments
+                      .filter((s) => s.customer_visible)
+                      .slice(0, 8)
+                      .map((s) => (
+                        <li key={s.slug}>
+                          {s.slug} · {s.census_classification}
+                        </li>
+                      ))}
+                  </ul>
+                }
+              />
+            ) : null}
+          </div>
+        ) : (
+          <p className="text-xs text-slate-500">customer_closure_report_v1: not present.</p>
+        )}
+
+        <BuyerTrustSurfaceTemplatePanel template={model.trust_surface_template} />
+      </div>
+    </details>
   );
 }
 
@@ -1278,6 +1503,13 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
     v2NextOwnerAction: v2.next_owner_action,
   });
 
+  const customerRealityAuthorityGated = buildCustomerRealityAuthorityGatedModelV1({
+    factory_next_best_action: report.next_best_action,
+    scoreboard: v2.customer_reality_scoreboard_v1,
+    steering: v2.customer_steering_comparison_v1,
+    closure: v2.customer_closure_report_v1,
+  });
+
   const founderControlPlane = buildFounderControlPlaneModel(process.cwd(), {
     next_best_action: report.next_best_action,
     known_unknowns: report.known_unknowns,
@@ -1374,6 +1606,13 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         </ExecutiveSection>
 
         <FounderControlPlaneSection model={founderControlPlane} />
+
+        <CustomerRealityAuthorityGatedSection
+          model={customerRealityAuthorityGated}
+          scoreboard={v2.customer_reality_scoreboard_v1}
+          steering={v2.customer_steering_comparison_v1}
+          closure={v2.customer_closure_report_v1}
+        />
 
         <BatchProductionOwnerDecisionsLaneSection lane={v2.batch_production_owner_decisions_lane_v1} />
 
