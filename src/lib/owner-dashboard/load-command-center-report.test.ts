@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
+import { buildEvidenceLeveragePrioritizationV1 } from "../../../scripts/lib/evidence-leverage-prioritization-v1";
 import {
   attachOwnerCommandCenterNeuronsReport,
   attachOwnerGscExternalDemandReport,
@@ -2046,15 +2047,58 @@ describe("owner integrity sentinel", () => {
   });
 });
 
+/** Committed artifacts required by command_center_control_graph_rollup_v1 on partial repo roots. */
+const PARTIAL_REPO_CONTROL_GRAPH_FIXTURE_REL_PATHS_V1 = [
+  "data/fridge/batch-production/audits/model-filter-correctness-audit-v1.json",
+  "data/fridge/batch-production/audits/learned-failure-guards-v1.json",
+  "data/fridge/batch-production/audits/anchor-integrity-audit-v1.json",
+  "data/fridge/batch-production/audits/evidence-leverage-prioritization-v1.json",
+  "data/fridge/batch-production/audits/family-reconciliation-v1.json",
+  "data/fridge/batch-production/audits/bad-mapping-correction-batch-runner-v1.json",
+  "data/fridge/batch-production/audits/dangerous-mapping-remediation-plan-v1.json",
+  "data/fridge/batch-production/page-factory/proven-cohort-manifest-v1/proven-cohort-page-factory-manifest-v1.json",
+  "data/compatibility_mappings.csv",
+  "data/fridge_models.csv",
+] as const;
+
+function copyRepoFixtureToPartialRoot(rootDir: string, relPath: string): void {
+  const dest = join(rootDir, relPath);
+  mkdirSync(dirname(dest), { recursive: true });
+  cpSync(join(process.cwd(), relPath), dest);
+}
+
+const PARTIAL_REPO_ANCHOR_INTEGRITY_AUDIT_REL_V1 =
+  "data/fridge/batch-production/audits/anchor-integrity-audit-v1.json" as const;
+
+/** Pre-research screening hard-reads filters.csv; freeze filter families so filters.csv can stay absent. */
+function freezeFilterFamiliesInPartialRepoAnchorIntegrityV1(rootDir: string): void {
+  const leverage = buildEvidenceLeveragePrioritizationV1({ rootDir });
+  const filterFamilyKeys = leverage.top_50_highest_leverage_evidence_targets
+    .filter((target) => target.family_key.startsWith("filter::"))
+    .map((target) => target.family_key);
+  if (filterFamilyKeys.length === 0) return;
+
+  const anchorPath = join(rootDir, PARTIAL_REPO_ANCHOR_INTEGRITY_AUDIT_REL_V1);
+  const anchor = JSON.parse(readFileSync(anchorPath, "utf8")) as {
+    families_with_disputed_or_watchlist_primary_anchor?: string[];
+  };
+  anchor.families_with_disputed_or_watchlist_primary_anchor = [
+    ...new Set([
+      ...(anchor.families_with_disputed_or_watchlist_primary_anchor ?? []),
+      ...filterFamilyKeys,
+    ]),
+  ];
+  writeFileSync(anchorPath, JSON.stringify(anchor));
+}
+
 describe("loadCommandCenterReportForOwner partial repo root", () => {
   it("returns ok:true and degrades fridge buyer-path lanes when data/filters.csv is missing", async () => {
     const rootDir = mkdtempSync(join(tmpdir(), "bp-cc-partial-"));
-    const affiliateDir = join(rootDir, "data/affiliate");
-    mkdirSync(affiliateDir, { recursive: true });
-    cpSync(
-      join(process.cwd(), "data/affiliate/affiliate-application-tracker.json"),
-      join(affiliateDir, "affiliate-application-tracker.json"),
-    );
+    copyRepoFixtureToPartialRoot(rootDir, "data/affiliate/affiliate-application-tracker.json");
+    for (const relPath of PARTIAL_REPO_CONTROL_GRAPH_FIXTURE_REL_PATHS_V1) {
+      copyRepoFixtureToPartialRoot(rootDir, relPath);
+    }
+    freezeFilterFamiliesInPartialRepoAnchorIntegrityV1(rootDir);
     assert.equal(existsSync(join(rootDir, "data/filters.csv")), false);
 
     const result = await loadCommandCenterReportForOwner(rootDir);
