@@ -453,6 +453,39 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(cas.components.customer_steering.source_lane, "customer_steering_comparison_v1");
   assert.equal(cas.components.closure_proof.source_lane, "customer_closure_report_v1");
   assert.notEqual(report.next_best_action, "");
+  const cah = report.command_center_v2.customer_authority_history_status_v1;
+  assert.equal(cah.contract, "customer_authority_history_status_v1");
+  assert.equal(cah.read_only, true);
+  assert.equal(cah.data_mutation, false);
+  assert.equal(cah.mutation_authorized, false);
+  assert.equal(typeof cah.snapshot_count, "number");
+  assert.equal(typeof cah.trend_measurable, "boolean");
+  assert.equal(typeof cah.steering_history_logged, "boolean");
+  assert.equal(cah.last_append_attempt, null);
+});
+
+test("writeAuthorityHistory appends snapshot and surfaces last_append_attempt", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: () => [],
+    readTextFile: readTextFileTrackerOrRepoData,
+    writeAuthorityHistory: true,
+    now: () => new Date("2099-01-15T12:00:00.000Z"),
+  });
+  const cah = report.command_center_v2.customer_authority_history_status_v1;
+  assert.equal(cah.last_append_attempt?.wrote, true);
+  assert.equal(
+    cah.last_append_attempt?.rel_path,
+    "data/command-center/customer-authority-history/2099-01-15.json",
+  );
+  assert.equal(cah.steering_history_logged, true);
+  const rel = cah.last_append_attempt?.rel_path;
+  if (rel) {
+    fs.rmSync(path.join(rootDir, rel), { force: true });
+  }
 });
 
 test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {

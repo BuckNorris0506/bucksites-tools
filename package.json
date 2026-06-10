@@ -70,6 +70,7 @@
     "buckparts:audit": "tsx scripts/audit-buckparts-system-contracts.ts",
     "buckparts:command-surface": "tsx scripts/report-buckparts-command-surface.ts",
     "buckparts:command-center": "tsx scripts/report-buckparts-command-center.ts",
+    "buckparts:customer-authority-history": "tsx scripts/report-customer-authority-history-v1.ts",
     "buckparts:all-product-safe-buyer-path-census": "tsx scripts/report-all-product-safe-buyer-path-census-v1.ts",
     "buckparts:ship-guard": "tsx scripts/buckparts-ship-guard.ts",
     "buckparts:learning-outcomes-approved-insert:dry-run": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts",

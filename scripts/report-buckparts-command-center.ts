@@ -69,6 +69,11 @@ import {
 } from "./lib/customer-steering-comparison-v1";
 import { buildCustomerClosureReportV1 } from "./lib/customer-closure-report-v1";
 import { buildCustomerAuthorityScoreV1 } from "./lib/customer-authority-score-v1";
+import {
+  appendCustomerAuthorityHistorySnapshotV1,
+  buildCustomerAuthorityHistorySnapshotV1,
+  buildCustomerAuthorityHistoryStatusV1,
+} from "./lib/customer-authority-history-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -409,6 +414,8 @@ type BuildOptions = {
   learningOutcomesConfidenceApprovalsLoader?: () => LearningOutcomesConfidenceApprovalsLoadedV1;
   /** When set, skips catalog/Supabase joins for page publishability truth (tests). */
   pagePublishabilityTruthSummaryLoader?: () => Promise<PagePublishabilityTruthSummaryV1>;
+  /** When true, append one read-only authority snapshot for snapshot_date_utc (skip if file exists). */
+  writeAuthorityHistory?: boolean;
   providers?: {
     commandSurface?: typeof buildBuckpartsCommandSurfaceReport;
     affiliateTracker?: typeof buildBuckpartsAffiliateTrackerReport;
@@ -2465,6 +2472,32 @@ export async function buildBuckpartsCommandCenterReport(
     root_next_best_action: nextBestAction,
   });
 
+  const authority_history_generated_at = now().toISOString();
+  let authority_history_last_append_attempt: ReturnType<
+    typeof appendCustomerAuthorityHistorySnapshotV1
+  > | null = null;
+  if (options.writeAuthorityHistory === true) {
+    const authority_history_snapshot = buildCustomerAuthorityHistorySnapshotV1({
+      generated_at: authority_history_generated_at,
+      authorityScore: customer_authority_score_v1,
+      steering: customer_steering_comparison_v1,
+      closure: customer_closure_report_v1,
+      root_next_best_action: nextBestAction,
+    });
+    authority_history_last_append_attempt = appendCustomerAuthorityHistorySnapshotV1({
+      rootDir,
+      snapshot: authority_history_snapshot,
+    });
+  }
+
+  const customer_authority_history_status_v1 = buildCustomerAuthorityHistoryStatusV1({
+    generated_at: authority_history_generated_at,
+    rootDir,
+    last_append_attempt: options.writeAuthorityHistory === true
+      ? authority_history_last_append_attempt
+      : null,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2486,6 +2519,7 @@ export async function buildBuckpartsCommandCenterReport(
     customer_steering_comparison_v1,
     customer_closure_report_v1,
     customer_authority_score_v1,
+    customer_authority_history_status_v1,
   };
 
   return {
@@ -2558,7 +2592,11 @@ export function stripEvidenceUncappedCandidatesForStdout(
 }
 
 export async function main(): Promise<void> {
-  const report = await buildBuckpartsCommandCenterReport({ inlineLiveSiteSmokeFallback: true });
+  const writeAuthorityHistory = process.argv.includes("--write-authority-history");
+  const report = await buildBuckpartsCommandCenterReport({
+    inlineLiveSiteSmokeFallback: true,
+    writeAuthorityHistory,
+  });
   process.stdout.write(`${JSON.stringify(stripEvidenceUncappedCandidatesForStdout(report), null, 2)}\n`);
 }
 

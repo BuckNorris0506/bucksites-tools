@@ -1082,6 +1082,8 @@ export type CommandCenterV2Report = {
   customer_closure_report_v1?: import("./customer-closure-report-v1").CustomerClosureReportV1;
   /** Read-only point-in-time customer authority score — does not replace next_best_action. */
   customer_authority_score_v1?: import("./customer-authority-score-v1").CustomerAuthorityScoreV1;
+  /** Read-only append-only authority history status — snapshots written only with --write-authority-history. */
+  customer_authority_history_status_v1?: import("./customer-authority-history-v1").CustomerAuthorityHistoryStatusV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
