@@ -388,18 +388,18 @@ export function buildHyperAgentDispatchRegistryV1(args: {
     (row) => row.family_key,
   );
   const owner_review_ready_family_keys = ownerReviewSignals.map((row) => row.family_key);
-  const redispatch_blocked_dedup_keys = [
-    ...new Set(
+  const redispatch_blocked_dedup_keys = Array.from(
+    new Set(
       entries.filter((entry) => entry.block_redispatch).map((entry) => entry.dedup_key),
     ),
-  ];
-  const redispatch_blocked_slug_batch_fingerprints = [
-    ...new Set(
+  );
+  const redispatch_blocked_slug_batch_fingerprints = Array.from(
+    new Set(
       entries
         .filter((entry) => entry.block_redispatch && entry.slug_batch_fingerprint)
         .map((entry) => entry.slug_batch_fingerprint as string),
     ),
-  ];
+  );
 
   return {
     contract: HYPERAGENT_DISPATCH_REGISTRY_CONTRACT_V1,
@@ -414,7 +414,7 @@ export function buildHyperAgentDispatchRegistryV1(args: {
     redispatch_blocked_slug_batch_fingerprints,
     operator_events_present: operator.present,
     operator_events_rel_path: operator.relPath,
-    exact_repo_paths_read: [...pathsRead].sort(),
+    exact_repo_paths_read: Array.from(pathsRead).sort(),
     proven_facts: [
       `PROVEN: registry_entry_count=${String(entries.length)}.`,
       `PROVEN: frozen_family_count=${String(frozen_family_keys.length)}.`,

@@ -371,7 +371,7 @@ export function hasGoCtaInPublicFilterHtml(html: string): boolean {
 }
 
 export function parseSitemapFilterLocs(xml: string): string[] {
-  return [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)]
+  return Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g))
     .map((m) => m[1]!.trim())
     .filter((url) => /^https:\/\/buckparts\.com\/filter\/[^/?#]+$/i.test(url));
 }
@@ -469,7 +469,7 @@ export function buildFridgeSafeLinkRescueOwnerReviewMarkdownV1(
     "## Recommended first batch of 5 (read-only browser/evidence collection today)",
     "",
   ];
-  for (const [index, row] of report.recommended_first_batch_of_5.entries()) {
+  for (const [index, row] of Array.from(report.recommended_first_batch_of_5.entries())) {
     lines.push(
       `${index + 1}. **${row.slug}** — ${row.likely_next_safe_buyer_path_type} — ${row.live_url}`,
       `   - CSV: ${row.csv_retailer_row_state}`,

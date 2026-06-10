@@ -323,7 +323,7 @@ export function validateMissionFactoryRegistryDocumentV1(
   if (errors.length > 0) return { ok: false, errors };
 
   const missions: MissionFactoryRegistryEntryV1[] = [];
-  for (const [index, raw] of (o.missions as unknown[]).entries()) {
+  for (const [index, raw] of Array.from((o.missions as unknown[]).entries())) {
     const validated = validateMissionFactoryRegistryEntryV1(raw);
     if (!validated.ok) {
       errors.push(`missions[${String(index)}]: ${validated.errors.join("; ")}`);

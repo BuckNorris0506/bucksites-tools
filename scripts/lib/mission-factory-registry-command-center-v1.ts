@@ -29,7 +29,10 @@ export type MissionFactoryRegistryQueueGeneratorSummaryV1 = {
   missions_added_preview: number;
 };
 
-export type MissionFactoryRegistryCommandCenterLaneV1 = MissionFactoryRegistryReportV1 & {
+export type MissionFactoryRegistryCommandCenterLaneV1 = Omit<
+  MissionFactoryRegistryReportV1,
+  "contract"
+> & {
   contract: typeof MISSION_FACTORY_REGISTRY_COMMAND_CENTER_CONTRACT_V1;
   recommended_jq_path: typeof MISSION_FACTORY_REGISTRY_CC_JQ_PATH_V1;
   lane_status: "OK" | "ATTENTION" | "UNKNOWN";

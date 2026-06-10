@@ -206,7 +206,7 @@ export function generateSafeLinkCoverageQueueCandidatesV1(args: {
   }
 
   const candidates: MissionFactoryQueueCandidateV1[] = [];
-  for (const [target_family, group] of grouped) {
+  for (const [target_family, group] of Array.from(grouped)) {
     const input = {
       mission_type: "SAFE_LINK_COVERAGE" as const,
       wedge: "refrigerator" as const,
@@ -401,7 +401,7 @@ export function runMissionFactoryQueueGeneratorV1(args: {
     safe_link_coverage_candidate_count: safeLinkCandidates.length,
     ordered_candidate_preview: ordered.slice(0, 10),
     missions_by_priority,
-    exact_repo_paths_read: [...pathsRead].sort(),
+    exact_repo_paths_read: Array.from(pathsRead).sort(),
     proven_facts: [
       `PROVEN: queue_depth_before=${String(queue_depth_before)} queue_depth_after=${String(registry_write_performed ? queue_depth_after : queue_depth_before + missions_added_ids.length)} target_band=${String(MISSION_FACTORY_QUEUE_MIN_DEPTH_V1)}-${String(MISSION_FACTORY_QUEUE_MAX_DEPTH_V1)}.`,
       `PROVEN: generation_mode=${generation_mode}; missions_added=${String(missions_added_ids.length)}; candidates_blocked_dedup=${String(candidates_blocked_dedup)}.`,

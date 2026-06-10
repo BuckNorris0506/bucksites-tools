@@ -528,7 +528,7 @@ export function buildHyperAgentWorkQueueV1(args: {
     blocked_items,
     owner_review_ready_items,
     items,
-    exact_repo_paths_read: [...pathsRead].sort(),
+    exact_repo_paths_read: Array.from(pathsRead).sort(),
     proven_facts: [
       `PROVEN: queue_item_count=${String(items.length)} derived from command_center_control_graph_rollup_v1, bad_mapping_correction_batch_runner_v1, and hyperagent_dispatch_registry_v1.`,
       `PROVEN: owner_review_ready_count=${String(owner_review_ready_items.length)}.`,

@@ -387,6 +387,23 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(tog.lanes.reduce((s, l) => s + l.max_contribution, 0), 100);
   assert.equal(tog.goal_reached, tog.foundation_maturity_score_100 === 100 && tog.lanes.every((l) => l.status === "PROVEN"));
   assertFoundationScorecardNoBannedClaims(tog);
+  const crs = report.command_center_v2.customer_reality_scoreboard_v1;
+  assert.equal(crs.contract, "customer_reality_scoreboard_v1");
+  assert.equal(crs.read_only, true);
+  assert.equal(crs.data_mutation, false);
+  assert.equal(crs.mutation_authorized, false);
+  assert.equal(crs.recommended_next_customer_action_dry_run.dry_run_only, true);
+  assert.equal(crs.recommended_next_customer_action_dry_run.replaces_next_best_action, false);
+  assert.ok(crs.verified_buyer_path_coverage.source_lanes.includes("all_product_safe_buyer_path_census_v1"));
+  assert.ok(
+    ["PROVEN", "INFERRED", "UNKNOWN"].includes(crs.verified_buyer_path_coverage.evidence_basis),
+  );
+  assert.ok(typeof report.next_best_action === "string" && report.next_best_action.length > 0);
+  assert.notEqual(
+    crs.recommended_next_customer_action_dry_run.action,
+    report.next_best_action,
+    "dry-run must not replace next_best_action string",
+  );
 });
 
 test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {

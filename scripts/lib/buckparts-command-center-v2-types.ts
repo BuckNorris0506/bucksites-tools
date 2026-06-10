@@ -29,6 +29,7 @@ import type { SystemContractAuditSummaryV1 } from "./buckparts-system-contract-a
 import type { MissionFactoryOrchestratorCommandCenterLaneV1 } from "./mission-factory-orchestrator-command-center-v1";
 import type { MissionFactoryRegistryCommandCenterLaneV1 } from "./mission-factory-registry-command-center-v1";
 import type { CommandCenterControlGraphRollupV1 } from "./command-center-control-graph-rollup-v1";
+import type { CommandCenterEfficiencyTruthTableV1 } from "./command-center-efficiency-truth-table-v1";
 import type { UniversalBatchLifecycleTruthTableV1 } from "./universal-batch-lifecycle-truth-table-v1";
 import type { UniversalBatchLifecycleApplyReadinessCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-readiness-command-center-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanCommandCenterLaneV1 } from "./universal-batch-lifecycle-apply-execution-plan-command-center-v1";
@@ -1073,6 +1074,8 @@ export type CommandCenterV2Report = {
   marketing_intelligence_engine_v1: BuckpartsMarketingIntelligenceEngineV1;
   /** Read-only always-on agent work queue — permissioned lanes; does not replace batch dispatch. */
   agent_control_plane_v1: BuckpartsAgentControlPlaneV1;
+  /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
+  customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
@@ -1085,6 +1088,7 @@ export type { RpwfeVerifiedLinkRescuePlanLaneV1 } from "./rpwfe-verified-link-re
 export type { BuckpartsCertaintyEngineChecklistLaneV1 } from "./buckparts-certainty-engine-checklist-v1";
 export type { OperatorProcessCompressionLaneV1 } from "./operator-process-compression-v1";
 export type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-signal-usefulness-v1";
+export type { CustomerRealityScoreboardV1 } from "./customer-reality-scoreboard-v1";
 
 export type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 export type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/semi-cruise-status-summary-v1";

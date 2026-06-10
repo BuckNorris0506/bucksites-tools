@@ -431,7 +431,7 @@ function collectBlockedReasons(
   }
   if (item.blocked_reasons.length > 0) reasons.push(...item.blocked_reasons);
   if (registryBlock.blocked) reasons.push(...registryBlock.reasons);
-  return [...new Set(reasons)];
+  return Array.from(new Set(reasons));
 }
 
 function haltExitCode(halt_condition: HyperAgentOrchestratorHaltConditionV0): number {

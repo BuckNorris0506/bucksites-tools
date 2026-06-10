@@ -269,7 +269,7 @@ function listEvidenceForSlug(rootDir: string, slug: string): string[] {
     .map((n) => `data/evidence/${n}`);
 }
 
-const FACTORY_STATES: ReadonlySet<FridgeSafeLinkBatchFactoryStateV1> = new Set([
+const FACTORY_STATES: ReadonlySet<FridgeSafeLinkBatchFactoryStateV1> = new Set<FridgeSafeLinkBatchFactoryStateV1>([
   "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
   "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
   "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
@@ -788,7 +788,9 @@ export function buildFridgeSafeLinkBatchFactoryV1(args: {
   const ownerBrowserProofOverlay = loadOwnerBrowserProofValidationOverlayV1(rootDir);
 
   let hyperBySlug = new Map<string, HyperAgentDiscoveryRowV1>();
-  let hyperagentIngestRelPath = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
+  let hyperagentIngestRelPath:
+    | typeof FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1
+    | typeof FRIDGE_SAFE_LINK_HYPERAGENT_BUNDLE_REL_V1 = FRIDGE_SAFE_LINK_HYPERAGENT_DISCOVERY_BRIDGE_REL_V1;
   let hyperagentBundleRelPath: string | null = null;
   let hyperagentDiscoveryBridgeRelPath: string | null = null;
   let bundleAuthentic: boolean | null = null;

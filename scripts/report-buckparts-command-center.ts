@@ -62,6 +62,7 @@ import { buildRpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./lib/rpwfe-pur
 import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certainty-engine-checklist-v1";
 import { buildOperatorProcessCompressionLaneV1 } from "./lib/operator-process-compression-v1";
 import { buildExternalQualitySignalUsefulnessLaneV1 } from "./lib/external-quality-signal-usefulness-v1";
+import { buildCustomerRealityScoreboardV1 } from "./lib/customer-reality-scoreboard-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -2400,6 +2401,22 @@ export async function buildBuckpartsCommandCenterReport(
     brain_manifest: command_center_v2.command_center_brain_coverage_manifest_v1,
   });
 
+  const customer_reality_scoreboard_v1 = buildCustomerRealityScoreboardV1({
+    generated_at: now().toISOString(),
+    census: command_center_v2_with_operator_digest.all_product_safe_buyer_path_census_v1,
+    certaintyChecklist: command_center_v2_with_operator_digest.buckparts_certainty_engine_checklist_v1,
+    marketingEngine: command_center_v2_with_operator_digest.marketing_intelligence_engine_v1,
+    missionFactoryRegistry: mission_factory_registry_v1,
+    publicTrustContract: command_center_v2_with_operator_digest.public_trust_unification_backend_contract_v1,
+    revenueLedgerContract: command_center_v2_with_operator_digest.revenue_truth_ledger_contract_v1,
+    revenueSnapshot: command_center_v2_with_operator_digest.revenue_snapshot,
+    deployLiveSiteMonitor: command_center_v2_with_operator_digest.deploy_live_site_monitor_v1,
+    rpwfeOwnerReview: command_center_v2_with_operator_digest.rpwfe_purchase_option_rescue_owner_review_v1,
+    searchAndClickIntelligenceSummary: searchAndClickSummary,
+    moneyFunnelSummary: moneyFunnelSummary,
+    rescueDeltaTrendSummary: rescueDeltaTrendSummary,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2417,6 +2434,7 @@ export async function buildBuckpartsCommandCenterReport(
     universal_batch_lifecycle_truth_table_v1,
     semi_cruise_status_summary_v1,
     agent_control_plane_v1,
+    customer_reality_scoreboard_v1,
   };
 
   return {

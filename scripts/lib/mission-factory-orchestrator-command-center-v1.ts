@@ -14,7 +14,10 @@ import {
 export const MISSION_FACTORY_ORCHESTRATOR_COMMAND_CENTER_CONTRACT_V1 =
   "mission_factory_orchestrator_command_center_lane_v1" as const;
 
-export type MissionFactoryOrchestratorCommandCenterLaneV1 = MissionFactoryOrchestratorReportV1 & {
+export type MissionFactoryOrchestratorCommandCenterLaneV1 = Omit<
+  MissionFactoryOrchestratorReportV1,
+  "contract"
+> & {
   contract: typeof MISSION_FACTORY_ORCHESTRATOR_COMMAND_CENTER_CONTRACT_V1;
   recommended_jq_path: typeof MISSION_FACTORY_ORCHESTRATOR_CC_JQ_PATH_V1;
   lane_status: "OK" | "ATTENTION" | "UNKNOWN";
