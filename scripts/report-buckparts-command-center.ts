@@ -68,6 +68,7 @@ import {
   type FactorySteeringOverrideSourceV1,
 } from "./lib/customer-steering-comparison-v1";
 import { buildCustomerClosureReportV1 } from "./lib/customer-closure-report-v1";
+import { buildCustomerAuthorityScoreV1 } from "./lib/customer-authority-score-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -2455,6 +2456,15 @@ export async function buildBuckpartsCommandCenterReport(
     readTextFile: (abs) => readFileSync(abs, "utf8"),
   });
 
+  const customer_authority_score_v1 = buildCustomerAuthorityScoreV1({
+    generated_at: now().toISOString(),
+    scoreboard: customer_reality_scoreboard_v1,
+    steering: customer_steering_comparison_v1,
+    closure: customer_closure_report_v1,
+    controlGraphRollup: command_center_control_graph_rollup_v1,
+    root_next_best_action: nextBestAction,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2475,6 +2485,7 @@ export async function buildBuckpartsCommandCenterReport(
     customer_reality_scoreboard_v1,
     customer_steering_comparison_v1,
     customer_closure_report_v1,
+    customer_authority_score_v1,
   };
 
   return {

@@ -1080,6 +1080,8 @@ export type CommandCenterV2Report = {
   customer_steering_comparison_v1?: import("./customer-steering-comparison-v1").CustomerSteeringComparisonV1;
   /** Read-only customer closure report — proves customer-visible improvement only with complete evidence chain. */
   customer_closure_report_v1?: import("./customer-closure-report-v1").CustomerClosureReportV1;
+  /** Read-only point-in-time customer authority score — does not replace next_best_action. */
+  customer_authority_score_v1?: import("./customer-authority-score-v1").CustomerAuthorityScoreV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };

@@ -432,6 +432,27 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.ok(ccr.source_lanes.includes("fridge_guarded_batch_closeout_learning_v1"));
   assert.ok(ccr.source_lanes.includes("all_product_safe_buyer_path_census_v1"));
   assert.ok(Array.isArray(ccr.customer_visible_shipments));
+  const cas = report.command_center_v2.customer_authority_score_v1;
+  assert.equal(cas.contract, "customer_authority_score_v1");
+  assert.equal(cas.read_only, true);
+  assert.equal(cas.data_mutation, false);
+  assert.equal(cas.mutation_authorized, false);
+  assert.equal(cas.replaces_next_best_action, false);
+  assert.ok(["PROVEN", "INFERRED", "UNKNOWN"].includes(cas.evidence_basis));
+  assert.ok(
+    typeof cas.authority_score_100 === "number" || cas.authority_score_100 === "UNKNOWN",
+  );
+  assert.ok(
+    ["VISIBILITY_ONLY", "ADVISORY_COMPARE", "AUTHORITY_GATED_ACTIVE"].includes(cas.authority_mode),
+  );
+  assert.equal(cas.retrospective.point_in_time_measurable, true);
+  assert.equal(cas.retrospective.trend_measurable, false);
+  assert.equal(cas.retrospective.steering_history_logged, false);
+  assert.equal(cas.retrospective.closure_registry_present, false);
+  assert.equal(cas.components.wrong_part_exposure.reduction_measurable, false);
+  assert.equal(cas.components.customer_steering.source_lane, "customer_steering_comparison_v1");
+  assert.equal(cas.components.closure_proof.source_lane, "customer_closure_report_v1");
+  assert.notEqual(report.next_best_action, "");
 });
 
 test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {
