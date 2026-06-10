@@ -419,6 +419,19 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(typeof csc.comparison.conflicts_with_next_best_action, "boolean");
   assert.ok(csc.source_lanes.includes("customer_reality_scoreboard_v1"));
   assert.ok(csc.source_lanes.includes("next_best_action"));
+  const ccr = report.command_center_v2.customer_closure_report_v1;
+  assert.equal(ccr.contract, "customer_closure_report_v1");
+  assert.equal(ccr.read_only, true);
+  assert.equal(ccr.data_mutation, false);
+  assert.equal(ccr.mutation_authorized, false);
+  assert.equal(typeof ccr.customer_visible_closures_count, "number");
+  assert.equal(typeof ccr.promoted_missions_count, "number");
+  assert.equal(typeof ccr.closure_candidates_count, "number");
+  assert.ok(["PROVEN", "INFERRED", "UNKNOWN", "LOW"].includes(ccr.closure_confidence));
+  assert.ok(ccr.source_lanes.includes("mission_factory_registry_v1"));
+  assert.ok(ccr.source_lanes.includes("fridge_guarded_batch_closeout_learning_v1"));
+  assert.ok(ccr.source_lanes.includes("all_product_safe_buyer_path_census_v1"));
+  assert.ok(Array.isArray(ccr.customer_visible_shipments));
 });
 
 test("owner_dashboard_top_of_game_panel_proof_v1 all_markers_present on this repo checkout", () => {

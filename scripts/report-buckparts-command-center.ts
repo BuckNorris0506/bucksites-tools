@@ -67,6 +67,7 @@ import {
   buildCustomerSteeringComparisonV1,
   type FactorySteeringOverrideSourceV1,
 } from "./lib/customer-steering-comparison-v1";
+import { buildCustomerClosureReportV1 } from "./lib/customer-closure-report-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -2440,6 +2441,20 @@ export async function buildBuckpartsCommandCenterReport(
     steering_override_source: steeringOverrideSource,
   });
 
+  const customer_closure_report_v1 = buildCustomerClosureReportV1({
+    generated_at: now().toISOString(),
+    rootDir,
+    missionFactoryRegistry: mission_factory_registry_v1,
+    closeoutLearning: fridge_guarded_batch_closeout_learning_v1,
+    rescueDeltaTrendSummary: rescueDeltaTrendSummary,
+    census: command_center_v2_with_operator_digest.all_product_safe_buyer_path_census_v1,
+    publishability: command_center_v2_with_operator_digest.page_publishability_truth_summary_v1,
+    recentEvidence: command_center_v2_with_operator_digest.recent_evidence,
+    fileExists: existsSync,
+    readDir: (abs) => readdirSync(abs),
+    readTextFile: (abs) => readFileSync(abs, "utf8"),
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2459,6 +2474,7 @@ export async function buildBuckpartsCommandCenterReport(
     agent_control_plane_v1,
     customer_reality_scoreboard_v1,
     customer_steering_comparison_v1,
+    customer_closure_report_v1,
   };
 
   return {

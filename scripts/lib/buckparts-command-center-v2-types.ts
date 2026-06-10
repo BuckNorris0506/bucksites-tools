@@ -1078,6 +1078,8 @@ export type CommandCenterV2Report = {
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */
   customer_steering_comparison_v1?: import("./customer-steering-comparison-v1").CustomerSteeringComparisonV1;
+  /** Read-only customer closure report — proves customer-visible improvement only with complete evidence chain. */
+  customer_closure_report_v1?: import("./customer-closure-report-v1").CustomerClosureReportV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
