@@ -132,6 +132,37 @@ npm run buckparts:command-center | jq '.next_best_action'
 
 **UNKNOWN:** `data/command-center/customer-closures/` per-slug closure registry — **not implemented** (distinct from authority history snapshots).
 
+### Issue lifecycle — `command_center_issue_reaudit_v1` (PROVEN — `bf5627c`)
+
+**Purpose:** Read-only re-audit plan for **DEPLOYED** issues awaiting live **RE_AUDITED** proof. Feeds HyperAgent; does **not** mutate issue JSON or mark **CLOSED_PROVEN** without owner proof.
+
+| Item | Value |
+|------|-------|
+| Contract | `command_center_issue_reaudit_v1` |
+| jq path | `.command_center_v2.command_center_issue_reaudit_v1` |
+| Builder | `scripts/lib/command-center-issue-reaudit-v1.ts` |
+| Steering | `scripts/lib/command-center-issue-reaudit-steering-v1.ts` → `steering_override_source: issue_registry_reaudit` |
+| Registry companion | `.command_center_v2.command_center_issue_registry_v1` (repair steering **off** when issues are DEPLOYED) |
+
+**Lifecycle support:** `DEPLOYED` → *(re-audit lane)* → `RE_AUDITED` → `CLOSED_PROVEN` / `STILL_OPEN` / `REGRESSED`. Lane plans bounded probes only; closure requires explicit `re_audit_outcome` + owner-approved JSON update.
+
+**Re-audit candidate selection (PROVEN):** DEPLOYED issues without `re_audit_outcome`; rank **TIER_0** first, then oldest `detected_at`. Current seeded set: **4** candidates (`BP-000001` … `BP-000004`).
+
+**Top candidate (PROVEN at validation):** **`BP-000001`** — Wrong-filter BLOCK customer exposure quarantine (`TIER_0`, oldest).
+
+**Steering behavior (PROVEN):** When no repair-eligible issue exists, root **`next_best_action`** steers to `ISSUE RE-AUDIT: BP-000001 …` with **`next_move_mode: READ_ONLY`**; `close_allowed: false` on all candidates; `data_mutation: false`, `mutation_authorized: false`.
+
+**Validation at implementation (PROVEN):** `153/153` Command Center integration tests; issue registry + lifecycle audit unit tests; `npm run lint` + `npm run build` passing.
+
+```bash
+npm run buckparts:command-center | jq '{
+  issue_reaudit_candidate_count: .command_center_v2.command_center_issue_reaudit_v1.total_deployed_awaiting_reaudit,
+  top_reaudit_issue_id: .command_center_v2.command_center_issue_reaudit_v1.top_reaudit_candidate.issue_id,
+  next_best_action: .next_best_action,
+  steering_mode: .command_center_v2.customer_steering_comparison_v1.factory_steering.steering_override_source
+}'
+```
+
 ### 3. Owner Dashboard — authority-gated Customer Reality UI (PROVEN — Slice 4)
 
 **PROVEN:** `/ownerdashboard/[secret]` renders a collapsible **Customer Reality · authority-gated visibility** section after Founder Control Plane — visibility-only by default; claims steering authority only when gates are PROVEN.
