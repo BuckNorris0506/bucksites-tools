@@ -1,0 +1,35 @@
+{
+  "opportunity_id": "SEO-000001",
+  "title": "Frigidaire confusion-family model pages — indexability review",
+  "opportunity_type": "indexability_gap",
+  "registry_kind": "seo",
+  "severity": "TIER_1",
+  "source_system": "sitemap_indexability_audit_v1",
+  "detected_at": "2026-06-11T12:00:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "HyperAgent",
+  "affected_routes": ["/fridge/frigidaire-fghb2868pf", "/fridge/frigidaire-ffhn2740tw"],
+  "evidence_files": [
+    "scripts/lib/sitemap-indexability-audit-v1.ts",
+    "data/command-center/issues/BP-000004.json"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "seo_surface": "organic",
+  "target_queries": ["frigidaire fghb2868pf water filter", "frigidaire ffhn2740tw filter replacement"],
+  "indexability_hypothesis": "Disputed-anchor Frigidaire slugs may need noindex or stronger canonical discipline before organic capture.",
+  "proven_facts": [
+    "PROVEN: Opportunity record is planning-only; no automation authorized.",
+    "PROVEN: Related trust issue BP-000004 is CLOSED_PROVEN on origin/main.",
+    "PROVEN: command_center_issue_reaudit_v1.total_deployed_awaiting_reaudit is 0."
+  ],
+  "inferred_facts": [
+    "INFERRED: Indexability planning may reference closed BP-000004 precedent; not an open repair work order."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: GSC impression baseline for target queries not attached to this planning record.",
+    "UNKNOWN: Owner-approved SEO execution packet not created."
+  ]
+}

@@ -66,6 +66,9 @@ import type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-s
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 import type { CommandCenterIssueRegistryLaneV1 } from "./command-center-issue-registry-command-center-v1";
+import type { DistributionOpportunityRegistryLaneV1 } from "./command-center-distribution-opportunity-registry-v1";
+import type { RevenueOpportunityRegistryLaneV1 } from "./command-center-revenue-opportunity-registry-v1";
+import type { SeoOpportunityRegistryLaneV1 } from "./command-center-seo-opportunity-registry-v1";
 import type { CommandCenterIssueReauditLaneV1 } from "./command-center-issue-reaudit-v1";
 
 export type TokenControlStatus =
@@ -1080,6 +1083,12 @@ export type CommandCenterV2Report = {
   command_center_issue_registry_v1: CommandCenterIssueRegistryLaneV1;
   /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
   command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
+  /** Read-only SEO opportunity planning registry — starter examples only; no NBA steering. */
+  seo_opportunity_registry_v1: SeoOpportunityRegistryLaneV1;
+  /** Read-only revenue opportunity planning registry — starter examples only; no NBA steering. */
+  revenue_opportunity_registry_v1: RevenueOpportunityRegistryLaneV1;
+  /** Read-only distribution opportunity planning registry — starter examples only; no NBA steering. */
+  distribution_opportunity_registry_v1: DistributionOpportunityRegistryLaneV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */

@@ -1,0 +1,34 @@
+{
+  "opportunity_id": "DIST-000002",
+  "title": "Air purifier wedge — audience segment capture planning",
+  "opportunity_type": "audience_segment_capture",
+  "registry_kind": "distribution",
+  "severity": "TIER_3",
+  "source_system": "demand_to_coverage_next_lane_v1",
+  "detected_at": "2026-06-11T14:30:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "Cursor",
+  "affected_routes": ["/air-purifier/search", "/air-purifier/filter/[slug]"],
+  "evidence_files": [
+    "scripts/lib/demand-to-coverage-next-lane-v1.ts",
+    "scripts/lib/air-purifier-truth-spine-v1.ts"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "distribution_channel": "organic_wedge_expansion",
+  "audience_segment": "air_purifier_filter_replacement",
+  "reach_hypothesis": "Post-fridge lifecycle closure, air_purifier demand-selected batch may justify distribution planning for filter-replacement queries.",
+  "proven_facts": [
+    "PROVEN: demand_to_coverage_next_lane_v1 may recommend air_purifier as next wedge.",
+    "PROVEN: Issue registry has zero open repair issues; opportunity is planning-only."
+  ],
+  "inferred_facts": [
+    "INFERRED: Distribution opportunity ranks below TIER_0/TIER_1 trust and revenue planning items."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: AP distribution partner surfaces not identified.",
+    "UNKNOWN: Audience sizing not attached to this record."
+  ]
+}

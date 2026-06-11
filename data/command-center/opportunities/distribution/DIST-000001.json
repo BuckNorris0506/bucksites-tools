@@ -1,0 +1,35 @@
+{
+  "opportunity_id": "DIST-000001",
+  "title": "Search-intent answer surfaces — syndication readiness",
+  "opportunity_type": "syndication_readiness",
+  "registry_kind": "distribution",
+  "severity": "TIER_2",
+  "source_system": "customer_language_and_waterdrop_research_lane_v1",
+  "detected_at": "2026-06-11T14:00:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "HyperAgent",
+  "affected_routes": ["/search", "/help"],
+  "evidence_files": [
+    "scripts/lib/customer-language-and-waterdrop-research-lane-v1.ts",
+    "docs/command-center/BuckParts-COMMAND-CENTER-CUSTOMER-REALITY-ARCHITECTURE-V1.md"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "distribution_channel": "owned_search_utility",
+  "audience_segment": "replacement_intent_homeowners",
+  "reach_hypothesis": "Answer-engine utility pages may be syndicated to partner surfaces only after trust-gate issues reach RE_AUDITED.",
+  "proven_facts": [
+    "PROVEN: Distribution planning lane is read-only with automation_authorized=false.",
+    "PROVEN: All seeded trust issues BP-000001 through BP-000004 are CLOSED_PROVEN.",
+    "PROVEN: Issue re-audit awaiting count is 0; factory NBA returned to demand-to-coverage steering."
+  ],
+  "inferred_facts": [
+    "INFERRED: Syndication planning must not be treated as executable until owner moves opportunity to PACKET_READY."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Partner channel list not defined.",
+    "UNKNOWN: Distribution packet not moved to PACKET_READY."
+  ]
+}

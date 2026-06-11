@@ -133,10 +133,39 @@ npm run buckparts:command-center | jq '{
 
 Customer Reality Command Center lanes (`customer_reality_scoreboard_v1`, `customer_steering_comparison_v1`, `customer_closure_report_v1`, `customer_authority_score_v1`, `customer_authority_history_status_v1`) **remain operational** — see **Current stopping point — Customer Reality Command Center (historical — superseded by `4bac7aa`)** below. Factory NBA may differ from customer dry-run.
 
+### 2.5 Opportunity registries — planning-only scaffold (wired; not production-ready)
+
+**PROVEN:** Three read-only opportunity registry lanes are wired into Command Center v2:
+
+| Contract | jq path | Data |
+|----------|---------|------|
+| `seo_opportunity_registry_v1` | `.command_center_v2.seo_opportunity_registry_v1` | `data/command-center/opportunities/seo/` |
+| `revenue_opportunity_registry_v1` | `.command_center_v2.revenue_opportunity_registry_v1` | `data/command-center/opportunities/revenue/` |
+| `distribution_opportunity_registry_v1` | `.command_center_v2.distribution_opportunity_registry_v1` | `data/command-center/opportunities/distribution/` |
+
+**PROVEN doctrine:**
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | All three lanes are **`read_only`**, **`planning_only`**, **`automation_authorized: false`**, **`steering_override_active: false`**. |
+| **PROVEN** | Opportunity registries **do not** steer **`next_best_action`** and **do not** mix with the issue repair lifecycle. |
+| **PROVEN** | **`command_center_issue_registry_v1`** remains the **only repair lifecycle tracker** for trust-gate customer-safety work. |
+| **PROVEN** | Seeded `SEO-*`, `REV-*`, `DIST-*` JSON records are **starter planning examples**, not production work orders or executable repair tasks. |
+| **INFERRED** | Opportunity lifecycle statuses mirror issue statuses for planning vocabulary only — opportunities are **not** CLOSED_PROVEN repair proof. |
+
+```bash
+npm run buckparts:command-center | jq '{
+  seo: .command_center_v2.seo_opportunity_registry_v1 | {contract, planning_only, total_opportunities, highest: .highest_priority_opportunity.opportunity_id},
+  revenue: .command_center_v2.revenue_opportunity_registry_v1 | {contract, planning_only, total_opportunities},
+  distribution: .command_center_v2.distribution_opportunity_registry_v1 | {contract, planning_only, total_opportunities}
+}'
+```
+
 ### 3. Do not do next (at this stopping point)
 
 - Do **not** treat **`re_audit_outcome: PASS`** alone as **CLOSED_PROVEN** — owner approval + closure metadata required.
-- Do **not** include **opportunity registry** work in this milestone — `data/command-center/opportunities/` and `command-center-*-opportunity-registry-v1.ts` files are **uncommitted / unrelated** and **not** part of the current stopping point.
+- Do **not** treat **opportunity registry** records as executable repair work — they are **planning-only**; issue registry owns repair closure.
+- Do **not** wire opportunity registries to **`next_best_action`** steering without explicit owner activation and precedence rules.
 - Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence and explicit owner direction.
 - Do **not** mutate issue JSON from Command Center lanes (`data_mutation: false` on registry + re-audit lanes).
 
@@ -149,7 +178,8 @@ node --import tsx --test scripts/lib/command-center-issue-closure-v1.test.ts
 node --import tsx --test scripts/lib/command-center-issue-lifecycle-audit-v1.test.ts
 node --import tsx --test scripts/lib/command-center-issue-registry-v1.test.ts
 node --import tsx --test scripts/lib/command-center-issue-reaudit-v1.test.ts
-npx tsx --test scripts/report-buckparts-command-center.test.ts --test-name-pattern "command_center_issue"
+node --import tsx --test scripts/lib/command-center-opportunity-registries-v1.test.ts
+npx tsx --test scripts/report-buckparts-command-center.test.ts --test-name-pattern "command_center_issue|opportunity_registry"
 node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 ```
 

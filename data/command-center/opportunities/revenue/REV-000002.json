@@ -1,0 +1,32 @@
+{
+  "opportunity_id": "REV-000002",
+  "title": "RepairClinic affiliate lane readiness review",
+  "opportunity_type": "affiliate_lane_expansion",
+  "registry_kind": "revenue",
+  "severity": "TIER_2",
+  "source_system": "affiliate_readiness",
+  "detected_at": "2026-06-11T13:30:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "Owner",
+  "affected_routes": ["/filter/[slug]", "/fridge/[slug]"],
+  "evidence_files": [
+    "data/affiliate/affiliate-application-tracker.json"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "revenue_lane": "repairclinic",
+  "monetization_gate": "application_not_started_or_drafting",
+  "revenue_hypothesis": "RepairClinic approval would diversify non-Amazon monetization beyond Waterdrop proof slice.",
+  "proven_facts": [
+    "PROVEN: RepairClinic status tracked in affiliate_readiness lane."
+  ],
+  "inferred_facts": [
+    "INFERRED: Revenue lane expansion planning is subordinate to demand-to-coverage steering; issue registry has zero open repair issues."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: RepairClinic application timeline not recorded.",
+    "UNKNOWN: Revenue opportunity not approved for execution."
+  ]
+}

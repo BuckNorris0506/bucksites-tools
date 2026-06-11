@@ -94,6 +94,45 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "Read-only issue lifecycle registry loaded from data/command-center/issues; steers TIER_0 next_best_action when open.",
   },
   {
+    system_id: "seo_opportunity_registry",
+    npm_script_or_path:
+      "data/command-center/opportunities/seo/*.json + scripts/lib/command-center-seo-opportunity-registry-v1.ts",
+    cc_json_path: "command_center_v2.seo_opportunity_registry_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-opportunity-registries-v1.test.ts",
+    reason:
+      "Read-only planning-only SEO opportunities; seeded starter examples; does not steer next_best_action.",
+  },
+  {
+    system_id: "revenue_opportunity_registry",
+    npm_script_or_path:
+      "data/command-center/opportunities/revenue/*.json + scripts/lib/command-center-revenue-opportunity-registry-v1.ts",
+    cc_json_path: "command_center_v2.revenue_opportunity_registry_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-opportunity-registries-v1.test.ts",
+    reason:
+      "Read-only planning-only revenue opportunities; seeded starter examples; does not steer next_best_action.",
+  },
+  {
+    system_id: "distribution_opportunity_registry",
+    npm_script_or_path:
+      "data/command-center/opportunities/distribution/*.json + scripts/lib/command-center-distribution-opportunity-registry-v1.ts",
+    cc_json_path: "command_center_v2.distribution_opportunity_registry_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-opportunity-registries-v1.test.ts",
+    reason:
+      "Read-only planning-only distribution opportunities; seeded starter examples; does not steer next_best_action.",
+  },
+  {
     system_id: "owner_quarantined_fridge_models",
     npm_script_or_path: "src/lib/owner-dashboard/owner-quarantined-fridge-models-v1.ts",
     cc_json_path: "command_center_v2.owner_quarantined_fridge_models_v1",

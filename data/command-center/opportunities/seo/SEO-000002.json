@@ -1,0 +1,34 @@
+{
+  "opportunity_id": "SEO-000002",
+  "title": "GSWF filter page internal link capture",
+  "opportunity_type": "internal_link_opportunity",
+  "registry_kind": "seo",
+  "severity": "TIER_2",
+  "source_system": "marketing_intelligence_engine_v1",
+  "detected_at": "2026-06-11T12:30:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "Cursor",
+  "affected_routes": ["/filter/gswf", "/fridge/ge-gpf6p"],
+  "evidence_files": [
+    "scripts/lib/buckparts-marketing-intelligence-engine-v1.ts",
+    "docs/business-development/catalog-contamination-audit/GSWF-SAMPLE-CATALOG-CONTAMINATION-AUDIT.md"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "seo_surface": "internal_links",
+  "target_queries": ["gswf water filter", "ge gpf6p filter"],
+  "indexability_hypothesis": "Internal links from high-intent filter PDP to model-specific guidance may improve query capture without new SKUs.",
+  "proven_facts": [
+    "PROVEN: Related trust issue BP-000003 is CLOSED_PROVEN on origin/main.",
+    "PROVEN: Opportunity record is planning-only; not executable repair work."
+  ],
+  "inferred_facts": [
+    "INFERRED: Internal link planning must not override caution-buy trust gates."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Click-weighted internal link priority not measured.",
+    "UNKNOWN: PACKET_READY SEO execution brief not authored."
+  ]
+}

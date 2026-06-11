@@ -4669,6 +4669,70 @@ test("command_center_v2.command_center_issue_registry_v1 is read-only and does n
   assert.equal(manifestEntry!.cc_json_path, "command_center_v2.command_center_issue_registry_v1");
 });
 
+test("command_center_v2 opportunity_registry lanes are planning-only and do not steer next_best_action", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: (p) => (fs.existsSync(p) ? fs.readdirSync(p) : []),
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+
+  const seo = report.command_center_v2.seo_opportunity_registry_v1;
+  const revenue = report.command_center_v2.revenue_opportunity_registry_v1;
+  const distribution = report.command_center_v2.distribution_opportunity_registry_v1;
+  assert.ok(seo);
+  assert.ok(revenue);
+  assert.ok(distribution);
+
+  for (const lane of [seo, revenue, distribution]) {
+    assert.equal(lane.read_only, true);
+    assert.equal(lane.data_mutation, false);
+    assert.equal(lane.mutation_authorized, false);
+    assert.equal(lane.planning_only, true);
+    assert.equal(lane.automation_authorized, false);
+    assert.equal(lane.steering_override_active, false);
+    assert.equal(lane.parse_errors.length, 0);
+  }
+
+  assert.equal(seo.contract, "seo_opportunity_registry_v1");
+  assert.equal(revenue.contract, "revenue_opportunity_registry_v1");
+  assert.equal(distribution.contract, "distribution_opportunity_registry_v1");
+  assert.equal(seo.total_opportunities, 2);
+  assert.equal(revenue.total_opportunities, 2);
+  assert.equal(distribution.total_opportunities, 2);
+
+  const allProvenFacts = [
+    ...seo.opportunities,
+    ...revenue.opportunities,
+    ...distribution.opportunities,
+  ].flatMap((row) => row.proven_facts);
+  assert.equal(allProvenFacts.some((fact) => /DEPLOYED awaiting RE_AUDIT/i.test(fact)), false);
+  assert.equal(allProvenFacts.some((fact) => /is DEPLOYED/i.test(fact)), false);
+
+  const seoBp4 = seo.opportunities.find((row) => row.opportunity_id === "SEO-000001");
+  assert.ok(seoBp4?.proven_facts.some((fact) => fact.includes("BP-000004 is CLOSED_PROVEN")));
+
+  assert.equal(report.command_center_v2.command_center_issue_reaudit_v1.total_deployed_awaiting_reaudit, 0);
+  assert.doesNotMatch(report.next_best_action, /SEO-000001|REV-000001|DIST-000001/);
+  assert.notEqual(
+    report.command_center_v2.customer_steering_comparison_v1?.factory_steering.steering_override_source,
+    "seo_opportunity_registry_v1",
+  );
+
+  for (const systemId of [
+    "seo_opportunity_registry",
+    "revenue_opportunity_registry",
+    "distribution_opportunity_registry",
+  ] as const) {
+    const entry = findBrainManifestEntry(report, (r) => r.system_id === systemId);
+    assert.ok(entry, `missing brain manifest entry for ${systemId}`);
+    assert.equal(entry!.verdict, "CONNECTED");
+    assert.equal(entry!.dashboard_only, false);
+  }
+});
+
 test("command_center_v2.owner_integrity_sentinel_v1 is read-only CC-owned truth gate", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

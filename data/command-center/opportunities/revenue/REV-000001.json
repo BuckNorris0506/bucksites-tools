@@ -1,0 +1,33 @@
+{
+  "opportunity_id": "REV-000001",
+  "title": "Waterdrop DA29-00020B live proof slice monetization gate",
+  "opportunity_type": "proof_slice_monetization",
+  "registry_kind": "revenue",
+  "severity": "TIER_1",
+  "source_system": "affiliate_readiness",
+  "detected_at": "2026-06-11T13:00:00.000Z",
+  "status": "DISCOVERED",
+  "assigned_to": "Owner",
+  "affected_routes": ["/filter/da29-00020b"],
+  "evidence_files": [
+    "data/affiliate/affiliate-application-tracker.json",
+    "scripts/lib/customer-language-and-waterdrop-research-lane-v1.ts"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "revenue_lane": "waterdrop_non_amazon",
+  "monetization_gate": "affiliate_approval_pending",
+  "revenue_hypothesis": "Once non-Amazon affiliate lane is APPROVED, Waterdrop proof slice may become first revenue-truth validation target.",
+  "proven_facts": [
+    "PROVEN: Waterdrop proof slice CTA status may be LIVE while broader affiliate approvals remain pending."
+  ],
+  "inferred_facts": [
+    "INFERRED: Revenue opportunity remains planning-only until affiliate gate clears."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Commission capture instrumentation for this slice not PROVEN end-to-end.",
+    "UNKNOWN: Owner revenue packet not moved to PACKET_READY."
+  ]
+}

@@ -564,6 +564,26 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "full issue lifecycle",
     describe: "Full issue lifecycle loop proven doctrine",
   },
+  {
+    id: "seo_opportunity_registry_v1",
+    needle: "seo_opportunity_registry_v1",
+    describe: "SEO opportunity registry Command Center lane",
+  },
+  {
+    id: "opportunity_registry_planning_only",
+    needle: "planning-only scaffold",
+    describe: "Opportunity registries planning-only doctrine",
+  },
+  {
+    id: "opportunity_starter_examples",
+    needle: "starter planning examples",
+    describe: "Opportunity seeded records are starter examples",
+  },
+  {
+    id: "issue_registry_only_repair_tracker",
+    needle: "only repair lifecycle tracker",
+    describe: "Issue registry is only repair lifecycle tracker",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {
