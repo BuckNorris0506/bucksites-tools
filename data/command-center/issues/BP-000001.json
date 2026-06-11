@@ -1,0 +1,33 @@
+{
+  "issue_id": "BP-000001",
+  "title": "Wrong-filter BLOCK customer exposure quarantine",
+  "issue_type": "trust_gate_wrong_filter_block_exposure",
+  "severity": "TIER_0",
+  "source_system": "fridge_learned_failure_customer_guard",
+  "detected_at": "2026-06-10T20:00:00.000Z",
+  "status": "DEPLOYED",
+  "assigned_to": "Cursor",
+  "affected_routes": ["/fridge/[slug]", "/search"],
+  "evidence_files": [
+    "src/lib/fridge/fridge-learned-failure-customer-guard-v1.ts",
+    "src/lib/fridge/fridge-learned-failure-customer-guard-v1.test.ts",
+    "data/fridge/batch-production/audits/learned-failure-guards-v1.json"
+  ],
+  "repair_commit": "9ba0318",
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "proven_facts": [
+    "PROVEN: repair_commit 9ba0318 exists in git history and is ancestor of HEAD.",
+    "PROVEN: repair_commit 9ba0318 is ancestor of origin/main.",
+    "PROVEN: evidence_files listed in issue record exist on disk."
+  ],
+  "inferred_facts": [
+    "INFERRED: resolveFridgeCustomerSafetyV1 quarantines BLOCK aggregate_verdict models on customer surfaces."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live/public RE_AUDITED artifact (re_audit_outcome PASS) not recorded.",
+    "UNKNOWN: issue-specific closure probe proving no remaining BLOCK exposure.",
+    "UNKNOWN: CLOSED_PROVEN — closure chain incomplete."
+  ]
+}

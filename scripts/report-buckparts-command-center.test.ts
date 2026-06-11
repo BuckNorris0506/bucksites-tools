@@ -142,6 +142,12 @@ function refrigeratorModelFirstSteeringActive(
   return report.next_best_action.startsWith("REFRIGERATOR MODEL-FIRST [READY]:");
 }
 
+function issueRegistryTier0SteeringActive(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): boolean {
+  return report.next_best_action.startsWith("ISSUE REGISTRY TIER_0:");
+}
+
 function lifecycleOwnsOwnerFacingExecutionGuidance(
   report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
 ): boolean {
@@ -1048,6 +1054,10 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
     /until at least one non-Amazon network lane reaches APPROVED/i.test(report.next_best_action),
     false,
   );
+  if (issueRegistryTier0SteeringActive(report)) {
+    assert.match(report.next_best_action, /BP-000001/);
+    return;
+  }
   if (refrigeratorModelFirstSteeringActive(report)) {
     assert.match(report.why_this_action, /prioritize fridge official-manufacturer evidence over AP filter-first steering/i);
     return;
@@ -4408,6 +4418,10 @@ test("command center next_best_action prefers demand-selected batch when refrige
   if (refrigeratorModelFirstSteeringActive(report)) {
     return;
   }
+  if (issueRegistryTier0SteeringActive(report)) {
+    assert.match(report.next_best_action, /BP-000001/);
+    return;
+  }
 
   assert.ok(
     report.next_best_action.startsWith("DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]:"),
@@ -4566,6 +4580,44 @@ test("command_center_v2.owner_quarantined_fridge_models_v1 is read-only CC-owned
 
   const gate = report.command_center_v2.brain_integrity_gate_v1;
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_quarantined_fridge_models"));
+});
+
+test("command_center_v2.command_center_issue_registry_v1 is read-only and does not steer DEPLOYED TIER_0 NBA", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: (p) => (fs.existsSync(p) ? fs.readdirSync(p) : []),
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.command_center_issue_registry_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "command_center_issue_registry_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.command_center_issue_registry_v1");
+  assert.equal(lane.total_open, 4);
+  assert.equal(lane.total_closed, 0);
+  assert.equal(lane.lifecycle_distribution.aligned_count, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 4);
+  assert.equal(lane.steering_override_active, false);
+  assert.equal(lane.highest_priority_steering_eligible_issue, null);
+  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000001");
+  assert.ok(lane.issues_preview.length >= 1);
+  assert.equal(/ISSUE REGISTRY TIER_0:/.test(report.next_best_action), false);
+  assert.notEqual(
+    report.command_center_v2.customer_steering_comparison_v1?.factory_steering.steering_override_source,
+    "issue_registry_tier_0",
+  );
+
+  const manifestEntry = findBrainManifestEntry(
+    report,
+    (r) => r.system_id === "command_center_issue_registry",
+  );
+  assert.ok(manifestEntry);
+  assert.equal(manifestEntry!.verdict, "CONNECTED");
+  assert.equal(manifestEntry!.cc_json_path, "command_center_v2.command_center_issue_registry_v1");
 });
 
 test("command_center_v2.owner_integrity_sentinel_v1 is read-only CC-owned truth gate", async () => {

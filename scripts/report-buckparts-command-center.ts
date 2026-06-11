@@ -106,6 +106,8 @@ import {
   buildMissionFactoryRegistryCommandCenterLaneV1,
   buildMissionFactoryRegistryCommandCenterLaneUnknownV1,
 } from "./lib/mission-factory-registry-command-center-v1";
+import { buildCommandCenterIssueRegistryCommandCenterLaneV1 } from "./lib/command-center-issue-registry-command-center-v1";
+import { resolveCommandCenterIssueRegistrySteeringOverrideV1 } from "./lib/command-center-issue-registry-steering-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-closeout-learning-command-center-v1";
 import { buildFridgeGuardedBatchLifecycleRuleProposalCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-lifecycle-rule-proposal-command-center-v1";
@@ -2129,6 +2131,17 @@ export async function buildBuckpartsCommandCenterReport(
     buckpartsScriptNames: buckpartsScriptNamesForLifecycle,
   });
 
+  const command_center_issue_registry_v1 = buildCommandCenterIssueRegistryCommandCenterLaneV1({
+    rootDir,
+    now,
+    fileExists,
+    readTextFile,
+  });
+
+  const issueRegistrySteeringOverride = resolveCommandCenterIssueRegistrySteeringOverrideV1(
+    command_center_issue_registry_v1,
+  );
+
   if (brainGate.brain_status === "STOP_THE_LINE") {
     nextBestAction = brainGate.next_brain_action;
     whyThisAction = brainGate.lane_work_allowed_reason;
@@ -2205,7 +2218,19 @@ export async function buildBuckpartsCommandCenterReport(
 
   let steeringOverrideSource: FactorySteeringOverrideSourceV1 = "root_resolve";
 
-  if (fridgeModelFirstSteeringOverride) {
+  if (brainGate.brain_status !== "STOP_THE_LINE" && issueRegistrySteeringOverride) {
+    steeringOverrideSource = "issue_registry_tier_0";
+    nextBestAction = issueRegistrySteeringOverride.next_best_action;
+    whyThisAction = issueRegistrySteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = issueRegistrySteeringOverride.next_move_command;
+    for (const reason of issueRegistrySteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (fridgeModelFirstSteeringOverride) {
     steeringOverrideSource = "refrigerator_model_first";
     nextBestAction = fridgeModelFirstSteeringOverride.next_best_action;
     whyThisAction = fridgeModelFirstSteeringOverride.why_this_action;
@@ -2531,6 +2556,7 @@ export async function buildBuckpartsCommandCenterReport(
     customer_authority_score_v1,
     customer_authority_history_status_v1,
     customer_authority_outcomes_v1,
+    command_center_issue_registry_v1,
   };
 
   return {

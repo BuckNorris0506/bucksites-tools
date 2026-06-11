@@ -70,6 +70,18 @@ const CURATED_ENTRIES: EntrySeed[] = [
     reason: "Eight neurons built during Command Center report generation (not dashboard-only).",
   },
   {
+    system_id: "command_center_issue_registry",
+    npm_script_or_path: "data/command-center/issues/*.json + scripts/lib/command-center-issue-registry-command-center-v1.ts",
+    cc_json_path: "command_center_v2.command_center_issue_registry_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-issue-registry-v1.test.ts",
+    reason:
+      "Read-only issue lifecycle registry loaded from data/command-center/issues; steers TIER_0 next_best_action when open.",
+  },
+  {
     system_id: "owner_quarantined_fridge_models",
     npm_script_or_path: "src/lib/owner-dashboard/owner-quarantined-fridge-models-v1.ts",
     cc_json_path: "command_center_v2.owner_quarantined_fridge_models_v1",

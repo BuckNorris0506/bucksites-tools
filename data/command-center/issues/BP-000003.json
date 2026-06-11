@@ -1,0 +1,33 @@
+{
+  "issue_id": "BP-000003",
+  "title": "GSWF single-filter-family WARN ambiguity caution",
+  "issue_type": "trust_gate_gswf_single_filter_family_ambiguity",
+  "severity": "TIER_1",
+  "source_system": "fridge_single_filter_family_ambiguity",
+  "detected_at": "2026-06-10T21:10:00.000Z",
+  "status": "DEPLOYED",
+  "assigned_to": "Cursor",
+  "affected_routes": ["/filter/[slug]", "/search"],
+  "evidence_files": [
+    "src/lib/fridge/fridge-single-filter-family-ambiguity-v1.ts",
+    "src/lib/fridge/fridge-filter-pdp-customer-safety-v1.ts",
+    "src/lib/fridge/fridge-filter-pdp-customer-safety-v1.test.ts"
+  ],
+  "repair_commit": "e7fa0f5",
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "proven_facts": [
+    "PROVEN: repair_commit e7fa0f5 exists in git history and is ancestor of HEAD.",
+    "PROVEN: repair_commit e7fa0f5 is ancestor of origin/main.",
+    "PROVEN: evidence_files listed in issue record exist on disk."
+  ],
+  "inferred_facts": [
+    "INFERRED: WARN single_filter_family models remain visible with caution buy on filter PDP and search."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live/public RE_AUDITED artifact (re_audit_outcome PASS) not recorded.",
+    "UNKNOWN: issue-specific closure probe for GSWF/GSWF2 caution surfaces.",
+    "UNKNOWN: CLOSED_PROVEN — closure chain incomplete."
+  ]
+}
