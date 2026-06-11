@@ -50,8 +50,8 @@ test("deployed issue without re_audit_outcome becomes re-audit candidate", () =>
     rootDir: ROOT,
     issue_registry: registryLane(),
   });
-  assert.equal(lane.total_deployed_awaiting_reaudit, 2);
-  assert.equal(lane.candidates.length, 2);
+  assert.equal(lane.total_deployed_awaiting_reaudit, 1);
+  assert.equal(lane.candidates.length, 1);
   assert.ok(lane.candidates.every((c) => c.close_allowed === false));
   assert.ok(lane.candidates.every((c) => c.status === "DEPLOYED"));
   assert.ok(lane.candidates.every((c) => c.suggested_hyperagent_prompt.includes("BuckParts Issue Re-Audit v1")));
@@ -77,24 +77,24 @@ test("oldest deployed issue selected as top_reaudit_candidate", () => {
     rootDir: ROOT,
     issue_registry: registryLane(),
   });
-  assert.equal(lane.top_reaudit_candidate?.issue_id, "BP-000003");
+  assert.equal(lane.top_reaudit_candidate?.issue_id, "BP-000004");
   assert.equal(lane.top_reaudit_candidate?.severity, "TIER_1");
 
   const issues = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues;
   const candidates = lane.candidates;
   const top = selectTopReauditCandidateV1(candidates, issues);
-  assert.equal(top?.issue_id, "BP-000003");
+  assert.equal(top?.issue_id, "BP-000004");
 
   const deployedOpen = issues.filter(
     (i) => i.status === "DEPLOYED" && i.re_audit_outcome !== "PASS",
   );
   const sorted = sortCommandCenterIssuesByPriorityV1(deployedOpen);
-  assert.equal(sorted[0]?.issue_id, "BP-000003");
+  assert.equal(sorted[0]?.issue_id, "BP-000004");
 });
 
 test("live proof unavailable prevents close_allowed and flags requires_live_probe", () => {
   const issue = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues.find(
-    (row) => row.issue_id === "BP-000003",
+    (row) => row.issue_id === "BP-000004",
   )!;
   const candidate = buildReauditCandidateV1({
     issue,
@@ -116,11 +116,11 @@ test("DEPLOYED issues do not steer repair NBA but re-audit steering activates", 
   });
   assert.equal(registry.steering_override_active, false);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(registry), null);
-  assert.equal(reaudit.total_deployed_awaiting_reaudit, 2);
+  assert.equal(reaudit.total_deployed_awaiting_reaudit, 1);
 
   const steering = resolveCommandCenterIssueReauditSteeringOverrideV1(reaudit);
   assert.ok(steering);
-  assert.match(steering!.next_best_action, /ISSUE RE-AUDIT: BP-000003/);
+  assert.match(steering!.next_best_action, /ISSUE RE-AUDIT: BP-000004/);
   assert.match(steering!.next_best_action, /re-audit/i);
   assert.match(steering!.why_this_action, /No steering-eligible repair issue/);
   assert.ok(reaudit.top_reaudit_candidate!.suggested_hyperagent_prompt.length > 200);

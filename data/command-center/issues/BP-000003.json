@@ -5,7 +5,7 @@
   "severity": "TIER_1",
   "source_system": "fridge_single_filter_family_ambiguity",
   "detected_at": "2026-06-10T21:10:00.000Z",
-  "status": "DEPLOYED",
+  "status": "CLOSED_PROVEN",
   "assigned_to": "Cursor",
   "affected_routes": ["/filter/[slug]", "/search"],
   "evidence_files": [
@@ -15,19 +15,34 @@
   ],
   "repair_commit": "e7fa0f5",
   "deploy_commit": null,
-  "closed_at": null,
-  "re_audit_outcome": null,
+  "closed_at": "2026-06-11T19:07:25.000Z",
+  "re_audit_outcome": "PASS",
+  "closure_reason": "Owner-approved closure after HyperAgent live RE_AUDIT PASS verified GSWF/GSWF2 ambiguity caution behavior and search suppression on production.",
+  "closure_evidence": [
+    "HYPERAGENT_RE_AUDIT:BP-000003:PASS",
+    "LIVE_ROUTE_PROBE:/filter/gswf:HTTP_200_GSWF_WARN_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/filter/gswf2:HTTP_200_GSWF2_WARN_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/search?q=ge-gfe28gmkbb:HTTP_200_TYPICAL_REPLACEMENT_SUPPRESSED",
+    "LIVE_ROUTE_PROBE:/fridge/ge-gfe28gmkbb:HTTP_200_CAUTION_PRESENT_NO_ACTIVE_BUY",
+    "LIVE_ROUTE_PROBE:/fridge/whirlpool-wrs325sdhz:HTTP_200_PASS_CONTROL_NORMAL_BUY_RETAINED",
+    "OWNER_CLOSURE_APPROVED:Jared:true"
+  ],
+  "closure_approved": true,
   "proven_facts": [
     "PROVEN: repair_commit e7fa0f5 exists in git history and is ancestor of HEAD.",
     "PROVEN: repair_commit e7fa0f5 is ancestor of origin/main.",
-    "PROVEN: evidence_files listed in issue record exist on disk."
+    "PROVEN: evidence_files listed in issue record exist on disk.",
+    "PROVEN: HyperAgent live re-audit returned re_audit_outcome PASS for BP-000003.",
+    "PROVEN: Live /filter/gswf and /filter/gswf2 verified GSWF/GSWF2 WARN models remain visible with caution copy and no confident buy or active /go links.",
+    "PROVEN: Live /search?q=ge-gfe28gmkbb verified typical replacement suppressed and compatibility under review shown.",
+    "PROVEN: Live /fridge/ge-gfe28gmkbb verified caution present with no active buy on GSWF model page.",
+    "PROVEN: Live /fridge/whirlpool-wrs325sdhz PASS control remained normal with confident buy retained.",
+    "PROVEN: Jared (owner) explicitly set closure_approved=true — owner-approved closure, not inferred from PASS alone.",
+    "PROVEN: CLOSED_PROVEN is not automatic from re_audit_outcome PASS; closed_at, closure_reason, closure_evidence, and closure_approved were all required.",
+    "PROVEN: Full closure chain satisfied — repair, deploy, RE_AUDIT PASS, owner approval, closure metadata."
   ],
   "inferred_facts": [
     "INFERRED: WARN single_filter_family models remain visible with caution buy on filter PDP and search."
   ],
-  "unknown_facts": [
-    "UNKNOWN: live/public RE_AUDITED artifact (re_audit_outcome PASS) not recorded.",
-    "UNKNOWN: issue-specific closure probe for GSWF/GSWF2 caution surfaces.",
-    "UNKNOWN: CLOSED_PROVEN — closure chain incomplete."
-  ]
+  "unknown_facts": []
 }
