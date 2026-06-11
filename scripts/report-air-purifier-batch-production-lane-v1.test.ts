@@ -141,12 +141,13 @@ test("Blueair F4MAX drift is catalog_identity_gap not buyer-path rescue on parti
   assert.match(gap!.safe_action, /Catalog task/i);
 });
 
-test("search-placeholder AP rows classify as search_placeholder_rescue_needed", () => {
-  for (const slug of ["coway-max2-hepa", "winix-hepa-115115", "blueair-f2-211"]) {
+test("batch-v2 applied AP rows classify as existing_direct_buyable on committed CSV", () => {
+  for (const slug of ["coway-max2-hepa", "winix-hepa-115115"]) {
     const result = classifyLiveSlug(slug);
-    assert.equal(result.state, "search_placeholder_rescue_needed", slug);
+    assert.equal(result.state, "existing_direct_buyable", slug);
     const primary = loadPrimaryLink(slug);
     assert.ok(primary);
+    assert.equal(primary!.browser_truth_classification, "direct_buyable", slug);
     const { buyLinkGateFailureKind } = require("@/lib/retailers/launch-buy-links") as typeof import("@/lib/retailers/launch-buy-links");
     assert.equal(
       buyLinkGateFailureKind({
@@ -154,10 +155,28 @@ test("search-placeholder AP rows classify as search_placeholder_rescue_needed", 
         affiliate_url: primary!.affiliate_url,
         browser_truth_classification: primary!.browser_truth_classification ?? null,
       }),
-      "search_placeholder",
+      null,
       slug,
     );
   }
+});
+
+test("unapplied search-placeholder AP rows still classify as search_placeholder_rescue_needed", () => {
+  const slug = "blueair-f2-211";
+  const result = classifyLiveSlug(slug);
+  assert.equal(result.state, "search_placeholder_rescue_needed", slug);
+  const primary = loadPrimaryLink(slug);
+  assert.ok(primary);
+  const { buyLinkGateFailureKind } = require("@/lib/retailers/launch-buy-links") as typeof import("@/lib/retailers/launch-buy-links");
+  assert.equal(
+    buyLinkGateFailureKind({
+      retailer_key: primary!.retailer_key ?? null,
+      affiliate_url: primary!.affiliate_url,
+      browser_truth_classification: primary!.browser_truth_classification ?? null,
+    }),
+    "search_placeholder",
+    slug,
+  );
 });
 
 test("report does not mutate AP CSV files", async () => {

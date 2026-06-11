@@ -1214,7 +1214,7 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
   const air_purifier_demand_selected_batch_owner_review_v1 =
-    buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+    await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
       rootDir,
       demandToCoverageNextLane: demand_to_coverage_next_lane_v1,
       fileExists,

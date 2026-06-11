@@ -6,31 +6,48 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-import { parse } from "csv-parse/sync";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
-import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
-import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
+import {
+  AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1,
+  buildAirPurifierBatchProductionLaneV1Report,
+  type AirPurifierBatchProductionLaneReportV1,
+  type ApBatchCandidateV1,
+  type ApBatchProductionLaneStateV1,
+} from "./air-purifier-batch-production-lane-v1";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 
 export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CONTRACT_V1 =
   "air_purifier_demand_selected_batch_owner_review_v1" as const;
 export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CC_JQ_PATH_V1 =
   ".command_center_v2.air_purifier_demand_selected_batch_owner_review_v1" as const;
-export const AP_RETAILER_LINKS_CSV_REL_V1 = "data/air-purifier/retailer_links.csv" as const;
+
+export const AP_OWNER_REVIEW_ACTIONABLE_BATCH_STATES_V1 = [
+  "search_placeholder_rescue_needed",
+  "reference_candidate",
+  "direct_buy_candidate",
+  "catalog_identity_gap",
+] as const satisfies readonly ApBatchProductionLaneStateV1[];
+
+const AP_OWNER_REVIEW_ACTIONABLE_STATE_SET_V1 = new Set<ApBatchProductionLaneStateV1>(
+  AP_OWNER_REVIEW_ACTIONABLE_BATCH_STATES_V1,
+);
 
 export type ApDemandSelectedCandidateRowsStatusV1 = "PROVEN" | "UNKNOWN";
 
 export type ApDemandSelectedCandidateRowV1 = {
   rank: number;
   filter_slug: string;
-  retailer_key: string | null;
-  retailer_name: string | null;
-  destination_url: string | null;
-  candidate_reason: string;
-  source_path: typeof AP_RETAILER_LINKS_CSV_REL_V1;
+  state: ApBatchProductionLaneStateV1;
+  priority_score: number;
+  pattern: string;
+  rationale: string;
+  gate_failure: string | null;
+  owner_review_required: boolean;
+  primary_retailer_key: string | null;
+  primary_url: string | null;
+  source_report: typeof AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1;
 };
 
 export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
@@ -39,6 +56,7 @@ export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
   data_mutation: false;
   recommended_jq_path: typeof AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CC_JQ_PATH_V1;
   source_demand_to_coverage_jq_path: ".command_center_v2.demand_to_coverage_next_lane_v1";
+  source_batch_production_report: typeof AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1;
   recommended_wedge: typeof HOMEKEEP_WEDGE_CATALOG.air_purifier | "UNKNOWN";
   source_recommendation_status: DemandToCoverageNextLaneReportV1["recommendation_status"];
   next_lane: string | null;
@@ -84,103 +102,79 @@ export type BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1 = {
   demandToCoverageNextLane: DemandToCoverageNextLaneReportV1;
   fileExists?: (absolutePath: string) => boolean;
   readTextFile?: (absolutePath: string) => string;
+  batchProductionLane?: AirPurifierBatchProductionLaneReportV1;
+  loadBatchProductionLane?: (deps: {
+    rootDir: string;
+    fileExists: (absolutePath: string) => boolean;
+    readTextFile: (absolutePath: string) => string;
+  }) => Promise<AirPurifierBatchProductionLaneReportV1>;
 };
 
-type RetailerLinkRow = {
-  filter_slug?: string;
-  retailer_name?: string;
-  retailer_key?: string;
-  destination_url?: string;
-  affiliate_url?: string;
-  browser_truth_classification?: string | null;
-  browser_truth_buyable_subtype?: string | null;
-};
-
-function readCsvRows(
-  rootDir: string,
-  relPath: string,
-  fileExists: (absolutePath: string) => boolean,
-  readTextFile: (absolutePath: string) => string,
-): RetailerLinkRow[] | null {
-  const abs = path.join(rootDir, ...relPath.split("/"));
-  if (!fileExists(abs)) return null;
-  try {
-    return parse(readTextFile(abs), {
-      columns: true,
-      skip_empty_lines: true,
-      relax_column_count: true,
-    }) as RetailerLinkRow[];
-  } catch {
-    return null;
-  }
+function mapBatchProductionCandidateRowV1(candidate: ApBatchCandidateV1): ApDemandSelectedCandidateRowV1 {
+  return {
+    rank: candidate.rank,
+    filter_slug: candidate.filter_slug,
+    state: candidate.state,
+    priority_score: candidate.priority_score,
+    pattern: candidate.pattern,
+    rationale: candidate.rationale,
+    gate_failure: candidate.gate_failure,
+    owner_review_required: candidate.state === "catalog_identity_gap",
+    primary_retailer_key: candidate.primary_retailer_key,
+    primary_url: candidate.primary_url,
+    source_report: AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1,
+  };
 }
 
-function candidateRowsFromApRetailerLinks(
-  rows: RetailerLinkRow[] | null,
+export function candidateRowsFromBatchProductionLaneV1(
+  report: AirPurifierBatchProductionLaneReportV1 | null | undefined,
+  maxRows = 10,
 ): {
   status: ApDemandSelectedCandidateRowsStatusV1;
   rows: ApDemandSelectedCandidateRowV1[];
   unknown_reason: string | null;
 } {
-  if (!rows) {
+  if (!report) {
     return {
       status: "UNKNOWN",
       rows: [],
       unknown_reason:
-        "data/air-purifier/retailer_links.csv could not be read; run a read-only AP buyer-path candidate report before owner batch-start approval.",
+        "air_purifier_batch_production_lane_v1 report unavailable; run npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts before owner batch-start approval.",
     };
   }
 
-  const seen = new Set<string>();
-  const candidates: ApDemandSelectedCandidateRowV1[] = [];
-  for (const row of rows) {
-    const filterSlug = row.filter_slug?.trim();
-    if (!filterSlug || seen.has(filterSlug)) continue;
-    const gate = buyLinkGateFailureKind({
-      retailer_key: row.retailer_key ?? null,
-      affiliate_url: row.affiliate_url ?? row.destination_url ?? "",
-      browser_truth_classification: row.browser_truth_classification ?? null,
-      browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
-    });
-    const state = mapSignalsToRetailerLinkState({
-      browserTruthClassification: row.browser_truth_classification ?? null,
-      gateFailureKind: gate,
-    });
-    const isBlocked = gate !== null || state === "BLOCKED_SEARCH_OR_DISCOVERY";
-    if (!isBlocked) continue;
-    seen.add(filterSlug);
-    candidates.push({
-      rank: candidates.length + 1,
-      filter_slug: filterSlug,
-      retailer_key: row.retailer_key?.trim() || null,
-      retailer_name: row.retailer_name?.trim() || null,
-      destination_url: row.destination_url?.trim() || row.affiliate_url?.trim() || null,
-      candidate_reason:
-        gate ?? "blocked_or_search_placeholder_buyer_path_needs_read_only_evidence_collection",
-      source_path: AP_RETAILER_LINKS_CSV_REL_V1,
-    });
-    if (candidates.length >= 10) break;
-  }
-
-  if (candidates.length === 0) {
+  if (report.source_status === "UNKNOWN") {
     return {
       status: "UNKNOWN",
       rows: [],
       unknown_reason:
-        "No blocked/search-placeholder AP candidate rows were proven from committed retailer_links.csv; a read-only AP buyer-path candidate report is missing.",
+        "air_purifier_batch_production_lane_v1 source_status=UNKNOWN; refresh AP filters/retailer_links/GSC inputs and re-run batch-production lane.",
+    };
+  }
+
+  const actionable = report.top_candidates.filter((candidate) =>
+    AP_OWNER_REVIEW_ACTIONABLE_STATE_SET_V1.has(candidate.state),
+  );
+
+  if (actionable.length === 0) {
+    return {
+      status: "UNKNOWN",
+      rows: [],
+      unknown_reason:
+        "No actionable AP buyer-path candidates were proven from air_purifier_batch_production_lane_v1.top_candidates.",
     };
   }
 
   return {
     status: "PROVEN",
-    rows: candidates,
+    rows: actionable.slice(0, maxRows).map(mapBatchProductionCandidateRowV1),
     unknown_reason: null,
   };
 }
 
-export function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
+export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
   deps: BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1,
-): AirPurifierDemandSelectedBatchOwnerReviewLaneV1 {
+): Promise<AirPurifierDemandSelectedBatchOwnerReviewLaneV1> {
   const fileExists = deps.fileExists ?? existsSync;
   const readTextFile = deps.readTextFile ?? ((p: string) => readFileSync(p, "utf8"));
   const demand = deps.demandToCoverageNextLane;
@@ -189,9 +183,17 @@ export function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     .filter((entry) => /air\s*purifier/i.test(entry.key))
     .slice(0, 10)
     .map((entry) => entry.key);
-  const candidateRows = candidateRowsFromApRetailerLinks(
-    readCsvRows(deps.rootDir, AP_RETAILER_LINKS_CSV_REL_V1, fileExists, readTextFile),
-  );
+
+  const batchProductionLane =
+    deps.batchProductionLane ??
+    (await (deps.loadBatchProductionLane?.({ rootDir: deps.rootDir, fileExists, readTextFile }) ??
+      buildAirPurifierBatchProductionLaneV1Report({
+        rootDir: deps.rootDir,
+        fileExists,
+        readTextFile,
+      })));
+
+  const candidateRows = candidateRowsFromBatchProductionLaneV1(batchProductionLane);
   const sourceIsApDemandSelected =
     demand.recommended_wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier &&
     demand.recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH";
@@ -217,6 +219,7 @@ export function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     data_mutation: false,
     recommended_jq_path: AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CC_JQ_PATH_V1,
     source_demand_to_coverage_jq_path: ".command_center_v2.demand_to_coverage_next_lane_v1",
+    source_batch_production_report: AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1,
     recommended_wedge: sourceIsApDemandSelected ? HOMEKEEP_WEDGE_CATALOG.air_purifier : "UNKNOWN",
     source_recommendation_status: demand.recommendation_status,
     next_lane: demand.next_lane,
@@ -242,9 +245,10 @@ export function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     candidate_rows_unknown_reason: candidateRows.unknown_reason,
     candidate_selection_logic: [
       "Source recommendation must be demand_to_coverage_next_lane_v1 with recommended_wedge=air_purifier and recommendation_status=START_NEW_DEMAND_SELECTED_BATCH.",
-      "Candidate rows are read from committed data/air-purifier/retailer_links.csv only.",
-      "Rows are included when launch-buy-link gates or retailer-link state classify them as blocked/search-placeholder buyer paths.",
-      "This packet is owner review only; it does not start a batch or collect browser evidence.",
+      "Candidate rows are a read-only projection of air_purifier_batch_production_lane_v1.top_candidates priority order.",
+      "Include only actionable states: search_placeholder_rescue_needed, reference_candidate, direct_buy_candidate, catalog_identity_gap.",
+      "Exclude wrong_family_reject, existing_direct_buyable, existing_official_reference, and other non-actionable states.",
+      "This packet is owner review only; it does not start a batch, generate agent packets, or collect browser evidence.",
     ],
     inputs_needed: [
       "Owner batch-start approval in a future explicit decision surface.",
@@ -260,6 +264,8 @@ export function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
       `PROVEN: source demand recommendation status is ${demand.recommendation_status}.`,
       `PROVEN: source next_batch_candidate is ${String(demand.next_batch_candidate)}.`,
       `PROVEN: candidate_rows_status=${candidateRows.status}.`,
+      `PROVEN: candidate_rows projected from ${AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1}.top_candidates.`,
+      `PROVEN: batch_production_lane source_status=${batchProductionLane.source_status}.`,
     ],
     inferred_facts: [
       ...demand.inferred_facts,

@@ -1,22 +1,22 @@
 import assert from "node:assert/strict";
+import path from "node:path";
 import test from "node:test";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 
+import type { AirPurifierBatchProductionLaneReportV1 } from "./air-purifier-batch-production-lane-v1";
+import { buildAirPurifierBatchProductionLaneV1Report } from "./air-purifier-batch-production-lane-v1";
 import {
   buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1,
-  AP_RETAILER_LINKS_CSV_REL_V1,
+  candidateRowsFromBatchProductionLaneV1,
 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import {
   buildDemandToCoverageNextLaneUnknownV1,
   type DemandToCoverageNextLaneReportV1,
 } from "./demand-to-coverage-next-lane-v1";
 
+const REPO_ROOT = process.cwd();
 const fixedNow = () => new Date("2026-06-01T12:00:00.000Z");
-const AP_LINKS_CSV = `filter_slug,retailer_name,affiliate_url,is_primary,retailer_key,retailer_slug,destination_url,browser_truth_classification,browser_truth_notes,browser_truth_checked_at
-levoit-rf-rar029,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-RAR029,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-RAR029,,,
-levoit-rf-rar040,OEM / manufacturer catalog (keyword lookup),https://levoit.com/search?q=LEVOIT-RF-RAR040,true,oem-catalog,oem-catalog,https://levoit.com/search?q=LEVOIT-RF-RAR040,,,
-`;
 
 function apDemandReportFixture(): DemandToCoverageNextLaneReportV1 {
   const base = buildDemandToCoverageNextLaneUnknownV1({ now: fixedNow, reason: "fixture" });
@@ -74,17 +74,149 @@ function apDemandReportFixture(): DemandToCoverageNextLaneReportV1 {
   };
 }
 
-test("AP demand-selected owner review lane is read-only and mutation-blocked", () => {
-  const lane = buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+function batchProductionFixture(): AirPurifierBatchProductionLaneReportV1 {
+  const emptyCounts = Object.fromEntries(
+    [
+      "existing_direct_buyable",
+      "existing_official_reference",
+      "direct_buy_candidate",
+      "reference_candidate",
+      "search_placeholder_rescue_needed",
+      "catalog_identity_gap",
+      "alias_or_redirect_gap",
+      "wrong_family_reject",
+      "owner_review",
+      "no_safe_path_yet",
+    ].map((state) => [state, 0]),
+  ) as AirPurifierBatchProductionLaneReportV1["state_counts"];
+
+  return {
+    report_name: "air_purifier_batch_production_lane_v1",
+    read_only: true,
+    data_mutation: false,
+    generated_at: fixedNow().toISOString(),
+    source_status: "PROVEN",
+    candidate_count: 4,
+    state_counts: emptyCounts,
+    top_candidates: [
+      {
+        rank: 1,
+        filter_slug: "blueair-particle-411",
+        brand_slug: "blueair",
+        oem_part_number: "BLUEAIR-PART411",
+        state: "catalog_identity_gap",
+        priority_score: 168,
+        gsc_impressions: 10,
+        gsc_queries: [],
+        compat_model_count: 3,
+        primary_retailer_key: "oem-catalog",
+        primary_url: "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+        gate_failure: "search_placeholder",
+        browser_truth_classification: null,
+        pattern: "blueair_catalog_identity",
+        rationale: "F4MAX vs PART411 identity split",
+        proof_required: "Resolve F4MAX catalog row + compat",
+        allowed_future_mutations: [],
+        reject_rules: [],
+      },
+      {
+        rank: 2,
+        filter_slug: "holmes-hapf30",
+        brand_slug: "holmes",
+        oem_part_number: "HOLMES-HAPF30",
+        state: "search_placeholder_rescue_needed",
+        priority_score: 81,
+        gsc_impressions: 0,
+        gsc_queries: [],
+        compat_model_count: 30,
+        primary_retailer_key: "oem-catalog",
+        primary_url: "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+        gate_failure: "search_placeholder",
+        browser_truth_classification: null,
+        pattern: "oem_search_placeholder_discovery",
+        rationale: "Only manufacturer search URL",
+        proof_required: "Discover official PDP",
+        allowed_future_mutations: [],
+        reject_rules: [],
+      },
+      {
+        rank: 3,
+        filter_slug: "shark-carbon-foam",
+        brand_slug: "shark",
+        oem_part_number: "SHARK-CARBON-FOAM",
+        state: "search_placeholder_rescue_needed",
+        priority_score: 63,
+        gsc_impressions: 0,
+        gsc_queries: [],
+        compat_model_count: 20,
+        primary_retailer_key: "oem-catalog",
+        primary_url: "https://www.sharkclean.com/search?q=SHARK-CARBON-FOAM",
+        gate_failure: "search_placeholder",
+        browser_truth_classification: null,
+        pattern: "oem_search_placeholder_discovery",
+        rationale: "Only manufacturer search URL",
+        proof_required: "Discover official PDP",
+        allowed_future_mutations: [],
+        reject_rules: [],
+      },
+      {
+        rank: 15,
+        filter_slug: "levoit-rf-rar029",
+        brand_slug: "levoit",
+        oem_part_number: "LEVOIT-RF-RAR029",
+        state: "wrong_family_reject",
+        priority_score: 36,
+        gsc_impressions: 0,
+        gsc_queries: [],
+        compat_model_count: 1,
+        primary_retailer_key: "oem-catalog",
+        primary_url: "https://levoit.com/search?q=LEVOIT-RF-RAR029",
+        gate_failure: "search_placeholder",
+        browser_truth_classification: null,
+        pattern: "levoit_oem_discovery",
+        rationale: "Pilot proof: wrong-family Amazon or OEM mismatch",
+        proof_required: "Exact OEM token on PDP",
+        allowed_future_mutations: [],
+        reject_rules: [],
+      },
+    ],
+    agent_work_packets: [],
+    catalog_identity_gaps: [],
+    reference_link_candidates: [],
+    direct_buy_candidates: [],
+    blocked_or_rejected: [],
+    notes: [],
+  };
+}
+
+test("candidateRowsFromBatchProductionLaneV1 projects actionable priority order and excludes wrong_family_reject", () => {
+  const projected = candidateRowsFromBatchProductionLaneV1(batchProductionFixture());
+  assert.equal(projected.status, "PROVEN");
+  assert.equal(projected.rows.length, 3);
+  assert.deepEqual(
+    projected.rows.map((row) => row.filter_slug),
+    ["blueair-particle-411", "holmes-hapf30", "shark-carbon-foam"],
+  );
+  assert.equal(projected.rows[0]?.rank, 1);
+  assert.equal(projected.rows[0]?.priority_score, 168);
+  assert.equal(projected.rows[0]?.state, "catalog_identity_gap");
+  assert.equal(projected.rows[0]?.owner_review_required, true);
+  assert.equal(projected.rows[1]?.owner_review_required, false);
+  assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
+  assert.equal(projected.rows[0]?.source_report, "air_purifier_batch_production_lane_v1");
+});
+
+test("AP demand-selected owner review lane is read-only and mutation-blocked", async () => {
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
     rootDir: "/fixture-root",
     demandToCoverageNextLane: apDemandReportFixture(),
-    fileExists: (abs) => abs.endsWith(AP_RETAILER_LINKS_CSV_REL_V1),
-    readTextFile: () => AP_LINKS_CSV,
+    batchProductionLane: batchProductionFixture(),
   });
 
   assert.equal(lane.contract, "air_purifier_demand_selected_batch_owner_review_v1");
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
+  assert.equal(lane.source_batch_production_report, "air_purifier_batch_production_lane_v1");
   assert.equal(lane.recommended_wedge, HOMEKEEP_WEDGE_CATALOG.air_purifier);
   assert.equal(lane.source_recommendation_status, "START_NEW_DEMAND_SELECTED_BATCH");
   assert.equal(lane.next_lane, "air_purifier_buyer_path_coverage");
@@ -102,7 +234,9 @@ test("AP demand-selected owner review lane is read-only and mutation-blocked", (
   assert.equal(lane.demand_proof.safe_cta_count, 10);
   assert.equal(lane.demand_proof.blocked_link_count, 58);
   assert.equal(lane.candidate_rows_status, "PROVEN");
-  assert.equal(lane.candidate_rows.length, 2);
+  assert.equal(lane.candidate_rows.length, 3);
+  assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
+  assert.ok(lane.candidate_selection_logic.some((line) => line.includes("top_candidates priority order")));
   assert.ok(lane.blockers.includes("open_batch_not_proven"));
   assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
   assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
@@ -110,15 +244,17 @@ test("AP demand-selected owner review lane is read-only and mutation-blocked", (
   assert.match(lane.next_agent_action, /do not start a batch/i);
 });
 
-test("AP owner review lane degrades safely when demand source is UNKNOWN", () => {
-  const lane = buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+test("AP owner review lane degrades safely when demand source is UNKNOWN", async () => {
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
     rootDir: "/fixture-root",
     demandToCoverageNextLane: buildDemandToCoverageNextLaneUnknownV1({
       now: fixedNow,
       reason: "fixture demand missing",
     }),
-    fileExists: () => false,
-    readTextFile: () => "",
+    batchProductionLane: {
+      ...batchProductionFixture(),
+      source_status: "UNKNOWN",
+    },
   });
 
   assert.equal(lane.read_only, true);
@@ -135,4 +271,71 @@ test("AP owner review lane degrades safely when demand source is UNKNOWN", () =>
   assert.deepEqual(lane.candidate_rows, []);
   assert.ok(lane.blockers.includes("source_demand_to_coverage_not_ap_start_candidate"));
   assert.ok(lane.unknown_facts.some((fact) => fact.includes("fixture demand missing")));
+});
+
+test("live repo owner-review candidates align with batch-production actionable priority", async () => {
+  const batchLane = await buildAirPurifierBatchProductionLaneV1Report({
+    rootDir: REPO_ROOT,
+    loadGscArtifact: async () => ({
+      ok: true as const,
+      artifact: {
+        status: "OK",
+        total_impressions: 289,
+        total_clicks: 3,
+        top_pages_by_impressions: [
+          {
+            key: "https://buckparts.com/air-purifier/filter/blueair-f4max-411",
+            impressions: 10,
+            clicks: 0,
+            ctr: 0,
+            average_position: 4.9,
+          },
+        ],
+        top_queries_by_impressions: [],
+      },
+      source: "test_fixture",
+    }),
+  });
+
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: apDemandReportFixture(),
+    batchProductionLane: batchLane,
+  });
+
+  const actionableTop = batchLane.top_candidates
+    .filter((candidate) =>
+      [
+        "search_placeholder_rescue_needed",
+        "reference_candidate",
+        "direct_buy_candidate",
+        "catalog_identity_gap",
+      ].includes(candidate.state),
+    )
+    .slice(0, 10);
+
+  assert.equal(lane.candidate_rows_status, "PROVEN");
+  assert.ok(lane.candidate_rows.length > 0);
+  assert.deepEqual(
+    lane.candidate_rows.map((row) => row.filter_slug),
+    actionableTop.map((candidate) => candidate.filter_slug),
+  );
+  assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
+  assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
+  assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
+  assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
+  assert.ok(
+    lane.proven_facts.some((fact) => fact.includes("air_purifier_batch_production_lane_v1.top_candidates")),
+  );
+});
+
+test("live repo projection excludes levoit-rf-rar029 wrong_family_reject from owner-review rows", async () => {
+  const batchLane = await buildAirPurifierBatchProductionLaneV1Report({ rootDir: REPO_ROOT });
+  const wrongFamily = batchLane.top_candidates.find(
+    (candidate) => candidate.filter_slug === "levoit-rf-rar029",
+  );
+  assert.equal(wrongFamily?.state, "wrong_family_reject");
+
+  const projected = candidateRowsFromBatchProductionLaneV1(batchLane);
+  assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
 });
