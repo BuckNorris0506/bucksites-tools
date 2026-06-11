@@ -534,6 +534,36 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "FULL_HYPERAGENT_PACKET_BODIES_REQUIRED",
     describe: "Cursor validation rejects stub/materialized HyperAgent bundles",
   },
+  {
+    id: "issue_lifecycle_closed_proven_head_4bac7aa",
+    needle: "4bac7aa",
+    describe: "Issue Lifecycle CLOSED_PROVEN milestone HEAD reference",
+  },
+  {
+    id: "issue_lifecycle_closed_proven_status",
+    needle: "CLOSED_PROVEN",
+    describe: "Issue Registry CLOSED_PROVEN lifecycle status",
+  },
+  {
+    id: "issue_lifecycle_bp_000001",
+    needle: "BP-000001",
+    describe: "First seeded issue BP-000001 closure reference",
+  },
+  {
+    id: "issue_lifecycle_bp_000004",
+    needle: "BP-000004",
+    describe: "Fourth seeded issue BP-000004 closure reference",
+  },
+  {
+    id: "command_center_issue_reaudit_v1",
+    needle: "command_center_issue_reaudit_v1",
+    describe: "Command Center issue re-audit lane contract",
+  },
+  {
+    id: "full_issue_lifecycle_loop",
+    needle: "full issue lifecycle",
+    describe: "Full issue lifecycle loop proven doctrine",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

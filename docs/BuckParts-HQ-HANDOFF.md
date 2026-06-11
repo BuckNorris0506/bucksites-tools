@@ -68,9 +68,96 @@
 
 ---
 
-## Current stopping point — Customer Reality Command Center (PROVEN through `4246889`)
+## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (PROVEN through `4bac7aa`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`4bac7aaf23f62d251cf4b97102d4d2433339ca3c`** |
+| Latest commit | **`4bac7aa`** — Issue Registry v1 seeded issues **BP-000001**–**BP-000004** owner-closed **CLOSED_PROVEN** |
+| Working tree | **Re-verify** — handoff records pushed `origin/main` truth; local uncommitted work may exist |
+| Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
+
+**Issue lifecycle milestone (PROVEN):**
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | **Issue Registry v1** is proven through **CLOSED_PROVEN** lifecycle — not just DEPLOYED + re-audit planning. |
+| **PROVEN** | Four seeded issues **BP-000001** through **BP-000004** are **`CLOSED_PROVEN`** with owner-approved closure metadata. |
+| **PROVEN** | The **full issue lifecycle** loop is proven end-to-end: `DISCOVERED` → `PACKET_READY` → `APPROVED` → `REPAIR_IN_PROGRESS` → `VALIDATED` → `DEPLOYED` → `RE_AUDITED` → **`CLOSED_PROVEN`**. |
+| **PROVEN** | **HyperAgent live re-audits** verified customer reality on production routes before owner closure. |
+| **PROVEN** | **BP-000001** exposed deploy/customer-reality gap → production **500** fix **`d010d58`** (static import for learned-failure guard bundle). |
+| **PROVEN** | **BP-000002**, **BP-000003**, **BP-000004** live re-audited (**PASS**) and owner-closed by Jared (`closure_approved: true`). |
+| **PROVEN** | Command Center **`next_best_action`** returns to **demand-to-coverage** steering when **no issue re-audit candidates** remain (`total_deployed_awaiting_reaudit: 0`). |
+| **PROVEN** | **`command_center_issue_reaudit_v1`** lane remains read-only — does **not** auto-close from PASS alone; **CLOSED_PROVEN** requires `re_audit_outcome: PASS` + `closure_approved` + `closed_at` + `closure_reason` + non-empty `closure_evidence`. |
+
+**Seeded issue closure summary (PROVEN at handoff refresh):**
+
+| Issue | Title (short) | Closure note |
+|-------|---------------|--------------|
+| **BP-000001** | Wrong-filter BLOCK customer exposure quarantine | HyperAgent PASS + **`d010d58`** deploy fix; owner-closed |
+| **BP-000002** | Filter PDP / search quarantined-model exposure | Live filter + search probes; owner-closed |
+| **BP-000003** | GSWF single-filter-family WARN ambiguity | GSWF/GSWF2 caution + search suppression; owner-closed |
+| **BP-000004** | Frigidaire confusion-family model-page caution | Frigidaire model-page caution probes + PASS control; owner-closed |
+
+**Issue JSON paths:** `data/command-center/issues/BP-000001.json` … `BP-000004.json`
+
+**Issue lifecycle Command Center lanes (PROVEN — read-only):**
+
+| Contract | jq path | Builder |
+|----------|---------|---------|
+| `command_center_issue_registry_v1` | `.command_center_v2.command_center_issue_registry_v1` | `scripts/lib/command-center-issue-registry-v1.ts` |
+| `command_center_issue_reaudit_v1` | `.command_center_v2.command_center_issue_reaudit_v1` | `scripts/lib/command-center-issue-reaudit-v1.ts` |
+| `command_center_issue_closure_v1` | *(eligibility on registry lifecycle audit rows)* | `scripts/lib/command-center-issue-closure-v1.ts` |
+
+**Re-run before citing issue registry or steering:**
+
+```bash
+npm run buckparts:command-center | jq '{
+  total_open: .command_center_v2.command_center_issue_registry_v1.total_open,
+  total_closed: .command_center_v2.command_center_issue_registry_v1.total_closed,
+  closed_proven_issue_ids: .command_center_v2.command_center_issue_registry_v1.closed_proven_issue_ids,
+  reaudits_awaiting: .command_center_v2.command_center_issue_reaudit_v1.total_deployed_awaiting_reaudit,
+  top_reaudit_issue_id: .command_center_v2.command_center_issue_reaudit_v1.top_reaudit_candidate.issue_id,
+  next_best_action: .next_best_action
+}'
+```
+
+**INFERRED at handoff refresh (re-run `jq` before citing):** `total_open: 0`, `total_closed: 4`, `closed_proven_issue_ids: ["BP-000001","BP-000002","BP-000003","BP-000004"]`, `reaudits_awaiting: 0`, `top_reaudit_issue_id: null`, factory NBA steers **demand-to-coverage** (not `ISSUE RE-AUDIT`).
+
+### 2. Customer Reality lanes — retained (PROVEN; superseded for next-move authority)
+
+Customer Reality Command Center lanes (`customer_reality_scoreboard_v1`, `customer_steering_comparison_v1`, `customer_closure_report_v1`, `customer_authority_score_v1`, `customer_authority_history_status_v1`) **remain operational** — see **Current stopping point — Customer Reality Command Center (historical — superseded by `4bac7aa`)** below. Factory NBA may differ from customer dry-run.
+
+### 3. Do not do next (at this stopping point)
+
+- Do **not** treat **`re_audit_outcome: PASS`** alone as **CLOSED_PROVEN** — owner approval + closure metadata required.
+- Do **not** include **opportunity registry** work in this milestone — `data/command-center/opportunities/` and `command-center-*-opportunity-registry-v1.ts` files are **uncommitted / unrelated** and **not** part of the current stopping point.
+- Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence and explicit owner direction.
+- Do **not** mutate issue JSON from Command Center lanes (`data_mutation: false` on registry + re-audit lanes).
+
+### 4. Validation (PROVEN before this handoff update)
+
+```bash
+npm run lint
+npm run build
+node --import tsx --test scripts/lib/command-center-issue-closure-v1.test.ts
+node --import tsx --test scripts/lib/command-center-issue-lifecycle-audit-v1.test.ts
+node --import tsx --test scripts/lib/command-center-issue-registry-v1.test.ts
+node --import tsx --test scripts/lib/command-center-issue-reaudit-v1.test.ts
+npx tsx --test scripts/report-buckparts-command-center.test.ts --test-name-pattern "command_center_issue"
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+---
+
+## Current stopping point — Customer Reality Command Center (historical — superseded by `4bac7aa`)
+
+**Superseded for next-move authority.** Retained for Customer Reality lane inventory and authority-history context. **Issue Lifecycle CLOSED_PROVEN** section above is the current executive stopping point.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -539,7 +626,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`4246889`** — Customer Reality Command Center (Slices 1–5a + Phase 5b authority history + authority-gated dashboard; see **Current stopping point — Customer Reality Command Center** at top). **Prior checkpoint `2199578`** (control graph + EDR4RXD1) is **superseded** for next-move authority — retained as historical context. **Prior milestones** (`9116a74` Page Factory preflight, RF28R7351SR **`a070797`**, grant pack **`afaf86d`**, fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`4bac7aa`** — Issue Registry v1 **CLOSED_PROVEN** milestone (BP-000001–BP-000004 owner-closed; see **Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone** at top). **Prior checkpoint `4246889`** (Customer Reality Command Center) is **superseded** for next-move authority — retained as historical context. **Prior checkpoint `2199578`** (control graph + EDR4RXD1) is also superseded. **Prior milestones** (`9116a74` Page Factory preflight, RF28R7351SR **`a070797`**, grant pack **`afaf86d`**, fridge spine **`7b09529`**, Semi-Cruise **`edfeeba`**, UI motion **`bbadce5`**, FOH slice **`8eaa8ac`**, etc.) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -1188,9 +1275,9 @@ npx tsx scripts/report-fridge-command-center-and-public-truth-audit-v1.ts
 
 ---
 
-## Current stopping point / chat migration state (historical — superseded by `4246889`)
+## Current stopping point / chat migration state (historical — superseded by `4bac7aa`)
 
-**Superseded:** Use **Current stopping point — Customer Reality Command Center (through `4246889`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
+**Superseded:** Use **Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (through `4bac7aa`)** at the top of this file first. This block retains **fridge spine / batch / Command Center** context from **`7b09529`** — still valid read-only inventory, not the latest HEAD or next-move authority.
 
 **Command Center is the operating brain** — fridge truth is on the spine; the founder should **not** rebuild fridge products from scratch or apply CSV backfill without owner approval.
 
