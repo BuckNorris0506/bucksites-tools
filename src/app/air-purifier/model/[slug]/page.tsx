@@ -16,6 +16,7 @@ import {
   ModelTruthPanelCopyProvider,
 } from "@/components/trust/ModelTruthPanel";
 import { buildModelPageTrust } from "@/lib/trust/part-trust";
+import { getAirPurifierModelReviewOverride } from "@/lib/air-purifier/air-purifier-model-review-overrides";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +40,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function AirPurifierModelPage({ params }: Props) {
   const model = await getAirPurifierModelBySlug(params.slug);
   if (!model) notFound();
+  const reviewOverride = getAirPurifierModelReviewOverride(params.slug);
 
   let primaryTrustBuy: VerticalModelPrimaryTrustBuy | undefined;
-  if (model.filters.length > 0) {
+  if (!reviewOverride && model.filters.length > 0) {
     const primary = model.filters[0]!;
     const buyPathSortContext = buyPathSortContextForFilter(
       primary.slug,
@@ -69,13 +71,18 @@ export default async function AirPurifierModelPage({ params }: Props) {
 
   return (
     <ModelTruthPanelCopyProvider value={AIR_PURIFIER_MODEL_TRUTH_COPY}>
+      {reviewOverride ? (
+        <div className="mb-8 rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
+          {reviewOverride.public_message}
+        </div>
+      ) : null}
       <VerticalModelPageContent
         brandName={model.brand.name}
         modelNumber={model.model_number}
         title={model.title}
         series={model.series}
         notes={model.notes}
-        filters={model.filters}
+        filters={reviewOverride ? [] : model.filters}
         filterBasePath="/air-purifier/filter"
         goBase="/air-purifier/go"
         searchHref="/air-purifier/search"

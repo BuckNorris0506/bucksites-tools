@@ -11,6 +11,10 @@ import {
   FILTER_PAGE_FIT_CONFIRMATION_AIR_PURIFIER,
 } from "@/lib/copy/vertical-fit";
 import { getAirPurifierFilterBySlug } from "@/lib/data/air-purifier/filters";
+import {
+  filterCompatModelsForCustomerDisplayV1,
+  filterPageCompatExclusionNoteV1,
+} from "@/lib/air-purifier/air-purifier-compat-display-overrides-v1";
 
 export const dynamic = "force-dynamic";
 
@@ -34,10 +38,17 @@ export default async function AirPurifierFilterPage({ params }: Props) {
   if (!filter) notFound();
 
   const showHoneywellRail = isHoneywellHrfSlug(filter.slug);
+  const compatNote = filterPageCompatExclusionNoteV1(filter.slug);
+  const displayModels = filterCompatModelsForCustomerDisplayV1(filter.slug, filter.models);
 
   return (
     <div className="space-y-10">
       {showHoneywellRail ? <HoneywellHrfFamilyRail currentSlug={filter.slug} /> : null}
+      {compatNote ? (
+        <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
+          {compatNote}
+        </div>
+      ) : null}
       <VerticalFilterPageContent
         brandName={filter.brand.name}
         filterSlug={filter.slug}
@@ -45,7 +56,7 @@ export default async function AirPurifierFilterPage({ params }: Props) {
         name={filter.name}
         replacementIntervalMonths={filter.replacement_interval_months}
         notes={filter.notes}
-        models={filter.models}
+        models={displayModels}
         modelBasePath="/air-purifier/model"
         retailerLinks={filter.retailer_links}
         officialReferenceLinks={filter.official_reference_links}

@@ -8,7 +8,7 @@ import { ManualEvidenceCallout } from "@/components/trust/ManualEvidenceCallout"
 import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacementMatchCard";
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
-import { getFridgeModelReviewOverride } from "@/lib/fridge/fridge-model-review-overrides";
+import { resolveFridgeCustomerSafetyV1 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { canonicalAlternatesForIndexablePath } from "@/lib/seo/canonical";
 import { classifyPageState } from "@/lib/page-state/page-state";
@@ -42,11 +42,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!fridge) {
     return { title: "Model not found" };
   }
+  const customerSafety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: params.slug });
   const hasAnyMappedFilters = fridge.filters.length > 0;
   const validCtaCount = fridge.filters.reduce((count, f) => count + f.retailer_links.length, 0);
   const pageState = classifyPageState({
-    isIndexable: hasAnyMappedFilters,
-    validCtaCount,
+    isIndexable: customerSafety.quarantine ? false : hasAnyMappedFilters,
+    validCtaCount: customerSafety.quarantine ? 0 : validCtaCount,
+    buyerPathState: customerSafety.quarantine ? "suppress_buy" : null,
     hasDemandSignal: null,
   });
   const title = `${fridge.model_number} water filter`;
@@ -62,7 +64,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function FridgePage({ params }: Props) {
   const fridge = await getFridgeBySlug(params.slug);
   if (!fridge) notFound();
-  const reviewOverride = getFridgeModelReviewOverride(params.slug);
+  const customerSafety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: params.slug });
+  const reviewOverride = customerSafety.quarantine
+    ? { public_message: customerSafety.public_message ?? "" }
+    : null;
   const manualEvidence = reviewOverride
     ? null
     : await loadRefrigeratorManualEvidenceForModel(params.slug);
