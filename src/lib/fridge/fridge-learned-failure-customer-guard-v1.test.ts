@@ -6,6 +6,7 @@ import test from "node:test";
 import {
   resetLearnedFailureGuardIndexCacheForTestsV1,
   resolveFridgeCustomerSafetyV1,
+  setLearnedFailureGuardsAuditUnavailableForTestsV1,
 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -48,6 +49,35 @@ test("GSWF WARN single_filter_family model stays non-quarantined", () => {
     fridgeModelSlug: "ge-gfe28gmkbb",
     rootDir: ROOT,
   });
+  assert.equal(safety.quarantine, false);
+  assert.equal(safety.reason, null);
+});
+
+test("missing guard audit data does not throw and fails closed", () => {
+  resetLearnedFailureGuardIndexCacheForTestsV1();
+  setLearnedFailureGuardsAuditUnavailableForTestsV1(true);
+  assert.doesNotThrow(() =>
+    resolveFridgeCustomerSafetyV1({ fridgeModelSlug: "samsung-rf28r7351sr" }),
+  );
+  const safety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: "samsung-rf28r7351sr" });
+  assert.equal(safety.quarantine, true);
+  assert.equal(safety.reason, "GUARD_DATA_UNAVAILABLE");
+  assert.equal(safety.evidence_basis, "UNKNOWN");
+  setLearnedFailureGuardsAuditUnavailableForTestsV1(false);
+});
+
+test("BLOCK model still quarantined when guard audit data is available", () => {
+  resetLearnedFailureGuardIndexCacheForTestsV1();
+  setLearnedFailureGuardsAuditUnavailableForTestsV1(false);
+  const safety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: "samsung-rf18hfenbww" });
+  assert.equal(safety.quarantine, true);
+  assert.equal(safety.reason, "LEARNED_FAILURE_GUARD_BLOCK");
+});
+
+test("PASS safe model still non-quarantined when guard audit data is available", () => {
+  resetLearnedFailureGuardIndexCacheForTestsV1();
+  setLearnedFailureGuardsAuditUnavailableForTestsV1(false);
+  const safety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: "samsung-rf28r7351sr" });
   assert.equal(safety.quarantine, false);
   assert.equal(safety.reason, null);
 });
