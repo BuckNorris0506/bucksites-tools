@@ -5,7 +5,7 @@
   "severity": "TIER_0",
   "source_system": "fridge_filter_pdp_customer_safety",
   "detected_at": "2026-06-10T20:30:00.000Z",
-  "status": "DEPLOYED",
+  "status": "CLOSED_PROVEN",
   "assigned_to": "Cursor",
   "affected_routes": ["/filter/[slug]", "/search"],
   "evidence_files": [
@@ -15,20 +15,31 @@
   ],
   "repair_commit": "3ddaeb0",
   "deploy_commit": null,
-  "closed_at": null,
-  "re_audit_outcome": null,
+  "closed_at": "2026-06-11T15:53:39.000Z",
+  "re_audit_outcome": "PASS",
+  "closure_reason": "Owner-approved closure after HyperAgent live RE_AUDIT PASS verified filter PDP quarantined-model hiding and search suppression on production.",
+  "closure_evidence": [
+    "HYPERAGENT_RE_AUDIT:BP-000002:PASS",
+    "LIVE_ROUTE_PROBE:/filter/da97-15217d:HTTP_200_BLOCK_MODELS_HIDDEN_CAUTION_PRESENT",
+    "LIVE_ROUTE_PROBE:/filter/da29-00020a:HTTP_200_BLOCK_MODELS_HIDDEN_CAUTION_PRESENT",
+    "LIVE_ROUTE_PROBE:/search?q=samsung-rf18hfenbww:HTTP_200_TYPICAL_REPLACEMENT_SUPPRESSED",
+    "OWNER_CLOSURE_APPROVED:Jared:true"
+  ],
+  "closure_approved": true,
   "proven_facts": [
     "PROVEN: repair_commit 3ddaeb0 exists in git history and is ancestor of HEAD.",
     "PROVEN: repair_commit 3ddaeb0 is ancestor of origin/main.",
     "PROVEN: prior repair commit c9ebdff is also on origin/main ancestry.",
-    "PROVEN: evidence_files listed in issue record exist on disk."
+    "PROVEN: evidence_files listed in issue record exist on disk.",
+    "PROVEN: HyperAgent live re-audit returned re_audit_outcome PASS for BP-000002.",
+    "PROVEN: Live /filter/da97-15217d verified BLOCK models hidden from compat list with caution note present.",
+    "PROVEN: Live /search?q=samsung-rf18hfenbww verified typical replacement suppressed and compatibility under review shown.",
+    "PROVEN: Jared (owner) explicitly set closure_approved=true — owner-approved closure, not inferred from PASS alone.",
+    "PROVEN: CLOSED_PROVEN is not automatic from re_audit_outcome PASS; closed_at, closure_reason, closure_evidence, and closure_approved were all required.",
+    "PROVEN: Full closure chain satisfied — repair, deploy, RE_AUDIT PASS, owner approval, closure metadata."
   ],
   "inferred_facts": [
     "INFERRED: filter PDP compat list and search typical-replacement lines respect quarantine gates."
   ],
-  "unknown_facts": [
-    "UNKNOWN: live/public RE_AUDITED artifact (re_audit_outcome PASS) not recorded.",
-    "UNKNOWN: issue-specific closure probe for mixed-quarantine filter PDPs.",
-    "UNKNOWN: CLOSED_PROVEN — closure chain incomplete."
-  ]
+  "unknown_facts": []
 }

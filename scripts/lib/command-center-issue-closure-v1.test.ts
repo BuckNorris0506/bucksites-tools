@@ -25,7 +25,7 @@ test("BP-000001 is CLOSED_PROVEN eligible with full closure chain", () => {
 
 test("DEPLOYED issue without closure metadata is not CLOSED_PROVEN eligible", () => {
   const issue = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues.find(
-    (row) => row.issue_id === "BP-000002",
+    (row) => row.issue_id === "BP-000003",
   )!;
   const audit = auditCommandCenterIssueLifecycleV1({ issue, rootDir: ROOT });
   assert.equal(audit.evidence_proven_max_status, "DEPLOYED");
@@ -35,8 +35,8 @@ test("DEPLOYED issue without closure metadata is not CLOSED_PROVEN eligible", ()
 
 test("CLOSED_PROVEN issues excluded from open counts and steering", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.equal(lane.total_open, 3);
-  assert.equal(lane.total_closed, 1);
+  assert.equal(lane.total_open, 2);
+  assert.equal(lane.total_closed, 2);
   assert.ok(lane.issues.some((row) => row.issue_id === "BP-000001"));
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 });
