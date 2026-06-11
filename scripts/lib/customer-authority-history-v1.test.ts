@@ -191,6 +191,7 @@ test("buildCustomerAuthorityHistorySnapshotV1 captures lane fields", () => {
   assert.equal(snapshot.captures.customer_visible_closures_count, 12);
   assert.equal(snapshot.captures.all_wedge_coverage_percent, 20.2);
   assert.equal(snapshot.captures.marketing_high_risk_opportunity_count, 17);
+  assert.equal(snapshot.captures.closure_target_slug, null);
 });
 
 test("append is skip-on-duplicate-date and status reflects history", () => {

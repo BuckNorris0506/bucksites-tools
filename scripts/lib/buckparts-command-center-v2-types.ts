@@ -1084,6 +1084,8 @@ export type CommandCenterV2Report = {
   customer_authority_score_v1?: import("./customer-authority-score-v1").CustomerAuthorityScoreV1;
   /** Read-only append-only authority history status — snapshots written only with --write-authority-history. */
   customer_authority_history_status_v1?: import("./customer-authority-history-v1").CustomerAuthorityHistoryStatusV1;
+  /** Read-only authority outcome evaluation — compares history snapshots to later customer evidence. */
+  customer_authority_outcomes_v1?: import("./customer-authority-outcomes-v1").CustomerAuthorityOutcomesV1;
 };
 
 export type { DemandToCoverageNextLaneReportV1 };

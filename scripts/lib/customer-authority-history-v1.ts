@@ -44,6 +44,7 @@ export type CustomerAuthorityHistorySnapshotCapturesV1 = {
   closure_confidence: CustomerAuthorityClosureConfidenceV1;
   all_wedge_coverage_percent: number | "UNKNOWN";
   marketing_high_risk_opportunity_count: number | "UNKNOWN";
+  closure_target_slug: string | null;
 };
 
 export type CustomerAuthorityHistorySnapshotV1 = {
@@ -181,6 +182,7 @@ export function buildCustomerAuthorityHistorySnapshotV1(
       marketing_high_risk_opportunity_count: lanesReady && score
         ? score.components.wrong_part_exposure.high_risk_opportunity_count
         : "UNKNOWN",
+      closure_target_slug: lanesReady && customerDryRun ? customerDryRun.closure_target_slug : null,
     },
     proven_facts,
     unknown_facts,

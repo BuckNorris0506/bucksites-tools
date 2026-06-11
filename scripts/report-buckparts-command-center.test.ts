@@ -462,6 +462,25 @@ test("command center is read_only true and data_mutation false", async () => {
   assert.equal(typeof cah.trend_measurable, "boolean");
   assert.equal(typeof cah.steering_history_logged, "boolean");
   assert.equal(cah.last_append_attempt, null);
+  const cao = report.command_center_v2.customer_authority_outcomes_v1;
+  assert.equal(cao.contract, "customer_authority_outcomes_v1");
+  assert.equal(cao.read_only, true);
+  assert.equal(cao.data_mutation, false);
+  assert.equal(cao.mutation_authorized, false);
+  assert.equal(cao.recommended_jq_path, ".command_center_v2.customer_authority_outcomes_v1");
+  assert.equal(typeof cao.snapshot_count, "number");
+  assert.ok(cao.snapshot_count >= 1);
+  assert.equal(typeof cao.outcome_window_days, "number");
+  assert.ok(
+    [
+      "INSUFFICIENT_HISTORY",
+      "CUSTOMER_STEERING_SIGNAL_POSITIVE",
+      "CUSTOMER_STEERING_SIGNAL_NEGATIVE",
+      "MIXED",
+      "UNKNOWN",
+    ].includes(cao.current_verdict),
+  );
+  assert.ok(Array.isArray(cao.evaluated_snapshots));
 });
 
 test("writeAuthorityHistory appends snapshot and surfaces last_append_attempt", async () => {

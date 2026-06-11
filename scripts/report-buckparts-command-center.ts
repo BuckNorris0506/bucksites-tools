@@ -74,6 +74,7 @@ import {
   buildCustomerAuthorityHistorySnapshotV1,
   buildCustomerAuthorityHistoryStatusV1,
 } from "./lib/customer-authority-history-v1";
+import { buildCustomerAuthorityOutcomesV1 } from "./lib/customer-authority-outcomes-v1";
 import { buildRpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./lib/rpwfe-official-ge-supabase-parity-plan-v1";
 import { buildRpwfeOfficialGeApplyPlanProposalLaneV1 } from "./lib/rpwfe-official-ge-apply-plan-proposal-v1";
 import { buildRpwfeOfficialGeBrowserEvidenceReviewLaneV1 } from "./lib/rpwfe-official-ge-browser-evidence-review-v1";
@@ -2498,6 +2499,15 @@ export async function buildBuckpartsCommandCenterReport(
       : null,
   });
 
+  const customer_authority_outcomes_v1 = buildCustomerAuthorityOutcomesV1({
+    generated_at: now().toISOString(),
+    rootDir,
+    authorityScore: customer_authority_score_v1,
+    steering: customer_steering_comparison_v1,
+    closure: customer_closure_report_v1,
+    scoreboard: customer_reality_scoreboard_v1,
+  });
+
   const command_center_v2_final: CommandCenterV2Report = {
     ...command_center_v2_with_operator_digest,
     owner_drift_detector_v1,
@@ -2520,6 +2530,7 @@ export async function buildBuckpartsCommandCenterReport(
     customer_closure_report_v1,
     customer_authority_score_v1,
     customer_authority_history_status_v1,
+    customer_authority_outcomes_v1,
   };
 
   return {
