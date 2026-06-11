@@ -107,6 +107,8 @@ import {
   buildMissionFactoryRegistryCommandCenterLaneUnknownV1,
 } from "./lib/mission-factory-registry-command-center-v1";
 import { buildCommandCenterIssueRegistryCommandCenterLaneV1 } from "./lib/command-center-issue-registry-command-center-v1";
+import { buildCommandCenterIssueReauditLaneV1 } from "./lib/command-center-issue-reaudit-v1";
+import { resolveCommandCenterIssueReauditSteeringOverrideV1 } from "./lib/command-center-issue-reaudit-steering-v1";
 import { resolveCommandCenterIssueRegistrySteeringOverrideV1 } from "./lib/command-center-issue-registry-steering-v1";
 import { buildBatchRunRegistryIntakeReportV1 } from "./lib/batch-run-registry-intake-v1";
 import { buildFridgeGuardedBatchCloseoutLearningCommandCenterLaneV1 } from "./lib/fridge-guarded-batch-closeout-learning-command-center-v1";
@@ -1135,6 +1137,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
     | "agent_control_plane_v1"
+    | "command_center_issue_registry_v1"
+    | "command_center_issue_reaudit_v1"
     | "page_publishability_truth_summary_v1"
     | "fridge_truth_spine_v1"
     | "refrigerator_model_first_batch_resolver_v1"
@@ -1354,6 +1358,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
     | "agent_control_plane_v1"
+    | "command_center_issue_registry_v1"
+    | "command_center_issue_reaudit_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
@@ -1496,6 +1502,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "ap_batch_v3_run_instantiation_v1"
     | "marketing_intelligence_engine_v1"
     | "agent_control_plane_v1"
+    | "command_center_issue_registry_v1"
+    | "command_center_issue_reaudit_v1"
     | "operator_digest_v1"
     | "semi_cruise_status_summary_v1"
     | "owner_drift_detector_v1"
@@ -1957,6 +1965,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "universal_batch_lifecycle_mutation_authorization_review_v1"
     | "universal_batch_lifecycle_truth_table_v1"
     | "agent_control_plane_v1"
+    | "command_center_issue_registry_v1"
+    | "command_center_issue_reaudit_v1"
   > = {
     ...command_center_v2_before_demand,
     daily_operator_summary_v1,
@@ -2138,8 +2148,19 @@ export async function buildBuckpartsCommandCenterReport(
     readTextFile,
   });
 
+  const command_center_issue_reaudit_v1 = buildCommandCenterIssueReauditLaneV1({
+    rootDir,
+    issue_registry: command_center_issue_registry_v1,
+    live_site_monitor: liveSiteMonitor,
+    now,
+  });
+
   const issueRegistrySteeringOverride = resolveCommandCenterIssueRegistrySteeringOverrideV1(
     command_center_issue_registry_v1,
+  );
+
+  const issueReauditSteeringOverride = resolveCommandCenterIssueReauditSteeringOverrideV1(
+    command_center_issue_reaudit_v1,
   );
 
   if (brainGate.brain_status === "STOP_THE_LINE") {
@@ -2225,6 +2246,18 @@ export async function buildBuckpartsCommandCenterReport(
     effectiveNextMoveMode = "READ_ONLY";
     effectiveNextMoveCommand = issueRegistrySteeringOverride.next_move_command;
     for (const reason of issueRegistrySteeringOverride.mutation_block_reasons) {
+      if (!mutatingBlockedReasons.includes(reason)) {
+        mutatingBlockedReasons.push(reason);
+      }
+    }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (issueReauditSteeringOverride) {
+    steeringOverrideSource = "issue_registry_reaudit";
+    nextBestAction = issueReauditSteeringOverride.next_best_action;
+    whyThisAction = issueReauditSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = issueReauditSteeringOverride.next_move_command;
+    for (const reason of issueReauditSteeringOverride.mutation_block_reasons) {
       if (!mutatingBlockedReasons.includes(reason)) {
         mutatingBlockedReasons.push(reason);
       }
@@ -2353,7 +2386,7 @@ export async function buildBuckpartsCommandCenterReport(
 
   const command_center_v2_with_operator_digest: Omit<
     CommandCenterV2Report,
-    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "mission_factory_registry_v1" | "mission_factory_orchestrator_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
+    "semi_cruise_status_summary_v1" | "agent_control_plane_v1" | "command_center_issue_registry_v1" | "command_center_issue_reaudit_v1" | "owner_drift_detector_v1" | "batch_run_registry_intake_v1" | "mission_factory_registry_v1" | "mission_factory_orchestrator_v1" | "fridge_guarded_batch_closeout_learning_v1" | "fridge_guarded_batch_lifecycle_rule_proposal_v1" | "fridge_guarded_batch_lifecycle_rule_promotion_plan_v1" | "command_center_efficiency_truth_table_v1" | "command_center_control_graph_rollup_v1" | "universal_batch_lifecycle_apply_readiness_v1" | "universal_batch_lifecycle_apply_execution_plan_v1" | "universal_batch_lifecycle_mutation_authorization_review_v1" | "universal_batch_lifecycle_truth_table_v1"
   > = {
     ...command_center_v2,
     operator_digest_v1: {
@@ -2557,6 +2590,7 @@ export async function buildBuckpartsCommandCenterReport(
     customer_authority_history_status_v1,
     customer_authority_outcomes_v1,
     command_center_issue_registry_v1,
+    command_center_issue_reaudit_v1,
   };
 
   return {

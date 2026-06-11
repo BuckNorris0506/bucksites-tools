@@ -148,6 +148,12 @@ function issueRegistryTier0SteeringActive(
   return report.next_best_action.startsWith("ISSUE REGISTRY TIER_0:");
 }
 
+function issueReauditSteeringActive(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): boolean {
+  return report.next_best_action.startsWith("ISSUE RE-AUDIT:");
+}
+
 function lifecycleOwnsOwnerFacingExecutionGuidance(
   report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
 ): boolean {
@@ -1056,6 +1062,11 @@ test("next_best_action does not claim no non-Amazon APPROVED when Waterdrop LIVE
   );
   if (issueRegistryTier0SteeringActive(report)) {
     assert.match(report.next_best_action, /BP-000001/);
+    return;
+  }
+  if (issueReauditSteeringActive(report)) {
+    assert.match(report.next_best_action, /BP-000001/);
+    assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
     return;
   }
   if (refrigeratorModelFirstSteeringActive(report)) {
@@ -4422,6 +4433,11 @@ test("command center next_best_action prefers demand-selected batch when refrige
     assert.match(report.next_best_action, /BP-000001/);
     return;
   }
+  if (issueReauditSteeringActive(report)) {
+    assert.match(report.next_best_action, /BP-000001/);
+    assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
+    return;
+  }
 
   assert.ok(
     report.next_best_action.startsWith("DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]:"),
@@ -4582,7 +4598,36 @@ test("command_center_v2.owner_quarantined_fridge_models_v1 is read-only CC-owned
   assert.ok(!gate.partial_entries.some((e) => e.system_id === "owner_quarantined_fridge_models"));
 });
 
-test("command_center_v2.command_center_issue_registry_v1 is read-only and does not steer DEPLOYED TIER_0 NBA", async () => {
+test("command_center_v2.command_center_issue_reaudit_v1 surfaces deployed re-audit candidates", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: (p) => (fs.existsSync(p) ? fs.readdirSync(p) : []),
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const reaudit = report.command_center_v2.command_center_issue_reaudit_v1;
+  assert.ok(reaudit);
+  assert.equal(reaudit.contract, "command_center_issue_reaudit_v1");
+  assert.equal(reaudit.read_only, true);
+  assert.equal(reaudit.data_mutation, false);
+  assert.equal(reaudit.recommended_jq_path, ".command_center_v2.command_center_issue_reaudit_v1");
+  assert.equal(reaudit.total_deployed_awaiting_reaudit, 4);
+  assert.equal(reaudit.top_reaudit_candidate?.issue_id, "BP-000001");
+  assert.ok(reaudit.top_reaudit_candidate?.suggested_hyperagent_prompt.includes("BP-000001"));
+
+  const registry = report.command_center_v2.command_center_issue_registry_v1;
+  assert.equal(registry.steering_override_active, false);
+  assert.match(report.next_best_action, /ISSUE RE-AUDIT: BP-000001/);
+  assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
+  assert.equal(
+    report.command_center_v2.customer_steering_comparison_v1?.factory_steering.steering_override_source,
+    "issue_registry_reaudit",
+  );
+});
+
+test("command_center_v2.command_center_issue_registry_v1 is read-only and does not steer DEPLOYED TIER_0 repair NBA", async () => {
   const rootDir = path.resolve(__dirname, "..");
   const report = await buildBuckpartsCommandCenterReport({
     rootDir,
@@ -4606,10 +4651,6 @@ test("command_center_v2.command_center_issue_registry_v1 is read-only and does n
   assert.equal(lane.highest_priority_issue?.issue_id, "BP-000001");
   assert.ok(lane.issues_preview.length >= 1);
   assert.equal(/ISSUE REGISTRY TIER_0:/.test(report.next_best_action), false);
-  assert.notEqual(
-    report.command_center_v2.customer_steering_comparison_v1?.factory_steering.steering_override_source,
-    "issue_registry_tier_0",
-  );
 
   const manifestEntry = findBrainManifestEntry(
     report,

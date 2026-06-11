@@ -273,6 +273,8 @@ export function buildCommandCenterV2Report(input: {
   | "external_quality_signal_usefulness_v1"
   | "marketing_intelligence_engine_v1"
   | "agent_control_plane_v1"
+  | "command_center_issue_registry_v1"
+  | "command_center_issue_reaudit_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
 > {

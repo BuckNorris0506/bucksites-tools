@@ -74,7 +74,6 @@ export function buildCommandCenterIssueRegistryCommandCenterLaneV1(args: {
     issues: loaded.issues,
     rootDir: args.rootDir,
     fileExists: args.fileExists,
-    readTextFile: args.readTextFile,
     runValidationTests: args.runValidationTests ?? false,
   });
   const effectiveStatusByIssueId = buildEffectiveIssueStatusMapV1(lifecycle_audit_v1.rows);

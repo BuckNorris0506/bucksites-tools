@@ -66,6 +66,7 @@ import type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-s
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 import type { CommandCenterIssueRegistryLaneV1 } from "./command-center-issue-registry-command-center-v1";
+import type { CommandCenterIssueReauditLaneV1 } from "./command-center-issue-reaudit-v1";
 
 export type TokenControlStatus =
   | "LIVE_OUTCOME_RECORDED"
@@ -1077,6 +1078,8 @@ export type CommandCenterV2Report = {
   agent_control_plane_v1: BuckpartsAgentControlPlaneV1;
   /** Read-only issue lifecycle registry — shared truth for HyperAgent, Cursor, and Command Center. */
   command_center_issue_registry_v1: CommandCenterIssueRegistryLaneV1;
+  /** Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT — feeds HyperAgent. */
+  command_center_issue_reaudit_v1: CommandCenterIssueReauditLaneV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */

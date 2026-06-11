@@ -70,6 +70,18 @@ const CURATED_ENTRIES: EntrySeed[] = [
     reason: "Eight neurons built during Command Center report generation (not dashboard-only).",
   },
   {
+    system_id: "command_center_issue_reaudit",
+    npm_script_or_path: "scripts/lib/command-center-issue-reaudit-v1.ts",
+    cc_json_path: "command_center_v2.command_center_issue_reaudit_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-issue-reaudit-v1.test.ts",
+    reason:
+      "Read-only re-audit plan for DEPLOYED issues awaiting live RE_AUDIT; feeds HyperAgent prompts.",
+  },
+  {
     system_id: "command_center_issue_registry",
     npm_script_or_path: "data/command-center/issues/*.json + scripts/lib/command-center-issue-registry-command-center-v1.ts",
     cc_json_path: "command_center_v2.command_center_issue_registry_v1",
