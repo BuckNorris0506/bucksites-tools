@@ -30,10 +30,14 @@ function filterNotesHtml(notes: string | null | undefined): string | null {
 export function FridgeModelFilterSection({
   filters,
   quarantineMessage,
+  modelPageCautionNote,
+  preferCautionBuy = false,
   telemetryBase,
 }: {
   filters: FridgeMappedFilterRow[];
   quarantineMessage?: string | null;
+  modelPageCautionNote?: string | null;
+  preferCautionBuy?: boolean;
   telemetryBase?: Omit<FridgeTrustFunnelPayload, "event_name" | "filter_slug">;
 }) {
   if (quarantineMessage) {
@@ -49,6 +53,12 @@ export function FridgeModelFilterSection({
 
   return (
     <section className="space-y-8">
+      {modelPageCautionNote ? (
+        <div className="rounded-3xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
+          {modelPageCautionNote}
+        </div>
+      ) : null}
+
       <div className="space-y-3">
         <h2 className="text-xl font-semibold text-bp-text">Full detail for each number</h2>
         <p className="max-w-prose text-base leading-relaxed text-bp-muted">
@@ -81,6 +91,14 @@ export function FridgeModelFilterSection({
               notes: f.notes,
               buyPathSortContext,
             });
+            if (
+              preferCautionBuy &&
+              trustSummary.buyer_path_state === "show_confident_buy" &&
+              f.retailer_links.length > 0
+            ) {
+              trustSummary.buyer_path_state = "show_caution_buy";
+              trustSummary.compatible_risk_level = "medium";
+            }
             const notesHtml = filterNotesHtml(f.notes);
             const aliases = f.also_known_as ?? [];
 

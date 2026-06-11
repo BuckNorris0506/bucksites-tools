@@ -9,6 +9,7 @@ import { VisualReplacementMatchCard } from "@/components/trust/VisualReplacement
 import { getFridgeBySlug } from "@/lib/data/fridges";
 import { loadFridgeFormFactorEvidenceForModel } from "@/lib/fridge/fridge-form-factor-evidence";
 import { resolveFridgeCustomerSafetyV1 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
+import { resolveFridgeModelPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-model-pdp-customer-safety-v1";
 import { loadRefrigeratorManualEvidenceForModel } from "@/lib/manuals/refrigerator-manual-evidence-loader";
 import { canonicalAlternatesForIndexablePath } from "@/lib/seo/canonical";
 import { classifyPageState } from "@/lib/page-state/page-state";
@@ -43,10 +44,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Model not found" };
   }
   const customerSafety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: params.slug });
+  const modelPdpSafety = resolveFridgeModelPdpCustomerSafetyV1({ fridgeModelSlug: params.slug });
   const hasAnyMappedFilters = fridge.filters.length > 0;
   const validCtaCount = fridge.filters.reduce((count, f) => count + f.retailer_links.length, 0);
   const pageState = classifyPageState({
-    isIndexable: customerSafety.quarantine ? false : hasAnyMappedFilters,
+    isIndexable:
+      customerSafety.quarantine || modelPdpSafety.prefer_noindex ? false : hasAnyMappedFilters,
     validCtaCount: customerSafety.quarantine ? 0 : validCtaCount,
     buyerPathState: customerSafety.quarantine ? "suppress_buy" : null,
     hasDemandSignal: null,
@@ -65,6 +68,7 @@ export default async function FridgePage({ params }: Props) {
   const fridge = await getFridgeBySlug(params.slug);
   if (!fridge) notFound();
   const customerSafety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: params.slug });
+  const modelPdpSafety = resolveFridgeModelPdpCustomerSafetyV1({ fridgeModelSlug: params.slug });
   const reviewOverride = customerSafety.quarantine
     ? { public_message: customerSafety.public_message ?? "" }
     : null;
@@ -76,14 +80,18 @@ export default async function FridgePage({ params }: Props) {
   const fridgeInterval = sharedFilterIntervalLabel(fridge.filters);
   const intervalHint =
     fridgeInterval != null ? `Suggested replacement timing: ${fridgeInterval}` : undefined;
-  const hasSafeCta = !reviewOverride && fridge.filters.some((f) => f.retailer_links.length > 0);
+  const hasGatedCta = !reviewOverride && fridge.filters.some((f) => f.retailer_links.length > 0);
   const modelTelemetryBase = {
     page_type: "fridge_model" as const,
     page_slug: params.slug,
     model_slug: params.slug,
-    trust_state: reviewOverride ? "quarantined" as const : "normal" as const,
+    trust_state: reviewOverride
+      ? ("quarantined" as const)
+      : modelPdpSafety.prefer_caution_buy
+        ? ("suppress_buy" as const)
+        : ("normal" as const),
     source_tier_present: Boolean(manualEvidence),
-    has_safe_cta: hasSafeCta,
+    has_safe_cta: hasGatedCta && !modelPdpSafety.prefer_caution_buy,
     is_quarantined: Boolean(reviewOverride),
   };
 
@@ -133,6 +141,8 @@ export default async function FridgePage({ params }: Props) {
         <FridgeModelFilterSection
           filters={fridge.filters}
           quarantineMessage={reviewOverride?.public_message ?? null}
+          modelPageCautionNote={reviewOverride ? null : modelPdpSafety.model_page_caution_note}
+          preferCautionBuy={!reviewOverride && modelPdpSafety.prefer_caution_buy}
           telemetryBase={{
             ...modelTelemetryBase,
           }}

@@ -61,6 +61,13 @@ export function resetLearnedFailureGuardIndexCacheForTestsV1(): void {
   guardIndexCache = null;
 }
 
+export function getFridgeLearnedFailureGuardRowV1(args: {
+  fridgeModelSlug: string;
+  rootDir?: string;
+}): PerSlugLearnedFailureGuardRowV1 | null {
+  return loadLearnedFailureGuardIndexV1(args.rootDir).get(normalizeSlug(args.fridgeModelSlug)) ?? null;
+}
+
 function blockedGuardIds(row: PerSlugLearnedFailureGuardRowV1): string[] {
   return row.confusion_family_guards
     .filter((guard) => guard.verdict === "BLOCK")

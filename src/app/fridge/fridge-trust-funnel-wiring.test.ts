@@ -12,7 +12,9 @@ describe("fridge trust funnel wiring", () => {
     const src = read("src/app/fridge/[slug]/page.tsx");
     assert.ok(src.includes("FridgeTrustFunnelViewTracker"));
     assert.ok(src.includes("event_name: \"fridge_model_view\""));
-    assert.ok(src.includes("trust_state: reviewOverride ? \"quarantined\" as const : \"normal\" as const"));
+    assert.ok(src.includes("trust_state: reviewOverride"));
+    assert.ok(src.includes("prefer_caution_buy"));
+    assert.ok(src.includes("\"suppress_buy\" as const"));
     assert.ok(src.includes("is_quarantined: Boolean(reviewOverride)"));
   });
 
