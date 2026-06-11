@@ -33,6 +33,7 @@ import {
   BUCKPARTS_VERIFIED_LINK_NONE_YET,
   BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
 } from "@/lib/copy/buckparts-verified-link-copy";
+import { resolveFridgeFilterPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -49,13 +50,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: "Filter not found" };
   }
   const usefulFilterIds = await loadRefrigeratorUsefulFilterIds();
+  const pdpSafety = resolveFridgeFilterPdpCustomerSafetyV1({
+    filterSlug: filter.slug,
+    fridgeModels: filter.fridge_models,
+    gatedRetailerLinkCount: filter.retailer_links.length,
+  });
   const pageState = classifyPageState({
-    isIndexable: usefulFilterIds.has(filter.id),
-    validCtaCount: filter.retailer_links.length,
+    isIndexable: pdpSafety.prefer_noindex ? false : usefulFilterIds.has(filter.id),
+    validCtaCount: pdpSafety.force_suppress_buy ? 0 : filter.retailer_links.length,
     buyerPathState:
-      filter.fridge_models.length > 0 && filter.retailer_links.length > 0
-        ? "show_buy"
-        : "suppress_buy",
+      pdpSafety.force_suppress_buy ||
+      !(pdpSafety.display_models_count > 0 && filter.retailer_links.length > 0)
+        ? "suppress_buy"
+        : "show_buy",
     hasDemandSignal: null,
   });
   const title = `${filter.oem_part_number} refrigerator filter`;
@@ -90,14 +97,29 @@ export default async function FilterPage({ params }: Props) {
     filter.name,
     filter.oem_part_number,
   );
+  const pdpSafety = resolveFridgeFilterPdpCustomerSafetyV1({
+    filterSlug: filter.slug,
+    fridgeModels: filter.fridge_models,
+    gatedRetailerLinkCount: filter.retailer_links.length,
+  });
+  const displayFridgeModels = pdpSafety.display_fridge_models;
   const trustSummary = buildPartPageTrust({
-    modelsCount: filter.fridge_models.length,
+    modelsCount: pdpSafety.display_models_count,
     retailerLinks: filter.retailer_links,
     oemPartNumber: filter.oem_part_number,
     alsoKnownAs: filter.also_known_as,
     notes: filter.notes,
     buyPathSortContext,
   });
+  if (pdpSafety.force_suppress_buy) {
+    trustSummary.buyer_path_state = "suppress_buy";
+  } else if (
+    pdpSafety.hidden_quarantined_model_count > 0 &&
+    pdpSafety.display_models_count > 0 &&
+    filter.retailer_links.length > 0
+  ) {
+    trustSummary.buyer_path_state = "show_caution_buy";
+  }
 
   const storePlainStatus = deriveFridgeFilterStorePlainStatus({
     gatedLinkCount: filter.retailer_links.length,
@@ -108,12 +130,13 @@ export default async function FilterPage({ params }: Props) {
   const publicNotes = publicFacingRefrigeratorFilterNotes(filter.notes);
   const usefulFilterIds = await loadRefrigeratorUsefulFilterIds();
   const filterPageState = classifyPageState({
-    isIndexable: usefulFilterIds.has(filter.id),
-    validCtaCount: filter.retailer_links.length,
+    isIndexable: pdpSafety.prefer_noindex ? false : usefulFilterIds.has(filter.id),
+    validCtaCount: pdpSafety.force_suppress_buy ? 0 : filter.retailer_links.length,
     buyerPathState:
-      filter.fridge_models.length > 0 && filter.retailer_links.length > 0
-        ? "show_buy"
-        : "suppress_buy",
+      pdpSafety.force_suppress_buy ||
+      !(pdpSafety.display_models_count > 0 && filter.retailer_links.length > 0)
+        ? "suppress_buy"
+        : "show_buy",
     hasDemandSignal: null,
   });
   const filterProductJsonLd = isIndexablePageState(filterPageState)
@@ -135,7 +158,7 @@ export default async function FilterPage({ params }: Props) {
     trust_state: filterTrustState as "suppress_buy" | "show_buy",
     source_tier_present: false,
     has_safe_cta: trustSummary.buyer_path_state !== "suppress_buy",
-    is_quarantined: false,
+    is_quarantined: pdpSafety.hidden_quarantined_model_count > 0,
   };
 
   return (
@@ -151,6 +174,12 @@ export default async function FilterPage({ params }: Props) {
         />
         <FridgeWinnerFamilyRail currentSlug={filter.slug} />
 
+        {pdpSafety.filter_page_caution_note ? (
+          <div className="rounded-2xl border border-bp-caution/40 bg-bp-caution-soft p-6 text-[15px] leading-relaxed text-bp-caution">
+            {pdpSafety.filter_page_caution_note}
+          </div>
+        ) : null}
+
         <VisualReplacementMatchCard
           variant="fridge_filter"
           brandName={filter.brand.name}
@@ -159,7 +188,7 @@ export default async function FilterPage({ params }: Props) {
           productName={filter.name}
           aliases={filter.also_known_as}
           intervalLabel={interval ?? undefined}
-          compatibleModelCount={filter.fridge_models.length}
+          compatibleModelCount={pdpSafety.display_models_count}
           storePlainStatus={storePlainStatus}
           telemetryBase={{
             ...filterTelemetryBase,
@@ -190,23 +219,32 @@ export default async function FilterPage({ params }: Props) {
 
         <section className="space-y-4">
           <h2 className="text-lg font-semibold text-bp-text">
-            Compatible refrigerator models ({filter.fridge_models.length})
+            Compatible refrigerator models ({pdpSafety.display_models_count})
           </h2>
-          {filter.fridge_models.length === 0 ? (
+          {pdpSafety.display_models_count === 0 ? (
             <p className="text-sm leading-relaxed text-bp-muted">
-              No refrigerator models are linked to this part number on file yet. If you have your fridge model or
-              another code from the old filter,{" "}
-              <Link
-                href="/search"
-                className="font-semibold text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55"
-              >
-                try search
-              </Link>{" "}
-              to check spelling, then compare what you see to the numbers on the cartridge before you buy.
+              {pdpSafety.hidden_quarantined_model_count > 0 ? (
+                <>
+                  Refrigerator models we had linked to this filter are under compatibility review. Open your
+                  exact model page from search and compare part numbers before buying any replacement filter.
+                </>
+              ) : (
+                <>
+                  No refrigerator models are linked to this part number on file yet. If you have your fridge model or
+                  another code from the old filter,{" "}
+                  <Link
+                    href="/search"
+                    className="font-semibold text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55"
+                  >
+                    try search
+                  </Link>{" "}
+                  to check spelling, then compare what you see to the numbers on the cartridge before you buy.
+                </>
+              )}
             </p>
           ) : (
             <ul className="divide-y divide-bp-border overflow-hidden rounded-xl border border-bp-border bg-bp-surface">
-              {filter.fridge_models.map((m) => (
+              {displayFridgeModels.map((m) => (
                 <li key={m.id}>
                   <Link
                     href={`/fridge/${m.slug}`}
