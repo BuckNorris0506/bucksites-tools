@@ -4613,17 +4613,22 @@ test("command_center_v2.command_center_issue_reaudit_v1 surfaces deployed re-aud
   assert.equal(reaudit.read_only, true);
   assert.equal(reaudit.data_mutation, false);
   assert.equal(reaudit.recommended_jq_path, ".command_center_v2.command_center_issue_reaudit_v1");
-  assert.equal(reaudit.total_deployed_awaiting_reaudit, 1);
-  assert.equal(reaudit.top_reaudit_candidate?.issue_id, "BP-000004");
-  assert.ok(reaudit.top_reaudit_candidate?.suggested_hyperagent_prompt.includes("BP-000004"));
+  assert.equal(reaudit.total_deployed_awaiting_reaudit, 0);
+  assert.equal(reaudit.top_reaudit_candidate, null);
+  assert.equal(reaudit.candidates.length, 0);
 
   const registry = report.command_center_v2.command_center_issue_registry_v1;
   assert.equal(registry.steering_override_active, false);
-  assert.equal(registry.total_closed, 3);
-  assert.deepEqual(registry.closed_proven_issue_ids, ["BP-000001", "BP-000002", "BP-000003"]);
-  assert.match(report.next_best_action, /ISSUE RE-AUDIT: BP-000004/);
-  assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
-  assert.equal(
+  assert.equal(registry.total_open, 0);
+  assert.equal(registry.total_closed, 4);
+  assert.deepEqual(registry.closed_proven_issue_ids, [
+    "BP-000001",
+    "BP-000002",
+    "BP-000003",
+    "BP-000004",
+  ]);
+  assert.equal(issueReauditSteeringActive(report), false);
+  assert.notEqual(
     report.command_center_v2.customer_steering_comparison_v1?.factory_steering.steering_override_source,
     "issue_registry_reaudit",
   );
@@ -4644,14 +4649,14 @@ test("command_center_v2.command_center_issue_registry_v1 is read-only and does n
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
   assert.equal(lane.recommended_jq_path, ".command_center_v2.command_center_issue_registry_v1");
-  assert.equal(lane.total_open, 1);
-  assert.equal(lane.total_closed, 3);
+  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_closed, 4);
   assert.equal(lane.lifecycle_distribution.aligned_count, 4);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 3);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 1);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000004");
+  assert.equal(lane.highest_priority_issue, null);
   assert.ok(lane.issues_preview.length >= 1);
   assert.equal(/ISSUE REGISTRY TIER_0:/.test(report.next_best_action), false);
 

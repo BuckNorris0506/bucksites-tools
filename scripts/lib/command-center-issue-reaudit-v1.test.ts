@@ -9,11 +9,11 @@ import {
   buildReauditCandidateV1,
   isIssueAwaitingReauditV1,
   selectTopReauditCandidateV1,
+  type CommandCenterIssueReauditLaneV1,
 } from "./command-center-issue-reaudit-v1";
 import { resolveCommandCenterIssueReauditSteeringOverrideV1 } from "./command-center-issue-reaudit-steering-v1";
 import { resolveCommandCenterIssueRegistrySteeringOverrideV1 } from "./command-center-issue-registry-steering-v1";
 import {
-  loadCommandCenterIssuesV1,
   sortCommandCenterIssuesByPriorityV1,
   type CommandCenterIssueRecordV1,
 } from "./command-center-issue-registry-v1";
@@ -45,16 +45,14 @@ function fixtureIssue(
   };
 }
 
-test("deployed issue without re_audit_outcome becomes re-audit candidate", () => {
+test("seeded CLOSED_PROVEN issues do not appear in re-audit candidates", () => {
   const lane = buildCommandCenterIssueReauditLaneV1({
     rootDir: ROOT,
     issue_registry: registryLane(),
   });
-  assert.equal(lane.total_deployed_awaiting_reaudit, 1);
-  assert.equal(lane.candidates.length, 1);
-  assert.ok(lane.candidates.every((c) => c.close_allowed === false));
-  assert.ok(lane.candidates.every((c) => c.status === "DEPLOYED"));
-  assert.ok(lane.candidates.every((c) => c.suggested_hyperagent_prompt.includes("BuckParts Issue Re-Audit v1")));
+  assert.equal(lane.total_deployed_awaiting_reaudit, 0);
+  assert.equal(lane.candidates.length, 0);
+  assert.equal(lane.top_reaudit_candidate, null);
 });
 
 test("CLOSED_PROVEN issue excluded from re-audit candidates", () => {
@@ -73,29 +71,51 @@ test("CLOSED_PROVEN issue excluded from re-audit candidates", () => {
 });
 
 test("oldest deployed issue selected as top_reaudit_candidate", () => {
-  const lane = buildCommandCenterIssueReauditLaneV1({
-    rootDir: ROOT,
-    issue_registry: registryLane(),
+  const older = fixtureIssue({
+    issue_id: "BP-OLDER",
+    severity: "TIER_1",
+    detected_at: "2026-06-10T10:00:00.000Z",
+    status: "DEPLOYED",
+    repair_commit: "abc1234",
   });
-  assert.equal(lane.top_reaudit_candidate?.issue_id, "BP-000004");
-  assert.equal(lane.top_reaudit_candidate?.severity, "TIER_1");
-
-  const issues = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues;
-  const candidates = lane.candidates;
+  const newer = fixtureIssue({
+    issue_id: "BP-NEWER",
+    severity: "TIER_1",
+    detected_at: "2026-06-10T12:00:00.000Z",
+    status: "DEPLOYED",
+    repair_commit: "def5678",
+  });
+  const issues = [newer, older];
+  const candidates = issues.map((issue) =>
+    buildReauditCandidateV1({
+      issue,
+      effectiveStatus: "DEPLOYED",
+      live_site_monitor_present: true,
+      live_route_probe_available: true,
+    }),
+  );
   const top = selectTopReauditCandidateV1(candidates, issues);
-  assert.equal(top?.issue_id, "BP-000004");
+  assert.equal(top?.issue_id, "BP-OLDER");
+  assert.equal(top?.severity, "TIER_1");
 
   const deployedOpen = issues.filter(
     (i) => i.status === "DEPLOYED" && i.re_audit_outcome !== "PASS",
   );
   const sorted = sortCommandCenterIssuesByPriorityV1(deployedOpen);
-  assert.equal(sorted[0]?.issue_id, "BP-000004");
+  assert.equal(sorted[0]?.issue_id, "BP-OLDER");
 });
 
 test("live proof unavailable prevents close_allowed and flags requires_live_probe", () => {
-  const issue = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues.find(
-    (row) => row.issue_id === "BP-000004",
-  )!;
+  const issue = fixtureIssue({
+    issue_id: "BP-FIXTURE-DEPLOYED",
+    severity: "TIER_1",
+    detected_at: "2026-06-10T21:40:00.000Z",
+    status: "DEPLOYED",
+    issue_type: "trust_gate_frigidaire_confusion_family_model_page",
+    repair_commit: "0b07da1",
+    affected_routes: ["/fridge/[slug]"],
+    evidence_files: ["src/lib/fridge/fridge-model-pdp-customer-safety-v1.ts"],
+  });
   const candidate = buildReauditCandidateV1({
     issue,
     effectiveStatus: "DEPLOYED",
@@ -110,17 +130,32 @@ test("live proof unavailable prevents close_allowed and flags requires_live_prob
 
 test("DEPLOYED issues do not steer repair NBA but re-audit steering activates", () => {
   const registry = registryLane();
-  const reaudit = buildCommandCenterIssueReauditLaneV1({
-    rootDir: ROOT,
-    issue_registry: registry,
+  const issue = fixtureIssue({
+    issue_id: "BP-FIXTURE-DEPLOYED",
+    severity: "TIER_1",
+    detected_at: "2026-06-10T21:40:00.000Z",
+    status: "DEPLOYED",
+    repair_commit: "0b07da1",
+    affected_routes: ["/fridge/[slug]"],
   });
+  const candidate = buildReauditCandidateV1({
+    issue,
+    effectiveStatus: "DEPLOYED",
+    live_site_monitor_present: true,
+    live_route_probe_available: true,
+  });
+  const reaudit = {
+    total_deployed_awaiting_reaudit: 1,
+    top_reaudit_candidate: candidate,
+    recommended_jq_path: ".command_center_v2.command_center_issue_reaudit_v1",
+  } as CommandCenterIssueReauditLaneV1;
+
   assert.equal(registry.steering_override_active, false);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(registry), null);
-  assert.equal(reaudit.total_deployed_awaiting_reaudit, 1);
 
   const steering = resolveCommandCenterIssueReauditSteeringOverrideV1(reaudit);
   assert.ok(steering);
-  assert.match(steering!.next_best_action, /ISSUE RE-AUDIT: BP-000004/);
+  assert.match(steering!.next_best_action, /ISSUE RE-AUDIT: BP-FIXTURE-DEPLOYED/);
   assert.match(steering!.next_best_action, /re-audit/i);
   assert.match(steering!.why_this_action, /No steering-eligible repair issue/);
   assert.ok(reaudit.top_reaudit_candidate!.suggested_hyperagent_prompt.length > 200);

@@ -51,19 +51,17 @@ test("seeded issues evidence-prove lifecycle through CLOSED_PROVEN for BP-000001
 
   const bp4 = audit.rows.find((r) => r.issue_id === "BP-000004");
   assert.ok(bp4);
-  assert.equal(bp4!.evidence_proven_max_status, "DEPLOYED");
-  assert.equal(bp4!.lifecycle_evidence.re_audit_outcome_recorded, false);
-  assert.equal(bp4!.lifecycle_evidence.re_audit_pass_proven, false);
-  assert.equal(bp4!.lifecycle_evidence.closure_proven, false);
-  assert.equal(bp4!.closed_proven_eligibility_v1.eligible, false);
+  assert.equal(bp4!.evidence_proven_max_status, "CLOSED_PROVEN");
+  assert.equal(bp4!.lifecycle_evidence.closure_proven, true);
+  assert.equal(bp4!.closed_proven_eligibility_v1.eligible, true);
 });
 
 test("lifecycle distribution surfaces CLOSED_PROVEN and DEPLOYED counts", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.CLOSED_PROVEN, 3);
-  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.DEPLOYED, 1);
-  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 3);
-  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 1);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.CLOSED_PROVEN, 4);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.DEPLOYED, 0);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(lane.lifecycle_distribution.aligned_count, 4);
 });
 

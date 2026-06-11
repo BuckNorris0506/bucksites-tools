@@ -132,7 +132,7 @@ test("DEPLOYED TIER_0 is not steering eligible; RE_AUDITED STILL_OPEN is", () =>
   );
 });
 
-test("seeded registry loads three CLOSED_PROVEN and one DEPLOYED", () => {
+test("seeded registry loads four CLOSED_PROVEN issues", () => {
   const loaded = loadCommandCenterIssuesV1({ rootDir: ROOT });
   assert.equal(loaded.issues_dir_exists, true);
   assert.equal(loaded.issues.length, 4);
@@ -143,9 +143,15 @@ test("seeded registry loads three CLOSED_PROVEN and one DEPLOYED", () => {
   assert.equal(bp2?.status, "CLOSED_PROVEN");
   const bp3 = loaded.issues.find((issue) => issue.issue_id === "BP-000003");
   assert.equal(bp3?.status, "CLOSED_PROVEN");
+  const bp4 = loaded.issues.find((issue) => issue.issue_id === "BP-000004");
+  assert.equal(bp4?.status, "CLOSED_PROVEN");
+  assert.equal(
+    loaded.issues.filter((issue) => issue.status === "CLOSED_PROVEN").length,
+    4,
+  );
   assert.equal(
     loaded.issues.filter((issue) => issue.status === "DEPLOYED").length,
-    1,
+    0,
   );
 });
 
@@ -205,29 +211,30 @@ test("VALIDATED effective status TIER_0 still steers next_best_action", () => {
   assert.match(steering!.next_best_action, /VALIDATED/);
 });
 
-test("command center lane does not steer when seeded issues are DEPLOYED on origin", () => {
+test("command center lane does not steer when all seeded issues are CLOSED_PROVEN", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
   assert.equal(lane.contract, "command_center_issue_registry_v1");
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
-  assert.equal(lane.total_open, 1);
-  assert.equal(lane.total_closed, 3);
-  assert.deepEqual(lane.closed_proven_issue_ids, ["BP-000001", "BP-000002", "BP-000003"]);
+  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_closed, 4);
+  assert.deepEqual(lane.closed_proven_issue_ids, [
+    "BP-000001",
+    "BP-000002",
+    "BP-000003",
+    "BP-000004",
+  ]);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000004");
+  assert.equal(lane.highest_priority_issue, null);
   assert.equal(lane.lifecycle_distribution.aligned_count, 4);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 3);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 1);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 
   const effective = buildEffectiveIssueStatusMapV1(lane.lifecycle_audit_v1.rows);
   assert.equal(
     selectHighestPrioritySteeringEligibleTier0IssueV1(lane.issues, effective),
     null,
-  );
-  assert.match(
-    buildIssueRegistryNextBestActionV1(lane.highest_priority_issue!, "DEPLOYED"),
-    /DEPLOYED/,
   );
 });

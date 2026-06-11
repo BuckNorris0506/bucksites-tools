@@ -24,9 +24,28 @@ test("BP-000001 is CLOSED_PROVEN eligible with full closure chain", () => {
 });
 
 test("DEPLOYED issue without closure metadata is not CLOSED_PROVEN eligible", () => {
-  const issue = loadCommandCenterIssuesV1({ rootDir: ROOT }).issues.find(
-    (row) => row.issue_id === "BP-000004",
-  )!;
+  const issue = {
+    issue_id: "BP-FIXTURE-DEPLOYED",
+    title: "Fixture deployed issue",
+    issue_type: "test_issue",
+    severity: "TIER_1" as const,
+    source_system: "test",
+    detected_at: "2026-06-10T00:00:00.000Z",
+    status: "DEPLOYED" as const,
+    assigned_to: "test",
+    affected_routes: ["/fridge/[slug]"],
+    evidence_files: ["src/lib/fridge/fridge-model-pdp-customer-safety-v1.ts"],
+    repair_commit: "0b07da1",
+    deploy_commit: null,
+    closed_at: null,
+    re_audit_outcome: null,
+    closure_reason: null,
+    closure_evidence: [],
+    closure_approved: false,
+    proven_facts: [],
+    inferred_facts: [],
+    unknown_facts: [],
+  };
   const audit = auditCommandCenterIssueLifecycleV1({ issue, rootDir: ROOT });
   assert.equal(audit.evidence_proven_max_status, "DEPLOYED");
   assert.equal(audit.closed_proven_eligibility_v1.eligible, false);
@@ -35,8 +54,8 @@ test("DEPLOYED issue without closure metadata is not CLOSED_PROVEN eligible", ()
 
 test("CLOSED_PROVEN issues excluded from open counts and steering", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.equal(lane.total_open, 1);
-  assert.equal(lane.total_closed, 3);
+  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_closed, 4);
   assert.ok(lane.issues.some((row) => row.issue_id === "BP-000001"));
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 });
