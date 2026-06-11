@@ -19,6 +19,7 @@ import {
   type SearchHitFridge,
   type SearchHitModel,
 } from "@/lib/data/search";
+import { resolveFridgeSearchModelHitDisplayV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const dynamic = "force-dynamic";
@@ -115,6 +116,10 @@ function ModelHitCard({
   const parts = hit.compatible_filters ?? [];
   const primaryPart = parts[0];
   const moreCount = parts.length > 1 ? parts.length - 1 : 0;
+  const fridgeSearchDisplay =
+    hit.kind === "fridge"
+      ? resolveFridgeSearchModelHitDisplayV1({ fridgeModelSlug: hit.slug })
+      : null;
 
   const body = (
     <>
@@ -125,7 +130,10 @@ function ModelHitCard({
       <p className="mt-1 text-sm text-bp-muted">
         Brand: {hit.brand_name}
       </p>
-      {primaryPart && (
+      {fridgeSearchDisplay?.status_line ? (
+        <p className="mt-2 text-sm text-bp-caution">{fridgeSearchDisplay.status_line}</p>
+      ) : null}
+      {primaryPart && fridgeSearchDisplay?.show_typical_replacement !== false && (
         <p className="mt-2 text-sm text-bp-muted">
           <span className="font-medium text-bp-text/90">Typical replacement:</span>{" "}
           <span className="bp-code text-sm font-medium text-bp-text">
