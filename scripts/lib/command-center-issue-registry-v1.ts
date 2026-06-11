@@ -59,6 +59,9 @@ export type CommandCenterIssueRecordV1 = {
   deploy_commit: string | null;
   closed_at: string | null;
   re_audit_outcome: CommandCenterIssueReAuditOutcomeV1 | null;
+  closure_reason: string | null;
+  closure_evidence: string[];
+  closure_approved: boolean;
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
@@ -194,6 +197,9 @@ export function parseCommandCenterIssueRecordV1(
       deploy_commit: nullableString(raw.deploy_commit),
       closed_at: nullableString(raw.closed_at),
       re_audit_outcome: isReAuditOutcome(raw.re_audit_outcome) ? raw.re_audit_outcome : null,
+      closure_reason: nullableString(raw.closure_reason),
+      closure_evidence: stringArray(raw.closure_evidence),
+      closure_approved: raw.closure_approved === true,
       proven_facts: stringArray(raw.proven_facts),
       inferred_facts: stringArray(raw.inferred_facts),
       unknown_facts: stringArray(raw.unknown_facts),

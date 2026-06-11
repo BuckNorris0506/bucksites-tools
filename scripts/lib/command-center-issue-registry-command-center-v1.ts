@@ -50,6 +50,8 @@ export type CommandCenterIssueRegistryLaneV1 = {
   highest_priority_issue: CommandCenterIssueRecordV1 | null;
   highest_priority_steering_eligible_issue: CommandCenterIssueRecordV1 | null;
   steering_override_active: boolean;
+  closed_proven_issue_ids: string[];
+  closure_eligible_issue_ids: string[];
   issues: CommandCenterIssueRecordV1[];
   issues_preview: CommandCenterIssueRegistryPreviewItemV1[];
   parse_errors: string[];
@@ -87,6 +89,13 @@ export function buildCommandCenterIssueRegistryCommandCenterLaneV1(args: {
     );
   const steering_override_active = highest_priority_steering_eligible_issue != null;
 
+  const closed_proven_issue_ids = loaded.issues
+    .filter((issue) => isCommandCenterIssueClosedV1(issue.status))
+    .map((issue) => issue.issue_id);
+  const closure_eligible_issue_ids = lifecycle_audit_v1.rows
+    .filter((row) => row.closed_proven_eligibility_v1.eligible)
+    .map((row) => row.issue_id);
+
   const oldest_open_issue =
     openIssues.length === 0
       ? null
@@ -101,7 +110,12 @@ export function buildCommandCenterIssueRegistryCommandCenterLaneV1(args: {
   ];
   if (highest_priority_issue) {
     proven_facts.push(
-      `PROVEN: highest_priority_issue=${highest_priority_issue.issue_id} severity=${highest_priority_issue.severity} status=${highest_priority_issue.status}.`,
+      `PROVEN: highest_priority_open_issue=${highest_priority_issue.issue_id} severity=${highest_priority_issue.severity} status=${highest_priority_issue.status}.`,
+    );
+  }
+  if (closed_proven_issue_ids.length > 0) {
+    proven_facts.push(
+      `PROVEN: closed_proven_issue_ids=${closed_proven_issue_ids.join(",")} (excluded from open counts and steering).`,
     );
   }
 
@@ -158,6 +172,8 @@ export function buildCommandCenterIssueRegistryCommandCenterLaneV1(args: {
     highest_priority_issue,
     highest_priority_steering_eligible_issue,
     steering_override_active,
+    closed_proven_issue_ids,
+    closure_eligible_issue_ids,
     issues: loaded.issues,
     issues_preview: loaded.issues.slice(0, ISSUES_PREVIEW_CAP_V1),
     parse_errors: loaded.parse_errors,

@@ -39,6 +39,9 @@ function fixtureIssue(
     deploy_commit: partial.deploy_commit ?? null,
     closed_at: partial.closed_at ?? null,
     re_audit_outcome: partial.re_audit_outcome ?? null,
+    closure_reason: partial.closure_reason ?? null,
+    closure_evidence: partial.closure_evidence ?? [],
+    closure_approved: partial.closure_approved ?? false,
     proven_facts: partial.proven_facts ?? [],
     inferred_facts: partial.inferred_facts ?? [],
     unknown_facts: partial.unknown_facts ?? [],
@@ -129,11 +132,17 @@ test("DEPLOYED TIER_0 is not steering eligible; RE_AUDITED STILL_OPEN is", () =>
   );
 });
 
-test("seeded registry loads four issues at DEPLOYED", () => {
+test("seeded registry loads BP-000001 CLOSED_PROVEN and three DEPLOYED", () => {
   const loaded = loadCommandCenterIssuesV1({ rootDir: ROOT });
   assert.equal(loaded.issues_dir_exists, true);
   assert.equal(loaded.issues.length, 4);
-  assert.ok(loaded.issues.every((issue) => issue.status === "DEPLOYED"));
+  const bp1 = loaded.issues.find((issue) => issue.issue_id === "BP-000001");
+  assert.equal(bp1?.status, "CLOSED_PROVEN");
+  assert.equal(bp1?.closure_approved, true);
+  assert.equal(
+    loaded.issues.filter((issue) => issue.status === "DEPLOYED").length,
+    3,
+  );
 });
 
 test("VALIDATED effective status TIER_0 still steers next_best_action", () => {
@@ -161,12 +170,27 @@ test("VALIDATED effective status TIER_0 still steers next_best_action", () => {
             validation_proven: false,
             pushed_to_origin_proven: false,
             deployed_proven: false,
-            re_audit_proven: false,
+            re_audit_outcome_recorded: false,
+            re_audit_pass_proven: false,
+            owner_closure_approved_proven: false,
+            closure_metadata_proven: false,
             closure_proven: false,
           },
           gate_details: [],
           recommended_status: "VALIDATED" as const,
           validation_test_files: [],
+          closed_proven_eligibility_v1: {
+            contract: "command_center_issue_closure_v1",
+            issue_id: issue.issue_id,
+            eligible: false,
+            declared_closed_proven: false,
+            evidence_proven_closed: false,
+            missing_requirements: ["re_audit_outcome PASS not recorded"],
+            closure_reason: null,
+            closure_evidence: [],
+            closed_at: null,
+            closure_approved: false,
+          },
         },
       ],
     },
@@ -182,13 +206,15 @@ test("command center lane does not steer when seeded issues are DEPLOYED on orig
   assert.equal(lane.contract, "command_center_issue_registry_v1");
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
-  assert.equal(lane.total_open, 4);
-  assert.equal(lane.total_closed, 0);
+  assert.equal(lane.total_open, 3);
+  assert.equal(lane.total_closed, 1);
+  assert.deepEqual(lane.closed_proven_issue_ids, ["BP-000001"]);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000001");
+  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000002");
   assert.equal(lane.lifecycle_distribution.aligned_count, 4);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 1);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 3);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 
   const effective = buildEffectiveIssueStatusMapV1(lane.lifecycle_audit_v1.rows);

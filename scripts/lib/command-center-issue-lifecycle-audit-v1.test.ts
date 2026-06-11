@@ -19,7 +19,7 @@ test("seeded validation tests pass in this checkout", () => {
   assert.equal(runSeededIssueValidationTestsV1(ROOT), true);
 });
 
-test("seeded issues on origin/main evidence-prove DEPLOYED not VALIDATED", () => {
+test("seeded issues evidence-prove lifecycle through CLOSED_PROVEN for BP-000001", () => {
   const loaded = loadCommandCenterIssuesV1({ rootDir: ROOT });
   const audit = buildCommandCenterIssueLifecycleAuditV1({
     issues: loaded.issues,
@@ -28,24 +28,32 @@ test("seeded issues on origin/main evidence-prove DEPLOYED not VALIDATED", () =>
   assert.equal(audit.lifecycle_distribution.aligned_count, 4);
   assert.equal(audit.lifecycle_distribution.overstated_count, 0);
   assert.equal(audit.lifecycle_distribution.understated_count, 0);
-  for (const id of SEEDED_IDS) {
+
+  const bp1 = audit.rows.find((r) => r.issue_id === "BP-000001");
+  assert.ok(bp1);
+  assert.equal(bp1!.evidence_proven_max_status, "CLOSED_PROVEN");
+  assert.equal(bp1!.lifecycle_evidence.re_audit_outcome_recorded, true);
+  assert.equal(bp1!.lifecycle_evidence.re_audit_pass_proven, true);
+  assert.equal(bp1!.lifecycle_evidence.closure_proven, true);
+  assert.equal(bp1!.closed_proven_eligibility_v1.eligible, true);
+
+  for (const id of ["BP-000002", "BP-000003", "BP-000004"] as const) {
     const row = audit.rows.find((r) => r.issue_id === id);
     assert.ok(row, `missing audit row for ${id}`);
     assert.equal(row!.evidence_proven_max_status, "DEPLOYED");
-    assert.equal(row!.recommended_status, "DEPLOYED");
-    assert.equal(row!.status_alignment, "ALIGNED");
-    assert.equal(row!.lifecycle_evidence.repair_commit_proven, true);
-    assert.equal(row!.lifecycle_evidence.pushed_to_origin_proven, true);
-    assert.equal(row!.lifecycle_evidence.deployed_proven, true);
-    assert.equal(row!.lifecycle_evidence.re_audit_proven, false);
+    assert.equal(row!.lifecycle_evidence.re_audit_outcome_recorded, false);
+    assert.equal(row!.lifecycle_evidence.re_audit_pass_proven, false);
     assert.equal(row!.lifecycle_evidence.closure_proven, false);
+    assert.equal(row!.closed_proven_eligibility_v1.eligible, false);
   }
 });
 
-test("lifecycle distribution surfaces declared DEPLOYED counts", () => {
+test("lifecycle distribution surfaces CLOSED_PROVEN and DEPLOYED counts", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.DEPLOYED, 4);
-  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 4);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.CLOSED_PROVEN, 1);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.DEPLOYED, 3);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 1);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 3);
   assert.equal(lane.lifecycle_distribution.aligned_count, 4);
 });
 

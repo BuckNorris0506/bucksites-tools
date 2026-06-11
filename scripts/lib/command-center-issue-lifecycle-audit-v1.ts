@@ -13,6 +13,8 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import { evaluateIssueClosedProvenEligibilityV1 } from "./command-center-issue-closure-v1";
+import type { IssueClosedProvenEligibilityV1 } from "./command-center-issue-closure-v1";
 import {
   COMMAND_CENTER_ISSUE_STATUSES_V1,
   compareCommandCenterIssueStatusOrderV1,
@@ -28,7 +30,12 @@ export type IssueLifecycleEvidenceGateV1 = {
   validation_proven: boolean;
   pushed_to_origin_proven: boolean;
   deployed_proven: boolean;
-  re_audit_proven: boolean;
+  /** Any re_audit_outcome recorded (PASS | STILL_OPEN | REGRESSED) — gates RE_AUDITED tier. */
+  re_audit_outcome_recorded: boolean;
+  /** re_audit_outcome === PASS — required for CLOSED_PROVEN, not sufficient alone. */
+  re_audit_pass_proven: boolean;
+  owner_closure_approved_proven: boolean;
+  closure_metadata_proven: boolean;
   closure_proven: boolean;
 };
 
@@ -49,6 +56,7 @@ export type IssueLifecycleAuditRowV1 = {
   gate_details: IssueLifecycleGateDetailV1[];
   recommended_status: CommandCenterIssueStatusV1;
   validation_test_files: string[];
+  closed_proven_eligibility_v1: IssueClosedProvenEligibilityV1;
 };
 
 export type IssueLifecycleDistributionV1 = {
@@ -163,7 +171,7 @@ export function evidenceProvenMaxStatusV1(
     return evidenceFilesPresent ? "PACKET_READY" : "DISCOVERED";
   }
   if (!gates.pushed_to_origin_proven) return "VALIDATED";
-  if (!gates.re_audit_proven) return "DEPLOYED";
+  if (!gates.re_audit_outcome_recorded) return "DEPLOYED";
   if (!gates.closure_proven) return "RE_AUDITED";
   return "CLOSED_PROVEN";
 }
@@ -205,22 +213,37 @@ export function auditCommandCenterIssueLifecycleV1(args: {
 
   const deployed_proven = pushed_to_origin_proven;
 
-  const re_audit_proven = args.issue.re_audit_outcome === "PASS";
-  const closure_proven =
-    args.issue.status === "CLOSED_PROVEN" &&
-    Boolean(args.issue.closed_at) &&
-    repair_commit_proven &&
-    pushed_to_origin_proven &&
-    re_audit_proven;
+  const re_audit_outcome_recorded = args.issue.re_audit_outcome != null;
+  const re_audit_pass_proven = args.issue.re_audit_outcome === "PASS";
+  const owner_closure_approved_proven = args.issue.closure_approved === true;
+  const closure_metadata_proven =
+    owner_closure_approved_proven &&
+    Boolean(args.issue.closed_at?.trim()) &&
+    Boolean(args.issue.closure_reason?.trim()) &&
+    args.issue.closure_evidence.length > 0;
 
   const lifecycle_evidence: IssueLifecycleEvidenceGateV1 = {
     repair_commit_proven,
     validation_proven,
     pushed_to_origin_proven,
     deployed_proven,
-    re_audit_proven,
-    closure_proven,
+    re_audit_outcome_recorded,
+    re_audit_pass_proven,
+    owner_closure_approved_proven,
+    closure_metadata_proven,
+    closure_proven: false,
   };
+
+  lifecycle_evidence.closure_proven =
+    repair_commit_proven &&
+    deployed_proven &&
+    re_audit_pass_proven &&
+    closure_metadata_proven;
+
+  const closed_proven_eligibility_v1 = evaluateIssueClosedProvenEligibilityV1({
+    issue: args.issue,
+    lifecycle_evidence,
+  });
 
   const gate_details: IssueLifecycleGateDetailV1[] = [
     {
@@ -256,18 +279,39 @@ export function auditCommandCenterIssueLifecycleV1(args: {
         : "Repair not proven on origin/main.",
     },
     {
-      gate: "re_audit_proven",
-      basis: re_audit_proven ? "PROVEN" : "UNKNOWN",
-      detail: re_audit_proven
-        ? `re_audit_outcome=${args.issue.re_audit_outcome}.`
-        : "No live/public RE_AUDITED artifact (re_audit_outcome PASS) recorded.",
+      gate: "re_audit_outcome_recorded",
+      basis: re_audit_outcome_recorded ? "PROVEN" : "UNKNOWN",
+      detail: re_audit_outcome_recorded
+        ? `re_audit_outcome=${args.issue.re_audit_outcome} recorded (RE_AUDITED tier).`
+        : "No re_audit_outcome recorded — issue remains DEPLOYED until live re-audit.",
+    },
+    {
+      gate: "re_audit_pass_proven",
+      basis: re_audit_pass_proven ? "PROVEN" : "UNKNOWN",
+      detail: re_audit_pass_proven
+        ? "re_audit_outcome PASS — necessary but not sufficient for CLOSED_PROVEN."
+        : "CLOSED_PROVEN requires re_audit_outcome PASS; PASS alone does not auto-close.",
+    },
+    {
+      gate: "owner_closure_approved_proven",
+      basis: owner_closure_approved_proven ? "PROVEN" : "UNKNOWN",
+      detail: owner_closure_approved_proven
+        ? "closure_approved=true (owner-approved closure)."
+        : "Owner closure_approved not recorded.",
+    },
+    {
+      gate: "closure_metadata_proven",
+      basis: closure_metadata_proven ? "PROVEN" : "UNKNOWN",
+      detail: closure_metadata_proven
+        ? `closed_at=${args.issue.closed_at}; closure_reason and closure_evidence present.`
+        : "CLOSED_PROVEN requires closed_at, closure_reason, closure_evidence, and closure_approved.",
     },
     {
       gate: "closure_proven",
-      basis: closure_proven ? "PROVEN" : "UNKNOWN",
-      detail: closure_proven
-        ? "closed_at present with deploy + re-audit proof."
-        : "CLOSED_PROVEN requires closure probe plus RE_AUDITED proof.",
+      basis: lifecycle_evidence.closure_proven ? "PROVEN" : "UNKNOWN",
+      detail: lifecycle_evidence.closure_proven
+        ? "Full closure chain proven: repair, deploy, RE_AUDIT PASS, owner approval, closure metadata."
+        : "CLOSED_PROVEN requires complete RE_AUDITED → closure evidence chain.",
     },
   ];
 
@@ -288,6 +332,7 @@ export function auditCommandCenterIssueLifecycleV1(args: {
     gate_details,
     recommended_status: evidence_proven_max_status,
     validation_test_files,
+    closed_proven_eligibility_v1,
   };
 }
 
@@ -330,7 +375,7 @@ export function buildCommandCenterIssueLifecycleAuditV1(args: {
     `PROVEN: lifecycle audit contract ${COMMAND_CENTER_ISSUE_LIFECYCLE_AUDIT_CONTRACT_V1} is read-only.`,
     `PROVEN: audited ${String(rows.length)} issue row(s).`,
     `PROVEN: lifecycle status order ${[...COMMAND_CENTER_ISSUE_STATUSES_V1].sort(compareCommandCenterIssueStatusOrderV1).join(">")}.`,
-    `PROVEN: VALIDATED=repair in git; DEPLOYED=repair on origin/main; RE_AUDITED=re_audit_outcome PASS.`,
+    `PROVEN: VALIDATED=repair in git; DEPLOYED=repair on origin/main; RE_AUDITED=re_audit_outcome recorded; CLOSED_PROVEN=PASS + owner closure_approved + closure metadata + deploy chain.`,
   ];
 
   const inferred_facts: string[] = [];
@@ -347,7 +392,10 @@ export function buildCommandCenterIssueLifecycleAuditV1(args: {
         `UNKNOWN: ${row.issue_id} declared_status=${row.declared_status} is below evidence_proven_max_status=${row.evidence_proven_max_status}.`,
       );
     }
-    if (row.evidence_proven_max_status === "DEPLOYED" && !row.lifecycle_evidence.re_audit_proven) {
+    if (
+      row.evidence_proven_max_status === "DEPLOYED" &&
+      !row.lifecycle_evidence.re_audit_outcome_recorded
+    ) {
       unknown_facts.push(`UNKNOWN: ${row.issue_id} live-site RE_AUDITED not proven.`);
     }
   }
