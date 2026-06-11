@@ -5,7 +5,7 @@
   "severity": "TIER_1",
   "source_system": "fridge_model_pdp_customer_safety",
   "detected_at": "2026-06-10T21:40:00.000Z",
-  "status": "DEPLOYED",
+  "status": "CLOSED_PROVEN",
   "assigned_to": "Cursor",
   "affected_routes": ["/fridge/[slug]"],
   "evidence_files": [
@@ -16,20 +16,34 @@
   ],
   "repair_commit": "0b07da1",
   "deploy_commit": null,
-  "closed_at": null,
-  "re_audit_outcome": null,
+  "closed_at": "2026-06-11T19:59:50.000Z",
+  "re_audit_outcome": "PASS",
+  "closure_reason": "Owner-approved closure after HyperAgent live RE_AUDIT PASS verified Frigidaire confusion-family caution behavior on production.",
+  "closure_evidence": [
+    "HYPERAGENT_RE_AUDIT:BP-000004:PASS",
+    "LIVE_ROUTE_PROBE:/fridge/frigidaire-fghb2868pf:HTTP_200_NOINDEX_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/fridge/frigidaire-fgsc2335tf:HTTP_200_NOINDEX_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/fridge/frigidaire-ffss2615ts:HTTP_200_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/fridge/frigidaire-grfc2353af:HTTP_200_CAUTION_PRESENT_NO_CONFIDENT_BUY",
+    "LIVE_ROUTE_PROBE:/fridge/samsung-rf28r7351sr:HTTP_200_PASS_CONTROL_NORMAL_BUY_RETAINED",
+    "OWNER_CLOSURE_APPROVED:Jared:true"
+  ],
+  "closure_approved": true,
   "proven_facts": [
     "PROVEN: repair_commit 0b07da1 exists in git history and is ancestor of HEAD.",
     "PROVEN: repair_commit 0b07da1 is ancestor of origin/main.",
-    "PROVEN: evidence_files listed in issue record exist on disk."
+    "PROVEN: evidence_files listed in issue record exist on disk.",
+    "PROVEN: HyperAgent live re-audit returned re_audit_outcome PASS for BP-000004.",
+    "PROVEN: Live /fridge/frigidaire-fghb2868pf and /fridge/frigidaire-fgsc2335tf verified noindex, caution present, and no confident buy.",
+    "PROVEN: Live /fridge/frigidaire-ffss2615ts and /fridge/frigidaire-grfc2353af verified caution present and no confident buy with mapped filters remaining visible.",
+    "PROVEN: No replacement substitution was introduced on probed Frigidaire confusion-family model pages.",
+    "PROVEN: Live /fridge/samsung-rf28r7351sr PASS control remained normal with confident buy retained.",
+    "PROVEN: Jared (owner) explicitly set closure_approved=true — owner-approved closure, not inferred from PASS alone.",
+    "PROVEN: CLOSED_PROVEN is not automatic from re_audit_outcome PASS; closed_at, closure_reason, closure_evidence, and closure_approved were all required.",
+    "PROVEN: Full closure chain satisfied — repair, deploy, RE_AUDIT PASS, owner approval, closure metadata."
   ],
   "inferred_facts": [
     "INFERRED: 12 Frigidaire slugs with confusion_family_guard WARN downgrade to show_caution_buy on model PDP."
   ],
-  "unknown_facts": [
-    "UNKNOWN: live/public RE_AUDITED artifact (re_audit_outcome PASS) not recorded.",
-    "UNKNOWN: issue-specific closure probe for model-page caution and disputed-anchor noindex slugs.",
-    "UNKNOWN: filter PDP and search surfaces for the same 12 slugs remain unaddressed in this batch.",
-    "UNKNOWN: CLOSED_PROVEN — closure chain incomplete."
-  ]
+  "unknown_facts": []
 }
