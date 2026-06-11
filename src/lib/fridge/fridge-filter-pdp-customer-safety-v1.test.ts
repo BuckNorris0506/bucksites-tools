@@ -5,10 +5,13 @@ import test from "node:test";
 
 import {
   filterFridgeModelsForCustomerDisplayV1,
+  GSWF2_FILTER_PAGE_VERIFY_HOUSING_NOTE_V1,
+  GSWF_FILTER_PAGE_CAUTION_NOTE_V1,
   resolveFridgeFilterPdpCustomerSafetyV1,
   resolveFridgeSearchModelHitDisplayV1,
 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 import { resetLearnedFailureGuardIndexCacheForTestsV1 } from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
+import { resetSingleFilterFamilyAmbiguityGuardIndexCacheForTestsV1 } from "@/lib/fridge/fridge-single-filter-family-ambiguity-v1";
 import { classifyPageState, PAGE_STATES } from "@/lib/page-state/page-state";
 import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
@@ -19,8 +22,13 @@ function model(slug: string) {
   return { slug, id: slug, model_number: slug };
 }
 
-test("hides BLOCK samsung models from filter PDP compat list", () => {
+function resetGuardCachesForTestsV1(): void {
   resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetSingleFilterFamilyAmbiguityGuardIndexCacheForTestsV1();
+}
+
+test("hides BLOCK samsung models from filter PDP compat list", () => {
+  resetGuardCachesForTestsV1();
   const { models, hiddenQuarantinedCount } = filterFridgeModelsForCustomerDisplayV1(
     [
       model("samsung-rf18hfenbww"),
@@ -37,7 +45,7 @@ test("hides BLOCK samsung models from filter PDP compat list", () => {
 });
 
 test("da97-15217d mixed mapping keeps safe models and shows partial caution", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const da97Models = [
     "samsung-rf18hfenbww",
     "samsung-rf263beaesp",
@@ -66,7 +74,7 @@ test("da97-15217d mixed mapping keeps safe models and shows partial caution", ()
 });
 
 test("lt1000p all-quarantined mapping suppresses buy even with gated retailer links", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const lt1000Models = [
     "lg-lfxs26973s",
     "lg-lfxc22596s",
@@ -106,7 +114,7 @@ test("lt1000p all-quarantined mapping suppresses buy even with gated retailer li
 });
 
 test("lt800p majority-quarantined TIER 0 slug suppresses confident buy", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const blocked = [
     "lg-lfxc22596d",
     "lg-lfxs30796s",
@@ -137,7 +145,7 @@ test("lt800p majority-quarantined TIER 0 slug suppresses confident buy", () => {
 });
 
 test("mixed BLOCK/safe filter PDP downgrades to caution buy, not confident buy", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const safety = resolveFridgeFilterPdpCustomerSafetyV1({
     filterSlug: "da97-15217d",
     fridgeModels: [model("samsung-rf18hfenbww"), model("samsung-rf28r6201sw")],
@@ -158,7 +166,7 @@ test("mixed BLOCK/safe filter PDP downgrades to caution buy, not confident buy",
 });
 
 test("search BLOCK fridge model suppresses typical replacement line", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const blocked = resolveFridgeSearchModelHitDisplayV1({
     fridgeModelSlug: "samsung-rf18hfenbww",
     rootDir: ROOT,
@@ -175,7 +183,7 @@ test("search BLOCK fridge model suppresses typical replacement line", () => {
 });
 
 test("filter with only non-quarantined models passes through unchanged", () => {
-  resetLearnedFailureGuardIndexCacheForTestsV1();
+  resetGuardCachesForTestsV1();
   const safety = resolveFridgeFilterPdpCustomerSafetyV1({
     filterSlug: "mwf",
     fridgeModels: [model("ge-gss25gshss"), model("ge-pss26sgpass")],
@@ -188,4 +196,77 @@ test("filter with only non-quarantined models passes through unchanged", () => {
   assert.equal(safety.filter_page_caution_note, null);
   assert.equal(safety.force_suppress_buy, false);
   assert.equal(safety.evidence_basis, "UNKNOWN");
+});
+
+test("GSWF all-WARN ambiguity keeps models visible with caution note and show_caution_buy", () => {
+  resetGuardCachesForTestsV1();
+  const gswfModels = [
+    "ge-cwe23sshww",
+    "ge-gfe24jgkww",
+    "ge-gfe28gmkbb",
+    "ge-gfe28gskes",
+    "ge-gne25jmkww",
+    "ge-gte18gsnrss",
+    "ge-pfe28kmkww",
+    "ge-pvd28bymfs",
+  ].map(model);
+
+  const safety = resolveFridgeFilterPdpCustomerSafetyV1({
+    filterSlug: "gswf",
+    fridgeModels: gswfModels,
+    gatedRetailerLinkCount: 1,
+    rootDir: ROOT,
+  });
+
+  assert.equal(safety.display_models_count, gswfModels.length);
+  assert.equal(safety.hidden_quarantined_model_count, 0);
+  assert.equal(safety.warn_ambiguous_model_count, gswfModels.length);
+  assert.equal(safety.force_suppress_buy, false);
+  assert.equal(safety.prefer_caution_buy, true);
+  assert.equal(safety.prefer_noindex, false);
+  assert.match(safety.filter_page_caution_note ?? "", /reviewing GSWF compatibility/i);
+
+  const trust = buildPartPageTrust({
+    modelsCount: safety.display_models_count,
+    retailerLinks: [{ id: "x", retailer_name: "A", affiliate_url: "https://example.com" }],
+    oemPartNumber: "GSWF",
+  });
+  if (safety.prefer_caution_buy) {
+    trust.buyer_path_state = "show_caution_buy";
+  }
+  assert.equal(trust.buyer_path_state, "show_caution_buy");
+  assert.notEqual(trust.buyer_path_state, "show_confident_buy");
+});
+
+test("GSWF2 adds verify-housing note without data mutation", () => {
+  resetGuardCachesForTestsV1();
+  const safety = resolveFridgeFilterPdpCustomerSafetyV1({
+    filterSlug: "gswf2",
+    fridgeModels: [model("ge-gye22gskww")],
+    gatedRetailerLinkCount: 1,
+    rootDir: ROOT,
+  });
+  assert.equal(safety.display_models_count, 1);
+  assert.ok((safety.filter_page_caution_note ?? "").includes(GSWF_FILTER_PAGE_CAUTION_NOTE_V1));
+  assert.ok((safety.filter_page_caution_note ?? "").includes(GSWF2_FILTER_PAGE_VERIFY_HOUSING_NOTE_V1));
+});
+
+test("search WARN-ambiguous GSWF model suppresses typical replacement", () => {
+  resetGuardCachesForTestsV1();
+  const hit = resolveFridgeSearchModelHitDisplayV1({
+    fridgeModelSlug: "ge-gfe28gmkbb",
+    rootDir: ROOT,
+  });
+  assert.equal(hit.show_typical_replacement, false);
+  assert.match(hit.status_line ?? "", /Compatibility under review/i);
+});
+
+test("search PASS single-family model still shows typical replacement", () => {
+  resetGuardCachesForTestsV1();
+  const hit = resolveFridgeSearchModelHitDisplayV1({
+    fridgeModelSlug: "samsung-rf28r7351sr",
+    rootDir: ROOT,
+  });
+  assert.equal(hit.show_typical_replacement, true);
+  assert.equal(hit.status_line, null);
 });

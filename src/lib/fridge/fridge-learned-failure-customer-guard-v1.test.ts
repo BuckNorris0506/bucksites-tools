@@ -41,3 +41,13 @@ test("samsung-rf28r7351sr remains non-quarantined when guard passes", () => {
   });
   assert.equal(safety.quarantine, false);
 });
+
+test("GSWF WARN single_filter_family model stays non-quarantined", () => {
+  resetLearnedFailureGuardIndexCacheForTestsV1();
+  const safety = resolveFridgeCustomerSafetyV1({
+    fridgeModelSlug: "ge-gfe28gmkbb",
+    rootDir: ROOT,
+  });
+  assert.equal(safety.quarantine, false);
+  assert.equal(safety.reason, null);
+});

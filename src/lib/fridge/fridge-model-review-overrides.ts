@@ -27,7 +27,8 @@ export function listFridgeModelReviewOverrides(): FridgeModelReviewOverride[] {
 export function getFridgeModelReviewOverride(
   fridgeModelSlug: string,
 ): FridgeModelReviewOverride | null {
-  return REVIEW_OVERRIDES[fridgeModelSlug] ?? null;
+  const slug = fridgeModelSlug.trim().toLowerCase();
+  return REVIEW_OVERRIDES[slug] ?? null;
 }
 
 export function isFridgeModelUnderOwnerReview(fridgeModelSlug: string): boolean {

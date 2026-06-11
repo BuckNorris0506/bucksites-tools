@@ -114,7 +114,8 @@ export default async function FilterPage({ params }: Props) {
   if (pdpSafety.force_suppress_buy) {
     trustSummary.buyer_path_state = "suppress_buy";
   } else if (
-    pdpSafety.hidden_quarantined_model_count > 0 &&
+    (pdpSafety.prefer_caution_buy ||
+      pdpSafety.hidden_quarantined_model_count > 0) &&
     pdpSafety.display_models_count > 0 &&
     filter.retailer_links.length > 0
   ) {
