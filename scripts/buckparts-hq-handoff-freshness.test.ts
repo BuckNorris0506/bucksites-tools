@@ -435,8 +435,8 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     describe: "Command Center status update packet contract id",
   },
   {
-    id: "customer_reality_head_9245206",
-    needle: "9245206",
+    id: "customer_reality_head_4246889",
+    needle: "4246889",
     describe: "Customer Reality Command Center stopping point HEAD reference",
   },
   {
@@ -458,6 +458,26 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     id: "customer_authority_score_v1",
     needle: "customer_authority_score_v1",
     describe: "Customer authority score lane contract",
+  },
+  {
+    id: "customer_authority_history_status_v1",
+    needle: "customer_authority_history_status_v1",
+    describe: "Customer authority history status lane contract",
+  },
+  {
+    id: "strategic_identity_not_affiliate",
+    needle: "BuckParts is **not** an affiliate site",
+    describe: "Strategic identity — not an affiliate site doctrine",
+  },
+  {
+    id: "strategic_second_wedge_not_approved",
+    needle: "NOT APPROVED FOR BUILD",
+    describe: "Second-wedge candidates not approved for build",
+  },
+  {
+    id: "strategic_abstraction_chain",
+    needle: "Evidence → Confidence → Risk → Reversibility → Action Authority → Outcome",
+    describe: "Core authority abstraction chain",
   },
   {
     id: "customer_reality_no_nba_replacement",
