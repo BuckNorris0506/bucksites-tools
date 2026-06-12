@@ -873,6 +873,8 @@ Before giving Jared any next step, first ask:
 
 If a move helps **one product only** and does **not** create reusable batch machinery, **stop** and propose batch/factory instead — unless Jared explicitly approves a one-off proof.
 
+8. When an action is to be taken, **end the message** with the next-best **exact copy/paste prompt or command** — not prose-only next steps. Identify the **surface** when relevant: **Terminal**, **Cursor**, **HyperAgent**, **Supabase SQL**, **Browser**, etc.
+
 ## Ops-agent workflow v1 (doctrine — packet contracts in repo)
 
 **Full contracts:** `docs/BuckParts-OPS-AGENT-WORKFLOW-V1.md` · **guards/tests:** `scripts/lib/buckparts-ops-agent-workflow-v1.ts`
@@ -1800,7 +1802,7 @@ Read-only inventory at this stop:
 
 ### Operator rules (do not regress)
 
-**HQ / agent chat behavior:** Do not give Jared the "best next move" without giving the exact copy/paste prompt or command in the same chat message. If HQ states a next move, the prompt/command must be included immediately.
+**HQ / agent chat behavior (required):** When an action is to be taken, the assistant must **end the message** with the next-best **exact copy/paste prompt or command**. The prompt/command must identify the **surface** when relevant: **Terminal**, **Cursor**, **HyperAgent**, **Supabase SQL**, **Browser**, etc. Do not give Jared the "best next move" in prose only — if HQ states a next move, the runnable prompt/command must be included in the **same message**, at the **end**.
 
 - **Do not** restart the Amazon interstitial loop as the primary batch path.
 - **Do not** make Jared manually author JSON facts — agent fills facts → founder reviews and approves via **Markdown**.
@@ -1932,7 +1934,7 @@ The owner/founder role is to judge what customers see, read, and trust; approve 
 Operating style:
 
 - use the BuckParts Truth Contract;
-- give direct copy/paste prompts;
+- when an action is to be taken, end the message with the next-best exact copy/paste prompt or command, naming the surface when relevant (Terminal, Cursor, HyperAgent, Supabase SQL, Browser, etc.);
 - move one step at a time when validation output is needed;
 - state Proven / Inferred / UNKNOWN for non-trivial claims;
 - prefer the smallest concrete next move;
