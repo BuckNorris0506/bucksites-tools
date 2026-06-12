@@ -5415,7 +5415,8 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
-  assert.ok(lane.candidate_selection_logic.some((line) => line.includes("top_candidates priority order")));
+  assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
+  assert.ok(lane.candidate_selection_logic.some((line) => line.includes("evidence-aware ranking")));
   assert.ok(lane.blockers.includes("open_batch_not_proven"));
   assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
   assert.ok(lane.blockers.includes("batch_run_registry_not_created"));

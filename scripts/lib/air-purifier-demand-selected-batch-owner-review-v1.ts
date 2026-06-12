@@ -17,6 +17,12 @@ import {
   type ApBatchProductionLaneStateV1,
 } from "./air-purifier-batch-production-lane-v1";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
+import {
+  getApOwnerReviewEvidenceEntryV1,
+  loadApOwnerReviewEvidenceIndexV1,
+  type ApOwnerReviewEvidenceEntryV1,
+  type ApOwnerReviewEvidenceIndexV1,
+} from "./air-purifier-owner-review-evidence-index-v1";
 
 export const AIR_PURIFIER_DEMAND_SELECTED_BATCH_OWNER_REVIEW_CONTRACT_V1 =
   "air_purifier_demand_selected_batch_owner_review_v1" as const;
@@ -45,9 +51,23 @@ export type ApDemandSelectedCandidateRowV1 = {
   rationale: string;
   gate_failure: string | null;
   owner_review_required: boolean;
+  evidence_disposition:
+    | "catalog_identity"
+    | "promote_pass_reference"
+    | "discovery_ready"
+    | "hold_needs_owner_review"
+    | null;
   primary_retailer_key: string | null;
   primary_url: string | null;
   source_report: typeof AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1;
+};
+
+export type ApDemandSelectedExcludedCandidateRowV1 = {
+  filter_slug: string;
+  batch_rank: number;
+  priority_score: number;
+  exclusion_reason: string;
+  evidence_source_files: string[];
 };
 
 export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
@@ -79,8 +99,10 @@ export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
   };
   candidate_rows_status: ApDemandSelectedCandidateRowsStatusV1;
   candidate_rows: ApDemandSelectedCandidateRowV1[];
+  excluded_candidate_rows: ApDemandSelectedExcludedCandidateRowV1[];
   candidate_rows_unknown_reason: string | null;
   candidate_selection_logic: string[];
+  evidence_index_source_status: ApOwnerReviewEvidenceIndexV1["source_status"];
   inputs_needed: string[];
   exact_owner_decision_needed_later: string;
   blockers: [
@@ -103,41 +125,165 @@ export type BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1 = {
   fileExists?: (absolutePath: string) => boolean;
   readTextFile?: (absolutePath: string) => string;
   batchProductionLane?: AirPurifierBatchProductionLaneReportV1;
+  evidenceIndex?: ApOwnerReviewEvidenceIndexV1 | null;
   loadBatchProductionLane?: (deps: {
     rootDir: string;
     fileExists: (absolutePath: string) => boolean;
     readTextFile: (absolutePath: string) => string;
   }) => Promise<AirPurifierBatchProductionLaneReportV1>;
+  loadEvidenceIndex?: (deps: {
+    rootDir: string;
+    fileExists: (absolutePath: string) => boolean;
+    readTextFile: (absolutePath: string) => string;
+  }) => ApOwnerReviewEvidenceIndexV1;
 };
 
-function mapBatchProductionCandidateRowV1(candidate: ApBatchCandidateV1): ApDemandSelectedCandidateRowV1 {
+const AP_OWNER_REVIEW_PROMOTE_PASS_REFERENCE_BONUS_V1 = 45;
+const AP_OWNER_REVIEW_MAX_LEVOIT_DISCOVERY_ROWS_V1 = 2;
+
+type OwnerReviewSortableCandidateV1 = {
+  candidate: ApBatchCandidateV1;
+  evidence: ApOwnerReviewEvidenceEntryV1 | null;
+  sort_tier: number;
+  effective_priority_score: number;
+  evidence_disposition: ApDemandSelectedCandidateRowV1["evidence_disposition"];
+  owner_review_required: boolean;
+  rationale: string;
+};
+
+function ownerReviewSortTierV1(args: {
+  candidate: ApBatchCandidateV1;
+  evidence: ApOwnerReviewEvidenceEntryV1 | null;
+}): number {
+  if (args.candidate.state === "catalog_identity_gap") return 0;
+  if (args.evidence?.promote_pass_reference) return 1;
+  if (args.evidence?.hold_needs_owner_review) return 3;
+  return 2;
+}
+
+function mapEvidenceAwareOwnerReviewRowV1(
+  item: OwnerReviewSortableCandidateV1,
+  displayRank: number,
+): ApDemandSelectedCandidateRowV1 {
   return {
-    rank: candidate.rank,
-    filter_slug: candidate.filter_slug,
-    state: candidate.state,
-    priority_score: candidate.priority_score,
-    pattern: candidate.pattern,
-    rationale: candidate.rationale,
-    gate_failure: candidate.gate_failure,
-    owner_review_required: candidate.state === "catalog_identity_gap",
-    primary_retailer_key: candidate.primary_retailer_key,
-    primary_url: candidate.primary_url,
+    rank: displayRank,
+    filter_slug: item.candidate.filter_slug,
+    state: item.candidate.state,
+    priority_score: item.candidate.priority_score,
+    pattern: item.candidate.pattern,
+    rationale: item.rationale,
+    gate_failure: item.candidate.gate_failure,
+    owner_review_required: item.owner_review_required,
+    evidence_disposition: item.evidence_disposition,
+    primary_retailer_key: item.candidate.primary_retailer_key,
+    primary_url: item.candidate.primary_url,
     source_report: AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1,
   };
 }
 
+function buildOwnerReviewSortableCandidatesV1(
+  actionable: ApBatchCandidateV1[],
+  evidenceIndex: ApOwnerReviewEvidenceIndexV1 | null | undefined,
+): {
+  sortable: OwnerReviewSortableCandidateV1[];
+  excluded: ApDemandSelectedExcludedCandidateRowV1[];
+} {
+  const sortable: OwnerReviewSortableCandidateV1[] = [];
+  const excluded: ApDemandSelectedExcludedCandidateRowV1[] = [];
+
+  for (const candidate of actionable) {
+    const evidence = getApOwnerReviewEvidenceEntryV1(evidenceIndex ?? null, candidate.filter_slug);
+    if (evidence?.exclude_from_owner_review) {
+      excluded.push({
+        filter_slug: candidate.filter_slug,
+        batch_rank: candidate.rank,
+        priority_score: candidate.priority_score,
+        exclusion_reason: evidence.rationale,
+        evidence_source_files: evidence.source_files,
+      });
+      continue;
+    }
+
+    const sort_tier = ownerReviewSortTierV1({ candidate, evidence });
+    const promote_pass_reference = evidence?.promote_pass_reference === true;
+    const hold_needs_owner_review =
+      candidate.state === "catalog_identity_gap"
+        ? true
+        : evidence?.hold_needs_owner_review === true;
+    const effective_priority_score =
+      candidate.priority_score + (promote_pass_reference ? AP_OWNER_REVIEW_PROMOTE_PASS_REFERENCE_BONUS_V1 : 0);
+
+    let evidence_disposition: ApDemandSelectedCandidateRowV1["evidence_disposition"] = "discovery_ready";
+    if (candidate.state === "catalog_identity_gap") evidence_disposition = "catalog_identity";
+    else if (promote_pass_reference) evidence_disposition = "promote_pass_reference";
+    else if (hold_needs_owner_review) evidence_disposition = "hold_needs_owner_review";
+
+    let rationale = candidate.rationale;
+    if (evidence?.rationale?.trim()) {
+      rationale = `${candidate.rationale} | ${evidence.rationale}`;
+    }
+
+    sortable.push({
+      candidate,
+      evidence,
+      sort_tier,
+      effective_priority_score,
+      evidence_disposition,
+      owner_review_required: hold_needs_owner_review,
+      rationale,
+    });
+  }
+
+  sortable.sort((a, b) => {
+    if (a.sort_tier !== b.sort_tier) return a.sort_tier - b.sort_tier;
+    if (b.effective_priority_score !== a.effective_priority_score) {
+      return b.effective_priority_score - a.effective_priority_score;
+    }
+    return a.candidate.rank - b.candidate.rank;
+  });
+
+  return { sortable, excluded };
+}
+
+function sliceEvidenceAwareOwnerReviewRowsV1(
+  sortable: OwnerReviewSortableCandidateV1[],
+  maxRows: number,
+): ApDemandSelectedCandidateRowV1[] {
+  const selected: OwnerReviewSortableCandidateV1[] = [];
+  let levoitDiscoveryCount = 0;
+  const hasPromotedReference = sortable.some((item) => item.evidence_disposition === "promote_pass_reference");
+
+  for (const item of sortable) {
+    if (selected.length >= maxRows) break;
+    if (hasPromotedReference && item.candidate.pattern === "levoit_oem_discovery") {
+      if (levoitDiscoveryCount >= AP_OWNER_REVIEW_MAX_LEVOIT_DISCOVERY_ROWS_V1) continue;
+      levoitDiscoveryCount += 1;
+    }
+    selected.push(item);
+  }
+
+  return selected.map((item, index) => mapEvidenceAwareOwnerReviewRowV1(item, index + 1));
+}
+
 export function candidateRowsFromBatchProductionLaneV1(
   report: AirPurifierBatchProductionLaneReportV1 | null | undefined,
-  maxRows = 10,
+  options?: {
+    maxRows?: number;
+    evidenceIndex?: ApOwnerReviewEvidenceIndexV1 | null;
+  },
 ): {
   status: ApDemandSelectedCandidateRowsStatusV1;
   rows: ApDemandSelectedCandidateRowV1[];
+  excluded_rows: ApDemandSelectedExcludedCandidateRowV1[];
   unknown_reason: string | null;
 } {
+  const maxRows = options?.maxRows ?? 10;
+  const evidenceIndex = options?.evidenceIndex ?? null;
   if (!report) {
     return {
       status: "UNKNOWN",
       rows: [],
+      excluded_rows: [],
       unknown_reason:
         "air_purifier_batch_production_lane_v1 report unavailable; run npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts before owner batch-start approval.",
     };
@@ -147,6 +293,7 @@ export function candidateRowsFromBatchProductionLaneV1(
     return {
       status: "UNKNOWN",
       rows: [],
+      excluded_rows: [],
       unknown_reason:
         "air_purifier_batch_production_lane_v1 source_status=UNKNOWN; refresh AP filters/retailer_links/GSC inputs and re-run batch-production lane.",
     };
@@ -160,14 +307,28 @@ export function candidateRowsFromBatchProductionLaneV1(
     return {
       status: "UNKNOWN",
       rows: [],
+      excluded_rows: [],
       unknown_reason:
         "No actionable AP buyer-path candidates were proven from air_purifier_batch_production_lane_v1.top_candidates.",
     };
   }
 
+  const { sortable, excluded } = buildOwnerReviewSortableCandidatesV1(actionable, evidenceIndex);
+
+  if (sortable.length === 0) {
+    return {
+      status: "UNKNOWN",
+      rows: [],
+      excluded_rows: excluded,
+      unknown_reason:
+        "No evidence-safe AP buyer-path candidates remain after excluding prior NO_SAFE_PATH / MODEL_FILTER_MAPPING_REVIEW_REQUIRED evidence.",
+    };
+  }
+
   return {
     status: "PROVEN",
-    rows: actionable.slice(0, maxRows).map(mapBatchProductionCandidateRowV1),
+    rows: sliceEvidenceAwareOwnerReviewRowsV1(sortable, maxRows),
+    excluded_rows: excluded,
     unknown_reason: null,
   };
 }
@@ -193,7 +354,18 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
         readTextFile,
       })));
 
-  const candidateRows = candidateRowsFromBatchProductionLaneV1(batchProductionLane);
+  const evidenceIndex =
+    deps.evidenceIndex ??
+    deps.loadEvidenceIndex?.({ rootDir: deps.rootDir, fileExists, readTextFile }) ??
+    loadApOwnerReviewEvidenceIndexV1({
+      rootDir: deps.rootDir,
+      fileExists,
+      readTextFile,
+    });
+
+  const candidateRows = candidateRowsFromBatchProductionLaneV1(batchProductionLane, {
+    evidenceIndex,
+  });
   const sourceIsApDemandSelected =
     demand.recommended_wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier &&
     demand.recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH";
@@ -242,12 +414,18 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     },
     candidate_rows_status: candidateRows.status,
     candidate_rows: candidateRows.rows,
+    excluded_candidate_rows: candidateRows.excluded_rows,
     candidate_rows_unknown_reason: candidateRows.unknown_reason,
+    evidence_index_source_status: evidenceIndex.source_status,
     candidate_selection_logic: [
       "Source recommendation must be demand_to_coverage_next_lane_v1 with recommended_wedge=air_purifier and recommendation_status=START_NEW_DEMAND_SELECTED_BATCH.",
-      "Candidate rows are a read-only projection of air_purifier_batch_production_lane_v1.top_candidates priority order.",
+      "Candidate rows start from air_purifier_batch_production_lane_v1.top_candidates actionable states, then apply read-only evidence-aware ranking.",
       "Include only actionable states: search_placeholder_rescue_needed, reference_candidate, direct_buy_candidate, catalog_identity_gap.",
       "Exclude wrong_family_reject, existing_direct_buyable, existing_official_reference, and other non-actionable states.",
+      "Exclude candidates with prior agent NO_SAFE_PATH or model-first MODEL_FILTER_MAPPING_REVIEW_REQUIRED evidence.",
+      "Mark NEEDS_OWNER_REVIEW agent evidence as owner_review_required=true and demote below discovery-ready rows.",
+      "Promote PASS_REFERENCE rows with recommended_csv_mutation when repo agent evidence proves a safer reference path.",
+      "Cap plain levoit_oem_discovery rows to 2 when promoted reference candidates exist.",
       "This packet is owner review only; it does not start a batch, generate agent packets, or collect browser evidence.",
     ],
     inputs_needed: [
@@ -264,8 +442,10 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
       `PROVEN: source demand recommendation status is ${demand.recommendation_status}.`,
       `PROVEN: source next_batch_candidate is ${String(demand.next_batch_candidate)}.`,
       `PROVEN: candidate_rows_status=${candidateRows.status}.`,
-      `PROVEN: candidate_rows projected from ${AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1}.top_candidates.`,
+      `PROVEN: candidate_rows projected from ${AIR_PURIFIER_BATCH_PRODUCTION_LANE_REPORT_NAME_V1}.top_candidates with evidence-aware ranking.`,
       `PROVEN: batch_production_lane source_status=${batchProductionLane.source_status}.`,
+      `PROVEN: evidence_index_source_status=${evidenceIndex.source_status}.`,
+      `PROVEN: excluded_candidate_rows_count=${candidateRows.excluded_rows.length}.`,
     ],
     inferred_facts: [
       ...demand.inferred_facts,

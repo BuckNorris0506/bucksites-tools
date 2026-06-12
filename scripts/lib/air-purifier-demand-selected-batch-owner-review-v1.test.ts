@@ -11,6 +11,10 @@ import {
   candidateRowsFromBatchProductionLaneV1,
 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import {
+  loadApOwnerReviewEvidenceIndexV1,
+  type ApOwnerReviewEvidenceIndexV1,
+} from "./air-purifier-owner-review-evidence-index-v1";
+import {
   buildDemandToCoverageNextLaneUnknownV1,
   type DemandToCoverageNextLaneReportV1,
 } from "./demand-to-coverage-next-lane-v1";
@@ -189,20 +193,63 @@ function batchProductionFixture(): AirPurifierBatchProductionLaneReportV1 {
   };
 }
 
-test("candidateRowsFromBatchProductionLaneV1 projects actionable priority order and excludes wrong_family_reject", () => {
-  const projected = candidateRowsFromBatchProductionLaneV1(batchProductionFixture());
+function evidenceIndexFixture(): ApOwnerReviewEvidenceIndexV1 {
+  return {
+    source_status: "PROVEN",
+    excluded_slugs: ["shark-carbon-foam"],
+    entries_by_slug: new Map([
+      [
+        "shark-carbon-foam",
+        {
+          filter_slug: "shark-carbon-foam",
+          disposition: "exclude_no_safe_path",
+          agent_decision: "NO_SAFE_PATH",
+          agent_review_group: "no_safe_path",
+          model_first_mapping_review_required: true,
+          promote_pass_reference: false,
+          hold_needs_owner_review: false,
+          exclude_from_owner_review: true,
+          rationale: "Agent evidence NO_SAFE_PATH (fixture).",
+          source_files: ["fixture/ap-oem-search-placeholder-v1.results.json"],
+        },
+      ],
+      [
+        "holmes-hapf30",
+        {
+          filter_slug: "holmes-hapf30",
+          disposition: "promote_pass_reference",
+          agent_decision: "PASS_REFERENCE",
+          agent_review_group: "reference_eligible",
+          model_first_mapping_review_required: false,
+          promote_pass_reference: true,
+          hold_needs_owner_review: false,
+          exclude_from_owner_review: false,
+          rationale: "Agent evidence PASS_REFERENCE with recommended_csv_mutation (fixture).",
+          source_files: ["fixture/ap-oem-search-placeholder-v1.results.json"],
+        },
+      ],
+    ]),
+  };
+}
+
+test("candidateRowsFromBatchProductionLaneV1 excludes NO_SAFE_PATH evidence and promotes PASS_REFERENCE rows", () => {
+  const projected = candidateRowsFromBatchProductionLaneV1(batchProductionFixture(), {
+    evidenceIndex: evidenceIndexFixture(),
+  });
   assert.equal(projected.status, "PROVEN");
-  assert.equal(projected.rows.length, 3);
+  assert.equal(projected.rows.length, 2);
   assert.deepEqual(
     projected.rows.map((row) => row.filter_slug),
-    ["blueair-particle-411", "holmes-hapf30", "shark-carbon-foam"],
+    ["blueair-particle-411", "holmes-hapf30"],
   );
   assert.equal(projected.rows[0]?.rank, 1);
   assert.equal(projected.rows[0]?.priority_score, 168);
   assert.equal(projected.rows[0]?.state, "catalog_identity_gap");
   assert.equal(projected.rows[0]?.owner_review_required, true);
-  assert.equal(projected.rows[1]?.owner_review_required, false);
+  assert.equal(projected.rows[1]?.evidence_disposition, "promote_pass_reference");
   assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
+  assert.ok(!projected.rows.some((row) => row.filter_slug === "shark-carbon-foam"));
+  assert.equal(projected.excluded_rows[0]?.filter_slug, "shark-carbon-foam");
   assert.equal(projected.rows[0]?.source_report, "air_purifier_batch_production_lane_v1");
 });
 
@@ -211,6 +258,7 @@ test("AP demand-selected owner review lane is read-only and mutation-blocked", a
     rootDir: "/fixture-root",
     demandToCoverageNextLane: apDemandReportFixture(),
     batchProductionLane: batchProductionFixture(),
+    evidenceIndex: evidenceIndexFixture(),
   });
 
   assert.equal(lane.contract, "air_purifier_demand_selected_batch_owner_review_v1");
@@ -234,9 +282,9 @@ test("AP demand-selected owner review lane is read-only and mutation-blocked", a
   assert.equal(lane.demand_proof.safe_cta_count, 10);
   assert.equal(lane.demand_proof.blocked_link_count, 58);
   assert.equal(lane.candidate_rows_status, "PROVEN");
-  assert.equal(lane.candidate_rows.length, 3);
+  assert.equal(lane.candidate_rows.length, 2);
   assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
-  assert.ok(lane.candidate_selection_logic.some((line) => line.includes("top_candidates priority order")));
+  assert.ok(lane.candidate_selection_logic.some((line) => line.includes("evidence-aware ranking")));
   assert.ok(lane.blockers.includes("open_batch_not_proven"));
   assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
   assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
@@ -273,7 +321,7 @@ test("AP owner review lane degrades safely when demand source is UNKNOWN", async
   assert.ok(lane.unknown_facts.some((fact) => fact.includes("fixture demand missing")));
 });
 
-test("live repo owner-review candidates align with batch-production actionable priority", async () => {
+test("live repo owner-review candidates are evidence-aware and exclude shark-carbon-foam", async () => {
   const batchLane = await buildAirPurifierBatchProductionLaneV1Report({
     rootDir: REPO_ROOT,
     loadGscArtifact: async () => ({
@@ -296,36 +344,37 @@ test("live repo owner-review candidates align with batch-production actionable p
       source: "test_fixture",
     }),
   });
+  const evidenceIndex = loadApOwnerReviewEvidenceIndexV1({ rootDir: REPO_ROOT });
 
   const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
     rootDir: REPO_ROOT,
     demandToCoverageNextLane: apDemandReportFixture(),
     batchProductionLane: batchLane,
+    evidenceIndex,
   });
-
-  const actionableTop = batchLane.top_candidates
-    .filter((candidate) =>
-      [
-        "search_placeholder_rescue_needed",
-        "reference_candidate",
-        "direct_buy_candidate",
-        "catalog_identity_gap",
-      ].includes(candidate.state),
-    )
-    .slice(0, 10);
 
   assert.equal(lane.candidate_rows_status, "PROVEN");
   assert.ok(lane.candidate_rows.length > 0);
-  assert.deepEqual(
-    lane.candidate_rows.map((row) => row.filter_slug),
-    actionableTop.map((candidate) => candidate.filter_slug),
-  );
   assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
+  assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
-  assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
+  assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "shark-hepa-hp100"));
   assert.ok(
-    lane.proven_facts.some((fact) => fact.includes("air_purifier_batch_production_lane_v1.top_candidates")),
+    lane.excluded_candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"),
+  );
+
+  const winixCarbon = lane.candidate_rows.find((row) => row.filter_slug === "winix-carbon-116131");
+  if (winixCarbon) {
+    assert.equal(winixCarbon.owner_review_required, true);
+    assert.equal(winixCarbon.evidence_disposition, "hold_needs_owner_review");
+  }
+
+  const levoitRowCount = lane.candidate_rows.filter((row) => row.pattern === "levoit_oem_discovery").length;
+  assert.ok(levoitRowCount <= 2);
+
+  assert.ok(
+    lane.proven_facts.some((fact) => fact.includes("evidence-aware ranking")),
   );
 });
 
@@ -336,6 +385,21 @@ test("live repo projection excludes levoit-rf-rar029 wrong_family_reject from ow
   );
   assert.equal(wrongFamily?.state, "wrong_family_reject");
 
-  const projected = candidateRowsFromBatchProductionLaneV1(batchLane);
+  const projected = candidateRowsFromBatchProductionLaneV1(batchLane, {
+    evidenceIndex: loadApOwnerReviewEvidenceIndexV1({ rootDir: REPO_ROOT }),
+  });
   assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
+});
+
+test("live repo promotes shark-hepa-hp100 only when PASS_REFERENCE evidence is proven", () => {
+  const evidenceIndex = loadApOwnerReviewEvidenceIndexV1({ rootDir: REPO_ROOT });
+  const sharkHp100 = evidenceIndex.entries_by_slug.get("shark-hepa-hp100");
+  assert.ok(sharkHp100);
+  assert.equal(sharkHp100.promote_pass_reference, true);
+  assert.match(sharkHp100.rationale, /PASS_REFERENCE with recommended_csv_mutation/);
+  assert.ok(
+    sharkHp100.source_files.includes(
+      "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+    ),
+  );
 });
