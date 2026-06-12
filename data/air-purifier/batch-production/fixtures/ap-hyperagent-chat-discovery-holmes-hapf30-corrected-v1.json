@@ -1,0 +1,46 @@
+{
+  "contract": "ap_hyperagent_chat_discovery_output_v1",
+  "packet_id": "ap-oem-search-placeholder-v1",
+  "wedge": "air_purifier",
+  "owner_decision": "APPROVE_READ_ONLY_DISCOVERY_FIRST_SLICE_ONLY",
+  "discovery_status": "DISCOVERY_COMPLETE",
+  "truth_closure_claimed": false,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "not_canonical_evidence": true,
+  "not_apply_eligible": true,
+  "candidate_rows": [
+    {
+      "filter_slug": "holmes-hapf30",
+      "repo_csv_primary_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "searched_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "final_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      "pdp_like_final_url": true,
+      "exact_tokens_seen": ["HAPF300AHD", "HAPF300AHD-U4R-2", "Aer1"],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": true,
+      "buy_action_seen": false,
+      "stock_state": "where_to_buy_only",
+      "browser_truth_classification_recommendation": "likely_valid",
+      "recommendation": "PASS_REFERENCE",
+      "reference_only_reason": "Official Holmes aer1 True HEPA PDP (HAPF300AHD 2-pack) shows Where To Buy / external retailer routing only—no Add to Cart in primary product area. Brand-prefixed HOLMES-HAPF30 site search returns zero results.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "PROVEN: Brand-prefixed /search?q=HOLMES-HAPF30 returned 0 results; bare /search?q=HAPF30 surfaced aer1 family path leading to SP_763535 PDP.",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: Opened repo search placeholder — zero results. PROVEN: Bare HAPF30 alternate search returned in-family reference. PROVEN: Live PDP SP_763535 primary slice shows HAPF300AHD / HAPF300AHD-U4R-2 and Aer1 branding; no Add to Cart; where-to-buy only. INFERRED: Catalog internal token HOLMES-HAPF30 not printed on PDP (aliases HAPF30/HAPF300 per filter_aliases.csv).",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "prior_repo_pass_reference_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html"
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: HOLMES-HAPF30 search placeholder returns zero results this session.",
+    "PROVEN: Bare HAPF30 alternate path reached official SP_763535 reference PDP.",
+    "PROVEN: Primary product area shows HAPF300AHD family tokens; no Add to Cart; where-to-buy only."
+  ],
+  "inferred_facts": [
+    "INFERRED: Aligns with prior repo PASS_REFERENCE evidence in agent-results/ap-oem-search-placeholder-v1.results.json."
+  ],
+  "unknown_facts": []
+}

@@ -90,15 +90,30 @@ From `scripts/lib/air-purifier-agent-packets-v1.ts` — `AP_AGENT_EVIDENCE_DECIS
 | Value | When to use (AP buyer-path) |
 |-------|----------------------------|
 | `PASS_DIRECT_BUYABLE` | Official PDP; exact token in primary slice; Add to Cart (or equivalent buy) observed |
-| `PASS_REFERENCE` | Official PDP; exact or family token proven; **no** safe buy action (OOS / notify / where-to-buy only) |
+| `PASS_REFERENCE` | Official PDP; exact or family token proven in primary slice; **no** safe buy action (OOS / notify / where-to-buy only) |
 | `NEEDS_OWNER_REVIEW` | PDP found but identity conflict, token ambiguity, or wrong-family notes in primary slice |
 | `NO_SAFE_PATH` | No official PDP; search/homepage only; or cannot prove manufacturer product page |
 | `REJECT_WRONG_FAMILY` | Official page is wrong product family vs catalog slug |
-| `REJECT_SEARCH_CATEGORY` | Final URL is search/category/marketing only |
+| `REJECT_SEARCH_CATEGORY` | **Only** when the **final inspected page** remains search/category/marketing with **no** PDP-like product page reached in-session — or when search results are wrong-family / search-noise only (see §3.1) |
 | `CATALOG_GAP` | **Do not use** in chat-only OEM discovery unless catalog row missing |
 | `ALIAS_REDIRECT_GAP` | **Do not use** unless GSC/catalog alias task explicitly in scope |
 
 **Trust gate:** HyperAgent must **not** emit `PASS_DIRECT_BUYABLE` unless `buy_action_seen === true` and exact token in primary slice — same bar as `validateAgentEvidenceRowV1()` in `scripts/lib/air-purifier-agent-results-aggregator-v1.ts`.
+
+### 3.1 Recommendation ↔ `final_url` semantics (required)
+
+HyperAgent must align `recommendation`, `final_url`, and `pdp_like_final_url` with what was **actually opened and inspected** in the live browser — not with the repo CSV placeholder alone.
+
+| Session outcome | Required row shape |
+|-----------------|-------------------|
+| Live **PDP-like** manufacturer page opened; in-family tokens in primary product area; **no** Add-to-Cart (or equivalent buy) | `final_url` = PDP URL; `pdp_like_final_url: true`; `recommendation: PASS_REFERENCE`; `browser_truth_classification_recommendation: likely_valid` (or `null` only if stock/buy state not observed); `reference_only_reason` set; `stock_state` reflects buy absence (`where_to_buy_only`, `out_of_stock`, `notify_me`, etc.) |
+| Brand-prefixed search fails; alternate path used; **PDP opened** via that path | Same as above — **do not** leave `final_url` on the search URL or emit `REJECT_SEARCH_CATEGORY` when a reference PDP was reached. Record the failed primary search in `search_placeholder_defect: true` and `alternate_discovery_path`. |
+| Search/category (or homepage) is the **only** page inspected; zero results or no navigable in-family PDP | `final_url` = search/category URL; `pdp_like_final_url: false`; `recommendation: REJECT_SEARCH_CATEGORY` or `NO_SAFE_PATH` as appropriate |
+| Search results show wrong-family or noise only; no safe official PDP opened | `pdp_like_final_url: false`; `recommendation: REJECT_SEARCH_CATEGORY` or `REJECT_WRONG_FAMILY` / `NEEDS_OWNER_REVIEW` per primary-slice conflict |
+
+**Explicit rule (holmes-class OEM search-placeholder rescue):** If HyperAgent opens a PDP-like final URL and the primary product area contains **in-family** tokens but **no** Add-to-Cart, the row **must** be `PASS_REFERENCE` — **not** `REJECT_SEARCH_CATEGORY`. `REJECT_SEARCH_CATEGORY` describes a search/category **terminal** page, not a discovered reference PDP.
+
+**Chat-only boundaries unchanged:** `recommended_csv_mutation` remains `null`; `not_canonical_evidence` and `not_apply_eligible` remain `true` at packet level; no mutation authority is granted by `PASS_REFERENCE` in chat output.
 
 ---
 
@@ -123,22 +138,27 @@ After HyperAgent returns `ap_hyperagent_chat_discovery_output_v1`, Cursor checks
 3. `repo_csv_primary_url` matches `data/air-purifier/retailer_links.csv` (**PROVEN** grep/read)
 4. `recommendation` ∈ `AP_AGENT_EVIDENCE_DECISIONS_V1`
 5. `PASS_DIRECT_BUYABLE` only if `buy_action_seen === true` and `exact_tokens_seen.length > 0`
-6. `PASS_REFERENCE` only if `pdp_like_final_url === true` and (`reference_only_reason` or `buy_action_seen === false`)
-7. `NO_SAFE_PATH` / `REJECT_SEARCH_CATEGORY` if `pdp_like_final_url === false`
-8. `recommended_csv_mutation === null` (chat-only)
-9. Reconcile with `loadApOwnerReviewEvidenceIndexV1()`:
+6. `PASS_REFERENCE` only if `pdp_like_final_url === true`, `final_url` is the inspected PDP (not the CSV search placeholder), and (`reference_only_reason` or `buy_action_seen === false`)
+7. `NO_SAFE_PATH` / `REJECT_SEARCH_CATEGORY` only if `pdp_like_final_url === false` **and** no PDP-like page was opened in-session (§3.1)
+8. **VALIDATION_PARTIAL** if live PDP was opened (`pdp_like_final_url` should be `true`) but row uses `REJECT_SEARCH_CATEGORY` or leaves `final_url` on the search URL
+9. `recommended_csv_mutation === null` (chat-only)
+10. Reconcile with `loadApOwnerReviewEvidenceIndexV1()`:
    - batch-v3 withhold: promotion blocked when batch-v3 `UNKNOWN` + null mutation unless documented search-placeholder defect in prior v1 notes
    - `shark-hepa-hp100`: expect `hold_needs_owner_review` until live PDP re-proof of committed `HE1FKBAS` URL
-   - `holmes-hapf30`: may stay `promote_pass_reference` with `owner_review_required: true` when search defect documented
-10. Command Center mutation flags remain `false`: `batch_start_authorized`, `csv_apply_authorized`, `evidence_write_authorized`, etc.
-11. **Do not** write `data/air-purifier/batch-production/agent-results/*.results.json` unless separate evidence-write authorization
-12. **Do not** create `data/owner-decisions/` rows from validation alone
+   - `holmes-hapf30`: may stay `promote_pass_reference` with `owner_review_required: true` when search defect documented; chat `PASS_REFERENCE` row should align with §6 corrected example
+11. Command Center mutation flags remain `false`: `batch_start_authorized`, `csv_apply_authorized`, `evidence_write_authorized`, etc.
+12. **Do not** write `data/air-purifier/batch-production/agent-results/*.results.json` unless separate evidence-write authorization
+13. **Do not** create `data/owner-decisions/` rows from validation alone
 
 Optional Cursor output: `buckparts_cursor_validation_packet_v1` draft in chat with `validation_status: VALIDATION_PASS | VALIDATION_PARTIAL | VALIDATION_FAIL` — still **not** canonical until owner authorizes evidence write.
+
+**Mechanical executor (read-only):** `scripts/lib/air-purifier-hyperagent-chat-discovery-validation-v1.ts` — `validateApHyperagentChatDiscoveryOutputV1()` returns `ap_hyperagent_chat_discovery_validation_result_v1` (stdout via `scripts/report-ap-hyperagent-chat-discovery-validation-v1.ts`; no file writes).
 
 ---
 
 ## 6. Example output (holmes-hapf30 — illustrative, not canonical)
+
+When live browser discovery **opens** the official reference PDP (holmes-class search-placeholder rescue), use the corrected row below. Do **not** emit `REJECT_SEARCH_CATEGORY` with `final_url` stuck on the CSV search placeholder after a PDP was inspected.
 
 ```json
 {
@@ -158,20 +178,20 @@ Optional Cursor output: `buckparts_cursor_validation_packet_v1` draft in chat wi
       "filter_slug": "holmes-hapf30",
       "repo_csv_primary_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
       "searched_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
-      "final_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
-      "pdp_like_final_url": false,
-      "exact_tokens_seen": [],
+      "final_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      "pdp_like_final_url": true,
+      "exact_tokens_seen": ["HAPF300AHD", "HAPF300AHD-U4R-2", "Aer1"],
       "wrong_family_tokens_seen": [],
-      "exact_token_in_primary_slice": false,
+      "exact_token_in_primary_slice": true,
       "buy_action_seen": false,
-      "stock_state": "not_shown",
-      "browser_truth_classification_recommendation": null,
-      "recommendation": "REJECT_SEARCH_CATEGORY",
-      "reference_only_reason": null,
+      "stock_state": "where_to_buy_only",
+      "browser_truth_classification_recommendation": "likely_valid",
+      "recommendation": "PASS_REFERENCE",
+      "reference_only_reason": "Official Holmes aer1 True HEPA PDP (HAPF300AHD 2-pack) shows Where To Buy / external retailer routing only—no Add to Cart in primary product area. Brand-prefixed HOLMES-HAPF30 site search returns zero results.",
       "search_placeholder_defect": true,
-      "alternate_discovery_path": "PROVEN: /search?q=HAPF30 returned reference result with HAPF300AHD / Aer1 tokens (not PDP)",
+      "alternate_discovery_path": "PROVEN: Brand-prefixed /search?q=HOLMES-HAPF30 returned 0 results; bare /search?q=HAPF30 surfaced aer1 family path leading to SP_763535 PDP.",
       "evidence_confidence": "PROVEN",
-      "evidence_notes": "PROVEN: Brand-prefixed HOLMES-HAPF30 search returns 0 results. PROVEN: Bare HAPF30 search returns one reference/info result with HAPF300AHD and Aer1 tokens. INFERRED: Aligns with prior repo PASS_REFERENCE PDP SP_763535 (not re-fetched this session).",
+      "evidence_notes": "PROVEN: Opened repo search placeholder — zero results. PROVEN: Bare HAPF30 alternate search returned in-family reference. PROVEN: Live PDP SP_763535 primary slice shows HAPF300AHD / HAPF300AHD-U4R-2 and Aer1 branding; no Add to Cart; where-to-buy only. INFERRED: Catalog internal token HOLMES-HAPF30 not printed on PDP (aliases HAPF30/HAPF300 per filter_aliases.csv).",
       "owner_review_required": true,
       "recommended_csv_mutation": null,
       "prior_repo_pass_reference_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html"
@@ -179,14 +199,13 @@ Optional Cursor output: `buckparts_cursor_validation_packet_v1` draft in chat wi
   ],
   "proven_facts": [
     "PROVEN: HOLMES-HAPF30 search placeholder returns zero results this session.",
-    "PROVEN: Bare HAPF30 search returns reference tokens HAPF300AHD / Aer1."
+    "PROVEN: Bare HAPF30 alternate path reached official SP_763535 reference PDP.",
+    "PROVEN: Primary product area shows HAPF300AHD family tokens; no Add to Cart; where-to-buy only."
   ],
   "inferred_facts": [
-    "INFERRED: Holmes remains reference-capable via aer1 family PDP path documented in repo agent-results."
+    "INFERRED: Aligns with prior repo PASS_REFERENCE evidence in agent-results/ap-oem-search-placeholder-v1.results.json."
   ],
-  "unknown_facts": [
-    "UNKNOWN: Live stock/buy state on SP_763535 PDP — not re-fetched this session."
-  ]
+  "unknown_facts": []
 }
 ```
 
@@ -212,10 +231,11 @@ Task:
 1. Read repo_csv_primary_url from data/air-purifier/retailer_links.csv for holmes-hapf30.
 2. Run live-browser manufacturer discovery.
 3. If brand-prefixed search fails, try one documented alternate path (e.g. bare HAPF30) and record it in alternate_discovery_path.
-4. Return ONE fenced JSON object matching ap_hyperagent_chat_discovery_output_v1 exactly (all required packet + row fields).
-5. Use recommendation values from AP_AGENT_EVIDENCE_DECISIONS_V1 only.
-6. Label claims PROVEN / INFERRED / UNKNOWN in evidence_notes and packet fact arrays.
-7. Set recommended_csv_mutation to null.
+4. If you open a live reference PDP with in-family tokens and no Add-to-Cart, set final_url to that PDP, pdp_like_final_url true, recommendation PASS_REFERENCE (§3.1) — not REJECT_SEARCH_CATEGORY.
+5. Return ONE fenced JSON object matching ap_hyperagent_chat_discovery_output_v1 exactly (all required packet + row fields).
+6. Use recommendation values from AP_AGENT_EVIDENCE_DECISIONS_V1 only.
+7. Label claims PROVEN / INFERRED / UNKNOWN in evidence_notes and packet fact arrays.
+8. Set recommended_csv_mutation to null.
 
 Hard boundaries — MUST NOT:
 - Write any repo file
@@ -227,7 +247,15 @@ End your message with:
 "This output is discovery input only — not canonical repo evidence, not apply-eligible, and not authorized to mutate CSV, Supabase, evidence files, public UI, or deploy."
 ```
 
-**Surface: Terminal** — Cursor validation (read-only):
+**Surface: Terminal** — mechanical packet validation (read-only):
+
+```bash
+node --import tsx scripts/report-ap-hyperagent-chat-discovery-validation-v1.ts \
+  --packet=data/air-purifier/batch-production/fixtures/ap-hyperagent-chat-discovery-holmes-hapf30-corrected-v1.json \
+  --scope=holmes-hapf30
+```
+
+**Surface: Terminal** — owner-review lane cross-check (read-only):
 
 ```bash
 node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 | {batch_start_authorized, evidence_write_authorized, csv_apply_authorized, candidate_rows: [.candidate_rows[] | select(.filter_slug=="holmes-hapf30") | {filter_slug, evidence_disposition, owner_review_required}]}'
