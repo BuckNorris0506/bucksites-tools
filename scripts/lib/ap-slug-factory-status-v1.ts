@@ -18,10 +18,15 @@ import {
   validateAgentEvidenceRowV1,
 } from "./air-purifier-agent-results-aggregator-v1";
 import {
+  loadApRetailerLinksCsvV1,
+  type AirPurifierApplyPlannerReportV1,
+} from "./air-purifier-apply-planner-v1";
+import {
   deriveApHyperagentChatDiscoveryValidationStatusV1,
   validateApHyperagentChatDiscoveryOutputV1,
   type ApHyperagentChatDiscoveryOutputV1,
 } from "./air-purifier-hyperagent-chat-discovery-validation-v1";
+import { countSpentPlannedRowsV1 } from "./buckparts-batch-production-operating-checklist-v1";
 
 export const AP_SLUG_FACTORY_STATUS_CONTRACT_V1 = "ap_slug_factory_status_v1" as const;
 
@@ -46,9 +51,16 @@ export type ApSlugFactoryStageStatusValueV1 =
   | "blocked"
   | "unknown";
 
+export type ApSlugFactoryStageProofKindV1 =
+  | "repo_artifact"
+  | "documented_only"
+  | "inferred"
+  | "unknown";
+
 export type ApSlugFactoryStageStatusV1 = {
   stage_id: ApSlugFactoryStageIdV1;
   status: ApSlugFactoryStageStatusValueV1;
+  proof_kind: ApSlugFactoryStageProofKindV1;
   evidence: string[];
   blocker_reasons: string[];
 };
@@ -71,10 +83,17 @@ export type ApSlugFactoryStatusV1 = {
   data_mutation: false;
   mutation_authorized: false;
   generated_at: string;
+  /** First incomplete factory stage — not the last completed stage. */
+  next_unresolved_stage_id: ApSlugFactoryStageIdV1 | null;
+  /**
+   * @deprecated Mirror of `next_unresolved_stage_id` for backward compatibility.
+   * Means next unresolved stage, not last completed stage.
+   */
   current_stage_id: ApSlugFactoryStageIdV1 | null;
   stage_statuses: ApSlugFactoryStageStatusV1[];
   artifact_paths: ApSlugFactoryStatusArtifactPathsV1;
   proven_facts: string[];
+  documented_facts: string[];
   unknown_facts: string[];
   next_owner_gate: string | null;
   next_mechanical_command: string | null;
@@ -325,43 +344,95 @@ type ApplyPlanShape = {
   planned_change_count?: number;
 };
 
+function slugScopedApplyPlanRelV1(slug: string): string {
+  return path.posix.join(AP_APPLY_PLANS_DIR_REL_V1, `ap-apply-plan-${normalizeSlug(slug)}-v1.json`);
+}
+
+function isSlugScopedApplyPlanRelV1(rel: string, slug: string): boolean {
+  return rel === slugScopedApplyPlanRelV1(slug);
+}
+
+function loadApplyPlanFromRel(args: {
+  rootDir: string;
+  rel: string;
+  fileExists: (abs: string) => boolean;
+  readText: (abs: string) => string;
+}): ApplyPlanShape | null {
+  const abs = path.join(args.rootDir, args.rel);
+  if (!args.fileExists(abs)) return null;
+  try {
+    return JSON.parse(args.readText(abs)) as ApplyPlanShape;
+  } catch {
+    return null;
+  }
+}
+
 function findApplyPlanPath(args: {
   rootDir: string;
   slug: string;
   fileExists: (abs: string) => boolean;
   readText: (abs: string) => string;
   listDir: (abs: string) => string[];
-}): { path: string | null; plan: ApplyPlanShape | null } {
+}): { path: string | null; plan: ApplyPlanShape | null; is_slug_scoped: boolean } {
   const slug = normalizeSlug(args.slug);
-  const preferred = path.posix.join(AP_APPLY_PLANS_DIR_REL_V1, `ap-apply-plan-${slug}-v1.json`);
-  const candidates = [preferred];
-  const absPlansDir = path.join(args.rootDir, AP_APPLY_PLANS_DIR_REL_V1);
-  if (args.fileExists(absPlansDir)) {
-    try {
-      for (const file of args.listDir(absPlansDir)) {
-        if (!file.endsWith(".json")) continue;
-        const rel = path.posix.join(AP_APPLY_PLANS_DIR_REL_V1, file);
-        if (!candidates.includes(rel)) candidates.push(rel);
-      }
-    } catch {
-      // ignore
+  const slugScopedRel = slugScopedApplyPlanRelV1(slug);
+  const slugScopedPlan = loadApplyPlanFromRel({
+    rootDir: args.rootDir,
+    rel: slugScopedRel,
+    fileExists: args.fileExists,
+    readText: args.readText,
+  });
+  if (slugScopedPlan) {
+    const slugs = (slugScopedPlan.planned_changes ?? [])
+      .map((c) => normalizeSlug(c.filter_slug ?? ""))
+      .filter(Boolean);
+    if (slugs.includes(slug)) {
+      return { path: slugScopedRel, plan: slugScopedPlan, is_slug_scoped: true };
     }
   }
 
-  for (const rel of candidates) {
-    const abs = path.join(args.rootDir, rel);
-    if (!args.fileExists(abs)) continue;
-    try {
-      const plan = JSON.parse(args.readText(abs)) as ApplyPlanShape;
+  const absPlansDir = path.join(args.rootDir, AP_APPLY_PLANS_DIR_REL_V1);
+  if (!args.fileExists(absPlansDir)) {
+    return { path: null, plan: null, is_slug_scoped: false };
+  }
+  try {
+    for (const file of args.listDir(absPlansDir)) {
+      if (!file.endsWith(".json")) continue;
+      const rel = path.posix.join(AP_APPLY_PLANS_DIR_REL_V1, file);
+      if (isSlugScopedApplyPlanRelV1(rel, slug)) continue;
+      const plan = loadApplyPlanFromRel({
+        rootDir: args.rootDir,
+        rel,
+        fileExists: args.fileExists,
+        readText: args.readText,
+      });
+      if (!plan) continue;
       const slugs = (plan.planned_changes ?? [])
         .map((c) => normalizeSlug(c.filter_slug ?? ""))
         .filter(Boolean);
-      if (slugs.includes(slug)) return { path: rel, plan };
-    } catch {
-      // skip
+      if (slugs.includes(slug)) {
+        return { path: rel, plan, is_slug_scoped: false };
+      }
     }
+  } catch {
+    // ignore
   }
-  return { path: null, plan: null };
+  return { path: null, plan: null, is_slug_scoped: false };
+}
+
+function isSlugSpentInApplyPlanV1(args: {
+  rootDir: string;
+  slug: string;
+  plan: ApplyPlanShape;
+  readText: (abs: string) => string;
+}): boolean {
+  const slug = normalizeSlug(args.slug);
+  const csvRows = loadApRetailerLinksCsvV1(args.rootDir, args.readText);
+  const { spentSlugs } = countSpentPlannedRowsV1(
+    args.plan as AirPurifierApplyPlannerReportV1,
+    csvRows,
+  );
+  return spentSlugs.map(normalizeSlug).includes(slug);
 }
 
 type ApplyRunShape = {
@@ -573,7 +644,9 @@ export function buildApSlugFactoryStatusV1(args: {
     "PROVEN: ap_slug_factory_status_v1 is read-only — uses committed repo artifacts only.",
     "PROVEN: no live HTTP probes and no Supabase calls in this reporter.",
     "PROVEN: mutation_authorized=false.",
+    "PROVEN: current_stage_id is a deprecated mirror of next_unresolved_stage_id (first incomplete stage).",
   ];
+  const documented_facts: string[] = [];
   const unknown_facts: string[] = [
     "UNKNOWN: deployed_commit — not inferred from local artifacts.",
     "UNKNOWN: live public exposure — requires committed production_smoke result artifact.",
@@ -594,6 +667,7 @@ export function buildApSlugFactoryStatusV1(args: {
     listDir,
   });
   let discoveryStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let discoveryProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const discoveryEvidence: string[] = [];
   const discoveryBlockers: string[] = [];
   if (catalog.status === "blocked") {
@@ -636,7 +710,9 @@ export function buildApSlugFactoryStatusV1(args: {
         (derived === "VALIDATION_PASS" || onlyStaleCsvPrimaryUrlDrift)
       ) {
         discoveryStatus = "complete";
+        discoveryProofKind = "inferred";
         if (derived === "VALIDATION_PASS") {
+          discoveryProofKind = "repo_artifact";
           proven_facts.push(
             `PROVEN: discovery_validated from ${discoveryPacketPath} (VALIDATION_PASS + DISCOVERY_COMPLETE).`,
           );
@@ -681,6 +757,7 @@ export function buildApSlugFactoryStatusV1(args: {
     listDir,
   });
   let evidenceStageStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let evidenceProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const evidenceStageEvidence: string[] = [];
   const evidenceBlockers: string[] = [];
   if (catalog.status === "blocked") {
@@ -694,10 +771,12 @@ export function buildApSlugFactoryStatusV1(args: {
     evidenceStageEvidence.push(`evidence_result=${evidence.path}`);
     evidenceStageEvidence.push(`decision=${evidence.row.decision}`);
     evidenceStageStatus = "complete";
+    evidenceProofKind = "repo_artifact";
     proven_facts.push(`PROVEN: canonical_evidence_present from ${evidence.path}.`);
   }
 
   let aggregatorStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let aggregatorProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const aggregatorEvidence: string[] = [];
   const aggregatorBlockers: string[] = [];
   if (!evidence.row) {
@@ -705,6 +784,7 @@ export function buildApSlugFactoryStatusV1(args: {
     aggregatorEvidence.push("no canonical evidence row — auto-apply eligibility not evaluated");
   } else if (isAutoApplyEligibleRow(evidence.row)) {
     aggregatorStatus = "complete";
+    aggregatorProofKind = "repo_artifact";
     aggregatorEvidence.push("passes strict auto_apply_eligible checks (aggregator rules)");
     proven_facts.push("PROVEN: aggregator_auto_apply_eligible from evidence row validation.");
   } else {
@@ -715,14 +795,16 @@ export function buildApSlugFactoryStatusV1(args: {
 
   const applyPlan = findApplyPlanPath({ rootDir, slug, fileExists, readText, listDir });
   let applyPlanStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let applyPlanProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const applyPlanEvidence: string[] = [];
   const applyPlanBlockers: string[] = [];
   if (!applyPlan.path || !applyPlan.plan) {
     applyPlanStatus = "unknown";
-    applyPlanEvidence.push("no slug-scoped apply plan artifact found");
+    applyPlanEvidence.push("no slug-scoped or batch apply plan artifact found");
     applyPlanBlockers.push("missing apply plan JSON with planned_changes for slug");
   } else {
     applyPlanEvidence.push(`apply_plan=${applyPlan.path}`);
+    applyPlanEvidence.push(`plan_scope=${applyPlan.is_slug_scoped ? "slug_scoped" : "batch_only"}`);
     applyPlanEvidence.push(`plan_status=${applyPlan.plan.plan_status ?? "UNKNOWN"}`);
     const ready =
       applyPlan.plan.plan_status === "READY_FOR_OWNER_APPROVAL" &&
@@ -730,11 +812,43 @@ export function buildApSlugFactoryStatusV1(args: {
       (applyPlan.plan.planned_changes ?? []).some(
         (c) => normalizeSlug(c.filter_slug ?? "") === slug,
       );
-    if (ready) {
+    const spent = isSlugSpentInApplyPlanV1({
+      rootDir,
+      slug,
+      plan: applyPlan.plan,
+      readText,
+    });
+    if (spent && !applyPlan.is_slug_scoped) {
+      applyPlanEvidence.push("plan_row_spent=true");
+      applyPlanStatus = "unknown";
+      applyPlanProofKind = "unknown";
+      applyPlanBlockers.push(
+        "batch apply plan row spent for slug — slug-scoped apply plan required for apply_plan_ready",
+      );
+    } else if (spent && applyPlan.is_slug_scoped) {
+      applyPlanEvidence.push("plan_row_spent=true");
+      if (ready) {
+        applyPlanStatus = "complete";
+        applyPlanProofKind = "repo_artifact";
+        proven_facts.push(
+          `PROVEN: apply_plan_ready from slug-scoped plan ${applyPlan.path} (row spent post-apply).`,
+        );
+      } else {
+        applyPlanStatus = "pending";
+        applyPlanProofKind = "unknown";
+        applyPlanBlockers.push("slug-scoped apply plan row spent but plan no longer READY_FOR_OWNER_APPROVAL");
+      }
+    } else if (ready && applyPlan.is_slug_scoped) {
       applyPlanStatus = "complete";
-      proven_facts.push(`PROVEN: apply_plan_ready from ${applyPlan.path}.`);
+      applyPlanProofKind = "repo_artifact";
+      proven_facts.push(`PROVEN: apply_plan_ready from slug-scoped plan ${applyPlan.path}.`);
+    } else if (ready) {
+      applyPlanStatus = "complete";
+      applyPlanProofKind = "repo_artifact";
+      proven_facts.push(`PROVEN: apply_plan_ready from batch plan ${applyPlan.path} (row not spent).`);
     } else {
       applyPlanStatus = "pending";
+      applyPlanProofKind = "unknown";
       applyPlanBlockers.push("apply plan not READY_FOR_OWNER_APPROVAL for slug");
     }
   }
@@ -747,6 +861,7 @@ export function buildApSlugFactoryStatusV1(args: {
     readText,
   });
   let dryRunStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let dryRunProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const dryRunEvidence: string[] = [];
   const dryRunBlockers: string[] = [];
   if (!dryRun.path || !dryRun.run) {
@@ -761,6 +876,7 @@ export function buildApSlugFactoryStatusV1(args: {
       (dryRun.run.blocked_reasons ?? []).length === 0
     ) {
       dryRunStatus = "complete";
+      dryRunProofKind = "repo_artifact";
       proven_facts.push(`PROVEN: executor_dry_run_ready from ${dryRun.path}.`);
     } else {
       dryRunStatus = "blocked";
@@ -778,6 +894,7 @@ export function buildApSlugFactoryStatusV1(args: {
     readText,
   });
   let csvApplyStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let csvApplyProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const csvApplyEvidence: string[] = [];
   const csvApplyBlockers: string[] = [];
   if (!applied.path || !applied.run) {
@@ -792,6 +909,7 @@ export function buildApSlugFactoryStatusV1(args: {
     const changed = (applied.run.changed_slugs ?? []).map(normalizeSlug);
     if (applied.run.apply_status === "APPLIED" && changed.includes(slug)) {
       csvApplyStatus = "complete";
+      csvApplyProofKind = "repo_artifact";
       proven_facts.push(`PROVEN: csv_apply_complete from ${applied.path}.`);
     } else {
       csvApplyStatus = "pending";
@@ -800,6 +918,7 @@ export function buildApSlugFactoryStatusV1(args: {
   }
 
   let repoValidationStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let repoValidationProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const repoValidationEvidence: string[] = [];
   const repoValidationBlockers: string[] = [];
   const post = applied.run?.post_apply_validation;
@@ -832,6 +951,7 @@ export function buildApSlugFactoryStatusV1(args: {
     );
     if (checks.every(Boolean)) {
       repoValidationStatus = "complete";
+      repoValidationProofKind = "repo_artifact";
       proven_facts.push(
         `PROVEN: repo_validation_complete from ${applied.path} post_apply_validation.`,
       );
@@ -861,6 +981,7 @@ export function buildApSlugFactoryStatusV1(args: {
     listDir,
   });
   let supabaseStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let supabaseProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const supabaseEvidence: string[] = [];
   const supabaseBlockers: string[] = [];
   if (!supabaseDoc) {
@@ -875,8 +996,9 @@ export function buildApSlugFactoryStatusV1(args: {
   } else {
     supabaseEvidence.push(`supabase_commit_result_doc=${supabaseDoc}`);
     supabaseStatus = "complete";
-    proven_facts.push(
-      `PROVEN: supabase_parity_applied from committed doc ${supabaseDoc} (operator-recorded COMMIT + ALREADY_APPLIED).`,
+    supabaseProofKind = "documented_only";
+    documented_facts.push(
+      `DOCUMENTED: supabase_parity_applied from committed doc ${supabaseDoc} (operator-recorded SQL COMMIT + parity ALREADY_APPLIED).`,
     );
     unknown_facts.push(
       "INFERRED: supabase_parity_applied from docs-only operator record — not re-verified against live Supabase in this reporter.",
@@ -891,6 +1013,7 @@ export function buildApSlugFactoryStatusV1(args: {
     listDir,
   });
   let smokeStatus: ApSlugFactoryStageStatusValueV1 = "unknown";
+  let smokeProofKind: ApSlugFactoryStageProofKindV1 = "unknown";
   const smokeEvidence: string[] = [];
   const smokeBlockers: string[] = [];
   if (!smokePath) {
@@ -905,67 +1028,81 @@ export function buildApSlugFactoryStatusV1(args: {
   } else {
     smokeEvidence.push(`production_smoke_result=${smokePath}`);
     smokeStatus = "complete";
+    smokeProofKind = "repo_artifact";
     proven_facts.push(`PROVEN: production_smoke_complete from ${smokePath}.`);
   }
+
+  const catalogProofKind: ApSlugFactoryStageProofKindV1 =
+    catalog.status === "complete" ? "repo_artifact" : "unknown";
 
   const stage_statuses: ApSlugFactoryStageStatusV1[] = [
     {
       stage_id: "catalog_present",
       status: catalog.status,
+      proof_kind: catalogProofKind,
       evidence: catalog.evidence,
       blocker_reasons: catalog.blockers,
     },
     {
       stage_id: "discovery_validated",
       status: discoveryStatus,
+      proof_kind: discoveryProofKind,
       evidence: discoveryEvidence,
       blocker_reasons: discoveryBlockers,
     },
     {
       stage_id: "canonical_evidence_present",
       status: evidenceStageStatus,
+      proof_kind: evidenceProofKind,
       evidence: evidenceStageEvidence,
       blocker_reasons: evidenceBlockers,
     },
     {
       stage_id: "aggregator_auto_apply_eligible",
       status: aggregatorStatus,
+      proof_kind: aggregatorProofKind,
       evidence: aggregatorEvidence,
       blocker_reasons: aggregatorBlockers,
     },
     {
       stage_id: "apply_plan_ready",
       status: applyPlanStatus,
+      proof_kind: applyPlanProofKind,
       evidence: applyPlanEvidence,
       blocker_reasons: applyPlanBlockers,
     },
     {
       stage_id: "executor_dry_run_ready",
       status: dryRunStatus,
+      proof_kind: dryRunProofKind,
       evidence: dryRunEvidence,
       blocker_reasons: dryRunBlockers,
     },
     {
       stage_id: "csv_apply_complete",
       status: csvApplyStatus,
+      proof_kind: csvApplyProofKind,
       evidence: csvApplyEvidence,
       blocker_reasons: csvApplyBlockers,
     },
     {
       stage_id: "repo_validation_complete",
       status: repoValidationStatus,
+      proof_kind: repoValidationProofKind,
       evidence: repoValidationEvidence,
       blocker_reasons: repoValidationBlockers,
     },
     {
       stage_id: "supabase_parity_applied",
       status: supabaseStatus,
+      proof_kind: supabaseProofKind,
       evidence: supabaseEvidence,
       blocker_reasons: supabaseBlockers,
     },
     {
       stage_id: "production_smoke_complete",
       status: smokeStatus,
+      proof_kind: smokeProofKind,
       evidence: smokeEvidence,
       blocker_reasons: smokeBlockers,
     },
@@ -986,6 +1123,8 @@ export function buildApSlugFactoryStatusV1(args: {
     proven_facts.push(`PROVEN: catalog_present — slug ${slug} in all four AP catalog CSVs.`);
   }
 
+  const next_unresolved_stage_id = resolveCurrentStageId(stage_statuses);
+
   return {
     contract: AP_SLUG_FACTORY_STATUS_CONTRACT_V1,
     slug,
@@ -993,10 +1132,12 @@ export function buildApSlugFactoryStatusV1(args: {
     data_mutation: false,
     mutation_authorized: false,
     generated_at: generatedAt,
-    current_stage_id: resolveCurrentStageId(stage_statuses),
+    next_unresolved_stage_id,
+    current_stage_id: next_unresolved_stage_id,
     stage_statuses,
     artifact_paths,
     proven_facts,
+    documented_facts,
     unknown_facts,
     next_owner_gate: resolveNextOwnerGate(stage_statuses),
     next_mechanical_command: resolveNextMechanicalCommand({

@@ -67,16 +67,25 @@ test("winix-filter-h-116130 resolves through supabase parity with production smo
   assert.equal(stageById(report, "supabase_parity_applied").status, "complete");
   assert.equal(stageById(report, "production_smoke_complete").status, "unknown");
 
+  assert.equal(report.next_unresolved_stage_id, "production_smoke_complete");
   assert.equal(report.current_stage_id, "production_smoke_complete");
   assert.equal(report.next_owner_gate, "production_smoke");
   assert.ok(report.artifact_paths.apply_plan_path?.includes(WINIX_SLUG));
   assert.ok(report.artifact_paths.supabase_commit_result_doc_path?.includes("WINIX"));
   assert.equal(report.artifact_paths.production_smoke_result_path, null);
 
+  assert.equal(stageById(report, "supabase_parity_applied").proof_kind, "documented_only");
+  assert.ok(
+    report.documented_facts.some((f) =>
+      f.startsWith("DOCUMENTED: supabase_parity_applied"),
+    ),
+  );
+  assert.ok(
+    !report.proven_facts.some((f) => f.includes("supabase_parity_applied")),
+  );
   assert.ok(
     report.unknown_facts.some((f) => f.includes("production_smoke_complete")),
   );
-  assert.ok(report.proven_facts.some((f) => f.includes("supabase_parity_applied")));
 });
 
 test("unknown slug returns blocked catalog stage safely", () => {
@@ -86,6 +95,7 @@ test("unknown slug returns blocked catalog stage safely", () => {
   });
 
   assert.equal(stageById(report, "catalog_present").status, "blocked");
+  assert.equal(report.next_unresolved_stage_id, "catalog_present");
   assert.equal(report.current_stage_id, "catalog_present");
   assert.equal(report.next_owner_gate, "catalog_ingest");
   assert.ok(stageById(report, "discovery_validated").status === "unknown");
@@ -101,4 +111,22 @@ test("winix commit result doc is present in repo for parity stage proof", () => 
   const body = readFileSync(docPath, "utf8");
   assert.ok(body.includes("ALREADY_APPLIED"));
   assert.ok(body.includes(WINIX_SLUG));
+});
+
+test("winix-hepa-115115 does not get false apply_plan_ready from spent batch plan", () => {
+  const HEPA_SLUG = "winix-hepa-115115";
+  const report = buildApSlugFactoryStatusV1({ rootDir: REPO_ROOT, slug: HEPA_SLUG });
+
+  assert.equal(stageById(report, "catalog_present").status, "complete");
+  assert.notEqual(stageById(report, "apply_plan_ready").status, "complete");
+  assert.equal(stageById(report, "apply_plan_ready").proof_kind, "unknown");
+  assert.ok(
+    stageById(report, "apply_plan_ready").evidence.some((e) => e.includes("batch_only")),
+  );
+  assert.ok(
+    stageById(report, "apply_plan_ready").blocker_reasons.some((b) =>
+      b.includes("batch apply plan row spent"),
+    ),
+  );
+  assert.equal(report.next_unresolved_stage_id, "discovery_validated");
 });
