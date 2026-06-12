@@ -47,6 +47,7 @@
     "buckparts:runbook:whole-house-water": "tsx scripts/runbook-whole-house-water.ts",
     "buckparts:search-gap:status:whole-house-water": "tsx scripts/apply-search-gap-status-whole-house-water.ts",
     "buckparts:guardrails:air-purifier": "tsx scripts/report-air-purifier-mapping-guardrails.ts",
+    "buckparts:ap:slug-status": "tsx scripts/report-ap-slug-factory-status-v1.ts",
     "buckparts:runbook:air-purifier": "tsx scripts/runbook-air-purifier.ts",
     "buckparts:search-gap:status:air-purifier": "tsx scripts/apply-search-gap-status-air-purifier.ts",
     "buckparts:ops:cross-wedge": "tsx scripts/report-homekeep-cross-wedge-ops.ts",
