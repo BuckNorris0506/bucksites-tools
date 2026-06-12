@@ -4,11 +4,12 @@
 
 **Report type:** read-only owner decision support — **one-slug Supabase SQL dry-run only**  
 **Generated:** 2026-06-10  
-**Repo checkpoint:** `da57cd1`  
+**Repo checkpoint:** `67c724d`  
 **Deploy note:** Deploy for `d58afca` was **cancelled** — treat **committed repo CSV/artifacts** as truth, **not** live deployed/public UI truth.  
 **Scope:** **one** filter slug only — `winix-filter-h-116130` — **not** `winix-filter-s-1712-0096-00`, **not** `winix-carbon-116131` demotion/repair  
 **SQL plan:** `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`  
-**Dry-run result:** `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md` (**PROVEN** executed with `ROLLBACK`)
+**Dry-run result:** `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`  
+**COMMIT + parity result:** `docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md` (**PROVEN** COMMIT + `ALREADY_APPLIED`)
 
 **Prior stages (local CSV — PROVEN complete):**
 
@@ -68,17 +69,29 @@ Full reconciliation: `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FIL
 
 ---
 
-## 0. Dry-run reconciliation (PROVEN at `da57cd1`)
+## 0. Reconciliation timeline
+
+### Dry-run (`da57cd1`) — **PROVEN**
 
 | Check | Result |
 |-------|--------|
-| SQL dry-run executed with `ROLLBACK` | **PROVEN** |
-| `brand_winix_exists` | **1** |
-| `model_5500_2_exists` | **1** |
-| `carbon_mapping_unchanged_baseline` | **1** |
+| SQL dry-run with `ROLLBACK` | **PROVEN** |
 | `filter_exists_after_rollback` | **0** |
-| No Supabase mutation persisted | **PROVEN** |
-| `COMMIT` authorized | **PROVEN no** — separate owner decision required |
+
+### COMMIT + parity (`67c724d`) — **PROVEN**
+
+| Check | Result |
+|-------|--------|
+| SQL `COMMIT` succeeded | **PROVEN** |
+| `filter_exists_after_commit` | **1** |
+| `retailer_link_exists_after_commit` | **1** |
+| `alias_exists_after_commit` | **1** |
+| `compat_mapping_exists_after_commit` | **1** |
+| `carbon_mapping_unchanged_after_commit` | **1** |
+| Parity `apply_status` | **`ALREADY_APPLIED`** |
+| Further Supabase update needed | **PROVEN no** |
+
+Full record: `docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md`
 
 ---
 
@@ -197,28 +210,20 @@ winix-5500-2,winix-filter-h-116130,true
 
 ## 6. Exact next action
 
-### Dry-run — **COMPLETE** (PROVEN)
+### SQL dry-run + COMMIT + parity — **COMPLETE** (PROVEN at `67c724d`)
 
-Reconciliation recorded in `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`.
+See `docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md`.
 
-### Next action — COMMIT decision (**NOT RUN YET**)
+**PROVEN:** Parity dry-run `ALREADY_APPLIED` — no parity `--apply` required.
 
-Requires owner **Option A** in dry-run result doc §5. Then:
+### Next step — deploy / live smoke only (**UNKNOWN**, separate authorization)
 
-1. Open `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
-2. Execute §1 preflight + §2 INSERTs + §3 verification unchanged
-3. Replace final `ROLLBACK;` with `COMMIT;`
+Live public exposure not proven (deploy cancelled at `d58afca`). Optional future owner packet for:
 
-**NOT AUTHORIZED until owner approves COMMIT in chat.**
+- Production deploy
+- Runtime smoke on `/air-purifier/filter/winix-filter-h-116130`
 
-### Post-COMMIT verification (after authorized COMMIT only)
-
-```bash
-npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
-  --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-winix-filter-h-116130-v1.json
-```
-
-**INFERRED:** Parity may report `ALREADY_APPLIED` if committed rows match plan `after_row`.
+**Not authorized by this docs record.**
 
 ---
 
@@ -249,6 +254,7 @@ npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
 - `docs/air-purifier/AP-EXECUTOR-DRY-RUN-OWNER-REVIEW-WINIX-FILTER-H-116130-v1.md`
 - `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
 - `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`
+- `docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md`
 
 ---
 

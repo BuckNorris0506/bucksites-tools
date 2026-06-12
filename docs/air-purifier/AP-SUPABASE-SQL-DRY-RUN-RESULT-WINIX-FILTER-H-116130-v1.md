@@ -11,6 +11,8 @@
 
 **Deploy note:** Deploy for `d58afca` was **cancelled** — repo CSV is truth; live public runtime is **UNKNOWN**.
 
+**COMMIT result (subsequent):** `docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md` at checkpoint `67c724d` — **PROVEN** COMMIT + parity `ALREADY_APPLIED`.
+
 ---
 
 ## 1. Dry-run execution summary
@@ -67,65 +69,28 @@ Dry-run success does **not** auto-authorize persistence.
 
 ---
 
-## 5. Next owner decision (post dry-run)
+## 5. COMMIT status — **COMPLETE** (PROVEN at `67c724d`)
 
-Choose **exactly one** and record in chat.
+Owner COMMIT executed. Full reconciliation:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  OPTION A — APPROVE COMMIT (winix-filter-h-116130 SQL plan only)            │
-│                                                                             │
-│  Dry-run verification passed per AP-SUPABASE-SQL-DRY-RUN-RESULT-            │
-│  WINIX-FILTER-H-116130-v1.md.                                               │
-│                                                                             │
-│  I authorize executing the same SQL plan with COMMIT instead of ROLLBACK:   │
-│    docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql         │
-│                                                                             │
-│  I do NOT authorize: seed import, parity --apply, deploy, CSV changes,      │
-│  other slugs, or winix-carbon-116131 demotion.                              │
-└─────────────────────────────────────────────────────────────────────────────┘
+`docs/air-purifier/AP-SUPABASE-SQL-COMMIT-RESULT-WINIX-FILTER-H-116130-v1.md`
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  OPTION B — DO NOT APPROVE COMMIT                                           │
-│                                                                             │
-│  I do not authorize Supabase COMMIT for winix-filter-h-116130.              │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+| Post-COMMIT check | Result |
+|-------------------|--------|
+| `filter_exists_after_commit` | **1** |
+| `retailer_link_exists_after_commit` | **1** |
+| `alias_exists_after_commit` | **1** |
+| `compat_mapping_exists_after_commit` | **1** |
+| `carbon_mapping_unchanged_after_commit` | **1** |
+| Parity dry-run `apply_status` | **`ALREADY_APPLIED`** |
+
+**PROVEN:** No further Supabase parity `--apply` required for this slug.
 
 ---
 
-## 6. Exact next SQL action if owner approves COMMIT
+## 6. Historical — COMMIT action (executed)
 
-**NOT RUN YET** — requires explicit Option A above.
-
-1. Open `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
-2. Execute preflight §1 and guarded INSERTs §2 unchanged
-3. Verify §3 post-insert SELECTs
-4. Replace final `ROLLBACK;` with:
-
-```sql
-COMMIT;
-```
-
-**Do not** run `npm run seed:import:air-purifier` in the same session.
-
-### Post-COMMIT verification (read-only)
-
-```bash
-npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
-  --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-winix-filter-h-116130-v1.json
-```
-
-Re-check carbon baseline:
-
-```sql
-SELECT m.slug AS model_slug, f.slug AS filter_slug, c.is_recommended
-FROM public.air_purifier_compatibility_mappings c
-JOIN public.air_purifier_models m ON m.id = c.air_purifier_model_id
-JOIN public.air_purifier_filters f ON f.id = c.air_purifier_filter_id
-WHERE lower(m.slug) = 'winix-5500-2'
-  AND lower(f.slug) = 'winix-carbon-116131';
-```
+SQL plan committed via `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql` with final `COMMIT;` (not `ROLLBACK`).
 
 ---
 
