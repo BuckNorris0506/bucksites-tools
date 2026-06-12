@@ -52,7 +52,7 @@ test("ap_slug_factory_status_v1 is read-only and does not write files", () => {
   }
 });
 
-test("winix-filter-h-116130 resolves through supabase parity with production smoke unknown", () => {
+test("winix-filter-h-116130 resolves all factory stages including production smoke", () => {
   const report = buildApSlugFactoryStatusV1({ rootDir: REPO_ROOT, slug: WINIX_SLUG });
 
   assert.equal(report.slug, WINIX_SLUG);
@@ -65,26 +65,31 @@ test("winix-filter-h-116130 resolves through supabase parity with production smo
   assert.equal(stageById(report, "csv_apply_complete").status, "complete");
   assert.equal(stageById(report, "repo_validation_complete").status, "complete");
   assert.equal(stageById(report, "supabase_parity_applied").status, "complete");
-  assert.equal(stageById(report, "production_smoke_complete").status, "unknown");
+  assert.equal(stageById(report, "production_smoke_complete").status, "complete");
 
-  assert.equal(report.next_unresolved_stage_id, "production_smoke_complete");
-  assert.equal(report.current_stage_id, "production_smoke_complete");
-  assert.equal(report.next_owner_gate, "production_smoke");
+  assert.equal(report.next_unresolved_stage_id, null);
+  assert.equal(report.current_stage_id, null);
+  assert.equal(report.next_owner_gate, null);
   assert.ok(report.artifact_paths.apply_plan_path?.includes(WINIX_SLUG));
   assert.ok(report.artifact_paths.supabase_commit_result_doc_path?.includes("WINIX"));
-  assert.equal(report.artifact_paths.production_smoke_result_path, null);
+  assert.ok(
+    report.artifact_paths.production_smoke_result_path?.includes(
+      "AP-PRODUCTION-SMOKE-RESULT-WINIX-FILTER-H-116130",
+    ),
+  );
 
   assert.equal(stageById(report, "supabase_parity_applied").proof_kind, "documented_only");
+  assert.equal(stageById(report, "production_smoke_complete").proof_kind, "repo_artifact");
   assert.ok(
-    report.documented_facts.some((f) =>
-      f.startsWith("DOCUMENTED: supabase_parity_applied"),
-    ),
+    report.proven_facts.some((f) => f.includes("production_smoke_complete")),
   );
   assert.ok(
     !report.proven_facts.some((f) => f.includes("supabase_parity_applied")),
   );
   assert.ok(
-    report.unknown_facts.some((f) => f.includes("production_smoke_complete")),
+    report.documented_facts.some((f) =>
+      f.startsWith("DOCUMENTED: supabase_parity_applied"),
+    ),
   );
 });
 
