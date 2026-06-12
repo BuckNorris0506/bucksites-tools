@@ -1,0 +1,465 @@
+{
+  "report_name": "air_purifier_apply_planner_batch_v2_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-06-12T22:15:23.990Z",
+  "source_results_dir": "data/air-purifier/batch-production/agent-results-batch-v2",
+  "source_aggregator_generated_at": "2026-06-12T22:15:23.992Z",
+  "synthesized_mutation_slugs": [
+    "levoit-rf-rar040",
+    "levoit-rf-rar060",
+    "levoit-rf-c131",
+    "levoit-rf-cr200",
+    "winix-hepa-115115",
+    "winix-filter-h-116130",
+    "gg-flt5000",
+    "coway-max2-hepa",
+    "rabbit-biogs-minusa2"
+  ],
+  "plan_status": "READY_FOR_OWNER_APPROVAL",
+  "planned_change_count": 4,
+  "planned_changes": [
+    {
+      "filter_slug": "levoit-rf-rar040",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "final_url": "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
+      "before_row": {
+        "filter_slug": "levoit-rf-rar040",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "levoit-rf-rar040",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR040. Official PDP core-400s-p-3-stage-replacement-filter HTTP 200; H1 Levoit Core® 400S-P 3-Stage Replacement Filter; consumer tokens 400S-P, Core 400, Core 400S in primary slice. PROVEN: internal tokens RAR040 and LEVOIT-RF-RAR040 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0051A. Compatible with Core 400S-P only per manufacturer copy.",
+        "browser_truth_checked_at": "2026-06-12T22:15:23.992Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR040. Official PDP core-400s-p-3-stage-replacement-filter HTTP 200; H1 Levoit Core® 400S-P 3-Stage Replacement Filter; consumer tokens 400S-P, Core 400, Core 400S in primary slice. PROVEN: internal tokens RAR040 and LEVOIT-RF-RAR040 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0051A. Compatible with Core 400S-P only per manufacturer copy.",
+      "browser_truth_checked_at": "2026-06-12T22:15:23.992Z",
+      "evidence_summary": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR040. Official PDP core-400s-p-3-stage-replacement-filter HTTP 200; H1 Levoit Core® 400S-P 3-Stage Replacement Filter; consumer tokens 400S-P, Core 400, Core 400S in primary slice. PROVEN: internal tokens RAR040 and LEVOIT-RF-RAR040 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0051A. Compatible with Core 400S-P only per manufacturer copy."
+    },
+    {
+      "filter_slug": "levoit-rf-rar060",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "final_url": "https://levoit.com/products/core-600s-p-original-replacement-filter",
+      "before_row": {
+        "filter_slug": "levoit-rf-rar060",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "levoit-rf-rar060",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/products/core-600s-p-original-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/products/core-600s-p-original-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR060. Official PDP core-600s-p-original-replacement-filter HTTP 200; H1 Levoit Core® 600S-P Original Replacement Filter; consumer token 600S-P in primary slice. PROVEN: internal tokens RAR060 and LEVOIT-RF-RAR060 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 400S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0061A.",
+        "browser_truth_checked_at": "2026-06-12T22:15:23.992Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR060. Official PDP core-600s-p-original-replacement-filter HTTP 200; H1 Levoit Core® 600S-P Original Replacement Filter; consumer token 600S-P in primary slice. PROVEN: internal tokens RAR060 and LEVOIT-RF-RAR060 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 400S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0061A.",
+      "browser_truth_checked_at": "2026-06-12T22:15:23.992Z",
+      "evidence_summary": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns 0 results for LEVOIT-RF-RAR060. Official PDP core-600s-p-original-replacement-filter HTTP 200; H1 Levoit Core® 600S-P Original Replacement Filter; consumer token 600S-P in primary slice. PROVEN: internal tokens RAR060 and LEVOIT-RF-RAR060 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; Vital 200, 400S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0061A."
+    },
+    {
+      "filter_slug": "levoit-rf-c131",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "final_url": "https://levoit.com/products/lv-pur131-air-purifier-replacement-filter",
+      "before_row": {
+        "filter_slug": "levoit-rf-c131",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "levoit-rf-c131",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/products/lv-pur131-air-purifier-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/products/lv-pur131-air-purifier-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns non-zero product links for LEVOIT-RF-C131 but not the sellable PDP. Official PDP lv-pur131-air-purifier-replacement-filter HTTP 200; H1 Levoit LV-PUR131 Air Purifier Replacement Filter; consumer tokens LV-PUR131, PUR131 in primary slice. PROVEN: internal tokens C131 and LEVOIT-RF-C131 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0002. Compatible with LV-PUR131 and LV-PUR131S only per manufacturer copy.",
+        "browser_truth_checked_at": "2026-06-12T22:15:23.992Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns non-zero product links for LEVOIT-RF-C131 but not the sellable PDP. Official PDP lv-pur131-air-purifier-replacement-filter HTTP 200; H1 Levoit LV-PUR131 Air Purifier Replacement Filter; consumer tokens LV-PUR131, PUR131 in primary slice. PROVEN: internal tokens C131 and LEVOIT-RF-C131 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0002. Compatible with LV-PUR131 and LV-PUR131S only per manufacturer copy.",
+      "browser_truth_checked_at": "2026-06-12T22:15:23.992Z",
+      "evidence_summary": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns non-zero product links for LEVOIT-RF-C131 but not the sellable PDP. Official PDP lv-pur131-air-purifier-replacement-filter HTTP 200; H1 Levoit LV-PUR131 Air Purifier Replacement Filter; consumer tokens LV-PUR131, PUR131 in primary slice. PROVEN: internal tokens C131 and LEVOIT-RF-C131 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, 200S-P only in cross-sell. Shopify SKU HEACAFLVNUS0002. Compatible with LV-PUR131 and LV-PUR131S only per manufacturer copy."
+    },
+    {
+      "filter_slug": "levoit-rf-cr200",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-levoit-oem-discovery-v1",
+      "final_url": "https://levoit.com/products/core-200s-p-replacement-filter",
+      "before_row": {
+        "filter_slug": "levoit-rf-cr200",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "levoit-rf-cr200",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/products/core-200s-p-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/products/core-200s-p-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns product links for LEVOIT-RF-CR200 but not the sellable PDP. Official PDP core-200s-p-replacement-filter HTTP 200; H1 Levoit Core 200S-P 3-Stage Replacement Filter; consumer tokens 200S-P, Core 200, Core 200S in primary slice. PROVEN: internal tokens CR200 and LEVOIT-RF-CR200 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, Vital 200 only in cross-sell. Shopify SKU HEACAFLVNUS0105Y. Compatible with Core 200S-P only per manufacturer copy.",
+        "browser_truth_checked_at": "2026-06-12T22:15:23.992Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns product links for LEVOIT-RF-CR200 but not the sellable PDP. Official PDP core-200s-p-replacement-filter HTTP 200; H1 Levoit Core 200S-P 3-Stage Replacement Filter; consumer tokens 200S-P, Core 200, Core 200S in primary slice. PROVEN: internal tokens CR200 and LEVOIT-RF-CR200 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, Vital 200 only in cross-sell. Shopify SKU HEACAFLVNUS0105Y. Compatible with Core 200S-P only per manufacturer copy.",
+      "browser_truth_checked_at": "2026-06-12T22:15:23.992Z",
+      "evidence_summary": "Consumer Naming Bridge Option A; live re-proof 2026-06-12 (BuckPartsOEMBrowserTruth/1.0): search placeholder returns product links for LEVOIT-RF-CR200 but not the sellable PDP. Official PDP core-200s-p-replacement-filter HTTP 200; H1 Levoit Core 200S-P 3-Stage Replacement Filter; consumer tokens 200S-P, Core 200, Core 200S in primary slice. PROVEN: internal tokens CR200 and LEVOIT-RF-CR200 absent from primary. Add to Cart present; HTML product JSON available:true. wrong_family_tokens_seen [] in primary; 400S-P, 600S-P, Vital 200 only in cross-sell. Shopify SKU HEACAFLVNUS0105Y. Compatible with Core 200S-P only per manufacturer copy."
+    }
+  ],
+  "refused_changes": [
+    {
+      "slug": "holmes-hapf30",
+      "retailer_key": null,
+      "review_group": "reference_eligible",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=reference_eligible",
+        "passes_reference_validation"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "shark-hepa-hp100",
+      "retailer_key": null,
+      "review_group": "reference_eligible",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=reference_eligible",
+        "passes_reference_validation"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma25-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma40-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "medify-ma50-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-f2-211",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-pro-m-particle",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-vital200-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "winix-carbon-116131",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "rabbit-carbon-minusa2",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "coway-airmega250-rf",
+      "retailer_key": null,
+      "review_group": "owner_review_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=owner_review_required",
+        "agent_needs_owner_review",
+        "owner_review_required_flag"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-rar029",
+      "retailer_key": null,
+      "review_group": "rejected",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=rejected",
+        "REJECT_WRONG_FAMILY"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "blueair-particle-411",
+      "retailer_key": null,
+      "review_group": "catalog_task_required",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=catalog_task_required",
+        "CATALOG_GAP"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "levoit-rf-meta-air",
+      "retailer_key": null,
+      "review_group": "no_safe_path",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=no_safe_path",
+        "NO_SAFE_PATH"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "shark-carbon-foam",
+      "retailer_key": null,
+      "review_group": "no_safe_path",
+      "reasons": [
+        "not_auto_apply_eligible: review_group=no_safe_path",
+        "NO_SAFE_PATH"
+      ],
+      "source": "review_group"
+    },
+    {
+      "slug": "winix-hepa-115115",
+      "retailer_key": "oem-catalog",
+      "review_group": "auto_apply_eligible",
+      "reasons": [
+        "before_row_validation:before_row_not_search_placeholder",
+        "before_row_validation:before_row_already_has_browser_truth"
+      ],
+      "source": "planner_validation"
+    },
+    {
+      "slug": "winix-filter-h-116130",
+      "retailer_key": "oem-catalog",
+      "review_group": "auto_apply_eligible",
+      "reasons": [
+        "before_row_validation:before_row_not_search_placeholder",
+        "before_row_validation:before_row_already_has_browser_truth"
+      ],
+      "source": "planner_validation"
+    },
+    {
+      "slug": "gg-flt5000",
+      "retailer_key": "oem-catalog",
+      "review_group": "auto_apply_eligible",
+      "reasons": [
+        "before_row_validation:before_row_not_search_placeholder",
+        "before_row_validation:before_row_already_has_browser_truth"
+      ],
+      "source": "planner_validation"
+    },
+    {
+      "slug": "coway-max2-hepa",
+      "retailer_key": "oem-catalog",
+      "review_group": "auto_apply_eligible",
+      "reasons": [
+        "before_row_validation:before_row_not_search_placeholder",
+        "before_row_validation:before_row_already_has_browser_truth"
+      ],
+      "source": "planner_validation"
+    },
+    {
+      "slug": "rabbit-biogs-minusa2",
+      "retailer_key": "oem-catalog",
+      "review_group": "auto_apply_eligible",
+      "reasons": [
+        "before_row_validation:before_row_not_search_placeholder",
+        "before_row_validation:before_row_already_has_browser_truth"
+      ],
+      "source": "planner_validation"
+    }
+  ],
+  "rollback_rows": [
+    {
+      "filter_slug": "levoit-rf-rar040",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-rar060",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-c131",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-cr200",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "projected_coverage_delta": {
+    "direct_buyable_plus": 4,
+    "official_reference_plus": 0,
+    "blocked_minus": 4
+  },
+  "owner_approval_required": true,
+  "apply_executor_available": false,
+  "recommended_next_action": "Owner approve 4 batch-v2 planned change(s), then run apply executor with --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json (not run in this step).",
+  "validation_checklist": [
+    "Confirm owner approval for each of the 4 batch-v2 direct-buy slugs before apply.",
+    "Re-run buyLinkGateFailureKind on after_row payloads — expect null for direct_buyable.",
+    "Verify /air-purifier/go remains safe-only after apply (future executor step).",
+    "Keep rollback_rows to revert data/air-purifier/retailer_links.csv if needed.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "npm run lint && npm run build after apply executor (future task)."
+  ],
+  "notes": [
+    "Batch-v2 bridge — read-only plan; no CSV writes in this step.",
+    "Only aggregator review_groups.auto_apply_eligible rows are eligible (PASS_DIRECT_BUYABLE with strict validation).",
+    "recommended_csv_mutation synthesized from final_url when evidence rows had null mutations.",
+    "PASS_REFERENCE, NEEDS_OWNER_REVIEW, NO_SAFE_PATH, REJECT_*, and CATALOG_GAP rows are in refused_changes."
+  ]
+}
