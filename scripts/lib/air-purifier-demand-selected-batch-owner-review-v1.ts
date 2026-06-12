@@ -210,6 +210,7 @@ function buildOwnerReviewSortableCandidatesV1(
       candidate.state === "catalog_identity_gap"
         ? true
         : evidence?.hold_needs_owner_review === true;
+    const searchPlaceholderPrimary = candidate.gate_failure === "search_placeholder";
     const effective_priority_score =
       candidate.priority_score + (promote_pass_reference ? AP_OWNER_REVIEW_PROMOTE_PASS_REFERENCE_BONUS_V1 : 0);
 
@@ -229,7 +230,8 @@ function buildOwnerReviewSortableCandidatesV1(
       sort_tier,
       effective_priority_score,
       evidence_disposition,
-      owner_review_required: hold_needs_owner_review,
+      owner_review_required:
+        hold_needs_owner_review || (promote_pass_reference && searchPlaceholderPrimary),
       rationale,
     });
   }

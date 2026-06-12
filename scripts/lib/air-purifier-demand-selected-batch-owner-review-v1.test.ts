@@ -359,7 +359,10 @@ test("live repo owner-review candidates are evidence-aware and exclude shark-car
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
-  assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "shark-hepa-hp100"));
+  const sharkHp100Row = lane.candidate_rows.find((row) => row.filter_slug === "shark-hepa-hp100");
+  assert.ok(sharkHp100Row);
+  assert.equal(sharkHp100Row.evidence_disposition, "hold_needs_owner_review");
+  assert.equal(sharkHp100Row.owner_review_required, true);
   assert.ok(
     lane.excluded_candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"),
   );
@@ -391,12 +394,17 @@ test("live repo projection excludes levoit-rf-rar029 wrong_family_reject from ow
   assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
 });
 
-test("live repo promotes shark-hepa-hp100 only when PASS_REFERENCE evidence is proven", () => {
+test("live repo withholds shark-hepa-hp100 promotion when batch-v3 withholds stale PASS_REFERENCE", () => {
   const evidenceIndex = loadApOwnerReviewEvidenceIndexV1({ rootDir: REPO_ROOT });
+  const holmes = evidenceIndex.entries_by_slug.get("holmes-hapf30");
+  assert.ok(holmes);
+  assert.equal(holmes.promote_pass_reference, true);
+
   const sharkHp100 = evidenceIndex.entries_by_slug.get("shark-hepa-hp100");
   assert.ok(sharkHp100);
-  assert.equal(sharkHp100.promote_pass_reference, true);
-  assert.match(sharkHp100.rationale, /PASS_REFERENCE with recommended_csv_mutation/);
+  assert.equal(sharkHp100.promote_pass_reference, false);
+  assert.equal(sharkHp100.hold_needs_owner_review, true);
+  assert.match(sharkHp100.rationale, /batch-v3 withholds stale PASS_REFERENCE promotion/i);
   assert.ok(
     sharkHp100.source_files.includes(
       "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",

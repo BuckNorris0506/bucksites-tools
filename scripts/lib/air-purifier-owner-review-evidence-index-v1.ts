@@ -44,6 +44,12 @@ export type ApOwnerReviewEvidenceIndexV1 = {
   excluded_slugs: string[];
 };
 
+const AP_BATCH_V3_RESULTS_DIR_V1 =
+  "data/air-purifier/batch-production/agent-results-batch-v3" as const;
+
+const DOCUMENTED_SEARCH_PLACEHOLDER_DEFECT_RE_V1 =
+  /returns zero results|search placeholder|site search for .+ returns zero/i;
+
 type SlugEvidenceAccumulatorV1 = {
   filter_slug: string;
   source_files: string[];
@@ -53,6 +59,8 @@ type SlugEvidenceAccumulatorV1 = {
   has_needs_owner_review: boolean;
   has_pass_reference_mutation: boolean;
   pass_reference_source_file: string | null;
+  pass_reference_evidence_notes: string | null;
+  batch_v3_reference_withhold: boolean;
   model_first_mapping_review_required: boolean;
 };
 
@@ -79,15 +87,63 @@ function ingestAgentRow(acc: SlugEvidenceAccumulatorV1, row: ApAggregatedReviewR
   ) {
     acc.has_pass_reference_mutation = true;
     acc.pass_reference_source_file = row.source_file;
+    if (row.evidence_notes?.trim()) {
+      acc.pass_reference_evidence_notes = row.evidence_notes.trim();
+    }
   }
+}
+
+function loadBatchV3ReferenceWithholdSlugsV1(args: {
+  rootDir: string;
+  fileExists: (absolutePath: string) => boolean;
+  readTextFile: (absolutePath: string) => string;
+}): Set<string> {
+  const withheld = new Set<string>();
+  const rel = `${AP_BATCH_V3_RESULTS_DIR_V1}/ap-oem-search-placeholder-v1.results.json`;
+  const abs = path.join(args.rootDir, rel);
+  if (!args.fileExists(abs)) return withheld;
+  try {
+    const parsed = JSON.parse(args.readTextFile(abs)) as {
+      candidate_results?: Array<{
+        filter_slug?: string;
+        evidence_status?: string;
+        recommended_csv_mutation?: unknown;
+      }>;
+    };
+    for (const row of parsed.candidate_results ?? []) {
+      const slug = row.filter_slug?.trim();
+      if (!slug) continue;
+      const status = (row.evidence_status ?? "").trim().toUpperCase();
+      if (
+        (status === "UNKNOWN" || status === "BLOCKED" || status === "FAIL") &&
+        row.recommended_csv_mutation == null
+      ) {
+        withheld.add(slug);
+      }
+    }
+  } catch {
+    return withheld;
+  }
+  return withheld;
+}
+
+function passReferencePromotionAllowedV1(acc: SlugEvidenceAccumulatorV1): boolean {
+  if (!acc.has_pass_reference_mutation) return false;
+  if (!acc.batch_v3_reference_withhold) return true;
+  const notes = acc.pass_reference_evidence_notes ?? "";
+  return DOCUMENTED_SEARCH_PLACEHOLDER_DEFECT_RE_V1.test(notes);
 }
 
 function finalizeSlugEvidenceAccumulatorV1(acc: SlugEvidenceAccumulatorV1): ApOwnerReviewEvidenceEntryV1 {
   const exclude_from_owner_review =
     acc.has_no_safe_path || acc.model_first_mapping_review_required;
-  const promote_pass_reference = !exclude_from_owner_review && acc.has_pass_reference_mutation;
+  const promote_pass_reference =
+    !exclude_from_owner_review && passReferencePromotionAllowedV1(acc);
   const hold_needs_owner_review =
-    !exclude_from_owner_review && !promote_pass_reference && acc.has_needs_owner_review;
+    !exclude_from_owner_review &&
+    (!promote_pass_reference &&
+      (acc.has_needs_owner_review ||
+        (acc.has_pass_reference_mutation && acc.batch_v3_reference_withhold)));
 
   let disposition: ApOwnerReviewEvidenceDispositionV1 = "neutral";
   if (acc.has_no_safe_path) disposition = "exclude_no_safe_path";
@@ -105,6 +161,20 @@ function finalizeSlugEvidenceAccumulatorV1(acc: SlugEvidenceAccumulatorV1): ApOw
   if (promote_pass_reference && acc.pass_reference_source_file) {
     rationaleParts.push(
       `Agent evidence PASS_REFERENCE with recommended_csv_mutation (${acc.pass_reference_source_file}).`,
+    );
+    if (DOCUMENTED_SEARCH_PLACEHOLDER_DEFECT_RE_V1.test(acc.pass_reference_evidence_notes ?? "")) {
+      rationaleParts.push(
+        "Documented manufacturer search-placeholder defect; reference PDP path retained pending live re-verify.",
+      );
+    }
+  }
+  if (
+    !promote_pass_reference &&
+    acc.has_pass_reference_mutation &&
+    acc.batch_v3_reference_withhold
+  ) {
+    rationaleParts.push(
+      "Newest batch-v3 withholds stale PASS_REFERENCE promotion; live reference PDP re-verify required before discovery slice.",
     );
   }
   if (hold_needs_owner_review) {
@@ -172,6 +242,11 @@ export function loadApOwnerReviewEvidenceIndexV1(args: {
   const readTextFile = args.readTextFile ?? ((p: string) => readFileSync(p, "utf8"));
 
   const accumulators = new Map<string, SlugEvidenceAccumulatorV1>();
+  const batchV3WithholdSlugs = loadBatchV3ReferenceWithholdSlugsV1({
+    rootDir: args.rootDir,
+    fileExists,
+    readTextFile,
+  });
   let source_status: ApOwnerReviewEvidenceIndexV1["source_status"] = "UNKNOWN";
   let dirsWithFiles = 0;
 
@@ -210,6 +285,8 @@ export function loadApOwnerReviewEvidenceIndexV1(args: {
           has_needs_owner_review: false,
           has_pass_reference_mutation: false,
           pass_reference_source_file: null,
+          pass_reference_evidence_notes: null,
+          batch_v3_reference_withhold: batchV3WithholdSlugs.has(row.slug),
           model_first_mapping_review_required: false,
         } satisfies SlugEvidenceAccumulatorV1);
       ingestAgentRow(acc, row);
@@ -219,6 +296,9 @@ export function loadApOwnerReviewEvidenceIndexV1(args: {
 
   const entries_by_slug = new Map<string, ApOwnerReviewEvidenceEntryV1>();
   for (const acc of Array.from(accumulators.values())) {
+    if (batchV3WithholdSlugs.has(acc.filter_slug)) {
+      acc.batch_v3_reference_withhold = true;
+    }
     entries_by_slug.set(acc.filter_slug, finalizeSlugEvidenceAccumulatorV1(acc));
   }
 

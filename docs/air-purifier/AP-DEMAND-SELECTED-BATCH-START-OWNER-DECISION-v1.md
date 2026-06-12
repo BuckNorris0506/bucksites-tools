@@ -207,41 +207,13 @@ Even after Jared approves read-only discovery, **all of the following stay block
 
 ---
 
-## 10. Exact HyperAgent prompt (after Option A — output-only, no file writes)
+## 10. Exact HyperAgent prompt (after Option A — validation-ready chat JSON)
 
-**Surface: HyperAgent**
+**Validation-ready contract:** `ap_hyperagent_chat_discovery_output_v1` — full field spec, checklist, and example in **`docs/air-purifier/AP-HYPERAGENT-DISCOVERY-VALIDATION-OUTPUT-v1.md`**.
 
-```text
-BuckParts AP read-only discovery — FIRST SLICE ONLY
+**Current slice (repo truth after Cursor validation):** **`holmes-hapf30` only.** `shark-hepa-hp100` is held (`hold_needs_owner_review`) until live PDP re-proof of committed `HE1FKBAS` URL — do not include in next discovery prompt.
 
-Repo context: /Users/jaredbuckman/bucksites-tools
-Owner decision: APPROVE READ-ONLY DISCOVERY FOR FIRST SLICE ONLY
-
-Scope — exactly these 2 filter slugs (no others):
-1. holmes-hapf30
-2. shark-hepa-hp100
-
-Task:
-Run live-browser manufacturer storefront discovery for each slug.
-For each slug, return in this chat (structured text, not files):
-- filter_slug
-- searched_url (current CSV primary / packet candidate URL)
-- final_url reached
-- exact_tokens_seen (primary product area only)
-- wrong_family_tokens_seen (if any, primary slice only)
-- buy_action_seen (true/false) and stock state (in stock / OOS / notify / where-to-buy only)
-- browser_truth_classification recommendation (reference vs direct_buyable vs blocked) with one-sentence rationale
-- reference_only_reason (if no Add to Cart)
-
-Hard boundaries — MUST NOT:
-- Write any file to the repo (no *.results.json, no CSV, no evidence dirs)
-- Create batch run-registry JSON
-- Mutate Supabase, public UI, or deploy
-- Touch any slug outside the 2 listed above
-- Claim apply-eligible or truth-closure status
-
-Output: chat response only. Discovery input for Cursor/repo validation — not canonical repo evidence.
-```
+**Surface: HyperAgent** — copy prompt from §7 of `AP-HYPERAGENT-DISCOVERY-VALIDATION-OUTPUT-v1.md`.
 
 **Surface: Terminal — re-verify Command Center flags unchanged (read-only):**
 
