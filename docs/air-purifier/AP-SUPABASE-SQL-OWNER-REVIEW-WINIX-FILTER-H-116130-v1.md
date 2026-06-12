@@ -4,10 +4,11 @@
 
 **Report type:** read-only owner decision support — **one-slug Supabase SQL dry-run only**  
 **Generated:** 2026-06-10  
-**Repo checkpoint:** `d58afca`  
+**Repo checkpoint:** `da57cd1`  
 **Deploy note:** Deploy for `d58afca` was **cancelled** — treat **committed repo CSV/artifacts** as truth, **not** live deployed/public UI truth.  
 **Scope:** **one** filter slug only — `winix-filter-h-116130` — **not** `winix-filter-s-1712-0096-00`, **not** `winix-carbon-116131` demotion/repair  
-**SQL plan:** `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
+**SQL plan:** `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`  
+**Dry-run result:** `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md` (**PROVEN** executed with `ROLLBACK`)
 
 **Prior stages (local CSV — PROVEN complete):**
 
@@ -56,15 +57,32 @@ Choose **exactly one** and record in chat.
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Future option only (not in this packet):**
+**Dry-run completed — next decision (see result doc §5):**
 
 ```
-COMMIT — after separate owner review of dry-run SELECT/RETURNING output
+OPTION A — APPROVE COMMIT (same SQL plan, replace ROLLBACK with COMMIT)
+OPTION B — DO NOT APPROVE COMMIT
 ```
+
+Full reconciliation: `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`
 
 ---
 
-## 1. Current repo proof (PROVEN at `d58afca`)
+## 0. Dry-run reconciliation (PROVEN at `da57cd1`)
+
+| Check | Result |
+|-------|--------|
+| SQL dry-run executed with `ROLLBACK` | **PROVEN** |
+| `brand_winix_exists` | **1** |
+| `model_5500_2_exists` | **1** |
+| `carbon_mapping_unchanged_baseline` | **1** |
+| `filter_exists_after_rollback` | **0** |
+| No Supabase mutation persisted | **PROVEN** |
+| `COMMIT` authorized | **PROVEN no** — separate owner decision required |
+
+---
+
+## 1. Current repo proof (PROVEN at `da57cd1`)
 
 ### `data/air-purifier/filters.csv`
 
@@ -177,42 +195,30 @@ winix-5500-2,winix-filter-h-116130,true
 
 ---
 
-## 6. Exact next action — dry-run only
+## 6. Exact next action
 
-### Safest first action (read-only repo — no Supabase)
+### Dry-run — **COMPLETE** (PROVEN)
 
-```bash
-grep 'winix-filter-h-116130' \
-  data/air-purifier/filters.csv \
-  data/air-purifier/retailer_links.csv \
-  data/air-purifier/filter_aliases.csv \
-  data/air-purifier/compatibility_mappings.csv
-```
+Reconciliation recorded in `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`.
 
-### Dry-run SQL (after owner Option A in chat)
+### Next action — COMMIT decision (**NOT RUN YET**)
 
-**Supabase SQL Editor or `psql`:** Open and execute the **entire** file:
+Requires owner **Option A** in dry-run result doc §5. Then:
 
-`docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
+1. Open `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
+2. Execute §1 preflight + §2 INSERTs + §3 verification unchanged
+3. Replace final `ROLLBACK;` with `COMMIT;`
 
-**PROVEN behavior:** File ends with `ROLLBACK;` — inserts are visible in-session via `RETURNING` / §3 SELECTs, then undone.
+**NOT AUTHORIZED until owner approves COMMIT in chat.**
 
-**NOT AUTHORIZED:**
-
-```sql
-COMMIT;
-```
-
-### Optional post-rollback parity check (read-only — still blocked until real COMMIT)
+### Post-COMMIT verification (after authorized COMMIT only)
 
 ```bash
 npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
   --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-winix-filter-h-116130-v1.json
 ```
 
-**Expected after ROLLBACK:** Still `BLOCKED` — filter slug not found (**PROVEN**).
-
-**INFERRED after future authorized COMMIT:** Parity may report `ALREADY_APPLIED` if DB matches plan `after_row` including `browser_truth_*`.
+**INFERRED:** Parity may report `ALREADY_APPLIED` if committed rows match plan `after_row`.
 
 ---
 
@@ -226,8 +232,11 @@ npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
 | SQL plan defaults to `ROLLBACK` | **PROVEN** |
 | SQL includes `browser_truth_*` from CSV | **PROVEN** |
 | Full seed unsafe for this step | **PROVEN** |
-| `winix` brand + `winix-5500-2` model exist in Supabase | **INFERRED** |
-| Dry-run INSERT RETURNING shows expected shape | **UNKNOWN** until executed |
+| `winix` brand exists in Supabase (`brand_winix_exists = 1`) | **PROVEN** |
+| `winix-5500-2` model exists in Supabase (`model_5500_2_exists = 1`) | **PROVEN** |
+| Carbon mapping baseline unchanged (`carbon_mapping_unchanged_baseline = 1`) | **PROVEN** |
+| Filter absent after rollback (`filter_exists_after_rollback = 0`) | **PROVEN** |
+| Dry-run INSERT RETURNING shows expected shape | **INFERRED** |
 | Post-COMMIT live public safe CTA | **UNKNOWN** (deploy cancelled) |
 | Parity status after COMMIT | **INFERRED** likely `ALREADY_APPLIED` if snapshots match |
 
@@ -239,6 +248,7 @@ npx tsx scripts/apply-air-purifier-supabase-parity-v1.ts \
 - `docs/air-purifier/AP-SUPABASE-PARITY-READINESS-OWNER-REVIEW-WINIX-FILTER-H-116130-v1.md`
 - `docs/air-purifier/AP-EXECUTOR-DRY-RUN-OWNER-REVIEW-WINIX-FILTER-H-116130-v1.md`
 - `docs/air-purifier/winix-filter-h-116130-supabase-insert-plan.sql`
+- `docs/air-purifier/AP-SUPABASE-SQL-DRY-RUN-RESULT-WINIX-FILTER-H-116130-v1.md`
 
 ---
 
