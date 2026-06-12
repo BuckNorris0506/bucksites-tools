@@ -584,6 +584,51 @@ const REQUIRED_TERMS: RequiredTerm[] = [
     needle: "only repair lifecycle tracker",
     describe: "Issue registry is only repair lifecycle tracker",
   },
+  {
+    id: "ap_selector_alignment_head_a4fcaad",
+    needle: "a4fcaad",
+    describe: "AP Demand-to-Coverage selector alignment HEAD reference",
+  },
+  {
+    id: "ap_selector_alignment_stopping_point",
+    needle: "AP Demand-to-Coverage Selector Alignment",
+    describe: "AP selector alignment current stopping point section",
+  },
+  {
+    id: "opportunity_registry_commit_7d27869",
+    needle: "7d27869",
+    describe: "Opportunity registry milestone commit reference",
+  },
+  {
+    id: "ap_owner_review_batch_production_projection",
+    needle: "air_purifier_batch_production_lane_v1.top_candidates",
+    describe: "AP owner-review projects from batch-production top_candidates",
+  },
+  {
+    id: "ap_top_candidate_blueair_particle_411",
+    needle: "blueair-particle-411",
+    describe: "AP owner-review top candidate blueair-particle-411 example",
+  },
+  {
+    id: "ap_selector_alignment_complete",
+    needle: "Selector alignment complete",
+    describe: "AP selector alignment complete doctrine",
+  },
+  {
+    id: "ap_batch_execution_not_started",
+    needle: "Batch execution not started",
+    describe: "AP batch execution not started doctrine",
+  },
+  {
+    id: "owner_operating_audit_design_only",
+    needle: "owner_operating_audit_v1",
+    describe: "Owner Operating Audit lane contract (design only)",
+  },
+  {
+    id: "owner_operating_audit_not_implemented",
+    needle: "DESIGN ONLY — NOT IMPLEMENTED",
+    describe: "Owner Operating Audit not implemented status",
+  },
 ];
 
 test("BuckParts HQ handoff includes Layer 6 control-plane terms", () => {

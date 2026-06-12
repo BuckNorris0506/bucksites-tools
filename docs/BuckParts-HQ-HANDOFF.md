@@ -68,9 +68,139 @@
 
 ---
 
-## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (PROVEN through `4bac7aa`)
+## Current stopping point — AP Demand-to-Coverage Selector Alignment (PROVEN through `a4fcaad`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Current repo state (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`a4fcaade451af327e720328dbae874e29fb55ad6`** |
+| Latest commit | **`a4fcaad`** — Align air purifier owner review with batch priority queue |
+| Prior milestone | **`7d27869`** — Add planning-only opportunity registries |
+| Working tree | **Re-verify** — handoff records pushed `origin/main` truth; local uncommitted work may exist |
+| Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
+
+### 2. Milestone stack (PROVEN)
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | **Opportunity Registry** milestone committed at **`7d27869`**. |
+| **PROVEN** | Opportunity registries (`seo_opportunity_registry_v1`, `revenue_opportunity_registry_v1`, `distribution_opportunity_registry_v1`) are **planning-only**, **read-only**, **non-steering**, and **do not override NBA**. |
+| **PROVEN** | **BP-000001** through **BP-000004** remain **`CLOSED_PROVEN`**. |
+| **PROVEN** | Issue re-audit queue cleared (`total_deployed_awaiting_reaudit: 0`). |
+| **PROVEN** | **`demand_to_coverage_next_lane_v1`** remains authoritative for wedge selection. |
+| **PROVEN** | **AP selector alignment** committed at **`a4fcaad`** — owner-review candidate rows now project from **`air_purifier_batch_production_lane_v1.top_candidates`**. |
+
+### 3. AP selector alignment — before vs after (`a4fcaad`)
+
+**Before (pre-`a4fcaad`):**
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | `air_purifier_demand_selected_batch_owner_review_v1` selected candidates by **CSV scan order** on `data/air-purifier/retailer_links.csv`. |
+| **PROVEN** | Owner-review top rows were **Levoit-heavy** (first blocked slugs in CSV file order). |
+| **PROVEN** | **`levoit-rf-rar029`** surfaced in owner-review top 10 while batch-production classified it **`wrong_family_reject`**. |
+| **PROVEN** | Owner-review and batch-production slug queues **diverged**. |
+
+**After (`a4fcaad`):**
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | Owner-review **`candidate_rows`** are a **read-only projection** of `air_purifier_batch_production_lane_v1.top_candidates` priority order. |
+| **PROVEN** | Actionable states only: `search_placeholder_rescue_needed`, `reference_candidate`, `direct_buy_candidate`, `catalog_identity_gap`. |
+| **PROVEN** | Excluded states include `wrong_family_reject`, `existing_direct_buyable`, `existing_official_reference`. |
+| **PROVEN** | **`levoit-rf-rar029`** no longer appears in owner-review candidate rows. |
+| **PROVEN** | Top actionable priorities now surface **Blueair / Holmes / Shark** correctly (examples below). |
+| **PROVEN** | Owner-review lane remains **read-only** and **authorization-focused** (`batch_start_authorized=false`). |
+| **PROVEN** | **`air_purifier_batch_production_lane_v1`** remains authoritative for **slug-level rescue ranking** and agent packet grouping. |
+
+**Top owner-review candidate examples (PROVEN at handoff refresh — re-run `jq` before citing):**
+
+| Rank | `filter_slug` | `state` | Notes |
+|------|---------------|---------|-------|
+| 1 | `blueair-particle-411` | `catalog_identity_gap` | `owner_review_required: true` |
+| 2 | `holmes-hapf30` | `search_placeholder_rescue_needed` | — |
+| 3 | `winix-carbon-116131` | `search_placeholder_rescue_needed` | — |
+| 4 | `shark-carbon-foam` | `search_placeholder_rescue_needed` | — |
+
+**Builder / contract paths:**
+
+| Contract | jq path | Builder |
+|----------|---------|---------|
+| `air_purifier_demand_selected_batch_owner_review_v1` | `.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1` | `scripts/lib/air-purifier-demand-selected-batch-owner-review-v1.ts` |
+| `air_purifier_batch_production_lane_v1` | *(standalone stdout)* | `scripts/lib/air-purifier-batch-production-lane-v1.ts` |
+| `demand_to_coverage_next_lane_v1` | `.command_center_v2.demand_to_coverage_next_lane_v1` | `scripts/lib/demand-to-coverage-next-lane-v1.ts` |
+
+```bash
+npm run buckparts:command-center | jq '{
+  nba: .next_best_action,
+  d2c: .command_center_v2.demand_to_coverage_next_lane_v1 | {recommended_wedge, recommendation_status, next_batch_candidate},
+  ap_review: .command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 | {
+    source_batch_production_report,
+    batch_start_authorized,
+    blockers,
+    top_4: [.candidate_rows[0:4][] | {rank, filter_slug, state, priority_score}]
+  }
+}'
+```
+
+### 4. Current factory truth (PROVEN — re-run before citing)
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | Factory **`next_best_action`** remains **Demand-to-Coverage** (`START_NEW_DEMAND_SELECTED_BATCH`). |
+| **PROVEN** | **`recommended_wedge`** remains **`air_purifier`**. |
+| **PROVEN** | **Selector alignment complete** — owner-review and batch-production slug priority are aligned. |
+| **PROVEN** | **Batch execution not started** — AP demand-selected batch remains blocked. |
+| **PROVEN** | AP batch start blockers include **`owner_batch_start_approval_missing`**, **`batch_run_registry_not_created`**, **`evidence_collection_not_started`**. |
+
+**INFERRED at handoff refresh (re-run `jq` before citing):** factory NBA text references refrigerator_water closed lifecycle + air_purifier demand-selected planning; mutation unauthorized on all owner-review authorization flags.
+
+### 5. Owner Operating Audit Lane (DESIGN ONLY — NOT IMPLEMENTED)
+
+| Label | Finding |
+|-------|---------|
+| **PROVEN** | Design exists in HQ/agent conversation only — **not implemented**, **not committed**, **not authorized**. |
+| **PROVEN** | **No** `data/command-center/owner-operating-audit/` registry files exist. |
+| **PROVEN** | **No** `.command_center_v2.owner_operating_audit_v1` lane exists in repo today. |
+
+**Proposed contract (design only):** `owner_operating_audit_v1`
+
+**Purpose (design doctrine):**
+
+- Track **owner/founder bottlenecks** with **measurable blockers** (approval delay, SEO weakness, research ops weakness, context switching, distribution/content/research gaps).
+- Mirror product-lane discipline: **`read_only`**, **`planning_only`**, **`steering_override_active: false`**, **`replaces_next_best_action: false`**.
+- **Never override NBA**; **never become a journal** — records require `measurable_blocker`, `stalled_lane_contract`, and `closure_criteria`.
+
+**Status:** **DESIGN ONLY** — implementation requires explicit founder activation; do not treat as operational truth.
+
+### 6. Do not do next (at this stopping point)
+
+- Do **not** treat **selector alignment** as **batch execution authorization** — `batch_start_authorized=false` until owner approval + run-registry exist.
+- Do **not** implement **`owner_operating_audit_v1`** without explicit founder activation.
+- Do **not** treat **opportunity registry** records as executable repair work — planning-only; issue registry owns repair closure.
+- Do **not** wire opportunity registries or owner-operating-audit design to **`next_best_action`** without explicit precedence rules.
+- Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence.
+
+### 7. Validation (PROVEN before this handoff update)
+
+```bash
+npm run lint
+npm run build
+node --import tsx --test scripts/lib/air-purifier-demand-selected-batch-owner-review-v1.test.ts
+node --import tsx --test scripts/report-air-purifier-batch-production-lane-v1.test.ts
+npx tsx --test scripts/report-buckparts-command-center.test.ts --test-name-pattern "air_purifier_demand_selected|demand_to_coverage|next_best_action"
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+---
+
+## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (historical — superseded by `a4fcaad`)
+
+**Superseded for next-move authority.** Retained for issue registry closure proof and re-audit doctrine. **AP Demand-to-Coverage Selector Alignment** section above is the current executive stopping point.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -133,9 +263,9 @@ npm run buckparts:command-center | jq '{
 
 Customer Reality Command Center lanes (`customer_reality_scoreboard_v1`, `customer_steering_comparison_v1`, `customer_closure_report_v1`, `customer_authority_score_v1`, `customer_authority_history_status_v1`) **remain operational** — see **Current stopping point — Customer Reality Command Center (historical — superseded by `4bac7aa`)** below. Factory NBA may differ from customer dry-run.
 
-### 2.5 Opportunity registries — planning-only scaffold (wired; not production-ready)
+### 2.5 Opportunity registries — planning-only scaffold (committed `7d27869`; not production-ready)
 
-**PROVEN:** Three read-only opportunity registry lanes are wired into Command Center v2:
+**PROVEN:** Opportunity registry milestone committed at **`7d27869`**. Three read-only opportunity registry lanes are wired into Command Center v2:
 
 | Contract | jq path | Data |
 |----------|---------|------|
@@ -1660,7 +1790,7 @@ Read-only inventory at this stop:
 - **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED** unless a future feed proves otherwise.
 - **GSC/GA4 freshness lane exists on Command Center** (`b85e90b`) — inspect `external_measurement_freshness_v1`; artifacts may still read **STALE** until operator runs `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` (listed in lane `recommended_commands`).
 - **Demand-to-coverage next lane (2026-05-22; repaired at `841980c`):** Command Center v2 includes read-only `command_center_v2.demand_to_coverage_next_lane_v1` (builder: `scripts/lib/demand-to-coverage-next-lane-v1.ts`; CLI: `npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts`). Current compact fields are machine-readable and coherent: `recommended_wedge=air_purifier`, `recommendation_status=START_NEW_DEMAND_SELECTED_BATCH`, `next_batch_candidate=air_purifier_demand_selected_batch_candidate`, blocker `open_batch_not_proven`. **Does not** start a batch, replace `next_best_action`, or mutate wedges.
-- **AP demand-selected owner review (local):** Command Center v2 now includes read-only `command_center_v2.air_purifier_demand_selected_batch_owner_review_v1`, an owner-review packet for the AP demand-selected candidate. It carries AP demand proof and candidate-row planning, but `batch_start_authorized=false`, `csv_apply_authorized=false`, `supabase_mutation_authorized=false`, `evidence_write_authorized=false`, `netlify_api_authorized=false`, and `public_ui_mutation_authorized=false`; blockers include `open_batch_not_proven`, `owner_batch_start_approval_missing`, `batch_run_registry_not_created`, and `evidence_collection_not_started`.
+- **AP demand-selected owner review (`a4fcaad`):** Command Center v2 includes read-only `command_center_v2.air_purifier_demand_selected_batch_owner_review_v1`. **`candidate_rows`** project from **`air_purifier_batch_production_lane_v1.top_candidates`** (not CSV scan order). `batch_start_authorized=false`; blockers include `owner_batch_start_approval_missing`, `batch_run_registry_not_created`, `evidence_collection_not_started`.
 - **RPWFE purchase-option rescue owner review (local):** Command Center v2 now includes read-only `command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1` for `/filter/rpwfe`, where the customer-visible state is `no_buy_options` because the committed GE catalog search row is blocked as a search placeholder. The lane records the GE spec PDP path as repo-doc proven but not applied, Waterdrop `WD-F19C` as an unproven compatible-replacement candidate, and keeps `official_label_authorized=false`, `compatible_label_authorized=false`, `csv_apply_authorized=false`, `supabase_mutation_authorized=false`, `evidence_write_authorized=false`, `public_ui_mutation_authorized=false`, and `netlify_api_authorized=false`. No buy CTA is authorized.
 - **BuckParts Certainty Engine Checklist (local):** Command Center v2 now includes read-only `command_center_v2.buckparts_certainty_engine_checklist_v1` — a north-star judge lane (not mutation authority) asking whether homeowners would feel less certain buying a replacement filter without checking BuckParts first. **Stable top-level jq fields:** `branded_term` = BuckParts Verified Link, `branded_term_definition`, `ai_vs_buckparts_positioning` = “AI can suggest. BuckParts verifies.” (with explanation that BuckParts beats generic AI only when evidence and verified buying paths exist — not when it guesses). Checklist adds **Visual Match Proof / Picture Match Check** and **label/photo/screenshot upload** (model sticker, filter label, Amazon/retailer screenshots, appliance tag) as major future trust features (**NOT_PROVEN** until live). Checklist item #1 stays **NOT_PROVEN**/**BLOCKED** until 100% fridge verified-link coverage. All authorization flags false. Inspect: `node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.buckparts_certainty_engine_checklist_v1 | {branded_term, branded_term_definition, ai_vs_buckparts_positioning, checklist_item_count, first_checklist_item: .checklist_items[0]}'`.
 - **Fridge money queues vs spine:** `top_money_queue` may still surface refrigerator monetization lanes; **`fridge_truth_spine_v1`** is the **truth inventory** lane (buyer-path + Supabase-vs-CSV + public-truth summary). **`next_best_action`** may remain **AP model-first steering** when evidence queue is READY — spine does **not** override.
