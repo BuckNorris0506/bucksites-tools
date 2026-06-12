@@ -1,0 +1,51 @@
+{
+  "contract": "ap_hyperagent_chat_discovery_output_v1",
+  "packet_id": "ap-oem-search-placeholder-v1",
+  "wedge": "air_purifier",
+  "owner_decision": "APPROVE_READ_ONLY_DISCOVERY_FIRST_SLICE_ONLY",
+  "discovery_status": "DISCOVERY_COMPLETE",
+  "truth_closure_claimed": false,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "not_canonical_evidence": true,
+  "not_apply_eligible": true,
+  "candidate_rows": [
+    {
+      "filter_slug": "winix-filter-h-116130",
+      "repo_csv_primary_url": "https://www.winixamerica.com/search?q=WINIX-116130",
+      "searched_url": "https://www.winixamerica.com/search?q=WINIX-116130",
+      "final_url": "https://www.winixamerica.com/product/filter-h-116130/",
+      "pdp_like_final_url": true,
+      "exact_tokens_seen": ["116130", "Filter H"],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": true,
+      "buy_action_seen": true,
+      "stock_state": "in_stock",
+      "browser_truth_classification_recommendation": "direct_buyable",
+      "recommendation": "PASS_DIRECT_BUYABLE",
+      "reference_only_reason": null,
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "PROVEN (model-first): 5500-2 official manual/model cross-reference documents Replacement Filter H / SKU 116130 and links to official Filter H PDP https://www.winixamerica.com/product/filter-h-116130/. INFERRED: Brand-prefixed /search?q=WINIX-116130 not independently re-proved in this packet; PDP reached via model-first documented buyer path.",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN (model-first ap-model-first-winix-carbon-116131-live-browser-v1): Official Winix Filter H PDP primary slice token Filter H – 116130; compatible with 5500-2 per product copy; In stock + Add to cart observed. PROVEN: Catalog row winix-filter-h-116130 exists with primary oem-catalog search placeholder matching retailer_links.csv. PROVEN: wrong_family_tokens_seen empty — model-first cites exact in-family token only in primary slice; neighboring Winix SKUs not documented as primary-slice wrong-family on Filter H PDP. INFERRED: WINIX-116130 brand-prefixed site search navigation not re-fetched live in this fixture packet.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "prior_repo_pass_reference_url": null
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: winix-filter-h-116130 exists in committed data/air-purifier/filters.csv, retailer_links.csv, filter_aliases.csv, and compatibility_mappings.csv at checkpoint e9fc7a9.",
+    "PROVEN: repo_csv_primary_url https://www.winixamerica.com/search?q=WINIX-116130 matches committed primary retailer_links row.",
+    "PROVEN (model-first): Official Filter H PDP https://www.winixamerica.com/product/filter-h-116130/ shows primary token Filter H – 116130, 5500-2 compatibility, In stock, and Add to cart.",
+    "PROVEN: recommended_csv_mutation remains null; packet is discovery input only."
+  ],
+  "inferred_facts": [
+    "INFERRED: Discovery fixture synthesizes buyer-path proof from model-first artifact rather than a new live HyperAgent browser session.",
+    "INFERRED: After owner-authorized evidence write, retailer_links primary URL may promote to the browser-proven Filter H PDP (mirrors winix-hepa-115115 apply pattern)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether brand-prefixed /search?q=WINIX-116130 returns navigable in-family results in a fresh live browser session.",
+    "UNKNOWN: Whether neighboring SKU cross-sell tokens (115115, 116131) appear outside primary slice on Filter H PDP without constituting wrong-family in primary area."
+  ]
+}
