@@ -1,0 +1,60 @@
+{
+  "report_name": "air_purifier_apply_executor_v1",
+  "generated_at": "2026-06-12T19:06:58.068Z",
+  "mode": "apply",
+  "data_mutation": true,
+  "source_plan_path": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-winix-filter-h-116130-v1.json",
+  "apply_status": "APPLIED",
+  "planned_change_count": 1,
+  "applied_change_count": 1,
+  "changed_slugs": [
+    "winix-filter-h-116130"
+  ],
+  "blocked_reasons": [],
+  "preflight": {
+    "plan_status": "READY_FOR_OWNER_APPROVAL",
+    "planned_change_count": 1,
+    "owner_approval_required": true,
+    "csv_row_count": 65,
+    "before_row_match_count": 1,
+    "validation_errors": [],
+    "duplicate_targets": []
+  },
+  "post_apply_validation": {
+    "changed_row_count": 1,
+    "target_slugs": [
+      "winix-filter-h-116130"
+    ],
+    "only_target_slugs_changed": true,
+    "all_direct_buyable": true,
+    "no_search_urls_on_targets": true,
+    "gate_by_slug": {
+      "winix-filter-h-116130": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      }
+    },
+    "ap_safe_cta_count_before": 10,
+    "ap_safe_cta_count_after": 11,
+    "ap_safe_cta_delta": 1
+  },
+  "rollback_rows": [
+    {
+      "filter_slug": "winix-filter-h-116130",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://www.winixamerica.com/search?q=WINIX-116130",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://www.winixamerica.com/search?q=WINIX-116130",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "notes": [
+    "Executor v1 mutates ONLY data/air-purifier/retailer_links.csv when --apply is set.",
+    "planned_changes only — refused_changes and other review groups are never applied.",
+    "Applied 1 row(s) to data/air-purifier/retailer_links.csv."
+  ]
+}
