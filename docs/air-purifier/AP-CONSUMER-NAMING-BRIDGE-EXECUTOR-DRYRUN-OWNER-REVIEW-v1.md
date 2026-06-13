@@ -15,7 +15,7 @@
 - Evidence write: `docs/air-purifier/AP-CONSUMER-NAMING-BRIDGE-EVIDENCE-WRITE-OWNER-REVIEW-v1.md` (Option A executed)
 - Apply plan write: `docs/air-purifier/AP-CONSUMER-NAMING-BRIDGE-APPLY-PLAN-OWNER-REVIEW-v1.md` (Option A executed)
 
-**Dry-run executed:** **No** — awaiting owner Option A below.
+**Dry-run executed:** **Yes** — cohort artifact written at checkpoint `26ff94f` (see §10).
 
 ---
 
@@ -44,7 +44,7 @@
 | `apply_plan_ready` factory stage | `complete` (cohort plan path) | **PROVEN** |
 | `retailer_links.csv` primaries still search placeholders | Yes | **PROVEN** |
 | Safe CTA delta | **0** | **PROVEN** |
-| Executor dry-run artifact for cohort | **Absent** | **PROVEN** |
+| Executor dry-run artifact for cohort | **Present** (`DRY_RUN_READY`) | **PROVEN** (at `26ff94f`) |
 | Executor `--apply` run for cohort | **Absent** | **PROVEN** |
 
 ### Per-slug factory snapshot (read-only)
@@ -326,6 +326,43 @@ Regardless of option chosen, **this packet does not authorize:**
 
 ---
 
+## 10. Dry-run execution (completed at `26ff94f`)
+
+**Command (no `--apply`):**
+
+```bash
+npx tsx scripts/report-air-purifier-apply-executor-v1.ts \
+  --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-levoit-consumer-naming-bridge-cohort-v1.json \
+  --out data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-levoit-consumer-naming-bridge-cohort-v1.json \
+  --markdown-out data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-levoit-consumer-naming-bridge-cohort-v1.md
+```
+
+**Dry-run status:** `DRY_RUN_READY` (**PROVEN**)
+
+| Field | Value |
+|-------|-------|
+| `mode` | `dry_run` |
+| `data_mutation` | `false` |
+| `planned_change_count` | `4` |
+| `applied_change_count` | `0` |
+| `changed_slugs` | `[]` |
+| `blocked_reasons` | `[]` |
+| `preflight.before_row_match_count` | `4` |
+| `preflight.validation_errors` | `[]` |
+| `rollback_rows.length` | `4` |
+| `generated_at` | `2026-06-13T00:08:59.971Z` |
+
+**Artifacts:**
+
+- `data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-levoit-consumer-naming-bridge-cohort-v1.json`
+- `data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-levoit-consumer-naming-bridge-cohort-v1.md`
+
+**CSV integrity:** All four cohort primaries remain search placeholders with empty `browser_truth_*` — **PROVEN** (no `--apply`).
+
+**Next owner gate:** Separate executor `--apply` authorization packet — not authorized by this dry-run.
+
+---
+
 ## Appendix — repo pointers
 
 | Artifact | Path |
@@ -335,6 +372,7 @@ Regardless of option chosen, **this packet does not authorize:**
 | Apply-plan packet | `docs/air-purifier/AP-CONSUMER-NAMING-BRIDGE-APPLY-PLAN-OWNER-REVIEW-v1.md` |
 | Cohort apply plan | `data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-levoit-consumer-naming-bridge-cohort-v1.json` |
 | Canonical evidence | `data/air-purifier/batch-production/agent-results/ap-levoit-oem-discovery-v1.results.json` |
+| Cohort dry-run result | `data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-levoit-consumer-naming-bridge-cohort-v1.json` |
 | Winix dry-run precedent | `docs/air-purifier/AP-EXECUTOR-DRY-RUN-OWNER-REVIEW-WINIX-FILTER-H-116130-v1.md` |
 
 ---
@@ -343,12 +381,11 @@ Regardless of option chosen, **this packet does not authorize:**
 
 | Topic | Label |
 |-------|-------|
-| Four slugs `PASS_DIRECT_BUYABLE` + `auto_apply_eligible` at `3321fe0` | **PROVEN** |
+| Four slugs `PASS_DIRECT_BUYABLE` + `auto_apply_eligible` | **PROVEN** |
 | Cohort apply plan `planned_change_count: 4` | **PROVEN** |
 | CSV still search placeholder; safe CTA delta 0 | **PROVEN** |
-| No dry-run artifact yet | **PROVEN** |
-| No mutation from this document | **PROVEN** |
-| Dry-run `DRY_RUN_READY` with `before_row_match_count: 4` after Option A | **INFERRED** |
+| Dry-run `DRY_RUN_READY`; `before_row_match_count: 4` at `26ff94f` | **PROVEN** |
+| Executor `--apply` not run | **PROVEN** |
 | Levoit stock/price at future apply time | **UNKNOWN** |
 
 ---
