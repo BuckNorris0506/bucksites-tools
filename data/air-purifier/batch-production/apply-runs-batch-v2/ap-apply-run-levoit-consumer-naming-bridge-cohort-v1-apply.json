@@ -1,0 +1,114 @@
+{
+  "report_name": "air_purifier_apply_executor_v1",
+  "generated_at": "2026-06-13T00:40:11.324Z",
+  "mode": "apply",
+  "data_mutation": true,
+  "source_plan_path": "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-levoit-consumer-naming-bridge-cohort-v1.json",
+  "apply_status": "APPLIED",
+  "planned_change_count": 4,
+  "applied_change_count": 4,
+  "changed_slugs": [
+    "levoit-rf-rar040",
+    "levoit-rf-rar060",
+    "levoit-rf-c131",
+    "levoit-rf-cr200"
+  ],
+  "blocked_reasons": [],
+  "preflight": {
+    "plan_status": "READY_FOR_OWNER_APPROVAL",
+    "planned_change_count": 4,
+    "owner_approval_required": true,
+    "csv_row_count": 65,
+    "before_row_match_count": 4,
+    "validation_errors": [],
+    "duplicate_targets": []
+  },
+  "post_apply_validation": {
+    "changed_row_count": 4,
+    "target_slugs": [
+      "levoit-rf-rar040",
+      "levoit-rf-rar060",
+      "levoit-rf-c131",
+      "levoit-rf-cr200"
+    ],
+    "only_target_slugs_changed": true,
+    "all_direct_buyable": true,
+    "no_search_urls_on_targets": true,
+    "gate_by_slug": {
+      "levoit-rf-rar040": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "levoit-rf-rar060": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "levoit-rf-c131": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      },
+      "levoit-rf-cr200": {
+        "gate_failure_kind": null,
+        "retailer_link_state": "LIVE_DIRECT_BUYABLE"
+      }
+    },
+    "ap_safe_cta_count_before": 11,
+    "ap_safe_cta_count_after": 15,
+    "ap_safe_cta_delta": 4
+  },
+  "rollback_rows": [
+    {
+      "filter_slug": "levoit-rf-rar040",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR040",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-rar060",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR060",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-c131",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-C131",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "levoit-rf-cr200",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://levoit.com/search?q=LEVOIT-RF-CR200",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "notes": [
+    "Executor v1 mutates ONLY data/air-purifier/retailer_links.csv when --apply is set.",
+    "planned_changes only — refused_changes and other review groups are never applied.",
+    "Applied 4 row(s) to data/air-purifier/retailer_links.csv."
+  ]
+}
