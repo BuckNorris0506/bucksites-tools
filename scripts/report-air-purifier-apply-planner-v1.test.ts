@@ -172,12 +172,23 @@ test("refuses wrong target file on mutation", () => {
 });
 
 test("preserves CSV shape and sets browser truth on after row", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "ap-apply-plan-"));
+  const reviewPath = writeReviewFixture(tmp, {
+    report_name: "air_purifier_agent_results_aggregator_v1",
+    generated_at: "2026-05-23T00:00:00.000Z",
+    review_groups: {
+      auto_apply_eligible: [autoApplyRow()],
+      owner_review_required: [],
+      reference_eligible: [],
+      rejected: [],
+      catalog_task_required: [],
+      no_safe_path: [],
+    },
+  });
+
   const report = buildAirPurifierApplyPlannerV1Report({
     rootDir: REPO_ROOT,
-    reviewPath: path.join(
-      REPO_ROOT,
-      "data/air-purifier/batch-production/batch-review/ap-agent-results-review-v1.json",
-    ),
+    reviewPath,
   });
   const planned = report.planned_changes.find((c) => c.filter_slug === "levoit-rf-lv-h133");
   assert.ok(planned);
@@ -185,18 +196,30 @@ test("preserves CSV shape and sets browser truth on after row", () => {
   assert.equal(planned!.before_row.is_primary, planned!.after_row.is_primary);
   assert.equal(planned!.after_row.browser_truth_classification, "direct_buyable");
   assert.ok(planned!.after_row.affiliate_url.includes("/products/"));
+  rmSync(tmp, { recursive: true, force: true });
 });
 
 test("includes rollback rows matching planned changes", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "ap-apply-plan-"));
+  const reviewPath = writeReviewFixture(tmp, {
+    report_name: "air_purifier_agent_results_aggregator_v1",
+    generated_at: "2026-05-23T00:00:00.000Z",
+    review_groups: {
+      auto_apply_eligible: [autoApplyRow()],
+      owner_review_required: [],
+      reference_eligible: [],
+      rejected: [],
+      catalog_task_required: [],
+      no_safe_path: [],
+    },
+  });
+
   const report = buildAirPurifierApplyPlannerV1Report({
     rootDir: REPO_ROOT,
-    reviewPath: path.join(
-      REPO_ROOT,
-      "data/air-purifier/batch-production/batch-review/ap-agent-results-review-v1.json",
-    ),
+    reviewPath,
   });
   assert.equal(report.rollback_rows.length, report.planned_change_count);
-  assert.equal(report.rollback_rows.length, 3);
+  assert.equal(report.rollback_rows.length, 1);
   for (let i = 0; i < report.planned_changes.length; i++) {
     const rb = report.rollback_rows[i]!;
     const before = report.planned_changes[i]!.before_row;
@@ -214,6 +237,7 @@ test("includes rollback rows matching planned changes", () => {
       "rollback should reflect current CSV (search placeholder pre-apply or direct_buyable post-apply)",
     );
   }
+  rmSync(tmp, { recursive: true, force: true });
 });
 
 test("does not mutate CSVs", () => {
@@ -229,12 +253,10 @@ test("does not mutate CSVs", () => {
   assert.equal(before, after);
 });
 
-test("live review produces READY_FOR_OWNER_APPROVAL with 3 planned changes", () => {
+test("live review is spent in current repo truth", () => {
   const report = buildAirPurifierApplyPlannerV1Report({ rootDir: REPO_ROOT });
-  assert.equal(report.plan_status, "READY_FOR_OWNER_APPROVAL");
-  assert.equal(report.planned_change_count, 3);
+  assert.equal(report.plan_status, "EMPTY");
+  assert.equal(report.planned_change_count, 0);
+  assert.equal(report.planned_changes.length, 0);
   assert.equal(report.apply_executor_available, false);
-  for (const slug of ["levoit-rf-lv-h133", "levoit-rf-lv-h128", "levoit-vital100-rf"]) {
-    assert.ok(report.planned_changes.some((c) => c.filter_slug === slug), slug);
-  }
 });

@@ -1,0 +1,359 @@
+{
+  "report_name": "air_purifier_apply_planner_batch_v2_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-06-15T17:49:12.386Z",
+  "source_results_dir": "data/air-purifier/batch-production/agent-results-batch-v2",
+  "source_aggregator_generated_at": "2026-06-15T17:49:12.389Z",
+  "synthesized_mutation_slugs": [
+    "medify-ma18-rf",
+    "medify-ma22-rf",
+    "medify-ma25-rf",
+    "medify-ma40-rf",
+    "medify-ma50-rf",
+    "medify-ma112-rf"
+  ],
+  "plan_status": "READY_FOR_OWNER_APPROVAL",
+  "planned_change_count": 6,
+  "planned_changes": [
+    {
+      "filter_slug": "medify-ma18-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-18-replacement-filter",
+      "before_row": {
+        "filter_slug": "medify-ma18-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-18-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-18-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma18-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-18-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-18-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder returns partial multi-model matches — PDP pinned via medifyair.com/collections/filters + Shopify sitemap. Official PDP ma-18-replacement-filter HTTP 200; H1 MA-18 replacement filter; consumer token MA-18 in primary slice; Add to Cart present; in stock $39.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Catalog internal token MEDIFY-MA-18-RF not required on PDP when MA-18 consumer token is present.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder returns partial multi-model matches — PDP pinned via medifyair.com/collections/filters + Shopify sitemap. Official PDP ma-18-replacement-filter HTTP 200; H1 MA-18 replacement filter; consumer token MA-18 in primary slice; Add to Cart present; in stock $39.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Catalog internal token MEDIFY-MA-18-RF not required on PDP when MA-18 consumer token is present.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder returns partial multi-model matches — PDP pinned via medifyair.com/collections/filters + Shopify sitemap. Official PDP ma-18-replacement-filter HTTP 200; H1 MA-18 replacement filter; consumer token MA-18 in primary slice; Add to Cart present; in stock $39.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Catalog internal token MEDIFY-MA-18-RF not required on PDP when MA-18 consumer token is present."
+    },
+    {
+      "filter_slug": "medify-ma22-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-22-replacement-filter",
+      "before_row": {
+        "filter_slug": "medify-ma22-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-22-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-22-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma22-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-22-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-22-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder not trusted for Medify classification — PDP pinned via collections + sitemap. Official PDP ma-22-replacement-filter HTTP 200; H1 MA-22 replacement filter; consumer token MA-22 in primary slice; Add to Cart present; in stock $45.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Prior discontinued concern refuted — live PDP in stock.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder not trusted for Medify classification — PDP pinned via collections + sitemap. Official PDP ma-22-replacement-filter HTTP 200; H1 MA-22 replacement filter; consumer token MA-22 in primary slice; Add to Cart present; in stock $45.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Prior discontinued concern refuted — live PDP in stock.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: primary oem-catalog search placeholder not trusted for Medify classification — PDP pinned via collections + sitemap. Official PDP ma-22-replacement-filter HTTP 200; H1 MA-22 replacement filter; consumer token MA-22 in primary slice; Add to Cart present; in stock $45.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Prior discontinued concern refuted — live PDP in stock."
+    },
+    {
+      "filter_slug": "medify-ma25-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-25-replacement-filter-set",
+      "before_row": {
+        "filter_slug": "medify-ma25-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-25-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-25-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma25-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-25-replacement-filter-set",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-25-replacement-filter-set",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-25-replacement-filter-set (not templated -set suffix). Official PDP HTTP 200; H1 MA-25 Filter Set; consumer token MA-25 in primary slice; Add to Cart present; in stock $49.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-25-replacement-filter-set (not templated -set suffix). Official PDP HTTP 200; H1 MA-25 Filter Set; consumer token MA-25 in primary slice; Add to Cart present; in stock $49.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-25-replacement-filter-set (not templated -set suffix). Official PDP HTTP 200; H1 MA-25 Filter Set; consumer token MA-25 in primary slice; Add to Cart present; in stock $49.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only."
+    },
+    {
+      "filter_slug": "medify-ma40-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-40-replacement-filter-set",
+      "before_row": {
+        "filter_slug": "medify-ma40-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-40-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-40-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma40-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-40-replacement-filter-set",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-40-replacement-filter-set",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-40-replacement-filter-set. Official PDP HTTP 200; H1 MA-40 Filter Set; consumer token MA-40 in primary slice; Add to Cart present; in stock $59.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-40-replacement-filter-set. Official PDP HTTP 200; H1 MA-40 Filter Set; consumer token MA-40 in primary slice; Add to Cart present; in stock $59.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-40-replacement-filter-set. Official PDP HTTP 200; H1 MA-40 Filter Set; consumer token MA-40 in primary slice; Add to Cart present; in stock $59.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only."
+    },
+    {
+      "filter_slug": "medify-ma50-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-50-replacement-filter",
+      "before_row": {
+        "filter_slug": "medify-ma50-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-50-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-50-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma50-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-50-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-50-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-50-replacement-filter. Official PDP HTTP 200; H1 MA-50 replacement filter; consumer token MA-50 in primary buy box; Add to Cart present; in stock $69.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Below-fold CMS body may mention MA-12 PRO — not in buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-50-replacement-filter. Official PDP HTTP 200; H1 MA-50 replacement filter; consumer token MA-50 in primary buy box; Add to Cart present; in stock $69.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Below-fold CMS body may mention MA-12 PRO — not in buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-50-replacement-filter. Official PDP HTTP 200; H1 MA-50 replacement filter; consumer token MA-50 in primary buy box; Add to Cart present; in stock $69.99. PROVEN: wrong_family_tokens_seen [] in primary buy box. Below-fold CMS body may mention MA-12 PRO — not in buy box. OEM-primary evidence supersedes legacy ap-amazon-secondary-v1 Amazon path for oem-catalog promotion only."
+    },
+    {
+      "filter_slug": "medify-ma112-rf",
+      "retailer_key": "oem-catalog",
+      "packet_id": "ap-medify-ma-series-cohort-v1",
+      "final_url": "https://medifyair.com/products/ma-112-filter-replacement-set",
+      "before_row": {
+        "filter_slug": "medify-ma112-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-112-RF",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-112-RF",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "medify-ma112-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://medifyair.com/products/ma-112-filter-replacement-set",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://medifyair.com/products/ma-112-filter-replacement-set",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-112-filter-replacement-set (non-templated suffix). Official PDP HTTP 200; H1 MA-112 Filter Replacement Set; consumer token MA-112 in primary slice; Add to Cart present; in stock $138.99. PROVEN: wrong_family_tokens_seen [] in primary buy box.",
+        "browser_truth_checked_at": "2026-06-15T17:49:12.389Z"
+      },
+      "changed_fields": [
+        "destination_url",
+        "affiliate_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ],
+      "browser_truth_notes": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-112-filter-replacement-set (non-templated suffix). Official PDP HTTP 200; H1 MA-112 Filter Replacement Set; consumer token MA-112 in primary slice; Add to Cart present; in stock $138.99. PROVEN: wrong_family_tokens_seen [] in primary buy box.",
+      "browser_truth_checked_at": "2026-06-15T17:49:12.389Z",
+      "evidence_summary": "Medify MA-series evidence write Option A (AP-MEDIFY-MA-SERIES-EVIDENCE-WRITE-OWNER-REVIEW-v1); live discovery 2026-06-13: PDP pinned via collections + sitemap; exact path ma-112-filter-replacement-set (non-templated suffix). Official PDP HTTP 200; H1 MA-112 Filter Replacement Set; consumer token MA-112 in primary slice; Add to Cart present; in stock $138.99. PROVEN: wrong_family_tokens_seen [] in primary buy box."
+    }
+  ],
+  "refused_changes": [],
+  "rollback_rows": [
+    {
+      "filter_slug": "medify-ma18-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-18-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-18-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "medify-ma22-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-22-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-22-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "medify-ma25-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-25-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-25-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "medify-ma40-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-40-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-40-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "medify-ma50-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-50-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-50-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    },
+    {
+      "filter_slug": "medify-ma112-rf",
+      "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+      "affiliate_url": "https://medifyair.com/search?q=MEDIFY-MA-112-RF",
+      "is_primary": "true",
+      "retailer_key": "oem-catalog",
+      "retailer_slug": "oem-catalog",
+      "destination_url": "https://medifyair.com/search?q=MEDIFY-MA-112-RF",
+      "browser_truth_classification": "",
+      "browser_truth_notes": "",
+      "browser_truth_checked_at": ""
+    }
+  ],
+  "projected_coverage_delta": {
+    "direct_buyable_plus": 6,
+    "official_reference_plus": 0,
+    "blocked_minus": 6
+  },
+  "owner_approval_required": true,
+  "apply_executor_available": false,
+  "recommended_next_action": "Owner approve 6 Medify MA-series planned change(s), then run apply executor with --plan data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-medify-ma-series-cohort-v1.json in a future step (not run in this step).",
+  "validation_checklist": [
+    "Confirm owner approval covers exactly the six Medify MA-series slugs in planned_changes before apply.",
+    "Confirm medify-ma35-rf and archived Amazon-secondary rows are not planned targets.",
+    "Re-run buyLinkGateFailureKind on after_row payloads — expect null for direct_buyable.",
+    "Verify /air-purifier/go remains safe-only after apply (future executor step).",
+    "Keep rollback_rows to revert data/air-purifier/retailer_links.csv if needed.",
+    "Do not edit data/retailer_links.csv (fridge batch).",
+    "npm run lint && npm run build after apply executor (future task)."
+  ],
+  "notes": [
+    "Medify MA-series scoped owner-approved apply-plan artifact; no CSV writes in this step.",
+    "Built from normal active batch-v2 AP agent-results; aggregator duplicate-slug behavior unchanged.",
+    "Only the six scoped auto_apply_eligible Medify rows are included as planned_changes.",
+    "medify-ma35-rf, archived Amazon-secondary rows, and non-Medify rows are excluded from this scoped artifact.",
+    "recommended_csv_mutation synthesized from final_url when evidence rows had null mutations."
+  ]
+}

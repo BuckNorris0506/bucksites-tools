@@ -1,4 +1,11 @@
 {
+  "archive_note": "Archived from active AP aggregator scan path after OEM Medify evidence superseded Amazon-secondary evidence for oem-catalog promotion only. Historical Amazon policy evidence preserved; file intentionally does not end with .results.json.",
+  "archived_from": "data/air-purifier/batch-production/agent-results/ap-amazon-secondary-v1.results.json",
+  "archived_scope": [
+    "medify-ma25-rf",
+    "medify-ma40-rf",
+    "medify-ma50-rf"
+  ],
   "contract": "air_purifier_agent_evidence_result_v1",
   "packet_id": "ap-amazon-secondary-v1",
   "generated_at": "2026-05-22T12:00:00.000Z",

@@ -298,7 +298,21 @@ test("live agent results approximate expected grouping buckets", () => {
   assert.ok(report.result_file_count >= 3);
 
   const autoSlugs = new Set(report.review_groups.auto_apply_eligible.map((r) => r.slug));
-  for (const slug of ["levoit-rf-lv-h133", "levoit-rf-lv-h128", "levoit-vital100-rf"]) {
+  for (const slug of [
+    "levoit-rf-rar040",
+    "levoit-rf-rar060",
+    "levoit-rf-lv-h133",
+    "levoit-rf-c131",
+    "levoit-rf-cr200",
+    "levoit-rf-lv-h128",
+    "levoit-vital100-rf",
+    "medify-ma18-rf",
+    "medify-ma22-rf",
+    "medify-ma25-rf",
+    "medify-ma40-rf",
+    "medify-ma50-rf",
+    "medify-ma112-rf",
+  ]) {
     assert.ok(autoSlugs.has(slug), `expected auto_apply ${slug}`);
   }
 
@@ -307,16 +321,7 @@ test("live agent results approximate expected grouping buckets", () => {
     ownerSlugs.has("winix-hepa-115115"),
     "winix-hepa-115115 has wrong_family_tokens in agent file — owner review not auto_apply",
   );
-  for (const slug of [
-    "levoit-rf-rar040",
-    "levoit-rf-rar060",
-    "levoit-rf-c131",
-    "levoit-rf-cr200",
-    "winix-carbon-116131",
-    "medify-ma25-rf",
-    "medify-ma40-rf",
-    "medify-ma50-rf",
-  ]) {
+  for (const slug of ["winix-carbon-116131", "shark-hepa-hp100", "rabbit-biogs-minusa2"]) {
     assert.ok(ownerSlugs.has(slug), `expected owner_review ${slug}`);
   }
 
