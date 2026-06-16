@@ -116,8 +116,9 @@ describe("ApHomeownerFilterPage", () => {
     assert.ok(html.includes("Medify MA-50 replacement filter"));
     assert.ok(html.includes("The filter for your Medify MA-50"));
     assert.ok(html.includes("MA-50 replacement HEPA filter"));
-    assert.ok(html.includes("MEDIFY-MA-50-RF"));
-    assert.ok(html.includes("Look for this code on the filter packaging."));
+    assert.ok(html.includes("MA-50"));
+    assert.ok(html.includes("Look for MA-50 on the unit, filter, or packaging."));
+    assert.equal(html.includes("MEDIFY-MA-50-RF"), false);
     assert.ok(html.includes("Replace about every 6 months"));
     assert.ok(html.includes("Exact match"));
     assert.ok(html.includes("Original part"));
@@ -169,6 +170,8 @@ describe("ApHomeownerFilterPage", () => {
     assert.equal(html.includes('href="/air-purifier/go/'), false);
     assert.ok(html.includes("No verified link right now"));
     assert.ok(html.includes("No checked buy link right now for this MA-50 filter."));
+    assert.ok(html.includes("Compare MA-50 with your old filter or manual"));
+    assert.equal(html.includes("MEDIFY-MA-50-RF"), false);
     assert.equal(html.includes("checked against Medify&#x27;s official product listing."), false);
   });
 

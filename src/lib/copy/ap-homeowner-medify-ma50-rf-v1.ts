@@ -4,7 +4,9 @@ export const AP_HOMEOWNER_MEDIFY_MA50_RF_COPY = {
   notSeller:
     "BuckParts checks retailer listings against your exact part. BuckParts is not the seller.",
   answerLabel: "The filter for your Medify MA-50",
-  partNumberPackagingHint: "Look for this code on the filter packaging.",
+  answerDisplayCode: "MA-50",
+  partNumberPackagingHint:
+    "Look for MA-50 on the unit, filter, or packaging.",
   genuineLine: "This is the genuine Medify filter made for the MA-50.",
   primaryCtaLabel: "View official Medify replacement filter",
   primaryCtaSrPrefix: "BuckParts Verified Link",
@@ -12,7 +14,7 @@ export const AP_HOMEOWNER_MEDIFY_MA50_RF_COPY = {
     "Open the official Medify replacement-filter page BuckParts checked for this cartridge.",
   ctaOpensLine: "Opens the checked Medify product page.",
   suppress:
-    "No checked buy link right now for this MA-50 filter. Compare MEDIFY-MA-50-RF with your old filter or manual before ordering anywhere else.",
+    "No checked buy link right now for this MA-50 filter. Compare MA-50 with your old filter or manual before ordering anywhere else.",
   modelCheckTitle: "Is this your purifier?",
   modelCheckBody: "If your purifier says MA-50, you're in the right place.",
   modelCheckWrongModelBody:
