@@ -12,7 +12,6 @@ import {
   CORE_400S_STANDARD_PART_NUMBER,
   core400sFitStateLabel,
   deriveCore400sFitState,
-  formatCore400sVerifiedDate,
   getCore400sPrimaryVerifiedLink,
   type Core400sConfusableFamily,
   type Core400sModelSummary,
@@ -44,9 +43,9 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
     trust: primaryTrustBuy?.trust,
     primaryVerifiedLink,
   });
-  const verifiedDate = formatCore400sVerifiedDate(
-    primaryVerifiedLink?.browser_truth_checked_at,
-  );
+  const displayRetailerLinks = primaryTrustBuy
+    ? removeVisibleVerificationDatesFromLinks(primaryTrustBuy.retailerLinks)
+    : [];
   const interval = intervalLabel(primary?.replacement_interval_months);
   const showConfusableNote = bundle.confusableFamilies.length === 3;
 
@@ -108,7 +107,7 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
           <section className={sectionClass}>
             <div className="space-y-2">
               <h2 className="text-base font-semibold text-bp-text">
-                See where to buy{verifiedDate ? ` - verified ${verifiedDate}` : ""}
+                See where to buy
               </h2>
               <p className="text-sm leading-relaxed text-bp-muted">
                 {CORE_400S_FLAGSHIP_COPY.ctaIntro}
@@ -119,7 +118,7 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
                 <BuckPartsVerifiedLinksSection>
                   <TrustAwareBuySection
                     trust={primaryTrustBuy.trust}
-                    links={primaryTrustBuy.retailerLinks}
+                    links={displayRetailerLinks}
                     goBase="/air-purifier/go"
                     primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
                     suppressMessage={CORE_400S_FLAGSHIP_COPY.suppress}
@@ -178,13 +177,6 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
           ) : null}
 
           <ModelListBlock
-            title={CORE_400S_FLAGSHIP_COPY.familyTitle}
-            body={CORE_400S_FLAGSHIP_COPY.familyBody}
-            models={bundle.familyModels}
-            currentSlug={model.slug}
-          />
-
-          <ModelListBlock
             title={`${CORE_400S_FLAGSHIP_COPY.alsoFitsTitle} (${bundle.alsoFitsModels.length})`}
             body={CORE_400S_FLAGSHIP_COPY.alsoFitsBody}
             models={bundle.alsoFitsModels}
@@ -200,29 +192,25 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
                 Checked against{" "}
                 <span className="font-mono font-semibold text-bp-text">
                   {CORE_400S_STANDARD_PART_NUMBER}
-                </span>
-                {verifiedDate ? ` on ${verifiedDate}` : ""}.
+                </span>.
               </li>
-              <li>The filter and model lists come from BuckParts air purifier data.</li>
+              <li>Fit details come from BuckParts air purifier fit records.</li>
               <li>BuckParts is not the seller and only shows a link when checks clear.</li>
             </ul>
-          </section>
-
-          <section className={sectionClass}>
-            <h2 className="text-base font-semibold text-bp-text">
-              {CORE_400S_FLAGSHIP_COPY.reminderTitle}
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-bp-muted">
-              {CORE_400S_FLAGSHIP_COPY.reminderBody}
-            </p>
-            <p className="mt-3 inline-flex rounded-md border border-bp-border bg-bp-trust-soft/55 px-3 py-2 text-sm font-semibold text-bp-text">
-              {CORE_400S_FLAGSHIP_COPY.reminderAction}: {interval ?? "6 months"}
-            </p>
           </section>
         </div>
       </div>
     </article>
   );
+}
+
+function removeVisibleVerificationDatesFromLinks(
+  links: VerticalModelPrimaryTrustBuy["retailerLinks"],
+): VerticalModelPrimaryTrustBuy["retailerLinks"] {
+  return links.map((link) => ({
+    ...link,
+    browser_truth_checked_at: null,
+  }));
 }
 
 function ModelListBlock({
@@ -283,11 +271,11 @@ function ConfusableNote({ families }: { families: Core400sConfusableFamily[] }) 
   ).join(" / ");
 
   return (
-    <div className="mt-4 rounded-lg border border-bp-caution/40 bg-bp-caution-soft px-3 py-3 text-sm leading-relaxed text-bp-caution">
-      <p className="font-semibold text-bp-caution">Different Core families use different filters.</p>
+    <div className="mt-4 rounded-lg border border-bp-border bg-bp-trust-soft/35 px-3 py-3 text-sm leading-relaxed text-bp-text/90">
+      <p className="font-semibold text-bp-text">Check the model label before ordering.</p>
       <p className="mt-1">
-        {familyNames} are mapped to {partNumbers}, not {CORE_400S_STANDARD_PART_NUMBER}. Confirm the
-        label says Core 400S before using this page.
+        {familyNames} use {partNumbers}. Those are not {CORE_400S_STANDARD_PART_NUMBER}. This page is
+        only for Core 400S.
       </p>
     </div>
   );

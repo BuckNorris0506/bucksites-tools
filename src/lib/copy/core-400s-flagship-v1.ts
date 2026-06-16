@@ -7,7 +7,7 @@ export const CORE_400S_FLAGSHIP_COPY = {
   catalogRefLabel: "Catalog ref",
   genuineLine: "This is the genuine Levoit filter made for the Core 400S family.",
   ctaIntro:
-    "We show a BuckParts Verified Link only when the listing passes our checks for this filter number.",
+    "BuckParts shows a retailer page here only after checking it against LEVOIT-RF-RAR040.",
   ctaOpensLine: "Opens the retailer product page we checked against this part number.",
   suppress:
     "No BuckParts Verified Link right now for this Core 400S filter. Compare LEVOIT-RF-RAR040 with your old filter or manual before ordering anywhere else.",
@@ -17,16 +17,9 @@ export const CORE_400S_FLAGSHIP_COPY = {
   differentModel: "I have a different model",
   insideTitle: "What is inside",
   insideBody:
-    "The repo note lists this as a 3-in-1 replacement filter for the Core 400 series. Match LEVOIT-RF-RAR040 before ordering.",
-  familyTitle: "Core 400 family",
-  familyBody:
-    "These are the repo-listed Core 400 series models that share this filter mapping.",
+    "This replacement filter is listed as a 3-in-1 filter for the Core 400 series. Match LEVOIT-RF-RAR040 before ordering.",
   alsoFitsTitle: "This filter also fits",
   alsoFitsBody:
-    "These model links come from the compatibility data for LEVOIT-RF-RAR040.",
+    "These model links share the LEVOIT-RF-RAR040 fit in BuckParts records.",
   trustTitle: "Why you can trust this match",
-  reminderTitle: "Stay on schedule",
-  reminderBody:
-    "Filters work best when replaced on time. Use the 6-month interval as your next reminder date after you install a fresh cartridge.",
-  reminderAction: "Add your own 6-month reminder",
 } as const;

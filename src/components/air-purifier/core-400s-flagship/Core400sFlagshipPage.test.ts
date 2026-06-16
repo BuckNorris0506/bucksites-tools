@@ -142,15 +142,23 @@ describe("Core400sFlagshipPage", () => {
     assert.ok(html.includes("Replace about every 6 months"));
     assert.ok(html.includes("Exact match"));
     assert.ok(html.includes("Original part"));
-    assert.ok(html.includes("verified Jun 12, 2026"));
     assert.ok(html.includes('href="/air-purifier/go/link-oem"'));
-    assert.ok(html.includes("Core 400 family"));
-    assert.ok(html.includes("LAP-C401S-WUSR"));
     assert.ok(html.includes("This filter also fits (2)"));
     assert.ok(html.includes("Core 450S"));
-    assert.ok(html.includes("Stay on schedule"));
+    assert.ok(html.includes("Check the model label before ordering."));
     assert.ok(html.includes("Core 200 / Core 300 / Core 600"));
+    assert.ok(html.includes("LEVOIT-RF-CR200 / LEVOIT-RF-RAR029 / LEVOIT-RF-RAR060"));
 
+    assert.equal(html.includes("verified Jun 12, 2026"), false);
+    assert.equal(html.includes("2026-06-12"), false);
+    assert.equal(html.includes("Core 400 family"), false);
+    assert.equal(html.includes("LAP-C401S-WUSR"), false);
+    assert.equal(html.includes("Stay on schedule"), false);
+    assert.equal(html.includes("Add your own 6-month reminder"), false);
+    assert.equal(html.includes("repo note"), false);
+    assert.equal(html.includes("repo-listed"), false);
+    assert.equal(html.includes("compatibility data"), false);
+    assert.equal(html.includes("Different Core families use different filters."), false);
     assert.equal(html.includes("Pet Allergy"), false);
     assert.equal(html.includes("Smoke &amp; Wildfire"), false);
     assert.equal(html.includes("Odor"), false);
