@@ -4,22 +4,23 @@ export const CORE_400S_FLAGSHIP_COPY = {
   notSeller:
     "BuckParts checks retailer listings against your exact part. BuckParts is not the seller.",
   answerLabel: "The filter for your Core 400S",
-  catalogRefLabel: "Catalog ref",
+  partNumberPackagingHint: "Look for this code on the filter packaging.",
   genuineLine: "This is the genuine Levoit filter made for the Core 400S family.",
+  primaryCtaLabel: "View official Levoit replacement filter",
+  primaryCtaSrPrefix: "BuckParts Verified Link",
   ctaIntro:
-    "BuckParts shows a retailer page here only after checking it against LEVOIT-RF-RAR040.",
-  ctaOpensLine: "Opens the retailer product page we checked against this part number.",
+    "Open the official Levoit replacement-filter page BuckParts checked for this model.",
+  ctaOpensLine: "Opens the checked Levoit product page.",
   suppress:
-    "No BuckParts Verified Link right now for this Core 400S filter. Compare LEVOIT-RF-RAR040 with your old filter or manual before ordering anywhere else.",
-  modelCheckTitle: "Make sure this is your model",
+    "No checked buy link right now for this Core 400S filter. Compare LEVOIT-RF-RAR040 with your old filter or manual before ordering anywhere else.",
+  modelCheckTitle: "Is this your model?",
   modelCheckBody:
-    "Check the label on the base of your purifier. This page is for the Core 400S.",
+    "If your label says Core 400 or Core 400S, you're in the right place.",
+  modelCheckWrongModelBody: "If it says Core 200, Core 300, or Core 600, use search instead.",
   differentModel: "I have a different model",
-  insideTitle: "What is inside",
-  insideBody:
-    "This replacement filter is listed as a 3-in-1 filter for the Core 400 series. Match LEVOIT-RF-RAR040 before ordering.",
   alsoFitsTitle: "This filter also fits",
-  alsoFitsBody:
-    "These model links share the LEVOIT-RF-RAR040 fit in BuckParts records.",
+  alsoFitsBody: "These Levoit models use the same replacement filter.",
   trustTitle: "Why you can trust this match",
+  trustOfficialListingClause:
+    "Buy links are checked against Levoit's official product listing.",
 } as const;

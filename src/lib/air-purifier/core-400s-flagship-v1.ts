@@ -72,6 +72,30 @@ export function formatCore400sVerifiedDate(isoDateTime: string | null | undefine
   }).format(new Date(ms));
 }
 
+/**
+ * LAP retail SKUs in repo share the Core 400S filter mapping; display uses the
+ * consumer model_number from the paired non-LAP row in models.csv (Core 400S, Core 450S).
+ */
+const CORE_400S_LAP_DISPLAY_LABEL_BY_SLUG: Readonly<Record<string, string>> = {
+  "levoit-lap-c401s-wusr": "Core 400S",
+  "levoit-lap-c451s-wusr": "Core 450S",
+};
+
+export function formatCore400sAlsoFitsDisplay(model: Core400sModelSummary): {
+  primary: string;
+  secondary?: string;
+} {
+  const brand = model.brand?.name?.trim() || "Levoit";
+  const lapFriendly = CORE_400S_LAP_DISPLAY_LABEL_BY_SLUG[model.slug.trim().toLowerCase()];
+  if (lapFriendly) {
+    return {
+      primary: `${brand} ${lapFriendly}`,
+      secondary: `model code ${model.model_number}`,
+    };
+  }
+  return { primary: `${brand} ${model.model_number}` };
+}
+
 export function sortCore400sModels<T extends Core400sModelSummary>(models: T[]): T[] {
   return [...models].sort((a, b) => {
     const aCurrent = a.slug === CORE_400S_FLAGSHIP_SLUG ? 0 : 1;

@@ -6,6 +6,7 @@ import {
   CORE_400S_STANDARD_FILTER_SLUG,
   deriveCore400sConfusableFamilies,
   deriveCore400sFitState,
+  formatCore400sAlsoFitsDisplay,
   formatCore400sVerifiedDate,
   isCore400sFlagshipSlug,
   sortCore400sModels,
@@ -49,6 +50,42 @@ describe("Core 400S flagship v1 derivations", () => {
       "Jun 12, 2026",
     );
     assert.equal(formatCore400sVerifiedDate("not-a-date"), null);
+  });
+
+  it("formats LAP also-fits rows with a friendly name and model code secondary", () => {
+    assert.deepEqual(
+      formatCore400sAlsoFitsDisplay({
+        id: "lap-c401s",
+        slug: "levoit-lap-c401s-wusr",
+        model_number: "LAP-C401S-WUSR",
+        brand: { name: "Levoit" },
+      }),
+      {
+        primary: "Levoit Core 400S",
+        secondary: "model code LAP-C401S-WUSR",
+      },
+    );
+    assert.deepEqual(
+      formatCore400sAlsoFitsDisplay({
+        id: "lap-c451s",
+        slug: "levoit-lap-c451s-wusr",
+        model_number: "LAP-C451S-WUSR",
+        brand: { name: "Levoit" },
+      }),
+      {
+        primary: "Levoit Core 450S",
+        secondary: "model code LAP-C451S-WUSR",
+      },
+    );
+    assert.deepEqual(
+      formatCore400sAlsoFitsDisplay({
+        id: "core-450s",
+        slug: "levoit-core-450s",
+        model_number: "Core 450S",
+        brand: { name: "Levoit" },
+      }),
+      { primary: "Levoit Core 450S" },
+    );
   });
 
   it("sorts related model lists with the flagship model first", () => {

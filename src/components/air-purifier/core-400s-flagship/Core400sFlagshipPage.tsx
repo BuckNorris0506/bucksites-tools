@@ -1,9 +1,6 @@
 import React from "react";
 import Link from "next/link";
 
-import {
-  BuckPartsVerifiedLinksSection,
-} from "@/components/trust/BuckPartsVerifiedLinksSection";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
 import type {
   VerticalModelPrimaryTrustBuy,
@@ -12,8 +9,8 @@ import {
   CORE_400S_STANDARD_PART_NUMBER,
   core400sFitStateLabel,
   deriveCore400sFitState,
+  formatCore400sAlsoFitsDisplay,
   getCore400sPrimaryVerifiedLink,
-  type Core400sConfusableFamily,
   type Core400sModelSummary,
 } from "@/lib/air-purifier/core-400s-flagship-v1";
 import { CORE_400S_FLAGSHIP_COPY } from "@/lib/copy/core-400s-flagship-v1";
@@ -21,10 +18,6 @@ import type { Core400sFlagshipBundle } from "@/lib/data/air-purifier/core-400s-f
 import type { AirPurifierModelWithFilters } from "@/lib/data/air-purifier/models";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { intervalLabel } from "@/lib/vertical/interval";
-import {
-  BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
-} from "@/lib/copy/buckparts-verified-link-copy";
-
 const sectionClass = "rounded-lg border border-bp-border bg-bp-surface p-4 sm:p-5";
 
 type Props = {
@@ -44,10 +37,12 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
     primaryVerifiedLink,
   });
   const displayRetailerLinks = primaryTrustBuy
-    ? removeVisibleVerificationDatesFromLinks(primaryTrustBuy.retailerLinks)
+    ? prepareCore400sDisplayRetailerLinks(primaryTrustBuy.retailerLinks)
     : [];
   const interval = intervalLabel(primary?.replacement_interval_months);
-  const showConfusableNote = bundle.confusableFamilies.length === 3;
+  const alsoFitsModels = bundle.alsoFitsModels.filter(
+    (relatedModel) => relatedModel.slug !== model.slug,
+  );
 
   return (
     <article className="space-y-8">
@@ -77,10 +72,7 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
                 {primary?.oem_part_number ?? CORE_400S_STANDARD_PART_NUMBER}
               </p>
               <p className="text-sm text-bp-muted">
-                {CORE_400S_FLAGSHIP_COPY.catalogRefLabel}:{" "}
-                <span className="font-mono font-semibold text-bp-text">
-                  {CORE_400S_STANDARD_PART_NUMBER}
-                </span>
+                {CORE_400S_FLAGSHIP_COPY.partNumberPackagingHint}
               </p>
             </div>
 
@@ -115,21 +107,19 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
             </div>
             {primaryTrustBuy && primary ? (
               <div className="mt-4">
-                <BuckPartsVerifiedLinksSection>
-                  <TrustAwareBuySection
-                    trust={primaryTrustBuy.trust}
-                    links={displayRetailerLinks}
-                    goBase="/air-purifier/go"
-                    primaryCtaLabel={BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX}
-                    suppressMessage={CORE_400S_FLAGSHIP_COPY.suppress}
-                    gateSuppressionSummary={primaryTrustBuy.gateSuppressionSummary ?? undefined}
-                    buyPathSortContext={buyPathSortContextForFilter(
-                      primary.slug,
-                      primary.name,
-                      primary.oem_part_number,
-                    )}
-                  />
-                </BuckPartsVerifiedLinksSection>
+                <TrustAwareBuySection
+                  trust={primaryTrustBuy.trust}
+                  links={displayRetailerLinks}
+                  goBase="/air-purifier/go"
+                  primaryCtaLabel={CORE_400S_FLAGSHIP_COPY.primaryCtaSrPrefix}
+                  suppressMessage={CORE_400S_FLAGSHIP_COPY.suppress}
+                  gateSuppressionSummary={primaryTrustBuy.gateSuppressionSummary ?? undefined}
+                  buyPathSortContext={buyPathSortContextForFilter(
+                    primary.slug,
+                    primary.name,
+                    primary.oem_part_number,
+                  )}
+                />
               </div>
             ) : (
               <p className="mt-4 rounded-lg border border-bp-caution/40 bg-bp-caution-soft px-3 py-3 text-sm leading-relaxed text-bp-caution">
@@ -150,9 +140,9 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
             <p className="mt-2 text-sm leading-relaxed text-bp-muted">
               {CORE_400S_FLAGSHIP_COPY.modelCheckBody}
             </p>
-            {showConfusableNote ? (
-              <ConfusableNote families={bundle.confusableFamilies} />
-            ) : null}
+            <p className="mt-2 text-sm leading-relaxed text-bp-muted">
+              {CORE_400S_FLAGSHIP_COPY.modelCheckWrongModelBody}
+            </p>
             <Link
               href="/air-purifier/search"
               className="mt-4 inline-flex text-sm font-semibold text-bp-trust underline-offset-2 hover:underline"
@@ -164,22 +154,10 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
             </Link>
           </section>
 
-          {primary?.notes ? (
-            <section className={sectionClass}>
-              <h2 className="text-base font-semibold text-bp-text">
-                {CORE_400S_FLAGSHIP_COPY.insideTitle}
-              </h2>
-              <p className="mt-2 text-sm leading-relaxed text-bp-muted">
-                {CORE_400S_FLAGSHIP_COPY.insideBody}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-bp-muted">{primary.notes}</p>
-            </section>
-          ) : null}
-
           <ModelListBlock
-            title={`${CORE_400S_FLAGSHIP_COPY.alsoFitsTitle} (${bundle.alsoFitsModels.length})`}
+            title={CORE_400S_FLAGSHIP_COPY.alsoFitsTitle}
             body={CORE_400S_FLAGSHIP_COPY.alsoFitsBody}
-            models={bundle.alsoFitsModels}
+            models={alsoFitsModels}
             currentSlug={model.slug}
           />
 
@@ -189,13 +167,14 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
             </h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-bp-muted">
               <li>
-                Checked against{" "}
+                This page is for{" "}
                 <span className="font-mono font-semibold text-bp-text">
                   {CORE_400S_STANDARD_PART_NUMBER}
-                </span>.
+                </span>, the replacement-filter number shown above.
               </li>
-              <li>Fit details come from BuckParts air purifier fit records.</li>
-              <li>BuckParts is not the seller and only shows a link when checks clear.</li>
+              <li>BuckParts is not the seller.</li>
+              <li>{CORE_400S_FLAGSHIP_COPY.trustOfficialListingClause}</li>
+              <li>A buy link appears only when the retailer page passes the filter check.</li>
             </ul>
           </section>
         </div>
@@ -204,11 +183,12 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
   );
 }
 
-function removeVisibleVerificationDatesFromLinks(
+function prepareCore400sDisplayRetailerLinks(
   links: VerticalModelPrimaryTrustBuy["retailerLinks"],
 ): VerticalModelPrimaryTrustBuy["retailerLinks"] {
   return links.map((link) => ({
     ...link,
+    retailer_name: CORE_400S_FLAGSHIP_COPY.primaryCtaLabel,
     browser_truth_checked_at: null,
   }));
 }
@@ -228,12 +208,11 @@ function ModelListBlock({
     <section className={sectionClass}>
       <h2 className="text-base font-semibold text-bp-text">{title}</h2>
       <p className="mt-2 text-sm leading-relaxed text-bp-muted">{body}</p>
-      {models.length === 0 ? (
-        <p className="mt-3 text-sm text-bp-muted">No related models are listed yet.</p>
-      ) : (
+      {models.length > 0 ? (
         <ul className="mt-4 divide-y divide-bp-border rounded-md border border-bp-border">
           {models.map((relatedModel) => {
             const isCurrent = relatedModel.slug === currentSlug;
+            const display = formatCore400sAlsoFitsDisplay(relatedModel);
             return (
               <li key={relatedModel.id}>
                 <Link
@@ -242,41 +221,22 @@ function ModelListBlock({
                   className="flex flex-col gap-1 px-3 py-3 text-sm transition-colors hover:bg-bp-trust-soft/40"
                 >
                   <span className="flex flex-wrap items-center gap-2">
-                    <span className="bp-code font-semibold text-bp-text">
-                      {relatedModel.model_number}
-                    </span>
+                    <span className="font-semibold text-bp-text">{display.primary}</span>
                     {isCurrent ? (
                       <span className="rounded-md bg-bp-success-soft px-2 py-0.5 text-xs font-semibold text-bp-success">
                         You are here
                       </span>
                     ) : null}
                   </span>
-                  {relatedModel.title ? (
-                    <span className="text-bp-muted">{relatedModel.title}</span>
+                  {display.secondary ? (
+                    <span className="text-bp-muted">{display.secondary}</span>
                   ) : null}
                 </Link>
               </li>
             );
           })}
         </ul>
-      )}
+      ) : null}
     </section>
-  );
-}
-
-function ConfusableNote({ families }: { families: Core400sConfusableFamily[] }) {
-  const familyNames = families.map((family) => family.series).join(" / ");
-  const partNumbers = Array.from(
-    new Set(families.flatMap((family) => family.filterPartNumbers)),
-  ).join(" / ");
-
-  return (
-    <div className="mt-4 rounded-lg border border-bp-border bg-bp-trust-soft/35 px-3 py-3 text-sm leading-relaxed text-bp-text/90">
-      <p className="font-semibold text-bp-text">Check the model label before ordering.</p>
-      <p className="mt-1">
-        {familyNames} use {partNumbers}. Those are not {CORE_400S_STANDARD_PART_NUMBER}. This page is
-        only for Core 400S.
-      </p>
-    </div>
   );
 }

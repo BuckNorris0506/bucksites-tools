@@ -12,7 +12,7 @@ import type { VerticalModelPrimaryTrustBuy } from "@/components/vertical/Vertica
 const verifiedLink = {
   id: "link-oem",
   air_purifier_filter_id: "filter-rar040",
-  retailer_name: "Levoit",
+  retailer_name: "OEM / manufacturer catalog (keyword lookup)",
   affiliate_url: "https://levoit.com/products/core-400s-p-3-stage-replacement-filter",
   is_primary: true,
   retailer_key: "oem-catalog",
@@ -88,6 +88,14 @@ const bundle: Core400sFlagshipBundle = {
       series: "Core 400/600",
       brand: { slug: "levoit", name: "Levoit" },
     },
+    {
+      id: "model-lap-c451s",
+      slug: "levoit-lap-c451s-wusr",
+      model_number: "LAP-C451S-WUSR",
+      title: "Levoit LAP-C451S-WUSR Air Purifier",
+      series: "Core 400/600",
+      brand: { slug: "levoit", name: "Levoit" },
+    },
   ],
   confusableFamilies: [
     { series: "Core 200", filterPartNumbers: ["LEVOIT-RF-CR200"] },
@@ -143,16 +151,33 @@ describe("Core400sFlagshipPage", () => {
     assert.ok(html.includes("Exact match"));
     assert.ok(html.includes("Original part"));
     assert.ok(html.includes('href="/air-purifier/go/link-oem"'));
-    assert.ok(html.includes("This filter also fits (2)"));
-    assert.ok(html.includes("Core 450S"));
-    assert.ok(html.includes("Check the model label before ordering."));
-    assert.ok(html.includes("Core 200 / Core 300 / Core 600"));
-    assert.ok(html.includes("LEVOIT-RF-CR200 / LEVOIT-RF-RAR029 / LEVOIT-RF-RAR060"));
+    assert.ok(html.includes("View official Levoit replacement filter"));
+    assert.ok(html.includes("Is this your model?"));
+    assert.ok(
+      html.includes("If your label says Core 400 or Core 400S, you&#x27;re in the right place."),
+    );
+    assert.ok(html.includes("If it says Core 200, Core 300, or Core 600, use search instead."));
+    assert.ok(html.includes("Look for this code on the filter packaging."));
+    assert.ok(html.includes("checked against Levoit&#x27;s official product listing."));
+    assert.ok(html.includes("This filter also fits"));
+    assert.ok(html.includes("Levoit Core 450S"));
+    assert.equal(html.includes("BuckParts Verified Link at at"), false);
+    assert.equal(html.includes("Levoit part number"), false);
 
+    assert.equal(html.includes("OEM / manufacturer catalog (keyword lookup)"), false);
+    assert.equal(html.includes("BuckParts Verified Links"), false);
+    assert.equal(html.includes("This filter also fits (2)"), false);
+    assert.equal(html.includes("LEVOIT-RF-CR200"), false);
+    assert.equal(html.includes("LEVOIT-RF-RAR029"), false);
+    assert.equal(html.includes("LEVOIT-RF-RAR060"), false);
     assert.equal(html.includes("verified Jun 12, 2026"), false);
     assert.equal(html.includes("2026-06-12"), false);
     assert.equal(html.includes("Core 400 family"), false);
+    assert.ok(html.includes("model code LAP-C451S-WUSR"));
     assert.equal(html.includes("LAP-C401S-WUSR"), false);
+    assert.equal(html.includes("What is inside"), false);
+    assert.equal(html.includes("3-in-1 for Core 400 series"), false);
+    assert.equal(html.includes("Fit details come from BuckParts air purifier fit records."), false);
     assert.equal(html.includes("Stay on schedule"), false);
     assert.equal(html.includes("Add your own 6-month reminder"), false);
     assert.equal(html.includes("repo note"), false);
@@ -184,6 +209,6 @@ describe("Core400sFlagshipPage", () => {
 
     assert.ok(!html.includes('href="/air-purifier/go/'));
     assert.ok(html.includes("No verified link right now"));
-    assert.ok(html.includes("No BuckParts Verified Link right now for this Core 400S filter."));
+    assert.ok(html.includes("No checked buy link right now for this Core 400S filter."));
   });
 });
