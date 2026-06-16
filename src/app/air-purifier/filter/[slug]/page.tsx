@@ -8,6 +8,7 @@ import {
 import { ApHomeownerFilterPage } from "@/components/air-purifier/homeowner/ApHomeownerFilterPage";
 import { VerticalFilterPageContent } from "@/components/vertical/VerticalFilterPageContent";
 import { isApHomeownerFilterPilotSlug } from "@/lib/air-purifier/ap-homeowner-framework-v1";
+import { getApHomeownerFilterPageCopy } from "@/lib/copy/ap-homeowner-filter-copy-v1";
 import {
   AIR_PURIFIER_FILTER_PAGE_INTRO,
   FILTER_PAGE_FIT_CONFIRMATION_AIR_PURIFIER,
@@ -46,6 +47,9 @@ export default async function AirPurifierFilterPage({ params }: Props) {
   const displayModels = filterCompatModelsForCustomerDisplayV1(filter.slug, filter.models);
 
   if (isApHomeownerFilterPilotSlug(filter.slug)) {
+    const copy = getApHomeownerFilterPageCopy(filter.slug);
+    if (!copy) notFound();
+
     const buyPathSortContext = buyPathSortContextForFilter(
       filter.slug,
       filter.name,
@@ -62,6 +66,7 @@ export default async function AirPurifierFilterPage({ params }: Props) {
 
     return (
       <ApHomeownerFilterPage
+        copy={copy}
         oemPartNumber={filter.oem_part_number}
         filterName={filter.name}
         replacementIntervalMonths={filter.replacement_interval_months}

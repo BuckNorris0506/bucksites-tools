@@ -5,7 +5,7 @@ import type { BuyLinkRow } from "@/components/BuyLinks";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 import {
-  AP_HOMEOWNER_FILTER_PILOT_SLUG,
+  AP_HOMEOWNER_FILTER_PILOT_SLUGS,
   apHomeownerFitStateLabel,
   apHomeownerShowsOfficialListingTrustBullet,
   deriveApHomeownerFitState,
@@ -26,11 +26,13 @@ const verifiedLink: BuyLinkRow = {
 };
 
 describe("ap-homeowner-framework-v1", () => {
-  it("gates only the medify-ma50-rf pilot slug", () => {
-    assert.equal(isApHomeownerFilterPilotSlug(AP_HOMEOWNER_FILTER_PILOT_SLUG), true);
-    assert.equal(isApHomeownerFilterPilotSlug(" medify-ma50-rf "), true);
+  it("gates only the two homeowner filter pilot slugs", () => {
+    for (const slug of AP_HOMEOWNER_FILTER_PILOT_SLUGS) {
+      assert.equal(isApHomeownerFilterPilotSlug(slug), true);
+      assert.equal(isApHomeownerFilterPilotSlug(` ${slug} `), true);
+    }
     assert.equal(isApHomeownerFilterPilotSlug("medify-ma40-rf"), false);
-    assert.equal(isApHomeownerFilterPilotSlug("levoit-rf-rar040"), false);
+    assert.equal(isApHomeownerFilterPilotSlug("levoit-rf-rar029"), false);
   });
 
   it("derives exact_match only for confident direct_buyable paths", () => {
@@ -52,14 +54,26 @@ describe("ap-homeowner-framework-v1", () => {
   });
 
   it("formats compat models for homeowner display", () => {
-    assert.equal(
+    assert.deepEqual(
       formatApHomeownerCompatModelDisplay({
         id: "1",
         slug: "medify-ma50",
         model_number: "MA-50",
         brand: { name: "Medify" },
       }),
-      "Medify MA-50",
+      { primary: "Medify MA-50" },
+    );
+    assert.deepEqual(
+      formatApHomeownerCompatModelDisplay({
+        id: "2",
+        slug: "levoit-lap-c401s-wusr",
+        model_number: "LAP-C401S-WUSR",
+        brand: { name: "Levoit" },
+      }),
+      {
+        primary: "Levoit Core 400S",
+        secondary: "model code LAP-C401S-WUSR",
+      },
     );
   });
 
