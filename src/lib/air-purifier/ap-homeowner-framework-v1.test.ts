@@ -26,13 +26,13 @@ const verifiedLink: BuyLinkRow = {
 };
 
 describe("ap-homeowner-framework-v1", () => {
-  it("gates only the two homeowner filter pilot slugs", () => {
+  it("gates only the homeowner filter pilot slugs", () => {
     for (const slug of AP_HOMEOWNER_FILTER_PILOT_SLUGS) {
       assert.equal(isApHomeownerFilterPilotSlug(slug), true);
       assert.equal(isApHomeownerFilterPilotSlug(` ${slug} `), true);
     }
     assert.equal(isApHomeownerFilterPilotSlug("medify-ma40-rf"), false);
-    assert.equal(isApHomeownerFilterPilotSlug("levoit-rf-rar029"), false);
+    assert.equal(isApHomeownerFilterPilotSlug("coway-airmega250-rf"), false);
   });
 
   it("derives exact_match only for confident direct_buyable paths", () => {

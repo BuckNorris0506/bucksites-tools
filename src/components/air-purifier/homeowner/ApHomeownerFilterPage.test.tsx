@@ -4,6 +4,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { AP_HOMEOWNER_COWAY_MAX2_HEPA_COPY } from "@/lib/copy/ap-homeowner-coway-max2-hepa-v1";
 import { AP_HOMEOWNER_LEVOIT_RF_RAR040_COPY } from "@/lib/copy/ap-homeowner-levoit-rf-rar040-v1";
 import { AP_HOMEOWNER_MEDIFY_MA50_RF_COPY } from "@/lib/copy/ap-homeowner-medify-ma50-rf-v1";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
@@ -28,6 +29,16 @@ const levoitVerifiedLink: BuyLinkRow = {
   retailer_key: "oem-catalog",
   browser_truth_classification: "direct_buyable",
   browser_truth_checked_at: "2026-06-12T22:15:23.992Z",
+};
+
+const cowayVerifiedLink: BuyLinkRow = {
+  id: "link-coway-oem",
+  retailer_name: "OEM / manufacturer catalog (keyword lookup)",
+  affiliate_url: "https://cowaymega.com/products/airmega-200m-ap-1512hh-filter-set",
+  is_primary: true,
+  retailer_key: "oem-catalog",
+  browser_truth_classification: "direct_buyable",
+  browser_truth_checked_at: "2026-05-24T05:39:50.321Z",
 };
 
 const medifyModels = [
@@ -63,6 +74,21 @@ const levoitModels = [
     slug: "levoit-core-450s",
     model_number: "Core 450S",
     brand: { name: "Levoit" },
+  },
+];
+
+const cowayModels = [
+  {
+    id: "model-ap-1512hh",
+    slug: "coway-ap-1512hh",
+    model_number: "AP-1512HH",
+    brand: { name: "Coway" },
+  },
+  {
+    id: "model-ap-1512p",
+    slug: "coway-ap-1512p",
+    model_number: "AP-1512P",
+    brand: { name: "Coway" },
   },
 ];
 
@@ -242,5 +268,79 @@ describe("ApHomeownerFilterPage", () => {
     assert.ok(html.includes("Compare Core 400S-RF or Core 400S with your old filter or manual"));
     assert.equal(html.includes("LEVOIT-RF-RAR040"), false);
     assert.equal(html.includes("checked against Levoit&#x27;s official product listing."), false);
+  });
+
+  it("renders the Coway Max2 homeowner filter page with verified CTA stack", () => {
+    const html = renderToStaticMarkup(
+      createElement(ApHomeownerFilterPage, {
+        copy: AP_HOMEOWNER_COWAY_MAX2_HEPA_COPY,
+        oemPartNumber: "COWAY-3304899",
+        filterName: "Airmega Mighty / 1512 series Max2 filter set",
+        replacementIntervalMonths: 12,
+        models: cowayModels,
+        retailerLinks: [cowayVerifiedLink],
+        trust: trust(cowayVerifiedLink),
+        buyPathSortContext: {
+          exactOemCatalogPart: true,
+          expectedOemPartNumber: "COWAY-3304899",
+          waterdropExactProofSlice: false,
+        },
+      }),
+    );
+
+    assert.ok(html.includes("Coway AP-1512 / Airmega Mighty replacement filter set"));
+    assert.ok(html.includes("The filter set for your AP-1512 / Airmega Mighty"));
+    assert.ok(html.includes("3304899"));
+    assert.ok(html.includes("Look for SKU 3304899 or Max2 on the filter or packaging."));
+    assert.equal(html.includes("COWAY-3304899"), false);
+    assert.ok(
+      html.includes(
+        "If your purifier is an AP-1512, Airmega Mighty, or Airmega 200M, you&#x27;re in the right place.",
+      ),
+    );
+    assert.ok(
+      html.includes(
+        "Other Coway Airmega lines — Airmega 100, 250, 300, and 400 — use different filter sets.",
+      ),
+    );
+    assert.ok(html.includes("If your unit is one of those, search that model instead."));
+    assert.ok(html.includes("View official Coway replacement filter"));
+    assert.ok(html.includes('href="/air-purifier/go/link-coway-oem"'));
+    assert.ok(html.includes("Coway AP-1512HH"));
+    assert.ok(html.includes('href="/air-purifier/model/coway-ap-1512hh"'));
+    assert.ok(html.includes("checked against Coway&#x27;s official product listing."));
+    assert.ok(html.includes("re-checks listings periodically"));
+    assert.ok(html.includes("Most recent listing check: May 24, 2026"));
+    assert.equal(html.includes("OEM / manufacturer catalog (keyword lookup)"), false);
+  });
+
+  it("uses the Coway suppress path when buyer_path_state is suppress_buy", () => {
+    const html = renderToStaticMarkup(
+      createElement(ApHomeownerFilterPage, {
+        copy: AP_HOMEOWNER_COWAY_MAX2_HEPA_COPY,
+        oemPartNumber: "COWAY-3304899",
+        filterName: "Airmega Mighty / 1512 series Max2 filter set",
+        replacementIntervalMonths: 12,
+        models: cowayModels,
+        retailerLinks: [],
+        trust: trust(cowayVerifiedLink, {
+          buyer_path_state: "suppress_buy",
+          approved_retailer_links: 0,
+          preferred_winner_link: null,
+        }),
+        buyPathSortContext: {
+          exactOemCatalogPart: true,
+          expectedOemPartNumber: "COWAY-3304899",
+          waterdropExactProofSlice: false,
+        },
+      }),
+    );
+
+    assert.equal(html.includes('href="/air-purifier/go/'), false);
+    assert.ok(html.includes("No verified link right now"));
+    assert.ok(html.includes("No checked buy link right now for this AP-1512 / Mighty filter set."));
+    assert.ok(html.includes("Compare SKU 3304899 or Max2 with your old filter or manual"));
+    assert.equal(html.includes("COWAY-3304899"), false);
+    assert.equal(html.includes("checked against Coway&#x27;s official product listing."), false);
   });
 });
