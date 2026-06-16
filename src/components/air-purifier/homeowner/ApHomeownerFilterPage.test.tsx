@@ -85,11 +85,18 @@ describe("ApHomeownerFilterPage", () => {
     assert.ok(html.includes('href="/air-purifier/go/link-oem"'));
     assert.ok(html.includes("View official Medify replacement filter"));
     assert.ok(html.includes("If your purifier says MA-50, you&#x27;re in the right place."));
-    assert.ok(html.includes("If you have a different Medify model, use search instead."));
+    assert.ok(
+      html.includes(
+        "Other Medify models — MA-14, MA-15, MA-25, MA-35, MA-40, and MA-112 — use different filters.",
+      ),
+    );
+    assert.ok(html.includes("If your unit says one of those, search that model instead."));
     assert.ok(html.includes("Works with these purifiers"));
     assert.ok(html.includes("Medify MA-50"));
     assert.ok(html.includes('href="/air-purifier/model/medify-ma50"'));
     assert.ok(html.includes("checked against Medify&#x27;s official product listing."));
+    assert.ok(html.includes("re-checks listings periodically"));
+    assert.ok(html.includes("Most recent listing check: Jun 15, 2026"));
     assert.equal(html.includes("BuckParts Verified Link at at"), false);
     assert.equal(html.includes("OEM / manufacturer catalog (keyword lookup)"), false);
     assert.equal(html.includes("BuckParts Verified Links"), false);

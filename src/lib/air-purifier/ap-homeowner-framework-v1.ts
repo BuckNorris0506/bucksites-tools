@@ -46,6 +46,20 @@ export function formatApHomeownerCompatModelDisplay(model: ApHomeownerCompatMode
   return `${brand} ${model.model_number}`;
 }
 
+export function formatApHomeownerListingCheckDate(
+  isoDateTime: string | null | undefined,
+): string | null {
+  if (!isoDateTime) return null;
+  const ms = Date.parse(isoDateTime);
+  if (Number.isNaN(ms)) return null;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(ms));
+}
+
 export function apHomeownerShowsOfficialListingTrustBullet(
   trust: Pick<PartTrustSummary, "buyer_path_state" | "preferred_winner_link" | "approved_retailer_links">,
 ): boolean {

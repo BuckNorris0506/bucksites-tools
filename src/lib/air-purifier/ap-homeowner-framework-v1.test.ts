@@ -10,6 +10,7 @@ import {
   apHomeownerShowsOfficialListingTrustBullet,
   deriveApHomeownerFitState,
   formatApHomeownerCompatModelDisplay,
+  formatApHomeownerListingCheckDate,
   isApHomeownerFilterPilotSlug,
   prepareApHomeownerDisplayRetailerLinks,
 } from "./ap-homeowner-framework-v1";
@@ -69,6 +70,14 @@ describe("ap-homeowner-framework-v1", () => {
     );
     assert.equal(prepared[0]?.retailer_name, "View official Medify replacement filter");
     assert.equal(prepared[0]?.browser_truth_checked_at, null);
+  });
+
+  it("formats listing check dates for homeowner trust copy", () => {
+    assert.equal(
+      formatApHomeownerListingCheckDate("2026-06-15T17:49:12.389Z"),
+      "Jun 15, 2026",
+    );
+    assert.equal(formatApHomeownerListingCheckDate(null), null);
   });
 
   it("shows official listing trust bullet only for direct_buyable oem-catalog winners", () => {

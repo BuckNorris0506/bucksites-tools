@@ -8,6 +8,7 @@ import {
   apHomeownerShowsOfficialListingTrustBullet,
   deriveApHomeownerFitState,
   formatApHomeownerCompatModelDisplay,
+  formatApHomeownerListingCheckDate,
   getApHomeownerPrimaryVerifiedLink,
   prepareApHomeownerDisplayRetailerLinks,
   type ApHomeownerCompatModel,
@@ -56,6 +57,9 @@ export function ApHomeownerFilterPage({
   const interval = intervalLabel(replacementIntervalMonths);
   const showBuySection = trust.buyer_path_state !== "suppress_buy" && retailerLinks.length > 0;
   const showOfficialListingBullet = apHomeownerShowsOfficialListingTrustBullet(trust);
+  const listingCheckDate = formatApHomeownerListingCheckDate(
+    primaryVerifiedLink?.browser_truth_checked_at,
+  );
   const mBase = modelBasePath.replace(/\/$/, "");
 
   return (
@@ -165,7 +169,15 @@ export function ApHomeownerFilterPage({
               </li>
               <li>BuckParts is not the seller.</li>
               {showOfficialListingBullet ? (
-                <li>{copy.trustOfficialListingClause}</li>
+                <li>
+                  {copy.trustOfficialListingClause}
+                  {listingCheckDate ? (
+                    <>
+                      {" "}
+                      {copy.trustOfficialListingLastCheckLabel} {listingCheckDate}.
+                    </>
+                  ) : null}
+                </li>
               ) : null}
               <li>A buy link appears only when the retailer page passes the filter check.</li>
             </ul>
