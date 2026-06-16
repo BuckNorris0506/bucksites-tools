@@ -30,6 +30,15 @@ Execution responses should end with:
 - exact copy/paste prompt or command
 - correct execution surface
 
+### Jared Terminal Authority
+
+- Jared can run any terminal command when given an exact copy/paste command.
+- Do not treat terminal execution as unavailable.
+- When terminal validation is the smallest safe next move, provide the exact command.
+- Still label the surface as **Terminal**.
+- Still avoid destructive commands unless explicitly authorized and scoped.
+- Do not assume Jared can inspect repo internals manually; convert terminal work into copy/paste proof commands.
+
 ---
 
 ## Strategic identity + second-wedge research (PROVEN audit findings — strategy only)
