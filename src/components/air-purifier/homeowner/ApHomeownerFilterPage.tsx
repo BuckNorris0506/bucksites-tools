@@ -13,7 +13,7 @@ import {
   prepareApHomeownerDisplayRetailerLinks,
   type ApHomeownerCompatModel,
 } from "@/lib/air-purifier/ap-homeowner-framework-v1";
-import { AP_HOMEOWNER_MEDIFY_MA50_RF_COPY } from "@/lib/copy/ap-homeowner-medify-ma50-rf-v1";
+import type { ApHomeownerFilterPageCopy } from "@/lib/copy/ap-homeowner-filter-copy-v1";
 import type { BuyPathGateSuppressionSummary } from "@/lib/retailers/launch-buy-links";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -21,6 +21,7 @@ import { intervalLabel } from "@/lib/vertical/interval";
 const sectionClass = "rounded-lg border border-bp-border bg-bp-surface p-4 sm:p-5";
 
 export type ApHomeownerFilterPageProps = {
+  copy: ApHomeownerFilterPageCopy;
   oemPartNumber: string;
   filterName: string | null;
   replacementIntervalMonths: number | null;
@@ -35,6 +36,7 @@ export type ApHomeownerFilterPageProps = {
 };
 
 export function ApHomeownerFilterPage({
+  copy,
   oemPartNumber,
   filterName,
   replacementIntervalMonths,
@@ -47,7 +49,6 @@ export function ApHomeownerFilterPage({
   searchHref = "/air-purifier/search",
   modelBasePath = "/air-purifier/model",
 }: ApHomeownerFilterPageProps) {
-  const copy = AP_HOMEOWNER_MEDIFY_MA50_RF_COPY;
   const primaryVerifiedLink = getApHomeownerPrimaryVerifiedLink({ trust, retailerLinks });
   const fitState = deriveApHomeownerFitState({ trust, primaryVerifiedLink });
   const displayRetailerLinks = prepareApHomeownerDisplayRetailerLinks(
@@ -75,7 +76,7 @@ export function ApHomeownerFilterPage({
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)] lg:items-start">
-        <div className="space-y-5 lg:order-2 lg:sticky lg:top-6">
+        <div className="order-2 space-y-5 lg:sticky lg:top-6 lg:order-2">
           <section className="rounded-lg border border-bp-border bg-bp-surface p-5 shadow-sm sm:p-6">
             <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">
               {copy.answerLabel}
@@ -134,7 +135,7 @@ export function ApHomeownerFilterPage({
           </section>
         </div>
 
-        <div className="space-y-5 lg:order-1">
+        <div className="order-1 space-y-5 lg:order-1">
           <section className={sectionClass}>
             <h2 className="text-base font-semibold text-bp-text">{copy.modelCheckTitle}</h2>
             <p className="mt-2 text-sm leading-relaxed text-bp-muted">{copy.modelCheckBody}</p>
@@ -205,18 +206,22 @@ function CompatModelList({
       <p className="mt-2 text-sm leading-relaxed text-bp-muted">{body}</p>
       {models.length > 0 ? (
         <ul className="mt-4 divide-y divide-bp-border rounded-md border border-bp-border">
-          {models.map((model) => (
-            <li key={model.id}>
-              <Link
-                href={`${modelBasePath}/${model.slug}`}
-                className="block px-3 py-3 text-sm transition-colors hover:bg-bp-trust-soft/40"
-              >
-                <span className="font-semibold text-bp-text">
-                  {formatApHomeownerCompatModelDisplay(model)}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {models.map((model) => {
+            const display = formatApHomeownerCompatModelDisplay(model);
+            return (
+              <li key={model.id}>
+                <Link
+                  href={`${modelBasePath}/${model.slug}`}
+                  className="flex flex-col gap-1 px-3 py-3 text-sm transition-colors hover:bg-bp-trust-soft/40"
+                >
+                  <span className="font-semibold text-bp-text">{display.primary}</span>
+                  {display.secondary ? (
+                    <span className="text-bp-muted">{display.secondary}</span>
+                  ) : null}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="mt-4 text-sm text-bp-muted">

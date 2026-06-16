@@ -1,7 +1,13 @@
 import type { BuyLinkRow } from "@/components/BuyLinks";
+import { formatCore400sAlsoFitsDisplay } from "@/lib/air-purifier/core-400s-flagship-v1";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
-export const AP_HOMEOWNER_FILTER_PILOT_SLUG = "medify-ma50-rf" as const;
+export const AP_HOMEOWNER_FILTER_PILOT_SLUGS = [
+  "medify-ma50-rf",
+  "levoit-rf-rar040",
+] as const;
+
+export type ApHomeownerFilterPilotSlug = (typeof AP_HOMEOWNER_FILTER_PILOT_SLUGS)[number];
 
 export type ApHomeownerFitState = "exact_match" | "no_verified_link";
 
@@ -13,7 +19,8 @@ export type ApHomeownerCompatModel = {
 };
 
 export function isApHomeownerFilterPilotSlug(slug: string): boolean {
-  return slug.trim().toLowerCase() === AP_HOMEOWNER_FILTER_PILOT_SLUG;
+  const normalized = slug.trim().toLowerCase();
+  return AP_HOMEOWNER_FILTER_PILOT_SLUGS.some((pilotSlug) => pilotSlug === normalized);
 }
 
 export function getApHomeownerPrimaryVerifiedLink(args: {
@@ -41,9 +48,16 @@ export function apHomeownerFitStateLabel(fitState: ApHomeownerFitState): string 
   return "No verified link right now";
 }
 
-export function formatApHomeownerCompatModelDisplay(model: ApHomeownerCompatModel): string {
-  const brand = model.brand.name.trim() || "Purifier";
-  return `${brand} ${model.model_number}`;
+export function formatApHomeownerCompatModelDisplay(model: ApHomeownerCompatModel): {
+  primary: string;
+  secondary?: string;
+} {
+  return formatCore400sAlsoFitsDisplay({
+    id: model.id,
+    slug: model.slug,
+    model_number: model.model_number,
+    brand: model.brand,
+  });
 }
 
 export function formatApHomeownerListingCheckDate(
