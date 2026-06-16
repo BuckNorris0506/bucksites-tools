@@ -5,7 +5,9 @@ import {
   HoneywellHrfFamilyRail,
   isHoneywellHrfSlug,
 } from "@/components/air-purifier/HoneywellHrfFamilyRail";
+import { ApHomeownerFilterPage } from "@/components/air-purifier/homeowner/ApHomeownerFilterPage";
 import { VerticalFilterPageContent } from "@/components/vertical/VerticalFilterPageContent";
+import { isApHomeownerFilterPilotSlug } from "@/lib/air-purifier/ap-homeowner-framework-v1";
 import {
   AIR_PURIFIER_FILTER_PAGE_INTRO,
   FILTER_PAGE_FIT_CONFIRMATION_AIR_PURIFIER,
@@ -15,6 +17,8 @@ import {
   filterCompatModelsForCustomerDisplayV1,
   filterPageCompatExclusionNoteV1,
 } from "@/lib/air-purifier/air-purifier-compat-display-overrides-v1";
+import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +44,35 @@ export default async function AirPurifierFilterPage({ params }: Props) {
   const showHoneywellRail = isHoneywellHrfSlug(filter.slug);
   const compatNote = filterPageCompatExclusionNoteV1(filter.slug);
   const displayModels = filterCompatModelsForCustomerDisplayV1(filter.slug, filter.models);
+
+  if (isApHomeownerFilterPilotSlug(filter.slug)) {
+    const buyPathSortContext = buyPathSortContextForFilter(
+      filter.slug,
+      filter.name,
+      filter.oem_part_number,
+    );
+    const trust = buildPartPageTrust({
+      modelsCount: displayModels.length,
+      retailerLinks: filter.retailer_links,
+      oemPartNumber: filter.oem_part_number,
+      alsoKnownAs: filter.also_known_as,
+      notes: filter.notes,
+      buyPathSortContext,
+    });
+
+    return (
+      <ApHomeownerFilterPage
+        oemPartNumber={filter.oem_part_number}
+        filterName={filter.name}
+        replacementIntervalMonths={filter.replacement_interval_months}
+        models={displayModels}
+        retailerLinks={filter.retailer_links}
+        trust={trust}
+        gateSuppressionSummary={filter.buy_path_gate_suppression}
+        buyPathSortContext={buyPathSortContext}
+      />
+    );
+  }
 
   return (
     <div className="space-y-10">
