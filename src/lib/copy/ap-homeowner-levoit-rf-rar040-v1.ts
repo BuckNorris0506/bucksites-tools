@@ -4,7 +4,9 @@ export const AP_HOMEOWNER_LEVOIT_RF_RAR040_COPY = {
   notSeller:
     "BuckParts checks retailer listings against your exact part. BuckParts is not the seller.",
   answerLabel: "The filter for your Core 400 / Core 400S",
-  partNumberPackagingHint: "Look for this code on the filter packaging.",
+  answerDisplayCode: "Core 400S-RF",
+  partNumberPackagingHint:
+    "Look for Core 400S-RF or Core 400S on the filter packaging.",
   genuineLine: "This is the genuine Levoit filter made for the Core 400 and Core 400S family.",
   primaryCtaLabel: "View official Levoit replacement filter",
   primaryCtaSrPrefix: "BuckParts Verified Link",
@@ -12,7 +14,7 @@ export const AP_HOMEOWNER_LEVOIT_RF_RAR040_COPY = {
     "Open the official Levoit replacement-filter page BuckParts checked for this cartridge.",
   ctaOpensLine: "Opens the checked Levoit product page.",
   suppress:
-    "No checked buy link right now for this Core 400 / Core 400S filter. Compare LEVOIT-RF-RAR040 with your old filter or manual before ordering anywhere else.",
+    "No checked buy link right now for this Core 400 / Core 400S filter. Compare Core 400S-RF or Core 400S with your old filter or manual before ordering anywhere else.",
   modelCheckTitle: "Is this your purifier?",
   modelCheckBody: "If your label says Core 400 or Core 400S, you're in the right place.",
   modelCheckWrongModelBody:

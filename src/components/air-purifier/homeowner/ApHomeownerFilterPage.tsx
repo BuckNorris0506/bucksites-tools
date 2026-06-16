@@ -62,6 +62,7 @@ export function ApHomeownerFilterPage({
     primaryVerifiedLink?.browser_truth_checked_at,
   );
   const mBase = modelBasePath.replace(/\/$/, "");
+  const compareCode = copy.answerDisplayCode ?? oemPartNumber;
 
   return (
     <article className="space-y-8">
@@ -86,7 +87,7 @@ export function ApHomeownerFilterPage({
                 {filterName ?? copy.h1}
               </p>
               <p className="bp-code inline-block text-xl font-semibold text-bp-text sm:text-2xl">
-                {oemPartNumber}
+                {compareCode}
               </p>
               <p className="text-sm text-bp-muted">{copy.partNumberPackagingHint}</p>
             </div>
@@ -165,8 +166,18 @@ export function ApHomeownerFilterPage({
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-bp-muted">
               <li>
                 This page is for{" "}
-                <span className="font-mono font-semibold text-bp-text">{oemPartNumber}</span>, the
-                replacement-filter number shown above.
+                <span
+                  className={
+                    copy.answerDisplayCode
+                      ? "font-semibold text-bp-text"
+                      : "font-mono font-semibold text-bp-text"
+                  }
+                >
+                  {compareCode}
+                </span>
+                {copy.answerDisplayCode
+                  ? ", the replacement filter shown above."
+                  : ", the replacement-filter number shown above."}
               </li>
               <li>BuckParts is not the seller.</li>
               {showOfficialListingBullet ? (

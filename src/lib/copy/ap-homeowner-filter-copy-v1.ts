@@ -6,6 +6,8 @@ export type ApHomeownerFilterPageCopy = {
   h1: string;
   notSeller: string;
   answerLabel: string;
+  /** When set, shown in the answer card and trust bullet instead of the catalog OEM token. */
+  answerDisplayCode?: string;
   partNumberPackagingHint: string;
   genuineLine: string;
   primaryCtaLabel: string;

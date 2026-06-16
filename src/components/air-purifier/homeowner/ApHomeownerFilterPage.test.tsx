@@ -192,7 +192,9 @@ describe("ApHomeownerFilterPage", () => {
 
     assert.ok(html.includes("Levoit Core 400 / Core 400S replacement filter"));
     assert.ok(html.includes("The filter for your Core 400 / Core 400S"));
-    assert.ok(html.includes("LEVOIT-RF-RAR040"));
+    assert.ok(html.includes("Core 400S-RF"));
+    assert.ok(html.includes("Look for Core 400S-RF or Core 400S on the filter packaging."));
+    assert.equal(html.includes("LEVOIT-RF-RAR040"), false);
     assert.ok(html.includes("If your label says Core 400 or Core 400S, you&#x27;re in the right place."));
     assert.ok(
       html.includes(
@@ -234,6 +236,8 @@ describe("ApHomeownerFilterPage", () => {
     assert.equal(html.includes('href="/air-purifier/go/'), false);
     assert.ok(html.includes("No verified link right now"));
     assert.ok(html.includes("No checked buy link right now for this Core 400 / Core 400S filter."));
+    assert.ok(html.includes("Compare Core 400S-RF or Core 400S with your old filter or manual"));
+    assert.equal(html.includes("LEVOIT-RF-RAR040"), false);
     assert.equal(html.includes("checked against Levoit&#x27;s official product listing."), false);
   });
 });
