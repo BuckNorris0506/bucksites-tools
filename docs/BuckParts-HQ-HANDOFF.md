@@ -2,6 +2,36 @@
 
 > **Strategic Initiatives Registry:** long-term strategic capabilities (NOT roadmap items, NOT active projects, NOT tasks) are preserved in `docs/strategic-initiatives/BP-STRATEGIC-INITIATIVES-REGISTRY.md` (BP-SI-001 – BP-SI-008). All are PARKED; none authorize work without an explicit founder activation decision.
 
+**Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
+
+## Execution Stack
+
+**Cursor**
+- Primary implementation agent
+
+**Codex**
+- Primary large-scale implementation and migration agent
+
+**HyperAgent**
+- Primary homeowner, trust, UX, customer-reality, and live-surface audit agent
+
+**Rules**
+- Build → localhost review → HyperAgent audit → refine → deploy
+- Customer-reality audits are first-class evidence
+- Passing tests/builds does not prove homeowner clarity
+- Customer confusion is a valid defect even when code is correct
+
+## HQ operating rule (execution mode)
+
+Unless Jared is explicitly requesting strategy, analysis, brainstorming, alternative evaluation, or research findings:
+
+Execution responses should end with:
+- best next action
+- exact copy/paste prompt or command
+- correct execution surface
+
+---
+
 ## Strategic identity + second-wedge research (PROVEN audit findings — strategy only)
 
 **Read this section for business identity and long-term wedge doctrine.** None of the second-wedge items below authorize build, product mutation, or Command Center expansion without explicit founder activation.
