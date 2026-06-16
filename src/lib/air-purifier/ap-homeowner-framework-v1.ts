@@ -5,6 +5,7 @@ import type { PartTrustSummary } from "@/lib/trust/part-trust";
 export const AP_HOMEOWNER_FILTER_PILOT_SLUGS = [
   "medify-ma50-rf",
   "levoit-rf-rar040",
+  "coway-max2-hepa",
 ] as const;
 
 export type ApHomeownerFilterPilotSlug = (typeof AP_HOMEOWNER_FILTER_PILOT_SLUGS)[number];
