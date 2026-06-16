@@ -17,11 +17,19 @@ const COMMAND_CENTER_DATA_TRACE_INCLUDES = [
   "./data/affiliate/affiliate-application-tracker.json",
 ];
 
+/** Repo CSV read at runtime by the Core 400S AP flagship branch (serverless cwd). */
+const AIR_PURIFIER_MODEL_DATA_TRACE_INCLUDES = [
+  "./data/air-purifier/models.csv",
+  "./data/air-purifier/filters.csv",
+  "./data/air-purifier/compatibility_mappings.csv",
+];
+
 const nextConfig = {
   experimental: {
     instrumentationHook: true,
     outputFileTracingIncludes: {
       "/ownerdashboard/[secret]": COMMAND_CENTER_DATA_TRACE_INCLUDES,
+      "/air-purifier/model/[slug]": AIR_PURIFIER_MODEL_DATA_TRACE_INCLUDES,
     },
   },
 };

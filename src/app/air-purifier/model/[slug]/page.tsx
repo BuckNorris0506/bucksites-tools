@@ -5,10 +5,13 @@ import {
   VerticalModelPageContent,
   type VerticalModelPrimaryTrustBuy,
 } from "@/components/vertical/VerticalModelPageContent";
+import { Core400sFlagshipPage } from "@/components/air-purifier/core-400s-flagship/Core400sFlagshipPage";
 import {
   AIR_PURIFIER_MODEL_PAGE_INTRO,
   MODEL_PAGE_FIT_CONFIRMATION_AIR_PURIFIER,
 } from "@/lib/copy/vertical-fit";
+import { isCore400sFlagshipSlug } from "@/lib/air-purifier/core-400s-flagship-v1";
+import { getCore400sFlagshipBundle } from "@/lib/data/air-purifier/core-400s-flagship-bundle";
 import { getAirPurifierModelBySlug } from "@/lib/data/air-purifier/models";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import {
@@ -67,6 +70,19 @@ export default async function AirPurifierModelPage({ params }: Props) {
       gateSuppressionSummary: model.primary_buy_path_gate_suppression,
       buySuppressMessage: AIR_PURIFIER_MODEL_PRIMARY_BUY_SUPPRESS,
     };
+  }
+
+  if (!reviewOverride && isCore400sFlagshipSlug(params.slug)) {
+    const bundle = await getCore400sFlagshipBundle(model);
+    return (
+      <ModelTruthPanelCopyProvider value={AIR_PURIFIER_MODEL_TRUTH_COPY}>
+        <Core400sFlagshipPage
+          model={model}
+          bundle={bundle}
+          primaryTrustBuy={primaryTrustBuy}
+        />
+      </ModelTruthPanelCopyProvider>
+    );
   }
 
   return (
