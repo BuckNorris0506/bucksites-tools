@@ -516,6 +516,7 @@ describe("owner quarantined fridge summary", () => {
       top_pages_by_impressions: [],
       top_pages_by_clicks: [],
       high_impression_low_click_opportunities: [],
+      tracked_page_slices_v1: [],
       proven_facts: ["GSC artifact row OK."],
       unknown_facts: [],
       next_owner_action: "Keep refreshing artifact.",
@@ -568,6 +569,7 @@ describe("owner quarantined fridge summary", () => {
       top_pages_by_impressions: "UNKNOWN",
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
+      tracked_page_slices_v1: "UNKNOWN",
       proven_facts: ["Parsed 3 rows from performance export."],
       unknown_facts: ["No rows contain both clicks and impressions values."],
       next_owner_action:

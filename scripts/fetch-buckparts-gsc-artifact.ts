@@ -8,7 +8,17 @@ import {
   throwGoogleApiLogSafeError,
 } from "./lib/google-api-log-safe-error";
 import { createSearchConsoleClientFromEnv } from "./lib/gsc-search-console-api";
-import type { GscArtifactTopEntry, GscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import {
+  apHomeownerPilotTrackedPageTargets,
+  buildNotFetchedApHomeownerPilotTrackedPageSlices,
+  buildQueryFailedTrackedPageSlice,
+  buildTrackedPageSliceFromFilteredRows,
+} from "./lib/gsc-tracked-page-slices-v1";
+import type {
+  GscArtifactTopEntry,
+  GscSearchAnalyticsArtifact,
+  GscTrackedPageSliceV1,
+} from "@/lib/owner-dashboard/gsc-api-artifact";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 type SearchConsoleApiRow = {
@@ -26,7 +36,29 @@ async function querySearchAnalytics(args: {
   dimensions?: Array<"query" | "page">;
   rowLimit?: number;
   startRow?: number;
+  pageUrlEquals?: string;
 }): Promise<SearchConsoleApiRow[]> {
+  const body: Record<string, unknown> = {
+    startDate: args.startDate,
+    endDate: args.endDate,
+    dimensions: args.dimensions,
+    rowLimit: args.rowLimit ?? 250,
+    startRow: args.startRow ?? 0,
+  };
+  if (args.pageUrlEquals) {
+    body.dimensionFilterGroups = [
+      {
+        groupType: "and",
+        filters: [
+          {
+            dimension: "page",
+            operator: "equals",
+            expression: args.pageUrlEquals,
+          },
+        ],
+      },
+    ];
+  }
   const response = await fetch(
     `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(args.property)}/searchAnalytics/query`,
     {
@@ -35,13 +67,7 @@ async function querySearchAnalytics(args: {
         Authorization: `Bearer ${args.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        startDate: args.startDate,
-        endDate: args.endDate,
-        dimensions: args.dimensions,
-        rowLimit: args.rowLimit ?? 250,
-        startRow: args.startRow ?? 0,
-      }),
+      body: JSON.stringify(body),
     },
   );
   if (!response.ok) {
@@ -163,6 +189,42 @@ async function queryTotals(args: {
   };
 }
 
+async function fetchTrackedPageSlicesV1(args: {
+  accessToken: string;
+  property: string;
+  dateRange: { start_date: string; end_date: string };
+  env?: Record<string, string | undefined>;
+}): Promise<GscTrackedPageSliceV1[]> {
+  const targets = apHomeownerPilotTrackedPageTargets(args.env, { gscProperty: args.property });
+  const slices: GscTrackedPageSliceV1[] = [];
+
+  for (const target of targets) {
+    try {
+      const rows = await querySearchAnalytics({
+        accessToken: args.accessToken,
+        property: args.property,
+        startDate: args.dateRange.start_date,
+        endDate: args.dateRange.end_date,
+        dimensions: ["page"],
+        rowLimit: 1,
+        startRow: 0,
+        pageUrlEquals: target.page_url,
+      });
+      slices.push(
+        buildTrackedPageSliceFromFilteredRows({
+          slug: target.slug,
+          page_url: target.page_url,
+          rows,
+        }),
+      );
+    } catch {
+      slices.push(buildQueryFailedTrackedPageSlice(target));
+    }
+  }
+
+  return slices;
+}
+
 function buildUnknownArtifact(args: {
   status: "UNKNOWN_CONFIG" | "UNKNOWN_API_ERROR";
   property: string | "UNKNOWN";
@@ -184,6 +246,9 @@ function buildUnknownArtifact(args: {
     top_pages_by_clicks: "UNKNOWN",
     top_pages_by_impressions: "UNKNOWN",
     high_impression_low_click_opportunities: "UNKNOWN",
+    tracked_page_slices_v1: buildNotFetchedApHomeownerPilotTrackedPageSlices(undefined, {
+      gscProperty: args.property === "UNKNOWN" ? undefined : args.property,
+    }),
     proven_facts: args.provenFacts ?? [],
     unknown_facts: args.unknownFacts,
     provenance: {
@@ -209,9 +274,11 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
     });
   }
 
+  const env = args?.env;
+
   try {
     const accessToken = await client.getAccessToken();
-    const [totals, queryRows, pageRows] = await Promise.all([
+    const [totals, queryRows, pageRows, tracked_page_slices_v1] = await Promise.all([
       queryTotals({
         accessToken,
         property: client.property,
@@ -228,6 +295,12 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
         property: client.property,
         dateRange,
         dimension: "page",
+      }),
+      fetchTrackedPageSlicesV1({
+        accessToken,
+        property: client.property,
+        dateRange,
+        env,
       }),
     ]);
     const averageCtr =
@@ -254,11 +327,13 @@ export async function buildGscSearchAnalyticsArtifact(args?: {
       top_pages_by_clicks: topPagesByClicks.length > 0 ? topPagesByClicks : "UNKNOWN",
       top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
       high_impression_low_click_opportunities: opportunities,
+      tracked_page_slices_v1,
       proven_facts: [
         `Fetched Search Analytics via readonly API auth_mode=${client.auth_mode}.`,
         `Property=${client.property}.`,
         `Date range=${dateRange.start_date}..${dateRange.end_date}.`,
         `Totals clicks=${totals.total_clicks}, impressions=${totals.total_impressions}.`,
+        `Tracked exact-page slices=${tracked_page_slices_v1.length} (AP homeowner pilots).`,
       ],
       unknown_facts: [],
       provenance: {
@@ -315,6 +390,7 @@ export async function main(): Promise<void> {
         fetched_at: result.artifact.fetched_at,
         property: result.artifact.property,
         durable_write: result.durable_write,
+        tracked_page_slices_v1: result.artifact.tracked_page_slices_v1 ?? [],
         ...(result.artifact.status !== "OK" ? { unknown_facts: result.artifact.unknown_facts } : {}),
       },
       null,

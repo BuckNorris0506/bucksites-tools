@@ -350,6 +350,7 @@ function gsc(overrides: Partial<OwnerGscExternalDemandNeuron> = {}): OwnerGscExt
     top_pages_by_impressions: [],
     top_pages_by_clicks: [],
     high_impression_low_click_opportunities: [{ key: "lg filter", impressions: 100, clicks: 0, ctr: 0 }],
+    tracked_page_slices_v1: [],
     proven_facts: ["GSC durable artifact metrics are present."],
     unknown_facts: [],
     next_owner_action: "Use GSC demand opportunities.",

@@ -5,6 +5,11 @@ import {
   buildGscSearchAnalyticsArtifact,
   buildHighImpressionLowClickOpportunities,
 } from "./fetch-buckparts-gsc-artifact";
+import {
+  buildNotFetchedTrackedPageSlice,
+  buildQueryFailedTrackedPageSlice,
+  buildTrackedPageSliceFromFilteredRows,
+} from "./lib/gsc-tracked-page-slices-v1";
 import { writeGscArtifactToSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 test("missing gsc env returns UNKNOWN_CONFIG artifact and no fake metrics", async () => {
@@ -194,4 +199,123 @@ test("malformed or incomplete GSC row data keeps opportunities UNKNOWN", () => {
   });
 
   assert.equal(opportunities, "UNKNOWN");
+});
+
+test("tracked page slice builders distinguish FOUND, ZERO_IN_RANGE, QUERY_FAILED, and NOT_FETCHED", () => {
+  const found = buildTrackedPageSliceFromFilteredRows({
+    slug: "medify-ma50-rf",
+    page_url: "https://buckparts.com/air-purifier/filter/medify-ma50-rf",
+    rows: [
+      {
+        keys: ["https://buckparts.com/air-purifier/filter/medify-ma50-rf"],
+        impressions: 14,
+        clicks: 2,
+        position: 18.4,
+      },
+    ],
+  });
+  assert.equal(found.match_status, "FOUND");
+  assert.equal(found.impressions, 14);
+  assert.equal(found.clicks, 2);
+
+  const zero = buildTrackedPageSliceFromFilteredRows({
+    slug: "levoit-rf-rar040",
+    page_url: "https://buckparts.com/air-purifier/filter/levoit-rf-rar040",
+    rows: [],
+  });
+  assert.equal(zero.match_status, "ZERO_IN_RANGE");
+  assert.equal(zero.impressions, 0);
+  assert.equal(zero.clicks, 0);
+
+  const failed = buildQueryFailedTrackedPageSlice({
+    slug: "coway-max2-hepa",
+    page_url: "https://buckparts.com/air-purifier/filter/coway-max2-hepa",
+  });
+  assert.equal(failed.match_status, "QUERY_FAILED");
+  assert.equal(failed.impressions, "UNKNOWN");
+
+  const notFetched = buildNotFetchedTrackedPageSlice({
+    slug: "medify-ma50-rf",
+    page_url: "https://buckparts.com/air-purifier/filter/medify-ma50-rf",
+  });
+  assert.equal(notFetched.match_status, "NOT_FETCHED");
+});
+
+test("successful GSC fetch includes tracked_page_slices_v1 from exact-page filtered queries", async () => {
+  const originalFetch = globalThis.fetch;
+  const filteredUrls: string[] = [];
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    if (url.includes("oauth2.googleapis.com/token")) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ access_token: "test-access-token-value" }),
+        text: async () => JSON.stringify({ access_token: "test-access-token-value" }),
+      } as Response;
+    }
+    const body = init?.body ? JSON.parse(String(init.body)) : {};
+    const filters = body.dimensionFilterGroups?.[0]?.filters;
+    if (Array.isArray(filters) && filters[0]?.expression) {
+      filteredUrls.push(String(filters[0].expression));
+      const pageUrl = String(filters[0].expression);
+      if (pageUrl.includes("levoit-rf-rar040")) {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            rows: [
+              {
+                keys: [pageUrl],
+                impressions: 9,
+                clicks: 1,
+                position: 22.1,
+              },
+            ],
+          }),
+          text: async () => "",
+        } as Response;
+      }
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ rows: [] }),
+        text: async () => "",
+      } as Response;
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        rows: [{ clicks: 5, impressions: 100, position: 10 }],
+      }),
+      text: async () => "",
+    } as Response;
+  }) as typeof fetch;
+
+  try {
+    const artifact = await buildGscSearchAnalyticsArtifact({
+      now: new Date("2026-06-10T12:00:00.000Z"),
+      env: {
+        GSC_PROPERTY_SITE_URL: "sc-domain:buckparts.com",
+        GSC_OAUTH_CLIENT_ID: "client-id",
+        GSC_OAUTH_CLIENT_SECRET: "secret",
+        GSC_OAUTH_REFRESH_TOKEN: "refresh",
+        NEXT_PUBLIC_SITE_URL: "https://buckparts.com",
+      },
+    });
+    assert.equal(artifact.status, "OK");
+    assert.ok(artifact.tracked_page_slices_v1);
+    assert.equal(artifact.tracked_page_slices_v1?.length, 3);
+    assert.equal(filteredUrls.length, 3);
+    const levoit = artifact.tracked_page_slices_v1?.find((s) => s.slug === "levoit-rf-rar040");
+    assert.ok(levoit);
+    assert.equal(levoit.match_status, "FOUND");
+    assert.equal(levoit.impressions, 9);
+    const medify = artifact.tracked_page_slices_v1?.find((s) => s.slug === "medify-ma50-rf");
+    assert.ok(medify);
+    assert.equal(medify.match_status, "ZERO_IN_RANGE");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

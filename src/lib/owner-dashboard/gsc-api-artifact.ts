@@ -13,6 +13,23 @@ export type GscArtifactTopEntry = {
   average_position?: number | "UNKNOWN";
 };
 
+export type GscTrackedPageSliceMatchStatusV1 =
+  | "FOUND"
+  | "ZERO_IN_RANGE"
+  | "QUERY_FAILED"
+  | "NOT_FETCHED";
+
+export type GscTrackedPageSliceV1 = {
+  slug: string;
+  page_url: string;
+  match_status: GscTrackedPageSliceMatchStatusV1;
+  impressions: number | "UNKNOWN";
+  clicks: number | "UNKNOWN";
+  ctr: number | "UNKNOWN";
+  average_position: number | "UNKNOWN";
+  gsc_page_key: string | "UNKNOWN";
+};
+
 export type GscSearchAnalyticsArtifact = {
   status: GscArtifactStatus;
   fetched_at: string;
@@ -27,6 +44,8 @@ export type GscSearchAnalyticsArtifact = {
   top_pages_by_clicks: GscArtifactTopEntry[] | "UNKNOWN";
   top_pages_by_impressions: GscArtifactTopEntry[] | "UNKNOWN";
   high_impression_low_click_opportunities: GscArtifactTopEntry[] | "UNKNOWN";
+  /** Exact-page demand slices for tracked URLs (optional on older artifacts). */
+  tracked_page_slices_v1?: GscTrackedPageSliceV1[];
   proven_facts: string[];
   unknown_facts: string[];
   provenance: {
@@ -64,6 +83,39 @@ function isTopEntries(value: unknown): value is GscArtifactTopEntry[] | "UNKNOWN
 
 function isUnknownableNumber(value: unknown): value is number | "UNKNOWN" {
   return value === "UNKNOWN" || (typeof value === "number" && Number.isFinite(value));
+}
+
+const TRACKED_PAGE_SLICE_MATCH_STATUSES = [
+  "FOUND",
+  "ZERO_IN_RANGE",
+  "QUERY_FAILED",
+  "NOT_FETCHED",
+] as const;
+
+function isTrackedPageSliceMatchStatus(value: unknown): value is GscTrackedPageSliceMatchStatusV1 {
+  return (
+    typeof value === "string" &&
+    (TRACKED_PAGE_SLICE_MATCH_STATUSES as readonly string[]).includes(value)
+  );
+}
+
+function isTrackedPageSlice(value: unknown): value is GscTrackedPageSliceV1 {
+  if (!isRecord(value)) return false;
+  if (typeof value.slug !== "string") return false;
+  if (typeof value.page_url !== "string") return false;
+  if (!isTrackedPageSliceMatchStatus(value.match_status)) return false;
+  if (!isUnknownableNumber(value.impressions)) return false;
+  if (!isUnknownableNumber(value.clicks)) return false;
+  if (!isUnknownableNumber(value.ctr)) return false;
+  if (!isUnknownableNumber(value.average_position)) return false;
+  if (value.gsc_page_key !== "UNKNOWN" && typeof value.gsc_page_key !== "string") return false;
+  return true;
+}
+
+function isTrackedPageSlices(value: unknown): value is GscTrackedPageSliceV1[] | undefined {
+  if (value === undefined) return true;
+  if (!Array.isArray(value)) return false;
+  return value.every(isTrackedPageSlice);
 }
 
 export function parseGscSearchAnalyticsArtifact(
@@ -112,6 +164,9 @@ export function parseGscSearchAnalyticsArtifact(
   }
   if (!isTopEntries(parsed.high_impression_low_click_opportunities)) {
     return { ok: false, reason: "Artifact high_impression_low_click_opportunities is invalid." };
+  }
+  if (!isTrackedPageSlices(parsed.tracked_page_slices_v1)) {
+    return { ok: false, reason: "Artifact tracked_page_slices_v1 is invalid." };
   }
   if (!Array.isArray(parsed.proven_facts) || !parsed.proven_facts.every((v) => typeof v === "string")) {
     return { ok: false, reason: "Artifact proven_facts is invalid." };

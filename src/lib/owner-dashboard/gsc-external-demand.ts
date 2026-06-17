@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { parseGscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
-import type { GscSearchAnalyticsArtifact } from "@/lib/owner-dashboard/gsc-api-artifact";
+import type { GscSearchAnalyticsArtifact, GscTrackedPageSliceV1 } from "@/lib/owner-dashboard/gsc-api-artifact";
 import { readGscArtifactFromSupabase } from "@/lib/owner-dashboard/gsc-durable-artifact-store";
 
 export type OwnerGscConnectionLevel = "BRIGHT" | "DIM" | "DARK" | "UNKNOWN";
@@ -44,6 +44,7 @@ export type OwnerGscExternalDemandNeuron = {
   top_pages_by_impressions: OwnerGscTopEntry[] | "UNKNOWN";
   top_pages_by_clicks: OwnerGscTopEntry[] | "UNKNOWN";
   high_impression_low_click_opportunities: OwnerGscTopEntry[] | "UNKNOWN";
+  tracked_page_slices_v1: GscTrackedPageSliceV1[] | "UNKNOWN";
   proven_facts: string[];
   unknown_facts: string[];
   next_owner_action: string;
@@ -201,6 +202,12 @@ function artifactHighImpressionLowClickOpportunities(
   });
 }
 
+function artifactTrackedPageSlicesV1(
+  artifact: GscSearchAnalyticsArtifact,
+): GscTrackedPageSliceV1[] | "UNKNOWN" {
+  return artifact.tracked_page_slices_v1 ?? "UNKNOWN";
+}
+
 function defaultDeps(): Deps {
   return {
     listFiles: (dir) => readdirSync(dir),
@@ -270,6 +277,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
         top_pages_by_impressions: artifact.top_pages_by_impressions,
         top_pages_by_clicks: artifact.top_pages_by_clicks,
         high_impression_low_click_opportunities: opportunities,
+        tracked_page_slices_v1: artifactTrackedPageSlicesV1(artifact),
         proven_facts: [
           ...artifact.proven_facts,
           `Durable artifact fetched_at=${artifact.fetched_at}.`,
@@ -318,6 +326,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
           top_pages_by_impressions: artifact.top_pages_by_impressions,
           top_pages_by_clicks: artifact.top_pages_by_clicks,
           high_impression_low_click_opportunities: opportunities,
+          tracked_page_slices_v1: artifactTrackedPageSlicesV1(artifact),
           proven_facts: [
             ...artifact.proven_facts,
             `Artifact fetched_at=${artifact.fetched_at}.`,
@@ -375,6 +384,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
       top_pages_by_impressions: "UNKNOWN",
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
+      tracked_page_slices_v1: "UNKNOWN",
       proven_facts: [],
       unknown_facts: [
         ...(durableStoreIssue ? [durableStoreIssue] : []),
@@ -428,6 +438,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
       top_pages_by_impressions: "UNKNOWN",
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
+      tracked_page_slices_v1: "UNKNOWN",
       proven_facts: provenFacts,
       unknown_facts: unknownFacts.length > 0 ? unknownFacts : ["Performance export text is unavailable after read."],
       next_owner_action: "Regenerate the GSC performance export in CSV-compatible format and place it under data/gsc.",
@@ -455,6 +466,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
       top_pages_by_impressions: "UNKNOWN",
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
+      tracked_page_slices_v1: "UNKNOWN",
       proven_facts: provenFacts,
       unknown_facts: [...unknownFacts, parsed.reason ?? "Unsupported CSV format."],
       next_owner_action: "Adjust export format to include query/page with clicks and impressions columns.",
@@ -482,6 +494,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
       top_pages_by_impressions: "UNKNOWN",
       top_pages_by_clicks: "UNKNOWN",
       high_impression_low_click_opportunities: "UNKNOWN",
+      tracked_page_slices_v1: "UNKNOWN",
       proven_facts: [...provenFacts, `Parsed ${parsed.rows.length} rows from performance export.`],
       unknown_facts: [...unknownFacts, "No rows contain both clicks and impressions values."],
       next_owner_action: "Regenerate export with complete numeric clicks/impressions columns and re-run owner dashboard.",
@@ -527,6 +540,7 @@ export async function buildOwnerGscExternalDemandNeuron(args: {
     top_pages_by_impressions: topPagesByImpressions.length > 0 ? topPagesByImpressions : "UNKNOWN",
     top_pages_by_clicks: topPagesByClicks.length > 0 ? topPagesByClicks : "UNKNOWN",
     high_impression_low_click_opportunities: opportunities,
+    tracked_page_slices_v1: "UNKNOWN",
     proven_facts: provenFacts,
     unknown_facts: [...(durableStoreIssue ? [durableStoreIssue] : []), ...unknownFacts],
     next_owner_action:
