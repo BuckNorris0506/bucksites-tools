@@ -13,6 +13,7 @@ import type {
   BuyPathGateSuppressionSummary,
   BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
+import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 
 function BuyPathSuppressionInventoryHints({ summary }: { summary: BuyPathGateSuppressionSummary }) {
@@ -51,6 +52,7 @@ export function TrustAwareBuySection({
   suppressMessage,
   gateSuppressionSummary,
   buyPathSortContext,
+  goAttribution,
 }: {
   trust: PartTrustSummary;
   links: BuyLinkRow[];
@@ -60,6 +62,8 @@ export function TrustAwareBuySection({
   /** When buy is suppressed but inventory rows exist, explains why they are gated (refrigerator filter hub). */
   gateSuppressionSummary?: BuyPathGateSuppressionSummary | null;
   buyPathSortContext?: BuyPathSortContext;
+  /** When set (AP phase 1), forwarded to TieredBuyLinks for `/go` href attribution. */
+  goAttribution?: ApGoAttributionV1 | null;
 }) {
   if (trust.buyer_path_state === "suppress_buy") {
     return (
@@ -84,6 +88,7 @@ export function TrustAwareBuySection({
         goBase={goBase}
         primaryCtaLabel={primaryCtaLabel}
         buyPathSortContext={buyPathSortContext}
+        goAttribution={goAttribution}
       />
     </div>
   );

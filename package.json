@@ -64,6 +64,7 @@
     "buckparts:amazon-multipack-duplicate-slots": "tsx scripts/report-amazon-multipack-duplicate-slots.ts",
     "buckparts:amazon-rescue-existing-whw-rows": "tsx scripts/report-amazon-rescue-existing-whw-rows.ts",
     "buckparts:report:affiliate-clicks": "tsx scripts/report-homekeep-affiliate-clicks.ts",
+    "buckparts:report:ap-go-attribution": "tsx scripts/report-ap-go-attribution-slice-v1.ts",
     "buckparts:report:business-scorecard": "tsx scripts/report-homekeep-business-scorecard.ts",
     "buckparts:report:launch-readiness": "tsx scripts/report-homekeep-launch-readiness.ts",
     "buckparts:report:grant-readiness": "tsx scripts/report-buckparts-grant-readiness-v1.ts",

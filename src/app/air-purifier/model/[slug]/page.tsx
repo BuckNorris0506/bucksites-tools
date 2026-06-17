@@ -14,6 +14,7 @@ import { isCore400sFlagshipSlug } from "@/lib/air-purifier/core-400s-flagship-v1
 import { getCore400sFlagshipBundle } from "@/lib/data/air-purifier/core-400s-flagship-bundle";
 import { getAirPurifierModelBySlug } from "@/lib/data/air-purifier/models";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildAirPurifierModelGoAttribution } from "@/lib/retailers/ap-go-attribution-v1";
 import {
   AIR_PURIFIER_MODEL_TRUTH_COPY,
   ModelTruthPanelCopyProvider,
@@ -80,6 +81,7 @@ export default async function AirPurifierModelPage({ params }: Props) {
           model={model}
           bundle={bundle}
           primaryTrustBuy={primaryTrustBuy}
+          goAttribution={buildAirPurifierModelGoAttribution(model.slug) ?? undefined}
         />
       </ModelTruthPanelCopyProvider>
     );
@@ -119,6 +121,7 @@ export default async function AirPurifierModelPage({ params }: Props) {
           </p>
         }
         primaryTrustBuy={primaryTrustBuy}
+        goAttribution={buildAirPurifierModelGoAttribution(params.slug) ?? undefined}
       />
     </ModelTruthPanelCopyProvider>
   );

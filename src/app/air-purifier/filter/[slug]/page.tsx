@@ -19,6 +19,7 @@ import {
   filterPageCompatExclusionNoteV1,
 } from "@/lib/air-purifier/air-purifier-compat-display-overrides-v1";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
+import { buildAirPurifierFilterGoAttribution } from "@/lib/retailers/ap-go-attribution-v1";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 
 export const dynamic = "force-dynamic";
@@ -75,6 +76,7 @@ export default async function AirPurifierFilterPage({ params }: Props) {
         trust={trust}
         gateSuppressionSummary={filter.buy_path_gate_suppression}
         buyPathSortContext={buyPathSortContext}
+        goAttribution={buildAirPurifierFilterGoAttribution(filter.slug) ?? undefined}
       />
     );
   }
@@ -106,6 +108,7 @@ export default async function AirPurifierFilterPage({ params }: Props) {
         notesSectionTitle="Notes & next steps"
         expandedSearchFooter
         alsoKnownAs={filter.also_known_as}
+        goAttribution={buildAirPurifierFilterGoAttribution(filter.slug) ?? undefined}
         wayfinding={
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             <Link

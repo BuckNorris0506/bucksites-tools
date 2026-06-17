@@ -16,6 +16,7 @@ import {
 } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 import { BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX } from "@/lib/copy/buckparts-verified-link-copy";
+import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 
 export type VerticalModelFilterRow = {
   id: string;
@@ -54,6 +55,8 @@ type Props = {
   notesSectionTitle?: string;
   expandedSearchFooter?: boolean;
   primaryTrustBuy?: VerticalModelPrimaryTrustBuy | null;
+  /** When set (AP phase 1), forwarded to buy CTAs for `/go` click_events attribution. */
+  goAttribution?: ApGoAttributionV1 | null;
 };
 
 export function VerticalModelPageContent({
@@ -72,6 +75,7 @@ export function VerticalModelPageContent({
   notesSectionTitle = "Extra notes",
   expandedSearchFooter = false,
   primaryTrustBuy,
+  goAttribution,
 }: Props) {
   const path = filterBasePath.replace(/\/$/, "");
   const primary = filters[0];
@@ -154,6 +158,7 @@ export function VerticalModelPageContent({
                           primary.name,
                           primary.oem_part_number,
                         )}
+                        goAttribution={goAttribution}
                       />
                     </BuckPartsVerifiedLinksSection>
                   </div>
@@ -170,6 +175,7 @@ export function VerticalModelPageContent({
                         primary.name,
                         primary.oem_part_number,
                       )}
+                      goAttribution={goAttribution}
                     />
                   </BuckPartsVerifiedLinksSection>
                 </div>

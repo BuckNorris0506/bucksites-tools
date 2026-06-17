@@ -16,6 +16,10 @@ import {
   sortBestVerifiedBuyLinks,
   type BuyPathSortContext,
 } from "@/lib/retailers/launch-buy-links";
+import {
+  appendApGoAttributionToGoHref,
+  type ApGoAttributionV1,
+} from "@/lib/retailers/ap-go-attribution-v1";
 
 const MAX_SECONDARY = 2;
 
@@ -41,6 +45,7 @@ export function TieredBuyLinks({
   goBase = "/go",
   primaryCtaLabel = BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
   buyPathSortContext,
+  goAttribution,
 }: {
   links: BuyLinkRow[];
   goBase?: string;
@@ -48,6 +53,8 @@ export function TieredBuyLinks({
   primaryCtaLabel?: string;
   /** When set (e.g. from `buyPathSortContextForFilter`), exact-OEM context can affect tie-break among gated links. */
   buyPathSortContext?: BuyPathSortContext;
+  /** When set (AP phase 1), appended as query params on `/go` hrefs for click_events attribution. */
+  goAttribution?: ApGoAttributionV1 | null;
 }) {
   const base = goBase.replace(/\/$/, "");
 
@@ -79,7 +86,7 @@ export function TieredBuyLinks({
       ) : null}
       <div>
         <a
-          href={`${base}/${primary.id}`}
+          href={appendApGoAttributionToGoHref(`${base}/${primary.id}`, goAttribution)}
           rel="nofollow sponsored"
           className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-bp-trust/15 bg-bp-trust px-5 text-center text-base font-semibold text-white transition-colors hover:bg-bp-trust/90 focus:outline-none focus:ring-2 focus:ring-bp-trust/40 focus:ring-offset-2 focus:ring-offset-bp-bg sm:w-auto sm:min-w-[14rem]"
         >
@@ -105,7 +112,7 @@ export function TieredBuyLinks({
             {alternates.map((link) => (
               <li key={link.id}>
                 <a
-                  href={`${base}/${link.id}`}
+                  href={appendApGoAttributionToGoHref(`${base}/${link.id}`, goAttribution)}
                   rel="nofollow sponsored"
                   className="inline-flex w-full items-center justify-center rounded-md border border-bp-border bg-bp-surface px-3 py-2 text-sm font-medium text-bp-text transition-colors hover:bg-bp-trust-soft/50 sm:w-auto"
                 >

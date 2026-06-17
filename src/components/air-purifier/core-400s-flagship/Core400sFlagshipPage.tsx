@@ -16,6 +16,7 @@ import {
 import { CORE_400S_FLAGSHIP_COPY } from "@/lib/copy/core-400s-flagship-v1";
 import type { Core400sFlagshipBundle } from "@/lib/data/air-purifier/core-400s-flagship-bundle";
 import type { AirPurifierModelWithFilters } from "@/lib/data/air-purifier/models";
+import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { intervalLabel } from "@/lib/vertical/interval";
 const sectionClass = "rounded-lg border border-bp-border bg-bp-surface p-4 sm:p-5";
@@ -24,9 +25,10 @@ type Props = {
   model: AirPurifierModelWithFilters;
   bundle: Core400sFlagshipBundle;
   primaryTrustBuy?: VerticalModelPrimaryTrustBuy | null;
+  goAttribution?: ApGoAttributionV1 | null;
 };
 
-export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) {
+export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy, goAttribution }: Props) {
   const primary = model.filters[0] ?? null;
   const primaryVerifiedLink = getCore400sPrimaryVerifiedLink({
     trust: primaryTrustBuy?.trust,
@@ -119,6 +121,7 @@ export function Core400sFlagshipPage({ model, bundle, primaryTrustBuy }: Props) 
                     primary.name,
                     primary.oem_part_number,
                   )}
+                  goAttribution={goAttribution}
                 />
               </div>
             ) : (

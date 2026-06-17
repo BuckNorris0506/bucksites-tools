@@ -14,6 +14,7 @@ import {
   BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
   BUCKPARTS_VERIFIED_LINK_SUPPRESS_DEFAULT,
 } from "@/lib/copy/buckparts-verified-link-copy";
+import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 import { intervalLabel } from "@/lib/vertical/interval";
 import type { ReactNode } from "react";
 
@@ -56,6 +57,8 @@ type Props = {
   buySuppressMessage?: string;
   /** AP-only today: verified official non-buy PDPs (direct outbound, not `/go`). */
   officialReferenceLinks?: BuyLinkRow[];
+  /** When set (AP phase 1), forwarded to buy CTAs for `/go` click_events attribution. */
+  goAttribution?: ApGoAttributionV1 | null;
 };
 
 export function VerticalFilterPageContent({
@@ -79,6 +82,7 @@ export function VerticalFilterPageContent({
   gateSuppressionSummary,
   buySuppressMessage,
   officialReferenceLinks,
+  goAttribution,
 }: Props) {
   const mBase = modelBasePath.replace(/\/$/, "");
   const buyPathSortContext = buyPathSortContextForFilter(filterSlug ?? oemPartNumber, name, oemPartNumber);
@@ -146,6 +150,7 @@ export function VerticalFilterPageContent({
               suppressMessage={buySuppressMessage ?? DEFAULT_VERTICAL_BUY_SUPPRESS_MESSAGE}
               gateSuppressionSummary={gateSuppressionSummary ?? undefined}
               buyPathSortContext={buyPathSortContext}
+              goAttribution={goAttribution}
             />
             {officialReferenceLinks && officialReferenceLinks.length > 0 ? (
               <OfficialProductReferenceLinks links={officialReferenceLinks} />

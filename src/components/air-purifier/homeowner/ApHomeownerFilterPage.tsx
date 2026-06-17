@@ -15,6 +15,7 @@ import {
 } from "@/lib/air-purifier/ap-homeowner-framework-v1";
 import type { ApHomeownerFilterPageCopy } from "@/lib/copy/ap-homeowner-filter-copy-v1";
 import type { BuyPathGateSuppressionSummary } from "@/lib/retailers/launch-buy-links";
+import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 import type { PartTrustSummary } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
 
@@ -33,6 +34,7 @@ export type ApHomeownerFilterPageProps = {
   goBase?: string;
   searchHref?: string;
   modelBasePath?: string;
+  goAttribution?: ApGoAttributionV1 | null;
 };
 
 export function ApHomeownerFilterPage({
@@ -48,6 +50,7 @@ export function ApHomeownerFilterPage({
   goBase = "/air-purifier/go",
   searchHref = "/air-purifier/search",
   modelBasePath = "/air-purifier/model",
+  goAttribution,
 }: ApHomeownerFilterPageProps) {
   const primaryVerifiedLink = getApHomeownerPrimaryVerifiedLink({ trust, retailerLinks });
   const fitState = deriveApHomeownerFitState({ trust, primaryVerifiedLink });
@@ -125,6 +128,7 @@ export function ApHomeownerFilterPage({
                   suppressMessage={copy.suppress}
                   gateSuppressionSummary={gateSuppressionSummary ?? undefined}
                   buyPathSortContext={buyPathSortContext}
+                  goAttribution={goAttribution}
                 />
               </div>
             ) : (

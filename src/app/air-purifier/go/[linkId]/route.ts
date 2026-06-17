@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { getAirPurifierRetailerLinkById } from "@/lib/data/air-purifier/retailers";
 import {
+  apGoAttributionClickEventKeys,
+  parseApGoAttributionFromSearchParams,
+} from "@/lib/retailers/ap-go-attribution-v1";
+import {
   GO_LINK_UUID_RE,
   goFallbackRedirect,
   logClickEventForGoRoute,
@@ -48,10 +52,15 @@ export async function GET(
     return goFallbackRedirect(request, "/go-unavailable");
   }
 
+  const attribution = parseApGoAttributionFromSearchParams(new URL(request.url).searchParams);
+
   await logClickEventForGoRoute(
     request,
     go,
-    { air_purifier_retailer_link_id: linkId },
+    {
+      air_purifier_retailer_link_id: linkId,
+      ...apGoAttributionClickEventKeys(attribution),
+    },
     "[go/air-purifier]",
   );
 
