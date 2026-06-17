@@ -6060,3 +6060,32 @@ test("learning_outcomes_owner_confidence_assignment_plan_v1 row includes matchin
   assert.equal(plan.rows[0].matching_owner_confidence_registry_entry, false);
   assertConfidenceAssignmentPlanNoBannedClaims(plan);
 });
+
+test("ap_homeowner_pilot_scorecard_v1 is attached to command_center_v2 with three pilot rows", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: (p) => p.endsWith("package.json") || p.includes("buckparts-gsc-search-analytics.json"),
+    readTextFile: (p) => {
+      if (p.endsWith("package.json")) return fs.readFileSync(p, "utf8");
+      if (p.includes("buckparts-gsc-search-analytics.json")) {
+        return fs.readFileSync(
+          path.join(process.cwd(), "data/reports/buckparts-gsc-search-analytics.json"),
+          "utf8",
+        );
+      }
+      return BASE_TRACKER;
+    },
+  });
+  const lane = report.command_center_v2.ap_homeowner_pilot_scorecard_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "ap_homeowner_pilot_scorecard_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.rows.length, 3);
+  assert.deepEqual(
+    lane.rows.map((row) => row.slug).sort(),
+    ["coway-max2-hepa", "levoit-rf-rar040", "medify-ma50-rf"],
+  );
+  assert.ok(lane.rows.every((row) => row.revenue_status === "NOT_CONNECTED"));
+  assert.ok(lane.proven_facts.some((f) => f.includes("tracked_page_slices_v1")));
+});

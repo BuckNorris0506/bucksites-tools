@@ -54,6 +54,7 @@ import type { SemiCruiseStatusSummaryV1 } from "../../src/lib/owner-dashboard/se
 import type { CustomerLanguageAndWaterdropResearchLaneV1 } from "../../src/lib/owner-dashboard/customer-language-and-waterdrop-research-lane-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
+import type { ApHomeownerPilotScorecardV1 } from "./ap-homeowner-pilot-scorecard-v1";
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 import type { RpwfeOfficialGeApplyPlanProposalLaneV1 } from "./rpwfe-official-ge-apply-plan-proposal-v1";
@@ -1047,6 +1048,8 @@ export type CommandCenterV2Report = {
   customer_language_and_waterdrop_research_lane_v1: CustomerLanguageAndWaterdropResearchLaneV1;
   /** Read-only GSC demand × wedge launch × repo buyer-path coverage join — not mutation authority. */
   demand_to_coverage_next_lane_v1: DemandToCoverageNextLaneReportV1;
+  /** Read-only 3-row AP homeowner pilot scorecard — GSC tracked_page_slices_v1 × 30d handoff clicks; not revenue. */
+  ap_homeowner_pilot_scorecard_v1: ApHomeownerPilotScorecardV1;
   /** Read-only owner-review packet for AP demand-selected batch candidate — does not start a batch. */
   air_purifier_demand_selected_batch_owner_review_v1: AirPurifierDemandSelectedBatchOwnerReviewLaneV1;
   /** Read-only owner-review packet for RPWFE purchase-option rescue — no buy CTA authority. */
@@ -1104,6 +1107,7 @@ export type CommandCenterV2Report = {
 };
 
 export type { DemandToCoverageNextLaneReportV1 };
+export type { ApHomeownerPilotScorecardV1 } from "./ap-homeowner-pilot-scorecard-v1";
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
 export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 export type { RpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";

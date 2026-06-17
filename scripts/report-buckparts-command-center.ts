@@ -57,6 +57,10 @@ import {
   buildDemandToCoverageNextLaneUnknownV1,
   buildDemandToCoverageNextLaneV1Report,
 } from "./lib/demand-to-coverage-next-lane-v1";
+import {
+  buildApHomeownerPilotScorecardUnknownV1,
+  buildApHomeownerPilotScorecardV1Report,
+} from "./lib/ap-homeowner-pilot-scorecard-v1";
 import { buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./lib/air-purifier-demand-selected-batch-owner-review-v1";
 import { buildRpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./lib/rpwfe-purchase-option-rescue-owner-review-v1";
 import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certainty-engine-checklist-v1";
@@ -1161,6 +1165,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_director_model_first_batch_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
+    | "ap_homeowner_pilot_scorecard_v1"
     | "air_purifier_demand_selected_batch_owner_review_v1"
     | "rpwfe_purchase_option_rescue_owner_review_v1"
     | "rpwfe_verified_link_rescue_plan_v1"
@@ -1213,6 +1218,28 @@ export async function buildBuckpartsCommandCenterReport(
       reason: `demand_to_coverage_next_lane_v1 failed: ${message}`,
     });
   }
+
+  let ap_homeowner_pilot_scorecard_v1 = buildApHomeownerPilotScorecardUnknownV1({
+    now,
+    reason: "ap_homeowner_pilot_scorecard_v1 not loaded yet",
+  });
+  try {
+    ap_homeowner_pilot_scorecard_v1 = await buildApHomeownerPilotScorecardV1Report({
+      rootDir,
+      now,
+      fileExists,
+      readTextFile,
+      clickRows30d,
+      clickQueryStatus: clickVisibility.runtime_status === "OK" ? "OK" : "UNKNOWN",
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    ap_homeowner_pilot_scorecard_v1 = buildApHomeownerPilotScorecardUnknownV1({
+      now,
+      reason: `ap_homeowner_pilot_scorecard_v1 failed: ${message}`,
+    });
+  }
+
   const air_purifier_demand_selected_batch_owner_review_v1 =
     await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
       rootDir,
@@ -1405,6 +1432,7 @@ export async function buildBuckpartsCommandCenterReport(
     owner_integrity_sentinel_v1,
     page_publishability_truth_summary_v1,
     demand_to_coverage_next_lane_v1,
+    ap_homeowner_pilot_scorecard_v1,
     air_purifier_demand_selected_batch_owner_review_v1,
     rpwfe_purchase_option_rescue_owner_review_v1,
     rpwfe_verified_link_rescue_plan_v1,

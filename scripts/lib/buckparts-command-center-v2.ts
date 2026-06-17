@@ -262,6 +262,7 @@ export function buildCommandCenterV2Report(input: {
   | "whole_house_water_director_model_first_batch_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
+  | "ap_homeowner_pilot_scorecard_v1"
   | "air_purifier_demand_selected_batch_owner_review_v1"
   | "rpwfe_purchase_option_rescue_owner_review_v1"
   | "rpwfe_verified_link_rescue_plan_v1"

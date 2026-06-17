@@ -1729,6 +1729,52 @@ export default async function OwnerDashboardPage({ params }: PageProps) {
         </ExecutiveSection>
 
         <ExecutiveSection
+          title="AP homeowner pilot scorecard"
+          subtitle="Read-only join of GSC tracked_page_slices_v1 exact-page demand and 30d /go handoff clicks per pilot slug. Clicks are not revenue."
+        >
+          <FieldBlock label="runtime_status" value={v2.ap_homeowner_pilot_scorecard_v1.runtime_status} />
+          <FieldBlock label="click_query_status" value={v2.ap_homeowner_pilot_scorecard_v1.click_query_status} />
+          <FieldBlock
+            label="gsc_artifact_source"
+            value={String(v2.ap_homeowner_pilot_scorecard_v1.gsc_artifact_source)}
+          />
+          <div className="overflow-x-auto">
+            <table className="mt-2 w-full min-w-[720px] border-collapse text-left text-xs text-slate-800 dark:text-slate-200">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-700">
+                  {[
+                    "slug",
+                    "gsc_match_status",
+                    "gsc_impressions",
+                    "gsc_clicks",
+                    "handoff_clicks_30d",
+                    "handoff_status",
+                    "interpretation",
+                  ].map((header) => (
+                    <th key={header} className="px-2 py-1.5 font-semibold uppercase tracking-wide text-slate-500">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {v2.ap_homeowner_pilot_scorecard_v1.rows.map((row) => (
+                  <tr key={row.slug} className="border-b border-slate-100 dark:border-slate-800">
+                    <td className="px-2 py-1.5 font-mono">{row.slug}</td>
+                    <td className="px-2 py-1.5">{row.gsc_match_status}</td>
+                    <td className="px-2 py-1.5">{String(row.gsc_impressions_30d)}</td>
+                    <td className="px-2 py-1.5">{String(row.gsc_clicks_30d)}</td>
+                    <td className="px-2 py-1.5">{String(row.handoff_clicks_30d)}</td>
+                    <td className="px-2 py-1.5">{row.handoff_status}</td>
+                    <td className="px-2 py-1.5">{row.interpretation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </ExecutiveSection>
+
+        <ExecutiveSection
           title="Throughput & monetization"
           subtitle="/go click visibility (read-only aggregates) and GA4 trust-funnel artifact summary. Dollar commission/revenue remains UNKNOWN in-repo."
         >
