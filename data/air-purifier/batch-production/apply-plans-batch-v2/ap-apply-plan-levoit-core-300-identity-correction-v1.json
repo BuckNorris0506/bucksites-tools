@@ -1,0 +1,320 @@
+{
+  "report_name": "air_purifier_apply_plan_levoit_core_300_identity_correction_v1",
+  "contract": "ap_apply_plan_levoit_core_300_identity_correction_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-18T03:00:00.000Z",
+  "plan_status": "READY_FOR_OWNER_APPROVAL",
+  "anchor_filter_slug": "levoit-rf-rar029",
+  "identity_verdict_sources": [
+    {
+      "artifact": "data/air-purifier/batch-production/agent-results-batch-v2/ap-levoit-oem-discovery-v1.results.json",
+      "decision": "REJECT_WRONG_FAMILY",
+      "summary": "levoit.com search for LEVOIT-RF-RAR029 returns 0 results; Amazon B0DR6X4N35 is Pet Care 300-RF-PA wrong-family; RAR029 token absent on OEM and Amazon."
+    },
+    {
+      "artifact": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-levoit-rf-rar029-live-browser-v1.results.json",
+      "decision": "MODEL_FILTER_MAPPING_REVIEW_REQUIRED",
+      "summary": "Official tokens Core 300-P-RF / Core 300-RF / HEACAFLVNUS0012A found; RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 not on any checked levoit.com page."
+    },
+    {
+      "artifact": "docs/BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md",
+      "decision": "PROVEN mapping-review example",
+      "summary": "levoit-rf-rar029 official identity is Core 300-P-RF / Core 300-RF — not RAR029."
+    }
+  ],
+  "correction_classification": {
+    "primary": "alias_supersession_with_catalog_identity_correction",
+    "slug_rename": false,
+    "full_split": false,
+    "rationale": "Keep stable public slug levoit-rf-rar029 and /air-purifier/filter/levoit-rf-rar029 URL. Correct canonical oem_part_number to official consumer cartridge family. Demote RAR029 / LEVOIT-RF-RAR029 to legacy search aliases only. Promote primary retailer row to official Core 300-P-RF PDP (Consumer Naming Bridge Option A pattern, matching levoit-rf-rar040 cohort). Not a slug rename. Not a compat split unless owner selects Option B."
+  },
+  "owner_decision_required": [
+    "Approve Option A (single anchor, identity correction + consumer PDP primary) vs Option B (split Core 300-RF vs Core 300-P-RF into two filter slugs).",
+    "Approve removal of Amazon secondary B0DR6X4N35 (REJECT_WRONG_FAMILY Pet Care variant).",
+    "Confirm legacy Core 300-RF sold-out PDP is reference-only; active buy path is Core 300-P-RF PDP for entire mapped family."
+  ],
+  "recommended_option": "A",
+  "planned_change_count_option_a": 22,
+  "projected_safe_edge_gain_option_a": 16,
+  "projected_stranded_model_gain_option_a": 16,
+  "affected_model_slugs": [
+    "levoit-core-300",
+    "levoit-core-300s",
+    "levoit-core-300-rf",
+    "levoit-core-300-rac",
+    "levoit-core-300-rwm",
+    "levoit-lap-c301s",
+    "levoit-lap-c302s-wusr",
+    "levoit-lap-c303s-wusr",
+    "levoit-core-300-black",
+    "levoit-core-300-white",
+    "levoit-core-300s-black",
+    "levoit-core-300s-white",
+    "levoit-lap-c302s-waaa",
+    "levoit-lap-c303s-waaa",
+    "levoit-core-p350",
+    "levoit-core-300-smart"
+  ],
+  "affected_files_option_a": [
+    "data/air-purifier/filters.csv",
+    "data/air-purifier/filter_aliases.csv",
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/models.csv"
+  ],
+  "unaffected_files_option_a": [
+    "data/air-purifier/compatibility_mappings.csv",
+    "data/air-purifier/model_aliases.csv"
+  ],
+  "planned_changes_option_a": [
+    {
+      "file": "data/air-purifier/filters.csv",
+      "operation": "update_row",
+      "match_key": { "filter_slug": "levoit-rf-rar029" },
+      "before_row": {
+        "brand_slug": "levoit",
+        "filter_slug": "levoit-rf-rar029",
+        "oem_part_number": "LEVOIT-RF-RAR029",
+        "name": "Core 300 / Core 300S HEPA 3-in-1 filter",
+        "replacement_interval_months": "6",
+        "notes": "HEPA + carbon prefilter bundle for Core 300 family"
+      },
+      "after_row": {
+        "brand_slug": "levoit",
+        "filter_slug": "levoit-rf-rar029",
+        "oem_part_number": "LEVOIT-CORE-300-P-RF",
+        "name": "Core 300 Series Original Filter (Core 300-P-RF)",
+        "replacement_interval_months": "6",
+        "notes": "Official Levoit cartridge family; supersedes legacy internal RAR029 label. Aliases retain Core 300-RF legacy token. Shopify HEACAFLVNUS0012A; UPC 817915026880."
+      },
+      "changed_fields": ["oem_part_number", "name", "notes"]
+    },
+    {
+      "file": "data/air-purifier/filter_aliases.csv",
+      "operation": "add_rows",
+      "rows": [
+        { "filter_slug": "levoit-rf-rar029", "alias": "Core 300-P-RF" },
+        { "filter_slug": "levoit-rf-rar029", "alias": "Core 300-RF" },
+        { "filter_slug": "levoit-rf-rar029", "alias": "Core 300-P 3-Stage Original Filter" },
+        { "filter_slug": "levoit-rf-rar029", "alias": "HEACAFLVNUS0012A" }
+      ],
+      "retain_existing_aliases": ["RF-RAR029", "Core 300 filter", "RAR029"],
+      "alias_policy": "Legacy RAR029 aliases retained for backward search only; not canonical OEM identity."
+    },
+    {
+      "file": "data/air-purifier/retailer_links.csv",
+      "operation": "update_row",
+      "match_key": { "filter_slug": "levoit-rf-rar029", "retailer_key": "oem-catalog", "is_primary": "true" },
+      "before_row": {
+        "filter_slug": "levoit-rf-rar029",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/search?q=LEVOIT-RF-RAR029",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/search?q=LEVOIT-RF-RAR029",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "after_row": {
+        "filter_slug": "levoit-rf-rar029",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "is_primary": "true",
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Core 300 identity correction + Consumer Naming Bridge Option A; live browser proof ap-model-first-levoit-rf-rar029-live-browser-v1 (2026-05-30): official PDP Core 300 Series Original Filter; consumer tokens Core 300-P-RF / Core 300-P 3-Stage Original Filter in primary slice; Shopify SKU HEACAFLVNUS0012A; UPC 817915026880; Add to cart $29.99 available:true. PROVEN: internal tokens RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 absent from primary. Legacy core300-air-purifier-replacement-filter (Core 300-RF) sold out — reference only. wrong_family_tokens_seen [] in primary; Pet 300-RF-PA variants not in primary slice.",
+        "browser_truth_checked_at": "2026-05-30T06:00:00.000Z"
+      },
+      "changed_fields": [
+        "affiliate_url",
+        "destination_url",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    },
+    {
+      "file": "data/air-purifier/retailer_links.csv",
+      "operation": "delete_row",
+      "match_key": { "filter_slug": "levoit-rf-rar029", "retailer_key": "amazon" },
+      "before_row": {
+        "filter_slug": "levoit-rf-rar029",
+        "retailer_name": "Amazon",
+        "affiliate_url": "https://www.amazon.com/dp/B0DR6X4N35?tag=buckparts20-20",
+        "is_primary": "false",
+        "retailer_key": "amazon",
+        "retailer_slug": "amazon",
+        "destination_url": "https://www.amazon.com/dp/B0DR6X4N35?tag=buckparts20-20",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": ""
+      },
+      "delete_rationale": "Batch-v2 REJECT_WRONG_FAMILY: B0DR6X4N35 is Core 300-P Pet Allergy / 300-RF-PA Pet Care variant; exact RAR029 token absent; must not remain as fallback buy path after identity correction."
+    },
+    {
+      "file": "data/air-purifier/models.csv",
+      "operation": "update_notes_column",
+      "match_key": { "notes_contains": "RF-RAR029" },
+      "before_notes": "Uses Core 300 cartridge (RF-RAR029)",
+      "after_notes": "Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)",
+      "affected_row_count": 5,
+      "affected_slugs": [
+        "levoit-core-300",
+        "levoit-core-300s",
+        "levoit-core-300-rf",
+        "levoit-core-300-rac",
+        "levoit-core-300-rwm"
+      ]
+    },
+    {
+      "file": "data/air-purifier/models.csv",
+      "operation": "update_notes_column",
+      "match_key": { "notes_contains": "Core 300 cartridge family" },
+      "before_notes": "Batch-2 expansion; Core 300 cartridge family",
+      "after_notes": "Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family",
+      "affected_row_count": 10,
+      "affected_slugs": [
+        "levoit-lap-c302s-wusr",
+        "levoit-lap-c303s-wusr",
+        "levoit-core-300-black",
+        "levoit-core-300-white",
+        "levoit-core-300s-black",
+        "levoit-core-300s-white",
+        "levoit-lap-c302s-waaa",
+        "levoit-lap-c303s-waaa",
+        "levoit-core-p350",
+        "levoit-core-300-smart"
+      ]
+    },
+    {
+      "file": "data/air-purifier/models.csv",
+      "operation": "update_row",
+      "match_key": { "slug": "levoit-lap-c301s" },
+      "before_notes": "Levoit SKU variant of Core 300S",
+      "after_notes": "Levoit SKU variant of Core 300S; Core 300-P-RF cartridge family"
+    }
+  ],
+  "option_b_split_alternative": {
+    "classification": "split",
+    "owner_only": true,
+    "summary": "Split legacy Core 300-RF line from current Core 300-P-RF line into two filter slugs if owner determines cartridges are not interchangeable for all 16 mapped models.",
+    "proposed_new_slugs": [
+      {
+        "filter_slug": "levoit-rf-core-300-rf",
+        "oem_part_number": "LEVOIT-CORE-300-RF",
+        "name": "Core 300-RF 3-Stage Original Filter (legacy)",
+        "primary_pdp": "https://levoit.com/products/core300-air-purifier-replacement-filter",
+        "buy_path_status": "reference_only_sold_out",
+        "candidate_models": [
+          "levoit-core-300",
+          "levoit-core-p350",
+          "levoit-core-300-rac"
+        ]
+      },
+      {
+        "filter_slug": "levoit-rf-core-300-p-rf",
+        "oem_part_number": "LEVOIT-CORE-300-P-RF",
+        "name": "Core 300 Series Original Filter (Core 300-P-RF)",
+        "primary_pdp": "https://levoit.com/products/core300-p-air-purifier-replacement-filter",
+        "buy_path_status": "direct_buyable",
+        "candidate_models": [
+          "levoit-core-300s",
+          "levoit-core-300s-black",
+          "levoit-core-300s-white",
+          "levoit-core-300-smart",
+          "levoit-lap-c301s",
+          "levoit-lap-c302s-wusr",
+          "levoit-lap-c303s-wusr",
+          "levoit-lap-c302s-waaa",
+          "levoit-lap-c303s-waaa"
+        ]
+      }
+    ],
+    "demote_or_deprecate": "levoit-rf-rar029",
+    "additional_files": [
+      "data/air-purifier/filters.csv",
+      "data/air-purifier/compatibility_mappings.csv",
+      "data/air-purifier/filter_aliases.csv",
+      "data/air-purifier/retailer_links.csv"
+    ],
+    "unresolved_models_needing_owner_assignment": [
+      "levoit-core-300-rf",
+      "levoit-core-300-rwm",
+      "levoit-core-300-black",
+      "levoit-core-300-white"
+    ]
+  },
+  "safety_risks": [
+    {
+      "risk": "Wrong cartridge variant",
+      "severity": "high",
+      "detail": "Amazon B0DR6X4N35 is Pet Care 300-RF-PA — must not survive as secondary after correction."
+    },
+    {
+      "risk": "Legacy vs P-line cartridge mismatch",
+      "severity": "medium",
+      "detail": "Official legacy Core 300-RF PDP lists Core 300 / Core P350 / Core 300-RAC; current Core 300-P-RF PDP lists P-line units. Single-anchor Option A assumes family consolidation on active PDP; Option B split if owner disagrees."
+    },
+    {
+      "risk": "Model slug nomenclature collision",
+      "severity": "medium",
+      "detail": "levoit-core-300-rf model slug may denote filter cartridge name on levoit.com, not a distinct unit PDP — mapping review required before split assignment."
+    },
+    {
+      "risk": "Core 300-RWM unknown official replacement",
+      "severity": "medium",
+      "detail": "Model-first pass: levoit.com search for Core 300-RWM returned 0 products; official filter SKU UNKNOWN."
+    },
+    {
+      "risk": "URL / SEO stability",
+      "severity": "low",
+      "detail": "Option A preserves levoit-rf-rar029 slug and filter page URL; only canonical OEM token and buy path change."
+    },
+    {
+      "risk": "Supabase parity drift",
+      "severity": "medium",
+      "detail": "Post-apply requires seed re-import; no Supabase mutation in this plan."
+    }
+  ],
+  "validation_commands": [
+    "npm run lint",
+    "npm run build",
+    "npx tsx scripts/report-air-purifier-weak-buyer-path-audit-v1.ts",
+    "npm run buckparts:guardrails:air-purifier",
+    "npm run seed:import:air-purifier -- --dry-run"
+  ],
+  "post_apply_steps": [
+    "Owner signs Option A or B.",
+    "Apply CSV changes via approved apply runner (not this packet).",
+    "npm run seed:import:air-purifier (after CSV apply).",
+    "Re-run weak buyer path audit; confirm levoit-rf-rar029 moves to safe_direct_buyable_filters.",
+    "Verify /air-purifier/filter/levoit-rf-rar029 and 16 model pages show direct_buyable primary."
+  ],
+  "proven_facts": [
+    "PROVEN: filters.csv stores oem_part_number LEVOIT-RF-RAR029 for levoit-rf-rar029.",
+    "PROVEN: 16 compatibility_mappings.csv rows map Core 300 family models to levoit-rf-rar029.",
+    "PROVEN: Primary retailer row is levoit.com/search?q=LEVOIT-RF-RAR029 with empty browser_truth_classification.",
+    "PROVEN: Batch-v2 ap-levoit-oem-discovery-v1 decision REJECT_WRONG_FAMILY for levoit-rf-rar029.",
+    "PROVEN: Model-first live browser pass found official tokens Core 300-P-RF, Core 300-RF, HEACAFLVNUS0012A; RAR029 / RF-RAR029 / LEVOIT-RF-RAR029 not on checked levoit.com pages.",
+    "PROVEN: Official buyable PDP https://levoit.com/products/core300-p-air-purifier-replacement-filter had Add to cart available:true at $29.99 during model-first pass.",
+    "PROVEN: Legacy PDP https://levoit.com/products/core300-air-purifier-replacement-filter (Core 300-RF) was sold out during model-first pass.",
+    "PROVEN: Amazon B0DR6X4N35 shows Pet Care 300-RF-PA wrong-family tokens per batch-v2 evidence.",
+    "PROVEN: Consumer Naming Bridge cohort already applied same URL-promotion pattern to levoit-rf-rar040/060/c131/cr200 without slug rename."
+  ],
+  "inferred_facts": [
+    "INFERRED: Option A (single anchor + identity correction) is sufficient for safe-edge gain on all 16 models if Core 300-P-RF PDP compatibility list is authoritative for the active lineup.",
+    "INFERRED: Legacy RAR029 / RF-RAR029 labels originated from internal BuckParts naming, not Levoit manufacturer pages.",
+    "INFERRED: Projected +16 safe edges if Option A primary promoted to direct_buyable (all 16 compat rows currently weak)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether Core 300-RWM has a distinct official replacement filter SKU.",
+    "UNKNOWN: Whether levoit-core-300-rf model slug is a discontinued unit vs filter-nomenclature collision only.",
+    "UNKNOWN: Whether Levoit meta/compatibility on Series Original Filter PDP overrides narrower on-page model list for legacy Core 300 non-P units.",
+    "UNKNOWN: Owner preference between Option A (single anchor) and Option B (split)."
+  ]
+}

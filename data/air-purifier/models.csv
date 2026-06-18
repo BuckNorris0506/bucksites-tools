@@ -1,10 +1,10 @@
 brand_slug,slug,model_number,title,series,notes
-levoit,levoit-core-300,Core 300,Levoit Core 300 Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
-levoit,levoit-core-300s,Core 300S,Levoit Core 300S Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
-levoit,levoit-core-300-rf,Core 300-RF,Levoit Core 300-RF Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
-levoit,levoit-core-300-rac,Core 300-RAC,Levoit Core 300-RAC Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
-levoit,levoit-core-300-rwm,Core 300-RWM,Levoit Core 300-RWM Air Purifier,Core 300,Uses Core 300 cartridge (RF-RAR029)
-levoit,levoit-lap-c301s,LAP-C301S-WAAA,Levoit LAP-C301S-WAAA Air Purifier,Core 300,Levoit SKU variant of Core 300S
+levoit,levoit-core-300,Core 300,Levoit Core 300 Air Purifier,Core 300,Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)
+levoit,levoit-core-300s,Core 300S,Levoit Core 300S Air Purifier,Core 300,Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)
+levoit,levoit-core-300-rf,Core 300-RF,Levoit Core 300-RF Air Purifier,Core 300,Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)
+levoit,levoit-core-300-rac,Core 300-RAC,Levoit Core 300-RAC Air Purifier,Core 300,Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)
+levoit,levoit-core-300-rwm,Core 300-RWM,Levoit Core 300-RWM Air Purifier,Core 300,Uses Core 300-P-RF / Core 300-RF cartridge (official Levoit)
+levoit,levoit-lap-c301s,LAP-C301S-WAAA,Levoit LAP-C301S-WAAA Air Purifier,Core 300,Levoit SKU variant of Core 300S; Core 300-P-RF cartridge family
 levoit,levoit-core-400s,Core 400S,Levoit Core 400S Air Purifier,Core 400,
 levoit,levoit-core-400s-rf,Core 400S-RF,Levoit Core 400S-RF Air Purifier,Core 400,
 levoit,levoit-core-400-rf,Core 400-RF,Levoit Core 400-RF Air Purifier,Core 400,
@@ -87,16 +87,16 @@ alen,alen-breathesmart-classic,BreatheSmart Classic,Alen BreatheSmart Classic Ai
 alen,alen-fit50,BreatheSmart FIT50,Alen BreatheSmart FIT50 Air Purifier,BreatheSmart,
 alen,alen-45i,BreatheSmart 45i,Alen BreatheSmart 45i Air Purifier,BreatheSmart,
 alen,alen-flex,BreatheSmart Flex,Alen BreatheSmart Flex Air Purifier,BreatheSmart,
-levoit,levoit-lap-c302s-wusr,LAP-C302S-WUSR,Levoit LAP-C302S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-lap-c303s-wusr,LAP-C303S-WUSR,Levoit LAP-C303S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-300-black,Core 300 (Black),Levoit Core 300 (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-300-white,Core 300 (White),Levoit Core 300 (White) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-300s-black,Core 300S (Black),Levoit Core 300S (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-300s-white,Core 300S (White),Levoit Core 300S (White) Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-lap-c302s-waaa,LAP-C302S-WAAA,Levoit LAP-C302S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-lap-c303s-waaa,LAP-C303S-WAAA,Levoit LAP-C303S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-p350,Core P350,Levoit Core P350 Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
-levoit,levoit-core-300-smart,Core 300 Smart,Levoit Core 300 Smart Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
+levoit,levoit-lap-c302s-wusr,LAP-C302S-WUSR,Levoit LAP-C302S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-lap-c303s-wusr,LAP-C303S-WUSR,Levoit LAP-C303S-WUSR Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-300-black,Core 300 (Black),Levoit Core 300 (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-300-white,Core 300 (White),Levoit Core 300 (White) Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-300s-black,Core 300S (Black),Levoit Core 300S (Black) Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-300s-white,Core 300S (White),Levoit Core 300S (White) Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-lap-c302s-waaa,LAP-C302S-WAAA,Levoit LAP-C302S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-lap-c303s-waaa,LAP-C303S-WAAA,Levoit LAP-C303S-WAAA Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-p350,Core P350,Levoit Core P350 Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
+levoit,levoit-core-300-smart,Core 300 Smart,Levoit Core 300 Smart Air Purifier,Core 300,Batch-2 expansion; Core 300-P-RF / Core 300-RF cartridge family
 levoit,levoit-lv-h132,LV-H132,Levoit LV-H132 Air Purifier,Compact,Petite tower; LV-H128 cartridge family
 levoit,levoit-lv-h133,LV-H133,Levoit LV-H133 Air Purifier,Core 300,Batch-2 expansion; Core 300 cartridge family
 levoit,levoit-lv-h134,LV-H134,Levoit LV-H134 Air Purifier,Tower,LV-H133 tower cartridge family

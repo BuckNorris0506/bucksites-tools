@@ -1,5 +1,5 @@
 brand_slug,slug,oem_part_number,name,replacement_interval_months,notes
-levoit,levoit-rf-rar029,LEVOIT-RF-RAR029,Core 300 / Core 300S HEPA 3-in-1 filter,6,HEPA + carbon prefilter bundle for Core 300 family
+levoit,levoit-rf-rar029,LEVOIT-CORE-300-P-RF,Core 300 Series Original Filter (Core 300-P-RF),6,Official Levoit cartridge family; supersedes legacy internal RAR029 label. Aliases retain Core 300-RF legacy token. Shopify HEACAFLVNUS0012A; UPC 817915026880.
 levoit,levoit-rf-rar040,LEVOIT-RF-RAR040,Core 400 / Core 400S replacement filter,6,3-in-1 for Core 400 series
 levoit,levoit-rf-rar060,LEVOIT-RF-RAR060,Core 600 / Core 600S replacement filter,6,3-in-1 for Core 600 series
 levoit,levoit-rf-cr200,LEVOIT-RF-CR200,Core 200 / Core 200S replacement filter,6,Compact Core 200 family cartridge
