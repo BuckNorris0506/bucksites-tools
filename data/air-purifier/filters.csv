@@ -57,3 +57,4 @@ austin-air,austin-air-hm400-fr400,FR400,Austin Air HealthMate replacement filter
 airdoctor,airdoctor-ad3000-cartridge,ADF401,AirDoctor 4-in-1 UltraHEPA + carbon replacement,12,"Published ADF401 family for AD3000-class units; verify model sticker vs AD3500."
 shark,shark-hepa-he15fkp,HE15FKPET,NeverChange HP150 HEPA filter,12,Shark first-party HE15FKPET for HP150/HP151/HP152/HP155 family
 shark,shark-hepa-he3fkp,HE3FKPET,NeverChange HP300 HEPA filter,60,Shark first-party HE3FKPET for HP300/HP301/HP302/HP305 family
+shark,shark-hepa-he1fkbas,HE1FKBAS,Shark Anti-Allergen HEPA complete kit (HE1FKBAS),6,Official integrated 3-in-1 complete kit; phased hard-reject re-home from shark-carbon-foam. HP1xx family (PROVEN cohort).

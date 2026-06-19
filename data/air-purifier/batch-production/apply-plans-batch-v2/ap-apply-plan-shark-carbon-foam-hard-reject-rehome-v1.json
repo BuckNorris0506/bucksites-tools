@@ -1,0 +1,319 @@
+{
+  "report_name": "air_purifier_apply_plan_shark_carbon_foam_hard_reject_rehome_v1",
+  "contract": "ap_apply_plan_shark_carbon_foam_hard_reject_rehome_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-18T15:00:00.000Z",
+  "plan_status": "READY_FOR_OWNER_APPROVAL",
+  "invalid_filter_slug": "shark-carbon-foam",
+  "hyperagent_identity_packet_note": "No committed ap-hyperagent-chat-discovery-shark-carbon-foam fixture in repo. Identity hard-reject synthesized from batch-v2, batch-v3, model-first, ap-oem-search-placeholder, and BuckParts-PRODUCT-ADDITION-MODEL-FIRST-CONTRACT.md.",
+  "hard_reject_verdict": {
+    "is_real_discrete_shark_part": false,
+    "official_token_found": false,
+    "separate_carbon_foam_sku_found": false,
+    "evidence_summary": "SHARK-CARBON-FOAM search resolves to marketing homepage; no official PDP. Shark HP families use integrated complete-kit cartridges (HE1FKBAS, HE2FKBAS, etc.) with carbon layer built in — not a discrete carbon/foam secondary SKU."
+  },
+  "affected_model_count": 21,
+  "affected_model_slugs": [
+    "shark-hp100",
+    "shark-hp105",
+    "shark-hp102",
+    "shark-hp102pet",
+    "shark-hp102petnc",
+    "shark-hp130",
+    "shark-hp135",
+    "shark-hp132",
+    "shark-hp141",
+    "shark-hp201",
+    "shark-hp202",
+    "shark-hp232",
+    "shark-hp200",
+    "shark-hp230",
+    "shark-hp231",
+    "shark-hp401",
+    "shark-hp402",
+    "shark-hp452",
+    "shark-hp462",
+    "shark-hp602",
+    "shark-hp652"
+  ],
+  "oem_kit_family_groups": {
+    "HE1FKBAS": {
+      "model_slugs": [
+        "shark-hp100",
+        "shark-hp105",
+        "shark-hp102",
+        "shark-hp102pet",
+        "shark-hp102petnc",
+        "shark-hp130",
+        "shark-hp135",
+        "shark-hp132",
+        "shark-hp141"
+      ],
+      "count": 9,
+      "official_pdp": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+      "proposed_destination_slug": "shark-hepa-he1fkbas",
+      "destination_slug_status": "must_create",
+      "legacy_marketing_slug": "shark-hepa-hp100",
+      "legacy_slug_status": "exists_needs_identity_correction"
+    },
+    "HE2FKBAS": {
+      "model_slugs": [
+        "shark-hp201",
+        "shark-hp202",
+        "shark-hp232",
+        "shark-hp200",
+        "shark-hp230",
+        "shark-hp231"
+      ],
+      "count": 6,
+      "official_pdp": "UNKNOWN",
+      "proposed_destination_slug": "shark-hepa-he2fkbas",
+      "destination_slug_status": "must_create",
+      "legacy_marketing_slug": "shark-hepa-hp200",
+      "legacy_slug_status": "exists_needs_identity_correction"
+    },
+    "HE4FKBAS": {
+      "model_slugs": [
+        "shark-hp401",
+        "shark-hp402",
+        "shark-hp452",
+        "shark-hp462"
+      ],
+      "count": 4,
+      "official_pdp": "UNKNOWN",
+      "proposed_destination_slug": "shark-hepa-he4fkbas",
+      "destination_slug_status": "must_create",
+      "legacy_marketing_slug": "shark-hepa-hp400",
+      "legacy_slug_status": "exists_needs_identity_correction"
+    },
+    "HE6FKBAS_HE6FKPRO": {
+      "model_slugs": [
+        "shark-hp602",
+        "shark-hp652"
+      ],
+      "count": 2,
+      "official_pdp": "UNKNOWN",
+      "proposed_destination_slug": "shark-hepa-he6fkpro",
+      "destination_slug_status": "must_create",
+      "legacy_marketing_slug": "shark-hepa-hp400",
+      "legacy_slug_status": "exists_wrong_family_likely"
+    },
+    "HE15FKPET": {
+      "model_slugs": [],
+      "count": 0,
+      "note": "Not in carbon-foam 21; already mapped to shark-hepa-he15fkp (NeverChange HP150 family)"
+    },
+    "HE3FKPET": {
+      "model_slugs": [],
+      "count": 0,
+      "note": "Not in carbon-foam 21; already mapped to shark-hepa-he3fkp (NeverChange HP300 family)"
+    },
+    "UNKNOWN": {
+      "model_slugs": [],
+      "count": 0,
+      "note": "All 21 models assigned to family bucket above; per-model confidence varies (see rehome_rows)"
+    }
+  },
+  "rehome_rows": [
+    {"model_slug": "shark-hp100", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "models.csv + batch-v2 HE1FKBAS PDP compat list"},
+    {"model_slug": "shark-hp105", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "models.csv HE1FKBAS compat list"},
+    {"model_slug": "shark-hp102", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "model-first: HP102 unit PDP + HE1FKBAS PDP compat"},
+    {"model_slug": "shark-hp102pet", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "INFERRED", "notes": "HP100 Series guide; not on fetched HE1FKBAS compat list"},
+    {"model_slug": "shark-hp102petnc", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "INFERRED", "notes": "HP100 Series guide; no unit PDP checked"},
+    {"model_slug": "shark-hp130", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "models.csv + batch-v2 compat"},
+    {"model_slug": "shark-hp135", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "models.csv HE1FKBAS compat list"},
+    {"model_slug": "shark-hp132", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "PROVEN", "notes": "model-first: HE1FKBAS PDP lists HP132"},
+    {"model_slug": "shark-hp141", "oem_kit": "HE1FKBAS", "destination_slug": "shark-hepa-he1fkbas", "confidence": "UNKNOWN", "notes": "model-first: not on HE1FKBAS/HE1FKPET compat lists; unit PDP redirect"},
+    {"model_slug": "shark-hp201", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "INFERRED", "notes": "HP2xx family; mapped to shark-hepa-hp200 today"},
+    {"model_slug": "shark-hp202", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "INFERRED", "notes": "HP2xx family"},
+    {"model_slug": "shark-hp232", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "INFERRED", "notes": "HP2xx family"},
+    {"model_slug": "shark-hp200", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "PROVEN", "notes": "models.csv: HE2FKBAS compat list includes HP200"},
+    {"model_slug": "shark-hp230", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "PROVEN", "notes": "models.csv: HE2FKBAS compat list includes HP230"},
+    {"model_slug": "shark-hp231", "oem_kit": "HE2FKBAS", "destination_slug": "shark-hepa-he2fkbas", "confidence": "PROVEN", "notes": "models.csv: HE2FKBAS compat list includes HP231"},
+    {"model_slug": "shark-hp401", "oem_kit": "HE4FKBAS", "destination_slug": "shark-hepa-he4fkbas", "confidence": "INFERRED", "notes": "HP4xx family; official HE4 token not proven in repo"},
+    {"model_slug": "shark-hp402", "oem_kit": "HE4FKBAS", "destination_slug": "shark-hepa-he4fkbas", "confidence": "INFERRED", "notes": "HP4xx family"},
+    {"model_slug": "shark-hp452", "oem_kit": "HE4FKBAS", "destination_slug": "shark-hepa-he4fkbas", "confidence": "INFERRED", "notes": "HP4xx family"},
+    {"model_slug": "shark-hp462", "oem_kit": "HE4FKBAS", "destination_slug": "shark-hepa-he4fkbas", "confidence": "INFERRED", "notes": "HP4xx family"},
+    {"model_slug": "shark-hp602", "oem_kit": "HE6FKBAS_HE6FKPRO", "destination_slug": "shark-hepa-he6fkpro", "confidence": "UNKNOWN", "notes": "Currently on shark-hepa-hp400; batch-v2 mentions HE6FKPRO token"},
+    {"model_slug": "shark-hp652", "oem_kit": "HE6FKBAS_HE6FKPRO", "destination_slug": "shark-hepa-he6fkpro", "confidence": "UNKNOWN", "notes": "Currently on shark-hepa-hp400; HE6 vs HE4 unproven"}
+  ],
+  "rehome_confidence_counts": {
+    "PROVEN": 8,
+    "INFERRED": 9,
+    "UNKNOWN": 4
+  },
+  "projected_impact": {
+    "wrong_family_compat_edges_removed": 21,
+    "safe_edge_gain_proven_destinations_only": 0,
+    "note": "No PROVEN direct_buyable OEM kit destination in committed retailer_links.csv for HE1FKBAS/HE2/HE4/HE6 slugs. HE1FKBAS had Add to cart in model-first accessory cross-link but shark-hepa-hp100 primary remains non-direct_buyable. Primary win is wrong-family-risk reduction, not immediate safe-edge gain."
+  },
+  "owner_follow_up_out_of_scope": [
+    "Deprecate legacy marketing slugs shark-hepa-hp100/hp200/hp400 after OEM slug migration",
+    "Live browser proof for HE2FKBAS/HE4FKBAS/HE6FKPRO official PDPs",
+    "Resolve HP141 and HP602/652 family assignment",
+    "HE1FKPET NanoSeal variant slug if needed (separate from complete-kit re-home)"
+  ],
+  "planned_changes": [
+    {
+      "file": "data/air-purifier/filters.csv",
+      "operation": "delete_row",
+      "match_key": { "slug": "shark-carbon-foam" },
+      "before_row": {
+        "brand_slug": "shark",
+        "slug": "shark-carbon-foam",
+        "oem_part_number": "SHARK-CARBON-FOAM",
+        "name": "Carbon / foam secondary cartridge",
+        "replacement_interval_months": "3",
+        "notes": "Paired with HP series"
+      }
+    },
+    {
+      "file": "data/air-purifier/filters.csv",
+      "operation": "add_rows",
+      "rows": [
+        {
+          "brand_slug": "shark",
+          "slug": "shark-hepa-he1fkbas",
+          "oem_part_number": "HE1FKBAS",
+          "name": "Shark Anti-Allergen HEPA complete kit (HE1FKBAS)",
+          "replacement_interval_months": "6",
+          "notes": "Official integrated 3-in-1 complete kit; replaces invalid shark-carbon-foam + marketing shark-hepa-hp100 identity. HP1xx family."
+        },
+        {
+          "brand_slug": "shark",
+          "slug": "shark-hepa-he2fkbas",
+          "oem_part_number": "HE2FKBAS",
+          "name": "Shark HEPA complete kit (HE2FKBAS)",
+          "replacement_interval_months": "6",
+          "notes": "Official complete kit for HP2xx family; replaces carbon-foam + shark-hepa-hp200 marketing slug."
+        },
+        {
+          "brand_slug": "shark",
+          "slug": "shark-hepa-he4fkbas",
+          "oem_part_number": "HE4FKBAS",
+          "name": "Shark HEPA complete kit (HE4FKBAS)",
+          "replacement_interval_months": "6",
+          "notes": "Official complete kit for HP401–462 family; INFERRED token — live PDP proof required."
+        },
+        {
+          "brand_slug": "shark",
+          "slug": "shark-hepa-he6fkpro",
+          "oem_part_number": "HE6FKPRO",
+          "name": "Shark HEPA complete kit (HE6FKPRO)",
+          "replacement_interval_months": "6",
+          "notes": "Official complete kit for HP602/652 family; UNKNOWN vs HE4 — live PDP proof required."
+        }
+      ]
+    },
+    {
+      "file": "data/air-purifier/filter_aliases.csv",
+      "operation": "add_rows",
+      "rows": [
+        { "filter_slug": "shark-hepa-he1fkbas", "alias": "HE1FKBAS" },
+        { "filter_slug": "shark-hepa-he1fkbas", "alias": "Shark HP100 Series filter" },
+        { "filter_slug": "shark-hepa-he2fkbas", "alias": "HE2FKBAS" },
+        { "filter_slug": "shark-hepa-he4fkbas", "alias": "HE4FKBAS" },
+        { "filter_slug": "shark-hepa-he6fkpro", "alias": "HE6FKPRO" },
+        { "filter_slug": "shark-hepa-he6fkpro", "alias": "HE6FKBAS" }
+      ]
+    },
+    {
+      "file": "data/air-purifier/retailer_links.csv",
+      "operation": "delete_row",
+      "match_key": { "filter_slug": "shark-carbon-foam" }
+    },
+    {
+      "file": "data/air-purifier/retailer_links.csv",
+      "operation": "add_rows",
+      "rows": [
+        {
+          "filter_slug": "shark-hepa-he1fkbas",
+          "retailer_name": "Shark — official replacement filter (product page)",
+          "affiliate_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+          "is_primary": "true",
+          "retailer_key": "shark-official",
+          "retailer_slug": "shark",
+          "destination_url": "https://www.sharkclean.com/products/shark-air-purifier-anti-allergen-filter-with-true-hepa-zidHE1FKBAS",
+          "browser_truth_classification": "likely_valid",
+          "browser_truth_notes": "Hard-reject shark-carbon-foam re-home; batch-v2 + model-first: official HE1FKBAS PDP; integrated complete kit not carbon-only. PROVEN: SHARK-CARBON-FOAM not on PDP. Notify-me/OOS state may block direct_buyable — owner live re-proof required before promotion.",
+          "browser_truth_checked_at": "2026-05-24T05:39:50.321Z"
+        }
+      ],
+      "deferred_rows": [
+        {
+          "filter_slug": "shark-hepa-he2fkbas",
+          "reason": "UNKNOWN official PDP URL in repo — add after live browser proof"
+        },
+        {
+          "filter_slug": "shark-hepa-he4fkbas",
+          "reason": "UNKNOWN official PDP URL in repo — add after live browser proof"
+        },
+        {
+          "filter_slug": "shark-hepa-he6fkpro",
+          "reason": "UNKNOWN official PDP URL in repo — add after live browser proof"
+        }
+      ]
+    },
+    {
+      "file": "data/air-purifier/compatibility_mappings.csv",
+      "operation": "delete_rows",
+      "delete_count": 21,
+      "match_pattern": "*,shark-carbon-foam,true"
+    },
+    {
+      "file": "data/air-purifier/compatibility_mappings.csv",
+      "operation": "add_rows",
+      "rows": [
+        {"model_slug": "shark-hp100", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp105", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp102", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp102pet", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp102petnc", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp130", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp135", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp132", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp141", "filter_slug": "shark-hepa-he1fkbas", "is_recommended": "true", "confidence": "UNKNOWN"},
+        {"model_slug": "shark-hp201", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp202", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp232", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp200", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp230", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp231", "filter_slug": "shark-hepa-he2fkbas", "is_recommended": "true", "confidence": "PROVEN"},
+        {"model_slug": "shark-hp401", "filter_slug": "shark-hepa-he4fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp402", "filter_slug": "shark-hepa-he4fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp452", "filter_slug": "shark-hepa-he4fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp462", "filter_slug": "shark-hepa-he4fkbas", "is_recommended": "true", "confidence": "INFERRED"},
+        {"model_slug": "shark-hp602", "filter_slug": "shark-hepa-he6fkpro", "is_recommended": "true", "confidence": "UNKNOWN"},
+        {"model_slug": "shark-hp652", "filter_slug": "shark-hepa-he6fkpro", "is_recommended": "true", "confidence": "UNKNOWN"}
+      ],
+      "owner_option_remove_legacy_duplicates": "After approval, also delete 21 rows mapping same models to shark-hepa-hp100/hp200/hp400 to avoid dual marketing+OEM compat."
+    }
+  ],
+  "validation_commands": [
+    "npm run lint",
+    "npm run build",
+    "npx tsx scripts/report-air-purifier-weak-buyer-path-audit-v1.ts",
+    "npm run buckparts:guardrails:air-purifier"
+  ],
+  "proven_facts": [
+    "PROVEN: SHARK-CARBON-FOAM not found on any checked official Shark page.",
+    "PROVEN: No separate carbon/foam replacement SKU on sharkclean.com parts catalog per batch-v2.",
+    "PROVEN: 21 models mapped to shark-carbon-foam; all also mapped to shark-hepa-hp100/hp200/hp400.",
+    "PROVEN: HE1FKBAS official PDP exists; lists HP100/HP102/HP132 compat; integrated complete kit.",
+    "PROVEN: batch-v2 and model-first classify shark-carbon-foam as NO_SAFE_PATH / MODEL_FILTER_MAPPING_REVIEW_REQUIRED.",
+    "PROVEN: shark-hepa-he15fkp and shark-hepa-he3fkp exist for NeverChange families (not in carbon-foam 21)."
+  ],
+  "inferred_facts": [
+    "INFERRED: HP2xx models re-home to HE2FKBAS via shark-hepa-he2fkbas.",
+    "INFERRED: HP401–462 re-home to HE4FKBAS via shark-hepa-he4fkbas.",
+    "INFERRED: Legacy shark-hepa-hp100/hp200/hp400 marketing slugs should be deprecated after OEM slug migration."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Committed HyperAgent identity packet file path (none in repo).",
+    "UNKNOWN: Official HE2FKBAS/HE4FKBAS/HE6FKPRO PDP URLs and buy paths.",
+    "UNKNOWN: HP141, HP602, HP652 exact OEM kit assignment.",
+    "UNKNOWN: Whether HE1FKBAS PDP is currently in-stock vs notify-only without fresh browser pass."
+  ]
+}
