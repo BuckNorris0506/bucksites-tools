@@ -109,7 +109,7 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ---
 
-## Current stopping point — AP CSV Execution Progress (PROVEN through `03dcf49`)
+## Current stopping point — AP CSV Execution Progress (PROVEN through `07d1281`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
 
@@ -118,12 +118,12 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| HEAD / `origin/main` at handoff refresh | **`03dcf49`** |
-| Latest commit | **`03dcf49`** — Winix Filter I / 116131 identity correction |
-| Prior AP commits (pushed) | **`f9dc3a9`** — Levoit Core 300 Option A identity correction; **`254f6c6`** — Shark carbon-foam HE1 proven cohort partial re-home |
+| HEAD / `origin/main` at handoff refresh | **`07d1281`** |
+| Latest commit | **`07d1281`** — Coway Airmega 250 Max2 buyer path |
+| Prior AP commits (pushed) | **`b4c94f8`** — Rabbit Air MinusA2 carbon filter direct buyer path; **`03dcf49`** — Winix Filter I / 116131 identity correction; **`f9dc3a9`** — Levoit Core 300 Option A; **`254f6c6`** — Shark carbon-foam HE1 partial re-home |
 | Working tree | **Re-verify** — handoff records pushed `origin/main` truth; local uncommitted work may exist |
 | Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
-| Supabase parity | **UNKNOWN** — seed import not completed this session |
+| Supabase parity | **UNKNOWN** — seed import still not run |
 
 ### 2. AP CSV apply milestones (PROVEN — pushed to `origin/main`)
 
@@ -132,38 +132,44 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | **`f9dc3a9`** | Levoit Core 300 | Option A identity correction — `levoit-rf-rar029` OEM → `LEVOIT-CORE-300-P-RF`; official PDP `direct_buyable`; Core 300 family notes |
 | **`254f6c6`** | Shark carbon-foam | HE1 **PROVEN** cohort partial re-home — `shark-hepa-he1fkbas` filter + `likely_valid` OEM PDP; 6 models off `shark-carbon-foam`; HE2 deferred (no PDP proof) |
 | **`03dcf49`** | Winix 116131 | Filter I identity correction — `winix-carbon-116131` reclassified as annual HEPA + washable AOC set; official Filter I PDP `direct_buyable`; compat restricted to **`winix-c555`** + **`winix-c555b`**; **26** wrong-family mappings removed |
+| **`b4c94f8`** | Rabbit MinusA2 | `rabbit-carbon-minusa2` — official MinusA2 charcoal PDP `direct_buyable`; identity notes (SKU A2-AC, not A3) |
+| **`07d1281`** | Coway Airmega 250 | `coway-airmega250-rf` — canonical token `COWAY-3109144` (AP-1720-FP); official cowaymega Airmega 250 Max2 PDP `direct_buyable`; compat restricted to **`coway-airmega-250`** / **`250s`** / **`250-graphite`**; **4** wrong-family mappings removed (150/160/240 + `coway-ap-2520f-p-` held) |
 
-**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows.
+**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows; Coway 150/160/240 filter slugs; `coway-airmega400-rf` buyer path.
 
 ### 3. AP buyer-path census (PROVEN — re-run audit before citing)
 
 | Metric | Value |
 |--------|------:|
-| Safe direct-buyable filters | **22** |
-| Weak linked filters | **30** |
-| Weak model coverage | **144** |
+| Safe direct-buyable filters | **24** |
+| Weak linked filters | **28** |
+| Weak model coverage | **129** |
+| Search-placeholder primary (weak) | **25** |
 | Guardrails (`buckparts:guardrails:air-purifier`) | **pass** |
 | `lint` / `build` | **pass** |
+| Weak-buyer-path audit | **pass** |
 
 ```bash
 npx tsx scripts/report-air-purifier-weak-buyer-path-audit-v1.ts | jq '{
   safe_direct_buyable_filter_count,
   weak_linked_filter_count,
-  weak_model_coverage_count
+  weak_model_coverage_count,
+  search_placeholder_primary_count
 }'
 npm run buckparts:guardrails:air-purifier
 ```
 
 ### 4. Remaining high-leverage weak AP filters (PROVEN at handoff refresh)
 
-| `filter_slug` | Notes |
-|---------------|-------|
-| `holmes-hapf30` | Search-placeholder primary; **31** models |
-| `shark-carbon-foam` | **15** compat rows remain after HE1 partial re-home; invalid identity |
-| `rabbit-carbon-minusa2` | Search-placeholder primary |
-| `coway-airmega250-rf` | Search-placeholder primary |
-| `gg-flt4100` | Search-placeholder primary |
-| `shark-hepa-he1fkbas` | `likely_valid` OEM PDP (notify/OOS) — not `direct_buyable` |
+| `filter_slug` | Weak model coverage | Notes |
+|---------------|--------------------:|-------|
+| `holmes-hapf30` | **31** | Search-placeholder primary |
+| `shark-carbon-foam` | **15** | **15** compat rows remain after HE1 partial re-home; invalid identity |
+| `gg-flt4100` | **6** | Search-placeholder primary |
+| `shark-hepa-he1fkbas` | **6** | `likely_valid` OEM PDP (notify/OOS) — not `direct_buyable` |
+| `vornado-carbon-pad` | **6** | Search-placeholder primary |
+| `blueair-f2-211` | **5** | Search-placeholder primary |
+| `coway-airmega400-rf` | **5** | Search-placeholder primary |
 
 ### 5. Do not do next (at this stopping point)
 
@@ -184,7 +190,7 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `03dcf49`)
+## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `07d1281`)
 
 **Superseded for next-move authority.** Retained for selector-alignment proof. **AP CSV Execution Progress** section above is the current executive stopping point.
 
@@ -314,7 +320,7 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (historical — superseded by `03dcf49`)
+## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (historical — superseded by `07d1281`)
 
 **Superseded for next-move authority.** Retained for issue registry closure proof and re-audit doctrine. **AP CSV Execution Progress** section at top is the current executive stopping point.
 
@@ -902,7 +908,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`03dcf49`** — AP CSV execution progress (Levoit Core 300 **`f9dc3a9`**, Shark HE1 partial re-home **`254f6c6`**, Winix Filter I **`03dcf49`**; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`07d1281`** — AP CSV execution progress (Levoit Core 300 **`f9dc3a9`**, Shark HE1 partial re-home **`254f6c6`**, Winix Filter I **`03dcf49`**, Rabbit MinusA2 **`b4c94f8`**, Coway Airmega 250 **`07d1281`**; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
