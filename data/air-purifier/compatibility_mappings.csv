@@ -34,7 +34,6 @@ coway-ap-1512hes,coway-max2-hepa,true
 coway-ap-1512hh-w,coway-max2-hepa,true
 coway-airmega-250,coway-airmega250-rf,true
 coway-airmega-250s,coway-airmega250-rf,true
-coway-ap-2520f-p-,coway-airmega250-rf,true
 coway-airmega-300,coway-airmega400-rf,true
 coway-airmega-300s,coway-airmega400-rf,true
 coway-airmega-400,coway-airmega400-rf,true
@@ -119,9 +118,6 @@ coway-ap-1512f,coway-max2-hepa,true
 coway-airmega-100,coway-airmega100-rf,true
 coway-airmega-100s,coway-airmega100-rf,true
 coway-ap-1019f-p,coway-airmega100-rf,true
-coway-airmega-150,coway-airmega250-rf,true
-coway-airmega-160,coway-airmega250-rf,true
-coway-airmega-240,coway-airmega250-rf,true
 coway-airmega-250-graphite,coway-airmega250-rf,true
 winix-c555,winix-hepa-115115,true
 winix-c555,winix-carbon-116131,true
