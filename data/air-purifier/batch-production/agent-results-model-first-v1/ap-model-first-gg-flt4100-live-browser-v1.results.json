@@ -1,0 +1,174 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-gg-flt4100-live-browser-v1",
+  "run_id": "ap-model-first-gg-flt4100-live-browser-2026-06-21",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "gg-flt4100",
+  "filter_slug": "gg-flt4100",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-21T05:10:00.000Z",
+  "checked_at": "2026-06-21T05:10:00.000Z",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "guardiantechnologies.com",
+  "filter_identity": {
+    "official_pdp_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+    "pdp_is_real": true,
+    "primary_product_title": "GermGuardian FLT4100 HEPA PURE™ Air Purifier Filter E",
+    "product_title_body_variant": "GermGuardian® FLT4100 HEPA GENUINE Replacement Filter E is a combination filter",
+    "exact_sku_or_part_number": "FLT4100",
+    "filter_letter": "Filter E",
+    "filter_type": "Combination filter — True HEPA (captures 99.97% of particles down to 0.1 micron) + activated carbon pre-filter",
+    "price_usd": "14.99",
+    "add_to_cart_present": true,
+    "buy_now_present": true,
+    "in_stock_proven": true,
+    "in_stock_text": "IN STOCK",
+    "primary_compatibility_text_verbatim": "Use with GermGuardian air purifier models AC4100, AC4175W or AC4150P, AC4150BL..",
+    "canonical_token_match": "PROVEN — on-page part number 'FLT4100' matches BuckParts token FLT4100. Repo stores oem_part_number as 'GUARDIAN-FLT4100' (internal form); the official on-page token is 'FLT4100'."
+  },
+  "model_slugs_checked": ["gg-ac4100", "gg-ac4150", "gg-ac4175", "gg-ac4225", "gg-ac4230", "gg-ac4820"],
+  "model_rows": [
+    {
+      "model_slug": "gg-ac4100",
+      "model_number": "AC4100",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e"],
+      "documented_filter_tokens": ["FLT4100", "Filter E"],
+      "notes": "PROVEN: official FLT4100 PDP compatibility text explicitly lists AC4100. Filter E, combination HEPA + carbon. Buyable PDP (Add to Cart + IN STOCK) live 2026-06-21."
+    },
+    {
+      "model_slug": "gg-ac4150",
+      "model_number": "AC4150",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e"],
+      "documented_filter_tokens": ["FLT4100", "Filter E"],
+      "notes": "PROVEN: official FLT4100 PDP compatibility text lists AC4150P and AC4150BL (AC4150 variants). Filter E."
+    },
+    {
+      "model_slug": "gg-ac4175",
+      "model_number": "AC4175",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e"],
+      "documented_filter_tokens": ["FLT4100", "Filter E"],
+      "notes": "PROVEN: official FLT4100 PDP compatibility text lists AC4175W (AC4175 variant). Filter E."
+    },
+    {
+      "model_slug": "gg-ac4225",
+      "model_number": "AC4225",
+      "model_filter_classification": "PHANTOM_NOT_FOUND",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "MODEL_NOT_FOUND_ON_OFFICIAL_SOURCE",
+      "official_source_urls": ["https://guardiantechnologies.com/search?q=AC4225"],
+      "documented_filter_tokens": [],
+      "notes": "PROVEN absence: official Guardian Technologies site search for 'AC4225' returns 'We are sorry! We couldn't find results for AC4225.' No AC4225 air purifier or compatible filter exists on the official source; AC4225 is absent from the FLT4100 PDP compatibility list. Likely a non-existent or mis-entered model number (possible confusion with AC4825/AC4200)."
+    },
+    {
+      "model_slug": "gg-ac4230",
+      "model_number": "AC4230",
+      "model_filter_classification": "PHANTOM_NOT_FOUND",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "MODEL_NOT_FOUND_ON_OFFICIAL_SOURCE",
+      "official_source_urls": ["https://guardiantechnologies.com/search?q=AC4230"],
+      "documented_filter_tokens": [],
+      "notes": "PROVEN absence: official Guardian Technologies site search for 'AC4230' returns '0 results found' / 'We couldn't find results for AC4230.' No AC4230 air purifier or compatible filter exists on the official source; AC4230 is absent from the FLT4100 PDP compatibility list. Likely a non-existent or mis-entered model number."
+    },
+    {
+      "model_slug": "gg-ac4820",
+      "model_number": "AC4820",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://guardiantechnologies.com/search?q=AC4820"],
+      "documented_filter_tokens": ["Filter B", "FLT4825", "FLT4800 Series"],
+      "correct_filter_official": "FLT4825 / FLT4800 Series (Filter B)",
+      "notes": "PROVEN wrong-family: AC4820 is a real GermGuardian model (22\" tower, 2-stage). Official site search associates AC4820 with Filter B — GermGuardian FLT4825 and FLT4800 Series — NOT FLT4100 (Filter E). AC4820 is absent from the FLT4100 PDP compatibility list. Correct filter proven on official source: FLT4825 (Filter B)."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+      "retailer_or_source": "guardian_technologies_official_oem_pdp",
+      "exact_token_proof": "PROVEN: PDP part number FLT4100; Filter E; title 'GermGuardian FLT4100 HEPA PURE™ Air Purifier Filter E'.",
+      "buyability_proof": "PROVEN: Add to Cart + Buy Now present; status IN STOCK; price $14.99; live browser 2026-06-21.",
+      "wrong_family_risk": "NONE for AC4100/AC4150/AC4175 (PDP-listed). WRONG-FAMILY if this slug remains mapped to AC4820 (Filter B) or to phantom AC4225/AC4230.",
+      "status": "PASS"
+    }
+  ],
+  "filter_first_cross_reference": {
+    "prior_artifact_rel": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-gg-flt4100-v1.results.json",
+    "prior_evidence_status": "UNKNOWN (repo_truth_only_v1 — no live browser; no PDP proof captured; recommended_csv_mutation null)",
+    "this_run_supersedes_prior": true,
+    "note": "Prior repo-truth-only run could not prove a manufacturer PDP for the exact token. This live-browser run proves the official FLT4100 PDP with Add to Cart + IN STOCK, and resolves per-model classification against official sources."
+  },
+  "evidence_status_counts": {"PASS": 3, "FAIL": 3, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 3, "PROVEN_WRONG_FAMILY": 1, "PHANTOM_NOT_FOUND": 2, "UNKNOWN": 0},
+  "recommended_csv_mutation": null,
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only. HyperAgent discovery input; Cursor/repo gates own validation and any apply. Promotion (retailer_links) should ship together with the compatibility trim so no AC4820/AC4225/AC4230 buyer is routed to FLT4100.",
+    "retailer_links_csv": {
+      "filter_slug": "gg-flt4100",
+      "action": "replace_primary",
+      "before": {
+        "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4100",
+        "is_primary": true,
+        "browser_truth_classification": ""
+      },
+      "after": {
+        "retailer_name": "Guardian Technologies (OEM)",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Guardian Technologies PDP 'GermGuardian FLT4100 ... Filter E' (HEPA + carbon, $14.99); Add to Cart + IN STOCK verified 2026-06-21; fits AC4100/AC4150/AC4175 only.",
+        "browser_truth_checked_at": "2026-06-21"
+      },
+      "affiliate_note": "Apply the Guardian Technologies / GermGuardian affiliate wrapper if a program exists; no affiliate tag fabricated here."
+    },
+    "filters_csv": {
+      "filter_slug": "gg-flt4100",
+      "action": "fix_notes_field",
+      "before_notes": "Slim 22\" tower",
+      "after_notes": "Small tabletop combination filter (Filter E) for AC4100/AC4150/AC4175 — not a tower",
+      "reason": "FLT4100 (Filter E) is a small tabletop filter; the '22-inch tower' descriptor belongs to the AC4820/FLT4825 (Filter B) form factor."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "gg-ac4820,gg-flt4100,true", "action": "remove", "reason": "PROVEN wrong-family; AC4820 uses Filter B (FLT4825 / FLT4800 Series). Re-home to the FLT4825 slug."},
+      {"edge": "gg-ac4225,gg-flt4100,true", "action": "remove_or_hold", "reason": "PHANTOM; AC4225 not found on official source."},
+      {"edge": "gg-ac4230,gg-flt4100,true", "action": "remove_or_hold", "reason": "PHANTOM; AC4230 not found on official source."}
+    ]
+  },
+  "expected_safe_edge_gain_if_applied": 3,
+  "proven_facts": [
+    "PROVEN: FLT4100 is a real, current official GermGuardian SKU with a live PDP at guardiantechnologies.com — Filter E, combination True HEPA + activated carbon.",
+    "PROVEN: The FLT4100 PDP is directly buyable — Add to Cart + Buy Now present, status IN STOCK, price $14.99 (live browser 2026-06-21).",
+    "PROVEN: PDP compatibility text (verbatim) lists AC4100, AC4175W, AC4150P, AC4150BL — covering AC4100, AC4150, AC4175.",
+    "PROVEN: AC4820 is associated on the official source with Filter B (FLT4825 / FLT4800 Series), NOT FLT4100; AC4820 is a 22-inch tower.",
+    "PROVEN absence: AC4225 and AC4230 both return 'couldn't find results' on the official Guardian Technologies site search — no such models on the official source."
+  ],
+  "inferred_facts": [
+    "INFERRED: AC4150 and AC4175 base model numbers correspond to the PDP-listed variants (AC4150P/AC4150BL; AC4175W).",
+    "INFERRED: The repo filters.csv notes 'Slim 22\" tower' likely originated from conflation with the AC4820/FLT4825 tower; FLT4100 is a small tabletop filter."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether AC4225/AC4230 are discontinued, mis-entered, or typos (e.g., for AC4825/AC4200) — only that they do not exist on the official source as of this capture.",
+    "UNKNOWN: Retailer stock durability beyond the 2026-06-21 capture; secondary authorized retailers (Amazon GermGuardian brand store) not re-verified in this run."
+  ]
+}
