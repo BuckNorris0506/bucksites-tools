@@ -1,0 +1,204 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-blueair-f2-211-live-browser-v1",
+  "run_id": "ap-model-first-blueair-f2-211-live-browser-2026-06-21",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "blueair-f2-211",
+  "filter_slug": "blueair-f2-211",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-21T22:25:00.000Z",
+  "checked_at": "2026-06-21T22:25:00.000Z",
+  "repo_head_at_capture": "5ca8990",
+  "repo_head_note": "Repo refreshed read-only to current origin/main HEAD 5ca8990 ('Update HQ handoff for AP execution through 07d1281') before capture; prior analyses were at 6a5122c.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "blueair.com",
+  "repo_truth": {
+    "filters_csv": "blueair,blueair-f2-211,BLUEAIR-F2MAX211PAC,Blue Pure 211+ particle + carbon filter,6,F2MAX for Blue Pure 211+ family",
+    "retailer_links_primary": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY; URL returns 404 per committed evidence",
+    "compatibility_edges": ["blueair-211-plus", "blueair-211-auto", "blueair-121", "blueair-blue-pure-311", "blueair-blue-pure-311-auto"],
+    "filter_aliases": "none for blueair-f2-211",
+    "notes_field_flag": "filters.csv notes 'F2MAX for Blue Pure 211+ family' is INCORRECT — F2MAX is the Blue Pure 211i Max filter token, not the legacy 211+ family."
+  },
+  "committed_evidence_reverification": {
+    "ap-blueair-catalog-identity-v1.results.json": {
+      "found": true,
+      "path": "data/air-purifier/batch-production/agent-results-batch-v2/ap-blueair-catalog-identity-v1.results.json",
+      "blueair_f2_211_decision": "NEEDS_OWNER_REVIEW",
+      "corroborates_this_run": true,
+      "key_points": "Token BLUEAIR-F2MAX211PAC / F2MAX211PAC not visible in primary product area; search URL 404; final PDP blue-pure-211-plus-particle-carbon H1 'Blue Pure 211+ Series Filter', compatible 211/211+ (NOT 211+ Auto); Add to cart $69.99; wrong_family_tokens_seen ['211i Max','211+ Auto']; recommended_csv_mutation null; owner_review_required true."
+    },
+    "ap-completion-batch-1-retailer-evidence-gap-v1.json": {
+      "found": false,
+      "expected_path": "data/air-purifier/batch-production/audits/ap-completion-batch-1-retailer-evidence-gap-v1.json",
+      "note": "NOT PRESENT at HEAD 5ca8990. No 'audits/' directory and no 'ap-completion*' or '*retailer-evidence-gap*' files exist under data/air-purifier/batch-production at this HEAD. Likely removed/relocated during the AP-execution applies (6a5122c -> 5ca8990 was a forced update). Contents not fabricated; flagged for owner/Cursor reconciliation."
+    }
+  },
+  "filter_identity": {
+    "candidate_pdp_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+    "pdp_is_real": true,
+    "page_title": "Blue Pure 211+ particle + carbon filter | Blueair",
+    "primary_product_title": "Blue Pure 211+ Series Filter",
+    "variant": "Particle + Carbon",
+    "exact_tokens_in_primary_slice": ["Blue Pure 211+ Series Filter", "Particle + Carbon"],
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "FABRICATED/GARBLED — 'BLUEAIR-F2MAX211PAC' (and 'F2MAX211PAC') does not appear on the official 211+ PDP or anywhere in official Blueair US documentation. 'F2MAX' is a REAL Blueair token but belongs to the Blue Pure 211i Max (newer Max line), NOT the legacy 211+. Real identity = 'Blue Pure 211+ Series Filter (Particle + Carbon)' with no FxMAX code.",
+    "price_usd": "69.99",
+    "member_or_subscription_price_usd": "59.50",
+    "in_stock_proven": true,
+    "in_stock_text": "In Stock",
+    "add_to_cart_present": true,
+    "wrong_family_tokens_on_pdp": ["Not Compatible with Blue Pure 211+ Auto"],
+    "primary_compatibility_text_verbatim": "Compatible with Blue Pure 211+. Not Compatible with Blue Pure 211+ Auto. This filter is compatible with the Blue Pure 211 & Blue Pure 211+ air purifiers."
+  },
+  "model_slugs_checked": ["blueair-211-plus", "blueair-211-auto", "blueair-121", "blueair-blue-pure-311", "blueair-blue-pure-311-auto"],
+  "model_rows": [
+    {
+      "model_slug": "blueair-211-plus",
+      "model_number": "Blue Pure 211+",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://www.blueair.com/products/blue-pure-211-plus-particle-carbon"],
+      "documented_filter_tokens": ["Blue Pure 211+ Series Filter", "Particle + Carbon"],
+      "notes": "PROVEN: official 211+ Series Particle+Carbon PDP states compatible with Blue Pure 211 & 211+. In stock + Add to Cart, $69.99, live 2026-06-21. This is the correct filter for the 211+."
+    },
+    {
+      "model_slug": "blueair-211-auto",
+      "model_number": "Blue Pure 211+ Auto",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/products/blue-pure-211-plus-particle-carbon", "https://www.blueair.com/products/blue-pure-211-plus-auto-particle-and-carbon"],
+      "documented_filter_tokens": ["Blue Pure 211+ Auto Particle + Carbon Filter"],
+      "correct_filter_official": "Blue Pure 211+ Auto Particle + Carbon Filter ($69.99, separate SKU)",
+      "notes": "PROVEN wrong-family: the 211+ Series filter PDP explicitly states 'Not Compatible with Blue Pure 211+ Auto'; the 211+ Auto has its own dedicated filter. Blueair warns using a non-Auto filter reduces CADR and voids warranty."
+    },
+    {
+      "model_slug": "blueair-121",
+      "model_number": "Blue Pure 121",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/en-fr/products/blue-pure-121-particle-carbon"],
+      "documented_filter_tokens": ["Blue Pure 121 Particle + Carbon Filter"],
+      "correct_filter_official": "Blue Pure 121 Particle + Carbon Filter ($94.99, larger extra-protection filter)",
+      "notes": "PROVEN wrong-family: official 121 filter page states 'only compatible with the Blue Pure 121 Air Purifier'. The 121 is an extra-large unit with its own larger filter; not the 211+ filter."
+    },
+    {
+      "model_slug": "blueair-blue-pure-311",
+      "model_number": "Blue Pure 311",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/products/blue-pure-311-particle-carbon-filter"],
+      "documented_filter_tokens": ["Blue Pure 311 Particle + Carbon Filter"],
+      "correct_filter_official": "Blue Pure 311 Particle + Carbon Filter ($34.99, smaller filter)",
+      "notes": "PROVEN wrong-family: official 311 filter page states 'only compatible with the Blue Pure 311 Air Purifier'. The 311 is a medium unit with its own smaller filter; not the 211+ filter."
+    },
+    {
+      "model_slug": "blueair-blue-pure-311-auto",
+      "model_number": "Blue Pure 311 Auto",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/products/blue-pure-311-auto-series"],
+      "documented_filter_tokens": ["Blue Pure 311 Auto Filter (Particle + Carbon)"],
+      "correct_filter_official": "Blue Pure 311 Auto Filter, Particle + Carbon ($39.99)",
+      "notes": "PROVEN wrong-family: official 311 Auto filter page states 'only compatible with the Blue Pure 311 Auto Air Purifier'. Distinct smaller filter; not the 211+ filter."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+      "retailer_or_source": "blueair_official_oem_pdp",
+      "exact_token_proof": "PROVEN: H1/primary 'Blue Pure 211+ Series Filter', variant 'Particle + Carbon'. Catalog token BLUEAIR-F2MAX211PAC NOT present on page.",
+      "buyability_proof": "PROVEN: In Stock; Add to Cart present and active; $69.99 ($59.50 member); live browser 2026-06-21.",
+      "wrong_family_risk": "PROVEN: page states 'Not Compatible with Blue Pure 211+ Auto'. Valid ONLY for Blue Pure 211 / 211+. WRONG-FAMILY if this slug remains mapped to 211+ Auto, 121, 311, or 311 Auto.",
+      "status": "PASS_FOR_211_PLUS_ONLY"
+    }
+  ],
+  "filter_first_cross_reference": {
+    "committed_artifact_rel": "data/air-purifier/batch-production/agent-results-batch-v2/ap-blueair-catalog-identity-v1.results.json",
+    "committed_decision": "NEEDS_OWNER_REVIEW",
+    "this_run_supersedes_prior": true,
+    "note": "Live re-proof (2026-06-21) confirms the official 211+ Series Particle+Carbon PDP is in stock + buyable and that the catalog token is not on-page; resolves per-model classification against official sources."
+  },
+  "evidence_status_counts": {"PASS": 1, "FAIL": 4, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 1, "PROVEN_WRONG_FAMILY": 4, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 0},
+  "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT promotion as-is. The underlying Blue Pure 211+ filter is real and directly buyable, but two blockers prevent a safe promotion of slug blueair-f2-211 in its current state. Recoverable to READY_FOR_OWNER_REVIEW for the 211+-only core after token correction + wrong-family split.",
+  "blockers": [
+    "BLOCKER 1 (identity/token): canonical OEM token BLUEAIR-F2MAX211PAC is fabricated/garbled — not on the official PDP and not a real Blueair token for the legacy 211+ (F2MAX belongs to the 211i Max). filters.csv notes 'F2MAX for Blue Pure 211+ family' is also wrong. Must correct to the real identity 'Blue Pure 211+ Series Filter (Particle + Carbon)'.",
+    "BLOCKER 2 (wrong-family over-mapping): 4 of 5 mapped models do NOT use this filter — Blue Pure 211+ Auto (own Auto filter; using 211+ filter voids warranty), Blue Pure 121 (own larger filter), Blue Pure 311 and 311 Auto (own smaller filters). Promoting the buyer path while these remain mapped would route four model-families to the WRONG part."
+  ],
+  "recoverable_core": "blueair-211-plus (Blue Pure 211+) -> correct filter (211+ Series Particle+Carbon PDP, in stock, $69.99). Expected safe-edge gain after correction = +1.",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation and any apply. Promotion must ship WITH the token correction and wrong-family split, never before.",
+    "filters_csv": {
+      "filter_slug": "blueair-f2-211",
+      "action": "correct_token_and_notes",
+      "before_oem_part_number": "BLUEAIR-F2MAX211PAC",
+      "after_oem_part_number": "BLUEAIR-211PLUS-PAC (or the repo's canonical form for 'Blue Pure 211+ Series Filter — Particle + Carbon'; do NOT use F2MAX, which is the 211i Max token)",
+      "before_notes": "F2MAX for Blue Pure 211+ family",
+      "after_notes": "Blue Pure 211+ Series Filter (Particle + Carbon); legacy 211+ only — NOT the F2MAX 211i Max filter, NOT 211+ Auto"
+    },
+    "retailer_links_csv": {
+      "filter_slug": "blueair-f2-211",
+      "action": "replace_primary_after_corrections",
+      "after": {
+        "retailer_name": "Blueair (OEM)",
+        "destination_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Blueair PDP 'Blue Pure 211+ Series Filter (Particle + Carbon)' $69.99; In Stock + Add to Cart verified 2026-06-21; Blue Pure 211 / 211+ only — NOT 211+ Auto.",
+        "browser_truth_checked_at": "2026-06-21"
+      },
+      "affiliate_note": "Apply Blueair affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "blueair-211-auto,blueair-f2-211,true", "action": "remove", "reason": "wrong-family; re-home to Blue Pure 211+ Auto Particle + Carbon Filter."},
+      {"edge": "blueair-121,blueair-f2-211,true", "action": "remove", "reason": "wrong-family; re-home to Blue Pure 121 Particle + Carbon Filter."},
+      {"edge": "blueair-blue-pure-311,blueair-f2-211,true", "action": "remove", "reason": "wrong-family; re-home to Blue Pure 311 Particle + Carbon Filter."},
+      {"edge": "blueair-blue-pure-311-auto,blueair-f2-211,true", "action": "remove", "reason": "wrong-family; re-home to Blue Pure 311 Auto Filter."},
+      {"keep": "blueair-211-plus,blueair-f2-211,true", "reason": "PROVEN_FITS"}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 1,
+  "guardrails_honored": {
+    "did_not_promote_blueair_particle_411": true,
+    "did_not_alias_f4max_slugs": true,
+    "no_csv_or_supabase_mutation": true,
+    "single_filter_only": true
+  },
+  "proven_facts": [
+    "PROVEN: Official Blue Pure 211+ Series Filter (Particle + Carbon) PDP is real, In Stock, Add to Cart active, $69.99 (live browser blueair.com 2026-06-21).",
+    "PROVEN: Catalog token BLUEAIR-F2MAX211PAC / F2MAX211PAC is NOT on the official PDP and is not a real Blueair token for the legacy 211+; 'F2MAX' officially belongs to the Blue Pure 211i Max.",
+    "PROVEN: The 211+ PDP explicitly states 'Not Compatible with Blue Pure 211+ Auto'.",
+    "PROVEN: Blue Pure 121, 311, and 311 Auto each have their own dedicated filter ('only compatible with' that model) per official Blueair pages — none is the 211+ filter.",
+    "PROVEN: Committed ap-blueair-catalog-identity-v1 already flagged blueair-f2-211 as NEEDS_OWNER_REVIEW with the same token-absence and 211+ Auto wrong-family findings.",
+    "PROVEN: Repo refreshed to current HEAD 5ca8990; blueair-f2-211 row + 5 compat edges + 404 search-placeholder primary are unchanged by the AP-execution applies."
+  ],
+  "inferred_facts": [
+    "INFERRED: The catalog token was likely constructed by mashing the Max-line code 'F2MAX' with model '211' and 'PAC' (Particle+Activated Carbon); the real legacy filter carries no FxMAX code.",
+    "INFERRED: The 211+ Auto uses the same physical footprint as the 211+ but a different internal configuration (Blueair sells them as cross-incompatible SKUs)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Second named committed file ap-completion-batch-1-retailer-evidence-gap-v1.json is absent at HEAD 5ca8990 (no audits/ dir; no ap-completion* files) — could not be re-verified; contents not fabricated.",
+    "UNKNOWN: Live stock durability beyond the 2026-06-21 capture; the AllergenBlock variant has shown Sold Out at times (Particle+Carbon variant captured In Stock).",
+    "UNKNOWN: The repo's preferred canonical token form to replace BLUEAIR-F2MAX211PAC (owner/Cursor catalog policy decision)."
+  ]
+}

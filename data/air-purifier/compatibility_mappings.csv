@@ -70,8 +70,6 @@ gg-ac5250,gg-flt5000,true
 gg-ac5900,gg-flt5000,true
 gg-cdap5500,gg-flt5000,true
 blueair-211-plus,blueair-f2-211,true
-blueair-211-auto,blueair-f2-211,true
-blueair-121,blueair-f2-211,true
 blueair-411,blueair-particle-411,true
 blueair-411a-max,blueair-particle-411,true
 blueair-mini-max,blueair-particle-411,true
@@ -175,8 +173,6 @@ gg-ac5800,gg-flt5000,true
 gg-ac5900ca,gg-flt5000,true
 gg-cdap4500,gg-flt5000,true
 gg-cdap5200,gg-flt5000,true
-blueair-blue-pure-311,blueair-f2-211,true
-blueair-blue-pure-311-auto,blueair-f2-211,true
 blueair-pro-m,blueair-pro-m-particle,true
 blueair-pro-l,blueair-pro-m-particle,true
 blueair-healthprotect-7470i,blueair-pro-m-particle,true
