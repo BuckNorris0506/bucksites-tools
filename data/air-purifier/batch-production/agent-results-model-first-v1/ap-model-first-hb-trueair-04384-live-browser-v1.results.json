@@ -1,0 +1,181 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-hb-trueair-04384-live-browser-v1",
+  "run_id": "ap-model-first-hb-trueair-04384-live-browser-2026-06-22",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "hb-trueair-04384",
+  "filter_slug": "hb-trueair-04384",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-22T16:55:00.000Z",
+  "checked_at": "2026-06-22T16:55:00.000Z",
+  "repo_head_requested": "b05a405",
+  "repo_head_at_capture": "efe75e5",
+  "repo_head_discrepancy": "REQUESTED HEAD b05a405 IS NOT REACHABLE ON origin/main ('fatal: couldn't find remote ref b05a405'). Current origin/main tip = efe75e5. (Prior un-pushed SHAs: 567a3c5, 2410e51, b05a405.) Captured against efe75e5; not fabricated.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "hamiltonbeach.com",
+  "repo_truth": {
+    "filters_csv": "hamilton-beach,hb-trueair-04384,HB-04384,TrueAir 04384 green meadow cartridge,12,Compact TrueAir",
+    "retailer_links_primary": "https://hamiltonbeach.com/search?q=HB-04384 (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY (HB-04384 is the purifier-model token, not the filter part)",
+    "compatibility_edges": ["hb-04384", "hb-04385", "hb-04386", "hb-04162"],
+    "filter_aliases": "none for hb-trueair-04384",
+    "identity_flags": [
+      "oem_part_number 'HB-04384' references the PURIFIER MODEL 04384, not the filter part. The real replacement filter is 990051000 (permanent HEPA). Token bridge required.",
+      "filters.csv name 'TrueAir 04384 green meadow cartridge' is INACCURATE — 990051000 is a permanent HEPA-grade filter, not a 'green meadow' scented cartridge. (The carbon pet-odor consumable is 04234G.)"
+    ]
+  },
+  "prior_repo_only_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-hb-trueair-04384-v1.results.json",
+    "found": false,
+    "note": "No prior repo-only model-first artifact (RETAILER_EVIDENCE_GAP slug — no committed agent-result existed). This live-browser run is the first model-first evidence artifact for this slug."
+  },
+  "filter_identity": {
+    "what_is_04384": "04384 is a PURIFIER MODEL — 'TrueAir Compact Pet Air Purifier with 3 Filtration Stages' (hamiltonbeach.com/trueair-compact-pet-air-purifier-04384, status 'No Longer Available'). It is NOT a filter part number.",
+    "official_filter_pdp_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+    "pdp_is_real": true,
+    "primary_product_title": "Replacement Permanent Filter for 04383, 04384, 04386 04383A",
+    "exact_sku_or_part_number": "990051000",
+    "filter_type": "Permanent / washable HEPA-grade filter (primary replacement). Secondary consumable: 04234G carbon-zeolite pet-odor 3-pack ($16.99). (Legacy 04290G all-purpose carbon = discontinued.)",
+    "price_usd": "19.99",
+    "in_stock_proven": true,
+    "in_stock_evidence": "First-hand orchestrator browser 2026-06-22: PDP live, Add to Cart present and active, $19.99. Subagent same-day corroborated (live ATC + price).",
+    "primary_compatibility_text_verbatim": "Replacement Permanent Filter for 04383, 04384, 04386 04383A",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "The repo token 'HB-04384' is the purifier model identifier, not the filter part. The real filter part is 990051000. 'HB-04384' does not resolve to the filter PDP.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "Filter part 990051000 ('Replacement Permanent Filter for 04383/04384/04386/04383A'). Model 04384 (purifier) -> filter 990051000. Secondary consumable 04234G (carbon pet-odor)."
+  },
+  "model_slugs_checked": ["hb-04384", "hb-04385", "hb-04386", "hb-04162"],
+  "model_rows": [
+    {
+      "model_slug": "hb-04384",
+      "model_number": "04384",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000"],
+      "documented_filter_tokens": ["990051000"],
+      "notes": "PROVEN: the official 990051000 filter PDP title explicitly lists 04384. TrueAir Compact line. Filter buyable ($19.99, ATC active)."
+    },
+    {
+      "model_slug": "hb-04385",
+      "model_number": "04385",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "evidence_strength": "INFERRED (strong) — official 990051000 title lists 04383/04384/04386/04383A and OMITS 04385; corroborated by multiple aftermarket compatibility listings (Natural-Breeze, PUREBURG) + TrueAir Compact 0438x family membership.",
+      "official_source_urls": ["https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000"],
+      "documented_filter_tokens": ["990051000"],
+      "notes": "Fits 990051000 — 04385 is in the TrueAir Compact 0438x band (same filter family). Official filter title doesn't enumerate 04385 (lists a subset); aftermarket sources do. Treat as fits with INFERRED official-enumeration."
+    },
+    {
+      "model_slug": "hb-04386",
+      "model_number": "04386",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000"],
+      "documented_filter_tokens": ["990051000"],
+      "notes": "PROVEN: the official 990051000 filter PDP title explicitly lists 04386. TrueAir Compact line."
+    },
+    {
+      "model_slug": "hb-04162",
+      "model_number": "04162",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://homeappliance.manualsonline.com/manuals/mfg/hamilton_beach/04162.html", "https://www.importitall.co.za/Hamilton-Beach-04913-TrueAir-HEPA-Replacement-Filter-for-04162-and-04163-Air-Cleaners-ap-B000050AOW.html"],
+      "documented_filter_tokens": ["04913", "04923", "04810"],
+      "correct_filter_official": "HEPA filter 04913 (+ carbon pre-filter 04923, + UV bulb 04810) — the TrueAir UV/console line (04160/04161/04162/04163), 350 sq ft",
+      "notes": "PROVEN wrong-family: 04162 is a DIFFERENT TrueAir line (HEPA + UV germicidal console). Per the 04162 owner's manual filter table, it uses HEPA filter 04913 + carbon pre-filter 04923 + UV bulb 04810 — NOT the 990051000 permanent filter (which serves the TrueAir Compact 0438x line). Re-home to a 04913 slug."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+      "retailer_or_source": "hamilton_beach_official_oem_pdp",
+      "exact_token_proof": "PROVEN (first-hand): PDP 'Replacement Permanent Filter for 04383, 04384, 04386 04383A', part 990051000.",
+      "buyability_proof": "PROVEN (first-hand 2026-06-22): Add to Cart present and active; $19.99.",
+      "wrong_family_risk": "NONE for the TrueAir Compact line (04383/04384/04385/04386). WRONG-FAMILY for 04162 (uses 04913 HEPA, not 990051000).",
+      "status": "PASS_FOR_TRUEAIR_COMPACT_ONLY"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 3, "FAIL": 1, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 3, "PROVEN_WRONG_FAMILY": 1, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 0},
+  "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT promotion as-is. The real replacement filter (990051000) is directly buyable, but the slug carries a model->part token bridge issue (the token references the purifier model 04384, not the filter part) AND one wrong-family edge (04162 uses HEPA 04913, not 990051000). Recoverable to READY_FOR_OWNER_REVIEW for the TrueAir Compact core after the token bridge + removing 04162.",
+  "blockers": [
+    "BLOCKER 1 (model->part token bridge): the slug oem_part_number 'HB-04384' is the PURIFIER MODEL number, not the filter part. The real filter is 990051000 (permanent HEPA). Also fix the inaccurate name 'TrueAir 04384 green meadow cartridge' -> 'Replacement Permanent Filter (990051000) for TrueAir Compact 04383/04384/04385/04386'.",
+    "BLOCKER 2 (wrong-family): hb-04162 is a different TrueAir line (UV/HEPA console) using HEPA filter 04913 + carbon pre-filter 04923, NOT 990051000. Promoting the slug while 04162 is mapped routes 04162 owners to the wrong filter. Re-home 04162 to a 04913 slug."
+  ],
+  "recoverable_core": "TrueAir Compact 04384 + 04385 + 04386 -> 990051000 (in stock, $19.99, ATC). Expected safe-edge gain after token bridge + removing 04162 = +3.",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation and apply. Promotion must ship WITH the token bridge + 04162 removal, never before.",
+    "filters_csv": {
+      "filter_slug": "hb-trueair-04384",
+      "action": "model_to_part_bridge_and_name_fix",
+      "before_oem_part_number": "HB-04384",
+      "after_oem_part_number": "990051000 (Hamilton Beach official filter part)",
+      "before_name": "TrueAir 04384 green meadow cartridge",
+      "after_name": "Replacement Permanent Filter (990051000) for TrueAir Compact 04383/04384/04385/04386",
+      "secondary_consumable_note": "Optional: carbon pet-odor 3-pack 04234G ($16.99) is the replaceable carbon consumable for the same Compact line."
+    },
+    "retailer_links_csv": {
+      "filter_slug": "hb-trueair-04384",
+      "action": "replace_primary_after_bridge",
+      "after": {
+        "retailer_name": "Hamilton Beach (OEM)",
+        "destination_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "affiliate_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Hamilton Beach 'Replacement Permanent Filter' part 990051000, $19.99; Add to Cart active 2026-06-22; fits TrueAir Compact 04383/04384/04385/04386.",
+        "browser_truth_checked_at": "2026-06-22"
+      },
+      "affiliate_note": "Apply Hamilton Beach affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "hb-04162,hb-trueair-04384,true", "action": "remove", "reason": "wrong-family; 04162 (UV/console TrueAir) uses HEPA 04913 + carbon 04923, not 990051000. Re-home to a 04913 slug."},
+      {"keep": "hb-04384,hb-trueair-04384,true", "reason": "PROVEN_FITS (990051000)"},
+      {"keep": "hb-04385,hb-trueair-04384,true", "reason": "FITS (Compact family + aftermarket; official title omits 04385)"},
+      {"keep": "hb-04386,hb-trueair-04384,true", "reason": "PROVEN_FITS (990051000)"},
+      {"consider_add": "hb-04383 (+04383A)", "reason": "the 990051000 official title lists 04383/04383A but the repo does not map them — coverage gap (out of strict scope; note for owner)."}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 3,
+  "naming_bridge_required": true,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "no_commit": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN (first-hand): the official Hamilton Beach replacement filter is part 990051000 ('Replacement Permanent Filter for 04383, 04384, 04386 04383A'), $19.99, Add to Cart active on hamiltonbeach.com (2026-06-22).",
+    "PROVEN: '04384' is a Hamilton Beach TrueAir Compact PURIFIER MODEL (now 'No Longer Available'), not a filter part — so the slug token references the appliance, not the consumable (model->part bridge required).",
+    "PROVEN: 990051000 fits the TrueAir Compact line 04383/04384/04386 (official PDP title) and 04383A; 04385 is in the same Compact 0438x family (aftermarket-corroborated; official title omits it).",
+    "PROVEN wrong-family: hb-04162 is a different TrueAir line (UV/HEPA console, 350 sq ft) using HEPA filter 04913 + carbon pre-filter 04923 + UV bulb 04810 (per the 04162 owner's manual filter table) — NOT 990051000.",
+    "PROVEN: repo at efe75e5 maps 4 models (04384/04385/04386/04162) to hb-trueair-04384 with token HB-04384, a search-placeholder primary, and an inaccurate 'green meadow cartridge' name.",
+    "PROVEN: requested HEAD b05a405 is NOT on origin/main (couldn't find remote ref)."
+  ],
+  "inferred_facts": [
+    "INFERRED: 04385 uses 990051000 (TrueAir Compact 0438x family + multiple aftermarket compatibility listings); official 990051000 title enumerates a subset and omits 04385.",
+    "INFERRED: the repo's 'green meadow cartridge' name may have come from a legacy scented-carbon descriptor; the actual primary replacement is the permanent HEPA filter 990051000."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether BuckParts should also add hb-04383 / 04383A edges (officially covered by 990051000) — a coverage gap, not part of this 4-model set.",
+    "UNKNOWN: the repo's preferred canonical token form for the bridge (990051000 vs a model-family label).",
+    "UNKNOWN: location/fate of requested HEAD b05a405 (not on origin/main)."
+  ]
+}
