@@ -1,0 +1,804 @@
+{
+  "contract": "ap_runtime_safe_cta_parity_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_writes": false,
+  "csv_writes": false,
+  "generated_at": "2026-06-22T23:19:52.692Z",
+  "git_head_hint": "7f2a1d5fad99732a33b1fa7c101b77aeedc8c09e",
+  "purpose": "Owner-review packet to close 9-slug stale-primary runtime safe CTA gap via guarded Supabase retailer_links SQL. Default transaction ends ROLLBACK.",
+  "schema_notes": {
+    "updated_at": "Column air_purifier_retailer_links.updated_at does not exist; all rows report updated_at null."
+  },
+  "authorization_summary": {
+    "backup_export": "READY_FOR_OWNER_APPROVAL",
+    "combined_sql_this_packet": "READY_FOR_OWNER_APPROVAL",
+    "per_slug_status": {
+      "blueair-f2-211": "READY_FOR_OWNER_APPROVAL",
+      "blueair-particle-411": "READY_FOR_OWNER_APPROVAL",
+      "coway-airmega250-rf": "READY_FOR_OWNER_APPROVAL",
+      "coway-airmega400-rf": "READY_FOR_OWNER_APPROVAL",
+      "gg-flt4100": "READY_FOR_OWNER_APPROVAL",
+      "gg-flt4825": "READY_FOR_OWNER_APPROVAL",
+      "hb-trueair-04384": "READY_FOR_OWNER_APPROVAL",
+      "rabbit-carbon-minusa2": "READY_FOR_OWNER_APPROVAL",
+      "vornado-carbon-pad": "READY_FOR_OWNER_APPROVAL"
+    },
+    "hold_slugs": []
+  },
+  "prerequisites": [
+    "JSON backup of public.air_purifier_retailer_links rows for 9 filter_ids",
+    "Optional: ap-oem-pre-alignment-packet-v1 OEM UPDATE for 5 slugs with filter OEM drift"
+  ],
+  "expected_safe_cta_delta": {
+    "runtime_safe_cta_count_delta": 6,
+    "runtime_safe_cta_delta_slugs": [
+      "blueair-f2-211",
+      "blueair-particle-411",
+      "coway-airmega250-rf",
+      "hb-trueair-04384",
+      "rabbit-carbon-minusa2",
+      "vornado-carbon-pad"
+    ],
+    "amazon_already_safe_no_count_delta": [
+      "coway-airmega400-rf",
+      "gg-flt4100",
+      "gg-flt4825"
+    ],
+    "oem_direct_buyable_primary_audit_delta": 9,
+    "total_slugs_in_packet": 9
+  },
+  "rollback_notes": [
+    "Transaction default is ROLLBACK — no durable change until owner replaces with COMMIT.",
+    "Restore from pre-apply JSON backup if COMMIT needs reversal.",
+    "Stale search rows are demoted (is_primary=false), not deleted.",
+    "Amazon alternates are not modified."
+  ],
+  "validation_commands_after_apply": [
+    "npx tsx scripts/report-air-purifier-supabase-vs-csv-diff-v1.ts",
+    "# Expect supabase_safe_direct_buyable_count increase by >= 6",
+    "# Per slug: primary_count = 1 and direct_buyable_count >= 1 in verification SELECTs",
+    "# Spot-check /air-purifier/filter/<slug> TieredBuyLinks primary CTA"
+  ],
+  "slug_packets": [
+    {
+      "filter_slug": "blueair-f2-211",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Retailer-link SQL is self-contained. Recommended: ap-oem-pre-alignment-packet-v1 filter OEM UPDATE before seed import.",
+      "supabase_filter_id": "c06ecca3-f7eb-4228-bd97-8c9c02b31f1e",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "blueair-f2-211",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "destination_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Blueair 211+ Series Particle+Carbon PDP; in stock + Add to Cart; fits Blue Pure 211 / 211+ only; NOT 211+ Auto.",
+        "browser_truth_checked_at": "2026-06-21T22:25:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "d034b55b-4931-4bb5-be4e-853e6db5494c",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+          "destination_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "d034b55b-4931-4bb5-be4e-853e6db5494c",
+          "affiliate_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+          "destination_url": "https://www.blueair.com/us/search?q=BLUEAIR-F2MAX211PAC",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "destination_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Blueair 211+ Series Particle+Carbon PDP; in stock + Add to Cart; fits Blue Pure 211 / 211+ only; NOT 211+ Auto.",
+        "browser_truth_checked_at": "2026-06-21T22:25:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.blueair.com/products/blue-pure-211-plus-particle-carbon"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- blueair-f2-211 (filter_id=c06ecca3-f7eb-4228-bd97-8c9c02b31f1e)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'd034b55b-4931-4bb5-be4e-853e6db5494c'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon', 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Blueair 211+ Series Particle+Carbon PDP; in stock + Add to Cart; fits Blue Pure 211 / 211+ only; NOT 211+ Auto.$bt_notes$, '2026-06-21T22:25:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e' AND l.affiliate_url = 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon' AND l.status = 'approved');\n"
+    },
+    {
+      "filter_slug": "blueair-particle-411",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Retailer-link SQL is self-contained. Recommended: ap-oem-pre-alignment-packet-v1 filter OEM UPDATE before seed import.",
+      "supabase_filter_id": "b096c446-0a8e-4e30-8c04-fcf99f125866",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "blueair-particle-411",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "destination_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official Blue Pure 411 Series Particle + Carbon Filter; $23.99 IN STOCK with Add to Cart; fits 411 / 411+ / 411 Auto only; NOT F4MAX Max-series; NOT Mini Max (FMINI). Supersedes BLUEAIR-PART411 search placeholder.",
+        "browser_truth_checked_at": "2026-06-22T16:20:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "be0c22f0-fc61-4454-aa08-848ba42090f3",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+          "destination_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "be0c22f0-fc61-4454-aa08-848ba42090f3",
+          "affiliate_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+          "destination_url": "https://www.blueair.com/us/search?q=BLUEAIR-PART411",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "destination_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official Blue Pure 411 Series Particle + Carbon Filter; $23.99 IN STOCK with Add to Cart; fits 411 / 411+ / 411 Auto only; NOT F4MAX Max-series; NOT Mini Max (FMINI). Supersedes BLUEAIR-PART411 search placeholder.",
+        "browser_truth_checked_at": "2026-06-22T16:20:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- blueair-particle-411 (filter_id=b096c446-0a8e-4e30-8c04-fcf99f125866)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'b096c446-0a8e-4e30-8c04-fcf99f125866' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'be0c22f0-fc61-4454-aa08-848ba42090f3'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'b096c446-0a8e-4e30-8c04-fcf99f125866', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.blueair.com/products/blue-pure-411-particle-carbon', 'https://www.blueair.com/products/blue-pure-411-particle-carbon', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official Blue Pure 411 Series Particle + Carbon Filter; $23.99 IN STOCK with Add to Cart; fits 411 / 411+ / 411 Auto only; NOT F4MAX Max-series; NOT Mini Max (FMINI). Supersedes BLUEAIR-PART411 search placeholder.$bt_notes$, '2026-06-22T16:20:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'b096c446-0a8e-4e30-8c04-fcf99f125866' AND l.affiliate_url = 'https://www.blueair.com/products/blue-pure-411-particle-carbon' AND l.status = 'approved');\n"
+    },
+    {
+      "filter_slug": "coway-airmega250-rf",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Retailer-link SQL is self-contained. Recommended: ap-oem-pre-alignment-packet-v1 filter OEM UPDATE before seed import.",
+      "supabase_filter_id": "09db87a2-057c-44ee-b2c9-7d50a86e0208",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "coway-airmega250-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.cowaymega.com/products/airmega-250-max2-filter",
+        "destination_url": "https://www.cowaymega.com/products/airmega-250-max2-filter",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Coway Airmega 250 identity correction; official cowaymega.com Airmega 250•250S•250ART Max2 Filter PDP; SKU 3109144 (AP-1720-FP); compatible 250/250S/250ART per product copy; in stock + Add to Cart verified 2026-06-19. Supersedes invalid COWAY-3712487 search placeholder.",
+        "browser_truth_checked_at": "2026-06-19T00:00:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "11194b61-3866-464c-ad9d-ae144a60e19e",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://coway.com/search?q=COWAY-3712487",
+          "destination_url": "https://coway.com/search?q=COWAY-3712487",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        },
+        {
+          "id": "1e8e8b90-0e2e-41e6-afbc-3e93f85e63b8",
+          "retailer_key": "coway-oem-dtc",
+          "affiliate_url": "https://en.coway.com/products/airmega-250-s-filters",
+          "destination_url": "https://en.coway.com/products/airmega-250-s-filters",
+          "is_primary": false,
+          "browser_truth_classification": "likely_valid",
+          "browser_truth_checked_at": "2026-04-21T05:59:53.793+00:00",
+          "created_at": "2026-04-21T05:59:53.874288+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "11194b61-3866-464c-ad9d-ae144a60e19e",
+          "affiliate_url": "https://coway.com/search?q=COWAY-3712487",
+          "destination_url": "https://coway.com/search?q=COWAY-3712487",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://www.cowaymega.com/products/airmega-250-max2-filter",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.cowaymega.com/products/airmega-250-max2-filter",
+        "destination_url": "https://www.cowaymega.com/products/airmega-250-max2-filter",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Coway Airmega 250 identity correction; official cowaymega.com Airmega 250•250S•250ART Max2 Filter PDP; SKU 3109144 (AP-1720-FP); compatible 250/250S/250ART per product copy; in stock + Add to Cart verified 2026-06-19. Supersedes invalid COWAY-3712487 search placeholder.",
+        "browser_truth_checked_at": "2026-06-19T00:00:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [
+        {
+          "id": "1e8e8b90-0e2e-41e6-afbc-3e93f85e63b8",
+          "retailer_key": "coway-oem-dtc",
+          "affiliate_url": "https://en.coway.com/products/airmega-250-s-filters",
+          "action": "PRESERVE_UNCHANGED_is_primary_false"
+        }
+      ],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.cowaymega.com/products/airmega-250-max2-filter"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- coway-airmega250-rf (filter_id=09db87a2-057c-44ee-b2c9-7d50a86e0208)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '09db87a2-057c-44ee-b2c9-7d50a86e0208' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '11194b61-3866-464c-ad9d-ae144a60e19e'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '09db87a2-057c-44ee-b2c9-7d50a86e0208', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.cowaymega.com/products/airmega-250-max2-filter', 'https://www.cowaymega.com/products/airmega-250-max2-filter', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Coway Airmega 250 identity correction; official cowaymega.com Airmega 250•250S•250ART Max2 Filter PDP; SKU 3109144 (AP-1720-FP); compatible 250/250S/250ART per product copy; in stock + Add to Cart verified 2026-06-19. Supersedes invalid COWAY-3712487 search placeholder.$bt_notes$, '2026-06-19T00:00:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '09db87a2-057c-44ee-b2c9-7d50a86e0208' AND l.affiliate_url = 'https://www.cowaymega.com/products/airmega-250-max2-filter' AND l.status = 'approved');\n"
+    },
+    {
+      "filter_slug": "coway-airmega400-rf",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Retailer-link SQL is self-contained. Recommended: ap-oem-pre-alignment-packet-v1 filter OEM UPDATE before seed import.",
+      "supabase_filter_id": "13fc174a-aa3a-4dc3-af0d-a27e22d0b691",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "coway-airmega400-rf",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "destination_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official cowaymega Airmega 400/400S Max2 Filter Set SKU 3104756; $129.00; in stock + Add to Cart verified 2026-06-21; Airmega 400/400S only — NOT 300/300S; AP-3019F(P) held pending proof.",
+        "browser_truth_checked_at": "2026-06-21T23:05:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "c2f163de-34ea-427e-8db6-ed1e9ab46f96",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://coway.com/search?q=COWAY-AMI400-RF",
+          "destination_url": "https://coway.com/search?q=COWAY-AMI400-RF",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        },
+        {
+          "id": "8d7e1d72-0691-4b0f-bc4e-1d5c2b9c4959",
+          "retailer_key": "coway-oem-dtc",
+          "affiliate_url": "https://en.coway.com/products/airmega-400-s-filters",
+          "destination_url": "https://en.coway.com/products/airmega-400-s-filters",
+          "is_primary": false,
+          "browser_truth_classification": "likely_valid",
+          "browser_truth_checked_at": "2026-04-21T05:59:53.793+00:00",
+          "created_at": "2026-04-21T05:59:53.874288+00:00",
+          "updated_at": null
+        },
+        {
+          "id": "791c2fe9-ec2a-4db7-84bc-fb85a5f3e53a",
+          "retailer_key": "amazon",
+          "affiliate_url": "https://www.amazon.com/gp/product/B01C9RIAE4",
+          "destination_url": "https://www.amazon.com/gp/product/B01C9RIAE4",
+          "is_primary": false,
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_checked_at": "2026-04-21T12:50:39.888+00:00",
+          "created_at": "2026-04-21T12:50:47.422138+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "c2f163de-34ea-427e-8db6-ed1e9ab46f96",
+          "affiliate_url": "https://coway.com/search?q=COWAY-AMI400-RF",
+          "destination_url": "https://coway.com/search?q=COWAY-AMI400-RF",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "destination_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official cowaymega Airmega 400/400S Max2 Filter Set SKU 3104756; $129.00; in stock + Add to Cart verified 2026-06-21; Airmega 400/400S only — NOT 300/300S; AP-3019F(P) held pending proof.",
+        "browser_truth_checked_at": "2026-06-21T23:05:00.000Z"
+      },
+      "amazon_alternates_preserved": [
+        {
+          "id": "791c2fe9-ec2a-4db7-84bc-fb85a5f3e53a",
+          "affiliate_url": "https://www.amazon.com/gp/product/B01C9RIAE4",
+          "browser_truth_classification": "direct_buyable",
+          "action": "PRESERVE_UNCHANGED"
+        }
+      ],
+      "other_rows_preserved": [
+        {
+          "id": "8d7e1d72-0691-4b0f-bc4e-1d5c2b9c4959",
+          "retailer_key": "coway-oem-dtc",
+          "affiliate_url": "https://en.coway.com/products/airmega-400-s-filters",
+          "action": "PRESERVE_UNCHANGED_is_primary_false"
+        }
+      ],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://cowaymega.com/products/airmega-400-max2-filter-set"
+        },
+        "runtime_safe_cta_before": true,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 0,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": true
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- coway-airmega400-rf (filter_id=13fc174a-aa3a-4dc3-af0d-a27e22d0b691)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '13fc174a-aa3a-4dc3-af0d-a27e22d0b691' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'c2f163de-34ea-427e-8db6-ed1e9ab46f96'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '13fc174a-aa3a-4dc3-af0d-a27e22d0b691', 'OEM / manufacturer catalog (keyword lookup)', 'https://cowaymega.com/products/airmega-400-max2-filter-set', 'https://cowaymega.com/products/airmega-400-max2-filter-set', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official cowaymega Airmega 400/400S Max2 Filter Set SKU 3104756; $129.00; in stock + Add to Cart verified 2026-06-21; Airmega 400/400S only — NOT 300/300S; AP-3019F(P) held pending proof.$bt_notes$, '2026-06-21T23:05:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '13fc174a-aa3a-4dc3-af0d-a27e22d0b691' AND l.affiliate_url = 'https://cowaymega.com/products/airmega-400-max2-filter-set' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 791c2fe9-ec2a-4db7-84bc-fb85a5f3e53a\n"
+    },
+    {
+      "filter_slug": "gg-flt4100",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Apply after JSON backup export.",
+      "supabase_filter_id": "8ceb861d-83f5-4aca-896d-3f3666e0dfaf",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "gg-flt4100",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4100 HEPA PURE Filter E; SKU/token FLT4100 in primary slice; combination True HEPA + activated carbon; $14.99 IN STOCK with Add to Cart + Buy Now; compatible AC4100 / AC4150P / AC4150BL / AC4175W per manufacturer copy. Supersedes germguardian.com search placeholder. Compat trim removes AC4820 (Filter B / FLT4825 wrong-family) and phantom AC4225/AC4230.",
+        "browser_truth_checked_at": "2026-06-21T05:10:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "4ffb81e3-6acd-4246-b3e9-317d7a12fc38",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4100",
+          "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4100",
+          "is_primary": true,
+          "browser_truth_classification": "browser_error",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        },
+        {
+          "id": "01a3f725-276e-4e5b-a63f-10ce8bc2c6bf",
+          "retailer_key": "amazon",
+          "affiliate_url": "https://www.amazon.com/dp/B00INIJN1S",
+          "destination_url": "https://www.amazon.com/dp/B00INIJN1S",
+          "is_primary": false,
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_checked_at": "2026-04-21T21:53:51.164+00:00",
+          "created_at": "2026-04-21T21:53:51.259282+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "4ffb81e3-6acd-4246-b3e9-317d7a12fc38",
+          "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4100",
+          "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4100",
+          "is_primary": true,
+          "browser_truth_classification": "browser_error",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4100 HEPA PURE Filter E; SKU/token FLT4100 in primary slice; combination True HEPA + activated carbon; $14.99 IN STOCK with Add to Cart + Buy Now; compatible AC4100 / AC4150P / AC4150BL / AC4175W per manufacturer copy. Supersedes germguardian.com search placeholder. Compat trim removes AC4820 (Filter B / FLT4825 wrong-family) and phantom AC4225/AC4230.",
+        "browser_truth_checked_at": "2026-06-21T05:10:00.000Z"
+      },
+      "amazon_alternates_preserved": [
+        {
+          "id": "01a3f725-276e-4e5b-a63f-10ce8bc2c6bf",
+          "affiliate_url": "https://www.amazon.com/dp/B00INIJN1S",
+          "browser_truth_classification": "direct_buyable",
+          "action": "PRESERVE_UNCHANGED"
+        }
+      ],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e"
+        },
+        "runtime_safe_cta_before": true,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 0,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": true
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- gg-flt4100 (filter_id=8ceb861d-83f5-4aca-896d-3f3666e0dfaf)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '8ceb861d-83f5-4aca-896d-3f3666e0dfaf' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '4ffb81e3-6acd-4246-b3e9-317d7a12fc38'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '8ceb861d-83f5-4aca-896d-3f3666e0dfaf', 'OEM / manufacturer catalog (keyword lookup)', 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e', 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4100 HEPA PURE Filter E; SKU/token FLT4100 in primary slice; combination True HEPA + activated carbon; $14.99 IN STOCK with Add to Cart + Buy Now; compatible AC4100 / AC4150P / AC4150BL / AC4175W per manufacturer copy. Supersedes germguardian.com search placeholder. Compat trim removes AC4820 (Filter B / FLT4825 wrong-family) and phantom AC4225/AC4230.$bt_notes$, '2026-06-21T05:10:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '8ceb861d-83f5-4aca-896d-3f3666e0dfaf' AND l.affiliate_url = 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 01a3f725-276e-4e5b-a63f-10ce8bc2c6bf\n"
+    },
+    {
+      "filter_slug": "gg-flt4825",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Apply after JSON backup export.",
+      "supabase_filter_id": "70be653e-74d0-4cf8-9902-c74dc44cabac",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "gg-flt4825",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4825 HEPA PURE Filter B; SKU/token FLT4825 in primary slice; Filter B HEPA + charcoal combo; $24.99 IN STOCK with Add to Cart; compatible AC4825 / AC4825DLX / AC4300 / AC4900 per manufacturer copy. Supersedes germguardian.com GUARDIAN-FLT4825 search placeholder.",
+        "browser_truth_checked_at": "2026-06-21T23:45:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "0e82211e-a192-4928-a849-80f45a97738d",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4825",
+          "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4825",
+          "is_primary": true,
+          "browser_truth_classification": "browser_error",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        },
+        {
+          "id": "3b913cb0-b016-4869-84a2-ed6b1e4d4b9a",
+          "retailer_key": "amazon",
+          "affiliate_url": "https://www.amazon.com/dp/B0055521W0",
+          "destination_url": "https://www.amazon.com/dp/B0055521W0",
+          "is_primary": false,
+          "browser_truth_classification": "direct_buyable",
+          "browser_truth_checked_at": "2026-04-21T21:53:51.164+00:00",
+          "created_at": "2026-04-21T21:53:51.259282+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "0e82211e-a192-4928-a849-80f45a97738d",
+          "affiliate_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4825",
+          "destination_url": "https://www.germguardian.com/search?q=GUARDIAN-FLT4825",
+          "is_primary": true,
+          "browser_truth_classification": "browser_error",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b",
+        "destination_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4825 HEPA PURE Filter B; SKU/token FLT4825 in primary slice; Filter B HEPA + charcoal combo; $24.99 IN STOCK with Add to Cart; compatible AC4825 / AC4825DLX / AC4300 / AC4900 per manufacturer copy. Supersedes germguardian.com GUARDIAN-FLT4825 search placeholder.",
+        "browser_truth_checked_at": "2026-06-21T23:45:00.000Z"
+      },
+      "amazon_alternates_preserved": [
+        {
+          "id": "3b913cb0-b016-4869-84a2-ed6b1e4d4b9a",
+          "affiliate_url": "https://www.amazon.com/dp/B0055521W0",
+          "browser_truth_classification": "direct_buyable",
+          "action": "PRESERVE_UNCHANGED"
+        }
+      ],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b"
+        },
+        "runtime_safe_cta_before": true,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 0,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": true
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- gg-flt4825 (filter_id=70be653e-74d0-4cf8-9902-c74dc44cabac)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '70be653e-74d0-4cf8-9902-c74dc44cabac' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '0e82211e-a192-4928-a849-80f45a97738d'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '70be653e-74d0-4cf8-9902-c74dc44cabac', 'OEM / manufacturer catalog (keyword lookup)', 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b', 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4825 HEPA PURE Filter B; SKU/token FLT4825 in primary slice; Filter B HEPA + charcoal combo; $24.99 IN STOCK with Add to Cart; compatible AC4825 / AC4825DLX / AC4300 / AC4900 per manufacturer copy. Supersedes germguardian.com GUARDIAN-FLT4825 search placeholder.$bt_notes$, '2026-06-21T23:45:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '70be653e-74d0-4cf8-9902-c74dc44cabac' AND l.affiliate_url = 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 3b913cb0-b016-4869-84a2-ed6b1e4d4b9a\n"
+    },
+    {
+      "filter_slug": "hb-trueair-04384",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Retailer-link SQL is self-contained. Recommended: ap-oem-pre-alignment-packet-v1 filter OEM UPDATE before seed import.",
+      "supabase_filter_id": "4004a082-7889-49b2-9877-8a2aa4d1d59b",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "hb-trueair-04384",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "destination_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first ap-model-first-hb-trueair-04384-live-browser-v1 (2026-06-22): official Hamilton Beach Replacement Permanent Filter part 990051000; $19.99 IN STOCK with Add to Cart; fits TrueAir Compact 04383/04384/04385/04386; NOT 04162 UV/console line (04913). Supersedes HB-04384 search placeholder.",
+        "browser_truth_checked_at": "2026-06-22T16:55:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "6a557b20-f983-4d6f-907f-eed958c6e964",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://hamiltonbeach.com/search?q=HB-04384",
+          "destination_url": "https://hamiltonbeach.com/search?q=HB-04384",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "6a557b20-f983-4d6f-907f-eed958c6e964",
+          "affiliate_url": "https://hamiltonbeach.com/search?q=HB-04384",
+          "destination_url": "https://hamiltonbeach.com/search?q=HB-04384",
+          "is_primary": true,
+          "browser_truth_classification": "likely_not_found",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "destination_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Live-browser model-first ap-model-first-hb-trueair-04384-live-browser-v1 (2026-06-22): official Hamilton Beach Replacement Permanent Filter part 990051000; $19.99 IN STOCK with Add to Cart; fits TrueAir Compact 04383/04384/04385/04386; NOT 04162 UV/console line (04913). Supersedes HB-04384 search placeholder.",
+        "browser_truth_checked_at": "2026-06-22T16:55:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- hb-trueair-04384 (filter_id=4004a082-7889-49b2-9877-8a2aa4d1d59b)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '4004a082-7889-49b2-9877-8a2aa4d1d59b' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '6a557b20-f983-4d6f-907f-eed958c6e964'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '4004a082-7889-49b2-9877-8a2aa4d1d59b', 'OEM / manufacturer catalog (keyword lookup)', 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000', 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first ap-model-first-hb-trueair-04384-live-browser-v1 (2026-06-22): official Hamilton Beach Replacement Permanent Filter part 990051000; $19.99 IN STOCK with Add to Cart; fits TrueAir Compact 04383/04384/04385/04386; NOT 04162 UV/console line (04913). Supersedes HB-04384 search placeholder.$bt_notes$, '2026-06-22T16:55:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '4004a082-7889-49b2-9877-8a2aa4d1d59b' AND l.affiliate_url = 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000' AND l.status = 'approved');\n"
+    },
+    {
+      "filter_slug": "rabbit-carbon-minusa2",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Apply after JSON backup export.",
+      "supabase_filter_id": "98ccee9c-fe69-4359-bb21-80a6660ef4a9",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "rabbit-carbon-minusa2",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter",
+        "destination_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Rabbit Air MinusA2 Charcoal-Based Activated Carbon Filter, SKU A2-AC, in-stock + Add-to-Cart verified 2026-06-19, fits MinusA2 SPA-700A/780A/780N, NOT A3",
+        "browser_truth_checked_at": "2026-06-19T00:00:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "546a8e4e-44a0-4dc0-a4f0-4dee5e599d03",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.rabbitair.com/search?q=RABBIT-CARBON-MA2",
+          "destination_url": "https://www.rabbitair.com/search?q=RABBIT-CARBON-MA2",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "546a8e4e-44a0-4dc0-a4f0-4dee5e599d03",
+          "affiliate_url": "https://www.rabbitair.com/search?q=RABBIT-CARBON-MA2",
+          "destination_url": "https://www.rabbitair.com/search?q=RABBIT-CARBON-MA2",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter",
+        "destination_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Rabbit Air MinusA2 Charcoal-Based Activated Carbon Filter, SKU A2-AC, in-stock + Add-to-Cart verified 2026-06-19, fits MinusA2 SPA-700A/780A/780N, NOT A3",
+        "browser_truth_checked_at": "2026-06-19T00:00:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.rabbitair.com/products/minusa2-charcoal-filter"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- rabbit-carbon-minusa2 (filter_id=98ccee9c-fe69-4359-bb21-80a6660ef4a9)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '98ccee9c-fe69-4359-bb21-80a6660ef4a9' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '546a8e4e-44a0-4dc0-a4f0-4dee5e599d03'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '98ccee9c-fe69-4359-bb21-80a6660ef4a9', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.rabbitair.com/products/minusa2-charcoal-filter', 'https://www.rabbitair.com/products/minusa2-charcoal-filter', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Rabbit Air MinusA2 Charcoal-Based Activated Carbon Filter, SKU A2-AC, in-stock + Add-to-Cart verified 2026-06-19, fits MinusA2 SPA-700A/780A/780N, NOT A3$bt_notes$, '2026-06-19T00:00:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '98ccee9c-fe69-4359-bb21-80a6660ef4a9' AND l.affiliate_url = 'https://www.rabbitair.com/products/minusa2-charcoal-filter' AND l.status = 'approved');\n"
+    },
+    {
+      "filter_slug": "vornado-carbon-pad",
+      "authorization": "READY_FOR_OWNER_APPROVAL",
+      "authorization_notes": "Apply after JSON backup export.",
+      "supabase_filter_id": "fd365aff-3e34-4291-b738-3b7ee956750b",
+      "current_csv_retailer_row": {
+        "source_file": "data/air-purifier/retailer_links.csv",
+        "filter_slug": "vornado-carbon-pad",
+        "retailer_name": "OEM / manufacturer catalog (keyword lookup)",
+        "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "destination_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Vornado MD1-0023 Activated Carbon Filter (2-Pack) $16.99; Add to Cart active 2026-06-21; AC300/AC350/AC500/AC550 only — NOT PCO MD1-0027; AC500B/AC550W unverified on official source.",
+        "browser_truth_checked_at": "2026-06-21T22:40:00.000Z"
+      },
+      "current_supabase_retailer_rows": [
+        {
+          "id": "1c96df93-676b-4ddc-a24c-3ad22f52a56d",
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://www.vornado.com/search?q=VORNADO-CARBON-PAD",
+          "destination_url": "https://www.vornado.com/search?q=VORNADO-CARBON-PAD",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "browser_truth_checked_at": "2026-04-18T19:20:57.908+00:00",
+          "created_at": "2026-04-11T04:48:02.931494+00:00",
+          "updated_at": null
+        }
+      ],
+      "stale_search_rows_to_demote": [
+        {
+          "id": "1c96df93-676b-4ddc-a24c-3ad22f52a56d",
+          "affiliate_url": "https://www.vornado.com/search?q=VORNADO-CARBON-PAD",
+          "destination_url": "https://www.vornado.com/search?q=VORNADO-CARBON-PAD",
+          "is_primary": true,
+          "browser_truth_classification": "likely_search_results",
+          "demote_action": "SET is_primary = false (row preserved)"
+        }
+      ],
+      "pdp_row_action": {
+        "action": "INSERT",
+        "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "reason": "CSV PDP affiliate_url absent from Supabase"
+      },
+      "target_pdp_row_from_csv": {
+        "retailer_key": "oem-catalog",
+        "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "destination_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "is_primary": true,
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Vornado MD1-0023 Activated Carbon Filter (2-Pack) $16.99; Add to Cart active 2026-06-21; AC300/AC350/AC500/AC550 only — NOT PCO MD1-0027; AC500B/AC550W unverified on official source.",
+        "browser_truth_checked_at": "2026-06-21T22:40:00.000Z"
+      },
+      "amazon_alternates_preserved": [],
+      "other_rows_preserved": [],
+      "expected_outcome": {
+        "exactly_one_is_primary": true,
+        "primary_row": {
+          "retailer_key": "oem-catalog",
+          "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1"
+        },
+        "runtime_safe_cta_before": false,
+        "runtime_safe_cta_after": true,
+        "runtime_safe_cta_delta": 1,
+        "oem_direct_buyable_primary_delta": 1,
+        "amazon_may_remain_runtime_winner": false
+      },
+      "slug_sql": "-- -----------------------------------------------------------------------------\n-- vornado-carbon-pad (filter_id=fd365aff-3e34-4291-b738-3b7ee956750b)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'fd365aff-3e34-4291-b738-3b7ee956750b' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '1c96df93-676b-4ddc-a24c-3ad22f52a56d'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'fd365aff-3e34-4291-b738-3b7ee956750b', 'OEM / manufacturer catalog (keyword lookup)', 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1', 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Vornado MD1-0023 Activated Carbon Filter (2-Pack) $16.99; Add to Cart active 2026-06-21; AC300/AC350/AC500/AC550 only — NOT PCO MD1-0027; AC500B/AC550W unverified on official source.$bt_notes$, '2026-06-21T22:40:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'fd365aff-3e34-4291-b738-3b7ee956750b' AND l.affiliate_url = 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1' AND l.status = 'approved');\n"
+    }
+  ],
+  "combined_sql_transaction": "-- AP Runtime Safe CTA Parity Packet v1\n-- git HEAD: 7f2a1d5fad99732a33b1fa7c101b77aeedc8c09e\n-- READ-ONLY ARTIFACT — default ROLLBACK; owner replaces ROLLBACK with COMMIT after verification\n-- Scope: 9 stale-primary slugs\n\nBEGIN;\n\n-- -----------------------------------------------------------------------------\n-- blueair-f2-211 (filter_id=c06ecca3-f7eb-4228-bd97-8c9c02b31f1e)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'd034b55b-4931-4bb5-be4e-853e6db5494c'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon', 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Blueair 211+ Series Particle+Carbon PDP; in stock + Add to Cart; fits Blue Pure 211 / 211+ only; NOT 211+ Auto.$bt_notes$, '2026-06-21T22:25:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'c06ecca3-f7eb-4228-bd97-8c9c02b31f1e' AND l.affiliate_url = 'https://www.blueair.com/products/blue-pure-211-plus-particle-carbon' AND l.status = 'approved');\n\n-- -----------------------------------------------------------------------------\n-- blueair-particle-411 (filter_id=b096c446-0a8e-4e30-8c04-fcf99f125866)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'b096c446-0a8e-4e30-8c04-fcf99f125866' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'be0c22f0-fc61-4454-aa08-848ba42090f3'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'b096c446-0a8e-4e30-8c04-fcf99f125866', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.blueair.com/products/blue-pure-411-particle-carbon', 'https://www.blueair.com/products/blue-pure-411-particle-carbon', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first ap-model-first-blueair-particle-411-live-browser-v1 (2026-06-22): official Blue Pure 411 Series Particle + Carbon Filter; $23.99 IN STOCK with Add to Cart; fits 411 / 411+ / 411 Auto only; NOT F4MAX Max-series; NOT Mini Max (FMINI). Supersedes BLUEAIR-PART411 search placeholder.$bt_notes$, '2026-06-22T16:20:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'b096c446-0a8e-4e30-8c04-fcf99f125866' AND l.affiliate_url = 'https://www.blueair.com/products/blue-pure-411-particle-carbon' AND l.status = 'approved');\n\n-- -----------------------------------------------------------------------------\n-- coway-airmega250-rf (filter_id=09db87a2-057c-44ee-b2c9-7d50a86e0208)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '09db87a2-057c-44ee-b2c9-7d50a86e0208' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '11194b61-3866-464c-ad9d-ae144a60e19e'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '09db87a2-057c-44ee-b2c9-7d50a86e0208', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.cowaymega.com/products/airmega-250-max2-filter', 'https://www.cowaymega.com/products/airmega-250-max2-filter', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Coway Airmega 250 identity correction; official cowaymega.com Airmega 250•250S•250ART Max2 Filter PDP; SKU 3109144 (AP-1720-FP); compatible 250/250S/250ART per product copy; in stock + Add to Cart verified 2026-06-19. Supersedes invalid COWAY-3712487 search placeholder.$bt_notes$, '2026-06-19T00:00:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '09db87a2-057c-44ee-b2c9-7d50a86e0208' AND l.affiliate_url = 'https://www.cowaymega.com/products/airmega-250-max2-filter' AND l.status = 'approved');\n\n-- -----------------------------------------------------------------------------\n-- coway-airmega400-rf (filter_id=13fc174a-aa3a-4dc3-af0d-a27e22d0b691)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '13fc174a-aa3a-4dc3-af0d-a27e22d0b691' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = 'c2f163de-34ea-427e-8db6-ed1e9ab46f96'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '13fc174a-aa3a-4dc3-af0d-a27e22d0b691', 'OEM / manufacturer catalog (keyword lookup)', 'https://cowaymega.com/products/airmega-400-max2-filter-set', 'https://cowaymega.com/products/airmega-400-max2-filter-set', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official cowaymega Airmega 400/400S Max2 Filter Set SKU 3104756; $129.00; in stock + Add to Cart verified 2026-06-21; Airmega 400/400S only — NOT 300/300S; AP-3019F(P) held pending proof.$bt_notes$, '2026-06-21T23:05:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '13fc174a-aa3a-4dc3-af0d-a27e22d0b691' AND l.affiliate_url = 'https://cowaymega.com/products/airmega-400-max2-filter-set' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 791c2fe9-ec2a-4db7-84bc-fb85a5f3e53a\n\n-- -----------------------------------------------------------------------------\n-- gg-flt4100 (filter_id=8ceb861d-83f5-4aca-896d-3f3666e0dfaf)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '8ceb861d-83f5-4aca-896d-3f3666e0dfaf' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '4ffb81e3-6acd-4246-b3e9-317d7a12fc38'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '8ceb861d-83f5-4aca-896d-3f3666e0dfaf', 'OEM / manufacturer catalog (keyword lookup)', 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e', 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4100 HEPA PURE Filter E; SKU/token FLT4100 in primary slice; combination True HEPA + activated carbon; $14.99 IN STOCK with Add to Cart + Buy Now; compatible AC4100 / AC4150P / AC4150BL / AC4175W per manufacturer copy. Supersedes germguardian.com search placeholder. Compat trim removes AC4820 (Filter B / FLT4825 wrong-family) and phantom AC4225/AC4230.$bt_notes$, '2026-06-21T05:10:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '8ceb861d-83f5-4aca-896d-3f3666e0dfaf' AND l.affiliate_url = 'https://guardiantechnologies.com/products/germguardian-flt4100-hepa-genuine-replacement-filter-e' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 01a3f725-276e-4e5b-a63f-10ce8bc2c6bf\n\n-- -----------------------------------------------------------------------------\n-- gg-flt4825 (filter_id=70be653e-74d0-4cf8-9902-c74dc44cabac)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '70be653e-74d0-4cf8-9902-c74dc44cabac' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '0e82211e-a192-4928-a849-80f45a97738d'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '70be653e-74d0-4cf8-9902-c74dc44cabac', 'OEM / manufacturer catalog (keyword lookup)', 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b', 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first 2026-06-21: official Guardian Technologies PDP GermGuardian FLT4825 HEPA PURE Filter B; SKU/token FLT4825 in primary slice; Filter B HEPA + charcoal combo; $24.99 IN STOCK with Add to Cart; compatible AC4825 / AC4825DLX / AC4300 / AC4900 per manufacturer copy. Supersedes germguardian.com GUARDIAN-FLT4825 search placeholder.$bt_notes$, '2026-06-21T23:45:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '70be653e-74d0-4cf8-9902-c74dc44cabac' AND l.affiliate_url = 'https://guardiantechnologies.com/products/germguardian-flt4825-true-hepa-genuine-replacement-filter-b' AND l.status = 'approved');\n-- preserve safe Amazon alternate (no mutation): 3b913cb0-b016-4869-84a2-ed6b1e4d4b9a\n\n-- -----------------------------------------------------------------------------\n-- hb-trueair-04384 (filter_id=4004a082-7889-49b2-9877-8a2aa4d1d59b)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '4004a082-7889-49b2-9877-8a2aa4d1d59b' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '6a557b20-f983-4d6f-907f-eed958c6e964'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '4004a082-7889-49b2-9877-8a2aa4d1d59b', 'OEM / manufacturer catalog (keyword lookup)', 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000', 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Live-browser model-first ap-model-first-hb-trueair-04384-live-browser-v1 (2026-06-22): official Hamilton Beach Replacement Permanent Filter part 990051000; $19.99 IN STOCK with Add to Cart; fits TrueAir Compact 04383/04384/04385/04386; NOT 04162 UV/console line (04913). Supersedes HB-04384 search placeholder.$bt_notes$, '2026-06-22T16:55:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '4004a082-7889-49b2-9877-8a2aa4d1d59b' AND l.affiliate_url = 'https://hamiltonbeach.com/filter-permanent-04383-air-purifier-990051000' AND l.status = 'approved');\n\n-- -----------------------------------------------------------------------------\n-- rabbit-carbon-minusa2 (filter_id=98ccee9c-fe69-4359-bb21-80a6660ef4a9)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = '98ccee9c-fe69-4359-bb21-80a6660ef4a9' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '546a8e4e-44a0-4dc0-a4f0-4dee5e599d03'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT '98ccee9c-fe69-4359-bb21-80a6660ef4a9', 'OEM / manufacturer catalog (keyword lookup)', 'https://www.rabbitair.com/products/minusa2-charcoal-filter', 'https://www.rabbitair.com/products/minusa2-charcoal-filter', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Rabbit Air MinusA2 Charcoal-Based Activated Carbon Filter, SKU A2-AC, in-stock + Add-to-Cart verified 2026-06-19, fits MinusA2 SPA-700A/780A/780N, NOT A3$bt_notes$, '2026-06-19T00:00:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = '98ccee9c-fe69-4359-bb21-80a6660ef4a9' AND l.affiliate_url = 'https://www.rabbitair.com/products/minusa2-charcoal-filter' AND l.status = 'approved');\n\n-- -----------------------------------------------------------------------------\n-- vornado-carbon-pad (filter_id=fd365aff-3e34-4291-b738-3b7ee956750b)\n-- -----------------------------------------------------------------------------\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE air_purifier_filter_id = 'fd365aff-3e34-4291-b738-3b7ee956750b' AND status = 'approved';\nUPDATE public.air_purifier_retailer_links SET is_primary = false WHERE id = '1c96df93-676b-4ddc-a24c-3ad22f52a56d'; -- stale search\nINSERT INTO public.air_purifier_retailer_links (air_purifier_filter_id, retailer_name, affiliate_url, destination_url, retailer_slug, retailer_key, is_primary, status, source, browser_truth_classification, browser_truth_notes, browser_truth_checked_at) SELECT 'fd365aff-3e34-4291-b738-3b7ee956750b', 'OEM / manufacturer catalog (keyword lookup)', 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1', 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1', 'oem-catalog', 'oem-catalog', true, 'approved', 'manual', 'direct_buyable', $bt_notes$Official Vornado MD1-0023 Activated Carbon Filter (2-Pack) $16.99; Add to Cart active 2026-06-21; AC300/AC350/AC500/AC550 only — NOT PCO MD1-0027; AC500B/AC550W unverified on official source.$bt_notes$, '2026-06-21T22:40:00.000Z'::timestamptz WHERE NOT EXISTS (SELECT 1 FROM public.air_purifier_retailer_links l WHERE l.air_purifier_filter_id = 'fd365aff-3e34-4291-b738-3b7ee956750b' AND l.affiliate_url = 'https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1' AND l.status = 'approved');\n\n-- =============================================================================\n-- POST-CHANGE VERIFICATION (review before COMMIT)\n-- =============================================================================\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'blueair-f2-211' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'blueair-f2-211' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'blueair-particle-411' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'blueair-particle-411' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'coway-airmega250-rf' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'coway-airmega250-rf' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'coway-airmega400-rf' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'coway-airmega400-rf' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'gg-flt4100' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'gg-flt4100' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'gg-flt4825' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'gg-flt4825' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'hb-trueair-04384' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'hb-trueair-04384' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'rabbit-carbon-minusa2' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'rabbit-carbon-minusa2' AND l.status = 'approved' GROUP BY f.slug;\n\nSELECT f.slug, l.id, l.retailer_key, l.affiliate_url, l.is_primary, l.browser_truth_classification, l.browser_truth_checked_at, left(l.browser_truth_notes, 100) AS notes_prefix FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'vornado-carbon-pad' AND l.status = 'approved' ORDER BY l.is_primary DESC, l.retailer_key;\nSELECT f.slug, count(*) FILTER (WHERE l.is_primary) AS primary_count, count(*) FILTER (WHERE l.browser_truth_classification = 'direct_buyable') AS direct_buyable_count FROM public.air_purifier_retailer_links l JOIN public.air_purifier_filters f ON f.id = l.air_purifier_filter_id WHERE lower(f.slug) = 'vornado-carbon-pad' AND l.status = 'approved' GROUP BY f.slug;\n\nROLLBACK;\n-- COMMIT;",
+  "exact_repo_paths_read": [
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/batch-production/audits/ap-runtime-primary-selection-trace-v1.json",
+    "data/air-purifier/batch-production/audits/ap-runtime-convergence-gap-v1.json"
+  ],
+  "supabase_tables_queried": [
+    "air_purifier_filters",
+    "air_purifier_retailer_links"
+  ]
+}
