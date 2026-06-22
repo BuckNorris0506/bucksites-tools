@@ -1,0 +1,211 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-vornado-carbon-pad-live-browser-v1",
+  "run_id": "ap-model-first-vornado-carbon-pad-live-browser-2026-06-21",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "vornado-carbon-pad",
+  "filter_slug": "vornado-carbon-pad",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-21T22:40:00.000Z",
+  "checked_at": "2026-06-21T22:40:00.000Z",
+  "repo_head_at_capture": "efe75e5",
+  "repo_head_note": "Repo refreshed read-only to current origin/main HEAD efe75e5 ('Update HQ handoff for AP execution through 8a840e1') before capture — matches the HEAD specified in the request.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "vornado.com",
+  "repo_truth": {
+    "filters_csv": "vornado,vornado-carbon-pad,VORNADO-CARBON-PAD,Carbon prefilter pad,3,Washable / replaceable pad",
+    "retailer_links_primary": "https://www.vornado.com/search?q=VORNADO-CARBON-PAD (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY",
+    "compatibility_edges": ["vornado-ac350", "vornado-ac500", "vornado-ac550", "vornado-pc300", "vornado-ac500b", "vornado-ac550w"],
+    "filter_aliases": "none for vornado-carbon-pad",
+    "descriptor_flags": [
+      "filters.csv name 'Carbon prefilter pad' is a generic descriptor; Vornado's official name is 'Activated Carbon Filter' (no 'pad').",
+      "filters.csv notes 'Washable / replaceable pad' is INCORRECT — MD1-0023 is a REPLACEABLE carbon filter (replace every 4-6 months), not washable.",
+      "filters.csv replacement_interval_months=3 differs from official 4-6 months."
+    ]
+  },
+  "prior_repo_only_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-vornado-carbon-pad-v1.results.json",
+    "found": true,
+    "prior_mode": "repo_truth_only_v1",
+    "prior_result": "All 6 models UNKNOWN; SEARCH_PLACEHOLDER_PRIMARY; recommended_csv_mutation null; no PDP proof; no identity conflict asserted (missing-proof only). Breadcrumbed this live-browser file as the next step.",
+    "this_run_supersedes_prior": true
+  },
+  "filter_identity": {
+    "discrete_official_sku_exists": true,
+    "official_pdp_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+    "pdp_is_real": true,
+    "primary_product_title": "MD1-0023 Activated Carbon Filter (2-Pack)",
+    "exact_sku_or_part_number": "MD1-0023",
+    "filter_type": "Activated coconut-carbon pre-filter (2 per pack); replace every 4-6 months",
+    "price_usd": "16.99",
+    "add_to_cart_present": true,
+    "add_to_cart_active": true,
+    "in_stock_proven": true,
+    "in_stock_evidence": "Add to Cart button present and active; no out-of-stock/sold-out indicator on PDP (live browser 2026-06-21). Explicit stock-level text not surfaced in this extraction; same-day subagent live check reported 'In Stock'.",
+    "primary_compatibility_text_verbatim": "This Activated Carbon Filter (2-Pack), part number MD1-0023, works with models AC300 and AC500 True HEPA Air Purifiers. Fits AC300, AC350, AC500, AC550.",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "ABSENT — 'VORNADO-CARBON-PAD' (and 'carbon pad') does not appear on vornado.com as a product name, SKU, or descriptor. Vornado uses 'Activated Carbon Filter'. The repo token is a BuckParts-internal generic descriptor.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "MD1-0023 — 'Activated Carbon Filter (2-Pack)' (AC300/AC350/AC500/AC550). Companion HEPA = MD1-0022. NOTE: the PCO family carbon filter is a DIFFERENT SKU, MD1-0027."
+  },
+  "model_slugs_checked": ["vornado-ac350", "vornado-ac500", "vornado-ac500b", "vornado-ac550", "vornado-ac550w", "vornado-pc300"],
+  "model_rows": [
+    {
+      "model_slug": "vornado-ac350",
+      "model_number": "AC350",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://vornado.com/collections/ac350-replacement-parts", "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1"],
+      "documented_filter_tokens": ["MD1-0023", "MD1-0022"],
+      "notes": "PROVEN: AC350 replacement-parts collection + MD1-0023 PDP list AC350. Carbon = MD1-0023 ($16.99, ATC active); HEPA companion = MD1-0022."
+    },
+    {
+      "model_slug": "vornado-ac500",
+      "model_number": "AC500",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1"],
+      "documented_filter_tokens": ["MD1-0023", "MD1-0022"],
+      "notes": "PROVEN: MD1-0023 PDP compatibility lists AC500 (and the body text explicitly names AC500)."
+    },
+    {
+      "model_slug": "vornado-ac500b",
+      "model_number": "AC500B",
+      "model_filter_classification": "PHANTOM_NOT_FOUND",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "MODEL_NOT_FOUND_ON_OFFICIAL_SOURCE",
+      "official_source_urls": ["https://vornado.com/search?q=AC500B"],
+      "documented_filter_tokens": [],
+      "notes": "PROVEN absence: vornado.com search for 'AC500B' returns 0 results; no official product page. INFERRED (not proven): 'B' is likely a Black color-variant of AC500 (which would use MD1-0023), but no official source confirms the exact AC500B SKU. Hold/verify before mapping."
+    },
+    {
+      "model_slug": "vornado-ac550",
+      "model_number": "AC550",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://vornado.com/products/ac550-air-purifier-with-true-hepa-filtration", "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1"],
+      "documented_filter_tokens": ["MD1-0023", "MD1-0022"],
+      "notes": "PROVEN: AC550 unit PDP explicitly states 'Two (2) HEPA Filters (MD1-0022) and Two (2) Carbon Prefilters (MD1-0023) included'. Carbon = MD1-0023."
+    },
+    {
+      "model_slug": "vornado-ac550w",
+      "model_number": "AC550W",
+      "model_filter_classification": "PHANTOM_NOT_FOUND",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "MODEL_NOT_FOUND_ON_OFFICIAL_SOURCE",
+      "official_source_urls": ["https://vornado.com/search?q=AC550W"],
+      "documented_filter_tokens": [],
+      "notes": "PROVEN absence: vornado.com search for 'AC550W' returns 0 results; no official product page. INFERRED (not proven): 'W' is likely a White color-variant of AC550 (which would use MD1-0023), but no official source confirms the exact AC550W SKU. Hold/verify before mapping."
+    },
+    {
+      "model_slug": "vornado-pc300",
+      "model_number": "PC300",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://vornado.com/products/pco300-silverscreen-air-purifier-with-true-hepa-filtration", "https://vornado.com/products/md1-0027-advanced-carbon-filter-1"],
+      "documented_filter_tokens": ["MD1-0027"],
+      "correct_filter_official": "MD1-0027 Advanced Carbon Filter (fits PCO200/PCO300/PCO375DC/PCO500/PCO575DC)",
+      "notes": "PROVEN wrong-family: 'PC300' returns 0 results (likely a truncation of the real model PCO300). The real PCO300 (Silverscreen, UV+TiO2+HEPA — different product platform) uses carbon filter MD1-0027, NOT MD1-0023. Assigning MD1-0023 to it is a wrong-part mapping. (PCO300 HEPA MD1-0022 is shared, but the carbon SKU differs.)"
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+      "retailer_or_source": "vornado_official_oem_pdp",
+      "exact_token_proof": "PROVEN: official PDP title 'MD1-0023 Activated Carbon Filter (2-Pack)', SKU MD1-0023. Catalog token VORNADO-CARBON-PAD NOT present.",
+      "buyability_proof": "PROVEN: Add to Cart present and active; $16.99; no OOS indicator; live browser 2026-06-21.",
+      "wrong_family_risk": "NONE for AC350/AC500/AC550. WRONG-FAMILY if this slug remains mapped to PC300/PCO300 (needs MD1-0027). AC500B/AC550W unverified (phantom on official source).",
+      "status": "PASS_FOR_AC_FAMILY_ONLY"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 3, "FAIL": 3, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 3, "PROVEN_WRONG_FAMILY": 1, "PHANTOM_NOT_FOUND": 2, "UNKNOWN": 0},
+  "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT promotion as-is. The carbon filter is REAL and directly buyable (MD1-0023) — this is NOT a phantom slug — but three blockers prevent a safe promotion of vornado-carbon-pad in its current state. Recoverable to READY_FOR_OWNER_REVIEW for the AC-family core after a naming bridge + model-map trim.",
+  "blockers": [
+    "BLOCKER 1 (naming bridge required): canonical token VORNADO-CARBON-PAD is a generic descriptor absent from every official Vornado page. Correct identity = MD1-0023 'Activated Carbon Filter (2-Pack)'. Also fix filters.csv descriptor errors ('Washable / replaceable pad' -> replaceable carbon filter; interval 3 -> 4-6 months).",
+    "BLOCKER 2 (wrong-family): vornado-pc300 maps to the PCO300 line, which uses carbon filter MD1-0027, NOT MD1-0023. Promoting the slug while PC300 is mapped would route PCO300 owners to the wrong carbon filter.",
+    "BLOCKER 3 (phantom models): vornado-ac500b and vornado-ac550w return 0 results on vornado.com — no official product page. Likely color variants of AC500/AC550 (would use MD1-0023) but unverified; hold/verify before they can count as safe edges."
+  ],
+  "recoverable_core": "AC350 + AC500 + AC550 -> MD1-0023 (in stock, $16.99, ATC active). Expected safe-edge gain after naming bridge + trim = +3 (up to +5 if AC500B/AC550W are confirmed AC500/AC550 color variants).",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation and any apply. Promotion must ship WITH the naming bridge + model-map trim, never before.",
+    "filters_csv": {
+      "filter_slug": "vornado-carbon-pad",
+      "action": "naming_bridge_and_descriptor_fix",
+      "before_oem_part_number": "VORNADO-CARBON-PAD",
+      "after_oem_part_number": "MD1-0023 (Vornado official SKU; or repo's canonical form for the 'Activated Carbon Filter (2-Pack)')",
+      "before_name": "Carbon prefilter pad",
+      "after_name": "MD1-0023 Activated Carbon Filter (2-Pack)",
+      "before_notes": "Washable / replaceable pad",
+      "after_notes": "Replaceable activated carbon pre-filter, 2-pack, every 4-6 months; AC300/AC350/AC500/AC550 (NOT the PCO MD1-0027 carbon filter)",
+      "before_interval_months": 3,
+      "after_interval_months": 6
+    },
+    "retailer_links_csv": {
+      "filter_slug": "vornado-carbon-pad",
+      "action": "replace_primary_after_bridge",
+      "after": {
+        "retailer_name": "Vornado (OEM)",
+        "destination_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "affiliate_url": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Vornado PDP 'MD1-0023 Activated Carbon Filter (2-Pack)' $16.99; Add to Cart active 2026-06-21; fits AC300/AC350/AC500/AC550.",
+        "browser_truth_checked_at": "2026-06-21"
+      },
+      "affiliate_note": "Apply Vornado affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "vornado-pc300,vornado-carbon-pad,true", "action": "remove", "reason": "wrong-family; PCO300 uses MD1-0027, not MD1-0023. Re-home to an MD1-0027 slug."},
+      {"edge": "vornado-ac500b,vornado-carbon-pad,true", "action": "hold_or_verify", "reason": "phantom on official source; likely AC500 Black variant -> would use MD1-0023 if confirmed."},
+      {"edge": "vornado-ac550w,vornado-carbon-pad,true", "action": "hold_or_verify", "reason": "phantom on official source; likely AC550 White variant -> would use MD1-0023 if confirmed."},
+      {"keep": "vornado-ac350,vornado-carbon-pad,true", "reason": "PROVEN_FITS"},
+      {"keep": "vornado-ac500,vornado-carbon-pad,true", "reason": "PROVEN_FITS"},
+      {"keep": "vornado-ac550,vornado-carbon-pad,true", "reason": "PROVEN_FITS"}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 3,
+  "expected_safe_edge_gain_upper_bound": 5,
+  "naming_bridge_required": true,
+  "vornado_carbon_pad_absent_on_official_pdp": true,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN: A real discrete official Vornado carbon pre-filter SKU exists — MD1-0023 'Activated Carbon Filter (2-Pack)', $16.99, Add to Cart active, fits AC300/AC350/AC500/AC550 (live browser vornado.com 2026-06-21).",
+    "PROVEN: The token 'VORNADO-CARBON-PAD' (and the word 'pad') does NOT appear on any official Vornado page; the official name is 'Activated Carbon Filter'. A naming bridge to MD1-0023 is required.",
+    "PROVEN: AC550 unit PDP explicitly lists MD1-0022 (HEPA) + MD1-0023 (carbon) as included filters.",
+    "PROVEN wrong-family: the PCO line (real model PCO300; 'PC300' returns 0 results) uses carbon filter MD1-0027, not MD1-0023.",
+    "PROVEN absence: 'AC500B' and 'AC550W' return 0 results on vornado.com — no official product pages.",
+    "PROVEN: repo at HEAD efe75e5; vornado-carbon-pad row carries an inaccurate 'Washable / replaceable pad' descriptor and a 404-style search-placeholder primary."
+  ],
+  "inferred_facts": [
+    "INFERRED: AC500B and AC550W are likely Black/White color variants of AC500/AC550 (which use MD1-0023), but no official source confirms the exact suffixed SKUs.",
+    "INFERRED: 'PC300' in the repo is likely a truncation of the real model 'PCO300'."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Exact official confirmation of AC500B / AC550W as color variants vs retired/third-party SKUs.",
+    "UNKNOWN: Explicit live stock-level text on the MD1-0023 PDP (Add to Cart was active; no stock-count string surfaced this pass).",
+    "UNKNOWN: The repo's preferred canonical token form for the naming bridge (owner/Cursor catalog policy)."
+  ]
+}
