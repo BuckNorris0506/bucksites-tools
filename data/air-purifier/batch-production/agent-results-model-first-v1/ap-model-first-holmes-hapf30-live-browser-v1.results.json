@@ -2,199 +2,859 @@
   "contract": "air_purifier_model_first_evidence_result_v1",
   "report_name": "air_purifier_model_first_evidence_result_v1",
   "packet_id": "ap-model-first-holmes-hapf30-live-browser-v1",
-  "run_id": "ap-model-first-holmes-hapf30-live-browser-2026-05-28",
+  "run_id": "ap-model-first-holmes-hapf30-live-browser-2026-06-22",
   "queue_contract": "ap_model_first_evidence_queue_v1",
   "anchor_filter_slug": "holmes-hapf30",
   "filter_slug": "holmes-hapf30",
   "read_only": true,
   "data_mutation": false,
-  "generated_at": "2026-05-28T12:00:00.000Z",
-  "checked_at": "2026-05-28T12:00:00.000Z",
-  "source_status": "PARTIAL",
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-22T03:58:19.000Z",
+  "checked_at": "2026-06-22T03:58:19.000Z",
+  "repo_head_at_capture": "82f8f9e",
+  "source_status": "PROVEN",
   "evidence_collection_mode": "live_browser_model_first_v1",
   "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "holmesproducts.com",
+  "evidence_source_transparency": "Orchestrator curl to holmesproducts.com returned HTTP 403 (Cloudflare). PDP body fields captured via Exa web_fetch_exa same-day (2026-06-22) from official URLs; no fields fabricated.",
+  "repo_truth": {
+    "filters_csv": "holmes,holmes-hapf30,HOLMES-HAPF30,HAPF30 / HAPF300 HEPA filter,6,AER1 tower line",
+    "filter_aliases": "holmes-hapf30 -> HAPF30, HAPF300",
+    "retailer_links_primary": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30 (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY",
+    "compatibility_edges_count": 31,
+    "identity_notes": "Repo slug holmes-hapf30 is an aer1 Type-A family label; official sellable SKUs are HAPF300AHD-U4R-2 (True HEPA) and HAPF300APD-U4-2 (Performance Plus), not standalone HAPF30 on a buyable PDP."
+  },
+  "prior_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-holmes-hapf30-live-browser-v1.results.json",
+    "prior_run_id": "ap-model-first-holmes-hapf30-live-browser-2026-05-28",
+    "this_run_supersedes_prior": true,
+    "note": "Prior May 2026 artifact sampled 5 models only with all UNKNOWN evidence_status; this run covers all 31 compatibility-mapped models with live Exa re-capture."
+  },
+  "filter_identity": {
+    "official_pdp_urls": [
+      "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html"
+    ],
+    "primary_pdp_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+    "pdp_is_real": true,
+    "primary_product_title": "Holmes HAPF300AHD Aer1 True HEPA Allergen Remover Air Purifier Filter (2-Pack)",
+    "secondary_product_title": "Holmes HAPF300APD aer1 True HEPA Performance Plus Air Purifier Filter Dual Pack",
+    "exact_sku_or_part_numbers": [
+      "HAPF300AHD-U4R-2",
+      "HAPF300APD-U4-2"
+    ],
+    "aer1_family_tokens": [
+      "HAPF30",
+      "HAPF300AHD",
+      "HAPF300APD",
+      "HAPF30AO",
+      "HAPF30AS",
+      "HAPF30AT",
+      "HAPF30ATD"
+    ],
+    "filter_type": "aer1 Type-A family — True HEPA allergen remover (HAPF300AHD) and Performance Plus (HAPF300APD) variants",
+    "price_usd": null,
+    "add_to_cart_present": true,
+    "add_to_cart_active": false,
+    "in_stock_proven": false,
+    "in_stock_text": "Out of Stock",
+    "purchase_path": "Where To Buy (external retailers Amazon/Walmart/Target per Holmes Q&A); search HAPF30 returns product but quantity not available",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "ABSENT — 'HOLMES-HAPF30' does not appear on official Holmes PDPs. Real on-page models are HAPF300AHD-U4R-2 / HAPF300APD-U4-2. Repo aliases HAPF30/HAPF300 partially bridge consumer tokens.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "Official aer1 True HEPA SKU HAPF300AHD-U4R-2 (primary reference PDP SP_763535); catalog internal token HOLMES-HAPF30 is BuckParts form only."
+  },
+  "model_slugs_checked": [
+    "holmes-hap412bcs",
+    "holmes-hap412bns",
+    "holmes-hap422b",
+    "holmes-hap424-u",
+    "holmes-hap424-u8",
+    "holmes-hap706-u",
+    "holmes-hap716-u",
+    "holmes-hap726-u",
+    "holmes-hap9412-ua",
+    "holmes-hap9412b-ua",
+    "holmes-hap9413",
+    "holmes-hap9414",
+    "holmes-hap9422",
+    "holmes-hap9423",
+    "holmes-hap9424",
+    "holmes-hap9426",
+    "holmes-hap9726",
+    "holmes-hap616-u",
+    "holmes-hap625-u",
+    "holmes-hap633-u",
+    "holmes-hap633w",
+    "holmes-hap701-u",
+    "holmes-hap702-u",
+    "holmes-hap703-u",
+    "holmes-hap704-u",
+    "holmes-hap705-u",
+    "holmes-hap706b",
+    "holmes-hap9240",
+    "holmes-hap9241",
+    "holmes-hap9242",
+    "holmes-hap9243"
+  ],
   "model_rows": [
     {
       "model_slug": "holmes-hap412bcs",
       "model_number": "HAP412BCS",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
       "official_source_urls": [
-        "https://www.holmesproducts.com/instruction-manuals.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
-        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html"
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
       ],
       "manual_urls": [],
       "documented_filter_tokens": [
         "HAPF30",
-        "HAPF30AO",
-        "HAPF30AS",
-        "HAPF30AT",
-        "HAPF30ATD",
         "HAPF300AHD",
         "HAPF300APD",
-        "HAPF300AH"
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
       ],
-      "evidence_status": "UNKNOWN",
-      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
-      "notes": "PROVEN: No dedicated holmesproducts.com PDP or manual entry for exact model number HAP412BCS (live browser search May 2026). PROVEN: Official Holmes aer1 filter PDPs list family prefix HAP412 (not HAP412BCS suffix) among compatible purifiers. PROVEN: Official PDP primary SKU tokens are HAPF300AHD-U4R-2 / HAPF300APD-U4-2 — not catalog slug HOLMES-HAPF30. PROVEN: Holmes Q&A on SP_763535 documents aer1 aliases HAPF30AO-U4R-1, HAPF300AHD-U4R-1, HAPF300APD-U4-1, HAPF30AS-U4R-2, HAPF30ATD-U4R-2; copy references traditional Type A HAPF30 filters. UNKNOWN: Per-model manual PDF URL for HAP412BCS (instruction-manuals index lists HAP412BNS variants only)."
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP412BCS (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP412BCS."
     },
     {
       "model_slug": "holmes-hap412bns",
       "model_number": "HAP412BNS",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
       "official_source_urls": [
-        "https://www.holmesproducts.com/instruction-manuals.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
-        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html"
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
       ],
       "manual_urls": [],
       "documented_filter_tokens": [
         "HAPF30",
-        "HAPF30AO",
-        "HAPF30AS",
-        "HAPF30AT",
-        "HAPF30ATD",
         "HAPF300AHD",
         "HAPF300APD",
-        "HAPF300AH"
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
       ],
-      "evidence_status": "UNKNOWN",
-      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
-      "notes": "PROVEN: Holmes instruction-manuals index lists HAP412BNS-NU and HAP412BNS-U manual entries (live browser). PROVEN: Same official filter PDP family compatibility for HAP412 prefix. UNKNOWN: Direct PDF download URL not captured (manual index only). UNKNOWN: Exact HOLMES-HAPF30 catalog token on an official Holmes product PDP. No safe official Add to Cart on checked Holmes filter PDPs."
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP412BNS (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP412BNS."
     },
     {
       "model_slug": "holmes-hap422b",
       "model_number": "HAP422B",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
       "official_source_urls": [
-        "https://www.holmesproducts.com/instruction-manuals.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
-        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html"
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
       ],
       "manual_urls": [],
       "documented_filter_tokens": [
         "HAPF30",
-        "HAPF30AO",
-        "HAPF30AS",
-        "HAPF30AT",
-        "HAPF30ATD",
         "HAPF300AHD",
         "HAPF300APD",
-        "HAPF300AH"
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
       ],
-      "evidence_status": "UNKNOWN",
-      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
-      "notes": "PROVEN: Official Holmes filter PDPs document HAP422 family prefix compatibility (not HAP422B suffix). PROVEN: No dedicated holmesproducts.com product or manual page found for exact HAP422B. INFERRED: HAP422B is aer1-ready like HAP422 family per repo model series=AER1 and official HAP422 compatibility list — not sufficient for PASS without per-model official page. UNKNOWN: Standalone HAPF30 OEM SKU with in-stock Holmes Add to Cart."
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP422B (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP422B."
     },
     {
       "model_slug": "holmes-hap424-u",
       "model_number": "HAP424-U",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
       "official_source_urls": [
-        "https://www.holmesproducts.com/instruction-manuals.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
-        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html"
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
       ],
       "manual_urls": [],
       "documented_filter_tokens": [
         "HAPF30",
-        "HAPF30AO",
-        "HAPF30AS",
-        "HAPF30AT",
-        "HAPF30ATD",
         "HAPF300AHD",
         "HAPF300APD",
-        "HAPF300AH"
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
       ],
-      "evidence_status": "UNKNOWN",
-      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
-      "notes": "PROVEN: Holmes instruction-manuals index lists HAP424-NU-1 tower manual entry (live browser). PROVEN: Official filter PDPs list HAP424 family prefix. UNKNOWN: Exact HAP424-U suffix on an official Holmes model/support page. UNKNOWN: Exact HOLMES-HAPF30 token on official in-stock PDP."
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP424-U (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP424-U."
     },
     {
       "model_slug": "holmes-hap424-u8",
       "model_number": "HAP424-U8",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
       "official_source_urls": [
-        "https://www.holmesproducts.com/instruction-manuals.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
         "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
-        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html"
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
       ],
       "manual_urls": [],
       "documented_filter_tokens": [
         "HAPF30",
-        "HAPF30AO",
-        "HAPF30AS",
-        "HAPF30AT",
-        "HAPF30ATD",
         "HAPF300AHD",
         "HAPF300APD",
-        "HAPF300AH"
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
       ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP424-U8 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP424-U8."
+    },
+    {
+      "model_slug": "holmes-hap706-u",
+      "model_number": "HAP706-U",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP706-U (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP706-U."
+    },
+    {
+      "model_slug": "holmes-hap716-u",
+      "model_number": "HAP716-U",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP716-U (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP716-U."
+    },
+    {
+      "model_slug": "holmes-hap726-u",
+      "model_number": "HAP726-U",
+      "model_filter_classification": "UNKNOWN",
       "evidence_status": "UNKNOWN",
       "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
-      "notes": "PROVEN: Official Holmes filter PDPs document HAP424 family prefix only — no HAP424-U8-specific official page found (live browser). PROVEN: HAP424-NU-1 manual exists on instruction-manuals index (related tower line). UNKNOWN: Whether HAP424-U8 maps 1:1 to HAP424-NU-1 manual without official proof. Do not claim unavailable."
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP726-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap9412-ua",
+      "model_number": "HAP9412-UA",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9412-UA (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9412-UA."
+    },
+    {
+      "model_slug": "holmes-hap9412b-ua",
+      "model_number": "HAP9412B-UA",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9412B-UA (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9412B-UA."
+    },
+    {
+      "model_slug": "holmes-hap9413",
+      "model_number": "HAP9413",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9413 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9413."
+    },
+    {
+      "model_slug": "holmes-hap9414",
+      "model_number": "HAP9414",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9414 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9414."
+    },
+    {
+      "model_slug": "holmes-hap9422",
+      "model_number": "HAP9422",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9422 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9422."
+    },
+    {
+      "model_slug": "holmes-hap9423",
+      "model_number": "HAP9423",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9423 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9423."
+    },
+    {
+      "model_slug": "holmes-hap9424",
+      "model_number": "HAP9424",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9424 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9424."
+    },
+    {
+      "model_slug": "holmes-hap9426",
+      "model_number": "HAP9426",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP9426 is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap9726",
+      "model_number": "HAP9726",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP9726 is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap616-u",
+      "model_number": "HAP616-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP616-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap625-u",
+      "model_number": "HAP625-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP625-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap633-u",
+      "model_number": "HAP633-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP633-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap633w",
+      "model_number": "HAP633W",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP633W is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap701-u",
+      "model_number": "HAP701-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP701-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap702-u",
+      "model_number": "HAP702-U",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP702-U (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP702-U."
+    },
+    {
+      "model_slug": "holmes-hap703-u",
+      "model_number": "HAP703-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP703-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap704-u",
+      "model_number": "HAP704-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP704-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap705-u",
+      "model_number": "HAP705-U",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "UNKNOWN: HAP705-U is not named on the official SP_763535/SP_763540 compatibility lists (live Exa capture 2026-06-22). Repo maps to holmes-hapf30 via compatibility_mappings.csv only — insufficient for PROVEN_FITS without per-model official documentation. Do not claim wrong-family without proof."
+    },
+    {
+      "model_slug": "holmes-hap706b",
+      "model_number": "HAP706B",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP706B (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP706B."
+    },
+    {
+      "model_slug": "holmes-hap9240",
+      "model_number": "HAP9240",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9240 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9240."
+    },
+    {
+      "model_slug": "holmes-hap9241",
+      "model_number": "HAP9241",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9241 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9241."
+    },
+    {
+      "model_slug": "holmes-hap9242",
+      "model_number": "HAP9242",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9242 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9242."
+    },
+    {
+      "model_slug": "holmes-hap9243",
+      "model_number": "HAP9243",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "OFFICIAL_FILTER_PDP_OUT_OF_STOCK_WHERE_TO_BUY",
+      "official_source_urls": [
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+        "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
+        "https://www.holmesproducts.com/which-aer1-air-Filter-is-right-for-my-air-purifier.html",
+        "https://www.holmesproducts.com/instruction-manuals.html"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": [
+        "HAPF30",
+        "HAPF300AHD",
+        "HAPF300APD",
+        "HAPF300AHD-U4R-2",
+        "HAPF300APD-U4-2"
+      ],
+      "notes": "PROVEN: Official Holmes aer1 True HEPA PDP SP_763535 (HAPF300AHD-U4R-2) and Performance Plus SP_763540 (HAPF300APD-U4-2) list compatible purifier family prefix for HAP9243 (live Exa capture 2026-06-22). aer1 Type-A filter family per Holmes Q&A (HAPF30/HAPF300 aliases). No dedicated holmesproducts.com page for exact suffix HAP9243."
     }
   ],
   "candidate_buyer_paths": [
     {
       "url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
       "retailer_or_source": "holmes_official",
-      "exact_token_proof": "PROVEN: Primary product model on PDP is HAPF300AHD-U4R-2; page lists HAPF300AHD/HAPF30-family Q&A tokens. PROVEN: Exact catalog slug token HOLMES-HAPF30 does not appear in primary product area.",
-      "buyability_proof": "PROVEN: Page shows Out of Stock and Where To Buy (not safe Add to Cart). Committed batch-v3 agrees add_to_cart_or_buy_button_found=false.",
-      "wrong_family_risk": "PROVEN: PDP is True HEPA HAPF300AHD SKU — repo anchor holmes-hapf30 is HAPF30/HAPF300 family label; mapping to this PDP alone would be HAPF300-skew without per-model proof.",
+      "exact_token_proof": "PROVEN: Primary model HAPF300AHD-U4R-2 on official PDP; HAPF300AHD/HAPF30-family Q&A tokens. PROVEN: HOLMES-HAPF30 absent.",
+      "buyability_proof": "PROVEN: Out of Stock; Where To Buy only — Add to Cart UI present but product unavailable (Exa capture 2026-06-22). Not safe direct_buyable.",
+      "wrong_family_risk": "LOW for aer1-mapped models on official compat list; repo slug conflates Type-A aer1 family with specific HAPF300AHD SKU.",
       "status": "FAIL"
     },
     {
       "url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763540.html",
       "retailer_or_source": "holmes_official",
-      "exact_token_proof": "PROVEN: Primary product model HAPF300APD-U4-2 on official PDP. PROVEN: HAPF30/HOLMES-HAPF30 exact slug not in primary product area.",
-      "buyability_proof": "PROVEN: Where To Buy / notify-style purchase path on official Holmes filter PDP (no safe direct buy proven in live browser pass).",
-      "wrong_family_risk": "PROVEN: Performance Plus HAPF300APD line — same aer1 family but different SKU than HAPF30 Type-A naming in repo.",
+      "exact_token_proof": "PROVEN: Primary model HAPF300APD-U4-2 on official PDP.",
+      "buyability_proof": "PROVEN: Out of Stock; Where To Buy only (Exa capture 2026-06-22).",
+      "wrong_family_risk": "Performance Plus line — same aer1 bay, different filter SKU than HAPF300AHD; repo name HAPF30/HAPF300 is family-level.",
       "status": "FAIL"
     },
     {
-      "url": "https://www.amazon.com/Replacement-Purifiers-Filters-Booster-HAPF30AT/dp/B0C3H7SXQ6",
-      "retailer_or_source": "amazon_retailer_third_party",
-      "exact_token_proof": "PROVEN: Listing title references HAPF30AT compare-to token; PROVEN: Sold by Leemone (third-party, not Holmes OEM).",
-      "buyability_proof": "PROVEN: Add to Cart visible on PDP (retailer evidence only).",
-      "wrong_family_risk": "PROVEN: Third-party compatible filter — not official model evidence; not safe for holmes-hapf30 CSV primary without OEM token + model chain proof.",
+      "url": "https://www.holmesproducts.com/search?q=HAPF30",
+      "retailer_or_source": "holmes_official_search",
+      "exact_token_proof": "PROVEN: Search returns HAPF300AHD 2-pack as sole result.",
+      "buyability_proof": "PROVEN: \"The selected quantity is currently not available.\"",
+      "wrong_family_risk": "NONE for discovery; not a PDP.",
       "status": "FAIL"
     }
   ],
-  "filter_first_cross_reference": {
-    "source_artifact_rel": "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json",
-    "filter_slug": "holmes-hapf30",
-    "evidence_status": "UNKNOWN",
-    "candidate_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
-    "browser_truth_classification": "official_reference",
-    "exact_token_found": false,
-    "add_to_cart_or_buy_button_found": false,
-    "token_evidence": "Live browser confirms HAPF300AHD family tokens on official filter PDP; HOLMES-HAPF30 slug not proven.",
-    "buy_button_evidence": "Live browser: Out of Stock + Where To Buy on official Holmes filter PDP.",
-    "rejection_reason": "Missing exact catalog slug token proof and safe buy-button proof for direct_buyable.",
-    "applies_to": "filter_slug_only_not_per_model_pages"
-  },
   "evidence_status_counts": {
-    "PASS": 0,
+    "PASS": 20,
     "FAIL": 0,
-    "UNKNOWN": 5,
+    "UNKNOWN": 11,
     "BLOCKED": 0
   },
+  "model_filter_classification_counts": {
+    "PROVEN_FITS": 20,
+    "PROVEN_WRONG_FAMILY": 0,
+    "PHANTOM_NOT_FOUND": 0,
+    "UNKNOWN": 11
+  },
   "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT safe direct_buyable promotion. Official Holmes aer1 filter PDPs are real reference pages but Out of Stock with Where To Buy only — no in-stock Holmes Add to Cart. Catalog search placeholder HOLMES-HAPF30 is non-resolving; bare HAPF30 search finds product but unavailable. 20/31 mapped models PROVEN_FITS via official compat lists; 11 models UNKNOWN (not on official lists). Reference-only OEM PDP promotion may be a separate owner lane — not direct_buyable.",
+  "blockers": [
+    "BLOCKER 1 (buyability): Official SP_763535 and SP_763540 show Out of Stock + Where To Buy — fails direct_buyable gate.",
+    "BLOCKER 2 (token bridge): Repo oem_part_number HOLMES-HAPF30 not on official PDP; primary sellable identity is HAPF300AHD-U4R-2 / HAPF300APD-U4-2.",
+    "BLOCKER 3 (model coverage): 11/31 compatibility-mapped models lack official compat-list proof (HAP726, HAP9426, HAP9726, HAP616/625/633 family, HAP701/703/704/705)."
+  ],
+  "open_items": [
+    "Owner decision: reference-only promotion to SP_763535 vs defer until Holmes restores OEM direct purchase.",
+    "Trim or re-home 11 UNKNOWN compat edges before any promotion.",
+    "Clarify whether holmes-hapf30 anchor targets HAPF300AHD only or entire aer1 Type-A family (multiple SKUs)."
+  ],
+  "expected_safe_edge_gain_if_buyable": 20,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "no_commit": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
   "proven_facts": [
-    "PROVEN: Live browser pass checked 5 queue sample models for anchor filter holmes-hapf30.",
-    "PROVEN: Official Holmes aer1 filter PDPs SP_763535 and SP_763540 document HAP412/HAP422/HAP424 family compatibility and HAPF300AHD/HAPF300APD SKUs.",
-    "PROVEN: Official Holmes filter PDPs are Out of Stock with Where To Buy — not safe direct_buyable.",
-    "PROVEN: Exact catalog slug HOLMES-HAPF30 not found on checked official Holmes product pages.",
-    "PROVEN: recommended_csv_mutation is null — model evidence + safe buyer path not both proven."
+    "PROVEN: Official Holmes SP_763535 (HAPF300AHD-U4R-2) and SP_763540 (HAPF300APD-U4-2) PDPs exist on holmesproducts.com (Exa capture 2026-06-22).",
+    "PROVEN: Both official filter PDPs show Out of Stock with Where To Buy — not safe direct_buyable.",
+    "PROVEN: HOLMES-HAPF30 site search is non-resolving; bare HAPF30 search returns HAPF300AHD product but unavailable.",
+    "PROVEN: 20/31 repo-mapped models match official HAP412/HAP422/HAP424/HAP702/HAP706/HAP716/HAP924x/HAP941x/HAP942x family prefixes on SP_763535 compat copy.",
+    "PROVEN: recommended_csv_mutation null; safe_apply_authorized false."
   ],
   "inferred_facts": [
-    "INFERRED: All five sample units are aer1-ready tower/desktop family aligned with official HAP412/HAP422/HAP424 compatibility lists.",
-    "INFERRED: Repo compatibility_mappings holmes-hapf30 links are directionally consistent with official aer1 family documentation but lack per-suffix model pages."
+    "INFERRED: Repo holmes-hapf30 is a family-level aer1 Type-A anchor; official OEM sells specific HAPF300AHD/HAPF300APD SKUs.",
+    "INFERRED: Prior batch reference_eligible classification remains directionally valid for SP_763535 reference path only."
   ],
   "unknown_facts": [
-    "UNKNOWN: Official in-stock Holmes OEM PDP with exact HOLMES-HAPF30 or standalone HAPF30 SKU and Add to Cart.",
-    "UNKNOWN: Direct PDF manual URLs for each exact model suffix (instruction-manuals index entries found for related variants only).",
-    "UNKNOWN: Whether any retailer OEM-sold HAPF30AT listing exists with Holmes as seller (only third-party compatible listings observed on Amazon)."
+    "UNKNOWN: Whether Holmes will restore in-stock OEM Add to Cart on SP_763535/SP_763540.",
+    "UNKNOWN: Per-suffix official support pages for 11 models not on compat lists.",
+    "UNKNOWN: Whether HAP726/HAP616/HAP633/HAP701 series use aer1 filters despite absence from published compat list."
   ]
 }
