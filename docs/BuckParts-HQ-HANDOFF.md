@@ -109,7 +109,7 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ---
 
-## Current stopping point — AP CSV Execution Progress (PROVEN through `8a840e1`)
+## Current stopping point — AP CSV Execution Progress (PROVEN through `c780e82`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
 
@@ -118,10 +118,11 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| HEAD / `origin/main` at handoff refresh | **`8a840e1`** |
-| Latest commit | **`8a840e1`** — Blueair 211 Plus filter buyer path |
-| Prior AP commits (pushed) | **`2acc8f9`** — GermGuardian FLT4100 direct buyer path; **`07d1281`** — Coway Airmega 250 Max2 buyer path; **`b4c94f8`** — Rabbit Air MinusA2 carbon filter; **`03dcf49`** — Winix Filter I / 116131 identity correction; **`f9dc3a9`** — Levoit Core 300 Option A; **`254f6c6`** — Shark carbon-foam HE1 partial re-home |
-| Working tree | **Re-verify** — handoff records pushed `origin/main` truth at **`8a840e1`**; local uncommitted work may exist |
+| HEAD / `origin/main` at handoff refresh | **`c780e82`** |
+| Latest commit | **`c780e82`** — Renpho RP-AP003 live-browser model-first evidence |
+| AP wave commits (pushed on `origin/main`) | **`567a3c5`** — Vornado carbon pad buyer path; **`2410e51`** — Coway Airmega 400 Max2 buyer path; **`82f8f9e`** — GermGuardian FLT4825 buyer path; **`b05a405`** — Holmes HAPF30 live-browser rejection evidence; **`c780e82`** — Renpho RP-AP003 live-browser evidence |
+| Prior AP commits (pushed) | **`8a840e1`** — Blueair 211 Plus; **`2acc8f9`** — GermGuardian FLT4100; **`07d1281`** — Coway Airmega 250 Max2; **`b4c94f8`** — Rabbit MinusA2 carbon; **`03dcf49`** — Winix Filter I / 116131; **`f9dc3a9`** — Levoit Core 300 Option A; **`254f6c6`** — Shark carbon-foam HE1 partial re-home |
+| Working tree | **Re-verify** — handoff records pushed `origin/main` truth at **`c780e82`**; local uncommitted work may exist |
 | Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
 | Supabase parity | **UNKNOWN** — seed import still not run; CSV commits do not prove Supabase parity |
 
@@ -136,17 +137,27 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | **`07d1281`** | Coway Airmega 250 | `coway-airmega250-rf` — canonical token `COWAY-3109144` (AP-1720-FP); official cowaymega Airmega 250 Max2 PDP `direct_buyable`; compat restricted to **`coway-airmega-250`** / **`250s`** / **`250-graphite`**; **4** wrong-family mappings removed (150/160/240 + `coway-ap-2520f-p-` held) |
 | **`2acc8f9`** | GermGuardian FLT4100 | `gg-flt4100` — official Guardian Technologies FLT4100 Filter E PDP `direct_buyable`; notes corrected (Filter E tabletop, not 22″ tower FLT4825); **3** compat rows removed (**`gg-ac4820`** wrong-family Filter B; phantom **`gg-ac4225`** / **`gg-ac4230`**) |
 | **`8a840e1`** | Blueair 211 Plus | `blueair-f2-211` — token `BLUEAIR-F2MAX211PAC` → **`BLUEAIR-211PLUS-PAC`**; name/notes corrected (211+ Series Particle+Carbon; not F2MAX / 211i Max); official Blueair 211+ PDP `direct_buyable`; live-browser artifact `ap-model-first-blueair-f2-211-live-browser-v1.results.json`; **4** wrong-family compat rows removed (**`blueair-211-auto`**, **`blueair-121`**, **`blueair-blue-pure-311`**, **`blueair-blue-pure-311-auto`**); **`blueair-211-plus`** kept — re-home deferred |
+| **`567a3c5`** | Vornado carbon pad | `vornado-carbon-pad` — official MD1-0023 activated carbon filter PDP `direct_buyable`; name/notes corrected (MD1-0023, not generic “carbon pad”); **1** wrong-family row removed (**`vornado-pc300`**); **`vornado-ac500b`** / **`vornado-ac550w`** held |
+| **`2410e51`** | Coway Airmega 400 Max2 | `coway-airmega400-rf` — token `COWAY-AMI400-RF` → **`COWAY-3104756`**; official cowaymega Airmega 400 Max2 PDP `direct_buyable`; **2** wrong-family rows removed (**`coway-airmega-300`** / **`300s`**); **`coway-airmega-400`** / **`400s`** + **`coway-ap-3019f-p-`** kept |
+| **`82f8f9e`** | GermGuardian FLT4825 | `gg-flt4825` — official Guardian Technologies FLT4825 Filter B PDP `direct_buyable`; search placeholder abandoned; compat unchanged (**4** models) |
 
-**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows; Coway 150/160/240 filter slugs; `coway-airmega400-rf` buyer path; Blueair 121 / 211+ Auto / 311 / 311 Auto filter slugs (models unmapped after wrong-family trim).
+**Evidence-only commits (no CSV apply):**
+
+| Commit | Lane | Verdict |
+|--------|------|---------|
+| **`b05a405`** | Holmes HAPF30 | **`direct_buyable` REJECT** — official aer1 PDPs Out of Stock + Where To Buy only; artifact `ap-model-first-holmes-hapf30-live-browser-v1.results.json` |
+| **`c780e82`** | Renpho RP-AP003 | **NO_SAFE_PATH_FOUND** — no official Renpho filter sale path; model/filter slug collision; artifact `ap-model-first-renpho-rp-ap003-live-browser-v1.results.json` |
+
+**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows; Coway 300/300S re-home (SKU 3104757); `coway-ap-3019f-p-` verification on 400 filter; Blueair 121 / 211+ Auto / 311 / 311 Auto filter slugs (models unmapped after wrong-family trim); Holmes HAPF30 reference-only lane; Renpho catalog identity / re-home.
 
 ### 3. AP buyer-path census (PROVEN — re-run audit before citing)
 
 | Metric | Value |
 |--------|------:|
-| Safe direct-buyable filters | **26** |
-| Weak linked filters | **26** |
-| Weak model coverage | **118** |
-| Search-placeholder primary (weak) | **23** |
+| Safe direct-buyable filters | **29** |
+| Weak linked filters | **24** |
+| Weak model coverage | **104** |
+| Search-placeholder primary (weak) | **21** |
 | Guardrails (`buckparts:guardrails:air-purifier`) | **pass** |
 | `lint` / `build` | **pass** |
 | Weak-buyer-path audit | **pass** |
@@ -161,26 +172,39 @@ npx tsx scripts/report-air-purifier-weak-buyer-path-audit-v1.ts | jq '{
 npm run buckparts:guardrails:air-purifier
 ```
 
-### 4. Remaining high-leverage weak AP filters (PROVEN at handoff refresh)
+### 4. Model-first evidence verdicts (PROVEN — artifacts on `origin/main`)
+
+| `filter_slug` | Verdict | Notes |
+|---------------|---------|-------|
+| `holmes-hapf30` | **`direct_buyable` REJECT** | Official aer1 PDPs real but OOS + Where To Buy; **20/31** PROVEN_FITS, **11** UNKNOWN compat |
+| `renpho-rp-ap003` | **NO_SAFE_PATH_FOUND** | No official filter PDP; `RENPHO-RP-AP003` is purifier model token; slug collision |
+| `blueair-particle-411` | **REJECT** | Wrong-family split required (not yet applied) |
+| `alen-fl40` | **NO_SAFE_PATH_FOUND_CURRENTLY** | Sold out on checked OEM path |
+| `hb-trueair-04384` | **Recoverable candidate** | Token bridge + wrong-family removal — **not yet applied** |
+
+### 5. Remaining high-leverage weak AP filters (PROVEN at handoff refresh)
 
 | `filter_slug` | Weak model coverage | Notes |
 |---------------|--------------------:|-------|
-| `holmes-hapf30` | **31** | Search-placeholder primary |
-| `shark-carbon-foam` | **15** | **15** compat rows remain after HE1 partial re-home; invalid identity |
+| `holmes-hapf30` | **31** | Search-placeholder primary; live-browser **REJECT** for `direct_buyable` |
+| `shark-carbon-foam` | **15** | **15** compat rows remain after HE1 partial re-home; invalid identity / re-home lane |
 | `shark-hepa-he1fkbas` | **6** | `likely_valid` OEM PDP (notify/OOS) — not `direct_buyable` |
-| `vornado-carbon-pad` | **6** | Search-placeholder primary |
-| `coway-airmega400-rf` | **5** | Search-placeholder primary |
+| `alen-fl40` | **4** | **NO_SAFE_PATH_FOUND_CURRENTLY** (sold out) |
+| `renpho-rp-ap003` | **4** | **NO_SAFE_PATH_FOUND** — evidence committed **`c780e82`** |
+| `hb-trueair-04384` | **4** | Recoverable token-bridge candidate — not applied |
+| `blueair-particle-411` | **3** | **REJECT** — wrong-family split required |
 
-**Recently promoted (no longer weak):** `gg-flt4100` (**`2acc8f9`**), `blueair-f2-211` (**`8a840e1`**).
+**Recently promoted (no longer weak):** `gg-flt4100` (**`2acc8f9`**), `blueair-f2-211` (**`8a840e1`**), `vornado-carbon-pad` (**`567a3c5`**), `coway-airmega400-rf` (**`2410e51`**), `gg-flt4825` (**`82f8f9e`**).
 
-### 5. Do not do next (at this stopping point)
+### 6. Do not do next (at this stopping point)
 
 - Do **not** run **`npm run seed:import:air-purifier`** without explicit owner scope — Supabase parity **UNKNOWN**.
 - Do **not** treat AP CSV commits as live-site proof — re-run weak-buyer-path audit + guardrails after pull.
+- Do **not** promote **`holmes-hapf30`** or **`renpho-rp-ap003`** to `direct_buyable` without new buyability proof.
 - Do **not** expand Shark carbon-foam / Winix follow-up in the same lane without owner-approved apply plan.
 - Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence.
 
-### 6. Validation (PROVEN before this handoff update)
+### 7. Validation (PROVEN before this handoff update)
 
 ```bash
 npm run lint
@@ -192,7 +216,7 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `8a840e1`)
+## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `c780e82`)
 
 **Superseded for next-move authority.** Retained for selector-alignment proof. **AP CSV Execution Progress** section above is the current executive stopping point.
 
@@ -910,7 +934,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`8a840e1`** — AP CSV execution progress (Levoit Core 300 **`f9dc3a9`**, Shark HE1 partial re-home **`254f6c6`**, Winix Filter I **`03dcf49`**, Rabbit MinusA2 **`b4c94f8`**, Coway Airmega 250 **`07d1281`**, GermGuardian FLT4100 **`2acc8f9`**, Blueair 211 Plus **`8a840e1`**; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`c780e82`** — AP CSV execution progress through Vornado **`567a3c5`**, Coway 400 Max2 **`2410e51`**, GermGuardian FLT4825 **`82f8f9e`**, Holmes HAPF30 evidence **`b05a405`**, Renpho RP-AP003 evidence **`c780e82`** (plus prior **`8a840e1`** Blueair 211+, **`2acc8f9`** FLT4100, **`07d1281`** Coway 250, **`b4c94f8`** Rabbit, **`03dcf49`** Winix 116131, **`f9dc3a9`** Levoit Core 300, **`254f6c6`** Shark HE1 partial re-home; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
