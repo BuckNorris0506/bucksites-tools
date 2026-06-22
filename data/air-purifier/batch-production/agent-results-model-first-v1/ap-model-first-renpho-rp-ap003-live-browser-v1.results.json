@@ -1,0 +1,170 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-renpho-rp-ap003-live-browser-v1",
+  "run_id": "ap-model-first-renpho-rp-ap003-live-browser-2026-06-22",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "renpho-rp-ap003",
+  "filter_slug": "renpho-rp-ap003",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-22T17:20:00.000Z",
+  "checked_at": "2026-06-22T17:20:00.000Z",
+  "repo_head_requested": "b05a405",
+  "repo_head_at_capture": "efe75e5",
+  "repo_head_discrepancy": "REQUESTED HEAD b05a405 IS NOT REACHABLE ON origin/main ('fatal: couldn't find remote ref b05a405'). Current origin/main tip = efe75e5. (Prior un-pushed SHAs: 567a3c5, 2410e51, b05a405.) Captured against efe75e5; not fabricated.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "renpho.com",
+  "repo_truth": {
+    "filters_csv": "renpho,renpho-rp-ap003,RENPHO-RP-AP003,RP-AP003 / AP001 series HEPA,6,001 family",
+    "models_csv": "renpho,renpho-rp-ap003,RP-AP003,Renpho RP-AP003 Air Purifier,Renpho (NOTE: same slug 'renpho-rp-ap003' exists as BOTH a filter and a model -> slug collision)",
+    "retailer_links_primary": "https://renpho.com/search?q=RENPHO-RP-AP003 (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY (returns 0 results on renpho.com)",
+    "compatibility_edges": ["renpho-rp-ap003 (self-edge: model->same-named filter)", "renpho-rp-ap001", "renpho-rp-ap002", "renpho-rp-ap080"],
+    "filter_aliases": "none for renpho-rp-ap003",
+    "identity_flags": [
+      "oem_part_number 'RENPHO-RP-AP003' is the PURIFIER MODEL code, not a filter part. Model->part bridge required.",
+      "slug collision: 'renpho-rp-ap003' is used as both a filter (filters.csv) and an air-purifier model (models.csv), with a self-referential compat edge (renpho-rp-ap003 -> renpho-rp-ap003). The 'filter' is named after the model; there is no distinct filter identity."
+    ]
+  },
+  "prior_repo_only_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-v1.results.json",
+    "found": false,
+    "note": "No prior repo-only model-first artifact (RETAILER_EVIDENCE_GAP slug — no committed agent-result). First model-first artifact for this slug."
+  },
+  "filter_identity": {
+    "what_is_rp_ap003": "PROVEN: RP-AP003 is a Renpho AIR PURIFIER MODEL (successor to RP-AP002 in the RP-AP00x console line), not a filter part. renpho.com/search?q=RP-AP003 -> 0 results; renpho.com/products/rp-ap003 -> 404.",
+    "official_filter_pdp_url": "NONE — no official Renpho replacement-filter PDP exists for this family.",
+    "pdp_is_real": false,
+    "filter_family": "AP001-series 5-stage filter (washable pre-filter + charcoal + activated carbon + antibacterial layer + H13 True HEPA), shared by RP-AP001 / RP-AP001S / RP-AP002 (PROVEN via OEM manuals/reviews); RP-AP003 INFERRED to share it.",
+    "exact_sku_or_part_number": "UNKNOWN — no official Renpho-published filter part number found. Aftermarket listings use 'RP-AP001-F1' as a compatibility designator (NOT an OEM SKU).",
+    "catalog_token_status": "Repo token 'RENPHO-RP-AP003' = the purifier model. No real filter SKU exists publicly. Token bridges to an UNKNOWN OEM filter part.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "UNKNOWN — the actual OEM filter part number is not published. Tentative (aftermarket, NOT OEM-proven): 'RP-AP001-F1' for the RP-AP001/001S/002 family."
+  },
+  "buyability": {
+    "direct_buyable_official": false,
+    "status": "NO OFFICIAL BUYER PATH",
+    "evidence_first_hand": "PROVEN (orchestrator live browser 2026-06-22): renpho.com/collections/air-purifier-filters shows 'Showing 0 Results' / 'No products found' — Renpho sells NO replacement filters directly on renpho.com.",
+    "evidence_subagent": "Renpho's official Amazon storefront (page F73D4A69-...) lists no air-purifier filters (only scales/massagers); no Renpho-sold (seller=RENPHO) filter ASIN found. Only THIRD-PARTY aftermarket filters exist (e.g., Fette ASIN B07ZZ7ZLGY $39.99; Nyingchi ASIN B09TXRF6HK $38.95) — NOT official Renpho products.",
+    "interpretation": "There is NO official OEM buyer path for this filter. Renpho does not sell the replacement filter through any official channel (renpho.com or its Amazon store). Aftermarket-only."
+  },
+  "model_slugs_checked": ["renpho-rp-ap003", "renpho-rp-ap001", "renpho-rp-ap002", "renpho-rp-ap080"],
+  "model_rows": [
+    {
+      "model_slug": "renpho-rp-ap001",
+      "model_number": "RP-AP001",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "NO_OFFICIAL_FILTER_SOLD",
+      "official_source_urls": ["https://renpho.com"],
+      "documented_filter_tokens": ["AP001-series 5-stage HEPA (aftermarket designator RP-AP001-F1)"],
+      "notes": "PROVEN: RP-AP001 is the base model of the shared AP001-series filter family (OEM manuals/reviews). Uses this filter family. BUT no official filter is sold (no safe buyer path)."
+    },
+    {
+      "model_slug": "renpho-rp-ap002",
+      "model_number": "RP-AP002",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "NO_OFFICIAL_FILTER_SOLD",
+      "official_source_urls": ["https://breathequality.com/renpho-rp-ap002-review/"],
+      "documented_filter_tokens": ["AP001-series 5-stage HEPA"],
+      "notes": "PROVEN: RP-AP002 shares the same filter as RP-AP001. No official filter sold."
+    },
+    {
+      "model_slug": "renpho-rp-ap003",
+      "model_number": "RP-AP003 (anchor; self-edge)",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_strength": "INFERRED — RP-AP003 is the successor to RP-AP002 in the same family; no OEM filter spec specifically for RP-AP003 found.",
+      "evidence_status": "PASS",
+      "buyer_path_status": "NO_OFFICIAL_FILTER_SOLD",
+      "official_source_urls": ["https://breathequality.com/renpho-rp-ap002-review/"],
+      "documented_filter_tokens": ["AP001-series 5-stage HEPA"],
+      "notes": "Self-edge (the filter slug is named after this model). RP-AP003 INFERRED to use the AP001-series filter (successor to RP-AP002). No official filter sold; OEM filter part UNKNOWN."
+    },
+    {
+      "model_slug": "renpho-rp-ap080",
+      "model_number": "RP-AP080",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "MODEL_UNVERIFIED",
+      "official_source_urls": ["https://renpho.com"],
+      "documented_filter_tokens": [],
+      "notes": "UNKNOWN: no evidence that 'RP-AP080' is a real Renpho model (ExaAnswer: not identified; not found on renpho.com). Cannot confirm it exists or that it uses the AP001-series filter. Possibly phantom or a mis-entered code — verify before keeping. (Distinct from confirmed wrong-family RP-AP068/088/089 which use their own filters — but none of those are mapped here.)"
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "NONE (renpho.com/collections/air-purifier-filters = 0 products; Renpho Amazon store = no filters)",
+      "retailer_or_source": "none_official",
+      "exact_token_proof": "UNKNOWN — no official OEM filter part number/PDP published.",
+      "buyability_proof": "DISPROVEN: Renpho sells no replacement filters via any official channel (first-hand renpho.com 0 results; subagent Renpho Amazon store = no filters).",
+      "wrong_family_risk": "N/A — no official path to promote. Aftermarket-only third-party filters exist but are not BuckParts-verifiable safe links.",
+      "status": "NO_SAFE_PATH"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 3, "FAIL": 0, "UNKNOWN": 1, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 3, "PROVEN_WRONG_FAMILY": 0, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 1},
+  "recommended_csv_mutation": null,
+  "verdict": "NO_SAFE_PATH_FOUND",
+  "verdict_detail": "NO_SAFE_PATH_FOUND. The AP001-series filter family is real (RP-AP001/001S/002 OEM-confirmed; RP-AP003 inferred), but Renpho sells NO replacement filter through any official channel (renpho.com filter collection = 0 products, first-hand; Renpho's official Amazon store = no filters), and the OEM filter part number is UNKNOWN. There is no official safe buyer path to promote to, and no canonical filter identity. The slug is a model->part bridge to an unknown/unsold part. Keep suppressed (no safe link).",
+  "blockers": [
+    "BLOCKER 1 (no official buyer path): Renpho does not sell the replacement filter on renpho.com (0 products) or its official Amazon storefront (no filters). Only third-party aftermarket filters exist — not BuckParts-verifiable safe links. NO official direct_buyable path.",
+    "BLOCKER 2 (unknown filter identity / model->part bridge): the slug token RENPHO-RP-AP003 is the purifier MODEL; the real OEM filter part number is UNKNOWN (none published). The 'filter' has no distinct identity — it is named after the model.",
+    "BLOCKER 3 (slug collision): 'renpho-rp-ap003' is used as BOTH a filter and a model in the repo (self-referential compat edge). Should be disambiguated.",
+    "BLOCKER 4 (unverified edge): renpho-rp-ap080 is not a confirmed Renpho model (possibly phantom)."
+  ],
+  "recoverable_core": "None via official channel today. RP-AP001/001S/002 (and inferred RP-AP003) genuinely use the shared AP001-series filter, but with no official filter sold and no OEM part number, there is no safe official buyer path. Expected safe-edge gain via official OEM = 0.",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation. Do NOT promote a buyer path — no official filter is sold. Recommend KEEP SUPPRESSED (no_safe_link).",
+    "retailer_links_csv": {
+      "filter_slug": "renpho-rp-ap003",
+      "action": "keep_suppressed_no_safe_link",
+      "reason": "No official Renpho filter PDP exists (renpho.com sells 0 filters; Renpho Amazon store sells no filters). Do not promote. If BuckParts policy ever permits an authorized aftermarket fallback, that is an owner decision and is NOT a BuckParts Verified OEM safe link."
+    },
+    "filters_csv": {
+      "filter_slug": "renpho-rp-ap003",
+      "action": "flag_identity_unresolved",
+      "note": "oem_part_number RENPHO-RP-AP003 is the model code; real OEM filter part UNKNOWN. Resolve the model/filter slug collision (renpho-rp-ap003 exists in both models.csv and filters.csv)."
+    },
+    "compatibility_mappings_csv": [
+      {"keep": "renpho-rp-ap001,renpho-rp-ap003,true", "reason": "PROVEN_FITS (filter family) — but no official buyer path"},
+      {"keep": "renpho-rp-ap002,renpho-rp-ap003,true", "reason": "PROVEN_FITS (filter family)"},
+      {"review": "renpho-rp-ap003,renpho-rp-ap003,true", "reason": "self-referential model->filter edge; resolve slug collision"},
+      {"edge": "renpho-rp-ap080,renpho-rp-ap003,true", "action": "verify_or_remove", "reason": "RP-AP080 unverified as a real Renpho model (possibly phantom)."}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 0,
+  "naming_bridge_required": true,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "no_commit": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN (first-hand): renpho.com/collections/air-purifier-filters shows 'Showing 0 Results / No products found' — Renpho sells NO replacement filters directly on renpho.com.",
+    "PROVEN: RP-AP003 is a Renpho air-purifier MODEL (successor to RP-AP002), not a filter part (renpho.com search 0 results; /products/rp-ap003 404).",
+    "PROVEN: RP-AP001, RP-AP001S, RP-AP002 share one AP001-series 5-stage filter family (OEM manuals/reviews).",
+    "PROVEN: no official Renpho-published filter part number / ASIN exists; Renpho's official Amazon storefront sells no air-purifier filters; only third-party aftermarket filters are available.",
+    "PROVEN: repo at efe75e5 has a slug collision — 'renpho-rp-ap003' is both a filter (filters.csv) and a model (models.csv), with a self-referential compat edge; 4 edges total.",
+    "PROVEN: requested HEAD b05a405 is NOT on origin/main (couldn't find remote ref)."
+  ],
+  "inferred_facts": [
+    "INFERRED: RP-AP003 uses the AP001-series filter (successor to RP-AP002 in the same family); no OEM filter spec specific to RP-AP003 found.",
+    "INFERRED: the aftermarket designator 'RP-AP001-F1' approximates the filter for the RP-AP001/001S/002 (and likely AP003) family — not an OEM SKU."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether 'RP-AP080' is a real Renpho model (ExaAnswer could not identify it; not on renpho.com).",
+    "UNKNOWN: the official OEM filter part number for the RP-AP00x family (none published).",
+    "UNKNOWN: whether Renpho will ever sell the filter officially again (collection exists but is empty).",
+    "UNKNOWN: location/fate of requested HEAD b05a405 (not on origin/main)."
+  ]
+}
