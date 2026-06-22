@@ -1,0 +1,195 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-coway-airmega400-rf-live-browser-v1",
+  "run_id": "ap-model-first-coway-airmega400-rf-live-browser-2026-06-21",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "coway-airmega400-rf",
+  "filter_slug": "coway-airmega400-rf",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-21T23:05:00.000Z",
+  "checked_at": "2026-06-21T23:05:00.000Z",
+  "repo_head_requested": "567a3c5",
+  "repo_head_at_capture": "efe75e5",
+  "repo_head_discrepancy": "REQUESTED HEAD 567a3c5 IS NOT REACHABLE ON origin/main. `git fetch origin 567a3c5` -> 'fatal: couldn't find remote ref 567a3c5'. Current origin/main tip = efe75e5c4a8ea560b1fbabd99b32934ac3dceeec (efe75e5, 'Update HQ handoff for AP execution through 8a840e1'). Captured against efe75e5 (current truth). If 567a3c5 is a local/un-pushed or future commit, re-run after it lands on origin/main. Not fabricated.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "cowaymega.com",
+  "evidence_source_transparency": "PDP existence + exact page title confirmed FIRST-HAND by orchestrator live browser (2026-06-21). PDP body fields (SKU, price, stock, Add-to-Cart, compatibility) are PROVEN via the discovery subagent's same-day live capture (Exa full-text crawl + browser session, 2026-06-21); the orchestrator's own AI-extractor returned title-only because cowaymega.com's JS product body did not render to it (likely client-side rendering / bot mitigation). No fields fabricated.",
+  "repo_truth": {
+    "filters_csv": "coway,coway-airmega400-rf,COWAY-AMI400-RF,Airmega 300 / 400 series replacement set,12,Combined filter pack for larger Airmega",
+    "retailer_links_primary": "https://coway.com/search?q=COWAY-AMI400-RF (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY (note: real store is cowaymega.com, not coway.com)",
+    "compatibility_edges": ["coway-airmega-300", "coway-airmega-300s", "coway-airmega-400", "coway-airmega-400s", "coway-ap-3019f-p-"],
+    "filter_aliases": "none for coway-airmega400-rf",
+    "identity_flags": [
+      "filters.csv name 'Airmega 300 / 400 series replacement set' CONFLATES two distinct filters: 300/300S use SKU 3104757; 400/400S use SKU 3104756. They are NOT one shared set.",
+      "oem_part_number token 'COWAY-AMI400-RF' is not the real Coway SKU and does not appear on any official Coway page (real 400 filter SKU = 3104756)."
+    ]
+  },
+  "prior_repo_only_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-coway-airmega400-rf-v1.results.json",
+    "found": false,
+    "note": "No prior repo-only model-first artifact exists for this slug at HEAD efe75e5 (unlike most other AP slugs). This live-browser run is the first model-first evidence artifact for coway-airmega400-rf."
+  },
+  "filter_identity": {
+    "official_pdp_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+    "pdp_is_real": true,
+    "primary_product_title": "Airmega 400•400S Max2 Filter Set",
+    "page_title_first_hand": "Coway Airmega 400 - Max2 Filter Replacement Set for Home Air Purifier – Cowaymega",
+    "exact_sku_or_part_number": "3104756",
+    "filter_type": "Max2 Filter Set (True HEPA + Activated Carbon); set contains two Max2 filters (one per side); 12-month life",
+    "price_usd": "129.00",
+    "add_to_cart_present": true,
+    "in_stock_proven": true,
+    "in_stock_evidence": "Subagent live capture 2026-06-21: 'Only 1425 left in stock', Add to Cart present/enabled, Subscribe & Save 25% option. Orchestrator first-hand confirmed the live PDP loads with this exact title.",
+    "primary_compatibility_text": "Max2 Filter compatible with Airmega 400 & 400S (per 400/400S unit PDPs and the '400•400S' filter-set title). Each set = 2 Max2 filters.",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "ABSENT — 'COWAY-AMI400-RF' (and 'COWAY-AIRMEGA400' style tokens) do not appear on any official cowaymega.com page. The official identifier is numeric SKU 3104756 (Shopify handle 'airmega-400-max2-filter-set'). The repo token is a third-party/internal slug.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "3104756 — 'Airmega 400•400S Max2 Filter Set' (Airmega 400/400S ONLY). The Airmega 300/300S use a DIFFERENT SKU, 3104757 ('Airmega 300•300S Max2 Filter Set', $99)."
+  },
+  "model_slugs_checked": ["coway-airmega-300", "coway-airmega-300s", "coway-airmega-400", "coway-airmega-400s", "coway-ap-3019f-p-"],
+  "model_rows": [
+    {
+      "model_slug": "coway-airmega-400",
+      "model_number": "Airmega 400",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://cowaymega.com/products/airmega-400", "https://cowaymega.com/products/airmega-400-max2-filter-set"],
+      "documented_filter_tokens": ["3104756", "Airmega 400•400S Max2 Filter Set"],
+      "notes": "PROVEN: Airmega 400 unit PDP states 'Max2 Filter Compatible with Airmega 400 & 400S'; filter set SKU 3104756. Correct fit for this slug once token is corrected to 3104756."
+    },
+    {
+      "model_slug": "coway-airmega-400s",
+      "model_number": "Airmega 400S",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://cowaymega.com/products/airmega-400s", "https://cowaymega.com/products/airmega-400-max2-filter-set"],
+      "documented_filter_tokens": ["3104756", "Airmega 400•400S Max2 Filter Set"],
+      "notes": "PROVEN: Airmega 400S unit PDP states 'Max2 Filter compatible with Airmega 400/400S'; SKU 3104756. White and Graphite are color variants of the same 400S product page (both use 3104756) — not separate models."
+    },
+    {
+      "model_slug": "coway-airmega-300",
+      "model_number": "Airmega 300",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://cowaymega.com/products/airmega-300", "https://cowaymega.com/products/airmega-300-max2-filter-set"],
+      "documented_filter_tokens": ["3104757", "Airmega 300•300S Max2 Filter Set"],
+      "correct_filter_official": "3104757 — 'Airmega 300•300S Max2 Filter Set' ($99.00)",
+      "notes": "PROVEN wrong-family: Airmega 300 uses SKU 3104757 (different price $99, different coverage 2,512 ft²), NOT the 400's 3104756. Mapping it to coway-airmega400-rf (the 400 filter) would route a 300 owner to the wrong filter. Re-home to a 3104757 slug."
+    },
+    {
+      "model_slug": "coway-airmega-300s",
+      "model_number": "Airmega 300S",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://cowaymega.com/products/airmega-300-max2-filter-set"],
+      "documented_filter_tokens": ["3104757", "Airmega 300•300S Max2 Filter Set"],
+      "correct_filter_official": "3104757 — 'Airmega 300•300S Max2 Filter Set' ($99.00)",
+      "notes": "PROVEN wrong-family: 300S is named on the 300•300S filter set (SKU 3104757), not the 400's 3104756. Re-home to a 3104757 slug."
+    },
+    {
+      "model_slug": "coway-ap-3019f-p-",
+      "model_number": "AP-3019F(P)",
+      "model_filter_classification": "UNKNOWN",
+      "evidence_status": "UNKNOWN",
+      "buyer_path_status": "MODEL_CODE_UNVERIFIED",
+      "official_source_urls": ["https://cowaymega.com/search?q=AP-3019F"],
+      "documented_filter_tokens": [],
+      "notes": "UNKNOWN: 'AP-3019F(P)' is an internal model code not confirmed on cowaymega.com this run. The 400/400S are sold under brand name only on cowaymega.com (no AP-code exposed), so this could be the 400-family underlying code (-> PROVEN_FITS, 3104756), the 300-family code (-> WRONG_FAMILY, 3104757), or a different/older Coway model (-> wrong-family or phantom). Verify against official Coway model documentation before mapping."
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+      "retailer_or_source": "coway_official_oem_pdp",
+      "exact_token_proof": "PROVEN: official PDP 'Airmega 400•400S Max2 Filter Set', SKU 3104756. Catalog token COWAY-AMI400-RF NOT present.",
+      "buyability_proof": "PROVEN (subagent live capture 2026-06-21): $129.00; 'Only 1425 left in stock'; Add to Cart present. Orchestrator first-hand confirmed PDP live (title).",
+      "wrong_family_risk": "NONE for Airmega 400/400S. WRONG-FAMILY for 300/300S (need 3104757). AP-3019F(P) unverified.",
+      "status": "PASS_FOR_400_FAMILY_ONLY"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 2, "FAIL": 2, "UNKNOWN": 1, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 2, "PROVEN_WRONG_FAMILY": 2, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 1},
+  "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT promotion as-is. The Airmega 400 filter is REAL and directly buyable (SKU 3104756), but the slug carries a token error AND a 300-vs-400 conflation/over-mapping. Recoverable to READY_FOR_OWNER_REVIEW for the 400-family core after token correction + split.",
+  "blockers": [
+    "BLOCKER 1 (token / naming bridge): canonical token COWAY-AMI400-RF is not a real Coway SKU and is absent from every official page. Correct identity = SKU 3104756 'Airmega 400•400S Max2 Filter Set'.",
+    "BLOCKER 2 (300/400 conflation + wrong-family): filters.csv name 'Airmega 300 / 400 series replacement set' conflates two distinct filters. coway-airmega-300 and coway-airmega-300s use SKU 3104757 ($99), NOT the 400's 3104756 ($129). Promoting the slug to the 400 filter while 300/300S remain mapped routes 300-series owners to the wrong filter. Split: keep 400/400S on this slug (3104756); re-home 300/300S to a 3104757 slug.",
+    "BLOCKER 3 (unverified model): coway-ap-3019f-p- (AP-3019F(P)) could not be verified as a 400-family unit. Verify before it can count as a safe edge."
+  ],
+  "recoverable_core": "Airmega 400 + 400S -> SKU 3104756 (in stock, $129, Add to Cart). Expected safe-edge gain after token fix + split = +2.",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation and any apply. Promotion must ship WITH the token correction + 300/400 split, never before. Also reconcile the repo-HEAD discrepancy (567a3c5 not on origin/main).",
+    "filters_csv": {
+      "filter_slug": "coway-airmega400-rf",
+      "action": "token_correction_and_scope_to_400",
+      "before_oem_part_number": "COWAY-AMI400-RF",
+      "after_oem_part_number": "3104756 (Coway official SKU for Airmega 400•400S Max2 Filter Set)",
+      "before_name": "Airmega 300 / 400 series replacement set",
+      "after_name": "Airmega 400•400S Max2 Filter Set (SKU 3104756)",
+      "before_notes": "Combined filter pack for larger Airmega",
+      "after_notes": "Airmega 400/400S only (2-filter Max2 set, 12 months). Airmega 300/300S use a DIFFERENT filter, SKU 3104757."
+    },
+    "retailer_links_csv": {
+      "filter_slug": "coway-airmega400-rf",
+      "action": "replace_primary_after_corrections",
+      "after": {
+        "retailer_name": "Coway (OEM)",
+        "destination_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "affiliate_url": "https://cowaymega.com/products/airmega-400-max2-filter-set",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Coway PDP 'Airmega 400•400S Max2 Filter Set' SKU 3104756, $129.00; in stock + Add to Cart (2026-06-21); Airmega 400/400S only.",
+        "browser_truth_checked_at": "2026-06-21"
+      },
+      "affiliate_note": "Apply Coway affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "coway-airmega-300,coway-airmega400-rf,true", "action": "remove", "reason": "wrong-family; Airmega 300 uses SKU 3104757. Re-home to a 3104757 slug."},
+      {"edge": "coway-airmega-300s,coway-airmega400-rf,true", "action": "remove", "reason": "wrong-family; Airmega 300S uses SKU 3104757. Re-home to a 3104757 slug."},
+      {"edge": "coway-ap-3019f-p-,coway-airmega400-rf,true", "action": "hold_or_verify", "reason": "unverified model code; confirm whether AP-3019F(P) is a 400-family unit before keeping."},
+      {"keep": "coway-airmega-400,coway-airmega400-rf,true", "reason": "PROVEN_FITS (3104756)"},
+      {"keep": "coway-airmega-400s,coway-airmega400-rf,true", "reason": "PROVEN_FITS (3104756)"}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 2,
+  "naming_bridge_required": true,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "no_commit": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN: Official Coway Airmega 400/400S replacement filter is SKU 3104756 'Airmega 400•400S Max2 Filter Set', $129.00, in stock + Add to Cart on cowaymega.com (subagent live capture 2026-06-21; orchestrator first-hand confirmed the live PDP + title).",
+    "PROVEN: Airmega 300/300S use a DIFFERENT filter — SKU 3104757 'Airmega 300•300S Max2 Filter Set', $99.00. The 300 and 400 do NOT share a filter.",
+    "PROVEN: token COWAY-AMI400-RF is absent from official Coway pages; real identifier is SKU 3104756.",
+    "PROVEN: repo at efe75e5 maps coway-airmega400-rf to 5 models (300, 300S, 400, 400S, AP-3019F(P)) with a conflated name 'Airmega 300 / 400 series replacement set'.",
+    "PROVEN: requested HEAD 567a3c5 is NOT on origin/main (couldn't find remote ref); current tip is efe75e5."
+  ],
+  "inferred_facts": [
+    "INFERRED: Airmega 400S 'Graphite' is a color variant on the same 400S product page (uses 3104756), not a separate model.",
+    "INFERRED: The slug's intent was a single 'larger Airmega' set, but Coway splits 300 vs 400 into two SKUs, so the intent is only half-correct."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether coway-ap-3019f-p- (AP-3019F(P)) is the 400-family underlying code, the 300-family code, or a different/older model — unverified on official source this run.",
+    "UNKNOWN: Explicit live stock-level text first-hand at orchestrator level (cowaymega.com JS body did not render to the orchestrator extractor; subagent same-day capture reported in stock).",
+    "UNKNOWN: The repo's preferred canonical token form for the naming bridge, and the location/fate of requested HEAD 567a3c5."
+  ]
+}
