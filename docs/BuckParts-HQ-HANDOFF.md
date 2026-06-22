@@ -109,7 +109,7 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ---
 
-## Current stopping point — AP CSV Execution Progress (PROVEN through `07d1281`)
+## Current stopping point — AP CSV Execution Progress (PROVEN through `8a840e1`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
 
@@ -118,12 +118,12 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| HEAD / `origin/main` at handoff refresh | **`07d1281`** |
-| Latest commit | **`07d1281`** — Coway Airmega 250 Max2 buyer path |
-| Prior AP commits (pushed) | **`b4c94f8`** — Rabbit Air MinusA2 carbon filter direct buyer path; **`03dcf49`** — Winix Filter I / 116131 identity correction; **`f9dc3a9`** — Levoit Core 300 Option A; **`254f6c6`** — Shark carbon-foam HE1 partial re-home |
-| Working tree | **Re-verify** — handoff records pushed `origin/main` truth; local uncommitted work may exist |
+| HEAD / `origin/main` at handoff refresh | **`8a840e1`** |
+| Latest commit | **`8a840e1`** — Blueair 211 Plus filter buyer path |
+| Prior AP commits (pushed) | **`2acc8f9`** — GermGuardian FLT4100 direct buyer path; **`07d1281`** — Coway Airmega 250 Max2 buyer path; **`b4c94f8`** — Rabbit Air MinusA2 carbon filter; **`03dcf49`** — Winix Filter I / 116131 identity correction; **`f9dc3a9`** — Levoit Core 300 Option A; **`254f6c6`** — Shark carbon-foam HE1 partial re-home |
+| Working tree | **Re-verify** — handoff records pushed `origin/main` truth at **`8a840e1`**; local uncommitted work may exist |
 | Live deploy | **UNKNOWN** — handoff records repo truth only; re-run Command Center locally before citing live numbers |
-| Supabase parity | **UNKNOWN** — seed import still not run |
+| Supabase parity | **UNKNOWN** — seed import still not run; CSV commits do not prove Supabase parity |
 
 ### 2. AP CSV apply milestones (PROVEN — pushed to `origin/main`)
 
@@ -134,17 +134,19 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 | **`03dcf49`** | Winix 116131 | Filter I identity correction — `winix-carbon-116131` reclassified as annual HEPA + washable AOC set; official Filter I PDP `direct_buyable`; compat restricted to **`winix-c555`** + **`winix-c555b`**; **26** wrong-family mappings removed |
 | **`b4c94f8`** | Rabbit MinusA2 | `rabbit-carbon-minusa2` — official MinusA2 charcoal PDP `direct_buyable`; identity notes (SKU A2-AC, not A3) |
 | **`07d1281`** | Coway Airmega 250 | `coway-airmega250-rf` — canonical token `COWAY-3109144` (AP-1720-FP); official cowaymega Airmega 250 Max2 PDP `direct_buyable`; compat restricted to **`coway-airmega-250`** / **`250s`** / **`250-graphite`**; **4** wrong-family mappings removed (150/160/240 + `coway-ap-2520f-p-` held) |
+| **`2acc8f9`** | GermGuardian FLT4100 | `gg-flt4100` — official Guardian Technologies FLT4100 Filter E PDP `direct_buyable`; notes corrected (Filter E tabletop, not 22″ tower FLT4825); **3** compat rows removed (**`gg-ac4820`** wrong-family Filter B; phantom **`gg-ac4225`** / **`gg-ac4230`**) |
+| **`8a840e1`** | Blueair 211 Plus | `blueair-f2-211` — token `BLUEAIR-F2MAX211PAC` → **`BLUEAIR-211PLUS-PAC`**; name/notes corrected (211+ Series Particle+Carbon; not F2MAX / 211i Max); official Blueair 211+ PDP `direct_buyable`; live-browser artifact `ap-model-first-blueair-f2-211-live-browser-v1.results.json`; **4** wrong-family compat rows removed (**`blueair-211-auto`**, **`blueair-121`**, **`blueair-blue-pure-311`**, **`blueair-blue-pure-311-auto`**); **`blueair-211-plus`** kept — re-home deferred |
 
-**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows; Coway 150/160/240 filter slugs; `coway-airmega400-rf` buyer path.
+**Out of scope in these commits (explicit follow-up):** Filter A / Filter H / Filter S / Filter T Winix compat repair; Shark HE2/HE4/HE6 carbon-foam remainder; C555 → `winix-hepa-115115` wrong-family rows; Coway 150/160/240 filter slugs; `coway-airmega400-rf` buyer path; Blueair 121 / 211+ Auto / 311 / 311 Auto filter slugs (models unmapped after wrong-family trim).
 
 ### 3. AP buyer-path census (PROVEN — re-run audit before citing)
 
 | Metric | Value |
 |--------|------:|
-| Safe direct-buyable filters | **24** |
-| Weak linked filters | **28** |
-| Weak model coverage | **129** |
-| Search-placeholder primary (weak) | **25** |
+| Safe direct-buyable filters | **26** |
+| Weak linked filters | **26** |
+| Weak model coverage | **118** |
+| Search-placeholder primary (weak) | **23** |
 | Guardrails (`buckparts:guardrails:air-purifier`) | **pass** |
 | `lint` / `build` | **pass** |
 | Weak-buyer-path audit | **pass** |
@@ -165,11 +167,11 @@ npm run buckparts:guardrails:air-purifier
 |---------------|--------------------:|-------|
 | `holmes-hapf30` | **31** | Search-placeholder primary |
 | `shark-carbon-foam` | **15** | **15** compat rows remain after HE1 partial re-home; invalid identity |
-| `gg-flt4100` | **6** | Search-placeholder primary |
 | `shark-hepa-he1fkbas` | **6** | `likely_valid` OEM PDP (notify/OOS) — not `direct_buyable` |
 | `vornado-carbon-pad` | **6** | Search-placeholder primary |
-| `blueair-f2-211` | **5** | Search-placeholder primary |
 | `coway-airmega400-rf` | **5** | Search-placeholder primary |
+
+**Recently promoted (no longer weak):** `gg-flt4100` (**`2acc8f9`**), `blueair-f2-211` (**`8a840e1`**).
 
 ### 5. Do not do next (at this stopping point)
 
@@ -190,7 +192,7 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `07d1281`)
+## Current stopping point — AP Demand-to-Coverage Selector Alignment (historical — superseded by `8a840e1`)
 
 **Superseded for next-move authority.** Retained for selector-alignment proof. **AP CSV Execution Progress** section above is the current executive stopping point.
 
@@ -320,7 +322,7 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (historical — superseded by `07d1281`)
+## Current stopping point — Issue Lifecycle CLOSED_PROVEN Milestone (historical — superseded by `8a840e1`)
 
 **Superseded for next-move authority.** Retained for issue registry closure proof and re-audit doctrine. **AP CSV Execution Progress** section at top is the current executive stopping point.
 
@@ -908,7 +910,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`07d1281`** — AP CSV execution progress (Levoit Core 300 **`f9dc3a9`**, Shark HE1 partial re-home **`254f6c6`**, Winix Filter I **`03dcf49`**, Rabbit MinusA2 **`b4c94f8`**, Coway Airmega 250 **`07d1281`**; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`8a840e1`** — AP CSV execution progress (Levoit Core 300 **`f9dc3a9`**, Shark HE1 partial re-home **`254f6c6`**, Winix Filter I **`03dcf49`**, Rabbit MinusA2 **`b4c94f8`**, Coway Airmega 250 **`07d1281`**, GermGuardian FLT4100 **`2acc8f9`**, Blueair 211 Plus **`8a840e1`**; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
