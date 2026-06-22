@@ -1,0 +1,172 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-blueair-particle-411-live-browser-v1",
+  "run_id": "ap-model-first-blueair-particle-411-live-browser-2026-06-22",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "blueair-particle-411",
+  "filter_slug": "blueair-particle-411",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-22T16:20:00.000Z",
+  "checked_at": "2026-06-22T16:20:00.000Z",
+  "repo_head_requested": "b05a405",
+  "repo_head_at_capture": "efe75e5",
+  "repo_head_discrepancy": "REQUESTED HEAD b05a405 IS NOT REACHABLE ON origin/main. `git fetch origin b05a405` -> 'fatal: couldn't find remote ref b05a405'. Current origin/main tip = efe75e5. This is the THIRD consecutive request citing a HEAD not on origin/main (prior: 567a3c5, 2410e51). Pattern strongly suggests local/un-pushed commits. Captured against efe75e5 (current truth); not fabricated. Reconcile/push before re-run if these SHAs matter.",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "blueair.com",
+  "repo_truth": {
+    "filters_csv": "blueair,blueair-particle-411,BLUEAIR-PART411,Blue Pure 411 particle + carbon filter,6,Replacement for Blue Pure 411 / Mini",
+    "retailer_links_primary": "https://www.blueair.com/us/search?q=BLUEAIR-PART411 (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY (BLUEAIR-PART411 is not a real token; does not resolve)",
+    "compatibility_edges": ["blueair-411", "blueair-411a-max", "blueair-mini-max"],
+    "filter_aliases": "none for blueair-particle-411",
+    "descriptor_flags": [
+      "filters.csv notes 'Replacement for Blue Pure 411 / Mini' is partly WRONG — the Blue Pure Mini Max uses its own FMINI filter, not the particle-411 filter. The '/ Mini' bakes in a wrong-family mapping.",
+      "name 'Blue Pure 411 particle + carbon filter' is correct for the LEGACY 411 only."
+    ]
+  },
+  "batch_v3_blocked_explanation": {
+    "source_artifact": "data/air-purifier/batch-production/agent-results-batch-v3/ap-blueair-catalog-identity-v1.results.json (run ap-batch-v3-proposed-2026-05-26)",
+    "evidence_status": "BLOCKED",
+    "browser_truth_classification": "wrong_family",
+    "why_blocked": "Batch-v3 marked blueair-particle-411 BLOCKED / wrong_family for two compounding reasons: (1) TOKEN NOT PROVEN — the exact catalog token BLUEAIR-PART411 is not shown on the legacy particle-411 PDP primary product area (the page is buyable, but under the 'Blue Pure 411 Series Filter' name, not the catalog token); (2) UNRESOLVED CATALOG-IDENTITY SPLIT — the F4MAX Max-series filter (411i Max / 411a Max; token family 110036 / F4MAX) is a DISTINCT sellable filter from PART411 / F411PACF (411 / 411+ / 411 Auto), yet the catalog/compat conflates them: blueair-411a-max is (likely) wrongly mapped to blueair-particle-411, and a GSC drift slug 'blueair-f4max-411' conflates the two identities. rejection_reason: 'Catalog identity split unresolved for buyer-path use. Wrong-family risk remains; cannot mark direct_buyable or alias drift slug.' recommended_catalog_action: OWNER_APPROVED_CATALOG_IDENTITY_TASK_REQUIRED — create a separate F4MAX catalog row and repair compat/route mappings BEFORE any buyer-path mutation.",
+    "this_run_extends": "Live re-proof (2026-06-22) confirms the batch-v3 finding AND adds a 2nd wrong-family edge it did not enumerate: blueair-mini-max uses FMINI (its own filter), not the particle-411 filter."
+  },
+  "filter_identity": {
+    "official_pdp_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+    "pdp_is_real": true,
+    "primary_product_title": "Blue Pure 411 Series Filter — Particle + Carbon Filter",
+    "exact_tokens_in_primary_slice": ["Blue Pure 411 Series Filter", "Particle + Carbon"],
+    "on_page_sku_token": "none visible (no 'F411PACF' printed on page; 'F411PACF' is an industry/summary shorthand, not an on-page token)",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "ABSENT — 'BLUEAIR-PART411' does not appear anywhere on blueair.com; it is a BuckParts-internal token only. The real identity is the 'Blue Pure 411 Series Particle + Carbon Filter' (industry shorthand F411PACF).",
+    "price_usd": "23.99 (1-pack); 40.80 (2-pack)",
+    "in_stock_proven": true,
+    "in_stock_evidence": "Add to Cart present and active; no out-of-stock indicator (live browser 2026-06-22). Subagent same-day capture: $23.99 1-pack, Add to Cart, in stock.",
+    "primary_compatibility_text_verbatim": "This filter is compatible with the following Blue family models: 411, 411+, & 411 Auto.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "Blue Pure 411 Series Particle + Carbon Filter (legacy 411 / 411+ / 411 Auto ONLY; industry shorthand F411PACF). NOTE: the Max-series (411i Max / 411a Max) uses a DISTINCT F4MAX filter; the Blue Pure Mini Max uses a DISTINCT FMINI filter — do NOT alias either to this slug."
+  },
+  "model_slugs_checked": ["blueair-411", "blueair-411a-max", "blueair-mini-max"],
+  "model_rows": [
+    {
+      "model_slug": "blueair-411",
+      "model_number": "Blue Pure 411",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": ["https://www.blueair.com/products/blue-pure-411-particle-carbon"],
+      "documented_filter_tokens": ["Blue Pure 411 Series Filter", "Particle + Carbon", "F411PACF (shorthand)"],
+      "notes": "PROVEN: official PDP states compatible with 411 / 411+ / 411 Auto. In stock + Add to Cart, $23.99 (1-pack). This is the correct legacy particle-411 filter for the Blue Pure 411."
+    },
+    {
+      "model_slug": "blueair-411a-max",
+      "model_number": "Blue Pure 411a Max",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/products/f4max-replacement-pac-filter-for-411max-series-f4max"],
+      "documented_filter_tokens": ["F4MAX"],
+      "correct_filter_official": "F4MAX 'Blue Pure 411i Max / 411a Max' filter ($29.99) — distinct Max-series filter",
+      "notes": "PROVEN wrong-family: the 411a Max uses the F4MAX filter, explicitly 'only compatible with the Blue Pure 411i, 411a Max'. It does NOT use the legacy particle-411 filter. Re-home to a separate F4MAX slug (do NOT alias F4MAX to particle-411)."
+    },
+    {
+      "model_slug": "blueair-mini-max",
+      "model_number": "Blue Pure Mini Max",
+      "model_filter_classification": "PROVEN_WRONG_FAMILY",
+      "evidence_status": "FAIL",
+      "buyer_path_status": "WRONG_FAMILY_FOR_MODEL",
+      "official_source_urls": ["https://www.blueair.com/products/replacement-filter-for-blue-pure-mini-max"],
+      "documented_filter_tokens": ["FMINI"],
+      "correct_filter_official": "FMINI 'Blue Pure Mini Max Filter' ($21.99) — Mini Max-specific filter",
+      "notes": "PROVEN wrong-family: Blue Pure Mini Max is a real model that uses its own FMINI filter, explicitly 'only compatible with the Blue Pure Mini Max'. It does NOT use the legacy particle-411 filter. Re-home to a separate FMINI slug. (The repo notes '/ Mini' reflect this wrong mapping.)"
+    }
+  ],
+  "candidate_buyer_paths": [
+    {
+      "url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+      "retailer_or_source": "blueair_official_oem_pdp",
+      "exact_token_proof": "PROVEN: 'Blue Pure 411 Series Filter — Particle + Carbon'; compatible with 411 / 411+ / 411 Auto. Catalog token BLUEAIR-PART411 NOT present.",
+      "buyability_proof": "PROVEN: Add to Cart present and active; $23.99 (1-pack) / $40.80 (2-pack); no OOS indicator; live browser 2026-06-22.",
+      "wrong_family_risk": "NONE for the legacy Blue Pure 411. WRONG-FAMILY if this slug remains mapped to 411a Max (F4MAX) or Mini Max (FMINI).",
+      "status": "PASS_FOR_LEGACY_411_ONLY"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 1, "FAIL": 2, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 1, "PROVEN_WRONG_FAMILY": 2, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 0},
+  "recommended_csv_mutation": null,
+  "verdict": "REJECT",
+  "verdict_detail": "REJECT promotion as-is. The legacy Blue Pure 411 particle+carbon filter is REAL and directly buyable, but the slug carries a token-not-proven issue AND a wrong-family over-mapping (411a Max -> F4MAX; Mini Max -> FMINI). This is exactly the unresolved catalog-identity split that batch-v3 flagged BLOCKED. Recoverable to READY_FOR_OWNER_REVIEW for the legacy-411-only core after the F4MAX/FMINI split + token bridge.",
+  "blockers": [
+    "BLOCKER 1 (token bridge): BLUEAIR-PART411 is absent from blueair.com; the real identity is the 'Blue Pure 411 Series Particle + Carbon Filter' (shorthand F411PACF). The placeholder primary (search?q=BLUEAIR-PART411) does not resolve.",
+    "BLOCKER 2 (wrong-family over-mapping): blueair-411a-max uses F4MAX and blueair-mini-max uses FMINI — neither uses the legacy particle-411 filter. Promoting the slug while they remain mapped routes Max / Mini Max owners to the wrong filter. Also fix the filters.csv notes ('/ Mini').",
+    "BLOCKER 3 (catalog-identity split, per batch-v3): the F4MAX Max-series must be a SEPARATE catalog row; do NOT alias F4MAX (or the GSC drift slug blueair-f4max-411) to particle-411. Owner-approved catalog-identity task required before buyer-path mutation."
+  ],
+  "recoverable_core": "Blue Pure 411 (legacy) -> particle-411 filter (in stock, $23.99). Expected safe-edge gain after token bridge + split = +1.",
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — HyperAgent discovery input. Cursor/repo owns validation and apply. Do NOT alias F4MAX or FMINI to particle-411. Promotion must ship WITH the token bridge + wrong-family split, never before.",
+    "filters_csv": {
+      "filter_slug": "blueair-particle-411",
+      "action": "token_bridge_and_descriptor_fix",
+      "before_oem_part_number": "BLUEAIR-PART411",
+      "after_oem_part_number": "Blue Pure 411 Series Particle + Carbon Filter (industry shorthand F411PACF; repo canonical form per catalog policy)",
+      "before_notes": "Replacement for Blue Pure 411 / Mini",
+      "after_notes": "Legacy Blue Pure 411 / 411+ / 411 Auto only. NOT 411a/411i Max (F4MAX) and NOT Mini Max (FMINI)."
+    },
+    "retailer_links_csv": {
+      "filter_slug": "blueair-particle-411",
+      "action": "replace_primary_after_corrections",
+      "after": {
+        "retailer_name": "Blueair (OEM)",
+        "destination_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "affiliate_url": "https://www.blueair.com/products/blue-pure-411-particle-carbon",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Blueair PDP 'Blue Pure 411 Series Particle + Carbon Filter' $23.99 (1-pack); in stock + Add to Cart 2026-06-22; Blue Pure 411 / 411+ / 411 Auto only.",
+        "browser_truth_checked_at": "2026-06-22"
+      },
+      "affiliate_note": "Apply Blueair affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"edge": "blueair-411a-max,blueair-particle-411,true", "action": "remove", "reason": "wrong-family; 411a Max uses F4MAX. Re-home to a separate F4MAX slug (do NOT alias F4MAX to particle-411)."},
+      {"edge": "blueair-mini-max,blueair-particle-411,true", "action": "remove", "reason": "wrong-family; Mini Max uses FMINI. Re-home to a separate FMINI slug."},
+      {"keep": "blueair-411,blueair-particle-411,true", "reason": "PROVEN_FITS (legacy particle-411 filter)"}
+    ]
+  },
+  "expected_safe_edge_gain_if_corrected": 1,
+  "naming_bridge_required": true,
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "did_not_alias_f4max": true,
+    "did_not_promote": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN: legacy Blue Pure 411 Series Particle + Carbon Filter is real, In Stock, Add to Cart active, $23.99 (1-pack) / $40.80 (2-pack), at blueair.com/products/blue-pure-411-particle-carbon; compatible with Blue Pure 411 / 411+ / 411 Auto (live browser 2026-06-22 + subagent same-day).",
+    "PROVEN: catalog token BLUEAIR-PART411 is absent from blueair.com; the page has no on-page 'F411PACF' token either (F411PACF is industry shorthand).",
+    "PROVEN wrong-family: Blue Pure 411a Max uses the F4MAX filter ($29.99), 'only compatible with 411i / 411a Max' — distinct from the legacy particle-411.",
+    "PROVEN wrong-family: Blue Pure Mini Max is a real model using its own FMINI filter ($21.99), 'only compatible with Mini Max' — distinct from the legacy particle-411.",
+    "PROVEN (task 5): batch-v3 (agent-results-batch-v3/ap-blueair-catalog-identity-v1) marked blueair-particle-411 BLOCKED / wrong_family — token BLUEAIR-PART411 not on PDP + unresolved F4MAX-vs-particle catalog-identity split + likely-wrong 411a-max compat + GSC drift slug blueair-f4max-411 conflation; requires owner-approved catalog-identity task.",
+    "PROVEN: requested HEAD b05a405 is NOT on origin/main (couldn't find remote ref); current tip is efe75e5 (3rd consecutive un-pushed HEAD)."
+  ],
+  "inferred_facts": [
+    "INFERRED: only the legacy Blue Pure 411 (1 of 3 mapped models) belongs on this slug; 411a Max and Mini Max are wrong-family re-home candidates.",
+    "INFERRED: the repo notes '/ Mini' originated from the same wrong Mini-Max mapping."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: the repo's preferred canonical token form for the particle-411 bridge (owner/Cursor catalog policy).",
+    "UNKNOWN: live stock-level text first-hand (Add to Cart active; no stock-count string surfaced; subagent reported in stock).",
+    "UNKNOWN: location/fate of requested HEAD b05a405 (not on origin/main)."
+  ]
+}

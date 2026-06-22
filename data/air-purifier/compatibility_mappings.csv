@@ -69,8 +69,8 @@ gg-ac5900,gg-flt5000,true
 gg-cdap5500,gg-flt5000,true
 blueair-211-plus,blueair-f2-211,true
 blueair-411,blueair-particle-411,true
-blueair-411a-max,blueair-particle-411,true
-blueair-mini-max,blueair-particle-411,true
+blueair-411a-max,blueair-f4max-411max,true
+blueair-mini-max,blueair-fmini-mini-max,true
 medify-ma25,medify-ma25-rf,true
 medify-ma40,medify-ma40-rf,true
 medify-ma40w,medify-ma40-rf,true

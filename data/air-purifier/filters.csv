@@ -18,7 +18,9 @@ honeywell,honeywell-hrf-r3,HONEYWELL-HRF-R3,HPA300 series True HEPA R filter,12,
 germguardian,gg-flt4825,GUARDIAN-FLT4825,FLT4825 HEPA + charcoal combo,6,"FLT4825 for 22"" tower Guardian models"
 germguardian,gg-flt5000,GUARDIAN-FLT5000,FLT5000 HEPA + charcoal combo,6,"FLT5000 for 28"" tower Guardian models"
 blueair,blueair-f2-211,BLUEAIR-211PLUS-PAC,Blue Pure 211+ Series Filter (Particle + Carbon),6,Legacy Blue Pure 211 / 211+ only; NOT 211+ Auto; NOT F2MAX / 211i Max line.
-blueair,blueair-particle-411,BLUEAIR-PART411,Blue Pure 411 particle + carbon filter,6,Replacement for Blue Pure 411 / Mini
+blueair,blueair-particle-411,F411PACF,Blue Pure 411 Series Filter (Particle + Carbon),6,"Legacy Blue Pure 411 / 411+ / 411 Auto only; NOT 411i Max / 411a Max (F4MAX); NOT Mini Max (FMINI)."
+blueair,blueair-f4max-411max,F4MAX,Blue Pure 411i Max / 411a Max Filter (Particle + Carbon),6,"F4MAX / 110036 Max-series cartridge; 411i Max / 411a Max only; NOT legacy 411/411+/411 Auto."
+blueair,blueair-fmini-mini-max,FMINI,Blue Pure Mini Max Filter (Particle + Carbon),6,"FMINI cartridge; Blue Pure Mini Max only; NOT legacy 411 series or F4MAX Max line."
 medify,medify-ma25-rf,MEDIFY-MA-25-RF,MA-25 replacement HEPA filter,6,MA-25 cartridge
 medify,medify-ma40-rf,MEDIFY-MA-40-RF,MA-40 replacement HEPA filter,6,MA-40 / MA-40W
 medify,medify-ma50-rf,MEDIFY-MA-50-RF,MA-50 replacement HEPA filter,6,MA-50 cartridge
