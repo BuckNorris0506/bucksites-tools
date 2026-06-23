@@ -312,6 +312,132 @@ export function buyLinkGateFailureKind<
   return null;
 }
 
+/**
+ * R1 Wrong-Code Prevention — shadow/count mode only.
+ * Classifies live `direct_buyable` rows with missing or aged `browser_truth_checked_at`.
+ * Does NOT affect `buyLinkGateFailureKind`, CTAs, or `/go` until explicitly enforced later.
+ */
+export const R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+
+export type StaleBrowserTruthShadowKind =
+  | "missing_browser_truth_checked_at"
+  | "stale_browser_truth_checked_at";
+
+export type StaleBrowserTruthShadowClassification = {
+  shadow_kind: StaleBrowserTruthShadowKind;
+  /** Shadow diagnostics only — never blocks live buy paths in R1 count mode. */
+  enforce: false;
+  max_age_ms: number;
+  checked_at_ms: number | null;
+  age_ms: number | null;
+};
+
+export type StaleBrowserTruthShadowLink = {
+  retailer_key?: string | null;
+  affiliate_url: string;
+  browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
+  browser_truth_checked_at?: string | null;
+};
+
+export function parseBrowserTruthCheckedAtMs(
+  checkedAt: string | null | undefined,
+): number | null {
+  if (!checkedAt?.trim()) return null;
+  const ms = Date.parse(checkedAt.trim());
+  return Number.isNaN(ms) ? null : ms;
+}
+
+/** True when `checkedAt` is absent/unparseable or older than the R1 shadow threshold. */
+export function isBrowserTruthCheckedAtStaleForR1Shadow(
+  checkedAt: string | null | undefined,
+  options?: { now?: Date; maxAgeMs?: number },
+): boolean {
+  const maxAgeMs = options?.maxAgeMs ?? R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS;
+  const checkedAtMs = parseBrowserTruthCheckedAtMs(checkedAt);
+  if (checkedAtMs === null) return true;
+  const nowMs = (options?.now ?? new Date()).getTime();
+  return nowMs - checkedAtMs > maxAgeMs;
+}
+
+/**
+ * Non-enforcing shadow label for rows that already pass live buy gates as `direct_buyable`
+ * but lack fresh browser-truth recency evidence.
+ */
+export function staleBrowserTruthShadowClassification<
+  T extends StaleBrowserTruthShadowLink,
+>(
+  link: T,
+  options?: { now?: Date; maxAgeMs?: number },
+): StaleBrowserTruthShadowClassification | null {
+  if (buyLinkGateFailureKind(link) !== null) return null;
+  if (!isExplicitBuyableClassification(link.browser_truth_classification)) return null;
+
+  const maxAgeMs = options?.maxAgeMs ?? R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS;
+  const nowMs = (options?.now ?? new Date()).getTime();
+  const checkedAtMs = parseBrowserTruthCheckedAtMs(link.browser_truth_checked_at);
+
+  if (checkedAtMs === null) {
+    return {
+      shadow_kind: "missing_browser_truth_checked_at",
+      enforce: false,
+      max_age_ms: maxAgeMs,
+      checked_at_ms: null,
+      age_ms: null,
+    };
+  }
+
+  const ageMs = nowMs - checkedAtMs;
+  if (ageMs <= maxAgeMs) return null;
+
+  return {
+    shadow_kind: "stale_browser_truth_checked_at",
+    enforce: false,
+    max_age_ms: maxAgeMs,
+    checked_at_ms: checkedAtMs,
+    age_ms: ageMs,
+  };
+}
+
+export type StaleBrowserTruthShadowCountSummary = {
+  live_direct_buyable_count: number;
+  stale_shadow_count: number;
+  missing_browser_truth_checked_at_count: number;
+  stale_browser_truth_checked_at_count: number;
+  fresh_direct_buyable_count: number;
+};
+
+export function summarizeStaleBrowserTruthShadowCounts<
+  T extends StaleBrowserTruthShadowLink,
+>(links: T[], options?: { now?: Date; maxAgeMs?: number }): StaleBrowserTruthShadowCountSummary {
+  let live_direct_buyable_count = 0;
+  let missing_browser_truth_checked_at_count = 0;
+  let stale_browser_truth_checked_at_count = 0;
+
+  for (const link of links) {
+    if (!isDirectBuyableSafeCtaRow(link)) continue;
+    live_direct_buyable_count += 1;
+    const shadow = staleBrowserTruthShadowClassification(link, options);
+    if (!shadow) continue;
+    if (shadow.shadow_kind === "missing_browser_truth_checked_at") {
+      missing_browser_truth_checked_at_count += 1;
+    } else {
+      stale_browser_truth_checked_at_count += 1;
+    }
+  }
+
+  const stale_shadow_count =
+    missing_browser_truth_checked_at_count + stale_browser_truth_checked_at_count;
+
+  return {
+    live_direct_buyable_count,
+    stale_shadow_count,
+    missing_browser_truth_checked_at_count,
+    stale_browser_truth_checked_at_count,
+    fresh_direct_buyable_count: live_direct_buyable_count - stale_shadow_count,
+  };
+}
+
 export type BuyPathGateSuppressionSummary = {
   hadSearchPlaceholderRows: boolean;
   hadIndirectDiscoveryRows: boolean;

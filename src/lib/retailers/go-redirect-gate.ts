@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
+import {
+  buyLinkGateFailureKind,
+  staleBrowserTruthShadowClassification,
+  type StaleBrowserTruthShadowClassification,
+} from "@/lib/retailers/launch-buy-links";
 
 /** Amazon Associates store ID applied at `/go` redirect time only (not stored on rows). */
 export const AMAZON_AFFILIATE_TAG = "buckparts20-20";
@@ -83,6 +87,30 @@ export function isAffiliateUrlSafeForGoRedirect(
       browser_truth_classification: classification,
       browser_truth_buyable_subtype: browserTruthBuyableSubtype,
     }) === null
+  );
+}
+
+/**
+ * R1 shadow/count mode: reports stale browser-truth recency for rows that still pass `/go`.
+ * Does not change `isAffiliateUrlSafeForGoRedirect` behavior.
+ */
+export function staleBrowserTruthShadowForGoRedirect(
+  retailerKey: string | null | undefined,
+  affiliateUrl: string,
+  classification?: string,
+  browserTruthBuyableSubtype?: string | null,
+  browserTruthCheckedAt?: string | null,
+  options?: Parameters<typeof staleBrowserTruthShadowClassification>[1],
+): StaleBrowserTruthShadowClassification | null {
+  return staleBrowserTruthShadowClassification(
+    {
+      retailer_key: retailerKey,
+      affiliate_url: affiliateUrl?.trim() ?? "",
+      browser_truth_classification: classification,
+      browser_truth_buyable_subtype: browserTruthBuyableSubtype,
+      browser_truth_checked_at: browserTruthCheckedAt,
+    },
+    options,
   );
 }
 

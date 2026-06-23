@@ -6,6 +6,7 @@ import {
   isAffiliateUrlSafeForGoRedirect,
   isHttpOrHttpsUrl,
   nextResponseRedirectAffiliateIfSafe,
+  staleBrowserTruthShadowForGoRedirect,
 } from "@/lib/retailers/go-redirect-gate";
 
 describe("go-redirect-gate", () => {
@@ -264,6 +265,48 @@ describe("go-redirect-gate", () => {
           "https://www.amazon.com/dp/B00EXAMPLE",
         ),
         false,
+      );
+    });
+
+    it("still allows direct_buyable regardless of browser_truth_checked_at age (R1 shadow only)", () => {
+      assert.equal(
+        isAffiliateUrlSafeForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+        ),
+        true,
+      );
+    });
+  });
+
+  describe("staleBrowserTruthShadowForGoRedirect (non-enforcing)", () => {
+    const now = new Date("2026-06-10T12:00:00.000Z");
+
+    it("reports stale shadow for live direct_buyable rows with aged checked_at", () => {
+      const shadow = staleBrowserTruthShadowForGoRedirect(
+        "amazon",
+        "https://www.amazon.com/dp/B00EXAMPLE",
+        "direct_buyable",
+        null,
+        "2020-01-01T00:00:00.000Z",
+        { now },
+      );
+      assert.equal(shadow?.shadow_kind, "stale_browser_truth_checked_at");
+      assert.equal(shadow?.enforce, false);
+    });
+
+    it("returns null for fresh checked_at on live direct_buyable rows", () => {
+      assert.equal(
+        staleBrowserTruthShadowForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          null,
+          "2026-05-01T00:00:00.000Z",
+          { now },
+        ),
+        null,
       );
     });
   });

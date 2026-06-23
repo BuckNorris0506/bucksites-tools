@@ -161,6 +161,7 @@
     "buckparts:codex-next-execution-packet": "tsx scripts/run-buckparts-codex-next-execution-packet.ts",
     "buckparts:affiliate-tracker": "tsx scripts/report-buckparts-affiliate-tracker.ts",
     "buckparts:blocked-link-queue": "tsx scripts/report-buckparts-blocked-link-money-queue.ts",
+    "buckparts:stale-browser-truth-shadow": "tsx scripts/report-buckparts-stale-browser-truth-shadow-v1.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
     "buckparts:discover:frigidaire-oem-pdps": "tsx scripts/discover-frigidaire-oem-direct-pdp-candidates.ts",
     "buckparts:frigidaire-replacement-strategy": "tsx scripts/report-frigidaire-replacement-strategy.ts",

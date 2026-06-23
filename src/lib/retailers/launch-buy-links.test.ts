@@ -18,6 +18,9 @@ import {
   selectBestVerifiedBuyLink,
   sortBestVerifiedBuyLinks,
   summarizeBuyPathGateSuppression,
+  staleBrowserTruthShadowClassification,
+  summarizeStaleBrowserTruthShadowCounts,
+  R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS,
 } from "./launch-buy-links";
 
 describe("isSearchEngineDiscoveryUrl (major search hosts)", () => {
@@ -1023,5 +1026,110 @@ describe("Waterdrop exact-proof purchase-option priority", () => {
       filterRealBuyRetailerLinks([unsafeWaterdropLink, amazonLink]).map((r) => r.id),
       ["6bbf8586-a87e-46de-932c-2bc341587619"],
     );
+  });
+});
+
+describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", () => {
+  const now = new Date("2026-06-10T12:00:00.000Z");
+  const freshCheckedAt = "2026-05-01T00:00:00.000Z";
+  const staleCheckedAt = "2026-01-01T00:00:00.000Z";
+
+  it("does not change buyLinkGateFailureKind for stale direct_buyable rows", () => {
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: staleCheckedAt,
+      }),
+      null,
+    );
+  });
+
+  it("still includes stale direct_buyable rows in filterRealBuyRetailerLinks", () => {
+    const links = filterRealBuyRetailerLinks([
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: staleCheckedAt,
+      },
+    ]);
+    assert.equal(links.length, 1);
+  });
+
+  it("classifies missing checked_at as missing_browser_truth_checked_at shadow", () => {
+    const shadow = staleBrowserTruthShadowClassification(
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: null,
+      },
+      { now },
+    );
+    assert.equal(shadow?.shadow_kind, "missing_browser_truth_checked_at");
+    assert.equal(shadow?.enforce, false);
+  });
+
+  it("classifies aged checked_at as stale_browser_truth_checked_at shadow", () => {
+    const shadow = staleBrowserTruthShadowClassification(
+      {
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: staleCheckedAt,
+      },
+      { now },
+    );
+    assert.equal(shadow?.shadow_kind, "stale_browser_truth_checked_at");
+    assert.equal(shadow?.enforce, false);
+    assert.equal(shadow?.max_age_ms, R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS);
+    assert.ok((shadow?.age_ms ?? 0) > R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS);
+  });
+
+  it("returns null for fresh direct_buyable rows", () => {
+    assert.equal(
+      staleBrowserTruthShadowClassification(
+        {
+          retailer_key: "amazon",
+          affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_checked_at: freshCheckedAt,
+        },
+        { now },
+      ),
+      null,
+    );
+  });
+
+  it("summarizeStaleBrowserTruthShadowCounts separates fresh and stale live links", () => {
+    const summary = summarizeStaleBrowserTruthShadowCounts(
+      [
+        {
+          retailer_key: "amazon",
+          affiliate_url: "https://www.amazon.com/dp/B00FRESH",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_checked_at: freshCheckedAt,
+        },
+        {
+          retailer_key: "amazon",
+          affiliate_url: "https://www.amazon.com/dp/B00STALE",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_checked_at: staleCheckedAt,
+        },
+        {
+          retailer_key: "google-search",
+          affiliate_url: "https://www.google.com/search?q=filter",
+          browser_truth_classification: "direct_buyable",
+          browser_truth_checked_at: staleCheckedAt,
+        },
+      ],
+      { now },
+    );
+
+    assert.equal(summary.live_direct_buyable_count, 2);
+    assert.equal(summary.stale_shadow_count, 1);
+    assert.equal(summary.fresh_direct_buyable_count, 1);
   });
 });
