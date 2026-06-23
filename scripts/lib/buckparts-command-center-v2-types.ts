@@ -67,6 +67,7 @@ import type { ExternalQualitySignalUsefulnessLaneV1 } from "./external-quality-s
 import type { BuckpartsMarketingIntelligenceEngineV1 } from "./buckparts-marketing-intelligence-engine-v1";
 import type { BuckpartsAgentControlPlaneV1 } from "./buckparts-agent-control-plane-v1";
 import type { CommandCenterIssueRegistryLaneV1 } from "./command-center-issue-registry-command-center-v1";
+import type { TruthIntegrityRegistryCommandCenterLaneV1 } from "./command-center-truth-integrity-registry-v1";
 import type { DistributionOpportunityRegistryLaneV1 } from "./command-center-distribution-opportunity-registry-v1";
 import type { RevenueOpportunityRegistryLaneV1 } from "./command-center-revenue-opportunity-registry-v1";
 import type { SeoOpportunityRegistryLaneV1 } from "./command-center-seo-opportunity-registry-v1";
@@ -1092,6 +1093,8 @@ export type CommandCenterV2Report = {
   revenue_opportunity_registry_v1: RevenueOpportunityRegistryLaneV1;
   /** Read-only distribution opportunity planning registry — starter examples only; no NBA steering. */
   distribution_opportunity_registry_v1: DistributionOpportunityRegistryLaneV1;
+  /** Read-only Truth Integrity Department ledger — surfaces truth debt from committed registry JSON; no enforcement. */
+  truth_integrity_registry_v1: TruthIntegrityRegistryCommandCenterLaneV1;
   /** Read-only Customer Reality scoreboard — aggregated on full report build; does not replace next_best_action. */
   customer_reality_scoreboard_v1?: import("./customer-reality-scoreboard-v1").CustomerRealityScoreboardV1;
   /** Read-only customer vs factory steering comparison — dry-run only; does not replace next_best_action. */

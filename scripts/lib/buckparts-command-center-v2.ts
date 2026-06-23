@@ -279,6 +279,7 @@ export function buildCommandCenterV2Report(input: {
   | "seo_opportunity_registry_v1"
   | "revenue_opportunity_registry_v1"
   | "distribution_opportunity_registry_v1"
+  | "truth_integrity_registry_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
 > {

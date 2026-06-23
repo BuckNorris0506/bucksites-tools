@@ -4733,6 +4733,33 @@ test("command_center_v2 opportunity_registry lanes are planning-only and do not 
   }
 });
 
+test("command_center_v2.truth_integrity_registry_v1 is read-only truth debt lane", async () => {
+  const rootDir = path.resolve(__dirname, "..");
+  const report = await buildBuckpartsCommandCenterReport({
+    rootDir,
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: (p) => (fs.existsSync(p) ? fs.readdirSync(p) : []),
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+
+  const lane = report.command_center_v2.truth_integrity_registry_v1;
+  assert.equal(lane.contract, "truth_integrity_registry_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.steering_override_active, false);
+  assert.equal(lane.parse_errors.length, 0);
+  assert.equal(lane.total_findings, 2);
+  assert.equal(lane.truth_integrity_shadowed_count, 1);
+  assert.equal(lane.truth_integrity_measured_count, 1);
+  assert.equal(lane.high_severity_unfixed_count, 2);
+  assert.ok(lane.top_truth_integrity_risk);
+  assert.equal(lane.top_truth_integrity_risk?.finding_code, "R5");
+  assert.ok(lane.recommended_truth_integrity_next_action.length > 0);
+  assert.doesNotMatch(report.next_best_action, /TIR-2026-/);
+});
+
 test("command_center_v2.owner_integrity_sentinel_v1 is read-only CC-owned truth gate", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
