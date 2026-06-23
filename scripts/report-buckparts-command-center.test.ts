@@ -4817,6 +4817,27 @@ test("command_center_v2.brain_integrity_gate_v1 governs lane work from brain cov
   }
 });
 
+test("command_center_v2.buckparts_production_truth_ap_v1 is read-only CC truth", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: () => false,
+    readDir: () => [],
+    readTextFile: () => BASE_TRACKER,
+  });
+  const lane = report.command_center_v2.buckparts_production_truth_ap_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "buckparts_production_truth_ap_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.mutation_authorized, false);
+  assert.equal(lane.npm_script, "buckparts:production-truth:ap");
+  assert.ok(["OK", "ATTENTION", "BLOCKED", "UNKNOWN"].includes(lane.runtime_status));
+  assert.equal(typeof lane.summary.pass, "number");
+  assert.equal(typeof lane.summary.fail, "number");
+  assert.equal(typeof lane.summary.inventory_warning_count, "number");
+  assert.ok(lane.cases.every((c) => typeof c.customer_safety_status === "string"));
+});
+
 test("command_center_v2.external_measurement_freshness_v1 is read-only CC truth", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

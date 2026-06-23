@@ -28,6 +28,24 @@ type RuntimeStatus = "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
 type TopOfGameStatus = "BRIGHT" | "PARTIAL" | "DARK" | "UNKNOWN" | "NOT_NEEDED_YET";
 type CommandCenterReport = Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>;
 
+export type BuckpartsDailyOperatorProductionTruthApV1 = {
+  runtime_status: "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
+  supabase_configured: boolean;
+  npm_script: "buckparts:production-truth:ap";
+  summary: {
+    pass: number;
+    fail: number;
+    inventory_warning_count: number;
+    pass_with_inventory_warnings: number;
+  };
+  cases: Array<{
+    case_id: string;
+    status: string;
+    customer_safety_status: string;
+    inventory_warning_count: number;
+  }>;
+};
+
 type Ga4TrustFunnelRead =
   | { status: "OK"; source: "SUPABASE" | "LOCAL_ARTIFACT"; artifact: Ga4TrustFunnelArtifact; issue: null }
   | { status: "UNKNOWN"; source: "NONE"; artifact: null; issue: string };
@@ -120,6 +138,7 @@ export type BuckpartsDailyOperatorReport = {
     agent_action: RecommendationAuthorityRecord;
     evaluated_actions: RecommendationAuthorityRecord[];
   };
+  production_truth_ap: BuckpartsDailyOperatorProductionTruthApV1 | null;
   next_owner_action: string;
   next_agent_action: string;
   validation_status: {
@@ -479,6 +498,29 @@ function hasKnownUnknown(haystack: string[], needle: string): boolean {
   return haystack.some((item) => item.toLowerCase().includes(needle.toLowerCase()));
 }
 
+function projectProductionTruthApFromCommandCenter(
+  lane: CommandCenterReport["command_center_v2"]["buckparts_production_truth_ap_v1"] | null | undefined,
+): BuckpartsDailyOperatorProductionTruthApV1 | null {
+  if (!lane) return null;
+  return {
+    runtime_status: lane.runtime_status,
+    supabase_configured: lane.supabase_configured,
+    npm_script: lane.npm_script,
+    summary: {
+      pass: lane.summary.pass,
+      fail: lane.summary.fail,
+      inventory_warning_count: lane.summary.inventory_warning_count,
+      pass_with_inventory_warnings: lane.summary.pass_with_inventory_warnings,
+    },
+    cases: lane.cases.map((c) => ({
+      case_id: c.case_id,
+      status: c.status,
+      customer_safety_status: c.customer_safety_status,
+      inventory_warning_count: c.inventory_warnings.length,
+    })),
+  };
+}
+
 export async function buildBuckpartsDailyOperatorReport(
   options: DailyOperatorOptions = {},
 ): Promise<BuckpartsDailyOperatorReport> {
@@ -511,6 +553,9 @@ export async function buildBuckpartsDailyOperatorReport(
   const liveSite = liveSiteResult.ok ? liveSiteResult.value : null;
   const gsc = gscResult.ok ? gscResult.value : null;
   const ga4 = ga4Result.ok ? ga4Result.value : null;
+  const productionTruthAp = projectProductionTruthApFromCommandCenter(
+    commandCenter?.command_center_v2?.buckparts_production_truth_ap_v1,
+  );
   if (ga4 && ga4.status !== "OK") {
     blocked_jobs.push({ job_or_signal: "ga4_trust_funnel", status: "UNKNOWN", reason: ga4.issue });
   }
@@ -521,6 +566,11 @@ export async function buildBuckpartsDailyOperatorReport(
   }
   const liveStatus = routeHealthStatus(liveSite);
   if (liveStatus === "BLOCKED") stopLineIssues.push("live_site_smoke_check: route health has UNKNOWN or 5xx result.");
+  if (productionTruthAp && productionTruthAp.summary.fail > 0) {
+    stopLineIssues.push(
+      `production_truth_ap: blocking fail=${productionTruthAp.summary.fail} (npm run buckparts:production-truth:ap)`,
+    );
+  }
 
   const unknownFacts: string[] = [];
   if (!commandCenter) unknownFacts.push("Command Center report unavailable; dependent demand/click/action fields are UNKNOWN.");
@@ -603,6 +653,9 @@ export async function buildBuckpartsDailyOperatorReport(
       : null,
     commandCenter?.command_center_v2?.recent_evidence?.evidence_inventory?.contract === "evidence_inventory_v1"
       ? "Evidence signal is authoritative only as inventory/body mapping."
+      : null,
+    productionTruthAp
+      ? `AP Production Truth runtime_status=${productionTruthAp.runtime_status}; pass=${productionTruthAp.summary.pass}; fail=${productionTruthAp.summary.fail}; inventory_warnings=${productionTruthAp.summary.inventory_warning_count}.`
       : null,
   ].filter((v): v is string => typeof v === "string");
 
@@ -693,6 +746,7 @@ export async function buildBuckpartsDailyOperatorReport(
       agent_action: recommendationAuthority.agent_action,
       evaluated_actions: recommendationAuthority.evaluated_actions,
     },
+    production_truth_ap: productionTruthAp,
     next_owner_action: recommendationAuthority.next_owner_action,
     next_agent_action: recommendationAuthority.next_agent_action,
     validation_status: {
@@ -763,6 +817,22 @@ function siteTargetWarning(report: BuckpartsDailyOperatorReport, canonicalProduc
   return `Live-site smoke target is ${target}; production custom domain check (${canonicalProductionUrl}) is UNKNOWN.`;
 }
 
+function productionTruthApLines(
+  productionTruth: BuckpartsDailyOperatorReport["production_truth_ap"],
+): string[] {
+  if (!productionTruth) return ["- AP Production Truth: UNKNOWN (Command Center lane unavailable)."];
+  const summary = productionTruth.summary;
+  return [
+    `- Runtime status: ${productionTruth.runtime_status}; Supabase configured: ${String(productionTruth.supabase_configured)}.`,
+    `- Summary: pass=${summary.pass}, fail=${summary.fail}, inventory_warnings=${summary.inventory_warning_count}, pass_with_inventory_warnings=${summary.pass_with_inventory_warnings}.`,
+    ...productionTruth.cases.map(
+      (c) =>
+        `- ${c.case_id}: status=${c.status}, customer_safety=${c.customer_safety_status}, inventory_warnings=${c.inventory_warning_count}.`,
+    ),
+    `- Standalone: npm run ${productionTruth.npm_script}`,
+  ];
+}
+
 function checklistStatusLines(status: BuckpartsDailyOperatorReport["top_of_game_checklist_status"]): string[] {
   return [
     `- Fit correctness: ${status.fit_correctness}`,
@@ -828,6 +898,9 @@ export function formatBuckpartsDailyOperatorHumanReport(
     "",
     "TOP-OF-GAME CHECKLIST",
     ...checklistStatusLines(report.top_of_game_checklist_status),
+    "",
+    "PRODUCTION TRUTH (AP)",
+    ...productionTruthApLines(report.production_truth_ap),
     "",
     "RECOMMENDATION AUTHORITY",
     ...recommendationAuthorityLines(report.recommendation_authority),

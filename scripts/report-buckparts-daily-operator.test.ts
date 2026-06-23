@@ -171,7 +171,50 @@ function searchSummary() {
   };
 }
 
-function commandCenter() {
+function productionTruthApLane(
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    contract: "buckparts_production_truth_ap_v1" as const,
+    read_only: true as const,
+    data_mutation: false as const,
+    mutation_authorized: false as const,
+    generated_at: fixedNow().toISOString(),
+    supabase_configured: true,
+    runtime_loader: "getAirPurifierFilterBySlug | getAirPurifierModelBySlug" as const,
+    runtime_status: "OK" as const,
+    npm_script: "buckparts:production-truth:ap" as const,
+    summary: {
+      total_cases: 1,
+      pass: 1,
+      fail: 0,
+      pass_with_inventory_warnings: 0,
+      inventory_warning_count: 0,
+      skip: 0,
+      unknown: 0,
+    },
+    cases: [
+      {
+        case_id: "ap-safe-winix-filter-h-116130",
+        title: "Winix",
+        case_type: "safe_direct_buyable" as const,
+        status: "PASS" as const,
+        customer_safety_status: "PASS" as const,
+        inventory_warnings: [],
+        filter_slug: "winix-filter-h-116130",
+        model_slug: null,
+        authority_artifacts: [],
+        assertions: [],
+      },
+    ],
+    proven_facts: ["PROVEN: mocked lane for daily operator tests."],
+    inferred_facts: [],
+    unknown_facts: [],
+    ...overrides,
+  };
+}
+
+function commandCenter(overrides: { production_truth_ap?: Record<string, unknown> } = {}) {
   return {
     report_name: "buckparts_command_center_v1",
     generated_at: fixedNow().toISOString(),
@@ -282,6 +325,7 @@ function commandCenter() {
           },
         },
       },
+      buckparts_production_truth_ap_v1: productionTruthApLane(overrides.production_truth_ap),
     },
   } as Awaited<ReturnType<typeof import("./report-buckparts-command-center").buildBuckpartsCommandCenterReport>>;
 }
@@ -428,6 +472,7 @@ test("Daily Operator command/report shape is stable", async () => {
     "unknown_facts",
     "decision_authority_policy",
     "recommendation_authority",
+    "production_truth_ap",
   ]) {
     assert.ok(key in report);
   }
@@ -456,6 +501,7 @@ test("default Daily Operator output is owner-readable with main section headings
     "TRAFFIC / CLICKS / MONEY",
     "SITE HEALTH",
     "TOP-OF-GAME CHECKLIST",
+    "PRODUCTION TRUTH (AP)",
     "RECOMMENDATION AUTHORITY",
     "NEXT ACTION",
     "DO NOT TOUCH",
@@ -466,6 +512,75 @@ test("default Daily Operator output is owner-readable with main section headings
   assert.ok(output.includes("production custom domain check (https://buckparts.com) is UNKNOWN"));
   assert.ok(output.includes("- Owner: Use GSC demand opportunities."));
   assert.ok(output.includes("- Agent: WITHHELD — recommendation source is not authority-scoped."));
+});
+
+test("Daily Operator STOP_THE_LINE when AP Production Truth has blocking fails", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      commandCenter: async () =>
+        commandCenter({
+          production_truth_ap: {
+            runtime_status: "BLOCKED",
+            summary: {
+              total_cases: 4,
+              pass: 3,
+              fail: 1,
+              pass_with_inventory_warnings: 0,
+              inventory_warning_count: 0,
+              skip: 0,
+              unknown: 0,
+            },
+          },
+        }),
+    }),
+  });
+  assert.equal(report.production_truth_ap?.summary.fail, 1);
+  assert.equal(report.business_warning.status, "STOP_THE_LINE");
+  assert.ok(
+    report.business_warning.issues.some((issue) => issue.includes("production_truth_ap: blocking fail=1")),
+  );
+  assert.equal(report.runtime_status, "BLOCKED");
+});
+
+test("Daily Operator keeps inventory warnings as ATTENTION only", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({
+    now: fixedNow,
+    providers: providers({
+      commandCenter: async () =>
+        commandCenter({
+          production_truth_ap: {
+            runtime_status: "ATTENTION",
+            summary: {
+              total_cases: 4,
+              pass: 4,
+              fail: 0,
+              pass_with_inventory_warnings: 1,
+              inventory_warning_count: 1,
+              skip: 0,
+              unknown: 0,
+            },
+            cases: [
+              {
+                case_id: "ap-suppressed-holmes-hapf30",
+                title: "Holmes",
+                case_type: "suppressed_search_placeholder",
+                status: "PASS",
+                customer_safety_status: "PASS",
+                inventory_warnings: [{ assertion_id: "no_search_primary_win" }],
+                filter_slug: "holmes-hapf30",
+                model_slug: null,
+                authority_artifacts: [],
+                assertions: [],
+              },
+            ],
+          },
+        }),
+    }),
+  });
+  assert.equal(report.production_truth_ap?.summary.inventory_warning_count, 1);
+  assert.equal(report.business_warning.status, "CLEAR");
+  assert.ok(report.runtime_status === "ATTENTION" || report.runtime_status === "OK");
 });
 
 test("Daily Operator withholds unscoped Command Center records while allowing scoped demand authority", async () => {

@@ -167,6 +167,10 @@ import {
 } from "./lib/ap-model-first-evidence-queue-v1";
 import { buildAirPurifierWeakBuyerPathAuditV1Report } from "./lib/air-purifier-weak-buyer-path-audit-v1";
 import {
+  buildBuckpartsProductionTruthApCommandCenterLaneUnknownV1,
+  buildBuckpartsProductionTruthApCommandCenterLaneV1,
+} from "./lib/buckparts-production-truth-ap-command-center-v1";
+import {
   buildBuckpartsSitemapIndexabilityAuditUnknownV1,
   buildBuckpartsSitemapIndexabilityAuditV1,
 } from "./lib/buckparts-sitemap-indexability-audit-v1";
@@ -1760,6 +1764,20 @@ export async function buildBuckpartsCommandCenterReport(
     listDir: readDir,
   });
 
+  let buckparts_production_truth_ap_v1;
+  try {
+    buckparts_production_truth_ap_v1 = await buildBuckpartsProductionTruthApCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    buckparts_production_truth_ap_v1 = buildBuckpartsProductionTruthApCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let all_product_safe_buyer_path_census_v1;
   try {
     all_product_safe_buyer_path_census_v1 = await buildAllProductSafeBuyerPathCensusV1Report({
@@ -2034,6 +2052,7 @@ export async function buildBuckpartsCommandCenterReport(
     ap_batch_v3_run_instantiation_v1,
     air_purifier_model_first_production_lane_v1,
     air_purifier_weak_buyer_path_audit_v1,
+    buckparts_production_truth_ap_v1,
     all_product_safe_buyer_path_census_v1,
     ap_model_first_evidence_queue_v1,
     marketing_intelligence_engine_v1,

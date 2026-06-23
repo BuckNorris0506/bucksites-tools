@@ -1075,6 +1075,8 @@ export type CommandCenterV2Report = {
   air_purifier_model_first_production_lane_v1?: AirPurifierModelFirstProductionLaneReportV1;
   /** Read-only weak buyer path diagnosis for linked AP filters without safe primaries. */
   air_purifier_weak_buyer_path_audit_v1?: AirPurifierWeakBuyerPathAuditReportV1;
+  /** Read-only AP Production Truth golden-case runtime checks — same loaders as live pages. */
+  buckparts_production_truth_ap_v1?: import("./buckparts-production-truth-ap-command-center-v1").BuckpartsProductionTruthApCommandCenterLaneV1;
   /** Read-only all-wedge safe buyer path census and rescue queue — no mutation authority. */
   all_product_safe_buyer_path_census_v1?: import("./all-product-safe-buyer-path-census-v1").AllProductSafeBuyerPathCensusV1;
   /** Read-only model-first evidence queue for steering (no packet files written). */
