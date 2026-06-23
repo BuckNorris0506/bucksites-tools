@@ -109,7 +109,154 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ---
 
+## Current stopping point — AP demand-selected correctness-risk Command Center steering (`3189b9b`)
+
+**Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Milestone summary (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`3189b9b`** |
+| Latest commit | **`3189b9b`** — Wire AP correctness risks into Command Center steering |
+| Prior commits (same workstream) | **`a2f5be0`** — Fix AP build type regressions; **`296dc32`** — Add AP demand-selected open-batch proof helpers; **`66e65cc`** — Clear stale AP demand-selected open-batch blocker; **`3266e7e`** — Update Command Center tests for completed AP demand discovery; **`936f6c9`** — Add AP demand-selected correctness issue packets (**BP-000005**, **BP-000006**); **`1a2140a`** — Surface AP demand-selected correctness risks in Command Center; **`d59f3f8`** — Record AP demand-selected noncanonical discovery result |
+| Holmes / Production Truth AP | **Retained** — see **Current stopping point — Holmes HAPF30 self-correction + Production Truth AP** below (superseded for next-move authority) |
+
+### 2. Command Center steering — correctness risks (PROVEN — re-run `jq` before citing)
+
+When AP demand-selected discovery is **proven on disk** and blocking correctness verdicts remain, Command Center **`next_best_action`** is steered by **`demand_selected_correctness_risks`** — **not** stale demand-to-coverage batch-planning messaging.
+
+| Field | Value |
+|-------|-------|
+| `next_best_action` prefix | **`CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]:`** |
+| `steering_override_source` | **`demand_selected_correctness_risks`** — `.command_center_v2.customer_steering_comparison_v1.factory_steering.steering_override_source` |
+| Linked issues cited in NBA | **BP-000005** (`vornado-md1-0023`), **BP-000006** (`renpho-rp-ap003`) |
+| Blocking verdicts (audit lane) | **`vornado_md1_0023_status=issue_track_and_split_before_progression`**; **`renpho_rp_ap003_status=exclude_from_future_batch_progression`** |
+| Demand lane (unchanged) | **`recommended_wedge: air_purifier`**, **`recommendation_status: START_NEW_DEMAND_SELECTED_BATCH`** — wedge selection unchanged; only root NBA phase demoted from batch planning to correctness resolution |
+| Steering precedence | TIER_0 issue registry → re-audit → refrigerator model-first → model-first → **`demand_selected_correctness_risks`** → demand_to_coverage |
+| Resolver (read-only) | `scripts/lib/demand-selected-correctness-risks-steering-v1.ts` — **`resolveDemandSelectedCorrectnessRisksSteeringOverrideV1`** |
+| CC wiring | `scripts/report-buckparts-command-center.ts` — no new Command Center mirror lane |
+
+```bash
+node --import tsx scripts/report-buckparts-command-center.ts 2>/dev/null | jq '{
+  next_best_action_prefix: (.next_best_action | split(":")[0]),
+  steering_override_source: .command_center_v2.customer_steering_comparison_v1.factory_steering.steering_override_source,
+  demand_lane: .command_center_v2.demand_to_coverage_next_lane_v1 | {recommended_wedge, recommendation_status},
+  correctness: .command_center_v2.air_purifier_demand_selected_correctness_risks_v1 | {
+    source_status, vornado_md1_0023_status, renpho_rp_ap003_status
+  },
+  mutation: .command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 | {
+    batch_start_authorized, csv_apply_authorized, supabase_mutation_authorized,
+    evidence_write_authorized, public_ui_mutation_authorized, netlify_api_authorized
+  }
+}'
+```
+
+**PROVEN live NBA (re-run before citing):** `CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]: … Resolve owner-approved catalog identity for BP-000005 (vornado-md1-0023) and BP-000006 (renpho-rp-ap003) before resuming demand-selected batch planning. Mutation unauthorized. Demoted: demand_to_coverage START_NEW_DEMAND_SELECTED_BATCH batch-planning messaging (wedge selection unchanged).`
+
+### 3. AP demand-selected run registry + open-batch proof (PROVEN — foundation from `296dc32`)
+
+| Field | Value |
+|-------|-------|
+| Run registry | **PROVEN** — `data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json` |
+| `run_id` | **`ap-demand-selected-batch-run-v1-2026-06-23`** |
+| `stage` | **`read_only_evidence_collection_complete`** |
+| `closeout_complete` | **`false`** (open batch — not closed for apply) |
+| `evidence_collection_started` | **`true`** (demand-selected discovery artifact on disk) |
+| Intake status | **`PROVEN_OPEN`** — `batch_run_registry_intake_v1.ap_demand_selected_open_run_registry_status` |
+| `demand_blockers` | **`[]`** — `demand_to_coverage_next_lane_v1.blockers` |
+| `owner_review_blockers` | **`[]`** — `air_purifier_demand_selected_batch_owner_review_v1.blockers` |
+| `open_batch_proof_v1.open_batch_existence` | **`PROVEN`** |
+| `open_batch_proof_v1.batch_closeout` | **`NOT_PROVEN`** |
+| `open_batch_proof_v1.apply_readiness` | **`NOT_PROVEN`** |
+
+**Discovery artifact (PROVEN — noncanonical, not apply-eligible):**
+
+- `data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json`
+- Mechanical validation **`VALIDATION_PASS`** (84/84); **`discovery_artifact_not_canonical: true`**; **`discovery_artifact_not_apply_eligible: true`**
+
+**Mutation / authorization (PROVEN — all remain false):**
+
+| Flag | Value |
+|------|-------|
+| `batch_start_authorized` | **`false`** |
+| `csv_apply_authorized` | **`false`** |
+| `supabase_mutation_authorized` | **`false`** |
+| `evidence_write_authorized` | **`false`** |
+| `public_ui_mutation_authorized` | **`false`** |
+| `netlify_api_authorized` | **`false`** |
+
+**Builder / contract paths:**
+
+| Contract | jq path | Builder |
+|----------|---------|---------|
+| `demand_to_coverage_next_lane_v1` | `.command_center_v2.demand_to_coverage_next_lane_v1` | `scripts/lib/demand-to-coverage-next-lane-v1.ts` |
+| `air_purifier_demand_selected_batch_owner_review_v1` | `.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1` | `scripts/lib/air-purifier-demand-selected-batch-owner-review-v1.ts` |
+| `air_purifier_demand_selected_correctness_risks_v1` | `.command_center_v2.air_purifier_demand_selected_correctness_risks_v1` | `scripts/lib/air-purifier-demand-selected-correctness-risks-command-center-v1.ts` |
+| `demand_selected_correctness_risks_steering_v1` | *(resolver-only — no mirror lane)* | `scripts/lib/demand-selected-correctness-risks-steering-v1.ts` |
+| `batch_run_registry_intake_v1` | `.command_center_v2.batch_run_registry_intake_v1` | `scripts/lib/batch-run-registry-intake-v1.ts` |
+
+### 4. Correctness risks — tracked TIER_1 issues (PROVEN)
+
+| Issue | Severity | Status | Scope |
+|-------|----------|--------|-------|
+| **BP-000005** | **TIER_1** | **`PACKET_READY`** | Vornado MD1-0023 HEPA slug vs MD1-0022/MD1-0023 carbon identity split |
+| **BP-000006** | **TIER_1** | **`PACKET_READY`** | Renpho RP-AP003 model/filter slug collision |
+
+**Authority artifacts:** `data/command-center/issues/BP-000005.json`, `data/command-center/issues/BP-000006.json`, `data/air-purifier/batch-production/audits/ap-demand-selected-correctness-risks-v1.json`
+
+**PROVEN:** **BP-000001** through **BP-000004** remain **`CLOSED_PROVEN`**.
+
+### 5. Best next action (business/system)
+
+**Next phase is correctness resolution / canonical evidence decision — not more read-only HyperAgent chat discovery.** Command Center steering now reflects this phase directly.
+
+1. **Owner review + resolve BP-000005** — Vornado HEPA vs carbon identity split before any slug progression toward apply.
+2. **Owner review + resolve BP-000006** — Renpho model/filter slug collision; exclude from batch progression until disambiguated.
+3. **Canonical evidence decision** — promote or reject demand-selected discovery rows only after identity correctness; discovery artifact remains **noncanonical** and **not apply-eligible**.
+4. **Holmes / Production Truth / CSV parity** — parallel hygiene workstreams per sections below; do not conflate with demand-selected correctness closure.
+
+### 6. Do not do next (at this stopping point)
+
+- Do **not** run more read-only HyperAgent chat discovery for this run — **`read_only_evidence_collection_complete`**; discovery phase is done.
+- Do **not** treat **`open_batch_existence: PROVEN`** or correctness-risk steering as batch closeout, CSV apply, Supabase mutation, evidence write, buy-link promotion, UI deploy, or **`batch_start_authorized`**.
+- Do **not** apply demand-selected discovery JSON to CSV/Supabase — artifact is **`not_canonical`** / **`not_apply_eligible`**.
+- Do **not** expect **`DEMAND-TO-COVERAGE [START_NEW_DEMAND_SELECTED_BATCH]`** as root NBA while **BP-000005** / **BP-000006** blocking verdicts remain — demand lane data is unchanged; steering demotes batch-planning messaging only.
+- Do **not** close **BP-000005** or **BP-000006** without owner-reviewed identity/collision resolution evidence.
+- Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence.
+
+### 7. Validation (PROVEN before this handoff update)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** |
+| `npm run buckparts:operator-proof` | **PASS** (`RESULT: OK`; live `next_best_action` = **`CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]`**) |
+
+```bash
+npm run build
+npm run buckparts:operator-proof
+node --import tsx scripts/report-buckparts-command-center.ts 2>/dev/null | jq '{
+  steering_override_source: .command_center_v2.customer_steering_comparison_v1.factory_steering.steering_override_source,
+  next_best_action_prefix: (.next_best_action | split(":")[0]),
+  demand_lane: .command_center_v2.demand_to_coverage_next_lane_v1 | {recommended_wedge, recommendation_status},
+  open_batch_proof: .command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.open_batch_proof_v1,
+  mutation: .command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 | {
+    batch_start_authorized, csv_apply_authorized, evidence_write_authorized
+  }
+}'
+node --import tsx --test scripts/lib/demand-selected-correctness-risks-steering-v1.test.ts
+node --import tsx --test --test-name-pattern "air_purifier_demand_selected|demand-selected batch when refrigerator_water" \
+  scripts/report-buckparts-command-center.test.ts
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+npm run buckparts:production-truth:ap
+```
+
+---
+
 ## Current stopping point — Holmes HAPF30 self-correction + Production Truth AP (`2295ebd`)
+
+**Superseded for next-move authority.** Retained for Holmes demotion + Production Truth AP context. **AP demand-selected correctness-risk Command Center steering** section above is the current executive stopping point.
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
 
@@ -180,9 +327,9 @@ node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
 
 ---
 
-## Current stopping point — AP CSV Execution Progress (historical — superseded by `2295ebd`)
+## Current stopping point — AP CSV Execution Progress (historical — superseded by `3189b9b`)
 
-**Superseded for next-move authority.** Retained for CSV apply history through **`c780e82`**. **Holmes HAPF30 self-correction + Production Truth AP** section above is the current executive stopping point.
+**Superseded for next-move authority.** Retained for CSV apply history through **`c780e82`**. **AP demand-selected correctness-risk Command Center steering** section above is the current executive stopping point.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -1006,7 +1153,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, `npm run buckparts:production-truth:ap`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`2295ebd`** — Holmes HAPF30 self-correction + Production Truth AP suite committed (Amazon row **`da6d3777-c4de-40c0-9f86-abe025b1db32`** demoted; live `summary.pass=4`, `summary.fail=0`; Holmes `customer_safety_status=PASS` with one inventory warning; outcome `ap-holmes-hapf30-self-correction-outcome-v1.json`; see **Current stopping point — Holmes HAPF30 self-correction + Production Truth AP** at top). **Prior checkpoint `c780e82`** (AP CSV execution progress) is **superseded** for next-move authority. **Prior checkpoint `a4fcaad`** (AP selector alignment), **`4bac7aa`** (Issue Registry CLOSED_PROVEN), and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, `npm run buckparts:production-truth:ap`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`3189b9b`** — AP demand-selected correctness-risk Command Center steering (`steering_override_source=demand_selected_correctness_risks`; root NBA **`CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]`** while **BP-000005** / **BP-000006** block progression; demand lane still **`air_purifier` / `START_NEW_DEMAND_SELECTED_BATCH`**; open-batch proof **`open_batch_existence=PROVEN`**; mutation flags false; see **Current stopping point — AP demand-selected correctness-risk Command Center steering** at top). **Prior checkpoint `296dc32`** (open-batch proof + blocker reconciliation) and **`2295ebd`** (Holmes HAPF30 self-correction + Production Truth AP) are **superseded** for next-move authority. **Prior checkpoint `c780e82`** (AP CSV execution progress), **`a4fcaad`** (AP selector alignment), **`4bac7aa`** (Issue Registry CLOSED_PROVEN), and **`4246889`** (Customer Reality Command Center) remain documented below — treat as historical unless re-validated. Treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -1916,7 +2063,15 @@ npm run build
 
 ## Current next build priority
 
-**At stopping point `aec8b8c` (re-run named reports before trusting):**
+**At stopping point `3189b9b` (re-run named reports before trusting):**
+
+1. **AP demand-selected correctness** — owner-resolve **BP-000005** (Vornado identity split) and **BP-000006** (Renpho collision); canonical evidence decision; Command Center NBA already steers to this phase via **`demand_selected_correctness_risks`**; **not** more read-only discovery.
+2. **Holmes / Production Truth AP** — recurring `npm run buckparts:production-truth:ap`; OEM search-primary rescue only when owner-scoped.
+3. **AP convergence / parity** — close remaining CSV↔Supabase safe-CTA drift where owner approves apply scope.
+4. **Fridge (unchanged spine truth):** do **not** redo fridge products from scratch; CSV backfill **plan only** until founder approval.
+5. **Save credits:** focused tests unless production/public route changes require **`npm run build`**.
+
+**Historical priority at `aec8b8c` (superseded):**
 
 1. **Grant:** strategy / application kit — **not** more public trust page overbuilding unless a specific grant requires it.
 2. **WHW:** **`3m-ap811` `browser_truth_capture`** — **not** model-first retry; **no** CSV apply from AP811 buyer-path proof; **no** public WHW opening (`whw_public_opening_authorized: false`).
@@ -2011,8 +2166,9 @@ Read-only inventory at this stop:
 - **Netlify deploy API is not routine Command Center validation** — `command_center_v2.deploy_publish_queue_v1` gates owner Netlify API/CLI (`netlify_api_call_authorized` defaults **false**); lane never executes Netlify. Default validation: public GET live smoke (`deploy_live_site_monitor_v1`); optional local `data/ops/netlify-deploy-metadata-v1.json` only for budgeted publish recommendations.
 - **Amazon Associates commission feed is not connected** — `data/ops/revenue-ledger-v1.json` has zero entries; Command Center `commission_or_revenue` remains **NOT_CONNECTED** unless a future feed proves otherwise.
 - **GSC/GA4 freshness lane exists on Command Center** (`b85e90b`) — inspect `external_measurement_freshness_v1`; artifacts may still read **STALE** until operator runs `npm run buckparts:gsc:fetch` / `npm run buckparts:ga4:fetch` (listed in lane `recommended_commands`).
-- **Demand-to-coverage next lane (2026-05-22; repaired at `841980c`):** Command Center v2 includes read-only `command_center_v2.demand_to_coverage_next_lane_v1` (builder: `scripts/lib/demand-to-coverage-next-lane-v1.ts`; CLI: `npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts`). Current compact fields are machine-readable and coherent: `recommended_wedge=air_purifier`, `recommendation_status=START_NEW_DEMAND_SELECTED_BATCH`, `next_batch_candidate=air_purifier_demand_selected_batch_candidate`, blocker `open_batch_not_proven`. **Does not** start a batch, replace `next_best_action`, or mutate wedges.
-- **AP demand-selected owner review (`a4fcaad`):** Command Center v2 includes read-only `command_center_v2.air_purifier_demand_selected_batch_owner_review_v1`. **`candidate_rows`** project from **`air_purifier_batch_production_lane_v1.top_candidates`** (not CSV scan order). `batch_start_authorized=false`; blockers include `owner_batch_start_approval_missing`, `batch_run_registry_not_created`, `evidence_collection_not_started`.
+- **Demand-to-coverage next lane (`841980c`+; reconciled at `296dc32`; steering demoted at `3189b9b` when correctness blocks):** Command Center v2 includes read-only `command_center_v2.demand_to_coverage_next_lane_v1`. When AP demand-selected registry is **PROVEN_OPEN** with **`evidence_collection_started=true`**, **`open_batch_not_proven`** is cleared; **`open_batch_proof_v1`** distinguishes open batch existence (**PROVEN**) from closeout and apply readiness (**NOT_PROVEN**). Wedge selection remains authoritative; root NBA may be demoted by **`demand_selected_correctness_risks`** steering when **BP-000005** / **BP-000006** block progression. **Does not** authorize batch start, CSV apply, or evidence writes.
+- **AP demand-selected owner review (`a4fcaad`+; reconciled at `296dc32`):** Command Center v2 includes read-only `command_center_v2.air_purifier_demand_selected_batch_owner_review_v1`. **`candidate_rows`** project from **`air_purifier_batch_production_lane_v1.top_candidates`**. **`batch_start_authorized=false`**; when discovery complete, blockers may be **`[]`** while mutation flags remain false.
+- **AP demand-selected correctness risks (`1a2140a`+; steered at `3189b9b`):** Command Center v2 includes read-only `command_center_v2.air_purifier_demand_selected_correctness_risks_v1`; **BP-000005** and **BP-000006** are TIER_1 **`PACKET_READY`**. When blocking verdicts remain and open batch existence is **PROVEN**, **`resolveDemandSelectedCorrectnessRisksSteeringOverrideV1`** sets **`steering_override_source=demand_selected_correctness_risks`** and root NBA **`CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]`**.
 - **RPWFE purchase-option rescue owner review (local):** Command Center v2 now includes read-only `command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1` for `/filter/rpwfe`, where the customer-visible state is `no_buy_options` because the committed GE catalog search row is blocked as a search placeholder. The lane records the GE spec PDP path as repo-doc proven but not applied, Waterdrop `WD-F19C` as an unproven compatible-replacement candidate, and keeps `official_label_authorized=false`, `compatible_label_authorized=false`, `csv_apply_authorized=false`, `supabase_mutation_authorized=false`, `evidence_write_authorized=false`, `public_ui_mutation_authorized=false`, and `netlify_api_authorized=false`. No buy CTA is authorized.
 - **BuckParts Certainty Engine Checklist (local):** Command Center v2 now includes read-only `command_center_v2.buckparts_certainty_engine_checklist_v1` — a north-star judge lane (not mutation authority) asking whether homeowners would feel less certain buying a replacement filter without checking BuckParts first. **Stable top-level jq fields:** `branded_term` = BuckParts Verified Link, `branded_term_definition`, `ai_vs_buckparts_positioning` = “AI can suggest. BuckParts verifies.” (with explanation that BuckParts beats generic AI only when evidence and verified buying paths exist — not when it guesses). Checklist adds **Visual Match Proof / Picture Match Check** and **label/photo/screenshot upload** (model sticker, filter label, Amazon/retailer screenshots, appliance tag) as major future trust features (**NOT_PROVEN** until live). Checklist item #1 stays **NOT_PROVEN**/**BLOCKED** until 100% fridge verified-link coverage. All authorization flags false. Inspect: `node --import tsx scripts/report-buckparts-command-center.ts | jq '.command_center_v2.buckparts_certainty_engine_checklist_v1 | {branded_term, branded_term_definition, ai_vs_buckparts_positioning, checklist_item_count, first_checklist_item: .checklist_items[0]}'`.
 - **Fridge money queues vs spine:** `top_money_queue` may still surface refrigerator monetization lanes; **`fridge_truth_spine_v1`** is the **truth inventory** lane (buyer-path + Supabase-vs-CSV + public-truth summary). **`next_best_action`** may remain **AP model-first steering** when evidence queue is READY — spine does **not** override.
@@ -2232,7 +2388,7 @@ Current repo checkpoint:
 - Save credits: focused tests unless production/public route changes require build.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — grant trust pack + WHW safe-CTA expansion**, **Current next build priority**, **Do not do next**, and docs/BuckParts-TRUTH-MAP.md), then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — AP demand-selected correctness-risk Command Center steering**, **Current next build priority**, **Do not do next**, and docs/BuckParts-TRUTH-MAP.md), then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
 ```
 
 ---
