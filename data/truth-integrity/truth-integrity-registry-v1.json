@@ -1,0 +1,229 @@
+{
+  "contract": "truth_integrity_registry_v1",
+  "schema_version": "1.0",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "department": "Truth Integrity Department",
+  "governing_docs": [
+    "docs/BuckParts-CONSTITUTION.md",
+    "docs/BuckParts-TRUTH-INTEGRITY-REGISTRY.md"
+  ],
+  "created_at": "2026-06-23T03:27:11.000Z",
+  "last_re_audit_at": "2026-06-23T03:27:11.000Z",
+  "git_head_at_population": "bc29506d3de4d171c69371b41ea295920daa5c74",
+  "population_note": "Initial seed from HyperAgent audits: R1 stale browser truth (shadow mode), R5 HQ handoff fake freshness test. Read-only — no Supabase/CSV/production mutation.",
+  "findings": [
+    {
+      "finding_id": "TIR-2026-0001",
+      "finding_code": "R1",
+      "title": "Live direct_buyable CTAs lack enforced browser_truth recency",
+      "status": "SHADOWED",
+      "severity": "high",
+      "truth_surface": "browser_truth_freshness",
+      "constitution_refs": [
+        "§5 Truth Contract — evidence outranks memory; corrections improve truth",
+        "§7 Evidence Standards — point-in-time checks are not permanent truth"
+      ],
+      "summary": "**PROVEN:** `buyLinkGateFailureKind` allows `direct_buyable` rows regardless of `browser_truth_checked_at` age. **PROVEN:** R1 shadow instrumentation (`staleBrowserTruthShadowClassification`, `buckparts:stale-browser-truth-shadow`) counts stale rows without suppressing CTAs or `/go`. **INFERRED:** Wrong-part / wrong-listing risk rises when PDP truth ages without re-check.",
+      "proven_gap": "No enforcing gate ties live buy-path authority to browser-truth recency. A row can remain `direct_buyable` with missing or 90+ day old `browser_truth_checked_at` and still win CTA selection and `/go` redirects.",
+      "false_safety_risk": "Operators may assume `direct_buyable` implies recently verified browser truth. Shadow report showing `stale_shadow_count: 0` at one snapshot does not prove future safety — only current DB recency at the 90-day threshold.",
+      "smallest_safe_fix": "Phase 1 (done): shadow/count only via `R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS` and read-only report. Phase 2 (not started): owner-approved enforcement — add `stale_browser_truth` to `buyLinkGateFailureKind` or demote stale primaries before CTA selection; run parity on AP stale-primary cohort first.",
+      "blast_radius": {
+        "30d": "**INFERRED:** Stale PDP pricing/stock/variant drift on live CTAs; shadow count rises; homeowners reach outdated destinations.",
+        "60d": "**INFERRED:** Cumulative wrong-code exposure across wedges; audit reports understate risk if shadow report not re-run.",
+        "90d": "**PROVEN policy threshold:** Rows older than `R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS` classify as stale in shadow mode; without enforcement, CTAs still live."
+      },
+      "related_finding_ids": [],
+      "related_audit_artifacts": [
+        "data/air-purifier/batch-production/audits/ap-runtime-convergence-gap-v1.json",
+        "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-packet-v1.json"
+      ],
+      "evidence": {
+        "proof_status": "PROVEN",
+        "discovered_at": "2026-06-22T22:07:53.000Z",
+        "last_confirmed_at": "2026-06-23T03:27:11.000Z",
+        "discovered_by": "hyperagent_audit",
+        "git_heads": [
+          "bc29506",
+          "655259d"
+        ],
+        "artifacts": [
+          {
+            "path": "src/lib/retailers/launch-buy-links.ts",
+            "role": "primary",
+            "excerpt_or_pointer": "R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS; staleBrowserTruthShadowClassification; buyLinkGateFailureKind unchanged"
+          },
+          {
+            "path": "src/lib/retailers/go-redirect-gate.ts",
+            "role": "primary",
+            "excerpt_or_pointer": "isAffiliateUrlSafeForGoRedirect ignores checked_at; staleBrowserTruthShadowForGoRedirect is non-enforcing"
+          },
+          {
+            "path": "scripts/report-buckparts-stale-browser-truth-shadow-v1.ts",
+            "role": "supporting",
+            "excerpt_or_pointer": "read-only Supabase scan; enforce: false in report output"
+          },
+          {
+            "path": "src/lib/retailers/launch-buy-links.test.ts",
+            "role": "supporting",
+            "excerpt_or_pointer": "describe staleBrowserTruthShadowClassification — proves gate unchanged for stale rows"
+          },
+          {
+            "path": "data/air-purifier/batch-production/audits/ap-runtime-convergence-gap-v1.json",
+            "role": "supporting",
+            "excerpt_or_pointer": "residual_gap_count: 11 — stale-primary / CSV-vs-Supabase convergence failures drive unsafe runtime CTAs"
+          },
+          {
+            "path": "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-parity-packet-v1.json",
+            "role": "supporting",
+            "excerpt_or_pointer": "9-slug parity packet; expected_safe_cta_count_delta: 6 — data fix path separate from R1 recency gate"
+          }
+        ]
+      },
+      "validation_commands": {
+        "prove_gap": [
+          "node --import tsx -e \"import { buyLinkGateFailureKind } from './src/lib/retailers/launch-buy-links.ts'; console.log(buyLinkGateFailureKind({ retailer_key: 'amazon', affiliate_url: 'https://www.amazon.com/dp/B00EXAMPLE', browser_truth_classification: 'direct_buyable', browser_truth_checked_at: '2020-01-01T00:00:00.000Z' }));\"",
+          "# Expect: null (passes gate despite aged checked_at)"
+        ],
+        "prove_mitigation": [
+          "npm run buckparts:stale-browser-truth-shadow",
+          "# Expect: report_name buckparts_stale_browser_truth_shadow_v1, enforce: false, totals.stale_shadow_count"
+        ],
+        "prove_fixed": [
+          "# UNIMPLEMENTED — run after buyLinkGateFailureKind enforces recency or equivalent CTA demotion",
+          "npm test -- src/lib/retailers/launch-buy-links.test.ts src/lib/retailers/go-redirect-gate.test.ts",
+          "npm run buckparts:stale-browser-truth-shadow"
+        ],
+        "prove_not_regressed": [
+          "npm run buckparts:stale-browser-truth-shadow",
+          "node --import tsx --test scripts/report-buckparts-stale-browser-truth-shadow-v1.test.ts"
+        ]
+      },
+      "re_audit": {
+        "workflow": "1) Run prove_gap to confirm gate still ignores checked_at age. 2) Run prove_mitigation report; record totals.stale_shadow_count and by_source_table. 3) If enforcement lands, run prove_fixed and transition to FIXED. 4) Cross-check AP parity packet apply status vs ap-runtime-convergence-gap residual slugs.",
+        "cadence_days": 30,
+        "next_re_audit_after": "2026-07-23T00:00:00.000Z",
+        "last_re_audit_at": "2026-06-23T03:27:11.000Z",
+        "re_audit_owner": "hyperagent"
+      },
+      "status_history": [
+        {
+          "from_status": "OPEN",
+          "to_status": "MEASURED",
+          "at": "2026-06-22T22:07:53.000Z",
+          "actor": "cursor_investigation",
+          "note": "Gap characterized: no recency dimension on live buy gate.",
+          "git_head": "bc29506"
+        },
+        {
+          "from_status": "MEASURED",
+          "to_status": "SHADOWED",
+          "at": "2026-06-22T22:07:53.000Z",
+          "actor": "cursor_investigation",
+          "note": "Shadow classification + read-only report merged at bc29506; CTAs and /go unchanged.",
+          "git_head": "bc29506"
+        }
+      ]
+    },
+    {
+      "finding_id": "TIR-2026-0002",
+      "finding_code": "R5",
+      "title": "HQ handoff freshness test validates presence, not HEAD or recency",
+      "status": "MEASURED",
+      "severity": "high",
+      "truth_surface": "hq_handoff",
+      "constitution_refs": [
+        "§5 Truth Contract — evidence outranks memory",
+        "§6 Uncertainty Doctrine — silence over speculation",
+        "§7 Evidence Standards — discovery is not closure"
+      ],
+      "summary": "**PROVEN:** `scripts/buckparts-hq-handoff-freshness.test.ts` checks 120 substring needles in `docs/BuckParts-HQ-HANDOFF.md` via `source.includes(needle)` only. **PROVEN:** Test header admits it does not validate commit hashes. **PROVEN:** Test passes at `bc29506` while handoff executive checkpoint is `c780e82` (7 commits behind) and while required needle `afaf86d` is a superseded grant milestone (2026-05-29).",
+      "proven_gap": "No comparison between `git rev-parse HEAD` and handoff stopping-point tables. Historical milestone strings are required forever — test stays green as handoff drifts. Test id `current_head_afaf86d` enforces grant checkpoint `afaf86d`, not live HEAD.",
+      "false_safety_risk": "Test name and `docs/BuckParts-RUNNER-STATUS.md` label it a freshness guard. Handoff blocks cite passing this test as validation before commit. Operators and HQ agents may treat green test as current stopping-point truth while §0B lane priority contradicts top AP CSV section.",
+      "smallest_safe_fix": "Split concerns: (1) keep presence contract as-is; (2) add separate `hq-handoff-head-parity` test parsing top executive checkpoint vs `git rev-parse --short HEAD`; (3) rename `current_head_afaf86d` → `historical_grant_checkpoint_afaf86d`; (4) optional max-age guard on handoff checkpoint date. Do not add more historical hash needles per milestone.",
+      "blast_radius": {
+        "30d": "**INFERRED:** ~363 commits potential drift; wrong NBA and obsolete prompts; test still passes if strings retained.",
+        "60d": "**INFERRED:** Severe — multiple superseded stopping points; grant/AP/WHW narratives conflict; test green.",
+        "90d": "**INFERRED:** Handoff becomes archaeology; Command Center-only operators safe; HQ-migration agents misled."
+      },
+      "related_finding_ids": [],
+      "related_audit_artifacts": [],
+      "evidence": {
+        "proof_status": "PROVEN",
+        "discovered_at": "2026-06-23T03:00:00.000Z",
+        "last_confirmed_at": "2026-06-23T03:27:11.000Z",
+        "discovered_by": "hyperagent_audit",
+        "git_heads": [
+          "bc29506",
+          "c780e82"
+        ],
+        "artifacts": [
+          {
+            "path": "scripts/buckparts-hq-handoff-freshness.test.ts",
+            "role": "primary",
+            "excerpt_or_pointer": "lines 1-5: presence only, not commit hashes; lines 634-649: includes() over 120 needles"
+          },
+          {
+            "path": "scripts/buckparts-hq-handoff-freshness.test.ts",
+            "role": "primary",
+            "excerpt_or_pointer": "id current_head_afaf86d needle afaf86d — historical grant checkpoint"
+          },
+          {
+            "path": "docs/BuckParts-HQ-HANDOFF.md",
+            "role": "primary",
+            "excerpt_or_pointer": "lines 112-125: executive checkpoint c780e82; line ~1115: afaf86d superseded grant section"
+          },
+          {
+            "path": "docs/BuckParts-HQ-HANDOFF.md",
+            "role": "supporting",
+            "excerpt_or_pointer": "§0B line ~2174: grant/WHW priority #0 vs top AP CSV stopping point — internal contradiction"
+          },
+          {
+            "path": "docs/BuckParts-RUNNER-STATUS.md",
+            "role": "supporting",
+            "excerpt_or_pointer": "HQ handoff freshness described as presence check; not in default npm test"
+          },
+          {
+            "path": "docs/BuckParts-HQ-HANDOFF.md",
+            "role": "counterevidence",
+            "excerpt_or_pointer": "line ~935: HQ handoff is not the source of operating truth — doctrine exists but test does not enforce alignment with CC"
+          }
+        ]
+      },
+      "validation_commands": {
+        "prove_gap": [
+          "node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts",
+          "git rev-parse --short HEAD",
+          "rg -n 'HEAD / .origin/main. at handoff refresh' docs/BuckParts-HQ-HANDOFF.md | head -1",
+          "# Expect: test PASS while HEAD differs from top checkpoint cell (bc29506 vs c780e82 at population)"
+        ],
+        "prove_mitigation": [],
+        "prove_fixed": [
+          "# UNIMPLEMENTED — run after head-parity test added and passing",
+          "node --import tsx --test scripts/buckparts-hq-handoff-head-parity.test.ts"
+        ],
+        "prove_not_regressed": [
+          "node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts"
+        ]
+      },
+      "re_audit": {
+        "workflow": "1) Run prove_gap: confirm freshness test passes and HEAD != handoff top checkpoint when handoff not updated. 2) Check §0B vs top stopping-point agreement. 3) If head-parity test lands, run prove_fixed and set FIXED. 4) Count commits since handoff checkpoint for blast_radius note.",
+        "cadence_days": 14,
+        "next_re_audit_after": "2026-07-07T00:00:00.000Z",
+        "last_re_audit_at": "2026-06-23T03:27:11.000Z",
+        "re_audit_owner": "hyperagent"
+      },
+      "status_history": [
+        {
+          "from_status": "OPEN",
+          "to_status": "MEASURED",
+          "at": "2026-06-23T03:00:00.000Z",
+          "actor": "hyperagent_audit",
+          "note": "R5 investigation complete at bc29506; gap proven with command evidence.",
+          "git_head": "bc29506"
+        }
+      ]
+    }
+  ]
+}
