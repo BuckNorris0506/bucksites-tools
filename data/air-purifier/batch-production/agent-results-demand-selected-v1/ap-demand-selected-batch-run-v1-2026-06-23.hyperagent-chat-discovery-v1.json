@@ -1,0 +1,350 @@
+{
+  "contract": "ap_hyperagent_chat_discovery_output_v1",
+  "packet_id": "ap-demand-selected-oem-search-placeholder-v1",
+  "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+  "batch": "air_purifier_demand_selected_batch_candidate",
+  "wedge": "air_purifier",
+  "owner_decision": "APPROVE_READ_ONLY_DISCOVERY_DEMAND_SELECTED_BATCH_V1",
+  "discovery_status": "DISCOVERY_COMPLETE",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "truth_closure_claimed": false,
+  "not_canonical_evidence": true,
+  "not_apply_eligible": true,
+  "excluded": [
+    {
+      "filter_slug": "levoit-rf-meta-air",
+      "reason": "NO_SAFE_PATH evidence exists; not in current batch scope."
+    }
+  ],
+  "candidate_rows": [
+    {
+      "filter_slug": "holmes-hapf30",
+      "repo_csv_primary_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "searched_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "final_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "unknown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "NEEDS_OWNER_REVIEW",
+      "recommendation_reason": "Holmes-class search-placeholder rescue: brand-prefixed HOLMES-HAPF30 search returned a no-results state; bare HAPF30 search surfaced in-family AER1/HAPF300 tokens in the results listing but no official PDP was opened this session, and the documented prior reference PDP (SP_763535) returned HTTP 403. Rescue stays OPEN; customer_safety_status PASS preserved; not direct_buyable; not promoted.",
+      "reference_only_reason": "No official PDP opened this session, so PASS_REFERENCE is not asserted; in-family AER1/HAPF300 reference tokens appeared only in a search-results listing, not a PDP primary product area.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "PROVEN: brand-prefixed /search?q=HOLMES-HAPF30 -> no-results state. PROVEN: bare /search?q=HAPF30 results listing surfaced AER1 / HAPF300 in-family tokens but remained a search page (no PDP opened). INFERRED: documented prior reference PDP SP_763535 returned HTTP 403 this session (not openable / not re-proven live).",
+      "evidence_confidence": "INFERRED",
+      "evidence_notes": "PROVEN: HOLMES-HAPF30 brand search returns no product results this session. PROVEN: bare HAPF30 search lists in-family AER1/HAPF300 tokens but final_url remained a search page; no PDP primary slice opened. INFERRED: prior repo reference PDP (SP_763535) exists but returned HTTP 403 this session. UNKNOWN: whether an Add-to-Cart-free reference PDP is currently reachable.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "prior_repo_pass_reference_url": "https://www.holmesproducts.com/filters/air-purifier-filters/noname/SP_763535.html",
+      "proven_facts": [
+        "PROVEN: brand-prefixed HOLMES-HAPF30 manufacturer search returned a no-results state.",
+        "PROVEN: bare HAPF30 search-results listing contained in-family AER1 and HAPF300 tokens."
+      ],
+      "inferred_facts": [
+        "INFERRED: a Holmes AER1/HAPF300 reference PDP likely exists (referenced in search results), keeping the search-placeholder rescue viable."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: no official PDP opened this session; documented reference PDP SP_763535 returned HTTP 403; PASS_REFERENCE not provable this session."
+      ]
+    },
+    {
+      "filter_slug": "vornado-md1-0023",
+      "repo_csv_primary_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
+      "searched_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
+      "final_url": "https://vornado.com/search?q=VORNADO-MD1-0023",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [
+        "MD1-0023 (official Vornado MD1-0023 product is the Activated Carbon 2-pack, not HEPA)",
+        "MD1-0022 (repo-documented official HEPA token for this slug)"
+      ],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "Bounded attempt terminated on a 25-result vornado.com search page; no single official HEPA PDP opened. Compounded by a repo-documented identity conflict: official MD1-0023 product is the Activated Carbon 2-pack while the official HEPA is MD1-0022 \u2014 this HEPA slug's catalog token points at a wrong-family (carbon) product on the manufacturer store.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: a correct HEPA PDP would key on MD1-0022 (repo note), not MD1-0023; not attempted this session (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: final_url is a vornado.com search page (25 results); no PDP opened. PROVEN (repo): filters.csv + vornado-carbon-pad row document official HEPA = MD1-0022 and official MD1-0023 = Activated Carbon 2-pack. INFERRED: linking this HEPA slug to an MD1-0023 manufacturer product would be wrong-family (carbon).",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: vornado.com search for VORNADO-MD1-0023 returned a 25-result search page; no PDP opened.",
+        "PROVEN: repo documents official HEPA = MD1-0022 and official MD1-0023 product = Activated Carbon 2-pack (identity conflict)."
+      ],
+      "inferred_facts": [
+        "INFERRED: a correct official HEPA PDP for this slug would key on MD1-0022, not the committed MD1-0023 token."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: whether an official MD1-0022 HEPA PDP with a buy action exists; not attempted under the one-bounded-attempt scope."
+      ]
+    },
+    {
+      "filter_slug": "alen-fl40",
+      "repo_csv_primary_url": "https://www.alen.com/search?q=ALEN-FL40-HEPA",
+      "searched_url": "https://www.alen.com/search?q=ALEN-FL40-HEPA",
+      "final_url": "https://alen.com/search?q=ALEN-FL40-HEPA",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "Bounded attempt terminated on an alen.com search page (23 results) for the brand-prefixed token; no single official PDP auto-resolved or was opened this session.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: a bare FL40 / 'BreatheSmart 45i filter' search may reach a single PDP; not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: final_url remained an alen.com search page (23 results); in-family FL40/45i/Flex tokens appear in the results listing, not a PDP primary slice. UNKNOWN: official PDP buy state (no PDP opened).",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: alen.com search for ALEN-FL40-HEPA returned a 23-result search page; no PDP opened."
+      ],
+      "inferred_facts": [
+        "INFERRED: an official Alen FL40 (BreatheSmart 45i/Flex) PDP likely exists under a non-brand-prefixed term."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: official PDP existence/buy action; not opened under the bounded scope."
+      ]
+    },
+    {
+      "filter_slug": "renpho-rp-ap003",
+      "repo_csv_primary_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+      "searched_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+      "final_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "renpho.com brand-prefixed search returned '0 results found for RENPHO-RP-AP003'; terminal search page, no PDP.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: bare 'RP-AP003' / 'AP003' / 'AP001' search not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: renpho.com search returned 0 results for the brand-prefixed token; final_url is a 0-result search page; no PDP.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: renpho.com search for RENPHO-RP-AP003 returned 0 results (terminal search page)."
+      ],
+      "inferred_facts": [
+        "INFERRED: the RP-AP003/AP001 product may be reachable under a bare token; not attempted (bounded)."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: official PDP existence/buy action for RP-AP003."
+      ]
+    },
+    {
+      "filter_slug": "coway-airmega100-rf",
+      "repo_csv_primary_url": "https://coway.com/search?q=COWAY-AMI100-RF",
+      "searched_url": "https://coway.com/search?q=COWAY-AMI100-RF",
+      "final_url": "https://coway.com/search?q=COWAY-AMI100-RF",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "Committed URL resolves to the Coway global/corporate (Korean) search surface (coway.com), not the US cowaymega.com store; terminal search page, no US-buyable PDP opened.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: sibling Coway filters are PROVEN on the US store cowaymega.com; an Airmega-100 cowaymega path was not attempted this session (bounded) \u2014 UNKNOWN whether an Airmega 100 filter PDP exists there.",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: coway.com/search?q=COWAY-AMI100-RF is the Coway corporate (Korean) search surface (title contains the Korean term for integrated search); no US PDP. INFERRED: correct US store is cowaymega.com. UNKNOWN: Airmega 100 filter availability on cowaymega.com.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: committed coway.com search URL resolves to the Coway corporate/Korean search surface, not a US buyable store."
+      ],
+      "inferred_facts": [
+        "INFERRED: the correct US manufacturer store is cowaymega.com (sibling Coway filters PROVEN there)."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: whether an Airmega 100 filter PDP exists on cowaymega.com; not attempted (bounded)."
+      ]
+    },
+    {
+      "filter_slug": "hb-trueair-04948",
+      "repo_csv_primary_url": "https://hamiltonbeach.com/search?q=HB-04948",
+      "searched_url": "https://hamiltonbeach.com/search?q=HB-04948",
+      "final_url": "https://hamiltonbeach.com/search?q=HB-04948",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "unknown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "NO_SAFE_PATH",
+      "recommendation_reason": "Committed search URL returned HTTP 404 (Page Not Found) on hamiltonbeach.com; no search results, no PDP, no manufacturer product page proven. Compounded by identity ambiguity: per the sibling hb-trueair-04384 row, a 04xxx number can denote the purifier model rather than the filter part.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: a Hamilton Beach permanent/odor filter part (e.g., a 99005xxxx part, as sibling 04384 -> 990051000) may exist; not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: hamiltonbeach.com/search?q=HB-04948 returned HTTP 404 Page Not Found this session. INFERRED: identity ambiguity (04948 filter part vs purifier model) per sibling 04384 precedent. UNKNOWN: the correct official filter-part PDP, if any.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: hamiltonbeach.com/search?q=HB-04948 returned HTTP 404 Page Not Found."
+      ],
+      "inferred_facts": [
+        "INFERRED: 04948 may denote a purifier model rather than the filter part (sibling 04384 precedent)."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: the official Hamilton Beach filter-part PDP for this slug, if one exists."
+      ]
+    },
+    {
+      "filter_slug": "alen-b75-mp",
+      "repo_csv_primary_url": "https://www.alen.com/search?q=ALEN-B75-MP",
+      "searched_url": "https://www.alen.com/search?q=ALEN-B75-MP",
+      "final_url": "https://alen.com/search?q=ALEN-B75-MP",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "Bounded attempt terminated on an alen.com search page (2 results) for the brand-prefixed token; no PDP opened this session despite a near-direct result count.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: the 2-result set likely contains the BreatheSmart 75i (B75-MP) PDP; not opened (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: final_url remained an alen.com search page (2 results); in-family B75/75i tokens in results listing; no PDP primary slice opened. UNKNOWN: PDP buy state.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: alen.com search for ALEN-B75-MP returned a 2-result search page; no PDP opened."
+      ],
+      "inferred_facts": [
+        "INFERRED: an official Alen BreatheSmart 75i (B75-MP) PDP likely exists within those results."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: PDP buy action/stock; not opened (bounded)."
+      ]
+    },
+    {
+      "filter_slug": "alen-bf35",
+      "repo_csv_primary_url": "https://www.alen.com/search?q=ALEN-BF35-HEPA",
+      "searched_url": "https://www.alen.com/search?q=ALEN-BF35-HEPA",
+      "final_url": "https://alen.com/search?q=ALEN-BF35-HEPA",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "Bounded attempt terminated on an alen.com search page (21 results) for the brand-prefixed token; no single official PDP opened this session.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: a bare BF35 / 'BreatheSmart Classic filter' search may reach the PDP; not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: final_url remained an alen.com search page (21 results); in-family BF35/Classic/Fit50 tokens in results; no PDP opened.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: alen.com search for ALEN-BF35-HEPA returned a 21-result search page; no PDP opened."
+      ],
+      "inferred_facts": [
+        "INFERRED: an official Alen BF35 (BreatheSmart Classic/Fit50) PDP likely exists."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: PDP buy action/stock; not opened (bounded)."
+      ]
+    },
+    {
+      "filter_slug": "renpho-rp-ap068",
+      "repo_csv_primary_url": "https://renpho.com/search?q=RENPHO-RP-AP068",
+      "searched_url": "https://renpho.com/search?q=RENPHO-RP-AP068",
+      "final_url": "https://renpho.com/search?q=RENPHO-RP-AP068",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "renpho.com brand-prefixed search returned '0 results found for RENPHO-RP-AP068'; terminal search page, no PDP.",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: bare 'RP-AP068' / 'AP068' search not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: renpho.com search returned 0 results for the brand-prefixed token; final_url is a 0-result search page; no PDP.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: renpho.com search for RENPHO-RP-AP068 returned 0 results (terminal search page)."
+      ],
+      "inferred_facts": [
+        "INFERRED: the RP-AP068 product may be reachable under a bare token; not attempted (bounded)."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: official PDP existence/buy action for RP-AP068."
+      ]
+    },
+    {
+      "filter_slug": "renpho-rp-ap088",
+      "repo_csv_primary_url": "https://renpho.com/search?q=RENPHO-RP-AP088",
+      "searched_url": "https://renpho.com/search?q=RENPHO-RP-AP088",
+      "final_url": "https://renpho.com/search?q=RENPHO-RP-AP088",
+      "pdp_like_final_url": false,
+      "exact_tokens_seen": [],
+      "wrong_family_tokens_seen": [],
+      "exact_token_in_primary_slice": false,
+      "buy_action_seen": null,
+      "stock_state": "not_shown",
+      "browser_truth_classification_recommendation": null,
+      "recommendation": "REJECT_SEARCH_CATEGORY",
+      "recommendation_reason": "renpho.com brand-prefixed search returned '0 results found for RENPHO-RP-AP088'; terminal search page, no PDP. (filter_aliases.csv lists consumer alias AP088 \u2014 a bare-token path not attempted under bounded scope.)",
+      "search_placeholder_defect": true,
+      "alternate_discovery_path": "INFERRED: bare 'AP088' (repo alias) / 'RP-AP088' search not attempted (bounded).",
+      "evidence_confidence": "PROVEN",
+      "evidence_notes": "PROVEN: renpho.com search returned 0 results for the brand-prefixed token; final_url is a 0-result search page; no PDP. INFERRED: repo alias AP088 may resolve under a bare search.",
+      "owner_review_required": true,
+      "recommended_csv_mutation": null,
+      "proven_facts": [
+        "PROVEN: renpho.com search for RENPHO-RP-AP088 returned 0 results (terminal search page)."
+      ],
+      "inferred_facts": [
+        "INFERRED: repo alias AP088 may reach a PDP under a bare token; not attempted (bounded)."
+      ],
+      "unknown_facts": [
+        "UNKNOWN: official PDP existence/buy action for RP-AP088."
+      ]
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: All 10 in-scope slugs' repo_csv_primary_url are manufacturer search-placeholder URLs with blank browser_truth_classification in data/air-purifier/retailer_links.csv @ main (d1872505).",
+    "PROVEN: No slug reached an official product PDP this session; every bounded attempt terminated on a manufacturer search/category page, or HTTP 404 for hamiltonbeach.com.",
+    "PROVEN: renpho.com returned '0 results' for RENPHO-RP-AP003, RENPHO-RP-AP068, and RENPHO-RP-AP088.",
+    "PROVEN: hamiltonbeach.com/search?q=HB-04948 returned HTTP 404 Page Not Found.",
+    "PROVEN: coway.com/search?q=COWAY-AMI100-RF resolves to the Coway global/corporate (Korean) search surface, not the US cowaymega.com store.",
+    "PROVEN: alen.com brand-token searches returned multi-result search pages (FL40 23, BF35 21, B75-MP 2) with no PDP opened.",
+    "PROVEN: vornado.com search for VORNADO-MD1-0023 returned a 25-result search page; repo documents official MD1-0023 = Activated Carbon 2-pack and official HEPA = MD1-0022 (identity conflict).",
+    "PROVEN: no PASS_DIRECT_BUYABLE asserted; buy_action_seen is not true on any PDP (search-page add-to-cart chrome is not a PDP buy action)."
+  ],
+  "inferred_facts": [
+    "INFERRED: holmes-hapf30 search-placeholder rescue remains viable \u2014 bare HAPF30 results surfaced in-family AER1/HAPF300 tokens \u2014 but no reference PDP was opened (documented SP_763535 returned HTTP 403).",
+    "INFERRED: official PDPs likely exist for several Alen (FL40/BF35/B75-MP) and Renpho products under non-brand-prefixed search terms; not opened under the one-bounded-attempt scope.",
+    "INFERRED: a cowaymega.com Airmega-100 path may exist (sibling Coway filters PROVEN on cowaymega.com); the committed coway.com URL is the wrong store."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether each product has a navigable official PDP with a buy action \u2014 not determinable from a single bounded search-placeholder attempt; requires owner/Cursor deeper discovery.",
+    "UNKNOWN: live status/identity of the documented Holmes reference PDP (HTTP 403 this session).",
+    "UNKNOWN: Hamilton Beach 04948 identity (filter part vs purifier model) given the 404 and the sibling 04384 precedent."
+  ]
+}

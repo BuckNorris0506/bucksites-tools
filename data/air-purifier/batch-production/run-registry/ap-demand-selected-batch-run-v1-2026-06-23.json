@@ -7,7 +7,7 @@
   "lane_label": "AP demand-selected buyer-path batch v1",
   "proposed": false,
   "batch_started_read_only": true,
-  "stage": "read_only_evidence_collection_authorized",
+  "stage": "read_only_evidence_collection_complete",
   "closeout_complete": false,
   "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
   "proposed_row_count": 10,
@@ -90,6 +90,16 @@
     "buy_link_mutation_authorized": false,
     "netlify_api_authorized": false,
     "owner_approval_artifact_rel_path": "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json"
+  },
+  "read_only_hyperagent_chat_discovery": {
+    "artifact_rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "contract": "ap_hyperagent_chat_discovery_output_v1",
+    "mechanical_validation_status": "VALIDATION_PASS",
+    "mechanical_validation_checks_passed": 84,
+    "mechanical_validation_checks_failed": 0,
+    "not_canonical_evidence": true,
+    "not_apply_eligible": true,
+    "candidate_row_count": 10
   },
   "created_at": "2026-06-23T16:05:00.000Z"
 }
