@@ -147,7 +147,7 @@ export type BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1 = {
     readTextFile: (absolutePath: string) => string;
   }) => ApOwnerReviewEvidenceIndexV1;
   loadDemandSelectedRunRegistry?: (
-    deps: LoadAirPurifierDemandSelectedBatchOwnerReviewDepsV1,
+    deps: BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1,
   ) => ApDemandSelectedBatchRunRegistryVisibilityV1;
 };
 
@@ -397,7 +397,7 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     ? demand.blockers.filter((blocker) => blocker !== "open_batch_not_proven")
     : demand.blockers;
   const sourceBlockers = reconciledDemandBlockers.map(
-    (blocker) => `source_demand_to_coverage_blocker: ${blocker}`,
+    (blocker) => `source_demand_to_coverage_blocker: ${blocker}` as `source_demand_to_coverage_blocker: ${string}`,
   );
   const readOnlyEvidenceCollectionAuthorized =
     batchRunRegistry.status === "PROVEN" && batchRunRegistry.read_only_evidence_collection_authorized;
@@ -406,7 +406,7 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     ...(!readOnlyEvidenceCollectionAuthorized ? ["owner_batch_start_approval_missing" as const] : []),
     ...(batchRunRegistry.status !== "PROVEN" ? ["batch_run_registry_not_created" as const] : []),
     ...(batchRunRegistry.evidence_collection_started ? [] : ["evidence_collection_not_started" as const]),
-    ...(!sourceIsApDemandSelected ? ["source_demand_to_coverage_not_ap_start_candidate"] : []),
+    ...(!sourceIsApDemandSelected ? ["source_demand_to_coverage_not_ap_start_candidate" as const] : []),
     ...sourceBlockers,
   ];
   const unknownFacts = [

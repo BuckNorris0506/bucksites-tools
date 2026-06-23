@@ -311,7 +311,7 @@ function evalAssertion(args: {
       const safe = isAffiliateUrlSafeForGoRedirect(
         selectedBuy.retailer_key,
         selectedBuy.affiliate_url,
-        selectedBuy.browser_truth_classification,
+        selectedBuy.browser_truth_classification ?? undefined,
         selectedBuy.browser_truth_buyable_subtype ?? null,
       );
       return {
