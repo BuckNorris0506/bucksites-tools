@@ -368,6 +368,49 @@ test("AP owner review lane clears owner_batch_start_approval_missing when read-o
   assert.match(lane.next_agent_action, /read-only HyperAgent chat discovery/i);
 });
 
+test("AP owner review lane clears open_batch_not_proven when registry is PROVEN_OPEN with evidence started", async () => {
+  const registryFixture: ApDemandSelectedBatchRunRegistryVisibilityV1 = {
+    status: "PROVEN",
+    run_registry_rel_path:
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+    stage: "read_only_evidence_collection_complete",
+    batch_start_mode: "read_only_browser_discovery_only",
+    proposed_slug_count: 10,
+    excluded_slug_count: 1,
+    read_only_evidence_collection_authorized: true,
+    owner_approval_artifact_rel_path:
+      "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json",
+    evidence_collection_started: true,
+    parse_error: null,
+  };
+
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: {
+      ...apDemandReportFixture(),
+      blockers: [],
+      unknown_facts: [],
+    },
+    batchProductionLane: batchProductionFixture(),
+    evidenceIndex: {
+      source_status: "PROVEN",
+      entries_by_slug: new Map(),
+      excluded_slugs: [],
+    },
+    loadDemandSelectedRunRegistry: () => registryFixture,
+  });
+
+  assert.ok(!lane.blockers.includes("open_batch_not_proven"));
+  assert.ok(!lane.blockers.some((blocker) => blocker.includes("open_batch_not_proven")));
+  assert.equal(lane.open_batch_proof_v1.open_batch_existence, "PROVEN");
+  assert.equal(lane.open_batch_proof_v1.batch_closeout, "NOT_PROVEN");
+  assert.equal(lane.open_batch_proof_v1.apply_readiness, "NOT_PROVEN");
+  assert.equal(lane.batch_start_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+});
+
 test("AP owner review lane degrades safely when demand source is UNKNOWN", async () => {
   const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
     rootDir: "/fixture-root",

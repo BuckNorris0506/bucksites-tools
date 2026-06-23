@@ -23,6 +23,12 @@ import { readGscArtifactFromSupabase } from "@/lib/owner-dashboard/gsc-durable-a
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
 
+import {
+  isApDemandSelectedOpenBatchRegistryProvenOpenV1,
+  loadApDemandSelectedBatchRunRegistryV1,
+  type ApDemandSelectedBatchRunRegistryVisibilityV1,
+} from "./ap-demand-selected-batch-run-registry-v1";
+
 export const DEMAND_TO_COVERAGE_NEXT_LANE_REPORT_NAME_V1 = "demand_to_coverage_next_lane_v1" as const;
 export const DEMAND_TO_COVERAGE_NEXT_LANE_CONTRACT_V1 = "demand_to_coverage_next_lane_v1" as const;
 
@@ -153,6 +159,11 @@ export type BuildDemandToCoverageNextLaneDepsV1 = {
   readTextFile?: (absolutePath: string) => string;
   loadGscArtifact?: () => Promise<GscArtifactLoadResultV1>;
   loadSitemapText?: () => string | null;
+  loadApDemandSelectedRunRegistry?: (deps: {
+    rootDir: string;
+    fileExists: (absolutePath: string) => boolean;
+    readText: (absolutePath: string) => string;
+  }) => ApDemandSelectedBatchRunRegistryVisibilityV1;
 };
 
 function defaultFileExists(absolutePath: string): boolean {
@@ -593,6 +604,8 @@ export async function buildDemandToCoverageNextLaneV1Report(
   const blockers: string[] = [];
   const inferred_facts: string[] = [];
   const unknown_facts: string[] = [];
+  let apOpenBatchExistenceProven = false;
+  let apOpenBatchRegistry: ApDemandSelectedBatchRunRegistryVisibilityV1 | null = null;
 
   if (winner && gscResult.ok) {
     recommended_wedge = winner.wedge;
@@ -605,10 +618,26 @@ export async function buildDemandToCoverageNextLaneV1Report(
       );
     } else if (winnerLive) {
       recommendation_status = "START_NEW_DEMAND_SELECTED_BATCH";
-      next_action =
-        `Start a demand-selected ${winner.wedge} buyer-path batch candidate only after owner approval; no open batch is proven by this report.`;
-      blockers.push("open_batch_not_proven");
-      unknown_facts.push("No active/open batch registry is read by demand_to_coverage_next_lane_v1.");
+      if (winner.wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier) {
+        apOpenBatchRegistry =
+          deps.loadApDemandSelectedRunRegistry?.({ rootDir, fileExists, readText: readTextFile }) ??
+          loadApDemandSelectedBatchRunRegistryV1({ rootDir, fileExists, readText: readTextFile });
+        apOpenBatchExistenceProven = isApDemandSelectedOpenBatchRegistryProvenOpenV1(apOpenBatchRegistry);
+      }
+      if (apOpenBatchExistenceProven && apOpenBatchRegistry) {
+        next_action = `Demand-selected ${winner.wedge} open batch is proven read-only (run_id=${String(apOpenBatchRegistry.run_id)}); batch closeout and apply readiness are not proven.`;
+      } else {
+        next_action =
+          `Start a demand-selected ${winner.wedge} buyer-path batch candidate only after owner approval; no open batch is proven by this report.`;
+        blockers.push("open_batch_not_proven");
+        if (winner.wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier && apOpenBatchRegistry?.status === "PROVEN") {
+          unknown_facts.push(
+            "AP demand-selected run registry is PROVEN_OPEN but evidence_collection_started=false; open batch existence is not proven for blocker reconciliation.",
+          );
+        } else {
+          unknown_facts.push("No active/open batch registry is read by demand_to_coverage_next_lane_v1.");
+        }
+      }
     } else {
       recommendation_status = "RECOMMEND_REOPEN";
       next_action = winner.recommended_action;
@@ -646,6 +675,13 @@ export async function buildDemandToCoverageNextLaneV1Report(
   if (winner) {
     proven_facts.push(
       `Winner row: ${winner.wedge} priority_score=${String(winner.priority_score)}; launch_state=${winner.launch_state}.`,
+    );
+  }
+  if (apOpenBatchExistenceProven && apOpenBatchRegistry) {
+    proven_facts.push(
+      `PROVEN: AP demand-selected run registry ${String(apOpenBatchRegistry.run_registry_rel_path)} proves open batch existence (evidence_collection_started=true).`,
+      "PROVEN: batch closeout is NOT_PROVEN (closeout_complete remains false on open demand-selected registry).",
+      "PROVEN: apply readiness is NOT_PROVEN; this lane does not authorize batch start, CSV apply, or evidence writes.",
     );
   }
 

@@ -5476,7 +5476,15 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_selection_logic.some((line) => line.includes("evidence-aware ranking")));
-  assert.ok(lane.blockers.includes("open_batch_not_proven"));
+  if (lane.batch_run_registry.status === "PROVEN" && lane.batch_run_registry.evidence_collection_started) {
+    assert.ok(!lane.blockers.includes("open_batch_not_proven"));
+    assert.ok(!lane.blockers.some((blocker) => blocker.includes("open_batch_not_proven")));
+    assert.equal(lane.open_batch_proof_v1.open_batch_existence, "PROVEN");
+    assert.equal(lane.open_batch_proof_v1.batch_closeout, "NOT_PROVEN");
+    assert.equal(lane.open_batch_proof_v1.apply_readiness, "NOT_PROVEN");
+  } else {
+    assert.ok(lane.blockers.includes("open_batch_not_proven"));
+  }
   if (lane.batch_run_registry.status === "PROVEN" && lane.batch_run_registry.read_only_evidence_collection_authorized) {
     assert.ok(!lane.blockers.includes("owner_batch_start_approval_missing"));
   } else {

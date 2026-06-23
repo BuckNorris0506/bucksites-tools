@@ -18,8 +18,11 @@ import {
 } from "./air-purifier-batch-production-lane-v1";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import {
+  buildApDemandSelectedOpenBatchProofStatusV1,
+  isApDemandSelectedOpenBatchRegistryProvenOpenV1,
   loadApDemandSelectedBatchRunRegistryV1,
   type ApDemandSelectedBatchRunRegistryVisibilityV1,
+  type ApDemandSelectedOpenBatchProofStatusV1,
 } from "./ap-demand-selected-batch-run-registry-v1";
 import {
   getApOwnerReviewEvidenceEntryV1,
@@ -108,15 +111,17 @@ export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
   candidate_selection_logic: string[];
   evidence_index_source_status: ApOwnerReviewEvidenceIndexV1["source_status"];
   batch_run_registry: ApDemandSelectedBatchRunRegistryVisibilityV1;
+  open_batch_proof_v1: ApDemandSelectedOpenBatchProofStatusV1;
   inputs_needed: string[];
   exact_owner_decision_needed_later: string;
-  blockers: [
-    "open_batch_not_proven",
-    "owner_batch_start_approval_missing",
-    "batch_run_registry_not_created",
-    "evidence_collection_not_started",
-    ...string[],
-  ];
+  blockers: (
+    | "open_batch_not_proven"
+    | "owner_batch_start_approval_missing"
+    | "batch_run_registry_not_created"
+    | "evidence_collection_not_started"
+    | "source_demand_to_coverage_not_ap_start_candidate"
+    | `source_demand_to_coverage_blocker: ${string}`
+  )[];
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
@@ -386,11 +391,18 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
   const sourceIsApDemandSelected =
     demand.recommended_wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier &&
     demand.recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH";
-  const sourceBlockers = demand.blockers.map((blocker) => `source_demand_to_coverage_blocker: ${blocker}`);
+  const openBatchProof = buildApDemandSelectedOpenBatchProofStatusV1(batchRunRegistry);
+  const openBatchExistenceProven = isApDemandSelectedOpenBatchRegistryProvenOpenV1(batchRunRegistry);
+  const reconciledDemandBlockers = openBatchExistenceProven
+    ? demand.blockers.filter((blocker) => blocker !== "open_batch_not_proven")
+    : demand.blockers;
+  const sourceBlockers = reconciledDemandBlockers.map(
+    (blocker) => `source_demand_to_coverage_blocker: ${blocker}`,
+  );
   const readOnlyEvidenceCollectionAuthorized =
     batchRunRegistry.status === "PROVEN" && batchRunRegistry.read_only_evidence_collection_authorized;
   const blockers: AirPurifierDemandSelectedBatchOwnerReviewLaneV1["blockers"] = [
-    "open_batch_not_proven",
+    ...(openBatchExistenceProven ? [] : ["open_batch_not_proven" as const]),
     ...(!readOnlyEvidenceCollectionAuthorized ? ["owner_batch_start_approval_missing" as const] : []),
     ...(batchRunRegistry.status !== "PROVEN" ? ["batch_run_registry_not_created" as const] : []),
     ...(batchRunRegistry.evidence_collection_started ? [] : ["evidence_collection_not_started" as const]),
@@ -444,6 +456,7 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     candidate_rows_unknown_reason: candidateRows.unknown_reason,
     evidence_index_source_status: evidenceIndex.source_status,
     batch_run_registry: batchRunRegistry,
+    open_batch_proof_v1: openBatchProof,
     candidate_selection_logic: [
       "Source recommendation must be demand_to_coverage_next_lane_v1 with recommended_wedge=air_purifier and recommendation_status=START_NEW_DEMAND_SELECTED_BATCH.",
       "Candidate rows start from air_purifier_batch_production_lane_v1.top_candidates actionable states, then apply read-only evidence-aware ranking.",
@@ -486,6 +499,13 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
             ...(readOnlyEvidenceCollectionAuthorized
               ? [
                   `PROVEN: founder approved read-only evidence collection for run_id=${String(batchRunRegistry.run_id)}; owner_approval_artifact_rel_path=${String(batchRunRegistry.owner_approval_artifact_rel_path)}.`,
+                ]
+              : []),
+            ...(openBatchExistenceProven
+              ? [
+                  `PROVEN: open batch existence for run_id=${String(batchRunRegistry.run_id)} (stage=${String(batchRunRegistry.stage)}; evidence_collection_started=true).`,
+                  "PROVEN: batch closeout is NOT_PROVEN (closeout_complete remains false on open demand-selected registry).",
+                  "PROVEN: apply readiness is NOT_PROVEN; batch_start_authorized and mutation flags remain false.",
                 ]
               : []),
           ]
