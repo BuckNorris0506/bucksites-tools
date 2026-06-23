@@ -1,0 +1,673 @@
+{
+  "contract": "command_center_control_loop_v1_audit",
+  "read_only": true,
+  "data_mutation": false,
+  "generated_at": "2026-06-23T04:05:47.000Z",
+  "git_head_at_audit": "2b7febec330ec583bb478257e2e0e2c1ce938ccc",
+  "git_head_short": "2b7febe",
+  "audit_scope": "Repo truth only — Command Center, Daily Operator, Founder Digest, Sentry config, Truth Integrity Registry, Issue Registry, Failure Pattern Registry, model-first evidence lanes, AP diff/convergence artifacts, validation scripts. No live Supabase/CSV reads for this audit.",
+  "operating_loop_target": [
+    "observe_reality",
+    "detect_demand",
+    "detect_drift",
+    "detect_uncertainty",
+    "generate_hypotheses",
+    "prioritize_opportunities",
+    "assign_investigation",
+    "collect_evidence",
+    "challenge_evidence",
+    "measure_confidence",
+    "decide",
+    "generate_work",
+    "assign_agent",
+    "agent_executes",
+    "validate_output",
+    "measure_customer_outcome",
+    "measure_business_outcome",
+    "learn",
+    "update_command_center",
+    "repeat"
+  ],
+  "loop_steps": [
+    {
+      "step_id": "observe_reality",
+      "step_name": "Observe reality",
+      "status": "PROVEN",
+      "evidence_files": [
+        "scripts/report-buckparts-command-center.ts",
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "scripts/lib/buckparts-command-center-v2-types.ts",
+        "scripts/report-buckparts-daily-operator.ts",
+        "scripts/live-site-smoke-check.ts",
+        "scripts/lib/deploy-live-site-monitor-command-center-lane-v1.ts",
+        "scripts/lib/load-live-site-monitor-artifact.ts",
+        "src/lib/owner-dashboard/owner-command-center-neurons-v1.ts",
+        "src/lib/owner-dashboard/gsc-external-demand.ts",
+        "src/lib/owner-dashboard/ga4-trust-funnel-artifact.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npm run buckparts:daily",
+        "npm run buckparts:live-site-smoke"
+      ],
+      "notes": "CC v2 aggregates dozens of read-only lanes (deploy monitor, live site, neurons, browser truth, batch production). Daily Operator re-invokes CC plus GSC/GA4 reads. PROVEN as artifact generation; freshness varies by lane (see external_measurement_freshness_v1)."
+    },
+    {
+      "step_id": "detect_demand",
+      "step_name": "Detect demand",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "src/lib/owner-dashboard/gsc-external-demand.ts",
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+        "scripts/lib/buckparts-demand-work-queue-summary-v1.ts",
+        "scripts/lib/buckparts-marketing-intelligence-engine-v1.ts",
+        "scripts/report-buckparts-daily-operator.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npm run buckparts:daily",
+        "npx tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts"
+      ],
+      "notes": "GSC external demand neuron + internal search_and_click_intelligence_summary are wired. Revenue/click money path often NOT_CONNECTED (revenue_snapshot.click_visibility). Demand-to-coverage lane exists but is not a closed autonomous detector."
+    },
+    {
+      "step_id": "detect_drift",
+      "step_name": "Detect drift",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/owner-drift-detector-v1.ts",
+        "scripts/lib/command-center-truth-integrity-registry-v1.ts",
+        "data/truth-integrity/truth-integrity-registry-v1.json",
+        "scripts/buckparts-hq-handoff-freshness.test.ts",
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "data/air-purifier/batch-production/audits/ap-runtime-convergence-gap-v1.json",
+        "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-owner-drift-detector-v1.ts"
+      ],
+      "notes": "owner_drift_detector_v1 classifies new ideas vs CC execution context. truth_integrity_registry_v1 surfaces SHADOWED vs MEASURED guard gaps (TIR-2026-0001/0002). AP convergence/diff JSON artifacts exist. HQ handoff freshness is presence-only (R5 MEASURED gap). No unified drift score consumed by gates."
+    },
+    {
+      "step_id": "detect_uncertainty",
+      "step_name": "Detect uncertainty",
+      "status": "PROVEN",
+      "evidence_files": [
+        "scripts/lib/buckparts-command-center-v2-types.ts",
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/report-buckparts-blocked-link-money-queue.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "UNKNOWN / NOT_PROVEN / BLOCKED enums are first-class across lanes (browser_truth, blocked_link_summary, external_quality_signal_usefulness_v1, semi_cruise). Agent control plane explicitly models uncertainty in job status."
+    },
+    {
+      "step_id": "generate_hypotheses",
+      "step_name": "Generate hypotheses",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/marketing-intelligence-engine-v1.ts",
+        "scripts/lib/command-center-seo-opportunity-registry-v1.ts",
+        "scripts/lib/command-center-revenue-opportunity-registry-v1.ts",
+        "scripts/lib/command-center-distribution-opportunity-registry-v1.ts",
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/lib/ap-model-first-evidence-queue-v1.ts",
+        "scripts/report-hyperagent-work-queue-v1.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+        "npx tsx scripts/report-hyperagent-work-queue-v1.ts"
+      ],
+      "notes": "Marketing intelligence + opportunity registries produce planning hypotheses. AP model-first queue ranks weak buyer paths. HyperAgent work queue lists investigation candidates. No single hypothesis registry feeds CC next_best_action automatically."
+    },
+    {
+      "step_id": "prioritize_opportunities",
+      "step_name": "Prioritize opportunities",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "scripts/lib/command-center-issue-registry-v1.ts",
+        "scripts/lib/evidence-leverage-prioritization-v1.ts",
+        "scripts/lib/command-center-truth-integrity-registry-v1.ts",
+        "scripts/lib/buckparts-command-center-v2-types.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "next_best_action with steering_override_active from issue registry (TIER_0) and truth_integrity recommended action (steering_override_active: false). evidence_leverage_prioritization_v1 lane exists. Multiple competing prioritizers (control graph rollup, marketing, AP batch) — fragmentation is PARTIAL not unified."
+    },
+    {
+      "step_id": "assign_investigation",
+      "step_name": "Assign investigation",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/report-hyperagent-work-queue-v1.ts",
+        "scripts/dispatch-hyperagent-orchestrator-v0.ts",
+        "scripts/lib/mission-factory-orchestrator-v1.ts",
+        "scripts/run-buckparts-command-center-dispatch-v1.ts"
+      ],
+      "evidence_commands": [
+        "npx tsx scripts/report-hyperagent-work-queue-v1.ts",
+        "npx tsx scripts/dispatch-hyperagent-orchestrator-v0.ts",
+        "npm run buckparts:command-center:run-dispatch"
+      ],
+      "notes": "Agent control plane defines jobs with permission levels. HyperAgent orchestrator v0 and mission factory exist. CC dispatch runner allowlists exact commands but does not auto-route investigations from CC lanes. Assignment is manual or script-invoked."
+    },
+    {
+      "step_id": "collect_evidence",
+      "step_name": "Collect evidence",
+      "status": "PROVEN",
+      "evidence_files": [
+        "scripts/lib/air-purifier-model-first-evidence-result-v1.ts",
+        "scripts/lib/ap-model-first-evidence-queue-v1.ts",
+        "data/air-purifier/batch-production/agent-packets-model-first-v1/",
+        "data/evidence/",
+        "scripts/lib/whole-house-water-browser-truth-capture-result-v1.ts",
+        "scripts/report-buckparts-stale-browser-truth-shadow-v1.ts",
+        "scripts/run-buckparts-codex-readonly-smoke.ts"
+      ],
+      "evidence_commands": [
+        "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+        "npx tsx scripts/run-buckparts-codex-readonly-smoke.ts"
+      ],
+      "notes": "File-backed browser proof, model-first evidence results, hyperagent packets, and codex readonly smoke produce durable artifacts under data/. FORBIDDEN_MUTATIONS lists guard model-first path."
+    },
+    {
+      "step_id": "challenge_evidence",
+      "step_name": "Challenge evidence",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "src/lib/owner-dashboard/codex-output-review-packet-v1.ts",
+        "src/lib/owner-dashboard/codex-packet-proof-read-model-v1.ts",
+        "scripts/lib/customer-closure-report-v1.ts",
+        "data/fridge/batch-production/drafts/fridge-safe-link-batch-factory-v1.json",
+        "scripts/lib/truth-integrity-registry-v1.ts",
+        "scripts/buckparts-hq-handoff-freshness.test.ts"
+      ],
+      "evidence_commands": [
+        "npx tsx scripts/run-buckparts-codex-readonly-smoke.ts",
+        "npm test -- scripts/buckparts-hq-handoff-freshness.test.ts"
+      ],
+      "notes": "Codex output review + cursor_validation overlays on batch factories challenge agent output. Truth Integrity Registry formalizes SHADOWED vs MEASURED. Not systematic across all evidence lanes; HQ handoff test does not challenge recency."
+    },
+    {
+      "step_id": "measure_confidence",
+      "step_name": "Measure confidence",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/customer-authority-score-v1.ts",
+        "scripts/lib/buckparts-stale-browser-truth-shadow-report-v1.ts",
+        "scripts/lib/buckparts-certainty-engine-checklist-v1.ts",
+        "scripts/lib/command-center-truth-integrity-registry-v1.ts",
+        "scripts/lib/buckparts-command-center-v2-types.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "Per-lane proof_status (PROVEN/INFERRED/UNKNOWN), browser truth classifications, codex_task_outcome_status, customer_authority_score tiers. No unified confidence scalar that gates automation."
+    },
+    {
+      "step_id": "decide",
+      "step_name": "Decide",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/command-center-issue-registry-v1.ts",
+        "scripts/lib/buckparts-founder-decision-registry-summary-v1.ts",
+        "scripts/lib/universal-batch-lifecycle-mutation-authorization-review-command-center-v1.ts",
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/lib/owner-drift-detector-v1.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "Issue registry can steer next_best_action at TIER_0. Founder decision registry + mutation authorization review are read-only decision support. mutation_authorized remains false on drift detector and most lanes. Layer 6 autonomy NOT_PROVEN per failure_pattern_registry digest hint."
+    },
+    {
+      "step_id": "generate_work",
+      "step_name": "Generate work",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "src/lib/owner-dashboard/founder-execution-packet-v1.ts",
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/lib/buckparts-batch-production-operating-dispatch-v1.ts",
+        "scripts/report-hyperagent-work-queue-v1.ts",
+        "data/air-purifier/batch-production/agent-packets-model-first-v1/"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-hyperagent-work-queue-v1.ts"
+      ],
+      "notes": "Founder execution packets, agent control plane jobs, batch operating dispatch, and hyperagent packets generate work artifacts. Work generation is proven; automatic selection from CC state is partial."
+    },
+    {
+      "step_id": "assign_agent",
+      "step_name": "Assign agent",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/buckparts-agent-control-plane-v1.ts",
+        "scripts/dispatch-hyperagent-orchestrator-v0.ts",
+        "scripts/run-buckparts-codex-next-execution-packet.ts",
+        "scripts/lib/mission-factory-orchestrator-v1.ts"
+      ],
+      "evidence_commands": [
+        "npx tsx scripts/dispatch-hyperagent-orchestrator-v0.ts",
+        "npx tsx scripts/run-buckparts-codex-next-execution-packet.ts"
+      ],
+      "notes": "Permission levels (OBSERVE_READ_ONLY through DEPLOY_GATED) define what agents may do. Dispatch scripts exist but require human trigger; no CC-scheduled agent assignment."
+    },
+    {
+      "step_id": "agent_executes",
+      "step_name": "Agent executes",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/run-buckparts-codex-readonly-smoke.ts",
+        "scripts/run-buckparts-codex-next-execution-packet.ts",
+        "scripts/dispatch-hyperagent-orchestrator-v0.ts",
+        "scripts/lib/buckparts-runner-step-v1.ts",
+        "scripts/lib/buckparts-agent-control-plane-v1.ts"
+      ],
+      "evidence_commands": [
+        "npx tsx scripts/run-buckparts-codex-readonly-smoke.ts",
+        "npm run buckparts:runner-step"
+      ],
+      "notes": "Codex readonly smoke and hyperagent dispatch execute agent work with guardrails. buckparts-runner-step-v1 runs lint/build/operator-proof only — Layer 6 agent execution NOT_PROVEN in runner contract."
+    },
+    {
+      "step_id": "validate_output",
+      "step_name": "Validate output",
+      "status": "PROVEN",
+      "evidence_files": [
+        "scripts/lib/buckparts-runner-step-v1.ts",
+        "scripts/buckparts-operator-proof.ts",
+        "src/lib/owner-dashboard/codex-output-review-packet-v1.ts",
+        "package.json",
+        ".github/workflows/buckparts-runner-step.yml"
+      ],
+      "evidence_commands": [
+        "npm run lint",
+        "npm run build",
+        "npm run buckparts:operator-proof",
+        "npm run buckparts:runner-step"
+      ],
+      "notes": "Runner step + operator-proof + CI workflow validate build/lint/operator invariants. Cursor validation overlays on batch artifacts. Full npm test suite has unrelated failures; truth_integrity CC tests pass in isolation."
+    },
+    {
+      "step_id": "measure_customer_outcome",
+      "step_name": "Measure customer outcome",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/customer-reality-scoreboard-v1.ts",
+        "scripts/lib/customer-closure-report-v1.ts",
+        "scripts/lib/customer-authority-outcomes-v1.ts",
+        "scripts/lib/customer-authority-history-v1.ts",
+        "scripts/report-customer-authority-history-v1.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-customer-authority-history-v1.ts"
+      ],
+      "notes": "customer_reality_scoreboard_v1, customer_closure_report, customer_authority_outcomes_v1 on CC v2. Outcome evaluation needs history snapshots (7-day window); INSUFFICIENT_HISTORY common without regular snapshot cadence."
+    },
+    {
+      "step_id": "measure_business_outcome",
+      "step_name": "Measure business outcome",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/buckparts-command-center-v2-types.ts",
+        "scripts/report-buckparts-daily-operator.ts",
+        "src/lib/owner-dashboard/ga4-trust-funnel-artifact.ts",
+        "scripts/lib/buckparts-command-center-v2.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center",
+        "npm run buckparts:daily"
+      ],
+      "notes": "revenue_snapshot, click_visibility, GA4 trust funnel in daily operator. Many fields NOT_CONNECTED or UNKNOWN. Business outcome measurement is observational not closed-loop scored against prior decisions."
+    },
+    {
+      "step_id": "learn",
+      "step_name": "Learn",
+      "status": "PARTIAL",
+      "evidence_files": [
+        "scripts/lib/learning-outcomes-read-model-v1.ts",
+        "scripts/lib/learning-outcomes-insert-plan-v1.ts",
+        "src/lib/owner-dashboard/failure-pattern-registry-v1.ts",
+        "docs/BuckParts-FAILURE-PATTERN-REGISTRY.md",
+        "data/truth-integrity/truth-integrity-registry-v1.json"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "learning_outcomes_insert_plan_v1 on CC is owner-review gated. Failure pattern registry is digest-only (not consumed by runner/gates). Truth Integrity Registry captures audit learnings but steering_override_active is false."
+    },
+    {
+      "step_id": "update_command_center",
+      "step_name": "Update Command Center",
+      "status": "PROVEN",
+      "evidence_files": [
+        "scripts/report-buckparts-command-center.ts",
+        "scripts/lib/buckparts-command-center-v2.ts",
+        "scripts/lib/command-center-truth-integrity-registry-v1.ts",
+        "scripts/lib/buckparts-brain-coverage-manifest-v1.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:command-center"
+      ],
+      "notes": "CC rebuilds all lanes each run from repo + optional Supabase reads. truth_integrity_registry_v1 lane committed @ 2b7febe. Brain manifest does not yet list truth_integrity — coverage gap is visibility not rebuild."
+    },
+    {
+      "step_id": "repeat",
+      "step_name": "Repeat",
+      "status": "PARTIAL",
+      "evidence_files": [
+        ".github/workflows/buckparts-daily-operator.yml",
+        ".github/workflows/buckparts-founder-digest.yml",
+        ".github/workflows/buckparts-runner-step.yml",
+        "scripts/lib/buckparts-command-center-v2-types.ts"
+      ],
+      "evidence_commands": [
+        "npm run buckparts:daily",
+        "npm run buckparts:founder-digest",
+        "npm run buckparts:runner-step"
+      ],
+      "notes": "Scheduled daily operator + founder digest + manual runner-step. semi_cruise_status_summary_v1 is read-only status — not autonomous closed loop. No workflow chains observe→decide→execute→learn without founder gate."
+    }
+  ],
+  "status_summary": {
+    "PROVEN": 4,
+    "PARTIAL": 16,
+    "UNKNOWN": 0,
+    "MISSING": 0
+  },
+  "weakest_links": [
+    {
+      "rank": 1,
+      "link": "repeat",
+      "why": "Cron workflows run reports but do not close observe→assign→execute→validate→learn without founder/Cursor gates. semi_cruise is observational only.",
+      "severity": "HIGH"
+    },
+    {
+      "rank": 2,
+      "link": "agent_executes → validate_output → update_command_center",
+      "why": "Runner step validates lint/build/operator-proof only; Layer 6 agent autonomy NOT_PROVEN. Agent dispatch is manual; outcomes do not auto-feed CC gates.",
+      "severity": "HIGH"
+    },
+    {
+      "rank": 3,
+      "link": "measure_business_outcome",
+      "why": "revenue_snapshot.click_visibility and GA4 paths frequently NOT_CONNECTED; business ROI of next_best_action is not measurable in-loop.",
+      "severity": "HIGH"
+    },
+    {
+      "rank": 4,
+      "link": "learn → update_command_center",
+      "why": "learning_outcomes_insert_plan_v1 and failure_pattern_registry are not consumed by steering or mutation gates; truth_integrity does not override next_best_action.",
+      "severity": "MEDIUM"
+    },
+    {
+      "rank": 5,
+      "link": "detect_drift (HQ handoff / browser truth freshness)",
+      "why": "TIR-2026-0001 SHADOWED stale-browser-truth; TIR-2026-0002 MEASURED HQ handoff presence-vs-freshness. Drift known but not enforced.",
+      "severity": "MEDIUM"
+    },
+    {
+      "rank": 6,
+      "link": "external_quality_signal (Sentry → CC)",
+      "why": "sentry_errors_feed_command_center: NOT_PROVEN in external_quality_signal_usefulness_v1 despite @sentry/nextjs app wiring.",
+      "severity": "MEDIUM"
+    },
+    {
+      "rank": 7,
+      "link": "prioritize_opportunities",
+      "why": "Multiple competing next-action surfaces (root next_best_action, control_graph, marketing, AP batch, truth_integrity recommended action with override off).",
+      "severity": "MEDIUM"
+    },
+    {
+      "rank": 8,
+      "link": "measure_customer_outcome → were_we_right",
+      "why": "customer_authority_outcomes_v1 requires snapshot history; without cadence, Were we right? stays INCONCLUSIVE.",
+      "severity": "MEDIUM"
+    }
+  ],
+  "automation_safety": {
+    "safe_for_agent_automation_now": [
+      {
+        "step_ids": ["observe_reality", "detect_uncertainty"],
+        "permission_level": "OBSERVE_READ_ONLY",
+        "rationale": "CC report generation, audits, truth integrity counts, hyperagent read-only packets, codex readonly smoke — no mutation gates.",
+        "evidence": "scripts/lib/buckparts-agent-control-plane-v1.ts"
+      },
+      {
+        "step_ids": ["collect_evidence"],
+        "permission_level": "EVIDENCE_ARTIFACT_WRITE",
+        "rationale": "Model-first browser proof JSON under data/ with explicit FORBIDDEN_MUTATIONS list.",
+        "evidence": "scripts/lib/ap-model-first-evidence-queue-v1.ts"
+      },
+      {
+        "step_ids": ["validate_output"],
+        "permission_level": "OBSERVE_READ_ONLY",
+        "rationale": "lint, build, operator-proof, isolated CC lane tests.",
+        "evidence": "scripts/lib/buckparts-runner-step-v1.ts"
+      },
+      {
+        "step_ids": ["generate_hypotheses", "generate_work"],
+        "permission_level": "PLAN_ARTIFACT_WRITE",
+        "rationale": "Work queues, hyperagent packets, founder execution packet drafts — planning artifacts only.",
+        "evidence": "scripts/report-hyperagent-work-queue-v1.ts"
+      }
+    ],
+    "founder_or_cursor_gated": [
+      {
+        "step_ids": ["decide", "assign_agent", "agent_executes"],
+        "permission_level": "SAFE_APPLY_GATED | DEPLOY_GATED | OWNER_ONLY",
+        "rationale": "Mutation authorization review, issue registry TIER_0 steering, Supabase/CSV apply, deploy — mutation_authorized false on drift detector and dispatch runner read_only.",
+        "evidence": "scripts/lib/universal-batch-lifecycle-mutation-authorization-review-command-center-v1.ts"
+      },
+      {
+        "step_ids": ["learn"],
+        "permission_level": "OWNER_ONLY",
+        "rationale": "learning_outcomes_insert_plan_v1 requires owner review before any insert.",
+        "evidence": "scripts/lib/learning-outcomes-insert-plan-v1.ts"
+      },
+      {
+        "step_ids": ["repeat"],
+        "permission_level": "FOUNDER_CRON",
+        "rationale": "Daily operator and founder digest run on schedule but do not authorize autonomous mutation loops.",
+        "evidence": ".github/workflows/buckparts-daily-operator.yml"
+      },
+      {
+        "step_ids": ["prioritize_opportunities"],
+        "permission_level": "FOUNDER_STEERING",
+        "rationale": "next_best_action changes affect entire operating graph; truth_integrity explicitly does not override yet.",
+        "evidence": "scripts/lib/command-center-truth-integrity-registry-v1.ts"
+      }
+    ]
+  },
+  "six_questions": {
+    "what_is_happening": {
+      "answer_basis": "PROVEN lanes + PARTIAL external feeds",
+      "primary_surfaces": [
+        "command_center_v2.operator_digest_v1",
+        "buckparts_daily_operator_v1.runtime_status",
+        "command_center_v2.semi_cruise_status_summary_v1",
+        "command_center_v2.top_of_game_foundation_scorecard_v1"
+      ],
+      "commands": ["npm run buckparts:command-center", "npm run buckparts:daily"],
+      "gaps": ["GA4/revenue often NOT_CONNECTED", "Sentry not feeding CC", "truth_integrity not in brain manifest or founder digest"]
+    },
+    "what_is_broken": {
+      "answer_basis": "issue registry + blocked links + truth integrity + brain STOP_THE_LINE",
+      "primary_surfaces": [
+        "command_center_issue_registry_v1",
+        "blocked_link_summary",
+        "truth_integrity_registry_v1",
+        "command_center_brain_coverage_manifest_v1"
+      ],
+      "commands": ["npm run buckparts:command-center"],
+      "gaps": ["truth_integrity high_severity_unfixed does not steer NBA", "failure_pattern_registry informational only"]
+    },
+    "what_is_uncertain": {
+      "answer_basis": "PROVEN UNKNOWN labeling",
+      "primary_surfaces": [
+        "browser_truth lanes",
+        "blocked_link_summary",
+        "external_quality_signal_usefulness_v1",
+        "customer_authority_outcomes_v1 verdict INSUFFICIENT_HISTORY"
+      ],
+      "commands": ["npm run buckparts:command-center"],
+      "gaps": ["No single uncertainty rollup consumed by operator_digest root"]
+    },
+    "what_matters_most": {
+      "answer_basis": "next_best_action + TIER_0 issue override",
+      "primary_surfaces": [
+        "report.next_best_action",
+        "operator_digest_v1",
+        "command_center_issue_registry_v1.steering_override_active",
+        "evidence_leverage_prioritization_v1"
+      ],
+      "commands": ["npm run buckparts:command-center"],
+      "gaps": ["Competing prioritizers; truth_integrity recommended action not merged into root NBA"]
+    },
+    "what_should_happen_next": {
+      "answer_basis": "PARTIAL — fragmented recommendations",
+      "primary_surfaces": [
+        "report.next_best_action",
+        "truth_integrity_registry_v1.recommended_truth_integrity_next_action",
+        "agent_control_plane_v1.jobs",
+        "hyperagent work queue",
+        "batch_production_operating_dispatch_v1"
+      ],
+      "commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-hyperagent-work-queue-v1.ts"
+      ],
+      "gaps": ["No canonical ranked action list; dispatch runner allowlist is narrow"]
+    },
+    "were_we_right": {
+      "answer_basis": "PARTIAL — history-dependent",
+      "primary_surfaces": [
+        "customer_authority_outcomes_v1",
+        "customer_reality_scoreboard_v1",
+        "customer_closure_report",
+        "learning_outcomes_insert_plan_v1"
+      ],
+      "commands": [
+        "npm run buckparts:command-center",
+        "npx tsx scripts/report-customer-authority-history-v1.ts"
+      ],
+      "gaps": ["Snapshot cadence required; business outcome not tied to prior NBA predictions"]
+    }
+  },
+  "sentry_assessment": {
+    "app_wiring": "PROVEN",
+    "command_center_feed": "NOT_PROVEN",
+    "evidence_files": [
+      "sentry.server.config.ts",
+      "instrumentation.ts",
+      "package.json"
+    ],
+    "cc_lane": "command_center_v2.external_quality_signal_usefulness_v1.sentry_errors_feed_command_center",
+    "notes": "Sentry captures runtime errors in Next.js app; CC explicitly marks feed as NOT_PROVEN — external quality signal not closed into operating loop."
+  },
+  "registries_assessment": {
+    "truth_integrity_registry_v1": {
+      "status": "PROVEN",
+      "cc_lane": "command_center_v2.truth_integrity_registry_v1",
+      "steers_nba": false,
+      "seeded_findings": 2,
+      "data": "data/truth-integrity/truth-integrity-registry-v1.json"
+    },
+    "command_center_issue_registry_v1": {
+      "status": "PROVEN",
+      "steers_nba": true,
+      "condition": "TIER_0 + steering_override_active",
+      "lib": "scripts/lib/command-center-issue-registry-v1.ts"
+    },
+    "failure_pattern_registry_v1": {
+      "status": "PROVEN",
+      "steers_nba": false,
+      "surfaces": ["founder_digest", "owner_dashboard"],
+      "lib": "src/lib/owner-dashboard/failure-pattern-registry-v1.ts"
+    }
+  },
+  "ap_evidence_lanes": {
+    "model_first_queue": {
+      "status": "PROVEN",
+      "command": "npx tsx scripts/report-ap-model-first-evidence-queue-v1.ts",
+      "lib": "scripts/lib/ap-model-first-evidence-queue-v1.ts"
+    },
+    "convergence_gap": {
+      "status": "PROVEN",
+      "artifact": "data/air-purifier/batch-production/audits/ap-runtime-convergence-gap-v1.json"
+    },
+    "supabase_vs_csv_diff": {
+      "status": "PROVEN",
+      "artifact": "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json"
+    },
+    "safe_cta_parity_packet": {
+      "status": "PROVEN",
+      "artifact": "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-parity-packet-v1.json"
+    }
+  },
+  "validation_scripts": {
+    "runner_step": "npm run buckparts:runner-step",
+    "operator_proof": "npm run buckparts:operator-proof",
+    "command_center_tests": "npm test -- scripts/report-buckparts-command-center.test.ts",
+    "truth_integrity_lane_tests": "npm test -- scripts/lib/command-center-truth-integrity-registry-v1.test.ts",
+    "hq_handoff_freshness": "npm test -- scripts/buckparts-hq-handoff-freshness.test.ts",
+    "stale_browser_truth_shadow": "npm run buckparts:stale-browser-truth-shadow",
+    "ci_workflows": [
+      ".github/workflows/buckparts-daily-operator.yml",
+      ".github/workflows/buckparts-founder-digest.yml",
+      ".github/workflows/buckparts-runner-step.yml"
+    ]
+  },
+  "recommendation_v1": {
+    "title": "command_center_control_loop_summary_v1 — derive six operator questions inside existing CC",
+    "principle": "No new standalone brain; extend Command Center v2 with one read-only projection lane that composes existing lanes.",
+    "smallest_durable_steps": [
+      {
+        "order": 1,
+        "change": "Add command_center_control_loop_summary_v1 lane to buckparts-command-center-v2-types.ts + builder",
+        "maps_to": "six_questions structured fields from existing lanes (issue registry, truth integrity, NBA, customer_authority_outcomes, semi_cruise)",
+        "mutates_steering": false
+      },
+      {
+        "order": 2,
+        "change": "Extend operator_digest_v1 root projection with control_loop_summary excerpt (3–5 lines)",
+        "maps_to": "founder_digest and daily_operator inherit without new digest contract",
+        "mutates_steering": false
+      },
+      {
+        "order": 3,
+        "change": "Register truth_integrity_registry_v1 in buckparts-brain-coverage-manifest-v1.ts",
+        "maps_to": "brain STOP_THE_LINE visibility for shadowed truth gaps",
+        "mutates_steering": false
+      },
+      {
+        "order": 4,
+        "change": "Wire customer_authority_history snapshot into buckparts:daily cron (optional write to data/customer-authority-history/)",
+        "maps_to": "were_we_right with INSUFFICIENT_HISTORY → evaluable",
+        "mutates_steering": false,
+        "note": "File write only; no Supabase"
+      }
+    ],
+    "explicitly_defer": [
+      "truth_integrity steering_override_active until TIR findings have measured fix verification",
+      "Sentry → CC feed until durable artifact contract exists",
+      "Layer 6 runner agent execution until operator-proof expands",
+      "Unified opportunity ranker merging all batch subgraphs"
+    ]
+  },
+  "distance_to_full_loop": {
+    "overall": "PARTIAL",
+    "proven_backbone": "Observe (CC) → surface uncertainty → validate build → rebuild CC",
+    "missing_backbone": "Autonomous repeat, business outcome closure, learn→steer feedback, Sentry ingest, agent execute without founder gate"
+  }
+}
