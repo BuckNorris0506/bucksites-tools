@@ -5482,16 +5482,20 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   } else {
     assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
   }
-  assert.ok(lane.blockers.includes("evidence_collection_not_started"));
+  if (lane.batch_run_registry.evidence_collection_started) {
+    assert.ok(!lane.blockers.includes("evidence_collection_not_started"));
+  } else {
+    assert.ok(lane.blockers.includes("evidence_collection_not_started"));
+  }
   if (lane.batch_run_registry.status === "PROVEN") {
     assert.ok(!lane.blockers.includes("batch_run_registry_not_created"));
     assert.equal(lane.batch_run_registry.run_id, "ap-demand-selected-batch-run-v1-2026-06-23");
-    assert.equal(lane.batch_run_registry.stage, "read_only_evidence_collection_authorized");
+    assert.equal(lane.batch_run_registry.stage, "read_only_evidence_collection_complete");
     assert.equal(lane.batch_run_registry.batch_start_mode, "read_only_browser_discovery_only");
     assert.equal(lane.batch_run_registry.proposed_slug_count, 10);
     assert.equal(lane.batch_run_registry.excluded_slug_count, 1);
     assert.equal(lane.batch_run_registry.read_only_evidence_collection_authorized, true);
-    assert.equal(lane.batch_run_registry.evidence_collection_started, false);
+    assert.equal(lane.batch_run_registry.evidence_collection_started, true);
   } else {
     assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
   }
