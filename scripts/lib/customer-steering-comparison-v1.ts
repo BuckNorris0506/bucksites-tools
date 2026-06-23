@@ -21,6 +21,7 @@ export type FactorySteeringOverrideSourceV1 =
   | "issue_registry_reaudit"
   | "refrigerator_model_first"
   | "model_first"
+  | "demand_selected_correctness_risks"
   | "demand_to_coverage"
   | "universal_batch_lifecycle"
   | "fridge_apply_plan_approval"

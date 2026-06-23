@@ -154,6 +154,12 @@ function issueReauditSteeringActive(
   return report.next_best_action.startsWith("ISSUE RE-AUDIT:");
 }
 
+function demandSelectedCorrectnessRisksSteeringActive(
+  report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
+): boolean {
+  return report.next_best_action.startsWith("CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]:");
+}
+
 function lifecycleOwnsOwnerFacingExecutionGuidance(
   report: Awaited<ReturnType<typeof buildBuckpartsCommandCenterReport>>,
 ): boolean {
@@ -4436,6 +4442,40 @@ test("command center next_best_action prefers demand-selected batch when refrige
   if (issueReauditSteeringActive(report)) {
     assert.match(report.next_best_action, /BP-000004/);
     assert.match(report.why_this_action, /re-audit|RE_AUDIT/i);
+    return;
+  }
+
+  const correctness = report.command_center_v2.air_purifier_demand_selected_correctness_risks_v1;
+  const ownerReview = report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1;
+  if (
+    correctness.source_status === "PROVEN" &&
+    ownerReview.open_batch_proof_v1.open_batch_existence === "PROVEN" &&
+    (correctness.vornado_md1_0023_status === "issue_track_and_split_before_progression" ||
+      correctness.renpho_rp_ap003_status === "exclude_from_future_batch_progression")
+  ) {
+    assert.ok(demandSelectedCorrectnessRisksSteeringActive(report));
+    assert.match(report.next_best_action, /BP-000005 \(vornado-md1-0023\)/);
+    assert.match(report.next_best_action, /BP-000006 \(renpho-rp-ap003\)/);
+    assert.match(report.next_best_action, /catalog identity correctness blocks batch progression/i);
+    assert.match(report.next_best_action, /batch-planning messaging \(wedge selection unchanged\)/i);
+    assert.match(report.next_best_action, /mutation unauthorized/i);
+    assert.equal(demand.recommendation_status, "START_NEW_DEMAND_SELECTED_BATCH");
+    assert.equal(demand.recommended_wedge, "air_purifier");
+    assert.equal(
+      report.command_center_v2.customer_steering_comparison_v1.factory_steering
+        .steering_override_source,
+      "demand_selected_correctness_risks",
+    );
+    assert.match(report.execution_guidance.next_move_command, /BP-000005\.json/);
+    assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
+    assert.equal(
+      report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.batch_start_authorized,
+      false,
+    );
+    assert.equal(
+      report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.csv_apply_authorized,
+      false,
+    );
     return;
   }
 

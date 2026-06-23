@@ -130,6 +130,7 @@ import {
   isRefrigeratorWaterLifecycleClosedV1,
   resolveDemandToCoverageNextLaneAfterFridgeCloseoutSteeringOverrideV1,
 } from "./lib/refrigerator-water-closed-lifecycle-command-center-steering-v1";
+import { resolveDemandSelectedCorrectnessRisksSteeringOverrideV1 } from "./lib/demand-selected-correctness-risks-steering-v1";
 import {
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
@@ -2304,6 +2305,16 @@ export async function buildBuckpartsCommandCenterReport(
       brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
     });
 
+  const demandSelectedCorrectnessRisksSteeringOverride =
+    resolveDemandSelectedCorrectnessRisksSteeringOverrideV1({
+      correctnessRisks: air_purifier_demand_selected_correctness_risks_v1,
+      ownerReviewOpenBatchProof:
+        air_purifier_demand_selected_batch_owner_review_v1.open_batch_proof_v1,
+      demandLane: demand_to_coverage_next_lane_v1,
+      issues: command_center_issue_registry_v1.issues,
+      brainStopTheLine: brainGate.brain_status === "STOP_THE_LINE",
+    });
+
   const fridgeApplyPlanApprovalSteeringOverride =
     resolveFridgeBuyerPathBatchApplyPlanApprovalSteeringOverrideV1({
       approvalLane: command_center_v2.fridge_buyer_path_batch_apply_plan_approval_v1,
@@ -2388,6 +2399,17 @@ export async function buildBuckpartsCommandCenterReport(
         mutatingBlockedReasons.push(reason);
       }
     }
+    mutatingBlocked = mutatingBlockedReasons.length > 0;
+  } else if (demandSelectedCorrectnessRisksSteeringOverride) {
+    steeringOverrideSource = "demand_selected_correctness_risks";
+    nextBestAction = demandSelectedCorrectnessRisksSteeringOverride.next_best_action;
+    whyThisAction = demandSelectedCorrectnessRisksSteeringOverride.why_this_action;
+    effectiveNextMoveMode = "READ_ONLY";
+    effectiveNextMoveCommand = demandSelectedCorrectnessRisksSteeringOverride.next_move_command;
+    mutatingBlockedReasons.length = 0;
+    mutatingBlockedReasons.push(
+      ...demandSelectedCorrectnessRisksSteeringOverride.mutation_block_reasons,
+    );
     mutatingBlocked = mutatingBlockedReasons.length > 0;
   } else if (demandToCoverageAfterFridgeCloseoutSteeringOverride) {
     steeringOverrideSource = "demand_to_coverage";
