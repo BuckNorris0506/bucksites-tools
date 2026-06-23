@@ -1,0 +1,44 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-06-23-ap-demand-selected-read-only-evidence-collection",
+      "source_queue_row_id": "queue-ap-demand-selected-batch-owner-review-v1",
+      "source_decision_packet_id": "air_purifier_demand_selected_batch_owner_review_v1:ap-demand-selected-batch-run-v1-2026-06-23",
+      "decided_at": "2026-06-23T18:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Approved starting read-only evidence collection for run_id ap-demand-selected-batch-run-v1-2026-06-23. Scope is read-only browser/discovery only via HyperAgent chat output. This approval does not authorize CSV mutation, Supabase writes, canonical evidence file writes, retailer_links mutation, buy-link promotion, public UI changes, git commits, deploys, or Netlify API usage.",
+      "allowed_next_scope": "read_only_agent",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not write to Supabase or run SQL that mutates database state.",
+        "Do not mutate retailer_links or other retailer catalog/link artifacts.",
+        "Do not create, delete, or overwrite canonical agent-results JSON unless a separate owner authorization exists.",
+        "Do not promote buy links or change affiliate program URLs from this approval alone.",
+        "Do not run batch apply/mutation scripts or mutating npm targets from this approval alone.",
+        "Do not deploy or call Netlify API from this approval alone.",
+        "read_only_agent scope is browser/discovery only — not production mutation approval.",
+        "This approval row is not automation_input for Runner Step, queues, or mutation gates."
+      ],
+      "ap_demand_selected_read_only_evidence_collection_approval_context_v1": {
+        "review_packet_contract": "air_purifier_demand_selected_batch_owner_review_v1",
+        "founder_option_id": "approve_read_only_evidence_collection_start",
+        "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+        "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
+        "proposed_slug_count": 10,
+        "excluded_slug_count": 1,
+        "evidence_collection_mode": "hyperagent_chat_discovery_read_only",
+        "mutation_authorized": false,
+        "evidence_write_authorized": false,
+        "csv_apply_authorized": false,
+        "supabase_mutation_authorized": false,
+        "public_ui_mutation_authorized": false,
+        "buy_link_mutation_authorized": false,
+        "netlify_api_authorized": false,
+        "run_registry_rel_path": "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json"
+      }
+    }
+  ]
+}

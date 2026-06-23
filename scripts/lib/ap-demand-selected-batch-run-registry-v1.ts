@@ -16,6 +16,27 @@ export const AP_DEMAND_SELECTED_BATCH_CANDIDATE_ID_V1 =
 export const AP_DEMAND_SELECTED_BATCH_RUN_REGISTRY_DIR_REL_V1 =
   "data/air-purifier/batch-production/run-registry" as const;
 
+export const AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1 =
+  "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json" as const;
+
+export const AP_DEMAND_SELECTED_EVIDENCE_RESULTS_DIR_REL_V1 =
+  "data/air-purifier/batch-production/agent-results-demand-selected-v1" as const;
+
+export type ApDemandSelectedOwnerReadOnlyEvidenceApprovalV1 = {
+  status: "approved";
+  approved_at: string;
+  approved_by: "founder";
+  run_id: string;
+  scope: "read_only_browser_discovery_only";
+  evidence_write_authorized: false;
+  csv_apply_authorized: false;
+  supabase_mutation_authorized: false;
+  public_ui_mutation_authorized: false;
+  buy_link_mutation_authorized: false;
+  netlify_api_authorized: false;
+  owner_approval_artifact_rel_path: typeof AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1;
+};
+
 export type ApDemandSelectedBatchRunRegistryDocumentV1 = {
   contract: typeof AP_PROVEN_RUN_CONTRACT_V1;
   read_only: true;
@@ -29,6 +50,7 @@ export type ApDemandSelectedBatchRunRegistryDocumentV1 = {
   stage?: string;
   batch_start_mode?: string;
   created_at?: string;
+  owner_read_only_evidence_collection_approval?: ApDemandSelectedOwnerReadOnlyEvidenceApprovalV1;
 };
 
 export type ApDemandSelectedBatchRunRegistryVisibilityV1 = {
@@ -39,6 +61,9 @@ export type ApDemandSelectedBatchRunRegistryVisibilityV1 = {
   batch_start_mode: string | null;
   proposed_slug_count: number | null;
   excluded_slug_count: number | null;
+  read_only_evidence_collection_authorized: boolean;
+  owner_approval_artifact_rel_path: string | null;
+  evidence_collection_started: boolean;
   parse_error: string | null;
 };
 
@@ -60,6 +85,60 @@ function defaultReadText(absPath: string): string {
 function defaultListRunRegistryJson(dirAbs: string): string[] {
   if (!existsSync(dirAbs)) return [];
   return readdirSync(dirAbs).filter((name) => name.endsWith(".json"));
+}
+
+function parseOwnerReadOnlyEvidenceApprovalV1(
+  input: unknown,
+  runId: string,
+): { ok: true; approval: ApDemandSelectedOwnerReadOnlyEvidenceApprovalV1 } | { ok: false; errors: string[] } {
+  const errors: string[] = [];
+  if (input === null || typeof input !== "object" || Array.isArray(input)) {
+    return { ok: false, errors: ["owner_read_only_evidence_collection_approval must be an object"] };
+  }
+  const o = input as Record<string, unknown>;
+  if (o.status !== "approved") errors.push('approval status must be "approved"');
+  if (o.approved_by !== "founder") errors.push('approved_by must be "founder"');
+  if (typeof o.approved_at !== "string" || Number.isNaN(Date.parse(o.approved_at))) {
+    errors.push("approved_at must be a parseable ISO 8601 string");
+  }
+  if (o.run_id !== runId) errors.push("approval run_id must match registry run_id");
+  if (o.scope !== "read_only_browser_discovery_only") {
+    errors.push('scope must be "read_only_browser_discovery_only"');
+  }
+  for (const flag of [
+    "evidence_write_authorized",
+    "csv_apply_authorized",
+    "supabase_mutation_authorized",
+    "public_ui_mutation_authorized",
+    "buy_link_mutation_authorized",
+    "netlify_api_authorized",
+  ] as const) {
+    if (o[flag] !== false) errors.push(`${flag} must be false`);
+  }
+  if (o.owner_approval_artifact_rel_path !== AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1) {
+    errors.push(`owner_approval_artifact_rel_path must be "${AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1}"`);
+  }
+  if (errors.length > 0) return { ok: false, errors };
+  return {
+    ok: true,
+    approval: o as ApDemandSelectedOwnerReadOnlyEvidenceApprovalV1,
+  };
+}
+
+export function loadApDemandSelectedEvidenceCollectionStartedV1(
+  deps: Pick<LoadApDemandSelectedBatchRunRegistryDepsV1, "rootDir" | "fileExists" | "listRunRegistryJson"> & {
+    listEvidenceResultsJson?: (dirAbs: string) => string[];
+  },
+): boolean {
+  const fileExists = deps.fileExists ?? defaultFileExists;
+  const listEvidenceResultsJson =
+    deps.listEvidenceResultsJson ??
+    ((dirAbs: string) => {
+      if (!fileExists(dirAbs)) return [];
+      return readdirSync(dirAbs).filter((name) => name.endsWith(".json"));
+    });
+  const dirAbs = path.join(deps.rootDir, AP_DEMAND_SELECTED_EVIDENCE_RESULTS_DIR_REL_V1);
+  return listEvidenceResultsJson(dirAbs).length > 0;
 }
 
 export function validateApDemandSelectedBatchRunRegistryDocumentV1(
@@ -94,6 +173,18 @@ export function validateApDemandSelectedBatchRunRegistryDocumentV1(
   }
   if (errors.length > 0) return { ok: false, errors };
 
+  let ownerApproval: ApDemandSelectedOwnerReadOnlyEvidenceApprovalV1 | undefined;
+  if (o.owner_read_only_evidence_collection_approval !== undefined) {
+    const approvalParsed = parseOwnerReadOnlyEvidenceApprovalV1(
+      o.owner_read_only_evidence_collection_approval,
+      (o.run_id as string).trim(),
+    );
+    if (!approvalParsed.ok) {
+      return { ok: false, errors: approvalParsed.errors.map((e) => `approval: ${e}`) };
+    }
+    ownerApproval = approvalParsed.approval;
+  }
+
   return {
     ok: true,
     doc: {
@@ -111,6 +202,7 @@ export function validateApDemandSelectedBatchRunRegistryDocumentV1(
       stage: typeof o.stage === "string" ? o.stage : undefined,
       batch_start_mode: typeof o.batch_start_mode === "string" ? o.batch_start_mode : undefined,
       created_at: typeof o.created_at === "string" ? o.created_at : undefined,
+      owner_read_only_evidence_collection_approval: ownerApproval,
     },
   };
 }
@@ -118,7 +210,9 @@ export function validateApDemandSelectedBatchRunRegistryDocumentV1(
 function visibilityFromDoc(
   relPath: string,
   doc: ApDemandSelectedBatchRunRegistryDocumentV1,
+  evidenceCollectionStarted: boolean,
 ): ApDemandSelectedBatchRunRegistryVisibilityV1 {
+  const approval = doc.owner_read_only_evidence_collection_approval;
   return {
     status: "PROVEN",
     run_registry_rel_path: relPath,
@@ -127,6 +221,9 @@ function visibilityFromDoc(
     batch_start_mode: doc.batch_start_mode ?? null,
     proposed_slug_count: doc.proposed_slugs.length,
     excluded_slug_count: doc.excluded_slugs?.length ?? 0,
+    read_only_evidence_collection_authorized: approval?.status === "approved" && approval.run_id === doc.run_id,
+    owner_approval_artifact_rel_path: approval?.owner_approval_artifact_rel_path ?? null,
+    evidence_collection_started: evidenceCollectionStarted,
     parse_error: null,
   };
 }
@@ -165,7 +262,13 @@ export function loadApDemandSelectedBatchRunRegistryV1(
     }
   }
 
-  if (best) return visibilityFromDoc(best.relPath, best.doc);
+  if (best) {
+    return visibilityFromDoc(
+      best.relPath,
+      best.doc,
+      loadApDemandSelectedEvidenceCollectionStartedV1(deps),
+    );
+  }
 
   return {
     status: "MISSING",
@@ -175,6 +278,9 @@ export function loadApDemandSelectedBatchRunRegistryV1(
     batch_start_mode: null,
     proposed_slug_count: null,
     excluded_slug_count: null,
+    read_only_evidence_collection_authorized: false,
+    owner_approval_artifact_rel_path: null,
+    evidence_collection_started: false,
     parse_error: lastParseError,
   };
 }

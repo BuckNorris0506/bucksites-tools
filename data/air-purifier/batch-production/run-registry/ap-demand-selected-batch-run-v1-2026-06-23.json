@@ -7,7 +7,7 @@
   "lane_label": "AP demand-selected buyer-path batch v1",
   "proposed": false,
   "batch_started_read_only": true,
-  "stage": "evidence_collection_planned",
+  "stage": "read_only_evidence_collection_authorized",
   "closeout_complete": false,
   "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
   "proposed_row_count": 10,
@@ -48,7 +48,7 @@
   "buy_link_mutation_authorized": false,
   "netlify_api_authorized": false,
   "batch_start_authorized": true,
-  "batch_start_mode": "read_only_evidence_planning_only",
+  "batch_start_mode": "read_only_browser_discovery_only",
   "customer_safety_preservation": {
     "holmes-hapf30": {
       "customer_safety_status": "PASS",
@@ -77,5 +77,19 @@
   ],
   "may_proceed_to_packet_write": false,
   "may_proceed_to_evidence_file_write": false,
+  "owner_read_only_evidence_collection_approval": {
+    "status": "approved",
+    "approved_at": "2026-06-23T18:00:00.000Z",
+    "approved_by": "founder",
+    "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+    "scope": "read_only_browser_discovery_only",
+    "evidence_write_authorized": false,
+    "csv_apply_authorized": false,
+    "supabase_mutation_authorized": false,
+    "public_ui_mutation_authorized": false,
+    "buy_link_mutation_authorized": false,
+    "netlify_api_authorized": false,
+    "owner_approval_artifact_rel_path": "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json"
+  },
   "created_at": "2026-06-23T16:05:00.000Z"
 }

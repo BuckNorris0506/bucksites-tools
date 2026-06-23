@@ -5464,25 +5464,35 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   assert.equal(lane.candidate_rows_status, "PROVEN");
   assert.ok(lane.candidate_rows.length > 0);
   assert.equal(lane.source_batch_production_report, "air_purifier_batch_production_lane_v1");
-  assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
+  assert.equal(lane.candidate_rows[0]?.filter_slug, "holmes-hapf30");
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_selection_logic.some((line) => line.includes("evidence-aware ranking")));
   assert.ok(lane.blockers.includes("open_batch_not_proven"));
-  assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
+  if (lane.batch_run_registry.status === "PROVEN" && lane.batch_run_registry.read_only_evidence_collection_authorized) {
+    assert.ok(!lane.blockers.includes("owner_batch_start_approval_missing"));
+  } else {
+    assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
+  }
   assert.ok(lane.blockers.includes("evidence_collection_not_started"));
   if (lane.batch_run_registry.status === "PROVEN") {
     assert.ok(!lane.blockers.includes("batch_run_registry_not_created"));
     assert.equal(lane.batch_run_registry.run_id, "ap-demand-selected-batch-run-v1-2026-06-23");
-    assert.equal(lane.batch_run_registry.stage, "evidence_collection_planned");
-    assert.equal(lane.batch_run_registry.batch_start_mode, "read_only_evidence_planning_only");
+    assert.equal(lane.batch_run_registry.stage, "read_only_evidence_collection_authorized");
+    assert.equal(lane.batch_run_registry.batch_start_mode, "read_only_browser_discovery_only");
     assert.equal(lane.batch_run_registry.proposed_slug_count, 10);
     assert.equal(lane.batch_run_registry.excluded_slug_count, 1);
+    assert.equal(lane.batch_run_registry.read_only_evidence_collection_authorized, true);
+    assert.equal(lane.batch_run_registry.evidence_collection_started, false);
   } else {
     assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
   }
-  assert.match(lane.next_agent_action, /do not start a batch/i);
+  if (lane.batch_run_registry.read_only_evidence_collection_authorized) {
+    assert.match(lane.next_agent_action, /read-only HyperAgent chat discovery/i);
+  } else {
+    assert.match(lane.next_agent_action, /do not start a batch/i);
+  }
 });
 
 test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-only owner packet", async () => {

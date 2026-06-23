@@ -303,6 +303,9 @@ test("AP owner review lane detects demand-selected run registry when present", a
     batch_start_mode: "read_only_evidence_planning_only",
     proposed_slug_count: 10,
     excluded_slug_count: 1,
+    read_only_evidence_collection_authorized: false,
+    owner_approval_artifact_rel_path: null,
+    evidence_collection_started: false,
     parse_error: null,
   };
 
@@ -328,6 +331,41 @@ test("AP owner review lane detects demand-selected run registry when present", a
   assert.equal(lane.batch_start_authorized, false);
   assert.equal(lane.csv_apply_authorized, false);
   assert.equal(lane.evidence_write_authorized, false);
+});
+
+test("AP owner review lane clears owner_batch_start_approval_missing when read-only evidence collection is authorized", async () => {
+  const registryFixture: ApDemandSelectedBatchRunRegistryVisibilityV1 = {
+    status: "PROVEN",
+    run_registry_rel_path:
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+    stage: "read_only_evidence_collection_authorized",
+    batch_start_mode: "read_only_browser_discovery_only",
+    proposed_slug_count: 10,
+    excluded_slug_count: 1,
+    read_only_evidence_collection_authorized: true,
+    owner_approval_artifact_rel_path:
+      "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json",
+    evidence_collection_started: false,
+    parse_error: null,
+  };
+
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: apDemandReportFixture(),
+    batchProductionLane: batchProductionFixture(),
+    evidenceIndex: {
+      source_status: "PROVEN",
+      entries_by_slug: new Map(),
+      excluded_slugs: [],
+    },
+    loadDemandSelectedRunRegistry: () => registryFixture,
+  });
+
+  assert.ok(!lane.blockers.includes("owner_batch_start_approval_missing"));
+  assert.ok(lane.blockers.includes("evidence_collection_not_started"));
+  assert.equal(lane.batch_start_authorized, false);
+  assert.match(lane.next_agent_action, /read-only HyperAgent chat discovery/i);
 });
 
 test("AP owner review lane degrades safely when demand source is UNKNOWN", async () => {

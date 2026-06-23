@@ -387,11 +387,13 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     demand.recommended_wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier &&
     demand.recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH";
   const sourceBlockers = demand.blockers.map((blocker) => `source_demand_to_coverage_blocker: ${blocker}`);
+  const readOnlyEvidenceCollectionAuthorized =
+    batchRunRegistry.status === "PROVEN" && batchRunRegistry.read_only_evidence_collection_authorized;
   const blockers: AirPurifierDemandSelectedBatchOwnerReviewLaneV1["blockers"] = [
     "open_batch_not_proven",
-    "owner_batch_start_approval_missing",
+    ...(!readOnlyEvidenceCollectionAuthorized ? ["owner_batch_start_approval_missing" as const] : []),
     ...(batchRunRegistry.status !== "PROVEN" ? ["batch_run_registry_not_created" as const] : []),
-    "evidence_collection_not_started",
+    ...(batchRunRegistry.evidence_collection_started ? [] : ["evidence_collection_not_started" as const]),
     ...(!sourceIsApDemandSelected ? ["source_demand_to_coverage_not_ap_start_candidate"] : []),
     ...sourceBlockers,
   ];
@@ -404,7 +406,9 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     ...(batchRunRegistry.status === "PARSE_ERROR" && batchRunRegistry.parse_error
       ? [`Demand-selected run-registry parse error: ${batchRunRegistry.parse_error}`]
       : []),
-    "No browser evidence collection has started from this owner-review packet.",
+    ...(batchRunRegistry.evidence_collection_started
+      ? []
+      : ["No browser evidence collection has started from this owner-review packet."]),
   ];
 
   return {
@@ -454,12 +458,17 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     inputs_needed: [
       ...(batchRunRegistry.status !== "PROVEN"
         ? ["Owner batch-start approval in a future explicit decision surface.", "A future batch run-registry JSON only after owner approval."]
-        : []),
-      "Read-only browser/evidence collection plan for selected AP candidate rows.",
+        : readOnlyEvidenceCollectionAuthorized
+          ? ["Read-only HyperAgent chat discovery output for scoped demand-selected slugs."]
+          : ["Owner batch-start approval for read-only evidence collection."]),
+      ...(readOnlyEvidenceCollectionAuthorized
+        ? []
+        : ["Read-only browser/evidence collection plan for selected AP candidate rows."]),
       "Separate future apply plan before any CSV/Supabase/public mutation.",
     ],
-    exact_owner_decision_needed_later:
-      "Approve starting air_purifier_demand_selected_batch_candidate for read-only AP buyer-path evidence collection; this must not authorize CSV apply, Supabase mutation, evidence writes, public UI mutation, Netlify API calls, or deployment.",
+    exact_owner_decision_needed_later: readOnlyEvidenceCollectionAuthorized
+      ? "No further owner decision needed to start read-only evidence collection; separate approval is required before evidence file writes, CSV apply, Supabase mutation, public UI mutation, buy-link promotion, Netlify API calls, or deployment."
+      : "Approve starting air_purifier_demand_selected_batch_candidate for read-only AP buyer-path evidence collection; this must not authorize CSV apply, Supabase mutation, evidence writes, public UI mutation, Netlify API calls, or deployment.",
     blockers,
     proven_facts: [
       "PROVEN: owner-review packet is read_only=true and data_mutation=false.",
@@ -474,6 +483,11 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
         ? [
             `PROVEN: demand-selected run-registry detected at ${batchRunRegistry.run_registry_rel_path}; run_id=${String(batchRunRegistry.run_id)}; stage=${String(batchRunRegistry.stage)}.`,
             `PROVEN: demand-selected batch_run_registry proposed_slug_count=${String(batchRunRegistry.proposed_slug_count)}; excluded_slug_count=${String(batchRunRegistry.excluded_slug_count)}.`,
+            ...(readOnlyEvidenceCollectionAuthorized
+              ? [
+                  `PROVEN: founder approved read-only evidence collection for run_id=${String(batchRunRegistry.run_id)}; owner_approval_artifact_rel_path=${String(batchRunRegistry.owner_approval_artifact_rel_path)}.`,
+                ]
+              : []),
           ]
         : []),
     ],
@@ -481,12 +495,18 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
       ...demand.inferred_facts,
       ...(batchRunRegistry.status !== "PROVEN"
         ? ["INFERRED: AP demand-selected batch candidate should be owner-reviewed before any batch-start registry exists."]
-        : ["INFERRED: Demand-selected run-registry is on disk for read-only visibility; mutation flags remain false."]),
+        : readOnlyEvidenceCollectionAuthorized
+          ? [
+              "INFERRED: Founder authorized read-only browser discovery for the demand-selected run; mutation flags remain false until separate approval.",
+            ]
+          : ["INFERRED: Demand-selected run-registry is on disk for read-only visibility; mutation flags remain false."]),
     ],
     unknown_facts: unknownFacts,
-    next_agent_action:
-      "Use this lane for owner review only; do not start a batch, create run-registry JSON, create agent packets, collect browser evidence, mutate CSV/Supabase/evidence/public UI, call Netlify, deploy, or create owner approval rows.",
-    next_owner_action:
-      "Review whether to approve a future read-only AP demand-selected batch start; current packet leaves batch_start_authorized=false.",
+    next_agent_action: readOnlyEvidenceCollectionAuthorized
+      ? `Run read-only HyperAgent chat discovery for run_id ${String(batchRunRegistry.run_id)} scoped slugs only; do not write canonical evidence JSON, mutate CSV/Supabase/public UI, promote buy links, call Netlify, deploy, or create owner approval rows.`
+      : "Use this lane for owner review only; do not start a batch, create run-registry JSON, create agent packets, collect browser evidence, mutate CSV/Supabase/evidence/public UI, call Netlify, deploy, or create owner approval rows.",
+    next_owner_action: readOnlyEvidenceCollectionAuthorized
+      ? "Monitor read-only evidence collection progress; authorize evidence file writes only after separate owner decision. batch_start_authorized remains false for mutation."
+      : "Review whether to approve a future read-only AP demand-selected batch start; current packet leaves batch_start_authorized=false.",
   };
 }
