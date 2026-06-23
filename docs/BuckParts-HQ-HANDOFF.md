@@ -109,9 +109,80 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ---
 
-## Current stopping point — AP CSV Execution Progress (PROVEN through `c780e82`)
+## Current stopping point — Holmes HAPF30 self-correction + Production Truth AP (`2295ebd`)
 
 **Read this section first** for HQ / Cursor / HyperAgent pickup.
+
+### 1. Milestone summary (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD / `origin/main` at handoff refresh | **`2295ebd`** |
+| Latest commit | **`2295ebd`** — Document Holmes HAPF30 self-correction and production truth warnings |
+| Production Truth AP suite | **Committed** — `npm run buckparts:production-truth:ap` (`scripts/lib/buckparts-production-truth-ap-v1.ts`, golden cases, tests) |
+| Holmes runtime self-correction | **PROVEN** — detect → diagnose → owner demote → validate (one AP micro-cycle) |
+| Phase 3 Self-Correction (overall) | **PARTIAL** — one **PROVEN** micro-cycle for Supabase-only `direct_buyable` leak defect class; full autonomous loop **not** proven |
+| Claim / TIR / belief meta-work | **Do not resume** — parked until AP convergence priority clears |
+| Next business/system priority | **AP convergence / parity expansion** + **recurring Production Truth wiring** (not new CC lanes or schema meta-work) |
+
+### 2. Holmes HAPF30 self-correction cycle (PROVEN)
+
+| Step | Detail |
+|------|--------|
+| **Detect** | Production Truth case `ap-suppressed-holmes-hapf30` — `safe_cta_absent` **FAIL** (runtime `gated_safe_count=1`) |
+| **Diagnose** | Supabase-only Amazon row ASIN **B005BFSBVY** carried `browser_truth_classification=direct_buyable` despite CSV (OEM search placeholder only) + model-first **REJECT** |
+| **Owner apply** | Demoted row **`da6d3777-c4de-40c0-9f86-abe025b1db32`** via `ap-holmes-hapf30-amazon-demotion-packet-v2.sql` (browser_truth cleared; buy gates **unchanged**) |
+| **Validate** | `gated_safe_count=0`; Production Truth `safe_cta_absent` **PASS**; outcome artifact committed |
+
+**Authority artifacts:** `data/air-purifier/batch-production/audits/ap-holmes-hapf30-self-correction-outcome-v1.json`, `ap-holmes-hapf30-amazon-demotion-packet-v2.sql`, `ap-model-first-holmes-hapf30-live-browser-v1.results.json`
+
+**Still open (inventory hygiene — not customer-safety):** raw OEM `is_primary` search URL remains in Supabase (`search_placeholder_rescue_needed`); tracked as non-blocking `inventory_warnings[]` in Production Truth.
+
+### 3. Production Truth live report (PROVEN — 2026-06-23)
+
+```bash
+npm run buckparts:production-truth:ap
+```
+
+| Field | Value |
+|-------|-------|
+| `summary.pass` | **4** |
+| `summary.fail` | **0** (blocking assertions only) |
+| `summary.pass_with_inventory_warnings` | **1** |
+| Holmes `customer_safety_status` | **PASS** (`safe_cta_absent`, `actual: 0`) |
+| Holmes `status` (blocking) | **PASS** |
+| Holmes `inventory_warnings` | **1** — `no_search_primary_win` (PARTIAL; `blocks_case_pass: false`) |
+
+Exit code **0** when only inventory warnings fail. Buy-path gates (`filterRealBuyRetailerLinks`, `buyLinkGateFailureKind`) were **not** weakened.
+
+### 4. Do not do next (at this stopping point)
+
+- Do **not** resume **claim / TIR / belief** meta-architecture work yet.
+- Do **not** restore Holmes Amazon `direct_buyable` without fresh owner browser evidence contradicting model-first **REJECT**.
+- Do **not** treat Holmes OEM search primary as a customer-safety FAIL — it is gated off the buy path; rescue is **`search_placeholder_rescue_needed`** (separate workstream).
+- Do **not** run **`npm run seed:import:air-purifier`** or broad Supabase parity without explicit owner scope.
+- Do **not** expand Command Center lanes for this milestone — Production Truth is the recurring runtime alarm surface.
+
+### 5. Best next action (business/system)
+
+1. **AP convergence / parity expansion** — close remaining CSV↔Supabase safe-CTA drift (parity packet slugs, `ap-runtime-convergence-gap-v1.json` authority).
+2. **Wire Production Truth recurring** — daily operator / CI read of `buckparts:production-truth:ap` (blocking FAIL only fails the job).
+3. **Holmes OEM rescue** — only when owner scopes `search_placeholder_rescue`; not required to keep customer-safety **PASS**.
+
+### 6. Validation (PROVEN before this handoff update)
+
+```bash
+npm run buckparts:production-truth:ap
+node --import tsx --test scripts/lib/buckparts-production-truth-ap-v1.test.ts
+node --import tsx --test scripts/buckparts-hq-handoff-freshness.test.ts
+```
+
+---
+
+## Current stopping point — AP CSV Execution Progress (historical — superseded by `2295ebd`)
+
+**Superseded for next-move authority.** Retained for CSV apply history through **`c780e82`**. **Holmes HAPF30 self-correction + Production Truth AP** section above is the current executive stopping point.
 
 ### 1. Current repo state (PROVEN — re-verify before citing)
 
@@ -186,7 +257,7 @@ npm run buckparts:guardrails:air-purifier
 
 | `filter_slug` | Weak model coverage | Notes |
 |---------------|--------------------:|-------|
-| `holmes-hapf30` | **31** | Search-placeholder primary; live-browser **REJECT** for `direct_buyable` |
+| `holmes-hapf30` | **31** | **Runtime Amazon leak closed (`2295ebd`)** — `gated_safe_count=0`; OEM search primary rescue still **`search_placeholder_rescue_needed`** |
 | `shark-carbon-foam` | **15** | **15** compat rows remain after HE1 partial re-home; invalid identity / re-home lane |
 | `shark-hepa-he1fkbas` | **6** | `likely_valid` OEM PDP (notify/OOS) — not `direct_buyable` |
 | `alen-fl40` | **4** | **NO_SAFE_PATH_FOUND_CURRENTLY** (sold out) |
@@ -200,7 +271,8 @@ npm run buckparts:guardrails:air-purifier
 
 - Do **not** run **`npm run seed:import:air-purifier`** without explicit owner scope — Supabase parity **UNKNOWN**.
 - Do **not** treat AP CSV commits as live-site proof — re-run weak-buyer-path audit + guardrails after pull.
-- Do **not** promote **`holmes-hapf30`** or **`renpho-rp-ap003`** to `direct_buyable` without new buyability proof.
+- Do **not** promote **`holmes-hapf30`** to `direct_buyable` without new buyability proof (Amazon demotion **`2295ebd`** closed the Supabase-only leak; OEM rescue is separate).
+- Do **not** promote **`renpho-rp-ap003`** to `direct_buyable` without new buyability proof.
 - Do **not** expand Shark carbon-foam / Winix follow-up in the same lane without owner-approved apply plan.
 - Do **not** reopen **BP-000001**–**BP-000004** without new customer-reality regression evidence.
 
@@ -934,7 +1006,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`c780e82`** — AP CSV execution progress through Vornado **`567a3c5`**, Coway 400 Max2 **`2410e51`**, GermGuardian FLT4825 **`82f8f9e`**, Holmes HAPF30 evidence **`b05a405`**, Renpho RP-AP003 evidence **`c780e82`** (plus prior **`8a840e1`** Blueair 211+, **`2acc8f9`** FLT4100, **`07d1281`** Coway 250, **`b4c94f8`** Rabbit, **`03dcf49`** Winix 116131, **`f9dc3a9`** Levoit Core 300, **`254f6c6`** Shark HE1 partial re-home; see **Current stopping point — AP CSV Execution Progress** at top). **Prior checkpoint `a4fcaad`** (AP selector alignment) is **superseded** for next-move authority. **Prior checkpoint `4bac7aa`** (Issue Registry CLOSED_PROVEN) and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, `npm run buckparts:production-truth:ap`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`2295ebd`** — Holmes HAPF30 self-correction + Production Truth AP suite committed (Amazon row **`da6d3777-c4de-40c0-9f86-abe025b1db32`** demoted; live `summary.pass=4`, `summary.fail=0`; Holmes `customer_safety_status=PASS` with one inventory warning; outcome `ap-holmes-hapf30-self-correction-outcome-v1.json`; see **Current stopping point — Holmes HAPF30 self-correction + Production Truth AP** at top). **Prior checkpoint `c780e82`** (AP CSV execution progress) is **superseded** for next-move authority. **Prior checkpoint `a4fcaad`** (AP selector alignment), **`4bac7aa`** (Issue Registry CLOSED_PROVEN), and **`4246889`** (Customer Reality Command Center) remain documented below — treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
