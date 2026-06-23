@@ -67,6 +67,32 @@ export type ApDemandSelectedBatchRunRegistryVisibilityV1 = {
   parse_error: string | null;
 };
 
+/** Read-only proof axes for AP demand-selected open batch visibility (not apply authorization). */
+export type ApDemandSelectedOpenBatchProofStatusV1 = {
+  open_batch_existence: "PROVEN" | "NOT_PROVEN";
+  batch_closeout: "NOT_PROVEN";
+  apply_readiness: "NOT_PROVEN";
+};
+
+/** Matches batch_run_registry_intake_v1 PROVEN_OPEN plus evidence_collection_started. */
+export function isApDemandSelectedOpenBatchRegistryProvenOpenV1(
+  registry: ApDemandSelectedBatchRunRegistryVisibilityV1,
+): boolean {
+  return registry.status === "PROVEN" && registry.evidence_collection_started === true;
+}
+
+export function buildApDemandSelectedOpenBatchProofStatusV1(
+  registry: ApDemandSelectedBatchRunRegistryVisibilityV1,
+): ApDemandSelectedOpenBatchProofStatusV1 {
+  return {
+    open_batch_existence: isApDemandSelectedOpenBatchRegistryProvenOpenV1(registry)
+      ? "PROVEN"
+      : "NOT_PROVEN",
+    batch_closeout: "NOT_PROVEN",
+    apply_readiness: "NOT_PROVEN",
+  };
+}
+
 export type LoadApDemandSelectedBatchRunRegistryDepsV1 = {
   rootDir: string;
   fileExists?: (absolutePath: string) => boolean;

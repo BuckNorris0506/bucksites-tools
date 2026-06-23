@@ -8,8 +8,11 @@ import {
   AP_DEMAND_SELECTED_BATCH_CANDIDATE_ID_V1,
   AP_DEMAND_SELECTED_BATCH_RUN_REGISTRY_DIR_REL_V1,
   AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1,
+  buildApDemandSelectedOpenBatchProofStatusV1,
+  isApDemandSelectedOpenBatchRegistryProvenOpenV1,
   loadApDemandSelectedBatchRunRegistryV1,
   validateApDemandSelectedBatchRunRegistryDocumentV1,
+  type ApDemandSelectedBatchRunRegistryVisibilityV1,
 } from "./ap-demand-selected-batch-run-registry-v1";
 
 const REPO_ROOT = process.cwd();
@@ -101,7 +104,7 @@ test("loadApDemandSelectedBatchRunRegistryV1 returns PROVEN on repo checkout", (
   }
   assert.equal(loaded.status, "PROVEN");
   assert.equal(loaded.run_id, "ap-demand-selected-batch-run-v1-2026-06-23");
-  assert.equal(loaded.stage, "read_only_evidence_collection_authorized");
+  assert.equal(loaded.stage, "read_only_evidence_collection_complete");
   assert.equal(loaded.batch_start_mode, "read_only_browser_discovery_only");
   assert.equal(loaded.proposed_slug_count, 10);
   assert.equal(loaded.excluded_slug_count, 1);
@@ -110,7 +113,7 @@ test("loadApDemandSelectedBatchRunRegistryV1 returns PROVEN on repo checkout", (
     loaded.owner_approval_artifact_rel_path,
     AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1,
   );
-  assert.equal(loaded.evidence_collection_started, false);
+  assert.equal(loaded.evidence_collection_started, true);
 });
 
 test("loadApDemandSelectedBatchRunRegistryV1 returns MISSING in empty temp dir", () => {
@@ -138,4 +141,36 @@ test("loadApDemandSelectedBatchRunRegistryV1 ignores closed AP registries", () =
   );
   const loaded = loadApDemandSelectedBatchRunRegistryV1({ rootDir: dir });
   assert.equal(loaded.status, "MISSING");
+});
+
+test("isApDemandSelectedOpenBatchRegistryProvenOpenV1 requires PROVEN registry and evidence started", () => {
+  const provenOpen: ApDemandSelectedBatchRunRegistryVisibilityV1 = {
+    status: "PROVEN",
+    run_registry_rel_path: "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+    stage: "read_only_evidence_collection_complete",
+    batch_start_mode: "read_only_browser_discovery_only",
+    proposed_slug_count: 10,
+    excluded_slug_count: 1,
+    read_only_evidence_collection_authorized: true,
+    owner_approval_artifact_rel_path: AP_DEMAND_SELECTED_OWNER_APPROVAL_ARTIFACT_REL_V1,
+    evidence_collection_started: true,
+    parse_error: null,
+  };
+  assert.equal(isApDemandSelectedOpenBatchRegistryProvenOpenV1(provenOpen), true);
+  assert.deepEqual(buildApDemandSelectedOpenBatchProofStatusV1(provenOpen), {
+    open_batch_existence: "PROVEN",
+    batch_closeout: "NOT_PROVEN",
+    apply_readiness: "NOT_PROVEN",
+  });
+
+  assert.equal(
+    isApDemandSelectedOpenBatchRegistryProvenOpenV1({ ...provenOpen, evidence_collection_started: false }),
+    false,
+  );
+  assert.equal(
+    buildApDemandSelectedOpenBatchProofStatusV1({ ...provenOpen, evidence_collection_started: false })
+      .open_batch_existence,
+    "NOT_PROVEN",
+  );
 });

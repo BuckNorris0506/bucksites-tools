@@ -218,3 +218,46 @@ test("closed AP batch recommendation does not contradict itself with continue-cu
   assert.doesNotMatch(report.recommended_next_action, /Continue refrigerator-water 20-safe buyer-path batch/i);
   assert.doesNotMatch(report.recommended_next_action, /CONTINUE_CURRENT_BATCH/i);
 });
+
+test("demand lane clears open_batch_not_proven when AP registry is PROVEN_OPEN with evidence started", async () => {
+  const report = await buildDemandToCoverageNextLaneV1Report({
+    rootDir: "/fixture-root",
+    now: fixedNow,
+    fileExists: (abs) => {
+      const rel = abs.replace("/fixture-root/", "");
+      return rel in files || rel === "data/gsc/sitemap.xml";
+    },
+    readTextFile: (abs) => {
+      const rel = abs.replace("/fixture-root/", "");
+      if (rel === "data/gsc/sitemap.xml") return SITEMAP_FIXTURE;
+      return files[rel] ?? "";
+    },
+    loadGscArtifact: async () => ({
+      ok: true,
+      artifact: fixtureGscArtifact(),
+      source: "test_fixture",
+    }),
+    loadSitemapText: () => SITEMAP_FIXTURE,
+    loadApDemandSelectedRunRegistry: () => ({
+      status: "PROVEN",
+      run_registry_rel_path:
+        "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+      run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+      stage: "read_only_evidence_collection_complete",
+      batch_start_mode: "read_only_browser_discovery_only",
+      proposed_slug_count: 10,
+      excluded_slug_count: 1,
+      read_only_evidence_collection_authorized: true,
+      owner_approval_artifact_rel_path:
+        "data/owner-decisions/ap-demand-selected-batch-read-only-evidence-collection-approval-v1.json",
+      evidence_collection_started: true,
+      parse_error: null,
+    }),
+  });
+
+  assert.equal(report.recommended_wedge, HOMEKEEP_WEDGE_CATALOG.air_purifier);
+  assert.ok(!report.blockers.includes("open_batch_not_proven"));
+  assert.ok(report.proven_facts.some((fact) => fact.includes("proves open batch existence")));
+  assert.ok(report.proven_facts.some((fact) => fact.includes("batch closeout is NOT_PROVEN")));
+  assert.ok(report.proven_facts.some((fact) => fact.includes("apply readiness is NOT_PROVEN")));
+});
