@@ -1,0 +1,277 @@
+{
+  "contract": "ap_demand_selected_correctness_risks_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_writes": false,
+  "supabase_writes": false,
+  "evidence_writes": false,
+  "owner_decision_rows": false,
+  "registry_changes": false,
+  "generated_at": "2026-06-23T20:00:00.000Z",
+  "git_head": "d59f3f8fa186396d9d00ff087c2fedc863a0b56b",
+  "git_head_label": "d59f3f8 Record AP demand-selected noncanonical discovery result",
+  "title": "AP demand-selected batch — correctness risks (vornado-md1-0023, renpho-rp-ap003)",
+  "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+  "scope_slugs": ["vornado-md1-0023", "renpho-rp-ap003"],
+  "discovery_artifact_rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+  "discovery_artifact_contract": "ap_hyperagent_chat_discovery_output_v1",
+  "discovery_artifact_not_canonical": true,
+  "discovery_artifact_not_apply_eligible": true,
+  "mechanical_validation_status": "VALIDATION_PASS",
+  "executive_summary": {
+    "vornado-md1-0023": {
+      "verdict": "issue_track_and_split_before_progression",
+      "label": "PROVEN",
+      "headline": "Catalog identity split already documented: MD1-0023 is official carbon SKU on vornado-carbon-pad (direct_buyable); vornado-md1-0023 HEPA slug uses wrong token and overlaps wrong-family compat edges. Demand-selected discovery confirms search-placeholder only — does not resolve HEPA identity."
+    },
+    "renpho-rp-ap003": {
+      "verdict": "exclude_from_future_batch_progression",
+      "label": "PROVEN",
+      "headline": "Model/filter slug collision plus prior model-first NO_SAFE_PATH (expected safe-edge gain 0). Demand-selected discovery REJECT_SEARCH_CATEGORY is consistent but understates the catalog collision; slug should not advance toward apply without identity disambiguation."
+    }
+  },
+  "slug_assessments": [
+    {
+      "filter_slug": "vornado-md1-0023",
+      "demand_selected_batch_rank": 2,
+      "discovery_row": {
+        "recommendation": "REJECT_SEARCH_CATEGORY",
+        "owner_review_required": true,
+        "search_placeholder_defect": true,
+        "pdp_like_final_url": false,
+        "wrong_family_tokens_seen": [
+          "MD1-0023 (official Vornado MD1-0023 product is the Activated Carbon 2-pack, not HEPA)",
+          "MD1-0022 (repo-documented official HEPA token for this slug)"
+        ],
+        "recommended_csv_mutation": null
+      },
+      "catalog_truth": {
+        "filters_csv": {
+          "slug": "vornado-md1-0023",
+          "oem_part_number": "VORNADO-MD1-0023",
+          "display_name": "AC350/500/550 HEPA cartridge",
+          "label": "PROVEN"
+        },
+        "sibling_slug": {
+          "slug": "vornado-carbon-pad",
+          "oem_part_number": "VORNADO-CARBON-PAD",
+          "display_name": "MD1-0023 Activated Carbon Filter (2-Pack)",
+          "filters_csv_note": "Official Vornado MD1-0023 activated carbon pre-filter (2-pack); official HEPA = MD1-0022; pending vornado-md1-0023 HEPA slug correction",
+          "label": "PROVEN"
+        },
+        "retailer_links_csv": {
+          "vornado-md1-0023_primary": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
+          "vornado-md1-0023_browser_truth": null,
+          "vornado-carbon-pad_primary": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
+          "vornado-carbon-pad_browser_truth": "direct_buyable",
+          "label": "PROVEN"
+        },
+        "compat_models_mapped": [
+          "vornado-ac350",
+          "vornado-ac500",
+          "vornado-ac550",
+          "vornado-pc300",
+          "vornado-ac500b",
+          "vornado-ac550w"
+        ],
+        "compat_also_maps_carbon_pad": true
+      },
+      "prior_evidence": [
+        {
+          "artifact": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-vornado-carbon-pad-live-browser-v1.results.json",
+          "anchor_slug": "vornado-carbon-pad",
+          "verdict": "REJECT promotion as-is; carbon MD1-0023 PROVEN direct_buyable; companion HEPA MD1-0022",
+          "wrong_family_edge": "vornado-pc300,vornado-carbon-pad — PCO300 uses MD1-0027 not MD1-0023",
+          "label": "PROVEN"
+        }
+      ],
+      "md1_0023_vs_md1_0022_analysis": {
+        "question": "Is MD1-0023 vs MD1-0022 a new discovery conflict or already-known repo truth?",
+        "answer": "ALREADY_KNOWN repo truth — not a new HyperAgent finding.",
+        "proven_facts": [
+          "PROVEN: Official Vornado carbon product SKU is MD1-0023 (Activated Carbon Filter 2-Pack) — live browser evidence on vornado-carbon-pad.",
+          "PROVEN: Official companion HEPA token is MD1-0022 per unit PDP text and model-first evidence.",
+          "PROVEN: vornado-md1-0023 catalog row names the slug HEPA but binds OEM token VORNADO-MD1-0023, which is the carbon SKU on the manufacturer store.",
+          "PROVEN: vornado-carbon-pad already holds the buyable MD1-0023 carbon PDP; vornado-md1-0023 remains search-placeholder only."
+        ],
+        "inferred_facts": [
+          "INFERRED: Continuing demand-selected batch progression on vornado-md1-0023 without catalog split risks rediscovering carbon under the wrong HEPA slug or promoting wrong-family mappings."
+        ],
+        "unknown_facts": [
+          "UNKNOWN: whether an official MD1-0022 HEPA PDP with Add to Cart exists — not opened in demand-selected bounded attempt."
+        ]
+      },
+      "correctness_risks": [
+        {
+          "risk_id": "vornado-hepa-carbon-token-collision",
+          "severity": "high",
+          "label": "PROVEN",
+          "detail": "Single manufacturer token MD1-0023 is split across two filter slugs with opposing filter types (HEPA vs carbon)."
+        },
+        {
+          "risk_id": "vornado-pc300-wrong-family-compat",
+          "severity": "high",
+          "label": "PROVEN",
+          "detail": "compatibility_mappings.csv maps vornado-pc300 -> vornado-md1-0023; model-first evidence PROVEN wrong-family (PCO300 carbon = MD1-0027)."
+        },
+        {
+          "risk_id": "vornado-batch-targets-resolved-carbon-slug-elsewhere",
+          "severity": "medium",
+          "label": "PROVEN",
+          "detail": "Demand-selected batch scopes vornado-md1-0023 while vornado-carbon-pad already has direct_buyable official carbon path."
+        }
+      ],
+      "recommendation": {
+        "action": "issue_track_and_split",
+        "exclude_from_future_batch_progression": false,
+        "exclude_from_apply_progression": true,
+        "reclassify_owner_review": true,
+        "split_required": true,
+        "issue_packet_recommended": true,
+        "rationale": "Do not treat demand-selected discovery as progress toward buyer-path apply on vornado-md1-0023. Open issue packet for catalog identity split (HEPA slug -> MD1-0022 token / new slug vs carbon on vornado-carbon-pad), trim wrong-family compat edges, and reconcile batch scope before any canonical evidence write or CSV apply planning.",
+        "owner_review_disposition_target": "hold_needs_owner_review",
+        "safe_to_continue_read_only_discovery_on_slug": false
+      }
+    },
+    {
+      "filter_slug": "renpho-rp-ap003",
+      "demand_selected_batch_rank": 4,
+      "discovery_row": {
+        "recommendation": "REJECT_SEARCH_CATEGORY",
+        "owner_review_required": true,
+        "search_placeholder_defect": true,
+        "pdp_like_final_url": false,
+        "wrong_family_tokens_seen": [],
+        "recommended_csv_mutation": null
+      },
+      "catalog_truth": {
+        "filters_csv": {
+          "slug": "renpho-rp-ap003",
+          "oem_part_number": "RENPHO-RP-AP003",
+          "display_name": "RP-AP003 / AP001 series HEPA",
+          "label": "PROVEN"
+        },
+        "models_csv": {
+          "slug": "renpho-rp-ap003",
+          "model_number": "RP-AP003",
+          "display_name": "Renpho RP-AP003 Air Purifier",
+          "label": "PROVEN"
+        },
+        "slug_collision": {
+          "same_slug_in_filters_and_models": true,
+          "self_referential_compat_edge": "renpho-rp-ap003,renpho-rp-ap003,true",
+          "label": "PROVEN"
+        },
+        "retailer_links_csv": {
+          "primary": "https://renpho.com/search?q=RENPHO-RP-AP003",
+          "browser_truth": null,
+          "label": "PROVEN"
+        },
+        "compat_edges": [
+          "renpho-rp-ap003,renpho-rp-ap003,true",
+          "renpho-rp-ap001,renpho-rp-ap003,true",
+          "renpho-rp-ap002,renpho-rp-ap003,true",
+          "renpho-rp-ap080,renpho-rp-ap003,true"
+        ]
+      },
+      "prior_evidence": [
+        {
+          "artifact": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-live-browser-v1.results.json",
+          "verdict": "NO_SAFE_PATH_FOUND",
+          "expected_safe_edge_gain_if_corrected": 0,
+          "blockers": [
+            "no official Renpho filter PDP on renpho.com or official Amazon store",
+            "RENPHO-RP-AP003 is model code not filter part number",
+            "slug collision filter + model",
+            "renpho-rp-ap080 possibly phantom"
+          ],
+          "label": "PROVEN"
+        }
+      ],
+      "model_filter_collision_analysis": {
+        "question": "Does demand-selected discovery change the renpho-rp-ap003 posture?",
+        "answer": "No — discovery is consistent with prior NO_SAFE_PATH; collision remains unaddressed.",
+        "proven_facts": [
+          "PROVEN: renpho-rp-ap003 exists in both filters.csv and models.csv.",
+          "PROVEN: compatibility_mappings.csv contains self-edge renpho-rp-ap003 -> renpho-rp-ap003.",
+          "PROVEN: model-first live browser verdict NO_SAFE_PATH_FOUND with expected_safe_edge_gain_if_corrected = 0.",
+          "PROVEN: demand-selected discovery returned 0-result renpho.com search for brand-prefixed token; REJECT_SEARCH_CATEGORY."
+        ],
+        "inferred_facts": [
+          "INFERRED: bare-token discovery might surface product pages but model-first already established no official filter sold and no OEM part number — low value for batch progression."
+        ],
+        "unknown_facts": [
+          "UNKNOWN: whether a distinct OEM filter part number exists outside Renpho direct channels — not published in repo evidence."
+        ]
+      },
+      "correctness_risks": [
+        {
+          "risk_id": "renpho-slug-collision",
+          "severity": "high",
+          "label": "PROVEN",
+          "detail": "Filter slug duplicates model slug; oem_part_number is model code not filter identity."
+        },
+        {
+          "risk_id": "renpho-no-official-buyer-path",
+          "severity": "high",
+          "label": "PROVEN",
+          "detail": "Model-first: Renpho sells 0 replacement filters on renpho.com; no official Amazon filter listings."
+        },
+        {
+          "risk_id": "renpho-owner-review-underweighted",
+          "severity": "medium",
+          "label": "INFERRED",
+          "detail": "Demand-selected owner-review lane marked discovery_ready / owner_review_required=false despite model-first blockers not indexed in canonical evidence index."
+        }
+      ],
+      "recommendation": {
+        "action": "exclude_and_issue_track",
+        "exclude_from_future_batch_progression": true,
+        "exclude_from_apply_progression": true,
+        "reclassify_owner_review": true,
+        "split_required": true,
+        "issue_packet_recommended": true,
+        "rationale": "Exclude renpho-rp-ap003 from future demand-selected batch progression until model/filter slug collision is resolved. Discovery adds no safe buyer path. Issue-track catalog identity disambiguation; do not advance toward canonical evidence or apply.",
+        "owner_review_disposition_target": "exclude_no_safe_path_or_hold_needs_owner_review",
+        "safe_to_continue_read_only_discovery_on_slug": false
+      }
+    }
+  ],
+  "cross_slug_findings": {
+    "proven_facts": [
+      "PROVEN: Both slugs remain search-placeholder primaries with null browser_truth in retailer_links.csv.",
+      "PROVEN: Demand-selected noncanonical discovery is VALIDATION_PASS (84/84) but not_canonical_evidence and not_apply_eligible.",
+      "PROVEN: Neither slug has canonical agent-results row in AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1."
+    ],
+    "inferred_facts": [
+      "INFERRED: Mechanical validation pass does not override catalog correctness risks — both slugs need governance before batch closeout or apply planning."
+    ],
+    "unknown_facts": []
+  },
+  "recommended_next_steps_read_only": [
+    "Create Command Center issue packet(s) for vornado HEPA/carbon identity split and renpho model/filter collision — planning only.",
+    "Remove renpho-rp-ap003 from future demand-selected batch candidate scopes until exclusion criteria met.",
+    "For vornado: scope future work to vornado-carbon-pad apply readiness (separate track) and MD1-0022 HEPA identity correction — not vornado-md1-0023 token-as-HEPA.",
+    "Reconcile owner-review evidence index to surface model-first blockers for renpho and vornado family conflicts."
+  ],
+  "explicitly_out_of_scope": [
+    "CSV mutation",
+    "Supabase mutation",
+    "canonical agent-results writes",
+    "owner-decision registry rows",
+    "run-registry edits",
+    "buy-link promotion",
+    "batch_start_authorized or apply authorization"
+  ],
+  "authority_artifacts": [
+    "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    "data/air-purifier/filters.csv",
+    "data/air-purifier/models.csv",
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/compatibility_mappings.csv",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-vornado-carbon-pad-live-browser-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-live-browser-v1.results.json"
+  ]
+}

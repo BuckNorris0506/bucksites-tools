@@ -264,6 +264,7 @@ export function buildCommandCenterV2Report(input: {
   | "demand_to_coverage_next_lane_v1"
   | "ap_homeowner_pilot_scorecard_v1"
   | "air_purifier_demand_selected_batch_owner_review_v1"
+  | "air_purifier_demand_selected_correctness_risks_v1"
   | "rpwfe_purchase_option_rescue_owner_review_v1"
   | "rpwfe_verified_link_rescue_plan_v1"
   | "rpwfe_official_ge_browser_evidence_review_v1"

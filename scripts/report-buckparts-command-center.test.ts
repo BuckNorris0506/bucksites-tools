@@ -5495,6 +5495,42 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   }
 });
 
+test("command_center_v2.air_purifier_demand_selected_correctness_risks_v1 is read-only audit projection", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.air_purifier_demand_selected_correctness_risks_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "air_purifier_demand_selected_correctness_risks_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(
+    lane.recommended_jq_path,
+    ".command_center_v2.air_purifier_demand_selected_correctness_risks_v1",
+  );
+  if (lane.source_status === "PROVEN") {
+    assert.equal(lane.risk_count, 6);
+    assert.equal(lane.high_risk_slug_count, 2);
+    assert.equal(lane.vornado_md1_0023_status, "issue_track_and_split_before_progression");
+    assert.equal(lane.renpho_rp_ap003_status, "exclude_from_future_batch_progression");
+    assert.equal(lane.generated_at, "2026-06-23T20:00:00.000Z");
+    assert.match(lane.recommended_action, /renpho-rp-ap003/i);
+  } else {
+    assert.equal(lane.risk_count, "UNKNOWN");
+    assert.equal(lane.high_risk_slug_count, "UNKNOWN");
+    assert.equal(lane.vornado_md1_0023_status, "UNKNOWN");
+    assert.equal(lane.renpho_rp_ap003_status, "UNKNOWN");
+    assert.equal(lane.generated_at, "UNKNOWN");
+  }
+});
+
 test("command_center_v2.rpwfe_purchase_option_rescue_owner_review_v1 is read-only owner packet", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

@@ -62,6 +62,7 @@ import {
   buildApHomeownerPilotScorecardV1Report,
 } from "./lib/ap-homeowner-pilot-scorecard-v1";
 import { buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./lib/air-purifier-demand-selected-batch-owner-review-v1";
+import { buildAirPurifierDemandSelectedCorrectnessRisksLaneV1 } from "./lib/air-purifier-demand-selected-correctness-risks-command-center-v1";
 import { buildRpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./lib/rpwfe-purchase-option-rescue-owner-review-v1";
 import { buildBuckpartsCertaintyEngineChecklistV1 } from "./lib/buckparts-certainty-engine-checklist-v1";
 import { buildOperatorProcessCompressionLaneV1 } from "./lib/operator-process-compression-v1";
@@ -1173,6 +1174,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "demand_to_coverage_next_lane_v1"
     | "ap_homeowner_pilot_scorecard_v1"
     | "air_purifier_demand_selected_batch_owner_review_v1"
+    | "air_purifier_demand_selected_correctness_risks_v1"
     | "rpwfe_purchase_option_rescue_owner_review_v1"
     | "rpwfe_verified_link_rescue_plan_v1"
     | "rpwfe_official_ge_browser_evidence_review_v1"
@@ -1250,6 +1252,12 @@ export async function buildBuckpartsCommandCenterReport(
     await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
       rootDir,
       demandToCoverageNextLane: demand_to_coverage_next_lane_v1,
+      fileExists,
+      readTextFile,
+    });
+  const air_purifier_demand_selected_correctness_risks_v1 =
+    buildAirPurifierDemandSelectedCorrectnessRisksLaneV1({
+      rootDir,
       fileExists,
       readTextFile,
     });
@@ -1441,6 +1449,7 @@ export async function buildBuckpartsCommandCenterReport(
     demand_to_coverage_next_lane_v1,
     ap_homeowner_pilot_scorecard_v1,
     air_purifier_demand_selected_batch_owner_review_v1,
+    air_purifier_demand_selected_correctness_risks_v1,
     rpwfe_purchase_option_rescue_owner_review_v1,
     rpwfe_verified_link_rescue_plan_v1,
     rpwfe_official_ge_browser_evidence_review_v1,

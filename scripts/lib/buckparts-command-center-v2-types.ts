@@ -56,6 +56,7 @@ import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import type { ApHomeownerPilotScorecardV1 } from "./ap-homeowner-pilot-scorecard-v1";
 import type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import type { AirPurifierDemandSelectedCorrectnessRisksLaneV1 } from "./air-purifier-demand-selected-correctness-risks-command-center-v1";
 import type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 import type { RpwfeOfficialGeApplyPlanProposalLaneV1 } from "./rpwfe-official-ge-apply-plan-proposal-v1";
 import type { RpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
@@ -1053,6 +1054,8 @@ export type CommandCenterV2Report = {
   ap_homeowner_pilot_scorecard_v1: ApHomeownerPilotScorecardV1;
   /** Read-only owner-review packet for AP demand-selected batch candidate — does not start a batch. */
   air_purifier_demand_selected_batch_owner_review_v1: AirPurifierDemandSelectedBatchOwnerReviewLaneV1;
+  /** Read-only demand-selected correctness risks projection from audit JSON — not mutation authority. */
+  air_purifier_demand_selected_correctness_risks_v1: AirPurifierDemandSelectedCorrectnessRisksLaneV1;
   /** Read-only owner-review packet for RPWFE purchase-option rescue — no buy CTA authority. */
   rpwfe_purchase_option_rescue_owner_review_v1: RpwfePurchaseOptionRescueOwnerReviewLaneV1;
   /** Read-only RPWFE BuckParts Verified Link rescue evidence plan — no link apply or browser collection. */
@@ -1114,6 +1117,7 @@ export type CommandCenterV2Report = {
 export type { DemandToCoverageNextLaneReportV1 };
 export type { ApHomeownerPilotScorecardV1 } from "./ap-homeowner-pilot-scorecard-v1";
 export type { AirPurifierDemandSelectedBatchOwnerReviewLaneV1 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+export type { AirPurifierDemandSelectedCorrectnessRisksLaneV1 } from "./air-purifier-demand-selected-correctness-risks-command-center-v1";
 export type { RpwfePurchaseOptionRescueOwnerReviewLaneV1 } from "./rpwfe-purchase-option-rescue-owner-review-v1";
 export type { RpwfeOfficialGeSupabaseParityPlanLaneV1 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
 export type { RpwfeOfficialGeApplyPlanProposalLaneV1 } from "./rpwfe-official-ge-apply-plan-proposal-v1";
