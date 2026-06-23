@@ -1,0 +1,160 @@
+{
+  "contract": "ap_holmes_hapf30_amazon_demotion_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_writes": false,
+  "csv_writes": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-10T12:00:00.000Z",
+  "git_head_hint": "add5beb",
+  "purpose": "Owner-review packet to demote the Supabase-only Amazon direct_buyable row for holmes-hapf30 that exposes a gated safe CTA despite CSV authority (search-placeholder primary only) and model-first REJECT verdict. Default SQL transaction ends ROLLBACK.",
+  "production_truth_alarm": {
+    "case_id": "ap-suppressed-holmes-hapf30",
+    "filter_slug": "holmes-hapf30",
+    "pre_apply_status": "FAIL",
+    "failed_assertions": [
+      "safe_cta_absent",
+      "no_search_primary_win"
+    ],
+    "pre_apply_detail": "Runtime exposed 1 gated safe row (Amazon B005BFSBVY); raw primary remains Holmes search URL."
+  },
+  "authorization_summary": {
+    "backup_export": "READY_FOR_OWNER_APPROVAL",
+    "combined_sql_this_packet": "READY_FOR_OWNER_APPROVAL",
+    "filter_slug_status": {
+      "holmes-hapf30": "READY_FOR_OWNER_APPROVAL"
+    },
+    "hold_slugs": [],
+    "explicitly_out_of_scope": [
+      "holmes-hapf30-od",
+      "data/air-purifier/retailer_links.csv",
+      "oem-catalog primary search row for holmes-hapf30",
+      "search_placeholder_rescue promotion",
+      "direct_buyable promotion for holmes-hapf30"
+    ]
+  },
+  "defect_summary": {
+    "label": "PROVEN",
+    "root_cause": "Supabase-only Amazon row (ASIN B005BFSBVY) carries browser_truth_classification direct_buyable and passes filterRealBuyRetailerLinks; committed CSV has only OEM search-placeholder primary and no Amazon row.",
+    "runtime_safe_cta_count_before": 1,
+    "runtime_safe_cta_count_after_expected": 0,
+    "csv_safe_direct_buyable": false
+  },
+  "authority_artifacts": [
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-holmes-hapf30-live-browser-v1.results.json",
+    "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json",
+    "scripts/lib/buckparts-production-truth-golden-cases-ap-v1.ts",
+    "docs/BuckParts-HQ-HANDOFF.md"
+  ],
+  "target_row_selector": {
+    "filter_slug": "holmes-hapf30",
+    "retailer_key": "amazon",
+    "status": "approved",
+    "affiliate_url_contains": "B005BFSBVY",
+    "destination_url_contains": "B005BFSBVY",
+    "is_primary": false,
+    "browser_truth_classification_before": "direct_buyable",
+    "supabase_only_vs_csv": true,
+    "csv_row_exists": false
+  },
+  "csv_authority": {
+    "source_file": "data/air-purifier/retailer_links.csv",
+    "primary_affiliate_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+    "primary_retailer_key": "oem-catalog",
+    "browser_truth_classification": null,
+    "notes": "Search-placeholder primary; no Amazon row in committed CSV."
+  },
+  "model_first_authority": {
+    "source_file": "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-holmes-hapf30-live-browser-v1.results.json",
+    "verdict": "REJECT",
+    "verdict_detail": "REJECT safe direct_buyable promotion. Official Holmes aer1 filter PDPs Out of Stock with Where To Buy only.",
+    "recommended_csv_mutation": null
+  },
+  "proposed_demotion": {
+    "table": "public.air_purifier_retailer_links",
+    "mechanism": "Clear browser_truth fields on Amazon row only so buyLinkGateFailureKind returns missing_browser_truth and filterRealBuyRetailerLinks drops the row.",
+    "fields_to_clear": [
+      "browser_truth_classification",
+      "browser_truth_notes",
+      "browser_truth_checked_at",
+      "browser_truth_buyable_subtype"
+    ],
+    "fields_must_not_change": [
+      "affiliate_url",
+      "destination_url",
+      "retailer_name",
+      "retailer_key",
+      "retailer_slug",
+      "is_primary",
+      "status",
+      "air_purifier_filter_id",
+      "all oem-catalog rows for holmes-hapf30"
+    ],
+    "browser_truth_notes_after_demotion": "Demoted: Production Truth ap-suppressed-holmes-hapf30 alarm; supabase_only vs CSV; model-first REJECT 2026-06-22. Pending search_placeholder_rescue — do not restore direct_buyable without fresh owner browser evidence."
+  },
+  "prerequisites": [
+    "Run backup_export_command and save JSON under data/air-purifier/batch-production/audits/backups/",
+    "Confirm exactly one approved Amazon row matches B005BFSBVY for holmes-hapf30 (pre-flight SELECT in SQL file)",
+    "Owner explicit approval before replacing ROLLBACK with COMMIT",
+    "Do not edit retailer_links.csv as part of this packet"
+  ],
+  "backup_export_command": "node --import tsx -e \"\nimport { writeFileSync, mkdirSync } from 'node:fs';\nimport path from 'node:path';\nimport { getSupabaseServerClient } from './src/lib/supabase/server-client.ts';\nconst slug = 'holmes-hapf30';\nconst supabase = getSupabaseServerClient();\nconst { data: filter, error: fErr } = await supabase.from('air_purifier_filters').select('id, slug').ilike('slug', slug).maybeSingle();\nif (fErr) throw fErr;\nif (!filter) throw new Error('filter not found: ' + slug);\nconst { data: links, error: lErr } = await supabase.from('air_purifier_retailer_links').select('*').eq('air_purifier_filter_id', filter.id).eq('status', 'approved');\nif (lErr) throw lErr;\nconst outDir = path.join(process.cwd(), 'data/air-purifier/batch-production/audits/backups');\nmkdirSync(outDir, { recursive: true });\nconst stamp = new Date().toISOString().replace(/[:.]/g, '-');\nconst outPath = path.join(outDir, 'ap-holmes-hapf30-amazon-demotion-pre-apply-' + stamp + '.json');\nconst payload = {\n  contract: 'ap_holmes_hapf30_amazon_demotion_pre_apply_backup_v1',\n  exported_at: new Date().toISOString(),\n  git_head_hint: 'add5beb',\n  filter_slug: slug,\n  air_purifier_filter: filter,\n  air_purifier_retailer_links: links ?? []\n};\nwriteFileSync(outPath, JSON.stringify(payload, null, 2));\nconsole.log(JSON.stringify({ ok: true, outPath, link_count: (links ?? []).length }, null, 2));\n\"",
+  "sql_artifact": "data/air-purifier/batch-production/audits/ap-holmes-hapf30-amazon-demotion-packet-v1.sql",
+  "validation_commands_after_apply": [
+    "npm run buckparts:production-truth:ap",
+    "# Expect ap-suppressed-holmes-hapf30: safe_cta_absent PASS (runtime gated safe row count 0)",
+    "node --import tsx -e \"\nimport { getSupabaseServerClient } from './src/lib/supabase/server-client.ts';\nimport { filterRealBuyRetailerLinks } from './src/lib/retailers/launch-buy-links.ts';\nconst supabase = getSupabaseServerClient();\nconst { data: filter } = await supabase.from('air_purifier_filters').select('id, slug').ilike('slug', 'holmes-hapf30').maybeSingle();\nif (!filter) throw new Error('missing filter');\nconst { data: links } = await supabase.from('air_purifier_retailer_links').select('id, retailer_key, affiliate_url, browser_truth_classification, browser_truth_buyable_subtype, is_primary, status').eq('air_purifier_filter_id', filter.id).eq('status', 'approved');\nconst safe = filterRealBuyRetailerLinks(links ?? []);\nconsole.log(JSON.stringify({ slug: filter.slug, approved_count: (links ?? []).length, gated_safe_count: safe.length, amazon_direct_buyable_remaining: (links ?? []).filter(r => r.retailer_key === 'amazon' && r.browser_truth_classification === 'direct_buyable').length }, null, 2));\nif (safe.length !== 0) process.exit(1);\n\"",
+    "# Optional read-only: npx tsx scripts/report-air-purifier-supabase-vs-csv-diff-v1.ts (if script present in working tree)",
+  ],
+  "expected_production_truth_result": {
+    "case_id": "ap-suppressed-holmes-hapf30",
+    "case_status_expected": "PARTIAL",
+    "summary_note": "safe_cta_absent should PASS after demotion. no_search_primary_win may remain FAIL because raw is_primary OEM search URL still exists in Supabase (gated off buy path but present in inventory). That assertion is PARTIAL testability per golden case — separate search_placeholder_rescue workstream.",
+    "assertions": [
+      {
+        "assertion_id": "safe_cta_absent",
+        "kind": "safe_cta_absent",
+        "status_expected": "PASS",
+        "expected": true,
+        "actual_expected": 0,
+        "detail_expected": "No gated safe CTA rows (expected suppression)."
+      },
+      {
+        "assertion_id": "no_search_primary_win",
+        "kind": "primary_affiliate_url_must_not_contain",
+        "status_expected": "FAIL",
+        "status_expected_label": "KNOWN_PARTIAL",
+        "expected": "/search?",
+        "actual_expected": "https://www.holmesproducts.com/search?q=holmes-hapf30",
+        "detail_expected": "Raw primary inventory row still search URL until OEM rescue; gated buy path should have zero safe rows.",
+        "acceptance_for_this_packet": "Do not block demotion COMMIT on this assertion alone — track under search_placeholder_rescue_needed."
+      }
+    ],
+    "report_summary_expected": {
+      "holmes_case_status": "PARTIAL",
+      "holmes_safe_cta_absent": "PASS",
+      "holmes_no_search_primary_win": "FAIL_KNOWN_PARTIAL"
+    }
+  },
+  "rollback_notes": [
+    "SQL file default is ROLLBACK — no durable change until owner replaces with COMMIT.",
+    "Restore browser_truth_* from pre-apply backup JSON if demotion must be reversed.",
+    "Do not restore direct_buyable without new owner-approved browser evidence contradicting model-first REJECT."
+  ],
+  "proven_facts": [
+    "PROVEN: Production Truth ap-suppressed-holmes-hapf30 fails safe_cta_absent with runtime safe row count 1.",
+    "PROVEN: retailer_links.csv has holmes-hapf30 OEM search primary only — no Amazon row.",
+    "PROVEN: ap-supabase-vs-csv-diff-v1 lists holmes-hapf30 Amazon B005BFSBVY under supabase_only with direct_buyable.",
+    "PROVEN: ap-model-first-holmes-hapf30-live-browser-v1.results.json verdict is REJECT for safe direct_buyable promotion.",
+    "PROVEN: holmes-hapf30 is hard_excluded from ap-completion-batch-1-retailer-evidence-gap-v1 and search_placeholder_rescue_needed per HQ handoff."
+  ],
+  "inferred_facts": [
+    "INFERRED: After demotion, live /air-purifier/filter/holmes-hapf30 should show no BuckParts Verified buy CTA until a separate rescue lane adds owner-proven buy path.",
+    "INFERRED: supabase_safe_direct_buyable_count decreases by 1 after COMMIT."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live Amazon PDP stock/variant correctness for B005BFSBVY today (browser_truth_checked_at 2026-04-21).",
+    "UNKNOWN: Production row id and filter_id at apply time — resolved at runtime via slug + ASIN selector in SQL."
+  ]
+}
