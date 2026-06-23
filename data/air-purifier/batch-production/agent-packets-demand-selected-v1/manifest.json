@@ -1,0 +1,18 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "generated_at": "2026-06-23T16:05:00.000Z",
+  "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+  "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
+  "packet_count": 1,
+  "packet_ids": [
+    "ap-demand-selected-oem-search-placeholder-v1"
+  ],
+  "candidate_slug_count": 10,
+  "excluded_slugs": [
+    "levoit-rf-meta-air"
+  ],
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_write_authorized": false,
+  "batch_started_read_only": true
+}

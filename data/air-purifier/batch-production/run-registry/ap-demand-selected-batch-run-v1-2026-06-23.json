@@ -1,0 +1,81 @@
+{
+  "contract": "batch_production_proven_run_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+  "wedge": "air_purifier",
+  "lane_label": "AP demand-selected buyer-path batch v1",
+  "proposed": false,
+  "batch_started_read_only": true,
+  "stage": "evidence_collection_planned",
+  "closeout_complete": false,
+  "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
+  "proposed_row_count": 10,
+  "proposed_slugs": [
+    "holmes-hapf30",
+    "vornado-md1-0023",
+    "alen-fl40",
+    "renpho-rp-ap003",
+    "coway-airmega100-rf",
+    "hb-trueair-04948",
+    "alen-b75-mp",
+    "alen-bf35",
+    "renpho-rp-ap068",
+    "renpho-rp-ap088"
+  ],
+  "excluded_slugs": [
+    "levoit-rf-meta-air"
+  ],
+  "excluded_slug_reasons": {
+    "levoit-rf-meta-air": "Prior agent NO_SAFE_PATH across ap-levoit-oem-discovery-v1 result files — excluded from demand-selected owner-review queue."
+  },
+  "source_proven_run_id": "ap-batch-v2-2026-05-24",
+  "source_recommendation_proof": {
+    "demand_report": "demand_to_coverage_next_lane_v1",
+    "recommended_wedge": "air_purifier",
+    "recommendation_status": "START_NEW_DEMAND_SELECTED_BATCH",
+    "next_batch_candidate": "air_purifier_demand_selected_batch_candidate",
+    "next_lane": "air_purifier_buyer_path_coverage",
+    "owner_review_lane": "air_purifier_demand_selected_batch_owner_review_v1"
+  },
+  "expected_evidence_row_count": 10,
+  "expected_auto_apply_slugs": [],
+  "evidence_collection_mode": "hyperagent_chat_discovery_read_only",
+  "evidence_write_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "buy_link_mutation_authorized": false,
+  "netlify_api_authorized": false,
+  "batch_start_authorized": true,
+  "batch_start_mode": "read_only_evidence_planning_only",
+  "customer_safety_preservation": {
+    "holmes-hapf30": {
+      "customer_safety_status": "PASS",
+      "inventory_warning_open": true,
+      "search_placeholder_rescue_open": true,
+      "no_buy_link_promotion": true,
+      "prior_pass_reference_evidence_rel": "data/air-purifier/batch-production/agent-results/ap-oem-search-placeholder-v1.results.json",
+      "discovery_note": "Chat-only rediscovery allowed; do not promote buy links or write canonical evidence without separate owner authorization."
+    }
+  },
+  "artifact_paths": {
+    "run_registry": "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    "packets_dir": "data/air-purifier/batch-production/agent-packets-demand-selected-v1",
+    "packets_manifest": "data/air-purifier/batch-production/agent-packets-demand-selected-v1/manifest.json",
+    "results_dir": "data/air-purifier/batch-production/agent-results-demand-selected-v1",
+    "hyperagent_contract_doc": "docs/air-purifier/AP-HYPERAGENT-DISCOVERY-VALIDATION-OUTPUT-v1.md",
+    "lane_report_command": "npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts",
+    "owner_review_jq_path": ".command_center_v2.air_purifier_demand_selected_batch_owner_review_v1",
+    "hyperagent_validation_command": "npx tsx scripts/report-ap-hyperagent-chat-discovery-validation-v1.ts"
+  },
+  "operator_lessons": [
+    "Read-only batch start — does not mutate CSV, Supabase, retailer_links, public UI, or canonical agent-results files.",
+    "Evidence collection uses ap_hyperagent_chat_discovery_output_v1 in chat only until separate evidence-write authorization.",
+    "Holmes remains customer-safety PASS with inventory warning / search-placeholder rescue open — no buy-link promotion in this run.",
+    "levoit-rf-meta-air is explicitly excluded from this demand-selected batch scope."
+  ],
+  "may_proceed_to_packet_write": false,
+  "may_proceed_to_evidence_file_write": false,
+  "created_at": "2026-06-23T16:05:00.000Z"
+}

@@ -187,7 +187,23 @@ test("buildBatchRunRegistryIntakeReportV1 on repo when fridge planning registry 
   assert.equal(report.contract, BATCH_RUN_REGISTRY_INTAKE_CONTRACT_V1);
   assert.equal(report.mutation_authorized, false);
   if (existsSync(path.join(REPO_ROOT, "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json"))) {
-    assert.equal(report.ap_run_registry_status, "PROVEN_CLOSED");
+    const demandSelectedExists = existsSync(
+      path.join(
+        REPO_ROOT,
+        "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+      ),
+    );
+    assert.equal(
+      report.ap_run_registry_status,
+      demandSelectedExists ? "PROVEN_PRESENT_NOT_CLOSED" : "PROVEN_CLOSED",
+    );
+    if (demandSelectedExists) {
+      assert.equal(report.ap_demand_selected_open_run_registry_status, "PROVEN_OPEN");
+      assert.equal(
+        report.ap_demand_selected_open_run_id,
+        "ap-demand-selected-batch-run-v1-2026-06-23",
+      );
+    }
   }
   const fridgeRegistryAbs = path.join(REPO_ROOT, FRIDGE_REGISTRY_REL);
   if (existsSync(fridgeRegistryAbs)) {

@@ -18,6 +18,10 @@ import {
 } from "./air-purifier-batch-production-lane-v1";
 import type { DemandToCoverageNextLaneReportV1 } from "./demand-to-coverage-next-lane-v1";
 import {
+  loadApDemandSelectedBatchRunRegistryV1,
+  type ApDemandSelectedBatchRunRegistryVisibilityV1,
+} from "./ap-demand-selected-batch-run-registry-v1";
+import {
   getApOwnerReviewEvidenceEntryV1,
   loadApOwnerReviewEvidenceIndexV1,
   type ApOwnerReviewEvidenceEntryV1,
@@ -103,6 +107,7 @@ export type AirPurifierDemandSelectedBatchOwnerReviewLaneV1 = {
   candidate_rows_unknown_reason: string | null;
   candidate_selection_logic: string[];
   evidence_index_source_status: ApOwnerReviewEvidenceIndexV1["source_status"];
+  batch_run_registry: ApDemandSelectedBatchRunRegistryVisibilityV1;
   inputs_needed: string[];
   exact_owner_decision_needed_later: string;
   blockers: [
@@ -136,6 +141,9 @@ export type BuildAirPurifierDemandSelectedBatchOwnerReviewDepsV1 = {
     fileExists: (absolutePath: string) => boolean;
     readTextFile: (absolutePath: string) => string;
   }) => ApOwnerReviewEvidenceIndexV1;
+  loadDemandSelectedRunRegistry?: (
+    deps: LoadAirPurifierDemandSelectedBatchOwnerReviewDepsV1,
+  ) => ApDemandSelectedBatchRunRegistryVisibilityV1;
 };
 
 const AP_OWNER_REVIEW_PROMOTE_PASS_REFERENCE_BONUS_V1 = 45;
@@ -368,6 +376,13 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
   const candidateRows = candidateRowsFromBatchProductionLaneV1(batchProductionLane, {
     evidenceIndex,
   });
+  const batchRunRegistry =
+    deps.loadDemandSelectedRunRegistry?.(deps) ??
+    loadApDemandSelectedBatchRunRegistryV1({
+      rootDir: deps.rootDir,
+      fileExists,
+      readText: readTextFile,
+    });
   const sourceIsApDemandSelected =
     demand.recommended_wedge === HOMEKEEP_WEDGE_CATALOG.air_purifier &&
     demand.recommendation_status === "START_NEW_DEMAND_SELECTED_BATCH";
@@ -375,7 +390,7 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
   const blockers: AirPurifierDemandSelectedBatchOwnerReviewLaneV1["blockers"] = [
     "open_batch_not_proven",
     "owner_batch_start_approval_missing",
-    "batch_run_registry_not_created",
+    ...(batchRunRegistry.status !== "PROVEN" ? ["batch_run_registry_not_created" as const] : []),
     "evidence_collection_not_started",
     ...(!sourceIsApDemandSelected ? ["source_demand_to_coverage_not_ap_start_candidate"] : []),
     ...sourceBlockers,
@@ -383,7 +398,12 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
   const unknownFacts = [
     ...demand.unknown_facts,
     ...(candidateRows.unknown_reason ? [candidateRows.unknown_reason] : []),
-    "No batch run-registry JSON exists for this proposed AP demand-selected candidate.",
+    ...(batchRunRegistry.status !== "PROVEN"
+      ? ["No batch run-registry JSON exists for this proposed AP demand-selected candidate."]
+      : []),
+    ...(batchRunRegistry.status === "PARSE_ERROR" && batchRunRegistry.parse_error
+      ? [`Demand-selected run-registry parse error: ${batchRunRegistry.parse_error}`]
+      : []),
     "No browser evidence collection has started from this owner-review packet.",
   ];
 
@@ -419,6 +439,7 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
     excluded_candidate_rows: candidateRows.excluded_rows,
     candidate_rows_unknown_reason: candidateRows.unknown_reason,
     evidence_index_source_status: evidenceIndex.source_status,
+    batch_run_registry: batchRunRegistry,
     candidate_selection_logic: [
       "Source recommendation must be demand_to_coverage_next_lane_v1 with recommended_wedge=air_purifier and recommendation_status=START_NEW_DEMAND_SELECTED_BATCH.",
       "Candidate rows start from air_purifier_batch_production_lane_v1.top_candidates actionable states, then apply read-only evidence-aware ranking.",
@@ -431,8 +452,9 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
       "This packet is owner review only; it does not start a batch, generate agent packets, or collect browser evidence.",
     ],
     inputs_needed: [
-      "Owner batch-start approval in a future explicit decision surface.",
-      "A future batch run-registry JSON only after owner approval.",
+      ...(batchRunRegistry.status !== "PROVEN"
+        ? ["Owner batch-start approval in a future explicit decision surface.", "A future batch run-registry JSON only after owner approval."]
+        : []),
       "Read-only browser/evidence collection plan for selected AP candidate rows.",
       "Separate future apply plan before any CSV/Supabase/public mutation.",
     ],
@@ -448,10 +470,18 @@ export async function buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1(
       `PROVEN: batch_production_lane source_status=${batchProductionLane.source_status}.`,
       `PROVEN: evidence_index_source_status=${evidenceIndex.source_status}.`,
       `PROVEN: excluded_candidate_rows_count=${candidateRows.excluded_rows.length}.`,
+      ...(batchRunRegistry.status === "PROVEN"
+        ? [
+            `PROVEN: demand-selected run-registry detected at ${batchRunRegistry.run_registry_rel_path}; run_id=${String(batchRunRegistry.run_id)}; stage=${String(batchRunRegistry.stage)}.`,
+            `PROVEN: demand-selected batch_run_registry proposed_slug_count=${String(batchRunRegistry.proposed_slug_count)}; excluded_slug_count=${String(batchRunRegistry.excluded_slug_count)}.`,
+          ]
+        : []),
     ],
     inferred_facts: [
       ...demand.inferred_facts,
-      "INFERRED: AP demand-selected batch candidate should be owner-reviewed before any batch-start registry exists.",
+      ...(batchRunRegistry.status !== "PROVEN"
+        ? ["INFERRED: AP demand-selected batch candidate should be owner-reviewed before any batch-start registry exists."]
+        : ["INFERRED: Demand-selected run-registry is on disk for read-only visibility; mutation flags remain false."]),
     ],
     unknown_facts: unknownFacts,
     next_agent_action:

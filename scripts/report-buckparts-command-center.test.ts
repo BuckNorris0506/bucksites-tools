@@ -5471,8 +5471,17 @@ test("command_center_v2.air_purifier_demand_selected_batch_owner_review_v1 is re
   assert.ok(lane.candidate_selection_logic.some((line) => line.includes("evidence-aware ranking")));
   assert.ok(lane.blockers.includes("open_batch_not_proven"));
   assert.ok(lane.blockers.includes("owner_batch_start_approval_missing"));
-  assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
   assert.ok(lane.blockers.includes("evidence_collection_not_started"));
+  if (lane.batch_run_registry.status === "PROVEN") {
+    assert.ok(!lane.blockers.includes("batch_run_registry_not_created"));
+    assert.equal(lane.batch_run_registry.run_id, "ap-demand-selected-batch-run-v1-2026-06-23");
+    assert.equal(lane.batch_run_registry.stage, "evidence_collection_planned");
+    assert.equal(lane.batch_run_registry.batch_start_mode, "read_only_evidence_planning_only");
+    assert.equal(lane.batch_run_registry.proposed_slug_count, 10);
+    assert.equal(lane.batch_run_registry.excluded_slug_count, 1);
+  } else {
+    assert.ok(lane.blockers.includes("batch_run_registry_not_created"));
+  }
   assert.match(lane.next_agent_action, /do not start a batch/i);
 });
 

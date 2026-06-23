@@ -25,6 +25,7 @@ import {
   type FridgeBuyerPathBatchPlanningRunRegistryDocumentV1,
   validateFridgeBuyerPathBatchPlanningRunRegistryDocumentV1,
 } from "./fridge-buyer-path-batch-run-registry-v1";
+import { loadApDemandSelectedBatchRunRegistryV1 } from "./ap-demand-selected-batch-run-registry-v1";
 
 export { loadFridgeRunRegistryAtPathV1 } from "./fridge-buyer-path-batch-run-registry-closeout-v1";
 
@@ -66,6 +67,9 @@ export type BatchRunRegistryIntakeReportV1 = {
   wedges: BatchRunRegistryIntakeWedgeRowV1[];
   ap_run_registry_status: ApRunRegistryStatusV1;
   ap_run_registry_rel_path: string;
+  ap_demand_selected_open_run_registry_status: "PROVEN_OPEN" | "MISSING" | "PARSE_ERROR";
+  ap_demand_selected_open_run_registry_rel_path: string | null;
+  ap_demand_selected_open_run_id: string | null;
   fridge_run_registry_status: FridgeRunRegistryStatusV1;
   fridge_approval_status: FridgeBuyerPathBatchApprovalReportV1["approval_status"];
   fridge_proposed_batch_id: string | null;
@@ -282,6 +286,11 @@ export function buildBatchRunRegistryIntakeRecommendedNextActionV1(args: {
       "(checklist + optional `--registry-out data/owner-decisions/fridge-buyer-path-batch-approval-v1.json`) before run-registry intake can advance."
     );
   }
+  if (args.apStatus === "PROVEN_PRESENT_NOT_CLOSED") {
+    return (
+      "AP demand-selected open run-registry is on disk — continue read-only hyperagent chat discovery for scoped candidate slugs; verify with `npm run buckparts:batch-run-registry-intake` and Command Center owner-review lane. No mutation from this lane."
+    );
+  }
   if (args.apStatus === "PROVEN_CLOSED") {
     return (
       "AP batch-v2 proven run-registry is closed on disk — use demand-to-coverage / batch dispatch read models for next wedge batch candidate (read-only planning first)."
@@ -304,15 +313,36 @@ export function buildBatchRunRegistryIntakeReportV1(
   const proposal = buildProposal({ rootDir: deps.rootDir, now: deps.now });
   const approval = buildApproval({ rootDir: deps.rootDir, now: deps.now });
 
-  const apLoaded = loadApRunRegistryStatusV1({
-    rootDir: deps.rootDir,
-    relPath: apRel,
-    fileExists,
-    readText,
-  });
-
   const fridgeRegistryDirAbs = path.join(deps.rootDir, FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1);
   const listRunRegistryJson = deps.listRunRegistryJson ?? defaultListRunRegistryJson;
+
+  const demandSelectedRegistry = loadApDemandSelectedBatchRunRegistryV1({
+    rootDir: deps.rootDir,
+    fileExists,
+    readText,
+    listRunRegistryJson,
+  });
+
+  const apLoaded =
+    demandSelectedRegistry.status === "PROVEN"
+      ? {
+          status: "PROVEN_PRESENT_NOT_CLOSED" as const,
+          run_id: demandSelectedRegistry.run_id,
+          closeout_complete: false,
+          parse_error: null,
+        }
+      : loadApRunRegistryStatusV1({
+          rootDir: deps.rootDir,
+          relPath: apRel,
+          fileExists,
+          readText,
+        });
+
+  const apVisibilityRelPath =
+    demandSelectedRegistry.status === "PROVEN" && demandSelectedRegistry.run_registry_rel_path
+      ? demandSelectedRegistry.run_registry_rel_path
+      : apRel;
+
   const fridgeRegistryNames = listRunRegistryJson(fridgeRegistryDirAbs);
   const expectedRegistryRel = buildFridgeRunRegistryArtifactRelPathV1(proposal.proposed_batch_id);
   const registryLoad = loadFridgeRunRegistryAtPathV1({
@@ -330,7 +360,8 @@ export function buildBatchRunRegistryIntakeReportV1(
 
   const proven_facts: string[] = [
     `PROVEN: contract=${BATCH_RUN_REGISTRY_INTAKE_CONTRACT_V1}; read_only=true; data_mutation=false; mutation_authorized=false always.`,
-    `PROVEN: AP run-registry path=${apRel}; status=${apLoaded.status}.`,
+    `PROVEN: AP run-registry path=${apVisibilityRelPath}; status=${apLoaded.status}.`,
+    `PROVEN: AP demand-selected open run-registry status=${demandSelectedRegistry.status}.`,
     `PROVEN: Fridge run-registry dir=${FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1}; json_count=${String(fridgeRegistryNames.length)}.`,
     `PROVEN: Fridge proposal proposed_batch_id=${proposal.proposed_batch_id}; approval_status=${approval.approval_status}.`,
   ];
@@ -340,6 +371,16 @@ export function buildBatchRunRegistryIntakeReportV1(
   }
   if (apLoaded.run_id) {
     proven_facts.push(`PROVEN: AP run_id=${apLoaded.run_id}; closeout_complete=${String(apLoaded.closeout_complete)}.`);
+  }
+  if (demandSelectedRegistry.status === "PROVEN" && demandSelectedRegistry.run_registry_rel_path) {
+    proven_facts.push(
+      `PROVEN: AP demand-selected open run-registry at ${demandSelectedRegistry.run_registry_rel_path}; stage=${String(demandSelectedRegistry.stage)}; batch_start_mode=${String(demandSelectedRegistry.batch_start_mode)}.`,
+    );
+  }
+  if (demandSelectedRegistry.status === "PARSE_ERROR" && demandSelectedRegistry.parse_error) {
+    unknown_facts.push(
+      `UNKNOWN: Repair AP demand-selected run-registry parse error: ${demandSelectedRegistry.parse_error}.`,
+    );
   }
   if (fridgeResolved.status === "PROVEN_CLOSED" && registryLoad.closed?.doc) {
     proven_facts.push(
@@ -379,7 +420,7 @@ export function buildBatchRunRegistryIntakeReportV1(
   const wedges: BatchRunRegistryIntakeWedgeRowV1[] = [
     {
       wedge: "air_purifier",
-      run_registry_rel_path: apLoaded.status === "MISSING" ? null : apRel,
+      run_registry_rel_path: apLoaded.status === "MISSING" ? null : apVisibilityRelPath,
       run_registry_status: apLoaded.status,
       closeout_complete: apLoaded.closeout_complete,
       run_id: apLoaded.run_id,
@@ -413,7 +454,15 @@ export function buildBatchRunRegistryIntakeReportV1(
     generated_at: now().toISOString(),
     wedges,
     ap_run_registry_status: apLoaded.status,
-    ap_run_registry_rel_path: apRel,
+    ap_run_registry_rel_path: apVisibilityRelPath,
+    ap_demand_selected_open_run_registry_status:
+      demandSelectedRegistry.status === "PROVEN"
+        ? "PROVEN_OPEN"
+        : demandSelectedRegistry.status === "PARSE_ERROR"
+          ? "PARSE_ERROR"
+          : "MISSING",
+    ap_demand_selected_open_run_registry_rel_path: demandSelectedRegistry.run_registry_rel_path,
+    ap_demand_selected_open_run_id: demandSelectedRegistry.run_id,
     fridge_run_registry_status: fridgeResolved.status,
     fridge_approval_status: approval.approval_status,
     fridge_proposed_batch_id: proposal.proposed_row_count > 0 ? proposal.proposed_batch_id : null,

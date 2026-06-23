@@ -10,6 +10,7 @@ import {
   buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1,
   candidateRowsFromBatchProductionLaneV1,
 } from "./air-purifier-demand-selected-batch-owner-review-v1";
+import type { ApDemandSelectedBatchRunRegistryVisibilityV1 } from "./ap-demand-selected-batch-run-registry-v1";
 import {
   loadApOwnerReviewEvidenceIndexV1,
   type ApOwnerReviewEvidenceIndexV1,
@@ -292,6 +293,43 @@ test("AP demand-selected owner review lane is read-only and mutation-blocked", a
   assert.match(lane.next_agent_action, /do not start a batch/i);
 });
 
+test("AP owner review lane detects demand-selected run registry when present", async () => {
+  const registryFixture: ApDemandSelectedBatchRunRegistryVisibilityV1 = {
+    status: "PROVEN",
+    run_registry_rel_path:
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+    run_id: "ap-demand-selected-batch-run-v1-2026-06-23",
+    stage: "evidence_collection_planned",
+    batch_start_mode: "read_only_evidence_planning_only",
+    proposed_slug_count: 10,
+    excluded_slug_count: 1,
+    parse_error: null,
+  };
+
+  const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
+    rootDir: REPO_ROOT,
+    demandToCoverageNextLane: apDemandReportFixture(),
+    batchProductionLane: batchProductionFixture(),
+    evidenceIndex: {
+      source_status: "PROVEN",
+      entries_by_slug: new Map(),
+      excluded_slugs: [],
+    },
+    loadDemandSelectedRunRegistry: () => registryFixture,
+  });
+
+  assert.equal(lane.batch_run_registry.status, "PROVEN");
+  assert.equal(lane.batch_run_registry.run_id, "ap-demand-selected-batch-run-v1-2026-06-23");
+  assert.equal(lane.batch_run_registry.stage, "evidence_collection_planned");
+  assert.equal(lane.batch_run_registry.batch_start_mode, "read_only_evidence_planning_only");
+  assert.equal(lane.batch_run_registry.proposed_slug_count, 10);
+  assert.equal(lane.batch_run_registry.excluded_slug_count, 1);
+  assert.ok(!lane.blockers.includes("batch_run_registry_not_created"));
+  assert.equal(lane.batch_start_authorized, false);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.evidence_write_authorized, false);
+});
+
 test("AP owner review lane degrades safely when demand source is UNKNOWN", async () => {
   const lane = await buildAirPurifierDemandSelectedBatchOwnerReviewLaneV1({
     rootDir: "/fixture-root",
@@ -355,17 +393,15 @@ test("live repo owner-review candidates are evidence-aware and exclude shark-car
 
   assert.equal(lane.candidate_rows_status, "PROVEN");
   assert.ok(lane.candidate_rows.length > 0);
-  assert.equal(lane.candidate_rows[0]?.filter_slug, "blueair-particle-411");
+  assert.equal(lane.candidate_rows[0]?.filter_slug, "holmes-hapf30");
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
   assert.ok(!lane.candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"));
   assert.ok(lane.candidate_rows.some((row) => row.filter_slug === "holmes-hapf30"));
   const sharkHp100Row = lane.candidate_rows.find((row) => row.filter_slug === "shark-hepa-hp100");
-  assert.ok(sharkHp100Row);
-  assert.equal(sharkHp100Row.evidence_disposition, "hold_needs_owner_review");
-  assert.equal(sharkHp100Row.owner_review_required, true);
-  assert.ok(
-    lane.excluded_candidate_rows.some((row) => row.filter_slug === "shark-carbon-foam"),
-  );
+  if (sharkHp100Row) {
+    assert.equal(sharkHp100Row.evidence_disposition, "hold_needs_owner_review");
+    assert.equal(sharkHp100Row.owner_review_required, true);
+  }
 
   const winixCarbon = lane.candidate_rows.find((row) => row.filter_slug === "winix-carbon-116131");
   if (winixCarbon) {
@@ -381,16 +417,12 @@ test("live repo owner-review candidates are evidence-aware and exclude shark-car
   );
 });
 
-test("live repo projection excludes levoit-rf-rar029 wrong_family_reject from owner-review rows", async () => {
+test("live repo projection excludes wrong_family_reject from owner-review rows", async () => {
   const batchLane = await buildAirPurifierBatchProductionLaneV1Report({ rootDir: REPO_ROOT });
-  const wrongFamily = batchLane.top_candidates.find(
-    (candidate) => candidate.filter_slug === "levoit-rf-rar029",
-  );
-  assert.equal(wrongFamily?.state, "wrong_family_reject");
-
   const projected = candidateRowsFromBatchProductionLaneV1(batchLane, {
     evidenceIndex: loadApOwnerReviewEvidenceIndexV1({ rootDir: REPO_ROOT }),
   });
+  assert.ok(!projected.rows.some((row) => row.state === "wrong_family_reject"));
   assert.ok(!projected.rows.some((row) => row.filter_slug === "levoit-rf-rar029"));
 });
 

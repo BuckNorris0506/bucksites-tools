@@ -1,0 +1,331 @@
+{
+  "contract": "air_purifier_agent_packets_v1",
+  "packet_id": "ap-demand-selected-oem-search-placeholder-v1",
+  "wedge": "air_purifier",
+  "source_pattern": "oem_search_placeholder_discovery",
+  "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+  "proposed_batch_id": "air_purifier_demand_selected_batch_candidate",
+  "candidate_slugs": [
+    "holmes-hapf30",
+    "vornado-md1-0023",
+    "alen-fl40",
+    "renpho-rp-ap003",
+    "coway-airmega100-rf",
+    "hb-trueair-04948",
+    "alen-b75-mp",
+    "alen-bf35",
+    "renpho-rp-ap068",
+    "renpho-rp-ap088"
+  ],
+  "excluded_slugs": [
+    "levoit-rf-meta-air"
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "filter_slug": "holmes-hapf30",
+      "brand_slug": "holmes",
+      "oem_part_number": "HOLMES-HAPF30",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 81,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 31,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery | Prior PASS_REFERENCE evidence on disk — customer-safety PASS; inventory warning / search-placeholder rescue remains open; chat-only rediscovery only.",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof",
+        "Do not promote buy links in this read-only batch start"
+      ]
+    },
+    {
+      "rank": 2,
+      "filter_slug": "vornado-md1-0023",
+      "brand_slug": "vornado",
+      "oem_part_number": "VORNADO-MD1-0023",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 33,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 6,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 3,
+      "filter_slug": "alen-fl40",
+      "brand_slug": "alen",
+      "oem_part_number": "ALEN-FL40-HEPA",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 29,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 4,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.alen.com/search?q=ALEN-FL40-HEPA",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 4,
+      "filter_slug": "renpho-rp-ap003",
+      "brand_slug": "renpho",
+      "oem_part_number": "RENPHO-RP-AP003",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 29,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 4,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://renpho.com/search?q=RENPHO-RP-AP003",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 5,
+      "filter_slug": "coway-airmega100-rf",
+      "brand_slug": "coway",
+      "oem_part_number": "COWAY-AMI100-RF",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 27,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 3,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://coway.com/search?q=COWAY-AMI100-RF",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 6,
+      "filter_slug": "hb-trueair-04948",
+      "brand_slug": "hamilton-beach",
+      "oem_part_number": "HB-04948",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 27,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 3,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://hamiltonbeach.com/search?q=HB-04948",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 7,
+      "filter_slug": "alen-b75-mp",
+      "brand_slug": "alen",
+      "oem_part_number": "ALEN-B75-MP",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 25,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.alen.com/search?q=ALEN-B75-MP",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 8,
+      "filter_slug": "alen-bf35",
+      "brand_slug": "alen",
+      "oem_part_number": "ALEN-BF35-HEPA",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 25,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://www.alen.com/search?q=ALEN-BF35-HEPA",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 9,
+      "filter_slug": "renpho-rp-ap068",
+      "brand_slug": "renpho",
+      "oem_part_number": "RENPHO-RP-AP068",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 25,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://renpho.com/search?q=RENPHO-RP-AP068",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    },
+    {
+      "rank": 10,
+      "filter_slug": "renpho-rp-ap088",
+      "brand_slug": "renpho",
+      "oem_part_number": "RENPHO-RP-AP088",
+      "state": "search_placeholder_rescue_needed",
+      "priority_score": 25,
+      "gsc_impressions": 0,
+      "gsc_queries": [],
+      "compat_model_count": 2,
+      "primary_retailer_key": "oem-catalog",
+      "primary_url": "https://renpho.com/search?q=RENPHO-RP-AP088",
+      "gate_failure": "search_placeholder",
+      "browser_truth_classification": "",
+      "pattern": "oem_search_placeholder_discovery",
+      "rationale": "Only manufacturer search URL; exact OEM token in CSV; needs PDP discovery",
+      "proof_required": "Discover official PDP; exact token on page; Add to Cart for direct_buyable",
+      "allowed_future_mutations": [
+        "Replace search URL on existing primary row after proof"
+      ],
+      "reject_rules": [
+        "Do not weaken buy gates or /go rules",
+        "Do not add filter rows without approved catalog task",
+        "Do not alias GSC slugs without product-token proof",
+        "Do not mark direct_buyable without Add to Cart + exact token proof"
+      ]
+    }
+  ],
+  "max_rows": 10,
+  "task_type": "search_placeholder_rescue",
+  "objective": "Read-only manufacturer PDP discovery for demand-selected AP buyer-path batch (chat output only).",
+  "exact_proof_required": "Official manufacturer PDP; exact token; Add to Cart for direct_buyable",
+  "allowed_mutations": [],
+  "forbidden_actions": [
+    "Do not deploy or push without explicit owner approval.",
+    "Do not commit CSV or catalog changes unless explicitly requested.",
+    "Do not write to Supabase or call production mutation APIs.",
+    "Do not write canonical agent-results JSON in this read-only batch start.",
+    "Do not edit data/air-purifier/retailer_links.csv.",
+    "Do not promote buy links or apply PASS_REFERENCE / PASS_DIRECT_BUYABLE without separate owner authorization.",
+    "Do not include levoit-rf-meta-air in this batch scope."
+  ],
+  "reject_rules": [
+    "No new retailer rows without approval"
+  ],
+  "expected_output_schema": {
+    "contract": "ap_hyperagent_chat_discovery_output_v1",
+    "doc": "docs/air-purifier/AP-HYPERAGENT-DISCOVERY-VALIDATION-OUTPUT-v1.md",
+    "validation_command": "npx tsx scripts/report-ap-hyperagent-chat-discovery-validation-v1.ts"
+  },
+  "validation_checklist": [
+    "Return ap_hyperagent_chat_discovery_output_v1 in chat only — no repo file writes.",
+    "Holmes: PASS_REFERENCE allowed; customer-safety PASS preserved; no buy-link promotion.",
+    "Final URL is a product PDP, not search/category/error, when claiming PASS_REFERENCE or PASS_DIRECT_BUYABLE.",
+    "recommended_csv_mutation must be null in chat output."
+  ],
+  "owner_review_required": false,
+  "no_commit": true,
+  "no_deploy": true,
+  "read_only": true,
+  "data_mutation": false,
+  "evidence_write_authorized": false,
+  "generated_at": "2026-06-23T16:05:00.000Z"
+}
