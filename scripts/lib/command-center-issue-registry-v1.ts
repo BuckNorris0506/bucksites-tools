@@ -44,6 +44,25 @@ export const COMMAND_CENTER_ISSUE_RE_AUDIT_OUTCOMES_V1 = [
 export type CommandCenterIssueReAuditOutcomeV1 =
   (typeof COMMAND_CENTER_ISSUE_RE_AUDIT_OUTCOMES_V1)[number];
 
+export const COMMAND_CENTER_ISSUE_PACKET_CONTRACT_V1 = "command_center_issue_packet_v1" as const;
+
+export type CommandCenterIssuePacketV1 = {
+  contract: typeof COMMAND_CENTER_ISSUE_PACKET_CONTRACT_V1;
+  read_only: true;
+  filter_slug: string;
+  wedge: "air_purifier";
+  measurable_blocker: string;
+  stalled_lane_contract: string;
+  closure_criteria: string[];
+  affected_artifacts: string[];
+  affected_queues: string[];
+  owner_review_implications: string[];
+  future_batch_scope_rules: string[];
+  proven_facts: string[];
+  inferred_facts: string[];
+  unknown_facts: string[];
+};
+
 export type CommandCenterIssueRecordV1 = {
   issue_id: string;
   title: string;
@@ -65,6 +84,7 @@ export type CommandCenterIssueRecordV1 = {
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
+  issue_packet_v1?: CommandCenterIssuePacketV1 | null;
 };
 
 const SEVERITY_RANK: Record<CommandCenterIssueSeverityV1, number> = {
@@ -159,6 +179,54 @@ function nullableString(value: unknown): string | null {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 }
 
+function parseIssuePacketV1(
+  raw: unknown,
+  sourceFile: string,
+): { packet: CommandCenterIssuePacketV1 | null; parse_errors: string[] } {
+  const parse_errors: string[] = [];
+  if (raw == null) return { packet: null, parse_errors };
+  if (!isRecord(raw)) {
+    return { packet: null, parse_errors: [`${sourceFile}: issue_packet_v1 must be an object`] };
+  }
+  if (raw.contract !== COMMAND_CENTER_ISSUE_PACKET_CONTRACT_V1) {
+    parse_errors.push(`${sourceFile}: issue_packet_v1.contract must be ${COMMAND_CENTER_ISSUE_PACKET_CONTRACT_V1}`);
+    return { packet: null, parse_errors };
+  }
+  const filter_slug = typeof raw.filter_slug === "string" ? raw.filter_slug.trim() : "";
+  if (!filter_slug) parse_errors.push(`${sourceFile}: issue_packet_v1.filter_slug missing`);
+  const measurable_blocker =
+    typeof raw.measurable_blocker === "string" ? raw.measurable_blocker.trim() : "";
+  const stalled_lane_contract =
+    typeof raw.stalled_lane_contract === "string" ? raw.stalled_lane_contract.trim() : "";
+  if (!measurable_blocker) {
+    parse_errors.push(`${sourceFile}: issue_packet_v1.measurable_blocker missing`);
+  }
+  if (!stalled_lane_contract) {
+    parse_errors.push(`${sourceFile}: issue_packet_v1.stalled_lane_contract missing`);
+  }
+  if (parse_errors.length > 0) return { packet: null, parse_errors };
+
+  return {
+    packet: {
+      contract: COMMAND_CENTER_ISSUE_PACKET_CONTRACT_V1,
+      read_only: true,
+      filter_slug,
+      wedge: "air_purifier",
+      measurable_blocker,
+      stalled_lane_contract,
+      closure_criteria: stringArray(raw.closure_criteria),
+      affected_artifacts: stringArray(raw.affected_artifacts),
+      affected_queues: stringArray(raw.affected_queues),
+      owner_review_implications: stringArray(raw.owner_review_implications),
+      future_batch_scope_rules: stringArray(raw.future_batch_scope_rules),
+      proven_facts: stringArray(raw.proven_facts),
+      inferred_facts: stringArray(raw.inferred_facts),
+      unknown_facts: stringArray(raw.unknown_facts),
+    },
+    parse_errors,
+  };
+}
+
 export function parseCommandCenterIssueRecordV1(
   raw: unknown,
   sourceFile: string,
@@ -180,6 +248,9 @@ export function parseCommandCenterIssueRecordV1(
   if (parse_errors.length > 0 || !isSeverity(severity) || !isStatus(status)) {
     return { issue: null, parse_errors };
   }
+
+  const packetParsed = parseIssuePacketV1(raw.issue_packet_v1, sourceFile);
+  parse_errors.push(...packetParsed.parse_errors);
 
   return {
     issue: {
@@ -203,6 +274,7 @@ export function parseCommandCenterIssueRecordV1(
       proven_facts: stringArray(raw.proven_facts),
       inferred_facts: stringArray(raw.inferred_facts),
       unknown_facts: stringArray(raw.unknown_facts),
+      issue_packet_v1: packetParsed.packet,
     },
     parse_errors,
   };

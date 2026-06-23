@@ -1,0 +1,99 @@
+{
+  "issue_id": "BP-000006",
+  "title": "Renpho RP-AP003 model/filter slug collision",
+  "issue_type": "ap_catalog_model_filter_slug_collision",
+  "severity": "TIER_1",
+  "source_system": "ap_demand_selected_correctness_risks_v1",
+  "detected_at": "2026-06-23T21:01:00.000Z",
+  "status": "PACKET_READY",
+  "assigned_to": "Owner",
+  "affected_routes": [
+    "/filter/renpho-rp-ap003"
+  ],
+  "evidence_files": [
+    "data/air-purifier/batch-production/audits/ap-demand-selected-correctness-risks-v1.json",
+    "data/air-purifier/filters.csv",
+    "data/air-purifier/models.csv",
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/compatibility_mappings.csv",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-live-browser-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "closure_reason": null,
+  "closure_evidence": [],
+  "closure_approved": false,
+  "issue_packet_v1": {
+    "contract": "command_center_issue_packet_v1",
+    "read_only": true,
+    "filter_slug": "renpho-rp-ap003",
+    "wedge": "air_purifier",
+    "measurable_blocker": "renpho-rp-ap003 exists as both a filter slug and a model slug with oem_part_number RENPHO-RP-AP003 (model code); model-first NO_SAFE_PATH_FOUND with expected_safe_edge_gain_if_corrected=0; no official Renpho filter PDP.",
+    "stalled_lane_contract": "air_purifier_demand_selected_batch_owner_review_v1",
+    "closure_criteria": [
+      "Owner-approved disambiguation: distinct filter slug vs model-only slug (or documented suppression policy).",
+      "filters.csv and models.csv no longer share renpho-rp-ap003 without explicit owner-approved bridge strategy.",
+      "compatibility_mappings.csv self-edge renpho-rp-ap003,renpho-rp-ap003 removed or replaced with model->filter edges using distinct slugs.",
+      "renpho-rp-ap080 edge verified or removed (possibly phantom model).",
+      "renpho-rp-ap003 excluded from future demand-selected batch scopes until collision resolved.",
+      "Owner closes issue CLOSED_PROVEN only after catalog repair + evidence index reflects disposition — not from audit packet alone."
+    ],
+    "affected_artifacts": [
+      "data/air-purifier/filters.csv (renpho-rp-ap003 filter row)",
+      "data/air-purifier/models.csv (renpho-rp-ap003 model row)",
+      "data/air-purifier/retailer_links.csv (search placeholder primary)",
+      "data/air-purifier/compatibility_mappings.csv (4 edges including self-referential)",
+      "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-renpho-rp-ap003-live-browser-v1.results.json",
+      "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+      "scripts/lib/air-purifier-owner-review-evidence-index-v1.ts (model-first dir not indexed)"
+    ],
+    "affected_queues": [
+      "air_purifier_demand_selected_batch_owner_review_v1.candidate_rows (renpho-rp-ap003 rank 4)",
+      "air_purifier_demand_selected_correctness_risks_v1 (renpho_rp_ap003_status=exclude_from_future_batch_progression)",
+      "air_purifier_batch_production_lane_v1.top_candidates",
+      "ap-demand-selected-batch-run-v1-2026-06-23 proposed_slugs",
+      "AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1 (model-first results excluded — disposition gap)"
+    ],
+    "owner_review_implications": [
+      "Exclude renpho-rp-ap003 from owner-review discovery_ready posture — target exclude_no_safe_path or hold_needs_owner_review.",
+      "Do not advance toward canonical evidence write or CSV apply; keep suppressed no_safe_link per model-first verdict.",
+      "Demand-selected REJECT_SEARCH_CATEGORY is consistent but does not resolve collision — owner must approve identity plan first.",
+      "batch_start_authorized and csv_apply_authorized remain false for apply on this slug."
+    ],
+    "future_batch_scope_rules": [
+      "Exclude renpho-rp-ap003 from all future demand-selected batch candidate scopes until closure criteria met.",
+      "Do not add renpho-rp-ap003 to expected_auto_apply_slugs in any run registry.",
+      "Mechanical VALIDATION_PASS on demand-selected discovery does not clear this slug for batch progression.",
+      "If a distinct OEM filter part number is discovered later, open new issue or supersede — do not auto-promote third-party filters without owner policy.",
+      "Mirror levoit-rf-meta-air exclusion pattern: explicit excluded_slugs entry with rationale in run registry."
+    ],
+    "proven_facts": [
+      "PROVEN: renpho-rp-ap003 in both filters.csv and models.csv at HEAD 1a2140a.",
+      "PROVEN: compatibility_mappings.csv contains self-edge renpho-rp-ap003,renpho-rp-ap003,true.",
+      "PROVEN: model-first ap-model-first-renpho-rp-ap003-live-browser-v1 verdict NO_SAFE_PATH_FOUND; expected_safe_edge_gain_if_corrected=0.",
+      "PROVEN: Renpho sells 0 replacement filters on renpho.com per model-first live browser evidence.",
+      "PROVEN: demand-selected discovery row REJECT_SEARCH_CATEGORY with 0 brand search results.",
+      "PROVEN: ap-demand-selected-correctness-risks-v1 recommends exclude_from_future_batch_progression for renpho-rp-ap003."
+    ],
+    "inferred_facts": [
+      "INFERRED: Owner-review lane marks discovery_ready because model-first dir is outside AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1."
+    ],
+    "unknown_facts": [
+      "UNKNOWN: Distinct OEM filter part number outside Renpho direct channels — not published in repo evidence."
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: Issue packet BP-000006 is read-only planning at status PACKET_READY; no repair_commit.",
+    "PROVEN: Severity TIER_1 — does not steer Command Center TIER_0 issue registry NBA.",
+    "PROVEN: Source audit ap-demand-selected-correctness-risks-v1 committed at 1a2140a."
+  ],
+  "inferred_facts": [
+    "INFERRED: Slug collision blocks safe buyer-path progression regardless of demand-selected discovery pass."
+  ],
+  "unknown_facts": []
+}

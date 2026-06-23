@@ -1,0 +1,98 @@
+{
+  "issue_id": "BP-000005",
+  "title": "Vornado MD1-0023 HEPA slug vs MD1-0022/MD1-0023 carbon identity split",
+  "issue_type": "ap_catalog_identity_hepa_carbon_token_split",
+  "severity": "TIER_1",
+  "source_system": "ap_demand_selected_correctness_risks_v1",
+  "detected_at": "2026-06-23T21:00:00.000Z",
+  "status": "PACKET_READY",
+  "assigned_to": "Owner",
+  "affected_routes": [
+    "/filter/vornado-md1-0023",
+    "/filter/vornado-carbon-pad"
+  ],
+  "evidence_files": [
+    "data/air-purifier/batch-production/audits/ap-demand-selected-correctness-risks-v1.json",
+    "data/air-purifier/filters.csv",
+    "data/air-purifier/retailer_links.csv",
+    "data/air-purifier/compatibility_mappings.csv",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-vornado-carbon-pad-live-browser-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json"
+  ],
+  "repair_commit": null,
+  "deploy_commit": null,
+  "closed_at": null,
+  "re_audit_outcome": null,
+  "closure_reason": null,
+  "closure_evidence": [],
+  "closure_approved": false,
+  "issue_packet_v1": {
+    "contract": "command_center_issue_packet_v1",
+    "read_only": true,
+    "filter_slug": "vornado-md1-0023",
+    "wedge": "air_purifier",
+    "measurable_blocker": "vornado-md1-0023 binds OEM token VORNADO-MD1-0023 to a HEPA display name while official manufacturer MD1-0023 is the carbon 2-pack already buyable on vornado-carbon-pad; official HEPA token MD1-0022 is documented in repo but not resolved on the HEPA slug.",
+    "stalled_lane_contract": "air_purifier_demand_selected_batch_owner_review_v1",
+    "closure_criteria": [
+      "Owner-approved catalog identity plan separates HEPA identity (MD1-0022 token or corrected slug) from carbon identity (MD1-0023 on vornado-carbon-pad).",
+      "filters.csv no longer labels vornado-md1-0023 as HEPA while binding VORNADO-MD1-0023 carbon SKU without owner-approved alias strategy.",
+      "compatibility_mappings.csv removes or corrects wrong-family edge vornado-pc300 -> vornado-md1-0023 (PCO300 carbon = MD1-0027 per model-first evidence).",
+      "Demand-selected discovery on vornado-md1-0023 is not treated as apply progression while identity remains split.",
+      "Owner closes issue CLOSED_PROVEN only after CSV apply + validation chain — not from audit packet alone."
+    ],
+    "affected_artifacts": [
+      "data/air-purifier/filters.csv (vornado-md1-0023, vornado-carbon-pad rows)",
+      "data/air-purifier/retailer_links.csv (vornado-md1-0023 search placeholder; vornado-carbon-pad direct_buyable)",
+      "data/air-purifier/compatibility_mappings.csv (vornado-ac350/500/550/500b/550w + vornado-pc300 edges)",
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json (proposed_slugs includes vornado-md1-0023)",
+      "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+      "data/air-purifier/batch-production/audits/ap-demand-selected-correctness-risks-v1.json",
+      "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-parity-packet-v1.json (vornado-carbon-pad separate track)"
+    ],
+    "affected_queues": [
+      "air_purifier_demand_selected_batch_owner_review_v1.candidate_rows (vornado-md1-0023 rank 2)",
+      "air_purifier_demand_selected_correctness_risks_v1 (vornado_md1_0023_status=issue_track_and_split_before_progression)",
+      "air_purifier_batch_production_lane_v1.top_candidates (search_placeholder_rescue_needed)",
+      "ap-demand-selected-batch-run-v1-2026-06-23 proposed_slugs",
+      "Future CSV apply planning for vornado-carbon-pad (carbon track — separate from HEPA slug)"
+    ],
+    "owner_review_implications": [
+      "Hold vornado-md1-0023 at evidence_disposition hold_needs_owner_review — do not promote demand-selected discovery toward apply.",
+      "batch_start_authorized and csv_apply_authorized remain false for this slug until identity packet is owner-approved.",
+      "Carbon apply readiness on vornado-carbon-pad is a separate owner track; do not conflate with vornado-md1-0023 HEPA rescue.",
+      "Model-first evidence on vornado-carbon-pad is authoritative for MD1-0023 carbon buy path; demand-selected discovery on vornado-md1-0023 adds no HEPA buyer path."
+    ],
+    "future_batch_scope_rules": [
+      "Do not progress vornado-md1-0023 toward canonical evidence write or CSV apply until this issue reaches owner-approved repair plan.",
+      "Demand-selected batch closeout must not treat REJECT_SEARCH_CATEGORY discovery as identity resolution.",
+      "Future demand-selected scopes may include vornado-carbon-pad only after explicit carbon-track owner approval — not vornado-md1-0023 as HEPA-on-MD1-0023-token.",
+      "Exclude vornado-md1-0023 from auto-apply slugs in any batch run registry until closure criteria met.",
+      "Re-open or supersede this issue if catalog rows re-bind MD1-0023 token to HEPA without MD1-0022 correction."
+    ],
+    "proven_facts": [
+      "PROVEN: filters.csv row vornado-md1-0023 uses OEM token VORNADO-MD1-0023 with display name AC350/500/550 HEPA cartridge.",
+      "PROVEN: filters.csv row vornado-carbon-pad documents official MD1-0023 = Activated Carbon 2-Pack; official HEPA = MD1-0022; pending vornado-md1-0023 HEPA slug correction.",
+      "PROVEN: retailer_links.csv vornado-carbon-pad primary is direct_buyable at vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1.",
+      "PROVEN: retailer_links.csv vornado-md1-0023 primary remains Vornado search placeholder with null browser_truth.",
+      "PROVEN: model-first ap-model-first-vornado-carbon-pad-live-browser-v1 documents MD1-0023 carbon buyable and companion HEPA MD1-0022; wrong-family vornado-pc300 edge.",
+      "PROVEN: demand-selected discovery row for vornado-md1-0023 is REJECT_SEARCH_CATEGORY with wrong-family tokens MD1-0023/MD1-0022 noted.",
+      "PROVEN: ap-demand-selected-correctness-risks-v1 audit at HEAD 1a2140a recommends issue_track_and_split for vornado-md1-0023."
+    ],
+    "inferred_facts": [
+      "INFERRED: Continuing batch progression without split risks promoting carbon SKU under HEPA slug or retaining wrong-family compat edges."
+    ],
+    "unknown_facts": [
+      "UNKNOWN: Whether official MD1-0022 HEPA PDP with Add to Cart exists — not opened in demand-selected bounded attempt."
+    ]
+  },
+  "proven_facts": [
+    "PROVEN: Issue packet BP-000005 is read-only planning at status PACKET_READY; no repair_commit.",
+    "PROVEN: Severity TIER_1 — does not steer Command Center TIER_0 issue registry NBA.",
+    "PROVEN: Source audit ap-demand-selected-correctness-risks-v1 committed at 1a2140a."
+  ],
+  "inferred_facts": [
+    "INFERRED: Catalog identity correction requires owner-approved apply plan before any CSV mutation."
+  ],
+  "unknown_facts": []
+}

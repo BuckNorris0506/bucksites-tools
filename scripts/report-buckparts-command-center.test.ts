@@ -4619,7 +4619,7 @@ test("command_center_v2.command_center_issue_reaudit_v1 surfaces deployed re-aud
 
   const registry = report.command_center_v2.command_center_issue_registry_v1;
   assert.equal(registry.steering_override_active, false);
-  assert.equal(registry.total_open, 0);
+  assert.equal(registry.total_open, 2);
   assert.equal(registry.total_closed, 4);
   assert.deepEqual(registry.closed_proven_issue_ids, [
     "BP-000001",
@@ -4649,14 +4649,21 @@ test("command_center_v2.command_center_issue_registry_v1 is read-only and does n
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
   assert.equal(lane.recommended_jq_path, ".command_center_v2.command_center_issue_registry_v1");
-  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_open, 2);
   assert.equal(lane.total_closed, 4);
-  assert.equal(lane.lifecycle_distribution.aligned_count, 4);
+  assert.equal(lane.lifecycle_distribution.aligned_count, 6);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 2);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue, null);
+  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000005");
+  const bp5 = lane.issues.find((issue) => issue.issue_id === "BP-000005");
+  const bp6 = lane.issues.find((issue) => issue.issue_id === "BP-000006");
+  assert.equal(bp5?.issue_packet_v1?.filter_slug, "vornado-md1-0023");
+  assert.equal(bp6?.issue_packet_v1?.filter_slug, "renpho-rp-ap003");
+  assert.ok(bp5?.issue_packet_v1?.closure_criteria.length);
+  assert.ok(bp6?.issue_packet_v1?.future_batch_scope_rules.some((rule) => /exclude/i.test(rule)));
   assert.ok(lane.issues_preview.length >= 1);
   assert.equal(/ISSUE REGISTRY TIER_0:/.test(report.next_best_action), false);
 

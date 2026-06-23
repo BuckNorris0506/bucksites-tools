@@ -52,10 +52,11 @@ test("DEPLOYED issue without closure metadata is not CLOSED_PROVEN eligible", ()
   assert.ok(audit.closed_proven_eligibility_v1.missing_requirements.length > 0);
 });
 
-test("CLOSED_PROVEN issues excluded from open counts and steering", () => {
+test("CLOSED_PROVEN issues excluded from steering; TIER_1 catalog issues remain open", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_open, 2);
   assert.equal(lane.total_closed, 4);
   assert.ok(lane.issues.some((row) => row.issue_id === "BP-000001"));
+  assert.ok(lane.issues.some((row) => row.issue_id === "BP-000005"));
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 });

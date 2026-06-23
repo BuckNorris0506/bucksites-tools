@@ -132,10 +132,10 @@ test("DEPLOYED TIER_0 is not steering eligible; RE_AUDITED STILL_OPEN is", () =>
   );
 });
 
-test("seeded registry loads four CLOSED_PROVEN issues", () => {
+test("seeded registry loads four CLOSED_PROVEN issues and two PACKET_READY AP catalog issues", () => {
   const loaded = loadCommandCenterIssuesV1({ rootDir: ROOT });
   assert.equal(loaded.issues_dir_exists, true);
-  assert.equal(loaded.issues.length, 4);
+  assert.equal(loaded.issues.length, 6);
   const bp1 = loaded.issues.find((issue) => issue.issue_id === "BP-000001");
   assert.equal(bp1?.status, "CLOSED_PROVEN");
   assert.equal(bp1?.closure_approved, true);
@@ -150,8 +150,8 @@ test("seeded registry loads four CLOSED_PROVEN issues", () => {
     4,
   );
   assert.equal(
-    loaded.issues.filter((issue) => issue.status === "DEPLOYED").length,
-    0,
+    loaded.issues.filter((issue) => issue.status === "PACKET_READY").length,
+    2,
   );
 });
 
@@ -211,12 +211,12 @@ test("VALIDATED effective status TIER_0 still steers next_best_action", () => {
   assert.match(steering!.next_best_action, /VALIDATED/);
 });
 
-test("command center lane does not steer when all seeded issues are CLOSED_PROVEN", () => {
+test("command center lane does not steer when only TIER_1 catalog issues are open", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
   assert.equal(lane.contract, "command_center_issue_registry_v1");
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
-  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_open, 2);
   assert.equal(lane.total_closed, 4);
   assert.deepEqual(lane.closed_proven_issue_ids, [
     "BP-000001",
@@ -226,9 +226,10 @@ test("command center lane does not steer when all seeded issues are CLOSED_PROVE
   ]);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue, null);
-  assert.equal(lane.lifecycle_distribution.aligned_count, 4);
+  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000005");
+  assert.equal(lane.lifecycle_distribution.aligned_count, 6);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 2);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 
