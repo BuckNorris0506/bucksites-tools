@@ -103,7 +103,7 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
   const expected: Record<(typeof REFERENCE_SLUGS)[number], string> = {
     edr4rxd1: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
     gswf: "CONFLICT_REQUIRES_RECONCILIATION",
-    rpwfe: "RESCUE_BROWSER_PROOF_READY",
+    rpwfe: "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
     adq36006101: "AUDIT_WRONG_PART_RISK",
     edr2rxd1: "BUYER_PATH_SEARCH_PLACEHOLDER_PENDING",
   };
@@ -120,6 +120,32 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
       }),
     );
   }
+});
+
+test("rpwfe scope split: rescue buyer-path proven with mapping fit blocked", () => {
+  const loaded = loadFridgeArtifactsForFilterSlugV1(ROOT, "rpwfe");
+  const disposition = resolveFridgeDispositionV1(loaded);
+  assert.equal(disposition, "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED");
+
+  const mapping = mapFridgeDispositionToUcfV1(disposition);
+  assert.equal(mapping.core_disposition, "mapping_review");
+  assert.equal(mapping.adapter_state, "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED");
+
+  const projection = buildFridgeCoverageFactoryReferenceProjectionV1({
+    rootDir: ROOT,
+    filterSlugs: ["rpwfe"],
+  });
+  const assessment = projection.assessments[0]!;
+  const evidence = projection.evidence[0]!;
+  const work = projection.work_items[0]!;
+
+  assert.equal(assessment.core_disposition, "mapping_review");
+  assert.equal(assessment.adapter_state, "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED");
+  assert.equal(evidence.claims.identity.status, "proven");
+  assert.equal(evidence.claims.buyer_path.status, "proven");
+  assert.equal(evidence.claims.fit.status, "blocked");
+  assert.equal(work.permitted_action_class, "MAPPING_REVIEW");
+  assert.notEqual(work.permitted_action_class, "PLAN_CHANGE");
 });
 
 test("promotion gates respected when buyer_path is not proven", () => {

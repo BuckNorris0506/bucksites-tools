@@ -7,6 +7,7 @@ import {
   COVERAGE_WORK_ITEM_CONTRACT_V1,
   coverageFactoryContractsGrantProductionMutationAuthorityV1,
   UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+  UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
   validateCoverageWorkItemV1,
 } from "./index";
 
@@ -141,12 +142,18 @@ test("all disposition classes generate correct work types from committed referen
 
   const rpwfe = generated.work_items.find((item) => item.subject_ids[0]?.includes("rpwfe"));
   assert.ok(rpwfe);
-  assert.equal(rpwfe.permitted_action_class, "PLAN_CHANGE");
+  assert.equal(rpwfe.permitted_action_class, "MAPPING_REVIEW");
   assert.equal(rpwfe.requires_owner_review, true);
   assert.ok(
     rpwfe.blockers.some((blocker) =>
+      blocker.includes(UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1),
+    ),
+  );
+  assert.equal(
+    rpwfe.blockers.some((blocker) =>
       blocker.includes(UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1),
     ),
+    false,
   );
 
   for (const subjectId of factory.subject_rows

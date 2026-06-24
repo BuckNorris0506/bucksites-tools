@@ -8,6 +8,7 @@ import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import {
   coverageFactoryContractsGrantProductionMutationAuthorityV1,
   UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+  UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
   validateCoverageWorkItemV1,
 } from "./index";
 
@@ -130,12 +131,13 @@ test("evidence and blockers survive factory into decision layer", () => {
 
   const rpwfe = decision.subject_rows.find((row) => row.subject_id.includes("rpwfe"));
   assert.ok(rpwfe);
+  assert.equal(rpwfe.disposition, "mapping_review");
   assert.equal(rpwfe.evidence_summary.fit, "blocked");
   assert.ok(
     decision.truth_blockers.some(
       (blocker) =>
         blocker.subject_id === rpwfe.subject_id &&
-        blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+        blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
     ),
   );
 
@@ -143,10 +145,11 @@ test("evidence and blockers survive factory into decision layer", () => {
     item.subject_ids[0]?.includes("rpwfe"),
   );
   assert.ok(rpwfeCandidate);
+  assert.equal(rpwfeCandidate.permitted_action_class, "MAPPING_REVIEW");
   assert.equal(rpwfeCandidate.requires_owner_review, true);
   assert.ok(
     rpwfeCandidate.blockers.some((blocker) =>
-      blocker.includes(UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1),
+      blocker.includes(UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1),
     ),
   );
 });

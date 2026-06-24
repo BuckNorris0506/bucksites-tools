@@ -78,6 +78,7 @@ export const FRIDGE_COVERAGE_DISPOSITIONS_V1 = [
   "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
   "APPLY_ELIGIBLE_WITH_EXISTING_PROOF",
   "RESCUE_BROWSER_PROOF_READY",
+  "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
   "BUYER_PATH_SEARCH_PLACEHOLDER_PENDING",
   "READY_FOR_OWNER_BROWSER_PROOF",
   "CONFLICT_REQUIRES_RECONCILIATION",
@@ -142,6 +143,16 @@ export const FRIDGE_COVERAGE_DISPOSITION_MAPPING_TABLE_V1: readonly FridgeCovera
       evidence_dimension_hints: {
         identity: "proven",
         fit: "proven",
+        buyer_path: "proven",
+      },
+    },
+    {
+      fridge_disposition: "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
+      core_disposition: "mapping_review",
+      adapter_state: "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
+      evidence_dimension_hints: {
+        identity: "proven",
+        fit: "blocked",
         buyer_path: "proven",
       },
     },
@@ -543,6 +554,13 @@ function findDraftArtifact(
   };
 }
 
+function mappingFitBlockedByAuditV1(loaded: FridgeLoadedArtifactsV1): boolean {
+  return (
+    loaded.audit_summary?.worst_classification === "WRONG_PART_RISK" ||
+    loaded.batch_factory_row?.batch_factory_state === "DO_NOT_USE_WRONG_PART_RISK"
+  );
+}
+
 export function resolveFridgeDispositionV1(loaded: FridgeLoadedArtifactsV1): FridgeCoverageDispositionV1 {
   const batchState = loaded.batch_factory_row?.batch_factory_state;
 
@@ -558,6 +576,9 @@ export function resolveFridgeDispositionV1(loaded: FridgeLoadedArtifactsV1): Fri
     loaded.rescue_browser_evidence?.browser_truth_status === "PASS" &&
     loaded.rescue_browser_evidence.captured_signals?.classification === "direct_buyable"
   ) {
+    if (mappingFitBlockedByAuditV1(loaded)) {
+      return "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED";
+    }
     return "RESCUE_BROWSER_PROOF_READY";
   }
 
@@ -646,6 +667,12 @@ function blockersFromLoaded(loaded: FridgeLoadedArtifactsV1): string[] {
     disposition === "RESCUE_BROWSER_PROOF_READY"
   ) {
     blockers.push("Founder approval required before any CSV apply from read-only UCF projection");
+  }
+
+  if (disposition === "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED") {
+    blockers.push(
+      "Rescue buyer-path proof is ready; model-fit mapping safety remains blocked pending owner or mapping review",
+    );
   }
 
   if (
@@ -840,7 +867,8 @@ function workItemActionForFridgeDisposition(
   if (
     disposition === "CONFLICT_REQUIRES_RECONCILIATION" ||
     disposition === "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL" ||
-    disposition === "BAD_MAPPING_REMEDIATION_REQUIRED"
+    disposition === "BAD_MAPPING_REMEDIATION_REQUIRED" ||
+    disposition === "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED"
   ) {
     return "MAPPING_REVIEW";
   }
@@ -875,6 +903,7 @@ function buildWorkItemForFridgeSubject(
     requires_owner_review:
       disposition === "APPLY_READY_AFTER_OWNER_BROWSER_PROOF" ||
       disposition === "RESCUE_BROWSER_PROOF_READY" ||
+      disposition === "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED" ||
       disposition === "FAMILY_RECONCILIATION_OWNER_REVIEW",
     priority_score:
       disposition === "APPLY_READY_AFTER_OWNER_BROWSER_PROOF" ||
@@ -1245,7 +1274,7 @@ export function assessFridgeContractFitV1(): FridgeContractFitGapV1[] {
       kind: "ADAPTER_ONLY",
       topic: "rescue_evidence_precedence",
       detail:
-        "Read-only rescue browser evidence (rpwfe-official-ge-browser-evidence-v1) takes precedence over audit WRONG_PART_RISK aggregate when filter-specific direct_buyable proof is committed.",
+        "Read-only rescue browser evidence (rpwfe-official-ge-browser-evidence-v1) preserves buyer-path proof when direct_buyable, but WRONG_PART_RISK audit aggregate routes to RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED instead of planning-ready.",
     },
     {
       kind: "LEGACY_DATA_ISSUE",

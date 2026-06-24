@@ -33,6 +33,9 @@ const UNIVERSAL_COVERAGE_FACTORY_SCHEMA_VERSION_V1 = "1.1.0" as const;
 export const UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1 =
   "PLANNING_READY_FIT_BLOCKED" as const;
 
+export const UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1 =
+  "RESCUE_BUYER_PATH_READY_FIT_BLOCKED" as const;
+
 export const COMMITTED_UCF_ADAPTER_IDS_V1 = [
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
@@ -242,6 +245,18 @@ export function deriveFactorySubjectTruthBlockersV1(args: {
     blockers.push({
       code: UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
       detail: `ready_for_change_planning with fit=blocked and adapter_state=${args.adapter_state}; planning work must not be treated as apply-ready.`,
+    });
+  }
+
+  if (
+    args.disposition === "mapping_review" &&
+    args.evidence_summary.buyer_path === "proven" &&
+    args.evidence_summary.fit === "blocked" &&
+    args.adapter_state === "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED"
+  ) {
+    blockers.push({
+      code: UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
+      detail: `buyer_path=proven with fit=blocked and adapter_state=${args.adapter_state}; rescue buyer-path proof is ready but mapping safety remains blocked.`,
     });
   }
 

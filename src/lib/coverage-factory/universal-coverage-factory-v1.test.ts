@@ -17,6 +17,7 @@ import {
   buildUniversalCoverageFactoryV1,
   isCommittedUcfAdapterIdV1,
   UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+  UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
   universalCoverageFactoryGrantsMutationAuthorityV1,
   validateUniversalCoverageFactoryV1,
 } from "./universal-coverage-factory-v1";
@@ -191,16 +192,25 @@ test("subject_rows preserve evidence, blockers, provenance, and subject links", 
   assert.equal(edr4.policy_apply_allowed, false);
 });
 
-test("rpwfe planning-ready with fit blocked is flagged as truth blocker", () => {
+test("rpwfe rescue buyer-path proven with mapping fit blocked is flagged as truth blocker", () => {
   const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
   const rpwfe = factory.subject_rows.find((row) => row.subject_id.includes("rpwfe"));
   assert.ok(rpwfe);
-  assert.equal(rpwfe.disposition, "ready_for_change_planning");
+  assert.equal(rpwfe.disposition, "mapping_review");
+  assert.equal(rpwfe.evidence_summary.identity, "proven");
+  assert.equal(rpwfe.evidence_summary.buyer_path, "proven");
   assert.equal(rpwfe.evidence_summary.fit, "blocked");
+  assert.equal(rpwfe.adapter_state, "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED");
   assert.ok(
+    rpwfe.truth_blockers.some(
+      (blocker) => blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
+    ),
+  );
+  assert.equal(
     rpwfe.truth_blockers.some(
       (blocker) => blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
     ),
+    false,
   );
 });
 
