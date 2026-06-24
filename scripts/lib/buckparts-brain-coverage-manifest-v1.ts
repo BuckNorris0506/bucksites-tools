@@ -34,7 +34,7 @@ const VERDICTS: BrainCoverageVerdictV1[] = [
 function entry(
   seed: EntrySeed,
 ): BrainCoverageManifestEntryV1 {
-  return {
+  const row: BrainCoverageManifestEntryV1 = {
     system_id: seed.system_id,
     npm_script_or_path: seed.npm_script_or_path,
     cc_json_path: seed.cc_json_path,
@@ -44,6 +44,13 @@ function entry(
     validation_command: seed.validation_command,
     reason: seed.reason,
   };
+  if (seed.source !== undefined) row.source = seed.source;
+  if (seed.role !== undefined) row.role = seed.role;
+  if (seed.owner !== undefined) row.owner = seed.owner;
+  if (seed.mutation_authority !== undefined) row.mutation_authority = seed.mutation_authority;
+  if (seed.steering_authority !== undefined) row.steering_authority = seed.steering_authority;
+  if (seed.notes !== undefined) row.notes = seed.notes;
+  return row;
 }
 
 /** Curated systems beyond package.json script enumeration. */
@@ -92,6 +99,25 @@ const CURATED_ENTRIES: EntrySeed[] = [
       "node --import tsx --test scripts/lib/command-center-issue-registry-v1.test.ts",
     reason:
       "Read-only issue lifecycle registry loaded from data/command-center/issues; steers TIER_0 next_best_action when open.",
+  },
+  {
+    system_id: "truth_integrity_registry_v1",
+    npm_script_or_path:
+      "data/truth-integrity/truth-integrity-registry-v1.json + scripts/lib/command-center-truth-integrity-registry-v1.ts",
+    cc_json_path: "command_center_v2.truth_integrity_registry_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/command-center-truth-integrity-registry-v1.test.ts",
+    reason:
+      "Truth Integrity Department read-only truth debt ledger projected into Command Center during report generation.",
+    source: "data/truth-integrity/truth-integrity-registry-v1.json",
+    role: "truth debt / integrity finding ledger",
+    owner: "Truth Integrity Department",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "visible to Brain/Command Center, no NBA override",
   },
   {
     system_id: "seo_opportunity_registry",
