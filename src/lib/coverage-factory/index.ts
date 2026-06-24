@@ -137,6 +137,22 @@ export function coverageFactoryContractsGrantProductionMutationAuthorityV1(): fa
 }
 
 export {
+  buildUniversalCoverageFactoryV1,
+  COMMITTED_UCF_ADAPTER_IDS_V1,
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
+  isCommittedUcfAdapterIdV1,
+  UNIVERSAL_COVERAGE_FACTORY_CONTRACT_V1,
+  universalCoverageFactoryGrantsMutationAuthorityV1,
+  validateUniversalCoverageFactoryV1,
+  type CommittedUcfAdapterIdV1,
+  type UniversalCoverageFactoryBatchHeadV1,
+  type UniversalCoverageFactoryRunManifestV1,
+  type UniversalCoverageFactoryTotalsV1,
+  type UniversalCoverageFactoryV1,
+  type UniversalCoverageFactoryWedgeSummaryV1,
+} from "./universal-coverage-factory-v1";
+
+export {
   AP_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   AP_COVERAGE_LEGACY_MAP_V1,
