@@ -109,6 +109,11 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
     rpwfe: "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
     adq36006101: "AUDIT_WRONG_PART_RISK",
     edr2rxd1: "BUYER_PATH_SEARCH_PLACEHOLDER_PENDING",
+    edr3rxd1: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
+    eptwfu01: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
+    ultrawf: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
+    wf3cb: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
+    wfcb: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
   };
 
   for (const slug of REFERENCE_SLUGS) {

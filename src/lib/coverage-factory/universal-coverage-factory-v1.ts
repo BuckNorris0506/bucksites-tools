@@ -401,6 +401,11 @@ export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
     "rpwfe",
     "adq36006101",
     "edr2rxd1",
+    "edr3rxd1",
+    "eptwfu01",
+    "ultrawf",
+    "wf3cb",
+    "wfcb",
   ],
 };
 
