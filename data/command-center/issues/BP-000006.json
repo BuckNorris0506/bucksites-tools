@@ -20,7 +20,7 @@
     "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
     "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json"
   ],
-  "repair_commit": null,
+  "repair_commit": "9f29e54",
   "deploy_commit": null,
   "closed_at": "2026-06-24T02:00:00.000Z",
   "re_audit_outcome": null,
