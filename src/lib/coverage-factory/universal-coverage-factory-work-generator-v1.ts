@@ -15,11 +15,12 @@ import {
   validateUniversalCoverageFactoryDecisionLayerV1,
   type UniversalCoverageFactoryDecisionLayerV1,
 } from "./universal-coverage-factory-decision-layer-v1";
+import { UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1 } from "./universal-coverage-factory-v1";
 
 export const UNIVERSAL_COVERAGE_FACTORY_WORK_GENERATOR_CONTRACT_V1 =
   "universal_coverage_factory_work_generator_v1" as const;
 
-const WORK_GENERATOR_SCHEMA_VERSION_V1 = "1.0.0" as const;
+const WORK_GENERATOR_SCHEMA_VERSION_V1 = "1.1.0" as const;
 
 export type UniversalCoverageFactoryWorkGeneratorDispositionV1 =
   | "mapping_review"
@@ -65,6 +66,19 @@ export function stableUcfWorkItemIdV1(subjectId: string): string {
   return `ucf-work-v1-${subjectId.replaceAll(":", "-")}`;
 }
 
+function dispositionForSubjectRow(
+  disposition: CoverageAssessmentDispositionV1,
+): UniversalCoverageFactoryWorkGeneratorDispositionV1 {
+  if (disposition === "suppressed") return "suppressed";
+  if (disposition === "mapping_review") return "mapping_review";
+  if (disposition === "owner_review") return "owner_review";
+  if (disposition === "research_buyer_path") return "research_buyer_path";
+  if (disposition === "research_identity") return "research_identity";
+  if (disposition === "research_fit") return "research_fit";
+  if (disposition === "ready_for_change_planning") return "ready_for_change_planning";
+  throw new Error(`Disposition not supported by work generator (fail closed): ${disposition}`);
+}
+
 function inferDispositionForSubject(
   decision: UniversalCoverageFactoryDecisionLayerV1,
   subjectId: string,
@@ -72,38 +86,13 @@ function inferDispositionForSubject(
   if (decision.suppressed_subjects.includes(subjectId)) {
     return "suppressed";
   }
-  if (decision.ready_for_change_planning_subjects.includes(subjectId)) {
-    return "ready_for_change_planning";
-  }
-  if (decision.research_required_subjects.includes(subjectId)) {
-    const candidate = decision.candidate_work_items.find((item) => item.subject_ids[0] === subjectId);
-    if (candidate?.permitted_action_class === "READ_ONLY_RESEARCH") {
-      return "research_buyer_path";
-    }
-    return "research_buyer_path";
+
+  const row = decision.subject_rows.find((entry) => entry.subject_id === subjectId);
+  if (!row) {
+    throw new Error(`Missing subject row for ${subjectId} (fail closed)`);
   }
 
-  const candidate = decision.candidate_work_items.find((item) => item.subject_ids[0] === subjectId);
-  if (!candidate) {
-    throw new Error(`Missing candidate work item for subject ${subjectId} (fail closed)`);
-  }
-
-  if (candidate.permitted_action_class === "MAPPING_REVIEW") {
-    return "mapping_review";
-  }
-  if (candidate.permitted_action_class === "OWNER_REVIEW") {
-    return "owner_review";
-  }
-  if (candidate.permitted_action_class === "PLAN_CHANGE") {
-    return "ready_for_change_planning";
-  }
-  if (candidate.permitted_action_class === "READ_ONLY_RESEARCH") {
-    return "research_buyer_path";
-  }
-
-  throw new Error(
-    `Unknown permitted_action_class for subject ${subjectId} (fail closed): ${candidate.permitted_action_class}`,
-  );
+  return dispositionForSubjectRow(row.disposition);
 }
 
 function actionClassForWorkGeneratorDisposition(
@@ -117,17 +106,34 @@ function actionClassForWorkGeneratorDisposition(
   return null;
 }
 
+function researchDispositionBlocker(
+  disposition: UniversalCoverageFactoryWorkGeneratorDispositionV1,
+): string {
+  return `WORK_GENERATOR_RESEARCH_DISPOSITION:${disposition}`;
+}
+
 function provenanceBlockersFromDecision(
   decision: UniversalCoverageFactoryDecisionLayerV1,
   subjectId: string,
 ): string[] {
   const candidate = decision.candidate_work_items.find((item) => item.subject_ids[0] === subjectId);
+  const row = decision.subject_rows.find((entry) => entry.subject_id === subjectId);
   const truth = decision.truth_blockers
     .filter((blocker) => blocker.subject_id === subjectId)
     .map((blocker) => `${blocker.code}:${blocker.detail}`);
 
   const provenance = [
     `source_provenance_index_hash:${decision.source_provenance_index_hash}`,
+    ...(row?.blockers.map((blocker) => `ASSESSMENT_BLOCKER:${blocker}`) ?? []),
+    ...(row
+      ? [
+          `evidence_summary:identity=${row.evidence_summary.identity}`,
+          `evidence_summary:fit=${row.evidence_summary.fit}`,
+          `evidence_summary:buyer_path=${row.evidence_summary.buyer_path}`,
+          `provenance_ref_count:${row.provenance_summary.provenance_ref_count}`,
+          `subject_link_count:${row.subject_link_count}`,
+        ]
+      : []),
     ...(candidate?.blockers ?? []),
     ...truth,
   ];
@@ -145,10 +151,20 @@ function buildGeneratedWorkItem(
     throw new Error(`Cannot build work item for suppressed subject ${subjectId}`);
   }
 
+  const row = decision.subject_rows.find((entry) => entry.subject_id === subjectId);
+  const hasPlanningFitContradiction =
+    row?.truth_blockers.some(
+      (blocker) => blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+    ) ?? false;
+
   const blockers = [
     ...provenanceBlockersFromDecision(decision, subjectId),
     "WORK_GENERATOR_NO_APPLY_AUTHORITY:policy_apply_allowed remains false at work-generator layer",
   ];
+
+  if (RESEARCH_DISPOSITIONS_V1.includes(disposition)) {
+    blockers.push(researchDispositionBlocker(disposition));
+  }
 
   const candidate = decision.candidate_work_items.find((item) => item.subject_ids[0] === subjectId);
   const hasAdapterPolicyApply =
@@ -164,6 +180,12 @@ function buildGeneratedWorkItem(
     );
   }
 
+  if (hasPlanningFitContradiction) {
+    blockers.push(
+      `${UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1}:planning work is blocked from apply-ready interpretation`,
+    );
+  }
+
   return {
     contract: COVERAGE_WORK_ITEM_CONTRACT_V1,
     work_item_id: stableUcfWorkItemIdV1(subjectId),
@@ -173,7 +195,8 @@ function buildGeneratedWorkItem(
     requires_owner_review:
       disposition === "owner_review" ||
       disposition === "mapping_review" ||
-      disposition === "ready_for_change_planning",
+      (disposition === "ready_for_change_planning" &&
+        (row?.policy_apply_allowed === false || hasPlanningFitContradiction)),
     priority_score: candidate?.priority_score ?? null,
     blockers: Array.from(new Set(blockers)),
     read_only: true,
@@ -185,13 +208,10 @@ function buildGeneratedWorkItem(
 }
 
 function collectSubjectIds(decision: UniversalCoverageFactoryDecisionLayerV1): string[] {
-  const subjectIds = new Set<string>();
-  for (const item of decision.candidate_work_items) {
-    for (const subjectId of item.subject_ids) {
-      subjectIds.add(subjectId);
-    }
-  }
-  return Array.from(subjectIds).sort((left, right) => left.localeCompare(right));
+  return decision.subject_rows
+    .filter((row) => row.disposition !== "suppressed")
+    .map((row) => row.subject_id)
+    .sort((left, right) => left.localeCompare(right));
 }
 
 export function validateUniversalCoverageFactoryWorkGeneratorV1(
@@ -236,7 +256,15 @@ export function buildUniversalCoverageFactoryWorkGeneratorV1(
     const item = buildGeneratedWorkItem(decision, subjectId, disposition);
 
     if (disposition === "ready_for_change_planning") {
-      if (item.requires_owner_review !== true) {
+      const row = decision.subject_rows.find((entry) => entry.subject_id === subjectId);
+      const hasPlanningFitContradiction =
+        row?.truth_blockers.some(
+          (blocker) => blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+        ) ?? false;
+      const planningOnlyEnvelope =
+        row?.policy_apply_allowed === false || hasPlanningFitContradiction;
+
+      if (planningOnlyEnvelope && item.requires_owner_review !== true) {
         throw new Error(
           `ready_for_change_planning requires owner_review_required=true for ${subjectId}`,
         );
@@ -244,7 +272,13 @@ export function buildUniversalCoverageFactoryWorkGeneratorV1(
       if (
         !item.blockers.some((blocker) => blocker.includes("WORK_GENERATOR_NO_APPLY_AUTHORITY"))
       ) {
-        throw new Error(`ready_for_change_planning must enforce policy_apply_allowed false`);
+        throw new Error(`ready_for_change_planning must enforce no apply authority for ${subjectId}`);
+      }
+    }
+
+    if (RESEARCH_DISPOSITIONS_V1.includes(disposition)) {
+      if (!item.blockers.some((blocker) => blocker.includes(disposition))) {
+        throw new Error(`research work item must preserve disposition ${disposition} for ${subjectId}`);
       }
     }
 
@@ -276,14 +310,7 @@ export function buildUniversalCoverageFactoryWorkGeneratorV1(
 export function dispositionForCoverageAssessmentV1(
   disposition: CoverageAssessmentDispositionV1,
 ): UniversalCoverageFactoryWorkGeneratorDispositionV1 | "suppressed" {
-  if (disposition === "suppressed") return "suppressed";
-  if (disposition === "mapping_review") return "mapping_review";
-  if (disposition === "owner_review") return "owner_review";
-  if (disposition === "research_buyer_path") return "research_buyer_path";
-  if (disposition === "research_identity") return "research_identity";
-  if (disposition === "research_fit") return "research_fit";
-  if (disposition === "ready_for_change_planning") return "ready_for_change_planning";
-  throw new Error(`Disposition not supported by work generator (fail closed): ${disposition}`);
+  return dispositionForSubjectRow(disposition);
 }
 
 export function expectedActionClassForWorkGeneratorDisposition(

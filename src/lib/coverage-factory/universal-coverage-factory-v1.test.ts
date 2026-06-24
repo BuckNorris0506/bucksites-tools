@@ -16,6 +16,7 @@ import {
 import {
   buildUniversalCoverageFactoryV1,
   isCommittedUcfAdapterIdV1,
+  UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
   universalCoverageFactoryGrantsMutationAuthorityV1,
   validateUniversalCoverageFactoryV1,
 } from "./universal-coverage-factory-v1";
@@ -170,4 +171,71 @@ test("provenance_index_hash is stable for fixed adapter set and clock", () => {
 
   assert.equal(first.run_manifest.provenance_index_hash, second.run_manifest.provenance_index_hash);
   assert.match(first.run_manifest.provenance_index_hash, /^sha256:[a-f0-9]{64}$/);
+});
+
+test("subject_rows preserve evidence, blockers, provenance, and subject links", () => {
+  const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
+
+  assert.equal(factory.subject_rows.length, 11);
+  for (const row of factory.subject_rows) {
+    assert.ok(row.evidence_summary);
+    assert.ok(Array.isArray(row.blockers));
+    assert.ok(row.provenance_summary);
+    assert.equal(row.subject_link_count, row.subject_link_refs.length);
+    assert.ok(row.provenance_summary.provenance_ref_count >= 0);
+  }
+
+  const edr4 = factory.subject_rows.find((row) => row.subject_id.includes("edr4rxd1"));
+  assert.ok(edr4);
+  assert.equal(edr4.disposition, "ready_for_change_planning");
+  assert.equal(edr4.policy_apply_allowed, false);
+});
+
+test("rpwfe planning-ready with fit blocked is flagged as truth blocker", () => {
+  const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
+  const rpwfe = factory.subject_rows.find((row) => row.subject_id.includes("rpwfe"));
+  assert.ok(rpwfe);
+  assert.equal(rpwfe.disposition, "ready_for_change_planning");
+  assert.equal(rpwfe.evidence_summary.fit, "blocked");
+  assert.ok(
+    rpwfe.truth_blockers.some(
+      (blocker) => blocker.code === UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+    ),
+  );
+});
+
+test("validateUniversalCoverageFactoryV1 rejects inconsistent totals and duplicate subject IDs", () => {
+  const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
+
+  const badTotals = {
+    ...factory,
+    factory_totals: {
+      ...factory.factory_totals,
+      total_subjects: factory.factory_totals.total_subjects + 1,
+    },
+  };
+  assert.equal(validateUniversalCoverageFactoryV1(badTotals), false);
+
+  const duplicateRows = {
+    ...factory,
+    subject_rows: [
+      factory.subject_rows[0],
+      { ...factory.subject_rows[0] },
+      ...factory.subject_rows.slice(1),
+    ],
+    batch_heads: [
+      factory.batch_heads[0],
+      factory.batch_heads[0],
+      ...factory.batch_heads.slice(1),
+    ],
+  };
+  assert.equal(validateUniversalCoverageFactoryV1(duplicateRows), false);
+
+  const fabricatedHead = {
+    ...factory,
+    batch_heads: factory.batch_heads.map((head, index) =>
+      index === 0 ? { ...head, disposition: "covered" as const } : head,
+    ),
+  };
+  assert.equal(validateUniversalCoverageFactoryV1(fabricatedHead), false);
 });

@@ -90,6 +90,17 @@ export function validateCoverageAssessmentV1(value: unknown): value is CoverageA
   return true;
 }
 
+function coverageAssessmentPlanningEvidenceSatisfiedV1(args: {
+  evidence: CoverageEvidenceV1;
+  requirements?: CoverageEvidenceRequirementsV1;
+}): boolean {
+  const requirements = args.requirements ?? DEFAULT_COVERAGE_EVIDENCE_REQUIREMENTS_V1;
+  if (coverageEvidenceHasUnknownOnPromotionDimensionsV1({ evidence: args.evidence, requirements })) {
+    return false;
+  }
+  return coverageEvidenceMeetsPromotionRequirementsV1({ evidence: args.evidence, requirements });
+}
+
 function coverageAssessmentDispositionConsistentWithEvidenceV1(args: {
   assessment: CoverageAssessmentV1;
   evidence: CoverageEvidenceV1;
@@ -102,17 +113,40 @@ function coverageAssessmentDispositionConsistentWithEvidenceV1(args: {
     if (!coverageEvidenceMeetsCoveredRequirementsV1(evidence)) return false;
   }
 
-  if (isCoverageAssessmentPromotionDispositionV1(assessment.core_disposition)) {
+  if (assessment.core_disposition === "ready_for_change_planning") {
+    return coverageAssessmentPlanningEvidenceSatisfiedV1({ evidence, requirements });
+  }
+
+  if (assessment.core_disposition === "candidate_apply") {
     if (!assessment.policy_apply_allowed) return false;
-    if (coverageEvidenceHasUnknownOnPromotionDimensionsV1({ evidence, requirements })) {
-      return false;
-    }
-    if (!coverageEvidenceMeetsPromotionRequirementsV1({ evidence, requirements })) {
-      return false;
-    }
+    return coverageAssessmentPlanningEvidenceSatisfiedV1({ evidence, requirements });
   }
 
   return true;
+}
+
+/** Planning-only readiness: evidence gates apply; policy_apply_allowed may remain false. */
+export function coverageAssessmentPlanningAllowedV1(args: {
+  assessment: CoverageAssessmentV1;
+  evidence: CoverageEvidenceV1;
+  requirements?: CoverageEvidenceRequirementsV1;
+}): boolean {
+  if (args.assessment.core_disposition !== "ready_for_change_planning") {
+    return true;
+  }
+  return coverageAssessmentDispositionConsistentWithEvidenceV1(args);
+}
+
+/** Apply candidacy is stricter than planning-only: requires policy_apply_allowed and full promotion evidence. */
+export function coverageAssessmentApplyAllowedV1(args: {
+  assessment: CoverageAssessmentV1;
+  evidence: CoverageEvidenceV1;
+  requirements?: CoverageEvidenceRequirementsV1;
+}): boolean {
+  if (args.assessment.core_disposition !== "candidate_apply") {
+    return true;
+  }
+  return coverageAssessmentDispositionConsistentWithEvidenceV1(args);
 }
 
 /**
@@ -125,10 +159,13 @@ export function coverageAssessmentPromotionAllowedV1(args: {
   requirements?: CoverageEvidenceRequirementsV1;
 }): boolean {
   const { assessment } = args;
-  if (!isCoverageAssessmentPromotionDispositionV1(assessment.core_disposition)) {
-    return true;
+  if (assessment.core_disposition === "ready_for_change_planning") {
+    return coverageAssessmentPlanningAllowedV1(args);
   }
-  return coverageAssessmentDispositionConsistentWithEvidenceV1(args);
+  if (assessment.core_disposition === "candidate_apply") {
+    return coverageAssessmentApplyAllowedV1(args);
+  }
+  return true;
 }
 
 export function validateCoverageAssessmentWithEvidenceV1(args: {

@@ -18,6 +18,8 @@ import {
   DEFAULT_COVERAGE_EVIDENCE_REQUIREMENTS_V1,
   assertCanonicalWedgeCatalogValuesV1,
   buildCoverageSubjectIdV1,
+  coverageAssessmentApplyAllowedV1,
+  coverageAssessmentPlanningAllowedV1,
   coverageAssessmentPromotionAllowedV1,
   coverageEvidenceMeetsPromotionRequirementsV1,
   coverageEvidenceSupportsPromotionV1,
@@ -323,6 +325,56 @@ test("unknown evidence cannot become candidate_apply or ready_for_change_plannin
   assert.equal(
     validateCoverageAssessmentWithEvidenceV1({
       assessment: planningAssessment,
+      evidence: provenEvidence,
+    }),
+    true,
+  );
+});
+
+test("planning-only is valid without policy_apply; candidate_apply remains stricter", () => {
+  const provenEvidence = buildProvenEvidence(SUBJECT_ID_AP);
+
+  const planningNoApply = buildAssessment("ready_for_change_planning", SUBJECT_ID_AP);
+  planningNoApply.policy_apply_allowed = false;
+  assert.ok(validateCoverageAssessmentV1(planningNoApply));
+  assert.equal(
+    coverageAssessmentPlanningAllowedV1({ assessment: planningNoApply, evidence: provenEvidence }),
+    true,
+  );
+  assert.equal(
+    validateCoverageAssessmentWithEvidenceV1({
+      assessment: planningNoApply,
+      evidence: provenEvidence,
+    }),
+    true,
+  );
+
+  const candidateNoApply = buildAssessment("candidate_apply", SUBJECT_ID_AP);
+  candidateNoApply.policy_apply_allowed = false;
+  assert.equal(
+    coverageAssessmentApplyAllowedV1({ assessment: candidateNoApply, evidence: provenEvidence }),
+    false,
+  );
+  assert.equal(
+    validateCoverageAssessmentWithEvidenceV1({
+      assessment: candidateNoApply,
+      evidence: provenEvidence,
+    }),
+    false,
+  );
+
+  const candidateWithApply = buildAssessment("candidate_apply", SUBJECT_ID_AP);
+  candidateWithApply.policy_apply_allowed = true;
+  assert.equal(
+    coverageAssessmentApplyAllowedV1({
+      assessment: candidateWithApply,
+      evidence: provenEvidence,
+    }),
+    true,
+  );
+  assert.equal(
+    validateCoverageAssessmentWithEvidenceV1({
+      assessment: candidateWithApply,
       evidence: provenEvidence,
     }),
     true,

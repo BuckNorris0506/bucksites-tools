@@ -21,11 +21,17 @@ import {
   buildWhwCoverageFactoryReferenceProjectionV1,
 } from "./adapters/whw-coverage-factory-adapter-v1";
 import type { CoverageAssessmentDispositionV1, CoverageAssessmentV1 } from "./coverage-assessment-v1";
+import type { CoverageEvidenceClaimStatusV1, CoverageEvidenceV1 } from "./coverage-evidence-v1";
+import type { CoverageProvenanceRefV1 } from "./coverage-provenance-ref-v1";
+import type { CoverageSubjectLinkKindV1, CoverageSubjectLinkV1 } from "./coverage-subject-link-v1";
 import type { CoverageSubjectV1 } from "./coverage-subject-v1";
 
 export const UNIVERSAL_COVERAGE_FACTORY_CONTRACT_V1 = "universal_coverage_factory_v1" as const;
 
-const UNIVERSAL_COVERAGE_FACTORY_SCHEMA_VERSION_V1 = "1.0.0" as const;
+const UNIVERSAL_COVERAGE_FACTORY_SCHEMA_VERSION_V1 = "1.1.0" as const;
+
+export const UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1 =
+  "PLANNING_READY_FIT_BLOCKED" as const;
 
 export const COMMITTED_UCF_ADAPTER_IDS_V1 = [
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
@@ -61,6 +67,44 @@ export type UniversalCoverageFactoryBatchHeadV1 = {
   policy_apply_allowed: boolean;
 };
 
+export type UniversalCoverageFactoryEvidenceSummaryV1 = {
+  identity: CoverageEvidenceClaimStatusV1;
+  fit: CoverageEvidenceClaimStatusV1;
+  buyer_path: CoverageEvidenceClaimStatusV1;
+  demand: CoverageEvidenceClaimStatusV1;
+  publication: CoverageEvidenceClaimStatusV1;
+};
+
+export type UniversalCoverageFactorySubjectLinkRefV1 = {
+  from_subject_id: string;
+  to_subject_id: string;
+  link_kind: CoverageSubjectLinkKindV1;
+};
+
+export type UniversalCoverageFactoryProvenanceSummaryV1 = {
+  provenance_ref_count: number;
+  provenance_refs: CoverageProvenanceRefV1[];
+};
+
+export type UniversalCoverageFactorySubjectTruthBlockerV1 = {
+  code: string;
+  detail: string;
+};
+
+export type UniversalCoverageFactorySubjectRowV1 = {
+  wedge: HomekeepWedgeCatalog;
+  subject_id: string;
+  disposition: CoverageAssessmentDispositionV1;
+  adapter_state: string;
+  policy_apply_allowed: boolean;
+  blockers: string[];
+  evidence_summary: UniversalCoverageFactoryEvidenceSummaryV1;
+  provenance_summary: UniversalCoverageFactoryProvenanceSummaryV1;
+  subject_link_count: number;
+  subject_link_refs: UniversalCoverageFactorySubjectLinkRefV1[];
+  truth_blockers: UniversalCoverageFactorySubjectTruthBlockerV1[];
+};
+
 export type UniversalCoverageFactoryRunManifestV1 = {
   schema_version: string;
   subject_count: number;
@@ -83,6 +127,7 @@ export type UniversalCoverageFactoryV1 = {
   production_mutation_authorized: false;
   wedge_summary: UniversalCoverageFactoryWedgeSummaryV1[];
   factory_totals: UniversalCoverageFactoryTotalsV1;
+  subject_rows: UniversalCoverageFactorySubjectRowV1[];
   batch_heads: UniversalCoverageFactoryBatchHeadV1[];
   run_manifest: UniversalCoverageFactoryRunManifestV1;
 };
@@ -92,6 +137,8 @@ type AdapterProjectionSliceV1 = {
   wedge: HomekeepWedgeCatalog;
   subjects: CoverageSubjectV1[];
   assessments: CoverageAssessmentV1[];
+  evidence: CoverageEvidenceV1[];
+  subject_links: CoverageSubjectLinkV1[];
   provenance_index_hash: string;
 };
 
@@ -135,19 +182,121 @@ function buildWedgeSummary(slice: AdapterProjectionSliceV1): UniversalCoverageFa
   };
 }
 
-function buildBatchHeads(
-  slice: AdapterProjectionSliceV1,
-): UniversalCoverageFactoryBatchHeadV1[] {
+export function buildEvidenceSummaryFromCoverageEvidenceV1(
+  evidence: CoverageEvidenceV1,
+): UniversalCoverageFactoryEvidenceSummaryV1 {
+  return {
+    identity: evidence.claims.identity.status,
+    fit: evidence.claims.fit.status,
+    buyer_path: evidence.claims.buyer_path.status,
+    demand: evidence.claims.demand.status,
+    publication: evidence.claims.publication.status,
+  };
+}
+
+function provenanceRefKey(ref: CoverageProvenanceRefV1): string {
+  if (ref.kind === "artifact_path_hash") {
+    return `artifact:${ref.label}:${ref.hash}`;
+  }
+  if (ref.kind === "packet_id") {
+    return `packet:${ref.packet_id}`;
+  }
+  return `contract:${ref.contract}:${ref.row_key}`;
+}
+
+export function buildProvenanceSummaryFromCoverageEvidenceV1(
+  evidence: CoverageEvidenceV1,
+): UniversalCoverageFactoryProvenanceSummaryV1 {
+  const seen = new Set<string>();
+  const provenance_refs: CoverageProvenanceRefV1[] = [];
+
+  for (const dimension of ["identity", "fit", "buyer_path", "demand", "publication"] as const) {
+    for (const ref of evidence.claims[dimension].provenance_refs) {
+      const key = provenanceRefKey(ref);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      provenance_refs.push(ref);
+    }
+  }
+
+  provenance_refs.sort((left, right) => provenanceRefKey(left).localeCompare(provenanceRefKey(right)));
+
+  return {
+    provenance_ref_count: provenance_refs.length,
+    provenance_refs,
+  };
+}
+
+export function deriveFactorySubjectTruthBlockersV1(args: {
+  disposition: CoverageAssessmentDispositionV1;
+  evidence_summary: UniversalCoverageFactoryEvidenceSummaryV1;
+  adapter_state: string;
+  policy_apply_allowed: boolean;
+}): UniversalCoverageFactorySubjectTruthBlockerV1[] {
+  const blockers: UniversalCoverageFactorySubjectTruthBlockerV1[] = [];
+
+  if (
+    args.disposition === "ready_for_change_planning" &&
+    args.evidence_summary.fit === "blocked"
+  ) {
+    blockers.push({
+      code: UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
+      detail: `ready_for_change_planning with fit=blocked and adapter_state=${args.adapter_state}; planning work must not be treated as apply-ready.`,
+    });
+  }
+
+  if (args.disposition === "candidate_apply" && !args.policy_apply_allowed) {
+    blockers.push({
+      code: "CANDIDATE_APPLY_WITHOUT_POLICY",
+      detail: "candidate_apply requires policy_apply_allowed=true.",
+    });
+  }
+
+  return blockers;
+}
+
+function buildSubjectLinkRefsForSubject(
+  subjectId: string,
+  subjectLinks: CoverageSubjectLinkV1[],
+): UniversalCoverageFactorySubjectLinkRefV1[] {
+  const refs = subjectLinks
+    .filter((link) => link.from_subject_id === subjectId || link.to_subject_id === subjectId)
+    .map((link) => ({
+      from_subject_id: link.from_subject_id,
+      to_subject_id: link.to_subject_id,
+      link_kind: link.link_kind,
+    }));
+
+  refs.sort((left, right) => {
+    const leftKey = `${left.from_subject_id}|${left.link_kind}|${left.to_subject_id}`;
+    const rightKey = `${right.from_subject_id}|${right.link_kind}|${right.to_subject_id}`;
+    return leftKey.localeCompare(rightKey);
+  });
+
+  return refs;
+}
+
+function buildSubjectRows(slice: AdapterProjectionSliceV1): UniversalCoverageFactorySubjectRowV1[] {
   return slice.subjects.map((subject, index) => {
     const assessment = slice.assessments[index];
+    const evidence = slice.evidence[index];
     if (!assessment || assessment.subject_id !== subject.subject_id) {
       throw new Error(
         `Assessment/subject mismatch for ${subject.subject_id} in adapter ${slice.adapter_id}`,
       );
     }
+    if (!evidence || evidence.subject_id !== subject.subject_id) {
+      throw new Error(
+        `Evidence/subject mismatch for ${subject.subject_id} in adapter ${slice.adapter_id}`,
+      );
+    }
     if (!assessment.adapter_state) {
       throw new Error(`Missing adapter_state for ${subject.subject_id}`);
     }
+
+    const evidence_summary = buildEvidenceSummaryFromCoverageEvidenceV1(evidence);
+    const provenance_summary = buildProvenanceSummaryFromCoverageEvidenceV1(evidence);
+    const subject_link_refs = buildSubjectLinkRefsForSubject(subject.subject_id, slice.subject_links);
 
     return {
       wedge: slice.wedge,
@@ -155,14 +304,35 @@ function buildBatchHeads(
       disposition: assessment.core_disposition,
       adapter_state: assessment.adapter_state,
       policy_apply_allowed: assessment.policy_apply_allowed,
+      blockers: [...assessment.blockers],
+      evidence_summary,
+      provenance_summary,
+      subject_link_count: subject_link_refs.length,
+      subject_link_refs,
+      truth_blockers: deriveFactorySubjectTruthBlockersV1({
+        disposition: assessment.core_disposition,
+        evidence_summary,
+        adapter_state: assessment.adapter_state,
+        policy_apply_allowed: assessment.policy_apply_allowed,
+      }),
     };
   });
 }
 
-function sortBatchHeadsDeterministic(
-  batchHeads: UniversalCoverageFactoryBatchHeadV1[],
-): UniversalCoverageFactoryBatchHeadV1[] {
-  return [...batchHeads].sort((left, right) => {
+function batchHeadFromSubjectRow(row: UniversalCoverageFactorySubjectRowV1): UniversalCoverageFactoryBatchHeadV1 {
+  return {
+    wedge: row.wedge,
+    subject_id: row.subject_id,
+    disposition: row.disposition,
+    adapter_state: row.adapter_state,
+    policy_apply_allowed: row.policy_apply_allowed,
+  };
+}
+
+function sortSubjectRowsDeterministic(
+  rows: UniversalCoverageFactorySubjectRowV1[],
+): UniversalCoverageFactorySubjectRowV1[] {
+  return [...rows].sort((left, right) => {
     const wedgeCompare = left.wedge.localeCompare(right.wedge);
     if (wedgeCompare !== 0) return wedgeCompare;
     return left.subject_id.localeCompare(right.subject_id);
@@ -210,6 +380,8 @@ const COMMITTED_UCF_ADAPTER_REGISTRY_V1: readonly CommittedAdapterConfigV1[] = [
         wedge: projection.run_manifest.wedge,
         subjects: projection.subjects,
         assessments: projection.assessments,
+        evidence: projection.evidence,
+        subject_links: projection.subject_links,
         provenance_index_hash: projection.run_manifest.provenance_index_hash,
       };
     },
@@ -231,6 +403,8 @@ const COMMITTED_UCF_ADAPTER_REGISTRY_V1: readonly CommittedAdapterConfigV1[] = [
         wedge: projection.run_manifest.wedge,
         subjects: projection.subjects,
         assessments: projection.assessments,
+        evidence: projection.evidence,
+        subject_links: projection.subject_links,
         provenance_index_hash: projection.run_manifest.provenance_index_hash,
       };
     },
@@ -253,6 +427,8 @@ const COMMITTED_UCF_ADAPTER_REGISTRY_V1: readonly CommittedAdapterConfigV1[] = [
         wedge: projection.run_manifest.wedge,
         subjects: projection.subjects,
         assessments: projection.assessments,
+        evidence: projection.evidence,
+        subject_links: projection.subject_links,
         provenance_index_hash: projection.run_manifest.provenance_index_hash,
       };
     },
@@ -295,6 +471,110 @@ function buildFactoryTotals(
   };
 }
 
+function batchHeadMatchesSubjectRow(
+  head: UniversalCoverageFactoryBatchHeadV1,
+  row: UniversalCoverageFactorySubjectRowV1,
+): boolean {
+  return (
+    head.wedge === row.wedge &&
+    head.subject_id === row.subject_id &&
+    head.disposition === row.disposition &&
+    head.adapter_state === row.adapter_state &&
+    head.policy_apply_allowed === row.policy_apply_allowed
+  );
+}
+
+export function universalCoverageFactoryInternalConsistencyErrorsV1(
+  factory: UniversalCoverageFactoryV1,
+): string[] {
+  const errors: string[] = [];
+
+  if (!Array.isArray(factory.subject_rows) || !Array.isArray(factory.batch_heads)) {
+    errors.push("subject_rows and batch_heads must be arrays");
+    return errors;
+  }
+
+  if (!factory.factory_totals || typeof factory.factory_totals !== "object") {
+    errors.push("factory_totals must be present");
+    return errors;
+  }
+
+  if (!factory.run_manifest || typeof factory.run_manifest !== "object") {
+    errors.push("run_manifest must be present");
+    return errors;
+  }
+
+  if (factory.subject_rows.length !== factory.batch_heads.length) {
+    errors.push("subject_rows length must equal batch_heads length");
+  }
+
+  if (factory.factory_totals.total_subjects !== factory.subject_rows.length) {
+    errors.push("factory_totals.total_subjects must equal subject_rows length");
+  }
+
+  if (factory.run_manifest.subject_count !== factory.subject_rows.length) {
+    errors.push("run_manifest.subject_count must equal subject_rows length");
+  }
+
+  const subjectIds = factory.subject_rows.map((row) => row.subject_id);
+  if (subjectIds.length !== new Set(subjectIds).size) {
+    errors.push("subject_id values must be globally unique across adapters");
+  }
+
+  for (let index = 0; index < factory.subject_rows.length; index += 1) {
+    const row = factory.subject_rows[index];
+    const head = factory.batch_heads[index];
+    if (!row || !head || !batchHeadMatchesSubjectRow(head, row)) {
+      errors.push(`batch_heads[${index}] must match subject_rows[${index}] summary fields`);
+    }
+  }
+
+  const sortedRows = sortSubjectRowsDeterministic(factory.subject_rows);
+  for (let index = 0; index < factory.subject_rows.length; index += 1) {
+    const row = factory.subject_rows[index];
+    const expected = sortedRows[index];
+    if (!row || !expected || row.subject_id !== expected.subject_id) {
+      errors.push("subject_rows must be sorted by wedge then subject_id");
+      break;
+    }
+  }
+
+  for (const summary of factory.wedge_summary) {
+    const rowsForWedge = factory.subject_rows.filter((row) => row.wedge === summary.wedge);
+    if (rowsForWedge.length !== summary.subject_count) {
+      errors.push(`wedge_summary subject_count mismatch for wedge ${summary.wedge}`);
+    }
+  }
+
+  const totals = factory.factory_totals;
+  if (
+    totals.total_ready_for_change_planning !==
+    factory.subject_rows.filter((row) => row.disposition === "ready_for_change_planning").length
+  ) {
+    errors.push("factory_totals.total_ready_for_change_planning must reconcile with subject_rows");
+  }
+  if (
+    totals.total_suppressed !==
+    factory.subject_rows.filter((row) => row.disposition === "suppressed").length
+  ) {
+    errors.push("factory_totals.total_suppressed must reconcile with subject_rows");
+  }
+  if (
+    totals.total_mapping_review !==
+    factory.subject_rows.filter((row) => row.disposition === "mapping_review").length
+  ) {
+    errors.push("factory_totals.total_mapping_review must reconcile with subject_rows");
+  }
+  if (
+    totals.total_owner_review !==
+    factory.subject_rows.filter((row) => row.disposition === "owner_review").length
+  ) {
+    errors.push("factory_totals.total_owner_review must reconcile with subject_rows");
+  }
+
+  return errors;
+}
+
 export function validateUniversalCoverageFactoryV1(row: unknown): row is UniversalCoverageFactoryV1 {
   if (!row || typeof row !== "object") return false;
   const candidate = row as UniversalCoverageFactoryV1;
@@ -304,13 +584,31 @@ export function validateUniversalCoverageFactoryV1(row: unknown): row is Univers
   if (candidate.mutation_authorized !== false) return false;
   if (candidate.production_mutation_authorized !== false) return false;
   if (!Array.isArray(candidate.wedge_summary)) return false;
+  if (!Array.isArray(candidate.subject_rows)) return false;
   if (!Array.isArray(candidate.batch_heads)) return false;
   if (!candidate.factory_totals || typeof candidate.factory_totals !== "object") return false;
   if (!candidate.run_manifest || typeof candidate.run_manifest !== "object") return false;
   if (candidate.run_manifest.read_only !== true) return false;
   if (candidate.run_manifest.mutation_authorized !== false) return false;
   if (candidate.run_manifest.production_mutation_authorized !== false) return false;
-  return true;
+
+  for (const subjectRow of candidate.subject_rows) {
+    if (!subjectRow || typeof subjectRow !== "object") return false;
+    if (typeof subjectRow.subject_id !== "string") return false;
+    if (!subjectRow.evidence_summary || typeof subjectRow.evidence_summary !== "object") {
+      return false;
+    }
+    if (!subjectRow.provenance_summary || typeof subjectRow.provenance_summary !== "object") {
+      return false;
+    }
+    if (!Array.isArray(subjectRow.blockers)) return false;
+    if (!Array.isArray(subjectRow.truth_blockers)) return false;
+    if (!Array.isArray(subjectRow.subject_link_refs)) return false;
+    if (typeof subjectRow.subject_link_count !== "number") return false;
+    if (subjectRow.subject_link_count !== subjectRow.subject_link_refs.length) return false;
+  }
+
+  return universalCoverageFactoryInternalConsistencyErrorsV1(candidate).length === 0;
 }
 
 export function universalCoverageFactoryGrantsMutationAuthorityV1(): false {
@@ -336,7 +634,8 @@ export function buildUniversalCoverageFactoryV1(args: {
 
   const wedgeSummaries = slices.map(buildWedgeSummary);
   const factoryTotals = buildFactoryTotals(wedgeSummaries);
-  const batchHeads = sortBatchHeadsDeterministic(slices.flatMap(buildBatchHeads));
+  const subject_rows = sortSubjectRowsDeterministic(slices.flatMap(buildSubjectRows));
+  const batch_heads = subject_rows.map(batchHeadFromSubjectRow);
 
   const run_manifest: UniversalCoverageFactoryRunManifestV1 = {
     schema_version: UNIVERSAL_COVERAGE_FACTORY_SCHEMA_VERSION_V1,
@@ -351,7 +650,7 @@ export function buildUniversalCoverageFactoryV1(args: {
     production_mutation_authorized: false,
   };
 
-  return {
+  const factory: UniversalCoverageFactoryV1 = {
     contract: UNIVERSAL_COVERAGE_FACTORY_CONTRACT_V1,
     schema_version: UNIVERSAL_COVERAGE_FACTORY_SCHEMA_VERSION_V1,
     read_only: true,
@@ -360,7 +659,17 @@ export function buildUniversalCoverageFactoryV1(args: {
     production_mutation_authorized: false,
     wedge_summary: wedgeSummaries,
     factory_totals: factoryTotals,
-    batch_heads: batchHeads,
+    subject_rows,
+    batch_heads,
     run_manifest,
   };
+
+  const consistencyErrors = universalCoverageFactoryInternalConsistencyErrorsV1(factory);
+  if (consistencyErrors.length > 0) {
+    throw new Error(
+      `Universal coverage factory internal consistency failed (fail closed): ${consistencyErrors.join("; ")}`,
+    );
+  }
+
+  return factory;
 }
