@@ -6,15 +6,19 @@ import test from "node:test";
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 
 import {
+  AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   assessFridgeContractFitV1,
   assessWhwContractFitV1,
   buildApCoverageFactoryReferenceProjectionV1,
   buildFridgeCoverageFactoryReferenceProjectionV1,
   buildWhwCoverageFactoryReferenceProjectionV1,
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
+  FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
   validateCoverageAssessmentV1,
   validateCoverageEvidenceV1,
   validateCoverageRunManifestV1,
   validateCoverageSubjectV1,
+  WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
 } from "./index";
 
 import { assessApplianceAirContractFitV1, buildApplianceAirCoverageFactoryReferenceProjectionV1 } from "./adapters/appliance-air-coverage-factory-adapter-v1";
@@ -64,7 +68,9 @@ test("six-wedge pressure test: all adapters project into UCF without proven cont
 
   const ap = buildApCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["vornado-md1-0022", "alen-b75-mp", "holmes-hapf30"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
   validateProjectionRows(ap);
   results.push({
@@ -77,7 +83,9 @@ test("six-wedge pressure test: all adapters project into UCF without proven cont
 
   const whw = buildWhwCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["3m-ap810", "3m-ap811", "ge-fxhtc"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
   validateProjectionRows(whw);
   results.push({
@@ -88,7 +96,9 @@ test("six-wedge pressure test: all adapters project into UCF without proven cont
 
   const fridge = buildFridgeCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["edr4rxd1", "gswf", "rpwfe", "adq36006101", "edr2rxd1"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
   validateProjectionRows(fridge);
   results.push({
@@ -130,6 +140,11 @@ test("six-wedge pressure test: all adapters project into UCF without proven cont
     ...countGaps(assessApplianceAirContractFitV1()),
   });
 
+  const ucfRegisteredSubjectCount =
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1].length +
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1].length +
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1].length;
+
   assert.equal(results.length, 6);
   assert.equal(
     results.reduce((sum, row) => sum + row.proven_contract_gap_count, 0),
@@ -137,7 +152,7 @@ test("six-wedge pressure test: all adapters project into UCF without proven cont
   );
   assert.equal(
     results.reduce((sum, row) => sum + row.subject_count, 0),
-    3 + 3 + 5 + 2 + 2 + 2,
+    ucfRegisteredSubjectCount + 2 + 2 + 2,
   );
 
   for (const row of results) {

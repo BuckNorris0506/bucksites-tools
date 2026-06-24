@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   AP_VORNADO_MD1_0022_REPO_SNAPSHOT_V1,
   buildApCoverageFactoryReferenceProjectionV1,
   buildFridgeCoverageFactoryReferenceProjectionV1,
@@ -12,6 +13,8 @@ import {
   buildUniversalCoverageFactoryV1,
   buildUniversalCoverageFactoryWorkGeneratorV1,
   buildWhwCoverageFactoryReferenceProjectionV1,
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
+  FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
   loadApModelFirstArtifactV1,
   loadFridgeArtifactsForFilterSlugV1,
   loadWhwArtifactsForFilterSlugV1,
@@ -23,6 +26,7 @@ import {
   projectApRepoCatalogSnapshotV1,
   resolveFridgeDispositionV1,
   resolveWhwDispositionV1,
+  WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
 } from "./index";
 import {
   FRIDGE_MODEL_FILTER_AUDIT_REL_V1,
@@ -388,15 +392,21 @@ test("UCF parity audit v1 inventory", () => {
 
   const refAp = buildApCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["vornado-md1-0022", "alen-b75-mp", "holmes-hapf30"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
   const refWhw = buildWhwCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["3m-ap810", "3m-ap811", "ge-fxhtc"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
   const refFridge = buildFridgeCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,
-    filterSlugs: ["edr4rxd1", "gswf", "rpwfe", "adq36006101", "edr2rxd1"],
+    filterSlugs: [
+      ...COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1],
+    ],
   });
 
   const registeredSubjectIds = new Set(factory.subject_rows.map((row) => row.subject_id));
@@ -498,28 +508,35 @@ test("UCF parity audit v1 inventory", () => {
       ? registeredMismatches.length === 0 && workRecommendationDiffSubjects.size === 0
       : false;
 
+  const apRegisteredCount =
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1].length;
+  const whwRegisteredCount =
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1].length;
+  const fridgeRegisteredCount =
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1].length;
+
   const report = {
     subject_counts: {
       air_purifier: {
         discovered: discoverApSlugs().length,
         loadable: loadable.ap.length,
-        ucf_registered: 3,
+        ucf_registered: apRegisteredCount,
       },
       whole_house_water: {
         discovered: discoverWhwSlugs().length,
         loadable: loadable.whw.length,
-        ucf_registered: 3,
+        ucf_registered: whwRegisteredCount,
       },
       refrigerator_water: {
         discovered: discoverFridgeSlugs().length,
         loadable: loadable.fridge.length,
-        ucf_registered: 5,
+        ucf_registered: fridgeRegisteredCount,
       },
       universal_factory_total: factory.subject_rows.length,
       scale_gap_loadable_minus_registered: {
-        air_purifier: loadable.ap.length - 3,
-        whole_house_water: loadable.whw.length - 3,
-        refrigerator_water: loadable.fridge.length - 5,
+        air_purifier: loadable.ap.length - apRegisteredCount,
+        whole_house_water: loadable.whw.length - whwRegisteredCount,
+        refrigerator_water: loadable.fridge.length - fridgeRegisteredCount,
         total: scaleGap,
       },
     },

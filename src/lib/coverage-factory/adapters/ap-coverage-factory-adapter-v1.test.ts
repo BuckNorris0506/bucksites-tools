@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
   COVERAGE_EVIDENCE_DIMENSIONS_V1,
   coverageAssessmentPromotionAllowedV1,
   coverageEvidenceMeetsPromotionRequirementsV1,
@@ -29,7 +31,8 @@ import {
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 
-const REFERENCE_SLUGS = ["vornado-md1-0022", "alen-b75-mp", "holmes-hapf30"] as const;
+const REFERENCE_SLUGS =
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1];
 
 test("AP reference projection validates all UCF contract rows", () => {
   const projection = buildApCoverageFactoryReferenceProjectionV1({

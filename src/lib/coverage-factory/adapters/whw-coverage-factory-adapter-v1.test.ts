@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
   COVERAGE_EVIDENCE_DIMENSIONS_V1,
   coverageAssessmentPromotionAllowedV1,
   coverageEvidenceMeetsPromotionRequirementsV1,
@@ -16,6 +17,7 @@ import {
   validateCoverageSubjectLinkV1,
   validateCoverageSubjectV1,
   validateCoverageWorkItemV1,
+  WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
 } from "../index";
 
 import {
@@ -33,7 +35,8 @@ import {
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 
-const REFERENCE_SLUGS = ["3m-ap810", "3m-ap811", "ge-fxhtc"] as const;
+const REFERENCE_SLUGS =
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1];
 
 test("WHW reference projection validates all UCF contract rows", () => {
   const projection = buildWhwCoverageFactoryReferenceProjectionV1({
@@ -166,7 +169,7 @@ test("WHW projection report and contract fit assessment", () => {
     filterSlugs: [...REFERENCE_SLUGS],
   });
   const report = buildWhwProjectionReportV1(projection, ROOT);
-  assert.equal(report.length, 3);
+  assert.equal(report.length, REFERENCE_SLUGS.length);
 
   const ap810 = report.find((row) => row.filter_slug === "3m-ap810");
   assert.ok(ap810);

@@ -4,10 +4,12 @@ import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 import {
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
   COVERAGE_EVIDENCE_DIMENSIONS_V1,
   coverageAssessmentPromotionAllowedV1,
   coverageEvidenceMeetsPromotionRequirementsV1,
   coverageFactoryContractsGrantProductionMutationAuthorityV1,
+  FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
   validateCoverageAssessmentV1,
   validateCoverageAssessmentWithEvidenceV1,
   validateCoverageEvidenceV1,
@@ -34,7 +36,8 @@ import {
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../..");
 
-const REFERENCE_SLUGS = ["edr4rxd1", "gswf", "rpwfe", "adq36006101", "edr2rxd1"] as const;
+const REFERENCE_SLUGS =
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1];
 
 test.before(() => {
   resetFridgeAdapterAuditCacheV1();
@@ -100,7 +103,7 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
     ]),
   );
 
-  const expected: Record<(typeof REFERENCE_SLUGS)[number], string> = {
+  const expected: Record<string, string> = {
     edr4rxd1: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
     gswf: "CONFLICT_REQUIRES_RECONCILIATION",
     rpwfe: "RESCUE_BROWSER_PROOF_READY_MAPPING_BLOCKED",
@@ -178,7 +181,7 @@ test("refrigerator projection report and contract fit assessment", () => {
     filterSlugs: [...REFERENCE_SLUGS],
   });
   const report = buildFridgeProjectionReportV1(projection, ROOT);
-  assert.equal(report.length, 5);
+  assert.equal(report.length, REFERENCE_SLUGS.length);
 
   const edr4 = report.find((row) => row.filter_slug === "edr4rxd1");
   assert.ok(edr4);
