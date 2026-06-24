@@ -153,6 +153,15 @@ export {
 } from "./universal-coverage-factory-v1";
 
 export {
+  buildUniversalCoverageFactoryDecisionLayerV1,
+  UNIVERSAL_COVERAGE_FACTORY_DECISION_LAYER_CONTRACT_V1,
+  universalCoverageFactoryDecisionLayerGrantsMutationAuthorityV1,
+  validateUniversalCoverageFactoryDecisionLayerV1,
+  type UniversalCoverageFactoryDecisionLayerV1,
+  type UniversalCoverageFactoryTruthBlockerV1,
+} from "./universal-coverage-factory-decision-layer-v1";
+
+export {
   AP_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   AP_COVERAGE_LEGACY_MAP_V1,
