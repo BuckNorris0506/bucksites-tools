@@ -152,3 +152,38 @@ export {
   type ApCoverageFactoryProjectionV1,
   type ApModelFirstArtifactV1,
 } from "./adapters/ap-coverage-factory-adapter-v1";
+
+export {
+  WHW_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  WHW_COVERAGE_LEGACY_MAP_V1,
+  assessWhwContractFitV1,
+  buildWhwCoverageFactoryReferenceProjectionV1,
+  buildWhwProjectionReportV1,
+  loadWhwArtifactsForFilterSlugV1,
+  mapWhwDispositionToUcfV1,
+  resolveWhwDispositionV1,
+  whwCoverageDispositionMeaningPreservedV1,
+  type WhwContractFitGapV1,
+  type WhwCoverageDispositionV1,
+  type WhwCoverageFactoryProjectionV1,
+  type WhwProjectionReportRowV1,
+} from "./adapters/whw-coverage-factory-adapter-v1";
+
+export {
+  FRIDGE_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  FRIDGE_COVERAGE_LEGACY_MAP_V1,
+  assessFridgeContractFitV1,
+  buildFridgeCoverageFactoryReferenceProjectionV1,
+  buildFridgeProjectionReportV1,
+  fridgeCoverageDispositionMeaningPreservedV1,
+  loadFridgeArtifactsForFilterSlugV1,
+  mapFridgeDispositionToUcfV1,
+  resetFridgeAdapterAuditCacheV1,
+  resolveFridgeDispositionV1,
+  type FridgeContractFitGapV1,
+  type FridgeCoverageDispositionV1,
+  type FridgeCoverageFactoryProjectionV1,
+  type FridgeProjectionReportRowV1,
+} from "./adapters/fridge-coverage-factory-adapter-v1";
