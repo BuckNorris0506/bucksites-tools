@@ -135,3 +135,20 @@ export const COVERAGE_FACTORY_FOUNDATION_READ_ONLY_DEFAULTS_V1 = {
 export function coverageFactoryContractsGrantProductionMutationAuthorityV1(): false {
   return false;
 }
+
+export {
+  AP_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  AP_COVERAGE_LEGACY_MAP_V1,
+  AP_VORNADO_MD1_0022_REPO_SNAPSHOT_V1,
+  apCoverageDispositionMeaningPreservedV1,
+  buildApCoverageFactoryReferenceProjectionV1,
+  loadApModelFirstArtifactV1,
+  mapApDispositionToUcfV1,
+  normalizeApDispositionV1,
+  projectApModelFirstArtifactV1,
+  projectApRepoCatalogSnapshotV1,
+  type ApCoverageDispositionV1,
+  type ApCoverageFactoryProjectionV1,
+  type ApModelFirstArtifactV1,
+} from "./adapters/ap-coverage-factory-adapter-v1";
