@@ -236,3 +236,57 @@ export {
   type FridgeCoverageFactoryProjectionV1,
   type FridgeProjectionReportRowV1,
 } from "./adapters/fridge-coverage-factory-adapter-v1";
+
+export {
+  VACUUM_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  VACUUM_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  VACUUM_COVERAGE_LEGACY_MAP_V1,
+  VACUUM_WEDGE_POSTURE_SNAPSHOT_V1,
+  assessVacuumContractFitV1,
+  buildVacuumCoverageFactoryReferenceProjectionV1,
+  buildVacuumProjectionReportV1,
+  loadVacuumArtifactsForSubjectSlugV1,
+  mapVacuumDispositionToUcfV1,
+  resolveVacuumDispositionV1,
+  vacuumCoverageDispositionMeaningPreservedV1,
+  type VacuumContractFitGapV1,
+  type VacuumCoverageDispositionV1,
+  type VacuumCoverageFactoryProjectionV1,
+  type VacuumProjectionReportRowV1,
+} from "./adapters/vacuum-coverage-factory-adapter-v1";
+
+export {
+  HUMIDIFIER_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  HUMIDIFIER_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  HUMIDIFIER_COVERAGE_LEGACY_MAP_V1,
+  HUMIDIFIER_WEDGE_POSTURE_SNAPSHOT_V1,
+  assessHumidifierContractFitV1,
+  buildHumidifierCoverageFactoryReferenceProjectionV1,
+  buildHumidifierProjectionReportV1,
+  loadHumidifierArtifactsForSubjectSlugV1,
+  mapHumidifierDispositionToUcfV1,
+  resolveHumidifierDispositionV1,
+  humidifierCoverageDispositionMeaningPreservedV1,
+  type HumidifierContractFitGapV1,
+  type HumidifierCoverageDispositionV1,
+  type HumidifierCoverageFactoryProjectionV1,
+  type HumidifierProjectionReportRowV1,
+} from "./adapters/humidifier-coverage-factory-adapter-v1";
+
+export {
+  APPLIANCE_AIR_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
+  APPLIANCE_AIR_COVERAGE_FACTORY_ADAPTER_ID_V1,
+  APPLIANCE_AIR_COVERAGE_LEGACY_MAP_V1,
+  APPLIANCE_AIR_WEDGE_POSTURE_SNAPSHOT_V1,
+  assessApplianceAirContractFitV1,
+  buildApplianceAirCoverageFactoryReferenceProjectionV1,
+  buildApplianceAirProjectionReportV1,
+  loadApplianceAirArtifactsForSubjectSlugV1,
+  mapApplianceAirDispositionToUcfV1,
+  resolveApplianceAirDispositionV1,
+  applianceAirCoverageDispositionMeaningPreservedV1,
+  type ApplianceAirContractFitGapV1,
+  type ApplianceAirCoverageDispositionV1,
+  type ApplianceAirCoverageFactoryProjectionV1,
+  type ApplianceAirProjectionReportRowV1,
+} from "./adapters/appliance-air-coverage-factory-adapter-v1";
