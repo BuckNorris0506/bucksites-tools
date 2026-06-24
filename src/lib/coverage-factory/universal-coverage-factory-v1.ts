@@ -366,8 +366,35 @@ function combineProvenanceIndexHash(slices: AdapterProjectionSliceV1[]): string 
 export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
   Record<CommittedUcfAdapterIdV1, readonly string[]>
 > = {
-  [AP_COVERAGE_FACTORY_ADAPTER_ID_V1]: ["vornado-md1-0022", "alen-b75-mp", "holmes-hapf30"],
-  [WHW_COVERAGE_FACTORY_ADAPTER_ID_V1]: ["3m-ap810", "3m-ap811", "ge-fxhtc"],
+  [AP_COVERAGE_FACTORY_ADAPTER_ID_V1]: [
+    "vornado-md1-0022",
+    "alen-b75-mp",
+    "holmes-hapf30",
+    "coway-airmega250-rf",
+    "gg-flt4100",
+    "gg-flt4825",
+    "levoit-rf-rar029",
+    "levoit-rf-rar040",
+    "levoit-rf-rar060",
+    "rabbit-carbon-minusa2",
+    "shark-carbon-foam",
+    "winix-carbon-116131",
+  ],
+  [WHW_COVERAGE_FACTORY_ADAPTER_ID_V1]: [
+    "3m-ap810",
+    "3m-ap811",
+    "ge-fxhtc",
+    "3m-ap910r",
+    "3m-ap917hd-s",
+    "culligan-cw5-bb",
+    "ge-fxhsc",
+    "ge-fxwpc",
+    "pentek-dgd-5005",
+    "pentek-p5-slim",
+    "springwell-cf1-sediment",
+    "watts-w50pehd",
+    "whirlpool-whkf-gd05",
+  ],
   [FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1]: [
     "edr4rxd1",
     "gswf",

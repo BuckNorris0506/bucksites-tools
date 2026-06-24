@@ -30,11 +30,13 @@ function buildFixturePair() {
 
 test("decision layer validates and aggregates AP + WHW + Fridge factory output", () => {
   const { factory, decision } = buildFixturePair();
+  const activeSubjectCount =
+    factory.subject_rows.length - factory.factory_totals.total_suppressed;
 
   assert.ok(validateUniversalCoverageFactoryDecisionLayerV1(decision));
   assert.equal(decision.contract, "universal_coverage_factory_decision_layer_v1");
-  assert.equal(decision.subject_rows.length, 11);
-  assert.equal(decision.candidate_work_items.length, 8);
+  assert.equal(decision.subject_rows.length, factory.subject_rows.length);
+  assert.equal(decision.candidate_work_items.length, activeSubjectCount);
   assert.equal(decision.suppressed_subjects.length, factory.factory_totals.total_suppressed);
   assert.equal(
     decision.ready_for_change_planning_subjects.length,

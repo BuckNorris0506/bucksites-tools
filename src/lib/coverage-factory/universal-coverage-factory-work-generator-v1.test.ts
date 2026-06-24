@@ -120,10 +120,12 @@ function candidateItem(args: {
 
 test("all disposition classes generate correct work types from committed reference pipeline", () => {
   const { factory, generated } = buildFixtureWorkGenerator();
+  const activeSubjectCount =
+    factory.subject_rows.length - factory.factory_totals.total_suppressed;
 
   assert.ok(validateUniversalCoverageFactoryWorkGeneratorV1(generated));
-  assert.equal(generated.generated_work_item_count, 8);
-  assert.equal(generated.suppressed_subject_count, 3);
+  assert.equal(generated.generated_work_item_count, activeSubjectCount);
+  assert.equal(generated.suppressed_subject_count, factory.factory_totals.total_suppressed);
 
   const gswf = generated.work_items.find((item) => item.subject_ids[0]?.includes("gswf"));
   assert.ok(gswf);

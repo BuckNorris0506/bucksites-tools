@@ -15,6 +15,8 @@ import {
 
 import {
   buildUniversalCoverageFactoryV1,
+  COMMITTED_UCF_ADAPTER_IDS_V1,
+  COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
   isCommittedUcfAdapterIdV1,
   UCF_SUBJECT_TRUTH_BLOCKER_PLANNING_READY_FIT_BLOCKED_V1,
   UCF_SUBJECT_TRUTH_BLOCKER_RESCUE_BUYER_PATH_MAPPING_BLOCKED_V1,
@@ -26,17 +28,26 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.
 
 const FIXED_NOW = () => new Date("2026-06-10T22:00:00.000Z");
 
+function committedUcfRegisteredSubjectCountV1(): number {
+  return COMMITTED_UCF_ADAPTER_IDS_V1.reduce(
+    (sum, adapterId) =>
+      sum + COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[adapterId].length,
+    0,
+  );
+}
+
 test("AP + WHW + Fridge aggregate into universal_coverage_factory_v1", () => {
   const factory = buildUniversalCoverageFactoryV1({
     rootDir: ROOT,
     now: FIXED_NOW,
   });
+  const registeredCount = committedUcfRegisteredSubjectCountV1();
 
   assert.ok(validateUniversalCoverageFactoryV1(factory));
   assert.equal(factory.contract, "universal_coverage_factory_v1");
   assert.equal(factory.wedge_summary.length, 3);
-  assert.equal(factory.batch_heads.length, 11);
-  assert.equal(factory.run_manifest.subject_count, 11);
+  assert.equal(factory.batch_heads.length, registeredCount);
+  assert.equal(factory.run_manifest.subject_count, registeredCount);
 
   const wedges = factory.wedge_summary.map((row) => row.wedge).sort();
   assert.deepEqual(wedges, [
@@ -53,9 +64,18 @@ test("AP + WHW + Fridge aggregate into universal_coverage_factory_v1", () => {
     (row) => row.wedge === HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
   );
   assert.ok(ap && whw && fridge);
-  assert.equal(ap.subject_count, 3);
-  assert.equal(whw.subject_count, 3);
-  assert.equal(fridge.subject_count, 5);
+  assert.equal(
+    ap.subject_count,
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1].length,
+  );
+  assert.equal(
+    whw.subject_count,
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[WHW_COVERAGE_FACTORY_ADAPTER_ID_V1].length,
+  );
+  assert.equal(
+    fridge.subject_count,
+    COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1].length,
+  );
 });
 
 test("factory totals reconcile with wedge summaries", () => {
@@ -177,7 +197,7 @@ test("provenance_index_hash is stable for fixed adapter set and clock", () => {
 test("subject_rows preserve evidence, blockers, provenance, and subject links", () => {
   const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
 
-  assert.equal(factory.subject_rows.length, 11);
+  assert.equal(factory.subject_rows.length, committedUcfRegisteredSubjectCountV1());
   for (const row of factory.subject_rows) {
     assert.ok(row.evidence_summary);
     assert.ok(Array.isArray(row.blockers));
