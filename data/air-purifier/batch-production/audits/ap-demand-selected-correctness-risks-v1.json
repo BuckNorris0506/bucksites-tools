@@ -8,10 +8,10 @@
   "evidence_writes": false,
   "owner_decision_rows": false,
   "registry_changes": false,
-  "generated_at": "2026-06-24T00:39:22.000Z",
+  "generated_at": "2026-06-24T02:00:00.000Z",
   "git_head": "f3c2141157596b7ecf946c0e0f7ad7eb96ed9808",
   "git_head_label": "f3c2141 Repair Vornado MD1-0022 HEPA identity",
-  "title": "AP demand-selected batch — correctness risks (vornado-md1-0023 superseded, renpho-rp-ap003)",
+  "title": "AP demand-selected batch — correctness risks (vornado and renpho superseded)",
   "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
   "scope_slugs": ["vornado-md1-0023", "renpho-rp-ap003"],
   "discovery_artifact_rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
@@ -30,7 +30,9 @@
       "npm run buckparts:operator-proof:RESULT_OK",
       "npm run buckparts:production-truth:ap:exit_0_supabase_cases_skipped"
     ],
-    "supabase_parity_claimed": false
+    "supabase_parity_claimed": false,
+    "bp_000006_status": "CLOSED_PROVEN",
+    "renpho_repair_summary": "Bogus filter slug renpho-rp-ap003 removed from filters.csv and retailer_links.csv; renpho-rp-ap003 retained model-only in models.csv; all compat edges to bogus filter slug removed (self-edge, ap001/ap002/ap080). No buyer path created; aftermarket filters not promoted."
   },
   "executive_summary": {
     "vornado-md1-0023": {
@@ -39,9 +41,9 @@
       "headline": "BP-000005 CLOSED_PROVEN at repair_commit f3c2141. CSV catalog split applied: HEPA slug vornado-md1-0022 (VORNADO-MD1-0022) created; HEPA-on-MD1-0023 identity retired; carbon remains vornado-carbon-pad (direct_buyable); vornado-pc300 -> vornado-md1-0023 wrong-family edge removed. Historical demand-selected discovery on retired slug is noncanonical and not apply-eligible."
     },
     "renpho-rp-ap003": {
-      "verdict": "exclude_from_future_batch_progression",
+      "verdict": "catalog_suppressed_no_safe_path",
       "label": "PROVEN",
-      "headline": "Model/filter slug collision plus prior model-first NO_SAFE_PATH (expected safe-edge gain 0). Demand-selected discovery REJECT_SEARCH_CATEGORY is consistent but understates the catalog collision; slug should not advance toward apply without identity disambiguation."
+      "headline": "BP-000006 CLOSED_PROVEN. Owner-approved suppress + no-safe-path: bogus filter slug removed; renpho-rp-ap003 model-only; compat edges to bogus filter retired; no official Renpho filter buyer path."
     }
   },
   "slug_assessments": [
@@ -168,6 +170,13 @@
     },
     {
       "filter_slug": "renpho-rp-ap003",
+      "supersession_v1": {
+        "status": "CLOSED_PROVEN",
+        "disposition": "catalog_suppressed_no_safe_path",
+        "model_slug_retained": "renpho-rp-ap003",
+        "filter_slug_removed": "renpho-rp-ap003",
+        "label": "PROVEN"
+      },
       "demand_selected_batch_rank": 4,
       "discovery_row": {
         "recommendation": "REJECT_SEARCH_CATEGORY",
@@ -178,34 +187,41 @@
         "recommended_csv_mutation": null
       },
       "catalog_truth": {
+        "pre_repair_snapshot_label": "HISTORICAL_AT_f3c2141",
         "filters_csv": {
           "slug": "renpho-rp-ap003",
-          "oem_part_number": "RENPHO-RP-AP003",
-          "display_name": "RP-AP003 / AP001 series HEPA",
-          "label": "PROVEN"
+          "label": "REMOVED"
         },
         "models_csv": {
           "slug": "renpho-rp-ap003",
           "model_number": "RP-AP003",
           "display_name": "Renpho RP-AP003 Air Purifier",
+          "label": "PROVEN_MODEL_ONLY"
+        },
+        "post_repair_csv": {
+          "filter_row_removed": true,
+          "retailer_link_removed": true,
+          "compat_edges_removed": [
+            "renpho-rp-ap003,renpho-rp-ap003,true",
+            "renpho-rp-ap001,renpho-rp-ap003,true",
+            "renpho-rp-ap002,renpho-rp-ap003,true",
+            "renpho-rp-ap080,renpho-rp-ap003,true"
+          ],
+          "buyer_path_created": false,
+          "aftermarket_filters_promoted": false,
           "label": "PROVEN"
         },
         "slug_collision": {
-          "same_slug_in_filters_and_models": true,
-          "self_referential_compat_edge": "renpho-rp-ap003,renpho-rp-ap003,true",
-          "label": "PROVEN"
+          "same_slug_in_filters_and_models": false,
+          "self_referential_compat_edge": null,
+          "label": "RESOLVED"
         },
         "retailer_links_csv": {
-          "primary": "https://renpho.com/search?q=RENPHO-RP-AP003",
+          "primary": null,
           "browser_truth": null,
-          "label": "PROVEN"
+          "label": "REMOVED_WITH_FILTER_SLUG"
         },
-        "compat_edges": [
-          "renpho-rp-ap003,renpho-rp-ap003,true",
-          "renpho-rp-ap001,renpho-rp-ap003,true",
-          "renpho-rp-ap002,renpho-rp-ap003,true",
-          "renpho-rp-ap080,renpho-rp-ap003,true"
-        ]
+        "compat_edges": []
       },
       "prior_evidence": [
         {
@@ -237,35 +253,36 @@
           "UNKNOWN: whether a distinct OEM filter part number exists outside Renpho direct channels — not published in repo evidence."
         ]
       },
-      "correctness_risks": [
+      "correctness_risks": [],
+      "correctness_risks_superseded": [
         {
           "risk_id": "renpho-slug-collision",
           "severity": "high",
-          "label": "PROVEN",
-          "detail": "Filter slug duplicates model slug; oem_part_number is model code not filter identity."
+          "superseded_by": "bp_000006_closed_proven",
+          "label": "SUPERSEDED_BP_000006_CLOSED_PROVEN"
         },
         {
           "risk_id": "renpho-no-official-buyer-path",
           "severity": "high",
-          "label": "PROVEN",
-          "detail": "Model-first: Renpho sells 0 replacement filters on renpho.com; no official Amazon filter listings."
+          "superseded_by": "bp_000006_closed_proven",
+          "label": "SUPERSEDED_BP_000006_CLOSED_PROVEN"
         },
         {
           "risk_id": "renpho-owner-review-underweighted",
           "severity": "medium",
-          "label": "INFERRED",
-          "detail": "Demand-selected owner-review lane marked discovery_ready / owner_review_required=false despite model-first blockers not indexed in canonical evidence index."
+          "superseded_by": "bp_000006_closed_proven",
+          "label": "SUPERSEDED_BP_000006_CLOSED_PROVEN"
         }
       ],
       "recommendation": {
-        "action": "exclude_and_issue_track",
-        "exclude_from_future_batch_progression": true,
+        "action": "superseded_bp_000006_closed_proven",
+        "exclude_from_future_batch_progression": false,
         "exclude_from_apply_progression": true,
         "reclassify_owner_review": true,
-        "split_required": true,
-        "issue_packet_recommended": true,
-        "rationale": "Exclude renpho-rp-ap003 from future demand-selected batch progression until model/filter slug collision is resolved. Discovery adds no safe buyer path. Issue-track catalog identity disambiguation; do not advance toward canonical evidence or apply.",
-        "owner_review_disposition_target": "exclude_no_safe_path_or_hold_needs_owner_review",
+        "split_required": false,
+        "issue_packet_recommended": false,
+        "rationale": "Owner-approved suppress + no-safe-path: bogus filter slug removed; model-only renpho-rp-ap003 retained; compat edges to bogus filter retired. No buyer path; aftermarket not promoted. BP-000006 CLOSED_PROVEN.",
+        "owner_review_disposition_target": "exclude_no_safe_path",
         "safe_to_continue_read_only_discovery_on_slug": false
       }
     }
@@ -273,22 +290,22 @@
   "cross_slug_findings": {
     "proven_facts": [
       "PROVEN: BP-000005 CLOSED_PROVEN at repair_commit f3c2141 — Vornado HEPA/carbon CSV identity split repaired.",
-      "PROVEN: renpho-rp-ap003 remains search-placeholder primary with exclude_from_future_batch_progression; BP-000006 open.",
+      "PROVEN: BP-000006 CLOSED_PROVEN — renpho bogus filter slug suppressed; model-only retained; no buyer path.",
       "PROVEN: Demand-selected noncanonical discovery is VALIDATION_PASS (84/84) but not_canonical_evidence and not_apply_eligible.",
-      "PROVEN: renpho-rp-ap003 has no canonical agent-results row in AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1."
+      "PROVEN: No blocking correctness-risk verdicts remain; demand-selected correctness steering eligible to clear."
     ],
     "inferred_facts": [
-      "INFERRED: Mechanical validation pass does not override renpho catalog correctness risk — BP-000006 still blocks demand-selected batch progression steering."
+      "INFERRED: Demand-selected batch progression steering may resume under demand_to_coverage when no other steering layers block."
     ],
     "unknown_facts": [
       "UNKNOWN: Live Supabase parity for retired vornado-md1-0023 slug — not claimed at BP-000005 closure."
     ]
   },
   "recommended_next_steps_read_only": [
-    "Resolve BP-000006 renpho model/filter slug collision before demand-selected batch progression resumes.",
-    "Remove renpho-rp-ap003 from future demand-selected batch candidate scopes until exclusion criteria met.",
+    "Demand-selected correctness risks cleared — resume read-only demand_to_coverage batch planning unless other steering layers block.",
     "Optional: bounded MD1-0022 HEPA PDP browser evidence for vornado-md1-0022 buyer-path promotion.",
-    "vornado-carbon-pad carbon apply readiness remains a separate owner track."
+    "vornado-carbon-pad carbon apply readiness remains a separate owner track.",
+    "renpho-rp-ap003 remains model-only with no official filter buyer path — do not promote aftermarket filters without owner policy."
   ],
   "explicitly_out_of_scope": [
     "CSV mutation",

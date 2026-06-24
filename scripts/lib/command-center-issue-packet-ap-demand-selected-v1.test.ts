@@ -17,7 +17,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..")
 test("BP-000005 and BP-000006 issue_packet_v1 parse with required planning fields", () => {
   const expectedStatus: Record<"BP-000005" | "BP-000006", CommandCenterIssueStatusV1> = {
     "BP-000005": "CLOSED_PROVEN",
-    "BP-000006": "PACKET_READY",
+    "BP-000006": "CLOSED_PROVEN",
   };
   for (const issueId of ["BP-000005", "BP-000006"] as const) {
     const abs = path.join(ROOT, "data/command-center/issues", `${issueId}.json`);
@@ -49,7 +49,7 @@ test("open TIER_1 AP catalog issues do not steer issue registry NBA", () => {
   const bp5 = lane.issues.find((issue) => issue.issue_id === "BP-000005");
   const bp6 = lane.issues.find((issue) => issue.issue_id === "BP-000006");
   assert.equal(bp5?.status, "CLOSED_PROVEN");
-  assert.equal(bp6?.status, "PACKET_READY");
+  assert.equal(bp6?.status, "CLOSED_PROVEN");
   assert.ok(bp5?.issue_packet_v1);
   assert.ok(bp6?.issue_packet_v1);
   assert.equal(bp5?.issue_packet_v1?.filter_slug, "vornado-md1-0023");
@@ -59,15 +59,15 @@ test("open TIER_1 AP catalog issues do not steer issue registry NBA", () => {
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 });
 
-test("registry loads six issues with five closed and one PACKET_READY", () => {
+test("registry loads six issues with all CLOSED_PROVEN", () => {
   const loaded = loadCommandCenterIssuesV1({ rootDir: ROOT });
   assert.equal(loaded.issues.length, 6);
   assert.equal(
     loaded.issues.filter((issue) => issue.status === "CLOSED_PROVEN").length,
-    5,
+    6,
   );
   assert.equal(
     loaded.issues.filter((issue) => issue.status === "PACKET_READY").length,
-    1,
+    0,
   );
 });

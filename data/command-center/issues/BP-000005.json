@@ -105,7 +105,7 @@
     "PROVEN: Jared (owner) explicitly set closure_approved=true after CSV repair — not inferred from audit packet alone.",
     "PROVEN: CLOSED_PROVEN required repair_commit, closed_at, closure_reason, closure_evidence, and closure_approved.",
     "PROVEN: Supabase parity not claimed at closure.",
-    "PROVEN: BP-000006 renpho collision remains open and blocking demand-selected correctness steering."
+    "PROVEN: BP-000006 CLOSED_PROVEN — renpho bogus filter suppressed; demand-selected correctness steering cleared for renpho."
   ],
   "inferred_facts": [
     "INFERRED: vornado-md1-0022 HEPA buyer path may remain search-placeholder until bounded MD1-0022 PDP browser evidence is captured."

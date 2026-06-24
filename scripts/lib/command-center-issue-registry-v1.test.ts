@@ -216,21 +216,22 @@ test("command center lane does not steer when only TIER_1 catalog issues are ope
   assert.equal(lane.contract, "command_center_issue_registry_v1");
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
-  assert.equal(lane.total_open, 1);
-  assert.equal(lane.total_closed, 5);
+  assert.equal(lane.total_open, 0);
+  assert.equal(lane.total_closed, 6);
   assert.deepEqual(lane.closed_proven_issue_ids, [
     "BP-000001",
     "BP-000002",
     "BP-000003",
     "BP-000004",
     "BP-000005",
+    "BP-000006",
   ]);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000006");
+  assert.equal(lane.highest_priority_issue, null);
   assert.equal(lane.lifecycle_distribution.aligned_count, 6);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 5);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 1);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 6);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 0);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(resolveCommandCenterIssueRegistrySteeringOverrideV1(lane), null);
 

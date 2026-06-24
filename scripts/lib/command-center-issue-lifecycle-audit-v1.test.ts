@@ -58,11 +58,11 @@ test("seeded issues evidence-prove lifecycle through CLOSED_PROVEN for BP-000001
 
 test("lifecycle distribution surfaces CLOSED_PROVEN and DEPLOYED counts", () => {
   const lane = buildCommandCenterIssueRegistryCommandCenterLaneV1({ rootDir: ROOT });
-  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.CLOSED_PROVEN, 5);
-  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.PACKET_READY, 1);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.CLOSED_PROVEN, 6);
+  assert.deepEqual(lane.lifecycle_distribution.declared_by_status.PACKET_READY, 0);
   assert.deepEqual(lane.lifecycle_distribution.declared_by_status.DEPLOYED, 0);
-  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 5);
-  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 1);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 6);
+  assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 0);
   assert.deepEqual(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(lane.lifecycle_distribution.aligned_count, 6);
 });
