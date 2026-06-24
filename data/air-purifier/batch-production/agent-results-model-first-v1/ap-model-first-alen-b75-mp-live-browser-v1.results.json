@@ -1,0 +1,194 @@
+{
+  "contract": "air_purifier_model_first_evidence_result_v1",
+  "report_name": "air_purifier_model_first_evidence_result_v1",
+  "packet_id": "ap-model-first-alen-b75-mp-live-browser-v1",
+  "run_id": "ap-model-first-alen-b75-mp-live-browser-2026-06-10",
+  "queue_contract": "ap_model_first_evidence_queue_v1",
+  "anchor_filter_slug": "alen-b75-mp",
+  "filter_slug": "alen-b75-mp",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "safe_apply_authorized": false,
+  "truth_closure_claimed": false,
+  "generated_at": "2026-06-10T18:00:00.000Z",
+  "checked_at": "2026-06-10T18:00:00.000Z",
+  "repo_head_at_capture": "e5e14f2",
+  "source_status": "PROVEN",
+  "evidence_collection_mode": "live_browser_model_first_v1",
+  "evidence_mode": "live_browser_model_first_v1",
+  "official_source_domain": "alen.com",
+  "evidence_source_transparency": "Live Shopify product JSON (alen-breathesmart-75i-hepa-filter.js) + Exa web_fetch_exa + curl HTML parse 2026-06-10; no CSV/Supabase mutation.",
+  "repo_truth": {
+    "filters_csv": "alen,alen-b75-mp,ALEN-B75-MP,BreatheSmart 75i medical-grade layer,12,75i large room",
+    "filter_aliases": "none for alen-b75-mp",
+    "retailer_links_primary": "https://www.alen.com/search?q=ALEN-B75-MP (is_primary=true, browser_truth_classification empty) -> SEARCH_PLACEHOLDER_PRIMARY",
+    "compatibility_edges": ["alen-breathesmart-75i", "alen-breathesmart-75i-white"],
+    "descriptor_flags": [
+      "Repo name 'medical-grade layer' aligns with Alen Essential (Pure) / 75i-Pure tier — NOT Advanced Fresh or Ultimate Odor variants on the same PDP.",
+      "Repo oem_part_number ALEN-B75-MP does not appear on alen.com; official Shopify SKU is F20011."
+    ]
+  },
+  "prior_artifact_reverification": {
+    "path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "prior_run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
+    "this_run_supersedes_prior": true,
+    "note": "Prior bounded discovery terminated on 2-result alen.com search for ALEN-B75-MP without opening PDP; buy state UNKNOWN. This run opens official filter PDP and proves ATC for Essential (Pure)."
+  },
+  "filter_identity": {
+    "discrete_official_sku_exists": true,
+    "official_pdp_url": "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993",
+    "official_pdp_url_unscoped": "https://alen.com/products/alen-breathesmart-75i-hepa-filter",
+    "alternate_discovery_urls": [
+      "https://alen.com/collections/alen-breathesmart-75i-replacement-filters",
+      "https://alen.com/products/alen-breathesmart-75i-air-purifier"
+    ],
+    "pdp_is_real": true,
+    "primary_product_title": "BreatheSmart 75i HEPA Filter - Essential (Pure)",
+    "exact_sku_or_part_numbers": ["F20011"],
+    "legacy_tokens_on_pdp": ["B7 Pure", "Essential (Pure)", "75i-Pure Filter"],
+    "filter_type": "Medical-grade H13 True HEPA — Essential (Pure) tier; entry-level 75i replacement filter",
+    "price_usd": "99.00",
+    "shopify_variant_id": "40426983292993",
+    "add_to_cart_present": true,
+    "add_to_cart_active": true,
+    "in_stock_proven": true,
+    "in_stock_evidence": "Shopify variant F20011 available=true; Add to cart $99.00 on variant-locked PDP (live 2026-06-10).",
+    "primary_compatibility_text_verbatim": "BreatheSmart 75i HEPA Filter; Essential (Pure) — medical-grade HEPA filter for BreatheSmart 75i purifier family. Support article lists '75i-Pure Filter' for BreatheSmart 75i.",
+    "catalog_token_present_on_pdp": false,
+    "catalog_token_status": "ABSENT — 'ALEN-B75-MP' and 'B75-MP' do not appear on official alen.com PDP. alen.com search for bare 'B75-MP' returns 0 results; 'ALEN-B75-MP' returns 2-result search page only.",
+    "naming_bridge_required": true,
+    "naming_bridge_target": "F20011 — BreatheSmart 75i HEPA Filter Essential (Pure) / support '75i-Pure Filter' (formerly B7 Pure). Repo slug alen-b75-mp decodes as BreatheSmart 75i + Medical-grade Pure tier."
+  },
+  "browser_truth_classification": "direct_buyable",
+  "model_slugs_checked": ["alen-breathesmart-75i", "alen-breathesmart-75i-white"],
+  "model_rows": [
+    {
+      "model_slug": "alen-breathesmart-75i",
+      "model_number": "BreatheSmart 75i",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": [
+        "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993",
+        "https://alen.com/products/alen-breathesmart-75i-air-purifier",
+        "https://support.alen.com/hc/en-us/articles/13612003209492-Which-Filter-Should-I-Buy"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": ["F20011", "75i-Pure Filter", "Essential (Pure)"],
+      "notes": "PROVEN: Official 75i filter PDP + support matrix scope 75i-Pure to BreatheSmart 75i only."
+    },
+    {
+      "model_slug": "alen-breathesmart-75i-white",
+      "model_number": "BreatheSmart 75i (White)",
+      "model_filter_classification": "PROVEN_FITS",
+      "evidence_status": "PASS",
+      "buyer_path_status": "DIRECT_BUYABLE_OFFICIAL_PDP",
+      "official_source_urls": [
+        "https://alen.com/products/alen-breathesmart-75i-air-purifier",
+        "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993"
+      ],
+      "manual_urls": [],
+      "documented_filter_tokens": ["F20011", "75i-Pure Filter", "Essential (Pure)"],
+      "notes": "PROVEN: White is a designer-panel color variant of the same BreatheSmart 75i unit; same filter bay and 75i replacement filter family."
+    }
+  ],
+  "wrong_family_analysis": {
+    "same_pdp_variant_risk": {
+      "status": "MEDIUM",
+      "wrong_variants": [
+        {"sku": "F20012", "title": "Advanced (Fresh)", "risk": "HEPA+carbon — not Pure-only medical-grade layer"},
+        {"sku": "F20015", "title": "Ultimate (Odor)", "risk": "HEPA+carbon catalyst — not Pure-only"}
+      ],
+      "mitigation": "Variant-lock primary URL to F20011 / Essential (Pure); do not promote parent PDP without variant parameter."
+    },
+    "cross_slug_family_risk": {
+      "status": "LOW",
+      "note": "Repo alen-fl40 and alen-bf35 are separate slugs for different purifier families (45i/Flex, Classic/Fit50)."
+    },
+    "proven_wrong_family_edges": []
+  },
+  "candidate_buyer_paths": [
+    {
+      "url": "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993",
+      "retailer_or_source": "alen_official_oem_pdp",
+      "exact_token_proof": "PROVEN: Shopify SKU F20011, title 'Essential (Pure)', formerly B7 Pure. Catalog token ALEN-B75-MP NOT present.",
+      "buyability_proof": "PROVEN: Add to cart $99.00; Shopify available=true for F20011 (2026-06-10).",
+      "wrong_family_risk": "LOW when variant-locked to F20011. MEDIUM if unscoped parent URL allows Fresh/Odor purchase for Pure-only slug.",
+      "status": "PASS"
+    }
+  ],
+  "evidence_status_counts": {"PASS": 2, "FAIL": 0, "UNKNOWN": 0, "BLOCKED": 0},
+  "model_filter_classification_counts": {"PROVEN_FITS": 2, "PROVEN_WRONG_FAMILY": 0, "PHANTOM_NOT_FOUND": 0, "UNKNOWN": 0},
+  "filter_first_cross_reference": null,
+  "recommended_csv_mutation": null,
+  "verdict": "SAFE_TO_PROGRESS",
+  "verdict_detail": "SAFE_TO_PROGRESS for owner-approved CSV planning only. Official Alen BreatheSmart 75i Essential (Pure) filter is real, in-stock, and directly buyable at $99 (F20011). Both repo-mapped 75i models PROVEN_FITS. Naming bridge ALEN-B75-MP -> F20011 required; primary must use variant-locked PDP URL. Not authorized for apply without owner sign-off and committed artifact.",
+  "recommended_disposition": "SAFE_TO_PROGRESS",
+  "blockers": [
+    "BLOCKER 1 (naming bridge): Repo oem_part_number ALEN-B75-MP absent from official storefront; correct sellable identity = F20011 Essential (Pure) / 75i-Pure Filter.",
+    "BLOCKER 2 (variant lock): PDP hosts three 75i filter tiers (F20011/F20012/F20015); slug intent is Pure-only — primary URL must include ?variant=40426983292993.",
+    "BLOCKER 3 (search-placeholder): CSV primary remains defective alen.com search URL until owner-approved mutation."
+  ],
+  "expected_safe_edge_gain_if_corrected": 2,
+  "expected_safe_edge_gain_upper_bound": 2,
+  "naming_bridge_required": true,
+  "proposed_changes_for_cursor_review": {
+    "owner_approval_required": true,
+    "safe_apply_authorized": false,
+    "truth_closure_claimed": false,
+    "note": "Advisory only — owner approves CSV planning after naming bridge + variant lock. Promotion must ship WITH variant-locked primary, never before.",
+    "filters_csv": {
+      "filter_slug": "alen-b75-mp",
+      "action": "naming_bridge_optional",
+      "before_oem_part_number": "ALEN-B75-MP",
+      "after_oem_part_number": "F20011 (or ALEN-B75-MP with filter_aliases.csv bridge — owner policy)",
+      "before_name": "BreatheSmart 75i medical-grade layer",
+      "after_name": "BreatheSmart 75i HEPA Filter - Essential (Pure) (F20011)"
+    },
+    "retailer_links_csv": {
+      "filter_slug": "alen-b75-mp",
+      "action": "replace_primary_after_bridge",
+      "after": {
+        "retailer_name": "Alen (OEM)",
+        "destination_url": "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993",
+        "affiliate_url": "https://alen.com/products/alen-breathesmart-75i-hepa-filter?variant=40426983292993",
+        "is_primary": true,
+        "retailer_key": "oem-catalog",
+        "retailer_slug": "oem-catalog",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Official Alen BreatheSmart 75i Essential (Pure) filter SKU F20011 $99.00; Add to cart active 2026-06-10; variant-locked to Pure tier. Catalog token ALEN-B75-MP is BuckParts-internal; bridge to F20011.",
+        "browser_truth_checked_at": "2026-06-10"
+      },
+      "affiliate_note": "Apply Alen affiliate wrapper if a program exists; no affiliate tag fabricated."
+    },
+    "compatibility_mappings_csv": [
+      {"keep": "alen-breathesmart-75i,alen-b75-mp,true", "reason": "PROVEN_FITS"},
+      {"keep": "alen-breathesmart-75i-white,alen-b75-mp,true", "reason": "PROVEN_FITS"}
+    ]
+  },
+  "guardrails_honored": {
+    "no_csv_or_supabase_mutation": true,
+    "no_canonical_evidence_writes": true,
+    "no_commit": true,
+    "single_filter_only": true,
+    "repo_read_only": true
+  },
+  "proven_facts": [
+    "PROVEN: Official PDP https://alen.com/products/alen-breathesmart-75i-hepa-filter exists with Shopify SKUs F20011 (Essential Pure $99), F20012 (Advanced Fresh $129), F20015 (Ultimate Odor $139).",
+    "PROVEN: Variant F20011 available=true; Add to cart $99.00 active on variant-locked PDP (2026-06-10).",
+    "PROVEN: ALEN-B75-MP and B75-MP absent from PDP; bare B75-MP site search returns 0 results.",
+    "PROVEN: Support article maps BreatheSmart 75i -> 75i-Pure Filter (Essential tier).",
+    "PROVEN: 2/2 repo compatibility-mapped models PROVEN_FITS for 75i Essential Pure filter.",
+    "PROVEN: Repo CSV primary remains search-placeholder https://www.alen.com/search?q=ALEN-B75-MP.",
+    "PROVEN: recommended_csv_mutation=null; safe_apply_authorized=false."
+  ],
+  "inferred_facts": [
+    "INFERRED: Repo slug alen-b75-mp encodes BreatheSmart 75i (B75) + Medical-grade Pure (MP) tier — matches F20011 Essential (Pure), not Fresh/Odor variants."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Whether checkout completes end-to-end (no purchase click performed).",
+    "UNKNOWN: Owner preferred canonical oem_part_number form after bridge (F20011 vs retained ALEN-B75-MP + alias).",
+    "UNKNOWN: Live Supabase/runtime parity vs CSV for this slug."
+  ]
+}
