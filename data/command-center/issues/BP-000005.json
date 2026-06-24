@@ -5,10 +5,10 @@
   "severity": "TIER_1",
   "source_system": "ap_demand_selected_correctness_risks_v1",
   "detected_at": "2026-06-23T21:00:00.000Z",
-  "status": "PACKET_READY",
+  "status": "CLOSED_PROVEN",
   "assigned_to": "Owner",
   "affected_routes": [
-    "/filter/vornado-md1-0023",
+    "/filter/vornado-md1-0022",
     "/filter/vornado-carbon-pad"
   ],
   "evidence_files": [
@@ -20,13 +20,23 @@
     "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
     "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json"
   ],
-  "repair_commit": null,
+  "repair_commit": "f3c2141",
   "deploy_commit": null,
-  "closed_at": null,
+  "closed_at": "2026-06-24T00:39:22.000Z",
   "re_audit_outcome": null,
-  "closure_reason": null,
-  "closure_evidence": [],
-  "closure_approved": false,
+  "closure_reason": "Owner-approved closure after CSV catalog identity repair at f3c2141: HEPA identity moved to vornado-md1-0022 (VORNADO-MD1-0022); HEPA-on-MD1-0023 identity retired; carbon remains vornado-carbon-pad; wrong-family vornado-pc300 -> vornado-md1-0023 edge removed. Runtime validation observed via npm run build and npm run buckparts:operator-proof (not durable artifacts in repo). Supabase parity not claimed.",
+  "closure_evidence": [
+    "REPAIR_COMMIT:f3c2141",
+    "CSV_REPAIR:data/air-purifier/filters.csv:vornado-md1-0022_added_vornado-md1-0023_retired",
+    "CSV_REPAIR:data/air-purifier/retailer_links.csv:vornado-md1-0022_added_vornado-md1-0023_removed",
+    "CSV_REPAIR:data/air-purifier/compatibility_mappings.csv:ac_family_hepa_remapped_pc300_edge_removed",
+    "RUNTIME_VALIDATION_OBSERVED:npm_run_build:PASS:not_durable_artifact",
+    "RUNTIME_VALIDATION_OBSERVED:npm_run_buckparts_operator_proof:RESULT_OK:not_durable_artifact",
+    "RUNTIME_VALIDATION_OBSERVED:buckparts_production_truth_ap:exit_0_supabase_cases_skipped:not_durable_artifact",
+    "AUDIT_SUPERSESSION:ap-demand-selected-correctness-risks-v1:vornado_verdict_catalog_identity_repaired_csv_f3c2141",
+    "OWNER_CLOSURE_APPROVED:Jared:true"
+  ],
+  "closure_approved": true,
   "issue_packet_v1": {
     "contract": "command_center_issue_packet_v1",
     "read_only": true,
@@ -87,12 +97,20 @@
     ]
   },
   "proven_facts": [
-    "PROVEN: Issue packet BP-000005 is read-only planning at status PACKET_READY; no repair_commit.",
-    "PROVEN: Severity TIER_1 — does not steer Command Center TIER_0 issue registry NBA.",
-    "PROVEN: Source audit ap-demand-selected-correctness-risks-v1 committed at 1a2140a."
+    "PROVEN: repair_commit f3c2141 exists in git history and repairs CSV catalog identity split.",
+    "PROVEN: filters.csv at f3c2141 adds vornado-md1-0022 (VORNADO-MD1-0022 HEPA) and retires vornado-md1-0023 row.",
+    "PROVEN: retailer_links.csv at f3c2141 adds vornado-md1-0022 search placeholder and removes vornado-md1-0023 row; vornado-carbon-pad direct_buyable unchanged.",
+    "PROVEN: compatibility_mappings.csv at f3c2141 remaps AC-family HEPA edges to vornado-md1-0022, removes vornado-pc300 -> vornado-md1-0023, preserves carbon edges to vornado-carbon-pad.",
+    "PROVEN: Runtime validation observed — npm run build PASS, npm run buckparts:operator-proof RESULT OK, buckparts:production-truth:ap exit 0 with Supabase cases skipped — not durable artifacts committed in repo.",
+    "PROVEN: Jared (owner) explicitly set closure_approved=true after CSV repair — not inferred from audit packet alone.",
+    "PROVEN: CLOSED_PROVEN required repair_commit, closed_at, closure_reason, closure_evidence, and closure_approved.",
+    "PROVEN: Supabase parity not claimed at closure.",
+    "PROVEN: BP-000006 renpho collision remains open and blocking demand-selected correctness steering."
   ],
   "inferred_facts": [
-    "INFERRED: Catalog identity correction requires owner-approved apply plan before any CSV mutation."
+    "INFERRED: vornado-md1-0022 HEPA buyer path may remain search-placeholder until bounded MD1-0022 PDP browser evidence is captured."
   ],
-  "unknown_facts": []
+  "unknown_facts": [
+    "UNKNOWN: Live Supabase rows for retired vornado-md1-0023 slug — parity apply not performed at closure."
+  ]
 }

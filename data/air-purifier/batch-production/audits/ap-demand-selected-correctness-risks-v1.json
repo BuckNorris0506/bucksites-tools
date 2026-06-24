@@ -8,10 +8,10 @@
   "evidence_writes": false,
   "owner_decision_rows": false,
   "registry_changes": false,
-  "generated_at": "2026-06-23T20:00:00.000Z",
-  "git_head": "d59f3f8fa186396d9d00ff087c2fedc863a0b56b",
-  "git_head_label": "d59f3f8 Record AP demand-selected noncanonical discovery result",
-  "title": "AP demand-selected batch — correctness risks (vornado-md1-0023, renpho-rp-ap003)",
+  "generated_at": "2026-06-24T00:39:22.000Z",
+  "git_head": "f3c2141157596b7ecf946c0e0f7ad7eb96ed9808",
+  "git_head_label": "f3c2141 Repair Vornado MD1-0022 HEPA identity",
+  "title": "AP demand-selected batch — correctness risks (vornado-md1-0023 superseded, renpho-rp-ap003)",
   "run_id": "ap-demand-selected-batch-run-v1-2026-06-23",
   "scope_slugs": ["vornado-md1-0023", "renpho-rp-ap003"],
   "discovery_artifact_rel_path": "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
@@ -19,11 +19,24 @@
   "discovery_artifact_not_canonical": true,
   "discovery_artifact_not_apply_eligible": true,
   "mechanical_validation_status": "VALIDATION_PASS",
+  "repair_supersession_v1": {
+    "bp_000005_status": "CLOSED_PROVEN",
+    "repair_commit": "f3c2141",
+    "repair_commit_full": "f3c2141157596b7ecf946c0e0f7ad7eb96ed9808",
+    "superseded_at": "2026-06-24T00:39:22.000Z",
+    "catalog_repair_summary": "HEPA identity vornado-md1-0022 created; HEPA-on-MD1-0023 retired; carbon remains vornado-carbon-pad; vornado-pc300 -> vornado-md1-0023 removed.",
+    "validation_observed_runtime_not_durable": [
+      "npm run build:PASS",
+      "npm run buckparts:operator-proof:RESULT_OK",
+      "npm run buckparts:production-truth:ap:exit_0_supabase_cases_skipped"
+    ],
+    "supabase_parity_claimed": false
+  },
   "executive_summary": {
     "vornado-md1-0023": {
-      "verdict": "issue_track_and_split_before_progression",
+      "verdict": "catalog_identity_repaired_csv_f3c2141",
       "label": "PROVEN",
-      "headline": "Catalog identity split already documented: MD1-0023 is official carbon SKU on vornado-carbon-pad (direct_buyable); vornado-md1-0023 HEPA slug uses wrong token and overlaps wrong-family compat edges. Demand-selected discovery confirms search-placeholder only — does not resolve HEPA identity."
+      "headline": "BP-000005 CLOSED_PROVEN at repair_commit f3c2141. CSV catalog split applied: HEPA slug vornado-md1-0022 (VORNADO-MD1-0022) created; HEPA-on-MD1-0023 identity retired; carbon remains vornado-carbon-pad (direct_buyable); vornado-pc300 -> vornado-md1-0023 wrong-family edge removed. Historical demand-selected discovery on retired slug is noncanonical and not apply-eligible."
     },
     "renpho-rp-ap003": {
       "verdict": "exclude_from_future_batch_progression",
@@ -34,6 +47,13 @@
   "slug_assessments": [
     {
       "filter_slug": "vornado-md1-0023",
+      "supersession_v1": {
+        "status": "CLOSED_PROVEN",
+        "repair_commit": "f3c2141",
+        "replacement_hepa_slug": "vornado-md1-0022",
+        "carbon_slug_unchanged": "vornado-carbon-pad",
+        "label": "PROVEN"
+      },
       "demand_selected_batch_rank": 2,
       "discovery_row": {
         "recommendation": "REJECT_SEARCH_CATEGORY",
@@ -47,31 +67,42 @@
         "recommended_csv_mutation": null
       },
       "catalog_truth": {
+        "pre_repair_snapshot_label": "HISTORICAL_AT_d59f3f8",
         "filters_csv": {
           "slug": "vornado-md1-0023",
           "oem_part_number": "VORNADO-MD1-0023",
           "display_name": "AC350/500/550 HEPA cartridge",
+          "label": "SUPERSEDED"
+        },
+        "post_repair_csv_at_f3c2141": {
+          "hepa_slug": "vornado-md1-0022",
+          "hepa_oem_part_number": "VORNADO-MD1-0022",
+          "hepa_display_name": "True HEPA Filter (MD1-0022)",
+          "retired_slug": "vornado-md1-0023",
+          "carbon_slug": "vornado-carbon-pad",
+          "carbon_browser_truth": "direct_buyable",
+          "pc300_to_md1_0023_edge": "removed",
+          "ac_family_hepa_compat": "remapped_to_vornado-md1-0022",
           "label": "PROVEN"
         },
         "sibling_slug": {
           "slug": "vornado-carbon-pad",
           "oem_part_number": "VORNADO-CARBON-PAD",
           "display_name": "MD1-0023 Activated Carbon Filter (2-Pack)",
-          "filters_csv_note": "Official Vornado MD1-0023 activated carbon pre-filter (2-pack); official HEPA = MD1-0022; pending vornado-md1-0023 HEPA slug correction",
+          "filters_csv_note": "Official Vornado MD1-0023 activated carbon pre-filter (2-pack); companion HEPA = MD1-0022 on vornado-md1-0022.",
           "label": "PROVEN"
         },
         "retailer_links_csv": {
-          "vornado-md1-0023_primary": "https://www.vornado.com/search?q=VORNADO-MD1-0023",
-          "vornado-md1-0023_browser_truth": null,
+          "vornado-md1-0022_primary": "https://www.vornado.com/search?q=MD1-0022",
+          "vornado-md1-0022_browser_truth": null,
           "vornado-carbon-pad_primary": "https://vornado.com/products/md1-0023-activated-carbon-filter-2-pack-1",
           "vornado-carbon-pad_browser_truth": "direct_buyable",
           "label": "PROVEN"
         },
-        "compat_models_mapped": [
+        "compat_models_mapped_hepa_post_repair": [
           "vornado-ac350",
           "vornado-ac500",
           "vornado-ac550",
-          "vornado-pc300",
           "vornado-ac500b",
           "vornado-ac550w"
         ],
@@ -102,35 +133,36 @@
           "UNKNOWN: whether an official MD1-0022 HEPA PDP with Add to Cart exists — not opened in demand-selected bounded attempt."
         ]
       },
-      "correctness_risks": [
+      "correctness_risks": [],
+      "correctness_risks_superseded": [
         {
           "risk_id": "vornado-hepa-carbon-token-collision",
           "severity": "high",
-          "label": "PROVEN",
-          "detail": "Single manufacturer token MD1-0023 is split across two filter slugs with opposing filter types (HEPA vs carbon)."
+          "superseded_by": "f3c2141",
+          "label": "SUPERSEDED_BP_000005_CLOSED_PROVEN"
         },
         {
           "risk_id": "vornado-pc300-wrong-family-compat",
           "severity": "high",
-          "label": "PROVEN",
-          "detail": "compatibility_mappings.csv maps vornado-pc300 -> vornado-md1-0023; model-first evidence PROVEN wrong-family (PCO300 carbon = MD1-0027)."
+          "superseded_by": "f3c2141",
+          "label": "SUPERSEDED_BP_000005_CLOSED_PROVEN"
         },
         {
           "risk_id": "vornado-batch-targets-resolved-carbon-slug-elsewhere",
           "severity": "medium",
-          "label": "PROVEN",
-          "detail": "Demand-selected batch scopes vornado-md1-0023 while vornado-carbon-pad already has direct_buyable official carbon path."
+          "superseded_by": "f3c2141",
+          "label": "SUPERSEDED_BP_000005_CLOSED_PROVEN"
         }
       ],
       "recommendation": {
-        "action": "issue_track_and_split",
+        "action": "superseded_bp_000005_closed_proven",
         "exclude_from_future_batch_progression": false,
-        "exclude_from_apply_progression": true,
-        "reclassify_owner_review": true,
-        "split_required": true,
-        "issue_packet_recommended": true,
-        "rationale": "Do not treat demand-selected discovery as progress toward buyer-path apply on vornado-md1-0023. Open issue packet for catalog identity split (HEPA slug -> MD1-0022 token / new slug vs carbon on vornado-carbon-pad), trim wrong-family compat edges, and reconcile batch scope before any canonical evidence write or CSV apply planning.",
-        "owner_review_disposition_target": "hold_needs_owner_review",
+        "exclude_from_apply_progression": false,
+        "reclassify_owner_review": false,
+        "split_required": false,
+        "issue_packet_recommended": false,
+        "rationale": "Catalog identity split repaired in CSV at f3c2141. BP-000005 CLOSED_PROVEN. HEPA progression targets vornado-md1-0022; carbon track remains vornado-carbon-pad (separate owner scope). Historical demand-selected discovery on retired vornado-md1-0023 slug is noncanonical.",
+        "owner_review_disposition_target": "superseded_closed",
         "safe_to_continue_read_only_discovery_on_slug": false
       }
     },
@@ -240,20 +272,23 @@
   ],
   "cross_slug_findings": {
     "proven_facts": [
-      "PROVEN: Both slugs remain search-placeholder primaries with null browser_truth in retailer_links.csv.",
+      "PROVEN: BP-000005 CLOSED_PROVEN at repair_commit f3c2141 — Vornado HEPA/carbon CSV identity split repaired.",
+      "PROVEN: renpho-rp-ap003 remains search-placeholder primary with exclude_from_future_batch_progression; BP-000006 open.",
       "PROVEN: Demand-selected noncanonical discovery is VALIDATION_PASS (84/84) but not_canonical_evidence and not_apply_eligible.",
-      "PROVEN: Neither slug has canonical agent-results row in AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1."
+      "PROVEN: renpho-rp-ap003 has no canonical agent-results row in AP_OWNER_REVIEW_EVIDENCE_RESULT_DIRS_V1."
     ],
     "inferred_facts": [
-      "INFERRED: Mechanical validation pass does not override catalog correctness risks — both slugs need governance before batch closeout or apply planning."
+      "INFERRED: Mechanical validation pass does not override renpho catalog correctness risk — BP-000006 still blocks demand-selected batch progression steering."
     ],
-    "unknown_facts": []
+    "unknown_facts": [
+      "UNKNOWN: Live Supabase parity for retired vornado-md1-0023 slug — not claimed at BP-000005 closure."
+    ]
   },
   "recommended_next_steps_read_only": [
-    "Create Command Center issue packet(s) for vornado HEPA/carbon identity split and renpho model/filter collision — planning only.",
+    "Resolve BP-000006 renpho model/filter slug collision before demand-selected batch progression resumes.",
     "Remove renpho-rp-ap003 from future demand-selected batch candidate scopes until exclusion criteria met.",
-    "For vornado: scope future work to vornado-carbon-pad apply readiness (separate track) and MD1-0022 HEPA identity correction — not vornado-md1-0023 token-as-HEPA.",
-    "Reconcile owner-review evidence index to surface model-first blockers for renpho and vornado family conflicts."
+    "Optional: bounded MD1-0022 HEPA PDP browser evidence for vornado-md1-0022 buyer-path promotion.",
+    "vornado-carbon-pad carbon apply readiness remains a separate owner track."
   ],
   "explicitly_out_of_scope": [
     "CSV mutation",

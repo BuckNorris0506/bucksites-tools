@@ -27,6 +27,14 @@ const provenCorrectnessRisks = {
     "Track vornado-md1-0023 identity split | Exclude renpho-rp-ap003 from future batch progression",
 };
 
+const liveRepoCorrectnessRisks = {
+  source_status: "PROVEN" as const,
+  vornado_md1_0023_status: "catalog_identity_repaired_csv_f3c2141",
+  renpho_rp_ap003_status: "exclude_from_future_batch_progression",
+  recommended_action:
+    "Resolve BP-000006 renpho model/filter slug collision | Remove renpho-rp-ap003 from future demand-selected batch candidate scopes",
+};
+
 const provenOpenBatchProof = {
   open_batch_existence: "PROVEN" as const,
 };
@@ -77,7 +85,7 @@ function linkedIssue(
 }
 
 const liveRepoIssues = [
-  linkedIssue("BP-000005", "vornado-md1-0023"),
+  linkedIssue("BP-000005", "vornado-md1-0023", "CLOSED_PROVEN"),
   linkedIssue("BP-000006", "renpho-rp-ap003"),
 ];
 
@@ -91,9 +99,9 @@ describe("demand-selected-correctness-risks-steering-v1", () => {
     assert.equal(AP_DEMAND_SELECTED_CORRECTNESS_BLOCKING_VERDICTS_V1.length, 2);
   });
 
-  test("returns override for live-repo-shaped activation inputs", () => {
+  test("returns override for live-repo-shaped activation inputs (BP-000006 only)", () => {
     const override = resolveDemandSelectedCorrectnessRisksSteeringOverrideV1({
-      correctnessRisks: provenCorrectnessRisks,
+      correctnessRisks: liveRepoCorrectnessRisks,
       ownerReviewOpenBatchProof: provenOpenBatchProof,
       demandLane: provenDemandLane,
       issues: liveRepoIssues,
@@ -105,12 +113,12 @@ describe("demand-selected-correctness-risks-steering-v1", () => {
       override.next_best_action,
       /^CORRECTNESS_RISKS \[CORRECTNESS_RESOLUTION_REQUIRED\]:/,
     );
-    assert.match(override.next_best_action, /BP-000005 \(vornado-md1-0023\)/);
     assert.match(override.next_best_action, /BP-000006 \(renpho-rp-ap003\)/);
+    assert.doesNotMatch(override.next_best_action, /BP-000005/);
     assert.match(override.next_best_action, /catalog identity correctness blocks batch progression/i);
     assert.match(override.next_best_action, /batch-planning messaging \(wedge selection unchanged\)/i);
     assert.match(override.next_best_action, /mutation unauthorized/i);
-    assert.deepEqual(override.linked_issue_ids, ["BP-000005", "BP-000006"]);
+    assert.deepEqual(override.linked_issue_ids, ["BP-000006"]);
     assert.ok(
       override.mutation_block_reasons.every((reason) => !/authorized=true/i.test(reason)),
     );

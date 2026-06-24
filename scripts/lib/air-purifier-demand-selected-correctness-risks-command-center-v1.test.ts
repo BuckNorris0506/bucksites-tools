@@ -11,15 +11,15 @@ import {
 
 const SAMPLE_AUDIT = {
   contract: "ap_demand_selected_correctness_risks_v1",
-  generated_at: "2026-06-23T20:00:00.000Z",
+  generated_at: "2026-06-24T00:39:22.000Z",
   executive_summary: {
-    "vornado-md1-0023": { verdict: "issue_track_and_split_before_progression" },
+    "vornado-md1-0023": { verdict: "catalog_identity_repaired_csv_f3c2141" },
     "renpho-rp-ap003": { verdict: "exclude_from_future_batch_progression" },
   },
   slug_assessments: [
     {
       filter_slug: "vornado-md1-0023",
-      correctness_risks: [{ severity: "high" }, { severity: "high" }, { severity: "medium" }],
+      correctness_risks: [],
     },
     {
       filter_slug: "renpho-rp-ap003",
@@ -27,7 +27,7 @@ const SAMPLE_AUDIT = {
     },
   ],
   recommended_next_steps_read_only: [
-    "Create Command Center issue packet(s) for vornado HEPA/carbon identity split and renpho model/filter collision — planning only.",
+    "Resolve BP-000006 renpho model/filter slug collision before demand-selected batch progression resumes.",
     "Remove renpho-rp-ap003 from future demand-selected batch candidate scopes until exclusion criteria met.",
   ],
 } as const;
@@ -35,13 +35,12 @@ const SAMPLE_AUDIT = {
 describe("air_purifier_demand_selected_correctness_risks_v1", () => {
   test("projectApDemandSelectedCorrectnessRisksFromAuditV1 projects required fields only", () => {
     const projection = projectApDemandSelectedCorrectnessRisksFromAuditV1(SAMPLE_AUDIT);
-    assert.equal(projection.risk_count, 6);
-    assert.equal(projection.high_risk_slug_count, 2);
-    assert.equal(projection.vornado_md1_0023_status, "issue_track_and_split_before_progression");
+    assert.equal(projection.risk_count, 3);
+    assert.equal(projection.high_risk_slug_count, 1);
+    assert.equal(projection.vornado_md1_0023_status, "catalog_identity_repaired_csv_f3c2141");
     assert.equal(projection.renpho_rp_ap003_status, "exclude_from_future_batch_progression");
-    assert.equal(projection.generated_at, "2026-06-23T20:00:00.000Z");
-    assert.match(projection.recommended_action, /issue packet/i);
-    assert.match(projection.recommended_action, /renpho-rp-ap003/i);
+    assert.equal(projection.generated_at, "2026-06-24T00:39:22.000Z");
+    assert.match(projection.recommended_action, /BP-000006|renpho-rp-ap003/i);
   });
 
   test("buildAirPurifierDemandSelectedCorrectnessRisksLaneV1 returns UNKNOWN when audit missing", () => {
@@ -68,11 +67,11 @@ describe("air_purifier_demand_selected_correctness_risks_v1", () => {
       readTextFile: () => JSON.stringify(SAMPLE_AUDIT),
     });
     assert.equal(lane.source_status, "PROVEN");
-    assert.equal(lane.risk_count, 6);
-    assert.equal(lane.high_risk_slug_count, 2);
-    assert.equal(lane.vornado_md1_0023_status, "issue_track_and_split_before_progression");
+    assert.equal(lane.risk_count, 3);
+    assert.equal(lane.high_risk_slug_count, 1);
+    assert.equal(lane.vornado_md1_0023_status, "catalog_identity_repaired_csv_f3c2141");
     assert.equal(lane.renpho_rp_ap003_status, "exclude_from_future_batch_progression");
-    assert.equal(lane.generated_at, "2026-06-23T20:00:00.000Z");
+    assert.equal(lane.generated_at, "2026-06-24T00:39:22.000Z");
   });
 
   test("buildAirPurifierDemandSelectedCorrectnessRisksLaneUnknownV1 stays read-only", () => {

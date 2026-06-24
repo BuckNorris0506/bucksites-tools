@@ -4450,11 +4450,10 @@ test("command center next_best_action prefers demand-selected batch when refrige
   if (
     correctness.source_status === "PROVEN" &&
     ownerReview.open_batch_proof_v1.open_batch_existence === "PROVEN" &&
-    (correctness.vornado_md1_0023_status === "issue_track_and_split_before_progression" ||
-      correctness.renpho_rp_ap003_status === "exclude_from_future_batch_progression")
+    correctness.renpho_rp_ap003_status === "exclude_from_future_batch_progression"
   ) {
     assert.ok(demandSelectedCorrectnessRisksSteeringActive(report));
-    assert.match(report.next_best_action, /BP-000005 \(vornado-md1-0023\)/);
+    assert.doesNotMatch(report.next_best_action, /BP-000005 \(vornado-md1-0023\)/);
     assert.match(report.next_best_action, /BP-000006 \(renpho-rp-ap003\)/);
     assert.match(report.next_best_action, /catalog identity correctness blocks batch progression/i);
     assert.match(report.next_best_action, /batch-planning messaging \(wedge selection unchanged\)/i);
@@ -4466,7 +4465,7 @@ test("command center next_best_action prefers demand-selected batch when refrige
         .steering_override_source,
       "demand_selected_correctness_risks",
     );
-    assert.match(report.execution_guidance.next_move_command, /BP-000005\.json/);
+    assert.match(report.execution_guidance.next_move_command, /BP-000006\.json/);
     assert.equal(report.execution_guidance.next_move_mode, "READ_ONLY");
     assert.equal(
       report.command_center_v2.air_purifier_demand_selected_batch_owner_review_v1.batch_start_authorized,
@@ -4659,13 +4658,14 @@ test("command_center_v2.command_center_issue_reaudit_v1 surfaces deployed re-aud
 
   const registry = report.command_center_v2.command_center_issue_registry_v1;
   assert.equal(registry.steering_override_active, false);
-  assert.equal(registry.total_open, 2);
-  assert.equal(registry.total_closed, 4);
+  assert.equal(registry.total_open, 1);
+  assert.equal(registry.total_closed, 5);
   assert.deepEqual(registry.closed_proven_issue_ids, [
     "BP-000001",
     "BP-000002",
     "BP-000003",
     "BP-000004",
+    "BP-000005",
   ]);
   assert.equal(issueReauditSteeringActive(report), false);
   assert.notEqual(
@@ -4689,17 +4689,19 @@ test("command_center_v2.command_center_issue_registry_v1 is read-only and does n
   assert.equal(lane.read_only, true);
   assert.equal(lane.data_mutation, false);
   assert.equal(lane.recommended_jq_path, ".command_center_v2.command_center_issue_registry_v1");
-  assert.equal(lane.total_open, 2);
-  assert.equal(lane.total_closed, 4);
+  assert.equal(lane.total_open, 1);
+  assert.equal(lane.total_closed, 5);
   assert.equal(lane.lifecycle_distribution.aligned_count, 6);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 4);
-  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 2);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.CLOSED_PROVEN, 5);
+  assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.PACKET_READY, 1);
   assert.equal(lane.lifecycle_distribution.evidence_proven_max_by_status.DEPLOYED, 0);
   assert.equal(lane.steering_override_active, false);
   assert.equal(lane.highest_priority_steering_eligible_issue, null);
-  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000005");
+  assert.equal(lane.highest_priority_issue?.issue_id, "BP-000006");
   const bp5 = lane.issues.find((issue) => issue.issue_id === "BP-000005");
   const bp6 = lane.issues.find((issue) => issue.issue_id === "BP-000006");
+  assert.equal(bp5?.status, "CLOSED_PROVEN");
+  assert.equal(bp6?.status, "PACKET_READY");
   assert.equal(bp5?.issue_packet_v1?.filter_slug, "vornado-md1-0023");
   assert.equal(bp6?.issue_packet_v1?.filter_slug, "renpho-rp-ap003");
   assert.ok(bp5?.issue_packet_v1?.closure_criteria.length);
@@ -5575,11 +5577,11 @@ test("command_center_v2.air_purifier_demand_selected_correctness_risks_v1 is rea
     ".command_center_v2.air_purifier_demand_selected_correctness_risks_v1",
   );
   if (lane.source_status === "PROVEN") {
-    assert.equal(lane.risk_count, 6);
-    assert.equal(lane.high_risk_slug_count, 2);
-    assert.equal(lane.vornado_md1_0023_status, "issue_track_and_split_before_progression");
+    assert.equal(lane.risk_count, 3);
+    assert.equal(lane.high_risk_slug_count, 1);
+    assert.equal(lane.vornado_md1_0023_status, "catalog_identity_repaired_csv_f3c2141");
     assert.equal(lane.renpho_rp_ap003_status, "exclude_from_future_batch_progression");
-    assert.equal(lane.generated_at, "2026-06-23T20:00:00.000Z");
+    assert.equal(lane.generated_at, "2026-06-24T00:39:22.000Z");
     assert.match(lane.recommended_action, /renpho-rp-ap003/i);
   } else {
     assert.equal(lane.risk_count, "UNKNOWN");
