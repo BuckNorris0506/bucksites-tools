@@ -9,6 +9,12 @@ import {
   type HomekeepWedgeCatalog,
 } from "@/lib/catalog/identity";
 
+import {
+  coverageSubjectIdMatchesWedgeV1,
+  parseCoverageSubjectIdV1,
+  validateCoverageSubjectIdV1,
+} from "./coverage-subject-id-v1";
+
 export const COVERAGE_SUBJECT_CONTRACT_V1 = "coverage_subject_v1" as const;
 
 export const COVERAGE_SUBJECT_KINDS_V1 = [
@@ -34,10 +40,6 @@ export type CoverageSubjectV1 = {
   data_mutation: false;
 };
 
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
-}
-
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
@@ -48,14 +50,18 @@ export function validateCoverageSubjectV1(value: unknown): value is CoverageSubj
   }
   const row = value as Record<string, unknown>;
   if (row.contract !== COVERAGE_SUBJECT_CONTRACT_V1) return false;
-  if (!isNonEmptyString(row.subject_id)) return false;
+  if (!validateCoverageSubjectIdV1(row.subject_id)) return false;
   if (typeof row.wedge !== "string" || !isHomekeepWedgeCatalog(row.wedge)) return false;
+  if (!coverageSubjectIdMatchesWedgeV1(row.subject_id, row.wedge)) return false;
+  const parsedSubjectId = parseCoverageSubjectIdV1(row.subject_id);
+  if (!parsedSubjectId) return false;
   if (
     typeof row.kind !== "string" ||
     !(COVERAGE_SUBJECT_KINDS_V1 as readonly string[]).includes(row.kind)
   ) {
     return false;
   }
+  if (parsedSubjectId.subject_kind !== row.kind) return false;
   if (!isStringArray(row.internal_slug_labels)) return false;
   if (row.official_model_token !== null && typeof row.official_model_token !== "string") {
     return false;

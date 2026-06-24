@@ -2,6 +2,13 @@
  * Universal Coverage Factory — normalized evidence claim bundle v1.
  */
 
+import {
+  coverageProvenanceRefsSatisfyProvenClaimV1,
+  validateCoverageProvenanceRefListV1,
+  type CoverageProvenanceRefV1,
+} from "./coverage-provenance-ref-v1";
+import { validateCoverageSubjectIdV1 } from "./coverage-subject-id-v1";
+
 export const COVERAGE_EVIDENCE_CONTRACT_V1 = "coverage_evidence_v1" as const;
 
 export const COVERAGE_EVIDENCE_CLAIM_STATUSES_V1 = [
@@ -27,8 +34,7 @@ export type CoverageEvidenceDimensionV1 = (typeof COVERAGE_EVIDENCE_DIMENSIONS_V
 export type CoverageEvidenceClaimV1 = {
   dimension: CoverageEvidenceDimensionV1;
   status: CoverageEvidenceClaimStatusV1;
-  /** Opaque provenance reference ids — no URLs required at contract layer. */
-  provenance_ref_ids: string[];
+  provenance_refs: CoverageProvenanceRefV1[];
   summary: string | null;
 };
 
@@ -39,16 +45,6 @@ export type CoverageEvidenceV1 = {
   read_only: true;
   data_mutation: false;
 };
-
-const REQUIRED_PROMOTION_DIMENSIONS: readonly CoverageEvidenceDimensionV1[] = [
-  "identity",
-  "fit",
-  "buyer_path",
-];
-
-function isNonEmptyString(value: unknown): value is string {
-  return typeof value === "string" && value.trim().length > 0;
-}
 
 function isClaimStatus(value: unknown): value is CoverageEvidenceClaimStatusV1 {
   return (
@@ -69,8 +65,10 @@ function validateClaim(value: unknown): value is CoverageEvidenceClaimV1 {
   const row = value as Record<string, unknown>;
   if (!isDimension(row.dimension)) return false;
   if (!isClaimStatus(row.status)) return false;
-  if (!Array.isArray(row.provenance_ref_ids)) return false;
-  if (!row.provenance_ref_ids.every((id) => typeof id === "string")) return false;
+  if (!validateCoverageProvenanceRefListV1(row.provenance_refs)) return false;
+  if (row.status === "proven" && !coverageProvenanceRefsSatisfyProvenClaimV1(row.provenance_refs)) {
+    return false;
+  }
   if (row.summary !== null && typeof row.summary !== "string") return false;
   return true;
 }
@@ -79,7 +77,7 @@ export function validateCoverageEvidenceV1(value: unknown): value is CoverageEvi
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
   const row = value as Record<string, unknown>;
   if (row.contract !== COVERAGE_EVIDENCE_CONTRACT_V1) return false;
-  if (!isNonEmptyString(row.subject_id)) return false;
+  if (!validateCoverageSubjectIdV1(row.subject_id)) return false;
   if (typeof row.claims !== "object" || row.claims === null || Array.isArray(row.claims)) {
     return false;
   }
@@ -100,18 +98,18 @@ export function coverageEvidenceDimensionIsUnknownV1(
   return evidence.claims[dimension].status === "unknown";
 }
 
+/** Prefer coverageEvidenceHasUnknownOnPromotionDimensionsV1 from evidence-requirements. */
 export function coverageEvidenceHasUnknownOnRequiredDimensionsV1(
   evidence: CoverageEvidenceV1,
 ): boolean {
-  return REQUIRED_PROMOTION_DIMENSIONS.some((dimension) =>
+  return (["identity", "fit", "buyer_path"] as const).some((dimension) =>
     coverageEvidenceDimensionIsUnknownV1(evidence, dimension),
   );
 }
 
-/** Promotion requires proven identity, fit, and buyer_path — never unknown or blocked. */
+/** Prefer coverageEvidenceMeetsPromotionRequirementsV1 from evidence-requirements. */
 export function coverageEvidenceSupportsPromotionV1(evidence: CoverageEvidenceV1): boolean {
-  for (const dimension of REQUIRED_PROMOTION_DIMENSIONS) {
-    if (evidence.claims[dimension].status !== "proven") return false;
-  }
-  return true;
+  return (["identity", "fit", "buyer_path"] as const).every(
+    (dimension) => evidence.claims[dimension].status === "proven",
+  );
 }

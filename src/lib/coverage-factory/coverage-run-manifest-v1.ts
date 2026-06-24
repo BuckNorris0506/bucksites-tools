@@ -2,6 +2,8 @@
  * Universal Coverage Factory — immutable-shaped run manifest v1.
  */
 
+import { isHomekeepWedgeCatalog, type HomekeepWedgeCatalog } from "@/lib/catalog/identity";
+
 import {
   COVERAGE_ASSESSMENT_DISPOSITIONS_V1,
   type CoverageAssessmentDispositionV1,
@@ -17,13 +19,18 @@ export type CoverageRunManifestAssessmentCountsV1 = Readonly<
 
 export type CoverageRunManifestV1 = {
   contract: typeof COVERAGE_RUN_MANIFEST_CONTRACT_V1;
+  schema_version: string;
   run_id: string;
   adapter_id: string;
   adapter_version: string;
+  wedge: HomekeepWedgeCatalog;
   generated_at: string;
   /** Logical input labels → content hash (e.g. sha256 hex); no filesystem paths required. */
   input_artifact_hashes: CoverageRunManifestInputHashesV1;
   assessment_counts: CoverageRunManifestAssessmentCountsV1;
+  subject_count: number;
+  /** Hash over the provenance ref index emitted for this run (opaque at contract layer). */
+  provenance_index_hash: string;
   prior_run_id: string | null;
   immutable: true;
   read_only: true;
@@ -70,12 +77,18 @@ export function validateCoverageRunManifestV1(value: unknown): value is Coverage
   if (typeof value !== "object" || value === null || Array.isArray(value)) return false;
   const row = value as Record<string, unknown>;
   if (row.contract !== COVERAGE_RUN_MANIFEST_CONTRACT_V1) return false;
+  if (!isNonEmptyString(row.schema_version)) return false;
   if (!isNonEmptyString(row.run_id)) return false;
   if (!isNonEmptyString(row.adapter_id)) return false;
   if (!isNonEmptyString(row.adapter_version)) return false;
+  if (typeof row.wedge !== "string" || !isHomekeepWedgeCatalog(row.wedge)) return false;
   if (!isValidIsoTimestamp(row.generated_at)) return false;
   if (!isInputHashesRecord(row.input_artifact_hashes)) return false;
   if (!isAssessmentCountsRecord(row.assessment_counts)) return false;
+  if (typeof row.subject_count !== "number" || !Number.isInteger(row.subject_count) || row.subject_count < 0) {
+    return false;
+  }
+  if (!isNonEmptyString(row.provenance_index_hash)) return false;
   if (row.prior_run_id !== null && !isNonEmptyString(row.prior_run_id)) return false;
   if (row.immutable !== true) return false;
   if (row.read_only !== true || row.data_mutation !== false) return false;

@@ -2,6 +2,62 @@
  * Universal Coverage Factory v1 — contract foundation exports.
  */
 
+export const COVERAGE_FACTORY_SCHEMA_VERSION_V1 = "1.0.0" as const;
+
+export {
+  COVERAGE_SUBJECT_ID_CONTRACT_V1,
+  COVERAGE_SUBJECT_ID_KIND_SEGMENTS_V1,
+  buildCoverageSubjectIdV1,
+  coverageSubjectIdIsRawSlugOnlyV1,
+  coverageSubjectIdMatchesWedgeV1,
+  parseCoverageSubjectIdV1,
+  validateCoverageSubjectIdV1,
+  type CoverageSubjectIdKindSegmentV1,
+  type CoverageSubjectIdResolvedKindV1,
+  type ParsedCoverageSubjectIdV1,
+} from "./coverage-subject-id-v1";
+
+export {
+  COVERAGE_PROVENANCE_REF_CONTRACT_V1,
+  COVERAGE_PROVENANCE_REF_KINDS_V1,
+  coverageProvenanceRefsSatisfyProvenClaimV1,
+  validateCoverageProvenanceRefListV1,
+  validateCoverageProvenanceRefV1,
+  type CoverageProvenanceRefArtifactPathHashV1,
+  type CoverageProvenanceRefContractRowV1,
+  type CoverageProvenanceRefKindV1,
+  type CoverageProvenanceRefPacketIdV1,
+  type CoverageProvenanceRefV1,
+} from "./coverage-provenance-ref-v1";
+
+export {
+  COVERAGE_SUBJECT_LINK_CONTRACT_V1,
+  COVERAGE_SUBJECT_LINK_KINDS_V1,
+  validateCoverageSubjectLinkV1,
+  type CoverageSubjectLinkKindV1,
+  type CoverageSubjectLinkV1,
+} from "./coverage-subject-link-v1";
+
+export {
+  COVERAGE_LEGACY_MAP_CONTRACT_V1,
+  coverageLegacyMapGrantsMutationAuthorityV1,
+  validateCoverageLegacyMapV1,
+  type CoverageLegacyMapEntryV1,
+  type CoverageLegacyMapEvidenceDimensionHintsV1,
+  type CoverageLegacyMapV1,
+} from "./coverage-legacy-map-v1";
+
+export {
+  COVERAGE_EVIDENCE_REQUIREMENTS_CONTRACT_V1,
+  DEFAULT_COVERAGE_EVIDENCE_PROMOTION_DIMENSIONS_V1,
+  DEFAULT_COVERAGE_EVIDENCE_REQUIREMENTS_V1,
+  coverageEvidenceHasUnknownOnPromotionDimensionsV1,
+  coverageEvidenceMeetsCoveredRequirementsV1,
+  coverageEvidenceMeetsPromotionRequirementsV1,
+  validateCoverageEvidenceRequirementsV1,
+  type CoverageEvidenceRequirementsV1,
+} from "./coverage-evidence-requirements-v1";
+
 export {
   COVERAGE_SUBJECT_CONTRACT_V1,
   COVERAGE_SUBJECT_KINDS_V1,
@@ -63,6 +119,7 @@ export {
   COVERAGE_FACTORY_ADAPTER_CONTRACT_V1,
   coverageFactoryAdapterDescribesCapabilityOnlyV1,
   coverageFactoryAdapterGrantsMutationAuthorityV1,
+  coverageFactoryAdapterSubjectNamespaceMatchesWedgeV1,
   validateCoverageFactoryAdapterDescriptorV1,
   type CoverageFactoryAdapterCapabilityV1,
   type CoverageFactoryAdapterDescriptorV1,
