@@ -162,6 +162,18 @@ export {
 } from "./universal-coverage-factory-decision-layer-v1";
 
 export {
+  buildUniversalCoverageFactoryWorkGeneratorV1,
+  dispositionForCoverageAssessmentV1,
+  expectedActionClassForWorkGeneratorDisposition,
+  stableUcfWorkItemIdV1,
+  UNIVERSAL_COVERAGE_FACTORY_WORK_GENERATOR_CONTRACT_V1,
+  universalCoverageFactoryWorkGeneratorGrantsMutationAuthorityV1,
+  validateUniversalCoverageFactoryWorkGeneratorV1,
+  type UniversalCoverageFactoryWorkGeneratorDispositionV1,
+  type UniversalCoverageFactoryWorkGeneratorV1,
+} from "./universal-coverage-factory-work-generator-v1";
+
+export {
   AP_COVERAGE_DISPOSITION_MAPPING_TABLE_V1,
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   AP_COVERAGE_LEGACY_MAP_V1,
