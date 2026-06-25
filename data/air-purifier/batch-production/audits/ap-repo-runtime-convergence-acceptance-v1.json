@@ -1,0 +1,17 @@
+{
+  "contract": "ap_repo_runtime_convergence_acceptance_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "wedge": "air_purifier",
+  "accepted_at": "2026-06-25T07:38:59.000Z",
+  "accepted_by": "jared",
+  "reason": "Temporary deploy acceptance for repo_runtime_convergence_gate_v1 aggregate AP safe CTA repo-runtime gap (34 CSV vs 28 Supabase, gap 6). Gap slugs: blueair-f4max-411max, blueair-fmini-mini-max, honeywell-hrf-r2, honeywell-hrf-r3, levoit-rf-rar029, winix-carbon-116131. Close path requires owner-authorized batch work: net-new Blueair Max/Mini filter seed, Honeywell OEM primary promotion, Levoit/Winix OEM pre-alignment + retailer_links parity apply. seed_import remains HOLD per ap-supabase-vs-csv-diff-v1.",
+  "re_review_by": "2026-07-09T07:38:59.000Z",
+  "measured_gap": {
+    "csv_safe_direct_buyable_count": 34,
+    "supabase_safe_direct_buyable_count": 28,
+    "gap_size": 6,
+    "measured_at": "2026-06-25T07:38:52.156Z",
+    "supabase_truth_status": "CHECKED"
+  }
+}

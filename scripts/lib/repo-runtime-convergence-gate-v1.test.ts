@@ -363,9 +363,9 @@ test("acceptance validation requires future re_review_by", () => {
   assert.ok(validation.errors.some((e) => e.includes("future")));
 });
 
-test("repo truth committed diff implies BLOCKED today without acceptance artifact", async () => {
+test("gap with no acceptance artifact is BLOCKED under enforce", async () => {
   const report = await buildRepoRuntimeConvergenceGateReportV1({
-    rootDir: process.cwd(),
+    rootDir: mkdtempSync(path.join(tmpdir(), "rrcg-no-accept-")),
     enforce: true,
     deps: {
       now: FIXED_NOW,
