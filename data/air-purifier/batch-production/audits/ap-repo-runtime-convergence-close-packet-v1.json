@@ -1,0 +1,276 @@
+{
+  "contract": "ap_repo_runtime_convergence_close_packet_v1",
+  "packet_revision": "v1.1-mutation-safety-audit",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_writes": false,
+  "csv_writes": false,
+  "ui_changes": false,
+  "buy_link_changes": false,
+  "production_mutations": false,
+  "generated_at": "2026-06-25T18:00:00.000Z",
+  "git_head_hint": "e2ba7b4765561218754066a4ed355168af04999e",
+  "sql_companion": "data/air-purifier/batch-production/audits/ap-repo-runtime-convergence-close-packet-v1.sql",
+  "gate_contract": "repo_runtime_convergence_gate_v1",
+  "gate_state_at_packet_generation": "EXPLICITLY_DIVERGED",
+  "live_measurement": {
+    "csv_safe_direct_buyable_count": 34,
+    "supabase_safe_direct_buyable_count": 28,
+    "gap_size": 6,
+    "supabase_truth_status": "CHECKED",
+    "measured_at": "2026-06-25T16:22:22.904Z"
+  },
+  "gap_inventory_summary": {
+    "SAFE_TO_APPLY_NOW": 0,
+    "REQUIRES_OWNER_REVIEW": 4,
+    "MUST_REMAIN_BLOCKED_until_pre_alignment": 2,
+    "seed_import": "HOLD"
+  },
+  "mutation_safety_audit_resolution": {
+    "audit_date": "2026-06-25",
+    "prior_verdict": "SAFE_FOR_OWNER_APPROVAL_with_mandatory_preflight",
+    "revised_verdict": "SAFE_FOR_OWNER_APPROVAL",
+    "issues": [
+      {
+        "id": "M1",
+        "severity": "MAJOR",
+        "finding": "Phase 3 demote-all without promote rowcount assert could orphan primaries",
+        "resolution": "Phase 3 rewritten with CTE pattern: prove exactly one oem-catalog approved target; demote only when target_count=1; promote with RETURNING; mutation_assertion PASS requires promoted_count=1; per-slug validation SELECT before COMMIT",
+        "status": "RESOLVED"
+      },
+      {
+        "id": "M2",
+        "severity": "MAJOR",
+        "finding": "Phase 4 URL-exact guards could silently 0-row update",
+        "resolution": "Phase 4 UPDATE wrapped in RETURNING CTE with rows_updated count and mutation_assertion (PASS/FAIL_ZERO_ROWS); P4-B preflight detects READY_FOR_UPDATE vs ALREADY_ALIGNED; phase4_slug_assertion validates official PDP URL + direct_buyable; explicit ROLLBACK instruction on FAIL_ZERO_ROWS",
+        "status": "RESOLVED"
+      },
+      {
+        "id": "M3",
+        "severity": "MAJOR",
+        "finding": "Split-phase COMMIT guidance lacked actual phase boundaries",
+        "resolution": "Four separate BEGIN/ROLLBACK transaction blocks (Phases 1–4); each phase has dedicated preflight assertions and validation SELECTs; blocking owner rules in SQL header",
+        "status": "RESOLVED"
+      },
+      {
+        "id": "m1",
+        "severity": "MINOR",
+        "finding": "Verification SELECT non-blocking",
+        "resolution": "Each phase ends with assertion SELECTs returning PASS/FAIL columns; blocking comments require owner to not COMMIT unless PASS; final gate verification SELECT after all phases",
+        "status": "RESOLVED"
+      },
+      {
+        "id": "m2",
+        "severity": "MINOR",
+        "finding": "Rollback manual-only depends on backup discipline",
+        "resolution": "Section 2 backup mandatory in blocking rules rule 5; rollback plan unchanged (manual JSON restore) with explicit validation-failure trigger",
+        "status": "ACKNOWLEDGED"
+      },
+      {
+        "id": "m3",
+        "severity": "MINOR",
+        "finding": "Phase 4 dependency on Phase 1 overstated",
+        "resolution": "Phase 4 SQL has no FK dependency on Phase 1; P4-A documents operational OEM hygiene check (FAIL_PHASE1_NOT_COMMITTED); JSON section_6 clarifies SQL-independent but operationally after Phase 1",
+        "status": "RESOLVED"
+      },
+      {
+        "id": "m4",
+        "severity": "MINOR",
+        "finding": "Blueair brand zero-row cascade",
+        "resolution": "P2-A asserts blueair_brand_count=1 before Phase 2; P2-B asserts model slugs; Phase 2 INSERTs use RETURNING rowcount SELECTs; phase2_assertion FAIL blocks COMMIT",
+        "status": "RESOLVED"
+      }
+    ]
+  },
+  "transaction_boundaries": {
+    "model": "one_BEGIN_ROLLBACK_per_phase",
+    "phases": [
+      { "phase": 1, "sql_marker": "PHASE 1 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P1-A, P1-B", "validation": "phase1_oem_assertion PASS" },
+      { "phase": 2, "sql_marker": "PHASE 2 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P2-A through P2-D", "validation": "phase2_assertion PASS for both Blueair slugs" },
+      { "phase": 3, "sql_marker": "PHASE 3 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P3-A", "validation": "mutation_assertion PASS + phase3_slug_assertion PASS per Honeywell slug" },
+      { "phase": 4, "sql_marker": "PHASE 4 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P4-A, P4-B", "validation": "phase4_slug_assertion PASS per slug (rows_updated=1 or ALREADY_ALIGNED)" }
+    ],
+    "blocking_rules": [
+      "Do not run all phases blindly in one COMMIT",
+      "Do not COMMIT a phase unless its validation SELECT shows PASS",
+      "Do not remove acceptance artifact until enforce gate CONVERGED gap 0"
+    ]
+  },
+  "schema_notes": {
+    "updated_at": "Column air_purifier_retailer_links.updated_at does not exist.",
+    "one_approved_per_slot": "Unique index air_purifier_retailer_links_one_approved_per_slot on (air_purifier_filter_id, retailer_key) WHERE status='approved' — prefer UPDATE-in-place over INSERT for oem-catalog slots.",
+    "slug_subqueries": "SQL uses slug-based subqueries instead of hardcoded filter UUIDs so packet survives row-id drift.",
+    "sql_assertions": "PASS/FAIL columns are owner gates — PostgreSQL cannot auto-abort COMMIT; owner must read results before replacing ROLLBACK."
+  },
+  "section_1_executive_summary": {
+    "goal": "Move repo_runtime_convergence_gate_v1 from EXPLICITLY_DIVERGED to CONVERGED (gap 6 → 0).",
+    "current_gap": {
+      "csv_safe_direct_buyable": 34,
+      "supabase_safe_direct_buyable": 28,
+      "gap_size": 6,
+      "gap_slugs": [
+        "blueair-f4max-411max",
+        "blueair-fmini-mini-max",
+        "honeywell-hrf-r2",
+        "honeywell-hrf-r3",
+        "levoit-rf-rar029",
+        "winix-carbon-116131"
+      ]
+    },
+    "why_old_9_slug_packet_does_not_close_gate": "ap-runtime-safe-cta-parity-packet-v1 targets blueair-f2-211, blueair-particle-411, coway-airmega250-rf, coway-airmega400-rf, gg-flt4100, gg-flt4825, hb-trueair-04384, rabbit-carbon-minusa2, vornado-carbon-pad. PROVEN: zero overlap with today's 6-slug gap inventory (live buildApRepoRuntimeConvergenceAcceptancePlanV1 2026-06-25).",
+    "why_bulk_seed_import_remains_forbidden": [
+      "PROVEN: ap-supabase-vs-csv-diff-v1 authorization_recommendations.seed_import=HOLD.",
+      "PROVEN: vertical-seed OEM collisions on levoit-rf-rar029 and winix-carbon-116131.",
+      "INFERRED: phased guarded SQL with per-phase validation is the only authorized close path."
+    ],
+    "apply_sequence": [
+      "Section 2 preflight backup (export JSON)",
+      "Phase 1 preflight P1-A/B → Phase 1 transaction → validate → COMMIT or ROLLBACK",
+      "Phase 2 preflight P2-A–D → Phase 2 transaction → validate → COMMIT or ROLLBACK",
+      "Phase 3 preflight P3-A → Phase 3 transaction → validate → COMMIT or ROLLBACK",
+      "Phase 4 preflight P4-A/B → Phase 4 transaction → validate → COMMIT or ROLLBACK",
+      "Final gate verification SELECT + Section 8 npm validation",
+      "Acceptance artifact disposition (Section 9)"
+    ]
+  },
+  "section_2_preflight_backup_sql": {
+    "instruction": "Run read-only SELECT blocks from sql_companion Section 2 in Supabase SQL editor. Export results as JSON before any COMMIT. Mandatory for rollback (m2).",
+    "tables": [
+      "public.air_purifier_filters",
+      "public.air_purifier_retailer_links",
+      "public.air_purifier_filter_aliases",
+      "public.air_purifier_compatibility_mappings"
+    ],
+    "gap_slug_scope": [
+      "blueair-f4max-411max",
+      "blueair-fmini-mini-max",
+      "honeywell-hrf-r2",
+      "honeywell-hrf-r3",
+      "levoit-rf-rar029",
+      "winix-carbon-116131"
+    ],
+    "legacy_collision_slug_scope": ["blueair-f4max-411", "blueair-fmini"]
+  },
+  "section_3_phase_1_oem_pre_alignment": {
+    "phase": 1,
+    "targets": ["levoit-rf-rar029", "winix-carbon-116131"],
+    "operational_prerequisite_for": ["seed_import collision hygiene", "recommended before Phase 4 COMMIT"],
+    "sql_dependency_for_phase_4": false,
+    "preflight_assertions": ["P1-A oem_assertion PASS", "P1-B levoit_winix_filter_count=2"],
+    "validation_gate": "phase1_oem_assertion=PASS for both slugs",
+    "status": "GUARDED_SQL_READY"
+  },
+  "section_4_phase_2_blueair_seed": {
+    "phase": 2,
+    "targets": ["blueair-f4max-411max", "blueair-fmini-mini-max"],
+    "avoid_legacy_slugs": ["blueair-f4max-411", "blueair-fmini"],
+    "preflight_assertions": [
+      "P2-A blueair_brand_count=1",
+      "P2-B models blueair-411a-max and blueair-mini-max exist",
+      "P2-C net_new_filter_slug_count=0 (first apply)",
+      "P2-D no F4MAX/FMINI OEM on other slugs"
+    ],
+    "validation_gate": "phase2_assertion=PASS: primary oem-catalog direct_buyable per slug",
+    "rowcount_returns": ["f4max_filter_rows_inserted", "f4max_compat_rows_inserted", "f4max_link_rows_inserted", "fmini_*"],
+    "status": "GUARDED_SQL_READY"
+  },
+  "section_5_phase_3_honeywell_primary_promotion": {
+    "phase": 3,
+    "targets": ["honeywell-hrf-r2", "honeywell-hrf-r3"],
+    "strategy": "CTE safe promote: prove target oem-catalog approved row (count=1) before demote; promote with RETURNING; mutation_assertion requires promoted_count=1",
+    "preflight_assertions": ["P3-A oem_catalog_approved_count=1 per slug"],
+    "validation_gate": "mutation_assertion=PASS AND phase3_slug_assertion=PASS per slug",
+    "zero_primary_prevention": "Demote blocked unless target_count=1; promote blocked unless target_count=1",
+    "status": "GUARDED_SQL_READY"
+  },
+  "section_6_phase_4_levoit_winix_retailer_parity": {
+    "phase": 4,
+    "targets": ["levoit-rf-rar029", "winix-carbon-116131"],
+    "sql_executable_without_phase_1": true,
+    "operational_recommendation": "Run after Phase 1 COMMIT to clear OEM collision hygiene; P4-A checks oem_part_number aligned",
+    "preflight_assertions": [
+      "P4-A phase1_oem_hygiene=PASS",
+      "P4-B phase4_preflight_state READY_FOR_UPDATE or ALREADY_ALIGNED"
+    ],
+    "validation_gate": "rows_updated=1 OR ALREADY_ALIGNED; phase4_slug_assertion=PASS with official PDP URL and direct_buyable",
+    "zero_row_policy": "If rows_updated=0 and not ALREADY_ALIGNED, ROLLBACK and re-run diff — do NOT COMMIT",
+    "status": "GUARDED_SQL_READY"
+  },
+  "section_7_rollback_plan": {
+    "default_transaction_behavior": "Each phase defaults ROLLBACK until owner replaces after validation PASS.",
+    "backup_requirement": "MANDATORY — Section 2 JSON export before first COMMIT. Rollback is manual restore; no auto-inverse SQL.",
+    "restore_by_table": [
+      {
+        "table": "public.air_purifier_filters",
+        "method": "UPDATE from backup; DELETE net-new Blueair slugs to cascade children"
+      },
+      {
+        "table": "public.air_purifier_retailer_links",
+        "method": "UPDATE is_primary, URLs, browser_truth_* from backup JSON"
+      }
+    ],
+    "validation_failure_trigger": "Any phase validation FAIL or npm enforce not CONVERGED → restore from backup before further applies"
+  },
+  "section_8_post_apply_validation_commands": [
+    "npm run buckparts:repo-runtime-convergence:check",
+    "npm run buckparts:repo-runtime-convergence:check -- --enforce",
+    "npm run buckparts:all-product-safe-buyer-path-census",
+    "npm run buckparts:production-truth:ap",
+    "npm run buckparts:buyer-path-inventory-growth-planner"
+  ],
+  "section_8_expected_outcomes": {
+    "repo_runtime_convergence_gate_v1": "CONVERGED",
+    "gap_size": 0,
+    "final_slug_assertion": "PASS for all 6 gap slugs"
+  },
+  "section_9_acceptance_artifact_disposition": {
+    "artifact_path": "data/air-purifier/batch-production/audits/ap-repo-runtime-convergence-acceptance-v1.json",
+    "rules": [
+      {
+        "condition": "enforce gate CONVERGED AND gap_size = 0",
+        "action": "remove acceptance artifact (owner-authorized commit)"
+      },
+      {
+        "condition": "gap shrinks but gap_size > 0",
+        "action": "update measured_gap; retain artifact"
+      },
+      {
+        "condition": "no SQL apply",
+        "action": "retain unchanged"
+      }
+    ],
+    "blocking_rule": "Do NOT remove acceptance artifact until enforce returns CONVERGED gap 0"
+  },
+  "section_10_safety_verdict": {
+    "overall": "SAFE_FOR_OWNER_APPROVAL",
+    "rationale": "v1.1 revision resolves all MAJOR mutation-safety-audit findings (M1–M3). Per-phase transaction boundaries, preflight assertions, CTE rowcount guards, and PASS/FAIL validation gates. m2 (manual rollback) acknowledged — mitigated by mandatory Section 2 backup.",
+    "per_phase": {
+      "preflight_backup": "SAFE_TO_REVIEW",
+      "phase_1_oem_pre_alignment": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
+      "phase_2_blueair_seed": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
+      "phase_3_honeywell_promotion": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
+      "phase_4_levoit_winix_parity": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL"
+    },
+    "explicitly_not": ["SAFE_TO_APPLY_NOW", "unattended_auto_apply"],
+    "seed_import": "BLOCKED",
+    "owner_commit_gates": [
+      "Section 2 backup exported",
+      "Per-phase preflight PASS",
+      "Per-phase validation assertion PASS",
+      "npm enforce CONVERGED gap 0 before acceptance artifact removal"
+    ]
+  },
+  "remaining_risks": [
+    "Production drift since ap-supabase-vs-csv-diff-v1 snapshot — preflight assertions may FAIL; owner must re-run diff, not force COMMIT.",
+    "PostgreSQL cannot auto-abort on validation FAIL — owner discipline required (m1 residual).",
+    "Rollback remains manual JSON restore — backup skip is irrecoverable without diff re-snapshot (m2 residual).",
+    "Phase 2 adds compat mappings without removing legacy blueair-411a-max→blueair-f4max-411 mappings — pre-existing model-page wrong-family exposure; out of packet scope.",
+    "P4-B ALREADY_ALIGNED path allows COMMIT with rows_updated=0 — owner must confirm phase4_slug_assertion=PASS, not mutation_assertion alone."
+  ],
+  "parity_packet_overlap_note": "PROVEN: current 6-slug gap inventory does not overlap ap-runtime-safe-cta-parity-packet-v1 delta slugs.",
+  "proven_facts": [
+    "PROVEN: gate_state=EXPLICITLY_DIVERGED; gap_size=6.",
+    "PROVEN: All MAJOR audit findings addressed in v1.1 SQL revision.",
+    "PROVEN: Phase 4 SQL has no transactional dependency on Phase 1; P4-A is operational hygiene only."
+  ]
+}
