@@ -357,3 +357,19 @@ export {
   type UcfReplacementSimulationDimensionV1,
   type UcfReplacementSimulationResultV1,
 } from "./ucf-replacement-proof-v1";
+
+export {
+  assertGoatC1LbcfUcfTaxonomyBridgeSafetyInvariantsV1,
+  buildGoatC1LbcfUcfTaxonomyBridgeReportV1,
+  compareLbcfUcfOverlappingFridgeSubjectsV1,
+  GOAT_C1_LBCF_UCF_TAXONOMY_BRIDGE_CONTRACT_V1,
+  GOAT_C1_LBCF_UCF_TAXONOMY_BRIDGE_REPORT_NAME_V1,
+  GOAT_C1_READINESS_VERDICTS_V1,
+  LBCF_UCF_TAXONOMY_BRIDGE_MATRIX_V1,
+  lookupLbcfUcfTaxonomyBridgeRowV1,
+  type GoatC1LbcfUcfTaxonomyBridgeReportV1,
+  type GoatC1ReadinessVerdictV1,
+  type LbcfUcfOverlapComparisonRowV1,
+  type LbcfUcfTaxonomyBridgeComparisonV1,
+  type LbcfUcfTaxonomyBridgeMatrixRowV1,
+} from "./goat-c1-lbcf-ucf-taxonomy-bridge-v1";
