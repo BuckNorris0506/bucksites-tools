@@ -132,6 +132,7 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
     "smartwater-mwfp": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
     w10413645a: "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
     wf2cb: "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+    fppwfu01: "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
   };
 
   for (const slug of REFERENCE_SLUGS) {

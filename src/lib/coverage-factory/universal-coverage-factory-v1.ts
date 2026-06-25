@@ -430,6 +430,7 @@ export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
     "smartwater-mwfp",
     "w10413645a",
     "wf2cb",
+    "fppwfu01",
   ],
 };
 
