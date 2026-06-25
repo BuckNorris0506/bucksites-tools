@@ -415,3 +415,23 @@ export {
   type UcfProvenanceLoadBearingExperimentReportV1,
   type UcfProvenanceSubjectProjectionV1,
 } from "./ucf-provenance-load-bearing-experiment-v1";
+
+export {
+  buildUcfFailClosedEnforcementExperimentReportV1,
+  classifyUcfFailClosedEnforcementVerdictV1,
+  isSuppressedSubjectSystemBlockedV1,
+  runUcfFailClosedSubjectEnforcementExperimentV1,
+  selectUcfFailClosedExperimentSuppressedSubjectsV1,
+  simulateSuppressedSubjectMutationAttemptsV1,
+  ucfFailClosedEnforcementExperimentGrantsMutationAuthorityV1,
+  UCF_FAIL_CLOSED_ENFORCEMENT_EXPERIMENT_CONTRACT_V1,
+  UCF_FAIL_CLOSED_ENFORCEMENT_EXPERIMENT_REPORT_NAME_V1,
+  UCF_FAIL_CLOSED_FALSIFICATION_CLAIM_V1,
+  type UcfFailClosedEnforcementExperimentReportV1,
+  type UcfFailClosedEnforcementVerdictV1,
+  type UcfFailClosedMutationAttemptKindV1,
+  type UcfFailClosedMutationAttemptV1,
+  type UcfFailClosedMutationSystemResponseV1,
+  type UcfFailClosedSubjectBaselineV1,
+  type UcfFailClosedSubjectEnforcementResultV1,
+} from "./ucf-fail-closed-enforcement-experiment-v1";
