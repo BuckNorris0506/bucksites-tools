@@ -72,21 +72,45 @@ test("top cohort starts with 4396710 from current repo truth", () => {
   );
 });
 
+test("registered cohort slugs cite UCF coverage disposition authority without changing rows", () => {
+  const report = buildFridgeBuyerPathOwnerReviewBridgeV1({ rootDir: REPO_ROOT });
+  assert.ok(
+    report.proven_facts.some((fact) =>
+      fact.includes("ucf_decision_authority_cutover_phase2_v1"),
+    ),
+  );
+  const registeredSlug = report.rows.find((row) =>
+    report.proven_facts.some(
+      (fact) =>
+        fact.includes(`filter_slug=${row.slug}`) &&
+        fact.includes("coverage disposition authority=universal_coverage_factory_v1"),
+    ),
+  );
+  if (registeredSlug) {
+    assert.equal(registeredSlug.factory_state, FRIDGE_BUYER_PATH_OWNER_REVIEW_BRIDGE_SOURCE_FACTORY_STATE_V1);
+    assert.equal(registeredSlug.apply_mutation_authorized, false);
+  }
+});
+
 test("mutation_ready_count is 0 without apply authorization", () => {
   const report = buildFridgeBuyerPathOwnerReviewBridgeV1({ rootDir: REPO_ROOT });
   assert.equal(report.summary.mutation_ready_count, 0);
   assert.equal(report.apply_authorization_present, false);
 });
 
-test("formal_batch_exists is false — not invented when run-registry absent", () => {
+test("formal_batch_exists stays false even when run-registry JSON exists on disk", () => {
   const report = buildFridgeBuyerPathOwnerReviewBridgeV1({ rootDir: REPO_ROOT });
   assert.equal(report.summary.formal_batch_exists, false);
-  assert.equal(report.summary.formal_batch_registry_path, null);
   assert.ok(
     report.proven_facts.some((f) =>
       f.includes(FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1),
     ),
   );
+  if (report.summary.formal_batch_registry_path) {
+    assert.ok(
+      report.unknown_facts.some((f) => f.includes(report.summary.formal_batch_registry_path!)),
+    );
+  }
 });
 
 test("findAmazonLiveOutcomeEvidencePathsV1 returns live-outcome paths only", () => {

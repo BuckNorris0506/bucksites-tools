@@ -9,9 +9,7 @@ import {
   AP_VORNADO_MD1_0022_REPO_SNAPSHOT_V1,
   buildApCoverageFactoryReferenceProjectionV1,
   buildFridgeCoverageFactoryReferenceProjectionV1,
-  buildUniversalCoverageFactoryDecisionLayerV1,
-  buildUniversalCoverageFactoryV1,
-  buildUniversalCoverageFactoryWorkGeneratorV1,
+  buildUcfDecisionAuthoritySnapshotV1,
   buildWhwCoverageFactoryReferenceProjectionV1,
   COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
   FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
@@ -380,12 +378,12 @@ test("UCF parity audit v1 inventory", () => {
     }
   }
 
-  const factory = buildUniversalCoverageFactoryV1({
+  const snapshot = buildUcfDecisionAuthoritySnapshotV1({
     rootDir: ROOT,
     now: () => new Date("2026-06-10T22:00:00.000Z"),
   });
-  const decisionLayer = buildUniversalCoverageFactoryDecisionLayerV1(factory);
-  const workGen = buildUniversalCoverageFactoryWorkGeneratorV1(decisionLayer);
+  const factory = snapshot.factory;
+  const workGen = snapshot.work_generator;
 
   const refAp = buildApCoverageFactoryReferenceProjectionV1({
     rootDir: ROOT,

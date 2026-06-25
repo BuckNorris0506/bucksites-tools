@@ -158,7 +158,7 @@ test("repo summary cites UCF coverage disposition authority for registered top c
   );
   if (registeredTopSlug) {
     assert.ok(
-      summary.proven_facts.some((fact) => fact.includes("ucf_decision_authority_cutover_v1")),
+      summary.proven_facts.some((fact) => fact.includes("ucf_decision_authority_cutover_phase2_v1")),
     );
   }
 });

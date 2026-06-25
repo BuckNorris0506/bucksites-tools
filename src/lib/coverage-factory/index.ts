@@ -327,5 +327,17 @@ export {
   type UcfDecisionAuthorityConsumerInventoryEntryV1,
   type UcfDecisionAuthorityConsumerMigrationStatusV1,
   type UcfDecisionAuthorityCutoverReportV1,
+  resolveUcfCoverageDispositionForRegisteredSlugV1,
   type UcfDecisionAuthoritySnapshotV1,
 } from "./ucf-decision-authority-cutover-v1";
+
+export {
+  buildUcfDecisionAuthorityCutoverPhase2ReportV1,
+  UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1,
+  UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_REPORT_NAME_V1,
+  UCF_DECISION_AUTHORITY_PHASE2_CONSUMER_AUDIT_V1,
+  UCF_GOAT_C1_CONSUMERS_V1,
+  type UcfDecisionAuthorityCutoverPhase2ReportV1,
+  type UcfDecisionAuthorityPhase2AuditClassificationV1,
+  type UcfDecisionAuthorityPhase2AuditEntryV1,
+} from "./ucf-decision-authority-cutover-phase2-v1";

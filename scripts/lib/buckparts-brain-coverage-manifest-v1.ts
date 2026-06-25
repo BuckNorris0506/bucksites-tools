@@ -64,9 +64,9 @@ const CURATED_ENTRIES: EntrySeed[] = [
     verdict: "CONNECTED",
     blocks_lane_work: false,
     validation_command:
-      "node --import tsx --test src/lib/coverage-factory/ucf-decision-authority-cutover-v1.test.ts",
+      "node --import tsx --test src/lib/coverage-factory/ucf-decision-authority-cutover-phase2-v1.test.ts",
     reason:
-      "Universal Coverage Factory is the canonical coverage disposition authority for 60/60 registered homekeep subjects; cutover v1 begins wiring UCF provenance into operator lanes without CC redesign.",
+      "Universal Coverage Factory is the canonical coverage disposition authority for 60/60 registered homekeep subjects; cutover phase2 wires UCF provenance into operator lanes without CC redesign.",
     source: "src/lib/coverage-factory/universal-coverage-factory-v1.ts",
     role: "coverage disposition decision authority (registered subjects)",
     owner: "Coverage Factory / UCF",

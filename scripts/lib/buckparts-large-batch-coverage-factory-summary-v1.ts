@@ -7,6 +7,7 @@ import {
   buildUcfDecisionAuthoritySnapshotV1,
   type UcfDecisionAuthoritySnapshotV1,
 } from "@/lib/coverage-factory/ucf-decision-authority-cutover-v1";
+import { UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1 } from "@/lib/coverage-factory/ucf-decision-authority-cutover-phase2-v1";
 import {
   buildLargeBatchCoverageFactoryReportV1,
   LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1,
@@ -169,6 +170,7 @@ export function buildLargeBatchCoverageFactorySummaryV1(
       snapshot,
       filterSlugs: report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => c.slug),
       wedge: "refrigerator_water",
+      cutover_contract: UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1,
     });
     return buildLargeBatchCoverageFactorySummaryV1FromReport(report, {
       ucfCoverageDispositionProvenanceFacts,

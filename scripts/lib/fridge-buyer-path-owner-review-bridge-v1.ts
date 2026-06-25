@@ -15,6 +15,12 @@ import {
   type LargeBatchCoverageFactoryReportV1,
   type RetailerLinkCsvRowV1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
+import {
+  buildUcfCoverageDispositionProvenanceFactsV1,
+  buildUcfDecisionAuthoritySnapshotV1,
+  type UcfDecisionAuthoritySnapshotV1,
+} from "@/lib/coverage-factory/ucf-decision-authority-cutover-v1";
+import { UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1 } from "@/lib/coverage-factory/ucf-decision-authority-cutover-phase2-v1";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
 export const FRIDGE_BUYER_PATH_OWNER_REVIEW_BRIDGE_CONTRACT_V1 =
@@ -80,6 +86,10 @@ export type BuildFridgeBuyerPathOwnerReviewBridgeDepsV1 = {
   buildFactoryReport?: (
     deps: BuildLargeBatchCoverageFactoryDepsV1,
   ) => LargeBatchCoverageFactoryReportV1;
+  buildUcfSnapshot?: (args: {
+    rootDir: string;
+    now?: () => Date;
+  }) => UcfDecisionAuthoritySnapshotV1;
   readTextFile?: (absolutePath: string) => string;
   fileExists?: (absolutePath: string) => boolean;
   listEvidenceFilenames?: (absolutePath: string) => string[];
@@ -290,6 +300,15 @@ export function buildFridgeBuyerPathOwnerReviewBridgeV1(
   const cohort = selectPublishableAmazonCohort(factoryReport);
   const batchRegistry = detectFormalBatchRegistry(deps.rootDir, fileExists);
 
+  const buildUcfSnapshot = deps.buildUcfSnapshot ?? buildUcfDecisionAuthoritySnapshotV1;
+  const ucfSnapshot = buildUcfSnapshot({ rootDir: deps.rootDir, now: deps.now });
+  const ucfCoverageDispositionProvenanceFacts = buildUcfCoverageDispositionProvenanceFactsV1({
+    snapshot: ucfSnapshot,
+    filterSlugs: cohort.map((candidate) => candidate.slug),
+    wedge: "refrigerator_water",
+    cutover_contract: UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1,
+  });
+
   const rows: FridgeBuyerPathOwnerReviewBridgeRowV1[] = cohort.map((candidate) => {
     const evidence_artifact_paths = findAmazonLiveOutcomeEvidencePathsV1(
       candidate.slug,
@@ -359,6 +378,7 @@ export function buildFridgeBuyerPathOwnerReviewBridgeV1(
       "PROVEN: committed buyer-path fields read data/retailer_links.csv only (repo CSV truth).",
       "PROVEN: apply_authorization_present=false; apply_mutation_authorized=false for every row.",
       `PROVEN: formal_batch_exists=false (no fridge batch run-registry at ${FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1}).`,
+      ...ucfCoverageDispositionProvenanceFacts,
     ],
     unknown_facts: [
       "UNKNOWN: Whether Supabase retailer_links holds direct_buyable rows matching evidence committed_live_row payloads — bridge does not read Supabase.",

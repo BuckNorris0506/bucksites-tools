@@ -70,12 +70,13 @@ test("cutover report inventories migrated consumers and blockers", () => {
   assert.equal(report.read_only, true);
   assert.equal(report.mutation_authorized, false);
   assert.equal(report.registered_subject_count, 60);
-  assert.ok(report.consumers_migrated.length >= 4);
+  assert.ok(report.consumers_migrated.length >= 5);
   assert.ok(
     report.consumers_migrated.some(
-      (row) => row.consumer === "buckparts_large_batch_coverage_factory_summary_v1",
+      (row) => row.consumer === "fridge_buyer_path_owner_review_bridge_v1",
     ),
   );
+  assert.equal(report.cutover_percentage, 100);
   assert.ok(report.remaining_blockers.some((blocker) => blocker.includes("large_batch_coverage_factory_v1")));
   assert.ok(report.remaining_legacy_consumers.includes("large_batch_coverage_factory_v1"));
   assert.ok(report.validation_commands.includes("npm run build"));

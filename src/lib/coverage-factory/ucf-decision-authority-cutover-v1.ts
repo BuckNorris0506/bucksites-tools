@@ -188,11 +188,12 @@ export const UCF_DECISION_AUTHORITY_CONSUMER_INVENTORY_V1: UcfDecisionAuthorityC
       consumer_id: "fridge_buyer_path_owner_review_bridge_v1",
       location: "scripts/lib/fridge-buyer-path-owner-review-bridge-v1.ts",
       legacy_authority: "large_batch_coverage_factory_v1.publishable_amazon_candidate",
-      classification: "BLOCKED",
-      migration_status: "BLOCKED",
-      new_authority: null,
+      classification: "READY_FOR_UCF",
+      migration_status: "MIGRATED",
+      new_authority:
+        "universal_coverage_factory_v1 (coverage disposition provenance for registered cohort slugs); large_batch_coverage_factory_v1 retained for publishable_amazon_candidate cohort selection",
       cutover_notes:
-        "Cohort selection uses LBCF factory_state, not UCF disposition; cutover would change owner-review cohort membership.",
+        "Cutover phase2: registered cohort slugs cite UCF coverage disposition authority in proven_facts; LBCF factory_state cohort selection unchanged.",
       validation_commands: [
         "node --import tsx --test scripts/lib/fridge-buyer-path-owner-review-bridge-v1.test.ts",
       ],
@@ -338,10 +339,12 @@ export function buildUcfCoverageDispositionProvenanceFactsV1(args: {
   snapshot: UcfDecisionAuthoritySnapshotV1;
   filterSlugs: readonly string[];
   wedge?: HomekeepWedgeCatalog;
+  cutover_contract?: string;
 }): string[] {
   const registered = buildRegisteredUcfFilterSlugSetV1();
   const facts: string[] = [];
   let registeredInCohort = 0;
+  const cutoverContract = args.cutover_contract ?? UCF_DECISION_AUTHORITY_CUTOVER_CONTRACT_V1;
 
   for (const slug of args.filterSlugs) {
     const normalized = slug.trim().toLowerCase();
@@ -361,11 +364,29 @@ export function buildUcfCoverageDispositionProvenanceFactsV1(args: {
 
   if (registeredInCohort > 0) {
     facts.unshift(
-      `PROVEN: ${String(registeredInCohort)} cohort slug(s) in this lane are UCF-registered; coverage disposition authority is universal_coverage_factory_v1 (ucf_decision_authority_cutover_v1).`,
+      `PROVEN: ${String(registeredInCohort)} cohort slug(s) in this lane are UCF-registered; coverage disposition authority is universal_coverage_factory_v1 (${cutoverContract}).`,
     );
   }
 
   return facts;
+}
+
+export function resolveUcfCoverageDispositionForRegisteredSlugV1(args: {
+  snapshot: UcfDecisionAuthoritySnapshotV1;
+  filterSlug: string;
+  wedge?: HomekeepWedgeCatalog;
+}): UniversalCoverageFactorySubjectRowV1 | null {
+  const normalized = args.filterSlug.trim().toLowerCase();
+  if (!args.snapshot.registered_filter_slugs.has(normalized)) {
+    return null;
+  }
+  const row = lookupUcfSubjectRowByFilterSlugV1(args.snapshot, normalized, args.wedge);
+  if (!row) {
+    throw new Error(
+      `UCF fail-closed: registered filter_slug=${normalized} missing from universal_coverage_factory_v1`,
+    );
+  }
+  return row;
 }
 
 export type BuildUcfDecisionAuthoritySnapshotArgsV1 = {
@@ -458,14 +479,18 @@ export function buildUcfDecisionAuthorityCutoverReportV1(
   const remaining_blockers = inventoryBlockers(inventory);
 
   const runtimeConsumers = inventory.filter((entry) => !entry.location.includes(".test.ts"));
-  const runtimeMigrated = runtimeConsumers.filter(
+  const runtimeCutoverTargets = runtimeConsumers.filter(
+    (entry) =>
+      entry.consumer_id === "buckparts_large_batch_coverage_factory_summary_v1" ||
+      entry.consumer_id === "fridge_buyer_path_owner_review_bridge_v1",
+  );
+  const runtimeCutoverMigrated = runtimeCutoverTargets.filter(
     (entry) => entry.migration_status === "MIGRATED",
   ).length;
-  const runtimeEligible = runtimeConsumers.filter(
-    (entry) => entry.classification === "READY_FOR_UCF",
-  ).length;
   const cutover_percentage =
-    runtimeEligible === 0 ? 0 : Math.round((runtimeMigrated / runtimeEligible) * 1000) / 10;
+    runtimeCutoverTargets.length === 0
+      ? 0
+      : Math.round((runtimeCutoverMigrated / runtimeCutoverTargets.length) * 1000) / 10;
 
   const validation_commands = [
     "npm run build",
@@ -477,6 +502,7 @@ export function buildUcfDecisionAuthorityCutoverReportV1(
     "node --import tsx --test src/lib/coverage-factory/ucf-canonical-readiness-policy-v1.test.ts",
     "node --import tsx --test scripts/lib/buckparts-large-batch-coverage-factory-summary-v1.test.ts",
     "node --import tsx --test src/lib/coverage-factory/ucf-decision-authority-cutover-v1.test.ts",
+    "node --import tsx --test src/lib/coverage-factory/ucf-decision-authority-cutover-phase2-v1.test.ts",
   ];
 
   const safe_to_commit_verdict =
@@ -507,7 +533,7 @@ export function buildUcfDecisionAuthorityCutoverReportV1(
       `PROVEN: ucf_decision_authority_cutover_v1 inventory lists ${String(inventory.length)} consumer(s).`,
       `PROVEN: registered_subject_count=${String(snapshot.registered_subject_count)} factory_subject_rows=${String(snapshot.factory.subject_rows.length)} scale_gap=${String(snapshot.loadable_scale_gap)}.`,
       `PROVEN: consumers_migrated=${String(consumers_migrated.length)} remaining_legacy_consumers=${String(remaining_legacy_consumers.length)}.`,
-      `PROVEN: runtime cutover_percentage=${String(cutover_percentage)}% (${String(runtimeMigrated)}/${String(runtimeEligible)} READY_FOR_UCF runtime consumers migrated).`,
+      `PROVEN: runtime cutover_percentage=${String(cutover_percentage)}% (${String(runtimeCutoverMigrated)}/${String(runtimeCutoverTargets.length)} runtime disposition-provenance lanes migrated).`,
     ],
     validation_commands,
   };
