@@ -291,3 +291,21 @@ export {
   type ApplianceAirCoverageFactoryProjectionV1,
   type ApplianceAirProjectionReportRowV1,
 } from "./adapters/appliance-air-coverage-factory-adapter-v1";
+
+export {
+  assessUcfCanonicalReadinessV1,
+  classifyUcfParityFindingV1,
+  UCF_ACCEPTED_INTERPRETATION_SUBJECT_IDS_V1,
+  UCF_CANONICAL_READINESS_GOVERNANCE_CLASSES_V1,
+  UCF_CANONICAL_READINESS_POLICY_CONTRACT_V1,
+  UCF_CANONICAL_READINESS_VERDICTS_V1,
+  UCF_PARITY_FINDING_SEVERITIES_V1,
+  UCF_PARITY_FINDING_TYPES_V1,
+  type ClassifiedUcfParityFindingV1,
+  type UcfCanonicalReadinessAssessmentV1,
+  type UcfCanonicalReadinessGovernanceClassV1,
+  type UcfCanonicalReadinessVerdictV1,
+  type UcfParityFindingSeverityV1,
+  type UcfParityFindingTypeV1,
+  type UcfParityFindingV1,
+} from "./ucf-canonical-readiness-policy-v1";

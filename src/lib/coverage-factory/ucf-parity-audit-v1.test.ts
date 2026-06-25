@@ -34,18 +34,15 @@ import {
   resetFridgeAdapterAuditCacheV1,
 } from "./adapters/fridge-coverage-factory-adapter-v1";
 import { projectWhwLoadedArtifactsV1 } from "./adapters/whw-coverage-factory-adapter-v1";
+import {
+  assessUcfCanonicalReadinessV1,
+  UCF_CANONICAL_READINESS_GOVERNANCE_CLASSES_V1,
+  type UcfParityFindingV1,
+} from "./ucf-canonical-readiness-policy-v1";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 
-type Mismatch = {
-  wedge: string;
-  subject_id: string;
-  source_truth: Record<string, unknown>;
-  ucf_truth: Record<string, unknown>;
-  mismatch_type: string;
-  severity: "critical" | "high" | "medium" | "low";
-  evidence: string;
-};
+type Mismatch = UcfParityFindingV1;
 
 const EVIDENCE_DIMS = ["identity", "fit", "buyer_path", "demand", "publication"] as const;
 
@@ -494,19 +491,15 @@ test("UCF parity audit v1 inventory", () => {
   const criticalCount = mismatches.filter((m) => m.severity === "critical").length;
   const registeredMismatches = mismatches.filter((m) => registeredSubjectIds.has(m.subject_id));
 
-  let verdict: "CANONICAL_READY" | "CANONICAL_READY_WITH_FIXES" | "NOT_CANONICAL_READY";
-  if (criticalCount > 0 || registeredMismatches.length > 0) {
-    verdict = "NOT_CANONICAL_READY";
-  } else if (scaleGap > 0 || mismatches.length > 0) {
-    verdict = "CANONICAL_READY_WITH_FIXES";
-  } else {
-    verdict = "CANONICAL_READY";
-  }
+  const canonicalReadiness = assessUcfCanonicalReadinessV1({
+    findings: mismatches,
+    registered_subject_ids: registeredSubjectIds,
+    scale_gap: scaleGap,
+    work_recommendation_diff_subject_count: workRecommendationDiffSubjects.size,
+  });
 
-  const canReplaceDecisionLogicToday =
-    scaleGap === 0 && criticalCount === 0 && registeredMismatches.length === 0
-      ? registeredMismatches.length === 0 && workRecommendationDiffSubjects.size === 0
-      : false;
+  const verdict = canonicalReadiness.verdict;
+  const canReplaceDecisionLogicToday = canonicalReadiness.can_replace_existing_decision_logic_today;
 
   const apRegisteredCount =
     COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[AP_COVERAGE_FACTORY_ADAPTER_ID_V1].length;
@@ -553,8 +546,29 @@ test("UCF parity audit v1 inventory", () => {
     evidence_dimension_diff_subjects: [...evidenceDimensionDiffSubjects].sort(),
     work_recommendation_diff_subjects: [...workRecommendationDiffSubjects].sort(),
     registered_subject_mismatch_count: registeredMismatches.length,
+    canonical_readiness: {
+      contract: canonicalReadiness.contract,
+      verdict: canonicalReadiness.verdict,
+      registered_canonical_blocker_count: canonicalReadiness.registered_canonical_blocker_count,
+      registered_accepted_interpretation_count:
+        canonicalReadiness.registered_accepted_interpretation_count,
+      registered_governance_debt_count: canonicalReadiness.registered_governance_debt_count,
+      registered_adapter_bug_count: canonicalReadiness.registered_adapter_bug_count,
+      registered_factory_bug_count: canonicalReadiness.registered_factory_bug_count,
+      registered_unknown_count: canonicalReadiness.registered_unknown_count,
+      registered_critical_raw_count: canonicalReadiness.registered_critical_raw_count,
+      by_governance_class: Object.fromEntries(
+        UCF_CANONICAL_READINESS_GOVERNANCE_CLASSES_V1.map((governanceClass) => [
+          governanceClass,
+          canonicalReadiness.classified_findings.filter(
+            (finding) => finding.governance_class === governanceClass,
+          ).length,
+        ]),
+      ),
+    },
     can_replace_existing_decision_logic_today: canReplaceDecisionLogicToday,
     verdict,
+    classified_findings: canonicalReadiness.classified_findings,
     mismatches,
     unloadable,
   };
@@ -568,6 +582,9 @@ test("UCF parity audit v1 inventory", () => {
     0,
     `registered subjects must have zero critical parity mismatches: ${JSON.stringify(registeredCritical)}`,
   );
+  assert.equal(canonicalReadiness.registered_canonical_blocker_count, 0);
+  assert.equal(canonicalReadiness.registered_accepted_interpretation_count, 11);
+  assert.equal(verdict, "CANONICAL_READY_WITH_FIXES");
 
   const rpwfeRegistered = registeredMismatches.filter((m) => m.subject_id.includes("rpwfe"));
   assert.equal(rpwfeRegistered.length, 0, "rpwfe must not appear in registered parity mismatches");
