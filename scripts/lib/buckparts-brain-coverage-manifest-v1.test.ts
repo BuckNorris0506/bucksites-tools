@@ -22,6 +22,18 @@ test("buildCommandCenterBrainCoverageManifestV1 enumerates buckparts scripts fro
   assert.ok(cc);
   assert.equal(cc!.verdict, "CONNECTED");
   assert.ok(manifest.entries.some((e) => e.system_id === "hq_handoff_doc"));
+  const tir = manifest.entries.find((e) => e.system_id === "truth_integrity_registry_v1");
+  assert.ok(tir);
+  assert.equal(tir!.verdict, "CONNECTED");
+  assert.equal(tir!.cc_json_path, "command_center_v2.truth_integrity_registry_v1");
+  assert.equal(tir!.source, "data/truth-integrity/truth-integrity-registry-v1.json");
+  assert.equal(tir!.role, "truth debt / integrity finding ledger");
+  assert.equal(tir!.owner, "Truth Integrity Department");
+  assert.equal(tir!.mutation_authority, false);
+  assert.equal(tir!.steering_authority, false);
+  assert.equal(tir!.notes, "visible to Brain/Command Center, no NBA override");
+  assert.equal(tir!.blocks_lane_work, false);
+  assert.equal(tir!.dashboard_only, false);
   assert.equal(manifest.read_only, true);
   assert.equal(manifest.data_mutation, false);
   assert.ok(manifest.verdict_counts);

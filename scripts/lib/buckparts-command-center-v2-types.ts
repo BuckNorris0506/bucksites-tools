@@ -761,6 +761,18 @@ export type BrainCoverageManifestEntryV1 = {
   blocks_lane_work: boolean;
   validation_command: string;
   reason: string;
+  /** Committed artifact path when the system is registry-backed (optional). */
+  source?: string;
+  /** Operator-facing role label (optional). */
+  role?: string;
+  /** Owning department or lane (optional). */
+  owner?: string;
+  /** False when the system must not authorize production mutation. */
+  mutation_authority?: boolean;
+  /** False when the system must not override Command Center steering. */
+  steering_authority?: boolean;
+  /** Brain visibility notes (optional). */
+  notes?: string;
 };
 
 export type BrainCoverageVerdictCountsV1 = Record<BrainCoverageVerdictV1, number>;

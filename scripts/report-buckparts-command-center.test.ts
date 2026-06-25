@@ -3129,6 +3129,23 @@ test("command_center_v2.command_center_brain_coverage_manifest_v1 is read-only b
   assert.equal(operatingMap!.verdict, "CONNECTED");
   assert.equal(operatingMap!.cc_json_path, "command_center_v2.operating_map_summary_v1");
 
+  const issueRegistry = findBrainManifestEntry(report, (r) => r.system_id === "command_center_issue_registry");
+  assert.ok(issueRegistry);
+  assert.equal(issueRegistry!.verdict, "CONNECTED");
+  assert.equal(issueRegistry!.cc_json_path, "command_center_v2.command_center_issue_registry_v1");
+
+  const truthIntegrity = findBrainManifestEntry(report, (r) => r.system_id === "truth_integrity_registry_v1");
+  assert.ok(truthIntegrity);
+  assert.equal(truthIntegrity!.verdict, "CONNECTED");
+  assert.equal(truthIntegrity!.cc_json_path, "command_center_v2.truth_integrity_registry_v1");
+  assert.equal(truthIntegrity!.source, "data/truth-integrity/truth-integrity-registry-v1.json");
+  assert.equal(truthIntegrity!.role, "truth debt / integrity finding ledger");
+  assert.equal(truthIntegrity!.owner, "Truth Integrity Department");
+  assert.equal(truthIntegrity!.mutation_authority, false);
+  assert.equal(truthIntegrity!.steering_authority, false);
+  assert.equal(truthIntegrity!.notes, "visible to Brain/Command Center, no NBA override");
+  assert.equal(truthIntegrity!.blocks_lane_work, false);
+
   const hq = findBrainManifestEntry(report, (r) => r.system_id === "hq_handoff_doc");
   assert.ok(hq);
   assert.equal(hq!.verdict, "DEPRECATED");
