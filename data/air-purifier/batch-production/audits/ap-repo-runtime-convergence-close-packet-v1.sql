@@ -1,4 +1,4 @@
--- AP Repo-Runtime Convergence Close Packet v1.1 (mutation-safety-audit revision)
+-- AP Repo-Runtime Convergence Close Packet v1.2 (Phase 3 Honeywell rewrite)
 -- git HEAD: e2ba7b4765561218754066a4ed355168af04999e
 -- READ-ONLY ARTIFACT — each phase defaults ROLLBACK; owner replaces ROLLBACK with COMMIT per phase ONLY after that phase's validation SELECT passes.
 -- Scope: 6-slug gap closing repo_runtime_convergence_gate_v1 (34 CSV / 28 Supabase → target gap 0)
@@ -375,7 +375,8 @@ ROLLBACK;
 -- P3-A) Honeywell oem-catalog approved promote targets exist (exactly one per slug)
 SELECT
   f.slug,
-  COUNT(rl.id) AS oem_catalog_approved_count
+  COUNT(rl.id) AS oem_catalog_approved_count,
+  CASE WHEN COUNT(rl.id) = 1 THEN 'PASS' ELSE 'FAIL' END AS p3_target_assertion
 FROM public.air_purifier_filters f
 JOIN public.air_purifier_retailer_links rl ON rl.air_purifier_filter_id = f.id
 WHERE f.slug IN ('honeywell-hrf-r2', 'honeywell-hrf-r3')
@@ -383,37 +384,49 @@ WHERE f.slug IN ('honeywell-hrf-r2', 'honeywell-hrf-r3')
   AND rl.status = 'approved'
 GROUP BY f.slug
 ORDER BY f.slug;
--- EXPECT: 2 rows; oem_catalog_approved_count = 1 each — if missing, STOP (demote-only would orphan primaries)
+-- EXPECT: 2 rows; oem_catalog_approved_count=1; p3_target_assertion=PASS each — else STOP (do not BEGIN Phase 3)
+
+-- P3-B) Current primary state (dry-run baseline)
+SELECT
+  f.slug,
+  MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS current_primary_retailer_key
+FROM public.air_purifier_filters f
+LEFT JOIN public.air_purifier_retailer_links rl ON rl.air_purifier_filter_id = f.id
+WHERE f.slug IN ('honeywell-hrf-r2', 'honeywell-hrf-r3')
+GROUP BY f.slug
+ORDER BY f.slug;
+-- EXPECT (repo truth): current_primary_retailer_key=amazon for both slugs pre-apply
 
 
 -- =============================================================================
--- PHASE 3 TRANSACTION: Honeywell primary promotion (safe CTE — no demote unless target proven)
+-- PHASE 3 TRANSACTION: Honeywell primary promotion (v1.2 — separate statements per slug)
+-- Prior v1.1 chained demote+promote CTEs on air_purifier_retailer_links FAILED dry-run safety
+-- review: demote-all-approved ran before promote; promote returned 0 rows for honeywell-hrf-r3
+-- → primary_count=0. Rewritten: promote target FIRST, demote non-target primaries ONLY after
+-- target is proven primary — cannot orphan slug with zero primaries.
 -- =============================================================================
 
 BEGIN;
 
+-- ─────────────────────────────────────────────────────────────────────────────
 -- honeywell-hrf-r2
-WITH target AS (
-  SELECT rl.id AS link_id, f.id AS filter_id
-  FROM public.air_purifier_retailer_links rl
-  JOIN public.air_purifier_filters f ON f.id = rl.air_purifier_filter_id
-  WHERE f.slug = 'honeywell-hrf-r2'
-    AND rl.retailer_key = 'oem-catalog'
-    AND rl.status = 'approved'
-),
-target_assertion AS (
-  SELECT COUNT(*) AS target_count FROM target
-),
-demoted AS (
-  UPDATE public.air_purifier_retailer_links rl
-  SET is_primary = false
-  FROM target t
-  WHERE rl.air_purifier_filter_id = t.filter_id
-    AND rl.status = 'approved'
-    AND (SELECT target_count FROM target_assertion) = 1
-  RETURNING rl.id
-),
-promoted AS (
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- R2-1) Prove exactly one approved oem-catalog target
+SELECT
+  'honeywell-hrf-r2' AS filter_slug,
+  COUNT(rl.id) AS oem_catalog_target_count,
+  MAX(rl.id::text) AS oem_catalog_link_id,
+  CASE WHEN COUNT(rl.id) = 1 THEN 'PASS' ELSE 'FAIL' END AS target_proof_assertion
+FROM public.air_purifier_retailer_links rl
+JOIN public.air_purifier_filters f ON f.id = rl.air_purifier_filter_id
+WHERE f.slug = 'honeywell-hrf-r2'
+  AND rl.retailer_key = 'oem-catalog'
+  AND rl.status = 'approved';
+-- DRY-RUN EXPECT: oem_catalog_target_count=1; target_proof_assertion=PASS — else ROLLBACK
+
+-- R2-2) Promote oem-catalog target (guarded: exactly one target)
+WITH promoted AS (
   UPDATE public.air_purifier_retailer_links rl
   SET
     retailer_name = 'Honeywell Store — True HEPA Filter R 2-Pack (HRF-R2)',
@@ -426,32 +439,76 @@ promoted AS (
     browser_truth_classification = 'direct_buyable',
     browser_truth_notes = $bt_notes$Playwright Honeywell bite #2: PDP HRF-R2 2-pack; Add to Cart; not search/404; R1/R3 tokens not dominant$bt_notes$,
     browser_truth_checked_at = '2026-05-22T23:00:00.000Z'::timestamptz
-  FROM target t
-  WHERE rl.id = t.link_id
-    AND (SELECT target_count FROM target_assertion) = 1
+  WHERE rl.id = (
+    SELECT rl2.id
+    FROM public.air_purifier_retailer_links rl2
+    JOIN public.air_purifier_filters f2 ON f2.id = rl2.air_purifier_filter_id
+    WHERE f2.slug = 'honeywell-hrf-r2'
+      AND rl2.retailer_key = 'oem-catalog'
+      AND rl2.status = 'approved'
+    LIMIT 1
+  )
+  AND (
+    SELECT COUNT(*)
+    FROM public.air_purifier_retailer_links rl3
+    JOIN public.air_purifier_filters f3 ON f3.id = rl3.air_purifier_filter_id
+    WHERE f3.slug = 'honeywell-hrf-r2'
+      AND rl3.retailer_key = 'oem-catalog'
+      AND rl3.status = 'approved'
+  ) = 1
   RETURNING rl.id
 )
 SELECT
   'honeywell-hrf-r2' AS filter_slug,
-  (SELECT target_count FROM target_assertion) AS oem_catalog_target_count,
-  (SELECT COUNT(*) FROM demoted) AS demoted_count,
-  (SELECT COUNT(*) FROM promoted) AS promoted_count,
-  CASE
-    WHEN (SELECT target_count FROM target_assertion) = 1
-     AND (SELECT COUNT(*) FROM promoted) = 1
-    THEN 'PASS'
-    ELSE 'FAIL'
-  END AS mutation_assertion;
--- EXPECT: oem_catalog_target_count=1; promoted_count=1; mutation_assertion=PASS — else ROLLBACK (do NOT COMMIT)
+  COUNT(*) AS promoted_count,
+  CASE WHEN COUNT(*) = 1 THEN 'PASS' ELSE 'FAIL' END AS promote_assertion
+FROM promoted;
+-- DRY-RUN EXPECT: promoted_count=1; promote_assertion=PASS — else ROLLBACK (do not demote)
 
--- honeywell-hrf-r2 post-mutation validation
+-- R2-3) Demote non-target approved primary rows ONLY after target is primary
+WITH demoted AS (
+  UPDATE public.air_purifier_retailer_links rl
+  SET is_primary = false
+  FROM public.air_purifier_filters f
+  WHERE rl.air_purifier_filter_id = f.id
+    AND f.slug = 'honeywell-hrf-r2'
+    AND rl.status = 'approved'
+    AND rl.is_primary = true
+    AND rl.id <> (
+      SELECT rl_tgt.id
+      FROM public.air_purifier_retailer_links rl_tgt
+      JOIN public.air_purifier_filters f_tgt ON f_tgt.id = rl_tgt.air_purifier_filter_id
+      WHERE f_tgt.slug = 'honeywell-hrf-r2'
+        AND rl_tgt.retailer_key = 'oem-catalog'
+        AND rl_tgt.status = 'approved'
+      LIMIT 1
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM public.air_purifier_retailer_links rl_chk
+      JOIN public.air_purifier_filters f_chk ON f_chk.id = rl_chk.air_purifier_filter_id
+      WHERE f_chk.slug = 'honeywell-hrf-r2'
+        AND rl_chk.retailer_key = 'oem-catalog'
+        AND rl_chk.status = 'approved'
+        AND rl_chk.is_primary = true
+    )
+  RETURNING rl.id
+)
+SELECT
+  'honeywell-hrf-r2' AS filter_slug,
+  COUNT(*) AS demoted_non_target_count
+FROM demoted;
+-- DRY-RUN EXPECT: demoted_non_target_count=1 (amazon demoted) when promote succeeded
+
+-- R2-4) Per-slug validation
 SELECT
   f.slug,
   COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_count,
   MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_retailer_key,
   MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_browser_truth,
   CASE
-    WHEN MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'oem-catalog'
+    WHEN COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 1
+     AND MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'oem-catalog'
      AND MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'direct_buyable'
     THEN 'PASS'
     ELSE 'FAIL'
@@ -460,29 +517,28 @@ FROM public.air_purifier_filters f
 LEFT JOIN public.air_purifier_retailer_links rl ON rl.air_purifier_filter_id = f.id
 WHERE f.slug = 'honeywell-hrf-r2'
 GROUP BY f.slug;
+-- DRY-RUN EXPECT: primary_count=1; primary_retailer_key=oem-catalog; primary_browser_truth=direct_buyable; phase3_slug_assertion=PASS
 
+
+-- ─────────────────────────────────────────────────────────────────────────────
 -- honeywell-hrf-r3
-WITH target AS (
-  SELECT rl.id AS link_id, f.id AS filter_id
-  FROM public.air_purifier_retailer_links rl
-  JOIN public.air_purifier_filters f ON f.id = rl.air_purifier_filter_id
-  WHERE f.slug = 'honeywell-hrf-r3'
-    AND rl.retailer_key = 'oem-catalog'
-    AND rl.status = 'approved'
-),
-target_assertion AS (
-  SELECT COUNT(*) AS target_count FROM target
-),
-demoted AS (
-  UPDATE public.air_purifier_retailer_links rl
-  SET is_primary = false
-  FROM target t
-  WHERE rl.air_purifier_filter_id = t.filter_id
-    AND rl.status = 'approved'
-    AND (SELECT target_count FROM target_assertion) = 1
-  RETURNING rl.id
-),
-promoted AS (
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- R3-1) Prove exactly one approved oem-catalog target
+SELECT
+  'honeywell-hrf-r3' AS filter_slug,
+  COUNT(rl.id) AS oem_catalog_target_count,
+  MAX(rl.id::text) AS oem_catalog_link_id,
+  CASE WHEN COUNT(rl.id) = 1 THEN 'PASS' ELSE 'FAIL' END AS target_proof_assertion
+FROM public.air_purifier_retailer_links rl
+JOIN public.air_purifier_filters f ON f.id = rl.air_purifier_filter_id
+WHERE f.slug = 'honeywell-hrf-r3'
+  AND rl.retailer_key = 'oem-catalog'
+  AND rl.status = 'approved';
+-- DRY-RUN EXPECT: oem_catalog_target_count=1; target_proof_assertion=PASS — else ROLLBACK
+
+-- R3-2) Promote oem-catalog target (guarded: exactly one target)
+WITH promoted AS (
   UPDATE public.air_purifier_retailer_links rl
   SET
     retailer_name = 'Honeywell Store — True HEPA Filter R 3-Pack (HRF-R3)',
@@ -495,31 +551,76 @@ promoted AS (
     browser_truth_classification = 'direct_buyable',
     browser_truth_notes = $bt_notes$Playwright pilot v1: PDP title/H1 HRF-R3; Add to Cart visible; not search/404; wrong-family R1/R2 not dominant$bt_notes$,
     browser_truth_checked_at = '2026-05-22T22:30:00.000Z'::timestamptz
-  FROM target t
-  WHERE rl.id = t.link_id
-    AND (SELECT target_count FROM target_assertion) = 1
+  WHERE rl.id = (
+    SELECT rl2.id
+    FROM public.air_purifier_retailer_links rl2
+    JOIN public.air_purifier_filters f2 ON f2.id = rl2.air_purifier_filter_id
+    WHERE f2.slug = 'honeywell-hrf-r3'
+      AND rl2.retailer_key = 'oem-catalog'
+      AND rl2.status = 'approved'
+    LIMIT 1
+  )
+  AND (
+    SELECT COUNT(*)
+    FROM public.air_purifier_retailer_links rl3
+    JOIN public.air_purifier_filters f3 ON f3.id = rl3.air_purifier_filter_id
+    WHERE f3.slug = 'honeywell-hrf-r3'
+      AND rl3.retailer_key = 'oem-catalog'
+      AND rl3.status = 'approved'
+  ) = 1
   RETURNING rl.id
 )
 SELECT
   'honeywell-hrf-r3' AS filter_slug,
-  (SELECT target_count FROM target_assertion) AS oem_catalog_target_count,
-  (SELECT COUNT(*) FROM demoted) AS demoted_count,
-  (SELECT COUNT(*) FROM promoted) AS promoted_count,
-  CASE
-    WHEN (SELECT target_count FROM target_assertion) = 1
-     AND (SELECT COUNT(*) FROM promoted) = 1
-    THEN 'PASS'
-    ELSE 'FAIL'
-  END AS mutation_assertion;
+  COUNT(*) AS promoted_count,
+  CASE WHEN COUNT(*) = 1 THEN 'PASS' ELSE 'FAIL' END AS promote_assertion
+FROM promoted;
+-- DRY-RUN EXPECT: promoted_count=1; promote_assertion=PASS — else ROLLBACK (do not demote)
 
--- honeywell-hrf-r3 post-mutation validation
+-- R3-3) Demote non-target approved primary rows ONLY after target is primary
+WITH demoted AS (
+  UPDATE public.air_purifier_retailer_links rl
+  SET is_primary = false
+  FROM public.air_purifier_filters f
+  WHERE rl.air_purifier_filter_id = f.id
+    AND f.slug = 'honeywell-hrf-r3'
+    AND rl.status = 'approved'
+    AND rl.is_primary = true
+    AND rl.id <> (
+      SELECT rl_tgt.id
+      FROM public.air_purifier_retailer_links rl_tgt
+      JOIN public.air_purifier_filters f_tgt ON f_tgt.id = rl_tgt.air_purifier_filter_id
+      WHERE f_tgt.slug = 'honeywell-hrf-r3'
+        AND rl_tgt.retailer_key = 'oem-catalog'
+        AND rl_tgt.status = 'approved'
+      LIMIT 1
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM public.air_purifier_retailer_links rl_chk
+      JOIN public.air_purifier_filters f_chk ON f_chk.id = rl_chk.air_purifier_filter_id
+      WHERE f_chk.slug = 'honeywell-hrf-r3'
+        AND rl_chk.retailer_key = 'oem-catalog'
+        AND rl_chk.status = 'approved'
+        AND rl_chk.is_primary = true
+    )
+  RETURNING rl.id
+)
+SELECT
+  'honeywell-hrf-r3' AS filter_slug,
+  COUNT(*) AS demoted_non_target_count
+FROM demoted;
+-- DRY-RUN EXPECT: demoted_non_target_count=1 (amazon demoted) when promote succeeded
+
+-- R3-4) Per-slug validation
 SELECT
   f.slug,
   COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_count,
   MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_retailer_key,
   MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_browser_truth,
   CASE
-    WHEN MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'oem-catalog'
+    WHEN COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 1
+     AND MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'oem-catalog'
      AND MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'direct_buyable'
     THEN 'PASS'
     ELSE 'FAIL'
@@ -528,9 +629,33 @@ FROM public.air_purifier_filters f
 LEFT JOIN public.air_purifier_retailer_links rl ON rl.air_purifier_filter_id = f.id
 WHERE f.slug = 'honeywell-hrf-r3'
 GROUP BY f.slug;
+-- DRY-RUN EXPECT: primary_count=1; primary_retailer_key=oem-catalog; primary_browser_truth=direct_buyable; phase3_slug_assertion=PASS
+
+
+-- PHASE 3 FINAL VALIDATION (both slugs — required before COMMIT)
+SELECT
+  f.slug,
+  COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_count,
+  MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_retailer_key,
+  MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) AS primary_browser_truth,
+  CASE
+    WHEN COUNT(*) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 1
+     AND MAX(rl.retailer_key) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'oem-catalog'
+     AND MAX(rl.browser_truth_classification) FILTER (WHERE rl.status = 'approved' AND rl.is_primary) = 'direct_buyable'
+    THEN 'PASS'
+    ELSE 'FAIL'
+  END AS phase3_slug_assertion
+FROM public.air_purifier_filters f
+LEFT JOIN public.air_purifier_retailer_links rl ON rl.air_purifier_filter_id = f.id
+WHERE f.slug IN ('honeywell-hrf-r2', 'honeywell-hrf-r3')
+GROUP BY f.slug
+ORDER BY f.slug;
+-- BLOCKING RULE: Do NOT COMMIT unless BOTH rows show:
+--   primary_count=1, primary_retailer_key=oem-catalog, primary_browser_truth=direct_buyable, phase3_slug_assertion=PASS
+-- If honeywell-hrf-r3 (or r2) shows primary_count=0 or phase3_slug_assertion=FAIL → ROLLBACK and re-run diff.
 
 ROLLBACK;
--- Owner: replace ROLLBACK with COMMIT only if all four validation result sets above show PASS.
+-- Owner: replace ROLLBACK with COMMIT only when Phase 3 final validation shows PASS for BOTH slugs.
 
 
 -- =============================================================================

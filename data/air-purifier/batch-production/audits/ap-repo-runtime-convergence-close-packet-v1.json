@@ -1,6 +1,6 @@
 {
   "contract": "ap_repo_runtime_convergence_close_packet_v1",
-  "packet_revision": "v1.1-mutation-safety-audit",
+  "packet_revision": "v1.2-phase3-honeywell-rewrite",
   "read_only": true,
   "data_mutation": false,
   "supabase_writes": false,
@@ -35,7 +35,14 @@
         "id": "M1",
         "severity": "MAJOR",
         "finding": "Phase 3 demote-all without promote rowcount assert could orphan primaries",
-        "resolution": "Phase 3 rewritten with CTE pattern: prove exactly one oem-catalog approved target; demote only when target_count=1; promote with RETURNING; mutation_assertion PASS requires promoted_count=1; per-slug validation SELECT before COMMIT",
+        "resolution": "v1.1 CTE pattern superseded by v1.2: separate statements per slug; promote-first; demote non-target primaries only after target is_primary=true",
+        "status": "SUPERSEDED_BY_M1b"
+      },
+      {
+        "id": "M1b",
+        "severity": "MAJOR",
+        "finding": "v1.1 chained demote+promote CTEs on air_purifier_retailer_links failed Supabase dry-run: honeywell-hrf-r3 ended primary_count=0 (demote-all ran; promote 0 rows)",
+        "resolution": "Phase 3 v1.2: per-slug steps R*-1 prove target, R*-2 promote (single UPDATE+RETURNING), R*-3 demote non-target primaries guarded by EXISTS(target is_primary), R*-4 per-slug validation, final validation both slugs; promote-before-demote prevents zero-primary",
         "status": "RESOLVED"
       },
       {
@@ -87,7 +94,7 @@
     "phases": [
       { "phase": 1, "sql_marker": "PHASE 1 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P1-A, P1-B", "validation": "phase1_oem_assertion PASS" },
       { "phase": 2, "sql_marker": "PHASE 2 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P2-A through P2-D", "validation": "phase2_assertion PASS for both Blueair slugs" },
-      { "phase": 3, "sql_marker": "PHASE 3 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P3-A", "validation": "mutation_assertion PASS + phase3_slug_assertion PASS per Honeywell slug" },
+      { "phase": 3, "sql_marker": "PHASE 3 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P3-A, P3-B", "validation": "promote_assertion PASS per slug + phase3_slug_assertion PASS for BOTH honeywell-hrf-r2 and honeywell-hrf-r3 (primary_count=1, oem-catalog, direct_buyable)" },
       { "phase": 4, "sql_marker": "PHASE 4 TRANSACTION", "default_end": "ROLLBACK", "preflight": "P4-A, P4-B", "validation": "phase4_slug_assertion PASS per slug (rows_updated=1 or ALREADY_ALIGNED)" }
     ],
     "blocking_rules": [
@@ -176,12 +183,20 @@
   },
   "section_5_phase_3_honeywell_primary_promotion": {
     "phase": 3,
+    "packet_revision": "v1.2-phase3-honeywell-rewrite",
     "targets": ["honeywell-hrf-r2", "honeywell-hrf-r3"],
-    "strategy": "CTE safe promote: prove target oem-catalog approved row (count=1) before demote; promote with RETURNING; mutation_assertion requires promoted_count=1",
-    "preflight_assertions": ["P3-A oem_catalog_approved_count=1 per slug"],
-    "validation_gate": "mutation_assertion=PASS AND phase3_slug_assertion=PASS per slug",
-    "zero_primary_prevention": "Demote blocked unless target_count=1; promote blocked unless target_count=1",
-    "status": "GUARDED_SQL_READY"
+    "strategy": "Separate statements per slug (no chained demote+promote CTEs): prove target → promote oem-catalog → demote non-target primaries only after target is_primary → validate",
+    "zero_primary_prevention": "Promote runs before demote; demote step guarded by EXISTS(oem-catalog target is_primary=true); if promote_assertion=FAIL, demote step is no-op",
+    "prior_cte_failure": "v1.1 single-statement demote+promote CTEs demoted ALL approved rows (including target) before promote; dry-run showed honeywell-hrf-r3 promote_count=0 → primary_count=0. v1.2 rejected that pattern.",
+    "preflight_assertions": ["P3-A p3_target_assertion=PASS (exactly one oem-catalog approved per slug)", "P3-B current_primary_retailer_key baseline"],
+    "per_slug_steps": ["R*-1 target_proof_assertion", "R*-2 promote_assertion (promoted_count=1)", "R*-3 demoted_non_target_count", "R*-4 phase3_slug_assertion"],
+    "validation_gate": "Phase 3 final validation: BOTH slugs primary_count=1, primary_retailer_key=oem-catalog, primary_browser_truth=direct_buyable, phase3_slug_assertion=PASS",
+    "commit_blocking_rule": "Do NOT COMMIT unless both HRF-R2 and HRF-R3 pass final validation; any FAIL → ROLLBACK and re-run diff",
+    "dry_run_expectations": {
+      "honeywell-hrf-r2": { "promoted_count": 1, "demoted_non_target_count": 1, "primary_count": 1, "phase3_slug_assertion": "PASS" },
+      "honeywell-hrf-r3": { "promoted_count": 1, "demoted_non_target_count": 1, "primary_count": 1, "phase3_slug_assertion": "PASS" }
+    },
+    "status": "GUARDED_SQL_READY_PENDING_DRY_RUN_RERUN"
   },
   "section_6_phase_4_levoit_winix_retailer_parity": {
     "phase": 4,
@@ -243,12 +258,12 @@
   },
   "section_10_safety_verdict": {
     "overall": "SAFE_FOR_OWNER_APPROVAL",
-    "rationale": "v1.1 revision resolves all MAJOR mutation-safety-audit findings (M1–M3). Per-phase transaction boundaries, preflight assertions, CTE rowcount guards, and PASS/FAIL validation gates. m2 (manual rollback) acknowledged — mitigated by mandatory Section 2 backup.",
+    "rationale": "v1.2 Phase 3 rewrite addresses M1b dry-run failure (zero-primary on honeywell-hrf-r3). Promote-first + non-target demote guards. Phase 3 requires successful dry-run re-validation before COMMIT. Other phases unchanged from v1.1.",
     "per_phase": {
       "preflight_backup": "SAFE_TO_REVIEW",
       "phase_1_oem_pre_alignment": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
       "phase_2_blueair_seed": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
-      "phase_3_honeywell_promotion": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL",
+      "phase_3_honeywell_promotion": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL_AFTER_DRY_RUN_RERUN",
       "phase_4_levoit_winix_parity": "SAFE_TO_APPLY_WITH_OWNER_APPROVAL"
     },
     "explicitly_not": ["SAFE_TO_APPLY_NOW", "unattended_auto_apply"],
@@ -261,16 +276,17 @@
     ]
   },
   "remaining_risks": [
+    "Phase 3 v1.2 must pass fresh Supabase dry-run for BOTH honeywell-hrf-r2 and honeywell-hrf-r3 before any COMMIT — v1.1 CTE pattern demonstrated zero-primary risk on hrf-r3.",
     "Production drift since ap-supabase-vs-csv-diff-v1 snapshot — preflight assertions may FAIL; owner must re-run diff, not force COMMIT.",
-    "PostgreSQL cannot auto-abort on validation FAIL — owner discipline required (m1 residual).",
-    "Rollback remains manual JSON restore — backup skip is irrecoverable without diff re-snapshot (m2 residual).",
-    "Phase 2 adds compat mappings without removing legacy blueair-411a-max→blueair-f4max-411 mappings — pre-existing model-page wrong-family exposure; out of packet scope.",
-    "P4-B ALREADY_ALIGNED path allows COMMIT with rows_updated=0 — owner must confirm phase4_slug_assertion=PASS, not mutation_assertion alone."
+    "PostgreSQL cannot auto-abort on validation FAIL — owner discipline required.",
+    "Rollback remains manual JSON restore — backup skip is irrecoverable without diff re-snapshot.",
+    "Phase 2 adds compat mappings without removing legacy blueair-411a-max→blueair-f4max-411 mappings — out of packet scope.",
+    "P4-B ALREADY_ALIGNED path allows COMMIT with rows_updated=0 — owner must confirm phase4_slug_assertion=PASS."
   ],
   "parity_packet_overlap_note": "PROVEN: current 6-slug gap inventory does not overlap ap-runtime-safe-cta-parity-packet-v1 delta slugs.",
   "proven_facts": [
     "PROVEN: gate_state=EXPLICITLY_DIVERGED; gap_size=6.",
-    "PROVEN: All MAJOR audit findings addressed in v1.1 SQL revision.",
+    "PROVEN: v1.2 Phase 3 rejects chained demote+promote CTE pattern after dry-run failure on honeywell-hrf-r3.",
     "PROVEN: Phase 4 SQL has no transactional dependency on Phase 1; P4-A is operational hygiene only."
   ]
 }
