@@ -419,6 +419,17 @@ export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
     "purepour",
     "xwf",
     "xwfe",
+    "4396842",
+    "adq75795101",
+    "da97-19467c",
+    "frig-242017801",
+    "gswf2",
+    "mswf",
+    "opfg3f",
+    "pfmwf",
+    "smartwater-mwfp",
+    "w10413645a",
+    "wf2cb",
   ],
 };
 
