@@ -165,6 +165,7 @@
     "buckparts:stale-browser-truth-shadow": "tsx scripts/report-buckparts-stale-browser-truth-shadow-v1.ts",
     "buckparts:production-truth:ap": "tsx scripts/report-buckparts-production-truth-ap-v1.ts",
     "buckparts:repo-runtime-convergence:check": "tsx scripts/check-repo-runtime-convergence-gate-v1.ts",
+    "buckparts:referenceability:factory": "tsx scripts/report-buckparts-referenceability-factory-v1.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
     "buckparts:discover:frigidaire-oem-pdps": "tsx scripts/discover-frigidaire-oem-direct-pdp-candidates.ts",
     "buckparts:frigidaire-replacement-strategy": "tsx scripts/report-frigidaire-replacement-strategy.ts",
