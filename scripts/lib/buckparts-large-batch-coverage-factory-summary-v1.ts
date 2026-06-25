@@ -16,6 +16,24 @@ import {
   type LargeBatchCoverageFactoryStateV1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
 
+import {
+  buildLargeBatchCoverageFactorySummaryDualAuthorityV1,
+  buildTopCandidatesUcfDispositionV1,
+  dualOutputAuthorityProvenanceFactV1,
+  LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1,
+  type LargeBatchCoverageFactorySummaryDualAuthorityV1,
+  type LargeBatchCoverageFactorySummaryTopCandidateUcfDispositionV1,
+  UCF_DISPOSITION_AUTHORITY_V1,
+} from "./buckparts-large-batch-coverage-factory-dual-output-authority-v1";
+
+export {
+  GOAT_C1_LBCF_UCF_DUAL_OUTPUT_AUTHORITY_CONTRACT_V1,
+  LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1,
+  UCF_DISPOSITION_AUTHORITY_V1,
+  type LargeBatchCoverageFactorySummaryDualAuthorityV1,
+  type LargeBatchCoverageFactorySummaryTopCandidateUcfDispositionV1,
+} from "./buckparts-large-batch-coverage-factory-dual-output-authority-v1";
+
 export const LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_CONTRACT_V1 =
   "large_batch_coverage_factory_summary_v1" as const;
 
@@ -58,6 +76,10 @@ export type LargeBatchCoverageFactorySummaryV1 = {
   next_agent_action: string;
   expansion_blocker_summary: string;
   factory_failure_reason: string | null;
+  expansion_taxonomy_authority: typeof LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1;
+  disposition_authority: typeof UCF_DISPOSITION_AUTHORITY_V1;
+  dual_authority: LargeBatchCoverageFactorySummaryDualAuthorityV1;
+  top_5_candidates_ucf_disposition: LargeBatchCoverageFactorySummaryTopCandidateUcfDispositionV1[];
   proven_facts: string[];
   unknown_facts: string[];
 };
@@ -109,6 +131,9 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
   report: LargeBatchCoverageFactoryReportV1,
   options?: {
     ucfCoverageDispositionProvenanceFacts?: string[];
+    ucfSnapshot?: UcfDecisionAuthoritySnapshotV1 | null;
+    dualOutputAttentionRequired?: boolean;
+    dualOutputUnknownFacts?: string[];
   },
 ): LargeBatchCoverageFactorySummaryV1 {
   const top_5_candidates = report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => ({
@@ -119,6 +144,20 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
     block_reason: c.block_reason,
   }));
 
+  const dual_authority = buildLargeBatchCoverageFactorySummaryDualAuthorityV1();
+  const ucfDisposition = buildTopCandidatesUcfDispositionV1({
+    topCandidates: top_5_candidates,
+    snapshot: options?.ucfSnapshot ?? null,
+  });
+  const dualUnknownFacts = [
+    ...(options?.dualOutputUnknownFacts ?? []),
+    ...ucfDisposition.unknown_facts,
+  ];
+  const runtime_status =
+    options?.dualOutputAttentionRequired || ucfDisposition.attention_required
+      ? "ATTENTION"
+      : "OK";
+
   const actions = buildActions(report);
 
   return {
@@ -128,7 +167,7 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
     data_mutation: false,
     mutation_ready: false,
     generated_at: report.generated_at,
-    runtime_status: "OK",
+    runtime_status,
     source_command: "npm run buckparts:large-batch-coverage-factory",
     factory_report_name: report.report_name,
     candidate_count: report.candidate_count,
@@ -139,10 +178,15 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
     next_agent_action: actions.next_agent_action,
     expansion_blocker_summary: buildExpansionBlockerSummary(report),
     factory_failure_reason: null,
+    expansion_taxonomy_authority: LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1,
+    disposition_authority: UCF_DISPOSITION_AUTHORITY_V1,
+    dual_authority,
+    top_5_candidates_ucf_disposition: ucfDisposition.rows,
     proven_facts: [
       ...report.notes,
       `${LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_CONTRACT_V1} is a read-only Command Center projection of ${LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1}.`,
       "PROVEN: mutation_ready is false — not a Codex publish or retailer_links authority source.",
+      dualOutputAuthorityProvenanceFactV1(),
       EXPANSION_DEPTH_NOTE_V1,
       ...(options?.ucfCoverageDispositionProvenanceFacts ?? []),
       ...(report.state_counts.new_product_candidate === 0 &&
@@ -151,7 +195,7 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
         ? [FIRST_FRIDGE_EXPANSION_DEMOTED_NOTE_V1]
         : []),
     ],
-    unknown_facts: [],
+    unknown_facts: dualUnknownFacts,
   };
 }
 
@@ -159,21 +203,38 @@ export function buildLargeBatchCoverageFactorySummaryV1(
   deps: BuildLargeBatchCoverageFactorySummaryDepsV1,
 ): LargeBatchCoverageFactorySummaryV1 {
   const now = deps.now ?? (() => new Date());
+  const dual_authority = buildLargeBatchCoverageFactorySummaryDualAuthorityV1();
   try {
     const report = (deps.buildFactoryReport ?? buildLargeBatchCoverageFactoryReportV1)({
       rootDir: deps.rootDir,
       topCandidatesLimit: deps.topCandidatesLimit ?? MAX_TOP_CANDIDATES,
     });
     const buildUcfSnapshot = deps.buildUcfSnapshot ?? buildUcfDecisionAuthoritySnapshotV1;
-    const snapshot = buildUcfSnapshot({ rootDir: deps.rootDir, now: deps.now });
-    const ucfCoverageDispositionProvenanceFacts = buildUcfCoverageDispositionProvenanceFactsV1({
-      snapshot,
-      filterSlugs: report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => c.slug),
-      wedge: "refrigerator_water",
-      cutover_contract: UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1,
-    });
+    let snapshot: UcfDecisionAuthoritySnapshotV1 | null = null;
+    let dualOutputAttentionRequired = false;
+    const dualOutputUnknownFacts: string[] = [];
+    try {
+      snapshot = buildUcfSnapshot({ rootDir: deps.rootDir, now: deps.now });
+    } catch (ucfError) {
+      dualOutputAttentionRequired = true;
+      const reason = ucfError instanceof Error ? ucfError.message : String(ucfError);
+      dualOutputUnknownFacts.push(
+        `UNKNOWN: universal_coverage_factory_v1 snapshot failed (${reason}); disposition_authority degraded.`,
+      );
+    }
+    const ucfCoverageDispositionProvenanceFacts = snapshot
+      ? buildUcfCoverageDispositionProvenanceFactsV1({
+          snapshot,
+          filterSlugs: report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => c.slug),
+          wedge: "refrigerator_water",
+          cutover_contract: UCF_DECISION_AUTHORITY_CUTOVER_PHASE2_CONTRACT_V1,
+        })
+      : [];
     return buildLargeBatchCoverageFactorySummaryV1FromReport(report, {
       ucfCoverageDispositionProvenanceFacts,
+      ucfSnapshot: snapshot,
+      dualOutputAttentionRequired,
+      dualOutputUnknownFacts,
     });
   } catch (e) {
     const reason = e instanceof Error ? e.message : String(e);
@@ -197,9 +258,14 @@ export function buildLargeBatchCoverageFactorySummaryV1(
         "Diagnose Large Batch Coverage Factory build failure read-only; re-run npm run buckparts:large-batch-coverage-factory after fix. Do not mutate production.",
       expansion_blocker_summary: `UNKNOWN: factory report did not build (${reason}). ${EXPANSION_DEPTH_NOTE_V1}`,
       factory_failure_reason: reason,
+      expansion_taxonomy_authority: LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1,
+      disposition_authority: UCF_DISPOSITION_AUTHORITY_V1,
+      dual_authority,
+      top_5_candidates_ucf_disposition: [],
       proven_facts: [
         "PROVEN: Command Center caught factory build failure without throwing.",
         "PROVEN: mutation_ready is false.",
+        dualOutputAuthorityProvenanceFactV1(),
       ],
       unknown_facts: [`UNKNOWN: ${LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1} build error: ${reason}`],
     };

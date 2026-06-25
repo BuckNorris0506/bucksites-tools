@@ -5,6 +5,8 @@ import {
   buildLargeBatchCoverageFactorySummaryV1,
   buildLargeBatchCoverageFactorySummaryV1FromReport,
   LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1,
+  LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1,
+  UCF_DISPOSITION_AUTHORITY_V1,
 } from "./buckparts-large-batch-coverage-factory-summary-v1";
 import {
   buildLargeBatchCoverageFactoryReportV1,
@@ -16,8 +18,15 @@ import {
   buildUcfCoverageDispositionProvenanceFactsV1,
   buildUcfDecisionAuthoritySnapshotV1,
 } from "@/lib/coverage-factory/ucf-decision-authority-cutover-v1";
+import { resetFridgeAdapterAuditCacheV1 } from "@/lib/coverage-factory/adapters/fridge-coverage-factory-adapter-v1";
+import { isUcfPromotionDispositionV1 } from "@/lib/coverage-factory/goat-c1-lbcf-ucf-taxonomy-bridge-v1";
 
 const REPO_ROOT = process.cwd();
+const FIXED_NOW = () => new Date("2026-06-10T22:00:00.000Z");
+
+test.before(() => {
+  resetFridgeAdapterAuditCacheV1();
+});
 
 function missingExaDiscoveryLoadResultV1(): LoadExaDiscoveryForFactoryResultV1 {
   return {
@@ -124,6 +133,7 @@ test("summary from factory report is read-only and surfaces counts", () => {
   });
   const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(sampleFactoryReport(), {
     ucfCoverageDispositionProvenanceFacts: ucfFacts,
+    ucfSnapshot: snapshot,
   });
   assert.equal(summary.report_name, LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1);
   assert.equal(summary.read_only, true);
@@ -245,4 +255,117 @@ test("repo summary with active combined Exa manifest yields 60 and three evidenc
     assert.equal(row!.factory_state, "evidence_needed");
     assert.equal(row!.has_gated_buyable_link, false);
   }
+});
+
+test("dual-authority fields are present and LBCF remains expansion taxonomy authority", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    now: FIXED_NOW,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+  });
+  if (summary.runtime_status !== "OK" && summary.runtime_status !== "ATTENTION") {
+    assert.fail(`unexpected runtime_status ${summary.runtime_status}`);
+  }
+  assert.equal(summary.expansion_taxonomy_authority, LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1);
+  assert.equal(summary.disposition_authority, UCF_DISPOSITION_AUTHORITY_V1);
+  assert.equal(summary.dual_authority.expansion_taxonomy_authority, LBCF_EXPANSION_TAXONOMY_AUTHORITY_V1);
+  assert.equal(summary.dual_authority.disposition_authority, UCF_DISPOSITION_AUTHORITY_V1);
+  assert.equal(summary.dual_authority.goat_c1_interpretation, "SPLIT_DUAL_OUTPUT");
+  assert.equal(summary.dual_authority.factory_state_implies_promotion_authority, false);
+  assert.ok(
+    summary.proven_facts.some((fact) => fact.includes("goat_c1_lbcf_ucf_dual_output_authority_v1")),
+  );
+  assert.equal(summary.top_5_candidates_ucf_disposition.length, summary.top_5_candidates.length);
+  for (let i = 0; i < summary.top_5_candidates.length; i++) {
+    assert.equal(summary.top_5_candidates_ucf_disposition[i]!.slug, summary.top_5_candidates[i]!.slug);
+    assert.equal(summary.top_5_candidates_ucf_disposition[i]!.promotion_from_factory_state_alone, false);
+  }
+});
+
+test("registered top-cohort slugs cite UCF disposition authority", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    now: FIXED_NOW,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+  });
+  const registeredRow = summary.top_5_candidates_ucf_disposition.find((row) => row.ucf_registered);
+  if (!registeredRow) return;
+  assert.equal(registeredRow.ucf_authority_source, UCF_DISPOSITION_AUTHORITY_V1);
+  assert.ok(registeredRow.ucf_subject_id?.includes("refrigerator_water:filter:"));
+  assert.ok(registeredRow.ucf_core_disposition);
+  assert.ok(registeredRow.ucf_evidence_summary);
+});
+
+test("publishable factory_state cannot imply UCF promotion without UCF authority", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    now: FIXED_NOW,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+  });
+  for (let i = 0; i < summary.top_5_candidates.length; i++) {
+    const candidate = summary.top_5_candidates[i]!;
+    const ucfRow = summary.top_5_candidates_ucf_disposition[i]!;
+    if (!candidate.factory_state.startsWith("publishable_")) continue;
+    if (ucfRow.ucf_core_disposition && isUcfPromotionDispositionV1(ucfRow.ucf_core_disposition)) {
+      assert.equal(ucfRow.ucf_authority_source, UCF_DISPOSITION_AUTHORITY_V1);
+    }
+    assert.equal(ucfRow.promotion_from_factory_state_alone, false);
+  }
+});
+
+test("UCF snapshot failure degrades to ATTENTION without throwing", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    now: FIXED_NOW,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+    buildUcfSnapshot: () => {
+      throw new Error("fixture ucf snapshot failure");
+    },
+  });
+  assert.equal(summary.runtime_status, "ATTENTION");
+  assert.equal(summary.candidate_count, 57);
+  assert.equal(summary.top_5_candidates.length, 5);
+  assert.ok(
+    summary.unknown_facts.some((fact) => fact.includes("universal_coverage_factory_v1 snapshot failed")),
+  );
+  assert.equal(summary.dual_authority.disposition_authority, UCF_DISPOSITION_AUTHORITY_V1);
+});
+
+test("external summary fields unchanged aside from additive dual-output metadata", () => {
+  const report = buildLargeBatchCoverageFactoryReportV1({
+    rootDir: REPO_ROOT,
+    topCandidatesLimit: 5,
+    loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+  });
+  const snapshot = buildUcfDecisionAuthoritySnapshotV1({ rootDir: REPO_ROOT, now: FIXED_NOW });
+  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(report, { ucfSnapshot: snapshot });
+  assert.equal(summary.candidate_count, report.candidate_count);
+  assert.deepEqual(
+    summary.top_5_candidates,
+    report.top_candidates.slice(0, 5).map((c) => ({
+      slug: c.slug,
+      oem_part_number: c.oem_part_number,
+      factory_state: c.factory_state,
+      priority_score: c.priority_score,
+      block_reason: c.block_reason,
+    })),
+  );
+  assert.equal(summary.state_counts, report.state_counts);
+  assert.match(summary.next_agent_action, /do not mutate production/i);
 });

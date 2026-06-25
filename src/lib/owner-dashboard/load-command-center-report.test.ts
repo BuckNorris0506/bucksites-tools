@@ -30,6 +30,7 @@ import type {
   PagePublishabilityTruthSummaryV1,
 } from "../../../scripts/lib/buckparts-command-center-v2-types";
 import type { LargeBatchCoverageFactorySummaryV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-summary-v1";
+import { buildLargeBatchCoverageFactorySummaryDualAuthorityV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-dual-output-authority-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
@@ -109,6 +110,10 @@ function stubLargeBatchCoverageFactorySummaryV1(
     next_agent_action: "fixture factory lane",
     expansion_blocker_summary: "fixture expansion blocker",
     factory_failure_reason: null,
+    expansion_taxonomy_authority: "large_batch_coverage_factory_v1",
+    disposition_authority: "universal_coverage_factory_v1",
+    dual_authority: buildLargeBatchCoverageFactorySummaryDualAuthorityV1(),
+    top_5_candidates_ucf_disposition: [],
     proven_facts: ["fixture large batch coverage factory summary"],
     unknown_facts: [],
     ...overrides,

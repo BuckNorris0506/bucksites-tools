@@ -57,6 +57,16 @@ function baseV2() {
       expansion_blocker_summary:
         "Factory currently classifies the existing fridge set only until a deeper expansion source is added.",
       factory_failure_reason: null,
+      expansion_taxonomy_authority: "large_batch_coverage_factory_v1",
+      disposition_authority: "universal_coverage_factory_v1",
+      dual_authority: {
+        contract: "goat_c1_lbcf_ucf_dual_output_authority_v1",
+        expansion_taxonomy_authority: "large_batch_coverage_factory_v1",
+        disposition_authority: "universal_coverage_factory_v1",
+        goat_c1_interpretation: "SPLIT_DUAL_OUTPUT",
+        factory_state_implies_promotion_authority: false,
+      },
+      top_5_candidates_ucf_disposition: [],
       proven_facts: [],
       unknown_facts: [],
     },
