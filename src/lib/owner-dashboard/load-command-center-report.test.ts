@@ -2001,10 +2001,14 @@ describe("owner integrity sentinel", () => {
 
   it("public fridge page behavior wiring remains unchanged", () => {
     const src = readFileSync(join(process.cwd(), "src/app/fridge/[slug]/page.tsx"), "utf8");
-    assert.ok(src.includes("const reviewOverride = getFridgeModelReviewOverride(params.slug);"));
+    assert.ok(src.includes("const reviewOverride ="));
+    assert.ok(src.includes("const reviewOverride = customerSafety.quarantine"));
+    assert.ok(src.includes("resolveFridgeCustomerSafetyV1"));
     assert.ok(src.includes("const manualEvidence = reviewOverride"));
     assert.ok(src.includes("mappedFilterCount={reviewOverride ? 0 : fridge.filters.length}"));
     assert.ok(src.includes("quarantineMessage={reviewOverride?.public_message ?? null}"));
+    assert.ok(src.includes("connectedFilters={reviewOverride ? [] : fridge.filters}"));
+    assert.ok(src.includes("is_quarantined: Boolean(reviewOverride)"));
   });
 
   it("semi_cruise_status_summary_v1 exposes owner-dashboard display fields", () => {
