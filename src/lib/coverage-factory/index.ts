@@ -341,3 +341,19 @@ export {
   type UcfDecisionAuthorityPhase2AuditClassificationV1,
   type UcfDecisionAuthorityPhase2AuditEntryV1,
 } from "./ucf-decision-authority-cutover-phase2-v1";
+
+export {
+  assertUcfReplacementSimulationPassedV1,
+  buildUcfReplacementProofReportV1,
+  runUcfReplacementSimulationV1,
+  UCF_LEGACY_COVERAGE_DECISION_SOURCES_V1,
+  UCF_REPLACEMENT_PROOF_CONTRACT_V1,
+  UCF_REPLACEMENT_PROOF_REPORT_NAME_V1,
+  type UcfLegacyCoverageDecisionSourceV1,
+  type UcfReplacementBehaviorIdenticalVerdictV1,
+  type UcfReplacementMatrixRowV1,
+  type UcfReplacementProofReportV1,
+  type UcfReplacementSimulationDeltaV1,
+  type UcfReplacementSimulationDimensionV1,
+  type UcfReplacementSimulationResultV1,
+} from "./ucf-replacement-proof-v1";
