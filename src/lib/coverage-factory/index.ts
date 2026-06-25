@@ -395,3 +395,23 @@ export {
   type GoatC1TaxonomyResolutionStrategyV1,
   type GoatC1TaxonomyResolutionTableRowV1,
 } from "./goat-c1-taxonomy-resolution-plan-v1";
+
+export {
+  buildUcfProvenanceLoadBearingExperimentReportV1,
+  classifyStrippedProvenanceOutcomeV1,
+  classifyUcfProvenanceExperimentVerdictV1,
+  deriveStrippedDispositionV1,
+  runUcfProvenanceSubjectExperimentV1,
+  selectUcfProvenanceExperimentSubjectsV1,
+  stripProvenanceFromCoverageEvidenceV1,
+  ucfProvenanceExperimentGrantsMutationAuthorityV1,
+  UCF_PROVENANCE_FALSIFICATION_CLAIM_V1,
+  UCF_PROVENANCE_LOAD_BEARING_EXPERIMENT_CONTRACT_V1,
+  UCF_PROVENANCE_LOAD_BEARING_EXPERIMENT_REPORT_NAME_V1,
+  workItemClassForDispositionV1,
+  type UcfProvenanceExperimentOutcomeV1,
+  type UcfProvenanceExperimentSubjectResultV1,
+  type UcfProvenanceExperimentVerdictV1,
+  type UcfProvenanceLoadBearingExperimentReportV1,
+  type UcfProvenanceSubjectProjectionV1,
+} from "./ucf-provenance-load-bearing-experiment-v1";
