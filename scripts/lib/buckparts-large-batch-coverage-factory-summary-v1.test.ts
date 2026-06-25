@@ -12,6 +12,10 @@ import {
   type LargeBatchCoverageFactoryReportV1,
 } from "@/lib/coverage/large-batch-coverage-factory-v1";
 import type { LoadExaDiscoveryForFactoryResultV1 } from "@/lib/coverage/exa-discovery-factory-merge-v1";
+import {
+  buildUcfCoverageDispositionProvenanceFactsV1,
+  buildUcfDecisionAuthoritySnapshotV1,
+} from "@/lib/coverage-factory/ucf-decision-authority-cutover-v1";
 
 const REPO_ROOT = process.cwd();
 
@@ -109,7 +113,18 @@ function sampleFactoryReport(): LargeBatchCoverageFactoryReportV1 {
 }
 
 test("summary from factory report is read-only and surfaces counts", () => {
-  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(sampleFactoryReport());
+  const snapshot = buildUcfDecisionAuthoritySnapshotV1({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-06-10T22:00:00.000Z"),
+  });
+  const ucfFacts = buildUcfCoverageDispositionProvenanceFactsV1({
+    snapshot,
+    filterSlugs: ["lt700p"],
+    wedge: "refrigerator_water",
+  });
+  const summary = buildLargeBatchCoverageFactorySummaryV1FromReport(sampleFactoryReport(), {
+    ucfCoverageDispositionProvenanceFacts: ucfFacts,
+  });
   assert.equal(summary.report_name, LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1);
   assert.equal(summary.read_only, true);
   assert.equal(summary.data_mutation, false);
@@ -120,6 +135,32 @@ test("summary from factory report is read-only and surfaces counts", () => {
   assert.equal(summary.blocked_counts.total, 1);
   assert.equal(summary.top_5_candidates.length, 1);
   assert.ok(summary.expansion_blocker_summary.includes("new_product_candidate=0"));
+});
+
+test("repo summary cites UCF coverage disposition authority for registered top cohort slugs", () => {
+  const summary = buildLargeBatchCoverageFactorySummaryV1({
+    rootDir: REPO_ROOT,
+    buildFactoryReport: (factoryDeps) =>
+      buildLargeBatchCoverageFactoryReportV1({
+        ...factoryDeps,
+        loadExaDiscovery: () => missingExaDiscoveryLoadResultV1(),
+      }),
+  });
+  if (summary.runtime_status !== "OK") {
+    assert.fail(`expected OK runtime_status, got ${summary.runtime_status}`);
+  }
+  const registeredTopSlug = summary.top_5_candidates.find((candidate) =>
+    summary.proven_facts.some(
+      (fact) =>
+        fact.includes(`filter_slug=${candidate.slug}`) &&
+        fact.includes("coverage disposition authority=universal_coverage_factory_v1"),
+    ),
+  );
+  if (registeredTopSlug) {
+    assert.ok(
+      summary.proven_facts.some((fact) => fact.includes("ucf_decision_authority_cutover_v1")),
+    );
+  }
 });
 
 test("factory build failure degrades to ATTENTION without throwing", () => {

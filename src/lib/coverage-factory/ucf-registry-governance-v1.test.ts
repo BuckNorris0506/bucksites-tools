@@ -12,10 +12,10 @@ import {
   AP_COVERAGE_FACTORY_ADAPTER_ID_V1,
   buildApCoverageFactoryReferenceProjectionV1,
   buildFridgeCoverageFactoryReferenceProjectionV1,
-  buildUniversalCoverageFactoryV1,
+  buildUcfDecisionAuthoritySnapshotV1,
   buildWhwCoverageFactoryReferenceProjectionV1,
-  COMMITTED_UCF_ADAPTER_IDS_V1,
   COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1,
+  committedUcfRegisteredSubjectCountV1,
   FRIDGE_COVERAGE_FACTORY_ADAPTER_ID_V1,
   WHW_COVERAGE_FACTORY_ADAPTER_ID_V1,
 } from "./index";
@@ -32,12 +32,8 @@ function evidenceSnapshot(evidence: { claims: Record<string, { status: string }>
   );
 }
 
-function committedUcfRegisteredSubjectCountV1(): number {
-  return COMMITTED_UCF_ADAPTER_IDS_V1.reduce(
-    (sum, adapterId) =>
-      sum + COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1[adapterId].length,
-    0,
-  );
+function committedUcfRegisteredSubjectCountFromRegistryV1(): number {
+  return committedUcfRegisteredSubjectCountV1();
 }
 
 test.before(() => {
@@ -45,8 +41,9 @@ test.before(() => {
 });
 
 test("registered registry slugs project identically through adapters and universal factory", () => {
-  const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
-  const registryCount = committedUcfRegisteredSubjectCountV1();
+  const snapshot = buildUcfDecisionAuthoritySnapshotV1({ rootDir: ROOT, now: FIXED_NOW });
+  const factory = snapshot.factory;
+  const registryCount = committedUcfRegisteredSubjectCountFromRegistryV1();
 
   assert.equal(factory.subject_rows.length, registryCount);
   assert.equal(factory.run_manifest.subject_count, registryCount);

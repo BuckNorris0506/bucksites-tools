@@ -309,3 +309,23 @@ export {
   type UcfParityFindingTypeV1,
   type UcfParityFindingV1,
 } from "./ucf-canonical-readiness-policy-v1";
+
+export {
+  buildRegisteredUcfFilterSlugSetV1,
+  buildRegisteredUcfSubjectIdSetV1,
+  buildUcfCoverageDispositionProvenanceFactsV1,
+  buildUcfDecisionAuthorityCutoverReportV1,
+  buildUcfDecisionAuthoritySnapshotV1,
+  committedUcfRegisteredSubjectCountV1,
+  lookupUcfSubjectRowByFilterSlugV1,
+  UCF_DECISION_AUTHORITY_CONSUMER_INVENTORY_V1,
+  UCF_DECISION_AUTHORITY_CUTOVER_CONTRACT_V1,
+  UCF_DECISION_AUTHORITY_CUTOVER_REPORT_NAME_V1,
+  type BuildUcfDecisionAuthoritySnapshotArgsV1,
+  type UcfDecisionAuthorityConsumerClassificationV1,
+  type UcfDecisionAuthorityConsumerCutoverRowV1,
+  type UcfDecisionAuthorityConsumerInventoryEntryV1,
+  type UcfDecisionAuthorityConsumerMigrationStatusV1,
+  type UcfDecisionAuthorityCutoverReportV1,
+  type UcfDecisionAuthoritySnapshotV1,
+} from "./ucf-decision-authority-cutover-v1";

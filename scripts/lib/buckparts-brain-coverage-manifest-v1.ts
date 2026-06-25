@@ -56,6 +56,25 @@ function entry(
 /** Curated systems beyond package.json script enumeration. */
 const CURATED_ENTRIES: EntrySeed[] = [
   {
+    system_id: "universal_coverage_factory_v1",
+    npm_script_or_path:
+      "src/lib/coverage-factory/universal-coverage-factory-v1.ts (read-only factory; not yet a Command Center lane)",
+    cc_json_path: "NONE — ucf_decision_authority_cutover_v1 report via test harness",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test src/lib/coverage-factory/ucf-decision-authority-cutover-v1.test.ts",
+    reason:
+      "Universal Coverage Factory is the canonical coverage disposition authority for 60/60 registered homekeep subjects; cutover v1 begins wiring UCF provenance into operator lanes without CC redesign.",
+    source: "src/lib/coverage-factory/universal-coverage-factory-v1.ts",
+    role: "coverage disposition decision authority (registered subjects)",
+    owner: "Coverage Factory / UCF",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "ucf_decision_authority_cutover_v1 inventory + snapshot builder",
+  },
+  {
     system_id: "buckparts_command_center",
     npm_script_or_path: "npm run buckparts:command-center → scripts/report-buckparts-command-center.ts",
     cc_json_path: "report_name=buckparts_command_center_v1; command_center_v2",

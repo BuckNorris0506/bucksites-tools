@@ -3,6 +3,11 @@
  */
 
 import {
+  buildUcfCoverageDispositionProvenanceFactsV1,
+  buildUcfDecisionAuthoritySnapshotV1,
+  type UcfDecisionAuthoritySnapshotV1,
+} from "@/lib/coverage-factory/ucf-decision-authority-cutover-v1";
+import {
   buildLargeBatchCoverageFactoryReportV1,
   LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1,
   type BuildLargeBatchCoverageFactoryDepsV1,
@@ -63,6 +68,10 @@ export type BuildLargeBatchCoverageFactorySummaryDepsV1 = {
   buildFactoryReport?: (
     factoryDeps: BuildLargeBatchCoverageFactoryDepsV1,
   ) => LargeBatchCoverageFactoryReportV1;
+  buildUcfSnapshot?: (args: {
+    rootDir: string;
+    now?: () => Date;
+  }) => UcfDecisionAuthoritySnapshotV1;
 };
 
 function buildExpansionBlockerSummary(report: LargeBatchCoverageFactoryReportV1): string {
@@ -97,6 +106,9 @@ function buildActions(report: LargeBatchCoverageFactoryReportV1): {
 
 export function buildLargeBatchCoverageFactorySummaryV1FromReport(
   report: LargeBatchCoverageFactoryReportV1,
+  options?: {
+    ucfCoverageDispositionProvenanceFacts?: string[];
+  },
 ): LargeBatchCoverageFactorySummaryV1 {
   const top_5_candidates = report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => ({
     slug: c.slug,
@@ -131,6 +143,7 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
       `${LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_CONTRACT_V1} is a read-only Command Center projection of ${LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1}.`,
       "PROVEN: mutation_ready is false — not a Codex publish or retailer_links authority source.",
       EXPANSION_DEPTH_NOTE_V1,
+      ...(options?.ucfCoverageDispositionProvenanceFacts ?? []),
       ...(report.state_counts.new_product_candidate === 0 &&
       report.source_summary.bulk_catalog.row_count ===
         report.source_summary.live_filters_csv.row_count
@@ -150,7 +163,16 @@ export function buildLargeBatchCoverageFactorySummaryV1(
       rootDir: deps.rootDir,
       topCandidatesLimit: deps.topCandidatesLimit ?? MAX_TOP_CANDIDATES,
     });
-    return buildLargeBatchCoverageFactorySummaryV1FromReport(report);
+    const buildUcfSnapshot = deps.buildUcfSnapshot ?? buildUcfDecisionAuthoritySnapshotV1;
+    const snapshot = buildUcfSnapshot({ rootDir: deps.rootDir, now: deps.now });
+    const ucfCoverageDispositionProvenanceFacts = buildUcfCoverageDispositionProvenanceFactsV1({
+      snapshot,
+      filterSlugs: report.top_candidates.slice(0, MAX_TOP_CANDIDATES).map((c) => c.slug),
+      wedge: "refrigerator_water",
+    });
+    return buildLargeBatchCoverageFactorySummaryV1FromReport(report, {
+      ucfCoverageDispositionProvenanceFacts,
+    });
   } catch (e) {
     const reason = e instanceof Error ? e.message : String(e);
     return {
