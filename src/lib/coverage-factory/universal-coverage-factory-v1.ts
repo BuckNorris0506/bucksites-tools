@@ -379,6 +379,12 @@ export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
     "rabbit-carbon-minusa2",
     "shark-carbon-foam",
     "winix-carbon-116131",
+    "blueair-f2-211",
+    "blueair-particle-411",
+    "coway-airmega400-rf",
+    "hb-trueair-04384",
+    "renpho-rp-ap003",
+    "vornado-carbon-pad",
   ],
   [WHW_COVERAGE_FACTORY_ADAPTER_ID_V1]: [
     "3m-ap810",
@@ -406,6 +412,13 @@ export const COMMITTED_UCF_ADAPTER_REFERENCE_FILTER_SLUGS_V1: Readonly<
     "ultrawf",
     "wf3cb",
     "wfcb",
+    "4396508",
+    "da97-17376a",
+    "frig-242086201",
+    "frig-242294502",
+    "purepour",
+    "xwf",
+    "xwfe",
   ],
 };
 

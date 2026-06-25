@@ -114,6 +114,13 @@ test("refrigerator disposition meaning preserved for committed reference slugs",
     ultrawf: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
     wf3cb: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
     wfcb: "APPLY_READY_AFTER_OWNER_BROWSER_PROOF",
+    "4396508": "CONFLICT_REQUIRES_RECONCILIATION",
+    "da97-17376a": "AUDIT_WRONG_PART_RISK",
+    "frig-242086201": "CONFLICT_REQUIRES_RECONCILIATION",
+    "frig-242294502": "DO_NOT_USE_WRONG_PART_RISK",
+    purepour: "CONFLICT_REQUIRES_RECONCILIATION",
+    xwf: "AUDIT_WRONG_PART_RISK",
+    xwfe: "AUDIT_WRONG_PART_RISK",
   };
 
   for (const slug of REFERENCE_SLUGS) {

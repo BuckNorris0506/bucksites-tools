@@ -22,6 +22,33 @@ import {
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const FIXED_NOW = () => new Date("2026-06-10T22:00:00.000Z");
 
+const DECISION_DISPOSITION_PRIORITY_V1 = {
+  mapping_review: 1,
+  owner_review: 2,
+  research_buyer_path: 3,
+  research_identity: 3,
+  research_fit: 3,
+  ready_for_change_planning: 4,
+  suppressed: 5,
+  candidate_apply: 6,
+  covered: 7,
+} as const;
+
+function expectedHighestPrioritySubjectId(
+  rows: ReturnType<typeof buildUniversalCoverageFactoryV1>["subject_rows"],
+): string {
+  const ordered = [...rows].sort((left, right) => {
+    const priorityCompare =
+      DECISION_DISPOSITION_PRIORITY_V1[left.disposition] -
+      DECISION_DISPOSITION_PRIORITY_V1[right.disposition];
+    if (priorityCompare !== 0) return priorityCompare;
+    const wedgeCompare = left.wedge.localeCompare(right.wedge);
+    if (wedgeCompare !== 0) return wedgeCompare;
+    return left.subject_id.localeCompare(right.subject_id);
+  });
+  return ordered[0]!.subject_id;
+}
+
 function buildFixturePair() {
   const factory = buildUniversalCoverageFactoryV1({ rootDir: ROOT, now: FIXED_NOW });
   const decision = buildUniversalCoverageFactoryDecisionLayerV1(factory);
@@ -47,13 +74,14 @@ test("decision layer validates and aggregates AP + WHW + Fridge factory output",
 
 test("highest priority follows mapping_review > owner_review > research > planning > suppressed", () => {
   const { factory, decision } = buildFixturePair();
+  const expectedHighest = expectedHighestPrioritySubjectId(factory.subject_rows);
 
   assert.equal(decision.highest_priority_wedge, HOMEKEEP_WEDGE_CATALOG.refrigerator_water);
-  assert.equal(decision.highest_priority_subject, "refrigerator_water:filter:gswf");
+  assert.equal(decision.highest_priority_subject, expectedHighest);
 
-  const gswf = factory.subject_rows.find((row) => row.subject_id.includes("gswf"));
-  assert.ok(gswf);
-  assert.equal(gswf.disposition, "mapping_review");
+  const highestRow = factory.subject_rows.find((row) => row.subject_id === expectedHighest);
+  assert.ok(highestRow);
+  assert.equal(highestRow.disposition, "mapping_review");
 });
 
 test("subject cohort lists reconcile and are deterministic", () => {
