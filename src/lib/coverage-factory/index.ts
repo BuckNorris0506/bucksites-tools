@@ -373,3 +373,25 @@ export {
   type LbcfUcfTaxonomyBridgeComparisonV1,
   type LbcfUcfTaxonomyBridgeMatrixRowV1,
 } from "./goat-c1-lbcf-ucf-taxonomy-bridge-v1";
+
+export {
+  assertGoatC1DualAuthorityResolvesBridgeV1,
+  buildGoatC1TaxonomyResolutionPlanReportV1,
+  GOAT_C1_INTERPRETATION_OPTIONS_V1,
+  GOAT_C1_INTERPRETATION_RECOMMENDATION_V1,
+  GOAT_C1_SMALLEST_NEXT_BUILD_SLICE_V1,
+  GOAT_C1_TAXONOMY_RESOLUTION_PLAN_CONTRACT_V1,
+  GOAT_C1_TAXONOMY_RESOLUTION_PLAN_REPORT_NAME_V1,
+  GOAT_C1_TAXONOMY_RESOLUTION_RISKS_V1,
+  GOAT_C1_TAXONOMY_RESOLUTION_STRATEGIES_V1,
+  GOAT_C1_TAXONOMY_RESOLUTION_TABLE_SEED_V1,
+  lookupGoatC1TaxonomyResolutionRowV1,
+  type GoatC1InterpretationOptionV1,
+  type GoatC1InterpretationRecommendationV1,
+  type GoatC1NextBuildSliceV1,
+  type GoatC1PostResolutionReadinessV1,
+  type GoatC1TaxonomyResolutionPlanReportV1,
+  type GoatC1TaxonomyResolutionRiskV1,
+  type GoatC1TaxonomyResolutionStrategyV1,
+  type GoatC1TaxonomyResolutionTableRowV1,
+} from "./goat-c1-taxonomy-resolution-plan-v1";
