@@ -170,6 +170,7 @@
     "buckparts:search-intent-alignment:experiment": "tsx scripts/report-buckparts-search-intent-alignment-experiment-v1.ts",
     "buckparts:search-intent-factory:proof-experiment": "tsx scripts/report-buckparts-search-intent-factory-proof-experiment-v1.ts",
     "buckparts:wedge-speed-test": "tsx scripts/report-buckparts-wedge-speed-test-v1.ts",
+    "buckparts:single-subject-contract-portability-test": "tsx scripts/report-buckparts-single-subject-contract-portability-test-v1.ts",
     "buckparts:oem-blocked-details": "tsx scripts/report-buckparts-oem-catalog-blocked-details.ts",
     "buckparts:discover:frigidaire-oem-pdps": "tsx scripts/discover-frigidaire-oem-direct-pdp-candidates.ts",
     "buckparts:frigidaire-replacement-strategy": "tsx scripts/report-frigidaire-replacement-strategy.ts",
