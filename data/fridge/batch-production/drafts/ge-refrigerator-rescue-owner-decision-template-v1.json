@@ -1,0 +1,20 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "template_only": true,
+  "not_consumed_by_automation": true,
+  "mutation_authorized": false,
+  "read_only": true,
+  "data_mutation": false,
+  "template_for_packet_contract": "ge_refrigerator_rescue_owner_approval_packet_v1",
+  "source_decision_packet_id": "ge_refrigerator_rescue_owner_approval_packet_v1",
+  "allowed_founder_option_ids": [
+    "approve_apply_plan",
+    "reject_apply_plan",
+    "defer_apply_plan",
+    "request_more_proof"
+  ],
+  "notes": [
+    "Replace decision_id and decided_at before recording in founder decision registry.",
+    "approve_apply_plan does not auto-apply CSV — separate guarded executor required."
+  ]
+}

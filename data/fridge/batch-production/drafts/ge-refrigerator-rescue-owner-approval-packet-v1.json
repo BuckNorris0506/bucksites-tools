@@ -1,0 +1,300 @@
+{
+  "contract": "ge_refrigerator_rescue_owner_approval_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "owner_approval_required": true,
+  "apply_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "generated_at": "2026-06-25T23:48:59.614Z",
+  "source_command": "npm run buckparts:ge-refrigerator-rescue-adapter",
+  "adapter_contract": "ge_refrigerator_rescue_adapter_v1",
+  "adapter_report_summary": {
+    "ge_rescue_search_placeholder_count": 9,
+    "ge_reference_applied_count": 1,
+    "in_fridge_rescue_queue_count": 8,
+    "supersession_review_slug_count": 2,
+    "adapter_ready_for_browser_capture_count": 8
+  },
+  "decision_needed": "Owner review guarded GE refrigerator rescue apply proposals for 9 search-placeholder slugs (0 PROPOSED_OWNER_REVIEW_READY).",
+  "approval_options": [
+    {
+      "option_id": "approve_apply_plan",
+      "label": "Approve GE rescue apply plan",
+      "description": "Owner approves guarded per-slug retailer_links.csv proposals for browser-PASS GE rescue lanes. Proceed to separate apply executor — no automatic CSV mutation."
+    },
+    {
+      "option_id": "reject_apply_plan",
+      "label": "Reject apply plan",
+      "description": "Owner rejects GE rescue CSV proposals; keep search-placeholder rows unchanged."
+    },
+    {
+      "option_id": "defer_apply_plan",
+      "label": "Defer apply plan",
+      "description": "Owner defers decision; no apply authority granted."
+    },
+    {
+      "option_id": "request_more_proof",
+      "label": "Request more proof",
+      "description": "Owner needs additional browser evidence before approving any GE rescue apply."
+    }
+  ],
+  "lanes": [
+    {
+      "filter_slug": "gswf",
+      "oem_part_token": "GSWF",
+      "public_route": "/filter/gswf",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 3,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/gswf-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "gswf2",
+      "oem_part_token": "GSWF2",
+      "public_route": "/filter/gswf2",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 19,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/gswf2-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "mswf",
+      "oem_part_token": "MSWF",
+      "public_route": "/filter/mswf",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 24,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/mswf-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "mwf",
+      "oem_part_token": "MWF",
+      "public_route": "/filter/mwf",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": false,
+      "rescue_queue_rank": null,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/mwf-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/MWF",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "opfg3f",
+      "oem_part_token": "OPFG3F",
+      "public_route": "/filter/opfg3f",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 20,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/opfg3f-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "pfmwf",
+      "oem_part_token": "PFMWF",
+      "public_route": "/filter/pfmwf",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 25,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/pfmwf-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "public_route": "/filter/smartwater-mwfp",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 21,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/smartwater-mwfp-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": false,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "public_route": "/filter/xwf",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 17,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/xwf-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": true,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    },
+    {
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "public_route": "/filter/xwfe",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 8,
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/xwfe-official-ge-browser-evidence-v1.json",
+      "browser_evidence_contract": null,
+      "browser_truth_status": "NOT_CAPTURED",
+      "plan_status": "NOT_READY",
+      "owner_apply_review_ready": false,
+      "apply_plan_proposal_ready": false,
+      "supersession_review_required": true,
+      "current_row_state": "existing_ge_catalog_search_placeholder_blocked",
+      "proposed_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "planned_retailer_links_csv_change": null,
+      "blockers": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ]
+    }
+  ],
+  "owner_review_ready_lane_count": 0,
+  "not_ready_lane_count": 9,
+  "separate_apply_executor_required_statement": "PROVEN: Approving this owner approval packet records founder intent only. It does not apply data/retailer_links.csv changes, mutate Supabase, authorize BuckParts Verified Links, or deploy. A separate guarded apply executor with explicit owner_mutation_approved registry row and per-slug browser evidence PASS is still required before any CSV or Supabase mutation.",
+  "prohibited_actions_still_apply": [
+    "Do not mutate retailer_links.csv from this approval packet alone.",
+    "Do not mutate Supabase retailer_links or production database state.",
+    "Do not mutate public fridge pages, sitemap, or robots.",
+    "Do not authorize BuckParts Verified Links without separate apply executor.",
+    "Do not deploy or call Netlify API from this packet.",
+    "approve_apply_plan authorizes proceeding toward guarded per-slug apply — not automatic CSV apply.",
+    "This approval packet is not automation_input for Runner Step, queues, or mutation gates."
+  ],
+  "exact_repo_paths_read": [
+    "data/retailer_links.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json",
+    "data/fridge/batch-production/ge-rescue/gswf-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/gswf2-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/mswf-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/mwf-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/opfg3f-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/pfmwf-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/smartwater-mwfp-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/xwf-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/ge-rescue/xwfe-official-ge-browser-evidence-v1.json",
+    "data/fridge/batch-production/drafts/ge-refrigerator-rescue-owner-approval-packet-v1.json"
+  ],
+  "proven_facts": [
+    "PROVEN: 9 GE filter slugs have committed geapplianceparts.com search-placeholder primary rows in data/retailer_links.csv.",
+    "PROVEN: GE spec PDP discovery uses inferGeAppliancePartsSpecUrlV1 → https://www.geapplianceparts.com/store/parts/spec/{TOKEN}.",
+    "PROVEN: rpwfe is reference lane — repo CSV already direct_buyable official GE spec PDP.",
+    "PROVEN: 8 GE rescue slugs appear in fridge-safe-link-rescue-owner-review missing_safe_link cohort.",
+    "PROVEN: Owner approval packet includes 9 rescue lanes (excludes reference rpwfe)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live geapplianceparts.com buyability for each slug until Playwright capture runs.",
+    "UNKNOWN: Supabase parity state for GE rescue slugs (out of scope for adapter v1).",
+    "UNKNOWN: 9 lanes lack browser-PASS evidence on disk."
+  ]
+}

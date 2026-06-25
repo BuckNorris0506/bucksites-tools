@@ -1,0 +1,939 @@
+{
+  "contract": "ge_refrigerator_rescue_adapter_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "generated_at": "2026-06-25T23:48:59.607Z",
+  "source_paths_read": [
+    "data/retailer_links.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json"
+  ],
+  "cohort_summary": {
+    "ge_rescue_search_placeholder_count": 9,
+    "ge_reference_applied_count": 1,
+    "in_fridge_rescue_queue_count": 8,
+    "supersession_review_slug_count": 2,
+    "adapter_ready_for_browser_capture_count": 8
+  },
+  "rows": [
+    {
+      "filter_slug": "gswf",
+      "brand_slug": "ge",
+      "oem_part_token": "GSWF",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 3,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=GSWF",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [
+        "GSWF2"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/gswf-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/GSWF"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token GSWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "literal GSWF not visible in page title, h1, or text sample"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "gswf2",
+      "brand_slug": "ge",
+      "oem_part_token": "GSWF2",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 19,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=GSWF2",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [
+        "GSWF"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/gswf2-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/GSWF2"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token GSWF2 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "mswf",
+      "brand_slug": "ge",
+      "oem_part_token": "MSWF",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 24,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MSWF",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/mswf-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/MSWF"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token MSWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "mwf",
+      "brand_slug": "ge",
+      "oem_part_token": "MWF",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": false,
+      "rescue_queue_rank": null,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWF",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/MWF",
+      "discovered_spec_known_broken": true,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [
+        "MWFP"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/mwf-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/MWF"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "UNKNOWN",
+          "notes": "repo truth marks inferred GE spec PDP as known_broken_destination"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token MWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "opfg3f",
+      "brand_slug": "ge",
+      "oem_part_token": "OPFG3F",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 20,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=OPFG3F",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/opfg3f-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token OPFG3F not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "pfmwf",
+      "brand_slug": "ge",
+      "oem_part_token": "PFMWF",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 25,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=PFMWF",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/pfmwf-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/PFMWF"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token PFMWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "rpwfe",
+      "brand_slug": "ge",
+      "oem_part_token": "RPWFE",
+      "cohort_lane": "REFERENCE_ALREADY_APPLIED",
+      "in_fridge_rescue_queue": false,
+      "rescue_queue_rank": null,
+      "csv_primary_is_search_placeholder": false,
+      "csv_browser_truth_classification": "direct_buyable",
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/parts/spec/RPWFE",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/RPWFE",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/rpwfe-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "UNKNOWN",
+          "notes": "CSV primary is not a GE search placeholder (may be already applied)"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/RPWFE"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token RPWFE not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_packet_lane_eligible": false
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "brand_slug": "ge",
+      "oem_part_token": "MWFP",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 21,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=MWFP",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": false,
+      "wrong_family_forbidden_tokens": [
+        "MWF"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/smartwater-mwfp-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/MWFP"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token MWFP not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "WAIVED",
+          "notes": "no supersession review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "xwf",
+      "brand_slug": "ge",
+      "oem_part_token": "XWF",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 17,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWF",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "XWFE"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/xwf-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/XWF"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token XWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "XWF/XWFE supersession — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    },
+    {
+      "filter_slug": "xwfe",
+      "brand_slug": "ge",
+      "oem_part_token": "XWFE",
+      "cohort_lane": "RESCUE_SEARCH_PLACEHOLDER",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 8,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.geapplianceparts.com/store/catalog/search.jsp?searchKeyword=XWFE",
+      "discovered_spec_pdp_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "discovered_spec_known_broken": false,
+      "proposed_retailer_name": "GE Appliance Parts",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_ge",
+      "supersession_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "XWF"
+      ],
+      "browser_evidence_artifact_rel_path": "data/fridge/batch-production/ge-rescue/xwfe-official-ge-browser-evidence-v1.json",
+      "validation_gates": [
+        {
+          "gate_id": "ge_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is GE catalog search placeholder"
+        },
+        {
+          "gate_id": "ge_spec_pdp_url_discovered",
+          "status": "PASS",
+          "notes": "https://www.geapplianceparts.com/store/parts/spec/XWFE"
+        },
+        {
+          "gate_id": "ge_spec_pdp_not_known_broken",
+          "status": "PASS",
+          "notes": "inferred GE spec PDP is not in known-broken registry"
+        },
+        {
+          "gate_id": "final_url_direct_spec_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct GE spec PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token XWFE not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_ge_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official GE path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "supersession_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "XWF/XWFE supersession — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_packet_lane_eligible": true
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: 9 GE filter slugs have committed geapplianceparts.com search-placeholder primary rows in data/retailer_links.csv.",
+    "PROVEN: GE spec PDP discovery uses inferGeAppliancePartsSpecUrlV1 → https://www.geapplianceparts.com/store/parts/spec/{TOKEN}.",
+    "PROVEN: rpwfe is reference lane — repo CSV already direct_buyable official GE spec PDP.",
+    "PROVEN: 8 GE rescue slugs appear in fridge-safe-link-rescue-owner-review missing_safe_link cohort."
+  ],
+  "inferred_facts": [
+    "INFERRED: Browser capture + owner approval packet required before any CSV apply (same pattern as RPWFE official GE rescue).",
+    "INFERRED: XWF/XWFE slugs require supersession compatibility review even when browser evidence PASS."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live geapplianceparts.com buyability for each slug until Playwright capture runs.",
+    "UNKNOWN: Supabase parity state for GE rescue slugs (out of scope for adapter v1)."
+  ]
+}
