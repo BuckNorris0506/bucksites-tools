@@ -31,6 +31,7 @@ import type {
 } from "../../../scripts/lib/buckparts-command-center-v2-types";
 import type { LargeBatchCoverageFactorySummaryV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-summary-v1";
 import { buildLargeBatchCoverageFactorySummaryDualAuthorityV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-dual-output-authority-v1";
+import { emptyGoatC1DualOutputLeverageCounterV1 } from "../../../scripts/lib/buckparts-large-batch-coverage-factory-dual-output-leverage-counter-v1";
 import { buildBatchProductionOwnerDecisionsLaneV1 } from "@/lib/owner-dashboard/batch-production-owner-decisions-lane-v1";
 import {
   buildOwnerGscExternalDemandNeuron,
@@ -114,6 +115,7 @@ function stubLargeBatchCoverageFactorySummaryV1(
     disposition_authority: "universal_coverage_factory_v1",
     dual_authority: buildLargeBatchCoverageFactorySummaryDualAuthorityV1(),
     top_5_candidates_ucf_disposition: [],
+    goat_c1_dual_output_leverage_counter_v1: emptyGoatC1DualOutputLeverageCounterV1(),
     proven_facts: ["fixture large batch coverage factory summary"],
     unknown_facts: [],
     ...overrides,

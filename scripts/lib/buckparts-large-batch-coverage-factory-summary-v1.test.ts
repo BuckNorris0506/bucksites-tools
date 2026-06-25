@@ -276,6 +276,12 @@ test("dual-authority fields are present and LBCF remains expansion taxonomy auth
   assert.equal(summary.dual_authority.disposition_authority, UCF_DISPOSITION_AUTHORITY_V1);
   assert.equal(summary.dual_authority.goat_c1_interpretation, "SPLIT_DUAL_OUTPUT");
   assert.equal(summary.dual_authority.factory_state_implies_promotion_authority, false);
+  assert.equal(summary.goat_c1_dual_output_leverage_counter_v1.read_only, true);
+  assert.equal(summary.goat_c1_dual_output_leverage_counter_v1.data_mutation, false);
+  assert.equal(
+    summary.goat_c1_dual_output_leverage_counter_v1.cohort_row_count,
+    summary.top_5_candidates.length,
+  );
   assert.ok(
     summary.proven_facts.some((fact) => fact.includes("goat_c1_lbcf_ucf_dual_output_authority_v1")),
   );
@@ -345,6 +351,8 @@ test("UCF snapshot failure degrades to ATTENTION without throwing", () => {
     summary.unknown_facts.some((fact) => fact.includes("universal_coverage_factory_v1 snapshot failed")),
   );
   assert.equal(summary.dual_authority.disposition_authority, UCF_DISPOSITION_AUTHORITY_V1);
+  assert.equal(summary.goat_c1_dual_output_leverage_counter_v1.measurable, false);
+  assert.equal(summary.goat_c1_dual_output_leverage_counter_v1.expansion_label_would_mislead_count, 0);
 });
 
 test("external summary fields unchanged aside from additive dual-output metadata", () => {

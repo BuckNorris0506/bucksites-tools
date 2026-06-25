@@ -25,6 +25,17 @@ import {
   type LargeBatchCoverageFactorySummaryTopCandidateUcfDispositionV1,
   UCF_DISPOSITION_AUTHORITY_V1,
 } from "./buckparts-large-batch-coverage-factory-dual-output-authority-v1";
+import {
+  buildGoatC1DualOutputLeverageCounterV1,
+  dualOutputLeverageCounterProvenanceFactV1,
+  emptyGoatC1DualOutputLeverageCounterV1,
+  type GoatC1DualOutputLeverageCounterV1,
+} from "./buckparts-large-batch-coverage-factory-dual-output-leverage-counter-v1";
+
+export {
+  GOAT_C1_DUAL_OUTPUT_LEVERAGE_COUNTER_CONTRACT_V1,
+  type GoatC1DualOutputLeverageCounterV1,
+} from "./buckparts-large-batch-coverage-factory-dual-output-leverage-counter-v1";
 
 export {
   GOAT_C1_LBCF_UCF_DUAL_OUTPUT_AUTHORITY_CONTRACT_V1,
@@ -80,6 +91,7 @@ export type LargeBatchCoverageFactorySummaryV1 = {
   disposition_authority: typeof UCF_DISPOSITION_AUTHORITY_V1;
   dual_authority: LargeBatchCoverageFactorySummaryDualAuthorityV1;
   top_5_candidates_ucf_disposition: LargeBatchCoverageFactorySummaryTopCandidateUcfDispositionV1[];
+  goat_c1_dual_output_leverage_counter_v1: GoatC1DualOutputLeverageCounterV1;
   proven_facts: string[];
   unknown_facts: string[];
 };
@@ -159,6 +171,10 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
       : "OK";
 
   const actions = buildActions(report);
+  const goat_c1_dual_output_leverage_counter_v1 = buildGoatC1DualOutputLeverageCounterV1({
+    topCandidates: top_5_candidates,
+    ucfDispositionRows: ucfDisposition.rows,
+  });
 
   return {
     report_name: LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_REPORT_NAME_V1,
@@ -182,11 +198,13 @@ export function buildLargeBatchCoverageFactorySummaryV1FromReport(
     disposition_authority: UCF_DISPOSITION_AUTHORITY_V1,
     dual_authority,
     top_5_candidates_ucf_disposition: ucfDisposition.rows,
+    goat_c1_dual_output_leverage_counter_v1,
     proven_facts: [
       ...report.notes,
       `${LARGE_BATCH_COVERAGE_FACTORY_SUMMARY_CONTRACT_V1} is a read-only Command Center projection of ${LARGE_BATCH_COVERAGE_FACTORY_REPORT_NAME_V1}.`,
       "PROVEN: mutation_ready is false — not a Codex publish or retailer_links authority source.",
       dualOutputAuthorityProvenanceFactV1(),
+      dualOutputLeverageCounterProvenanceFactV1(goat_c1_dual_output_leverage_counter_v1),
       EXPANSION_DEPTH_NOTE_V1,
       ...(options?.ucfCoverageDispositionProvenanceFacts ?? []),
       ...(report.state_counts.new_product_candidate === 0 &&
@@ -262,6 +280,7 @@ export function buildLargeBatchCoverageFactorySummaryV1(
       disposition_authority: UCF_DISPOSITION_AUTHORITY_V1,
       dual_authority,
       top_5_candidates_ucf_disposition: [],
+      goat_c1_dual_output_leverage_counter_v1: emptyGoatC1DualOutputLeverageCounterV1(),
       proven_facts: [
         "PROVEN: Command Center caught factory build failure without throwing.",
         "PROVEN: mutation_ready is false.",
