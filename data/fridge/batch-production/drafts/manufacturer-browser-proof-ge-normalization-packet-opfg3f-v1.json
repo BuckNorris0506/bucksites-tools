@@ -1,0 +1,32 @@
+{
+  "contract": "manufacturer_browser_proof_ge_normalization_execution_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "owner_confirmation_required_before_pass": true,
+  "filter_slug": "opfg3f",
+  "oem_part_token": "OPFG3F",
+  "manufacturer_key": "ge_appliance_parts",
+  "normalization_status": "CAPTURE_REQUIRED_UNKNOWN",
+  "source_ge_evidence_artifact_rel": null,
+  "factory_normalization_draft_rel": null,
+  "prepared_verdict": "NEEDS_OWNER_BROWSER_REVIEW",
+  "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+  "owner_confirmation_checklist": [
+    "Review GE Playwright capture output and normalization draft snapshot.",
+    "Confirm exact OEM token and official GE Appliance Parts PDP path type.",
+    "Owner must explicitly set PASS_BROWSER_PROOF — factory never auto-grants PASS.",
+    "If normalization_status=CAPTURE_REQUIRED_UNKNOWN, run capture command before review."
+  ],
+  "normalization_draft_snapshot": null,
+  "trust_gates_preserved": [
+    "exact_token_gate_not_auto_waived",
+    "wrong_family_gate_not_auto_waived",
+    "official_pdp_path_type_required_for_pass",
+    "pass_browser_proof_requires_owner_verdict"
+  ],
+  "unknown_gaps": [
+    "UNKNOWN: GE browser evidence artifact not committed — run recommended capture command before normalization review."
+  ]
+}

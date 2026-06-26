@@ -1,0 +1,507 @@
+{
+  "contract": "manufacturer_browser_proof_owner_session_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_ge-appliance-parts",
+  "manufacturer_key": "ge_appliance_parts",
+  "slug_count": 8,
+  "session_slugs": [
+    {
+      "session_order": 1,
+      "filter_slug": "gswf",
+      "oem_part_token": "GSWF",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/gswf",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "gswf-official-pdp-full-page.png",
+        "gswf-oem-token-visible.png",
+        "gswf-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 2,
+      "filter_slug": "gswf2",
+      "oem_part_token": "GSWF2",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/gswf2",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "gswf2-official-pdp-full-page.png",
+        "gswf2-oem-token-visible.png",
+        "gswf2-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 3,
+      "filter_slug": "mswf",
+      "oem_part_token": "MSWF",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/mswf",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "mswf-official-pdp-full-page.png",
+        "mswf-oem-token-visible.png",
+        "mswf-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 4,
+      "filter_slug": "opfg3f",
+      "oem_part_token": "OPFG3F",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/opfg3f",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "opfg3f-official-pdp-full-page.png",
+        "opfg3f-oem-token-visible.png",
+        "opfg3f-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 5,
+      "filter_slug": "pfmwf",
+      "oem_part_token": "PFMWF",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/pfmwf",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "pfmwf-official-pdp-full-page.png",
+        "pfmwf-oem-token-visible.png",
+        "pfmwf-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 6,
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/smartwater-mwfp",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "smartwater-mwfp-official-pdp-full-page.png",
+        "smartwater-mwfp-oem-token-visible.png",
+        "smartwater-mwfp-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 7,
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/xwf",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "xwf-official-pdp-full-page.png",
+        "xwf-oem-token-visible.png",
+        "xwf-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 8,
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "manufacturer_key": "ge_appliance_parts",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/xwfe",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "url_role": "adapter_discovery",
+          "notes": "Adapter discovery URL from factory"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "xwfe-official-pdp-full-page.png",
+        "xwfe-oem-token-visible.png",
+        "xwfe-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Run GE Playwright capture command only when owner-authorized; review GE evidence artifact before PASS.",
+        "Reconcile GE normalization draft — owner confirmation required before PASS_BROWSER_PROOF."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    }
+  ],
+  "pre_session_checklist": [
+    "Open owner session packet slugs in priority order.",
+    "Use exact_urls — do not substitute search results or retailer guesses.",
+    "Capture required_screenshots before recording owner proof verdict."
+  ],
+  "post_session_owner_action": "GE Playwright capture may produce browser evidence only — owner must reconcile normalization draft and record PASS owner browser proof manually."
+}

@@ -29,6 +29,14 @@ import {
   MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_CONTRACT_V1,
   MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_JSON_REL_V1,
 } from "./manufacturer-browser-proof-refresh-orchestrator-v1";
+import {
+  MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_CONTRACT_V1,
+  MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_JSON_REL_V1,
+} from "./manufacturer-rescue-throughput-analytics-v1";
+import {
+  MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_CONTRACT_V1,
+  MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_JSON_REL_V1,
+} from "./manufacturer-browser-proof-execution-factory-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
 
@@ -63,6 +71,12 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHEST
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_V1 =
   "npm run buckparts:manufacturer-rescue-owner-approval-packet-factory" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_V1 =
+  "npm run buckparts:manufacturer-rescue-throughput-analytics" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_V1 =
+  "npm run buckparts:manufacturer-browser-proof-execution-factory" as const;
 
 export const EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1 =
   "npm run buckparts:repo-runtime-convergence:check" as const;
@@ -472,6 +486,102 @@ function intakeManufacturerBrowserProofRefreshOrchestrator(
   }
 }
 
+function intakeManufacturerBrowserProofExecutionFactory(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const intakeComplete = parsed.intake_complete === true;
+    const scheduled =
+      typeof parsed.scheduled_slug_count === "number" ? parsed.scheduled_slug_count : "UNKNOWN";
+    const batchCount =
+      typeof parsed.manufacturer_execution_batch_count === "number"
+        ? parsed.manufacturer_execution_batch_count
+        : "UNKNOWN";
+    return {
+      entry_id: `manufacturer_browser_proof_execution_factory_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:browser_proof_execution_factory",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `intake_complete=${String(intakeComplete)}`,
+        `scheduled_slug_count=${String(scheduled)}`,
+        `manufacturer_execution_batch_count=${String(batchCount)}`,
+        "auto_pass_forbidden=true",
+        "browser_automation_authorized=false",
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked: intakeComplete
+        ? "manufacturer browser proof execution packets indexed (owner review required before PASS)"
+        : "manufacturer browser proof execution factory indexed (incomplete upstream artifact intake)",
+      superseded_by: null,
+      source_contract: MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function intakeManufacturerRescueThroughputAnalytics(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const intakeComplete = parsed.intake_complete === true;
+    const funnel = asRecord(parsed.funnel_metrics);
+    const rescueCandidates =
+      funnel && typeof funnel.rescue_candidate_count === "number"
+        ? funnel.rescue_candidate_count
+        : "UNKNOWN";
+    const furthestStage =
+      funnel && typeof funnel.furthest_stage_reached === "string"
+        ? funnel.furthest_stage_reached
+        : "UNKNOWN";
+    return {
+      entry_id: `manufacturer_rescue_throughput_analytics_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:throughput_analytics",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `intake_complete=${String(intakeComplete)}`,
+        `rescue_candidate_count=${String(rescueCandidates)}`,
+        `furthest_funnel_stage=${furthestStage}`,
+        "read_only_kpi_dashboard=true",
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked: intakeComplete
+        ? "manufacturer rescue throughput KPI dashboard indexed from committed upstream artifacts"
+        : "manufacturer rescue throughput analytics indexed (incomplete upstream artifact intake)",
+      superseded_by: null,
+      source_contract: MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
 function intakeManufacturerBrowserProofFactory(
   rootDir: string,
   sourcePaths: Set<string>,
@@ -588,6 +698,14 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
     })(),
     ...((): ExecutionLedgerEntryV1[] => {
       const entry = intakeManufacturerRescueOwnerApprovalPacketFactory(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerRescueThroughputAnalytics(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerBrowserProofExecutionFactory(args.rootDir, sourcePaths);
       return entry ? [entry] : [];
     })(),
   ];

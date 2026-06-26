@@ -1,0 +1,409 @@
+{
+  "contract": "manufacturer_browser_proof_owner_session_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_everydrop-whirlpool",
+  "manufacturer_key": "everydrop_whirlpool",
+  "slug_count": 7,
+  "session_slugs": [
+    {
+      "session_order": 1,
+      "filter_slug": "4396395",
+      "oem_part_token": "4396395",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/4396395",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "4396395-official-pdp-full-page.png",
+        "4396395-oem-token-visible.png",
+        "4396395-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 2,
+      "filter_slug": "4396508",
+      "oem_part_token": "4396508",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/4396508",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "4396508-official-pdp-full-page.png",
+        "4396508-oem-token-visible.png",
+        "4396508-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 3,
+      "filter_slug": "4396842",
+      "oem_part_token": "4396842",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/4396842",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "4396842-official-pdp-full-page.png",
+        "4396842-oem-token-visible.png",
+        "4396842-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 4,
+      "filter_slug": "ukf8001",
+      "oem_part_token": "UKF8001",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/ukf8001",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "ukf8001-official-pdp-full-page.png",
+        "ukf8001-oem-token-visible.png",
+        "ukf8001-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 5,
+      "filter_slug": "w10413645a",
+      "oem_part_token": "W10413645A",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/w10413645a",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "w10413645a-official-pdp-full-page.png",
+        "w10413645a-oem-token-visible.png",
+        "w10413645a-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 6,
+      "filter_slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T03:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/edr3rxd1",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+        "owner_proof_checked_at": "2026-06-06T03:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-06T03:00:00.000Z"
+      },
+      "required_screenshots": [
+        "edr3rxd1-official-pdp-full-page.png",
+        "edr3rxd1-oem-token-visible.png",
+        "edr3rxd1-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 7,
+      "filter_slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T22:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/edr4rxd1",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+        "owner_proof_checked_at": "2026-06-05T22:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-05T22:00:00.000Z"
+      },
+      "required_screenshots": [
+        "edr4rxd1-official-pdp-full-page.png",
+        "edr4rxd1-oem-token-visible.png",
+        "edr4rxd1-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    }
+  ],
+  "pre_session_checklist": [
+    "Open owner session packet slugs in priority order.",
+    "Use exact_urls — do not substitute search results or retailer guesses.",
+    "Capture required_screenshots before recording owner proof verdict."
+  ],
+  "post_session_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+}

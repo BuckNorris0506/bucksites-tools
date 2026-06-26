@@ -152,6 +152,14 @@ import {
   buildManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1,
 } from "./lib/manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
 import {
+  buildManufacturerRescueThroughputAnalyticsCommandCenterLaneUnknownV1,
+  buildManufacturerRescueThroughputAnalyticsCommandCenterLaneV1,
+} from "./lib/manufacturer-rescue-throughput-analytics-command-center-v1";
+import {
+  buildManufacturerBrowserProofExecutionFactoryCommandCenterLaneUnknownV1,
+  buildManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1,
+} from "./lib/manufacturer-browser-proof-execution-factory-command-center-v1";
+import {
   buildBuckpartsExecutionLedgerCommandCenterLaneUnknownV1,
   buildBuckpartsExecutionLedgerCommandCenterLaneV1,
 } from "./lib/buckparts-execution-ledger-command-center-v1";
@@ -1200,6 +1208,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_factory_v1"
     | "manufacturer_browser_proof_refresh_orchestrator_v1"
     | "manufacturer_rescue_owner_approval_packet_factory_v1"
+    | "manufacturer_rescue_throughput_analytics_v1"
+    | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
@@ -1475,6 +1485,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_factory_v1"
     | "manufacturer_browser_proof_refresh_orchestrator_v1"
     | "manufacturer_rescue_owner_approval_packet_factory_v1"
+    | "manufacturer_rescue_throughput_analytics_v1"
+    | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1631,6 +1643,8 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_factory_v1"
     | "manufacturer_browser_proof_refresh_orchestrator_v1"
     | "manufacturer_rescue_owner_approval_packet_factory_v1"
+    | "manufacturer_rescue_throughput_analytics_v1"
+    | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -2140,6 +2154,38 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let manufacturer_rescue_throughput_analytics_v1;
+  try {
+    manufacturer_rescue_throughput_analytics_v1 =
+      buildManufacturerRescueThroughputAnalyticsCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    manufacturer_rescue_throughput_analytics_v1 =
+      buildManufacturerRescueThroughputAnalyticsCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
+  let manufacturer_browser_proof_execution_factory_v1;
+  try {
+    manufacturer_browser_proof_execution_factory_v1 =
+      buildManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    manufacturer_browser_proof_execution_factory_v1 =
+      buildManufacturerBrowserProofExecutionFactoryCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
   let execution_ledger_v1;
   try {
     execution_ledger_v1 = buildBuckpartsExecutionLedgerCommandCenterLaneV1({
@@ -2222,6 +2268,8 @@ export async function buildBuckpartsCommandCenterReport(
     manufacturer_browser_proof_factory_v1,
     manufacturer_browser_proof_refresh_orchestrator_v1,
     manufacturer_rescue_owner_approval_packet_factory_v1,
+    manufacturer_rescue_throughput_analytics_v1,
+    manufacturer_browser_proof_execution_factory_v1,
     execution_ledger_v1,
   };
 

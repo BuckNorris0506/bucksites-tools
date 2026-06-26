@@ -1,0 +1,90 @@
+{
+  "contract": "manufacturer_browser_proof_execution_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_ge-appliance-parts",
+  "manufacturer_key": "ge_appliance_parts",
+  "scheduled_slug_count": 8,
+  "execution_order": [
+    {
+      "filter_slug": "gswf",
+      "oem_part_token": "GSWF",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "gswf2",
+      "oem_part_token": "GSWF2",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "mswf",
+      "oem_part_token": "MSWF",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "opfg3f",
+      "oem_part_token": "OPFG3F",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "pfmwf",
+      "oem_part_token": "PFMWF",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    },
+    {
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "refresh_priority": 100,
+      "capture_strategy": "ge_automated_playwright_spec_capture"
+    }
+  ],
+  "capture_strategies": [
+    "ge_automated_playwright_spec_capture"
+  ],
+  "capture_commands": [
+    "npm run buckparts:ge-refrigerator-rescue-capture -- --all"
+  ],
+  "schedule_reasons": [
+    "factory_capture_work_required",
+    "owner_browser_proof_artifact_missing"
+  ],
+  "ge_normalization_draft_only": true,
+  "pre_execution_checklist": [
+    "Confirm refresh orchestrator batch is current — do not skip stale upstream artifacts.",
+    "Factory is read-only — capture commands listed for owner reference only; browser_automation_authorized=false.",
+    "Never commit PASS_BROWSER_PROOF without owner visual review.",
+    "GE batch: reconcile normalization execution packets before owner PASS."
+  ],
+  "post_capture_owner_action": "GE Playwright capture may produce browser evidence only — owner must reconcile normalization draft and record PASS owner browser proof manually.",
+  "owner_session_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-owner-session-packet-ge-appliance-parts-v1.json",
+  "ge_normalization_packet_rels": [
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf2-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-mswf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-opfg3f-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-pfmwf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-smartwater-mwfp-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json"
+  ]
+}

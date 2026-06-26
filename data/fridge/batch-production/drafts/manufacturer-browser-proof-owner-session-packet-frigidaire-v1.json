@@ -1,0 +1,583 @@
+{
+  "contract": "manufacturer_browser_proof_owner_session_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_frigidaire",
+  "manufacturer_key": "frigidaire",
+  "slug_count": 10,
+  "session_slugs": [
+    {
+      "session_order": 1,
+      "filter_slug": "fppwfu01",
+      "oem_part_token": "FPPWFU01",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/fppwfu01",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "fppwfu01-official-pdp-full-page.png",
+        "fppwfu01-oem-token-visible.png",
+        "fppwfu01-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 2,
+      "filter_slug": "frig-242017801",
+      "oem_part_token": "242017801",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/frig-242017801",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "frig-242017801-official-pdp-full-page.png",
+        "frig-242017801-oem-token-visible.png",
+        "frig-242017801-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 3,
+      "filter_slug": "frig-242086201",
+      "oem_part_token": "242086201",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/frig-242086201",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "frig-242086201-official-pdp-full-page.png",
+        "frig-242086201-oem-token-visible.png",
+        "frig-242086201-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 4,
+      "filter_slug": "frig-242294502",
+      "oem_part_token": "242294502",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/frig-242294502",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "frig-242294502-official-pdp-full-page.png",
+        "frig-242294502-oem-token-visible.png",
+        "frig-242294502-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 5,
+      "filter_slug": "purepour",
+      "oem_part_token": "PPWFU01",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/purepour",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "purepour-official-pdp-full-page.png",
+        "purepour-oem-token-visible.png",
+        "purepour-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 6,
+      "filter_slug": "wf2cb",
+      "oem_part_token": "WF2CB",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "live_buckparts_url": "https://buckparts.com/filter/wf2cb",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "UNKNOWN",
+          "url_role": "UNKNOWN",
+          "notes": "No committed target URL — owner must identify official PDP manually."
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": null,
+        "owner_proof_checked_at": null,
+        "official_pass": false,
+        "freshness_notes": null
+      },
+      "required_screenshots": [
+        "wf2cb-official-pdp-full-page.png",
+        "wf2cb-oem-token-visible.png",
+        "wf2cb-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 7,
+      "filter_slug": "eptwfu01",
+      "oem_part_token": "EPTWFU01",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T20:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/eptwfu01",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+        "owner_proof_checked_at": "2026-06-05T20:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-05T20:00:00.000Z"
+      },
+      "required_screenshots": [
+        "eptwfu01-official-pdp-full-page.png",
+        "eptwfu01-oem-token-visible.png",
+        "eptwfu01-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 8,
+      "filter_slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T02:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/ultrawf",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+        "owner_proof_checked_at": "2026-06-06T02:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-06T02:00:00.000Z"
+      },
+      "required_screenshots": [
+        "ultrawf-official-pdp-full-page.png",
+        "ultrawf-oem-token-visible.png",
+        "ultrawf-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 9,
+      "filter_slug": "wf3cb",
+      "oem_part_token": "WF3CB",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T12:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/wf3cb",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+        "owner_proof_checked_at": "2026-06-05T12:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-05T12:00:00.000Z"
+      },
+      "required_screenshots": [
+        "wf3cb-official-pdp-full-page.png",
+        "wf3cb-oem-token-visible.png",
+        "wf3cb-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    },
+    {
+      "session_order": 10,
+      "filter_slug": "wfcb",
+      "oem_part_token": "WFCB",
+      "manufacturer_key": "frigidaire",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T00:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "live_buckparts_url": "https://buckparts.com/filter/wfcb",
+      "exact_urls": [
+        {
+          "priority": 1,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "url_role": "official_target",
+          "notes": "Primary target from factory assessment"
+        },
+        {
+          "priority": 2,
+          "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "url_role": "repo_proven_official",
+          "notes": "Repo-proven official target from rescue orchestrator"
+        }
+      ],
+      "expected_evidence": {
+        "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json",
+        "owner_proof_checked_at": "2026-06-06T00:00:00.000Z",
+        "official_pass": true,
+        "freshness_notes": "proof stale checked_at=2026-06-06T00:00:00.000Z"
+      },
+      "required_screenshots": [
+        "wfcb-official-pdp-full-page.png",
+        "wfcb-oem-token-visible.png",
+        "wfcb-buy-or-add-to-cart-visible.png"
+      ],
+      "validation_checklist": [
+        "Confirm owner proof artifact is dated within 14 days before PASS.",
+        "Exact OEM part token visible on official manufacturer PDP.",
+        "Page is official manufacturer product detail — not search placeholder or third-party listing.",
+        "No wrong-family product signals (forbidden cross-family tokens absent).",
+        "Owner records verdict manually — factory never auto-grants PASS_BROWSER_PROOF.",
+        "Complete visual owner browser session — compare live page to OEM token and BuckParts filter page."
+      ],
+      "pass_criteria": "Owner visually confirms exact OEM token on official manufacturer PDP with no wrong-family signals; commits PASS_BROWSER_PROOF verdict to owner proof artifact only after review.",
+      "fail_criteria": [
+        "Search placeholder or non-official listing is primary buy path.",
+        "OEM token mismatch or wrong-family product detected.",
+        "Page unreachable or evidence stale beyond max age contract."
+      ],
+      "auto_pass_forbidden": true,
+      "owner_verdict_options": [
+        "PASS_BROWSER_PROOF",
+        "FAIL_BROWSER_PROOF",
+        "NEEDS_RECONCILIATION",
+        "NO_SAFE_LINK_FOUND"
+      ]
+    }
+  ],
+  "pre_session_checklist": [
+    "Open owner session packet slugs in priority order.",
+    "Use exact_urls — do not substitute search results or retailer guesses.",
+    "Capture required_screenshots before recording owner proof verdict."
+  ],
+  "post_session_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+}

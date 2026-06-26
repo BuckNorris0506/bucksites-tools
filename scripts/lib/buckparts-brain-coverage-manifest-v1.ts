@@ -158,6 +158,42 @@ const CURATED_ENTRIES: EntrySeed[] = [
     notes: "Founder decision with owner_mutation_approved required before readiness gate promotion",
   },
   {
+    system_id: "manufacturer_browser_proof_execution_factory_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-execution-factory",
+    cc_json_path: "command_center_v2.manufacturer_browser_proof_execution_factory_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-browser-proof-execution-factory-v1.test.ts",
+    reason:
+      "Read-only execution packet factory from committed refresh-orchestrator and browser-proof-factory artifacts; never auto-grants PASS_BROWSER_PROOF.",
+    source: "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
+    role: "manufacturer browser proof execution factory",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "Reduces repetitive browser-proof preparation; owner confirmation required before PASS",
+  },
+  {
+    system_id: "manufacturer_rescue_throughput_analytics_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-rescue-throughput-analytics",
+    cc_json_path: "command_center_v2.manufacturer_rescue_throughput_analytics_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-rescue-throughput-analytics-v1.test.ts",
+    reason:
+      "Read-only Manufacturer Rescue KPI dashboard — funnel metrics, bottlenecks, and weekly unlock estimate from committed upstream artifacts only.",
+    source: "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json",
+    role: "manufacturer rescue throughput analytics",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "Production KPI dashboard; does not rebuild upstream systems",
+  },
+  {
     system_id: "manufacturer_browser_proof_refresh_orchestrator_v1",
     npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-refresh-orchestrator",
     cc_json_path: "command_center_v2.manufacturer_browser_proof_refresh_orchestrator_v1",

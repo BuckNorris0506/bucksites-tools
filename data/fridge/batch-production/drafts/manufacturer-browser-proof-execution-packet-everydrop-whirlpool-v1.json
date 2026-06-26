@@ -1,0 +1,77 @@
+{
+  "contract": "manufacturer_browser_proof_execution_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_everydrop-whirlpool",
+  "manufacturer_key": "everydrop_whirlpool",
+  "scheduled_slug_count": 7,
+  "execution_order": [
+    {
+      "filter_slug": "4396395",
+      "oem_part_token": "4396395",
+      "refresh_priority": 100,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "4396508",
+      "oem_part_token": "4396508",
+      "refresh_priority": 100,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "4396842",
+      "oem_part_token": "4396842",
+      "refresh_priority": 100,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "ukf8001",
+      "oem_part_token": "UKF8001",
+      "refresh_priority": 100,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "w10413645a",
+      "oem_part_token": "W10413645A",
+      "refresh_priority": 100,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "refresh_priority": 80,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    },
+    {
+      "filter_slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "refresh_priority": 80,
+      "capture_strategy": "owner_browser_proof_session_assist"
+    }
+  ],
+  "capture_strategies": [
+    "owner_browser_proof_session_assist"
+  ],
+  "capture_commands": [
+    "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+  ],
+  "schedule_reasons": [
+    "factory_capture_work_required",
+    "owner_browser_proof_artifact_missing",
+    "proof stale checked_at=2026-06-05T22:00:00.000Z",
+    "proof stale checked_at=2026-06-06T03:00:00.000Z"
+  ],
+  "ge_normalization_draft_only": false,
+  "pre_execution_checklist": [
+    "Confirm refresh orchestrator batch is current — do not skip stale upstream artifacts.",
+    "Factory is read-only — capture commands listed for owner reference only; browser_automation_authorized=false.",
+    "Never commit PASS_BROWSER_PROOF without owner visual review.",
+    "Owner session packet lists exact URLs and screenshot requirements per slug."
+  ],
+  "post_capture_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF.",
+  "owner_session_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-owner-session-packet-everydrop-whirlpool-v1.json",
+  "ge_normalization_packet_rels": []
+}

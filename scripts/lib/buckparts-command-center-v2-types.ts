@@ -13,6 +13,8 @@ import type { ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 } from "./manu
 import type { ManufacturerBrowserProofFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-factory-command-center-v1";
 import type { ManufacturerBrowserProofRefreshOrchestratorCommandCenterLaneV1 } from "./manufacturer-browser-proof-refresh-orchestrator-command-center-v1";
 import type { ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1 } from "./manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
+import type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from "./manufacturer-rescue-throughput-analytics-command-center-v1";
+import type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 import type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
@@ -1066,6 +1068,10 @@ export type CommandCenterV2Report = {
   manufacturer_browser_proof_refresh_orchestrator_v1: ManufacturerBrowserProofRefreshOrchestratorCommandCenterLaneV1;
   /** Read-only manufacturer rescue owner approval packet factory — batches READY_FOR_OWNER_REVIEW apply plans; never auto-approves. */
   manufacturer_rescue_owner_approval_packet_factory_v1: ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1;
+  /** Read-only manufacturer rescue throughput analytics — KPI dashboard from committed rescue artifacts only. */
+  manufacturer_rescue_throughput_analytics_v1: ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1;
+  /** Read-only manufacturer browser proof execution factory — standardized execution packets; never auto-grants PASS. */
+  manufacturer_browser_proof_execution_factory_v1: ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1;
   /** Read-only execution ledger — completed operational work indexed from committed artifacts. */
   execution_ledger_v1: BuckpartsExecutionLedgerCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
@@ -1173,6 +1179,8 @@ export type { ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 } from "./manu
 export type { ManufacturerBrowserProofFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-factory-command-center-v1";
 export type { ManufacturerBrowserProofRefreshOrchestratorCommandCenterLaneV1 } from "./manufacturer-browser-proof-refresh-orchestrator-command-center-v1";
 export type { ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1 } from "./manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
+export type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from "./manufacturer-rescue-throughput-analytics-command-center-v1";
+export type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 export type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
 export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
@@ -1268,6 +1276,8 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "manufacturer_browser_proof_factory_v1"
   | "manufacturer_browser_proof_refresh_orchestrator_v1"
   | "manufacturer_rescue_owner_approval_packet_factory_v1"
+  | "manufacturer_rescue_throughput_analytics_v1"
+  | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"

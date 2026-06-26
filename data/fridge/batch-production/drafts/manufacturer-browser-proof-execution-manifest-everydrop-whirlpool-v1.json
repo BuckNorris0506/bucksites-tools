@@ -1,0 +1,19 @@
+{
+  "contract": "manufacturer_browser_proof_execution_manifest_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_everydrop-whirlpool",
+  "manufacturer_key": "everydrop_whirlpool",
+  "scheduled_slug_count": 7,
+  "execution_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-packet-everydrop-whirlpool-v1.json",
+  "owner_session_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-owner-session-packet-everydrop-whirlpool-v1.json",
+  "ge_normalization_packet_rels": [],
+  "refresh_batch_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-batch-everydrop-whirlpool-v1.json",
+  "capture_commands": [
+    "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+  ],
+  "recommended_next_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+}

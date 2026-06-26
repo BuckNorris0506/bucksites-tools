@@ -647,6 +647,21 @@ export {
 } from "./buckparts-mcp-manufacturer-browser-proof-refresh-orchestrator-v1";
 
 export {
+  BUCKPARTS_MCP_MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_CONTRACT_V1,
+  manufacturerRescueThroughputAnalyticsV1,
+  manufacturerRescueThroughputBottlenecksV1,
+  manufacturerRescueThroughputFunnelV1,
+} from "./buckparts-mcp-manufacturer-rescue-throughput-analytics-v1";
+
+export {
+  BUCKPARTS_MCP_MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_CONTRACT_V1,
+  manufacturerBrowserProofExecutionFactoryV1,
+  manufacturerBrowserProofExecutionManifestV1,
+  manufacturerBrowserProofGeNormalizationPacketV1,
+  manufacturerBrowserProofOwnerSessionPacketV1,
+} from "./buckparts-mcp-manufacturer-browser-proof-execution-factory-v1";
+
+export {
   BUCKPARTS_MCP_EXECUTION_LEDGER_CONTRACT_V1,
   capabilityLookupV1,
   capabilityTimelineV1,

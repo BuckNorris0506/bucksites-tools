@@ -1,0 +1,28 @@
+{
+  "contract": "manufacturer_browser_proof_execution_manifest_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "batch_id": "refresh_batch_ge-appliance-parts",
+  "manufacturer_key": "ge_appliance_parts",
+  "scheduled_slug_count": 8,
+  "execution_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-packet-ge-appliance-parts-v1.json",
+  "owner_session_packet_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-owner-session-packet-ge-appliance-parts-v1.json",
+  "ge_normalization_packet_rels": [
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-gswf2-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-mswf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-opfg3f-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-pfmwf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-smartwater-mwfp-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwf-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-ge-normalization-packet-xwfe-v1.json"
+  ],
+  "refresh_batch_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-batch-ge-appliance-parts-v1.json",
+  "capture_commands": [
+    "npm run buckparts:ge-refrigerator-rescue-capture -- --all"
+  ],
+  "recommended_next_action": "GE Playwright capture may produce browser evidence only — owner must reconcile normalization draft and record PASS owner browser proof manually."
+}
