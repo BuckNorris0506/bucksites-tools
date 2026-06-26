@@ -456,7 +456,7 @@ function normalizeGeRow(args: {
             : "INFERRED_GE_SPEC"
           : "UNKNOWN",
     csv_primary_is_search_placeholder: args.row.csv_primary_is_search_placeholder,
-    blocked_reasons: [...new Set(blocked)],
+    blocked_reasons: Array.from(new Set(blocked)),
     recommended_next_action: args.ownerLane.plan_status.startsWith("ALREADY")
       ? "Reference lane — repo CSV direct_buyable already applied; no rescue capture needed."
       : browserReady === "BLOCKED"
@@ -544,7 +544,7 @@ function normalizeFrigidaireRow(args: {
     adapter_discovery_url: null,
     adapter_discovery_provenance: "UNKNOWN",
     csv_primary_is_search_placeholder: args.row.csv_primary_is_search_placeholder,
-    blocked_reasons: [...new Set(blocked)],
+    blocked_reasons: Array.from(new Set(blocked)),
     recommended_next_action: browserPass
       ? "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
       : args.row.repo_proven_official_pdp_url
@@ -627,7 +627,7 @@ function normalizeEverydropRow(args: {
     adapter_discovery_url: null,
     adapter_discovery_provenance: "UNKNOWN",
     csv_primary_is_search_placeholder: args.row.csv_primary_is_search_placeholder,
-    blocked_reasons: [...new Set(blocked)],
+    blocked_reasons: Array.from(new Set(blocked)),
     recommended_next_action: args.row.recommended_next_action,
     orchestrator_rank: 0,
     coverage_unlocked: false,
@@ -658,7 +658,7 @@ function aggregateBlockedReasons(
       counts.set(reason, (counts.get(reason) ?? 0) + 1);
     }
   }
-  return [...counts.entries()]
+  return Array.from(counts.entries())
     .map(([reason, slug_count]) => ({ reason, slug_count }))
     .sort((a, b) => b.slug_count - a.slug_count || a.reason.localeCompare(b.reason));
 }
@@ -1021,7 +1021,7 @@ export function buildManufacturerSafeLinkRescueOrchestratorReportV1(args: {
     unified_rescue_queue: unified,
     proven_facts,
     unknown_facts,
-    source_paths_read: [...sourcePaths].sort(),
+    source_paths_read: Array.from(sourcePaths).sort(),
   };
 }
 

@@ -6083,6 +6083,34 @@ test("command_center_v2.whole_house_water_batch_production_director_v1 is read-o
   assert.ok(lane.proven_facts.some((f) => f.includes("csv_apply_authorized=false")));
 });
 
+test("command_center_v2.manufacturer_safe_link_rescue_director_v1 is read-only manufacturer rescue lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    fileExists: fs.existsSync,
+    readDir: (p) => fs.readdirSync(p),
+    readTextFile: (p) => fs.readFileSync(p, "utf8"),
+  });
+  const lane = report.command_center_v2.manufacturer_safe_link_rescue_director_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "manufacturer_safe_link_rescue_director_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.coverage_unlocked, false);
+  assert.equal(lane.safe_buyer_paths_unlocked, 0);
+  assert.equal(lane.csv_apply_authorized, false);
+  assert.equal(lane.browser_automation_authorized, false);
+  if (lane.ranked_manufacturers.length > 0) {
+    assert.equal(lane.ranked_manufacturers.length, 3);
+    assert.ok(lane.manufacturer_rescue_scoreboard.total_rescue_candidates > 0);
+    assert.notEqual(lane.next_recommended_manufacturer, "UNKNOWN");
+  }
+  assert.ok(
+    lane.inspect_summary.recommended_jq_paths.command_center.includes(
+      "manufacturer_safe_link_rescue_director_v1",
+    ),
+  );
+});
+
 test("command_center_v2.whole_house_water_director_model_first_batch_v1 is read-only director model-first batch", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),

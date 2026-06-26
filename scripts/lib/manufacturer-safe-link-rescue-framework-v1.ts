@@ -358,7 +358,7 @@ export function assessForbiddenTokensWrongFamily(args: {
     if (inIdentity && !slugInIdentity && !detected.includes(tok)) detected.push(tok);
   }
 
-  const unique = [...new Set(detected)];
+  const unique = Array.from(new Set(detected));
   return {
     blocked: unique.length > 0,
     forbidden_tokens_checked: forbidden,

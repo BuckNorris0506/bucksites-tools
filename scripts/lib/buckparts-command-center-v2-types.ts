@@ -8,6 +8,7 @@ import type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 import type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
 import type { OwnerDriftDetectorCommandCenterLaneV1 } from "./owner-drift-detector-command-center-v1";
 import type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
+import type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 import type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
@@ -1050,6 +1051,8 @@ export type CommandCenterV2Report = {
   whole_house_water_batch_production_director_v1: WholeHouseWaterBatchProductionDirectorV1;
   /** Read-only WHW director MODEL_FIRST_READY batch evidence — not CSV apply authority. */
   whole_house_water_director_model_first_batch_v1: WholeHouseWaterDirectorModelFirstBatchV1;
+  /** Read-only refrigerator manufacturer safe-link rescue director — orchestrator/scoreboard projection; not CSV apply authority. */
+  manufacturer_safe_link_rescue_director_v1: ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
   wedge_truth_spine_coverage_matrix_v1: WedgeTruthSpineCoverageMatrixV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
@@ -1150,6 +1153,7 @@ export type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/
 export type { DailyOperatorSummaryV1 } from "./buckparts-daily-operator-summary-v1";
 export type { DemandWorkQueueSummaryV1 } from "./buckparts-demand-work-queue-summary-v1";
 export type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch-coverage-factory-summary-v1";
+export type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
 export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
 export type { OwnerDriftDetectorCommandCenterLaneV1 } from "./owner-drift-detector-command-center-v1";
@@ -1239,6 +1243,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
   | "whole_house_water_director_model_first_batch_v1"
+  | "manufacturer_safe_link_rescue_director_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"

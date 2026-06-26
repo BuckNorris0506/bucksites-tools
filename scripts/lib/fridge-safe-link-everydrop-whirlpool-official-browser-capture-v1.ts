@@ -174,7 +174,7 @@ export function everydropWhirlpoolOfficialScreenshotRelV1(slug: string): string 
   return `data/fridge/batch-production/drafts/screenshots/fridge-safe-link-everydrop-whirlpool-official-${slug.toLowerCase()}-v1.png`;
 }
 
-function readCsv<T extends Record<string, string>>(
+function readCsv<T extends Record<string, unknown>>(
   rootDir: string,
   rel: string,
 ): T[] {

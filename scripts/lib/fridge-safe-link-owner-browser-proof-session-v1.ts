@@ -138,7 +138,7 @@ export function buildOwnerBrowserProofSessionSlugRowV1(args: {
       priority: c.priority ?? index + 1,
       url: c.url,
       retailer: c.retailer ?? "UNKNOWN",
-      notes: c.notes ?? null,
+      notes: typeof c.notes === "string" ? c.notes : null,
     }));
 
   return {
@@ -156,7 +156,7 @@ export function buildOwnerBrowserProofSessionSlugRowV1(args: {
       .map((u) => ({
         url: u.url,
         retailer: u.retailer ?? null,
-        reason: u.reason ?? null,
+        reason: typeof u.reason === "string" ? u.reason : null,
         action: u.action ?? null,
       })),
     visual_checklist: ws?.visual_checklist ?? [],
@@ -197,9 +197,9 @@ export function collectOwnerBrowserProofSessionDoNotUseV1(
         slug: packet.slug,
         url: avoid.url,
         retailer: avoid.retailer ?? null,
-        reason: avoid.reason ?? "listed in packet.urls_to_avoid",
+        reason: typeof avoid.reason === "string" ? avoid.reason : "listed in packet.urls_to_avoid",
         action,
-        evidence_level: avoid.evidence_level ?? null,
+        evidence_level: typeof avoid.evidence_level === "string" ? avoid.evidence_level : null,
       });
     }
   }
@@ -239,7 +239,8 @@ export function buildFridgeSafeLinkOwnerBrowserProofSessionV1(args: {
   }
 
   const slugs: OwnerBrowserProofSessionSlugRowV1[] = [];
-  for (const [index, item] of order.entries()) {
+  for (let index = 0; index < order.length; index++) {
+    const item = order[index]!;
     const packet = bySlug.get(item.slug);
     if (!packet) {
       throw new Error(`assist bundle missing packet for session slug: ${item.slug}`);

@@ -396,7 +396,7 @@ export function buildGeRefrigeratorRescueAdapterReportV1(args: {
   const fileExists = args.fileExists ?? existsSync;
   const readTextFile =
     args.readTextFile ?? ((abs: string) => readFileSync(abs, "utf8"));
-  const sourcePaths = [RETAILER_LINKS_CSV_REL, FILTERS_CSV_REL];
+  const sourcePaths: string[] = [RETAILER_LINKS_CSV_REL, FILTERS_CSV_REL];
 
   const retailerRows = loadCsv<RetailerLinkRow>(
     rootDir,

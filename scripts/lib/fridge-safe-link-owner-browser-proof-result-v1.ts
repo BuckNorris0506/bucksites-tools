@@ -43,6 +43,7 @@ export type OwnerBrowserProofResultUrlRowV1 = {
   url: string;
   retailer?: string;
   browser_proof_status?: string;
+  path_type?: string;
   proven_observations?: string[];
   inferred_observations?: string[];
   unknown_observations?: string[];

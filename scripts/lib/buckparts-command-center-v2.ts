@@ -260,6 +260,7 @@ export function buildCommandCenterV2Report(input: {
   | "sitemap_indexability_audit_v1"
   | "whole_house_water_batch_production_director_v1"
   | "whole_house_water_director_model_first_batch_v1"
+  | "manufacturer_safe_link_rescue_director_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
   | "ap_homeowner_pilot_scorecard_v1"

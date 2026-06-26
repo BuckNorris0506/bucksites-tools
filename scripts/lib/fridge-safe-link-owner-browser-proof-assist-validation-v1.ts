@@ -80,6 +80,8 @@ export type OwnerBrowserProofAssistPacketV1 = {
     visual_checklist?: string[];
     pass_criteria?: string;
     fail_criteria?: string[] | string;
+    recommended_screenshot_names?: string[];
+    wrong_part_risk?: { notes?: string } | string | null;
   };
   proven_facts?: string[];
   inferred_facts?: string[];
@@ -96,6 +98,8 @@ export type OwnerBrowserProofAssistDoNotUseEntryV1 = {
   url: string;
   action?: string;
   reason?: string;
+  retailer?: string;
+  evidence_level?: string;
 };
 
 export type OwnerBrowserProofAssistBundleV1 = {
@@ -118,6 +122,7 @@ export type OwnerBrowserProofAssistBundleV1 = {
     verified_link_authorized?: boolean;
     command_center_closure_claimed?: boolean;
     truth_closure_claimed?: boolean;
+    session_priority_order?: Array<{ slug: string; risk?: string; reason?: string }>;
   };
   packets: OwnerBrowserProofAssistPacketV1[];
   do_not_use?: OwnerBrowserProofAssistDoNotUseEntryV1[];

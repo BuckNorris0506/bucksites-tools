@@ -8,10 +8,13 @@ import path from "node:path";
 
 import {
   buildManufacturerSafeLinkRescueOrchestratorReportV1,
+  buildManufacturerRescueScoreboardV1,
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_JSON_REL_V1,
+  MANUFACTURER_SAFE_LINK_RESCUE_SCOREBOARD_JSON_REL_V1,
   type ManufacturerRescueOrchestratorQueueRowV1,
   type ManufacturerRescueOrchestratorReportV1,
+  type ManufacturerRescueScoreboardV1,
 } from "./manufacturer-safe-link-rescue-orchestrator-v1";
 import { MANUFACTURER_SAFE_LINK_RESCUE_FRAMEWORK_CONTRACT_V1 } from "./manufacturer-safe-link-rescue-framework-v1";
 
@@ -289,11 +292,11 @@ function buildBlockedSummary(
     }
   }
 
-  return [...byReason.entries()]
+  return Array.from(byReason.entries())
     .map(([reason, slugs]) => ({
       reason,
       slug_count: slugs.length,
-      example_slugs: [...new Set(slugs)].sort().slice(0, 5),
+      example_slugs: Array.from(new Set(slugs)).sort().slice(0, 5),
     }))
     .sort((a, b) => b.slug_count - a.slug_count || a.reason.localeCompare(b.reason));
 }
@@ -495,6 +498,81 @@ export function loadManufacturerRescueOrchestratorInputV1(args: {
   return {
     orchestrator,
     orchestrator_source_path: "buildManufacturerSafeLinkRescueOrchestratorReportV1(live)",
+  };
+}
+
+export function loadManufacturerRescueDirectorBundleV1(args: {
+  rootDir: string;
+  now?: () => Date;
+  fileExists?: (abs: string) => boolean;
+  readTextFile?: (abs: string) => string;
+}): {
+  director: ManufacturerRescueDirectorReportV1;
+  director_source_path: string;
+  scoreboard: ManufacturerRescueScoreboardV1;
+  scoreboard_source_path: string;
+  orchestrator_source_path: string;
+} {
+  const fileExists = args.fileExists ?? existsSync;
+  const readTextFile = args.readTextFile ?? ((abs: string) => readFileSync(abs, "utf8"));
+
+  const directorAbs = path.join(args.rootDir, MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_JSON_REL_V1);
+  let director: ManufacturerRescueDirectorReportV1 | null = null;
+  let directorSourcePath = "buildManufacturerSafeLinkRescueDirectorReportV1(live)";
+
+  if (fileExists(directorAbs)) {
+    try {
+      const parsed = JSON.parse(readTextFile(directorAbs)) as ManufacturerRescueDirectorReportV1;
+      if (parsed.contract === MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CONTRACT_V1) {
+        director = parsed;
+        directorSourcePath = MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_JSON_REL_V1;
+      }
+    } catch {
+      director = null;
+    }
+  }
+
+  const { orchestrator, orchestrator_source_path } = loadManufacturerRescueOrchestratorInputV1(args);
+
+  if (!director) {
+    director = buildManufacturerSafeLinkRescueDirectorReportV1({
+      rootDir: args.rootDir,
+      now: args.now,
+      fileExists,
+      readTextFile,
+      orchestrator,
+      orchestratorSourcePath: orchestrator_source_path,
+    });
+    directorSourcePath = "buildManufacturerSafeLinkRescueDirectorReportV1(live)";
+  }
+
+  const scoreboardAbs = path.join(args.rootDir, MANUFACTURER_SAFE_LINK_RESCUE_SCOREBOARD_JSON_REL_V1);
+  let scoreboard: ManufacturerRescueScoreboardV1 | null = null;
+  let scoreboardSourcePath = "buildManufacturerRescueScoreboardV1(live)";
+
+  if (fileExists(scoreboardAbs)) {
+    try {
+      const parsed = JSON.parse(readTextFile(scoreboardAbs)) as ManufacturerRescueScoreboardV1;
+      if (parsed.contract === "manufacturer_safe_link_rescue_scoreboard_v1") {
+        scoreboard = parsed;
+        scoreboardSourcePath = MANUFACTURER_SAFE_LINK_RESCUE_SCOREBOARD_JSON_REL_V1;
+      }
+    } catch {
+      scoreboard = null;
+    }
+  }
+
+  if (!scoreboard) {
+    scoreboard = buildManufacturerRescueScoreboardV1(orchestrator);
+    scoreboardSourcePath = "buildManufacturerRescueScoreboardV1(live)";
+  }
+
+  return {
+    director,
+    director_source_path: directorSourcePath,
+    scoreboard,
+    scoreboard_source_path: scoreboardSourcePath,
+    orchestrator_source_path,
   };
 }
 

@@ -120,10 +120,13 @@ const WEDGE_CAPABILITY_PROBES: Record<HomekeepWedgeCatalog, WedgeCapabilityProbe
     buyer_path_lib: "scripts/lib/fridge-truth-reconciliation-v1.ts",
     browser_truth_lib: "scripts/lib/fridge-command-center-and-public-truth-audit-v1.ts",
     apply_plan_lib: null,
-    safe_cta_queue_or_batch_director_lib: null,
+    safe_cta_queue_or_batch_director_lib:
+      "scripts/lib/manufacturer-safe-link-rescue-director-v1.ts",
     extra_lane_refs: [
       "scripts/lib/fridge-supabase-vs-csv-retailer-links-diff-v1.ts",
       "command_center_v2.fridge_truth_spine_v1",
+      "command_center_v2.manufacturer_safe_link_rescue_director_v1",
+      "manufacturer_safe_link_rescue_orchestrator_v1",
     ],
   },
   [HOMEKEEP_WEDGE_CATALOG.air_purifier]: {
