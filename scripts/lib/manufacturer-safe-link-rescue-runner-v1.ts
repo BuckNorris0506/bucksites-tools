@@ -4,7 +4,7 @@
  * BuckParts Truth Contract: deterministic plans only; no mutation, no browser automation.
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
@@ -661,4 +661,30 @@ export function writeManufacturerSafeLinkRescueRunnerArtifactsV1(args: {
     jsonRelPath: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_JSON_REL_V1,
     mdRelPath: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_BOARD_MD_REL_V1,
   };
+}
+
+export function loadManufacturerRescueRunnerReportV1(args: {
+  rootDir: string;
+  fileExists?: (abs: string) => boolean;
+  readTextFile?: (abs: string) => string;
+}): {
+  report: ManufacturerRescueRunnerReportV1;
+  runner_source_path: string;
+  runner_board_source_path: string;
+} | null {
+  const fileExists = args.fileExists ?? existsSync;
+  const readTextFile = args.readTextFile ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const jsonAbs = path.join(args.rootDir, MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_JSON_REL_V1);
+  if (!fileExists(jsonAbs)) return null;
+  try {
+    const parsed = JSON.parse(readTextFile(jsonAbs)) as ManufacturerRescueRunnerReportV1;
+    if (parsed.contract !== MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1) return null;
+    return {
+      report: parsed,
+      runner_source_path: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_JSON_REL_V1,
+      runner_board_source_path: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_BOARD_MD_REL_V1,
+    };
+  } catch {
+    return null;
+  }
 }

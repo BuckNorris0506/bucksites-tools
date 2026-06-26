@@ -18,7 +18,11 @@ import {
   getSafeBuyerPathV2,
   getTruthPolicyV2,
   manufacturerBrowserProofStatusV1,
+  manufacturerRescueBlockersV1,
   manufacturerRescueCohortV1,
+  manufacturerRescueNextActionV1,
+  manufacturerRescueRunnerBoardV1,
+  manufacturerRescueSlugStateV1,
   manufacturerRescueStatusV1,
   searchPartsV2,
 } from "../../scripts/lib/buckparts-mcp-tools-v2";
@@ -42,7 +46,7 @@ function toolResult(payload: unknown) {
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.3.0",
+    version: "0.4.0",
   },
   {
     instructions:
@@ -194,6 +198,56 @@ server.registerTool(
   },
   async ({ slug }) =>
     toolResult(manufacturerBrowserProofStatusV1({ rootDir: REPO_ROOT }, slug)),
+);
+
+server.registerTool(
+  "manufacturer_rescue_next_action",
+  {
+    title: "Manufacturer rescue next action (read-only)",
+    description:
+      "Returns the single READY_FOR_APPLY candidate from committed runner artifact, or the next executable blocking stage when no apply slot is open. Projects manufacturer-safe-link-rescue-runner-v1.json only.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(manufacturerRescueNextActionV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "manufacturer_rescue_runner_board",
+  {
+    title: "Manufacturer rescue runner board (read-only)",
+    description:
+      "Runner execution board: stage counts, manufacturer workloads, bottlenecks, execution order, and remaining opportunity from committed runner artifact.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(manufacturerRescueRunnerBoardV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "manufacturer_rescue_slug_state",
+  {
+    title: "Manufacturer rescue slug state (read-only)",
+    description:
+      "Complete per-slug runner state machine row (stage, next action, blockers, Boardy safety rules) from committed runner artifact.",
+    inputSchema: {
+      slug: z.string().min(1).describe("Exact BuckParts filter/part slug"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ slug }) => toolResult(manufacturerRescueSlugStateV1({ rootDir: REPO_ROOT }, slug)),
+);
+
+server.registerTool(
+  "manufacturer_rescue_blockers",
+  {
+    title: "Manufacturer rescue blockers (read-only)",
+    description:
+      "All BLOCKED rescue slugs grouped by blocker reason from committed runner artifact. No CSV or Supabase mutation.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(manufacturerRescueBlockersV1({ rootDir: REPO_ROOT })),
 );
 
 async function main(): Promise<void> {

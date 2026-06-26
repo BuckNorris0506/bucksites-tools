@@ -615,3 +615,13 @@ export {
   normalizeManufacturerKeyV1,
   resolveManufacturerKeyForSlugV1,
 } from "./buckparts-mcp-manufacturer-rescue-v1";
+
+export {
+  BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1,
+  manufacturerRescueBlockersV1,
+  manufacturerRescueNextActionV1,
+  manufacturerRescueRunnerBoardV1,
+  manufacturerRescueSlugStateV1,
+  projectManufacturerRescueBlockersV1,
+  projectManufacturerRescueNextActionV1,
+} from "./buckparts-mcp-manufacturer-rescue-runner-v1";

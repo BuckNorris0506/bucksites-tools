@@ -88,6 +88,10 @@ Adjust paths for your OS and clone location. Restart the client after editing.
 | `manufacturer_rescue_status` | `slug` | GE / EveryDrop / Frigidaire rescue lane per slug |
 | `manufacturer_rescue_cohort` | `manufacturer` | Full rescue cohort for one manufacturer |
 | `manufacturer_browser_proof_status` | `slug` | Owner browser proof draft artifact status |
+| `manufacturer_rescue_next_action` | _(none)_ | READY_FOR_APPLY slot or next executable stage |
+| `manufacturer_rescue_runner_board` | _(none)_ | Runner board, workloads, bottlenecks |
+| `manufacturer_rescue_slug_state` | `slug` | Per-slug runner state machine row |
+| `manufacturer_rescue_blockers` | _(none)_ | BLOCKED slugs grouped by blocker reason |
 
 All tools return JSON with `read_only: true`, `data_mutation: false`, `mutation_authorized: false`.
 
@@ -153,6 +157,22 @@ Input: `manufacturer` (`ge_appliance_parts`, `everydrop_whirlpool`, or `frigidai
 
 Input: `slug`. Reads draft owner browser proof JSON when on disk. `direct_buyable_proven` only for official-path PASS URLs with purchase signal in observations.
 
+### manufacturer_rescue_next_action
+
+No input. Reads committed `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json`. Returns the single `READY_FOR_APPLY` slug when the runner holds an apply slot; otherwise the next executable blocking stage. Does not rebuild runner or Command Center.
+
+### manufacturer_rescue_runner_board
+
+No input. Projects runner board: `stage_counts`, `manufacturer_workloads`, `bottlenecks`, `execution_order`, `remaining_opportunity`. Command Center lane referenced by jq path only.
+
+### manufacturer_rescue_slug_state
+
+Input: `slug`. Returns complete runner state machine row (`stage`, `next_executable_action`, `blocked_reasons`, Boardy safety rules) from committed runner artifact.
+
+### manufacturer_rescue_blockers
+
+No input. Returns all `BLOCKED`-stage slugs grouped by blocker reason plus runner `blocker_summary`.
+
 ## Architecture
 
 ```
@@ -161,6 +181,7 @@ scripts/lib/buckparts-mcp-truth-context-v1.ts   Shared repo CSV + audit context
 scripts/lib/buckparts-mcp-check-replacement-fit-v1.ts   checkReplacementFit logic
 scripts/lib/buckparts-mcp-tools-v2.ts  All v2 tool functions
 scripts/lib/buckparts-mcp-manufacturer-rescue-v1.ts   Manufacturer rescue MCP tools
+scripts/lib/buckparts-mcp-manufacturer-rescue-runner-v1.ts   Manufacturer rescue runner MCP tools
 scripts/lib/all-product-safe-buyer-path-census-v1.ts   Census (reused)
 scripts/lib/model-filter-correctness-audit-v1.ts       Fridge fit audit (reused)
 src/lib/retailers/launch-buy-links.ts                  Buy-path gates (reused)
@@ -171,7 +192,7 @@ Context loads committed CSVs per wedge, census, fridge model-filter audit JSON, 
 ## Tests
 
 ```bash
-node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-v1.test.ts
+node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-v1.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-runner-v1.test.ts
 ```
 
 Or: `npm test`
