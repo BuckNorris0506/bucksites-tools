@@ -7,24 +7,37 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "csv-parse/sync";
 
-import { isSearchPlaceholderBuyLink, isKnownBrokenUrl } from "@/lib/retailers/launch-buy-links";
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState } from "@/lib/retailers/retailer-link-state";
-import { inferGeAppliancePartsSpecUrlV1 } from "@/lib/owner-dashboard/batch-production-non-amazon-pdp-source-v1";
 
-import { assessGswf2Conflation } from "./fridge-safe-link-gswf-ge-official-browser-capture-v1";
-import type { OemBrowserClassification } from "./rpwfe-official-ge-browser-capture-v1";
+import {
+  GE_APPLIANCE_PARTS_HOST_V1,
+  GE_MANUFACTURER_RESCUE_CONFIG_V1,
+  GE_SUPERSESSION_REVIEW_SLUGS_V1,
+  GE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
+  toGeValidationGateInput,
+  type GeRefrigeratorRescueValidationGateIdV1,
+} from "./manufacturer-safe-link-rescue-ge-config-v1";
+import {
+  assessExactTokenInTitleOrH1WordBoundary,
+  normManufacturerToken,
+} from "./manufacturer-safe-link-rescue-framework-v1";
 import {
   FRIDGE_SAFE_LINK_RESCUE_OWNER_REVIEW_JSON_REL_V1,
   type FridgeSafeLinkRescueOwnerReviewV1,
 } from "./fridge-safe-link-rescue-owner-review-v1";
 
+export {
+  GE_APPLIANCE_PARTS_HOST_V1,
+  GE_SPEC_PDP_PATH_PATTERN_V1,
+  GE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
+  GE_SUPERSESSION_REVIEW_SLUGS_V1,
+  GE_REFRIGERATOR_RESCUE_VALIDATION_GATE_IDS_V1,
+  type GeRefrigeratorRescueValidationGateIdV1,
+} from "./manufacturer-safe-link-rescue-ge-config-v1";
+
 export const GE_REFRIGERATOR_RESCUE_ADAPTER_CONTRACT_V1 =
   "ge_refrigerator_rescue_adapter_v1" as const;
-
-export const GE_APPLIANCE_PARTS_HOST_V1 = "geapplianceparts.com" as const;
-
-export const GE_SPEC_PDP_PATH_PATTERN_V1 = "/store/parts/spec/" as const;
 
 /** Slugs with committed GE search-placeholder primary rows (repo truth 2026-06). */
 export const GE_RESCUE_SEARCH_PLACEHOLDER_SLUGS_V1 = [
@@ -48,36 +61,6 @@ export const GE_RESCUE_COHORT_SLUGS_V1 = [
 ] as const;
 
 export type GeRescueCohortSlugV1 = (typeof GE_RESCUE_COHORT_SLUGS_V1)[number];
-
-export const GE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1: Readonly<Record<string, readonly string[]>> = {
-  xwf: ["XWFE"],
-  xwfe: ["XWF"],
-  gswf: ["GSWF2"],
-  gswf2: ["GSWF"],
-  mwf: ["MWFP"],
-  "smartwater-mwfp": ["MWF"],
-};
-
-export const GE_SUPERSESSION_REVIEW_SLUGS_V1 = new Set<string>(["xwf", "xwfe"]);
-
-export const GE_REFRIGERATOR_RESCUE_VALIDATION_GATE_IDS_V1 = [
-  "ge_search_placeholder_detected",
-  "ge_spec_pdp_url_discovered",
-  "ge_spec_pdp_not_known_broken",
-  "final_url_direct_spec_pdp",
-  "exact_token_in_primary_slice",
-  "official_ge_manufacturer_path",
-  "direct_purchase_control_visible",
-  "page_not_search_or_catalog",
-  "page_not_blocked_or_error",
-  "page_not_not_found",
-  "wrong_family_token_not_detected",
-  "browser_classification_direct_buyable",
-  "supersession_review_cleared",
-] as const;
-
-export type GeRefrigeratorRescueValidationGateIdV1 =
-  (typeof GE_REFRIGERATOR_RESCUE_VALIDATION_GATE_IDS_V1)[number];
 
 export type GeRefrigeratorRescueValidationGateV1 = {
   gate_id: GeRefrigeratorRescueValidationGateIdV1;
@@ -188,35 +171,23 @@ export function geRescueBrowserEvidenceScreenshotRelPathV1(slug: string): string
 }
 
 export function normGeToken(v: string | null | undefined): string {
-  return (v ?? "").trim().toUpperCase();
+  return normManufacturerToken(v);
 }
 
 export function isGeAppliancePartsUrl(url: string): boolean {
-  try {
-    return new URL(url).hostname.toLowerCase().includes(GE_APPLIANCE_PARTS_HOST_V1);
-  } catch {
-    return url.toLowerCase().includes(GE_APPLIANCE_PARTS_HOST_V1);
-  }
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.pdp_discovery.isOfficialPdpUrl(url) ||
+    url.toLowerCase().includes(GE_APPLIANCE_PARTS_HOST_V1);
 }
 
 export function isGeAppliancePartsSearchPlaceholderUrl(
   retailerKey: string | null | undefined,
   url: string,
 ): boolean {
-  if (!isGeAppliancePartsUrl(url)) return false;
-  return isSearchPlaceholderBuyLink(retailerKey ?? "oem-parts-catalog", url);
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.search_placeholder.isSearchPlaceholderUrl(retailerKey, url);
 }
 
 export function isGeAppliancePartsSpecPdpUrl(url: string): boolean {
-  try {
-    const u = new URL(url);
-    return (
-      u.hostname.toLowerCase().includes(GE_APPLIANCE_PARTS_HOST_V1) &&
-      u.pathname.toLowerCase().includes("/parts/spec/")
-    );
-  } catch {
-    return false;
-  }
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.pdp_discovery.isOfficialPdpUrl(url);
 }
 
 export function detectGeSearchPlaceholderRows(args: {
@@ -278,19 +249,15 @@ export function discoverGeSpecPdpUrl(args: {
   filterSlug: string;
   oemPartToken: string;
 }): GeSpecPdpDiscoveryV1 | null {
-  const token = normGeToken(args.oemPartToken);
-  if (!token) return null;
-  const inferred = inferGeAppliancePartsSpecUrlV1(token);
-  const url =
-    inferred ?? `https://www.geapplianceparts.com/store/parts/spec/${token}`;
-  const knownBroken = isKnownBrokenUrl(url);
+  const discovered = GE_MANUFACTURER_RESCUE_CONFIG_V1.pdp_discovery.discoverPdpUrl(args);
+  if (!discovered) return null;
   return {
-    filter_slug: args.filterSlug.trim().toLowerCase(),
-    oem_part_token: token,
-    inferred_spec_url: url,
+    filter_slug: discovered.filter_slug,
+    oem_part_token: discovered.oem_part_token,
+    inferred_spec_url: discovered.discovered_url,
     discovery_provenance: "INFERRED_GE_SPEC",
     path_type: "official_manufacturer_spec_pdp",
-    known_broken_destination: knownBroken,
+    known_broken_destination: discovered.known_broken_destination,
   };
 }
 
@@ -303,49 +270,7 @@ export function assessWrongFamilyTokens(args: {
   textSample?: string;
   candidateToken?: string | null;
 }): GeWrongFamilyAssessmentV1 {
-  const slug = args.filterSlug.trim().toLowerCase();
-  const slugToken = normGeToken(args.oemPartToken);
-  const forbidden = [...(GE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1[slug] ?? [])];
-  const blob = `${args.title ?? ""}\n${args.h1Text ?? ""}\n${args.textSample ?? ""}`.toUpperCase();
-  const url = (args.finalUrl ?? "").toUpperCase();
-  const candidateToken = normGeToken(args.candidateToken);
-
-  const detected: string[] = [];
-  for (const tok of forbidden) {
-    if (candidateToken === tok) detected.push(tok);
-    if (url.includes(`/SPEC/${tok}`) || url.includes(`/SPEC/${tok}/`)) detected.push(tok);
-    const inIdentity = new RegExp(`\\b${tok}\\b`).test(blob);
-    const slugInIdentity = slugToken ? new RegExp(`\\b${slugToken}\\b`).test(blob) : false;
-    if (inIdentity && !slugInIdentity && !detected.includes(tok)) detected.push(tok);
-  }
-
-  if (slug === "gswf") {
-    const conflation = assessGswf2Conflation({
-      finalUrl: args.finalUrl ?? "",
-      title: args.title ?? "",
-      h1Text: args.h1Text ?? "",
-      textSample: args.textSample ?? "",
-    });
-    if (conflation.blocked) {
-      return {
-        blocked: true,
-        forbidden_tokens_checked: forbidden,
-        detected_forbidden_tokens: ["GSWF2"],
-        notes: conflation.notes,
-      };
-    }
-  }
-
-  const unique = [...new Set(detected)];
-  return {
-    blocked: unique.length > 0,
-    forbidden_tokens_checked: forbidden,
-    detected_forbidden_tokens: unique,
-    notes:
-      unique.length > 0
-        ? `wrong-family token(s) detected for slug ${slug}: ${unique.join(", ")}`
-        : "no forbidden wrong-family tokens detected",
-  };
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.wrong_family.assess(args);
 }
 
 export function assessExactTokenInPrimarySlice(args: {
@@ -354,12 +279,7 @@ export function assessExactTokenInPrimarySlice(args: {
   h1Text: string;
   textSample?: string;
 }): boolean {
-  const token = normGeToken(args.oemPartToken);
-  if (!token) return false;
-  const title = args.title.toUpperCase();
-  const h1 = args.h1Text.toUpperCase();
-  const re = new RegExp(`\\b${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`);
-  return re.test(title) || re.test(h1);
+  return assessExactTokenInTitleOrH1WordBoundary(args);
 }
 
 export function deriveGeRescueValidationGates(args: {
@@ -373,142 +293,19 @@ export function deriveGeRescueValidationGates(args: {
   h1Text: string;
   textSample: string;
   purchaseActions: string[];
-  classification: OemBrowserClassification;
+  classification: import("./rpwfe-official-ge-browser-capture-v1").OemBrowserClassification;
   wrongFamily: GeWrongFamilyAssessmentV1;
   captureCompleted?: boolean;
 }): GeRefrigeratorRescueValidationGateV1[] {
-  const slug = args.filterSlug.trim().toLowerCase();
-  const token = normGeToken(args.oemPartToken);
-  const u = args.finalUrl.toLowerCase();
-  const tokenLower = token.toLowerCase();
-
-  const directPdp =
-    /\/parts\/spec\//i.test(u) &&
-    (u.includes(`/spec/${tokenLower}`) || (u.includes(tokenLower) && !u.includes(`${tokenLower}2`)));
-  const exactToken = assessExactTokenInPrimarySlice({
-    oemPartToken: token,
-    title: args.title,
-    h1Text: args.h1Text,
-    textSample: args.textSample,
-  });
-  const blob = `${args.title}\n${args.h1Text}\n${args.textSample}`.toUpperCase();
-  const officialPath =
-    u.includes(GE_APPLIANCE_PARTS_HOST_V1) &&
-    (blob.includes("GE") || blob.includes("GE APPLIANCE") || u.includes(GE_APPLIANCE_PARTS_HOST_V1));
-  const purchaseVisible = args.purchaseActions.length > 0;
-  const notSearch = args.classification !== "likely_search_results";
-  const notBlocked =
-    args.classification !== "likely_blocked" && args.classification !== "browser_error";
-  const not404 = args.classification !== "likely_not_found";
-  const directBuyable = args.classification === "direct_buyable";
-  const supersession = GE_SUPERSESSION_REVIEW_SLUGS_V1.has(slug);
-
-  const gate = (
-    gate_id: GeRefrigeratorRescueValidationGateIdV1,
-    pass: boolean,
-    notes: string,
-    waived = false,
-  ): GeRefrigeratorRescueValidationGateV1 => ({
-    gate_id,
-    status: waived ? "WAIVED" : pass ? "PASS" : args.captureCompleted === false ? "UNKNOWN" : "FAIL",
-    notes,
-  });
-
-  return [
-    gate(
-      "ge_search_placeholder_detected",
-      args.csvPrimaryIsSearchPlaceholder,
-      args.csvPrimaryIsSearchPlaceholder
-        ? "CSV primary row is GE catalog search placeholder"
-        : "CSV primary is not a GE search placeholder (may be already applied)",
-    ),
-    gate(
-      "ge_spec_pdp_url_discovered",
-      args.discoveredSpecUrl !== null,
-      args.discoveredSpecUrl ?? "no inferred GE spec PDP URL",
-    ),
-    gate(
-      "ge_spec_pdp_not_known_broken",
-      args.discoveredSpecKnownBroken !== true,
-      args.discoveredSpecKnownBroken
-        ? "repo truth marks inferred GE spec PDP as known_broken_destination"
-        : "inferred GE spec PDP is not in known-broken registry",
-    ),
-    gate(
-      "final_url_direct_spec_pdp",
-      directPdp,
-      directPdp ? `final URL is GE /parts/spec/ for ${token}` : "final URL is not direct GE spec PDP",
-      args.captureCompleted === false,
-    ),
-    gate(
-      "exact_token_in_primary_slice",
-      exactToken && !args.wrongFamily.blocked,
-      exactToken
-        ? `exact token ${token} visible in title or h1`
-        : `exact token ${token} not proven in title/h1 primary slice`,
-      args.captureCompleted === false,
-    ),
-    gate(
-      "official_ge_manufacturer_path",
-      officialPath,
-      officialPath ? "geapplianceparts.com official manufacturer path" : "official GE path not proven",
-      args.captureCompleted === false,
-    ),
-    gate(
-      "direct_purchase_control_visible",
-      purchaseVisible,
-      purchaseVisible
-        ? `purchase actions: ${args.purchaseActions.slice(0, 3).join(" | ")}`
-        : "no Add to Cart / purchase control visible",
-      args.captureCompleted === false,
-    ),
-    gate(
-      "page_not_search_or_catalog",
-      notSearch,
-      notSearch ? "page not classified as search/catalog" : "page classified as search or catalog",
-      args.captureCompleted === false,
-    ),
-    gate(
-      "page_not_blocked_or_error",
-      notBlocked,
-      notBlocked ? "page not blocked/error" : `browser classification: ${args.classification}`,
-      args.captureCompleted === false,
-    ),
-    gate(
-      "page_not_not_found",
-      not404,
-      not404 ? "page not 404/discontinued" : "page not found or unavailable",
-      args.captureCompleted === false,
-    ),
-    gate(
-      "wrong_family_token_not_detected",
-      !args.wrongFamily.blocked,
-      args.wrongFamily.notes,
-      args.captureCompleted === false,
-    ),
-    gate(
-      "browser_classification_direct_buyable",
-      directBuyable,
-      directBuyable
-        ? "browser classification direct_buyable"
-        : `classification: ${args.classification}`,
-      args.captureCompleted === false,
-    ),
-    gate(
-      "supersession_review_cleared",
-      !supersession,
-      supersession
-        ? "XWF/XWFE supersession — owner compatibility review required before apply"
-        : "no supersession review required",
-      !supersession,
-    ),
-  ];
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.validation_gates.deriveGates(
+    toGeValidationGateInput(args),
+  ) as GeRefrigeratorRescueValidationGateV1[];
 }
 
 export function allGeRescueBrowserGatesPass(
   gates: GeRefrigeratorRescueValidationGateV1[],
 ): boolean {
-  return gates.every((g) => g.status === "PASS" || g.status === "WAIVED");
+  return GE_MANUFACTURER_RESCUE_CONFIG_V1.validation_gates.allGatesPass(gates);
 }
 
 function loadCsv<T>(

@@ -1,59 +1,47 @@
 /**
  * Read-only Whirlpool/EveryDrop official accessory PDP browser capture adapter (v1).
- * Repo CSV + committed owner-proof artifacts only — no CSV/Supabase/SQL mutation.
+ * Implementation delegates to manufacturer-safe-link-rescue-framework-v1 + EveryDrop config.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { setTimeout as delay } from "node:timers/promises";
 import { parse } from "csv-parse/sync";
-import { chromium } from "playwright";
+
+import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
 import {
-  buyLinkGateFailureKind,
-  isManufacturerSiteSearchUrl,
-  isSearchPlaceholderBuyLink,
-} from "@/lib/retailers/launch-buy-links";
-
+  assessEverydropSupersessionForSlug,
+  deriveEverydropWhirlpoolProofSignalsFromFramework,
+  EVERYDROP_WHIRLPOOL_MANUFACTURER_RESCUE_CONFIG_V1,
+  EVERYDROP_WHIRLPOOL_OWNER_PROOF_RESULT_REL_BY_SLUG_V1,
+  EVERYDROP_WHIRLPOOL_RESCUE_COHORT_SLUGS_V1,
+  loadEverydropRepoProvenOfficialTargetUrlV1,
+  WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1,
+  WHIRLPOOL_OFFICIAL_HOST_V1,
+  WHIRLPOOL_PARTS_SEARCH_HOST_V1,
+  type EverydropWhirlpoolRescueSlugV1,
+} from "./manufacturer-safe-link-rescue-everydrop-whirlpool-config-v1";
 import {
-  classifyOemPage,
-  type OemBrowserClassification,
-} from "./rpwfe-official-ge-browser-capture-v1";
+  createJsonMdDraftWriter,
+  defaultBrowserCaptureStrategyV1,
+  normManufacturerToken,
+} from "./manufacturer-safe-link-rescue-framework-v1";
+import type { OemBrowserClassification } from "./rpwfe-official-ge-browser-capture-v1";
+
+export {
+  EVERYDROP_WHIRLPOOL_OWNER_PROOF_RESULT_REL_BY_SLUG_V1,
+  EVERYDROP_WHIRLPOOL_RESCUE_COHORT_SLUGS_V1,
+  WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1,
+  WHIRLPOOL_OFFICIAL_HOST_V1,
+  WHIRLPOOL_PARTS_SEARCH_HOST_V1,
+  type EverydropWhirlpoolRescueSlugV1,
+} from "./manufacturer-safe-link-rescue-everydrop-whirlpool-config-v1";
 
 export const FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_ADAPTER_CONTRACT_V1 =
   "fridge_safe_link_everydrop_whirlpool_official_adapter_v1" as const;
 
 export const FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_CONTRACT_V1 =
   "fridge_safe_link_everydrop_whirlpool_official_owner_browser_proof_v1" as const;
-
-export const WHIRLPOOL_OFFICIAL_HOST_V1 = "whirlpool.com" as const;
-
-export const WHIRLPOOL_PARTS_SEARCH_HOST_V1 = "whirlpoolparts.com" as const;
-
-export const WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1 =
-  "/accessories/kitchen-accessories/refrigerator/" as const;
-
-/** Seven Whirlpool-parts search-placeholder primaries in committed retailer_links.csv (repo truth). */
-export const EVERYDROP_WHIRLPOOL_RESCUE_COHORT_SLUGS_V1 = [
-  "edr3rxd1",
-  "edr4rxd1",
-  "ukf8001",
-  "w10413645a",
-  "4396508",
-  "4396395",
-  "4396842",
-] as const;
-
-export type EverydropWhirlpoolRescueSlugV1 = (typeof EVERYDROP_WHIRLPOOL_RESCUE_COHORT_SLUGS_V1)[number];
-
-export const EVERYDROP_WHIRLPOOL_OWNER_PROOF_RESULT_REL_BY_SLUG_V1: Partial<
-  Record<EverydropWhirlpoolRescueSlugV1, string>
-> = {
-  edr3rxd1:
-    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
-  edr4rxd1:
-    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
-};
 
 export const FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_JSON_REL_V1 =
   "data/fridge/batch-production/drafts/fridge-safe-link-everydrop-whirlpool-official-proof-v1.json" as const;
@@ -68,12 +56,6 @@ export const FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_ALLOWED_WRITE_R
 
 const RETAILER_LINKS_CSV_REL = "data/retailer_links.csv" as const;
 const FILTERS_CSV_REL = "data/filters.csv" as const;
-
-const GOTO_MS = 48_000;
-const SETTLE_MS = 2_000;
-const HARD_MS = 75_000;
-const PURCHASE_RE =
-  /add to cart|buy now|checkout|add to basket|add to bag|shop now|purchase|add to order/i;
 
 export type EverydropWhirlpoolOfficialProofRowV1 = {
   filter_slug: EverydropWhirlpoolRescueSlugV1;
@@ -157,27 +139,13 @@ type RetailerLinkRow = {
   browser_truth_classification?: string | null;
 };
 
-type OwnerProofUrlRow = {
-  retailer?: string;
-  url?: string;
-  path_type?: string;
-  browser_proof_status?: string;
-};
-
-type OwnerProofResultFile = {
-  slug?: string;
-  oem_part_token?: string;
-  verdict?: string;
-  owner_proof_urls?: OwnerProofUrlRow[];
-};
-
 function isTruthyPrimary(value: string | undefined): boolean {
   const v = (value ?? "").trim().toLowerCase();
   return v === "true" || v === "1" || v === "yes";
 }
 
 export function normEverydropToken(v: string | null | undefined): string {
-  return (v ?? "").trim().toUpperCase();
+  return normManufacturerToken(v);
 }
 
 export function isWhirlpoolOfficialHost(url: string): boolean {
@@ -189,32 +157,16 @@ export function isWhirlpoolOfficialHost(url: string): boolean {
 }
 
 export function isWhirlpoolOfficialAccessoryPdpUrl(url: string): boolean {
-  try {
-    const u = new URL(url);
-    const host = u.hostname.toLowerCase();
-    const path = u.pathname.toLowerCase();
-    return host.includes(WHIRLPOOL_OFFICIAL_HOST_V1) && path.includes(WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1);
-  } catch {
-    const lower = url.toLowerCase();
-    return lower.includes(WHIRLPOOL_OFFICIAL_HOST_V1) && lower.includes(WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1);
-  }
+  return EVERYDROP_WHIRLPOOL_MANUFACTURER_RESCUE_CONFIG_V1.pdp_discovery.isOfficialPdpUrl(url);
 }
 
 export function isWhirlpoolPartsSearchPlaceholderUrl(
   retailerKey: string | null | undefined,
   url: string,
 ): boolean {
-  try {
-    const host = new URL(url).hostname.toLowerCase();
-    if (!host.includes(WHIRLPOOL_PARTS_SEARCH_HOST_V1)) return false;
-  } catch {
-    if (!url.toLowerCase().includes(WHIRLPOOL_PARTS_SEARCH_HOST_V1)) return false;
-  }
-  return (
-    isSearchPlaceholderBuyLink(retailerKey ?? "oem-parts-catalog", url) ||
-    isManufacturerSiteSearchUrl(url) ||
-    url.toLowerCase().includes("catalog.jsp") ||
-    url.toLowerCase().includes("searchkeyword=")
+  return EVERYDROP_WHIRLPOOL_MANUFACTURER_RESCUE_CONFIG_V1.search_placeholder.isSearchPlaceholderUrl(
+    retailerKey,
+    url,
   );
 }
 
@@ -242,24 +194,7 @@ export function loadRepoProvenOfficialTargetUrlV1(args: {
   url: string | null;
   source: EverydropWhirlpoolOfficialProofRowV1["repo_proven_target_source"];
 } {
-  const rel = EVERYDROP_WHIRLPOOL_OWNER_PROOF_RESULT_REL_BY_SLUG_V1[args.slug];
-  if (!rel) return { url: null, source: null };
-  const abs = path.join(args.rootDir, rel);
-  if (!existsSync(abs)) return { url: null, source: null };
-  try {
-    const parsed = JSON.parse(readFileSync(abs, "utf8")) as OwnerProofResultFile;
-    if (parsed.verdict !== "PASS_BROWSER_PROOF") return { url: null, source: null };
-    for (const row of parsed.owner_proof_urls ?? []) {
-      const url = (row.url ?? "").trim();
-      if (!url || !isWhirlpoolOfficialAccessoryPdpUrl(url)) continue;
-      if (row.path_type !== "official_manufacturer_pdp") continue;
-      if ((row.browser_proof_status ?? "").trim() !== "PASS") continue;
-      return { url, source: "owner_browser_proof_result" };
-    }
-  } catch {
-    return { url: null, source: null };
-  }
-  return { url: null, source: null };
+  return loadEverydropRepoProvenOfficialTargetUrlV1(args);
 }
 
 export function assessSupersessionForSlug(args: {
@@ -269,24 +204,7 @@ export function assessSupersessionForSlug(args: {
   h1Text: string;
   textSample: string;
 }): { required: boolean; notes: string | null } {
-  if (args.slug !== "w10413645a") {
-    return { required: false, notes: null };
-  }
-  const blob = `${args.title}\n${args.h1Text}\n${args.textSample}`.toUpperCase();
-  const legacy = blob.includes("W10413645A");
-  const successor = blob.includes("EDR2RXD1");
-  if (successor && !legacy) {
-    return {
-      required: true,
-      notes:
-        "Page identity emphasizes EDR2RXD1 successor without literal W10413645A — supersession label required before apply.",
-    };
-  }
-  return {
-    required: true,
-    notes:
-      "W10413645A is a legacy Whirlpool token superseded by EDR2RXD1 in repo discovery — owner must confirm official replacement PDP.",
-  };
+  return assessEverydropSupersessionForSlug(args);
 }
 
 export function deriveEverydropWhirlpoolOfficialProofSignals(args: {
@@ -312,73 +230,7 @@ export function deriveEverydropWhirlpoolOfficialProofSignals(args: {
   | "supersession_notes"
   | "blockers"
 > {
-  const token = normEverydropToken(args.oemToken);
-  const u = args.finalUrl.toLowerCase();
-  const identityBlob = `${args.title}\n${args.h1Text}\n${args.textSample}`.toUpperCase();
-  const tokenInIdentity = identityBlob.includes(token);
-  const directPdp =
-    Boolean(args.targetUrl && isWhirlpoolOfficialAccessoryPdpUrl(args.finalUrl)) &&
-    u.includes(WHIRLPOOL_OFFICIAL_ACCESSORY_PATH_V1.slice(1));
-  const officialPath = isWhirlpoolOfficialHost(args.finalUrl) && directPdp;
-  const purchaseVisible = args.purchaseActions.length > 0;
-  const notSearch = args.classification !== "likely_search_results";
-  const notBlocked = args.classification !== "likely_blocked" && args.classification !== "browser_error";
-  const not404 = args.classification !== "likely_not_found";
-  const supersession = assessSupersessionForSlug({
-    slug: args.slug,
-    oemToken: token,
-    title: args.title,
-    h1Text: args.h1Text,
-    textSample: args.textSample,
-  });
-
-  const blockers: string[] = [];
-  if (!args.captureSucceeded) blockers.push("browser_capture_not_completed");
-  if (!args.targetUrl) blockers.push("repo_proven_official_target_url_missing");
-  if (!directPdp) blockers.push("final_url_not_official_whirlpool_accessory_pdp");
-  if (!tokenInIdentity) blockers.push(`exact_token_${token}_not_proven_in_primary_slice`);
-  if (!officialPath) blockers.push("official_whirlpool_manufacturer_path_not_proven");
-  if (!purchaseVisible) blockers.push("direct_purchase_control_not_visible");
-  if (!notSearch) blockers.push("page_classified_as_search_or_catalog");
-  if (!notBlocked) blockers.push(`browser_classification_${args.classification}`);
-  if (!not404) blockers.push("page_not_found_or_unavailable");
-  if (supersession.required && args.slug === "w10413645a") {
-    blockers.push(`supersession_review:${supersession.notes ?? "required"}`);
-  }
-
-  const pass =
-    args.captureSucceeded &&
-    Boolean(args.targetUrl) &&
-    directPdp &&
-    tokenInIdentity &&
-    officialPath &&
-    purchaseVisible &&
-    notSearch &&
-    notBlocked &&
-    not404 &&
-    args.classification === "direct_buyable" &&
-    !(supersession.required && args.slug === "w10413645a" && !tokenInIdentity);
-
-  let whirlpoolProof: "PROVEN" | "INFERRED" | "UNKNOWN" = "UNKNOWN";
-  if (pass) whirlpoolProof = "PROVEN";
-  else if (args.captureSucceeded && directPdp && tokenInIdentity) whirlpoolProof = "INFERRED";
-
-  return {
-    browser_truth_status: pass ? "PASS" : args.captureSucceeded ? "FAIL" : "UNKNOWN",
-    direct_pdp_status: directPdp ? "PROVEN" : args.captureSucceeded ? "NOT_PROVEN" : "UNKNOWN",
-    exact_token_proven: args.captureSucceeded ? tokenInIdentity : "UNKNOWN",
-    current_direct_buyability_proven:
-      args.captureSucceeded && purchaseVisible && args.classification === "direct_buyable"
-        ? true
-        : args.captureSucceeded
-          ? false
-          : "UNKNOWN",
-    official_manufacturer_path_proven: args.captureSucceeded ? officialPath : "UNKNOWN",
-    whirlpool_official_pdp_proof_result: whirlpoolProof,
-    supersession_review_required: supersession.required,
-    supersession_notes: supersession.notes,
-    blockers,
-  };
+  return deriveEverydropWhirlpoolProofSignalsFromFramework(args);
 }
 
 export function buildOwnerBrowserChecklistOnlyProofForSlugV1(args: {
@@ -502,95 +354,19 @@ export async function captureEverydropWhirlpoolOfficialProofForSlugV1(args: {
     });
   }
 
-  let finalUrl = "";
-  let title = "";
-  let h1Text = "";
-  let textSample = "";
-  let purchaseActions: string[] = [];
-  let gotoErr = "";
-  let hardTimedOut = false;
-  let gotoFailed = false;
-  let captureSucceeded = false;
   const screenshotRel = everydropWhirlpoolOfficialScreenshotRelV1(args.slug);
 
+  let capture;
   try {
-    const browser = await chromium.launch({ headless: true });
-    try {
-      const context = await browser.newContext({
-        userAgent:
-          "BuckPartsOEMBrowserTruth/1.0 (+https://buckparts.com; read-only EveryDrop Whirlpool official capture)",
-        viewport: { width: 1280, height: 720 },
-      });
-      const page = await context.newPage();
-
-      const navigate = async () => {
-        try {
-          await page.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: GOTO_MS });
-          await delay(SETTLE_MS);
-        } catch (e) {
-          gotoFailed = true;
-          gotoErr = e instanceof Error ? e.message : String(e);
-        }
-      };
-
-      let hardTimer: ReturnType<typeof setTimeout> | undefined;
-      await Promise.race([
-        navigate().finally(() => {
-          if (hardTimer !== undefined) clearTimeout(hardTimer);
-        }),
-        new Promise<void>((resolve) => {
-          hardTimer = setTimeout(() => {
-            hardTimedOut = true;
-            resolve();
-          }, HARD_MS);
-        }),
-      ]);
-
-      finalUrl = page.url();
-      title = (await page.title().catch(() => "")) ?? "";
-      h1Text = (await page.locator("h1").first().textContent().catch(() => ""))?.trim() ?? "";
-      textSample = (
-        await page.evaluate(() => document.body?.innerText ?? "").catch(() => "")
-      ).slice(0, 12_000);
-
-      const candidates = page.locator(
-        'button, [role="button"], a, input[type="submit"], input[type="button"]',
-      );
-      const count = Math.min(await candidates.count().catch(() => 0), 200);
-      const seen = new Set<string>();
-      for (let i = 0; i < count; i++) {
-        const el = candidates.nth(i);
-        if (!(await el.isVisible().catch(() => false))) continue;
-        const text = (
-          [
-            await el.textContent().catch(() => ""),
-            await el.getAttribute("aria-label").catch(() => ""),
-            await el.getAttribute("title").catch(() => ""),
-          ]
-            .filter(Boolean)
-            .join(" ")
-            .replace(/\s+/g, " ")
-            .trim()
-        );
-        if (!text || !PURCHASE_RE.test(text) || seen.has(text)) continue;
-        seen.add(text);
-        purchaseActions.push(text);
-        if (purchaseActions.length >= 6) break;
-      }
-
-      if (args.writeDraftScreenshot !== false) {
-        const screenshotAbs = path.join(args.rootDir, screenshotRel);
-        mkdirSync(path.dirname(screenshotAbs), { recursive: true });
-        await page.screenshot({ path: screenshotAbs, fullPage: false }).catch(() => {});
-      }
-
-      await context.close().catch(() => {});
-      captureSucceeded = Boolean(finalUrl && !gotoFailed && !hardTimedOut);
-    } finally {
-      await browser.close().catch(() => {});
-    }
+    capture = await defaultBrowserCaptureStrategyV1.captureOemPage({
+      rootDir: args.rootDir,
+      targetUrl,
+      screenshotRel,
+      writeScreenshot: args.writeDraftScreenshot,
+      userAgent: EVERYDROP_WHIRLPOOL_MANUFACTURER_RESCUE_CONFIG_V1.browser_capture_user_agent,
+    });
   } catch (e) {
-    gotoErr = e instanceof Error ? e.message : String(e);
+    const gotoErr = e instanceof Error ? e.message : String(e);
     return buildOwnerBrowserChecklistOnlyProofForSlugV1({
       slug: args.slug,
       oemToken: args.oemToken,
@@ -602,15 +378,29 @@ export async function captureEverydropWhirlpoolOfficialProofForSlugV1(args: {
     });
   }
 
-  const { classification, notes } = classifyOemPage({
+  if (!capture.captureSucceeded) {
+    return buildOwnerBrowserChecklistOnlyProofForSlugV1({
+      slug: args.slug,
+      oemToken: args.oemToken,
+      brandSlug: args.brandSlug,
+      csvPrimaryUrl: args.csvPrimaryUrl,
+      repoProvenTargetUrl: targetUrl,
+      now,
+      captureError: capture.gotoError || "playwright_capture_failed",
+    });
+  }
+
+  const {
     finalUrl,
     title,
+    h1Text,
     textSample,
     purchaseActions,
-    hardTimeout: hardTimedOut,
-    gotoFailed,
-    errorNote: gotoErr.replace(/\s+/g, " ").slice(0, 400),
-  });
+    classification,
+    classificationNotes: notes,
+    captureSucceeded,
+    gotoError: gotoErr,
+  } = capture;
 
   const derived = deriveEverydropWhirlpoolOfficialProofSignals({
     slug: args.slug,
@@ -826,15 +616,12 @@ export function writeEverydropWhirlpoolOfficialProofDraftsV1(args: {
   rootDir: string;
   report: EverydropWhirlpoolOfficialCohortProofV1;
 }): { json_rel_path: string; md_rel_path: string } {
-  const jsonRel = FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_JSON_REL_V1;
-  const mdRel = FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_MD_REL_V1;
-  const jsonAbs = path.join(args.rootDir, jsonRel);
-  const mdAbs = path.join(args.rootDir, mdRel);
-  mkdirSync(path.dirname(jsonAbs), { recursive: true });
-  mkdirSync(path.dirname(mdAbs), { recursive: true });
-  writeFileSync(jsonAbs, `${JSON.stringify(args.report, null, 2)}\n`, "utf8");
-  writeFileSync(mdAbs, buildEverydropWhirlpoolOfficialCohortProofMarkdownV1(args.report), "utf8");
-  return { json_rel_path: jsonRel, md_rel_path: mdRel };
+  const writer = createJsonMdDraftWriter<EverydropWhirlpoolOfficialCohortProofV1>({
+    jsonRelPath: FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_JSON_REL_V1,
+    mdRelPath: FRIDGE_SAFE_LINK_EVERYDROP_WHIRLPOOL_OFFICIAL_PROOF_MD_REL_V1,
+    buildMarkdown: buildEverydropWhirlpoolOfficialCohortProofMarkdownV1,
+  });
+  return writer.writeDrafts(args);
 }
 
 export function summarizeCsvPrimaryGateForSlug(args: {
