@@ -25,6 +25,10 @@ import {
   MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_CONTRACT_V1,
   MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_JSON_REL_V1,
 } from "./manufacturer-rescue-owner-approval-packet-factory-v1";
+import {
+  MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_CONTRACT_V1,
+  MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_JSON_REL_V1,
+} from "./manufacturer-browser-proof-refresh-orchestrator-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
 
@@ -53,6 +57,9 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_READINESS_GATE_V1 =
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_FACTORY_V1 =
   "npm run buckparts:manufacturer-browser-proof-factory" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_V1 =
+  "npm run buckparts:manufacturer-browser-proof-refresh-orchestrator" as const;
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_V1 =
   "npm run buckparts:manufacturer-rescue-owner-approval-packet-factory" as const;
@@ -419,6 +426,52 @@ function intakeManufacturerRescueOwnerApprovalPacketFactory(
   }
 }
 
+function intakeManufacturerBrowserProofRefreshOrchestrator(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const scheduled =
+      typeof parsed.scheduled_slug_count === "number" ? parsed.scheduled_slug_count : "UNKNOWN";
+    const batchCount =
+      typeof parsed.manufacturer_refresh_batch_count === "number"
+        ? parsed.manufacturer_refresh_batch_count
+        : "UNKNOWN";
+    return {
+      entry_id: `manufacturer_browser_proof_refresh_orchestrator_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:browser_proof_refresh_orchestrator",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `scheduled_slug_count=${String(scheduled)}`,
+        `manufacturer_refresh_batch_count=${String(batchCount)}`,
+        "auto_pass_forbidden=true",
+        "browser_automation_authorized=false",
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked:
+        scheduled === 0
+          ? "browser proof refresh orchestrator indexed (no scheduled refresh work)"
+          : "manufacturer browser proof refresh batches scheduled (owner review required post-capture)",
+      superseded_by: null,
+      source_contract: MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
 function intakeManufacturerBrowserProofFactory(
   rootDir: string,
   sourcePaths: Set<string>,
@@ -527,6 +580,10 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
     })(),
     ...((): ExecutionLedgerEntryV1[] => {
       const entry = intakeManufacturerBrowserProofFactory(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerBrowserProofRefreshOrchestrator(args.rootDir, sourcePaths);
       return entry ? [entry] : [];
     })(),
     ...((): ExecutionLedgerEntryV1[] => {

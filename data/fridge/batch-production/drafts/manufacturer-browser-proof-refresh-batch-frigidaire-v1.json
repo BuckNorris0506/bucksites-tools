@@ -1,0 +1,186 @@
+{
+  "batch_id": "refresh_batch_frigidaire",
+  "manufacturer_key": "frigidaire",
+  "scheduled_slug_count": 10,
+  "work_items": [
+    {
+      "filter_slug": "fppwfu01",
+      "oem_part_token": "FPPWFU01",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "frig-242017801",
+      "oem_part_token": "242017801",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "frig-242086201",
+      "oem_part_token": "242086201",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "frig-242294502",
+      "oem_part_token": "242294502",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "purepour",
+      "oem_part_token": "PPWFU01",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "wf2cb",
+      "oem_part_token": "WF2CB",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "eptwfu01",
+      "oem_part_token": "EPTWFU01",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T20:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T02:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "wf3cb",
+      "oem_part_token": "WF3CB",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T12:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "wfcb",
+      "oem_part_token": "WFCB",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T00:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    }
+  ],
+  "capture_strategies": [
+    "owner_browser_proof_session_assist"
+  ],
+  "capture_commands": [
+    "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+  ],
+  "max_refresh_priority": 100,
+  "schedule_reasons": [
+    "factory_capture_work_required",
+    "owner_browser_proof_artifact_missing",
+    "proof stale checked_at=2026-06-05T12:00:00.000Z",
+    "proof stale checked_at=2026-06-05T20:00:00.000Z",
+    "proof stale checked_at=2026-06-06T00:00:00.000Z",
+    "proof stale checked_at=2026-06-06T02:00:00.000Z"
+  ],
+  "ge_normalization_draft_only": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "post_capture_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+}

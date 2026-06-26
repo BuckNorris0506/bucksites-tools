@@ -1,0 +1,136 @@
+{
+  "batch_id": "refresh_batch_everydrop-whirlpool",
+  "manufacturer_key": "everydrop_whirlpool",
+  "scheduled_slug_count": 7,
+  "work_items": [
+    {
+      "filter_slug": "4396395",
+      "oem_part_token": "4396395",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "4396508",
+      "oem_part_token": "4396508",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "4396842",
+      "oem_part_token": "4396842",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "ukf8001",
+      "oem_part_token": "UKF8001",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "w10413645a",
+      "oem_part_token": "W10413645A",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": null,
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-06T03:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "edr4rxd1",
+      "oem_part_token": "EDR4RXD1",
+      "capture_strategy": "owner_browser_proof_session_assist",
+      "evidence_status": "STALE",
+      "schedule_reasons": [
+        "proof stale checked_at=2026-06-05T22:00:00.000Z",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 80,
+      "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+      "target_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+      "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+      "normalization_draft_only": false,
+      "auto_pass_forbidden": true
+    }
+  ],
+  "capture_strategies": [
+    "owner_browser_proof_session_assist"
+  ],
+  "capture_commands": [
+    "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+  ],
+  "max_refresh_priority": 100,
+  "schedule_reasons": [
+    "factory_capture_work_required",
+    "owner_browser_proof_artifact_missing",
+    "proof stale checked_at=2026-06-05T22:00:00.000Z",
+    "proof stale checked_at=2026-06-06T03:00:00.000Z"
+  ],
+  "ge_normalization_draft_only": false,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "post_capture_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+}

@@ -1,0 +1,525 @@
+{
+  "contract": "manufacturer_browser_proof_refresh_orchestrator_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "auto_pass_forbidden": true,
+  "readiness_gate_promotion_authorized": false,
+  "generated_at": "2026-06-26T20:02:47.406Z",
+  "source_command": "npm run buckparts:manufacturer-browser-proof-refresh-orchestrator",
+  "factory_contract": "manufacturer_browser_proof_factory_v1",
+  "factory_artifact_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+  "factory_generated_at": "2026-06-26T20:02:46.830Z",
+  "factory_orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
+  "browser_proof_max_age_days": 14,
+  "deploy_build_marker": {
+    "marker": "UNKNOWN",
+    "marker_source_path": null,
+    "proof_after_marker_proven": "UNKNOWN"
+  },
+  "scheduled_slug_count": 25,
+  "manufacturer_refresh_batch_count": 3,
+  "manufacturer_refresh_batches": [
+    {
+      "batch_id": "refresh_batch_frigidaire",
+      "manufacturer_key": "frigidaire",
+      "scheduled_slug_count": 10,
+      "work_items": [
+        {
+          "filter_slug": "fppwfu01",
+          "oem_part_token": "FPPWFU01",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "frig-242017801",
+          "oem_part_token": "242017801",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "frig-242086201",
+          "oem_part_token": "242086201",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "frig-242294502",
+          "oem_part_token": "242294502",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "purepour",
+          "oem_part_token": "PPWFU01",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "wf2cb",
+          "oem_part_token": "WF2CB",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "eptwfu01",
+          "oem_part_token": "EPTWFU01",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-05T20:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "ultrawf",
+          "oem_part_token": "ULTRAWF",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-06T02:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "wf3cb",
+          "oem_part_token": "WF3CB",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-05T12:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "wfcb",
+          "oem_part_token": "WFCB",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-06T00:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        }
+      ],
+      "capture_strategies": [
+        "owner_browser_proof_session_assist"
+      ],
+      "capture_commands": [
+        "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+      ],
+      "max_refresh_priority": 100,
+      "schedule_reasons": [
+        "factory_capture_work_required",
+        "owner_browser_proof_artifact_missing",
+        "proof stale checked_at=2026-06-05T12:00:00.000Z",
+        "proof stale checked_at=2026-06-05T20:00:00.000Z",
+        "proof stale checked_at=2026-06-06T00:00:00.000Z",
+        "proof stale checked_at=2026-06-06T02:00:00.000Z"
+      ],
+      "ge_normalization_draft_only": false,
+      "auto_pass_forbidden": true,
+      "browser_automation_authorized": false,
+      "post_capture_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+    },
+    {
+      "batch_id": "refresh_batch_ge-appliance-parts",
+      "manufacturer_key": "ge_appliance_parts",
+      "scheduled_slug_count": 8,
+      "work_items": [
+        {
+          "filter_slug": "gswf",
+          "oem_part_token": "GSWF",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "gswf2",
+          "oem_part_token": "GSWF2",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "mswf",
+          "oem_part_token": "MSWF",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "opfg3f",
+          "oem_part_token": "OPFG3F",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "pfmwf",
+          "oem_part_token": "PFMWF",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "smartwater-mwfp",
+          "oem_part_token": "MWFP",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "xwf",
+          "oem_part_token": "XWF",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "xwfe",
+          "oem_part_token": "XWFE",
+          "capture_strategy": "ge_automated_playwright_spec_capture",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+          "target_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": true,
+          "auto_pass_forbidden": true
+        }
+      ],
+      "capture_strategies": [
+        "ge_automated_playwright_spec_capture"
+      ],
+      "capture_commands": [
+        "npm run buckparts:ge-refrigerator-rescue-capture -- --all"
+      ],
+      "max_refresh_priority": 100,
+      "schedule_reasons": [
+        "factory_capture_work_required",
+        "owner_browser_proof_artifact_missing"
+      ],
+      "ge_normalization_draft_only": true,
+      "auto_pass_forbidden": true,
+      "browser_automation_authorized": false,
+      "post_capture_owner_action": "GE Playwright capture may produce browser evidence only — owner must reconcile normalization draft and record PASS owner browser proof manually."
+    },
+    {
+      "batch_id": "refresh_batch_everydrop-whirlpool",
+      "manufacturer_key": "everydrop_whirlpool",
+      "scheduled_slug_count": 7,
+      "work_items": [
+        {
+          "filter_slug": "4396395",
+          "oem_part_token": "4396395",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "4396508",
+          "oem_part_token": "4396508",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "4396842",
+          "oem_part_token": "4396842",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "ukf8001",
+          "oem_part_token": "UKF8001",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "w10413645a",
+          "oem_part_token": "W10413645A",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "MISSING",
+          "schedule_reasons": [
+            "owner_browser_proof_artifact_missing",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 100,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": null,
+          "owner_proof_artifact_rel": null,
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "edr3rxd1",
+          "oem_part_token": "EDR3RXD1",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-06T03:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        },
+        {
+          "filter_slug": "edr4rxd1",
+          "oem_part_token": "EDR4RXD1",
+          "capture_strategy": "owner_browser_proof_session_assist",
+          "evidence_status": "STALE",
+          "schedule_reasons": [
+            "proof stale checked_at=2026-06-05T22:00:00.000Z",
+            "factory_capture_work_required"
+          ],
+          "refresh_priority": 80,
+          "recommended_capture_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+          "target_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+          "owner_proof_artifact_rel": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+          "normalization_draft_only": false,
+          "auto_pass_forbidden": true
+        }
+      ],
+      "capture_strategies": [
+        "owner_browser_proof_session_assist"
+      ],
+      "capture_commands": [
+        "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)"
+      ],
+      "max_refresh_priority": 100,
+      "schedule_reasons": [
+        "factory_capture_work_required",
+        "owner_browser_proof_artifact_missing",
+        "proof stale checked_at=2026-06-05T22:00:00.000Z",
+        "proof stale checked_at=2026-06-06T03:00:00.000Z"
+      ],
+      "ge_normalization_draft_only": false,
+      "auto_pass_forbidden": true,
+      "browser_automation_authorized": false,
+      "post_capture_owner_action": "Owner browser proof session required — factory never auto-grants PASS_BROWSER_PROOF."
+    }
+  ],
+  "manufacturer_refresh_batch_rels": [
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-batch-frigidaire-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-batch-ge-appliance-parts-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-batch-everydrop-whirlpool-v1.json"
+  ],
+  "inspect_summary": {
+    "recommended_next_action": "Execute 3 manufacturer refresh batch(es) in priority order; owner review required before PASS owner-browser-proof artifacts. Then re-run factory, readiness gate, and apply-plan factory.",
+    "readiness_gate_note": "manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority.",
+    "factory_note": "Orchestrator consumes manufacturer_browser_proof_factory_v1 only — does not rebuild director, runner, or orchestrator queues."
+  },
+  "proven_facts": [
+    "PROVEN: Orchestrator is read-only — browser_automation_authorized=false; schedules work only.",
+    "PROVEN: auto_pass_forbidden — orchestrator never grants PASS_BROWSER_PROOF.",
+    "PROVEN: scheduled 25 slug(s) across 3 manufacturer batch(es) from committed factory artifact.",
+    "PROVEN: 14-day freshness contract inherited from factory.",
+    "PROVEN: deploy marker UNKNOWN — deploy-marker refresh boost not applied beyond factory reasons."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production buyer-path parity until post-capture owner proof and census re-run.",
+    "UNKNOWN: proof-after-deploy-marker ordering not provable from committed artifacts alone."
+  ]
+}

@@ -110,6 +110,7 @@
     "buckparts:manufacturer-safe-link-rescue-readiness-gate": "tsx scripts/report-manufacturer-safe-link-rescue-readiness-gate-v1.ts",
     "buckparts:manufacturer-safe-link-rescue-apply-plan-factory": "tsx scripts/report-manufacturer-safe-link-rescue-apply-plan-factory-v1.ts",
     "buckparts:manufacturer-browser-proof-factory": "tsx scripts/report-manufacturer-browser-proof-factory-v1.ts",
+    "buckparts:manufacturer-browser-proof-refresh-orchestrator": "tsx scripts/report-manufacturer-browser-proof-refresh-orchestrator-v1.ts",
     "buckparts:manufacturer-rescue-owner-approval-packet-factory": "tsx scripts/report-manufacturer-rescue-owner-approval-packet-factory-v1.ts",
     "buckparts:execution-ledger": "tsx scripts/report-buckparts-execution-ledger-v1.ts",
     "buckparts:page-factory-preflight": "tsx scripts/report-buckparts-page-factory-preflight-v1.ts",

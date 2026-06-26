@@ -158,6 +158,25 @@ const CURATED_ENTRIES: EntrySeed[] = [
     notes: "Founder decision with owner_mutation_approved required before readiness gate promotion",
   },
   {
+    system_id: "manufacturer_browser_proof_refresh_orchestrator_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-refresh-orchestrator",
+    cc_json_path: "command_center_v2.manufacturer_browser_proof_refresh_orchestrator_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-browser-proof-refresh-orchestrator-v1.test.ts",
+    reason:
+      "Read-only refresh scheduling from manufacturer_browser_proof_factory_v1; never auto-grants PASS browser proof.",
+    source:
+      "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+    role: "manufacturer browser proof refresh orchestrator",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "Schedules manufacturer-level refresh batches; GE produces normalization drafts only",
+  },
+  {
     system_id: "manufacturer_browser_proof_factory_v1",
     npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-factory",
     cc_json_path: "command_center_v2.manufacturer_browser_proof_factory_v1",

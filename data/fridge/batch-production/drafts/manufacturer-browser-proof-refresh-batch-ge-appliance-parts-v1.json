@@ -1,0 +1,150 @@
+{
+  "batch_id": "refresh_batch_ge-appliance-parts",
+  "manufacturer_key": "ge_appliance_parts",
+  "scheduled_slug_count": 8,
+  "work_items": [
+    {
+      "filter_slug": "gswf",
+      "oem_part_token": "GSWF",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "gswf2",
+      "oem_part_token": "GSWF2",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "mswf",
+      "oem_part_token": "MSWF",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "opfg3f",
+      "oem_part_token": "OPFG3F",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "pfmwf",
+      "oem_part_token": "PFMWF",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "oem_part_token": "MWFP",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "xwf",
+      "oem_part_token": "XWF",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/XWF",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    },
+    {
+      "filter_slug": "xwfe",
+      "oem_part_token": "XWFE",
+      "capture_strategy": "ge_automated_playwright_spec_capture",
+      "evidence_status": "MISSING",
+      "schedule_reasons": [
+        "owner_browser_proof_artifact_missing",
+        "factory_capture_work_required"
+      ],
+      "refresh_priority": 100,
+      "recommended_capture_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+      "target_url": "https://www.geapplianceparts.com/store/parts/spec/XWFE",
+      "owner_proof_artifact_rel": null,
+      "normalization_draft_only": true,
+      "auto_pass_forbidden": true
+    }
+  ],
+  "capture_strategies": [
+    "ge_automated_playwright_spec_capture"
+  ],
+  "capture_commands": [
+    "npm run buckparts:ge-refrigerator-rescue-capture -- --all"
+  ],
+  "max_refresh_priority": 100,
+  "schedule_reasons": [
+    "factory_capture_work_required",
+    "owner_browser_proof_artifact_missing"
+  ],
+  "ge_normalization_draft_only": true,
+  "auto_pass_forbidden": true,
+  "browser_automation_authorized": false,
+  "post_capture_owner_action": "GE Playwright capture may produce browser evidence only — owner must reconcile normalization draft and record PASS owner browser proof manually."
+}

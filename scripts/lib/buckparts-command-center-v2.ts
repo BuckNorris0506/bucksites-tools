@@ -263,6 +263,7 @@ export function buildCommandCenterV2Report(input: {
   | "manufacturer_safe_link_rescue_director_v1"
   | "manufacturer_safe_link_rescue_runner_v1"
   | "manufacturer_browser_proof_factory_v1"
+  | "manufacturer_browser_proof_refresh_orchestrator_v1"
   | "manufacturer_rescue_owner_approval_packet_factory_v1"
   | "execution_ledger_v1"
   | "wedge_truth_spine_coverage_matrix_v1"

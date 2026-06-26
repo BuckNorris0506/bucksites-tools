@@ -641,6 +641,12 @@ export {
 } from "./buckparts-mcp-control-plane-v1";
 
 export {
+  BUCKPARTS_MCP_MANUFACTURER_BROWSER_PROOF_REFRESH_ORCHESTRATOR_CONTRACT_V1,
+  manufacturerBrowserProofRefreshBatchV1,
+  manufacturerBrowserProofRefreshScheduleV1,
+} from "./buckparts-mcp-manufacturer-browser-proof-refresh-orchestrator-v1";
+
+export {
   BUCKPARTS_MCP_EXECUTION_LEDGER_CONTRACT_V1,
   capabilityLookupV1,
   capabilityTimelineV1,
