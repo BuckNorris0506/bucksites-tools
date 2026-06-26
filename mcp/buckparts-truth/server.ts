@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Local read-only BuckParts MCP server for Cursor (stdio).
- * No HTTPS, no writes, no Supabase mutation, no affiliate/click mutation.
+ * BuckParts Truth MCP v2 — canonical read-only server (stdio).
+ * No HTTPS deployment, no writes, no Supabase mutation.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -10,54 +10,140 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
-import { checkReplacementFitV1 } from "../../scripts/lib/buckparts-mcp-check-replacement-fit-v1";
+import {
+  checkReplacementFitV1,
+  getCoverageMetricsV2,
+  getFilterV2,
+  getModelV2,
+  getSafeBuyerPathV2,
+  getTruthPolicyV2,
+  searchPartsV2,
+} from "../../scripts/lib/buckparts-mcp-tools-v2";
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+
+const READ_ONLY_ANNOTATIONS = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: false,
+} as const;
+
+function toolResult(payload: unknown) {
+  return {
+    content: [{ type: "text" as const, text: JSON.stringify(payload, null, 2) }],
+    structuredContent: payload as Record<string, unknown>,
+  };
+}
 
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.1.0",
+    version: "0.2.0",
   },
   {
     instructions:
-      "Read-only BuckParts verified fit and safe buyer-path truth from committed repo CSV and audit artifacts. Returns FULL truth or UNKNOWN — never infers fit.",
+      "Canonical read-only BuckParts truth server. Repo CSV + committed audit JSON only. Returns FULL truth or UNKNOWN — never infers fit or safe buy paths.",
   },
 );
 
+const checkReplacementFitHandler = async ({ model_or_part }: { model_or_part: string }) =>
+  toolResult(checkReplacementFitV1({ rootDir: REPO_ROOT }, model_or_part));
+
+const checkReplacementFitSchema = {
+  title: "Check replacement fit (read-only)",
+  description:
+    "Look up appliance model slug, filter/part slug, or unambiguous OEM/model number. Returns proven fit slug when audit-proven, wedge, disposition, safe buyer path status, and evidence paths. Exact match only.",
+  inputSchema: {
+    model_or_part: z
+      .string()
+      .min(1)
+      .describe("Exact model slug, filter slug, or unambiguous OEM/model number token"),
+  },
+  annotations: READ_ONLY_ANNOTATIONS,
+};
+
+server.registerTool("check_replacement_fit", checkReplacementFitSchema, checkReplacementFitHandler);
+server.registerTool("checkReplacementFit", checkReplacementFitSchema, checkReplacementFitHandler);
+
 server.registerTool(
-  "check_replacement_fit",
+  "getFilter",
   {
-    title: "Check replacement fit (read-only)",
+    title: "Get filter truth (read-only)",
     description:
-      "Look up a BuckParts appliance model slug, filter/part slug, or unambiguous OEM/model number in committed repo truth. Returns proven fit slug (when audit-proven), wedge, disposition, safe buyer path status, and evidence paths. Exact match only — UNKNOWN when not proven.",
+      "Exact filter slug lookup from committed catalog CSV. Returns identity, OEM, aliases, replacement interval, compatible model count, safe buyer path status, evidence paths, and truth status.",
     inputSchema: {
-      model_or_part: z
-        .string()
-        .min(1)
-        .describe(
-          "Exact appliance model slug (e.g. samsung-rf28r7351sr), filter slug (e.g. edr1rxd1), or unambiguous OEM/model number token",
-        ),
+      filter_slug: z.string().min(1).describe("Exact BuckParts filter/part slug"),
     },
-    annotations: {
-      readOnlyHint: true,
-      destructiveHint: false,
-      idempotentHint: true,
-      openWorldHint: false,
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ filter_slug }) => toolResult(getFilterV2({ rootDir: REPO_ROOT }, filter_slug)),
+);
+
+server.registerTool(
+  "getModel",
+  {
+    title: "Get model truth (read-only)",
+    description:
+      "Exact appliance model slug lookup. Returns compatible filters with recommendation flags, fit confidence, and evidence. UNKNOWN when fit is not audit-proven.",
+    inputSchema: {
+      model_slug: z.string().min(1).describe("Exact BuckParts appliance model slug"),
     },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
-  async ({ model_or_part }) => {
-    const result = checkReplacementFitV1({ rootDir: REPO_ROOT }, model_or_part);
-    return {
-      content: [
-        {
-          type: "text" as const,
-          text: JSON.stringify(result, null, 2),
-        },
-      ],
-      structuredContent: result,
-    };
+  async ({ model_slug }) => toolResult(getModelV2({ rootDir: REPO_ROOT }, model_slug)),
+);
+
+server.registerTool(
+  "searchParts",
+  {
+    title: "Search parts (exact-token only)",
+    description:
+      "Exact-token catalog search across filter slugs, model slugs, aliases, OEM tokens, and model numbers. Ranked exact matches only — never fuzzy or invented results.",
+    inputSchema: {
+      query: z.string().min(1).describe("Exact token to match (slug, alias, OEM, or model number)"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
   },
+  async ({ query }) => toolResult(searchPartsV2({ rootDir: REPO_ROOT }, query)),
+);
+
+server.registerTool(
+  "getSafeBuyerPath",
+  {
+    title: "Get safe buyer path (read-only)",
+    description:
+      "Exact filter slug lookup for buy-path truth: primary retailer, browser truth, direct_buyable state, suppression reason, evidence paths, owner approval requirements.",
+    inputSchema: {
+      filter_slug: z.string().min(1).describe("Exact BuckParts filter/part slug"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ filter_slug }) => toolResult(getSafeBuyerPathV2({ rootDir: REPO_ROOT }, filter_slug)),
+);
+
+server.registerTool(
+  "getCoverageMetrics",
+  {
+    title: "Get coverage metrics (read-only)",
+    description:
+      "Aggregate repo truth: wedge counts, safe buyer path counts, suppressed counts, AP convergence snapshot from committed artifacts, census summaries. No live Supabase.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(getCoverageMetricsV2({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "getTruthPolicy",
+  {
+    title: "Get BuckParts Truth Policy",
+    description:
+      "Returns the BuckParts Truth Contract, governing document references, and explanation of UNKNOWN behavior for MCP consumers.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(getTruthPolicyV2({ rootDir: REPO_ROOT })),
 );
 
 async function main(): Promise<void> {

@@ -1,10 +1,11 @@
-# BuckParts Truth MCP (local prototype)
+# BuckParts Truth MCP v2
 
-Read-only MCP server exposing BuckParts verified fit and safe buyer-path truth from **committed repo CSV and audit JSON only**.
+Canonical **read-only** MCP server exposing BuckParts verified fit and safe buyer-path truth from **committed repo CSV and audit JSON**.
 
-- **Cursor only** — stdio transport, no HTTPS deployment
-- **No write tools** — no CSV, Supabase, evidence, or affiliate mutation
 - **Truth contract** — repo truth over memory; FULL truth or `UNKNOWN`; no "probably fits"
+- **No write tools** — no CSV, Supabase, evidence, retailer link, or production mutation
+- **Exact-token search only** — no fuzzy catalog search
+- **Local stdio** — Cursor, Codex CLI, and ChatGPT Desktop via MCP config (no HTTPS deploy in-repo)
 
 ## Run
 
@@ -14,9 +15,11 @@ From repo root:
 npm run mcp:buckparts-truth
 ```
 
-## Cursor MCP config
+## Connection examples
 
-Add to `.cursor/mcp.json` (local example — adjust absolute path to your clone):
+### Cursor
+
+Add to `.cursor/mcp.json` (adjust `cwd` to your clone):
 
 ```json
 {
@@ -30,58 +33,136 @@ Add to `.cursor/mcp.json` (local example — adjust absolute path to your clone)
 }
 ```
 
-Alternative using `tsx` directly:
+Restart Cursor after saving.
+
+### Codex CLI
+
+In `~/.codex/config.toml` (or project `.codex/config.toml`):
+
+```toml
+[mcp_servers.buckparts-truth]
+command = "npm"
+args = ["run", "mcp:buckparts-truth"]
+cwd = "/Users/jaredbuckman/bucksites-tools"
+```
+
+Or with `tsx` directly:
+
+```toml
+[mcp_servers.buckparts-truth]
+command = "npx"
+args = ["tsx", "mcp/buckparts-truth/server.ts"]
+cwd = "/Users/jaredbuckman/bucksites-tools"
+```
+
+### ChatGPT Desktop
+
+Add to `~/Library/Application Support/com.openai.chatgpt/mcp.json` (macOS):
 
 ```json
 {
   "mcpServers": {
     "buckparts-truth": {
-      "command": "npx",
-      "args": ["tsx", "mcp/buckparts-truth/server.ts"],
+      "command": "npm",
+      "args": ["run", "mcp:buckparts-truth"],
       "cwd": "/Users/jaredbuckman/bucksites-tools"
     }
   }
 }
 ```
 
-Restart Cursor after saving.
+Adjust paths for your OS and clone location. Restart the client after editing.
 
-## Tool: `check_replacement_fit`
+## Tools
 
-**Input:** `model_or_part` — exact appliance model slug, filter/part slug, or unambiguous OEM/model number (compact match when unique).
+| Tool | Input | Purpose |
+| --- | --- | --- |
+| `check_replacement_fit` | `model_or_part` | Legacy snake_case name (backwards compatible) |
+| `checkReplacementFit` | `model_or_part` | Same handler as above |
+| `getFilter` | `filter_slug` | Filter identity, OEM, aliases, safe path, evidence |
+| `getModel` | `model_slug` | Compatible filters, fit confidence, evidence |
+| `searchParts` | `query` | Exact-token ranked search (no fuzzy) |
+| `getSafeBuyerPath` | `filter_slug` | Primary retailer, browser truth, suppression |
+| `getCoverageMetrics` | _(none)_ | Wedge/census/convergence aggregates |
+| `getTruthPolicy` | _(none)_ | Truth Contract + UNKNOWN behavior |
 
-**Output (JSON):**
+All tools return JSON with `read_only: true`, `data_mutation: false`, `mutation_authorized: false`.
 
-| Field | Meaning |
-| --- | --- |
-| `matched_slug` | Proven filter slug, or `UNKNOWN` |
-| `wedge` | Homekeep wedge, or `UNKNOWN` |
-| `replacement_fit_status` | `PROVEN` \| `SUPPRESSED` \| `UNKNOWN` |
-| `safe_buyer_path_status` | `SAFE_BUYER_PATH_PROVEN` \| `SUPPRESSED` \| `UNKNOWN` |
-| `disposition` | Coverage-factory disposition from repo truth, or `UNKNOWN` |
-| `evidence_paths` | Committed evidence / audit artifact paths |
-| `truth_note` | Human-readable guardrail summary |
+## Tool schemas (summary)
 
-### Example queries
+### checkReplacementFit / check_replacement_fit
 
-- `samsung-rf28r7351sr` — fridge model with `PROVEN_CORRECT` audit → fit `PROVEN`, matched `da97-17376b`
-- `edr1rxd1` — filter slug → identity proven; fit `UNKNOWN`; safe path from census
-- `RF28R7351SR` — unambiguous model number compact match
-- `levoit-core-300` — AP model in CSV; fit `UNKNOWN` (no wedge fit audit)
-- `not-a-real-slug` — all `UNKNOWN`
+```json
+{ "model_or_part": "samsung-rf28r7351sr" }
+```
+
+Returns: `matched_slug`, `wedge`, `replacement_fit_status`, `safe_buyer_path_status`, `disposition`, `evidence_paths`, `fit_audit_classification`, `truth_note`.
+
+### getFilter
+
+```json
+{ "filter_slug": "edr1rxd1" }
+```
+
+Returns: `identity`, `aliases`, `replacement_interval_months`, `compatible_model_count`, `safe_buyer_path_status`, `evidence_paths`, `truth_status`.
+
+### getModel
+
+```json
+{ "model_slug": "samsung-rf28r7351sr" }
+```
+
+Returns: `compatible_filters[]` (with `is_recommended`, `fit_status`), `fit_confidence`, `evidence_paths`. Fit `UNKNOWN` when not audit-proven.
+
+### searchParts
+
+```json
+{ "query": "EDR1RXD1" }
+```
+
+Returns: `matches[]` with `rank`, `match_kind`, `entity`, `slug`, `wedge`. Empty array when no exact token matches.
+
+### getSafeBuyerPath
+
+```json
+{ "filter_slug": "edr1rxd1" }
+```
+
+Returns: `primary_retailer`, `direct_buyable`, `suppression_reason`, `safe_gated_row_count`, `owner_approval_required`, `evidence_paths`.
+
+### getCoverageMetrics
+
+No input. Returns wedge counts, classification counts, census summary, AP convergence snapshot from committed artifacts.
+
+### getTruthPolicy
+
+No input. Returns governing document paths, core principles, UNKNOWN behavior, MCP guardrails.
+
+## Architecture
+
+```
+mcp/buckparts-truth/server.ts          MCP stdio entry (tool registration)
+scripts/lib/buckparts-mcp-truth-context-v1.ts   Shared repo CSV + audit context
+scripts/lib/buckparts-mcp-check-replacement-fit-v1.ts   checkReplacementFit logic
+scripts/lib/buckparts-mcp-tools-v2.ts  All v2 tool functions
+scripts/lib/all-product-safe-buyer-path-census-v1.ts   Census (reused)
+scripts/lib/model-filter-correctness-audit-v1.ts       Fridge fit audit (reused)
+src/lib/retailers/launch-buy-links.ts                  Buy-path gates (reused)
+```
+
+Context loads committed CSVs per wedge, census, fridge model-filter audit JSON, and filter aliases. No Supabase calls. No file writes.
 
 ## Tests
 
 ```bash
-node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts
+node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts
 ```
 
-Or full suite: `npm test`
+Or: `npm test`
 
 ## Scope limits (intentional)
 
-- No broad/fuzzy catalog search
-- No Supabase runtime reads (repo CSV + committed audit JSON only)
-- No ChatGPT / remote MCP
-- Refrigerator fit proof requires committed `model-filter-correctness-audit-v1.json`
+- Refrigerator fit `PROVEN` requires `model-filter-correctness-audit-v1.json` `PROVEN_CORRECT`
 - CSV compat alone never promotes to `PROVEN` fit
+- Live Supabase/runtime parity is `UNKNOWN` in MCP unless committed convergence artifacts exist
+- No remote HTTPS MCP deployment in this repo
