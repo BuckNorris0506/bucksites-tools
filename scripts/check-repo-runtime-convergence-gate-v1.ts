@@ -8,6 +8,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { buildRepoRuntimeConvergenceGateReportV1 } from "./lib/repo-runtime-convergence-gate-v1";
+import {
+  EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1,
+  refreshBuckpartsExecutionLedgerV1,
+} from "./lib/buckparts-execution-ledger-v1";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -21,6 +25,12 @@ async function main(): Promise<void> {
     rootDir,
     enforce,
   });
+
+  const ledger = refreshBuckpartsExecutionLedgerV1({
+    rootDir,
+    trigger_source: EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1,
+  });
+  process.stderr.write(`Refreshed ${ledger.jsonRelPath} (execution ledger; read-only index).\n`);
 
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   process.exit(report.exit_code);

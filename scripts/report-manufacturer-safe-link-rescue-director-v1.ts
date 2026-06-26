@@ -19,6 +19,10 @@ import {
   MANUFACTURER_SAFE_LINK_RESCUE_NEXT_ACTIONS_MD_REL_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_ROADMAP_JSON_REL_V1,
 } from "./lib/manufacturer-safe-link-rescue-director-v1";
+import {
+  EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_DIRECTOR_V1,
+  refreshBuckpartsExecutionLedgerV1,
+} from "./lib/buckparts-execution-ledger-v1";
 
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), ".."));
 
@@ -46,6 +50,13 @@ function main(): void {
   process.stderr.write(
     `Wrote ${MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_JSON_REL_V1}, ${MANUFACTURER_SAFE_LINK_RESCUE_ROADMAP_JSON_REL_V1}, ${MANUFACTURER_SAFE_LINK_RESCUE_NEXT_ACTIONS_MD_REL_V1} (read-only; no mutation authorized).\n`,
   );
+
+  const ledger = refreshBuckpartsExecutionLedgerV1({
+    rootDir: REPO_ROOT,
+    trigger_source: EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_DIRECTOR_V1,
+  });
+  process.stderr.write(`Refreshed ${ledger.jsonRelPath} (execution ledger; read-only index).\n`);
+
   process.stdout.write(`${JSON.stringify({ director, roadmap }, null, 2)}\n`);
 
   if (director.contract !== MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CONTRACT_V1) {

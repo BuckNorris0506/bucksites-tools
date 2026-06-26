@@ -9,11 +9,16 @@ import {
 import {
   BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1,
   buildBuckpartsExecutionLedgerReportV1,
+  computeExecutionLedgerFreshnessV1,
+  EXECUTION_LEDGER_STALE_AFTER_MS_V1,
+  refreshBuckpartsExecutionLedgerV1,
+  resolveExecutionLedgerFreshnessV1,
 } from "./buckparts-execution-ledger-v1";
 import {
   capabilityLookupV1,
   capabilityTimelineV1,
   executionHistoryV1,
+  executionLedgerStatusV1,
   lastCompletedCapabilityV1,
 } from "./buckparts-mcp-execution-ledger-v1";
 
@@ -31,6 +36,8 @@ test("execution ledger indexes committed dispatch runs and batch closeouts", () 
   assert.ok(report.entry_count > 0);
   assert.ok(report.entries.length > 0);
   assert.ok(report.source_paths_read.length > 0);
+  assert.ok(report.freshness);
+  assert.equal(report.freshness.source_artifact_count, report.source_paths_read.length);
 
   const dispatchEntry = report.entries.find((entry) =>
     entry.operational_lane.startsWith("command_center_dispatch:"),
@@ -80,6 +87,8 @@ test("command center lane projects execution ledger read-only", () => {
   assert.ok(lane.entry_count > 0);
   assert.ok(lane.capability_timeline.length > 0);
   assert.ok(lane.last_completed_capability);
+  assert.equal(lane.freshness.freshness_status, "FRESH");
+  assert.ok(lane.freshness.source_artifact_count > 0);
 });
 
 test("command center unknown lane preserves read-only contract", () => {
@@ -116,4 +125,52 @@ test("MCP execution ledger tools project history and lookup", () => {
   const missing = capabilityLookupV1(deps, "definitely-not-a-real-capability-token");
   assert.equal(missing.truth_status, "UNKNOWN");
   assert.equal(missing.match_count, 0);
+});
+
+test("freshness marks ledger FRESH inside stale window and STALE after", () => {
+  const generatedAt = "2026-06-10T12:00:00.000Z";
+  const fresh = computeExecutionLedgerFreshnessV1({
+    generated_at: generatedAt,
+    source_artifact_count: 3,
+    now: () => new Date("2026-06-10T18:00:00.000Z"),
+    last_refresh_trigger_source: "test",
+  });
+  assert.equal(fresh.freshness_status, "FRESH");
+  assert.equal(fresh.source_artifact_count, 3);
+
+  const stale = computeExecutionLedgerFreshnessV1({
+    generated_at: generatedAt,
+    source_artifact_count: 3,
+    now: () => new Date(Date.parse(generatedAt) + EXECUTION_LEDGER_STALE_AFTER_MS_V1 + 1),
+    last_refresh_trigger_source: "test",
+  });
+  assert.equal(stale.freshness_status, "STALE");
+});
+
+test("refresh writes ledger artifact with trigger source provenance", () => {
+  const { report, jsonRelPath } = refreshBuckpartsExecutionLedgerV1({
+    rootDir: REPO_ROOT,
+    trigger_source: "unit-test-refresh",
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(jsonRelPath, "data/command-center/execution-ledger-v1.json");
+  assert.equal(report.freshness.last_refresh_trigger_source, "unit-test-refresh");
+  assert.equal(
+    resolveExecutionLedgerFreshnessV1(report, () => new Date("2026-06-10T12:00:00.000Z"))
+      .freshness_status,
+    "FRESH",
+  );
+});
+
+test("MCP execution_ledger_status returns freshness without refreshing", () => {
+  refreshBuckpartsExecutionLedgerV1({
+    rootDir: REPO_ROOT,
+    trigger_source: "unit-test-status",
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  const status = executionLedgerStatusV1({ rootDir: REPO_ROOT });
+  assert.equal(status.read_only, true);
+  assert.equal(status.truth_status, "PROVEN");
+  assert.equal(status.freshness.last_refresh_trigger_source, "unit-test-status");
+  assert.ok(status.provenance.entry_count > 0);
 });

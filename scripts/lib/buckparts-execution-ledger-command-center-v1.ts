@@ -5,11 +5,14 @@
 import {
   BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1,
   BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1,
-  buildBuckpartsExecutionLedgerReportV1,
+  EXECUTION_LEDGER_TRIGGER_COMMAND_CENTER_V1,
   loadBuckpartsExecutionLedgerReportV1,
+  refreshBuckpartsExecutionLedgerV1,
+  resolveExecutionLedgerFreshnessV1,
   type BuckpartsExecutionLedgerReportV1,
   type ExecutionLedgerCapabilityGroupV1,
   type ExecutionLedgerEntryV1,
+  type ExecutionLedgerFreshnessV1,
 } from "./buckparts-execution-ledger-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CC_LANE_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
@@ -32,6 +35,7 @@ export type BuckpartsExecutionLedgerCommandCenterLaneV1 = {
   capability_timeline: ExecutionLedgerCapabilityGroupV1[];
   last_completed_capability: ExecutionLedgerEntryV1 | null;
   source_paths_read: string[];
+  freshness: ExecutionLedgerFreshnessV1;
   inspect_summary: BuckpartsExecutionLedgerReportV1["inspect_summary"];
   recommended_next_action: string;
   proven_facts: string[];
@@ -41,13 +45,22 @@ export type BuckpartsExecutionLedgerCommandCenterLaneV1 = {
 export function buildBuckpartsExecutionLedgerCommandCenterLaneV1(args: {
   rootDir: string;
   now?: () => Date;
+  auto_refresh?: boolean;
+  trigger_source?: string;
 }): BuckpartsExecutionLedgerCommandCenterLaneV1 {
+  const triggerSource = args.trigger_source ?? EXECUTION_LEDGER_TRIGGER_COMMAND_CENTER_V1;
   const report =
-    loadBuckpartsExecutionLedgerReportV1({ rootDir: args.rootDir }) ??
-    buildBuckpartsExecutionLedgerReportV1({
-      rootDir: args.rootDir,
-      now: args.now,
-    });
+    args.auto_refresh === false
+      ? loadBuckpartsExecutionLedgerReportV1({ rootDir: args.rootDir })
+      : refreshBuckpartsExecutionLedgerV1({
+          rootDir: args.rootDir,
+          trigger_source: triggerSource,
+          now: args.now,
+        }).report;
+
+  if (!report) {
+    throw new Error("execution ledger artifact missing and auto_refresh=false");
+  }
 
   return {
     contract: BUCKPARTS_EXECUTION_LEDGER_CC_LANE_CONTRACT_V1,
@@ -64,6 +77,7 @@ export function buildBuckpartsExecutionLedgerCommandCenterLaneV1(args: {
     capability_timeline: report.capability_timeline,
     last_completed_capability: report.last_completed_capability,
     source_paths_read: report.source_paths_read,
+    freshness: resolveExecutionLedgerFreshnessV1(report, args.now),
     inspect_summary: report.inspect_summary,
     recommended_next_action: report.inspect_summary.recommended_next_action,
     proven_facts: report.proven_facts,
@@ -90,6 +104,13 @@ export function buildBuckpartsExecutionLedgerCommandCenterLaneUnknownV1(args: {
     capability_timeline: [],
     last_completed_capability: null,
     source_paths_read: [],
+    freshness: {
+      last_generated_at: args.generated_at,
+      source_artifact_count: 0,
+      stale_after: "UNKNOWN",
+      freshness_status: "UNKNOWN",
+      last_refresh_trigger_source: "UNKNOWN",
+    },
     inspect_summary: {
       recommended_jq_paths: {
         standalone_report: ".inspect_summary",

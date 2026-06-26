@@ -17,6 +17,10 @@ import {
   FRIDGE_BUYER_PATH_BATCH_CLOSEOUT_CANONICAL_REGISTRY_REL_V1,
   parseFridgeCloseoutWriterCliArgsV1,
 } from "./lib/fridge-buyer-path-batch-run-registry-closeout-v1";
+import {
+  EXECUTION_LEDGER_TRIGGER_RUN_REGISTRY_CLOSEOUT_V1,
+  refreshBuckpartsExecutionLedgerV1,
+} from "./lib/buckparts-execution-ledger-v1";
 
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), ".."));
 
@@ -42,6 +46,13 @@ function main(): void {
     writeFileSync(abs, `${JSON.stringify(assessment.closed_doc, null, 2)}\n`, "utf8");
     payload.registry_written = true;
     payload.registry_out = FRIDGE_BUYER_PATH_BATCH_CLOSEOUT_CANONICAL_REGISTRY_REL_V1;
+
+    const ledger = refreshBuckpartsExecutionLedgerV1({
+      rootDir: REPO_ROOT,
+      trigger_source: EXECUTION_LEDGER_TRIGGER_RUN_REGISTRY_CLOSEOUT_V1,
+    });
+    payload.execution_ledger_refreshed = ledger.jsonRelPath;
+    process.stderr.write(`Refreshed ${ledger.jsonRelPath} (execution ledger; read-only index).\n`);
   }
 
   process.stdout.write(`${JSON.stringify(payload, null, 2)}\n`);

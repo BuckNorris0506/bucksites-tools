@@ -29,6 +29,7 @@ import {
   capabilityTimelineV1,
   commandCenterSummaryV1,
   executionHistoryV1,
+  executionLedgerStatusV1,
   laneStatusV1,
   lastCompletedCapabilityV1,
   nextBestActionV1,
@@ -55,7 +56,7 @@ function toolResult(payload: unknown) {
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.6.0",
+    version: "0.6.1",
   },
   {
     instructions:
@@ -385,6 +386,18 @@ server.registerTool(
   },
   async ({ commit_or_name }) =>
     toolResult(capabilityLookupV1({ rootDir: REPO_ROOT }, commit_or_name)),
+);
+
+server.registerTool(
+  "execution_ledger_status",
+  {
+    title: "Execution ledger status (read-only)",
+    description:
+      "Freshness metadata and provenance for the committed execution ledger index. Does not refresh or mutate artifacts.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(executionLedgerStatusV1({ rootDir: REPO_ROOT })),
 );
 
 async function main(): Promise<void> {

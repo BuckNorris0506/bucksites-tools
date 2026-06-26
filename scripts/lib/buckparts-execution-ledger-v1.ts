@@ -22,6 +22,36 @@ export const BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1 =
 export const BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1 =
   "npm run buckparts:execution-ledger" as const;
 
+export const EXECUTION_LEDGER_STALE_AFTER_MS_V1 = 24 * 60 * 60 * 1000;
+
+export const EXECUTION_LEDGER_TRIGGER_COMMAND_CENTER_V1 =
+  "npm run buckparts:command-center" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_ORCHESTRATOR_V1 =
+  "npm run buckparts:manufacturer-safe-link-rescue-orchestrator" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_DIRECTOR_V1 =
+  "npm run buckparts:manufacturer-safe-link-rescue-director" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_RUNNER_V1 =
+  "npm run buckparts:manufacturer-safe-link-rescue-runner" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1 =
+  "npm run buckparts:repo-runtime-convergence:check" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_RUN_REGISTRY_CLOSEOUT_V1 =
+  "npm run buckparts:fridge-buyer-path-batch-run-registry-closeout" as const;
+
+export type ExecutionLedgerFreshnessStatusV1 = "FRESH" | "STALE" | "UNKNOWN";
+
+export type ExecutionLedgerFreshnessV1 = {
+  last_generated_at: string;
+  source_artifact_count: number;
+  stale_after: string;
+  freshness_status: ExecutionLedgerFreshnessStatusV1;
+  last_refresh_trigger_source: string | "UNKNOWN";
+};
+
 export type ExecutionLedgerSafeToCommitStatusV1 =
   | "SAFE_TO_COMMIT"
   | "NOT_SAFE_TO_COMMIT"
@@ -75,6 +105,7 @@ export type BuckpartsExecutionLedgerReportV1 = {
   };
   proven_facts: string[];
   unknown_facts: string[];
+  freshness: ExecutionLedgerFreshnessV1;
 };
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -347,6 +378,13 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
   const capability_timeline = buildCapabilityTimeline(entries);
   const last_completed_capability = entries[0] ?? null;
 
+  const freshness = computeExecutionLedgerFreshnessV1({
+    generated_at: now().toISOString(),
+    source_artifact_count: sourcePaths.size,
+    now: args.now,
+    last_refresh_trigger_source: "UNKNOWN",
+  });
+
   return {
     contract: BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1,
     read_only: true,
@@ -380,7 +418,86 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
       "UNKNOWN: safe_to_commit_status unless future source artifacts include explicit verdict fields.",
       "UNKNOWN: live git remote parity for entries without committed push attestations.",
     ],
+    freshness,
   };
+}
+
+export function computeExecutionLedgerFreshnessV1(args: {
+  generated_at: string;
+  source_artifact_count: number;
+  now?: () => Date;
+  last_refresh_trigger_source?: string;
+}): ExecutionLedgerFreshnessV1 {
+  const now = args.now ?? (() => new Date());
+  const generatedMs = Date.parse(args.generated_at);
+  if (!Number.isFinite(generatedMs)) {
+    return {
+      last_generated_at: args.generated_at,
+      source_artifact_count: args.source_artifact_count,
+      stale_after: "UNKNOWN",
+      freshness_status: "UNKNOWN",
+      last_refresh_trigger_source: args.last_refresh_trigger_source ?? "UNKNOWN",
+    };
+  }
+  const staleAfterMs = generatedMs + EXECUTION_LEDGER_STALE_AFTER_MS_V1;
+  const stale_after = new Date(staleAfterMs).toISOString();
+  const freshness_status: ExecutionLedgerFreshnessStatusV1 =
+    now().getTime() < staleAfterMs ? "FRESH" : "STALE";
+  return {
+    last_generated_at: args.generated_at,
+    source_artifact_count: args.source_artifact_count,
+    stale_after,
+    freshness_status,
+    last_refresh_trigger_source: args.last_refresh_trigger_source ?? "UNKNOWN",
+  };
+}
+
+export function resolveExecutionLedgerFreshnessV1(
+  report: BuckpartsExecutionLedgerReportV1,
+  now?: () => Date,
+): ExecutionLedgerFreshnessV1 {
+  if (report.freshness) {
+    const recomputed = computeExecutionLedgerFreshnessV1({
+      generated_at: report.freshness.last_generated_at,
+      source_artifact_count: report.freshness.source_artifact_count,
+      now,
+      last_refresh_trigger_source: report.freshness.last_refresh_trigger_source,
+    });
+    return {
+      ...report.freshness,
+      stale_after: recomputed.stale_after,
+      freshness_status: recomputed.freshness_status,
+    };
+  }
+  return computeExecutionLedgerFreshnessV1({
+    generated_at: report.generated_at,
+    source_artifact_count: report.source_paths_read.length,
+    now,
+    last_refresh_trigger_source: "UNKNOWN",
+  });
+}
+
+export function refreshBuckpartsExecutionLedgerV1(args: {
+  rootDir: string;
+  trigger_source: string;
+  now?: () => Date;
+}): { report: BuckpartsExecutionLedgerReportV1; jsonRelPath: string } {
+  const now = args.now ?? (() => new Date());
+  const report = buildBuckpartsExecutionLedgerReportV1({ rootDir: args.rootDir, now });
+  const reportWithFreshness: BuckpartsExecutionLedgerReportV1 = {
+    ...report,
+    freshness: computeExecutionLedgerFreshnessV1({
+      generated_at: report.generated_at,
+      source_artifact_count: report.source_paths_read.length,
+      now: args.now,
+      last_refresh_trigger_source: args.trigger_source,
+    }),
+  };
+  const written = writeBuckpartsExecutionLedgerArtifactsV1({
+    rootDir: args.rootDir,
+    report: reportWithFreshness,
+  });
+  return { report: reportWithFreshness, jsonRelPath: written.jsonRelPath };
 }
 
 export function loadBuckpartsExecutionLedgerReportV1(args: {

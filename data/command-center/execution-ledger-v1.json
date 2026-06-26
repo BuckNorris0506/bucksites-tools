@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-26T04:04:45.601Z",
+  "generated_at": "2026-06-10T12:00:00.000Z",
   "source_command": "npm run buckparts:execution-ledger",
   "entry_count": 5,
   "entries": [
@@ -319,5 +319,12 @@
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
     "UNKNOWN: safe_to_commit_status unless future source artifacts include explicit verdict fields.",
     "UNKNOWN: live git remote parity for entries without committed push attestations."
-  ]
+  ],
+  "freshness": {
+    "last_generated_at": "2026-06-10T12:00:00.000Z",
+    "source_artifact_count": 10,
+    "stale_after": "2026-06-11T12:00:00.000Z",
+    "freshness_status": "FRESH",
+    "last_refresh_trigger_source": "unit-test-status"
+  }
 }

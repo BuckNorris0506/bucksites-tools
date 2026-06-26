@@ -10,8 +10,10 @@ import {
   BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1,
   buildBuckpartsExecutionLedgerReportV1,
   loadBuckpartsExecutionLedgerReportV1,
+  resolveExecutionLedgerFreshnessV1,
   type BuckpartsExecutionLedgerReportV1,
   type ExecutionLedgerEntryV1,
+  type ExecutionLedgerFreshnessV1,
 } from "./buckparts-execution-ledger-v1";
 
 type McpReadOnlyEnvelopeV1 = {
@@ -261,6 +263,71 @@ export function capabilityLookupV1(
       matches.length > 0
         ? `Matched ${String(matches.length)} ledger entry(ies) for token "${lookupToken}".`
         : `UNKNOWN — no ledger entries match "${lookupToken}".`,
+  };
+}
+
+export function executionLedgerStatusV1(deps: BuckPartsMcpDepsV1): ReturnType<typeof envelope> & {
+  truth_status: "PROVEN" | "UNKNOWN";
+  source: LedgerLoadSourceV1 | "UNKNOWN";
+  ledger_artifact_path: typeof BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1;
+  command_center_jq_path: typeof EXECUTION_LEDGER_CC_JQ_PATH_V1;
+  freshness: ExecutionLedgerFreshnessV1;
+  provenance: {
+    entry_count: number;
+    source_paths_read: string[];
+    last_completed_capability_entry_id: string | null;
+    source_command: typeof BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1;
+  };
+  repo_paths_read: string[];
+  truth_note: string;
+} {
+  const loaded = loadLedgerForMcp(deps);
+  if (!loaded.ok) {
+    return {
+      ...envelope(),
+      truth_status: "UNKNOWN",
+      source: "UNKNOWN",
+      ledger_artifact_path: BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1,
+      command_center_jq_path: EXECUTION_LEDGER_CC_JQ_PATH_V1,
+      freshness: {
+        last_generated_at: "UNKNOWN",
+        source_artifact_count: 0,
+        stale_after: "UNKNOWN",
+        freshness_status: "UNKNOWN",
+        last_refresh_trigger_source: "UNKNOWN",
+      },
+      provenance: {
+        entry_count: 0,
+        source_paths_read: loaded.repo_paths_read,
+        last_completed_capability_entry_id: null,
+        source_command: BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1,
+      },
+      repo_paths_read: loaded.repo_paths_read,
+      truth_note: loaded.truth_note,
+    };
+  }
+
+  const freshness = resolveExecutionLedgerFreshnessV1(loaded.report);
+
+  return {
+    ...envelope(),
+    truth_status: "PROVEN",
+    source: loaded.source,
+    ledger_artifact_path: BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1,
+    command_center_jq_path: EXECUTION_LEDGER_CC_JQ_PATH_V1,
+    freshness,
+    provenance: {
+      entry_count: loaded.report.entry_count,
+      source_paths_read: loaded.report.source_paths_read,
+      last_completed_capability_entry_id:
+        loaded.report.last_completed_capability?.entry_id ?? null,
+      source_command: BUCKPARTS_EXECUTION_LEDGER_SOURCE_COMMAND_V1,
+    },
+    repo_paths_read: loaded.repo_paths_read,
+    truth_note:
+      loaded.source === "committed_artifact"
+        ? `Ledger freshness=${freshness.freshness_status}; last refresh via ${freshness.last_refresh_trigger_source}.`
+        : `Live derived ledger (no committed artifact). freshness=${freshness.freshness_status}.`,
   };
 }
 

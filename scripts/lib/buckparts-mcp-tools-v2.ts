@@ -645,5 +645,6 @@ export {
   capabilityLookupV1,
   capabilityTimelineV1,
   executionHistoryV1,
+  executionLedgerStatusV1,
   lastCompletedCapabilityV1,
 } from "./buckparts-mcp-execution-ledger-v1";

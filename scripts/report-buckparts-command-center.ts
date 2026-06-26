@@ -2076,6 +2076,7 @@ export async function buildBuckpartsCommandCenterReport(
     execution_ledger_v1 = buildBuckpartsExecutionLedgerCommandCenterLaneV1({
       rootDir,
       now,
+      trigger_source: "npm run buckparts:command-center",
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
