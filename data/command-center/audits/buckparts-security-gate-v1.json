@@ -1,0 +1,595 @@
+{
+  "contract": "buckparts_security_gate_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "supabase_mutation_authorized": false,
+  "deploy_authorized": false,
+  "evidence_write_authorized": true,
+  "dependency_upgrade_authorized": false,
+  "secret_generation_authorized": false,
+  "automatic_fix_authorized": false,
+  "generated_at": "2026-06-26T17:17:08.904Z",
+  "source_command": "npm run buckparts:security-gate",
+  "overall_status": "WARN",
+  "deploy_readiness": "SAFE",
+  "safe_to_commit_verdict": "SAFE_TO_COMMIT",
+  "check_count": 16,
+  "checks": [
+    {
+      "check_id": "secret_in_tracked_files",
+      "category": "secret_exposure",
+      "status": "PASS",
+      "severity": "critical",
+      "evaluation_layer": "repo_static",
+      "evidence": [],
+      "notes": "No high-signal secret patterns in tracked text files (tests/docs/binary paths excluded).",
+      "remediation_hint": "Remove secrets from git history; rotate exposed credentials; use env vars server-side only."
+    },
+    {
+      "check_id": "secret_in_committed_env_files",
+      "category": "secret_exposure",
+      "status": "PASS",
+      "severity": "critical",
+      "evaluation_layer": "repo_static",
+      "evidence": [],
+      "notes": "No .env / .env.local / .env.production files are git-tracked.",
+      "remediation_hint": "Untrack env files, add to .gitignore, rotate any exposed values."
+    },
+    {
+      "check_id": "secret_in_data_artifacts",
+      "category": "secret_exposure",
+      "status": "PASS",
+      "severity": "high",
+      "evaluation_layer": "repo_static",
+      "evidence": [],
+      "notes": "No high-signal secret patterns in data/**/*.json artifacts.",
+      "remediation_hint": "Redact or remove credential-shaped values from committed data artifacts."
+    },
+    {
+      "check_id": "dangerous_env_in_next_config",
+      "category": "env_leakage",
+      "status": "PASS",
+      "severity": "critical",
+      "evaluation_layer": "repo_static",
+      "evidence": [],
+      "notes": "next.config.mjs does not map non-NEXT_PUBLIC server secrets into client env.",
+      "remediation_hint": "Remove server secrets from next.config env/client exposure; keep SERVICE_ROLE server-only."
+    },
+    {
+      "check_id": "next_public_surface_audit",
+      "category": "client_bundle",
+      "status": "PASS",
+      "severity": "medium",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "env_var_name",
+          "ref": "src/",
+          "detail": "NEXT_PUBLIC_GA_MEASUREMENT_ID"
+        },
+        {
+          "kind": "env_var_name",
+          "ref": "src/",
+          "detail": "NEXT_PUBLIC_GROW_FAVES_SITE_ID"
+        },
+        {
+          "kind": "env_var_name",
+          "ref": "src/",
+          "detail": "NEXT_PUBLIC_SITE_NAME"
+        },
+        {
+          "kind": "env_var_name",
+          "ref": "src/",
+          "detail": "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+        },
+        {
+          "kind": "env_var_name",
+          "ref": "src/",
+          "detail": "NEXT_PUBLIC_SUPABASE_URL"
+        }
+      ],
+      "notes": "All 5 NEXT_PUBLIC_* reference(s) in src/ match allowlist.",
+      "remediation_hint": "Document new NEXT_PUBLIC keys in security gate allowlist only when intentionally public."
+    },
+    {
+      "check_id": "security_headers_repo_config",
+      "category": "http_headers",
+      "status": "WARN",
+      "severity": "medium",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "next.config.mjs",
+          "detail": "config file present"
+        },
+        {
+          "kind": "file_path",
+          "ref": "netlify.toml",
+          "detail": "config file present"
+        }
+      ],
+      "notes": "No security headers configuration found in next.config.mjs, netlify.toml, or middleware.",
+      "remediation_hint": "Add CSP/HSTS/X-Frame-Options via Next headers() or Netlify [[headers]] (separate hardening slice)."
+    },
+    {
+      "check_id": "public_api_rate_limit",
+      "category": "rate_limiting",
+      "status": "WARN",
+      "severity": "medium",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "route",
+          "ref": "src/app/api/search/route.ts",
+          "detail": "no rate limit detected"
+        }
+      ],
+      "notes": "/api/search has no application-level rate limit (observation only).",
+      "remediation_hint": "Add rate limiting middleware for public API routes (future slice)."
+    },
+    {
+      "check_id": "api_route_inventory",
+      "category": "public_api",
+      "status": "PASS",
+      "severity": "low",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "route",
+          "ref": "src/app/air-purifier/go/[linkId]/route.ts",
+          "detail": "route handler"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/api/search/route.ts",
+          "detail": "public API route"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/appliance-air/go/[linkId]/route.ts",
+          "detail": "route handler"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/go/[linkId]/route.ts",
+          "detail": "route handler"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/humidifier/go/[linkId]/route.ts",
+          "detail": "route handler"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/vacuum/go/[linkId]/route.ts",
+          "detail": "route handler"
+        },
+        {
+          "kind": "route",
+          "ref": "src/app/whole-house-water/go/[linkId]/route.ts",
+          "detail": "route handler"
+        }
+      ],
+      "notes": "7 Next.js route handler(s) inventoried under src/app.",
+      "remediation_hint": "Review new route.ts files for auth boundaries before exposing externally."
+    },
+    {
+      "check_id": "api_error_leakage",
+      "category": "public_api",
+      "status": "WARN",
+      "severity": "low",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "src/app/api/search/route.ts",
+          "detail": "500 JSON includes raw Error.message"
+        }
+      ],
+      "notes": "Search API may return internal error messages in JSON 500 responses.",
+      "remediation_hint": "Return generic 500 messages to clients; log details server-side only."
+    },
+    {
+      "check_id": "owner_dashboard_secret_gate",
+      "category": "owner_dashboard",
+      "status": "PASS",
+      "severity": "high",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "src/app/ownerdashboard/[secret]/page.tsx",
+          "detail": "OWNER_DASHBOARD_SECRET=true"
+        },
+        {
+          "kind": "file_path",
+          "ref": "src/app/ownerdashboard/[secret]/page.tsx",
+          "detail": "constantTimeSecretMatch=true"
+        },
+        {
+          "kind": "file_path",
+          "ref": "src/app/ownerdashboard/[secret]/page.tsx",
+          "detail": "notFound()=true"
+        }
+      ],
+      "notes": "Owner dashboard uses secret env gate with constant-time compare and notFound() on mismatch.",
+      "remediation_hint": "Require OWNER_DASHBOARD_SECRET and constant-time compare; return 404 on mismatch."
+    },
+    {
+      "check_id": "mcp_read_only_annotations",
+      "category": "mcp_boundaries",
+      "status": "PASS",
+      "severity": "high",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool check_replacement_fit annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool checkReplacementFit annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool getFilter annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool getModel annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool searchParts annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool getSafeBuyerPath annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool getCoverageMetrics annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool getTruthPolicy annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_status annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_cohort annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_browser_proof_status annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_next_action annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_runner_board annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_slug_state annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool manufacturer_rescue_blockers annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool command_center_summary annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool next_best_action annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool work_queue annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool lane_status annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool business_snapshot annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool execution_history annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool last_completed_capability annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool capability_timeline annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool capability_lookup annotations=READ_ONLY_ANNOTATIONS"
+        },
+        {
+          "kind": "file_path",
+          "ref": "mcp/buckparts-truth/server.ts",
+          "detail": "tool execution_ledger_status annotations=READ_ONLY_ANNOTATIONS"
+        }
+      ],
+      "notes": "25 MCP tool registration(s) use read-only annotations.",
+      "remediation_hint": "Set READ_ONLY_ANNOTATIONS on every buckparts-truth MCP tool."
+    },
+    {
+      "check_id": "mcp_mutation_tool_present",
+      "category": "mcp_boundaries",
+      "status": "PASS",
+      "severity": "critical",
+      "evaluation_layer": "repo_static",
+      "evidence": [],
+      "notes": "No MCP mutation tools detected in buckparts-truth server.",
+      "remediation_hint": "Remove or annotate mutation MCP tools; buckparts-truth must stay read-only."
+    },
+    {
+      "check_id": "npm_audit_critical_high",
+      "category": "dependencies",
+      "status": "FAIL",
+      "severity": "high",
+      "evaluation_layer": "dependency",
+      "evidence": [
+        {
+          "kind": "command_output",
+          "ref": "npm audit --json",
+          "detail": "critical=0; high=6"
+        }
+      ],
+      "notes": "npm audit reports critical=0, high=6.",
+      "remediation_hint": "Review npm audit output; remediate in a dedicated dependency slice (gate does not auto-fix)."
+    },
+    {
+      "check_id": "netlify_build_enforce_chain",
+      "category": "deploy_safety",
+      "status": "PASS",
+      "severity": "high",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "netlify.toml",
+          "detail": "convergence_check=true"
+        },
+        {
+          "kind": "file_path",
+          "ref": "netlify.toml",
+          "detail": "enforce_flag=true"
+        },
+        {
+          "kind": "file_path",
+          "ref": "netlify.toml",
+          "detail": "npm_run_build=true"
+        }
+      ],
+      "notes": "Netlify build runs repo-runtime-convergence:check --enforce before npm run build.",
+      "remediation_hint": "Keep buckparts:repo-runtime-convergence:check -- --enforce && npm run build in netlify.toml."
+    },
+    {
+      "check_id": "ship_guard_available",
+      "category": "deploy_safety",
+      "status": "PASS",
+      "severity": "low",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "package.json",
+          "detail": "npm run buckparts:ship-guard"
+        }
+      ],
+      "notes": "Ship guard CLI available (npm run buckparts:ship-guard).",
+      "remediation_hint": "Restore buckparts:ship-guard for pre-push protected-file checks."
+    },
+    {
+      "check_id": "security_gate_in_build_chain",
+      "category": "deploy_safety",
+      "status": "WARN",
+      "severity": "low",
+      "evaluation_layer": "repo_static",
+      "evidence": [
+        {
+          "kind": "file_path",
+          "ref": "netlify.toml",
+          "detail": "not wired yet (slice 1)"
+        }
+      ],
+      "notes": "Security gate not yet wired into Netlify build/CI enforce chain (expected for slice 1).",
+      "remediation_hint": "Wire buckparts:security-gate --enforce into CI after slice 1 stabilizes."
+    }
+  ],
+  "category_rollups": {
+    "secret_exposure": {
+      "pass": 3,
+      "warn": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "env_leakage": {
+      "pass": 1,
+      "warn": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "client_bundle": {
+      "pass": 1,
+      "warn": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "http_headers": {
+      "pass": 0,
+      "warn": 1,
+      "fail": 0,
+      "unknown": 0
+    },
+    "rate_limiting": {
+      "pass": 0,
+      "warn": 1,
+      "fail": 0,
+      "unknown": 0
+    },
+    "public_api": {
+      "pass": 1,
+      "warn": 1,
+      "fail": 0,
+      "unknown": 0
+    },
+    "owner_dashboard": {
+      "pass": 1,
+      "warn": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "mcp_boundaries": {
+      "pass": 2,
+      "warn": 0,
+      "fail": 0,
+      "unknown": 0
+    },
+    "dependencies": {
+      "pass": 0,
+      "warn": 0,
+      "fail": 1,
+      "unknown": 0
+    },
+    "deploy_safety": {
+      "pass": 2,
+      "warn": 1,
+      "fail": 0,
+      "unknown": 0
+    }
+  },
+  "blockers": [
+    "npm_audit_critical_high:npm audit reports critical=0, high=6."
+  ],
+  "warnings": [
+    "security_headers_repo_config:No security headers configuration found in next.config.mjs, netlify.toml, or middleware.",
+    "public_api_rate_limit:/api/search has no application-level rate limit (observation only).",
+    "api_error_leakage:Search API may return internal error messages in JSON 500 responses.",
+    "security_gate_in_build_chain:Security gate not yet wired into Netlify build/CI enforce chain (expected for slice 1)."
+  ],
+  "proven_facts": [
+    "buckparts_security_gate_v1 is read-only; no CSV, Supabase, SQL, or production mutation.",
+    "Evaluated 16 security checks across repo_static and dependency layers.",
+    "overall_status=WARN; safe_to_commit_verdict=SAFE_TO_COMMIT.",
+    "Tracked files scanned for secrets: 1295 text candidate(s).",
+    "Route inventory: 7 handler(s)."
+  ],
+  "unknown_facts": [],
+  "source_paths_read": [
+    ".env.example",
+    ".eslintrc.json",
+    ".github/workflows/buckparts-daily-operator.yml",
+    ".github/workflows/buckparts-founder-digest.yml",
+    ".github/workflows/buckparts-runner-step.yml",
+    ".gitignore",
+    "README.md",
+    "audit-exports/README.md",
+    "audit-exports/buckparts-audit-2-business-report.md",
+    "audit-exports/buckparts-audit-2-top-10-projects.csv",
+    "audit-exports/buckparts-audit-2-top-25-findings.csv",
+    "buckparts-favicon-48.jpeg",
+    "buckparts-icon-180.png",
+    "buckparts-icon-512.png",
+    "buckparts-social-card-1200x630.png",
+    "content/help/how-often-to-replace-refrigerator-water-filter.md",
+    "content/help/how-to-find-refrigerator-model-number.md",
+    "content/help/reset-water-filter-light-frigidaire.md",
+    "content/help/reset-water-filter-light-ge.md",
+    "content/help/reset-water-filter-light-lg.md",
+    "content/help/reset-water-filter-light-samsung.md",
+    "content/help/reset-water-filter-light-whirlpool.md",
+    "data/EXPECTED_HEADERS.txt",
+    "data/affiliate/affiliate-application-tracker.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v2/ap-amazon-secondary-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v2/ap-blueair-catalog-identity-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v2/ap-levoit-oem-discovery-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v2/ap-oem-search-placeholder-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v2/manifest.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v3/ap-blueair-catalog-identity-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v3/ap-levoit-oem-discovery-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v3/ap-oem-search-placeholder-v1.json",
+    "data/air-purifier/batch-production/agent-packets-batch-v3/manifest.json",
+    "data/air-purifier/batch-production/agent-packets-demand-selected-v1/ap-demand-selected-oem-search-placeholder-v1.json",
+    "data/air-purifier/batch-production/agent-packets-demand-selected-v1/manifest.json",
+    "data/air-purifier/batch-production/agent-packets/ap-amazon-secondary-v1.json",
+    "data/air-purifier/batch-production/agent-packets/ap-blueair-catalog-identity-v1.json",
+    "data/air-purifier/batch-production/agent-packets/ap-levoit-oem-discovery-v1.json",
+    "data/air-purifier/batch-production/agent-packets/ap-oem-search-placeholder-v1.json",
+    "data/air-purifier/batch-production/agent-packets/manifest.json",
+    "data/air-purifier/batch-production/agent-results-batch-v2/ap-blueair-catalog-identity-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v2/ap-levoit-oem-discovery-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v2/ap-medify-ma-series-cohort-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v2/ap-oem-search-placeholder-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v2/archive/ap-amazon-secondary-v1-medify-duplicates-archived.json",
+    "data/air-purifier/batch-production/agent-results-batch-v3/ap-blueair-catalog-identity-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v3/ap-levoit-oem-discovery-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json",
+    "data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json",
+    "data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-alen-b75-mp-live-browser-v1.results.json",
+    "mcp/buckparts-truth/server.ts",
+    "netlify.toml",
+    "next.config.mjs",
+    "package.json",
+    "src/app/air-purifier/go/[linkId]/route.ts",
+    "src/app/api/search/route.ts",
+    "src/app/appliance-air/go/[linkId]/route.ts",
+    "src/app/go/[linkId]/route.ts",
+    "src/app/humidifier/go/[linkId]/route.ts",
+    "src/app/ownerdashboard/[secret]/page.tsx",
+    "src/app/vacuum/go/[linkId]/route.ts",
+    "src/app/whole-house-water/go/[linkId]/route.ts"
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "command_center": ".command_center_v2.buckparts_security_gate_v1",
+      "overall_status": ".overall_status",
+      "safe_to_commit_verdict": ".safe_to_commit_verdict",
+      "checks": ".checks",
+      "blockers": ".blockers"
+    },
+    "recommended_next_action": "Review WARN findings (headers, rate limits, API error leakage); hardening slices are separate from this gate."
+  }
+}
