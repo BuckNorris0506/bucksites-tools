@@ -106,6 +106,7 @@
     "buckparts:manufacturer-safe-link-rescue-orchestrator": "tsx scripts/report-manufacturer-safe-link-rescue-orchestrator-v1.ts",
     "buckparts:manufacturer-safe-link-rescue-director": "tsx scripts/report-manufacturer-safe-link-rescue-director-v1.ts",
     "buckparts:manufacturer-safe-link-rescue-runner": "tsx scripts/report-manufacturer-safe-link-rescue-runner-v1.ts",
+    "buckparts:manufacturer-safe-link-rescue-readiness-gate": "tsx scripts/report-manufacturer-safe-link-rescue-readiness-gate-v1.ts",
     "buckparts:execution-ledger": "tsx scripts/report-buckparts-execution-ledger-v1.ts",
     "buckparts:page-factory-preflight": "tsx scripts/report-buckparts-page-factory-preflight-v1.ts",
     "buckparts:samsung-haf-qin-wildcard-expansion-review": "tsx scripts/report-samsung-haf-qin-wildcard-expansion-review-v1.ts",

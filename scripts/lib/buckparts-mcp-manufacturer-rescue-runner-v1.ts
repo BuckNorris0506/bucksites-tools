@@ -130,6 +130,19 @@ export function projectManufacturerRescueNextActionV1(
       : null);
 
   if (!nextState) {
+    const pending = report.inspect_summary.top_pending_work_item;
+    if (pending) {
+      const pendingState = findSlugState(report, pending.filter_slug);
+      return {
+        action_mode: "NEXT_EXECUTABLE",
+        filter_slug: pending.filter_slug,
+        stage: pendingState?.stage ?? "UNKNOWN",
+        next_executable_action: pending.recommended_next_action,
+        ready_for_apply_slug: null,
+        ready_for_apply_enforced: true,
+        boardy_safety_rules: pendingState?.boardy_safety_rules ?? [],
+      };
+    }
     return {
       action_mode: "NO_EXECUTABLE",
       filter_slug: "UNKNOWN",
@@ -201,6 +214,7 @@ export type ManufacturerRescueNextActionResultV1 = McpReadOnlyEnvelopeV1 & {
   next_executable_action: string;
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
+  readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"] | null;
   boardy_safety_rules: ManufacturerRescueRunnerSlugStateV1["boardy_safety_rules"];
   coverage_unlocked: false;
   repo_paths_read: string[];
@@ -218,6 +232,7 @@ export type ManufacturerRescueRunnerBoardResultV1 = McpReadOnlyEnvelopeV1 & {
   orchestrator_generated_at: string | "UNKNOWN";
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
+  readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"] | null;
   remaining_opportunity: number | "UNKNOWN";
   stage_counts: Record<ManufacturerRescueRunnerStageV1, number> | Record<string, never>;
   execution_order: string[];
@@ -282,6 +297,7 @@ export function manufacturerRescueNextActionV1(
       next_executable_action: loaded.truth_note,
       ready_for_apply_slug: null,
       ready_for_apply_enforced: true,
+      readiness_gate_summary: null,
       boardy_safety_rules: [],
       coverage_unlocked: false,
       repo_paths_read: loaded.repo_paths_read,
@@ -308,6 +324,7 @@ export function manufacturerRescueNextActionV1(
     next_executable_action: next.next_executable_action,
     ready_for_apply_slug: next.ready_for_apply_slug,
     ready_for_apply_enforced: true,
+    readiness_gate_summary: report.readiness_gate_summary,
     boardy_safety_rules: next.boardy_safety_rules,
     coverage_unlocked: false,
     repo_paths_read: [
@@ -337,6 +354,7 @@ export function manufacturerRescueRunnerBoardV1(
       orchestrator_generated_at: "UNKNOWN",
       ready_for_apply_slug: null,
       ready_for_apply_enforced: true,
+      readiness_gate_summary: null,
       remaining_opportunity: "UNKNOWN",
       stage_counts: {},
       execution_order: [],
@@ -363,6 +381,7 @@ export function manufacturerRescueRunnerBoardV1(
     orchestrator_generated_at: report.orchestrator_generated_at,
     ready_for_apply_slug: report.ready_for_apply_slug,
     ready_for_apply_enforced: true,
+    readiness_gate_summary: report.readiness_gate_summary,
     remaining_opportunity: report.inspect_summary.remaining_opportunity,
     stage_counts: stageCountsFromReport(report),
     execution_order: report.execution_order,

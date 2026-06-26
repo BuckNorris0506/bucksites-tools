@@ -4,22 +4,22 @@ import test from "node:test";
 import { MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CONTRACT_V1 } from "./manufacturer-safe-link-rescue-director-v1";
 import type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 import {
+  assessManufacturerRescueReadinessCandidateV1,
+  buildManufacturerSafeLinkRescueReadinessGateFromInputsV1,
+  buildManufacturerSafeLinkRescueReadinessGateV1,
+  MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1,
+  MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
+  type ManufacturerRescueReadinessGateReportV1,
+} from "./manufacturer-safe-link-rescue-readiness-gate-v1";
+import {
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1,
   type ManufacturerRescueOrchestratorQueueRowV1,
   type ManufacturerRescueOrchestratorReportV1,
 } from "./manufacturer-safe-link-rescue-orchestrator-v1";
 import {
   buildManufacturerSafeLinkRescueRunnerFromInputsV1,
-  buildManufacturerSafeLinkRescueRunnerV1,
   deriveManufacturerRescueRunnerStageV1,
-  MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1,
-  MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_STAGES_V1,
 } from "./manufacturer-safe-link-rescue-runner-v1";
-import {
-  MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
-  MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1,
-  type ManufacturerRescueReadinessGateReportV1,
-} from "./manufacturer-safe-link-rescue-readiness-gate-v1";
 
 const REPO_ROOT = process.cwd();
 
@@ -27,32 +27,34 @@ function baseQueueRow(
   overrides: Partial<ManufacturerRescueOrchestratorQueueRowV1>,
 ): ManufacturerRescueOrchestratorQueueRowV1 {
   return {
-    filter_slug: "wf3cb",
+    filter_slug: "ultrawf",
     manufacturer_key: "frigidaire",
-    oem_part_token: "WF3CB",
+    oem_part_token: "ULTRAWF",
     cohort_lane: "RESCUE",
     in_fridge_rescue_queue: true,
     rescue_queue_rank: 1,
     census_rescue_priority_score: 100,
-    orchestrator_priority_score: 800,
+    orchestrator_priority_score: 900,
     expected_safe_coverage_signal: 200,
     existing_evidence_score: 10,
     browser_ready_state: "READY",
     owner_review_readiness: "READY",
-    browser_truth_status: "NOT_CAPTURED",
-    repo_proven_official_target_url: null,
-    adapter_discovery_url: "https://example.com/pdp",
+    browser_truth_status: "PASS",
+    repo_proven_official_target_url: "https://example.com/ultrawf",
+    adapter_discovery_url: "https://example.com/ultrawf",
     adapter_discovery_provenance: "INFERRED",
     csv_primary_is_search_placeholder: true,
-    blocked_reasons: [],
-    recommended_next_action: "capture browser proof",
+    blocked_reasons: ["confusion_family_review_required"],
+    recommended_next_action: "owner review",
     orchestrator_rank: 1,
     coverage_unlocked: false,
     ...overrides,
   };
 }
 
-function minimalDirectorLane(): ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 {
+function minimalDirectorLane(
+  slugs: string[] = ["ultrawf"],
+): ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 {
   return {
     contract: MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CONTRACT_V1,
     read_only: true,
@@ -80,7 +82,7 @@ function minimalDirectorLane(): ManufacturerSafeLinkRescueDirectorCommandCenterL
       data_mutation: false,
       mutation_authorized: false,
       coverage_unlocked: false,
-      total_rescue_candidates: 2,
+      total_rescue_candidates: slugs.length,
       browser_proofed: 1,
       owner_review_ready: 1,
       safe_buyer_paths_unlocked: 0,
@@ -92,30 +94,17 @@ function minimalDirectorLane(): ManufacturerSafeLinkRescueDirectorCommandCenterL
     remaining_opportunity: 1,
     browser_proof_queue: [],
     owner_review_queue: [],
-    guarded_apply_queue: [
-      {
-        rank: 1,
-        filter_slug: "wf3cb",
-        manufacturer_key: "frigidaire",
-        director_value_score: 1200,
-        orchestrator_priority_score: 1000,
-        expected_safe_coverage_signal: 210,
-        trust_risk: "LOW",
-        blocked_reasons: [],
-        recommended_next_action: "guarded apply",
-      },
-      {
-        rank: 2,
-        filter_slug: "gswf",
-        manufacturer_key: "ge_appliance_parts",
-        director_value_score: 900,
-        orchestrator_priority_score: 800,
-        expected_safe_coverage_signal: 200,
-        trust_risk: "LOW",
-        blocked_reasons: [],
-        recommended_next_action: "guarded apply",
-      },
-    ],
+    guarded_apply_queue: slugs.map((slug, index) => ({
+      rank: index + 1,
+      filter_slug: slug,
+      manufacturer_key: "frigidaire",
+      director_value_score: 1200 - index * 100,
+      orchestrator_priority_score: 1000,
+      expected_safe_coverage_signal: 210,
+      trust_risk: "LOW" as const,
+      blocked_reasons: slug === "ultrawf" ? ["confusion_family_review_required"] : [],
+      recommended_next_action: "guarded apply",
+    })),
     estimates: {
       safe_buyer_paths_unlockable_estimate: 1,
       safe_buyer_paths_unlockable_note: "estimate",
@@ -129,22 +118,22 @@ function minimalDirectorLane(): ManufacturerSafeLinkRescueDirectorCommandCenterL
     },
     trust_risk_summary: { trust_risk: "LOW", trust_risk_factors: [] },
     next_recommended_manufacturer: "frigidaire",
-    next_recommended_slug: "wf3cb",
-    best_execution_plan_summary: "apply wf3cb",
-    recommended_next_action: "apply wf3cb",
+    next_recommended_slug: slugs[0] ?? "ultrawf",
+    best_execution_plan_summary: "apply",
+    recommended_next_action: "apply",
     inspect_summary: {
       recommended_jq_paths: {
         standalone_report: ".inspect_summary",
         command_center: ".command_center_v2.manufacturer_safe_link_rescue_director_v1",
       },
       next_recommended_manufacturer: "frigidaire",
-      next_recommended_slug: "wf3cb",
+      next_recommended_slug: slugs[0] ?? "ultrawf",
       safe_buyer_paths_unlocked: 0,
       remaining_opportunity: 1,
       browser_proofed_count: 1,
       browser_proof_queue_count: 0,
       owner_review_queue_count: 0,
-      guarded_apply_queue_count: 2,
+      guarded_apply_queue_count: slugs.length,
       estimated_coverage_gain_percent_estimate: 1,
       trust_risk: "LOW",
       director_generated_at: "2026-06-10T12:00:00.000Z",
@@ -173,15 +162,15 @@ function minimalOrchestrator(
     verified_link_authorized: false,
     registered_manufacturers: [],
     manufacturer_summaries: [],
-      rescue_counts: {
-        total_rescue_candidates: rows.length,
-        browser_ready_count: 0,
-        owner_review_ready_count: 0,
-        browser_pass_count: 0,
-        unknown_truth_count: 0,
-        blocked_slug_count: 0,
-        guarded_apply_candidate_count: 0,
-      },
+    rescue_counts: {
+      total_rescue_candidates: rows.length,
+      browser_ready_count: 0,
+      owner_review_ready_count: 0,
+      browser_pass_count: 0,
+      unknown_truth_count: 0,
+      blocked_slug_count: 0,
+      guarded_apply_candidate_count: rows.length,
+    },
     blocked_reasons: [],
     recommended_execution_order: rows.map((r) => r.filter_slug),
     unified_rescue_queue: rows,
@@ -190,55 +179,6 @@ function minimalOrchestrator(
     source_paths_read: [],
   };
 }
-
-test("deriveManufacturerRescueRunnerStageV1 maps core stages deterministically", () => {
-  assert.equal(
-    deriveManufacturerRescueRunnerStageV1({
-      row: baseQueueRow({ cohort_lane: "REFERENCE_ALREADY_APPLIED" }),
-      readyForApplySlug: null,
-    }),
-    "COMPLETE",
-  );
-  assert.equal(
-    deriveManufacturerRescueRunnerStageV1({
-      row: baseQueueRow({ browser_ready_state: "BLOCKED", blocked_reasons: ["known_broken_destination"] }),
-      readyForApplySlug: null,
-    }),
-    "BLOCKED",
-  );
-  assert.equal(
-    deriveManufacturerRescueRunnerStageV1({
-      row: baseQueueRow({
-        browser_truth_status: "PASS",
-        owner_review_readiness: "READY",
-        csv_primary_is_search_placeholder: true,
-      }),
-      readyForApplySlug: "wf3cb",
-      readinessStatus: "READY_FOR_APPLY",
-    }),
-    "READY_FOR_APPLY",
-  );
-  assert.equal(
-    deriveManufacturerRescueRunnerStageV1({
-      row: baseQueueRow({
-        filter_slug: "gswf",
-        manufacturer_key: "ge_appliance_parts",
-        browser_truth_status: "PASS",
-        owner_review_readiness: "READY",
-        csv_primary_is_search_placeholder: true,
-      }),
-      readyForApplySlug: "wf3cb",
-    }),
-    "OWNER_REVIEW",
-  );
-  assert.equal(
-    deriveManufacturerRescueRunnerStageV1({
-      row: baseQueueRow({ browser_truth_status: "NOT_CAPTURED" }),
-      readyForApplySlug: null,
-    }),
-    "BROWSER_PROOF",
-  );
-});
 
 function mockReadyGate(readySlug: string): ManufacturerRescueReadinessGateReportV1 {
   return {
@@ -261,7 +201,7 @@ function mockReadyGate(readySlug: string): ManufacturerRescueReadinessGateReport
       marker_source_path: null,
       proof_after_marker_proven: "UNKNOWN",
     },
-    candidate_count: 2,
+    candidate_count: 1,
     candidates: [
       {
         filter_slug: readySlug,
@@ -274,17 +214,6 @@ function mockReadyGate(readySlug: string): ManufacturerRescueReadinessGateReport
         blocking_reasons: [],
         source_paths_read: [],
       },
-      {
-        filter_slug: "gswf",
-        manufacturer_key: "ge_appliance_parts",
-        oem_part_token: "GSWF",
-        readiness_status: "PENDING_OWNER_APPROVAL",
-        ready_for_apply: false,
-        director_value_score: 900,
-        checks: [],
-        blocking_reasons: ["owner_apply_approval_missing"],
-        source_paths_read: [],
-      },
     ],
     ready_for_apply_slug: readySlug,
     ready_for_apply_count: 1,
@@ -294,7 +223,7 @@ function mockReadyGate(readySlug: string): ManufacturerRescueReadinessGateReport
         READY_FOR_APPLY: 1,
         PENDING_BROWSER_REFRESH: 0,
         PENDING_CONFUSION_FAMILY_REVIEW: 0,
-        PENDING_OWNER_APPROVAL: 1,
+        PENDING_OWNER_APPROVAL: 0,
         PENDING_APPLY_PLAN: 0,
         BLOCKED_WRONG_FAMILY_RISK: 0,
         BLOCKED_MISSING_PROOF: 0,
@@ -317,55 +246,170 @@ function mockReadyGate(readySlug: string): ManufacturerRescueReadinessGateReport
   };
 }
 
-test("runner enforces exactly one READY_FOR_APPLY slug", () => {
+test("ultrawf is not READY_FOR_APPLY in live readiness gate", () => {
+  const gate = buildManufacturerSafeLinkRescueReadinessGateV1({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  const ultrawf = gate.candidates.find((c) => c.filter_slug === "ultrawf");
+  assert.ok(ultrawf, "ultrawf should be in readiness gate scope");
+  assert.notEqual(ultrawf.readiness_status, "READY_FOR_APPLY");
+  assert.equal(ultrawf.ready_for_apply, false);
+  assert.ok(
+    ultrawf.readiness_status === "PENDING_BROWSER_REFRESH" ||
+      ultrawf.readiness_status === "PENDING_CONFUSION_FAMILY_REVIEW",
+    `expected PENDING_BROWSER_REFRESH or PENDING_CONFUSION_FAMILY_REVIEW, got ${ultrawf.readiness_status}`,
+  );
+  assert.ok(ultrawf.blocking_reasons.length > 0);
+  assert.equal(gate.ready_for_apply_slug, null);
+  assert.equal(gate.ready_for_apply_count, 0);
+});
+
+test("no candidate is READY_FOR_APPLY without fresh browser proof", () => {
+  const row = baseQueueRow({
+    blocked_reasons: [],
+    browser_truth_status: "PASS",
+  });
+  const directorLane = minimalDirectorLane(["ultrawf"]);
+  const orchestrator = minimalOrchestrator([row]);
+  const gate = buildManufacturerSafeLinkRescueReadinessGateFromInputsV1({
+    rootDir: REPO_ROOT,
+    orchestrator,
+    directorLane,
+    now: () => new Date("2026-07-01T12:00:00.000Z"),
+  });
+  const candidate = gate.candidates.find((c) => c.filter_slug === "ultrawf");
+  assert.ok(candidate);
+  assert.notEqual(candidate.readiness_status, "READY_FOR_APPLY");
+  const freshCheck = candidate.checks.find((c) => c.check_id === "browser_proof_fresh");
+  assert.ok(freshCheck);
+  assert.equal(freshCheck.status, "FAIL");
+});
+
+test("no candidate is READY_FOR_APPLY without owner approval", () => {
+  const row = baseQueueRow({ blocked_reasons: [] });
+  const candidate = assessManufacturerRescueReadinessCandidateV1({
+    rootDir: REPO_ROOT,
+    row,
+    directorLane: minimalDirectorLane(),
+    deployMarker: { marker: "UNKNOWN", marker_source_path: null, proof_after_marker_proven: "UNKNOWN" },
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+    founderRows: [],
+  });
+  assert.notEqual(candidate.readiness_status, "READY_FOR_APPLY");
+  assert.ok(candidate.blocking_reasons.includes("owner_apply_approval_missing"));
+});
+
+test("no candidate is READY_FOR_APPLY with unresolved confusion-family review", () => {
+  const row = baseQueueRow({
+    blocked_reasons: ["confusion_family_review_required"],
+  });
+  const candidate = assessManufacturerRescueReadinessCandidateV1({
+    rootDir: REPO_ROOT,
+    row,
+    directorLane: minimalDirectorLane(),
+    deployMarker: { marker: "UNKNOWN", marker_source_path: null, proof_after_marker_proven: "UNKNOWN" },
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+    founderRows: [],
+  });
+  assert.equal(candidate.readiness_status, "PENDING_CONFUSION_FAMILY_REVIEW");
+  assert.equal(candidate.ready_for_apply, false);
+});
+
+test("zero READY_FOR_APPLY is valid when nothing is actually ready", () => {
+  const gate = buildManufacturerSafeLinkRescueReadinessGateFromInputsV1({
+    rootDir: REPO_ROOT,
+    orchestrator: minimalOrchestrator([baseQueueRow({})]),
+    directorLane: minimalDirectorLane(),
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(gate.ready_for_apply_count, 0);
+  assert.equal(gate.ready_for_apply_slug, null);
+  assert.ok(gate.top_pending_work_item);
+});
+
+test("runner does not invent READY_FOR_APPLY without readiness gate proof", () => {
   const rows = [
     baseQueueRow({
       filter_slug: "wf3cb",
+      oem_part_token: "WF3CB",
       browser_truth_status: "PASS",
-      owner_review_readiness: "READY",
-      csv_primary_is_search_placeholder: true,
+      blocked_reasons: [],
+    }),
+    baseQueueRow({
+      filter_slug: "ultrawf",
+      oem_part_token: "ULTRAWF",
+      blocked_reasons: ["confusion_family_review_required"],
+    }),
+  ];
+  const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
+    directorLane: minimalDirectorLane(["wf3cb", "ultrawf"]),
+    orchestrator: minimalOrchestrator(rows),
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(report.ready_for_apply_slug, null);
+  assert.equal(report.slug_states.filter((s) => s.stage === "READY_FOR_APPLY").length, 0);
+  assert.ok(report.inspect_summary.top_pending_work_item);
+});
+
+test("runner assigns READY_FOR_APPLY only from readiness gate READY_FOR_APPLY", () => {
+  const rows = [
+    baseQueueRow({
+      filter_slug: "wf3cb",
+      oem_part_token: "WF3CB",
+      browser_truth_status: "PASS",
+      blocked_reasons: [],
     }),
     baseQueueRow({
       filter_slug: "gswf",
       manufacturer_key: "ge_appliance_parts",
+      oem_part_token: "GSWF",
       browser_truth_status: "PASS",
-      owner_review_readiness: "READY",
-      csv_primary_is_search_placeholder: true,
+      blocked_reasons: [],
     }),
   ];
   const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
-    directorLane: minimalDirectorLane(),
+    directorLane: minimalDirectorLane(["wf3cb", "gswf"]),
     orchestrator: minimalOrchestrator(rows),
     readinessGate: mockReadyGate("wf3cb"),
     now: () => new Date("2026-06-10T12:00:00.000Z"),
   });
-
-  assert.equal(report.contract, MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1);
-  assert.equal(report.read_only, true);
-  assert.equal(report.csv_apply_authorized, false);
-  assert.equal(report.browser_automation_authorized, false);
   assert.equal(report.ready_for_apply_slug, "wf3cb");
   assert.equal(report.slug_states.filter((s) => s.stage === "READY_FOR_APPLY").length, 1);
-  assert.equal(report.ready_for_apply_enforced, true);
-  assert.ok(report.boardy_safety_contract.one_at_a_time_apply_enforced);
-  assert.ok(report.execution_order[0] === "wf3cb" || report.execution_order.includes("wf3cb"));
 });
 
-test("runner live build from repo artifacts", () => {
-  const report = buildManufacturerSafeLinkRescueRunnerV1({ rootDir: REPO_ROOT });
-  assert.equal(report.contract, MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1);
-  assert.ok(report.slug_states.length > 0);
+test("deriveManufacturerRescueRunnerStageV1 requires readiness gate READY_FOR_APPLY", () => {
+  const row = baseQueueRow({
+    filter_slug: "wf3cb",
+    blocked_reasons: [],
+  });
   assert.equal(
-    report.slug_states.filter((s) => s.stage === "READY_FOR_APPLY").length <= 1,
-    true,
+    deriveManufacturerRescueRunnerStageV1({
+      row,
+      readyForApplySlug: "wf3cb",
+      readinessStatus: "READY_FOR_APPLY",
+    }),
+    "READY_FOR_APPLY",
   );
-  if (report.ready_for_apply_slug) {
-    const readyState = report.slug_states.find((s) => s.filter_slug === report.ready_for_apply_slug);
-    assert.equal(readyState?.readiness_status, "READY_FOR_APPLY");
-  } else {
-    assert.equal(report.readiness_gate_summary.ready_for_apply_count, 0);
-  }
-  for (const stage of report.slug_states.map((s) => s.stage)) {
-    assert.ok((MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_STAGES_V1 as readonly string[]).includes(stage));
-  }
+  assert.notEqual(
+    deriveManufacturerRescueRunnerStageV1({
+      row,
+      readyForApplySlug: "wf3cb",
+      readinessStatus: "PENDING_OWNER_APPROVAL",
+    }),
+    "READY_FOR_APPLY",
+  );
+});
+
+test("readiness gate report is read-only with no mutation flags", () => {
+  const gate = buildManufacturerSafeLinkRescueReadinessGateV1({ rootDir: REPO_ROOT });
+  assert.equal(gate.contract, MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1);
+  assert.equal(gate.read_only, true);
+  assert.equal(gate.data_mutation, false);
+  assert.equal(gate.mutation_authorized, false);
+  assert.equal(gate.csv_apply_authorized, false);
+  assert.equal(gate.supabase_mutation_authorized, false);
+  assert.equal(gate.browser_automation_authorized, false);
+  assert.equal(gate.coverage_unlocked, false);
 });

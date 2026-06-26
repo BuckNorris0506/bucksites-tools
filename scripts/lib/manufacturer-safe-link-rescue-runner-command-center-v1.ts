@@ -18,8 +18,8 @@ import {
   type ManufacturerRescueRunnerSlugStateV1,
   type ManufacturerRescueRunnerStageV1,
 } from "./manufacturer-safe-link-rescue-runner-v1";
+import type { ManufacturerRescueReadinessGateReportV1 } from "./manufacturer-safe-link-rescue-readiness-gate-v1";
 import { loadManufacturerRescueOrchestratorInputV1 } from "./manufacturer-safe-link-rescue-director-v1";
-import type { ManufacturerRescueOrchestratorReportV1 } from "./manufacturer-safe-link-rescue-orchestrator-v1";
 
 export const MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CC_LANE_CONTRACT_V1 =
   MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1;
@@ -41,6 +41,8 @@ export type ManufacturerSafeLinkRescueRunnerInspectSummaryV1 = {
   director_generated_at: string;
   orchestrator_generated_at: string;
   runner_generated_at: string;
+  readiness_gate_ready_for_apply_count: number;
+  top_pending_work_item: ManufacturerRescueReadinessGateReportV1["top_pending_work_item"];
 };
 
 export type ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 = {
@@ -63,6 +65,8 @@ export type ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 = {
   source_command: typeof MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_SOURCE_COMMAND_V1;
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
+  readiness_gate_artifact_path: string;
+  readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"];
   execution_order: string[];
   slug_states: ManufacturerRescueRunnerSlugStateV1[];
   manufacturer_workloads: ManufacturerRescueRunnerManufacturerWorkloadV1[];
@@ -114,6 +118,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromReport
     director_generated_at: report.director_generated_at,
     orchestrator_generated_at: report.orchestrator_generated_at,
     runner_generated_at: report.generated_at,
+    readiness_gate_ready_for_apply_count: report.inspect_summary.readiness_gate_ready_for_apply_count,
+    top_pending_work_item: report.inspect_summary.top_pending_work_item,
   };
 
   return {
@@ -136,6 +142,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromReport
     source_command: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_SOURCE_COMMAND_V1,
     ready_for_apply_slug: report.ready_for_apply_slug,
     ready_for_apply_enforced: true,
+    readiness_gate_artifact_path: report.readiness_gate_artifact_path,
+    readiness_gate_summary: report.readiness_gate_summary,
     execution_order: report.execution_order,
     slug_states: report.slug_states,
     manufacturer_workloads: report.manufacturer_workloads,
@@ -182,6 +190,22 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1(
     source_command: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_SOURCE_COMMAND_V1,
     ready_for_apply_slug: null,
     ready_for_apply_enforced: true,
+    readiness_gate_artifact_path:
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    readiness_gate_summary: {
+      ready_for_apply_count: 0,
+      by_status: {
+        READY_FOR_APPLY: 0,
+        PENDING_BROWSER_REFRESH: 0,
+        PENDING_CONFUSION_FAMILY_REVIEW: 0,
+        PENDING_OWNER_APPROVAL: 0,
+        PENDING_APPLY_PLAN: 0,
+        BLOCKED_WRONG_FAMILY_RISK: 0,
+        BLOCKED_MISSING_PROOF: 0,
+        UNKNOWN_READINESS: 0,
+      },
+      top_pending_work_item: null,
+    },
     execution_order: [],
     slug_states: [],
     manufacturer_workloads: [],
@@ -208,6 +232,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1(
       director_generated_at: "UNKNOWN",
       orchestrator_generated_at: "UNKNOWN",
       runner_generated_at: args.generated_at,
+      readiness_gate_ready_for_apply_count: 0,
+      top_pending_work_item: null,
     },
     recommended_next_action:
       "Restore manufacturer rescue director/orchestrator artifacts, then run npm run buckparts:manufacturer-safe-link-rescue-runner. Lane is read-only.",
@@ -248,7 +274,10 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromDirect
   const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
     directorLane: args.directorLane,
     orchestrator,
+    rootDir: args.rootDir,
     now: args.now,
+    fileExists: args.fileExists,
+    readTextFile: args.readTextFile,
   });
   return buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromReportV1({ report });
 }
