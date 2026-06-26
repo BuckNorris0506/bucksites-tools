@@ -1,0 +1,273 @@
+{
+  "contract": "manufacturer_safe_link_rescue_apply_plan_factory_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "generated_at": "2026-06-26T18:22:29.709Z",
+  "source_command": "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
+  "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
+  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
+  "browser_proof_max_age_days": 14,
+  "candidate_count": 26,
+  "ready_for_owner_review_count": 0,
+  "blocked_count": 26,
+  "apply_plans_written": [],
+  "slug_results": [
+    {
+      "filter_slug": "edr4rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "edr3rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "ultrawf",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "eptwfu01",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "wf3cb",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "wfcb",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_stale_or_invalid_timestamp"
+      ]
+    },
+    {
+      "filter_slug": "gswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "xwfe",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "4396508",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "frig-242086201",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "xwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "fppwfu01",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "gswf2",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "wf2cb",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "frig-242017801",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "opfg3f",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "frig-242294502",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "purepour",
+      "manufacturer_key": "frigidaire",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "w10413645a",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "mswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "pfmwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "4396842",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "ukf8001",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "4396395",
+      "manufacturer_key": "everydrop_whirlpool",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    },
+    {
+      "filter_slug": "mwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "browser_proof_missing_or_not_pass"
+      ]
+    }
+  ],
+  "inspect_summary": {
+    "recommended_next_action": "No READY_FOR_OWNER_REVIEW apply plans — resolve browser proof, confusion-family, or CSV blockers first.",
+    "readiness_gate_promotion_authority_note": "manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority — apply plans do not grant apply slots."
+  },
+  "proven_facts": [
+    "PROVEN: Factory is read-only — no CSV, Supabase, SQL, or production mutation authorized.",
+    "PROVEN: owner_approval_required=true on every apply plan artifact.",
+    "PROVEN: evaluated 26 orchestrator rescue row(s).",
+    "PROVEN: 0 apply plan(s) READY_FOR_OWNER_REVIEW.",
+    "PROVEN: Readiness Gate remains sole READY_FOR_APPLY promotion authority."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production buyer-path parity until post-apply census re-run."
+  ]
+}
