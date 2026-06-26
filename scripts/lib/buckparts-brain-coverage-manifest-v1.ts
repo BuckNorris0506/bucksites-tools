@@ -139,6 +139,24 @@ const CURATED_ENTRIES: EntrySeed[] = [
     notes: "visible to Brain/Command Center, no NBA override",
   },
   {
+    system_id: "manufacturer_browser_proof_factory_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-factory",
+    cc_json_path: "command_center_v2.manufacturer_browser_proof_factory_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-browser-proof-factory-v1.test.ts",
+    reason:
+      "Read-only batched browser proof capture planning; never auto-grants PASS_BROWSER_PROOF; feeds readiness gate and apply-plan factory.",
+    source: "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+    role: "manufacturer rescue browser proof evidence factory",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "Batches capture by manufacturer/strategy; owner review required for PASS verdicts",
+  },
+  {
     system_id: "manufacturer_safe_link_rescue_readiness_gate_v1",
     npm_script_or_path: "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
     cc_json_path:

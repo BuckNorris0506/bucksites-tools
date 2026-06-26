@@ -17,6 +17,10 @@ import {
   MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
 } from "./manufacturer-safe-link-rescue-readiness-gate-v1";
+import {
+  MANUFACTURER_BROWSER_PROOF_FACTORY_CONTRACT_V1,
+  MANUFACTURER_BROWSER_PROOF_FACTORY_JSON_REL_V1,
+} from "./manufacturer-browser-proof-factory-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
 
@@ -42,6 +46,9 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_RUNNER_V1 =
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_READINESS_GATE_V1 =
   "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_FACTORY_V1 =
+  "npm run buckparts:manufacturer-browser-proof-factory" as const;
 
 export const EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1 =
   "npm run buckparts:repo-runtime-convergence:check" as const;
@@ -360,6 +367,52 @@ function intakeCloseoutPackets(rootDir: string, sourcePaths: Set<string>): Execu
   }
 }
 
+function intakeManufacturerBrowserProofFactory(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_BROWSER_PROOF_FACTORY_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_BROWSER_PROOF_FACTORY_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const captureWork =
+      typeof parsed.capture_work_required_count === "number"
+        ? parsed.capture_work_required_count
+        : "UNKNOWN";
+    const batchCount = Array.isArray(parsed.capture_batches) ? parsed.capture_batches.length : 0;
+    const orchestratorAt = asString(parsed.orchestrator_generated_at) ?? "UNKNOWN";
+    return {
+      entry_id: `manufacturer_browser_proof_factory_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:browser_proof_factory",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `capture_work_required_count=${String(captureWork)}`,
+        `capture_batch_count=${String(batchCount)}`,
+        `orchestrator_generated_at=${orchestratorAt}`,
+        "auto_pass_forbidden=true",
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked:
+        captureWork === 0
+          ? "manufacturer browser proof factory indexed (no pending capture work)"
+          : "manufacturer browser proof batched capture queue produced (owner review required)",
+      superseded_by: null,
+      source_contract: MANUFACTURER_BROWSER_PROOF_FACTORY_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
 function intakeManufacturerRescueReadinessGate(
   rootDir: string,
   sourcePaths: Set<string>,
@@ -418,6 +471,10 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
     ...intakeCloseoutPackets(args.rootDir, sourcePaths),
     ...((): ExecutionLedgerEntryV1[] => {
       const entry = intakeManufacturerRescueReadinessGate(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerBrowserProofFactory(args.rootDir, sourcePaths);
       return entry ? [entry] : [];
     })(),
   ];

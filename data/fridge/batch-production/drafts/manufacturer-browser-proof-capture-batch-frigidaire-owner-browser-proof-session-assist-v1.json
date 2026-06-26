@@ -1,0 +1,32 @@
+{
+  "batch_id": "capture_batch_frigidaire_owner_browser_proof_session_assist",
+  "manufacturer_key": "frigidaire",
+  "capture_strategy": "owner_browser_proof_session_assist",
+  "source_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+  "slug_count": 10,
+  "filter_slugs": [
+    "eptwfu01",
+    "fppwfu01",
+    "frig-242017801",
+    "frig-242086201",
+    "frig-242294502",
+    "purepour",
+    "ultrawf",
+    "wf2cb",
+    "wf3cb",
+    "wfcb"
+  ],
+  "work_reasons": [
+    "proof stale checked_at=2026-06-05T20:00:00.000Z",
+    "owner_browser_proof_artifact_missing",
+    "proof stale checked_at=2026-06-06T02:00:00.000Z",
+    "proof stale checked_at=2026-06-05T12:00:00.000Z",
+    "proof stale checked_at=2026-06-06T00:00:00.000Z"
+  ],
+  "target_urls": [
+    "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+    "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+    "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB"
+  ]
+}

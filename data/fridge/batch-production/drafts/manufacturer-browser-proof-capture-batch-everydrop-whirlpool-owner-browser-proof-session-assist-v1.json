@@ -1,0 +1,25 @@
+{
+  "batch_id": "capture_batch_everydrop_whirlpool_owner_browser_proof_session_assist",
+  "manufacturer_key": "everydrop_whirlpool",
+  "capture_strategy": "owner_browser_proof_session_assist",
+  "source_command": "npm run buckparts:fridge-safe-link-owner-browser-proof-session (owner visual inspection required)",
+  "slug_count": 7,
+  "filter_slugs": [
+    "4396395",
+    "4396508",
+    "4396842",
+    "edr3rxd1",
+    "edr4rxd1",
+    "ukf8001",
+    "w10413645a"
+  ],
+  "work_reasons": [
+    "owner_browser_proof_artifact_missing",
+    "proof stale checked_at=2026-06-06T03:00:00.000Z",
+    "proof stale checked_at=2026-06-05T22:00:00.000Z"
+  ],
+  "target_urls": [
+    "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+    "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html"
+  ]
+}

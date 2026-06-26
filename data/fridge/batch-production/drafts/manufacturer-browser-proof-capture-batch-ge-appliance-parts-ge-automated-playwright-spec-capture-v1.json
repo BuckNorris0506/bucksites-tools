@@ -1,0 +1,30 @@
+{
+  "batch_id": "capture_batch_ge_appliance_parts_ge_automated_playwright_spec_capture",
+  "manufacturer_key": "ge_appliance_parts",
+  "capture_strategy": "ge_automated_playwright_spec_capture",
+  "source_command": "npm run buckparts:ge-refrigerator-rescue-capture -- --all",
+  "slug_count": 8,
+  "filter_slugs": [
+    "gswf",
+    "gswf2",
+    "mswf",
+    "opfg3f",
+    "pfmwf",
+    "smartwater-mwfp",
+    "xwf",
+    "xwfe"
+  ],
+  "work_reasons": [
+    "owner_browser_proof_artifact_missing"
+  ],
+  "target_urls": [
+    "https://www.geapplianceparts.com/store/parts/spec/GSWF",
+    "https://www.geapplianceparts.com/store/parts/spec/GSWF2",
+    "https://www.geapplianceparts.com/store/parts/spec/MSWF",
+    "https://www.geapplianceparts.com/store/parts/spec/OPFG3F",
+    "https://www.geapplianceparts.com/store/parts/spec/PFMWF",
+    "https://www.geapplianceparts.com/store/parts/spec/MWFP",
+    "https://www.geapplianceparts.com/store/parts/spec/XWF",
+    "https://www.geapplianceparts.com/store/parts/spec/XWFE"
+  ]
+}

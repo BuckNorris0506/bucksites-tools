@@ -262,6 +262,7 @@ export function buildCommandCenterV2Report(input: {
   | "whole_house_water_director_model_first_batch_v1"
   | "manufacturer_safe_link_rescue_director_v1"
   | "manufacturer_safe_link_rescue_runner_v1"
+  | "manufacturer_browser_proof_factory_v1"
   | "execution_ledger_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
