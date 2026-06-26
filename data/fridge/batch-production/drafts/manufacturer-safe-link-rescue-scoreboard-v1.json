@@ -1,0 +1,37 @@
+{
+  "contract": "manufacturer_safe_link_rescue_scoreboard_v1",
+  "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
+  "generated_at": "2026-06-26T02:10:46.330Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "coverage_unlocked": false,
+  "total_rescue_candidates": 26,
+  "browser_proofed": 6,
+  "owner_review_ready": 6,
+  "safe_buyer_paths_unlocked": 0,
+  "remaining_opportunity": 20,
+  "by_manufacturer": [
+    {
+      "manufacturer_key": "ge_appliance_parts",
+      "rescue_candidates": 9,
+      "browser_proofed": 0,
+      "owner_review_ready": 0,
+      "remaining_opportunity": 9
+    },
+    {
+      "manufacturer_key": "everydrop_whirlpool",
+      "rescue_candidates": 7,
+      "browser_proofed": 2,
+      "owner_review_ready": 2,
+      "remaining_opportunity": 5
+    },
+    {
+      "manufacturer_key": "frigidaire",
+      "rescue_candidates": 10,
+      "browser_proofed": 4,
+      "owner_review_ready": 4,
+      "remaining_opportunity": 6
+    }
+  ]
+}

@@ -102,6 +102,8 @@
     "buckparts:fridge-safe-link-batch-factory": "tsx scripts/report-fridge-safe-link-batch-factory-v1.ts",
     "buckparts:ge-refrigerator-rescue-adapter": "tsx scripts/report-ge-refrigerator-rescue-adapter-v1.ts --write-drafts",
     "buckparts:ge-refrigerator-rescue-capture": "tsx scripts/capture-ge-refrigerator-rescue-browser-evidence-v1.ts",
+    "buckparts:frigidaire-refrigerator-rescue-adapter": "tsx scripts/report-frigidaire-refrigerator-rescue-adapter-v1.ts",
+    "buckparts:manufacturer-safe-link-rescue-orchestrator": "tsx scripts/report-manufacturer-safe-link-rescue-orchestrator-v1.ts",
     "buckparts:page-factory-preflight": "tsx scripts/report-buckparts-page-factory-preflight-v1.ts",
     "buckparts:samsung-haf-qin-wildcard-expansion-review": "tsx scripts/report-samsung-haf-qin-wildcard-expansion-review-v1.ts",
     "buckparts:page-factory-evidence-clone": "tsx scripts/report-buckparts-page-factory-evidence-clone-v1.ts",
