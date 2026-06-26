@@ -144,6 +144,10 @@ import {
   buildManufacturerBrowserProofFactoryCommandCenterLaneV1,
 } from "./lib/manufacturer-browser-proof-factory-command-center-v1";
 import {
+  buildManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneUnknownV1,
+  buildManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1,
+} from "./lib/manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
+import {
   buildBuckpartsExecutionLedgerCommandCenterLaneUnknownV1,
   buildBuckpartsExecutionLedgerCommandCenterLaneV1,
 } from "./lib/buckparts-execution-ledger-command-center-v1";
@@ -1190,6 +1194,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
     | "manufacturer_browser_proof_factory_v1"
+    | "manufacturer_rescue_owner_approval_packet_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
@@ -1463,6 +1468,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
     | "manufacturer_browser_proof_factory_v1"
+    | "manufacturer_rescue_owner_approval_packet_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1617,6 +1623,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
     | "manufacturer_browser_proof_factory_v1"
+    | "manufacturer_rescue_owner_approval_packet_factory_v1"
     | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -2094,6 +2101,22 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let manufacturer_rescue_owner_approval_packet_factory_v1;
+  try {
+    manufacturer_rescue_owner_approval_packet_factory_v1 =
+      buildManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    manufacturer_rescue_owner_approval_packet_factory_v1 =
+      buildManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
   let execution_ledger_v1;
   try {
     execution_ledger_v1 = buildBuckpartsExecutionLedgerCommandCenterLaneV1({
@@ -2174,6 +2197,7 @@ export async function buildBuckpartsCommandCenterReport(
     manufacturer_safe_link_rescue_director_v1,
     manufacturer_safe_link_rescue_runner_v1,
     manufacturer_browser_proof_factory_v1,
+    manufacturer_rescue_owner_approval_packet_factory_v1,
     execution_ledger_v1,
   };
 

@@ -271,7 +271,7 @@ function proofObservationBlob(
 ): string {
   const parts: string[] = [];
   for (const row of artifact.owner_proof_urls ?? []) {
-    parts.push(row.url ?? "", row.assessment ?? "");
+    parts.push(row.url ?? "");
     for (const obs of row.proven_observations ?? []) parts.push(obs);
   }
   return parts.join("\n");
@@ -1046,4 +1046,22 @@ export function buildManufacturerSafeLinkRescueApplyPlanFactoryPlansV1(args: {
     orchestrator,
   });
   return { factory, plans };
+}
+
+export function loadManufacturerSafeLinkRescueApplyPlanFactoryReportV1(args: {
+  rootDir: string;
+  fileExists?: (abs: string) => boolean;
+  readText?: (abs: string) => string;
+}): ManufacturerRescueApplyPlanFactoryReportV1 | null {
+  const fileExists = args.fileExists ?? existsSync;
+  const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const abs = path.join(args.rootDir, MANUFACTURER_SAFE_LINK_RESCUE_APPLY_PLAN_FACTORY_JSON_REL_V1);
+  if (!fileExists(abs)) return null;
+  try {
+    const parsed = JSON.parse(readText(abs)) as ManufacturerRescueApplyPlanFactoryReportV1;
+    if (parsed.contract !== MANUFACTURER_SAFE_LINK_RESCUE_APPLY_PLAN_FACTORY_CONTRACT_V1) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
 }

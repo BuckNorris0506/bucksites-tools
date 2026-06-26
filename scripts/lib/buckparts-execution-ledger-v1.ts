@@ -21,6 +21,10 @@ import {
   MANUFACTURER_BROWSER_PROOF_FACTORY_CONTRACT_V1,
   MANUFACTURER_BROWSER_PROOF_FACTORY_JSON_REL_V1,
 } from "./manufacturer-browser-proof-factory-v1";
+import {
+  MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_CONTRACT_V1,
+  MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_JSON_REL_V1,
+} from "./manufacturer-rescue-owner-approval-packet-factory-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
 
@@ -49,6 +53,9 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_READINESS_GATE_V1 =
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_FACTORY_V1 =
   "npm run buckparts:manufacturer-browser-proof-factory" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_V1 =
+  "npm run buckparts:manufacturer-rescue-owner-approval-packet-factory" as const;
 
 export const EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1 =
   "npm run buckparts:repo-runtime-convergence:check" as const;
@@ -367,6 +374,51 @@ function intakeCloseoutPackets(rootDir: string, sourcePaths: Set<string>): Execu
   }
 }
 
+function intakeManufacturerRescueOwnerApprovalPacketFactory(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const cohortCount =
+      typeof parsed.approval_cohort_count === "number" ? parsed.approval_cohort_count : "UNKNOWN";
+    const readyCount =
+      typeof parsed.ready_for_owner_review_plan_count === "number"
+        ? parsed.ready_for_owner_review_plan_count
+        : "UNKNOWN";
+    return {
+      entry_id: `manufacturer_rescue_owner_approval_packet_factory_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:owner_approval_packet_factory",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `approval_cohort_count=${String(cohortCount)}`,
+        `ready_for_owner_review_plan_count=${String(readyCount)}`,
+        "auto_approval_forbidden=true",
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked:
+        cohortCount === 0
+          ? "manufacturer rescue owner approval packet factory indexed (no cohorts)"
+          : "manufacturer rescue owner approval cohort packets produced (founder decision required)",
+      superseded_by: null,
+      source_contract: MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_FACTORY_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
 function intakeManufacturerBrowserProofFactory(
   rootDir: string,
   sourcePaths: Set<string>,
@@ -475,6 +527,10 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
     })(),
     ...((): ExecutionLedgerEntryV1[] => {
       const entry = intakeManufacturerBrowserProofFactory(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerRescueOwnerApprovalPacketFactory(args.rootDir, sourcePaths);
       return entry ? [entry] : [];
     })(),
   ];

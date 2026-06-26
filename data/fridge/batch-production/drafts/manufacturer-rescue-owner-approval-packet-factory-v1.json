@@ -1,0 +1,42 @@
+{
+  "contract": "manufacturer_rescue_owner_approval_packet_factory_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "auto_approval_forbidden": true,
+  "readiness_gate_promotion_authorized": false,
+  "generated_at": "2026-06-26T19:18:34.418Z",
+  "source_command": "npm run buckparts:manufacturer-rescue-owner-approval-packet-factory",
+  "apply_plan_factory_contract": "manufacturer_safe_link_rescue_apply_plan_factory_v1",
+  "apply_plan_factory_generated_at": "2026-06-26T18:22:29.709Z",
+  "apply_plan_factory_artifact_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-factory-v1.json",
+  "ready_for_owner_review_plan_count": 0,
+  "approval_cohort_count": 0,
+  "batch_approval_eligible_cohort_count": 0,
+  "total_lanes_in_cohorts": 0,
+  "cohorts": [],
+  "skipped_non_ready_plan_count": 26,
+  "inspect_summary": {
+    "recommended_next_action": "No READY_FOR_OWNER_REVIEW apply plans — run apply-plan factory after fresh browser proof; resolve blockers first.",
+    "readiness_gate_owner_approval_note": "Readiness Gate owner_approval_exists check consumes founder_decision_registry rows — packets do not auto-satisfy that check.",
+    "apply_plan_factory_note": "Factory consumes manufacturer_safe_link_rescue_apply_plan_factory_v1 READY_FOR_OWNER_REVIEW outputs only."
+  },
+  "proven_facts": [
+    "PROVEN: Factory is read-only — no CSV, Supabase, SQL, or production mutation.",
+    "PROVEN: auto_approval_forbidden — no founder decisions written automatically.",
+    "PROVEN: grouped 0 READY_FOR_OWNER_REVIEW plan(s) into 0 approval cohort(s).",
+    "PROVEN: 0 cohort(s) batch-approval eligible.",
+    "PROVEN: Readiness Gate remains sole READY_FOR_APPLY promotion authority."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Live production buyer-path parity until post-apply census re-run."
+  ]
+}

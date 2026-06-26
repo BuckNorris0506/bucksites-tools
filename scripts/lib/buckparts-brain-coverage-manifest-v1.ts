@@ -139,6 +139,25 @@ const CURATED_ENTRIES: EntrySeed[] = [
     notes: "visible to Brain/Command Center, no NBA override",
   },
   {
+    system_id: "manufacturer_rescue_owner_approval_packet_factory_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-rescue-owner-approval-packet-factory",
+    cc_json_path: "command_center_v2.manufacturer_rescue_owner_approval_packet_factory_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-rescue-owner-approval-packet-factory-v1.test.ts",
+    reason:
+      "Read-only owner approval cohort packets from READY_FOR_OWNER_REVIEW apply plans; never auto-approves; feeds readiness gate owner_approval_exists.",
+    source:
+      "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
+    role: "manufacturer rescue owner approval packet factory",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: false,
+    notes: "Founder decision with owner_mutation_approved required before readiness gate promotion",
+  },
+  {
     system_id: "manufacturer_browser_proof_factory_v1",
     npm_script_or_path: "npm run buckparts:manufacturer-browser-proof-factory",
     cc_json_path: "command_center_v2.manufacturer_browser_proof_factory_v1",

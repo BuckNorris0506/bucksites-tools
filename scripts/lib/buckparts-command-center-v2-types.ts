@@ -11,6 +11,7 @@ import type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./frid
 import type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 import type { ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-runner-command-center-v1";
 import type { ManufacturerBrowserProofFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-factory-command-center-v1";
+import type { ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1 } from "./manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
 import type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
@@ -1060,6 +1061,8 @@ export type CommandCenterV2Report = {
   manufacturer_safe_link_rescue_runner_v1: ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1;
   /** Read-only manufacturer browser proof factory — batched capture planning; never auto-grants PASS browser proof. */
   manufacturer_browser_proof_factory_v1: ManufacturerBrowserProofFactoryCommandCenterLaneV1;
+  /** Read-only manufacturer rescue owner approval packet factory — batches READY_FOR_OWNER_REVIEW apply plans; never auto-approves. */
+  manufacturer_rescue_owner_approval_packet_factory_v1: ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1;
   /** Read-only execution ledger — completed operational work indexed from committed artifacts. */
   execution_ledger_v1: BuckpartsExecutionLedgerCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
@@ -1165,6 +1168,7 @@ export type { LargeBatchCoverageFactorySummaryV1 } from "./buckparts-large-batch
 export type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 export type { ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-runner-command-center-v1";
 export type { ManufacturerBrowserProofFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-factory-command-center-v1";
+export type { ManufacturerRescueOwnerApprovalPacketFactoryCommandCenterLaneV1 } from "./manufacturer-rescue-owner-approval-packet-factory-command-center-v1";
 export type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
 export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
@@ -1258,6 +1262,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "manufacturer_safe_link_rescue_director_v1"
   | "manufacturer_safe_link_rescue_runner_v1"
   | "manufacturer_browser_proof_factory_v1"
+  | "manufacturer_rescue_owner_approval_packet_factory_v1"
   | "execution_ledger_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
