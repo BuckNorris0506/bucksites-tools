@@ -5,10 +5,6 @@
 
 import type { BuckPartsMcpDepsV1 } from "./buckparts-mcp-truth-context-v1";
 import {
-  BUCKPARTS_MCP_TOOLS_CONTRACT_V2,
-  type McpToolEnvelopeV2,
-} from "./buckparts-mcp-tools-v2";
-import {
   loadManufacturerRescueRunnerReportV1,
   MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_BOARD_MD_REL_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1,
@@ -19,6 +15,12 @@ import {
   type ManufacturerRescueRunnerSlugStateV1,
   type ManufacturerRescueRunnerStageV1,
 } from "./manufacturer-safe-link-rescue-runner-v1";
+
+type McpReadOnlyEnvelopeV1 = {
+  read_only: true;
+  data_mutation: false;
+  mutation_authorized: false;
+};
 
 export const BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1 =
   "buckparts_mcp_manufacturer_rescue_runner_v1" as const;
@@ -43,7 +45,7 @@ type RunnerArtifactLoadV1 =
       truth_note: string;
     };
 
-function envelope(): McpToolEnvelopeV2 & {
+function envelope(): McpReadOnlyEnvelopeV1 & {
   contract: typeof BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1;
 } {
   return {
@@ -183,7 +185,7 @@ export function projectManufacturerRescueBlockersV1(report: ManufacturerRescueRu
   };
 }
 
-export type ManufacturerRescueNextActionResultV1 = McpToolEnvelopeV2 & {
+export type ManufacturerRescueNextActionResultV1 = McpReadOnlyEnvelopeV1 & {
   contract: typeof BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1;
   tool: "manufacturer_rescue_next_action";
   truth_status: "PROVEN" | "UNKNOWN";
@@ -205,7 +207,7 @@ export type ManufacturerRescueNextActionResultV1 = McpToolEnvelopeV2 & {
   truth_note: string;
 };
 
-export type ManufacturerRescueRunnerBoardResultV1 = McpToolEnvelopeV2 & {
+export type ManufacturerRescueRunnerBoardResultV1 = McpReadOnlyEnvelopeV1 & {
   contract: typeof BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1;
   tool: "manufacturer_rescue_runner_board";
   truth_status: "PROVEN" | "UNKNOWN";
@@ -228,7 +230,7 @@ export type ManufacturerRescueRunnerBoardResultV1 = McpToolEnvelopeV2 & {
   truth_note: string;
 };
 
-export type ManufacturerRescueSlugStateResultV1 = McpToolEnvelopeV2 & {
+export type ManufacturerRescueSlugStateResultV1 = McpReadOnlyEnvelopeV1 & {
   contract: typeof BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1;
   tool: "manufacturer_rescue_slug_state";
   filter_slug: string;
@@ -241,7 +243,7 @@ export type ManufacturerRescueSlugStateResultV1 = McpToolEnvelopeV2 & {
   truth_note: string;
 };
 
-export type ManufacturerRescueBlockersResultV1 = McpToolEnvelopeV2 & {
+export type ManufacturerRescueBlockersResultV1 = McpReadOnlyEnvelopeV1 & {
   contract: typeof BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1;
   tool: "manufacturer_rescue_blockers";
   truth_status: "PROVEN" | "UNKNOWN";
@@ -470,4 +472,4 @@ export function manufacturerRescueBlockersV1(
 }
 
 export const BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_TOOLS_CONTRACT_NOTE_V1 =
-  `MCP runner tools use ${BUCKPARTS_MCP_TOOLS_CONTRACT_V2} read-only envelope fields and ${BUCKPARTS_MCP_MANUFACTURER_RESCUE_RUNNER_CONTRACT_V1} payload contract.` as const;
+  "MCP runner tools use buckparts_mcp_tools_v2 read-only envelope fields and buckparts_mcp_manufacturer_rescue_runner_v1 payload contract." as const;

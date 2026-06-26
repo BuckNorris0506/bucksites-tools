@@ -92,6 +92,11 @@ Adjust paths for your OS and clone location. Restart the client after editing.
 | `manufacturer_rescue_runner_board` | _(none)_ | Runner board, workloads, bottlenecks |
 | `manufacturer_rescue_slug_state` | `slug` | Per-slug runner state machine row |
 | `manufacturer_rescue_blockers` | _(none)_ | BLOCKED slugs grouped by blocker reason |
+| `command_center_summary` | _(none)_ | Command Center operational summary |
+| `next_best_action` | _(none)_ | Single highest-priority action across lanes |
+| `work_queue` | _(none)_ | Ranked operational queues |
+| `lane_status` | `lane_name` | Command Center v2 lane health and metrics |
+| `business_snapshot` | _(none)_ | Executive coverage/rescue/trust snapshot |
 
 All tools return JSON with `read_only: true`, `data_mutation: false`, `mutation_authorized: false`.
 
@@ -173,6 +178,26 @@ Input: `slug`. Returns complete runner state machine row (`stage`, `next_executa
 
 No input. Returns all `BLOCKED`-stage slugs grouped by blocker reason plus runner `blocker_summary`.
 
+### command_center_summary
+
+No input. Projects system health, `next_best_action`, operator digest, daily operator summary, and brain integrity gate from Command Center (committed snapshot or live read-only build).
+
+### next_best_action
+
+No input. Returns the single highest-priority action with lane, reason, blocking prerequisites, expected business impact, and exact jq source artifact.
+
+### work_queue
+
+No input. Returns ranked operational queues from Command Center lanes (demand queue, agent control plane, money queue, rescue runner).
+
+### lane_status
+
+Input: `lane_name` (e.g. `manufacturer_safe_link_rescue_runner_v1` or alias `runner`). Returns lane payload, health, blockers, and metrics.
+
+### business_snapshot
+
+No input. Combines coverage census, rescue progress, AP convergence artifacts, trust/brain gate status, highest risks, current phase, and next milestone.
+
 ## Architecture
 
 ```
@@ -182,6 +207,7 @@ scripts/lib/buckparts-mcp-check-replacement-fit-v1.ts   checkReplacementFit logi
 scripts/lib/buckparts-mcp-tools-v2.ts  All v2 tool functions
 scripts/lib/buckparts-mcp-manufacturer-rescue-v1.ts   Manufacturer rescue MCP tools
 scripts/lib/buckparts-mcp-manufacturer-rescue-runner-v1.ts   Manufacturer rescue runner MCP tools
+scripts/lib/buckparts-mcp-control-plane-v1.ts   Command Center control-plane MCP tools
 scripts/lib/all-product-safe-buyer-path-census-v1.ts   Census (reused)
 scripts/lib/model-filter-correctness-audit-v1.ts       Fridge fit audit (reused)
 src/lib/retailers/launch-buy-links.ts                  Buy-path gates (reused)
@@ -192,7 +218,7 @@ Context loads committed CSVs per wedge, census, fridge model-filter audit JSON, 
 ## Tests
 
 ```bash
-node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-v1.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-runner-v1.test.ts
+node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-v1.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-runner-v1.test.ts scripts/lib/buckparts-mcp-control-plane-v1.test.ts
 ```
 
 Or: `npm test`

@@ -24,6 +24,11 @@ import {
   manufacturerRescueRunnerBoardV1,
   manufacturerRescueSlugStateV1,
   manufacturerRescueStatusV1,
+  businessSnapshotV1,
+  commandCenterSummaryV1,
+  laneStatusV1,
+  nextBestActionV1,
+  workQueueV1,
   searchPartsV2,
 } from "../../scripts/lib/buckparts-mcp-tools-v2";
 
@@ -46,7 +51,7 @@ function toolResult(payload: unknown) {
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.4.0",
+    version: "0.5.0",
   },
   {
     instructions:
@@ -248,6 +253,73 @@ server.registerTool(
     annotations: READ_ONLY_ANNOTATIONS,
   },
   async () => toolResult(manufacturerRescueBlockersV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "command_center_summary",
+  {
+    title: "Command Center summary (read-only)",
+    description:
+      "Highest-level operational summary from BuckParts Command Center: system health, next_best_action, operator digest, daily operator summary, brain gate.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(await commandCenterSummaryV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "next_best_action",
+  {
+    title: "Next best action (read-only)",
+    description:
+      "Single highest-priority action across Command Center lanes with lane, reason, blocking prerequisites, business impact, and source artifact path.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(await nextBestActionV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "work_queue",
+  {
+    title: "Operational work queue (read-only)",
+    description:
+      "Active operational queues ranked by priority: root NBA, demand queue, agent control plane, money queue, rescue runner execution order.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(await workQueueV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "lane_status",
+  {
+    title: "Command Center lane status (read-only)",
+    description:
+      "Status, health, blockers, and metrics for a Command Center v2 lane by name or jq path fragment.",
+    inputSchema: {
+      lane_name: z
+        .string()
+        .min(1)
+        .describe(
+          "Lane key e.g. manufacturer_safe_link_rescue_runner_v1, operator_digest_v1, or alias runner",
+        ),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ lane_name }) => toolResult(await laneStatusV1({ rootDir: REPO_ROOT, lane_name })),
+);
+
+server.registerTool(
+  "business_snapshot",
+  {
+    title: "Business snapshot (read-only)",
+    description:
+      "Executive snapshot: coverage, rescue progress, repo/runtime convergence, trust status, highest risks, current phase, next milestone.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(await businessSnapshotV1({ rootDir: REPO_ROOT })),
 );
 
 async function main(): Promise<void> {
