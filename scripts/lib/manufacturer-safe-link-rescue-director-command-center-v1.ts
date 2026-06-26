@@ -66,7 +66,10 @@ export type ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 = {
   remaining_opportunity: number;
   browser_proof_queue: ManufacturerRescueDirectorRankedSlugV1[];
   owner_review_queue: ManufacturerRescueDirectorRankedSlugV1[];
+  /** @deprecated Use nominated_apply_candidates — does not imply readiness-gate promotion. */
   guarded_apply_queue: ManufacturerRescueDirectorRankedSlugV1[];
+  nominated_apply_candidates: ManufacturerRescueDirectorRankedSlugV1[];
+  readiness_gate_required_before_apply: true;
   estimates: ManufacturerRescueDirectorEstimatesV1;
   trust_risk_summary: {
     trust_risk: ManufacturerRescueTrustRiskV1;
@@ -155,6 +158,8 @@ export function buildManufacturerSafeLinkRescueDirectorCommandCenterLaneFromBund
     browser_proof_queue: args.director.ranked_browser_work,
     owner_review_queue: args.director.ranked_owner_reviews,
     guarded_apply_queue: args.director.ranked_guarded_apply_candidates,
+    nominated_apply_candidates: args.director.ranked_guarded_apply_candidates,
+    readiness_gate_required_before_apply: true,
     estimates: args.director.estimates,
     trust_risk_summary: {
       trust_risk: args.director.estimates.trust_risk,
@@ -170,6 +175,7 @@ export function buildManufacturerSafeLinkRescueDirectorCommandCenterLaneFromBund
       `PROVEN: Command Center lane ${MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CC_JQ_PATH_V1} projects director bundle read-only.`,
       `PROVEN: scoreboard total_rescue_candidates=${String(args.scoreboard.total_rescue_candidates)} browser_proofed=${String(args.scoreboard.browser_proofed)}.`,
       "PROVEN: safe_buyer_paths_unlocked=0 — director does not authorize CSV apply or coverage claims.",
+      "PROVEN: nominated_apply_candidates and guarded_apply_queue rank orchestrator-nominated slugs only; readiness_gate_required_before_apply=true.",
     ],
     unknown_facts: [...args.director.unknown_facts],
   };
@@ -230,6 +236,8 @@ export function buildManufacturerSafeLinkRescueDirectorCommandCenterLaneUnknownV
     browser_proof_queue: [],
     owner_review_queue: [],
     guarded_apply_queue: [],
+    nominated_apply_candidates: [],
+    readiness_gate_required_before_apply: true,
     estimates: emptyEstimates,
     trust_risk_summary: {
       trust_risk: "UNKNOWN",

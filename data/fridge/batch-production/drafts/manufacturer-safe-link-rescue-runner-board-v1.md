@@ -1,8 +1,8 @@
 # Manufacturer safe-link rescue runner board v1
 
-- generated_at: **2026-06-26T04:52:03.476Z**
-- director_generated_at: **2026-06-26T02:21:07.884Z**
-- orchestrator_generated_at: **2026-06-26T02:10:46.330Z**
+- generated_at: **2026-06-26T17:49:53.960Z**
+- director_generated_at: **2026-06-26T17:49:52.913Z**
+- orchestrator_generated_at: **2026-06-26T17:49:52.361Z**
 - ready_for_apply_slug: **NONE**
 - remaining_opportunity: **20**
 

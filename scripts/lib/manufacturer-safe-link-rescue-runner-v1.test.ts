@@ -14,12 +14,18 @@ import {
   deriveManufacturerRescueRunnerStageV1,
   MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_STAGES_V1,
+  resolveManufacturerRescueReadinessGatePromotionV1,
 } from "./manufacturer-safe-link-rescue-runner-v1";
 import {
   MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
   MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1,
   type ManufacturerRescueReadinessGateReportV1,
 } from "./manufacturer-safe-link-rescue-readiness-gate-v1";
+import {
+  manufacturerRescueOwnerProofOfficialPassV1,
+  assessManufacturerRescueBrowserProofFreshnessV1,
+} from "./manufacturer-safe-link-rescue-owner-browser-proof-evidence-v1";
+import { FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1 } from "./fridge-safe-link-owner-browser-proof-result-v1";
 
 const REPO_ROOT = process.cwd();
 
@@ -116,6 +122,31 @@ function minimalDirectorLane(): ManufacturerSafeLinkRescueDirectorCommandCenterL
         recommended_next_action: "guarded apply",
       },
     ],
+    nominated_apply_candidates: [
+      {
+        rank: 1,
+        filter_slug: "wf3cb",
+        manufacturer_key: "frigidaire",
+        director_value_score: 1200,
+        orchestrator_priority_score: 1000,
+        expected_safe_coverage_signal: 210,
+        trust_risk: "LOW",
+        blocked_reasons: [],
+        recommended_next_action: "guarded apply",
+      },
+      {
+        rank: 2,
+        filter_slug: "gswf",
+        manufacturer_key: "ge_appliance_parts",
+        director_value_score: 900,
+        orchestrator_priority_score: 800,
+        expected_safe_coverage_signal: 200,
+        trust_risk: "LOW",
+        blocked_reasons: [],
+        recommended_next_action: "guarded apply",
+      },
+    ],
+    readiness_gate_required_before_apply: true,
     estimates: {
       safe_buyer_paths_unlockable_estimate: 1,
       safe_buyer_paths_unlockable_note: "estimate",
@@ -360,6 +391,7 @@ test("runner live build from repo artifacts", () => {
     true,
   );
   if (report.ready_for_apply_slug) {
+    assert.equal(report.readiness_gate_promotion_status, "LOADED");
     const readyState = report.slug_states.find((s) => s.filter_slug === report.ready_for_apply_slug);
     assert.equal(readyState?.readiness_status, "READY_FOR_APPLY");
   } else {
@@ -368,4 +400,139 @@ test("runner live build from repo artifacts", () => {
   for (const stage of report.slug_states.map((s) => s.stage)) {
     assert.ok((MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_STAGES_V1 as readonly string[]).includes(stage));
   }
+});
+
+test("runner fails closed when readiness gate artifact missing", () => {
+  const rows = [
+    baseQueueRow({
+      filter_slug: "wf3cb",
+      browser_truth_status: "PASS",
+      owner_review_readiness: "READY",
+      csv_primary_is_search_placeholder: true,
+    }),
+  ];
+  const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
+    directorLane: minimalDirectorLane(),
+    orchestrator: minimalOrchestrator(rows),
+    rootDir: REPO_ROOT,
+    fileExists: () => false,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+
+  assert.equal(report.readiness_gate_promotion_status, "UNKNOWN_READINESS_GATE_STALE_OR_MISSING");
+  assert.equal(report.readiness_gate_artifact.status, "missing");
+  assert.equal(report.ready_for_apply_slug, null);
+  assert.equal(report.slug_states.filter((s) => s.stage === "READY_FOR_APPLY").length, 0);
+  assert.match(
+    report.inspect_summary.top_pending_work_item?.recommended_next_action ?? "",
+    /readiness gate/i,
+  );
+});
+
+test("runner fails closed when readiness gate artifact stale", () => {
+  const rows = [
+    baseQueueRow({
+      filter_slug: "wf3cb",
+      browser_truth_status: "PASS",
+      owner_review_readiness: "READY",
+      csv_primary_is_search_placeholder: true,
+    }),
+  ];
+  const staleGate = mockReadyGate("wf3cb");
+  staleGate.orchestrator_generated_at = "2026-06-09T00:00:00.000Z";
+
+  const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
+    directorLane: minimalDirectorLane(),
+    orchestrator: minimalOrchestrator(rows),
+    readinessGate: staleGate,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+
+  assert.equal(report.readiness_gate_promotion_status, "UNKNOWN_READINESS_GATE_STALE_OR_MISSING");
+  assert.equal(report.readiness_gate_artifact.status, "stale");
+  assert.equal(report.ready_for_apply_slug, null);
+  assert.equal(report.slug_states.every((s) => s.readiness_status === "UNKNOWN_READINESS_GATE_STALE_OR_MISSING"), true);
+});
+
+test("runner does not live-rebuild readiness gate in normal path", () => {
+  const gateRel =
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json";
+  const rows = [
+    baseQueueRow({
+      filter_slug: "wf3cb",
+      browser_truth_status: "PASS",
+      owner_review_readiness: "READY",
+      csv_primary_is_search_placeholder: true,
+    }),
+  ];
+  const promotion = resolveManufacturerRescueReadinessGatePromotionV1({
+    rootDir: REPO_ROOT,
+    orchestrator_generated_at: "2026-06-10T12:00:00.000Z",
+    director_generated_at: "2026-06-10T12:00:00.000Z",
+    fileExists: (abs) => !abs.endsWith("manufacturer-safe-link-rescue-readiness-gate-v1.json"),
+  });
+  assert.equal(promotion.promotion.ok, false);
+  assert.equal(promotion.promotion.artifact_status, "missing");
+
+  const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
+    directorLane: minimalDirectorLane(),
+    orchestrator: minimalOrchestrator(rows),
+    rootDir: REPO_ROOT,
+    fileExists: (abs) => !abs.endsWith("manufacturer-safe-link-rescue-readiness-gate-v1.json"),
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(report.readiness_gate_artifact.source_artifact_path, gateRel);
+  assert.equal(report.readiness_gate_promotion_status, "UNKNOWN_READINESS_GATE_STALE_OR_MISSING");
+  assert.equal(report.ready_for_apply_slug, null);
+});
+
+test("runner grants no READY_FOR_APPLY when readiness gate has zero ready candidates", () => {
+  const rows = [
+    baseQueueRow({
+      filter_slug: "wf3cb",
+      browser_truth_status: "PASS",
+      owner_review_readiness: "READY",
+      csv_primary_is_search_placeholder: true,
+    }),
+  ];
+  const gate = mockReadyGate("wf3cb");
+  gate.ready_for_apply_slug = null;
+  gate.ready_for_apply_count = 0;
+  gate.candidates = gate.candidates.map((c) => ({
+    ...c,
+    ready_for_apply: false,
+    readiness_status: "PENDING_OWNER_APPROVAL" as const,
+  }));
+
+  const report = buildManufacturerSafeLinkRescueRunnerFromInputsV1({
+    directorLane: minimalDirectorLane(),
+    orchestrator: minimalOrchestrator(rows),
+    readinessGate: gate,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+
+  assert.equal(report.ready_for_apply_slug, null);
+  assert.equal(report.slug_states.filter((s) => s.stage === "READY_FOR_APPLY").length, 0);
+});
+
+test("orchestrator and readiness gate share browser proof PASS and freshness helpers", () => {
+  const proofArtifact = {
+    contract: FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1,
+    verdict: "PASS_BROWSER_PROOF",
+    checked_at: "2026-06-06T12:00:00.000Z",
+    owner_proof_urls: [
+      {
+        url: "https://example.com/pdp",
+        path_type: "official_manufacturer_pdp",
+        browser_proof_status: "PASS",
+      },
+    ],
+  };
+  assert.equal(manufacturerRescueOwnerProofOfficialPassV1(proofArtifact), true);
+  const freshness = assessManufacturerRescueBrowserProofFreshnessV1({
+    artifact: proofArtifact,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(freshness.fresh, true);
+  assert.equal(freshness.max_age_days, MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1);
 });

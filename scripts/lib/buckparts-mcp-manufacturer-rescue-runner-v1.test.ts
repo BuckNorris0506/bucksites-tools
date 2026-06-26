@@ -43,6 +43,7 @@ function minimalSlugState(
     manufacturer_key: "frigidaire",
     oem_part_token: "WF3CB",
     stage: "OWNER_REVIEW",
+    readiness_status: "PENDING_OWNER_APPROVAL",
     execution_rank: 1,
     next_executable_action: "owner review",
     executable_now: true,
@@ -79,6 +80,33 @@ function minimalRunnerReport(
     orchestrator_generated_at: "2026-06-10T12:00:00.000Z",
     ready_for_apply_slug: null,
     ready_for_apply_enforced: true,
+    readiness_gate_contract: "manufacturer_safe_link_rescue_readiness_gate_v1",
+    readiness_gate_artifact_path:
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    readiness_gate_promotion_status: "LOADED",
+    readiness_gate_artifact: {
+      status: "loaded",
+      source_artifact_path:
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+      generated_at: "2026-06-10T12:00:00.000Z",
+      stale_reason: null,
+    },
+    readiness_gate_summary: {
+      artifact_status: "loaded",
+      generated_at: "2026-06-10T12:00:00.000Z",
+      ready_for_apply_count: 0,
+      by_status: {
+        READY_FOR_APPLY: 0,
+        PENDING_BROWSER_REFRESH: 0,
+        PENDING_CONFUSION_FAMILY_REVIEW: 0,
+        PENDING_OWNER_APPROVAL: 1,
+        PENDING_APPLY_PLAN: 0,
+        BLOCKED_WRONG_FAMILY_RISK: 0,
+        BLOCKED_MISSING_PROOF: 0,
+        UNKNOWN_READINESS: 0,
+      },
+      top_pending_work_item: null,
+    },
     slug_states: [minimalSlugState({})],
     execution_order: ["wf3cb"],
     manufacturer_workloads: [],
@@ -102,6 +130,9 @@ function minimalRunnerReport(
       ready_for_apply_slug: null,
       remaining_opportunity: 1,
       recommended_next_action: "owner review wf3cb",
+      readiness_gate_ready_for_apply_count: 0,
+      readiness_gate_artifact_status: "loaded",
+      top_pending_work_item: null,
     },
     proven_facts: [],
     unknown_facts: [],
@@ -117,6 +148,46 @@ test("loadManufacturerRescueRunnerReportV1 loads committed artifact when present
   assert.equal(loaded.report.contract, MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1);
   assert.equal(loaded.runner_source_path, MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_JSON_REL_V1);
   assert.ok(loaded.report.slug_states.length > 0);
+});
+
+test("projectManufacturerRescueNextActionV1 fails closed when readiness gate stale or missing", () => {
+  const regenerateAction =
+    "Regenerate committed readiness gate: npm run buckparts:manufacturer-safe-link-rescue-readiness-gate";
+  const report = minimalRunnerReport({
+    readiness_gate_promotion_status: "UNKNOWN_READINESS_GATE_STALE_OR_MISSING",
+    readiness_gate_artifact: {
+      status: "stale",
+      source_artifact_path:
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+      generated_at: "2026-06-09T12:00:00.000Z",
+      stale_reason: "orchestrator timestamp mismatch",
+    },
+    ready_for_apply_slug: null,
+    inspect_summary: {
+      recommended_jq_paths: {
+        standalone_report: ".inspect_summary",
+        command_center: ".command_center_v2.manufacturer_safe_link_rescue_runner_v1",
+        ready_for_apply_slug: ".ready_for_apply_slug",
+        execution_order: ".execution_order",
+      },
+      next_executable_slug: "UNKNOWN",
+      ready_for_apply_slug: null,
+      remaining_opportunity: 1,
+      recommended_next_action: regenerateAction,
+      readiness_gate_ready_for_apply_count: 0,
+      readiness_gate_artifact_status: "stale",
+      top_pending_work_item: {
+        filter_slug: "NONE",
+        readiness_status: "UNKNOWN_READINESS",
+        recommended_next_action: regenerateAction,
+      },
+    },
+  });
+  const next = projectManufacturerRescueNextActionV1(report);
+  assert.equal(next.action_mode, "NEXT_EXECUTABLE");
+  assert.equal(next.ready_for_apply_slug, null);
+  assert.equal(next.readiness_gate_promotion_status, "UNKNOWN_READINESS_GATE_STALE_OR_MISSING");
+  assert.match(next.next_executable_action, /readiness gate/i);
 });
 
 test("projectManufacturerRescueNextActionV1 prefers READY_FOR_APPLY slot", () => {

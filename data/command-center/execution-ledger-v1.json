@@ -3,10 +3,31 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-10T12:00:00.000Z",
+  "generated_at": "2026-06-26T17:49:53.969Z",
   "source_command": "npm run buckparts:execution-ledger",
-  "entry_count": 5,
+  "entry_count": 6,
   "entries": [
+    {
+      "entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T17:49:53.454Z",
+      "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json"
+      ],
+      "validation_performed": [
+        "ready_for_apply_count=0",
+        "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
+        "director_generated_at=2026-06-26T17:49:52.913Z"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer rescue promotion gate indexed (no READY_FOR_APPLY)",
+      "superseded_by": null,
+      "source_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
     {
       "entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
       "commit_sha": "UNKNOWN",
@@ -121,6 +142,35 @@
     }
   ],
   "capability_timeline": [
+    {
+      "capability_key": "manufacturer_safe_link_rescue_readiness_gate_promotion",
+      "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
+      "entries": [
+        {
+          "entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T17:49:53.454Z",
+          "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json"
+          ],
+          "validation_performed": [
+            "ready_for_apply_count=0",
+            "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
+            "director_generated_at=2026-06-26T17:49:52.913Z"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer rescue promotion gate indexed (no READY_FOR_APPLY)",
+          "superseded_by": null,
+          "source_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
+      "latest_completion_timestamp": "2026-06-26T17:49:53.454Z"
+    },
     {
       "capability_key": "refrigerator_water_batch_closeout_recorded",
       "operational_lane": "refrigerator_water:batch_closeout_recorded",
@@ -267,26 +317,24 @@
     }
   ],
   "last_completed_capability": {
-    "entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+    "entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
     "commit_sha": "UNKNOWN",
-    "completion_timestamp": "2026-06-03T06:40:06.770Z",
-    "operational_lane": "refrigerator_water:batch_closeout_recorded",
+    "completion_timestamp": "2026-06-26T17:49:53.454Z",
+    "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
     "artifacts_produced": [
-      "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
-      "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
-      "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json"
     ],
     "validation_performed": [
-      "closeout_complete=true",
-      "post_apply_parity=APPLIED_PARITY_PROVEN",
-      "go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH"
+      "ready_for_apply_count=0",
+      "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
+      "director_generated_at=2026-06-26T17:49:52.913Z"
     ],
     "safe_to_commit_status": "UNKNOWN",
     "pushed_to_origin": "UNKNOWN",
-    "business_capability_unlocked": "refrigerator_water batch closeout recorded",
+    "business_capability_unlocked": "manufacturer rescue promotion gate indexed (no READY_FOR_APPLY)",
     "superseded_by": null,
-    "source_contract": "fridge_buyer_path_batch_closed_run_registry_v1",
-    "source_artifact_rel_path": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+    "source_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
+    "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
     "provenance_tier": "COMMITTED_SOURCE"
   },
   "source_paths_read": [
@@ -299,6 +347,7 @@
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T014559063Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
     "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json"
   ],
   "inspect_summary": {
@@ -309,11 +358,11 @@
       "capability_timeline": ".capability_timeline",
       "last_completed_capability": ".last_completed_capability"
     },
-    "recommended_next_action": "Review last completed capability refrigerator_water:batch_closeout_recorded at 2026-06-03T06:40:06.770Z."
+    "recommended_next_action": "Review last completed capability manufacturer_safe_link_rescue:readiness_gate_promotion at 2026-06-26T17:49:53.454Z."
   },
   "proven_facts": [
     "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
-    "PROVEN: entry_count=5 from 10 source artifact path(s)."
+    "PROVEN: entry_count=6 from 11 source artifact path(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
@@ -321,10 +370,10 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-06-10T12:00:00.000Z",
-    "source_artifact_count": 10,
-    "stale_after": "2026-06-11T12:00:00.000Z",
+    "last_generated_at": "2026-06-26T17:49:53.969Z",
+    "source_artifact_count": 11,
+    "stale_after": "2026-06-27T17:49:53.969Z",
     "freshness_status": "FRESH",
-    "last_refresh_trigger_source": "unit-test-status"
+    "last_refresh_trigger_source": "npm run buckparts:manufacturer-safe-link-rescue-runner"
   }
 }

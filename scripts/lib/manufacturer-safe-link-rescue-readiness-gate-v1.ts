@@ -13,7 +13,6 @@ import {
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
 import {
-  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1,
   FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1,
   type OwnerBrowserProofResultV1,
 } from "./fridge-safe-link-owner-browser-proof-result-v1";
@@ -43,6 +42,13 @@ import {
   type WrongFamilyAssessmentV1,
 } from "./manufacturer-safe-link-rescue-framework-v1";
 import {
+  assessManufacturerRescueBrowserProofFreshnessV1,
+  loadManufacturerRescueOwnerBrowserProofArtifactV1,
+  MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1,
+  manufacturerRescueOwnerProofCheckedAtV1,
+  manufacturerRescueOwnerProofOfficialPassV1,
+} from "./manufacturer-safe-link-rescue-owner-browser-proof-evidence-v1";
+import {
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1,
   type ManufacturerRescueOrchestratorQueueRowV1,
   type ManufacturerRescueOrchestratorReportV1,
@@ -60,8 +66,6 @@ export const MANUFACTURER_SAFE_LINK_RESCUE_READINESS_WORK_QUEUE_MD_REL_V1 =
 export const MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_SOURCE_COMMAND_V1 =
   "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate" as const;
 
-export const MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1 = 14;
-
 export const MANUFACTURER_RESCUE_READINESS_STATUSES_V1 = [
   "READY_FOR_APPLY",
   "PENDING_BROWSER_REFRESH",
@@ -75,6 +79,37 @@ export const MANUFACTURER_RESCUE_READINESS_STATUSES_V1 = [
 
 export type ManufacturerRescueReadinessStatusV1 =
   (typeof MANUFACTURER_RESCUE_READINESS_STATUSES_V1)[number];
+
+export { MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1 };
+
+export const MANUFACTURER_RESCUE_READINESS_GATE_REGENERATE_COMMAND_V1 =
+  MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_SOURCE_COMMAND_V1;
+
+export const MANUFACTURER_RESCUE_READINESS_GATE_REGENERATE_ACTION_V1 =
+  "Regenerate committed readiness gate: npm run buckparts:manufacturer-safe-link-rescue-readiness-gate" as const;
+
+export type ManufacturerRescueReadinessGateArtifactStatusV1 = "loaded" | "missing" | "stale";
+
+export type ManufacturerRescueReadinessGatePromotionLoadV1 =
+  | {
+      ok: true;
+      artifact_status: "loaded";
+      artifact_path: typeof MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1;
+      gate: ManufacturerRescueReadinessGateReportV1;
+      stale_reason: null;
+    }
+  | {
+      ok: false;
+      artifact_status: "missing" | "stale";
+      artifact_path: typeof MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1;
+      gate: null;
+      stale_reason: string;
+      recommended_regenerate_command: typeof MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_SOURCE_COMMAND_V1;
+    };
+
+export type ManufacturerRescueReadinessGatePromotionStatusV1 =
+  | "LOADED"
+  | "UNKNOWN_READINESS_GATE_STALE_OR_MISSING";
 
 export type ManufacturerRescueReadinessCheckV1 = {
   check_id: string;
@@ -142,13 +177,6 @@ export type ManufacturerRescueReadinessGateReportV1 = {
   unknown_facts: string[];
 };
 
-const OWNER_PROOF_REL_BY_SLUG = Object.fromEntries(
-  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1.map((rel) => {
-    const match = rel.match(/owner-browser-proof-result-([a-z0-9-]+)-v1\.json$/);
-    return [match?.[1] ?? "", rel];
-  }),
-);
-
 function applyPlanCandidateRels(slug: string): string[] {
   return [
     `data/fridge/batch-production/drafts/fridge-safe-link-${slug}-apply-plan-proposal-v1.json`,
@@ -157,41 +185,23 @@ function applyPlanCandidateRels(slug: string): string[] {
   ];
 }
 
-function ownerProofOfficialPass(artifact: OwnerBrowserProofResultV1 | null): boolean {
-  if (!artifact || artifact.verdict !== "PASS_BROWSER_PROOF") return false;
-  return (artifact.owner_proof_urls ?? []).some(
-    (row) =>
-      (row.browser_proof_status ?? "").trim() === "PASS" &&
-      (row.path_type === "official_manufacturer_pdp" ||
-        row.path_type === "authorized_parts_distributor_pdp" ||
-        row.path_type === "official_manufacturer_accessory_pdp"),
-  );
-}
-
 function loadOwnerProof(
   rootDir: string,
   slug: string,
   fileExists: (abs: string) => boolean,
   readText: (abs: string) => string,
 ): { artifact: OwnerBrowserProofResultV1 | null; rel: string | null } {
-  const rel = OWNER_PROOF_REL_BY_SLUG[slug.trim().toLowerCase()] ?? null;
-  if (!rel) return { artifact: null, rel: null };
-  const abs = path.join(rootDir, rel);
-  if (!fileExists(abs)) return { artifact: null, rel };
-  try {
-    const artifact = JSON.parse(readText(abs)) as OwnerBrowserProofResultV1;
-    if (artifact.contract !== FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1) {
-      return { artifact: null, rel };
-    }
-    return { artifact, rel };
-  } catch {
-    return { artifact: null, rel };
-  }
+  const loaded = loadManufacturerRescueOwnerBrowserProofArtifactV1({
+    rootDir,
+    filter_slug: slug,
+    fileExists,
+    readText,
+  });
+  return { artifact: loaded.artifact, rel: loaded.artifact_rel };
 }
 
 function proofCheckedAt(artifact: OwnerBrowserProofResultV1 | null): string | null {
-  const checked = (artifact as { checked_at?: string } | null)?.checked_at;
-  return typeof checked === "string" && checked.trim() ? checked.trim() : null;
+  return manufacturerRescueOwnerProofCheckedAtV1(artifact);
 }
 
 function loadDeployBuildMarker(args: {
@@ -470,7 +480,7 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
   );
   if (ownerProofRel) sourcePaths.add(ownerProofRel);
 
-  const proofExists = ownerProof !== null && ownerProofOfficialPass(ownerProof);
+  const proofExists = ownerProof !== null && manufacturerRescueOwnerProofOfficialPassV1(ownerProof);
   checks.push({
     check_id: "browser_proof_exists",
     status: proofExists ? "PASS" : "FAIL",
@@ -481,26 +491,25 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
   if (!proofExists) blockingReasons.push("browser_proof_missing_or_not_pass");
 
   const checkedAt = proofCheckedAt(ownerProof);
-  let proofFresh = false;
+  const freshness = assessManufacturerRescueBrowserProofFreshnessV1({
+    artifact: ownerProof,
+    now: args.now,
+    max_age_days: MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1,
+  });
   if (!checkedAt) {
     checks.push({
       check_id: "browser_proof_fresh",
       status: "FAIL",
-      notes: "checked_at missing on browser proof artifact",
+      notes: freshness.notes,
     });
     blockingReasons.push("browser_proof_checked_at_missing");
   } else {
-    const ageMs = now().getTime() - Date.parse(checkedAt);
-    const maxAgeMs = MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1 * 86_400_000;
-    proofFresh = Number.isFinite(ageMs) && ageMs >= 0 && ageMs <= maxAgeMs;
     checks.push({
       check_id: "browser_proof_fresh",
-      status: proofFresh ? "PASS" : "FAIL",
-      notes: proofFresh
-        ? `proof age ${(ageMs / 86_400_000).toFixed(1)}d within ${String(MANUFACTURER_RESCUE_BROWSER_PROOF_MAX_AGE_DAYS_V1)}d`
-        : `proof stale or invalid checked_at=${checkedAt}`,
+      status: freshness.fresh ? "PASS" : "FAIL",
+      notes: freshness.notes,
     });
-    if (!proofFresh) blockingReasons.push("browser_proof_stale_or_invalid_timestamp");
+    if (!freshness.fresh) blockingReasons.push("browser_proof_stale_or_invalid_timestamp");
   }
 
   if (args.deployMarker.marker === "UNKNOWN" || !checkedAt) {
@@ -801,6 +810,81 @@ export function buildManufacturerSafeLinkRescueReadinessGateV1(args: {
     fileExists: args.fileExists,
     readText: args.readText,
   });
+}
+
+export function assessManufacturerRescueReadinessGateArtifactFreshnessV1(args: {
+  gate: ManufacturerRescueReadinessGateReportV1;
+  orchestrator_generated_at: string;
+  director_generated_at: string;
+}): { fresh: boolean; stale_reason: string | null } {
+  if (args.gate.orchestrator_generated_at !== args.orchestrator_generated_at) {
+    return {
+      fresh: false,
+      stale_reason: `readiness gate orchestrator_generated_at=${args.gate.orchestrator_generated_at} != current ${args.orchestrator_generated_at}`,
+    };
+  }
+  if (args.gate.director_generated_at !== args.director_generated_at) {
+    return {
+      fresh: false,
+      stale_reason: `readiness gate director_generated_at=${args.gate.director_generated_at} != current ${args.director_generated_at}`,
+    };
+  }
+  return { fresh: true, stale_reason: null };
+}
+
+export function loadManufacturerSafeLinkRescueReadinessGateForPromotionV1(args: {
+  rootDir: string;
+  orchestrator_generated_at: string;
+  director_generated_at: string;
+  fileExists?: (abs: string) => boolean;
+  readText?: (abs: string) => string;
+}): ManufacturerRescueReadinessGatePromotionLoadV1 {
+  const artifact_path = MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1;
+  const gate = loadManufacturerSafeLinkRescueReadinessGateV1({
+    rootDir: args.rootDir,
+    fileExists: args.fileExists,
+    readText: args.readText,
+  });
+  if (!gate) {
+    return {
+      ok: false,
+      artifact_status: "missing",
+      artifact_path,
+      gate: null,
+      stale_reason: `missing committed artifact ${artifact_path}`,
+      recommended_regenerate_command: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_SOURCE_COMMAND_V1,
+    };
+  }
+  const freshness = assessManufacturerRescueReadinessGateArtifactFreshnessV1({
+    gate,
+    orchestrator_generated_at: args.orchestrator_generated_at,
+    director_generated_at: args.director_generated_at,
+  });
+  if (!freshness.fresh) {
+    return {
+      ok: false,
+      artifact_status: "stale",
+      artifact_path,
+      gate: null,
+      stale_reason: freshness.stale_reason ?? "readiness gate artifact stale",
+      recommended_regenerate_command: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_SOURCE_COMMAND_V1,
+    };
+  }
+  return {
+    ok: true,
+    artifact_status: "loaded",
+    artifact_path,
+    gate,
+    stale_reason: null,
+  };
+}
+
+export function buildReadinessGateRegenerateTopPendingWorkItemV1(): ManufacturerRescueReadinessGateReportV1["top_pending_work_item"] {
+  return {
+    filter_slug: "NONE",
+    readiness_status: "UNKNOWN_READINESS",
+    recommended_next_action: MANUFACTURER_RESCUE_READINESS_GATE_REGENERATE_ACTION_V1,
+  };
 }
 
 export function loadManufacturerSafeLinkRescueReadinessGateV1(args: {

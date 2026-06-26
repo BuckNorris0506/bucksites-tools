@@ -106,8 +106,23 @@ export function projectManufacturerRescueNextActionV1(
   next_executable_action: string;
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
+  readiness_gate_promotion_status: ManufacturerRescueRunnerReportV1["readiness_gate_promotion_status"];
   boardy_safety_rules: ManufacturerRescueRunnerSlugStateV1["boardy_safety_rules"];
 } {
+  if (report.readiness_gate_promotion_status !== "LOADED") {
+    const pending = report.inspect_summary.top_pending_work_item;
+    return {
+      action_mode: "NEXT_EXECUTABLE",
+      filter_slug: pending?.filter_slug ?? "UNKNOWN",
+      stage: "UNKNOWN",
+      next_executable_action: report.inspect_summary.recommended_next_action,
+      ready_for_apply_slug: null,
+      ready_for_apply_enforced: true,
+      readiness_gate_promotion_status: report.readiness_gate_promotion_status,
+      boardy_safety_rules: [],
+    };
+  }
+
   if (report.ready_for_apply_slug) {
     const state = findSlugState(report, report.ready_for_apply_slug);
     return {
@@ -119,6 +134,7 @@ export function projectManufacturerRescueNextActionV1(
         "Single guarded apply slot — owner-approved CSV apply executor may run for this slug only; re-audit required immediately after apply.",
       ready_for_apply_slug: report.ready_for_apply_slug,
       ready_for_apply_enforced: true,
+      readiness_gate_promotion_status: report.readiness_gate_promotion_status,
       boardy_safety_rules: state?.boardy_safety_rules ?? ["one_at_a_time_apply", "reaudit_after_apply"],
     };
   }
@@ -140,6 +156,7 @@ export function projectManufacturerRescueNextActionV1(
         next_executable_action: pending.recommended_next_action,
         ready_for_apply_slug: null,
         ready_for_apply_enforced: true,
+        readiness_gate_promotion_status: report.readiness_gate_promotion_status,
         boardy_safety_rules: pendingState?.boardy_safety_rules ?? [],
       };
     }
@@ -150,6 +167,7 @@ export function projectManufacturerRescueNextActionV1(
       next_executable_action: report.inspect_summary.recommended_next_action,
       ready_for_apply_slug: null,
       ready_for_apply_enforced: true,
+      readiness_gate_promotion_status: report.readiness_gate_promotion_status,
       boardy_safety_rules: [],
     };
   }
@@ -161,6 +179,7 @@ export function projectManufacturerRescueNextActionV1(
     next_executable_action: nextState.next_executable_action,
     ready_for_apply_slug: null,
     ready_for_apply_enforced: true,
+    readiness_gate_promotion_status: report.readiness_gate_promotion_status,
     boardy_safety_rules: nextState.boardy_safety_rules,
   };
 }
@@ -215,6 +234,7 @@ export type ManufacturerRescueNextActionResultV1 = McpReadOnlyEnvelopeV1 & {
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
   readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"] | null;
+  readiness_gate_promotion_status: ManufacturerRescueRunnerReportV1["readiness_gate_promotion_status"] | "UNKNOWN";
   boardy_safety_rules: ManufacturerRescueRunnerSlugStateV1["boardy_safety_rules"];
   coverage_unlocked: false;
   repo_paths_read: string[];
@@ -233,6 +253,7 @@ export type ManufacturerRescueRunnerBoardResultV1 = McpReadOnlyEnvelopeV1 & {
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
   readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"] | null;
+  readiness_gate_promotion_status: ManufacturerRescueRunnerReportV1["readiness_gate_promotion_status"] | "UNKNOWN";
   remaining_opportunity: number | "UNKNOWN";
   stage_counts: Record<ManufacturerRescueRunnerStageV1, number> | Record<string, never>;
   execution_order: string[];
@@ -298,6 +319,7 @@ export function manufacturerRescueNextActionV1(
       ready_for_apply_slug: null,
       ready_for_apply_enforced: true,
       readiness_gate_summary: null,
+      readiness_gate_promotion_status: "UNKNOWN",
       boardy_safety_rules: [],
       coverage_unlocked: false,
       repo_paths_read: loaded.repo_paths_read,
@@ -325,6 +347,7 @@ export function manufacturerRescueNextActionV1(
     ready_for_apply_slug: next.ready_for_apply_slug,
     ready_for_apply_enforced: true,
     readiness_gate_summary: report.readiness_gate_summary,
+    readiness_gate_promotion_status: report.readiness_gate_promotion_status,
     boardy_safety_rules: next.boardy_safety_rules,
     coverage_unlocked: false,
     repo_paths_read: [
@@ -355,6 +378,7 @@ export function manufacturerRescueRunnerBoardV1(
       ready_for_apply_slug: null,
       ready_for_apply_enforced: true,
       readiness_gate_summary: null,
+      readiness_gate_promotion_status: "UNKNOWN",
       remaining_opportunity: "UNKNOWN",
       stage_counts: {},
       execution_order: [],
@@ -382,6 +406,7 @@ export function manufacturerRescueRunnerBoardV1(
     ready_for_apply_slug: report.ready_for_apply_slug,
     ready_for_apply_enforced: true,
     readiness_gate_summary: report.readiness_gate_summary,
+    readiness_gate_promotion_status: report.readiness_gate_promotion_status,
     remaining_opportunity: report.inspect_summary.remaining_opportunity,
     stage_counts: stageCountsFromReport(report),
     execution_order: report.execution_order,

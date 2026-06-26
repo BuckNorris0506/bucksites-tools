@@ -25,9 +25,15 @@ import {
 } from "./manufacturer-safe-link-rescue-orchestrator-v1";
 import { READ_ONLY_MUTATION_FLAGS_V1 } from "./manufacturer-safe-link-rescue-framework-v1";
 import {
-  buildManufacturerSafeLinkRescueReadinessGateFromInputsV1,
+  assessManufacturerRescueReadinessGateArtifactFreshnessV1,
+  buildReadinessGateRegenerateTopPendingWorkItemV1,
+  loadManufacturerSafeLinkRescueReadinessGateForPromotionV1,
   MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
   MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+  MANUFACTURER_RESCUE_READINESS_GATE_REGENERATE_ACTION_V1,
+  type ManufacturerRescueReadinessGateArtifactStatusV1,
+  type ManufacturerRescueReadinessGatePromotionLoadV1,
+  type ManufacturerRescueReadinessGatePromotionStatusV1,
   type ManufacturerRescueReadinessGateReportV1,
   type ManufacturerRescueReadinessStatusV1,
 } from "./manufacturer-safe-link-rescue-readiness-gate-v1";
@@ -82,7 +88,10 @@ export type ManufacturerRescueRunnerSlugStateV1 = {
   manufacturer_key: string;
   oem_part_token: string;
   stage: ManufacturerRescueRunnerStageV1;
-  readiness_status: ManufacturerRescueReadinessStatusV1 | "NOT_IN_READINESS_GATE";
+  readiness_status:
+    | ManufacturerRescueReadinessStatusV1
+    | "NOT_IN_READINESS_GATE"
+    | "UNKNOWN_READINESS_GATE_STALE_OR_MISSING";
   execution_rank: number;
   next_executable_action: string;
   executable_now: boolean;
@@ -130,7 +139,16 @@ export type ManufacturerRescueRunnerReportV1 = {
   ready_for_apply_enforced: true;
   readiness_gate_contract: typeof MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1;
   readiness_gate_artifact_path: string;
+  readiness_gate_promotion_status: ManufacturerRescueReadinessGatePromotionStatusV1;
+  readiness_gate_artifact: {
+    status: ManufacturerRescueReadinessGateArtifactStatusV1;
+    source_artifact_path: string;
+    generated_at: string | null;
+    stale_reason: string | null;
+  };
   readiness_gate_summary: {
+    artifact_status: ManufacturerRescueReadinessGateArtifactStatusV1;
+    generated_at: string | null;
     ready_for_apply_count: number;
     by_status: Record<ManufacturerRescueReadinessStatusV1, number>;
     top_pending_work_item: ManufacturerRescueReadinessGateReportV1["top_pending_work_item"];
@@ -159,6 +177,7 @@ export type ManufacturerRescueRunnerReportV1 = {
     remaining_opportunity: number;
     recommended_next_action: string;
     readiness_gate_ready_for_apply_count: number;
+    readiness_gate_artifact_status: ManufacturerRescueReadinessGateArtifactStatusV1;
     top_pending_work_item: ManufacturerRescueReadinessGateReportV1["top_pending_work_item"];
   };
   proven_facts: string[];
@@ -187,8 +206,9 @@ export function deriveManufacturerRescueRunnerStageV1(args: {
   row: ManufacturerRescueOrchestratorQueueRowV1;
   readyForApplySlug: string | null;
   readinessStatus?: ManufacturerRescueReadinessStatusV1 | null;
+  promotionLoaded?: boolean;
 }): ManufacturerRescueRunnerStageV1 {
-  const { row, readyForApplySlug, readinessStatus } = args;
+  const { row, readyForApplySlug, readinessStatus, promotionLoaded = true } = args;
 
   if (row.cohort_lane === "REFERENCE_ALREADY_APPLIED") {
     return "COMPLETE";
@@ -216,11 +236,18 @@ export function deriveManufacturerRescueRunnerStageV1(args: {
   }
 
   if (
+    promotionLoaded &&
     readyForApplySlug === row.filter_slug &&
     readinessStatus === "READY_FOR_APPLY" &&
     isManufacturerRescueGuardedApplyCandidateV1(row)
   ) {
     return "READY_FOR_APPLY";
+  }
+
+  if (!promotionLoaded) {
+    if (isManufacturerRescueGuardedApplyCandidateV1(row)) {
+      return "OWNER_REVIEW";
+    }
   }
 
   if (isManufacturerRescueGuardedApplyCandidateV1(row) && readinessStatus) {
@@ -469,11 +496,82 @@ function buildBottlenecks(
     );
 }
 
+export function resolveManufacturerRescueReadinessGatePromotionV1(args: {
+  rootDir?: string;
+  orchestrator_generated_at: string;
+  director_generated_at: string;
+  readinessGate?: ManufacturerRescueReadinessGateReportV1;
+  promotionLoad?: ManufacturerRescueReadinessGatePromotionLoadV1;
+  fileExists?: (abs: string) => boolean;
+  readTextFile?: (abs: string) => string;
+}): {
+  promotion: ManufacturerRescueReadinessGatePromotionLoadV1;
+  gate: ManufacturerRescueReadinessGateReportV1 | null;
+} {
+  if (args.readinessGate) {
+    const freshness = assessManufacturerRescueReadinessGateArtifactFreshnessV1({
+      gate: args.readinessGate,
+      orchestrator_generated_at: args.orchestrator_generated_at,
+      director_generated_at: args.director_generated_at,
+    });
+    if (!freshness.fresh) {
+      return {
+        promotion: {
+          ok: false,
+          artifact_status: "stale",
+          artifact_path: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+          gate: null,
+          stale_reason: freshness.stale_reason ?? "readiness gate artifact stale",
+          recommended_regenerate_command:
+            "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
+        },
+        gate: null,
+      };
+    }
+    return {
+      promotion: {
+        ok: true,
+        artifact_status: "loaded",
+        artifact_path: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+        gate: args.readinessGate,
+        stale_reason: null,
+      },
+      gate: args.readinessGate,
+    };
+  }
+  if (args.promotionLoad) {
+    return { promotion: args.promotionLoad, gate: args.promotionLoad.ok ? args.promotionLoad.gate : null };
+  }
+  if (!args.rootDir) {
+    return {
+      promotion: {
+        ok: false,
+        artifact_status: "missing",
+        artifact_path: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+        gate: null,
+        stale_reason: "readiness gate promotion requires committed artifact",
+        recommended_regenerate_command:
+          "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
+      },
+      gate: null,
+    };
+  }
+  const promotion = loadManufacturerSafeLinkRescueReadinessGateForPromotionV1({
+    rootDir: args.rootDir,
+    orchestrator_generated_at: args.orchestrator_generated_at,
+    director_generated_at: args.director_generated_at,
+    fileExists: args.fileExists,
+    readText: args.readTextFile,
+  });
+  return { promotion, gate: promotion.ok ? promotion.gate : null };
+}
+
 export function buildManufacturerSafeLinkRescueRunnerFromInputsV1(args: {
   directorLane: ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1;
   orchestrator: ManufacturerRescueOrchestratorReportV1;
   rootDir?: string;
   readinessGate?: ManufacturerRescueReadinessGateReportV1;
+  promotionLoad?: ManufacturerRescueReadinessGatePromotionLoadV1;
   now?: () => Date;
   fileExists?: (abs: string) => boolean;
   readTextFile?: (abs: string) => string;
@@ -482,33 +580,43 @@ export function buildManufacturerSafeLinkRescueRunnerFromInputsV1(args: {
   const directorLane = args.directorLane;
   const orchestrator = args.orchestrator;
 
-  const readinessGate =
-    args.readinessGate ??
-  (args.rootDir
-      ? buildManufacturerSafeLinkRescueReadinessGateFromInputsV1({
-          rootDir: args.rootDir,
-          orchestrator,
-          directorLane,
-          now: args.now,
-          fileExists: args.fileExists,
-          readText: args.readTextFile,
-        })
-      : null);
+  const { promotion, gate: readinessGate } = resolveManufacturerRescueReadinessGatePromotionV1({
+    rootDir: args.rootDir,
+    orchestrator_generated_at: orchestrator.generated_at,
+    director_generated_at: directorLane.generated_at,
+    readinessGate: args.readinessGate,
+    promotionLoad: args.promotionLoad,
+    fileExists: args.fileExists,
+    readTextFile: args.readTextFile,
+  });
 
-  const readyForApplySlug = readinessGate?.ready_for_apply_slug ?? null;
+  const promotionStatus: ManufacturerRescueReadinessGatePromotionStatusV1 = promotion.ok
+    ? "LOADED"
+    : "UNKNOWN_READINESS_GATE_STALE_OR_MISSING";
+
+  const readyForApplySlug = promotion.ok ? readinessGate!.ready_for_apply_slug : null;
   const readinessBySlug = new Map(
     (readinessGate?.candidates ?? []).map((c) => [c.filter_slug, c.readiness_status]),
   );
+  const topPending = promotion.ok
+    ? (readinessGate?.top_pending_work_item ?? null)
+    : buildReadinessGateRegenerateTopPendingWorkItemV1();
 
   const slugStates: ManufacturerRescueRunnerSlugStateV1[] = orchestrator.unified_rescue_queue.map(
     (row) => {
-      const readiness_status =
-        readinessBySlug.get(row.filter_slug) ?? ("NOT_IN_READINESS_GATE" as const);
+      const readiness_status = !promotion.ok
+        ? ("UNKNOWN_READINESS_GATE_STALE_OR_MISSING" as const)
+        : (readinessBySlug.get(row.filter_slug) ?? ("NOT_IN_READINESS_GATE" as const));
       const stage = deriveManufacturerRescueRunnerStageV1({
         row,
         readyForApplySlug,
         readinessStatus:
-          readiness_status === "NOT_IN_READINESS_GATE" ? null : readiness_status,
+          promotion.ok &&
+          readiness_status !== "NOT_IN_READINESS_GATE" &&
+          readiness_status !== "UNKNOWN_READINESS_GATE_STALE_OR_MISSING"
+            ? readiness_status
+            : null,
+        promotionLoaded: promotion.ok,
       });
       const director_value_score = computeDirectorValueScoreV1(row);
       return {
@@ -539,7 +647,20 @@ export function buildManufacturerSafeLinkRescueRunnerFromInputsV1(args: {
   const nextExecutable = slugStates.find((s) => s.executable_now)?.filter_slug ?? "UNKNOWN";
 
   const readyForApplyCount = slugStates.filter((s) => s.stage === "READY_FOR_APPLY").length;
-  const topPending = readinessGate?.top_pending_work_item ?? null;
+  const emptyByStatus = Object.fromEntries(
+    (
+      [
+        "READY_FOR_APPLY",
+        "PENDING_BROWSER_REFRESH",
+        "PENDING_CONFUSION_FAMILY_REVIEW",
+        "PENDING_OWNER_APPROVAL",
+        "PENDING_APPLY_PLAN",
+        "BLOCKED_WRONG_FAMILY_RISK",
+        "BLOCKED_MISSING_PROOF",
+        "UNKNOWN_READINESS",
+      ] as const
+    ).map((s) => [s, 0]),
+  ) as Record<ManufacturerRescueReadinessStatusV1, number>;
 
   return {
     contract: MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_CONTRACT_V1,
@@ -556,24 +677,18 @@ export function buildManufacturerSafeLinkRescueRunnerFromInputsV1(args: {
     ready_for_apply_enforced: true,
     readiness_gate_contract: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
     readiness_gate_artifact_path: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+    readiness_gate_promotion_status: promotionStatus,
+    readiness_gate_artifact: {
+      status: promotion.artifact_status,
+      source_artifact_path: promotion.artifact_path,
+      generated_at: readinessGate?.generated_at ?? null,
+      stale_reason: promotion.ok ? null : promotion.stale_reason,
+    },
     readiness_gate_summary: {
-      ready_for_apply_count: readinessGate?.ready_for_apply_count ?? 0,
-      by_status:
-        readinessGate?.readiness_summary.by_status ??
-        (Object.fromEntries(
-          (
-            [
-              "READY_FOR_APPLY",
-              "PENDING_BROWSER_REFRESH",
-              "PENDING_CONFUSION_FAMILY_REVIEW",
-              "PENDING_OWNER_APPROVAL",
-              "PENDING_APPLY_PLAN",
-              "BLOCKED_WRONG_FAMILY_RISK",
-              "BLOCKED_MISSING_PROOF",
-              "UNKNOWN_READINESS",
-            ] as const
-          ).map((s) => [s, 0]),
-        ) as Record<ManufacturerRescueReadinessStatusV1, number>),
+      artifact_status: promotion.artifact_status,
+      generated_at: readinessGate?.generated_at ?? null,
+      ready_for_apply_count: promotion.ok ? readinessGate!.ready_for_apply_count : 0,
+      by_status: promotion.ok ? readinessGate!.readiness_summary.by_status : emptyByStatus,
       top_pending_work_item: topPending,
     },
     slug_states: slugStates,
@@ -608,16 +723,22 @@ export function buildManufacturerSafeLinkRescueRunnerFromInputsV1(args: {
       recommended_next_action:
         readyForApplySlug !== null
           ? `READY_FOR_APPLY slot held by ${readyForApplySlug} — readiness gate proven; guarded apply executor only; re-audit after apply.`
-          : topPending
-            ? `${topPending.readiness_status} for ${topPending.filter_slug}: ${topPending.recommended_next_action}`
-            : directorLane.recommended_next_action,
-      readiness_gate_ready_for_apply_count: readinessGate?.ready_for_apply_count ?? 0,
+          : !promotion.ok
+            ? MANUFACTURER_RESCUE_READINESS_GATE_REGENERATE_ACTION_V1
+            : topPending
+              ? `${topPending.readiness_status} for ${topPending.filter_slug}: ${topPending.recommended_next_action}`
+              : directorLane.recommended_next_action,
+      readiness_gate_ready_for_apply_count: promotion.ok ? readinessGate!.ready_for_apply_count : 0,
+      readiness_gate_artifact_status: promotion.artifact_status,
       top_pending_work_item: topPending,
     },
     proven_facts: [
       "PROVEN: Runner is read-only — no CSV, Supabase, SQL, or browser automation authorized.",
       `PROVEN: ready_for_apply_enforced=true with ${String(readyForApplyCount)} slug(s) in READY_FOR_APPLY (max 1).`,
-      `PROVEN: READY_FOR_APPLY assigned only from ${MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1} proven candidates.`,
+      `PROVEN: READY_FOR_APPLY assigned only from committed ${MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1} artifact when loaded and fresh.`,
+      promotion.ok
+        ? `PROVEN: Readiness gate promotion artifact loaded from ${promotion.artifact_path}.`
+        : `PROVEN: Readiness gate promotion fail-closed (${promotion.artifact_status}) — no READY_FOR_APPLY without committed fresh gate.`,
       "PROVEN: Boardy safety contract requires browser proof freshness, wrong-family validation, one-at-a-time apply, and re-audit after apply.",
       `PROVEN: Consumed Command Center director lane ${MANUFACTURER_SAFE_LINK_RESCUE_DIRECTOR_CONTRACT_V1}.`,
       `PROVEN: Orchestrator contract ${orchestrator.contract} with ${String(orchestrator.unified_rescue_queue.length)} unified queue rows.`,

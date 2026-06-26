@@ -139,6 +139,67 @@ const CURATED_ENTRIES: EntrySeed[] = [
     notes: "visible to Brain/Command Center, no NBA override",
   },
   {
+    system_id: "manufacturer_safe_link_rescue_readiness_gate_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
+    cc_json_path:
+      "command_center_v2.manufacturer_safe_link_rescue_runner_v1.readiness_gate_artifact; data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-safe-link-rescue-readiness-gate-v1.test.ts",
+    reason:
+      "Sole promotion authority for manufacturer rescue READY_FOR_APPLY; Runner/CC/MCP fail closed without committed fresh gate artifact.",
+    source:
+      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    role: "manufacturer rescue apply promotion gate",
+    owner: "Manufacturer Safe Link Rescue",
+    mutation_authority: false,
+    steering_authority: true,
+    notes: "Director guarded_apply_queue is nomination only; readiness gate grants READY_FOR_APPLY",
+  },
+  {
+    system_id: "manufacturer_safe_link_rescue_runner_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-safe-link-rescue-runner",
+    cc_json_path: "command_center_v2.manufacturer_safe_link_rescue_runner_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-safe-link-rescue-runner-v1.test.ts",
+    reason:
+      "Read-only runner projection; consumes committed readiness gate for READY_FOR_APPLY slot only.",
+    mutation_authority: false,
+    steering_authority: false,
+  },
+  {
+    system_id: "manufacturer_safe_link_rescue_director_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-safe-link-rescue-director",
+    cc_json_path: "command_center_v2.manufacturer_safe_link_rescue_director_v1",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-safe-link-rescue-director-v1.test.ts",
+    reason:
+      "Ranks nominated apply candidates; readiness_gate_required_before_apply=true; does not grant apply promotion.",
+    mutation_authority: false,
+    steering_authority: false,
+  },
+  {
+    system_id: "manufacturer_safe_link_rescue_orchestrator_v1",
+    npm_script_or_path: "npm run buckparts:manufacturer-safe-link-rescue-orchestrator",
+    cc_json_path: "NONE — feeds director/runner via draft artifacts",
+    dashboard_only: false,
+    verdict: "CONNECTED",
+    blocks_lane_work: false,
+    validation_command:
+      "node --import tsx --test scripts/lib/manufacturer-safe-link-rescue-orchestrator-v1.test.ts",
+    reason: "Unified manufacturer rescue queue facts; shared browser proof evidence helpers.",
+    mutation_authority: false,
+    steering_authority: false,
+  },
+  {
     system_id: "seo_opportunity_registry",
     npm_script_or_path:
       "data/command-center/opportunities/seo/*.json + scripts/lib/command-center-seo-opportunity-registry-v1.ts",

@@ -1,6 +1,6 @@
 # Manufacturer safe-link rescue readiness work queue v1
 
-- generated_at: **2026-06-26T04:50:35.596Z**
+- generated_at: **2026-06-26T17:49:53.454Z**
 - ready_for_apply_slug: **NONE**
 - ready_for_apply_count: **0**
 - browser_proof_max_age_days: **14**

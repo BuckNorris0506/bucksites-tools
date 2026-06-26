@@ -11,18 +11,27 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T04:52:03.476Z",
+  "generated_at": "2026-06-26T17:49:53.960Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-runner",
   "director_cc_lane_contract": "manufacturer_safe_link_rescue_director_v1",
   "director_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-director-v1.json",
   "orchestrator_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
-  "director_generated_at": "2026-06-26T02:21:07.884Z",
-  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
+  "director_generated_at": "2026-06-26T17:49:52.913Z",
+  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
   "ready_for_apply_slug": null,
   "ready_for_apply_enforced": true,
   "readiness_gate_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
   "readiness_gate_artifact_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+  "readiness_gate_promotion_status": "LOADED",
+  "readiness_gate_artifact": {
+    "status": "loaded",
+    "source_artifact_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    "generated_at": "2026-06-26T17:49:53.454Z",
+    "stale_reason": null
+  },
   "readiness_gate_summary": {
+    "artifact_status": "loaded",
+    "generated_at": "2026-06-26T17:49:53.454Z",
     "ready_for_apply_count": 0,
     "by_status": {
       "READY_FOR_APPLY": 0,
@@ -915,6 +924,7 @@
     "remaining_opportunity": 20,
     "recommended_next_action": "PENDING_BROWSER_REFRESH for edr4rxd1: Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window).",
     "readiness_gate_ready_for_apply_count": 0,
+    "readiness_gate_artifact_status": "loaded",
     "top_pending_work_item": {
       "filter_slug": "edr4rxd1",
       "readiness_status": "PENDING_BROWSER_REFRESH",
@@ -924,7 +934,8 @@
   "proven_facts": [
     "PROVEN: Runner is read-only — no CSV, Supabase, SQL, or browser automation authorized.",
     "PROVEN: ready_for_apply_enforced=true with 0 slug(s) in READY_FOR_APPLY (max 1).",
-    "PROVEN: READY_FOR_APPLY assigned only from manufacturer_safe_link_rescue_readiness_gate_v1 proven candidates.",
+    "PROVEN: READY_FOR_APPLY assigned only from committed manufacturer_safe_link_rescue_readiness_gate_v1 artifact when loaded and fresh.",
+    "PROVEN: Readiness gate promotion artifact loaded from data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json.",
     "PROVEN: Boardy safety contract requires browser proof freshness, wrong-family validation, one-at-a-time apply, and re-audit after apply.",
     "PROVEN: Consumed Command Center director lane manufacturer_safe_link_rescue_director_v1.",
     "PROVEN: Orchestrator contract manufacturer_safe_link_rescue_orchestrator_v1 with 27 unified queue rows."

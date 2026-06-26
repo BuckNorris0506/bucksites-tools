@@ -48,6 +48,11 @@ import {
   READ_ONLY_MUTATION_FLAGS_V1,
   type ManufacturerRescueAdapter,
 } from "./manufacturer-safe-link-rescue-framework-v1";
+import {
+  loadManufacturerRescueOwnerBrowserProofArtifactV1,
+  manufacturerRescueOwnerProofOfficialPassV1,
+  officialUrlFromManufacturerRescueOwnerProofV1,
+} from "./manufacturer-safe-link-rescue-owner-browser-proof-evidence-v1";
 
 export const MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1 =
   "manufacturer_safe_link_rescue_orchestrator_v1" as const;
@@ -195,53 +200,26 @@ export type ManufacturerRescueScoreboardV1 = {
 const RETAILER_LINKS_CSV_REL = "data/retailer_links.csv" as const;
 const FILTERS_CSV_REL = "data/filters.csv" as const;
 
-const OWNER_PROOF_REL_BY_SLUG: Readonly<Record<string, string>> = Object.fromEntries(
-  FRIDGE_OWNER_BROWSER_PROOF_RESULT_ARTIFACT_RELS_V1.map((rel) => {
-    const match = rel.match(/owner-browser-proof-result-([a-z0-9-]+)-v1\.json$/);
-    return [match?.[1] ?? "", rel];
-  }),
-);
-
 function loadOwnerProofArtifact(
   rootDir: string,
   slug: string,
   fileExists: (abs: string) => boolean,
   readTextFile: (abs: string) => string,
 ): OwnerBrowserProofResultV1 | null {
-  const rel = OWNER_PROOF_REL_BY_SLUG[slug.trim().toLowerCase()];
-  if (!rel) return null;
-  const abs = path.join(rootDir, rel);
-  if (!fileExists(abs)) return null;
-  try {
-    const artifact = JSON.parse(readTextFile(abs)) as OwnerBrowserProofResultV1;
-    if (artifact.contract !== FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1) return null;
-    return artifact;
-  } catch {
-    return null;
-  }
+  return loadManufacturerRescueOwnerBrowserProofArtifactV1({
+    rootDir,
+    filter_slug: slug,
+    fileExists,
+    readText: readTextFile,
+  }).artifact;
 }
 
 function ownerProofOfficialPass(artifact: OwnerBrowserProofResultV1 | null): boolean {
-  if (!artifact || artifact.verdict !== "PASS_BROWSER_PROOF") return false;
-  return (artifact.owner_proof_urls ?? []).some(
-    (row) =>
-      (row.browser_proof_status ?? "").trim() === "PASS" &&
-      (row.path_type === "official_manufacturer_pdp" ||
-        row.path_type === "authorized_parts_distributor_pdp" ||
-        row.path_type === "official_manufacturer_accessory_pdp"),
-  );
+  return manufacturerRescueOwnerProofOfficialPassV1(artifact);
 }
 
 function officialUrlFromOwnerProof(artifact: OwnerBrowserProofResultV1 | null): string | null {
-  if (!artifact) return null;
-  const pass = (artifact.owner_proof_urls ?? []).find(
-    (row) =>
-      (row.browser_proof_status ?? "").trim() === "PASS" &&
-      (row.path_type === "official_manufacturer_pdp" ||
-        row.path_type === "authorized_parts_distributor_pdp" ||
-        row.path_type === "official_manufacturer_accessory_pdp"),
-  );
-  return pass?.url?.trim() || null;
+  return officialUrlFromManufacturerRescueOwnerProofV1(artifact);
 }
 
 export function discoverRegisteredManufacturerRescueAdaptersV1(): RegisteredManufacturerRescueAdapterV1[] {
@@ -902,11 +880,14 @@ export function buildManufacturerSafeLinkRescueOrchestratorReportV1(args: {
       fileExists,
       readTextFile,
     });
-    const ownerProof = loadOwnerProofArtifact(args.rootDir, row.filter_slug, fileExists, readTextFile);
-    if (ownerProof) {
-      const rel = OWNER_PROOF_REL_BY_SLUG[row.filter_slug];
-      if (rel) sourcePaths.add(rel);
-    }
+    const ownerProofLoad = loadManufacturerRescueOwnerBrowserProofArtifactV1({
+      rootDir: args.rootDir,
+      filter_slug: row.filter_slug,
+      fileExists,
+      readText: readTextFile,
+    });
+    if (ownerProofLoad.artifact_rel) sourcePaths.add(ownerProofLoad.artifact_rel);
+    const ownerProof = ownerProofLoad.artifact;
     const geEvidence = loadGeRefrigeratorRescueBrowserEvidenceArtifactV1({
       rootDir: args.rootDir,
       filterSlug: row.filter_slug,
@@ -926,11 +907,14 @@ export function buildManufacturerSafeLinkRescueOrchestratorReportV1(args: {
   }
 
   for (const row of frigidaireReport.rows) {
-    const ownerProof = loadOwnerProofArtifact(args.rootDir, row.filter_slug, fileExists, readTextFile);
-    if (ownerProof) {
-      const rel = OWNER_PROOF_REL_BY_SLUG[row.filter_slug];
-      if (rel) sourcePaths.add(rel);
-    }
+    const ownerProofLoad = loadManufacturerRescueOwnerBrowserProofArtifactV1({
+      rootDir: args.rootDir,
+      filter_slug: row.filter_slug,
+      fileExists,
+      readText: readTextFile,
+    });
+    if (ownerProofLoad.artifact_rel) sourcePaths.add(ownerProofLoad.artifact_rel);
+    const ownerProof = ownerProofLoad.artifact;
     queue.push(
       normalizeFrigidaireRow({
         row,
@@ -942,11 +926,14 @@ export function buildManufacturerSafeLinkRescueOrchestratorReportV1(args: {
 
   for (const row of everydropRows) {
     const slug = row.filter_slug;
-    const ownerProof = loadOwnerProofArtifact(args.rootDir, slug, fileExists, readTextFile);
-    if (ownerProof) {
-      const rel = OWNER_PROOF_REL_BY_SLUG[slug];
-      if (rel) sourcePaths.add(rel);
-    }
+    const ownerProofLoad = loadManufacturerRescueOwnerBrowserProofArtifactV1({
+      rootDir: args.rootDir,
+      filter_slug: slug,
+      fileExists,
+      readText: readTextFile,
+    });
+    if (ownerProofLoad.artifact_rel) sourcePaths.add(ownerProofLoad.artifact_rel);
+    const ownerProof = ownerProofLoad.artifact;
     queue.push(
       normalizeEverydropRow({
         row,

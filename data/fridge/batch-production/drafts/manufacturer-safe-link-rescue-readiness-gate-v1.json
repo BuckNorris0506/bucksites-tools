@@ -11,11 +11,11 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T04:50:35.596Z",
+  "generated_at": "2026-06-26T17:49:53.454Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
-  "director_generated_at": "2026-06-26T02:21:07.884Z",
+  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
+  "director_generated_at": "2026-06-26T17:49:52.913Z",
   "browser_proof_max_age_days": 14,
   "deploy_build_marker": {
     "marker": "UNKNOWN",
@@ -40,7 +40,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-05T22:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-05T22:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",
@@ -110,7 +110,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-06T03:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-06T03:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",
@@ -180,7 +180,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-06T02:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-06T02:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",
@@ -251,7 +251,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-05T20:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-05T20:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",
@@ -322,7 +322,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-05T12:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-05T12:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",
@@ -393,7 +393,7 @@
         {
           "check_id": "browser_proof_fresh",
           "status": "FAIL",
-          "notes": "proof stale or invalid checked_at=2026-06-06T00:00:00.000Z"
+          "notes": "proof stale checked_at=2026-06-06T00:00:00.000Z"
         },
         {
           "check_id": "browser_proof_after_deploy_marker",

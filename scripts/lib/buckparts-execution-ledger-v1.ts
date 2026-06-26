@@ -13,6 +13,10 @@ import {
 } from "./buckparts-command-center-dispatch-runner-v1";
 import { FRIDGE_BATCH_PRODUCTION_RUN_REGISTRY_DIR_REL_V1 } from "./fridge-buyer-path-owner-review-bridge-v1";
 import { BATCH_PRODUCTION_CHECKLIST_DEFAULT_REGISTRY_PATH_V1 } from "./buckparts-batch-production-operating-checklist-v1";
+import {
+  MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
+  MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1,
+} from "./manufacturer-safe-link-rescue-readiness-gate-v1";
 
 export const BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1 = "buckparts_execution_ledger_v1" as const;
 
@@ -35,6 +39,9 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_DIRECTOR_V1 =
 
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_RUNNER_V1 =
   "npm run buckparts:manufacturer-safe-link-rescue-runner" as const;
+
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_READINESS_GATE_V1 =
+  "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate" as const;
 
 export const EXECUTION_LEDGER_TRIGGER_REPO_RUNTIME_CONVERGENCE_V1 =
   "npm run buckparts:repo-runtime-convergence:check" as const;
@@ -353,6 +360,49 @@ function intakeCloseoutPackets(rootDir: string, sourcePaths: Set<string>): Execu
   }
 }
 
+function intakeManufacturerRescueReadinessGate(
+  rootDir: string,
+  sourcePaths: Set<string>,
+): ExecutionLedgerEntryV1 | null {
+  const rel = MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_JSON_REL_V1;
+  const abs = path.join(rootDir, rel);
+  if (!existsSync(abs)) return null;
+  sourcePaths.add(rel);
+  try {
+    const parsed = JSON.parse(readFileSync(abs, "utf8")) as Record<string, unknown>;
+    if (parsed.contract !== MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1) return null;
+    const generatedAt = asString(parsed.generated_at) ?? "UNKNOWN";
+    const readyCount =
+      typeof parsed.ready_for_apply_count === "number" ? parsed.ready_for_apply_count : "UNKNOWN";
+    const orchestratorAt = asString(parsed.orchestrator_generated_at) ?? "UNKNOWN";
+    const directorAt = asString(parsed.director_generated_at) ?? "UNKNOWN";
+    return {
+      entry_id: `manufacturer_rescue_readiness_gate_${generatedAt}`,
+      commit_sha: "UNKNOWN",
+      completion_timestamp: generatedAt,
+      operational_lane: "manufacturer_safe_link_rescue:readiness_gate_promotion",
+      artifacts_produced: [rel],
+      validation_performed: [
+        `ready_for_apply_count=${String(readyCount)}`,
+        `orchestrator_generated_at=${orchestratorAt}`,
+        `director_generated_at=${directorAt}`,
+      ],
+      safe_to_commit_status: "UNKNOWN",
+      pushed_to_origin: "UNKNOWN",
+      business_capability_unlocked:
+        readyCount === 0
+          ? "manufacturer rescue promotion gate indexed (no READY_FOR_APPLY)"
+          : "manufacturer rescue READY_FOR_APPLY promotion proven in committed gate",
+      superseded_by: null,
+      source_contract: MANUFACTURER_SAFE_LINK_RESCUE_READINESS_GATE_CONTRACT_V1,
+      source_artifact_rel_path: rel,
+      provenance_tier: "COMMITTED_SOURCE",
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function buildBuckpartsExecutionLedgerReportV1(args: {
   rootDir: string;
   now?: () => Date;
@@ -366,6 +416,10 @@ export function buildBuckpartsExecutionLedgerReportV1(args: {
     ...intakeDispatchRuns(args.rootDir, sourcePaths),
     ...intakeRunRegistries(args.rootDir, sourcePaths),
     ...intakeCloseoutPackets(args.rootDir, sourcePaths),
+    ...((): ExecutionLedgerEntryV1[] => {
+      const entry = intakeManufacturerRescueReadinessGate(args.rootDir, sourcePaths);
+      return entry ? [entry] : [];
+    })(),
   ];
 
   const entries = applySupersession(

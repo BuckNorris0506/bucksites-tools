@@ -42,6 +42,8 @@ export type ManufacturerSafeLinkRescueRunnerInspectSummaryV1 = {
   orchestrator_generated_at: string;
   runner_generated_at: string;
   readiness_gate_ready_for_apply_count: number;
+  readiness_gate_artifact_status: ManufacturerRescueRunnerReportV1["readiness_gate_artifact"]["status"];
+  readiness_gate_promotion_status: ManufacturerRescueRunnerReportV1["readiness_gate_promotion_status"];
   top_pending_work_item: ManufacturerRescueReadinessGateReportV1["top_pending_work_item"];
 };
 
@@ -66,6 +68,8 @@ export type ManufacturerSafeLinkRescueRunnerCommandCenterLaneV1 = {
   ready_for_apply_slug: string | null;
   ready_for_apply_enforced: true;
   readiness_gate_artifact_path: string;
+  readiness_gate_promotion_status: ManufacturerRescueRunnerReportV1["readiness_gate_promotion_status"];
+  readiness_gate_artifact: ManufacturerRescueRunnerReportV1["readiness_gate_artifact"];
   readiness_gate_summary: ManufacturerRescueRunnerReportV1["readiness_gate_summary"];
   execution_order: string[];
   slug_states: ManufacturerRescueRunnerSlugStateV1[];
@@ -119,6 +123,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromReport
     orchestrator_generated_at: report.orchestrator_generated_at,
     runner_generated_at: report.generated_at,
     readiness_gate_ready_for_apply_count: report.inspect_summary.readiness_gate_ready_for_apply_count,
+    readiness_gate_artifact_status: report.inspect_summary.readiness_gate_artifact_status,
+    readiness_gate_promotion_status: report.readiness_gate_promotion_status,
     top_pending_work_item: report.inspect_summary.top_pending_work_item,
   };
 
@@ -143,6 +149,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneFromReport
     ready_for_apply_slug: report.ready_for_apply_slug,
     ready_for_apply_enforced: true,
     readiness_gate_artifact_path: report.readiness_gate_artifact_path,
+    readiness_gate_promotion_status: report.readiness_gate_promotion_status,
+    readiness_gate_artifact: report.readiness_gate_artifact,
     readiness_gate_summary: report.readiness_gate_summary,
     execution_order: report.execution_order,
     slug_states: report.slug_states,
@@ -192,7 +200,17 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1(
     ready_for_apply_enforced: true,
     readiness_gate_artifact_path:
       "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    readiness_gate_promotion_status: "UNKNOWN_READINESS_GATE_STALE_OR_MISSING",
+    readiness_gate_artifact: {
+      status: "missing",
+      source_artifact_path:
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+      generated_at: null,
+      stale_reason: "runner lane UNKNOWN",
+    },
     readiness_gate_summary: {
+      artifact_status: "missing",
+      generated_at: null,
       ready_for_apply_count: 0,
       by_status: {
         READY_FOR_APPLY: 0,
@@ -233,6 +251,8 @@ export function buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1(
       orchestrator_generated_at: "UNKNOWN",
       runner_generated_at: args.generated_at,
       readiness_gate_ready_for_apply_count: 0,
+      readiness_gate_artifact_status: "missing",
+      readiness_gate_promotion_status: "UNKNOWN_READINESS_GATE_STALE_OR_MISSING",
       top_pending_work_item: null,
     },
     recommended_next_action:
