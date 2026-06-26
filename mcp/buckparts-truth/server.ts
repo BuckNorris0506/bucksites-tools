@@ -25,8 +25,12 @@ import {
   manufacturerRescueSlugStateV1,
   manufacturerRescueStatusV1,
   businessSnapshotV1,
+  capabilityLookupV1,
+  capabilityTimelineV1,
   commandCenterSummaryV1,
+  executionHistoryV1,
   laneStatusV1,
+  lastCompletedCapabilityV1,
   nextBestActionV1,
   workQueueV1,
   searchPartsV2,
@@ -51,7 +55,7 @@ function toolResult(payload: unknown) {
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.5.0",
+    version: "0.6.0",
   },
   {
     instructions:
@@ -320,6 +324,67 @@ server.registerTool(
     annotations: READ_ONLY_ANNOTATIONS,
   },
   async () => toolResult(await businessSnapshotV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "execution_history",
+  {
+    title: "Execution history (read-only)",
+    description:
+      "Completed operational work indexed from committed dispatch runs, batch closeouts, and closeout learning packets.",
+    inputSchema: {
+      limit: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("Optional max entries to return (newest first)."),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ limit }) => toolResult(executionHistoryV1({ rootDir: REPO_ROOT }, limit)),
+);
+
+server.registerTool(
+  "last_completed_capability",
+  {
+    title: "Last completed capability (read-only)",
+    description:
+      "Most recent completed operational capability from the execution ledger by completion timestamp.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(lastCompletedCapabilityV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "capability_timeline",
+  {
+    title: "Capability timeline (read-only)",
+    description:
+      "Operational capabilities grouped by lane with latest completion per lane from the execution ledger.",
+    inputSchema: {},
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async () => toolResult(capabilityTimelineV1({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "capability_lookup",
+  {
+    title: "Capability lookup (read-only)",
+    description:
+      "Find ledger entries by commit SHA prefix, entry id, operational lane, or business capability name fragment.",
+    inputSchema: {
+      commit_or_name: z
+        .string()
+        .min(1)
+        .describe("Commit SHA prefix, lane name, capability text, or entry id fragment."),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ commit_or_name }) =>
+    toolResult(capabilityLookupV1({ rootDir: REPO_ROOT }, commit_or_name)),
 );
 
 async function main(): Promise<void> {

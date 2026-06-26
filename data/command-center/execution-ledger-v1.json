@@ -1,0 +1,323 @@
+{
+  "contract": "buckparts_execution_ledger_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-26T04:04:45.601Z",
+  "source_command": "npm run buckparts:execution-ledger",
+  "entry_count": 5,
+  "entries": [
+    {
+      "entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-03T06:40:06.770Z",
+      "operational_lane": "refrigerator_water:batch_closeout_recorded",
+      "artifacts_produced": [
+        "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+        "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+        "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"
+      ],
+      "validation_performed": [
+        "closeout_complete=true",
+        "post_apply_parity=APPLIED_PARITY_PROVEN",
+        "go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "refrigerator_water batch closeout recorded",
+      "superseded_by": null,
+      "source_contract": "fridge_buyer_path_batch_closed_run_registry_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "closeout_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+      "commit_sha": "06d2902",
+      "completion_timestamp": "2026-06-01T00:00:00.000Z",
+      "operational_lane": "refrigerator_water:batch_closeout_learning",
+      "artifacts_produced": [
+        "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+        "data/fridge/batch-production/apply-execution-plans/fridge-buyer-path-batch-apply-execution-plan-v1-0fec4a7b623a.json",
+        "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+        "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+        "node --import tsx scripts/report-buckparts-command-center.ts",
+        "node --import tsx scripts/report-buckparts-go-first-hop-smoke-v1.ts --base-url http://127.0.0.1:3012",
+        "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor"
+      ],
+      "validation_performed": [
+        "post_apply_parity=APPLIED_PARITY_PROVEN",
+        "go_first_hop_smoke=PASS_WITH_FIRST_HOP_REDIRECT_SCOPE"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": true,
+      "business_capability_unlocked": "refrigerator_water guarded CSV batch applied with parity learning packet",
+      "superseded_by": null,
+      "source_contract": "fridge_buyer_path_batch_closeout_learning_packet_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "dispatch_dispatch-run-2026-05-26T020812754Z",
+      "commit_sha": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+      "completion_timestamp": "2026-05-26T02:08:12.754Z",
+      "operational_lane": "command_center_dispatch:supabase_parity_apply_proof",
+      "artifacts_produced": [
+        "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json"
+      ],
+      "validation_performed": [
+        "dispatch_execution_status=EXECUTED"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "Parity apply-run JSON committed — supabase_parity_applied stage becomes complete; dispatch re-evaluates runtime smoke.",
+      "superseded_by": null,
+      "source_contract": "buckparts_command_center_dispatch_run_v1",
+      "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "dispatch_dispatch-run-2026-05-25T000002000Z",
+      "commit_sha": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+      "completion_timestamp": "2026-05-25T00:00:02.000Z",
+      "operational_lane": "command_center_dispatch:supabase_parity_apply_proof",
+      "artifacts_produced": [
+        "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000002000Z.json"
+      ],
+      "validation_performed": [
+        "dispatch_execution_status=EXECUTED"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "x",
+      "superseded_by": "dispatch_dispatch-run-2026-05-26T020812754Z",
+      "source_contract": "buckparts_command_center_dispatch_run_v1",
+      "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000002000Z.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "run_registry_ap-batch-v2-2026-05-24",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-05-24T05:44:39.235Z",
+      "operational_lane": "air_purifier:AP batch-v2",
+      "artifacts_produced": [
+        "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+        "data/air-purifier/batch-production/agent-packets-batch-v2/manifest.json",
+        "data/air-purifier/batch-production/agent-results-batch-v2",
+        "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+        "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json",
+        "data/air-purifier/retailer_links.csv",
+        "npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts"
+      ],
+      "validation_performed": [
+        "closeout_complete=true"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "air_purifier batch closeout recorded",
+      "superseded_by": null,
+      "source_contract": "batch_production_proven_run_v1",
+      "source_artifact_rel_path": "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    }
+  ],
+  "capability_timeline": [
+    {
+      "capability_key": "refrigerator_water_batch_closeout_recorded",
+      "operational_lane": "refrigerator_water:batch_closeout_recorded",
+      "entries": [
+        {
+          "entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-03T06:40:06.770Z",
+          "operational_lane": "refrigerator_water:batch_closeout_recorded",
+          "artifacts_produced": [
+            "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+            "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+            "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"
+          ],
+          "validation_performed": [
+            "closeout_complete=true",
+            "post_apply_parity=APPLIED_PARITY_PROVEN",
+            "go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "refrigerator_water batch closeout recorded",
+          "superseded_by": null,
+          "source_contract": "fridge_buyer_path_batch_closed_run_registry_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+      "latest_completion_timestamp": "2026-06-03T06:40:06.770Z"
+    },
+    {
+      "capability_key": "refrigerator_water_batch_closeout_learning",
+      "operational_lane": "refrigerator_water:batch_closeout_learning",
+      "entries": [
+        {
+          "entry_id": "closeout_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+          "commit_sha": "06d2902",
+          "completion_timestamp": "2026-06-01T00:00:00.000Z",
+          "operational_lane": "refrigerator_water:batch_closeout_learning",
+          "artifacts_produced": [
+            "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+            "data/fridge/batch-production/apply-execution-plans/fridge-buyer-path-batch-apply-execution-plan-v1-0fec4a7b623a.json",
+            "data/fridge/batch-production/apply-plans/fridge-buyer-path-batch-apply-plan-v1-0fec4a7b623a.json",
+            "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+            "node --import tsx scripts/report-buckparts-command-center.ts",
+            "node --import tsx scripts/report-buckparts-go-first-hop-smoke-v1.ts --base-url http://127.0.0.1:3012",
+            "npm run buckparts:universal-batch-lifecycle-guarded-csv-apply-executor"
+          ],
+          "validation_performed": [
+            "post_apply_parity=APPLIED_PARITY_PROVEN",
+            "go_first_hop_smoke=PASS_WITH_FIRST_HOP_REDIRECT_SCOPE"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": true,
+          "business_capability_unlocked": "refrigerator_water guarded CSV batch applied with parity learning packet",
+          "superseded_by": null,
+          "source_contract": "fridge_buyer_path_batch_closeout_learning_packet_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "closeout_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+      "latest_completion_timestamp": "2026-06-01T00:00:00.000Z"
+    },
+    {
+      "capability_key": "command_center_dispatch_supabase_parity_apply_proof",
+      "operational_lane": "command_center_dispatch:supabase_parity_apply_proof",
+      "entries": [
+        {
+          "entry_id": "dispatch_dispatch-run-2026-05-26T020812754Z",
+          "commit_sha": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+          "completion_timestamp": "2026-05-26T02:08:12.754Z",
+          "operational_lane": "command_center_dispatch:supabase_parity_apply_proof",
+          "artifacts_produced": [
+            "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json"
+          ],
+          "validation_performed": [
+            "dispatch_execution_status=EXECUTED"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "Parity apply-run JSON committed — supabase_parity_applied stage becomes complete; dispatch re-evaluates runtime smoke.",
+          "superseded_by": null,
+          "source_contract": "buckparts_command_center_dispatch_run_v1",
+          "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        },
+        {
+          "entry_id": "dispatch_dispatch-run-2026-05-25T000002000Z",
+          "commit_sha": "f586519290ba3ac47c03e4d68564b663d825ffb7",
+          "completion_timestamp": "2026-05-25T00:00:02.000Z",
+          "operational_lane": "command_center_dispatch:supabase_parity_apply_proof",
+          "artifacts_produced": [
+            "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000002000Z.json"
+          ],
+          "validation_performed": [
+            "dispatch_execution_status=EXECUTED"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "x",
+          "superseded_by": "dispatch_dispatch-run-2026-05-26T020812754Z",
+          "source_contract": "buckparts_command_center_dispatch_run_v1",
+          "source_artifact_rel_path": "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000002000Z.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "dispatch_dispatch-run-2026-05-26T020812754Z",
+      "latest_completion_timestamp": "2026-05-26T02:08:12.754Z"
+    },
+    {
+      "capability_key": "air_purifier_ap_batch_v2",
+      "operational_lane": "air_purifier:AP batch-v2",
+      "entries": [
+        {
+          "entry_id": "run_registry_ap-batch-v2-2026-05-24",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-05-24T05:44:39.235Z",
+          "operational_lane": "air_purifier:AP batch-v2",
+          "artifacts_produced": [
+            "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+            "data/air-purifier/batch-production/agent-packets-batch-v2/manifest.json",
+            "data/air-purifier/batch-production/agent-results-batch-v2",
+            "data/air-purifier/batch-production/apply-plans-batch-v2/ap-apply-plan-batch-v2.json",
+            "data/air-purifier/batch-production/apply-runs-batch-v2/ap-apply-run-batch-v2.json",
+            "data/air-purifier/retailer_links.csv",
+            "npx tsx scripts/report-air-purifier-batch-production-lane-v1.ts"
+          ],
+          "validation_performed": [
+            "closeout_complete=true"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "air_purifier batch closeout recorded",
+          "superseded_by": null,
+          "source_contract": "batch_production_proven_run_v1",
+          "source_artifact_rel_path": "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "run_registry_ap-batch-v2-2026-05-24",
+      "latest_completion_timestamp": "2026-05-24T05:44:39.235Z"
+    }
+  ],
+  "last_completed_capability": {
+    "entry_id": "run_registry_fridge-buyer-path-batch-run-v1-0fec4a7b623a",
+    "commit_sha": "UNKNOWN",
+    "completion_timestamp": "2026-06-03T06:40:06.770Z",
+    "operational_lane": "refrigerator_water:batch_closeout_recorded",
+    "artifacts_produced": [
+      "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+      "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+      "data/owner-decisions/fridge-buyer-path-batch-approval-v1.json"
+    ],
+    "validation_performed": [
+      "closeout_complete=true",
+      "post_apply_parity=APPLIED_PARITY_PROVEN",
+      "go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH"
+    ],
+    "safe_to_commit_status": "UNKNOWN",
+    "pushed_to_origin": "UNKNOWN",
+    "business_capability_unlocked": "refrigerator_water batch closeout recorded",
+    "superseded_by": null,
+    "source_contract": "fridge_buyer_path_batch_closed_run_registry_v1",
+    "source_artifact_rel_path": "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json",
+    "provenance_tier": "COMMITTED_SOURCE"
+  },
+  "source_paths_read": [
+    "data/air-purifier/batch-production/run-registry/ap-batch-v2-proven-run-v1.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000000000Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000001000Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000001500Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000002000Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-25T000003000Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-26T014559063Z.json",
+    "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
+    "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+    "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json"
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "command_center": ".command_center_v2.execution_ledger_v1",
+      "entries": ".entries",
+      "capability_timeline": ".capability_timeline",
+      "last_completed_capability": ".last_completed_capability"
+    },
+    "recommended_next_action": "Review last completed capability refrigerator_water:batch_closeout_recorded at 2026-06-03T06:40:06.770Z."
+  },
+  "proven_facts": [
+    "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
+    "PROVEN: entry_count=5 from 10 source artifact path(s)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
+    "UNKNOWN: safe_to_commit_status unless future source artifacts include explicit verdict fields.",
+    "UNKNOWN: live git remote parity for entries without committed push attestations."
+  ]
+}

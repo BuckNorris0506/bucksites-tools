@@ -140,6 +140,10 @@ import {
   buildManufacturerSafeLinkRescueRunnerCommandCenterLaneV1,
 } from "./lib/manufacturer-safe-link-rescue-runner-command-center-v1";
 import {
+  buildBuckpartsExecutionLedgerCommandCenterLaneUnknownV1,
+  buildBuckpartsExecutionLedgerCommandCenterLaneV1,
+} from "./lib/buckparts-execution-ledger-command-center-v1";
+import {
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
@@ -1181,6 +1185,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
+    | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
     | "ap_homeowner_pilot_scorecard_v1"
@@ -1452,6 +1457,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
+    | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_core,
@@ -1604,6 +1610,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
     | "manufacturer_safe_link_rescue_runner_v1"
+    | "execution_ledger_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_before_daily,
@@ -2064,6 +2071,20 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let execution_ledger_v1;
+  try {
+    execution_ledger_v1 = buildBuckpartsExecutionLedgerCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    execution_ledger_v1 = buildBuckpartsExecutionLedgerCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     | "next_execution_packet_summary_v1"
@@ -2128,6 +2149,7 @@ export async function buildBuckpartsCommandCenterReport(
     wedge_truth_spine_coverage_matrix_v1,
     manufacturer_safe_link_rescue_director_v1,
     manufacturer_safe_link_rescue_runner_v1,
+    execution_ledger_v1,
   };
 
   const commandCenterShellForNextPacket = {

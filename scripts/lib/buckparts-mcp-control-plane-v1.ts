@@ -41,6 +41,7 @@ const LANE_NAME_ALIASES_V1: Readonly<Record<string, string>> = {
   demand_queue: "demand_work_queue_summary_v1",
   daily_operator: "daily_operator_summary_v1",
   brain_gate: "brain_integrity_gate_v1",
+  execution_ledger: "execution_ledger_v1",
 };
 
 export type CommandCenterMcpLoadSourceV1 = "committed_snapshot" | "live_build";

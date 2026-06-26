@@ -127,6 +127,7 @@ const WEDGE_CAPABILITY_PROBES: Record<HomekeepWedgeCatalog, WedgeCapabilityProbe
       "command_center_v2.fridge_truth_spine_v1",
       "command_center_v2.manufacturer_safe_link_rescue_director_v1",
       "command_center_v2.manufacturer_safe_link_rescue_runner_v1",
+      "command_center_v2.execution_ledger_v1",
       "manufacturer_safe_link_rescue_orchestrator_v1",
     ],
   },
