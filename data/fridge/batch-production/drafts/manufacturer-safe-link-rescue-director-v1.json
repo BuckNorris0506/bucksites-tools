@@ -1,0 +1,477 @@
+{
+  "contract": "manufacturer_safe_link_rescue_director_v1",
+  "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
+  "framework_contract": "manufacturer_safe_link_rescue_framework_v1",
+  "source_command": "npm run buckparts:manufacturer-safe-link-rescue-director",
+  "orchestrator_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
+  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
+  "generated_at": "2026-06-26T02:21:07.884Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "browser_automation_authorized": false,
+  "coverage_unlocked": false,
+  "why_this_order_was_chosen": [
+    "Stage 1 prioritizes owner-review-ready lanes — browser PASS already on disk for guarded apply candidates; founder review is the binding constraint before any CSV mutation.",
+    "Manufacturers ranked by expected_coverage_unlock_score — top: frigidaire (4 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.).",
+    "Browser capture work ordered after owner-review/apply stages because PASS proof must exist before guarded apply; new captures feed future owner-review lanes only.",
+    "Blocked/not-ready slugs parked last — no PDP inference, no weakening of wrong-family or supersession gates.",
+    "All estimates are planning projections — coverage_unlocked remains false until separate authorized apply executor mutates repo CSV."
+  ],
+  "blocked_summary": [
+    {
+      "reason": "browser_evidence_artifact_missing",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ]
+    },
+    {
+      "reason": "confusion_family_review_required",
+      "slug_count": 8,
+      "example_slugs": [
+        "eptwfu01",
+        "fppwfu01",
+        "frig-242086201",
+        "purepour",
+        "ultrawf"
+      ]
+    },
+    {
+      "reason": "exact_token_not_proven",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "live_browser_capture_unavailable_or_failed",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "repo_proven_official_pdp_url_missing",
+      "slug_count": 7,
+      "example_slugs": [
+        "fppwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "frig-242294502",
+        "purepour"
+      ]
+    },
+    {
+      "reason": "repo_proven_official_target_url_missing",
+      "slug_count": 5,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "ukf8001",
+        "w10413645a"
+      ]
+    },
+    {
+      "reason": "supersession_review_required",
+      "slug_count": 3,
+      "example_slugs": [
+        "w10413645a",
+        "xwf",
+        "xwfe"
+      ]
+    },
+    {
+      "reason": "known_broken_destination",
+      "slug_count": 1,
+      "example_slugs": [
+        "mwf"
+      ]
+    }
+  ],
+  "ranked_manufacturers": [
+    {
+      "manufacturer_key": "frigidaire",
+      "expected_coverage_unlock_score": 2050,
+      "rescue_candidate_count": 10,
+      "owner_review_ready_count": 4,
+      "browser_pass_count": 4,
+      "browser_ready_count": 3,
+      "remaining_opportunity": 6,
+      "rationale": "4 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.",
+      "rank": 1
+    },
+    {
+      "manufacturer_key": "everydrop_whirlpool",
+      "expected_coverage_unlock_score": 1127.5,
+      "rescue_candidate_count": 7,
+      "owner_review_ready_count": 2,
+      "browser_pass_count": 2,
+      "browser_ready_count": 2,
+      "remaining_opportunity": 5,
+      "rationale": "2 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.",
+      "rank": 2
+    },
+    {
+      "manufacturer_key": "ge_appliance_parts",
+      "expected_coverage_unlock_score": 1097.5,
+      "rescue_candidate_count": 9,
+      "owner_review_ready_count": 0,
+      "browser_pass_count": 0,
+      "browser_ready_count": 8,
+      "remaining_opportunity": 9,
+      "rationale": "8 browser-ready slug(s) need capture before apply planning.",
+      "rank": 3
+    }
+  ],
+  "ranked_browser_work": [
+    {
+      "rank": 1,
+      "filter_slug": "gswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 913,
+      "orchestrator_priority_score": 788,
+      "expected_safe_coverage_signal": 265,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for gswf; owner approval before any CSV apply."
+    },
+    {
+      "rank": 2,
+      "filter_slug": "xwfe",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 850,
+      "orchestrator_priority_score": 735,
+      "expected_safe_coverage_signal": 240,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "supersession_review_required",
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for xwfe; owner approval before any CSV apply."
+    },
+    {
+      "rank": 3,
+      "filter_slug": "xwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 754,
+      "orchestrator_priority_score": 639,
+      "expected_safe_coverage_signal": 195,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "supersession_review_required",
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for xwf; owner approval before any CSV apply."
+    },
+    {
+      "rank": 4,
+      "filter_slug": "gswf2",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 741,
+      "orchestrator_priority_score": 616,
+      "expected_safe_coverage_signal": 185,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for gswf2; owner approval before any CSV apply."
+    },
+    {
+      "rank": 5,
+      "filter_slug": "opfg3f",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 725,
+      "orchestrator_priority_score": 600,
+      "expected_safe_coverage_signal": 180,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for opfg3f; owner approval before any CSV apply."
+    },
+    {
+      "rank": 6,
+      "filter_slug": "smartwater-mwfp",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 715,
+      "orchestrator_priority_score": 590,
+      "expected_safe_coverage_signal": 175,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for smartwater-mwfp; owner approval before any CSV apply."
+    },
+    {
+      "rank": 7,
+      "filter_slug": "mswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 652,
+      "orchestrator_priority_score": 527,
+      "expected_safe_coverage_signal": 160,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for mswf; owner approval before any CSV apply."
+    },
+    {
+      "rank": 8,
+      "filter_slug": "pfmwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "director_value_score": 639,
+      "orchestrator_priority_score": 514,
+      "expected_safe_coverage_signal": 155,
+      "trust_risk": "UNKNOWN",
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "recommended_next_action": "Run read-only GE browser capture for pfmwf; owner approval before any CSV apply."
+    }
+  ],
+  "ranked_owner_reviews": [
+    {
+      "rank": 1,
+      "filter_slug": "edr4rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "director_value_score": 1447,
+      "orchestrator_priority_score": 1197,
+      "expected_safe_coverage_signal": 275,
+      "trust_risk": "LOW",
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "recommended_next_action": "Complete owner-browser checklist or rerun capture for edr4rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN."
+    },
+    {
+      "rank": 2,
+      "filter_slug": "edr3rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "director_value_score": 1434,
+      "orchestrator_priority_score": 1184,
+      "expected_safe_coverage_signal": 270,
+      "trust_risk": "LOW",
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "recommended_next_action": "Complete owner-browser checklist or rerun capture for edr3rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN."
+    },
+    {
+      "rank": 3,
+      "filter_slug": "ultrawf",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1320,
+      "orchestrator_priority_score": 1105,
+      "expected_safe_coverage_signal": 255,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 4,
+      "filter_slug": "eptwfu01",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1300,
+      "orchestrator_priority_score": 1085,
+      "expected_safe_coverage_signal": 245,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 5,
+      "filter_slug": "wf3cb",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1227,
+      "orchestrator_priority_score": 1012,
+      "expected_safe_coverage_signal": 210,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 6,
+      "filter_slug": "wfcb",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1117,
+      "orchestrator_priority_score": 902,
+      "expected_safe_coverage_signal": 205,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    }
+  ],
+  "ranked_guarded_apply_candidates": [
+    {
+      "rank": 1,
+      "filter_slug": "edr4rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "director_value_score": 1447,
+      "orchestrator_priority_score": 1197,
+      "expected_safe_coverage_signal": 275,
+      "trust_risk": "LOW",
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "recommended_next_action": "Complete owner-browser checklist or rerun capture for edr4rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN."
+    },
+    {
+      "rank": 2,
+      "filter_slug": "edr3rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "director_value_score": 1434,
+      "orchestrator_priority_score": 1184,
+      "expected_safe_coverage_signal": 270,
+      "trust_risk": "LOW",
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "recommended_next_action": "Complete owner-browser checklist or rerun capture for edr3rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN."
+    },
+    {
+      "rank": 3,
+      "filter_slug": "ultrawf",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1320,
+      "orchestrator_priority_score": 1105,
+      "expected_safe_coverage_signal": 255,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 4,
+      "filter_slug": "eptwfu01",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1300,
+      "orchestrator_priority_score": 1085,
+      "expected_safe_coverage_signal": 245,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 5,
+      "filter_slug": "wf3cb",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1227,
+      "orchestrator_priority_score": 1012,
+      "expected_safe_coverage_signal": 210,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    },
+    {
+      "rank": 6,
+      "filter_slug": "wfcb",
+      "manufacturer_key": "frigidaire",
+      "director_value_score": 1117,
+      "orchestrator_priority_score": 902,
+      "expected_safe_coverage_signal": 205,
+      "trust_risk": "MEDIUM",
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required."
+    }
+  ],
+  "estimates": {
+    "safe_buyer_paths_unlockable_estimate": 6,
+    "safe_buyer_paths_unlockable_note": "Estimate only — assumes separate owner-approved apply executor succeeds for all guarded_apply candidates. Director does not authorize CSV apply.",
+    "browser_hours_required_estimate": 6,
+    "browser_hours_note": "Planning estimate from browser-work queue depth × per-manufacturer hour constants — not measured runtime.",
+    "owner_review_count": 6,
+    "trust_risk": "HIGH",
+    "trust_risk_factors": [
+      "1 slug(s) with known_broken destination — do not capture or apply.",
+      "4 confusion-family review slug(s)."
+    ],
+    "expected_coverage_gain_percent_estimate": 23,
+    "expected_coverage_gain_note": "Up to 23% of rescue cohort (6/26) if guarded apply lanes complete with gates intact."
+  },
+  "best_execution_plan_summary": "Maximize safe buyer-path coverage by completing 6 owner review(s) first (frigidaire leads manufacturer priority), then 6 guarded apply candidate(s) via separate executor, while scheduling 8 browser capture(s) (~6h estimate) for remaining READY lanes.",
+  "proven_facts": [
+    "PROVEN: director read orchestrator (data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json) with 26 rescue candidates.",
+    "PROVEN: 6 owner-review-ready slug(s); 6 guarded apply candidate(s).",
+    "PROVEN: read_only=true; browser_automation_authorized=false; csv_apply_authorized=false.",
+    "PROVEN: coverage_unlocked=false — director is planning only."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live Supabase/runtime parity after any future apply.",
+    "UNKNOWN: production /go first-hop until post-apply validation.",
+    "UNKNOWN: actual browser capture duration — hour estimates are planning constants only.",
+    "PROVEN: all_product_safe_buyer_path_census_v1 loaded for rescue_priority_score overlay.",
+    "UNKNOWN: live Supabase/runtime parity for all cohort slugs.",
+    "UNKNOWN: production /go first-hop for rescue slugs."
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "contract": "manufacturer_safe_link_rescue_roadmap_v1",
+  "director_contract": "manufacturer_safe_link_rescue_director_v1",
+  "generated_at": "2026-06-26T02:21:07.884Z",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "coverage_unlocked": false,
+  "stages": [
+    {
+      "stage_id": "stage_1_owner_reviews",
+      "stage_order": 1,
+      "title": "Owner reviews (highest leverage)",
+      "workload_type": "owner_review",
+      "slug_count": 6,
+      "filter_slugs": [
+        "edr4rxd1",
+        "edr3rxd1",
+        "ultrawf",
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "estimated_browser_hours": 0,
+      "estimated_safe_paths_after_stage": 0,
+      "becomes_available_after_stage": [
+        "Guarded apply planning packets for browser-PASS search-placeholder primaries.",
+        "Founder decision on supersession/confusion lanes before any CSV mutation."
+      ],
+      "blockers_remaining": [
+        "csv_apply_not_authorized",
+        "owner_apply_approval_missing"
+      ]
+    },
+    {
+      "stage_id": "stage_2_guarded_apply",
+      "stage_order": 2,
+      "title": "Guarded apply candidates (post-owner approval)",
+      "workload_type": "guarded_apply",
+      "slug_count": 6,
+      "filter_slugs": [
+        "edr4rxd1",
+        "edr3rxd1",
+        "ultrawf",
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "estimated_browser_hours": 0,
+      "estimated_safe_paths_after_stage": 6,
+      "becomes_available_after_stage": [
+        "Up to one safe buyer path per slug in repo CSV (separate apply executor).",
+        "Production /go validation still UNKNOWN until post-apply parity check."
+      ],
+      "blockers_remaining": [
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized"
+      ]
+    },
+    {
+      "stage_id": "stage_3_browser_captures",
+      "stage_order": 3,
+      "title": "Browser capture / owner checklist work",
+      "workload_type": "browser_capture",
+      "slug_count": 8,
+      "filter_slugs": [
+        "gswf",
+        "xwfe",
+        "xwf",
+        "gswf2",
+        "opfg3f",
+        "smartwater-mwfp",
+        "mswf",
+        "pfmwf"
+      ],
+      "estimated_browser_hours": 6,
+      "estimated_safe_paths_after_stage": 0,
+      "becomes_available_after_stage": [
+        "New owner-review-ready lanes after PASS browser proof artifacts land on disk.",
+        "Additional guarded apply candidates only when gates pass — not inferred."
+      ],
+      "blockers_remaining": [
+        "browser_evidence_artifact_missing",
+        "repo_proven_official_target_url_missing"
+      ]
+    },
+    {
+      "stage_id": "stage_4_blocked_park",
+      "stage_order": 4,
+      "title": "Blocked or not-ready park",
+      "workload_type": "blocked_park",
+      "slug_count": 12,
+      "filter_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "fppwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "frig-242294502",
+        "mwf",
+        "purepour",
+        "ukf8001",
+        "w10413645a",
+        "wf2cb"
+      ],
+      "estimated_browser_hours": 0,
+      "estimated_safe_paths_after_stage": 0,
+      "becomes_available_after_stage": [
+        "UNKNOWN until repo-proven official PDP exists or known_broken blockers clear."
+      ],
+      "blockers_remaining": [
+        "browser_evidence_artifact_missing",
+        "confusion_family_review_required",
+        "exact_token_not_proven",
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_pdp_url_missing"
+      ]
+    }
+  ],
+  "cumulative_safe_paths_unlockable": [
+    0,
+    6,
+    6,
+    6
+  ],
+  "why_this_order_was_chosen": [
+    "Stage 1 prioritizes owner-review-ready lanes — browser PASS already on disk for guarded apply candidates; founder review is the binding constraint before any CSV mutation.",
+    "Manufacturers ranked by expected_coverage_unlock_score — top: frigidaire (4 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.).",
+    "Browser capture work ordered after owner-review/apply stages because PASS proof must exist before guarded apply; new captures feed future owner-review lanes only.",
+    "Blocked/not-ready slugs parked last — no PDP inference, no weakening of wrong-family or supersession gates.",
+    "All estimates are planning projections — coverage_unlocked remains false until separate authorized apply executor mutates repo CSV."
+  ]
+}
