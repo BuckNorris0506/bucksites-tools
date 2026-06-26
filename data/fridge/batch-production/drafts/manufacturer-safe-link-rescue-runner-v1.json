@@ -1,0 +1,908 @@
+{
+  "contract": "manufacturer_safe_link_rescue_runner_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "generated_at": "2026-06-26T03:13:09.669Z",
+  "source_command": "npm run buckparts:manufacturer-safe-link-rescue-runner",
+  "director_cc_lane_contract": "manufacturer_safe_link_rescue_director_v1",
+  "director_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-director-v1.json",
+  "orchestrator_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
+  "director_generated_at": "2026-06-26T02:21:07.884Z",
+  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
+  "ready_for_apply_slug": "ultrawf",
+  "ready_for_apply_enforced": true,
+  "slug_states": [
+    {
+      "filter_slug": "ultrawf",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "ULTRAWF",
+      "stage": "READY_FOR_APPLY",
+      "execution_rank": 1,
+      "next_executable_action": "Single guarded apply slot — owner-approved CSV apply executor may run for this slug only; re-audit required immediately after apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 1320,
+      "boardy_safety_rules": [
+        "browser_proof_freshness",
+        "wrong_family_validation",
+        "one_at_a_time_apply"
+      ],
+      "orchestrator_recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "eptwfu01",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "EPTWFU01",
+      "stage": "OWNER_REVIEW",
+      "execution_rank": 2,
+      "next_executable_action": "Owner review complete — waiting for one-at-a-time READY_FOR_APPLY slot (another slug holds apply turn).",
+      "executable_now": true,
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 1300,
+      "boardy_safety_rules": [
+        "browser_proof_freshness",
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "wf3cb",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "WF3CB",
+      "stage": "OWNER_REVIEW",
+      "execution_rank": 3,
+      "next_executable_action": "Owner review complete — waiting for one-at-a-time READY_FOR_APPLY slot (another slug holds apply turn).",
+      "executable_now": true,
+      "blocked_reasons": [
+        "confusion_family_review_required"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 1227,
+      "boardy_safety_rules": [
+        "browser_proof_freshness",
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "wfcb",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "WFCB",
+      "stage": "OWNER_REVIEW",
+      "execution_rank": 4,
+      "next_executable_action": "Owner review complete — waiting for one-at-a-time READY_FOR_APPLY slot (another slug holds apply turn).",
+      "executable_now": true,
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 1117,
+      "boardy_safety_rules": [
+        "browser_proof_freshness",
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "edr4rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "EDR4RXD1",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 5,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "LOW",
+      "director_value_score": 1447,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Complete owner-browser checklist or rerun capture for edr4rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "edr3rxd1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "EDR3RXD1",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 6,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "LOW",
+      "director_value_score": 1434,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Complete owner-browser checklist or rerun capture for edr3rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "gswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "GSWF",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 7,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 913,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for gswf; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "xwfe",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "XWFE",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 8,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "supersession_review_required",
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 850,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for xwfe; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "4396508",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "4396508",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 9,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 812,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for 4396508 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "xwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "XWF",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 10,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "supersession_review_required",
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 754,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for xwf; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "gswf2",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "GSWF2",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 11,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 741,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for gswf2; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "opfg3f",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "OPFG3F",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 12,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 725,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for opfg3f; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "smartwater-mwfp",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "MWFP",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 13,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 715,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for smartwater-mwfp; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "w10413645a",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "W10413645A",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 14,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false",
+        "supersession_review_required"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 664,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for w10413645a — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "mswf",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "MSWF",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 15,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 652,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for mswf; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "pfmwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "PFMWF",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 16,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 639,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "Run read-only GE browser capture for pfmwf; owner approval before any CSV apply.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "4396842",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "4396842",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 17,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 553,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for 4396842 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "ukf8001",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "UKF8001",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 18,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 331,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for ukf8001 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "4396395",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "4396395",
+      "stage": "BROWSER_PROOF",
+      "execution_rank": 19,
+      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "executable_now": true,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven",
+        "mutation_authorized=false",
+        "verified_link_authorized=false"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 283,
+      "boardy_safety_rules": [
+        "browser_proof_freshness"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for 4396395 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "frig-242086201",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "242086201",
+      "stage": "BLOCKED",
+      "execution_rank": 20,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 765,
+      "boardy_safety_rules": [
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "fppwfu01",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "FPPWFU01",
+      "stage": "BLOCKED",
+      "execution_rank": 21,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 735,
+      "boardy_safety_rules": [
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "frig-242017801",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "242017801",
+      "stage": "BLOCKED",
+      "execution_rank": 22,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 727,
+      "boardy_safety_rules": [],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "wf2cb",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "WF2CB",
+      "stage": "BLOCKED",
+      "execution_rank": 23,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 725,
+      "boardy_safety_rules": [
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "frig-242294502",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "242294502",
+      "stage": "BLOCKED",
+      "execution_rank": 24,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 717,
+      "boardy_safety_rules": [],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "purepour",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "PPWFU01",
+      "stage": "BLOCKED",
+      "execution_rank": 25,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing"
+      ],
+      "trust_risk": "MEDIUM",
+      "director_value_score": 692,
+      "boardy_safety_rules": [
+        "wrong_family_validation"
+      ],
+      "orchestrator_recommended_next_action": "UNKNOWN — no repo-proven Frigidaire official PDP; do not infer token URL.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "mwf",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "MWF",
+      "stage": "BLOCKED",
+      "execution_rank": 26,
+      "next_executable_action": "Parked — resolve blockers before any capture or apply: known_broken_destination, owner_apply_approval_missing, csv_apply_not_authorized, supabase_mutation_not_authorized, browser_evidence_artifact_missing.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "known_broken_destination",
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "browser_evidence_artifact_missing"
+      ],
+      "trust_risk": "HIGH",
+      "director_value_score": -14741,
+      "boardy_safety_rules": [],
+      "orchestrator_recommended_next_action": "Blocked — known broken GE spec destination; do not capture until official path is repo-proven.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "rpwfe",
+      "manufacturer_key": "ge_appliance_parts",
+      "oem_part_token": "RPWFE",
+      "stage": "COMPLETE",
+      "execution_rank": 27,
+      "next_executable_action": "No action — reference lane complete; buyer path already repo-proven.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "owner_apply_approval_missing",
+        "csv_apply_not_authorized",
+        "supabase_mutation_not_authorized",
+        "repo_csv_already_applied_official_ge"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": -4690,
+      "boardy_safety_rules": [],
+      "orchestrator_recommended_next_action": "Reference lane — repo CSV direct_buyable already applied; no rescue capture needed.",
+      "coverage_unlocked": false
+    }
+  ],
+  "execution_order": [
+    "ultrawf",
+    "eptwfu01",
+    "wf3cb",
+    "wfcb",
+    "edr4rxd1",
+    "edr3rxd1",
+    "gswf",
+    "xwfe",
+    "4396508",
+    "xwf",
+    "gswf2",
+    "opfg3f",
+    "smartwater-mwfp",
+    "w10413645a",
+    "mswf",
+    "pfmwf",
+    "4396842",
+    "ukf8001",
+    "4396395",
+    "frig-242086201",
+    "fppwfu01",
+    "frig-242017801",
+    "wf2cb",
+    "frig-242294502",
+    "purepour",
+    "mwf",
+    "rpwfe"
+  ],
+  "manufacturer_workloads": [
+    {
+      "manufacturer_key": "everydrop_whirlpool",
+      "remaining_slug_count": 7,
+      "stage_counts": {
+        "DISCOVER": 0,
+        "BROWSER_PROOF": 7,
+        "OWNER_REVIEW": 0,
+        "READY_FOR_APPLY": 0,
+        "APPLIED": 0,
+        "REAUDIT_DUE": 0,
+        "COMPLETE": 0,
+        "BLOCKED": 0
+      },
+      "estimated_browser_hours_remaining": 3.5,
+      "bottleneck_stage": "BROWSER_PROOF"
+    },
+    {
+      "manufacturer_key": "frigidaire",
+      "remaining_slug_count": 4,
+      "stage_counts": {
+        "DISCOVER": 0,
+        "BROWSER_PROOF": 0,
+        "OWNER_REVIEW": 3,
+        "READY_FOR_APPLY": 1,
+        "APPLIED": 0,
+        "REAUDIT_DUE": 0,
+        "COMPLETE": 0,
+        "BLOCKED": 6
+      },
+      "estimated_browser_hours_remaining": 0,
+      "bottleneck_stage": "OWNER_REVIEW"
+    },
+    {
+      "manufacturer_key": "ge_appliance_parts",
+      "remaining_slug_count": 8,
+      "stage_counts": {
+        "DISCOVER": 0,
+        "BROWSER_PROOF": 8,
+        "OWNER_REVIEW": 0,
+        "READY_FOR_APPLY": 0,
+        "APPLIED": 0,
+        "REAUDIT_DUE": 0,
+        "COMPLETE": 1,
+        "BLOCKED": 1
+      },
+      "estimated_browser_hours_remaining": 6,
+      "bottleneck_stage": "BROWSER_PROOF"
+    }
+  ],
+  "bottlenecks": [
+    {
+      "bottleneck_id": "bottleneck_browser_proof",
+      "stage": "BROWSER_PROOF",
+      "slug_count": 15,
+      "dominant_blocker": "owner_apply_approval_missing",
+      "example_slugs": [
+        "edr4rxd1",
+        "edr3rxd1",
+        "gswf",
+        "xwfe",
+        "4396508"
+      ]
+    },
+    {
+      "bottleneck_id": "bottleneck_blocked",
+      "stage": "BLOCKED",
+      "slug_count": 7,
+      "dominant_blocker": "repo_proven_official_pdp_url_missing",
+      "example_slugs": [
+        "frig-242086201",
+        "fppwfu01",
+        "frig-242017801",
+        "wf2cb",
+        "frig-242294502"
+      ]
+    },
+    {
+      "bottleneck_id": "bottleneck_owner_review",
+      "stage": "OWNER_REVIEW",
+      "slug_count": 3,
+      "dominant_blocker": "confusion_family_review_required",
+      "example_slugs": [
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ]
+    },
+    {
+      "bottleneck_id": "bottleneck_ready_for_apply",
+      "stage": "READY_FOR_APPLY",
+      "slug_count": 1,
+      "dominant_blocker": "confusion_family_review_required",
+      "example_slugs": [
+        "ultrawf"
+      ]
+    }
+  ],
+  "blocker_summary": [
+    {
+      "reason": "browser_evidence_artifact_missing",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ]
+    },
+    {
+      "reason": "csv_apply_not_authorized",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ]
+    },
+    {
+      "reason": "owner_apply_approval_missing",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ]
+    },
+    {
+      "reason": "supabase_mutation_not_authorized",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ]
+    },
+    {
+      "reason": "confusion_family_review_required",
+      "slug_count": 8,
+      "example_slugs": [
+        "eptwfu01",
+        "fppwfu01",
+        "frig-242086201",
+        "purepour",
+        "ultrawf"
+      ]
+    },
+    {
+      "reason": "exact_token_not_proven",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "live_browser_capture_unavailable_or_failed",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "mutation_authorized=false",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "repo_proven_official_pdp_url_missing",
+      "slug_count": 7,
+      "example_slugs": [
+        "fppwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "frig-242294502",
+        "purepour"
+      ]
+    },
+    {
+      "reason": "verified_link_authorized=false",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ]
+    },
+    {
+      "reason": "repo_proven_official_target_url_missing",
+      "slug_count": 5,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "ukf8001",
+        "w10413645a"
+      ]
+    },
+    {
+      "reason": "supersession_review_required",
+      "slug_count": 3,
+      "example_slugs": [
+        "w10413645a",
+        "xwf",
+        "xwfe"
+      ]
+    },
+    {
+      "reason": "known_broken_destination",
+      "slug_count": 1,
+      "example_slugs": [
+        "mwf"
+      ]
+    }
+  ],
+  "boardy_safety_contract": {
+    "browser_proof_freshness_required": true,
+    "wrong_family_validation_required": true,
+    "one_at_a_time_apply_enforced": true,
+    "reaudit_after_apply_required": true
+  },
+  "post_apply_validation_checklist": [
+    "Re-run npm run buckparts:manufacturer-safe-link-rescue-orchestrator",
+    "Re-run npm run buckparts:manufacturer-safe-link-rescue-director",
+    "Re-run npm run buckparts:manufacturer-safe-link-rescue-runner",
+    "Re-run model_filter_correctness_audit_v1 for applied slug parity",
+    "Confirm csv_primary_is_search_placeholder=false only after owner approval packet",
+    "Do not set coverage_unlocked=true from runner or director artifacts"
+  ],
+  "inspect_summary": {
+    "recommended_jq_paths": {
+      "standalone_report": ".inspect_summary",
+      "command_center": ".command_center_v2.manufacturer_safe_link_rescue_runner_v1",
+      "ready_for_apply_slug": ".ready_for_apply_slug",
+      "execution_order": ".execution_order"
+    },
+    "next_executable_slug": "ultrawf",
+    "ready_for_apply_slug": "ultrawf",
+    "remaining_opportunity": 20,
+    "recommended_next_action": "READY_FOR_APPLY slot held by ultrawf — guarded apply executor only; re-audit after apply."
+  },
+  "proven_facts": [
+    "PROVEN: Runner is read-only — no CSV, Supabase, SQL, or browser automation authorized.",
+    "PROVEN: ready_for_apply_enforced=true with 1 slug(s) in READY_FOR_APPLY (max 1).",
+    "PROVEN: Boardy safety contract requires browser proof freshness, wrong-family validation, one-at-a-time apply, and re-audit after apply.",
+    "PROVEN: Consumed Command Center director lane manufacturer_safe_link_rescue_director_v1.",
+    "PROVEN: Orchestrator contract manufacturer_safe_link_rescue_orchestrator_v1 with 27 unified queue rows."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live Supabase/runtime parity after any future apply.",
+    "UNKNOWN: production /go first-hop until post-apply validation.",
+    "UNKNOWN: actual browser capture duration — hour estimates are planning constants only.",
+    "PROVEN: all_product_safe_buyer_path_census_v1 loaded for rescue_priority_score overlay.",
+    "UNKNOWN: live Supabase/runtime parity for all cohort slugs.",
+    "UNKNOWN: production /go first-hop for rescue slugs.",
+    "UNKNOWN: Live production buyer path parity until post-apply validation checklist completes."
+  ]
+}

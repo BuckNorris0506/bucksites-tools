@@ -136,6 +136,10 @@ import {
   buildManufacturerSafeLinkRescueDirectorCommandCenterLaneV1,
 } from "./lib/manufacturer-safe-link-rescue-director-command-center-v1";
 import {
+  buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1,
+  buildManufacturerSafeLinkRescueRunnerCommandCenterLaneV1,
+} from "./lib/manufacturer-safe-link-rescue-runner-command-center-v1";
+import {
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
@@ -1176,6 +1180,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
+    | "manufacturer_safe_link_rescue_runner_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
     | "ap_homeowner_pilot_scorecard_v1"
@@ -1446,6 +1451,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
+    | "manufacturer_safe_link_rescue_runner_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_core,
@@ -1597,6 +1603,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "whole_house_water_batch_production_director_v1"
     | "whole_house_water_director_model_first_batch_v1"
     | "manufacturer_safe_link_rescue_director_v1"
+    | "manufacturer_safe_link_rescue_runner_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_before_daily,
@@ -2041,6 +2048,22 @@ export async function buildBuckpartsCommandCenterReport(
       });
   }
 
+  let manufacturer_safe_link_rescue_runner_v1;
+  try {
+    manufacturer_safe_link_rescue_runner_v1 =
+      buildManufacturerSafeLinkRescueRunnerCommandCenterLaneV1({
+        rootDir,
+        now,
+      });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    manufacturer_safe_link_rescue_runner_v1 =
+      buildManufacturerSafeLinkRescueRunnerCommandCenterLaneUnknownV1({
+        generated_at: now().toISOString(),
+        reason: message,
+      });
+  }
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     | "next_execution_packet_summary_v1"
@@ -2104,6 +2127,7 @@ export async function buildBuckpartsCommandCenterReport(
     whole_house_water_director_model_first_batch_v1,
     wedge_truth_spine_coverage_matrix_v1,
     manufacturer_safe_link_rescue_director_v1,
+    manufacturer_safe_link_rescue_runner_v1,
   };
 
   const commandCenterShellForNextPacket = {

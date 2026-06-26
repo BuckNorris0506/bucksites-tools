@@ -134,7 +134,9 @@ function rescueRows(orchestrator: ManufacturerRescueOrchestratorReportV1) {
   return orchestrator.unified_rescue_queue.filter((r) => r.cohort_lane !== "REFERENCE_ALREADY_APPLIED");
 }
 
-function isGuardedApplyCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+export function isManufacturerRescueGuardedApplyCandidateV1(
+  row: ManufacturerRescueOrchestratorQueueRowV1,
+): boolean {
   if (row.cohort_lane === "REFERENCE_ALREADY_APPLIED") return false;
   if (row.blocked_reasons.some((r) => r.includes("known_broken"))) return false;
   return (
@@ -144,17 +146,33 @@ function isGuardedApplyCandidate(row: ManufacturerRescueOrchestratorQueueRowV1):
   );
 }
 
-function isBrowserWorkCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+export function isManufacturerRescueBrowserWorkCandidateV1(
+  row: ManufacturerRescueOrchestratorQueueRowV1,
+): boolean {
   if (row.browser_ready_state !== "READY") return false;
   if (row.browser_truth_status === "PASS") return false;
   if (row.blocked_reasons.some((r) => r.includes("known_broken"))) return false;
   return true;
 }
 
-function isOwnerReviewCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+export function isManufacturerRescueOwnerReviewCandidateV1(
+  row: ManufacturerRescueOrchestratorQueueRowV1,
+): boolean {
   return (
     row.owner_review_readiness === "READY" || row.owner_review_readiness === "SUPERSESSION_REVIEW"
   );
+}
+
+function isGuardedApplyCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+  return isManufacturerRescueGuardedApplyCandidateV1(row);
+}
+
+function isBrowserWorkCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+  return isManufacturerRescueBrowserWorkCandidateV1(row);
+}
+
+function isOwnerReviewCandidate(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
+  return isManufacturerRescueOwnerReviewCandidateV1(row);
 }
 
 export function computeDirectorValueScoreV1(row: ManufacturerRescueOrchestratorQueueRowV1): number {
