@@ -17,6 +17,9 @@ import {
   getModelV2,
   getSafeBuyerPathV2,
   getTruthPolicyV2,
+  manufacturerBrowserProofStatusV1,
+  manufacturerRescueCohortV1,
+  manufacturerRescueStatusV1,
   searchPartsV2,
 } from "../../scripts/lib/buckparts-mcp-tools-v2";
 
@@ -39,7 +42,7 @@ function toolResult(payload: unknown) {
 const server = new McpServer(
   {
     name: "buckparts-truth",
-    version: "0.2.0",
+    version: "0.3.0",
   },
   {
     instructions:
@@ -144,6 +147,53 @@ server.registerTool(
     annotations: READ_ONLY_ANNOTATIONS,
   },
   async () => toolResult(getTruthPolicyV2({ rootDir: REPO_ROOT })),
+);
+
+server.registerTool(
+  "manufacturer_rescue_status",
+  {
+    title: "Manufacturer rescue status (read-only)",
+    description:
+      "Exact filter slug lookup for GE, EveryDrop/Whirlpool, or Frigidaire safe-link rescue cohort truth. Repo CSV + committed adapter artifacts only. Never infers PDP as repo-proven; UNKNOWN when not in cohort.",
+    inputSchema: {
+      slug: z.string().min(1).describe("Exact BuckParts filter/part slug"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ slug }) => toolResult(manufacturerRescueStatusV1({ rootDir: REPO_ROOT }, slug)),
+);
+
+server.registerTool(
+  "manufacturer_rescue_cohort",
+  {
+    title: "Manufacturer rescue cohort (read-only)",
+    description:
+      "Cohort summary for ge_appliance_parts, everydrop_whirlpool, or frigidaire rescue lanes. Reuses manufacturer-safe-link-rescue-framework-v1 adapters. No PDP inference as apply authorization.",
+    inputSchema: {
+      manufacturer: z
+        .string()
+        .min(1)
+        .describe("Manufacturer key: ge_appliance_parts, everydrop_whirlpool, or frigidaire"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ manufacturer }) =>
+    toolResult(manufacturerRescueCohortV1({ rootDir: REPO_ROOT }, manufacturer)),
+);
+
+server.registerTool(
+  "manufacturer_browser_proof_status",
+  {
+    title: "Manufacturer browser proof status (read-only)",
+    description:
+      "Owner browser proof draft artifact for a filter slug when on disk. PASS URLs and direct_buyable_proven only when official-path observations prove purchase signal. No Playwright side effects.",
+    inputSchema: {
+      slug: z.string().min(1).describe("Exact BuckParts filter/part slug"),
+    },
+    annotations: READ_ONLY_ANNOTATIONS,
+  },
+  async ({ slug }) =>
+    toolResult(manufacturerBrowserProofStatusV1({ rootDir: REPO_ROOT }, slug)),
 );
 
 async function main(): Promise<void> {

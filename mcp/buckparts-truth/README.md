@@ -85,6 +85,9 @@ Adjust paths for your OS and clone location. Restart the client after editing.
 | `getSafeBuyerPath` | `filter_slug` | Primary retailer, browser truth, suppression |
 | `getCoverageMetrics` | _(none)_ | Wedge/census/convergence aggregates |
 | `getTruthPolicy` | _(none)_ | Truth Contract + UNKNOWN behavior |
+| `manufacturer_rescue_status` | `slug` | GE / EveryDrop / Frigidaire rescue lane per slug |
+| `manufacturer_rescue_cohort` | `manufacturer` | Full rescue cohort for one manufacturer |
+| `manufacturer_browser_proof_status` | `slug` | Owner browser proof draft artifact status |
 
 All tools return JSON with `read_only: true`, `data_mutation: false`, `mutation_authorized: false`.
 
@@ -138,6 +141,18 @@ No input. Returns wedge counts, classification counts, census summary, AP conver
 
 No input. Returns governing document paths, core principles, UNKNOWN behavior, MCP guardrails.
 
+### manufacturer_rescue_status
+
+Input: `slug` (exact filter slug). Returns GE, EveryDrop/Whirlpool, or Frigidaire rescue lane truth from committed adapter reports. `repo_proven_official_pdp_url` is never inferred — GE rescue slugs expose `adapter_discovery_url` separately. `direct_buyable_proven` only when CSV gate passes or browser capture proves buyability.
+
+### manufacturer_rescue_cohort
+
+Input: `manufacturer` (`ge_appliance_parts`, `everydrop_whirlpool`, or `frigidaire`). Returns cohort rows, summary, proven/unknown facts. No PDP pattern guessing (`pdp_pattern_guessed_slug_count: 0`).
+
+### manufacturer_browser_proof_status
+
+Input: `slug`. Reads draft owner browser proof JSON when on disk. `direct_buyable_proven` only for official-path PASS URLs with purchase signal in observations.
+
 ## Architecture
 
 ```
@@ -145,6 +160,7 @@ mcp/buckparts-truth/server.ts          MCP stdio entry (tool registration)
 scripts/lib/buckparts-mcp-truth-context-v1.ts   Shared repo CSV + audit context
 scripts/lib/buckparts-mcp-check-replacement-fit-v1.ts   checkReplacementFit logic
 scripts/lib/buckparts-mcp-tools-v2.ts  All v2 tool functions
+scripts/lib/buckparts-mcp-manufacturer-rescue-v1.ts   Manufacturer rescue MCP tools
 scripts/lib/all-product-safe-buyer-path-census-v1.ts   Census (reused)
 scripts/lib/model-filter-correctness-audit-v1.ts       Fridge fit audit (reused)
 src/lib/retailers/launch-buy-links.ts                  Buy-path gates (reused)
@@ -155,7 +171,7 @@ Context loads committed CSVs per wedge, census, fridge model-filter audit JSON, 
 ## Tests
 
 ```bash
-node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts
+node --import tsx --test scripts/lib/buckparts-mcp-check-replacement-fit-v1.test.ts scripts/lib/buckparts-mcp-tools-v2.test.ts scripts/lib/buckparts-mcp-manufacturer-rescue-v1.test.ts
 ```
 
 Or: `npm test`

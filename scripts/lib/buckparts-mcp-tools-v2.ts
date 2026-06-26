@@ -604,3 +604,14 @@ export function getTruthPolicyV2(deps: BuckPartsMcpDepsV1): GetTruthPolicyResult
 
 // Re-export context helper for tests
 export { createBuckPartsMcpTruthContextV1, resolveExactToken };
+
+export {
+  BUCKPARTS_MCP_MANUFACTURER_RESCUE_CONTRACT_V1,
+  SUPPORTED_MANUFACTURER_KEYS_V1,
+  committedCsvDirectBuyableProvenV1,
+  manufacturerBrowserProofStatusV1,
+  manufacturerRescueCohortV1,
+  manufacturerRescueStatusV1,
+  normalizeManufacturerKeyV1,
+  resolveManufacturerKeyForSlugV1,
+} from "./buckparts-mcp-manufacturer-rescue-v1";
