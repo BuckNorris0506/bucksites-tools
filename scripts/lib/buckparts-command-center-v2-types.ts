@@ -1074,6 +1074,8 @@ export type CommandCenterV2Report = {
   manufacturer_browser_proof_execution_factory_v1: ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1;
   /** Read-only execution ledger — completed operational work indexed from committed artifacts. */
   execution_ledger_v1: BuckpartsExecutionLedgerCommandCenterLaneV1;
+  /** Read-only wrong-code-prevention HyperAgent findings projection — artifact ingest only; no HyperAgent write authority. */
+  wrong_code_prevention_v1: import("./wrong-code-prevention-command-center-v1").WrongCodePreventionCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
   wedge_truth_spine_coverage_matrix_v1: WedgeTruthSpineCoverageMatrixV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
@@ -1279,6 +1281,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "manufacturer_rescue_throughput_analytics_v1"
   | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
+  | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"

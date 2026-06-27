@@ -164,6 +164,10 @@ import {
   buildBuckpartsExecutionLedgerCommandCenterLaneV1,
 } from "./lib/buckparts-execution-ledger-command-center-v1";
 import {
+  buildWrongCodePreventionCommandCenterLaneUnknownV1,
+  buildWrongCodePreventionCommandCenterLaneV1,
+} from "./lib/wrong-code-prevention-command-center-v1";
+import {
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneUnknownV1,
   buildFridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1,
 } from "./lib/fridge-buyer-path-owner-review-bridge-command-center-v1";
@@ -1211,6 +1215,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
     | "ap_homeowner_pilot_scorecard_v1"
@@ -1488,6 +1493,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_core,
@@ -1646,6 +1652,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
     ...command_center_v2_before_daily,
@@ -2201,6 +2208,18 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let wrong_code_prevention_v1;
+  try {
+    wrong_code_prevention_v1 = buildWrongCodePreventionCommandCenterLaneV1({ rootDir, now });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    wrong_code_prevention_v1 = buildWrongCodePreventionCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      artifact_load_status: "invalid_contract",
+      detail: message,
+    });
+  }
+
   const command_center_v2_before_next_packet: Omit<
     CommandCenterV2Report,
     | "next_execution_packet_summary_v1"
@@ -2271,6 +2290,7 @@ export async function buildBuckpartsCommandCenterReport(
     manufacturer_rescue_throughput_analytics_v1,
     manufacturer_browser_proof_execution_factory_v1,
     execution_ledger_v1,
+    wrong_code_prevention_v1,
   };
 
   const commandCenterShellForNextPacket = {

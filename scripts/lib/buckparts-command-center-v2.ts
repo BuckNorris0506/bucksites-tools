@@ -268,6 +268,7 @@ export function buildCommandCenterV2Report(input: {
   | "manufacturer_rescue_throughput_analytics_v1"
   | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
+  | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"
   | "ap_homeowner_pilot_scorecard_v1"

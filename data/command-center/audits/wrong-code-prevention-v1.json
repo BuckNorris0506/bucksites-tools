@@ -1,0 +1,57 @@
+{
+  "contract": "wrong_code_prevention_v1",
+  "read_only": true,
+  "generated_at": "2026-06-26T18:30:00.000Z",
+  "git_head_hint": "72c7f7fc171a",
+  "overall_status": "WARN",
+  "stale_direct_buyable_count": 58,
+  "dangerous_db_only_slug_count": 13,
+  "handoff_head_drift_commits": 1,
+  "sql_plan_safety_status": "WARN",
+  "deprecated_slug_reference_count": 0,
+  "checks": [
+    {
+      "check_id": "hyperagent_write_path_not_enabled",
+      "status": "PASS",
+      "notes": "HyperAgent has no in-repo write/commit/push authority; artifact is repo-committed read model only."
+    },
+    {
+      "check_id": "handoff_head_drift",
+      "status": "WARN",
+      "notes": "1 local commit(s) ahead of origin/main — refresh HQ handoff before apply work."
+    },
+    {
+      "check_id": "dangerous_db_only_slugs",
+      "status": "WARN",
+      "notes": "dangerous_db_only_slug_count=13 from data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json.",
+      "evidence_paths": [
+        "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json"
+      ]
+    },
+    {
+      "check_id": "stale_direct_buyable_primary",
+      "status": "WARN",
+      "notes": "stale_direct_buyable_count=58 (browser_truth_drift_count proxy from AP diff artifact).",
+      "evidence_paths": [
+        "data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json"
+      ]
+    },
+    {
+      "check_id": "sql_plan_safety",
+      "status": "WARN",
+      "notes": "SQL parity packet exists with default ROLLBACK — human commit required.",
+      "evidence_paths": [
+        "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-parity-packet-v1.json"
+      ]
+    }
+  ],
+  "blockers": [],
+  "warnings": [
+    "dangerous_db_only_slug_count=13",
+    "stale_direct_buyable_count=58",
+    "handoff_head_drift_commits=1",
+    "sql_plan_safety_status=WARN",
+    "artifact_provenance=repo_baseline_not_hyperagent_ingest"
+  ],
+  "recommended_next_action": "Review wrong-code-prevention warnings before CSV/SQL apply; refresh artifact after HyperAgent read-only audit when enabled."
+}

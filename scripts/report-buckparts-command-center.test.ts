@@ -5873,6 +5873,30 @@ test("command_center_v2.operator_process_compression_v1 is read-only ship guard 
   assert.equal(lane.netlify_api_authorized, false);
 });
 
+test("command_center_v2.wrong_code_prevention_v1 is read-only HyperAgent findings lane", async () => {
+  const report = await buildBuckpartsCommandCenterReport({
+    providers: baseProviders(),
+    liveSiteMonitor: null,
+    demandToCoverageEngineLoader: async () => buildDemandToCoverageEngineV1FromRows([], "OK", []),
+    learningOutcomesReadModelLoader: async () => learningOutcomesReadModelOkFixture(),
+    evidenceToLearningOutcomesCandidateImportLoader: async () => evidenceImportOkFixture(),
+    fileExists: fs.existsSync,
+    readDir: fs.readdirSync,
+    readTextFile: readTextFileTrackerOrRepoData,
+  });
+  const lane = report.command_center_v2.wrong_code_prevention_v1;
+  assert.ok(lane);
+  assert.equal(lane.contract, "wrong_code_prevention_v1");
+  assert.equal(lane.read_only, true);
+  assert.equal(lane.data_mutation, false);
+  assert.equal(lane.hyperagent_write_authorized, false);
+  assert.equal(lane.auto_commit_authorized, false);
+  assert.equal(lane.auto_push_authorized, false);
+  assert.equal(lane.recommended_jq_path, ".command_center_v2.wrong_code_prevention_v1");
+  assert.equal(lane.artifact_path, "data/command-center/audits/wrong-code-prevention-v1.json");
+  assert.ok(["PASS", "WARN", "FAIL", "UNKNOWN"].includes(lane.overall_status));
+});
+
 test("command_center_v2.external_quality_signal_usefulness_v1 is read-only and not overstated", async () => {
   const report = await buildBuckpartsCommandCenterReport({
     providers: baseProviders(),
