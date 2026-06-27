@@ -1,0 +1,183 @@
+{
+  "contract": "fridge_safe_link_4396508_owner_classification_approval_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "public_ui_mutation_authorized": false,
+  "buy_link_mutation_authorized": false,
+  "approval_status": "PENDING_OWNER_REVIEW",
+  "not_an_approved_decision": true,
+  "generated_at": "2026-06-10T12:00:00.000Z",
+  "source_command": "manual_owner_packet_from_apply_plan_proposal_v1",
+  "source_apply_plan_proposal_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-4396508-apply-plan-proposal-v1.json",
+  "target_slug": "4396508",
+  "wedge": "refrigerator_water",
+  "brand_slug": "whirlpool",
+  "oem_part_token": "4396508",
+  "filter_id": "063a6122-c85f-4332-92c0-0d8e53dc5d4c",
+  "live_url": "https://buckparts.com/filter/4396508",
+  "live_has_go_cta": false,
+  "current_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+  "expected_census_delta_after_apply": {
+    "before_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+    "after_classification": "SAFE_BUYER_PATH_PROVEN",
+    "safe_buyer_path_proven_count_delta": 1,
+    "buyer_path_truth_status_note": "MIXED persists until all 57 compat-mapped filters are proven; this slug removes one zero-safe contributor."
+  },
+  "proposed_amazon_pdp": {
+    "proposed_url": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+    "canonical_pdp_url": "https://www.amazon.com/dp/B00NXPKBQ2",
+    "asin": "B00NXPKBQ2",
+    "pack_count_reviewed": 1,
+    "product_attribution": "aftermarket_compatible",
+    "product_attribution_not_oem": true,
+    "seller_title_observed": "EcoAqua 4396508 Refrigerator Water Filter, Replacement for Everydrop Filter 5, EDR5RXD1, Whirlpool WF-NLC240V, 4396510, NLC240V, PNL240V, 4396508p, 4396547, 4392857, LC400V, 1-Pack"
+  },
+  "primary_evidence_rel_path": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+  "secondary_evidence_rel_paths": [
+    "data/evidence/amazon-4396508-unknown-outcome.2026-05-03.json"
+  ],
+  "evidence_summary": {
+    "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT",
+    "exact_token_proof": "Owner browser screenshot showed seller-controlled product title with literal 4396508 on canonical Amazon PDP https://www.amazon.com/dp/B00NXPKBQ2.",
+    "buyability_proof": "Owner browser screenshot showed buy box, price, In Stock, Add to Cart, and Buy Now visible on the single-pack PDP.",
+    "mutation_ready": false,
+    "asin_collision_status": "EXACT_PDP_PROVEN_NO_COLLISION",
+    "amazon_asin_reuse_policy_classification": "EXACT_PDP_PROVEN_NO_COLLISION"
+  },
+  "affiliate_tag_status": "HAS_BUCKPARTS_TAG",
+  "affiliate_tracker_note": "Amazon Associates affiliate tracker status=APPROVED (data/affiliate/affiliate-application-tracker.json); affiliate_url includes tag=buckparts20-20.",
+  "current_csv_primary_row": {
+    "retailer_name": "OEM parts catalog (keyword lookup)",
+    "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396508",
+    "retailer_key": "oem-parts-catalog",
+    "is_primary": true,
+    "browser_truth_classification": "",
+    "safe_gated_count": 0,
+    "summary": "search_placeholder primary — zero launch-buy-links safe gated rows"
+  },
+  "proposed_retailer_link_row": {
+    "filter_slug": "4396508",
+    "retailer_name": "Amazon",
+    "affiliate_url": "https://www.amazon.com/dp/B00NXPKBQ2?tag=buckparts20-20",
+    "is_primary": true,
+    "sort_order": 0,
+    "retailer_key": "amazon",
+    "browser_truth_classification": null,
+    "browser_truth_buyable_subtype": null,
+    "browser_truth_notes": "Owner browser screenshot showed seller-controlled product title with literal 4396508 on canonical Amazon PDP https://www.amazon.com/dp/B00NXPKBQ2. Owner browser screenshot showed buy box, price, In Stock, Add to Cart, and Buy Now visible on the single-pack PDP. product_attribution=aftermarket_compatible evidence=data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+    "browser_truth_checked_at": "2026-05-10"
+  },
+  "owner_classification_review_v1": {
+    "unknown_fields_requiring_owner_decision": [
+      "browser_truth_classification",
+      "browser_truth_buyable_subtype"
+    ],
+    "owner_must_answer_before_guarded_apply": [
+      {
+        "question_id": "approve_aftermarket_single_pack_pdp",
+        "prompt": "Approve promoting Amazon ASIN B00NXPKBQ2 (EcoAqua aftermarket compatible single-pack) as the primary gated safe buyer path for filter slug 4396508?",
+        "required": true
+      },
+      {
+        "question_id": "browser_truth_classification",
+        "prompt": "Set browser_truth_classification for the proposed retailer_links row?",
+        "required": true,
+        "allowed_values_repo_proven": [
+          {
+            "value": "direct_buyable",
+            "repo_proof": [
+              "data/retailer_links.csv — all SAFE_BUYER_PATH_PROVEN Amazon fridge rows use direct_buyable",
+              "data/evidence/amazon-ukf8001-live-outcome.2026-05-05.json committed_live_row.browser_truth_classification=direct_buyable for aftermarket_compatible Amazon PDP"
+            ],
+            "recommended": true
+          }
+        ],
+        "recommended_value": "direct_buyable",
+        "recommended_basis": "Owner evidence proves buy box + Add to Cart on single-pack PDP; matches ukf8001 aftermarket-compatible guarded-apply precedent."
+      },
+      {
+        "question_id": "browser_truth_buyable_subtype",
+        "prompt": "Set browser_truth_buyable_subtype for the proposed row (Supabase parity / readiness gate; not a column in data/retailer_links.csv today)?",
+        "required": true,
+        "allowed_values_repo_proven": [
+          {
+            "value": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+            "repo_proof": [
+              "data/evidence/amazon-ukf8001-live-outcome.2026-05-05.json committed_live_row for aftermarket_compatible single-pack Amazon",
+              "data/evidence/waterdrop-da29-00020b-live-outcome.2026-05-20.json"
+            ],
+            "recommended": true
+          },
+          {
+            "value": "SINGLE_UNIT_DIRECT_BUYABLE",
+            "repo_proof": [
+              "scripts/lib/whole-house-water-browser-truth-capture-result-v1.ts BUYABLE_SUBTYPES.SINGLE_UNIT_DIRECT_BUYABLE"
+            ],
+            "recommended": false,
+            "note": "Used in whole-house-water capture; fridge aftermarket Amazon precedent prefers COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE."
+          }
+        ],
+        "recommended_value": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+        "recommended_basis": "product_attribution=aftermarket_compatible; single-pack reviewed; closest repo-proven fridge Amazon aftermarket precedent is ukf8001."
+      },
+      {
+        "question_id": "authorize_csv_and_supabase_parity_apply",
+        "prompt": "After fresh precheck, authorize guarded CSV/Supabase parity apply for 4396508 only (no batch slugs, no Verified Link auto-authorization)?",
+        "required": true
+      },
+      {
+        "question_id": "exclude_multipack_variants",
+        "prompt": "Confirm 2-pack and 3-pack variants seen in owner browser session are OUT OF SCOPE for this apply (single-pack B00NXPKBQ2 only)?",
+        "required": true
+      }
+    ]
+  },
+  "explicit_risks": [
+    "Aftermarket compatible listing — not OEM Whirlpool/Everydrop official PDP; buyer must not be misled as OEM.",
+    "Evidence is owner-browser screenshot from 2026-05-10 — stale if Amazon listing changed; fresh precheck required immediately before apply.",
+    "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH — /go first-hop not validated without separate no-click policy.",
+    "Live PDP may use Supabase at runtime; CSV-only apply without Supabase parity may not surface /go CTA (INFERRED from apply-plan proposal).",
+    "2-pack and 3-pack variants on same PDP family are not proven safe by primary evidence file.",
+    "ASIN B087PDLZL9 (edr3rxd1) is HARD_DO_NOT_USE in sprint policy — do not reuse collision workflow across slugs.",
+    "Guarded apply does not auto-authorize Verified Links or public UI mutation."
+  ],
+  "rollback_revert_plan": [
+    "If guarded apply writes CSV/Supabase and post-apply validation fails, revert data/retailer_links.csv row for filter_slug=4396508 to:",
+    "  retailer_name=\"OEM parts catalog (keyword lookup)\"",
+    "  affiliate_url=\"https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=4396508\"",
+    "  retailer_key=\"oem-parts-catalog\"",
+    "  browser_truth_classification=\"\"",
+    "If Supabase row was inserted, delete or disable the inserted retailer_links row only after owner-confirmed rollback packet.",
+    "Re-run read-only parity diff and live HTML scan (no /go clicks) to confirm /go CTA state returns to pre-apply baseline.",
+    "Do not delete evidence artifacts; rollback is data-path only."
+  ],
+  "commands_after_owner_approval": [
+    "npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens 4396508",
+    "npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508",
+    "npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508 --write-csv",
+    "npm run buckparts:all-product-safe-buyer-path-census",
+    "npm run buckparts:wedge-completion-evaluator"
+  ],
+  "founder_decision_template_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-4396508-founder-decision-template-v1.json",
+  "proven_facts": [
+    "PROVEN: packet is read_only; no CSV, Supabase, evidence, or UI mutation from this file.",
+    "PROVEN: source apply-plan proposal target_slug=4396508 only.",
+    "PROVEN: evidence verdict=EXACT_PDP_PROVEN_FROM_OWNER_BROWSER_SCREENSHOT; asin=B00NXPKBQ2; product_attribution=aftermarket_compatible.",
+    "PROVEN: asin_collision_reuse_check reports zero reuse for B00NXPKBQ2.",
+    "PROVEN: affiliate tag buckparts20-20; Amazon Associates tracker APPROVED.",
+    "PROVEN: committed CSV has search-placeholder primary with zero safe gated rows.",
+    "PROVEN: no founder approval row exists yet for 4396508 in data/owner-decisions/."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: live Supabase retailer_links state for filter_id at review time.",
+    "UNKNOWN: production /go first-hop outcome without clicking /go.",
+    "UNKNOWN: whether Netlify deploy required until deploy-classifier runs post-apply."
+  ],
+  "recommended_next_action": "Jared reviews this packet and answers owner_classification_review_v1 questions. If approved, copy registry_row_template from fridge-safe-link-4396508-founder-decision-template-v1.json into data/owner-decisions/ with decision_status=approved, then run precheck + guarded apply dry-run."
+}
