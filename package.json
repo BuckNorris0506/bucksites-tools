@@ -186,6 +186,8 @@
     "buckparts:agent-contract": "tsx scripts/report-buckparts-agent-contract-v1.ts",
     "buckparts:operations-metrics": "tsx scripts/report-buckparts-operations-metrics-v1.ts",
     "buckparts:production-mission-plan": "tsx scripts/report-buckparts-production-mission-plan-v1.ts",
+    "buckparts:wedge-completion-evaluator": "tsx scripts/report-wedge-completion-evaluator-v1.ts",
+    "buckparts:wedge-completion-director": "tsx scripts/report-wedge-completion-director-v1.ts",
     "buckparts:spend-ledger:append": "tsx scripts/append-buckparts-spend-ledger-entry.ts",
     "buckparts:runner-step:gh": "tsx scripts/run-buckparts-runner-step-gh.ts",
     "buckparts:codex-readonly-smoke": "tsx scripts/run-buckparts-codex-readonly-smoke.ts",

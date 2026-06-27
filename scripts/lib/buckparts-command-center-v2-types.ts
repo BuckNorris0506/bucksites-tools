@@ -60,6 +60,8 @@ import type { RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 } from "
 import type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 import type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 import type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
+import type { WedgeCompletionDirectorCommandCenterLaneV1 } from "./wedge-completion-director-command-center-v1";
+import type { WedgeCompletionEvaluatorCommandCenterLaneV1 } from "./wedge-completion-evaluator-command-center-v1";
 import type { DeployLiveSiteMonitorCommandCenterLaneV1 } from "./deploy-live-site-monitor-command-center-lane-v1";
 import type { DeployPublishQueueCommandCenterLaneV1 } from "./deploy-publish-queue-command-center-lane-v1";
 import type { OwnerVerticalLaunchPolicyV1 } from "../../src/lib/owner-dashboard/owner-vertical-launch-policy-v1";
@@ -1093,6 +1095,10 @@ export type CommandCenterV2Report = {
   wrong_code_prevention_v1: import("./wrong-code-prevention-command-center-v1").WrongCodePreventionCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
   wedge_truth_spine_coverage_matrix_v1: WedgeTruthSpineCoverageMatrixV1;
+  /** Read-only Wedge Completion Standard evaluator — refrigerator_water PASS/FAIL per dimension. */
+  wedge_completion_evaluator_v1: WedgeCompletionEvaluatorCommandCenterLaneV1;
+  /** Read-only Wedge Completion Director — deterministic next-best-action from evaluator output. */
+  wedge_completion_director_v1: WedgeCompletionDirectorCommandCenterLaneV1;
   /** Final root operator guidance mirrored after brain-gate adjustment (jq-safe v2 path). */
   operator_digest_v1: OperatorDigestProjectionV1;
   /** jq-safe mirror of root execution_guidance after batch dispatch override (set in report builder). */
@@ -1247,6 +1253,8 @@ export type { RefrigeratorModelFirstQaApprovalPacketCommandCenterLaneV1 } from "
 export type { WholeHouseWaterBatchProductionDirectorV1 } from "./whole-house-water-batch-production-director-v1";
 export type { WholeHouseWaterDirectorModelFirstBatchV1 } from "./whole-house-water-director-model-first-batch-v1";
 export type { WedgeTruthSpineCoverageMatrixV1 } from "./wedge-truth-spine-coverage-matrix-v1";
+export type { WedgeCompletionDirectorCommandCenterLaneV1 } from "./wedge-completion-director-command-center-v1";
+export type { WedgeCompletionEvaluatorCommandCenterLaneV1 } from "./wedge-completion-evaluator-command-center-v1";
 
 export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   CommandCenterV2Report,
@@ -1308,6 +1316,8 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "owner_decision_queue_v1"
   | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
+  | "wedge_completion_evaluator_v1"
+  | "wedge_completion_director_v1"
   | "operator_digest_v1"
   | "semi_cruise_status_summary_v1"
   | "agent_control_plane_v1"

@@ -180,6 +180,14 @@ import {
   buildProductionMissionCommandCenterLaneV1,
 } from "./lib/buckparts-production-mission-command-center-v1";
 import {
+  buildWedgeCompletionEvaluatorCommandCenterLaneUnknownV1,
+  buildWedgeCompletionEvaluatorCommandCenterLaneV1,
+} from "./lib/wedge-completion-evaluator-command-center-v1";
+import {
+  buildWedgeCompletionDirectorCommandCenterLaneUnknownV1,
+  buildWedgeCompletionDirectorCommandCenterLaneV1,
+} from "./lib/wedge-completion-director-command-center-v1";
+import {
   buildOwnerDecisionQueueCommandCenterLaneUnknownV1,
   buildOwnerDecisionQueueCommandCenterLaneV1,
 } from "./lib/owner-decision-queue-command-center-v1";
@@ -2287,6 +2295,34 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let wedge_completion_evaluator_v1;
+  try {
+    wedge_completion_evaluator_v1 = await buildWedgeCompletionEvaluatorCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    wedge_completion_evaluator_v1 = buildWedgeCompletionEvaluatorCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
+  let wedge_completion_director_v1;
+  try {
+    wedge_completion_director_v1 = await buildWedgeCompletionDirectorCommandCenterLaneV1({
+      rootDir,
+      now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    wedge_completion_director_v1 = buildWedgeCompletionDirectorCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let owner_decision_queue_v1;
   try {
     owner_decision_queue_v1 = buildOwnerDecisionQueueCommandCenterLaneV1({ rootDir, now });
@@ -2384,6 +2420,8 @@ export async function buildBuckpartsCommandCenterReport(
     agent_contract_v1,
     operations_metrics_v1,
     production_mission_v1,
+    wedge_completion_evaluator_v1,
+    wedge_completion_director_v1,
     owner_decision_queue_v1,
     wrong_code_prevention_v1,
   };
