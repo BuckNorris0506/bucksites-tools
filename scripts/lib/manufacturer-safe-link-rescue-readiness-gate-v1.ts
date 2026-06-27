@@ -49,6 +49,10 @@ import {
   manufacturerRescueOwnerProofOfficialPassV1,
 } from "./manufacturer-safe-link-rescue-owner-browser-proof-evidence-v1";
 import {
+  isOperationalOrchestratorBlockerV1,
+  resolveEverydropWhirlpoolOwnerApplyLaneEligibleV1,
+} from "./manufacturer-safe-link-rescue-everydrop-readiness-unblockers-v1";
+import {
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1,
   type ManufacturerRescueOrchestratorQueueRowV1,
   type ManufacturerRescueOrchestratorReportV1,
@@ -287,9 +291,24 @@ function resolveOwnerApplyLaneEligible(args: {
   rootDir: string;
   slug: string;
   manufacturerKey: string;
+  orchestratorRow: ManufacturerRescueOrchestratorQueueRowV1;
+  ownerProof: OwnerBrowserProofResultV1 | null;
+  applyPlanRel: string | null;
+  now?: () => Date;
   fileExists: (abs: string) => boolean;
   readText: (abs: string) => string;
 }): { eligible: boolean | "UNKNOWN"; source_note: string } {
+  if (args.manufacturerKey === "everydrop_whirlpool") {
+    return resolveEverydropWhirlpoolOwnerApplyLaneEligibleV1({
+      rootDir: args.rootDir,
+      row: args.orchestratorRow,
+      ownerProof: args.ownerProof,
+      applyPlanRel: args.applyPlanRel,
+      fileExists: args.fileExists,
+      readText: args.readText,
+      now: args.now,
+    });
+  }
   if (args.manufacturerKey === "frigidaire") {
     const row = loadFrigidaireAdapterRow(args.rootDir, args.slug, args.fileExists, args.readText);
     if (!row) return { eligible: "UNKNOWN", source_note: "frigidaire adapter row missing" };
@@ -568,6 +587,10 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
     rootDir: args.rootDir,
     slug,
     manufacturerKey: args.row.manufacturer_key,
+    orchestratorRow: args.row,
+    ownerProof,
+    applyPlanRel,
+    now: args.now,
     fileExists,
     readText,
   });
@@ -604,20 +627,19 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
   if (!directBuyable) blockingReasons.push("not_guarded_apply_direct_buyable_candidate");
 
   const directorBlocked = args.directorLane.guarded_apply_queue.some(
-    (q) => q.filter_slug === slug && q.blocked_reasons.length > 0,
+    (q) =>
+      q.filter_slug === slug &&
+      q.blocked_reasons.filter(isOperationalOrchestratorBlockerV1).length > 0,
   );
-  const unresolved =
-    args.row.blocked_reasons.filter(
-      (r) =>
-        !r.includes("csv_apply_not_authorized") &&
-        !r.includes("supabase_mutation_not_authorized") &&
-        !r.includes("owner_apply_approval_missing"),
-    ).length > 0 || directorBlocked;
+  const operationalOrchestratorBlockers = args.row.blocked_reasons.filter(
+    isOperationalOrchestratorBlockerV1,
+  );
+  const unresolved = operationalOrchestratorBlockers.length > 0 || directorBlocked;
   checks.push({
     check_id: "no_unresolved_blockers",
     status: unresolved ? "FAIL" : "PASS",
     notes: unresolved
-      ? `orchestrator/director blockers remain: ${args.row.blocked_reasons.join(", ")}`
+      ? `orchestrator/director blockers remain: ${operationalOrchestratorBlockers.join(", ") || args.row.blocked_reasons.join(", ")}`
       : "no unresolved orchestrator/director blockers beyond expected mutation gates",
   });
   if (unresolved) blockingReasons.push("unresolved_orchestrator_or_director_blockers");

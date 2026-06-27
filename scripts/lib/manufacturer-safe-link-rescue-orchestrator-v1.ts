@@ -41,6 +41,7 @@ import {
 } from "./ge-refrigerator-rescue-owner-approval-packet-v1";
 import { loadGeRefrigeratorRescueBrowserEvidenceArtifactV1 } from "./ge-refrigerator-rescue-browser-capture-v1";
 import { EVERYDROP_WHIRLPOOL_MANUFACTURER_RESCUE_CONFIG_V1 } from "./manufacturer-safe-link-rescue-everydrop-whirlpool-config-v1";
+import { filterEverydropOrchestratorBlockedReasonsV1 } from "./manufacturer-safe-link-rescue-everydrop-readiness-unblockers-v1";
 import { FRIGIDAIRE_MANUFACTURER_RESCUE_CONFIG_V1 } from "./manufacturer-safe-link-rescue-frigidaire-config-v1";
 import { GE_MANUFACTURER_RESCUE_CONFIG_V1 } from "./manufacturer-safe-link-rescue-ge-config-v1";
 import {
@@ -539,10 +540,15 @@ function normalizeEverydropRow(args: {
   ownerProof: OwnerBrowserProofResultV1 | null;
   inFridgeRescueQueue: boolean;
   rescueQueueRank: number | null;
+  now?: () => Date;
 }): ManufacturerRescueOrchestratorQueueRowV1 {
   const slug = args.row.filter_slug;
-  const blocked = [...args.row.blockers];
-  if (args.row.supersession_review_required) blocked.push("supersession_review_required");
+  const blocked = filterEverydropOrchestratorBlockedReasonsV1({
+    adapterBlockers: args.row.blockers,
+    ownerProof: args.ownerProof,
+    supersessionReviewRequired: args.row.supersession_review_required,
+    now: args.now,
+  });
 
   const browserPass = ownerProofOfficialPass(args.ownerProof);
   const browserTruth: ManufacturerRescueOrchestratorQueueRowV1["browser_truth_status"] = browserPass
@@ -941,6 +947,7 @@ export function buildManufacturerSafeLinkRescueOrchestratorReportV1(args: {
         ownerProof,
         inFridgeRescueQueue: rescueRankBySlug.has(slug),
         rescueQueueRank: rescueRankBySlug.get(slug) ?? null,
+        now,
       }),
     );
   }
