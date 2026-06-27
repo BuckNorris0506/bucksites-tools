@@ -103,6 +103,7 @@
     "buckparts:fridge-safe-link-ukf8001-guarded-apply": "tsx scripts/report-fridge-safe-link-ukf8001-guarded-apply-v1.ts",
     "buckparts:supabase-csv-parity-coverage-factory": "tsx scripts/report-supabase-csv-parity-coverage-factory-v1.ts",
     "buckparts:supabase-csv-parity-guarded-apply": "tsx scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
+    "buckparts:coverage-production-sprint-v2": "tsx scripts/report-coverage-production-sprint-v2.ts",
     "buckparts:fridge-safe-link-gswf-apply-readiness": "tsx scripts/report-fridge-safe-link-gswf-apply-readiness-v1.ts",
     "buckparts:fridge-safe-link-gswf-ge-official-proof": "tsx scripts/report-fridge-safe-link-gswf-ge-official-proof-v1.ts",
     "buckparts:fridge-safe-link-everydrop-whirlpool-official-proof": "tsx scripts/report-fridge-safe-link-everydrop-whirlpool-official-proof-v1.ts",
