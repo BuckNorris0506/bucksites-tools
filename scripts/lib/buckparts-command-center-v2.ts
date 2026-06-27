@@ -272,6 +272,8 @@ export function buildCommandCenterV2Report(input: {
   | "agent_contract_v1"
   | "operations_metrics_v1"
   | "production_mission_v1"
+  | "wedge_completion_evaluator_v1"
+  | "wedge_completion_director_v1"
   | "owner_decision_queue_v1"
   | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"

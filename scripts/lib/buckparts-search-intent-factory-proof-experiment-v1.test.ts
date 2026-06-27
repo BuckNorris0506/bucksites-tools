@@ -6,16 +6,13 @@ import test from "node:test";
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 
 import {
-  buildSearchIntentAlignmentExperimentReportV1,
-  type SearchIntentAlignmentPageRowV1,
-} from "./buckparts-search-intent-alignment-experiment-v1";
-import {
   SEARCH_INTENT_FACTORY_PROOF_EXPERIMENT_CONTRACT_V1,
   buildSearchIntentFactoryProofExperimentReportV1,
   manufactureSearchIntentFactoryProofCandidatesV1,
   manufactureSearchIntentFactoryProofPageV1,
   resolveSearchIntentFactoryProofVerdictV1,
   validateSearchIntentFactoryProofWorkItemV1,
+  type SearchIntentAlignmentPageRowV1,
 } from "./buckparts-search-intent-factory-proof-experiment-v1";
 
 const REPO_ROOT = process.cwd();
@@ -103,9 +100,16 @@ test("read-only flags and no mutation authority", async () => {
   assert.equal(report.supabase_writes, false);
 });
 
-test("uses same five pages as alignment experiment via live run", async () => {
+test("uses same five pages as alignment experiment via live run", async (t) => {
+  let alignmentMod: typeof import("./buckparts-search-intent-alignment-experiment-v1") | null = null;
+  try {
+    alignmentMod = await import("./buckparts-search-intent-alignment-experiment-v1");
+  } catch {
+    t.skip("buckparts-search-intent-alignment-experiment-v1 module not present");
+    return;
+  }
   const loadGsc = async () => ({ ok: false as const, reason: "fixture" });
-  const alignment = await buildSearchIntentAlignmentExperimentReportV1({
+  const alignment = await alignmentMod.buildSearchIntentAlignmentExperimentReportV1({
     rootDir: REPO_ROOT,
     loadGscArtifact: loadGsc,
     referenceabilityFactory: null,
@@ -233,6 +237,16 @@ test("UNKNOWN verdict when GSC unavailable on majority of pages", () => {
   }));
   const { verdict } = resolveSearchIntentFactoryProofVerdictV1({ pages, gscAvailable: false });
   assert.equal(verdict, "UNKNOWN");
+});
+
+test("returns UNKNOWN blocked report when alignment module missing", async () => {
+  const report = await buildSearchIntentFactoryProofExperimentReportV1({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+  });
+  assert.equal(report.experiment_verdict, "UNKNOWN");
+  assert.equal(report.manufactured_work_item_count, 0);
+  assert.ok(report.unknown_facts.some((f) => f.includes("MODULE_MISSING")));
 });
 
 test("does not mutate retailer_links.csv", async () => {

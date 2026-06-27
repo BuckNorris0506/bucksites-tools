@@ -223,13 +223,13 @@ function buildSlugCsvContextIndexV1(args: {
   }
 
   const slugs = new Set<string>([
-    ...filterBySlug.keys(),
-    ...compatCountBySlug.keys(),
-    ...retailerBySlug.keys(),
+    ...Array.from(filterBySlug.keys()),
+    ...Array.from(compatCountBySlug.keys()),
+    ...Array.from(retailerBySlug.keys()),
   ]);
 
   const index = new Map<string, SlugCsvContextV1>();
-  for (const slug of slugs) {
+  for (const slug of Array.from(slugs)) {
     const filterRow = filterBySlug.get(slug);
     const retailerRow = retailerBySlug.get(slug);
     index.set(slug, {
@@ -404,6 +404,6 @@ export async function buildReferenceabilityFactoryRunV1(
     work_items,
     skipped_rows,
     proven_facts,
-    unknown_facts: [...new Set(unknown_facts)],
+    unknown_facts: Array.from(new Set(unknown_facts)),
   };
 }

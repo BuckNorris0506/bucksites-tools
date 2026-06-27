@@ -182,6 +182,7 @@ type RetailerLinkRow = {
   is_primary?: string;
   browser_truth_classification?: string | null;
   browser_truth_buyable_subtype?: string | null;
+  browser_truth_notes?: string | null;
 };
 
 function defaultFileExists(abs: string): boolean {
@@ -267,12 +268,25 @@ function linkedFilterSlugs(
   return slugs;
 }
 
-function evidenceFilesForSlug(slug: string, filenames: string[]): string[] {
+function evidencePathsFromBrowserTruthNotes(notes: string | undefined): string[] {
+  if (!notes?.trim()) return [];
+  const matches = notes.match(/data\/[a-zA-Z0-9/_.-]+\.json/g) ?? [];
+  return Array.from(new Set(matches)).sort();
+}
+
+function evidenceFilesForSlug(
+  slug: string,
+  filenames: string[],
+  browserTruthNotes?: string,
+): string[] {
   const needle = slug.toLowerCase();
-  return filenames
+  const fromEvidenceDir = filenames
     .filter((name) => name.toLowerCase().includes(needle))
-    .map((name) => `data/evidence/${name}`)
-    .sort();
+    .map((name) => `data/evidence/${name}`);
+  const fromNotes = evidencePathsFromBrowserTruthNotes(browserTruthNotes).filter((p) =>
+    p.toLowerCase().includes(needle),
+  );
+  return Array.from(new Set([...fromEvidenceDir, ...fromNotes])).sort();
 }
 
 function summarizeRetailerRows(rows: RetailerLinkRow[]): {
@@ -465,7 +479,13 @@ export function buildAllProductSafeBuyerPathCensusV1(
       const isLinked = linked.has(slug);
       const retailerRows = linksBySlug.get(slug) ?? [];
       const retailer_summary = summarizeRetailerRows(retailerRows);
-      const evidence_files = evidenceFilesForSlug(slug, evidenceFilenames);
+      const primaryRetailer =
+        retailerRows.find((r) => isTruthyPrimary(r.is_primary)) ?? retailerRows[0] ?? null;
+      const evidence_files = evidenceFilesForSlug(
+        slug,
+        evidenceFilenames,
+        primaryRetailer?.browser_truth_notes ?? undefined,
+      );
       const model_count = modelCountByFilter.get(slug) ?? 0;
 
       let classification: SafeBuyerPathPageClassificationV1;

@@ -59,6 +59,15 @@ export type ReferenceabilityWorkItemV1 = ReferenceabilityRecommendationV1 & {
   artifact_write_authorized: false;
 };
 
+export const REFERENCEABILITY_FRIDGE_FILTER_TRUST_DECISION_MARKER_V1 =
+  "FilterPdpTrustDecisionSection" as const;
+
+export const REFERENCEABILITY_FRIDGE_FILTER_COMPAT_MODELS_MARKER_V1 =
+  "FilterPdpCompatibleModelsSection" as const;
+
+export const REFERENCEABILITY_FRIDGE_FILTER_REPO_EVIDENCE_MARKER_V1 =
+  "FilterPdpRepoEvidenceSection" as const;
+
 export type ReferenceabilityPageContextV1 = {
   compat_model_count: number;
   filter_row_present: boolean;
@@ -66,6 +75,7 @@ export type ReferenceabilityPageContextV1 = {
   browser_truth_checked_at: string | null;
   browser_truth_classification: string | null;
   page_template_rel_path: string;
+  page_template_source: string | null;
   page_template_banned_phrases: string[];
   trust_contract_rel_path: string;
   filter_pdp_trust_status: "READY" | "UNKNOWN";
@@ -76,6 +86,30 @@ export type ReferenceabilityPageContextV1 = {
   } | null;
   ap_runtime_gate_state: RepoRuntimeConvergenceGateStateV1 | null;
 };
+
+export function refrigeratorFilterTemplateHasTrustDecisionFramingV1(
+  templateSource: string | null | undefined,
+): boolean {
+  return Boolean(
+    templateSource?.includes(REFERENCEABILITY_FRIDGE_FILTER_TRUST_DECISION_MARKER_V1),
+  );
+}
+
+export function refrigeratorFilterTemplateHasCompatModelLinksV1(
+  templateSource: string | null | undefined,
+): boolean {
+  return Boolean(
+    templateSource?.includes(REFERENCEABILITY_FRIDGE_FILTER_COMPAT_MODELS_MARKER_V1),
+  );
+}
+
+export function refrigeratorFilterTemplateHasRepoEvidenceSurfacedV1(
+  templateSource: string | null | undefined,
+): boolean {
+  return Boolean(
+    templateSource?.includes(REFERENCEABILITY_FRIDGE_FILTER_REPO_EVIDENCE_MARKER_V1),
+  );
+}
 
 export type ReferenceabilityGapFindingV1 = Omit<
   ReferenceabilityRecommendationV1,
@@ -155,6 +189,7 @@ export function buildReferenceabilityPageContextV1(args: {
     browser_truth_checked_at: args.browser_truth_checked_at,
     browser_truth_classification: args.browser_truth_classification,
     page_template_rel_path,
+    page_template_source: args.page_template_source,
     page_template_banned_phrases,
     trust_contract_rel_path: TRUST_CONTRACT_REL_V1,
     filter_pdp_trust_status: args.filter_row_present ? "READY" : "UNKNOWN",
@@ -236,22 +271,28 @@ export function detectReferenceabilityGapsV1(args: {
 }): ReferenceabilityGapFindingV1[] {
   const { row, context, now } = args;
   const findings: ReferenceabilityGapFindingV1[] = [];
+  const fridgeTemplate = row.wedge === "refrigerator_water" ? context.page_template_source : null;
+  const trustFramingWired = refrigeratorFilterTemplateHasTrustDecisionFramingV1(fridgeTemplate);
+  const compatLinksWired = refrigeratorFilterTemplateHasCompatModelLinksV1(fridgeTemplate);
+  const repoEvidenceWired = refrigeratorFilterTemplateHasRepoEvidenceSurfacedV1(fridgeTemplate);
 
   if (row.evidence_files.length === 0) {
-    findings.push({
-      improvement_class: "evidence_presentation",
-      summary: "Surface explicit repo evidence references on the filter PDP.",
-      evidence: [`census:evidence_files_empty:${row.slug}`],
-      source: "all_product_safe_buyer_path_census_v1",
-      expected_customer_value:
-        "Homeowners see why BuckParts trusts this part before clicking a buying option.",
-      truth_risk: "LOW",
-      validation_path:
-        "Owner browser review: evidence file list visible on PDP without inventing claims.",
-      permitted_action_class: "OWNER_COPY_REVIEW",
-      priority_score: basePriority("evidence_presentation"),
-      content_invention_required: false,
-    });
+    if (!(repoEvidenceWired && row.wedge === "refrigerator_water")) {
+      findings.push({
+        improvement_class: "evidence_presentation",
+        summary: "Surface explicit repo evidence references on the filter PDP.",
+        evidence: [`census:evidence_files_empty:${row.slug}`],
+        source: "all_product_safe_buyer_path_census_v1",
+        expected_customer_value:
+          "Homeowners see why BuckParts trusts this part before clicking a buying option.",
+        truth_risk: "LOW",
+        validation_path:
+          "Owner browser review: evidence file list visible on PDP without inventing claims.",
+        permitted_action_class: "OWNER_COPY_REVIEW",
+        priority_score: basePriority("evidence_presentation"),
+        content_invention_required: false,
+      });
+    }
   } else {
     findings.push({
       improvement_class: "evidence_presentation",
@@ -271,23 +312,25 @@ export function detectReferenceabilityGapsV1(args: {
     });
   }
 
-  findings.push({
-    improvement_class: "homeowner_comprehension",
-    summary: "Strengthen fit-decision framing for filter PDP trust questions 2, 5, 7, 9.",
-    evidence: [
-      `public_route:${row.public_route}`,
-      `page_classification:${row.page_classification}`,
-      `trust_contract:${context.trust_contract_rel_path}`,
-    ],
-    source: TRUST_CONTRACT_REL_V1,
-    expected_customer_value:
-      "Readers grasp fit, uncertainty, and CTA visibility without internal jargon.",
-    truth_risk: "LOW",
-    validation_path: "OWNER_COPY_REVIEW against universal trust Q2/Q5/Q7/Q9.",
-    permitted_action_class: "OWNER_COPY_REVIEW",
-    priority_score: basePriority("homeowner_comprehension"),
-    content_invention_required: false,
-  });
+  if (!(trustFramingWired && row.wedge === "refrigerator_water")) {
+    findings.push({
+      improvement_class: "homeowner_comprehension",
+      summary: "Strengthen fit-decision framing for filter PDP trust questions 2, 5, 7, 9.",
+      evidence: [
+        `public_route:${row.public_route}`,
+        `page_classification:${row.page_classification}`,
+        `trust_contract:${context.trust_contract_rel_path}`,
+      ],
+      source: TRUST_CONTRACT_REL_V1,
+      expected_customer_value:
+        "Readers grasp fit, uncertainty, and CTA visibility without internal jargon.",
+      truth_risk: "LOW",
+      validation_path: "OWNER_COPY_REVIEW against universal trust Q2/Q5/Q7/Q9.",
+      permitted_action_class: "OWNER_COPY_REVIEW",
+      priority_score: basePriority("homeowner_comprehension"),
+      content_invention_required: false,
+    });
+  }
 
   if (context.compat_model_count <= 1) {
     findings.push({
@@ -303,7 +346,7 @@ export function detectReferenceabilityGapsV1(args: {
       priority_score: basePriority("comparison_clarity"),
       content_invention_required: false,
     });
-  } else {
+  } else if (!(compatLinksWired && row.wedge === "refrigerator_water")) {
     findings.push({
       improvement_class: "comparison_clarity",
       summary: "Expose model comparison anchors from proven compat mappings.",
@@ -382,18 +425,20 @@ export function detectReferenceabilityGapsV1(args: {
   }
 
   if (context.compat_model_count > 0) {
-    findings.push({
-      improvement_class: "internal_linking",
-      summary: "Plan internal links from filter PDP to mapped model pages.",
-      evidence: [`compat_model_count:${context.compat_model_count}`, `public_route:${row.public_route}`],
-      source: "compatibility_mappings.csv",
-      expected_customer_value: "Discovery paths stay on-site between model and part decisions.",
-      truth_risk: "LOW",
-      validation_path: "INTERNAL_LINK_PLAN — only compat-proven targets.",
-      permitted_action_class: "INTERNAL_LINK_PLAN",
-      priority_score: basePriority("internal_linking"),
-      content_invention_required: false,
-    });
+    if (!(compatLinksWired && row.wedge === "refrigerator_water")) {
+      findings.push({
+        improvement_class: "internal_linking",
+        summary: "Plan internal links from filter PDP to mapped model pages.",
+        evidence: [`compat_model_count:${context.compat_model_count}`, `public_route:${row.public_route}`],
+        source: "compatibility_mappings.csv",
+        expected_customer_value: "Discovery paths stay on-site between model and part decisions.",
+        truth_risk: "LOW",
+        validation_path: "INTERNAL_LINK_PLAN — only compat-proven targets.",
+        permitted_action_class: "INTERNAL_LINK_PLAN",
+        priority_score: basePriority("internal_linking"),
+        content_invention_required: false,
+      });
+    }
   }
 
   const staleDays = daysSinceIso(context.browser_truth_checked_at, now);

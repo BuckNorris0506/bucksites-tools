@@ -461,7 +461,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     .map((r) => ({ slug: norm(r.slug), name: norm(r.name) }))
     .sort((a, b) => a.slug.localeCompare(b.slug));
   const brandsFieldDrift: ApFieldDriftRowV1[] = [];
-  for (const [slug, csvRow] of csvBrandBySlug) {
+  for (const [slug, csvRow] of Array.from(csvBrandBySlug.entries())) {
     const dbRow = dbBrandBySlug.get(slug);
     if (!dbRow) continue;
     if (norm(csvRow.name) !== norm(dbRow.name)) {
@@ -495,7 +495,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     }))
     .sort((a, b) => a.slug.localeCompare(b.slug));
   const filtersFieldDrift: ApFieldDriftRowV1[] = [];
-  for (const [slug, csvRow] of csvFilterBySlug) {
+  for (const [slug, csvRow] of Array.from(csvFilterBySlug.entries())) {
     const dbRow = dbFilterBySlug.get(slug);
     if (!dbRow) continue;
     const checks: Array<[string, string, string]> = [
@@ -535,7 +535,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     }))
     .sort((a, b) => a.slug.localeCompare(b.slug));
   const modelsFieldDrift: ApFieldDriftRowV1[] = [];
-  for (const [slug, csvRow] of csvModelBySlug) {
+  for (const [slug, csvRow] of Array.from(csvModelBySlug.entries())) {
     const dbRow = dbModelBySlug.get(slug);
     if (!dbRow) continue;
     const checks: Array<[string, string, string]> = [
@@ -612,7 +612,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     .filter((r) => !csvCompat.has(compatKey(norm(r.model_slug), norm(r.filter_slug))))
     .sort((a, b) => a.model_slug.localeCompare(b.model_slug));
   const compatFieldDrift: ApFieldDriftRowV1[] = [];
-  for (const [key, csvRow] of csvCompat) {
+  for (const [key, csvRow] of Array.from(csvCompat.entries())) {
     const dbRow = dbCompat.get(key);
     if (!dbRow) continue;
     if (csvRow.is_recommended !== dbRow.is_recommended) {
@@ -651,7 +651,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
   const browserTruthDrift: ApSupabaseVsCsvDiffReportV1["air_purifier_retailer_links"]["browser_truth_drift"] =
     [];
 
-  for (const [key, csvRow] of csvLinkMap) {
+  for (const [key, csvRow] of Array.from(csvLinkMap.entries())) {
     const dbRow = dbLinkMap.get(key);
     if (!dbRow) continue;
     const checks: Array<[string, string, string]> = [
@@ -835,7 +835,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     list.push(row);
     csvLinksByFilter.set(row.filter_slug, list);
   }
-  for (const slug of csvLinksByFilter.keys()) {
+  for (const slug of Array.from(csvLinksByFilter.keys())) {
     const rows = csvLinksByFilter.get(slug) ?? [];
     const primary = rows.find((r) => r.is_primary) ?? rows[0];
     if (
@@ -858,7 +858,7 @@ export async function buildAirPurifierSupabaseVsCsvDiffV1Report(args: {
     list.push(row);
     dbLinksByFilter.set(row.filter_slug, list);
   }
-  for (const slug of dbLinksByFilter.keys()) {
+  for (const slug of Array.from(dbLinksByFilter.keys())) {
     const rows = dbLinksByFilter.get(slug) ?? [];
     const primary = rows.find((r) => r.is_primary) ?? rows[0];
     if (

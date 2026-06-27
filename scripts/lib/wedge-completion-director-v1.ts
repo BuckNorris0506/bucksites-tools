@@ -219,7 +219,7 @@ function buildReferenceabilityCandidate(args: {
     blocking_criterion_ids: active,
     fail_criteria_addressed_count: countStatuses(args.report, ids, "FAIL"),
     unknown_criteria_addressed_count: countStatuses(args.report, ids, "UNKNOWN"),
-    dimensions_touched: ["customer_experience", "distribution"].filter((dim) =>
+    dimensions_touched: (["customer_experience", "distribution"] as const).filter((dim) =>
       active.some((id) => dimensionForCriterion(args.report, id) === dim),
     ),
     expected_completion_impact:
@@ -496,11 +496,9 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
 
   let sprint: CoverageProductionSprintV2ReportV1 | null = args.sprint ?? null;
   if (sprint === null && !args.skipSprint) {
-    try {
-      sprint = buildCoverageProductionSprintV2ReportV1({ rootDir: args.rootDir, now });
-    } catch {
-      sprint = null;
-    }
+    throw new Error(
+      "buildWedgeCompletionDirectorFromEvaluatorReportV1: load sprint in buildWedgeCompletionDirectorReportV1 or pass sprint/skipSprint",
+    );
   }
 
   const fridgeSlugs = loadFridgeCsvSlugs(args.rootDir);
@@ -575,12 +573,23 @@ export async function buildWedgeCompletionDirectorReportV1(
   deps: BuildWedgeCompletionDirectorDepsV1,
 ): Promise<WedgeCompletionDirectorReportV1> {
   const report = await buildWedgeCompletionEvaluatorReportV1(deps);
+  let sprint: CoverageProductionSprintV2ReportV1 | null = deps.sprint ?? null;
+  if (sprint === null && !deps.skipSprint) {
+    try {
+      sprint = await buildCoverageProductionSprintV2ReportV1({
+        rootDir: deps.rootDir,
+        now: deps.now,
+      });
+    } catch {
+      sprint = null;
+    }
+  }
   return buildWedgeCompletionDirectorFromEvaluatorReportV1({
     report,
     rootDir: deps.rootDir,
     now: deps.now,
-    sprint: deps.sprint ?? null,
-    skipSprint: deps.skipSprint,
+    sprint,
+    skipSprint: true,
   });
 }
 

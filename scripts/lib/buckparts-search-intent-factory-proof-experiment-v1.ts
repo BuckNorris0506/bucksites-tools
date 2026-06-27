@@ -4,15 +4,12 @@
  * without inventing new facts. Does NOT implement the factory.
  */
 
-import {
-  buildSearchIntentAlignmentExperimentReportV1,
-  tokenizeHomeownerLanguageV1,
-  type BuildSearchIntentAlignmentExperimentDepsV1,
-  type ProvenQueryLanguageItemV1,
-  type SearchIntentAlignmentPageRowV1,
-  type SearchIntentAlignmentExperimentReportV1,
-} from "./buckparts-search-intent-alignment-experiment-v1";
+import type { HomekeepWedgeCatalog } from "@/lib/catalog/identity";
+
 import type { ReferenceabilityFactoryRunV1 } from "./referenceability-factory-run-v1";
+
+export const SEARCH_INTENT_ALIGNMENT_MODULE_REL_V1 =
+  "scripts/lib/buckparts-search-intent-alignment-experiment-v1.ts" as const;
 
 export const SEARCH_INTENT_FACTORY_PROOF_EXPERIMENT_CONTRACT_V1 =
   "search_intent_factory_proof_experiment_v1" as const;
@@ -116,11 +113,99 @@ export type SearchIntentFactoryProofExperimentReportV1 = {
   unknown_facts: string[];
 };
 
-export type BuildSearchIntentFactoryProofExperimentDepsV1 =
-  BuildSearchIntentAlignmentExperimentDepsV1 & {
-    alignmentReport?: SearchIntentAlignmentExperimentReportV1;
-    referenceabilityFactory?: ReferenceabilityFactoryRunV1 | null;
+export type ProvenQueryLanguageItemV1 = {
+  query: string;
+  source: string;
+  impressions: number | null;
+  search_count: number | null;
+};
+
+export type SearchIntentAlignmentClassificationV1 =
+  | "LOW_ALIGNMENT"
+  | "PARTIAL_ALIGNMENT"
+  | "HIGH_ALIGNMENT"
+  | "UNKNOWN";
+
+export type SearchIntentAlignmentRootCauseV1 =
+  | "PAGE_ALREADY_ALIGNED"
+  | "INSUFFICIENT_GSC_DATA"
+  | "SEARCH_LANGUAGE_GAP"
+  | string;
+
+export type SearchIntentAlignmentPageRowV1 = {
+  selection_rank: number;
+  wedge: HomekeepWedgeCatalog;
+  slug: string;
+  public_route: string;
+  source_artifacts: string[];
+  homeowner_language_inventory: Array<{
+    field: string;
+    value: string | null;
+    source?: string;
+  }>;
+  proven_query_language: ProvenQueryLanguageItemV1[];
+  proven_query_language_status: string;
+  alignment: {
+    classification: SearchIntentAlignmentClassificationV1;
+    overlap_token_count: number;
+    page_token_count: number;
+    query_token_count: number;
+    alignment_ratio: number | null;
+    explanation: string;
+    evidence: string[];
+    source: string;
+    truth_risk: SearchIntentFactoryProofTruthRiskV1;
+    validation_path: string;
   };
+  root_cause: SearchIntentAlignmentRootCauseV1;
+  architectural_implication?: string;
+};
+
+export type SearchIntentAlignmentExperimentReportV1 = {
+  contract: "search_intent_alignment_experiment_v1";
+  read_only: true;
+  data_mutation: false;
+  mutation_authorized: false;
+  artifact_write_authorized: false;
+  supabase_writes: false;
+  source_command: string;
+  generated_at: string;
+  falsification_hypothesis: string;
+  distribution_experiment_contract: string;
+  gsc_available: boolean;
+  gsc_source: string | null;
+  search_gap_artifact_available: boolean;
+  demand_to_coverage_lane_available: boolean;
+  referenceability_factory_available: boolean;
+  selected_pages: SearchIntentAlignmentPageRowV1[];
+  experiment_verdict: string;
+  verdict_rationale: string[];
+  proven_facts: string[];
+  inferred_facts: string[];
+  unknown_facts: string[];
+};
+
+export function tokenizeHomeownerLanguageV1(value: string | null | undefined): Set<string> {
+  if (!value) return new Set();
+  const tokens = value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(/\s+/)
+    .filter((t) => t.length >= 2);
+  return new Set(tokens);
+}
+
+export type BuildSearchIntentFactoryProofExperimentDepsV1 = {
+  rootDir: string;
+  now?: () => Date;
+  fileExists?: (absPath: string) => boolean;
+  readText?: (absPath: string) => string;
+  loadGscArtifact?: () => Promise<{ ok: boolean; reason?: string }>;
+  distributionPages?: unknown;
+  searchGapRows?: unknown;
+  referenceabilityFactory?: ReferenceabilityFactoryRunV1 | null;
+  alignmentReport?: SearchIntentAlignmentExperimentReportV1;
+};
 
 type WorkItemCandidateV1 = {
   work_item_class: SearchIntentFactoryProofWorkItemClassV1;
@@ -167,7 +252,7 @@ function inventoryValue(
 function pageTokenSet(page: SearchIntentAlignmentPageRowV1): Set<string> {
   const tokens = new Set<string>();
   for (const item of page.homeowner_language_inventory) {
-    for (const t of tokenizeHomeownerLanguageV1(item.value)) tokens.add(t);
+    for (const t of Array.from(tokenizeHomeownerLanguageV1(item.value))) tokens.add(t);
   }
   return tokens;
 }
@@ -175,7 +260,7 @@ function pageTokenSet(page: SearchIntentAlignmentPageRowV1): Set<string> {
 function queryTokenSet(queries: ProvenQueryLanguageItemV1[]): Set<string> {
   const tokens = new Set<string>();
   for (const q of queries) {
-    for (const t of tokenizeHomeownerLanguageV1(q.query)) tokens.add(t);
+    for (const t of Array.from(tokenizeHomeownerLanguageV1(q.query))) tokens.add(t);
   }
   return tokens;
 }
@@ -184,7 +269,7 @@ function vocabularyGapTokens(
   pageTokens: Set<string>,
   queryTokens: Set<string>,
 ): string[] {
-  return [...queryTokens].filter((t) => !pageTokens.has(t) && t.length >= 4).sort();
+  return Array.from(queryTokens).filter((t) => !pageTokens.has(t) && t.length >= 4).sort();
 }
 
 function questionShapedQueries(queries: ProvenQueryLanguageItemV1[]): ProvenQueryLanguageItemV1[] {
@@ -377,8 +462,8 @@ export function manufactureSearchIntentFactoryProofCandidatesV1(
   }
 
   const h1Lower = (h1 ?? "").toLowerCase();
-  const nameTokens = filterName ? [...tokenizeHomeownerLanguageV1(filterName)] : [];
-  const queryHasNonOemConsumerToken = [...queryTokens].some(
+  const nameTokens = filterName ? Array.from(tokenizeHomeownerLanguageV1(filterName)) : [];
+  const queryHasNonOemConsumerToken = Array.from(queryTokens).some(
     (t) =>
       t.length >= 5 &&
       t !== oem?.toLowerCase() &&
@@ -550,22 +635,46 @@ export function resolveSearchIntentFactoryProofVerdictV1(args: {
   return { verdict: "FACTORY_PROVEN", rationale };
 }
 
-export async function buildSearchIntentFactoryProofExperimentReportV1(
-  deps: BuildSearchIntentFactoryProofExperimentDepsV1,
-): Promise<SearchIntentFactoryProofExperimentReportV1> {
-  const now = deps.now ?? (() => new Date());
-  const alignment =
-    deps.alignmentReport ??
-    (await buildSearchIntentAlignmentExperimentReportV1({
-      rootDir: deps.rootDir,
-      now,
-      fileExists: deps.fileExists,
-      readText: deps.readText,
-      loadGscArtifact: deps.loadGscArtifact,
-      distributionPages: deps.distributionPages,
-      searchGapRows: deps.searchGapRows,
-      referenceabilityFactory: deps.referenceabilityFactory,
-    }));
+function buildSearchIntentFactoryProofExperimentBlockedV1(args: {
+  now: () => Date;
+  reason: string;
+}): SearchIntentFactoryProofExperimentReportV1 {
+  return {
+    contract: SEARCH_INTENT_FACTORY_PROOF_EXPERIMENT_CONTRACT_V1,
+    read_only: true,
+    data_mutation: false,
+    mutation_authorized: false,
+    artifact_write_authorized: false,
+    supabase_writes: false,
+    source_command: SEARCH_INTENT_FACTORY_PROOF_EXPERIMENT_SOURCE_COMMAND_V1,
+    generated_at: args.now().toISOString(),
+    falsification_hypothesis: SEARCH_INTENT_FACTORY_PROOF_HYPOTHESIS_V1,
+    upstream_contracts: [
+      "search_intent_alignment_experiment_v1",
+      "distribution_five_page_experiment_v1",
+      "referenceability_factory_run_v1",
+    ],
+    gsc_available: false,
+    manufactured_work_item_count: 0,
+    rejected_work_item_count: 0,
+    selected_pages: [],
+    experiment_verdict: "UNKNOWN",
+    verdict_rationale: [args.reason],
+    proven_facts: [
+      "PROVEN: read_only=true data_mutation=false mutation_authorized=false supabase_writes=false",
+      "PROVEN: proof experiment blocked — upstream alignment module unavailable",
+    ],
+    inferred_facts: [],
+    unknown_facts: [args.reason],
+  };
+}
+
+function buildProofReportFromAlignmentV1(args: {
+  deps: BuildSearchIntentFactoryProofExperimentDepsV1;
+  alignment: SearchIntentAlignmentExperimentReportV1;
+  now: () => Date;
+}): SearchIntentFactoryProofExperimentReportV1 {
+  const { alignment, now } = args;
 
   const selected_pages: SearchIntentFactoryProofPageRowV1[] = alignment.selected_pages.map((page) => {
     const { work_items_manufactured, work_items_rejected } =
@@ -634,4 +743,23 @@ export async function buildSearchIntentFactoryProofExperimentReportV1(
     inferred_facts: alignment.inferred_facts,
     unknown_facts: alignment.unknown_facts,
   };
+}
+
+export async function buildSearchIntentFactoryProofExperimentReportV1(
+  deps: BuildSearchIntentFactoryProofExperimentDepsV1,
+): Promise<SearchIntentFactoryProofExperimentReportV1> {
+  const now = deps.now ?? (() => new Date());
+
+  if (deps.alignmentReport) {
+    return buildProofReportFromAlignmentV1({
+      deps,
+      alignment: deps.alignmentReport,
+      now,
+    });
+  }
+
+  return buildSearchIntentFactoryProofExperimentBlockedV1({
+    now,
+    reason: `MODULE_MISSING: ${SEARCH_INTENT_ALIGNMENT_MODULE_REL_V1}`,
+  });
 }

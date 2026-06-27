@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FridgeTrustFunnelViewTracker } from "@/components/analytics/FridgeTrustFunnelViewTracker";
 import { TrustAwareBuySection } from "@/components/trust/TrustAwareBuySection";
@@ -9,6 +8,9 @@ import {
   VisualReplacementMatchCard,
 } from "@/components/trust/VisualReplacementMatchCard";
 import { FridgeWinnerFamilyRail } from "@/components/fridge/FridgeWinnerFamilyRail";
+import { FilterPdpCompatibleModelsSection } from "@/components/fridge/FilterPdpCompatibleModelsSection";
+import { FilterPdpRepoEvidenceSection } from "@/components/fridge/FilterPdpRepoEvidenceSection";
+import { FilterPdpTrustDecisionSection } from "@/components/fridge/FilterPdpTrustDecisionSection";
 import { JsonLdScript } from "@/components/seo/JsonLdScript";
 import { Prose } from "@/components/Prose";
 import { getFilterBySlug } from "@/lib/data/filters";
@@ -34,6 +36,10 @@ import {
   BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX,
 } from "@/lib/copy/buckparts-verified-link-copy";
 import { resolveFridgeFilterPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
+import {
+  buildFilterPdpRepoEvidencePaths,
+  primaryBrowserProofMeta,
+} from "@/lib/fridge/filter-pdp-repo-evidence";
 import { buyPathSortContextForFilter } from "@/lib/retailers/launch-buy-links";
 import { buildPartPageTrust } from "@/lib/trust/part-trust";
 import { intervalLabel } from "@/lib/vertical/interval";
@@ -152,6 +158,12 @@ export default async function FilterPage({ params }: Props) {
 
   const filterTrustState =
     trustSummary.buyer_path_state === "suppress_buy" ? "suppress_buy" : "show_buy";
+  const buyingOptionsShown = trustSummary.buyer_path_state !== "suppress_buy";
+  const repoEvidencePaths = buildFilterPdpRepoEvidencePaths({
+    censusEvidenceFiles: [],
+    retailerLinks: filter.retailer_links,
+  });
+  const browserProofMeta = primaryBrowserProofMeta(filter.retailer_links);
   const filterTelemetryBase = {
     page_type: "fridge_filter" as const,
     page_slug: filter.slug,
@@ -218,47 +230,29 @@ export default async function FilterPage({ params }: Props) {
           </div>
         </div>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-bp-text">
-            Compatible refrigerator models ({pdpSafety.display_models_count})
-          </h2>
-          {pdpSafety.display_models_count === 0 ? (
-            <p className="text-sm leading-relaxed text-bp-muted">
-              {pdpSafety.hidden_quarantined_model_count > 0 ? (
-                <>
-                  Refrigerator models we had linked to this filter are under compatibility review. Open your
-                  exact model page from search and compare part numbers before buying any replacement filter.
-                </>
-              ) : (
-                <>
-                  No refrigerator models are linked to this part number on file yet. If you have your fridge model or
-                  another code from the old filter,{" "}
-                  <Link
-                    href="/search"
-                    className="font-semibold text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55"
-                  >
-                    try search
-                  </Link>{" "}
-                  to check spelling, then compare what you see to the numbers on the cartridge before you buy.
-                </>
-              )}
-            </p>
-          ) : (
-            <ul className="divide-y divide-bp-border overflow-hidden rounded-xl border border-bp-border bg-bp-surface">
-              {displayFridgeModels.map((m) => (
-                <li key={m.id}>
-                  <Link
-                    href={`/fridge/${m.slug}`}
-                    className="block px-4 py-3.5 text-sm transition hover:bg-bp-trust-soft/40"
-                  >
-                    <span className="bp-code font-semibold text-bp-text">{m.model_number}</span>
-                    <span className="ml-2 text-bp-muted">{m.brand.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        <FilterPdpTrustDecisionSection
+          oemPartNumber={filter.oem_part_number}
+          compatibleModelCount={pdpSafety.display_models_count}
+          buyingOptionsShown={buyingOptionsShown}
+        />
+
+        <FilterPdpRepoEvidenceSection
+          repoEvidencePaths={repoEvidencePaths}
+          browserProofCheckedAt={browserProofMeta.checkedAt}
+          browserProofClassification={browserProofMeta.classification}
+        />
+
+        <FilterPdpCompatibleModelsSection
+          oemPartNumber={filter.oem_part_number}
+          displayModelCount={pdpSafety.display_models_count}
+          hiddenQuarantinedModelCount={pdpSafety.hidden_quarantined_model_count}
+          models={displayFridgeModels.map((m) => ({
+            id: m.id,
+            slug: m.slug,
+            model_number: m.model_number,
+            brand_name: m.brand.name,
+          }))}
+        />
       </article>
       {filterProductJsonLd ? <JsonLdScript data={filterProductJsonLd} /> : null}
     </section>
