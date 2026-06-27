@@ -164,6 +164,10 @@ import {
   buildBuckpartsExecutionLedgerCommandCenterLaneV1,
 } from "./lib/buckparts-execution-ledger-command-center-v1";
 import {
+  buildBuckpartsRunnerCommandCenterLaneUnknownV1,
+  buildBuckpartsRunnerCommandCenterLaneV1,
+} from "./lib/buckparts-runner-command-center-v1";
+import {
   buildWrongCodePreventionCommandCenterLaneUnknownV1,
   buildWrongCodePreventionCommandCenterLaneV1,
 } from "./lib/wrong-code-prevention-command-center-v1";
@@ -1215,6 +1219,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "buckparts_runner_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
     | "demand_to_coverage_next_lane_v1"
@@ -1493,6 +1498,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "buckparts_runner_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -1652,6 +1658,7 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_rescue_throughput_analytics_v1"
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
+    | "buckparts_runner_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
   > = {
@@ -2208,6 +2215,17 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let buckparts_runner_v1;
+  try {
+    buckparts_runner_v1 = buildBuckpartsRunnerCommandCenterLaneV1({ rootDir, now });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    buckparts_runner_v1 = buildBuckpartsRunnerCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let wrong_code_prevention_v1;
   try {
     wrong_code_prevention_v1 = buildWrongCodePreventionCommandCenterLaneV1({ rootDir, now });
@@ -2290,6 +2308,7 @@ export async function buildBuckpartsCommandCenterReport(
     manufacturer_rescue_throughput_analytics_v1,
     manufacturer_browser_proof_execution_factory_v1,
     execution_ledger_v1,
+    buckparts_runner_v1,
     wrong_code_prevention_v1,
   };
 
