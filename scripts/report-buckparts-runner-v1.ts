@@ -67,7 +67,7 @@ function main(): void {
 
   if (!cli.missionId) {
     process.stderr.write(
-      "Usage: node --import tsx scripts/report-buckparts-runner-v1.ts --mission <coverage_sprint_v1|evidence_sprint_v1|safe_link_sprint_v1> [--resume <run_id>]\n",
+      "Usage: node --import tsx scripts/report-buckparts-runner-v1.ts --mission <coverage_sprint_v1|evidence_sprint_v1|safe_link_sprint_v1|production_mission_v1> [--resume <run_id>]\n",
     );
     process.exit(2);
     return;

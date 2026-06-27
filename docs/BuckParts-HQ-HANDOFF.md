@@ -53,7 +53,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ## Current stopping point — Foundation v1 stack COMPLETE (`613d6b8`)
 
-**Read this section first** for HQ / Cursor / HyperAgent pickup after **Runner v1**, **Coverage Production Sprint v2**, and **Owner Decision Queue v1**.
+**Read this section first** for HQ / Cursor / HyperAgent pickup after **Runner v1**, **Coverage Production Sprint v2**, **Owner Decision Queue v1**, and **Agent Contract v1 (Foundation v2)**.
 
 Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, etc.) remain **PROVEN historical context** below — they do **not** supersede this foundation stack for Monday execution unless Command Center NBA explicitly overrides.
 
@@ -66,7 +66,10 @@ Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, e
 | **Runner v1** | **`buckparts_runner_v1`** — **v1 scope COMPLETE** |
 | **Coverage Production Sprint v2** | **`coverage_production_sprint_v2_v1`** — **COMPLETE** |
 | **Owner Decision Queue v1** | **`owner_decision_queue_v1`** — **v1 scope COMPLETE** |
-| **Next architectural foundation** | **Agent Contract + Dispatch Manifest** — **NOT STARTED** |
+| **Agent Contract + Dispatch Manifest v1** | **`agent_contract_v1`** — **Foundation v2 v1 scope COMPLETE** |
+| **Operations Metrics v1** | **`operations_metrics_v1`** — **Measurement mode ACTIVE** |
+| **Production Mission v1** | **`production_mission_v1`** — **Reference end-to-end mission COMPLETE** |
+| **Next work** | Execute production mission in ops; prove throughput via metrics snapshots before new foundation |
 
 ### New operating model (PROVEN doctrine)
 
@@ -79,7 +82,7 @@ Truth → Command Center → Runner → External AI → Validation → Owner Dec
 | **Truth** | Committed CSV, Supabase read models, `data/evidence/`, census | Repo-owned facts only |
 | **Command Center** | `node --import tsx scripts/report-buckparts-command-center.ts` | Read-only steering, lanes, NBA |
 | **Runner** | `node --import tsx scripts/report-buckparts-runner-v1.ts` | Mission orchestration over existing reports + validation |
-| **External AI** | **HyperAgent** (browser discovery), **Codex** (large migrations only when repo cannot express batch) | Human-invoked; never truth closure alone |
+| **External AI** | External operator surface (any tool **outside** Runner) | Human-invoked; dispatch manifest + result artifact; never truth closure alone |
 | **Validation** | lint, build, targeted tests, deploy classifier, security gate | Repo-owned proof |
 | **Owner Decision Queue** | `data/owner-decisions/queue/` | Pending decisions; **never auto-approves** |
 | **Approved Mutation** | Founder Decision Registry + guarded apply executors | `--write-csv` / apply only after `owner_mutation_approved` |
@@ -94,7 +97,7 @@ After each major **v1 foundation** is completed:
 2. **Do not start the next foundation** until step 1 is done
 3. **Do not claim v2 capabilities** while v1 scope is still open
 
-Foundations completed in this cycle: **Runner v1**, **Coverage Production Sprint v2**, **Owner Decision Queue v1**.
+Foundations completed in this cycle: **Runner v1**, **Coverage Production Sprint v2**, **Owner Decision Queue v1**, **Agent Contract + Dispatch Manifest v1**. **Measurement mode:** Operations Metrics v1 (`operations_metrics_v1`).
 
 ---
 
@@ -107,8 +110,8 @@ Foundations completed in this cycle: **Runner v1**, **Coverage Production Sprint
 | Capability | PROVEN path |
 |------------|-------------|
 | Three read-only missions | `coverage_sprint_v1`, `evidence_sprint_v1`, `safe_link_sprint_v1` — `scripts/lib/buckparts-runner-v1.ts` |
-| Step kinds | `tsx_report`, `npm_run`, `coordination_halt` |
-| Halt reasons | `FOUNDER_APPROVAL_REQUIRED`, `MUTATION_GATE_BLOCKED`, `EXTERNAL_AGENT_REQUIRED`, `STEP_FAILED`, `RESUME_MISMATCH` |
+| Step kinds | `tsx_report`, `npm_run`, `agent_dispatch` |
+| Halt reasons | `FOUNDER_APPROVAL_REQUIRED`, `MUTATION_GATE_BLOCKED`, `EXTERNAL_AGENT_REQUIRED`, `DISPATCH_EXHAUSTED`, `STEP_FAILED`, `RESUME_MISMATCH` |
 | Safety | Forbidden argv patterns (`--write-csv`, `--apply`, `git commit`, etc.); mission npm allowlist extends Runner Step allowlist |
 | Analysis then validation | Analysis may halt; **validation phase still runs** when halted on approval (proven in tests) |
 | Artifacts | `data/command-center/runner-runs/buckparts-runner-<mission>-<run_id>.json` |
@@ -124,7 +127,7 @@ Foundations completed in this cycle: **Runner v1**, **Coverage Production Sprint
 | Supabase parity gap → founder halt | `evaluateStepHaltV1` + coverage mission |
 | Guarded apply blocked → mutation gate halt | lifecycle executor dry-run step |
 | Validation continues after analysis halt | `runBuckpartsRunnerV1 continues validation after analysis halt` test |
-| Evidence sprint HyperAgent halt | `HALTED_EXTERNAL_AGENT` at `hyperagent_coordination` |
+| Evidence sprint external dispatch halt | `HALTED_EXTERNAL_AGENT` at `external_agent_dispatch` — manifest on disk; resume after validated result |
 | Lint failure → `FAILED` | safe_link_sprint validation test |
 
 Coverage mission validation bundle: `lint`, `build`, targeted runner+census tests, deploy classifier (`--working-tree`), security gate.
@@ -268,10 +271,9 @@ node --import tsx scripts/report-buckparts-command-center.ts 2>/dev/null | jq '.
 | **Runner v1** | **COMPLETE** | Missions + checkpoint + CC lane + queue bridge |
 | **Coverage Production Sprint v2** | **COMPLETE** | Read-only batch ranking; no new factories |
 | **Owner Decision Queue v1** | **COMPLETE** | CC lane + Runner halt artifacts + registry bridge |
-| **Agent Contract + Dispatch Manifest** | **NOT STARTED** | Next architectural foundation — formalize external-agent dispatch contracts and ingest manifests before expanding Runner missions |
-| Coverage Sprint v3 execution (7-slug evidence) | **IN PROGRESS (operational)** | Uses existing HyperAgent + owner-browser-proof + parity apply — **not** a new foundation |
-
-**Do not start Agent Contract + Dispatch Manifest** until this handoff section is committed and Jared acknowledges v1 closure.
+| **Agent Contract + Dispatch Manifest v1** | **COMPLETE** | Vendor-agnostic dispatch/result/validation; CC lane `agent_contract_v1`; see `docs/BuckParts-AGENT-CONTRACT-V1.md` |
+| **Operations Metrics v1** | **COMPLETE** | Read-only OS measurement; history snapshots; CC lane `operations_metrics_v1`; see `docs/BuckParts-OPERATIONS-METRICS-V1.md` |
+| Coverage Sprint v3 execution (7-slug evidence) | **IN PROGRESS (operational)** | Uses existing owner-browser-proof + parity apply — dispatch via Agent Contract v1 |
 
 ---
 

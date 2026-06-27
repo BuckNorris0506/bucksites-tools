@@ -11,9 +11,18 @@ import path from "node:path";
 import { RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1 } from "./buckparts-runner-safety-contract-v1";
 import { RUNNER_STEP_LAYER_TRUTH_V1, tailTextV1 } from "./buckparts-runner-step-v1";
 import {
+  executeAgentDispatchStepV1,
+  validateAgentDispatchStepConfigV1,
+  type AgentDispatchStepConfigV1,
+} from "./buckparts-agent-contract-v1";
+import {
   ownerDecisionRequestApprovalSatisfiesRunnerGateV1,
   upsertOwnerDecisionRequestFromRunnerHaltV1,
 } from "../../src/lib/owner-dashboard/owner-decision-queue-v1";
+import {
+  PRODUCTION_MISSION_DISPATCH_INPUT_ARTIFACTS_V1,
+  PRODUCTION_MISSION_RUNNER_MISSION_ID_V1,
+} from "./buckparts-production-mission-constants-v1";
 
 export const BUCKPARTS_RUNNER_CONTRACT_V1 = "buckparts_runner_v1" as const;
 
@@ -29,14 +38,16 @@ export const BUCKPARTS_RUNNER_CC_JQ_PATH_V1 = ".command_center_v2.buckparts_runn
 export type BuckpartsRunnerMissionIdV1 =
   | "coverage_sprint_v1"
   | "evidence_sprint_v1"
-  | "safe_link_sprint_v1";
+  | "safe_link_sprint_v1"
+  | "production_mission_v1";
 
-export type RunnerStepKindV1 = "tsx_report" | "npm_run" | "coordination_halt";
+export type RunnerStepKindV1 = "tsx_report" | "npm_run" | "agent_dispatch";
 
 export type RunnerHaltReasonV1 =
   | "FOUNDER_APPROVAL_REQUIRED"
   | "MUTATION_GATE_BLOCKED"
   | "EXTERNAL_AGENT_REQUIRED"
+  | "DISPATCH_EXHAUSTED"
   | "STEP_FAILED"
   | "RESUME_MISMATCH";
 
@@ -63,6 +74,8 @@ export type RunnerStepDefinitionV1 = {
   phase: RunnerStepPhaseV1;
   /** argv[0] must be node or npm — never shell strings. */
   command?: readonly string[];
+  /** Required when kind=agent_dispatch — vendor-agnostic external handoff config. */
+  dispatch?: AgentDispatchStepConfigV1;
   halt_policy: RunnerStepHaltPolicyV1;
   /** When set, step is skipped on resume if already in checkpoint.completed_step_ids. */
   idempotent: boolean;
@@ -95,6 +108,9 @@ export type RunnerStepResultV1 = {
   halt_detail: string | null;
   owner_decision_request_id?: string | null;
   owner_decision_request_artifact_path?: string | null;
+  agent_dispatch_manifest_rel_path?: string | null;
+  agent_result_rel_path?: string | null;
+  agent_validation_pass?: boolean | null;
 };
 
 export type BuckpartsRunnerCheckpointV1 = {
@@ -144,6 +160,8 @@ export type BuckpartsRunnerReportV1 = {
   proven_facts: string[];
   inferred_facts: string[];
   unknown_facts: string[];
+  production_mission_lifecycle_artifact_path?: string | null;
+  operations_metrics_snapshot_recorded?: boolean;
 };
 
 export type RunnerSpawnResultV1 = {
@@ -267,6 +285,7 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
           "tsx",
           "--test",
           "scripts/lib/buckparts-runner-v1.test.ts",
+          "scripts/lib/buckparts-agent-contract-v1.test.ts",
           "scripts/lib/all-product-safe-buyer-path-census-v1.test.ts",
         ],
         halt_policy: "fail_on_nonzero_exit",
@@ -305,7 +324,7 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
     mission_id: "evidence_sprint_v1",
     title: "Evidence Sprint",
     description:
-      "Batch production operating checklist, demand-selected batch lane, HyperAgent coordination halt when external discovery is required.",
+      "Batch production operating checklist, demand-selected batch lane, external agent dispatch when discovery evidence is required.",
     read_only: true,
     data_mutation: false,
     steps: [
@@ -324,13 +343,22 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
         "analysis",
       ),
       {
-        step_id: "hyperagent_coordination",
-        title: "HyperAgent discovery coordination (read-only packet)",
-        kind: "coordination_halt",
+        step_id: "external_agent_dispatch",
+        title: "External agent dispatch — read-only evidence collection",
+        kind: "agent_dispatch",
         phase: "analysis",
         halt_policy: "external_agent_if_dispatch_requires",
         idempotent: false,
-        provenance: "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+        provenance:
+          "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+        dispatch: {
+          template_id: "read_only_evidence_collection_v1",
+          input_artifact_rel_paths: [
+            "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json",
+          ],
+          objective_summary:
+            "Collect read-only browser/discovery evidence for demand-selected batch per run-registry; do not promote buy links or mutate product data.",
+        },
       },
       {
         step_id: "validation_lint",
@@ -364,7 +392,7 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
     validation_step_ids: ["validation_lint", "validation_build", "deploy_classifier"],
     proven_facts: [
       "PROVEN: Evidence sprint never sets evidence_write_authorized or csv_apply_authorized.",
-      "PROVEN: HyperAgent step halts with EXTERNAL_AGENT_REQUIRED — human must run discovery in chat.",
+      "PROVEN: External agent dispatch step halts with EXTERNAL_AGENT_REQUIRED until validated result artifact is on disk.",
     ],
   },
   safe_link_sprint_v1: {
@@ -445,6 +473,140 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
       "PROVEN: Guarded apply bridge runs without mutation flags.",
     ],
   },
+  production_mission_v1: {
+    mission_id: "production_mission_v1",
+    title: "Production Mission (Reference)",
+    description:
+      "End-to-end Foundation v2 reference: sprint ranking, census, mission plan, agent dispatch, parity factory, guarded apply dry-run, operations metrics, validation. Lifecycle artifact written on completion.",
+    read_only: true,
+    data_mutation: false,
+    steps: [
+      tsxReportStep(
+        "coverage_sprint_ranking",
+        "Coverage production sprint v2 — batch ranking",
+        "scripts/report-coverage-production-sprint-v2.ts",
+        "none",
+        "analysis",
+      ),
+      tsxReportStep(
+        "census_baseline",
+        "SAFE_BUYER_PATH census baseline",
+        "scripts/report-all-product-safe-buyer-path-census-v1.ts",
+        "none",
+        "analysis",
+      ),
+      tsxReportStep(
+        "production_mission_plan",
+        "Production mission plan resolver",
+        "scripts/report-buckparts-production-mission-plan-v1.ts",
+        "none",
+        "analysis",
+      ),
+      {
+        step_id: "external_agent_dispatch",
+        title: "External agent dispatch — evidence packaging",
+        kind: "agent_dispatch",
+        phase: "analysis",
+        halt_policy: "external_agent_if_dispatch_requires",
+        idempotent: false,
+        provenance: "buckparts_production_mission_v1 agent contract handoff",
+        dispatch: {
+          template_id: "read_only_evidence_collection_v1",
+          input_artifact_rel_paths: [...PRODUCTION_MISSION_DISPATCH_INPUT_ARTIFACTS_V1],
+          objective_summary:
+            "Package read-only owner-browser-proof evidence for production mission primary slug per mission plan; reference drafts under data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-*.json; do not mutate CSV or claim truth closure.",
+        },
+      },
+      tsxReportStep(
+        "parity_factory_primary",
+        "Supabase CSV parity factory — primary slug",
+        "scripts/report-supabase-csv-parity-coverage-factory-v1.ts",
+        "none",
+        "analysis",
+        ["--", "--slug", "edr4rxd1"],
+      ),
+      tsxReportStep(
+        "guarded_apply_primary",
+        "Supabase CSV parity guarded apply — primary slug (dry-run)",
+        "scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
+        "founder_approval_if_mutation_blocked",
+        "analysis",
+        ["--", "--slug", "edr4rxd1"],
+      ),
+      tsxReportStep(
+        "operations_metrics_record",
+        "Operations metrics projection",
+        "scripts/report-buckparts-operations-metrics-v1.ts",
+        "none",
+        "analysis",
+      ),
+      {
+        step_id: "validation_lint",
+        title: "Validation — lint",
+        kind: "npm_run",
+        phase: "validation",
+        command: ["npm", "run", "lint"],
+        halt_policy: "fail_on_nonzero_exit",
+        idempotent: true,
+        provenance: "npm run lint",
+      },
+      {
+        step_id: "validation_build",
+        title: "Validation — build",
+        kind: "npm_run",
+        phase: "validation",
+        command: ["npm", "run", "build"],
+        halt_policy: "fail_on_nonzero_exit",
+        idempotent: true,
+        provenance: "npm run build",
+      },
+      {
+        step_id: "validation_tests",
+        title: "Validation — production mission + foundation tests",
+        kind: "tsx_report",
+        phase: "validation",
+        command: [
+          "node",
+          "--import",
+          "tsx",
+          "--test",
+          "scripts/lib/buckparts-production-mission-v1.test.ts",
+          "scripts/lib/buckparts-agent-contract-v1.test.ts",
+          "scripts/lib/buckparts-operations-metrics-v1.test.ts",
+        ],
+        halt_policy: "fail_on_nonzero_exit",
+        idempotent: true,
+        provenance: "node --import tsx --test (production mission + foundation)",
+      },
+      tsxReportStep(
+        "deploy_classifier",
+        "Deploy classifier (working tree)",
+        "scripts/report-buckparts-deploy-classifier-v1.ts",
+        "none",
+        "validation",
+        ["--", "--working-tree"],
+      ),
+      tsxReportStep(
+        "security_gate",
+        "BuckParts security gate",
+        "scripts/report-buckparts-security-gate-v1.ts",
+        "none",
+        "validation",
+      ),
+    ],
+    validation_step_ids: [
+      "validation_lint",
+      "validation_build",
+      "validation_tests",
+      "deploy_classifier",
+      "security_gate",
+    ],
+    proven_facts: [
+      "PROVEN: Production mission v1 is the reference implementation for all future BuckParts production missions.",
+      "PROVEN: Agent dispatch, owner decision queue, guarded apply dry-run, and operations metrics snapshot run without new orchestration frameworks.",
+      "PROVEN: Measurable SAFE_BUYER_PATH_PROVEN delta requires founder-approved guarded apply write outside Runner.",
+    ],
+  },
 };
 
 export function listBuckpartsRunnerMissionIdsV1(): BuckpartsRunnerMissionIdV1[] {
@@ -466,7 +628,16 @@ export function commandDisplayV1(command: readonly string[]): string {
 
 export function validateRunnerStepCommandV1(step: RunnerStepDefinitionV1): string[] {
   const errors: string[] = [];
-  if (step.kind === "coordination_halt") {
+  if (step.kind === "agent_dispatch") {
+    if (!step.dispatch) {
+      errors.push(`${step.step_id}: agent_dispatch steps require dispatch config`);
+    } else {
+      errors.push(
+        ...validateAgentDispatchStepConfigV1(step.dispatch).map(
+          (e) => `${step.step_id}: ${e}`,
+        ),
+      );
+    }
     return errors;
   }
   if (!step.command || step.command.length < 2) {
@@ -565,13 +736,8 @@ export function evaluateStepHaltV1(args: {
     return { halt: false, reason: null, detail: null };
   }
 
-  if (step.kind === "coordination_halt") {
-    return {
-      halt: true,
-      reason: "EXTERNAL_AGENT_REQUIRED",
-      detail:
-        "PROVEN: Evidence sprint requires HyperAgent read-only chat discovery — run ap-demand-selected batch per run-registry; do not auto-promote buy links.",
-    };
+  if (step.kind === "agent_dispatch") {
+    return { halt: false, reason: null, detail: null };
   }
 
   if (step.halt_policy !== "founder_approval_if_mutation_blocked") {
@@ -650,6 +816,7 @@ export function executeRunnerStepV1(args: {
   missionId?: BuckpartsRunnerMissionIdV1;
   runId?: string;
   now?: () => Date;
+  writeArtifacts?: boolean;
 }): RunnerStepResultV1 {
   const tailChars = args.tailChars ?? 12_000;
   const started = Date.now();
@@ -671,25 +838,107 @@ export function executeRunnerStepV1(args: {
     };
   }
 
-  if (args.step.kind === "coordination_halt") {
-    const halt = evaluateStepHaltV1({
-      step: args.step,
-      parsed_json: null,
-      exit_code: 0,
+  if (args.step.kind === "agent_dispatch") {
+    if (!args.step.dispatch) {
+      return {
+        step_id: args.step.step_id,
+        title: args.step.title,
+        kind: args.step.kind,
+        status: "FAIL",
+        exit_code: 1,
+        duration_ms: Date.now() - started,
+        command_display: args.step.provenance,
+        stdout_excerpt: "",
+        stderr_excerpt: "agent_dispatch step missing dispatch config",
+        parsed_json_summary: null,
+        halt_reason: "STEP_FAILED",
+        halt_detail: "agent_dispatch step missing dispatch config",
+      };
+    }
+
+    const dispatchOutcome = executeAgentDispatchStepV1({
+      rootDir: args.cwd,
+      runId: args.runId ?? "unknown-run",
+      missionId: args.missionId ?? "unknown-mission",
+      stepId: args.step.step_id,
+      stepTitle: args.step.title,
+      config: args.step.dispatch,
+      writeArtifacts: args.writeArtifacts !== false,
+      now: args.now,
     });
+
+    if (dispatchOutcome.runner_status === "PASS") {
+      return {
+        step_id: args.step.step_id,
+        title: args.step.title,
+        kind: args.step.kind,
+        status: "PASS",
+        exit_code: 0,
+        duration_ms: Date.now() - started,
+        command_display: args.step.provenance,
+        stdout_excerpt: tailTextV1(
+          JSON.stringify({
+            contract: dispatchOutcome.manifest.contract,
+            manifest_id: dispatchOutcome.manifest.manifest_id,
+            validation_pass: dispatchOutcome.validation?.validation_pass ?? true,
+          }),
+          2000,
+        ),
+        stderr_excerpt: "",
+        parsed_json_summary: {
+          manifest_id: dispatchOutcome.manifest.manifest_id,
+          validation_pass: true,
+        },
+        halt_reason: null,
+        halt_detail: null,
+        agent_dispatch_manifest_rel_path: dispatchOutcome.manifest_rel_path,
+        agent_result_rel_path: dispatchOutcome.result_rel_path,
+        agent_validation_pass: true,
+      };
+    }
+
+    if (dispatchOutcome.runner_status === "HALTED") {
+      return {
+        step_id: args.step.step_id,
+        title: args.step.title,
+        kind: args.step.kind,
+        status: "HALTED",
+        exit_code: 0,
+        duration_ms: Date.now() - started,
+        command_display: args.step.provenance,
+        stdout_excerpt: tailTextV1(
+          JSON.stringify({
+            manifest_rel_path: dispatchOutcome.manifest_rel_path,
+            result_artifact_rel_path: dispatchOutcome.manifest.result_artifact_rel_path,
+          }),
+          2000,
+        ),
+        stderr_excerpt: "",
+        parsed_json_summary: null,
+        halt_reason: dispatchOutcome.halt_reason,
+        halt_detail: dispatchOutcome.halt_detail,
+        agent_dispatch_manifest_rel_path: dispatchOutcome.manifest_rel_path,
+        agent_result_rel_path: dispatchOutcome.result_rel_path,
+        agent_validation_pass: dispatchOutcome.validation?.validation_pass ?? null,
+      };
+    }
+
     return {
       step_id: args.step.step_id,
       title: args.step.title,
       kind: args.step.kind,
-      status: "HALTED",
-      exit_code: 0,
+      status: "FAIL",
+      exit_code: 1,
       duration_ms: Date.now() - started,
       command_display: args.step.provenance,
       stdout_excerpt: "",
-      stderr_excerpt: "",
+      stderr_excerpt: dispatchOutcome.halt_detail ?? "dispatch exhausted",
       parsed_json_summary: null,
-      halt_reason: halt.reason,
-      halt_detail: halt.detail,
+      halt_reason: dispatchOutcome.halt_reason ?? "DISPATCH_EXHAUSTED",
+      halt_detail: dispatchOutcome.halt_detail,
+      agent_dispatch_manifest_rel_path: dispatchOutcome.manifest_rel_path,
+      agent_result_rel_path: dispatchOutcome.result_rel_path,
+      agent_validation_pass: false,
     };
   }
 
@@ -1007,6 +1256,7 @@ export function runBuckpartsRunnerV1(args: {
       missionId: mission.mission_id,
       runId,
       now,
+      writeArtifacts,
     });
     stepResults.push(result);
 
@@ -1108,6 +1358,33 @@ export function runBuckpartsRunnerV1(args: {
         : [],
   };
 
+  if (mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 && writeArtifacts) {
+    try {
+      const { finalizeProductionMissionRunV1 } =
+        require("./buckparts-production-mission-v1") as typeof import("./buckparts-production-mission-v1");
+      const finalized = finalizeProductionMissionRunV1({
+        rootDir: args.rootDir,
+        runnerReport: report,
+        now,
+      });
+      report.production_mission_lifecycle_artifact_path = finalized.lifecycle_rel_path;
+      report.operations_metrics_snapshot_recorded = finalized.metrics_history_rel_path !== null;
+      report.proven_facts = [
+        ...report.proven_facts,
+        `PROVEN: Production mission lifecycle artifact ${finalized.lifecycle_rel_path}.`,
+        finalized.metrics_history_rel_path
+          ? `PROVEN: Operations metrics snapshot appended to ${finalized.metrics_history_rel_path}.`
+          : "UNKNOWN: Operations metrics snapshot not recorded.",
+      ];
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      report.unknown_facts = [
+        ...report.unknown_facts,
+        `UNKNOWN: Production mission finalize failed — ${message}`,
+      ];
+    }
+  }
+
   if (writeArtifacts) {
     saveRunnerCheckpointV1(args.rootDir, {
       contract: "buckparts_runner_checkpoint_v1",
@@ -1136,15 +1413,21 @@ function buildRecommendedNextActionV1(args: {
     return `PROVEN: Step ${String(args.halt_step_id)} failed — inspect stderr in artifact; fix and resume with ${buildResumeCommandV1(args.mission_id, args.run_id)}.`;
   }
   if (args.overall_status === "HALTED_EXTERNAL_AGENT") {
-    return "PROVEN: Run HyperAgent read-only discovery for demand-selected batch; ingest results via existing validation path; then resume runner.";
+    return "PROVEN: External operator must write validated result artifact per agent dispatch manifest; resume runner when result is on disk.";
   }
   if (args.overall_status === "HALTED_MUTATION_GATE") {
     return "PROVEN: Guarded apply bridge blocked — resolve readiness gate blockers; do not bypass mutation gates.";
   }
   if (args.overall_status === "HALTED_APPROVAL_REQUIRED") {
+    if (args.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1) {
+      return "PROVEN: Production mission halted at guarded apply — founder approval required; lifecycle artifact documents Dispatch → Agent → Validation → ODQ → Guarded Apply dry-run; execute write-csv separately after approval.";
+    }
     return "PROVEN: Record founder owner_mutation_approved in data/owner-decisions/ for scoped slugs (see owner_decision_queue_v1 pending request); then run guarded apply executor separately — runner does not mutate CSV.";
   }
   if (args.overall_status === "RESUMED_COMPLETE" || args.overall_status === "COMPLETE") {
+    if (args.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1) {
+      return "PROVEN: Production mission reference run complete — review lifecycle artifact under data/command-center/production-missions/.";
+    }
     return "PROVEN: Mission steps complete — review consolidated artifact; commit artifacts if SAFE_TO_COMMIT; deploy only when classifier says DEPLOY_REQUIRED.";
   }
   return "UNKNOWN";

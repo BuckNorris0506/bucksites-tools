@@ -17,6 +17,9 @@ import type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from ".
 import type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 import type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 import type { BuckpartsRunnerCommandCenterLaneV1 } from "./buckparts-runner-command-center-v1";
+import type { AgentContractCommandCenterLaneV1 } from "./buckparts-agent-contract-command-center-v1";
+import type { OperationsMetricsCommandCenterLaneV1 } from "./buckparts-operations-metrics-command-center-v1";
+import type { ProductionMissionCommandCenterLaneV1 } from "./buckparts-production-mission-command-center-v1";
 import type { OwnerDecisionQueueCommandCenterLaneV1 } from "./owner-decision-queue-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
@@ -1078,6 +1081,12 @@ export type CommandCenterV2Report = {
   execution_ledger_v1: BuckpartsExecutionLedgerCommandCenterLaneV1;
   /** Read-only BuckParts Runner v1 — latest mission execution report from data/command-center/runner-runs/. */
   buckparts_runner_v1: BuckpartsRunnerCommandCenterLaneV1;
+  /** Read-only vendor-agnostic agent dispatch manifest projection — Runner handoff only; no external API calls. */
+  agent_contract_v1: AgentContractCommandCenterLaneV1;
+  /** Read-only operations metrics — mission/dispatch/validation duration, throughput trends; no orchestration. */
+  operations_metrics_v1: OperationsMetricsCommandCenterLaneV1;
+  /** Read-only production mission v1 — latest lifecycle artifact for Foundation v2 reference mission. */
+  production_mission_v1: ProductionMissionCommandCenterLaneV1;
   /** Read-only owner decision queue — pending founder decisions indexed from data/owner-decisions/queue/. */
   owner_decision_queue_v1: OwnerDecisionQueueCommandCenterLaneV1;
   /** Read-only wrong-code-prevention HyperAgent findings projection — artifact ingest only; no HyperAgent write authority. */
@@ -1191,6 +1200,9 @@ export type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from ".
 export type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 export type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 export type { BuckpartsRunnerCommandCenterLaneV1 } from "./buckparts-runner-command-center-v1";
+export type { AgentContractCommandCenterLaneV1 } from "./buckparts-agent-contract-command-center-v1";
+export type { OperationsMetricsCommandCenterLaneV1 } from "./buckparts-operations-metrics-command-center-v1";
+export type { ProductionMissionCommandCenterLaneV1 } from "./buckparts-production-mission-command-center-v1";
 export type { OwnerDecisionQueueCommandCenterLaneV1 } from "./owner-decision-queue-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
 export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
@@ -1290,6 +1302,9 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
   | "buckparts_runner_v1"
+  | "agent_contract_v1"
+  | "operations_metrics_v1"
+  | "production_mission_v1"
   | "owner_decision_queue_v1"
   | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"

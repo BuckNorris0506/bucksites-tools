@@ -168,6 +168,18 @@ import {
   buildBuckpartsRunnerCommandCenterLaneV1,
 } from "./lib/buckparts-runner-command-center-v1";
 import {
+  buildAgentContractCommandCenterLaneUnknownV1,
+  buildAgentContractCommandCenterLaneV1,
+} from "./lib/buckparts-agent-contract-command-center-v1";
+import {
+  buildOperationsMetricsCommandCenterLaneUnknownV1,
+  buildOperationsMetricsCommandCenterLaneV1,
+} from "./lib/buckparts-operations-metrics-command-center-v1";
+import {
+  buildProductionMissionCommandCenterLaneUnknownV1,
+  buildProductionMissionCommandCenterLaneV1,
+} from "./lib/buckparts-production-mission-command-center-v1";
+import {
   buildOwnerDecisionQueueCommandCenterLaneUnknownV1,
   buildOwnerDecisionQueueCommandCenterLaneV1,
 } from "./lib/owner-decision-queue-command-center-v1";
@@ -1224,6 +1236,9 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "buckparts_runner_v1"
+    | "agent_contract_v1"
+    | "operations_metrics_v1"
+    | "production_mission_v1"
     | "owner_decision_queue_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
@@ -1504,6 +1519,9 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "buckparts_runner_v1"
+    | "agent_contract_v1"
+    | "operations_metrics_v1"
+    | "production_mission_v1"
     | "owner_decision_queue_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
@@ -1665,6 +1683,9 @@ export async function buildBuckpartsCommandCenterReport(
     | "manufacturer_browser_proof_execution_factory_v1"
     | "execution_ledger_v1"
     | "buckparts_runner_v1"
+    | "agent_contract_v1"
+    | "operations_metrics_v1"
+    | "production_mission_v1"
     | "owner_decision_queue_v1"
     | "wrong_code_prevention_v1"
     | "wedge_truth_spine_coverage_matrix_v1"
@@ -2233,6 +2254,39 @@ export async function buildBuckpartsCommandCenterReport(
     });
   }
 
+  let agent_contract_v1;
+  try {
+    agent_contract_v1 = buildAgentContractCommandCenterLaneV1({ rootDir, now });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    agent_contract_v1 = buildAgentContractCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
+  let operations_metrics_v1;
+  try {
+    operations_metrics_v1 = buildOperationsMetricsCommandCenterLaneV1({ rootDir, now });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    operations_metrics_v1 = buildOperationsMetricsCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
+  let production_mission_v1;
+  try {
+    production_mission_v1 = buildProductionMissionCommandCenterLaneV1({ rootDir, now });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    production_mission_v1 = buildProductionMissionCommandCenterLaneUnknownV1({
+      generated_at: now().toISOString(),
+      reason: message,
+    });
+  }
+
   let owner_decision_queue_v1;
   try {
     owner_decision_queue_v1 = buildOwnerDecisionQueueCommandCenterLaneV1({ rootDir, now });
@@ -2327,6 +2381,9 @@ export async function buildBuckpartsCommandCenterReport(
     manufacturer_browser_proof_execution_factory_v1,
     execution_ledger_v1,
     buckparts_runner_v1,
+    agent_contract_v1,
+    operations_metrics_v1,
+    production_mission_v1,
     owner_decision_queue_v1,
     wrong_code_prevention_v1,
   };

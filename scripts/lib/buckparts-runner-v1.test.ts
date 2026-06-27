@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -135,23 +135,34 @@ test("resume command format", () => {
   );
 });
 
-test("evidence sprint halts at hyperagent coordination", () => {
+test("evidence sprint halts at external agent dispatch pending result", () => {
   const spawnFn: RunnerSpawnFnV1 = () => ({
     exit_code: 0,
     stdout: JSON.stringify({ runtime_status: "PROVEN" }),
     stderr: "",
   });
 
-  const report = runBuckpartsRunnerV1({
-    rootDir: process.cwd(),
-    missionId: "evidence_sprint_v1",
-    runId: "test-evidence-halt",
-    spawnFn,
-    writeArtifacts: false,
-  });
+  const rootDir = mkdtempSync(path.join(tmpdir(), "runner-evidence-dispatch-"));
+  try {
+    const inputRel =
+      "data/air-purifier/batch-production/run-registry/ap-demand-selected-batch-run-v1-2026-06-23.json";
+    mkdirSync(path.dirname(path.join(rootDir, inputRel)), { recursive: true });
+    writeFileSync(path.join(rootDir, inputRel), "{}\n", "utf8");
 
-  assert.equal(report.overall_status, "HALTED_EXTERNAL_AGENT");
-  assert.equal(report.halt_step_id, "hyperagent_coordination");
+    const report = runBuckpartsRunnerV1({
+      rootDir,
+      missionId: "evidence_sprint_v1",
+      runId: "test-evidence-dispatch-halt",
+      spawnFn,
+      writeArtifacts: true,
+      now: () => new Date("2026-06-27T12:00:00.000Z"),
+    });
+
+    assert.equal(report.overall_status, "HALTED_EXTERNAL_AGENT");
+    assert.equal(report.halt_step_id, "external_agent_dispatch");
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
 });
 
 test("failed validation step yields FAILED overall status", () => {

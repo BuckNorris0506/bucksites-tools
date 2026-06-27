@@ -1,0 +1,26 @@
+{
+  "contract": "buckparts_agent_result_v1",
+  "manifest_id": "REPLACE_WITH_MANIFEST_ID_FROM_DISPATCH",
+  "dispatch_id": "REPLACE_WITH_DISPATCH_ID_FROM_MANIFEST",
+  "result_id": "production-mission-reference-result-v1",
+  "submitted_at": "2026-06-27T12:00:00.000Z",
+  "submitted_by_surface": "EXTERNAL_OPERATOR",
+  "completion_status": "COMPLETE",
+  "validation_status": "PENDING",
+  "output_artifact_rel_paths": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json"
+  ],
+  "structured_summary": {
+    "primary_apply_slug": "edr4rxd1",
+    "batch_id": "fridge_safe_link_first4_deblocked",
+    "evidence_type": "owner_browser_proof"
+  },
+  "proven_facts": [
+    "PROVEN: Read-only evidence packaging for production mission reference slug edr4rxd1."
+  ],
+  "unknown_facts": [],
+  "mutation_authorized": false,
+  "truth_closure_claimed": false,
+  "csv_apply_authorized": false,
+  "evidence_write_authorized": false
+}
