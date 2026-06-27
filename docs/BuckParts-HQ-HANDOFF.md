@@ -25,12 +25,20 @@
 
 Unless Jared is explicitly requesting strategy, analysis, brainstorming, alternative evaluation, or research findings:
 
-Execution responses should end with:
-- best next action
-- exact copy/paste prompt or command
-- correct execution surface
+**Whenever BuckParts work requires Jared to take an action**, the response must **end** with:
 
-Do not give Jared the "best next move" without giving the exact copy/paste prompt or command.
+1. **Execution surface** — e.g. **Terminal**, **Cursor**, **HyperAgent**, **Browser**, **Supabase SQL**, **Boardy**
+2. **Exact copy/paste prompt or command** — runnable without interpretation
+
+Do not give Jared the "best next move" in prose only.
+
+**Exceptions (no trailing prompt required):**
+
+- Jared explicitly requests no prompt
+- Explanation-only conversations (no action requested)
+- **UNKNOWN** facts prevent a correct prompt (state what is unknown; do not invent a command)
+
+Legacy alias: "best next action" = the same requirement as execution surface + exact command above.
 
 ### Jared Terminal Authority
 
@@ -40,6 +48,230 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 - Still label the surface as **Terminal**.
 - Still avoid destructive commands unless explicitly authorized and scoped.
 - Do not assume Jared can inspect repo internals manually; convert terminal work into copy/paste proof commands.
+
+---
+
+## Current stopping point — Foundation v1 stack COMPLETE (`613d6b8`)
+
+**Read this section first** for HQ / Cursor / HyperAgent pickup after **Runner v1**, **Coverage Production Sprint v2**, and **Owner Decision Queue v1**.
+
+Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, etc.) remain **PROVEN historical context** below — they do **not** supersede this foundation stack for Monday execution unless Command Center NBA explicitly overrides.
+
+### Milestone summary (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD at handoff refresh | **`613d6b8`** — Add owner decision queue v1 (Runner v1 + queue + CC lanes in same workstream) |
+| **Runner v1** | **`buckparts_runner_v1`** — **v1 scope COMPLETE** |
+| **Coverage Production Sprint v2** | **`coverage_production_sprint_v2_v1`** — **COMPLETE** |
+| **Owner Decision Queue v1** | **`owner_decision_queue_v1`** — **v1 scope COMPLETE** |
+| **Next architectural foundation** | **Agent Contract + Dispatch Manifest** — **NOT STARTED** |
+
+### New operating model (PROVEN doctrine)
+
+```
+Truth → Command Center → Runner → External AI → Validation → Owner Decision Queue → Approved Mutation
+```
+
+| Stage | Surface | Role |
+|-------|---------|------|
+| **Truth** | Committed CSV, Supabase read models, `data/evidence/`, census | Repo-owned facts only |
+| **Command Center** | `node --import tsx scripts/report-buckparts-command-center.ts` | Read-only steering, lanes, NBA |
+| **Runner** | `node --import tsx scripts/report-buckparts-runner-v1.ts` | Mission orchestration over existing reports + validation |
+| **External AI** | **HyperAgent** (browser discovery), **Codex** (large migrations only when repo cannot express batch) | Human-invoked; never truth closure alone |
+| **Validation** | lint, build, targeted tests, deploy classifier, security gate | Repo-owned proof |
+| **Owner Decision Queue** | `data/owner-decisions/queue/` | Pending decisions; **never auto-approves** |
+| **Approved Mutation** | Founder Decision Registry + guarded apply executors | `--write-csv` / apply only after `owner_mutation_approved` |
+
+**Cursor** sits across Validation and guarded apply implementation — not a separate truth authority.
+
+### Foundation Completion Rule (PROVEN HQ policy)
+
+After each major **v1 foundation** is completed:
+
+1. **Update this HQ Handoff** — record completed scope and deferred scope
+2. **Do not start the next foundation** until step 1 is done
+3. **Do not claim v2 capabilities** while v1 scope is still open
+
+Foundations completed in this cycle: **Runner v1**, **Coverage Production Sprint v2**, **Owner Decision Queue v1**.
+
+---
+
+### 1. Runner v1 — COMPLETE (declared v1 scope)
+
+**Contract:** `buckparts_runner_v1` · **CLI:** `npm run buckparts:runner` → `scripts/report-buckparts-runner-v1.ts` · **CC lane:** `.command_center_v2.buckparts_runner_v1`
+
+#### Capabilities implemented (v1)
+
+| Capability | PROVEN path |
+|------------|-------------|
+| Three read-only missions | `coverage_sprint_v1`, `evidence_sprint_v1`, `safe_link_sprint_v1` — `scripts/lib/buckparts-runner-v1.ts` |
+| Step kinds | `tsx_report`, `npm_run`, `coordination_halt` |
+| Halt reasons | `FOUNDER_APPROVAL_REQUIRED`, `MUTATION_GATE_BLOCKED`, `EXTERNAL_AGENT_REQUIRED`, `STEP_FAILED`, `RESUME_MISMATCH` |
+| Safety | Forbidden argv patterns (`--write-csv`, `--apply`, `git commit`, etc.); mission npm allowlist extends Runner Step allowlist |
+| Analysis then validation | Analysis may halt; **validation phase still runs** when halted on approval (proven in tests) |
+| Artifacts | `data/command-center/runner-runs/buckparts-runner-<mission>-<run_id>.json` |
+| Owner Decision Queue bridge | Halts upsert `owner_decision_request_v1` under `data/owner-decisions/queue/requests/` |
+| Resume gate unlock | If founder registry satisfies request → halted step treated as **PASS** without re-running |
+
+#### Proven validation
+
+| Check | PROVEN |
+|-------|--------|
+| Mission definition validation | `scripts/lib/buckparts-runner-v1.test.ts` — all missions validate |
+| Forbidden mutation argv rejected | `--write-csv` blocked in step command validation |
+| Supabase parity gap → founder halt | `evaluateStepHaltV1` + coverage mission |
+| Guarded apply blocked → mutation gate halt | lifecycle executor dry-run step |
+| Validation continues after analysis halt | `runBuckpartsRunnerV1 continues validation after analysis halt` test |
+| Evidence sprint HyperAgent halt | `HALTED_EXTERNAL_AGENT` at `hyperagent_coordination` |
+| Lint failure → `FAILED` | safe_link_sprint validation test |
+
+Coverage mission validation bundle: `lint`, `build`, targeted runner+census tests, deploy classifier (`--working-tree`), security gate.
+
+#### Checkpoint / resume behavior
+
+| Behavior | PROVEN |
+|----------|--------|
+| Checkpoint contract | `buckparts_runner_checkpoint_v1` in `data/command-center/runner-checkpoints/` |
+| Idempotent steps skipped on resume | Steps with `idempotent: true` skip if in `completed_step_ids` |
+| Resume CLI | `--mission <id> --resume <run_id>` |
+| Resume command in report | `resume_command` field on every run artifact |
+| Mismatch guard | Checkpoint `mission_id` must match CLI `--mission` |
+
+#### Command Center integration
+
+- Lane builder: `scripts/lib/buckparts-runner-command-center-v1.ts`
+- Surfaces latest run from `data/command-center/runner-runs/` only
+- `overall_status`, `halt_reason`, `recommended_next_action` projected read-only
+
+#### Deferred v2+ (explicitly NOT in v1)
+
+- **NOT IMPLEMENTED:** Automatic mutation steps in missions (`--write-csv`, Supabase apply, evidence writes)
+- **NOT IMPLEMENTED:** HyperAgent/Codex/Cursor auto-invocation or closed-loop output ingestion
+- **NOT IMPLEMENTED:** GitHub Actions workflow for `buckparts:runner` (distinct from **Runner Step v1** CI)
+- **NOT IMPLEMENTED:** Scheduled/cron mission runs or multi-mission DAG chaining
+- **NOT IMPLEMENTED:** Auto-resume after founder approval without explicit `--resume <run_id>`
+- **NOT IMPLEMENTED:** Dynamic mission definitions from Command Center (missions are code-defined only)
+- **NOT IMPLEMENTED:** Layer 6 closed-loop autonomy — see `docs/BuckParts-RUNNER-STATUS.md` (`layer_6_founder_only_approval: NOT_PROVEN`)
+- **NOT IMPLEMENTED:** Merging **Runner Step v1** (`buckparts:runner-step`) into **Runner v1** — both coexist; Step remains CI validation bundle only
+
+```bash
+# Terminal — list missions
+node --import tsx scripts/report-buckparts-runner-v1.ts --list-missions
+
+# Terminal — run coverage sprint (read-only analysis + validation)
+node --import tsx scripts/report-buckparts-runner-v1.ts --mission coverage_sprint_v1
+
+# Terminal — inspect CC lane
+node --import tsx scripts/report-buckparts-command-center.ts 2>/dev/null | jq '.command_center_v2.buckparts_runner_v1 | {overall_status, mission_id, halt_reason, recommended_next_action}'
+```
+
+---
+
+### 2. Coverage Production Sprint v2 — COMPLETE
+
+**Contract:** `coverage_production_sprint_v2_v1` · **CLI:** `npm run buckparts:coverage-production-sprint-v2` · **Module:** `scripts/lib/coverage-production-sprint-v2.ts`
+
+#### Purpose
+
+Stop optimizing individual slugs. Rank **executable production batches** by expected **`SAFE_BUYER_PATH_PROVEN`** delta using **existing** factories, guarded apply paths, and census — **no new orchestrators**.
+
+#### Mission
+
+- Minimum batch target: **+10** proven paths per sprint when repo supports it
+- If +10 impossible, **prove why** and name largest achievable batch
+- Reuse: parity factory, universal guarded CSV executor, First4 apply review, batch factory drafts
+
+#### Current proven state (re-run census before citing)
+
+| Metric | Value (live census) |
+|--------|---------------------|
+| **`SAFE_BUYER_PATH_PROVEN`** | **48** |
+| **`SAFE_BUYER_PATH_SUPPRESSED_TRUST`** | **68** (43 fridge + 25 AP) |
+| Live wedge product pages | **116** |
+| Parity factory ready slugs | **0** (ukf8001 applied; parity candidates blocked) |
+| Largest **EXECUTABLE_AFTER_APPROVAL** batch | **+2** (First4 deblocked: `edr4rxd1`, `4396508`) |
+| **+10 executable today** | **No** — proven in sprint v2 report |
+
+#### Sprint v2 winning batch (ranked output)
+
+**Fridge safe-link First4 deblocked** — +2 proven, `EXECUTABLE_AFTER_APPROVAL`, excludes `edr3rxd1` (B087PDLZL9) and blocked Waterdrop cluster.
+
+#### Sprint v3 production priority (INFERRED from sprint v2 + family audit — not a new foundation)
+
+**HyperAgent 7-slug owner browser proof batch** — up to **+7** proven, **158 model pages**, evidence sprint before guarded apply. See Coverage Production Sprint v3 analysis in chat; execute via existing owner-browser-proof + parity infrastructure only.
+
+```bash
+# Terminal — refresh sprint v2 ranking
+node --import tsx scripts/report-coverage-production-sprint-v2.ts
+
+# Terminal — refresh census
+node --import tsx scripts/report-all-product-safe-buyer-path-census-v1.ts | jq '.classification_counts'
+```
+
+---
+
+### 3. Owner Decision Queue v1 — COMPLETE (declared v1 scope)
+
+**Contract:** `owner_decision_queue_v1` · **CC lane:** `.command_center_v2.owner_decision_queue_v1` · **Module:** `src/lib/owner-dashboard/owner-decision-queue-v1.ts`
+
+#### Architecture
+
+| Artifact | Path |
+|----------|------|
+| Queue manifest | `data/owner-decisions/queue/owner-decision-queue-v1.json` |
+| Request artifacts | `data/owner-decisions/queue/requests/odr-v1-*.json` |
+| Request contract | `owner_decision_request_v1` |
+
+Each request records: `decision_type`, `target_slugs`, `options`, `evidence_summary`, `blockers`, `exact_downstream_action_if_approved/rejected`, `founder_decision_registry_bridge`.
+
+**PROVEN:** Queue is **read-only for mutation** — `mutation_authorized: false` always; **never auto-approves** production.
+
+#### Command Center lane
+
+- Builder: `scripts/lib/owner-decision-queue-command-center-v1.ts`
+- Surfaces: `pending_count`, `stale_count`, `top_pending_decisions`, `recently_approved_decisions`
+- Effective **APPROVED** requires active `founder_decision_registry_v1` row with `owner_mutation_approved` — queue does not grant mutation by itself
+
+#### Runner integration
+
+- On `FOUNDER_APPROVAL_REQUIRED` or `MUTATION_GATE_BLOCKED`, Runner calls `upsertOwnerDecisionRequestFromRunnerHaltV1`
+- `ownerDecisionRequestApprovalSatisfiesRunnerGateV1` re-checks registry — can unlock halted step as **PASS** on resume path
+- `source_system` pattern: `buckparts_runner_v1:<mission_id>`
+
+#### Founder registry bridge
+
+- `founder_decision_registry_bridge.matching_registry_sources` + `active_mutation_approval_decision_id`
+- Jared records outcomes in `data/owner-decisions/*.json` per `docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`
+- Approved registry row ≠ automatic apply — guarded executor still required
+
+#### Deferred v2+ (explicitly NOT in v1)
+
+- **NOT IMPLEMENTED:** Queue writing founder registry rows (human/agent records registry separately)
+- **NOT IMPLEMENTED:** Owner dashboard approve/reject buttons that mutate queue status
+- **NOT IMPLEMENTED:** Slack/email/Founder Digest push for new pending decisions
+- **NOT IMPLEMENTED:** Batch-level single decision covering many unrelated slugs without per-halt artifacts
+- **NOT IMPLEMENTED:** Auto-stale/supersede without operator review
+
+```bash
+# Terminal — Owner Decision Queue CC lane
+node --import tsx scripts/report-buckparts-command-center.ts 2>/dev/null | jq '.command_center_v2.owner_decision_queue_v1 | {pending_count, stale_count, top_pending: .top_pending_decisions[0].request_artifact_rel_path, recommended_next_action}'
+```
+
+---
+
+### Roadmap — foundation sequence
+
+| Foundation | Status | Notes |
+|------------|--------|-------|
+| **Runner v1** | **COMPLETE** | Missions + checkpoint + CC lane + queue bridge |
+| **Coverage Production Sprint v2** | **COMPLETE** | Read-only batch ranking; no new factories |
+| **Owner Decision Queue v1** | **COMPLETE** | CC lane + Runner halt artifacts + registry bridge |
+| **Agent Contract + Dispatch Manifest** | **NOT STARTED** | Next architectural foundation — formalize external-agent dispatch contracts and ingest manifests before expanding Runner missions |
+| Coverage Sprint v3 execution (7-slug evidence) | **IN PROGRESS (operational)** | Uses existing HyperAgent + owner-browser-proof + parity apply — **not** a new foundation |
+
+**Do not start Agent Contract + Dispatch Manifest** until this handoff section is committed and Jared acknowledges v1 closure.
 
 ---
 
@@ -111,7 +343,9 @@ Do not give Jared the "best next move" without giving the exact copy/paste promp
 
 ## Current stopping point — AP demand-selected correctness-risk Command Center steering (`3189b9b`)
 
-**Read this section first** for HQ / Cursor / HyperAgent pickup.
+**Superseded for foundation priority** by **Current stopping point — Foundation v1 stack COMPLETE** above. Retained for AP correctness context only.
+
+**Read this section** when AP demand-selected correctness work is active — not as default HQ pickup.
 
 ### 1. Milestone summary (PROVEN — re-verify before citing)
 
@@ -2178,7 +2412,7 @@ Read-only inventory at this stop:
 
 ### Operator rules (do not regress)
 
-**HQ / agent chat behavior (required):** When an action is to be taken, the assistant must **end the message** with the next-best **exact copy/paste prompt or command**. The prompt/command must identify the **surface** when relevant: **Terminal**, **Cursor**, **HyperAgent**, **Supabase SQL**, **Browser**, etc. Do not give Jared the "best next move" in prose only — if HQ states a next move, the runnable prompt/command must be included in the **same message**, at the **end**.
+**HQ / agent chat behavior (required):** When BuckParts work requires Jared to take an action, the assistant must **end the message** with **execution surface** + **exact copy/paste prompt or command**. See **HQ operating rule (execution mode)** at top of this doc for exceptions (`UNKNOWN`, explanation-only, explicit no-prompt).
 
 - **Do not** restart the Amazon interstitial loop as the primary batch path.
 - **Do not** make Jared manually author JSON facts — agent fills facts → founder reviews and approves via **Markdown**.
@@ -2225,6 +2459,8 @@ The backend/foundation should become a durable operating system that can:
 - separate agent-safe actions from owner-approval actions;
 - preserve `UNKNOWN` instead of creating fake confidence;
 - produce owner-readable next actions without founder micromanagement.
+
+**Foundation Completion Rule:** When a major v1 foundation ships (Runner, Coverage Sprint tooling, Owner Decision Queue, etc.), update this HQ Handoff with completed vs deferred scope **before** starting the next foundation. See **Current stopping point — Foundation v1 stack COMPLETE**.
 
 Do not over-prioritize customer-facing polish until this operating loop is stronger. The target is not "good enough"; the target is the smallest correct durable implementation that is excellent within its declared scope.
 
