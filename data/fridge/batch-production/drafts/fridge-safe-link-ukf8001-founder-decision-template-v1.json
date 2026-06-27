@@ -1,0 +1,44 @@
+{
+  "contract": "fridge_safe_link_ukf8001_founder_decision_template_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "template_status": "PENDING_OWNER_FILL",
+  "not_an_approved_decision": true,
+  "instructions": [
+    "This is a TEMPLATE only — not an approved founder decision.",
+    "Copy registry_row_template into data/owner-decisions/ as a new JSON file after owner review.",
+    "Set decision_status=approved, decided_at, owner_approved_by, and owner_note before guarded --write-csv.",
+    "Do not auto-create or commit owner approval from automation."
+  ],
+  "registry_row_template": {
+    "contract": "founder_decision_registry_v1",
+    "decision_id": "decision-2026-06-27-ukf8001-approve_csv_parity_apply",
+    "source_queue_row_id": "queue-fridge-safe-link-ukf8001-csv-parity",
+    "source_decision_packet_id": "fridge_safe_link_ukf8001_apply_plan_proposal_v1",
+    "decided_at": null,
+    "decision_status": "pending_owner_action",
+    "owner_note": "FILL AFTER REVIEW: Approve single-slug ukf8001 CSV parity apply (Amazon B07C8C2VBH direct_buyable). Authorize guarded executor --write-csv only — no Supabase mutation from this row.",
+    "allowed_next_scope": "owner_mutation_approved",
+    "evidence_required_before_mutation": true,
+    "prohibited_actions_still_apply": [
+      "Do not mutate retailer_links.csv from this template alone.",
+      "Do not batch apply da29-00020b, 4396710, 4396841, or Waterdrop HARD_DO_NOT_USE ASIN B087PDLZL9.",
+      "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+      "Do not write or overwrite evidence JSON under data/evidence/.",
+      "Do not mutate Supabase from this approval row — CSV parity only.",
+      "Do not mutate public pages, sitemap, or robots without separate review.",
+      "approve_csv_parity_apply authorizes guarded executor --write-csv — not automatic apply."
+    ],
+    "ukf8001_apply_context_v1": {
+      "apply_plan_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-ukf8001-apply-plan-proposal-v1.json",
+      "founder_option_id": "approve_csv_parity_apply",
+      "target_slug": "ukf8001",
+      "target_asin": "B07C8C2VBH",
+      "mutation_authorized": false,
+      "apply_not_executed": true,
+      "separate_guarded_apply_executor_required": true,
+      "owner_approved_by": null,
+      "approved_at": null
+    }
+  }
+}
