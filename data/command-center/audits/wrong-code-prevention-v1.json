@@ -1,12 +1,12 @@
 {
   "contract": "wrong_code_prevention_v1",
   "read_only": true,
-  "generated_at": "2026-06-26T18:30:00.000Z",
-  "git_head_hint": "72c7f7fc171a",
+  "generated_at": "2026-06-27T04:02:26.348Z",
+  "git_head_hint": "31fdd2611847",
   "overall_status": "WARN",
   "stale_direct_buyable_count": 58,
   "dangerous_db_only_slug_count": 13,
-  "handoff_head_drift_commits": 1,
+  "handoff_head_drift_commits": 0,
   "sql_plan_safety_status": "WARN",
   "deprecated_slug_reference_count": 0,
   "checks": [
@@ -17,8 +17,8 @@
     },
     {
       "check_id": "handoff_head_drift",
-      "status": "WARN",
-      "notes": "1 local commit(s) ahead of origin/main — refresh HQ handoff before apply work."
+      "status": "PASS",
+      "notes": "Local HEAD matches origin/main commit count (no ahead commits)."
     },
     {
       "check_id": "dangerous_db_only_slugs",
@@ -39,17 +39,13 @@
     {
       "check_id": "sql_plan_safety",
       "status": "WARN",
-      "notes": "SQL parity packet exists with default ROLLBACK — human commit required.",
-      "evidence_paths": [
-        "data/air-purifier/batch-production/audits/ap-runtime-safe-cta-parity-packet-v1.json"
-      ]
+      "notes": "SQL parity packet exists with default ROLLBACK — human commit required."
     }
   ],
   "blockers": [],
   "warnings": [
     "dangerous_db_only_slug_count=13",
     "stale_direct_buyable_count=58",
-    "handoff_head_drift_commits=1",
     "sql_plan_safety_status=WARN",
     "artifact_provenance=repo_baseline_not_hyperagent_ingest"
   ],

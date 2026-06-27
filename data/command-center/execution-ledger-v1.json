@@ -3,10 +3,120 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-26T17:49:53.969Z",
+  "generated_at": "2026-06-27T04:02:53.709Z",
   "source_command": "npm run buckparts:execution-ledger",
-  "entry_count": 6,
+  "entry_count": 11,
   "entries": [
+    {
+      "entry_id": "manufacturer_browser_proof_execution_factory_2026-06-26T20:43:48.189Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T20:43:48.189Z",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_execution_factory",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json"
+      ],
+      "validation_performed": [
+        "intake_complete=true",
+        "scheduled_slug_count=25",
+        "manufacturer_execution_batch_count=3",
+        "auto_pass_forbidden=true",
+        "browser_automation_authorized=false"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer browser proof execution packets indexed (owner review required before PASS)",
+      "superseded_by": null,
+      "source_contract": "manufacturer_browser_proof_execution_factory_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "manufacturer_rescue_throughput_analytics_2026-06-26T20:25:32.378Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T20:25:32.378Z",
+      "operational_lane": "manufacturer_safe_link_rescue:throughput_analytics",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json"
+      ],
+      "validation_performed": [
+        "intake_complete=true",
+        "rescue_candidate_count=26",
+        "furthest_funnel_stage=browser_proof_capture_scheduled",
+        "read_only_kpi_dashboard=true"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer rescue throughput KPI dashboard indexed from committed upstream artifacts",
+      "superseded_by": null,
+      "source_contract": "manufacturer_rescue_throughput_analytics_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "manufacturer_browser_proof_refresh_orchestrator_2026-06-26T20:02:47.406Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T20:02:47.406Z",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_refresh_orchestrator",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json"
+      ],
+      "validation_performed": [
+        "scheduled_slug_count=25",
+        "manufacturer_refresh_batch_count=3",
+        "auto_pass_forbidden=true",
+        "browser_automation_authorized=false"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer browser proof refresh batches scheduled (owner review required post-capture)",
+      "superseded_by": null,
+      "source_contract": "manufacturer_browser_proof_refresh_orchestrator_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "manufacturer_rescue_owner_approval_packet_factory_2026-06-26T19:18:34.418Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T19:18:34.418Z",
+      "operational_lane": "manufacturer_safe_link_rescue:owner_approval_packet_factory",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json"
+      ],
+      "validation_performed": [
+        "approval_cohort_count=0",
+        "ready_for_owner_review_plan_count=0",
+        "auto_approval_forbidden=true"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer rescue owner approval packet factory indexed (no cohorts)",
+      "superseded_by": null,
+      "source_contract": "manufacturer_rescue_owner_approval_packet_factory_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
+    {
+      "entry_id": "manufacturer_browser_proof_factory_2026-06-26T18:56:29.399Z",
+      "commit_sha": "UNKNOWN",
+      "completion_timestamp": "2026-06-26T18:56:29.399Z",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_factory",
+      "artifacts_produced": [
+        "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json"
+      ],
+      "validation_performed": [
+        "capture_work_required_count=25",
+        "capture_batch_count=3",
+        "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
+        "auto_pass_forbidden=true"
+      ],
+      "safe_to_commit_status": "UNKNOWN",
+      "pushed_to_origin": "UNKNOWN",
+      "business_capability_unlocked": "manufacturer browser proof batched capture queue produced (owner review required)",
+      "superseded_by": null,
+      "source_contract": "manufacturer_browser_proof_factory_v1",
+      "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+      "provenance_tier": "COMMITTED_SOURCE"
+    },
     {
       "entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
       "commit_sha": "UNKNOWN",
@@ -142,6 +252,156 @@
     }
   ],
   "capability_timeline": [
+    {
+      "capability_key": "manufacturer_safe_link_rescue_browser_proof_execution_factory",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_execution_factory",
+      "entries": [
+        {
+          "entry_id": "manufacturer_browser_proof_execution_factory_2026-06-26T20:43:48.189Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T20:43:48.189Z",
+          "operational_lane": "manufacturer_safe_link_rescue:browser_proof_execution_factory",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json"
+          ],
+          "validation_performed": [
+            "intake_complete=true",
+            "scheduled_slug_count=25",
+            "manufacturer_execution_batch_count=3",
+            "auto_pass_forbidden=true",
+            "browser_automation_authorized=false"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer browser proof execution packets indexed (owner review required before PASS)",
+          "superseded_by": null,
+          "source_contract": "manufacturer_browser_proof_execution_factory_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_browser_proof_execution_factory_2026-06-26T20:43:48.189Z",
+      "latest_completion_timestamp": "2026-06-26T20:43:48.189Z"
+    },
+    {
+      "capability_key": "manufacturer_safe_link_rescue_throughput_analytics",
+      "operational_lane": "manufacturer_safe_link_rescue:throughput_analytics",
+      "entries": [
+        {
+          "entry_id": "manufacturer_rescue_throughput_analytics_2026-06-26T20:25:32.378Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T20:25:32.378Z",
+          "operational_lane": "manufacturer_safe_link_rescue:throughput_analytics",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json"
+          ],
+          "validation_performed": [
+            "intake_complete=true",
+            "rescue_candidate_count=26",
+            "furthest_funnel_stage=browser_proof_capture_scheduled",
+            "read_only_kpi_dashboard=true"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer rescue throughput KPI dashboard indexed from committed upstream artifacts",
+          "superseded_by": null,
+          "source_contract": "manufacturer_rescue_throughput_analytics_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_rescue_throughput_analytics_2026-06-26T20:25:32.378Z",
+      "latest_completion_timestamp": "2026-06-26T20:25:32.378Z"
+    },
+    {
+      "capability_key": "manufacturer_safe_link_rescue_browser_proof_refresh_orchestrator",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_refresh_orchestrator",
+      "entries": [
+        {
+          "entry_id": "manufacturer_browser_proof_refresh_orchestrator_2026-06-26T20:02:47.406Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T20:02:47.406Z",
+          "operational_lane": "manufacturer_safe_link_rescue:browser_proof_refresh_orchestrator",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json"
+          ],
+          "validation_performed": [
+            "scheduled_slug_count=25",
+            "manufacturer_refresh_batch_count=3",
+            "auto_pass_forbidden=true",
+            "browser_automation_authorized=false"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer browser proof refresh batches scheduled (owner review required post-capture)",
+          "superseded_by": null,
+          "source_contract": "manufacturer_browser_proof_refresh_orchestrator_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_browser_proof_refresh_orchestrator_2026-06-26T20:02:47.406Z",
+      "latest_completion_timestamp": "2026-06-26T20:02:47.406Z"
+    },
+    {
+      "capability_key": "manufacturer_safe_link_rescue_owner_approval_packet_factory",
+      "operational_lane": "manufacturer_safe_link_rescue:owner_approval_packet_factory",
+      "entries": [
+        {
+          "entry_id": "manufacturer_rescue_owner_approval_packet_factory_2026-06-26T19:18:34.418Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T19:18:34.418Z",
+          "operational_lane": "manufacturer_safe_link_rescue:owner_approval_packet_factory",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json"
+          ],
+          "validation_performed": [
+            "approval_cohort_count=0",
+            "ready_for_owner_review_plan_count=0",
+            "auto_approval_forbidden=true"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer rescue owner approval packet factory indexed (no cohorts)",
+          "superseded_by": null,
+          "source_contract": "manufacturer_rescue_owner_approval_packet_factory_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_rescue_owner_approval_packet_factory_2026-06-26T19:18:34.418Z",
+      "latest_completion_timestamp": "2026-06-26T19:18:34.418Z"
+    },
+    {
+      "capability_key": "manufacturer_safe_link_rescue_browser_proof_factory",
+      "operational_lane": "manufacturer_safe_link_rescue:browser_proof_factory",
+      "entries": [
+        {
+          "entry_id": "manufacturer_browser_proof_factory_2026-06-26T18:56:29.399Z",
+          "commit_sha": "UNKNOWN",
+          "completion_timestamp": "2026-06-26T18:56:29.399Z",
+          "operational_lane": "manufacturer_safe_link_rescue:browser_proof_factory",
+          "artifacts_produced": [
+            "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json"
+          ],
+          "validation_performed": [
+            "capture_work_required_count=25",
+            "capture_batch_count=3",
+            "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
+            "auto_pass_forbidden=true"
+          ],
+          "safe_to_commit_status": "UNKNOWN",
+          "pushed_to_origin": "UNKNOWN",
+          "business_capability_unlocked": "manufacturer browser proof batched capture queue produced (owner review required)",
+          "superseded_by": null,
+          "source_contract": "manufacturer_browser_proof_factory_v1",
+          "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+          "provenance_tier": "COMMITTED_SOURCE"
+        }
+      ],
+      "latest_entry_id": "manufacturer_browser_proof_factory_2026-06-26T18:56:29.399Z",
+      "latest_completion_timestamp": "2026-06-26T18:56:29.399Z"
+    },
     {
       "capability_key": "manufacturer_safe_link_rescue_readiness_gate_promotion",
       "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
@@ -317,24 +577,26 @@
     }
   ],
   "last_completed_capability": {
-    "entry_id": "manufacturer_rescue_readiness_gate_2026-06-26T17:49:53.454Z",
+    "entry_id": "manufacturer_browser_proof_execution_factory_2026-06-26T20:43:48.189Z",
     "commit_sha": "UNKNOWN",
-    "completion_timestamp": "2026-06-26T17:49:53.454Z",
-    "operational_lane": "manufacturer_safe_link_rescue:readiness_gate_promotion",
+    "completion_timestamp": "2026-06-26T20:43:48.189Z",
+    "operational_lane": "manufacturer_safe_link_rescue:browser_proof_execution_factory",
     "artifacts_produced": [
-      "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json"
+      "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json"
     ],
     "validation_performed": [
-      "ready_for_apply_count=0",
-      "orchestrator_generated_at=2026-06-26T17:49:52.361Z",
-      "director_generated_at=2026-06-26T17:49:52.913Z"
+      "intake_complete=true",
+      "scheduled_slug_count=25",
+      "manufacturer_execution_batch_count=3",
+      "auto_pass_forbidden=true",
+      "browser_automation_authorized=false"
     ],
     "safe_to_commit_status": "UNKNOWN",
     "pushed_to_origin": "UNKNOWN",
-    "business_capability_unlocked": "manufacturer rescue promotion gate indexed (no READY_FOR_APPLY)",
+    "business_capability_unlocked": "manufacturer browser proof execution packets indexed (owner review required before PASS)",
     "superseded_by": null,
-    "source_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
-    "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    "source_contract": "manufacturer_browser_proof_execution_factory_v1",
+    "source_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
     "provenance_tier": "COMMITTED_SOURCE"
   },
   "source_paths_read": [
@@ -347,6 +609,11 @@
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T014559063Z.json",
     "data/command-center/dispatch-runs/dispatch-run-2026-05-26T020812754Z.json",
     "data/fridge/batch-production/closeout/fridge-buyer-path-batch-closeout-learning-packet-v1-0fec4a7b623a.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-execution-factory-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-rescue-throughput-analytics-v1.json",
     "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
     "data/fridge/batch-production/run-registry/fridge-buyer-path-batch-run-v1-0fec4a7b623a.json"
   ],
@@ -358,11 +625,11 @@
       "capability_timeline": ".capability_timeline",
       "last_completed_capability": ".last_completed_capability"
     },
-    "recommended_next_action": "Review last completed capability manufacturer_safe_link_rescue:readiness_gate_promotion at 2026-06-26T17:49:53.454Z."
+    "recommended_next_action": "Review last completed capability manufacturer_safe_link_rescue:browser_proof_execution_factory at 2026-06-26T20:43:48.189Z."
   },
   "proven_facts": [
     "PROVEN: Execution ledger is read-only and indexes committed dispatch runs, run-registry closeouts, and closeout learning packets only.",
-    "PROVEN: entry_count=6 from 11 source artifact path(s)."
+    "PROVEN: entry_count=11 from 16 source artifact path(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: pushed_to_origin unless closeout commits_involved explicitly mention push.",
@@ -370,10 +637,10 @@
     "UNKNOWN: live git remote parity for entries without committed push attestations."
   ],
   "freshness": {
-    "last_generated_at": "2026-06-26T17:49:53.969Z",
-    "source_artifact_count": 11,
-    "stale_after": "2026-06-27T17:49:53.969Z",
+    "last_generated_at": "2026-06-27T04:02:53.709Z",
+    "source_artifact_count": 16,
+    "stale_after": "2026-06-28T04:02:53.709Z",
     "freshness_status": "FRESH",
-    "last_refresh_trigger_source": "npm run buckparts:manufacturer-safe-link-rescue-runner"
+    "last_refresh_trigger_source": "npm run buckparts:command-center"
   }
 }
