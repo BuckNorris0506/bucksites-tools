@@ -21,6 +21,14 @@ export const MANUFACTURER_RESCUE_OWNER_PROOF_REL_BY_SLUG_V1: Readonly<Record<str
     }),
   );
 
+export function manufacturerRescueOwnerProofArtifactRelForSlugV1(filterSlug: string): string {
+  const slug = filterSlug.trim().toLowerCase();
+  return (
+    MANUFACTURER_RESCUE_OWNER_PROOF_REL_BY_SLUG_V1[slug] ??
+    `data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-${slug}-v1.json`
+  );
+}
+
 export type ManufacturerRescueOwnerBrowserProofLoadV1 = {
   artifact: OwnerBrowserProofResultV1 | null;
   artifact_rel: string | null;
@@ -76,8 +84,7 @@ export function loadManufacturerRescueOwnerBrowserProofArtifactV1(args: {
   readText: (abs: string) => string;
 }): ManufacturerRescueOwnerBrowserProofLoadV1 {
   const slug = args.filter_slug.trim().toLowerCase();
-  const rel = MANUFACTURER_RESCUE_OWNER_PROOF_REL_BY_SLUG_V1[slug] ?? null;
-  if (!rel) return { artifact: null, artifact_rel: null };
+  const rel = manufacturerRescueOwnerProofArtifactRelForSlugV1(slug);
   const abs = path.join(args.rootDir, rel);
   if (!args.fileExists(abs)) return { artifact: null, artifact_rel: rel };
   try {
