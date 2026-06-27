@@ -77,6 +77,8 @@
     "buckparts:customer-authority-history": "tsx scripts/report-customer-authority-history-v1.ts",
     "buckparts:all-product-safe-buyer-path-census": "tsx scripts/report-all-product-safe-buyer-path-census-v1.ts",
     "buckparts:ship-guard": "tsx scripts/buckparts-ship-guard.ts",
+    "buckparts:deploy-classifier": "tsx scripts/report-buckparts-deploy-classifier-v1.ts",
+    "buckparts:deploy-classifier:pre-push-summary": "tsx scripts/report-buckparts-deploy-classifier-v1.ts --push-ahead --summary-only",
     "buckparts:security-gate": "tsx scripts/report-buckparts-security-gate-v1.ts",
     "buckparts:learning-outcomes-approved-insert:dry-run": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts",
     "buckparts:learning-outcomes-approved-insert:mutate": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts --mutate-approved-learning-outcome",
