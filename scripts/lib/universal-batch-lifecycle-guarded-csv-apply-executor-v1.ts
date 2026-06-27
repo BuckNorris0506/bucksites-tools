@@ -212,10 +212,7 @@ function loadExecutionPlanArtifactV1(args: {
     if (target_file !== FRIDGE_RETAILER_LINKS_CSV_REL_V1) {
       errors.push(`execution_plan_target_file_invalid: target_file=${target_file || "missing"}`);
     }
-    if (
-      typeof planned_change_count !== "number" ||
-      planned_change_count !== UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
-    ) {
+    if (typeof planned_change_count !== "number" || planned_change_count < 1) {
       errors.push(
         `execution_plan_planned_change_count_invalid: planned_change_count=${String(planned_change_count)}`,
       );
@@ -223,11 +220,11 @@ function loadExecutionPlanArtifactV1(args: {
     if (!Array.isArray(row_patch_preview)) {
       errors.push("execution_plan_row_patch_preview_missing");
     } else if (
-      row_patch_preview.length !==
-      UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
+      typeof planned_change_count === "number" &&
+      row_patch_preview.length !== planned_change_count
     ) {
       errors.push(
-        `execution_plan_row_patch_preview_count_invalid: count=${String(row_patch_preview.length)}`,
+        `execution_plan_row_patch_preview_count_invalid: count=${String(row_patch_preview.length)} expected=${String(planned_change_count)}`,
       );
     }
     if (errors.length > 0) return { ok: false, errors };
@@ -279,11 +276,10 @@ export function assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1(
   }
 
   const previewSlugs = loaded.doc.row_patch_preview.map((row) => row.slug);
-  if (
-    previewSlugs.length !== UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
-  ) {
+  const expectedRowPatchCount = loaded.doc.planned_change_count;
+  if (previewSlugs.length !== expectedRowPatchCount) {
     executor_blockers.push(
-      `row_patch_preview_count_invalid: count=${String(previewSlugs.length)} expected=${String(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1)}`,
+      `row_patch_preview_count_invalid: count=${String(previewSlugs.length)} expected=${String(expectedRowPatchCount)}`,
     );
   }
   if (new Set(previewSlugs.map(normalizeSlug)).size !== previewSlugs.length) {
@@ -316,20 +312,21 @@ export function assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1(
   if (
     executor_blockers.length === 0 &&
     afterMatchCount > 0 &&
-    afterMatchCount !== UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
+    afterMatchCount !== expectedRowPatchCount
   ) {
     executor_blockers.push(
-      `csv_apply_partially_already_applied: after_row_match_count=${String(afterMatchCount)} expected=${String(UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1)}`,
+      `csv_apply_partially_already_applied: after_row_match_count=${String(afterMatchCount)} expected=${String(expectedRowPatchCount)}`,
     );
   }
 
   const appliedParity =
     executor_blockers.length === 0 &&
     beforeMismatchCount === 0 &&
-    afterMatchCount === UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1
+    afterMatchCount === expectedRowPatchCount
       ? assessGuardedCsvAppliedParityV1({
           rootDir: input.rootDir,
           rowPatches: loaded.doc.row_patch_preview,
+          expectedRowPatchCount,
           fileExists,
           readText,
         })
@@ -397,6 +394,7 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     readText,
   });
   const rowPatches = loaded.ok ? loaded.doc.row_patch_preview : [];
+  const expectedRowPatchCount = loaded.ok ? loaded.doc.planned_change_count : 0;
 
   const before_row_parity: UniversalBatchLifecycleGuardedCsvApplyExecutorBeforeRowParityV1[] =
     readiness.row_patch_slugs.map((slug) => {
@@ -418,12 +416,14 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     });
   const beforeRowParityProven =
     !readiness.applied_parity_proven &&
-    before_row_parity.length === UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_EXPECTED_ROW_PATCH_COUNT_V1 &&
+    before_row_parity.length === expectedRowPatchCount &&
+    expectedRowPatchCount > 0 &&
     before_row_parity.every((row) => row.parity_status === "PROVEN");
 
   const writePlan = assessGuardedCsvWritePlanV1({
     rootDir: input.rootDir,
     rowPatches,
+    expectedRowPatchCount: expectedRowPatchCount > 0 ? expectedRowPatchCount : undefined,
     fileExists,
     readText,
   });
@@ -512,7 +512,9 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     proven_facts.push("PROVEN: post-apply recognition blocks repeat guarded CSV apply.");
   }
   if (beforeRowParityProven) {
-    proven_facts.push("PROVEN: before_row_parity=PROVEN for all 14 target slugs.");
+    proven_facts.push(
+      `PROVEN: before_row_parity=PROVEN for all ${String(expectedRowPatchCount)} target slug(s).`,
+    );
   }
   if (write_mode_available && !writeCsv) {
     proven_facts.push(

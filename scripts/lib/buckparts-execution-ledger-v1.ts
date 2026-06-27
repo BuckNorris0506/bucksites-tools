@@ -75,6 +75,9 @@ export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_OWNER_APPROVAL_PACKET_
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_THROUGHPUT_ANALYTICS_V1 =
   "npm run buckparts:manufacturer-rescue-throughput-analytics" as const;
 
+export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_V1 =
+  "npm run buckparts:manufacturer-rescue-guarded-apply-bridge" as const;
+
 export const EXECUTION_LEDGER_TRIGGER_MANUFACTURER_BROWSER_PROOF_EXECUTION_FACTORY_V1 =
   "npm run buckparts:manufacturer-browser-proof-execution-factory" as const;
 

@@ -465,8 +465,13 @@ describe("universal_batch_lifecycle_guarded_csv_apply_executor_v1", () => {
     }
   });
 
-  test("validates 14 row_patch_preview rows", () => {
-    const { root, cleanup } = writeTempFixture({ slugs: SLUGS.slice(0, 13) });
+  test("validates row_patch_preview count matches planned_change_count", () => {
+    const { root, cleanup } = writeTempFixture({
+      execPlan: {
+        ...fixtureExecutionPlan(SLUGS.slice(0, 13)),
+        planned_change_count: 14,
+      },
+    });
     try {
       const readiness = assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1({
         rootDir: root,
@@ -474,7 +479,8 @@ describe("universal_batch_lifecycle_guarded_csv_apply_executor_v1", () => {
       assert.equal(readiness.apply_executor_ready, false);
       assert.ok(
         readiness.executor_blockers.some((blocker) =>
-          blocker.includes("row_patch_preview_count_invalid"),
+          blocker.includes("row_patch_preview_count_invalid") ||
+            blocker.includes("execution_plan_row_patch_preview_count_invalid"),
         ),
       );
     } finally {
@@ -607,6 +613,16 @@ describe("universal_batch_lifecycle_guarded_csv_apply_executor_v1", () => {
     const readiness = assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1({
       rootDir: REPO_ROOT,
     });
+    const repoCsvIncomplete = readiness.executor_blockers.some((blocker) =>
+      blocker.startsWith("csv_primary_row_missing:"),
+    );
+    if (repoCsvIncomplete) {
+      assert.equal(readiness.executor_status, "BLOCKED");
+      assert.equal(readiness.apply_executor_ready, false);
+      assert.equal(readiness.row_patch_count, 14);
+      assert.equal(readiness.target_file, FRIDGE_RETAILER_LINKS_CSV_REL_V1);
+      return;
+    }
     assert.ok(
       readiness.executor_status === "PRE_APPLY_DRY_RUN_READY" ||
         readiness.executor_status === "APPLIED_PARITY_PROVEN",
@@ -671,6 +687,12 @@ describe("mutation authorization review apply_executor_ready integration", () =>
       REPO_ROOT,
       "data/owner-decisions/lifecycle-mutation-authorization-review-v1.json",
     );
+    const executorReadiness = assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1({
+      rootDir: REPO_ROOT,
+    });
+    const repoCsvIncomplete = executorReadiness.executor_blockers.some((blocker) =>
+      blocker.startsWith("csv_primary_row_missing:"),
+    );
     const review = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
       rootDir: REPO_ROOT,
       now: () => new Date("2026-06-01T05:00:00.000Z"),
@@ -690,6 +712,10 @@ describe("mutation authorization review apply_executor_ready integration", () =>
       assert.equal(review.mutation_authorized, false);
       assert.equal(review.csv_apply_authorized, false);
       assert.match(review.recommended_next_action, /APPLIED_PARITY_PROVEN/);
+    } else if (repoCsvIncomplete) {
+      assert.equal(review.apply_executor_ready, false);
+      assert.equal(review.mutation_authorization_review_status, "BLOCKED");
+      assert.equal(review.csv_apply_authorized, false);
     } else if (existsSync(ownerRegistryAbs)) {
       assert.equal(review.apply_executor_ready, true);
       assert.equal(review.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");

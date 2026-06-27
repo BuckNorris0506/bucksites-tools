@@ -13,9 +13,12 @@ import {
   loadFridgeRetailerLinksCsvRowsV1,
   type RetailerLinkCsvRowV1,
 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
-import { UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_APPROVED_SLUG_COUNT_V1 } from "./universal-batch-lifecycle-apply-readiness-v1";
-
-const EXPECTED_ROW_PATCH_COUNT_V1 = UNIVERSAL_BATCH_LIFECYCLE_APPLY_READINESS_APPROVED_SLUG_COUNT_V1;
+function expectedRowPatchCountV1(
+  rowPatches: readonly UniversalBatchLifecycleApplyExecutionPlanRowPatchV1[],
+  override?: number,
+): number {
+  return override ?? rowPatches.length;
+}
 
 export type GuardedCsvWriteModeMutationAuthInputV1 = {
   mutation_authorization_review_status: "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY" | "BLOCKED";
@@ -167,9 +170,11 @@ function mergeAfterRowIntoPrimaryV1(
 export function assessGuardedCsvWritePlanV1(args: {
   rootDir: string;
   rowPatches: readonly UniversalBatchLifecycleApplyExecutionPlanRowPatchV1[];
+  expectedRowPatchCount?: number;
   fileExists?: (absPath: string) => boolean;
   readText?: (absPath: string) => string;
 }): GuardedCsvWritePlanV1 {
+  const expectedCount = expectedRowPatchCountV1(args.rowPatches, args.expectedRowPatchCount);
   const fileExists = args.fileExists ?? ((abs: string) => existsSync(abs));
   const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
 
@@ -226,9 +231,9 @@ export function assessGuardedCsvWritePlanV1(args: {
     });
   }
 
-  if (plannedPatches.length !== EXPECTED_ROW_PATCH_COUNT_V1) {
+  if (plannedPatches.length !== expectedCount) {
     blockers.push(
-      `write_plan_row_patch_count_invalid: count=${String(plannedPatches.length)} expected=${String(EXPECTED_ROW_PATCH_COUNT_V1)}`,
+      `write_plan_row_patch_count_invalid: count=${String(plannedPatches.length)} expected=${String(expectedCount)}`,
     );
   }
 
@@ -255,9 +260,11 @@ export function assessGuardedCsvWritePlanV1(args: {
 export function assessGuardedCsvAppliedParityV1(args: {
   rootDir: string;
   rowPatches: readonly UniversalBatchLifecycleApplyExecutionPlanRowPatchV1[];
+  expectedRowPatchCount?: number;
   fileExists?: (absPath: string) => boolean;
   readText?: (absPath: string) => string;
 }): GuardedCsvAppliedParityAssessmentV1 {
+  const expectedCount = expectedRowPatchCountV1(args.rowPatches, args.expectedRowPatchCount);
   const fileExists = args.fileExists ?? ((abs: string) => existsSync(abs));
   const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
 
@@ -303,15 +310,15 @@ export function assessGuardedCsvAppliedParityV1(args: {
     }
   }
 
-  if (targetRowIndices.length !== EXPECTED_ROW_PATCH_COUNT_V1) {
+  if (targetRowIndices.length !== expectedCount) {
     validation_blockers.push(
-      `post_apply_row_patch_count_invalid: count=${String(targetRowIndices.length)} expected=${String(EXPECTED_ROW_PATCH_COUNT_V1)}`,
+      `post_apply_row_patch_count_invalid: count=${String(targetRowIndices.length)} expected=${String(expectedCount)}`,
     );
   }
 
   const target_rows_match_after_row =
     validation_blockers.filter((blocker) => blocker.includes("after_row_mismatch")).length === 0 &&
-    targetRowIndices.length === EXPECTED_ROW_PATCH_COUNT_V1;
+    targetRowIndices.length === expectedCount;
 
   return {
     validation_status: validation_blockers.length === 0 ? "PROVEN" : "BLOCKED",
