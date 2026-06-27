@@ -576,9 +576,11 @@ export function buildSupabaseCsvParityExecutionPlanFromApplyPlanV1(args: {
       row_patch_preview: [rowPatch],
       rollback_patch_preview: [
         {
-          ...rowPatch,
+          slug: rowPatch.slug,
+          filter_slug: rowPatch.filter_slug,
           action: "rollback_restore_before_row",
-          after_row: before_row,
+          before_row: { ...after_row },
+          after_row: { ...before_row },
           changed_fields,
         },
       ],

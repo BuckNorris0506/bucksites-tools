@@ -128,6 +128,88 @@ export function csvSnapshotFromFridgeProposedFieldsV1(args: {
   };
 }
 
+export const FRIDGE_SAFE_LINK_4396508_OWNER_DECISION_REL_V1 =
+  "data/owner-decisions/fridge-safe-link-4396508-owner-approval-v1.json" as const;
+
+export type PendingOwnerBrowserTruthClassification4396508V1 = {
+  classification: string;
+  source_rel_path: string;
+  source_field: string;
+  blocked_until_founder_approval: true;
+};
+
+export function resolvePendingOwnerBrowserTruthClassification4396508V1(args: {
+  rootDir: string;
+  fileExists: (abs: string) => boolean;
+  readText: (abs: string) => string;
+}): PendingOwnerBrowserTruthClassification4396508V1 | null {
+  const ownerDecisionAbs = path.join(args.rootDir, FRIDGE_SAFE_LINK_4396508_OWNER_DECISION_REL_V1);
+  if (args.fileExists(ownerDecisionAbs)) {
+    const doc = loadJson<{ rows?: Array<Record<string, unknown>> }>(ownerDecisionAbs, args.readText);
+    const row = doc.rows?.[0];
+    const ctx = row?.["4396508_apply_context_v1"] as Record<string, unknown> | undefined;
+    const fromCtx =
+      typeof ctx?.owner_browser_truth_classification === "string"
+        ? ctx.owner_browser_truth_classification.trim()
+        : "";
+    if (fromCtx) {
+      return {
+        classification: fromCtx,
+        source_rel_path: FRIDGE_SAFE_LINK_4396508_OWNER_DECISION_REL_V1,
+        source_field: "4396508_apply_context_v1.owner_browser_truth_classification",
+        blocked_until_founder_approval: true,
+      };
+    }
+  }
+
+  const packetAbs = path.join(args.rootDir, FRIDGE_SAFE_LINK_4396508_OWNER_CLASSIFICATION_PACKET_REL_V1);
+  if (!args.fileExists(packetAbs)) return null;
+  const packet = loadJson<{
+    owner_classification_review_v1?: {
+      owner_must_answer_before_guarded_apply?: Array<{
+        question_id?: string;
+        recommended_value?: string;
+      }>;
+    };
+  }>(packetAbs, args.readText);
+  const question = packet.owner_classification_review_v1?.owner_must_answer_before_guarded_apply?.find(
+    (item) => item.question_id === "browser_truth_classification",
+  );
+  const recommended = question?.recommended_value?.trim() ?? "";
+  if (!recommended) return null;
+  return {
+    classification: recommended,
+    source_rel_path: FRIDGE_SAFE_LINK_4396508_OWNER_CLASSIFICATION_PACKET_REL_V1,
+    source_field: "owner_classification_review_v1.browser_truth_classification.recommended_value",
+    blocked_until_founder_approval: true,
+  };
+}
+
+export function buildOwnerReviewInsertPlanProposedCsvRow4396508V1(args: {
+  rootDir: string;
+  slug: string;
+  fields: FridgeSafeLink4396508ApplyPlanProposalV1["proposed_retailer_link_row_fields"];
+  fileExists: (abs: string) => boolean;
+  readText: (abs: string) => string;
+}): {
+  proposed_csv_row: SupabaseCsvParityCsvRowSnapshotV1;
+  pending_owner_browser_truth: PendingOwnerBrowserTruthClassification4396508V1 | null;
+} {
+  const proposed_csv_row = csvSnapshotFromFridgeProposedFieldsV1({
+    slug: args.slug,
+    fields: args.fields,
+  });
+  const pending_owner_browser_truth = resolvePendingOwnerBrowserTruthClassification4396508V1({
+    rootDir: args.rootDir,
+    fileExists: args.fileExists,
+    readText: args.readText,
+  });
+  if (pending_owner_browser_truth) {
+    proposed_csv_row.browser_truth_classification = pending_owner_browser_truth.classification;
+  }
+  return { proposed_csv_row, pending_owner_browser_truth };
+}
+
 export function buildSupabaseCsvParityApplyPlanFromFridge4396508ProposalV1(args: {
   rootDir: string;
   fridgeProposal: FridgeSafeLink4396508ApplyPlanProposalV1;
@@ -165,10 +247,14 @@ export function buildSupabaseCsvParityApplyPlanFromFridge4396508ProposalV1(args:
   }
 
   const currentSnapshot = csvRowSnapshotFromRetailerRow(csvRows[0]!, slug);
-  const proposedSnapshot = csvSnapshotFromFridgeProposedFieldsV1({
-    slug,
-    fields: args.fridgeProposal.proposed_retailer_link_row_fields,
-  });
+  const { proposed_csv_row: proposedSnapshot, pending_owner_browser_truth } =
+    buildOwnerReviewInsertPlanProposedCsvRow4396508V1({
+      rootDir: args.rootDir,
+      slug,
+      fields: args.fridgeProposal.proposed_retailer_link_row_fields,
+      fileExists: args.fileExists,
+      readText: args.readText,
+    });
   const proposedAsin =
     typeof evidence.asin === "string" ? evidence.asin.trim().toUpperCase() : null;
 
@@ -244,8 +330,9 @@ export function buildSupabaseCsvParityApplyPlanFromFridge4396508ProposalV1(args:
       before_classification: "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
       after_classification: "SAFE_BUYER_PATH_PROVEN",
       safe_buyer_path_proven_count_delta: 1,
-      basis:
-        "CSV primary gains direct_buyable row only after founder sets browser_truth_classification and guarded --write-csv",
+      basis: pending_owner_browser_truth
+        ? `CSV primary gains ${pending_owner_browser_truth.classification} row from owner draft/packet preview; --write-csv blocked until active founder approval`
+        : "CSV primary gains direct_buyable row only after founder sets browser_truth_classification and guarded --write-csv",
     },
     blockers_before_apply: args.fridgeProposal.blockers_before_apply,
     owner_approval_needed_next: args.fridgeProposal.owner_approval_needed_next,
@@ -255,7 +342,9 @@ export function buildSupabaseCsvParityApplyPlanFromFridge4396508ProposalV1(args:
       ...args.fridgeProposal.proven_facts,
       `PROVEN: ${SUPABASE_CSV_PARITY_OWNER_REVIEW_INSERT_PLAN_CONTRACT_V1} bounded insert-plan path for ${slug}.`,
       `PROVEN: primary evidence ${args.config.primary_evidence_rel_path} is owner-review — not live-outcome.`,
-      `PROVEN: proposed_csv_row.browser_truth_classification remains empty until founder approval.`,
+      pending_owner_browser_truth
+        ? `PROVEN: proposed_csv_row.browser_truth_classification=${pending_owner_browser_truth.classification} sourced from ${pending_owner_browser_truth.source_rel_path}.${pending_owner_browser_truth.source_field} (dry-run preview only; --write-csv blocked until founder approval).`
+        : "PROVEN: proposed_csv_row.browser_truth_classification empty — owner draft/packet classification not loaded.",
       `PROVEN: apply plan source ${args.config.apply_plan_rel_path}.`,
     ],
     inferred_facts: args.fridgeProposal.inferred_facts,
