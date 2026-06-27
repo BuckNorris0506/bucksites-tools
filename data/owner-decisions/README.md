@@ -7,3 +7,38 @@
 **INFERRED:** Weekly digest and owner dashboard scan the same path for summaries; they do not treat registry rows as automation inputs.
 
 **UNKNOWN:** Whether your team tracks one file vs many — validator accepts a single document with a `rows` array.
+
+---
+
+## Activating a row for guarded CSV apply (founder-only)
+
+Normative spec: `docs/BuckParts-FOUNDER-DECISION-REGISTRY.md` § **Activating mutation approval for guarded apply executors**.
+
+**Draft / inactive row (dry-run OK, `--write-csv` blocked):**
+
+- `decision_status`: `deferred` (or `rejected`, `needs_more_evidence`)
+- `allowed_next_scope`: `none` (or `read_only_agent`, `human_external`)
+
+**Active mutation approval (required for `--write-csv` when executor gates pass):**
+
+- `decision_status`: **`approved`**
+- `allowed_next_scope`: **`owner_mutation_approved`**
+- `owner_note`: non-empty founder-signed text
+- `evidence_required_before_mutation`: **`true`**
+- `decided_at`: approval timestamp (ISO 8601)
+- Optional `{slug}_apply_context_v1`: set `owner_approved_by`, `approved_at` when present
+
+**Verify read model (no mutation):**
+
+```bash
+npm run buckparts:founder-decision-registry
+```
+
+**Verify guarded apply sees active approval (example slug `4396508`):**
+
+```bash
+npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508
+# founder_decision_missing: false only after activation
+```
+
+No repo automation writes or activates registry rows for you.

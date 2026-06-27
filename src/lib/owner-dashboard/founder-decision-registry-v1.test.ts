@@ -86,6 +86,25 @@ test("read_only_agent does not grant mutating repo authority", () => {
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-05-10T00:00:00.000Z"), false);
 });
 
+test("deferred + none is intentionally inactive for guarded apply mutation gates", () => {
+  const row = minimalValidRow();
+  assert.equal(row.decision_status, "deferred");
+  assert.equal(row.allowed_next_scope, "none");
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), false);
+  assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-06-27T20:00:00.000Z"), false);
+});
+
+test("approved + owner_mutation_approved is active for guarded apply when time bounds allow", () => {
+  const row = minimalValidRow({
+    decision_status: "approved",
+    allowed_next_scope: "owner_mutation_approved",
+    owner_note: "Approve single-slug guarded CSV apply.",
+    evidence_required_before_mutation: true,
+  });
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), true);
+  assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-06-27T20:00:00.000Z"), true);
+});
+
 test("expired expires_at is not active mutation approval", () => {
   const row = minimalValidRow({
     decision_status: "approved",

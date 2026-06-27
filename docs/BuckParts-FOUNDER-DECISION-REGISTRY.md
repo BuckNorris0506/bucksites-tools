@@ -92,6 +92,62 @@
 
 ---
 
+## Activating mutation approval for guarded apply executors (PROVEN)
+
+**PROVEN:** BuckParts **never** auto-flips a registry row from draft/inactive to mutation-active. A row on disk with `decision_status: deferred` and `allowed_next_scope: none` is **valid JSON** but **intentionally rejected** by guarded apply `--write-csv` paths (`founder_decision_missing: true` / `founder_owner_mutation_approved_missing_or_inactive`). This is **by design** — see `docs/ARCHITECTURE.md` **INV-006** and `docs/BuckParts-BATCH-PRODUCTION-LANE-V1.md` (approval is a separate human step).
+
+### Authoritative storage (one source of truth)
+
+| Layer | Role |
+|--------|------|
+| **`data/owner-decisions/*.json`** | **Only** durable store for founder mutation intent (`founder_decision_registry_v1` envelope + `rows[]`). |
+| **`isFounderRegistryRowActiveMutationApproval`** (`founder-decision-registry-v1.ts`) | **Canonical** active-mutation predicate: `approved` + `owner_mutation_approved` + time bounds. |
+| **Executor-specific matchers** | Read the same directory once per run; correlate row → slug/plan (e.g. `findActiveFounderDecisionForSupabaseCsvParitySlug` in `supabase-csv-parity-guarded-apply-v1.ts`, `findActiveFounderDecisionForSlug` in `manufacturer-rescue-guarded-apply-bridge-v1.ts`). **No second approval store.** |
+
+**PROVEN:** Runner, Owner Decision Queue, Command Center, and digest **do not** grant mutation authority. Queue effective `APPROVED` **projects** from an active registry row — it does not replace it.
+
+### Manual activation sequence (founder-only)
+
+After reviewing read-only artifacts (apply-plan proposal, classification packet, guarded dry-run), the founder **manually** edits or commits a registry row:
+
+| Step | Field | Inactive (draft / defer) | Active (authorizes guarded `--write-csv` when executor gates pass) |
+|------|--------|---------------------------|---------------------------------------------------------------------|
+| 1 | `decision_status` | `deferred`, `rejected`, or `needs_more_evidence` | **`approved`** |
+| 2 | `allowed_next_scope` | `none`, `read_only_agent`, or `human_external` | **`owner_mutation_approved`** |
+| 3 | `owner_note` | Any (may include `PENDING_OWNER_SIGNATURE`) | **Non-empty** founder-signed note (required by validator) |
+| 4 | `evidence_required_before_mutation` | — | **`true`** (required when scope is `owner_mutation_approved`) |
+| 5 | `decided_at` | Draft assembly timestamp OK | **Approval timestamp** (ISO 8601) |
+| 6 | Optional slug context | e.g. `{slug}_apply_context_v1` with `owner_approved_by: null` | Set `owner_approved_by`, `approved_at` in apply-context blob when used |
+
+**Typical workflow for Supabase CSV parity / owner-review insert slugs (e.g. `4396508`):**
+
+1. Review `data/fridge/batch-production/drafts/fridge-safe-link-<slug>-apply-plan-proposal-v1.json` and owner classification packet.
+2. Run dry-run: `npm run buckparts:supabase-csv-parity-guarded-apply -- --slug <slug>` (expect `DRY_RUN_READY`; `founder_decision_missing: true` until activation).
+3. Copy or edit registry row under `data/owner-decisions/` (template may ship as `deferred` + `none`).
+4. Activate row (table above), commit JSON.
+5. Fresh precheck per apply-plan (e.g. `npm run buckparts:precheck:amazon-refrigerator-tokens -- --tokens <slug>`).
+6. Re-run dry-run, then `npm run buckparts:supabase-csv-parity-guarded-apply -- --slug <slug> --write-csv`.
+
+### Why inactive rows are rejected (not a resolver bug)
+
+Guarded apply executors require **all** of:
+
+1. Row validates (`validateFounderDecisionRegistryRowV1`).
+2. `decision_status === "approved"`.
+3. `allowed_next_scope === "owner_mutation_approved"`.
+4. `isFounderRegistryRowActiveMutationApproval(row, nowIso) === true` (includes `expires_at` / `review_after`).
+5. Slug / apply-plan correlation (structured `{slug}_apply_context_v1` or validated-row haystack).
+
+A file **existing** with `deferred` + `none` means **“review recorded, mutation not authorized yet”** — not missing discovery.
+
+### Bypass resistance (PROVEN)
+
+- **`--write-csv`** sets `mutation_authorized` only when an active founder row is loaded **and** the universal guarded CSV executor is ready (`buildSupabaseCsvParityGuardedApplyMutationAuthorizationV1`).
+- Each guarded-apply run loads registry rows **once** from disk; the same `founderRow` reference feeds both mutation-auth builds — no re-read, no alternate env bypass.
+- `read_only_agent` / Codex `approve_readonly_findings` rows **cannot** satisfy mutation gates (validator + `isFounderRegistryRowActiveMutationApproval`).
+
+---
+
 ## File placement (repo-consistent)
 
 - **Normative spec:** this file (`docs/BuckParts-FOUNDER-DECISION-REGISTRY.md`).
@@ -109,6 +165,7 @@
 
 | Date | Change |
 |------|--------|
+| 2026-06-27 | Documented guarded-apply activation workflow: manual `deferred`/`none` → `approved`/`owner_mutation_approved`; single authoritative store; inactive-row rejection rationale. |
 | 2026-05-16 | Clarified `read_only_agent` vs `owner_mutation_approved` vs `approve_readonly_findings` (no mutation authority from read-only scope or Codex approve-read-only). |
 | 2026-05-16 | Optional `codex_output_review_context_v1` on registry rows + read-model counts + digest queue correlation + Layer 6 `founder_decision_recording_for_codex_review_v1` (visibility only; Layer 6 still NOT_PROVEN). |
 | 2026-05-15 | Read model v1 + `buckparts:founder-decision-registry` report script + digest/dashboard surfacing (counts only). |
