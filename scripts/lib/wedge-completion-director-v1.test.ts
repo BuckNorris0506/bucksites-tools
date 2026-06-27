@@ -53,7 +53,7 @@ describe("wedge completion director v1", () => {
           criteria: [
             {
               criterion_id: "C3",
-              label: "Proven buyer paths",
+              label: "All mapped filters have proven safe buyer paths",
               status: "FAIL",
               pass_condition_summary: "test",
               evidence_paths: [],
@@ -119,17 +119,140 @@ describe("wedge completion director v1", () => {
       report.recommended_next_action.action_id,
       "clear_proven_slug_referenceability_debt_v1",
     );
+    assert.equal(report.recommended_next_action.action_temporality, "IMMEDIATE_SESSION_PASS_ELIGIBLE");
     assert.deepEqual(report.recommended_next_action.blocking_criterion_ids.sort(), ["D2", "E3"]);
     assert.equal(report.recommended_next_action.fail_criteria_addressed_count, 2);
   });
 
-  test("live refrigerator_water ranks referenceability ahead of coverage mission", async () => {
+  test("RECORD_NOW_WAIT_REQUIRED does not outrank IMMEDIATE when C3 is session-pass-eligible", () => {
+    const mockEvaluator: WedgeCompletionEvaluatorReportV1 = {
+      contract: "wedge_completion_evaluator_v1",
+      audit_contract: "wedge_completion_audit_v1",
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      artifact_write_authorized: false,
+      source_command: "npm run buckparts:wedge-completion-evaluator",
+      standard_design_doc: "docs/BuckParts-WEDGE-COMPLETION-STANDARD-DESIGN.md",
+      generated_at: "2026-06-27T12:00:00.000Z",
+      wedge: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+      overall_status: "WEDGE_INCOMPLETE",
+      blocking_dimensions: ["coverage", "measurement"],
+      blocking_criteria: [],
+      recommended_next_action: "test",
+      proven_facts: [],
+      unknown_facts: [],
+      dimensions: [
+        {
+          dimension_id: "coverage",
+          label: "Coverage",
+          status: "FAIL",
+          metrics: {},
+          criteria: [
+            {
+              criterion_id: "C3",
+              label: "All mapped filters have proven safe buyer paths",
+              status: "FAIL",
+              pass_condition_summary: "test",
+              evidence_paths: [],
+              blocking_evidence: ["buyer_path_truth_status=MIXED"],
+              metrics: { buyer_path_truth_status: "MIXED" },
+              source_contracts: [],
+            },
+          ],
+        },
+        {
+          dimension_id: "customer_experience",
+          label: "CX",
+          status: "PASS",
+          metrics: {},
+          criteria: [],
+        },
+        {
+          dimension_id: "distribution",
+          label: "Distribution",
+          status: "PASS",
+          metrics: {},
+          criteria: [],
+        },
+        {
+          dimension_id: "measurement",
+          label: "Measurement",
+          status: "FAIL",
+          metrics: {},
+          criteria: [
+            {
+              criterion_id: "M1",
+              label: "M1",
+              status: "FAIL",
+              pass_condition_summary: "test",
+              evidence_paths: [],
+              blocking_evidence: ["insufficient snapshot series"],
+              metrics: { snapshot_count: 7 },
+              source_contracts: [],
+            },
+            {
+              criterion_id: "M5",
+              label: "M5",
+              status: "FAIL",
+              pass_condition_summary: "test",
+              evidence_paths: [],
+              blocking_evidence: ["insufficient snapshot series"],
+              metrics: { snapshot_count: 7 },
+              source_contracts: [],
+            },
+          ],
+        },
+      ],
+    };
+
+    const report = buildWedgeCompletionDirectorFromEvaluatorReportV1({
+      report: mockEvaluator,
+      rootDir: REPO_ROOT,
+      skipSprint: true,
+    });
+
+    assert.equal(report.recommended_next_action.action_id, "coverage_production_mission_c3_v1");
+    assert.equal(report.recommended_next_action.action_temporality, "IMMEDIATE_SESSION_PASS_ELIGIBLE");
+
+    const metrics = report.ranked_action_candidates.find(
+      (c) => c.action_id === "operations_metrics_snapshot_series_m1_m5_v1",
+    );
+    assert.ok(metrics);
+    assert.equal(metrics.action_temporality, "RECORD_NOW_WAIT_REQUIRED");
+    assert.ok(metrics.rank > 1);
+  });
+
+  test("live refrigerator_water recommends coverage mission over metrics snapshot", async () => {
     const report = await buildWedgeCompletionDirectorReportV1({
       rootDir: REPO_ROOT,
       skipSearchIntent: true,
     });
     if (report.overall_status !== "WEDGE_INCOMPLETE") return;
     const failIds = report.blocking_criteria_fail.map((c) => c.criterion_id);
+    if (failIds.includes("C3") && failIds.includes("M1") && failIds.includes("M5")) {
+      assert.equal(
+        report.recommended_next_action.action_id,
+        "coverage_production_mission_c3_v1",
+      );
+      assert.equal(
+        report.recommended_next_action.action_temporality,
+        "IMMEDIATE_SESSION_PASS_ELIGIBLE",
+      );
+      const c3Rank = report.ranked_action_candidates.find(
+        (c) => c.action_id === "coverage_production_mission_c3_v1",
+      )?.rank;
+      const metricsRank = report.ranked_action_candidates.find(
+        (c) => c.action_id === "operations_metrics_snapshot_series_m1_m5_v1",
+      )?.rank;
+      assert.ok(c3Rank === 1);
+      assert.ok(metricsRank != null && metricsRank > 1);
+      assert.equal(
+        report.ranked_action_candidates.find((c) => c.action_id === "operations_metrics_snapshot_series_m1_m5_v1")
+          ?.action_temporality,
+        "RECORD_NOW_WAIT_REQUIRED",
+      );
+    }
     if (failIds.includes("E3") && failIds.includes("D2") && failIds.includes("C3")) {
       assert.equal(
         report.recommended_next_action.action_id,

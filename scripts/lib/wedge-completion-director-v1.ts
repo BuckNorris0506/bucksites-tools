@@ -56,6 +56,11 @@ export type WedgeCompletionDirectorActionIdV1 =
   | "operations_metrics_snapshot_series_m1_m5_v1"
   | "wedge_complete_no_action_v1";
 
+export type WedgeCompletionDirectorActionTemporalityV1 =
+  | "IMMEDIATE_SESSION_PASS_ELIGIBLE"
+  | "RECORD_NOW_WAIT_REQUIRED"
+  | "BLOCKED_OR_UNKNOWN";
+
 export type WedgeCompletionDirectorRankedCandidateV1 = {
   action_id: WedgeCompletionDirectorActionIdV1;
   rank: number;
@@ -69,7 +74,9 @@ export type WedgeCompletionDirectorRankedCandidateV1 = {
   report_script: string;
   artifact_rel_paths: string[];
   commands: string[];
+  /** @deprecated Prefer action_temporality for ranking; kept for inspect parity. */
   immediate_session_pass_eligible: boolean;
+  action_temporality: WedgeCompletionDirectorActionTemporalityV1;
   tie_break_notes: string[];
 };
 
@@ -106,6 +113,16 @@ export type WedgeCompletionDirectorReportV1 = {
 };
 
 const FRIDGE_FILTER_CSV = "data/filters.csv" as const;
+
+const ACTION_TEMPORALITY_RANK_V1: Record<WedgeCompletionDirectorActionTemporalityV1, number> = {
+  IMMEDIATE_SESSION_PASS_ELIGIBLE: 0,
+  RECORD_NOW_WAIT_REQUIRED: 1,
+  BLOCKED_OR_UNKNOWN: 2,
+};
+
+function temporalityRank(temporality: WedgeCompletionDirectorActionTemporalityV1): number {
+  return ACTION_TEMPORALITY_RANK_V1[temporality];
+}
 
 function loadFridgeCsvSlugs(rootDir: string): Set<string> {
   const abs = path.join(rootDir, FRIDGE_FILTER_CSV);
@@ -232,7 +249,8 @@ function buildReferenceabilityCandidate(args: {
       "data/filters.csv",
     ],
     commands: [REFERENCEABILITY_FACTORY_SOURCE_COMMAND_V1],
-    immediate_session_pass_eligible: false,
+    immediate_session_pass_eligible: true,
+    action_temporality: "IMMEDIATE_SESSION_PASS_ELIGIBLE",
     tie_break_notes: [
       "Addresses the most simultaneous FAIL criteria (E3 + D2) among executable repo factories per WEDGE-COMPLETION-STANDARD-DESIGN §3–§4.",
       "D3 already PASS — referenceability debt is the remaining distribution blocker besides D4 UNKNOWN.",
@@ -287,15 +305,16 @@ function buildCoverageMissionCandidate(args: {
     unknown_criteria_addressed_count: 0,
     dimensions_touched: ["coverage"],
     expected_completion_impact:
-      `Successful production mission can flip C3 PASS when buyer_path_truth_status reaches PROVEN_SAFE_ROWS_EXIST (now ${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}). C4 already PASS — reuse production_mission_v1 loop.`,
+      `Production mission can flip C3 PASS when every compat-mapped filter has a proven safe buyer path (buyer_path_truth_status PROVEN_SAFE_ROWS_EXIST — now ${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}; MIXED means some mapped filters still lack safe gated buy paths). C4 already PASS — reuse production_mission_v1 loop.`,
     factory_or_mission: "coverage_production_sprint_v2_v1 + production_mission_v1",
     report_script: "scripts/report-coverage-production-sprint-v2.ts",
     artifact_rel_paths: artifactPaths,
     commands,
     immediate_session_pass_eligible: true,
+    action_temporality: "IMMEDIATE_SESSION_PASS_ELIGIBLE",
     tie_break_notes: [
-      "Evaluator first-blocker traversal picks C3 first (coverage dimension order).",
-      "PROVEN lifecycle a6b27301-e040-4405-b613-5adcb6c99bb6 demonstrates one-session C3 progress path.",
+      "C3 requires uniform buyer-path truth on all compat-mapped filters — not merely >=1 proven slug (coverage dimension order).",
+      "PROVEN lifecycle a6b27301-e040-4405-b613-5adcb6c99bb6 demonstrates production-mission progress toward clearing zero-safe mapped filters.",
       topBatch
         ? `Top fridge batch ${topBatch.batch_id} expected_safe_buyer_path_proven_delta=${String(topBatch.expected_safe_buyer_path_proven_delta)} executability=${topBatch.executability}.`
         : "No sprint batch loaded — commands omit batch dry-runs.",
@@ -323,6 +342,7 @@ function buildDailyOperatorCandidate(args: {
     artifact_rel_paths: ["scripts/report-buckparts-daily-operator.ts", "scripts/lib/live-site-smoke.ts"],
     commands: ["npm run buckparts:daily"],
     immediate_session_pass_eligible: true,
+    action_temporality: "IMMEDIATE_SESSION_PASS_ELIGIBLE",
     tie_break_notes: ["E3 still FAIL — clearing E4 alone does not pass customer_experience dimension."],
   };
 }
@@ -334,7 +354,12 @@ function buildSearchIntentCandidate(args: {
   if (d4Status !== "UNKNOWN" && d4Status !== "FAIL") return null;
 
   const d4 = criterionById(args.report, "D4");
-  const moduleMissing = (d4?.blocking_evidence ?? []).some((e) => e.includes("Cannot find module"));
+  const moduleMissing = (d4?.blocking_evidence ?? []).some(
+    (e) => e.includes("Cannot find module") || e.includes("MODULE_MISSING"),
+  );
+  const temporality: WedgeCompletionDirectorActionTemporalityV1 = moduleMissing
+    ? "BLOCKED_OR_UNKNOWN"
+    : "IMMEDIATE_SESSION_PASS_ELIGIBLE";
   const commands = ["npm run buckparts:search-intent-factory:proof-experiment"];
 
   return {
@@ -352,7 +377,8 @@ function buildSearchIntentCandidate(args: {
     report_script: "scripts/report-buckparts-search-intent-factory-proof-experiment-v1.ts",
     artifact_rel_paths: ["scripts/lib/buckparts-search-intent-factory-proof-experiment-v1.ts"],
     commands,
-    immediate_session_pass_eligible: !moduleMissing,
+    immediate_session_pass_eligible: temporality === "IMMEDIATE_SESSION_PASS_ELIGIBLE",
+    action_temporality: temporality,
     tie_break_notes: moduleMissing
       ? ["Repo truth: D4 command fails today — ranked below executable factories."]
       : [],
@@ -378,14 +404,16 @@ function buildOperationsMetricsCandidate(args: {
     unknown_criteria_addressed_count: 0,
     dimensions_touched: ["measurement"],
     expected_completion_impact:
-      `Records another ops-metrics snapshot (now snapshot_count=${String(snapshotCount)}). M1/M5 require >=2 snapshots separated by >=24h per evaluator — one command cannot PASS both in the same session.`,
+      `Housekeeping: record another ops-metrics snapshot (now snapshot_count=${String(snapshotCount)}). M1/M5 require >=2 snapshots separated by >=24h — this cannot PASS either criterion in the current session; run after higher-priority immediate actions.`,
     factory_or_mission: "operations_metrics_v1",
     report_script: "scripts/report-buckparts-operations-metrics-v1.ts",
     artifact_rel_paths: ["data/command-center/operations-metrics/history-v1.jsonl"],
     commands: [`${BUCKPARTS_OPERATIONS_METRICS_SOURCE_COMMAND_V1} -- --record-snapshot`],
     immediate_session_pass_eligible: false,
+    action_temporality: "RECORD_NOW_WAIT_REQUIRED",
     tie_break_notes: [
-      "Ties referenceability on FAIL count (2) but time-gated — cannot flip M1/M5 PASS until >=24h elapses between snapshots.",
+      "Addresses M1 + M5 FAIL on paper (2 criteria) but time-gated — ranked below any IMMEDIATE_SESSION_PASS_ELIGIBLE action.",
+      "Record snapshot as housekeeping once immediate wedge blockers are in flight.",
     ],
   };
 }
@@ -409,6 +437,7 @@ function buildCompleteCandidate(args: {
     artifact_rel_paths: [WEDGE_COMPLETION_STANDARD_DESIGN_DOC_V1],
     commands: [WEDGE_COMPLETION_EVALUATOR_SOURCE_COMMAND_V1],
     immediate_session_pass_eligible: true,
+    action_temporality: "IMMEDIATE_SESSION_PASS_ELIGIBLE",
     tie_break_notes: [],
   };
 }
@@ -417,6 +446,11 @@ function compareCandidates(
   a: WedgeCompletionDirectorRankedCandidateV1,
   b: WedgeCompletionDirectorRankedCandidateV1,
 ): number {
+  const temporalityA = temporalityRank(a.action_temporality);
+  const temporalityB = temporalityRank(b.action_temporality);
+  if (temporalityA !== temporalityB) {
+    return temporalityA - temporalityB;
+  }
   if (b.fail_criteria_addressed_count !== a.fail_criteria_addressed_count) {
     return b.fail_criteria_addressed_count - a.fail_criteria_addressed_count;
   }
@@ -454,7 +488,11 @@ function buildWhyThisAction(args: {
   const runnerUp = args.ranked.find((c) => c.rank === 2);
   if (runnerUp && runnerUp.fail_criteria_addressed_count === args.winner.fail_criteria_addressed_count) {
     lines.push(
-      `TIE-BREAK: ${args.winner.action_id} beats ${runnerUp.action_id} — immediate_session_pass_eligible=${String(args.winner.immediate_session_pass_eligible)} vs ${String(runnerUp.immediate_session_pass_eligible)}; dimensions_touched=${String(args.winner.dimensions_touched.length)} vs ${String(runnerUp.dimensions_touched.length)}.`,
+      `TIE-BREAK: ${args.winner.action_id} beats ${runnerUp.action_id} — action_temporality=${args.winner.action_temporality} vs ${runnerUp.action_temporality}; dimensions_touched=${String(args.winner.dimensions_touched.length)} vs ${String(runnerUp.dimensions_touched.length)}.`,
+    );
+  } else if (runnerUp && temporalityRank(args.winner.action_temporality) !== temporalityRank(runnerUp.action_temporality)) {
+    lines.push(
+      `TIE-BREAK: ${args.winner.action_id} beats ${runnerUp.action_id} — action_temporality=${args.winner.action_temporality} before ${runnerUp.action_temporality} (immediate session work outranks time-gated housekeeping).`,
     );
   } else if (runnerUp) {
     lines.push(
@@ -470,6 +508,9 @@ function buildTieBreakReason(
   runnerUp: WedgeCompletionDirectorRankedCandidateV1 | undefined,
 ): string | null {
   if (!runnerUp) return null;
+  if (temporalityRank(winner.action_temporality) !== temporalityRank(runnerUp.action_temporality)) {
+    return `Prefer action_temporality=${winner.action_temporality} over ${runnerUp.action_temporality} (${runnerUp.action_id} is time-gated or blocked for this session).`;
+  }
   if (winner.fail_criteria_addressed_count !== runnerUp.fail_criteria_addressed_count) {
     return `Higher fail_criteria_addressed_count (${String(winner.fail_criteria_addressed_count)} vs ${String(runnerUp.fail_criteria_addressed_count)}).`;
   }
@@ -533,6 +574,7 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
     artifact_rel_paths: winner.artifact_rel_paths,
     commands: winner.commands,
     immediate_session_pass_eligible: winner.immediate_session_pass_eligible,
+    action_temporality: winner.action_temporality,
     tie_break_reason: buildTieBreakReason(winner, runnerUp),
     top_blocking_slug: topBlock.slug,
     top_blocking_summary: topBlock.summary,
@@ -611,6 +653,7 @@ export function buildWedgeCompletionDirectorReportUnknownV1(args: {
     artifact_rel_paths: [],
     commands: [],
     immediate_session_pass_eligible: false,
+    action_temporality: "BLOCKED_OR_UNKNOWN",
     tie_break_reason: null,
     top_blocking_slug: null,
     top_blocking_summary: null,

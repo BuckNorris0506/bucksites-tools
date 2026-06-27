@@ -298,14 +298,15 @@ function evaluateCoverageDimension(args: {
   criteria.push(
     criterion({
       criterion_id: "C3",
-      label: "Proven buyer paths exist",
+      label: "All mapped filters have proven safe buyer paths",
       status:
         !summary || !args.readiness
           ? "UNKNOWN"
           : c3Pass
             ? "PASS"
             : "FAIL",
-      pass_condition_summary: "safe_buyer_path_proven_count >= 1 and buyer_path_truth_status PROVEN_SAFE_ROWS_EXIST",
+      pass_condition_summary:
+        "buyer_path_truth_status === PROVEN_SAFE_ROWS_EXIST (no MIXED or ZERO_SAFE mapped filters) and safe_buyer_path_proven_count >= 1",
       evidence_paths: ["scripts/lib/all-product-safe-buyer-path-census-v1.ts"],
       blocking_evidence: c3Pass
         ? []
