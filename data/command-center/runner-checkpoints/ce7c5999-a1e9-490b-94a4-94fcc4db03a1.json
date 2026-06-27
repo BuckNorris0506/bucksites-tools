@@ -1,0 +1,21 @@
+{
+  "contract": "buckparts_runner_checkpoint_v1",
+  "run_id": "ce7c5999-a1e9-490b-94a4-94fcc4db03a1",
+  "mission_id": "coverage_sprint_v1",
+  "started_at": "2026-06-27T06:51:20.852Z",
+  "updated_at": "2026-06-27T06:57:27.714Z",
+  "completed_step_ids": [
+    "demand_to_coverage",
+    "safe_buyer_path_census",
+    "rescue_readiness_gate",
+    "fridge_supabase_csv_diff",
+    "lifecycle_guarded_apply_dry_run",
+    "validation_lint",
+    "validation_build",
+    "validation_tests",
+    "deploy_classifier",
+    "security_gate"
+  ],
+  "last_halt_reason": null,
+  "last_halt_step_id": null
+}

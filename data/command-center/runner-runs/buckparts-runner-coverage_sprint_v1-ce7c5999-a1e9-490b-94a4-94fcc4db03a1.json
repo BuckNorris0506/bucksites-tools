@@ -1,0 +1,211 @@
+{
+  "contract": "buckparts_runner_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "recommended_jq_path": ".command_center_v2.buckparts_runner_v1",
+  "source_command": "npm run buckparts:runner",
+  "generated_at": "2026-06-27T06:57:27.714Z",
+  "run_id": "ce7c5999-a1e9-490b-94a4-94fcc4db03a1",
+  "mission_id": "coverage_sprint_v1",
+  "mission_title": "Coverage Sprint",
+  "resumed_from_checkpoint": true,
+  "overall_status": "RESUMED_COMPLETE",
+  "layer_truth": {
+    "layer_3_repo_owned_execution": "PROVEN",
+    "layer_3_external_agent_execution": "UNKNOWN",
+    "layer_4_output_capture": "PROVEN_FOR_REPO_COMMANDS_ONLY",
+    "layer_5_validation_interpretation": "PARTIAL",
+    "layer_6_founder_only_approval": "NOT_PROVEN"
+  },
+  "steps": [
+    {
+      "step_id": "demand_to_coverage",
+      "title": "Demand-to-coverage next lane",
+      "kind": "tsx_report",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "node --import tsx scripts/report-buckparts-demand-to-coverage-next-lane.ts",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "safe_buyer_path_census",
+      "title": "All-product SAFE_BUYER_PATH census",
+      "kind": "tsx_report",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "node --import tsx scripts/report-all-product-safe-buyer-path-census-v1.ts",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "rescue_readiness_gate",
+      "title": "Manufacturer safe-link rescue readiness gate",
+      "kind": "tsx_report",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "node --import tsx scripts/report-manufacturer-safe-link-rescue-readiness-gate-v1.ts",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "fridge_supabase_csv_diff",
+      "title": "Fridge Supabase vs CSV retailer_links diff",
+      "kind": "tsx_report",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "node --import tsx scripts/report-fridge-supabase-vs-csv-retailer-links-diff-v1.ts",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "lifecycle_guarded_apply_dry_run",
+      "title": "Universal batch lifecycle guarded CSV apply (dry-run)",
+      "kind": "tsx_report",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "node --import tsx scripts/report-universal-batch-lifecycle-guarded-csv-apply-executor-v1.ts",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "validation_lint",
+      "title": "Validation — lint",
+      "kind": "npm_run",
+      "status": "SKIPPED",
+      "exit_code": null,
+      "duration_ms": 0,
+      "command_display": "npm run lint",
+      "stdout_excerpt": "",
+      "stderr_excerpt": "PROVEN SKIPPED: step already completed in checkpoint.",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "validation_build",
+      "title": "Validation — build",
+      "kind": "npm_run",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 75486,
+      "command_display": "npm run build",
+      "stdout_excerpt": "\n> bucksites-tools@0.1.0 build\n> next build\n\n  ▲ Next.js 14.2.35\n  - Environments: .env.local\n  - Experiments (use with caution):\n    · instrumentationHook\n\n   Creating an optimized production build ...\n ✓ Compiled successfully\n   Linting and checking validity of types ...\n   Collecting page data ...\n   Generating static pages (0/30) ...\n   Generating static pages (7/30) \n   Generating static pages (14/30) \n   Generating static pages (22/30) \n ✓ Generating static pages (30/30)\n   Finalizing page optimization ...\n   Collecting build traces ...\n\nRoute (app)                                     Size     First Load JS\n┌ ƒ /                                           2.13 kB        98.9 kB\n├ ○ /_not-found                                 339 B          88.2 kB\n├ ○ /about                                      416 B          97.2 kB\n├ ƒ /air-purifier                               1.39 kB        98.1 kB\n├ ƒ /air-purifier/brand/[slug]                  416 B          97.2 kB\n├ ƒ /air-purifier/filter/[slug]                 416 B          97.2 kB\n├ ƒ /air-purifier/go/[linkId]                   0 B                0 B\n├ ƒ /air-purifier/model/[slug]                  1.92 kB        98.6 kB\n├ ƒ /air-purifier/search                        1.39 kB        98.1 kB\n├ ƒ /api/search                                 0 B                0 B\n├ ○ /apple-icon.png                             0 B                0 B\n├ ƒ /appliance-air                              1.4 kB         98.1 kB\n├ ƒ /appliance-air/brand/[slug]                 417 B          97.2 kB\n├ ƒ /appliance-air/filter/[slug]                416 B          97.2 kB\n├ ƒ /appliance-air/go/[linkId]                  0 B                0 B\n├ ƒ /appliance-air/model/[slug]                 1.93 kB        98.7 kB\n├ ƒ /appliance-air/search                       1.4 kB         98.1 kB\n├ ƒ /brand/[slug]                               415 B          97.1 kB\n├ ƒ /catalog                                    804 B          97.5 kB\n├ ○ /disclosure                                 416 B          97.2 kB\n├ ƒ /filter/[slug]                              962 B          97.7 kB\n├ ƒ /fridge/[slug]                              963 B          97.7 kB\n├ ○ /go-unavailable                             416 B          97.2 kB\n├ ƒ /go/[linkId]                                0 B                0 B\n├ ƒ /help                                       416 B          97.2 kB\n├ ƒ /help/[slug]                                339 B          88.2 kB\n├ ƒ /help/reset-water-filter-light/[brandSlug]  416 B          97.2 kB\n├ ƒ /humidifier                                 1.4 kB         98.1 kB\n├ ƒ /humidifier/brand/[slug]                    416 B          97.2 kB\n├ ƒ /humidifier/filter/[slug]                   417 B          97.2 kB\n├ ƒ /humidifier/go/[linkId]                     0 B                0 B\n├ ƒ /humidifier/model/[slug]                    1.93 kB        98.7 kB\n├ ƒ /humidifier/search                          1.4 kB         98.1 kB\n├ ○ /icon.png                                   0 B                0 B\n├ ○ /opengraph-image.png                        0 B                0 B\n├ ƒ /ownerdashboard/[secret]                    338 B          88.2 kB\n├ ○ /privacy                                    416 B          97.2 kB\n├ ○ /robots.txt                                 0 B                0 B\n├ ƒ /search                                     2.13 kB        98.9 kB\n├ ƒ /sitemap.xml                                0 B                0 B\n├ ○ /terms                                      416 B          97.2 kB\n├ ○ /truth-policy                               416 B          97.2 kB\n├ ○ /twitter-image.png                          0 B                0 B\n├ ƒ /vacuum                                     1.4 kB         98.1 kB\n├ ƒ /vacuum/brand/[slug]                        416 B          97.2 kB\n├ ƒ /vacuum/filter/[slug]                       415 B          97.1 kB\n├ ƒ /vacuum/go/[linkId]                         0 B                0 B\n├ ƒ /vacuum/model/[slug]                        1.93 kB        98.7 kB\n├ ƒ /vacuum/search                              1.39 kB        98.1 kB\n├ ƒ /whole-house-water                          1.4 kB         98.1 kB\n├ ƒ /whole-house-water/brand/[slug]             416 B          97.2 kB\n├ ƒ /whole-house-water/filter/[slug]            417 B          97.2 kB\n├ ƒ /whole-house-water/go/[linkId]              0 B                0 B\n├ ƒ /whole-house-water/model/[slug]             1.92 kB        98.7 kB\n├ ƒ /whole-house-water/search                   1.4 kB         98.1 kB\n└ ○ /wrong-part-prevention                      416 B          97.2 kB\n+ First Load JS shared by all                   87.9 kB\n  ├ chunks/2117-274ef889434396a0.js             31.9 kB\n  ├ chunks/fd9d1056-6ca4eddc456eacfe.js         53.8 kB\n  └ other shared chunks (total)                 2.22 kB\n\n\n○  (Static)   prerendered as static content\nƒ  (Dynamic)  server-rendered on demand",
+      "stderr_excerpt": "",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "validation_tests",
+      "title": "Validation — targeted runner/census tests",
+      "kind": "tsx_report",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 183,
+      "command_display": "node --import tsx --test scripts/lib/buckparts-runner-v1.test.ts scripts/lib/all-product-safe-buyer-path-census-v1.test.ts",
+      "stdout_excerpt": "✔ census contract and read-only flags (17.021625ms)\n✔ census includes refrigerator and air purifier committed inventory (6.96675ms)\n✔ sample-csv wedges excluded from product rows (4.623042ms)\n✔ whole-house-water products labeled NOINDEX_UNPROVEN (4.454333ms)\n✔ top rescue queue only includes suppressed or noindex products (4.80375ms)\n✔ census does not mutate protected CSV paths (4.262167ms)\n✔ Command Center wiring includes census lane import (1.014959ms)\n✔ package script exists for standalone census (0.163667ms)\n✔ all mission definitions validate (0.399292ms)\n✔ rejects forbidden mutation argv patterns (0.075458ms)\n✔ evaluateStepHaltV1 halts on supabase csv parity gap (0.091959ms)\n✔ evaluateStepHaltV1 halts on readiness gate blocked executor (0.044458ms)\n✔ runBuckpartsRunnerV1 continues validation after analysis halt (1.01175ms)\n✔ resume command format (0.069417ms)\n✔ evidence sprint halts at hyperagent coordination (0.114667ms)\n✔ failed validation step yields FAILED overall status (0.10075ms)\nℹ tests 16\nℹ suites 0\nℹ pass 16\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 155.815625",
+      "stderr_excerpt": "",
+      "parsed_json_summary": null,
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "deploy_classifier",
+      "title": "Deploy classifier (working tree)",
+      "kind": "tsx_report",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 107,
+      "command_display": "node --import tsx scripts/report-buckparts-deploy-classifier-v1.ts -- --working-tree",
+      "stdout_excerpt": "{\n  \"contract\": \"buckparts_deploy_batching_policy_v1\",\n  \"read_only\": true,\n  \"data_mutation\": false,\n  \"mutation_authorized\": false,\n  \"netlify_api_authorized\": false,\n  \"deploy_authorized\": false,\n  \"generated_at\": \"2026-06-27T06:57:24.548Z\",\n  \"source_command\": \"npm run buckparts:deploy-classifier\",\n  \"scope\": \"working-tree\",\n  \"scope_range\": \"working-tree\",\n  \"changed_files\": [\n    \"data/command-center/execution-ledger-v1.json\",\n    \"data/command-center/runner-checkpoints/ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json\",\n    \"data/command-center/runner-runs/buckparts-runner-coverage_sprint_v1-ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json\",\n    \"data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json\",\n    \"data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-work-queue-v1.md\",\n    \"scripts/lib/buckparts-command-center-v2.ts\"\n  ],\n  \"per_path\": [\n    {\n      \"path\": \"data/command-center/execution-ledger-v1.json\",\n      \"rule_id\": \"execution_ledger_artifact\",\n      \"classification\": \"DEPLOY_OPTIONAL\",\n      \"notes\": \"Execution ledger read-model index\"\n    },\n    {\n      \"path\": \"data/command-center/runner-checkpoints/ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json\",\n      \"rule_id\": \"command_center_internal\",\n      \"classification\": \"DEPLOY_OPTIONAL\",\n      \"notes\": \"Internal Command Center artifact\"\n    },\n    {\n      \"path\": \"data/command-center/runner-runs/buckparts-runner-coverage_sprint_v1-ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json\",\n      \"rule_id\": \"command_center_internal\",\n      \"classification\": \"DEPLOY_OPTIONAL\",\n      \"notes\": \"Internal Command Center artifact\"\n    },\n    {\n      \"path\": \"data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json\",\n      \"rule_id\": \"draft_batch_production\",\n      \"classification\": \"NO_DEPLOY_NEEDED\",\n      \"notes\": \"Read-only batch-production draft artifact\"\n    },\n    {\n      \"path\": \"data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-work-queue-v1.md\",\n      \"rule_id\": \"draft_batch_production\",\n      \"classification\": \"NO_DEPLOY_NEEDED\",\n      \"notes\": \"Read-only batch-production draft artifact\"\n    },\n    {\n      \"path\": \"scripts/lib/buckparts-command-center-v2.ts\",\n      \"rule_id\": \"scripts_only\",\n      \"classification\": \"NO_DEPLOY_NEEDED\",\n      \"notes\": \"CLI/lib script — not Next.js runtime import\"\n    }\n  ],\n  \"counts\": {\n    \"deploy_required\": 0,\n    \"deploy_optional\": 3,\n    \"no_deploy_needed\": 3,\n    \"unknown\": 0\n  },\n  \"aggregate_classification\": \"DEPLOY_OPTIONAL\",\n  \"operator_action\": \"PUSH_BATCH_LOCALLY\",\n  \"operator_summary\": \"BATCH LOCALLY (deploy optional) — 6 changed file(s); safe to push and batch deploy later (DEPLOY_OPTIONAL).\",\n  \"proven_facts\": [\n    \"PROVEN: deploy batching policy v1 is read-only — no Netlify API, no production mutation.\",\n    \"PROVEN: classified 6 path(s) with scope=working-tree.\",\n    \"PROVEN: aggregate=DEPLOY_OPTIONAL; operator_action=PUSH_BATCH_LOCALLY.\"\n  ],\n  \"unknown_facts\": [],\n  \"recommended_next_action\": \"Push now if desired; batch Netlify deploy with the next runtime change or deploy at operator discretion.\"\n}",
+      "stderr_excerpt": "BATCH LOCALLY (deploy optional) — 6 changed file(s); safe to push and batch deploy later (DEPLOY_OPTIONAL).\nrecommended_next_action: Push now if desired; batch Netlify deploy with the next runtime change or deploy at operator discretion.",
+      "parsed_json_summary": {
+        "contract": "buckparts_deploy_batching_policy_v1",
+        "mutation_authorized": false,
+        "aggregate_classification": "DEPLOY_OPTIONAL"
+      },
+      "halt_reason": null,
+      "halt_detail": null
+    },
+    {
+      "step_id": "security_gate",
+      "title": "BuckParts security gate",
+      "kind": "tsx_report",
+      "status": "PASS",
+      "exit_code": 0,
+      "duration_ms": 3161,
+      "command_display": "node --import tsx scripts/report-buckparts-security-gate-v1.ts",
+      "stdout_excerpt": "h\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool manufacturer_rescue_runner_board annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool manufacturer_rescue_slug_state annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool manufacturer_rescue_blockers annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool command_center_summary annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool next_best_action annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool work_queue annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool lane_status annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool business_snapshot annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool execution_history annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool last_completed_capability annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool capability_timeline annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool capability_lookup annotations=READ_ONLY_ANNOTATIONS\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"mcp/buckparts-truth/server.ts\",\n          \"detail\": \"tool execution_ledger_status annotations=READ_ONLY_ANNOTATIONS\"\n        }\n      ],\n      \"notes\": \"25 MCP tool registration(s) use read-only annotations.\",\n      \"remediation_hint\": \"Set READ_ONLY_ANNOTATIONS on every buckparts-truth MCP tool.\"\n    },\n    {\n      \"check_id\": \"mcp_mutation_tool_present\",\n      \"category\": \"mcp_boundaries\",\n      \"status\": \"PASS\",\n      \"severity\": \"critical\",\n      \"evaluation_layer\": \"repo_static\",\n      \"evidence\": [],\n      \"notes\": \"No MCP mutation tools detected in buckparts-truth server.\",\n      \"remediation_hint\": \"Remove or annotate mutation MCP tools; buckparts-truth must stay read-only.\"\n    },\n    {\n      \"check_id\": \"npm_audit_critical_high\",\n      \"category\": \"dependencies\",\n      \"status\": \"FAIL\",\n      \"severity\": \"high\",\n      \"evaluation_layer\": \"dependency\",\n      \"evidence\": [\n        {\n          \"kind\": \"command_output\",\n          \"ref\": \"npm audit --json\",\n          \"detail\": \"critical=0; high=6\"\n        }\n      ],\n      \"notes\": \"npm audit reports critical=0, high=6.\",\n      \"remediation_hint\": \"Review npm audit output; remediate in a dedicated dependency slice (gate does not auto-fix).\"\n    },\n    {\n      \"check_id\": \"netlify_build_enforce_chain\",\n      \"category\": \"deploy_safety\",\n      \"status\": \"PASS\",\n      \"severity\": \"high\",\n      \"evaluation_layer\": \"repo_static\",\n      \"evidence\": [\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"netlify.toml\",\n          \"detail\": \"convergence_check=true\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"netlify.toml\",\n          \"detail\": \"enforce_flag=true\"\n        },\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"netlify.toml\",\n          \"detail\": \"npm_run_build=true\"\n        }\n      ],\n      \"notes\": \"Netlify build runs repo-runtime-convergence:check --enforce before npm run build.\",\n      \"remediation_hint\": \"Keep buckparts:repo-runtime-convergence:check -- --enforce && npm run build in netlify.toml.\"\n    },\n    {\n      \"check_id\": \"ship_guard_available\",\n      \"category\": \"deploy_safety\",\n      \"status\": \"PASS\",\n      \"severity\": \"low\",\n      \"evaluation_layer\": \"repo_static\",\n      \"evidence\": [\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"package.json\",\n          \"detail\": \"npm run buckparts:ship-guard\"\n        }\n      ],\n      \"notes\": \"Ship guard CLI available (npm run buckparts:ship-guard).\",\n      \"remediation_hint\": \"Restore buckparts:ship-guard for pre-push protected-file checks.\"\n    },\n    {\n      \"check_id\": \"security_gate_in_build_chain\",\n      \"category\": \"deploy_safety\",\n      \"status\": \"WARN\",\n      \"severity\": \"low\",\n      \"evaluation_layer\": \"repo_static\",\n      \"evidence\": [\n        {\n          \"kind\": \"file_path\",\n          \"ref\": \"netlify.toml\",\n          \"detail\": \"not wired yet (slice 1)\"\n        }\n      ],\n      \"notes\": \"Security gate not yet wired into Netlify build/CI enforce chain (expected for slice 1).\",\n      \"remediation_hint\": \"Wire buckparts:security-gate --enforce into CI after slice 1 stabilizes.\"\n    }\n  ],\n  \"category_rollups\": {\n    \"secret_exposure\": {\n      \"pass\": 3,\n      \"warn\": 0,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"env_leakage\": {\n      \"pass\": 1,\n      \"warn\": 0,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"client_bundle\": {\n      \"pass\": 1,\n      \"warn\": 0,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"http_headers\": {\n      \"pass\": 0,\n      \"warn\": 1,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"rate_limiting\": {\n      \"pass\": 0,\n      \"warn\": 1,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"public_api\": {\n      \"pass\": 1,\n      \"warn\": 1,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"owner_dashboard\": {\n      \"pass\": 1,\n      \"warn\": 0,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"mcp_boundaries\": {\n      \"pass\": 2,\n      \"warn\": 0,\n      \"fail\": 0,\n      \"unknown\": 0\n    },\n    \"dependencies\": {\n      \"pass\": 0,\n      \"warn\": 0,\n      \"fail\": 1,\n      \"unknown\": 0\n    },\n    \"deploy_safety\": {\n      \"pass\": 2,\n      \"warn\": 1,\n      \"fail\": 0,\n      \"unknown\": 0\n    }\n  },\n  \"blockers\": [\n    \"npm_audit_critical_high:npm audit reports critical=0, high=6.\"\n  ],\n  \"warnings\": [\n    \"security_headers_repo_config:No security headers configuration found in next.config.mjs, netlify.toml, or middleware.\",\n    \"public_api_rate_limit:/api/search has no application-level rate limit (observation only).\",\n    \"api_error_leakage:Search API may return internal error messages in JSON 500 responses.\",\n    \"security_gate_in_build_chain:Security gate not yet wired into Netlify build/CI enforce chain (expected for slice 1).\"\n  ],\n  \"proven_facts\": [\n    \"buckparts_security_gate_v1 is read-only; no CSV, Supabase, SQL, or production mutation.\",\n    \"Evaluated 16 security checks across repo_static and dependency layers.\",\n    \"overall_status=WARN; safe_to_commit_verdict=SAFE_TO_COMMIT.\",\n    \"Tracked files scanned for secrets: 1389 text candidate(s).\",\n    \"Route inventory: 7 handler(s).\"\n  ],\n  \"unknown_facts\": [],\n  \"source_paths_read\": [\n    \".env.example\",\n    \".eslintrc.json\",\n    \".github/workflows/buckparts-daily-operator.yml\",\n    \".github/workflows/buckparts-founder-digest.yml\",\n    \".github/workflows/buckparts-runner-step.yml\",\n    \".gitignore\",\n    \"README.md\",\n    \"audit-exports/README.md\",\n    \"audit-exports/buckparts-audit-2-business-report.md\",\n    \"audit-exports/buckparts-audit-2-top-10-projects.csv\",\n    \"audit-exports/buckparts-audit-2-top-25-findings.csv\",\n    \"buckparts-favicon-48.jpeg\",\n    \"buckparts-icon-180.png\",\n    \"buckparts-icon-512.png\",\n    \"buckparts-social-card-1200x630.png\",\n    \"content/help/how-often-to-replace-refrigerator-water-filter.md\",\n    \"content/help/how-to-find-refrigerator-model-number.md\",\n    \"content/help/reset-water-filter-light-frigidaire.md\",\n    \"content/help/reset-water-filter-light-ge.md\",\n    \"content/help/reset-water-filter-light-lg.md\",\n    \"content/help/reset-water-filter-light-samsung.md\",\n    \"content/help/reset-water-filter-light-whirlpool.md\",\n    \"data/EXPECTED_HEADERS.txt\",\n    \"data/affiliate/affiliate-application-tracker.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v2/ap-amazon-secondary-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v2/ap-blueair-catalog-identity-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v2/ap-levoit-oem-discovery-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v2/ap-oem-search-placeholder-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v2/manifest.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v3/ap-blueair-catalog-identity-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v3/ap-levoit-oem-discovery-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v3/ap-oem-search-placeholder-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-batch-v3/manifest.json\",\n    \"data/air-purifier/batch-production/agent-packets-demand-selected-v1/ap-demand-selected-oem-search-placeholder-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets-demand-selected-v1/manifest.json\",\n    \"data/air-purifier/batch-production/agent-packets/ap-amazon-secondary-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets/ap-blueair-catalog-identity-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets/ap-levoit-oem-discovery-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets/ap-oem-search-placeholder-v1.json\",\n    \"data/air-purifier/batch-production/agent-packets/manifest.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v2/ap-blueair-catalog-identity-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v2/ap-levoit-oem-discovery-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v2/ap-medify-ma-series-cohort-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v2/ap-oem-search-placeholder-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v2/archive/ap-amazon-secondary-v1-medify-duplicates-archived.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v3/ap-blueair-catalog-identity-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v3/ap-levoit-oem-discovery-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-batch-v3/ap-oem-search-placeholder-v1.results.json\",\n    \"data/air-purifier/batch-production/agent-results-demand-selected-v1/ap-demand-selected-batch-run-v1-2026-06-23.hyperagent-chat-discovery-v1.json\",\n    \"data/air-purifier/batch-production/agent-results-model-first-v1/ap-model-first-alen-b75-mp-live-browser-v1.results.json\",\n    \"mcp/buckparts-truth/server.ts\",\n    \"netlify.toml\",\n    \"next.config.mjs\",\n    \"package.json\",\n    \"src/app/air-purifier/go/[linkId]/route.ts\",\n    \"src/app/api/search/route.ts\",\n    \"src/app/appliance-air/go/[linkId]/route.ts\",\n    \"src/app/go/[linkId]/route.ts\",\n    \"src/app/humidifier/go/[linkId]/route.ts\",\n    \"src/app/ownerdashboard/[secret]/page.tsx\",\n    \"src/app/vacuum/go/[linkId]/route.ts\",\n    \"src/app/whole-house-water/go/[linkId]/route.ts\"\n  ],\n  \"inspect_summary\": {\n    \"recommended_jq_paths\": {\n      \"standalone_report\": \".inspect_summary\",\n      \"command_center\": \".command_center_v2.buckparts_security_gate_v1\",\n      \"overall_status\": \".overall_status\",\n      \"safe_to_commit_verdict\": \".safe_to_commit_verdict\",\n      \"checks\": \".checks\",\n      \"blockers\": \".blockers\"\n    },\n    \"recommended_next_action\": \"Review WARN findings (headers, rate limits, API error leakage); hardening slices are separate from this gate.\"\n  }\n}",
+      "stderr_excerpt": "Wrote data/command-center/audits/buckparts-security-gate-v1.json and data/command-center/drafts/buckparts-security-gate-v1.md (read-only audit artifacts only).",
+      "parsed_json_summary": {
+        "contract": "buckparts_security_gate_v1",
+        "overall_status": "WARN",
+        "mutation_authorized": false,
+        "safe_to_commit_verdict": "SAFE_TO_COMMIT"
+      },
+      "halt_reason": null,
+      "halt_detail": null
+    }
+  ],
+  "completed_step_ids": [
+    "demand_to_coverage",
+    "safe_buyer_path_census",
+    "rescue_readiness_gate",
+    "fridge_supabase_csv_diff",
+    "lifecycle_guarded_apply_dry_run",
+    "validation_lint",
+    "validation_build",
+    "validation_tests",
+    "deploy_classifier",
+    "security_gate"
+  ],
+  "pending_step_ids": [],
+  "halt_reason": null,
+  "halt_step_id": null,
+  "halt_detail": null,
+  "validation_summary": {
+    "lint_pass": "SKIPPED",
+    "build_pass": true,
+    "tests_pass": true,
+    "deploy_classifier_ran": true,
+    "security_gate_ran": true
+  },
+  "artifact_rel_path": "data/command-center/runner-runs/buckparts-runner-coverage_sprint_v1-ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json",
+  "checkpoint_rel_path": "data/command-center/runner-checkpoints/ce7c5999-a1e9-490b-94a4-94fcc4db03a1.json",
+  "recommended_next_action": "PROVEN: Mission steps complete — review consolidated artifact; commit artifacts if SAFE_TO_COMMIT; deploy only when classifier says DEPLOY_REQUIRED.",
+  "resume_command": null,
+  "proven_facts": [
+    "PROVEN: Coverage sprint uses only read-only report scripts and validation npm targets.",
+    "PROVEN: Guarded CSV apply executor runs dry-run only — no --write-csv in mission definition.",
+    "PROVEN: BuckParts Runner v1 never passes --apply, --write-csv, or Supabase mutation flags.",
+    "PROVEN: mission=coverage_sprint_v1 run_id=ce7c5999-a1e9-490b-94a4-94fcc4db03a1 completed_steps=10/10."
+  ],
+  "inferred_facts": [
+    "INFERRED: Resumed run skipped idempotent completed steps from checkpoint."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Customer-visible coverage delta requires separate census diff — runner validates execution only."
+  ]
+}
