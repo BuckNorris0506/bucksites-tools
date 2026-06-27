@@ -1,0 +1,940 @@
+{
+  "contract": "frigidaire_refrigerator_rescue_adapter_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "generated_at": "2026-06-26T01:43:33.584Z",
+  "source_paths_read": [
+    "data/retailer_links.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-owner-review-v1.json"
+  ],
+  "manufacturer_pdp_pattern_status": "PROVEN_PARTIAL",
+  "cohort_summary": {
+    "frigidaire_rescue_search_placeholder_count": 10,
+    "repo_proven_official_pdp_slug_count": 3,
+    "in_fridge_rescue_queue_count": 10,
+    "confusion_family_review_slug_count": 8,
+    "adapter_ready_for_browser_capture_count": 3,
+    "pdp_pattern_guessed_slug_count": 0
+  },
+  "rows": [
+    {
+      "filter_slug": "eptwfu01",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "EPTWFU01",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 7,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=EPTWFU01",
+      "repo_proven_official_pdp_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+      "repo_proven_pdp_source": "owner_browser_proof_result",
+      "manufacturer_pdp_pattern_status": "PROVEN_PARTIAL",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "ULTRAWF",
+        "WF3CB"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "PASS",
+          "notes": "repo owner browser proof official URL: https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "per-slug URL proven from owner proof; manufacturer-wide inferrable pattern: PROVEN_PARTIAL"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token EPTWFU01 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "fppwfu01",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "FPPWFU01",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 9,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=FPPWFU01",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "FPPWFU02"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token FPPWFU01 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "frig-242017801",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "242017801",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 11,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242017801",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token 242017801 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "WAIVED",
+          "notes": "no confusion-family review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "frig-242086201",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "242086201",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 6,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242086201",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "EPTWFU01",
+        "ULTRAWF"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token 242086201 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "frig-242294502",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "242294502",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 12,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=242294502",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": false,
+      "wrong_family_forbidden_tokens": [],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token 242294502 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "WAIVED",
+          "notes": "no confusion-family review required"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "purepour",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "PPWFU01",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 13,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=PPWFU01",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "FPPWFU02"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token PPWFU01 not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "ultrawf",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "ULTRAWF",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 5,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=ULTRAWF",
+      "repo_proven_official_pdp_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "repo_proven_pdp_source": "owner_browser_proof_result",
+      "manufacturer_pdp_pattern_status": "PROVEN_PARTIAL",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "EPTWFU01"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "PASS",
+          "notes": "repo owner browser proof official URL: https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "per-slug URL proven from owner proof; manufacturer-wide inferrable pattern: PROVEN_PARTIAL"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token ULTRAWF not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "wf2cb",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "WF2CB",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 10,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=WF2CB",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token WF2CB not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "wf3cb",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "WF3CB",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 14,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=WF3CB",
+      "repo_proven_official_pdp_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "repo_proven_pdp_source": "owner_browser_proof_result",
+      "manufacturer_pdp_pattern_status": "PROVEN_PARTIAL",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [
+        "EPTWFU01",
+        "ULTRAWF"
+      ],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "PASS",
+          "notes": "repo owner browser proof official URL: https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "per-slug URL proven from owner proof; manufacturer-wide inferrable pattern: PROVEN_PARTIAL"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token WF3CB not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": true,
+      "owner_apply_lane_eligible": false
+    },
+    {
+      "filter_slug": "wfcb",
+      "brand_slug": "frigidaire",
+      "oem_part_token": "WFCB",
+      "in_fridge_rescue_queue": true,
+      "rescue_queue_rank": 15,
+      "csv_primary_is_search_placeholder": true,
+      "csv_browser_truth_classification": null,
+      "current_primary_affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=WFCB",
+      "repo_proven_official_pdp_url": null,
+      "repo_proven_pdp_source": null,
+      "manufacturer_pdp_pattern_status": "UNKNOWN",
+      "proposed_retailer_name": "Frigidaire",
+      "proposed_retailer_key": "oem-parts-catalog",
+      "proposed_customer_label": "BuckParts Verified Link",
+      "proposed_label_subtype": "official_manufacturer_official_frigidaire",
+      "confusion_family_review_required": true,
+      "wrong_family_forbidden_tokens": [],
+      "validation_gates": [
+        {
+          "gate_id": "frigidaire_search_placeholder_detected",
+          "status": "PASS",
+          "notes": "CSV primary row is Frigidaire catalogsearch placeholder"
+        },
+        {
+          "gate_id": "frigidaire_official_pdp_url_proven_in_repo",
+          "status": "UNKNOWN",
+          "notes": "no PASS owner browser proof official_manufacturer_pdp URL on disk for slug"
+        },
+        {
+          "gate_id": "frigidaire_pdp_pattern_not_guessed",
+          "status": "PASS",
+          "notes": "adapter does not infer Frigidaire PDP URLs without repo proof"
+        },
+        {
+          "gate_id": "final_url_direct_official_pdp",
+          "status": "WAIVED",
+          "notes": "final URL is not direct Frigidaire official PDP"
+        },
+        {
+          "gate_id": "exact_token_in_primary_slice",
+          "status": "WAIVED",
+          "notes": "exact token WFCB not proven in title/h1 primary slice"
+        },
+        {
+          "gate_id": "official_frigidaire_manufacturer_path",
+          "status": "WAIVED",
+          "notes": "official Frigidaire path not proven"
+        },
+        {
+          "gate_id": "direct_purchase_control_visible",
+          "status": "WAIVED",
+          "notes": "no Add to Cart / purchase control visible"
+        },
+        {
+          "gate_id": "page_not_search_or_catalog",
+          "status": "WAIVED",
+          "notes": "page not classified as search/catalog"
+        },
+        {
+          "gate_id": "page_not_blocked_or_error",
+          "status": "WAIVED",
+          "notes": "page not blocked/error"
+        },
+        {
+          "gate_id": "page_not_not_found",
+          "status": "WAIVED",
+          "notes": "page not 404/discontinued"
+        },
+        {
+          "gate_id": "wrong_family_token_not_detected",
+          "status": "WAIVED",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "gate_id": "browser_classification_direct_buyable",
+          "status": "WAIVED",
+          "notes": "classification: likely_valid"
+        },
+        {
+          "gate_id": "confusion_family_review_cleared",
+          "status": "UNKNOWN",
+          "notes": "Frigidaire confusion-family slug — owner compatibility review required before apply"
+        }
+      ],
+      "adapter_ready_for_browser_capture": false,
+      "owner_apply_lane_eligible": false
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: 10 Frigidaire filter slugs have committed frigidaire.com catalogsearch primary rows in data/retailer_links.csv.",
+    "PROVEN: 3 slugs have PASS owner browser proof official_manufacturer_pdp URLs on disk (wf3cb, eptwfu01, ultrawf).",
+    "PROVEN: Adapter does not infer Frigidaire PDP URLs — pdp_pattern_guessed_slug_count=0.",
+    "PROVEN: 10 Frigidaire rescue slugs appear in fridge-safe-link-rescue-owner-review missing_safe_link cohort."
+  ],
+  "inferred_facts": [
+    "INFERRED: Manufacturer-wide Frigidaire PDP URL pattern remains PROVEN_PARTIAL — two proven shapes (frigidaire.com accessory path, frigidaireapplianceparts.com PartDetail) but not inferrable for all cohort slugs.",
+    "INFERRED: Owner browser proof + confusion-family review required before any CSV apply."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Official Frigidaire PDP URLs for 7 cohort slugs without PASS owner browser proof on disk.",
+    "UNKNOWN: Live buyability until browser capture runs against repo-proven targets only.",
+    "UNKNOWN: Supabase parity state (out of scope for adapter v1)."
+  ]
+}

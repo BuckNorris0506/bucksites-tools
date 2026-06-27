@@ -1,0 +1,628 @@
+{
+  "contract": "manufacturer_rescue_throughput_analytics_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "generated_at": "2026-06-26T20:25:32.378Z",
+  "source_command": "npm run buckparts:manufacturer-rescue-throughput-analytics",
+  "artifact_intake": {
+    "orchestrator": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T17:49:52.361Z"
+    },
+    "director": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-director-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T17:49:52.913Z"
+    },
+    "browser_proof_factory": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T20:02:46.830Z"
+    },
+    "browser_proof_refresh_orchestrator": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T20:02:47.406Z"
+    },
+    "readiness_gate": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T17:49:53.454Z"
+    },
+    "runner": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T17:49:53.960Z"
+    },
+    "apply_plan_factory": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-factory-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T18:22:29.709Z"
+    },
+    "owner_approval_packet_factory": {
+      "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T19:18:34.418Z"
+    },
+    "execution_ledger": {
+      "artifact_rel": "data/command-center/execution-ledger-v1.json",
+      "status": "LOADED",
+      "generated_at": "2026-06-26T20:02:47.408Z"
+    }
+  },
+  "intake_complete": true,
+  "funnel_metrics": {
+    "stage_counts": {
+      "rescue_candidate": 1,
+      "browser_proof_capture_scheduled": 25,
+      "browser_proof_fresh_official_pass": 0,
+      "apply_plan_ready_for_owner_review": 0,
+      "owner_approval_packet_cohort": 0,
+      "readiness_gate_ready_for_apply": 0,
+      "runner_ready_for_apply": 0,
+      "applied_or_complete": 0
+    },
+    "stage_conversion_rates": {
+      "rescue_candidate": 26,
+      "browser_proof_capture_scheduled": 25,
+      "browser_proof_fresh_official_pass": 0,
+      "apply_plan_ready_for_owner_review": 0,
+      "owner_approval_packet_cohort": 0,
+      "readiness_gate_ready_for_apply": 0,
+      "runner_ready_for_apply": 0,
+      "applied_or_complete": 0
+    },
+    "rescue_candidate_count": 26,
+    "furthest_stage_reached": "browser_proof_capture_scheduled"
+  },
+  "stage_ages": [
+    {
+      "stage": "browser_proof_stale",
+      "slug_count": 6,
+      "average_age_days": 21,
+      "median_age_days": 21,
+      "notes": "Days since owner_proof_checked_at for STALE assessments in browser proof factory."
+    },
+    {
+      "stage": "browser_proof_capture_scheduled",
+      "slug_count": 25,
+      "average_age_days": 21,
+      "median_age_days": 21,
+      "notes": "19 slug(s) MISSING proof — age UNKNOWN (no checked_at)."
+    },
+    {
+      "stage": "browser_proof_fresh_official_pass",
+      "slug_count": 0,
+      "average_age_days": 21,
+      "median_age_days": 21,
+      "notes": "Guarded nominees pending refresh use stale proof ages as proxy; fresh PASS slugs use checked_at."
+    }
+  ],
+  "blocker_distribution": [
+    {
+      "blocker_reason": "browser_proof_missing_or_not_pass",
+      "slug_count": 20,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "fppwfu01",
+        "frig-242017801"
+      ],
+      "source_systems": [
+        "apply_plan_factory"
+      ]
+    },
+    {
+      "blocker_reason": "owner_apply_approval_missing",
+      "slug_count": 16,
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "gswf",
+        "gswf2"
+      ],
+      "source_systems": [
+        "readiness_gate",
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "csv_apply_not_authorized",
+      "slug_count": 10,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "supabase_mutation_not_authorized",
+      "slug_count": 10,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "browser_evidence_artifact_missing",
+      "slug_count": 9,
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "confusion_family_review_required",
+      "slug_count": 8,
+      "example_slugs": [
+        "eptwfu01",
+        "fppwfu01",
+        "frig-242086201",
+        "purepour",
+        "ultrawf"
+      ],
+      "source_systems": [
+        "readiness_gate",
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "exact_token_not_proven",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "live_browser_capture_unavailable_or_failed",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "mutation_authorized=false",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "repo_proven_official_pdp_url_missing",
+      "slug_count": 7,
+      "example_slugs": [
+        "fppwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "frig-242294502",
+        "purepour"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "verified_link_authorized=false",
+      "slug_count": 7,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "apply_plan_artifact_missing",
+      "slug_count": 6,
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "ultrawf",
+        "wf3cb"
+      ],
+      "source_systems": [
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "browser_proof_stale_or_invalid_timestamp",
+      "slug_count": 6,
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "ultrawf",
+        "wf3cb"
+      ],
+      "source_systems": [
+        "apply_plan_factory",
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "owner_apply_lane_eligible_false",
+      "slug_count": 6,
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "ultrawf",
+        "wf3cb"
+      ],
+      "source_systems": [
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "unresolved_orchestrator_or_director_blockers",
+      "slug_count": 6,
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "ultrawf",
+        "wf3cb"
+      ],
+      "source_systems": [
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "repo_proven_official_target_url_missing",
+      "slug_count": 5,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "ukf8001",
+        "w10413645a"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "supersession_review_required",
+      "slug_count": 3,
+      "example_slugs": [
+        "w10413645a",
+        "xwf",
+        "xwfe"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "known_broken_destination",
+      "slug_count": 1,
+      "example_slugs": [
+        "mwf"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    },
+    {
+      "blocker_reason": "repo_csv_already_applied_official_ge",
+      "slug_count": 1,
+      "example_slugs": [
+        "rpwfe"
+      ],
+      "source_systems": [
+        "runner"
+      ]
+    }
+  ],
+  "manufacturer_throughput": [
+    {
+      "manufacturer_key": "frigidaire",
+      "rescue_candidate_count": 10,
+      "capture_scheduled_count": 10,
+      "fresh_official_pass_count": 0,
+      "apply_plan_ready_count": 0,
+      "owner_approval_cohort_slug_count": 0,
+      "readiness_ready_for_apply_count": 0,
+      "runner_ready_for_apply_count": 0,
+      "runner_blocked_count": 6,
+      "dominant_runner_stage": "BROWSER_PROOF",
+      "dominant_bottleneck": "browser_proof_stale_or_invalid_timestamp"
+    },
+    {
+      "manufacturer_key": "ge_appliance_parts",
+      "rescue_candidate_count": 9,
+      "capture_scheduled_count": 8,
+      "fresh_official_pass_count": 0,
+      "apply_plan_ready_count": 0,
+      "owner_approval_cohort_slug_count": 0,
+      "readiness_ready_for_apply_count": 0,
+      "runner_ready_for_apply_count": 0,
+      "runner_blocked_count": 1,
+      "dominant_runner_stage": "BROWSER_PROOF",
+      "dominant_bottleneck": "UNKNOWN"
+    },
+    {
+      "manufacturer_key": "everydrop_whirlpool",
+      "rescue_candidate_count": 7,
+      "capture_scheduled_count": 7,
+      "fresh_official_pass_count": 0,
+      "apply_plan_ready_count": 0,
+      "owner_approval_cohort_slug_count": 0,
+      "readiness_ready_for_apply_count": 0,
+      "runner_ready_for_apply_count": 0,
+      "runner_blocked_count": 0,
+      "dominant_runner_stage": "BROWSER_PROOF",
+      "dominant_bottleneck": "browser_proof_stale_or_invalid_timestamp"
+    }
+  ],
+  "weekly_unlock_capacity_estimate": {
+    "estimated_slugs_per_week": "UNKNOWN",
+    "theoretical_ceiling_if_primary_bottleneck_cleared": 6,
+    "single_blocker_browser_proof_refresh_candidates": 0,
+    "readiness_ready_for_apply_count": 0,
+    "execution_ledger_manufacturer_rescue_entries_30d": 4,
+    "methodology": "Committed-artifact snapshot only. estimated_slugs_per_week remains UNKNOWN without proven historical apply throughput in execution ledger.",
+    "assumptions": [
+      "Theoretical ceiling counts readiness gate PENDING_BROWSER_REFRESH guarded nominees only.",
+      "Single-blocker candidates have exactly one blocking reason containing browser_proof."
+    ],
+    "unknown_gaps": [
+      "UNKNOWN: owner review throughput (slugs/week) — no committed velocity metric.",
+      "UNKNOWN: post-apply unlock rate — ledger indexes artifact generation not CSV apply outcomes."
+    ]
+  },
+  "top_bottleneck_ranking": [
+    {
+      "rank": 1,
+      "bottleneck_id": "blocker_browser_proof_missing_or_not_pass",
+      "slug_count": 20,
+      "dominant_blocker": "browser_proof_missing_or_not_pass",
+      "affected_manufacturers": [],
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "fppwfu01",
+        "frig-242017801"
+      ],
+      "leverage_score": 200
+    },
+    {
+      "rank": 2,
+      "bottleneck_id": "blocker_owner_apply_approval_missing",
+      "slug_count": 16,
+      "dominant_blocker": "owner_apply_approval_missing",
+      "affected_manufacturers": [
+        "ge_appliance_parts"
+      ],
+      "example_slugs": [
+        "edr3rxd1",
+        "edr4rxd1",
+        "eptwfu01",
+        "gswf",
+        "gswf2"
+      ],
+      "leverage_score": 160
+    },
+    {
+      "rank": 3,
+      "bottleneck_id": "bottleneck_browser_proof",
+      "slug_count": 19,
+      "dominant_blocker": "owner_apply_approval_missing",
+      "affected_manufacturers": [],
+      "example_slugs": [
+        "edr4rxd1",
+        "edr3rxd1",
+        "ultrawf",
+        "eptwfu01",
+        "wf3cb"
+      ],
+      "leverage_score": 152
+    },
+    {
+      "rank": 4,
+      "bottleneck_id": "blocker_csv_apply_not_authorized",
+      "slug_count": 10,
+      "dominant_blocker": "csv_apply_not_authorized",
+      "affected_manufacturers": [
+        "ge_appliance_parts"
+      ],
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "leverage_score": 100
+    },
+    {
+      "rank": 5,
+      "bottleneck_id": "blocker_supabase_mutation_not_authorized",
+      "slug_count": 10,
+      "dominant_blocker": "supabase_mutation_not_authorized",
+      "affected_manufacturers": [
+        "ge_appliance_parts"
+      ],
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "leverage_score": 100
+    },
+    {
+      "rank": 6,
+      "bottleneck_id": "blocker_browser_evidence_artifact_missing",
+      "slug_count": 9,
+      "dominant_blocker": "browser_evidence_artifact_missing",
+      "affected_manufacturers": [
+        "ge_appliance_parts"
+      ],
+      "example_slugs": [
+        "gswf",
+        "gswf2",
+        "mswf",
+        "mwf",
+        "opfg3f"
+      ],
+      "leverage_score": 90
+    },
+    {
+      "rank": 7,
+      "bottleneck_id": "blocker_confusion_family_review_required",
+      "slug_count": 8,
+      "dominant_blocker": "confusion_family_review_required",
+      "affected_manufacturers": [
+        "frigidaire"
+      ],
+      "example_slugs": [
+        "eptwfu01",
+        "fppwfu01",
+        "frig-242086201",
+        "purepour",
+        "ultrawf"
+      ],
+      "leverage_score": 80
+    },
+    {
+      "rank": 8,
+      "bottleneck_id": "blocker_exact_token_not_proven",
+      "slug_count": 7,
+      "dominant_blocker": "exact_token_not_proven",
+      "affected_manufacturers": [
+        "everydrop_whirlpool"
+      ],
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "leverage_score": 70
+    },
+    {
+      "rank": 9,
+      "bottleneck_id": "blocker_live_browser_capture_unavailable_or_failed",
+      "slug_count": 7,
+      "dominant_blocker": "live_browser_capture_unavailable_or_failed",
+      "affected_manufacturers": [
+        "everydrop_whirlpool"
+      ],
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "leverage_score": 70
+    },
+    {
+      "rank": 10,
+      "bottleneck_id": "blocker_mutation_authorized=false",
+      "slug_count": 7,
+      "dominant_blocker": "mutation_authorized=false",
+      "affected_manufacturers": [
+        "everydrop_whirlpool"
+      ],
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "edr3rxd1",
+        "edr4rxd1"
+      ],
+      "leverage_score": 70
+    }
+  ],
+  "recommended_highest_leverage_improvement": {
+    "recommendation": "Refresh stale owner browser proof for guarded apply nominees, then regenerate readiness gate and apply-plan factory.",
+    "rationale": [
+      "PROVEN: 6 slug(s) STALE in browser proof factory.",
+      "PROVEN: 0 guarded nominee(s) blocked only by browser proof.",
+      "PROVEN: refresh orchestrator scheduled 25 slug(s)."
+    ],
+    "supporting_bottleneck_id": "blocker_browser_proof_missing_or_not_pass",
+    "proven_facts": [
+      "Readiness Gate remains sole READY_FOR_APPLY promotion authority."
+    ],
+    "unknown_facts": [
+      "UNKNOWN: calendar time to complete owner browser proof sessions."
+    ]
+  },
+  "inspect_summary": {
+    "recommended_next_action": "Refresh stale owner browser proof for guarded apply nominees, then regenerate readiness gate and apply-plan factory.",
+    "kpi_dashboard_note": "manufacturer_rescue_throughput_analytics_v1 is the read-only Manufacturer Rescue KPI dashboard — consumes committed artifacts only."
+  },
+  "proven_facts": [
+    "PROVEN: Analytics is read-only — no CSV, Supabase, SQL, or browser mutation.",
+    "PROVEN: 26 rescue candidate slug(s) in committed orchestrator.",
+    "PROVEN: funnel furthest stage reached: browser_proof_capture_scheduled.",
+    "PROVEN: 19 distinct blocker reason(s) aggregated.",
+    "PROVEN: all nine upstream committed artifacts LOADED."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: estimated_slugs_per_week — no proven historical apply throughput in ledger.",
+    "UNKNOWN: owner review throughput (slugs/week) — no committed velocity metric.",
+    "UNKNOWN: post-apply unlock rate — ledger indexes artifact generation not CSV apply outcomes."
+  ]
+}

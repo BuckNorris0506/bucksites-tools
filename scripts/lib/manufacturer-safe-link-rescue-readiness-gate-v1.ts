@@ -204,7 +204,7 @@ function proofCheckedAt(artifact: OwnerBrowserProofResultV1 | null): string | nu
   return manufacturerRescueOwnerProofCheckedAtV1(artifact);
 }
 
-function loadDeployBuildMarker(args: {
+export function loadManufacturerRescueDeployBuildMarkerV1(args: {
   rootDir: string;
   fileExists: (abs: string) => boolean;
   readText: (abs: string) => string;
@@ -691,7 +691,7 @@ export function buildManufacturerSafeLinkRescueReadinessGateFromInputsV1(args: {
   readText?: (abs: string) => string;
 }): ManufacturerRescueReadinessGateReportV1 {
   const now = args.now ?? (() => new Date());
-  const deployMarker = loadDeployBuildMarker({
+  const deployMarker = loadManufacturerRescueDeployBuildMarkerV1({
     rootDir: args.rootDir,
     fileExists: args.fileExists ?? existsSync,
     readText: args.readText ?? ((abs: string) => readFileSync(abs, "utf8")),
