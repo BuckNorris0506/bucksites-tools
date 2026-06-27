@@ -233,25 +233,25 @@ Phases: `coverage_sprint_ranking`, `census_baseline`, `production_mission_plan`,
 
 Rules that must hold regardless of agent, mission, or prompt. Sources: Constitution, Runner safety contract, Agent Contract, HQ handoff, readiness gate authority.
 
-**Enforcement note:** **PROVEN** where cited module tests or validators exist (e.g. `FORBIDDEN_ARG_PATTERNS_V1`, `validateMissionDefinitionV1`, `isFounderRegistryRowActiveMutationApproval`). Where only contract fields or HQ policy are cited, invariant is **documented** — not claimed as runtime-enforced everywhere.
+**Enforcement column:** **RUNTIME_ENFORCED** = repository code rejects or blocks violation on the cited path; **DOCUMENTED** = contract, constitution, or report fields only; **NOT_PROVEN** = explicitly unproven or not implemented.
 
-| ID | Rule | Source |
-|----|------|--------|
-| **INV-001** | Public buy guidance requires evidence that passes buy-path policy — no buying option without evidence. | Constitution §6–§7, §14 |
-| **INV-002** | `mutation_authorized: false` on Runner reports, queue artifacts, agent manifests/results, and read-only factory outputs unless a **separate** founder-authorized executor is invoked with explicit mutation flags. | Report contracts; `docs/BuckParts-AGENT-CONTRACT-V1.md` |
-| **INV-003** | Runner mission steps must not include `--write-csv`, `--apply`, `--mutate`, `--supabase-apply`, `git commit`, or `git push` (`FORBIDDEN_ARG_PATTERNS_V1`; validated by `validateMissionDefinitionV1` / `validateRunnerStepCommandV1`). | `scripts/lib/buckparts-runner-v1.ts` |
-| **INV-004** | `manufacturer_safe_link_rescue_readiness_gate_v1` is the sole `READY_FOR_APPLY` promotion authority for manufacturer rescue apply. | `scripts/lib/manufacturer-safe-link-rescue-readiness-gate-v1.ts`; apply-plan factory; guarded apply bridge |
-| **INV-005** | At most one slug in `READY_FOR_APPLY` runner stage at a time (`ready_for_apply_enforced: true`). | `scripts/lib/manufacturer-safe-link-rescue-runner-v1.ts` |
-| **INV-006** | Owner Decision Queue never auto-approves — effective `APPROVED` requires active `founder_decision_registry_v1` row with `allowed_next_scope: owner_mutation_approved` (`isFounderRegistryRowActiveMutationApproval`). Queue `mutation_authorized: false` always. | `src/lib/owner-dashboard/owner-decision-queue-v1.ts` |
-| **INV-007** | Agent dispatch results must have `mutation_authorized: false` and `truth_closure_claimed: false`. | `docs/BuckParts-AGENT-CONTRACT-V1.md` |
-| **INV-008** | Runner does not call vendor APIs; external work is off-repo with disk manifest/result contract. | `docs/BuckParts-AGENT-CONTRACT-V1.md`; `scripts/lib/buckparts-agent-contract-v1.ts` |
-| **INV-009** | Analysis halt does not skip validation phase in Runner v1 missions. | `scripts/lib/buckparts-runner-v1.ts`; `scripts/lib/buckparts-runner-v1.test.ts` |
-| **INV-010** | Founder may override sequencing/decisions, not facts or physical fit. | Constitution §13 |
-| **INV-011** | Demand and coverage gaps do not substitute for fit or listing evidence. | Constitution §6; HQ handoff |
-| **INV-012** | Apply-plan `READY_FOR_OWNER_REVIEW` does not authorize CSV write — separate guarded executor + registry approval required. | `scripts/lib/manufacturer-safe-link-rescue-apply-plan-factory-v1.ts`; guarded apply bridge |
-| **INV-013** | Operations Metrics v1 is read-only measurement — no mission execution or product mutation. | `docs/BuckParts-OPERATIONS-METRICS-V1.md` |
-| **INV-014** | Command Center JSON is a read-only steering surface — not a mutation or deploy trigger by itself. | `scripts/report-buckparts-command-center.ts`; HQ handoff (orchestration **PARTIAL**) |
-| **INV-015** | **UNKNOWN / NOT PROVEN:** Full Layer 6 closed-loop autonomy — HQ handoff documents `layer_6_founder_only_approval: NOT_PROVEN` (`docs/BuckParts-RUNNER-STATUS.md` reference in HQ handoff). | HQ handoff; Runner status doc |
+| ID | Rule | Source | Enforcement |
+|----|------|--------|-------------|
+| **INV-001** | Public buy guidance requires evidence that passes buy-path policy — no buying option without evidence. | Constitution §6–§7, §14 | DOCUMENTED |
+| **INV-002** | `mutation_authorized: false` on Runner reports, queue artifacts, agent manifests/results, and read-only factory outputs unless a **separate** founder-authorized executor is invoked with explicit mutation flags. | Report contracts; `docs/BuckParts-AGENT-CONTRACT-V1.md` | DOCUMENTED |
+| **INV-003** | Runner mission steps must not include `--write-csv`, `--apply`, `--mutate`, `--supabase-apply`, `git commit`, or `git push` (`FORBIDDEN_ARG_PATTERNS_V1`; validated by `validateMissionDefinitionV1` / `validateRunnerStepCommandV1`). | `scripts/lib/buckparts-runner-v1.ts` | RUNTIME_ENFORCED |
+| **INV-004** | `manufacturer_safe_link_rescue_readiness_gate_v1` is the sole `READY_FOR_APPLY` promotion authority for manufacturer rescue apply. | `scripts/lib/manufacturer-safe-link-rescue-readiness-gate-v1.ts`; apply-plan factory; guarded apply bridge | RUNTIME_ENFORCED |
+| **INV-005** | At most one slug in `READY_FOR_APPLY` runner stage at a time (`ready_for_apply_enforced: true`). | `scripts/lib/manufacturer-safe-link-rescue-runner-v1.ts` | RUNTIME_ENFORCED |
+| **INV-006** | Owner Decision Queue never auto-approves — effective `APPROVED` requires active `founder_decision_registry_v1` row with `allowed_next_scope: owner_mutation_approved` (`isFounderRegistryRowActiveMutationApproval`). Queue `mutation_authorized: false` always. | `src/lib/owner-dashboard/owner-decision-queue-v1.ts` | RUNTIME_ENFORCED |
+| **INV-007** | Agent dispatch results must have `mutation_authorized: false` and `truth_closure_claimed: false`. | `docs/BuckParts-AGENT-CONTRACT-V1.md` | RUNTIME_ENFORCED |
+| **INV-008** | Runner does not call vendor APIs; external work is off-repo with disk manifest/result contract. | `docs/BuckParts-AGENT-CONTRACT-V1.md`; `scripts/lib/buckparts-agent-contract-v1.ts` | RUNTIME_ENFORCED |
+| **INV-009** | Analysis halt does not skip validation phase in Runner v1 missions. | `scripts/lib/buckparts-runner-v1.ts`; `scripts/lib/buckparts-runner-v1.test.ts` | RUNTIME_ENFORCED |
+| **INV-010** | Founder may override sequencing/decisions, not facts or physical fit. | Constitution §13 | DOCUMENTED |
+| **INV-011** | Demand and coverage gaps do not substitute for fit or listing evidence. | Constitution §6; HQ handoff | DOCUMENTED |
+| **INV-012** | Apply-plan `READY_FOR_OWNER_REVIEW` does not authorize CSV write — separate guarded executor + registry approval required. | `scripts/lib/manufacturer-safe-link-rescue-apply-plan-factory-v1.ts`; guarded apply bridge | RUNTIME_ENFORCED |
+| **INV-013** | Operations Metrics v1 is read-only measurement — no mission execution or product mutation. | `docs/BuckParts-OPERATIONS-METRICS-V1.md` | DOCUMENTED |
+| **INV-014** | Command Center JSON is a read-only steering surface — not a mutation or deploy trigger by itself. | `scripts/report-buckparts-command-center.ts`; HQ handoff (orchestration **PARTIAL**) | DOCUMENTED |
+| **INV-015** | **UNKNOWN / NOT PROVEN:** Full Layer 6 closed-loop autonomy — HQ handoff documents `layer_6_founder_only_approval: NOT_PROVEN` (`docs/BuckParts-RUNNER-STATUS.md` reference in HQ handoff). | HQ handoff; Runner status doc | NOT_PROVEN |
 
 ---
 
