@@ -269,6 +269,7 @@ export function buildCommandCenterV2Report(input: {
   | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
   | "buckparts_runner_v1"
+  | "owner_decision_queue_v1"
   | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "demand_to_coverage_next_lane_v1"

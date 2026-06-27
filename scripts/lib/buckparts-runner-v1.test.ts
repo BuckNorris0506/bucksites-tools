@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
@@ -103,21 +106,26 @@ test("runBuckpartsRunnerV1 continues validation after analysis halt", () => {
     };
   };
 
-  const report = runBuckpartsRunnerV1({
-    rootDir: process.cwd(),
-    missionId: "coverage_sprint_v1",
-    runId: "test-run-coverage-halt",
-    spawnFn,
-    writeArtifacts: false,
-    now: () => new Date("2026-06-27T12:00:00.000Z"),
-  });
+  const rootDir = mkdtempSync(path.join(tmpdir(), "runner-v1-test-"));
+  try {
+    const report = runBuckpartsRunnerV1({
+      rootDir,
+      missionId: "coverage_sprint_v1",
+      runId: "test-run-coverage-halt",
+      spawnFn,
+      writeArtifacts: false,
+      now: () => new Date("2026-06-27T12:00:00.000Z"),
+    });
 
-  assert.equal(report.contract, BUCKPARTS_RUNNER_CONTRACT_V1);
-  assert.equal(report.overall_status, "HALTED_APPROVAL_REQUIRED");
-  assert.ok(spawnCalls >= 6);
-  assert.equal(report.validation_summary.lint_pass, true);
-  assert.equal(report.validation_summary.build_pass, true);
-  assert.equal(exitCodeForRunnerReportV1(report), 0);
+    assert.equal(report.contract, BUCKPARTS_RUNNER_CONTRACT_V1);
+    assert.equal(report.overall_status, "HALTED_APPROVAL_REQUIRED");
+    assert.ok(spawnCalls >= 6);
+    assert.equal(report.validation_summary.lint_pass, true);
+    assert.equal(report.validation_summary.build_pass, true);
+    assert.equal(exitCodeForRunnerReportV1(report), 0);
+  } finally {
+    rmSync(rootDir, { recursive: true, force: true });
+  }
 });
 
 test("resume command format", () => {

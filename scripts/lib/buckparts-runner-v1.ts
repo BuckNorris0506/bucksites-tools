@@ -10,6 +10,10 @@ import path from "node:path";
 
 import { RUNNER_EXECUTION_NPM_SCRIPT_ALLOWLIST_V1 } from "./buckparts-runner-safety-contract-v1";
 import { RUNNER_STEP_LAYER_TRUTH_V1, tailTextV1 } from "./buckparts-runner-step-v1";
+import {
+  ownerDecisionRequestApprovalSatisfiesRunnerGateV1,
+  upsertOwnerDecisionRequestFromRunnerHaltV1,
+} from "../../src/lib/owner-dashboard/owner-decision-queue-v1";
 
 export const BUCKPARTS_RUNNER_CONTRACT_V1 = "buckparts_runner_v1" as const;
 
@@ -89,6 +93,8 @@ export type RunnerStepResultV1 = {
   parsed_json_summary: unknown | null;
   halt_reason: RunnerHaltReasonV1 | null;
   halt_detail: string | null;
+  owner_decision_request_id?: string | null;
+  owner_decision_request_artifact_path?: string | null;
 };
 
 export type BuckpartsRunnerCheckpointV1 = {
@@ -122,6 +128,8 @@ export type BuckpartsRunnerReportV1 = {
   halt_reason: RunnerHaltReasonV1 | null;
   halt_step_id: string | null;
   halt_detail: string | null;
+  owner_decision_request_id: string | null;
+  owner_decision_request_artifact_path: string | null;
   validation_summary: {
     lint_pass: boolean | "SKIPPED";
     build_pass: boolean | "SKIPPED";
@@ -639,6 +647,9 @@ export function executeRunnerStepV1(args: {
   spawnFn: RunnerSpawnFnV1;
   tailChars?: number;
   skip?: boolean;
+  missionId?: BuckpartsRunnerMissionIdV1;
+  runId?: string;
+  now?: () => Date;
 }): RunnerStepResultV1 {
   const tailChars = args.tailChars ?? 12_000;
   const started = Date.now();
@@ -710,8 +721,49 @@ export function executeRunnerStepV1(args: {
   });
 
   let status: RunnerStepResultV1["status"] = "PASS";
+  let haltReason: RunnerHaltReasonV1 | null = null;
+  let haltDetail: string | null = null;
+  let ownerDecisionRequestId: string | null = null;
+  let ownerDecisionRequestPath: string | null = null;
+
   if (haltEval.halt && haltEval.reason !== "STEP_FAILED") {
     status = "HALTED";
+    haltReason = haltEval.reason;
+    haltDetail = haltEval.detail;
+
+    if (
+      (haltEval.reason === "FOUNDER_APPROVAL_REQUIRED" ||
+        haltEval.reason === "MUTATION_GATE_BLOCKED") &&
+      args.missionId &&
+      args.runId
+    ) {
+      const upserted = upsertOwnerDecisionRequestFromRunnerHaltV1({
+        rootDir: args.cwd,
+        missionId: args.missionId,
+        runId: args.runId,
+        stepId: args.step.step_id,
+        stepProvenance: args.step.provenance,
+        haltReason: haltEval.reason,
+        haltDetail: haltEval.detail,
+        parsedJson: parsed,
+        now: args.now,
+        writeArtifacts: true,
+      });
+      ownerDecisionRequestId = upserted.request.decision_request_id;
+      ownerDecisionRequestPath = upserted.request_artifact_rel_path;
+
+      if (
+        ownerDecisionRequestApprovalSatisfiesRunnerGateV1({
+          rootDir: args.cwd,
+          decisionRequestId: upserted.request.decision_request_id,
+          now: args.now,
+        })
+      ) {
+        status = "PASS";
+        haltReason = null;
+        haltDetail = null;
+      }
+    }
   } else if (spawnResult.exit_code !== 0) {
     status = "FAIL";
   }
@@ -729,14 +781,16 @@ export function executeRunnerStepV1(args: {
     parsed_json_summary: summarizeParsedJsonV1(parsed),
     halt_reason:
       status === "HALTED"
-        ? haltEval.reason
+        ? haltReason
         : status === "FAIL"
           ? "STEP_FAILED"
           : null,
     halt_detail:
       status === "HALTED" || status === "FAIL"
-        ? haltEval.detail ?? `exit_code=${String(spawnResult.exit_code)}`
+        ? haltDetail ?? `exit_code=${String(spawnResult.exit_code)}`
         : null,
+    owner_decision_request_id: ownerDecisionRequestId,
+    owner_decision_request_artifact_path: ownerDecisionRequestPath,
   };
 }
 
@@ -914,6 +968,8 @@ export function runBuckpartsRunnerV1(args: {
   let haltReason: RunnerHaltReasonV1 | null = null;
   let haltStepId: string | null = null;
   let haltDetail: string | null = null;
+  let ownerDecisionRequestId: string | null = null;
+  let ownerDecisionRequestPath: string | null = null;
   let failed = false;
   let analysisHalted = false;
 
@@ -948,8 +1004,16 @@ export function runBuckpartsRunnerV1(args: {
       cwd: args.rootDir,
       spawnFn,
       skip,
+      missionId: mission.mission_id,
+      runId,
+      now,
     });
     stepResults.push(result);
+
+    if (result.owner_decision_request_id) {
+      ownerDecisionRequestId = result.owner_decision_request_id;
+      ownerDecisionRequestPath = result.owner_decision_request_artifact_path ?? null;
+    }
 
     if (result.status === "PASS" || result.status === "SKIPPED") {
       if (!completedStepIds.includes(step.step_id)) {
@@ -1014,6 +1078,8 @@ export function runBuckpartsRunnerV1(args: {
     halt_reason: haltReason,
     halt_step_id: haltStepId,
     halt_detail: haltDetail,
+    owner_decision_request_id: ownerDecisionRequestId,
+    owner_decision_request_artifact_path: ownerDecisionRequestPath,
     validation_summary: buildValidationSummaryV1(stepResults),
     artifact_rel_path: artifactRelPath,
     checkpoint_rel_path: checkpointRel,
@@ -1076,7 +1142,7 @@ function buildRecommendedNextActionV1(args: {
     return "PROVEN: Guarded apply bridge blocked — resolve readiness gate blockers; do not bypass mutation gates.";
   }
   if (args.overall_status === "HALTED_APPROVAL_REQUIRED") {
-    return "PROVEN: Record founder owner_mutation_approved in data/owner-decisions/ for scoped slugs; then run guarded apply executor separately — runner does not mutate CSV.";
+    return "PROVEN: Record founder owner_mutation_approved in data/owner-decisions/ for scoped slugs (see owner_decision_queue_v1 pending request); then run guarded apply executor separately — runner does not mutate CSV.";
   }
   if (args.overall_status === "RESUMED_COMPLETE" || args.overall_status === "COMPLETE") {
     return "PROVEN: Mission steps complete — review consolidated artifact; commit artifacts if SAFE_TO_COMMIT; deploy only when classifier says DEPLOY_REQUIRED.";

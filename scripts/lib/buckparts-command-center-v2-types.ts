@@ -17,6 +17,7 @@ import type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from ".
 import type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 import type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 import type { BuckpartsRunnerCommandCenterLaneV1 } from "./buckparts-runner-command-center-v1";
+import type { OwnerDecisionQueueCommandCenterLaneV1 } from "./owner-decision-queue-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-approval-command-center-v1";
 import type { FridgeBuyerPathBatchApplyPlanProposalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-apply-plan-proposal-command-center-v1";
 import type { FridgeBuyerPathBatchApprovalCommandCenterLaneV1 } from "./fridge-buyer-path-batch-approval-command-center-v1";
@@ -1077,6 +1078,8 @@ export type CommandCenterV2Report = {
   execution_ledger_v1: BuckpartsExecutionLedgerCommandCenterLaneV1;
   /** Read-only BuckParts Runner v1 — latest mission execution report from data/command-center/runner-runs/. */
   buckparts_runner_v1: BuckpartsRunnerCommandCenterLaneV1;
+  /** Read-only owner decision queue — pending founder decisions indexed from data/owner-decisions/queue/. */
+  owner_decision_queue_v1: OwnerDecisionQueueCommandCenterLaneV1;
   /** Read-only wrong-code-prevention HyperAgent findings projection — artifact ingest only; no HyperAgent write authority. */
   wrong_code_prevention_v1: import("./wrong-code-prevention-command-center-v1").WrongCodePreventionCommandCenterLaneV1;
   /** Read-only wedge truth spine parity matrix — formal spine vs partial proof per wedge. */
@@ -1188,6 +1191,7 @@ export type { ManufacturerRescueThroughputAnalyticsCommandCenterLaneV1 } from ".
 export type { ManufacturerBrowserProofExecutionFactoryCommandCenterLaneV1 } from "./manufacturer-browser-proof-execution-factory-command-center-v1";
 export type { BuckpartsExecutionLedgerCommandCenterLaneV1 } from "./buckparts-execution-ledger-command-center-v1";
 export type { BuckpartsRunnerCommandCenterLaneV1 } from "./buckparts-runner-command-center-v1";
+export type { OwnerDecisionQueueCommandCenterLaneV1 } from "./owner-decision-queue-command-center-v1";
 export type { FridgeBuyerPathOwnerReviewBridgeCommandCenterLaneV1 } from "./fridge-buyer-path-owner-review-bridge-command-center-v1";
 export type { BatchRunRegistryIntakeCommandCenterLaneV1 } from "./batch-run-registry-intake-command-center-v1";
 export type { OwnerDriftDetectorCommandCenterLaneV1 } from "./owner-drift-detector-command-center-v1";
@@ -1286,6 +1290,7 @@ export type CommandCenterV2ReportWithoutOwnerLanesV1 = Omit<
   | "manufacturer_browser_proof_execution_factory_v1"
   | "execution_ledger_v1"
   | "buckparts_runner_v1"
+  | "owner_decision_queue_v1"
   | "wrong_code_prevention_v1"
   | "wedge_truth_spine_coverage_matrix_v1"
   | "operator_digest_v1"

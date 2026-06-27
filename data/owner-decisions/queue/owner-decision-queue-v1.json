@@ -1,0 +1,11 @@
+{
+  "contract": "owner_decision_queue_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-27T00:00:00.000Z",
+  "request_count": 0,
+  "pending_count": 0,
+  "request_artifact_paths": [],
+  "requests": []
+}
