@@ -233,88 +233,92 @@ Phases: `coverage_sprint_ranking`, `census_baseline`, `production_mission_plan`,
 
 Rules that must hold regardless of agent, mission, or prompt. Sources: Constitution, Runner safety contract, Agent Contract, HQ handoff, readiness gate authority.
 
-1. **PROVEN:** Public buy guidance requires evidence that passes buy-path policy — no buying option without evidence (Constitution §6–§7, §14).
-2. **PROVEN:** `mutation_authorized: false` on Runner reports, queue artifacts, agent manifests/results, and read-only factory outputs unless a **separate** founder-authorized executor is invoked with explicit mutation flags.
-3. **PROVEN:** Runner mission steps must not include `--write-csv`, `--apply`, `--mutate`, `--supabase-apply`, `git commit`, or `git push` (`FORBIDDEN_ARG_PATTERNS_V1`, `scripts/lib/buckparts-runner-v1.ts`).
-4. **PROVEN:** `manufacturer_safe_link_rescue_readiness_gate_v1` is the sole `READY_FOR_APPLY` promotion authority for manufacturer rescue apply.
-5. **PROVEN:** At most one slug in `READY_FOR_APPLY` runner stage at a time (`ready_for_apply_enforced: true`, `scripts/lib/manufacturer-safe-link-rescue-runner-v1.ts`).
-6. **PROVEN:** Owner Decision Queue never auto-approves — effective `APPROVED` requires active `founder_decision_registry_v1` row with `allowed_next_scope: owner_mutation_approved` (`isFounderRegistryRowActiveMutationApproval`).
-7. **PROVEN:** Agent dispatch results must have `mutation_authorized: false`, `truth_closure_claimed: false` (`docs/BuckParts-AGENT-CONTRACT-V1.md`).
-8. **PROVEN:** Runner does not call vendor APIs; external work is off-repo with disk manifest/result contract.
-9. **PROVEN:** Analysis halt does not skip validation phase in Runner v1 missions.
-10. **PROVEN:** Founder may override sequencing/decisions, not facts or physical fit (Constitution §13).
-11. **PROVEN:** Demand and coverage gaps do not substitute for fit or listing evidence (Constitution §6).
-12. **PROVEN:** Apply-plan `READY_FOR_OWNER_REVIEW` does not authorize CSV write — separate guarded executor + registry approval required.
-13. **PROVEN:** Operations Metrics v1 is read-only measurement — no mission execution or product mutation (`docs/BuckParts-OPERATIONS-METRICS-V1.md`).
-14. **PROVEN:** Command Center JSON is a read-only steering surface — not a mutation or deploy trigger by itself.
-15. **UNKNOWN:** Full Layer 6 closed-loop autonomy — HQ handoff documents `layer_6_founder_only_approval: NOT_PROVEN` (`docs/BuckParts-RUNNER-STATUS.md` reference in HQ handoff).
+**Enforcement note:** **PROVEN** where cited module tests or validators exist (e.g. `FORBIDDEN_ARG_PATTERNS_V1`, `validateMissionDefinitionV1`, `isFounderRegistryRowActiveMutationApproval`). Where only contract fields or HQ policy are cited, invariant is **documented** — not claimed as runtime-enforced everywhere.
+
+| ID | Rule | Source |
+|----|------|--------|
+| **INV-001** | Public buy guidance requires evidence that passes buy-path policy — no buying option without evidence. | Constitution §6–§7, §14 |
+| **INV-002** | `mutation_authorized: false` on Runner reports, queue artifacts, agent manifests/results, and read-only factory outputs unless a **separate** founder-authorized executor is invoked with explicit mutation flags. | Report contracts; `docs/BuckParts-AGENT-CONTRACT-V1.md` |
+| **INV-003** | Runner mission steps must not include `--write-csv`, `--apply`, `--mutate`, `--supabase-apply`, `git commit`, or `git push` (`FORBIDDEN_ARG_PATTERNS_V1`; validated by `validateMissionDefinitionV1` / `validateRunnerStepCommandV1`). | `scripts/lib/buckparts-runner-v1.ts` |
+| **INV-004** | `manufacturer_safe_link_rescue_readiness_gate_v1` is the sole `READY_FOR_APPLY` promotion authority for manufacturer rescue apply. | `scripts/lib/manufacturer-safe-link-rescue-readiness-gate-v1.ts`; apply-plan factory; guarded apply bridge |
+| **INV-005** | At most one slug in `READY_FOR_APPLY` runner stage at a time (`ready_for_apply_enforced: true`). | `scripts/lib/manufacturer-safe-link-rescue-runner-v1.ts` |
+| **INV-006** | Owner Decision Queue never auto-approves — effective `APPROVED` requires active `founder_decision_registry_v1` row with `allowed_next_scope: owner_mutation_approved` (`isFounderRegistryRowActiveMutationApproval`). Queue `mutation_authorized: false` always. | `src/lib/owner-dashboard/owner-decision-queue-v1.ts` |
+| **INV-007** | Agent dispatch results must have `mutation_authorized: false` and `truth_closure_claimed: false`. | `docs/BuckParts-AGENT-CONTRACT-V1.md` |
+| **INV-008** | Runner does not call vendor APIs; external work is off-repo with disk manifest/result contract. | `docs/BuckParts-AGENT-CONTRACT-V1.md`; `scripts/lib/buckparts-agent-contract-v1.ts` |
+| **INV-009** | Analysis halt does not skip validation phase in Runner v1 missions. | `scripts/lib/buckparts-runner-v1.ts`; `scripts/lib/buckparts-runner-v1.test.ts` |
+| **INV-010** | Founder may override sequencing/decisions, not facts or physical fit. | Constitution §13 |
+| **INV-011** | Demand and coverage gaps do not substitute for fit or listing evidence. | Constitution §6; HQ handoff |
+| **INV-012** | Apply-plan `READY_FOR_OWNER_REVIEW` does not authorize CSV write — separate guarded executor + registry approval required. | `scripts/lib/manufacturer-safe-link-rescue-apply-plan-factory-v1.ts`; guarded apply bridge |
+| **INV-013** | Operations Metrics v1 is read-only measurement — no mission execution or product mutation. | `docs/BuckParts-OPERATIONS-METRICS-V1.md` |
+| **INV-014** | Command Center JSON is a read-only steering surface — not a mutation or deploy trigger by itself. | `scripts/report-buckparts-command-center.ts`; HQ handoff (orchestration **PARTIAL**) |
+| **INV-015** | **UNKNOWN / NOT PROVEN:** Full Layer 6 closed-loop autonomy — HQ handoff documents `layer_6_founder_only_approval: NOT_PROVEN` (`docs/BuckParts-RUNNER-STATUS.md` reference in HQ handoff). | HQ handoff; Runner status doc |
 
 ---
 
 ## 4. DECISION LOG
 
-Each entry: three lines — what changed, why, what invariant it enforces or breaks.  
+Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if the decision were misused).  
 **PROVEN** from HQ handoff and module contracts unless noted.
 
 ### Runner v1 as mission orchestration engine
 
 - **What changed:** `buckparts_runner_v1` (`scripts/lib/buckparts-runner-v1.ts`) runs ordered missions over existing `scripts/report-*.ts` factories with checkpoints and consolidated artifacts.
 - **Why it changed:** Eliminate manual orchestration while preserving trust boundaries (`docs/BuckParts-HQ-HANDOFF.md` §1).
-- **What invariant it enforces:** Execution layer reuses truth factories; forbidden mutation argv patterns cannot be added to mission definitions without validation failure.
+- **Invariants enforced:** **INV-003** (forbidden argv blocked at mission validation), **INV-002** (runner reports `mutation_authorized: false`), **INV-008** (no vendor API calls).
 
 ### Analysis-then-validation phases
 
 - **What changed:** Runner steps split `analysis` vs `validation`; analysis may `HALT` while validation still runs.
 - **Why it changed:** Prove repo health even when founder approval or external agent blocks forward progress (HQ handoff §1; `scripts/lib/buckparts-runner-v1.test.ts`).
-- **What invariant it enforces:** Halt on approval does not silently skip lint/build/security gate validation.
+- **Invariants enforced:** **INV-009** (validation phase runs after analysis halt).
 
 ### Owner Decision Queue v1
 
 - **What changed:** `owner_decision_queue_v1` indexes `owner_decision_request_v1` artifacts; Runner upserts on approval halts; CC lane `.command_center_v2.owner_decision_queue_v1`.
 - **Why it changed:** First-class pending owner decisions visible to Runner, Command Center, and readiness flows without replacing registry (`docs/BuckParts-HQ-HANDOFF.md` §3).
-- **What invariant it enforces:** Queue `mutation_authorized: false` always; registry bridge required for effective approval — **does not break** mutation gates.
+- **Invariants enforced:** **INV-006** (queue never auto-approves; registry bridge required), **INV-002** (queue artifacts `mutation_authorized: false`). **At risk if misused:** bypassing **INV-006** by treating queue `APPROVED` projection as CSV write authority — **documented blocked** by **INV-012** and HQ handoff §3.
 
 ### Founder Decision Registry remains mutation authority
 
 - **What changed:** Queue projects `APPROVED` only via `isFounderRegistryRowActiveMutationApproval`; registry not replaced.
 - **Why it changed:** Compatibility with existing guarded apply checks (`hasOwnerApprovalForSlug`, parity bridge, lifecycle mutation auth).
-- **What invariant it enforces:** No new automated mutation authority source; founder text + scope still required for `owner_mutation_approved`.
+- **Invariants enforced:** **INV-006**, **INV-002**, **INV-012** (registry + executor still required for CSV/Supabase mutation).
 
 ### Agent Contract + Dispatch Manifest v1 (Foundation v2)
 
 - **What changed:** `coordination_halt` replaced by `agent_dispatch` + disk manifest/result validation (`scripts/lib/buckparts-agent-contract-v1.ts`).
 - **Why it changed:** Vendor-agnostic external operator handoff without Runner calling HyperAgent/Cursor/Codex APIs (`docs/BuckParts-AGENT-CONTRACT-V1.md`).
-- **What invariant it enforces:** `truth_closure_claimed: false` on results; external outputs are proposals until existing validation paths run.
+- **Invariants enforced:** **INV-007** (`truth_closure_claimed: false` on results), **INV-008** (external work off-repo), **INV-002** (results `mutation_authorized: false`). **At risk if misused:** treating validated dispatch result as truth closure — violates **INV-001**, **INV-007**.
 
 ### Readiness gate sole READY_FOR_APPLY authority
 
 - **What changed:** Apply-plan factory and guarded apply bridge document readiness gate as sole promotion authority.
 - **Why it changed:** Prevent parallel “ready” signals from bypassing browser proof, owner approval, and blocker checks.
-- **What invariant it enforces:** Single promotion path to `READY_FOR_APPLY`; **does not break** one-at-a-time apply rule.
+- **Invariants enforced:** **INV-004** (sole promotion authority), **INV-005** (one-at-a-time apply slot via runner). **At risk if misused:** promoting apply from plan factory alone — violates **INV-004**, **INV-012**.
 
 ### Production Mission v1 reference lifecycle
 
 - **What changed:** `production_mission_v1` mission writes `buckparts_production_mission_lifecycle_v1` artifacts and appends operations metrics snapshots.
 - **Why it changed:** End-to-end Foundation v2 exercise without new orchestration framework (`docs/BuckParts-PRODUCTION-MISSION-V1.md`).
-- **What invariant it enforces:** Runner remains dry-run inside mission steps; CSV write stays outside Runner — run `a9ab9a89…` confirmed `lifecycle_complete: false`, `delta: 0`; run `a6b27301…` confirmed full lifecycle with `lifecycle_complete: true`, `delta: +1` after founder-authorized external write.
+- **Invariants enforced:** **INV-003**, **INV-002** (Runner dry-run inside mission; CSV write outside Runner). **PROVEN:** run `a9ab9a89…` — `lifecycle_complete: false`, `delta: 0`; run `a6b27301…` — `lifecycle_complete: true`, `delta: +1` after founder-authorized external write.
 
 ### Operations Metrics v1 (measurement mode)
 
 - **What changed:** `operations_metrics_v1` indexes runner, dispatch, queue, census artifacts; optional `history-v1.jsonl` snapshots.
 - **Why it changed:** Measure throughput before building new foundation (`docs/BuckParts-OPERATIONS-METRICS-V1.md`).
-- **What invariant it enforces:** Measurement-only — no auto-dispatch or auto-approve.
+- **Invariants enforced:** **INV-013** (measurement only; no auto-dispatch or auto-approve). **At risk if misused:** using metrics as mutation trigger — violates **INV-002**, **INV-013**.
 
 ### Command Center as read-only steering (not orchestrator)
 
 - **What changed:** Command Center v2 aggregates lanes; core builder omits owner-only lanes filled in `scripts/report-buckparts-command-center.ts`.
 - **Why it changed:** Single operator JSON surface for NBA and lane status.
-- **What invariant it enforces:** **PARTIAL** — CC shows state; does **not** auto-execute next script (HQ handoff). **Does not break** mutation gates because CC lacks mutation flags.
+- **Invariants enforced:** **INV-014** (read-only steering; no auto-execute). **Documented partial:** end-to-end orchestration remains **PARTIAL** (HQ handoff) — CC does not replace Runner (**INV-014** preserved; does not violate **INV-002** because CC lanes carry `mutation_authorized: false`).
 
 ### Coverage Production Sprint v2 (batch ranking)
 
 - **What changed:** `coverage_production_sprint_v2_v1` ranks executable batches by expected `SAFE_BUYER_PATH_PROVEN` delta using existing factories only.
 - **Why it changed:** Stop slug-by-slug optimization; prioritize batches with proven executability (`docs/BuckParts-HQ-HANDOFF.md` §2).
-- **What invariant it enforces:** No new orchestrators; ranking is read-only intelligence.
+- **Invariants enforced:** **INV-011** (demand/ranking does not substitute for evidence), **INV-014** (read-only ranking), **INV-001** (no buy authority from ranking alone).
 
 ---
 
@@ -336,9 +340,17 @@ Each entry: three lines — what changed, why, what invariant it enforces or bre
 
 ## Deferred / NOT IMPLEMENTED (PROVEN from HQ handoff)
 
-- Automatic mutation steps inside Runner missions
-- Vendor auto-invocation or closed-loop ingest without manifest/result validation
-- Queue writing founder registry rows
-- Command Center single orchestration entrypoint that auto-runs next script
-- Dynamic mission definitions from Command Center (missions are code-defined in `scripts/lib/buckparts-runner-v1.ts`)
-- Foundation v2 **full lifecycle proof** with customer-visible `SAFE_BUYER_PATH_PROVEN` delta — **PROVEN once** by production mission run `a6b27301-e040-4405-b613-5adcb6c99bb6` (`lifecycle_complete: true`, `delta: +1` for `edr4rxd1`); first live audit run `a9ab9a89-c216-4a4e-bd86-132620591a5f` did **not** prove lifecycle (`delta: 0`)
+Items below are **NOT IMPLEMENTED** in v1 scope. No priority order is implied — HQ handoff lists these as deferred without ranked sequencing.
+
+| Deferred item | What breaks if this stays deferred |
+|---------------|-----------------------------------|
+| Automatic mutation steps inside Runner missions | **PROVEN:** Runner missions remain read-only; guarded apply with `--write-csv` / `--apply` stays a **separate** founder-authorized executor step outside Runner (`docs/BuckParts-PRODUCTION-MISSION-V1.md`; **INV-003**, **INV-002** preserved). **PROVEN:** Manual handoff between Runner halt and CSV/Supabase apply persists (HQ handoff §1 deferred list). |
+| Vendor auto-invocation or closed-loop ingest without manifest/result validation | **PROVEN:** External discovery requires human operator + disk manifest/result (`docs/BuckParts-AGENT-CONTRACT-V1.md`); missions halt `HALTED_EXTERNAL_AGENT` until validated result (**INV-008**, **INV-007** preserved). **UNKNOWN:** Whether operator latency blocks throughput — measure via **INV-013** / `operations_metrics_v1`. |
+| Queue writing founder registry rows | **PROVEN:** Founder must manually record outcomes in `data/owner-decisions/*.json` per `docs/BuckParts-FOUNDER-DECISION-REGISTRY.md` (HQ handoff §3). **PROVEN:** Gap between queue request artifact and registry row remains a human step (**INV-006** preserved). |
+| Command Center single orchestration entrypoint that auto-runs next script | **PROVEN:** End-to-end orchestration stays **PARTIAL** — CC shows stage state but does not execute one orchestrated flow (HQ handoff). **PROVEN:** No single read-only command returns next exact command + blocked stage + mutation allowed/denied (HQ handoff — **MISSING/PARTIAL**). Operator must select scripts manually (**INV-014** preserved). |
+| Dynamic mission definitions from Command Center | **PROVEN:** Missions remain code-defined in `scripts/lib/buckparts-runner-v1.ts`; new missions require code change and deploy of runtime lib when applicable. **UNKNOWN:** Impact on mission iteration speed. |
+| Auto-resume after founder approval without explicit `--resume <run_id>` | **PROVEN:** Operator must re-run Runner with `--resume` (HQ handoff §1 deferred). **PROVEN:** Halted runs stay halted on disk until explicit resume (**INV-009** validation-on-resume behavior unchanged). |
+| Queue auto-stale / auto-supersede without operator review | **PROVEN:** `SUPERSEDED` status type exists; supersede wiring **NOT IMPLEMENTED** (HQ handoff §3). **PROVEN:** Stale requests may remain `PENDING_OWNER_DECISION` or project `STALE` by timestamp only — no automatic cleanup. **UNKNOWN:** Operational clutter at scale. |
+| Layer 6 closed-loop autonomy | **PROVEN:** Documented **NOT PROVEN** — `layer_6_founder_only_approval: NOT_PROVEN` (HQ handoff; **INV-015**). **PROVEN:** Founder approval remains required for mutation-shaped scope; no autonomous apply loop. |
+
+**Not deferred — lifecycle proof status (unchanged):** Foundation v2 reference lifecycle **PROVEN once** by production mission run `a6b27301-e040-4405-b613-5adcb6c99bb6` (`lifecycle_complete: true`, `SAFE_BUYER_PATH_PROVEN` delta **+1** for `edr4rxd1`). First live audit run `a9ab9a89-c216-4a4e-bd86-132620591a5f` did **not** prove lifecycle (`lifecycle_complete: false`, **delta 0**). See §2 Production mission lifecycle phases.
