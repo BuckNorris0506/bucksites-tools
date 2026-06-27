@@ -1,0 +1,45 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-06-10-4396508-approve_csv_supabase_parity_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-4396508-csv-parity",
+      "source_decision_packet_id": "fridge_safe_link_4396508_owner_classification_approval_packet_v1",
+      "decided_at": "2026-06-10T12:00:00.000Z",
+      "decision_status": "deferred",
+      "owner_note": "PENDING_OWNER_SIGNATURE: Approve single-slug 4396508 guarded CSV/Supabase parity apply. Amazon ASIN B00NXPKBQ2 (EcoAqua aftermarket compatible single-pack). Repo-proven classification proposal: browser_truth_classification=direct_buyable; browser_truth_buyable_subtype=COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE (ukf8001 aftermarket Amazon precedent). Primary evidence data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json; apply plan data/fridge/batch-production/drafts/fridge-safe-link-4396508-apply-plan-proposal-v1.json. Authorize guarded executor --write-csv only for 4396508 — no batch slugs, no Verified Link auto-authorization, single-pack B00NXPKBQ2 only (2-pack/3-pack out of scope).",
+      "allowed_next_scope": "none",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not mutate retailer_links.csv from this row until decision_status=approved and allowed_next_scope=owner_mutation_approved.",
+        "Do not batch apply edr3rxd1, gswf, or other First4 slugs without separate approval rows.",
+        "Do not promote 2-pack or 3-pack ASIN variants for 4396508 from this approval.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not write or overwrite evidence JSON under data/evidence/.",
+        "Do not authorize Verified Links automatically from this row.",
+        "Do not click production /go until separate validation policy exists.",
+        "approve_csv_supabase_parity_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "4396508_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-4396508-apply-plan-proposal-v1.json",
+        "owner_classification_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-4396508-owner-classification-approval-packet-v1.json",
+        "founder_option_id": "approve_csv_supabase_parity_apply",
+        "target_slug": "4396508",
+        "target_asin": "B00NXPKBQ2",
+        "product_attribution": "aftermarket_compatible",
+        "owner_browser_truth_classification": "direct_buyable",
+        "owner_browser_truth_buyable_subtype": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+        "recommended_browser_truth_classification": "direct_buyable",
+        "recommended_browser_truth_buyable_subtype": "COMPATIBLE_REPLACEMENT_DIRECT_BUYABLE",
+        "primary_evidence_rel_path": "data/evidence/amazon-4396508-owner-review-pdp-evidence.2026-05-10.json",
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "owner_approved_by": null,
+        "approved_at": null
+      }
+    }
+  ]
+}

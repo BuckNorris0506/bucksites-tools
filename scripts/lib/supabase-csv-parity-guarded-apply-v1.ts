@@ -22,6 +22,7 @@ import {
   type SupabaseCsvParityApplyPlanProposalV1,
   type SupabaseCsvParityCandidatePackageV1,
 } from "./supabase-csv-parity-coverage-factory-v1";
+import { buildSupabaseCsvParityOwnerReviewInsertPlanPackageV1 } from "./supabase-csv-parity-owner-review-insert-plan-v1";
 import {
   buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1,
   UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_CONTRACT_V1,
@@ -226,6 +227,17 @@ async function resolveCandidatePackageV1(args: {
         continue;
       }
     }
+  }
+
+  const ownerReviewInsertPlan = buildSupabaseCsvParityOwnerReviewInsertPlanPackageV1({
+    rootDir: args.rootDir,
+    slug,
+    now: args.now,
+    fileExists,
+    readText,
+  });
+  if (ownerReviewInsertPlan?.apply_plan && ownerReviewInsertPlan.execution_plan) {
+    return ownerReviewInsertPlan;
   }
 
   throw new Error(
