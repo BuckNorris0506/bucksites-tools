@@ -85,33 +85,92 @@ function normalizeSlug(slug: string): string {
   return slug.trim().toLowerCase();
 }
 
-function loadFounderDecisionRows(rootDir: string): FounderDecisionRegistryRowV1[] {
-  const rows: FounderDecisionRegistryRowV1[] = [];
+export type SupabaseCsvParityFounderDecisionLoadedRowV1 = {
+  row: FounderDecisionRegistryRowV1;
+  apply_context_target_slugs: readonly string[];
+  apply_context_apply_plan_rel_paths: readonly string[];
+};
+
+/** Extract slug/plan correlation from `{slug}_apply_context_v1` blobs (not kept on validated rows). */
+export function extractSupabaseCsvParityApplyContextCorrelationV1(raw: Record<string, unknown>): {
+  apply_context_target_slugs: string[];
+  apply_context_apply_plan_rel_paths: string[];
+} {
+  const apply_context_target_slugs: string[] = [];
+  const apply_context_apply_plan_rel_paths: string[] = [];
+  for (const [key, value] of Object.entries(raw)) {
+    if (!key.endsWith("_apply_context_v1") || value === null || typeof value !== "object") continue;
+    const ctx = value as Record<string, unknown>;
+    if (typeof ctx.target_slug === "string" && ctx.target_slug.trim()) {
+      apply_context_target_slugs.push(normalizeSlug(ctx.target_slug));
+    }
+    if (typeof ctx.apply_plan_rel_path === "string" && ctx.apply_plan_rel_path.trim()) {
+      apply_context_apply_plan_rel_paths.push(ctx.apply_plan_rel_path.trim().toLowerCase());
+    }
+  }
+  return {
+    apply_context_target_slugs: [...new Set(apply_context_target_slugs)],
+    apply_context_apply_plan_rel_paths: [...new Set(apply_context_apply_plan_rel_paths)],
+  };
+}
+
+export function loadFounderDecisionRowsForSupabaseCsvParityV1(
+  rootDir: string,
+): SupabaseCsvParityFounderDecisionLoadedRowV1[] {
+  const rows: SupabaseCsvParityFounderDecisionLoadedRowV1[] = [];
   for (const file of scanFounderDecisionRegistryJsonFilesV1(rootDir)) {
     if ("parseError" in file || !file.parsed || typeof file.parsed !== "object") continue;
     const doc = file.parsed as { rows?: unknown[] };
     if (!Array.isArray(doc.rows)) continue;
     for (const raw of doc.rows) {
       const validated = validateFounderDecisionRegistryRowV1(raw);
-      if (validated.ok) rows.push(validated.row);
+      if (!validated.ok) continue;
+      const correlation =
+        raw !== null && typeof raw === "object" && !Array.isArray(raw)
+          ? extractSupabaseCsvParityApplyContextCorrelationV1(raw as Record<string, unknown>)
+          : { apply_context_target_slugs: [], apply_context_apply_plan_rel_paths: [] };
+      rows.push({
+        row: validated.row,
+        apply_context_target_slugs: correlation.apply_context_target_slugs,
+        apply_context_apply_plan_rel_paths: correlation.apply_context_apply_plan_rel_paths,
+      });
     }
   }
   return rows;
 }
 
+export function supabaseCsvParityFounderRowMatchesSlugAndApplyPlanV1(args: {
+  slug: string;
+  applyPlanRel: string;
+  loaded: SupabaseCsvParityFounderDecisionLoadedRowV1;
+}): boolean {
+  const slug = normalizeSlug(args.slug);
+  const applyPlanRel = args.applyPlanRel.trim().toLowerCase();
+  if (args.loaded.apply_context_target_slugs.includes(slug)) return true;
+  if (args.loaded.apply_context_apply_plan_rel_paths.includes(applyPlanRel)) return true;
+  const haystack = JSON.stringify(args.loaded.row).toLowerCase();
+  return haystack.includes(slug) || haystack.includes(applyPlanRel);
+}
+
 export function findActiveFounderDecisionForSupabaseCsvParitySlug(args: {
   slug: string;
   applyPlanRel: string;
-  founderRows: FounderDecisionRegistryRowV1[];
+  founderRows: SupabaseCsvParityFounderDecisionLoadedRowV1[];
   nowIso: string;
 }): FounderDecisionRegistryRowV1 | null {
   const slug = normalizeSlug(args.slug);
-  for (const row of args.founderRows) {
+  for (const loaded of args.founderRows) {
+    const row = loaded.row;
     if (row.decision_status !== "approved") continue;
     if (row.allowed_next_scope !== "owner_mutation_approved") continue;
     if (!isFounderRegistryRowActiveMutationApproval(row, args.nowIso)) continue;
-    const haystack = JSON.stringify(row).toLowerCase();
-    if (haystack.includes(slug) || haystack.includes(args.applyPlanRel.toLowerCase())) {
+    if (
+      supabaseCsvParityFounderRowMatchesSlugAndApplyPlanV1({
+        slug,
+        applyPlanRel: args.applyPlanRel,
+        loaded,
+      })
+    ) {
       return row;
     }
   }
@@ -316,7 +375,7 @@ export async function runSupabaseCsvParityGuardedApplyV1(args: {
   const founderRow = findActiveFounderDecisionForSupabaseCsvParitySlug({
     slug,
     applyPlanRel,
-    founderRows: loadFounderDecisionRows(args.rootDir),
+    founderRows: loadFounderDecisionRowsForSupabaseCsvParityV1(args.rootDir),
     nowIso: now().toISOString(),
   });
   const founderDecisionMissing = founderRow == null;
