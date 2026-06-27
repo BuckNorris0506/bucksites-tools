@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-27T06:00:22.901Z",
+  "generated_at": "2026-06-27T05:53:15.014Z",
   "wedge": "refrigerator_water",
   "execution_plan_status": "READY_FOR_MUTATION_AUTH_REVIEW",
   "source_apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/supabase-csv-parity-ukf8001-apply-plan-proposal-v1.json",

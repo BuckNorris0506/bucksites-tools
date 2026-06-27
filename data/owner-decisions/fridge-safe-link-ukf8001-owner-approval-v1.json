@@ -1,0 +1,38 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-06-27-ukf8001-approve_csv_parity_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-ukf8001-csv-parity",
+      "source_decision_packet_id": "fridge_safe_link_ukf8001_apply_plan_proposal_v1",
+      "decided_at": "2026-06-27T00:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Approve single-slug ukf8001 CSV parity apply: promote Amazon Basics B07C8C2VBH direct_buyable row to committed retailer_links.csv primary. Aftermarket compatible — not OEM. Authorize guarded executor --write-csv only; no Supabase mutation from this row.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not batch apply da29-00020b, 4396710, 4396841, or Waterdrop HARD_DO_NOT_USE ASIN B087PDLZL9.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not write or overwrite evidence JSON under data/evidence/.",
+        "Do not mutate Supabase from this approval row — CSV parity only.",
+        "Do not mutate public pages, sitemap, or robots without separate review.",
+        "approve_csv_parity_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "ukf8001_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-ukf8001-apply-plan-proposal-v1.json",
+        "execution_plan_rel_path": "data/fridge/batch-production/apply-execution-plans/fridge-safe-link-ukf8001-apply-execution-plan-v1.json",
+        "evidence_rel_path": "data/evidence/amazon-ukf8001-live-outcome.2026-05-05.json",
+        "founder_option_id": "approve_csv_parity_apply",
+        "target_slug": "ukf8001",
+        "target_asin": "B07C8C2VBH",
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-06-27T00:00:00.000Z"
+      }
+    }
+  ]
+}
