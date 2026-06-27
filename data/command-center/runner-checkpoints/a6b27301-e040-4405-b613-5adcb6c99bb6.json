@@ -1,0 +1,24 @@
+{
+  "contract": "buckparts_runner_checkpoint_v1",
+  "run_id": "a6b27301-e040-4405-b613-5adcb6c99bb6",
+  "mission_id": "production_mission_v1",
+  "started_at": "2026-06-27T14:58:43.912Z",
+  "updated_at": "2026-06-27T15:06:42.588Z",
+  "completed_step_ids": [
+    "coverage_sprint_ranking",
+    "census_baseline",
+    "production_mission_plan",
+    "external_agent_dispatch",
+    "parity_factory_primary",
+    "validation_lint",
+    "validation_build",
+    "validation_tests",
+    "deploy_classifier",
+    "security_gate",
+    "guarded_apply_primary",
+    "operations_metrics_record"
+  ],
+  "last_halt_reason": null,
+  "last_halt_step_id": null,
+  "safe_buyer_path_proven_baseline": 48
+}

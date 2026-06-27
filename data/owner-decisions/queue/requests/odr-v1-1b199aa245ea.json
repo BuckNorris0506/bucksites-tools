@@ -1,0 +1,56 @@
+{
+  "contract": "owner_decision_request_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "decision_request_id": "odr-v1-1b199aa245ea",
+  "created_at": "2026-06-27T14:58:46.497Z",
+  "updated_at": "2026-06-27T15:02:50.544Z",
+  "source_system": "buckparts_runner_v1:production_mission_v1",
+  "source_artifact_path": "scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
+  "target_slugs": [],
+  "decision_type": "guarded_apply_bridge",
+  "options": [
+    {
+      "option_id": "approve_owner_mutation",
+      "label": "Approve owner_mutation_approved scope in Founder Decision Registry v1",
+      "founder_registry_scope_hint": "owner_mutation_approved"
+    },
+    {
+      "option_id": "defer_decision",
+      "label": "Defer — no mutation authority granted",
+      "founder_registry_scope_hint": "read_only_agent"
+    },
+    {
+      "option_id": "reject_mutation",
+      "label": "Reject mutation — keep read-only until more evidence",
+      "founder_registry_scope_hint": "none"
+    }
+  ],
+  "recommended_option": "approve_owner_mutation",
+  "evidence_summary": "Guarded apply dry-run ready — founder external --write-csv required before census delta",
+  "blockers": [
+    "FOUNDER_APPROVAL_REQUIRED",
+    "Guarded apply dry-run ready — founder external --write-csv required before census delta"
+  ],
+  "risks": [
+    "INFERRED: Approving grants owner_mutation_approved in Founder Decision Registry only — guarded apply executor still required for CSV/Supabase mutation.",
+    "PROVEN: Queue artifact approval does not itself mutate retailer_links or production."
+  ],
+  "exact_downstream_action_if_approved": "Record founder_decision_registry_v1 row with allowed_next_scope=owner_mutation_approved for target slug(s); then run guarded apply executor separately with explicit flags.",
+  "exact_downstream_action_if_rejected": "Record rejected/deferred outcome in founder_decision_registry_v1; Runner remains halted; no CSV or Supabase mutation.",
+  "expires_or_stale_after": "2026-07-11T14:58:46.497Z",
+  "status": "PENDING_OWNER_DECISION",
+  "founder_decision_registry_bridge": {
+    "expected_allowed_next_scope": "owner_mutation_approved",
+    "matching_registry_sources": [],
+    "active_mutation_approval_decision_id": null
+  },
+  "runner_halt_context": {
+    "mission_id": "production_mission_v1",
+    "run_id": "a6b27301-e040-4405-b613-5adcb6c99bb6",
+    "step_id": "guarded_apply_primary",
+    "halt_reason": "MUTATION_GATE_BLOCKED",
+    "halt_detail": "Guarded apply executor or bridge blocked"
+  }
+}

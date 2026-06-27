@@ -1,0 +1,71 @@
+{
+  "contract": "manufacturer_safe_link_rescue_apply_plan_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "netlify_api_authorized": false,
+  "production_go_click_authorized": false,
+  "coverage_unlocked": false,
+  "browser_automation_authorized": false,
+  "generated_at": "2026-06-27T14:58:46.037Z",
+  "source_command": "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
+  "filter_slug": "edr4rxd1",
+  "manufacturer_key": "everydrop_whirlpool",
+  "oem_part_token": "EDR4RXD1",
+  "plan_status": "READY_FOR_OWNER_REVIEW",
+  "owner_approval_required": true,
+  "readiness_gate_required_after_owner_approval": true,
+  "proof_artifact_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+  "browser_proof_checked_at": "2026-06-26T12:00:00.000Z",
+  "official_destination_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+  "retailer_key": "oem-parts-catalog",
+  "retailer_slug": "oem-parts-catalog",
+  "browser_truth_classification": "direct_buyable",
+  "exact_token_evidence": {
+    "mode": "identity_blob_includes",
+    "proven": true,
+    "notes": "exact token EDR4RXD1 proven in owner browser proof observations"
+  },
+  "wrong_family_evidence": {
+    "blocked": false,
+    "forbidden_tokens_checked": [],
+    "detected_forbidden_tokens": [],
+    "notes": "no forbidden wrong-family tokens detected"
+  },
+  "current_csv_row": {
+    "filter_slug": "edr4rxd1",
+    "retailer_name": "OEM parts catalog (keyword lookup)",
+    "affiliate_url": "https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR4RXD1",
+    "is_primary": true,
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": null,
+    "browser_truth_notes": null,
+    "browser_truth_checked_at": null
+  },
+  "proposed_csv_row": {
+    "filter_slug": "edr4rxd1",
+    "retailer_name": "Whirlpool",
+    "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html",
+    "is_primary": true,
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+    "browser_truth_checked_at": "2026-06-26T12:00:00.000Z",
+    "customer_visible_label": "BuckParts Verified Link",
+    "label_subtype": "official_manufacturer_official_whirlpool"
+  },
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: owner browser proof PASS with fresh checked_at=2026-06-26T12:00:00.000Z.",
+    "PROVEN: official destination https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-4.edr4rxd1.html matches orchestrator repo truth when present.",
+    "PROVEN: apply plan is read-only — owner_approval_required=true; csv_apply_authorized=false.",
+    "PROVEN: manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority."
+  ],
+  "unknown_facts": []
+}

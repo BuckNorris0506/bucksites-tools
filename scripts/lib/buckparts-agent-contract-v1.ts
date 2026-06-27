@@ -74,6 +74,8 @@ export type AgentDispatchStepConfigV1 = {
   template_id: AgentDispatchTemplateIdV1;
   input_artifact_rel_paths: readonly string[];
   objective_summary: string;
+  /** When set, Runner may auto-write agent result if these repo paths already exist. */
+  expected_output_artifact_rel_paths?: readonly string[];
   timeout_ms?: number;
   max_attempts?: number;
 };
@@ -583,6 +585,71 @@ export function loadAgentResultV1(
   return parsed.ok ? parsed.result : null;
 }
 
+export function writeAgentResultV1(
+  rootDir: string,
+  resultRelPath: string,
+  result: BuckpartsAgentResultV1,
+): string {
+  const abs = path.join(rootDir, resultRelPath);
+  mkdirSync(path.dirname(abs), { recursive: true });
+  writeFileSync(abs, `${JSON.stringify(result, null, 2)}\n`, "utf8");
+  return resultRelPath;
+}
+
+/** Auto-package agent result when expected evidence artifacts already exist on disk. */
+export function tryAutoMaterializeAgentResultFromEvidenceV1(args: {
+  rootDir: string;
+  manifest: BuckpartsAgentDispatchManifestV1;
+  expectedOutputRelPaths?: readonly string[];
+  writeArtifacts: boolean;
+  now?: () => Date;
+}): BuckpartsAgentResultV1 | null {
+  const paths = (args.expectedOutputRelPaths ?? []).filter(
+    (rel) => typeof rel === "string" && rel.trim().length > 0,
+  );
+  if (paths.length === 0) {
+    return null;
+  }
+  const existing = paths.filter((rel) => existsSync(path.join(args.rootDir, rel)));
+  if (existing.length === 0) {
+    return null;
+  }
+
+  const now = args.now ?? (() => new Date());
+  const result: BuckpartsAgentResultV1 = {
+    contract: BUCKPARTS_AGENT_RESULT_CONTRACT_V1,
+    manifest_id: args.manifest.manifest_id,
+    dispatch_id: args.manifest.dispatch_id,
+    result_id: createHash("sha256")
+      .update(`${args.manifest.manifest_id}:auto:${existing.join(",")}`)
+      .digest("hex")
+      .slice(0, 16),
+    submitted_at: now().toISOString(),
+    submitted_by_surface: "EXTERNAL_OPERATOR",
+    completion_status: "COMPLETE",
+    validation_status: "PENDING",
+    output_artifact_rel_paths: existing,
+    structured_summary: {
+      auto_materialized_from_repo_evidence: true,
+      primary_slug: existing[0]?.match(/proof-result-([^-]+)-/)?.[1] ?? null,
+    },
+    proven_facts: [
+      "PROVEN: Agent result auto-materialized from existing repo evidence artifacts.",
+      `PROVEN: output_artifacts=${existing.join(", ")}`,
+    ],
+    unknown_facts: [],
+    mutation_authorized: false,
+    truth_closure_claimed: false,
+    csv_apply_authorized: false,
+    evidence_write_authorized: false,
+  };
+
+  if (args.writeArtifacts) {
+    writeAgentResultV1(args.rootDir, args.manifest.result_artifact_rel_path, result);
+  }
+  return result;
+}
+
 export function executeAgentDispatchStepV1(args: {
   rootDir: string;
   runId: string;
@@ -614,7 +681,15 @@ export function executeAgentDispatchStepV1(args: {
     writeAgentDispatchManifestV1(args.rootDir, manifest);
   }
 
-  const result = loadAgentResultV1(args.rootDir, manifest.result_artifact_rel_path);
+  const result =
+    loadAgentResultV1(args.rootDir, manifest.result_artifact_rel_path) ??
+    tryAutoMaterializeAgentResultFromEvidenceV1({
+      rootDir: args.rootDir,
+      manifest,
+      expectedOutputRelPaths: args.config.expected_output_artifact_rel_paths,
+      writeArtifacts: args.writeArtifacts,
+      now,
+    });
   const resultRelPath = result ? manifest.result_artifact_rel_path : null;
 
   if (!result) {

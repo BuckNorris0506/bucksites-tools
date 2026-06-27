@@ -1,0 +1,28 @@
+{
+  "contract": "buckparts_agent_result_v1",
+  "manifest_id": "30e23a657546ac19",
+  "dispatch_id": "39d7412e-b484-4a33-8798-31717deae297",
+  "result_id": "prod-mission-live-edr4rxd1-2026-06-27",
+  "submitted_at": "2026-06-27T14:48:30.000Z",
+  "submitted_by_surface": "EXTERNAL_OPERATOR",
+  "completion_status": "COMPLETE",
+  "validation_status": "PENDING",
+  "output_artifact_rel_paths": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json"
+  ],
+  "structured_summary": {
+    "primary_apply_slug": "edr4rxd1",
+    "batch_id": "fridge_safe_link_first4_deblocked",
+    "evidence_type": "owner_browser_proof",
+    "verdict": "PASS_BROWSER_PROOF"
+  },
+  "proven_facts": [
+    "PROVEN: Owner browser proof result already on disk — packaged for production mission dispatch validation.",
+    "PROVEN: Amazon OEM PDP B00UB38V2A evidence referenced in browser proof result."
+  ],
+  "unknown_facts": [],
+  "mutation_authorized": false,
+  "truth_closure_claimed": false,
+  "csv_apply_authorized": false,
+  "evidence_write_authorized": false
+}

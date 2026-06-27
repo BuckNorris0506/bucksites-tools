@@ -23,6 +23,13 @@ import {
   PRODUCTION_MISSION_DISPATCH_INPUT_ARTIFACTS_V1,
   PRODUCTION_MISSION_RUNNER_MISSION_ID_V1,
 } from "./buckparts-production-mission-constants-v1";
+import {
+  buildProductionMissionPlanSyncV1,
+  isProductionMissionApplyGoalSatisfiedV1,
+  productionMissionDispatchObjectiveV1,
+  resolveProductionMissionRunnerStepCommandV1,
+  type ProductionMissionPlanV1,
+} from "./buckparts-production-mission-v1";
 
 export const BUCKPARTS_RUNNER_CONTRACT_V1 = "buckparts_runner_v1" as const;
 
@@ -122,6 +129,7 @@ export type BuckpartsRunnerCheckpointV1 = {
   completed_step_ids: string[];
   last_halt_reason: RunnerHaltReasonV1 | null;
   last_halt_step_id: string | null;
+  safe_buyer_path_proven_baseline?: number | null;
 };
 
 export type BuckpartsRunnerReportV1 = {
@@ -162,6 +170,7 @@ export type BuckpartsRunnerReportV1 = {
   unknown_facts: string[];
   production_mission_lifecycle_artifact_path?: string | null;
   operations_metrics_snapshot_recorded?: boolean;
+  safe_buyer_path_proven_baseline?: number | null;
 };
 
 export type RunnerSpawnResultV1 = {
@@ -519,19 +528,19 @@ export const BUCKPARTS_RUNNER_MISSIONS_V1: Record<
       },
       tsxReportStep(
         "parity_factory_primary",
-        "Supabase CSV parity factory — primary slug",
+        "Apply plan factory — primary slug",
         "scripts/report-supabase-csv-parity-coverage-factory-v1.ts",
         "none",
         "analysis",
-        ["--", "--slug", "edr4rxd1"],
+        ["--", "--slug", "PLACEHOLDER"],
       ),
       tsxReportStep(
         "guarded_apply_primary",
-        "Supabase CSV parity guarded apply — primary slug (dry-run)",
+        "Guarded apply — primary slug (dry-run)",
         "scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
         "founder_approval_if_mutation_blocked",
         "analysis",
-        ["--", "--slug", "edr4rxd1"],
+        ["--", "--slug", "PLACEHOLDER"],
       ),
       tsxReportStep(
         "operations_metrics_record",
@@ -801,6 +810,31 @@ export function evaluateStepHaltV1(args: {
       halt: true,
       reason: "FOUNDER_APPROVAL_REQUIRED",
       detail: "csv_apply_authorized=false with owner_approval_required=true",
+    };
+  }
+
+  if (
+    bridgeStatus === "DRY_RUN_READY" &&
+    mutationAuthorized === false &&
+    step.halt_policy === "founder_approval_if_mutation_blocked"
+  ) {
+    return {
+      halt: true,
+      reason: "FOUNDER_APPROVAL_REQUIRED",
+      detail: "Guarded apply dry-run ready — founder external --write-csv required before census delta",
+    };
+  }
+
+  const writeCsvBlocked = asBoolean(readJsonField(parsed_json, "write_csv_blocked_until_founder_approval"));
+  if (
+    writeCsvBlocked === true &&
+    mutationAuthorized === false &&
+    step.halt_policy === "founder_approval_if_mutation_blocked"
+  ) {
+    return {
+      halt: true,
+      reason: "FOUNDER_APPROVAL_REQUIRED",
+      detail: "write_csv_blocked_until_founder_approval=true — execute guarded apply --write-csv externally",
     };
   }
 
@@ -1221,6 +1255,17 @@ export function runBuckpartsRunnerV1(args: {
   let ownerDecisionRequestPath: string | null = null;
   let failed = false;
   let analysisHalted = false;
+  let productionMissionPlan: ProductionMissionPlanV1 | null = null;
+  let safeBuyerPathProvenBaseline: number | null = null;
+  if (args.resumeRunId) {
+    const checkpoint = loadRunnerCheckpointV1(args.rootDir, args.resumeRunId);
+    safeBuyerPathProvenBaseline = checkpoint?.safe_buyer_path_proven_baseline ?? null;
+  }
+  if (mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1) {
+    if (resumed || completedStepIds.includes("production_mission_plan")) {
+      productionMissionPlan = buildProductionMissionPlanSyncV1({ rootDir: args.rootDir, now });
+    }
+  }
 
   for (const step of mission.steps) {
     if (analysisHalted && step.phase === "analysis") {
@@ -1241,15 +1286,100 @@ export function runBuckpartsRunnerV1(args: {
         halt_reason: null,
         halt_detail: null,
       });
+      continue;
+    }
+
+    if (
+      mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 &&
+      productionMissionPlan &&
+      step.step_id === "parity_factory_primary" &&
+      !productionMissionPlan.target.apply_factory_report_script
+    ) {
+      stepResults.push({
+        step_id: step.step_id,
+        title: step.title,
+        kind: step.kind,
+        status: "SKIPPED",
+        exit_code: null,
+        duration_ms: 0,
+        command_display: step.command ? commandDisplayV1(step.command) : step.provenance,
+        stdout_excerpt: "",
+        stderr_excerpt: tailTextV1("PROVEN SKIPPED: no apply factory script for resolved target.", 500),
+        parsed_json_summary: null,
+        halt_reason: null,
+        halt_detail: null,
+      });
       if (!completedStepIds.includes(step.step_id)) {
         completedStepIds.push(step.step_id);
       }
       continue;
     }
 
+    if (
+      mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 &&
+      productionMissionPlan &&
+      step.step_id === "guarded_apply_primary" &&
+      isProductionMissionApplyGoalSatisfiedV1({
+        rootDir: args.rootDir,
+        plan: productionMissionPlan,
+      })
+    ) {
+      stepResults.push({
+        step_id: step.step_id,
+        title: step.title,
+        kind: step.kind,
+        status: "PASS",
+        exit_code: 0,
+        duration_ms: 0,
+        command_display: step.command ? commandDisplayV1(step.command) : step.provenance,
+        stdout_excerpt: tailTextV1(
+          JSON.stringify({
+            proven: true,
+            primary_apply_slug: productionMissionPlan.target.primary_apply_slug,
+            reason: "external_guarded_write_already_reflected_in_census",
+          }),
+          2000,
+        ),
+        stderr_excerpt: "",
+        parsed_json_summary: {
+          bridge_status: "APPLIED",
+          mutation_authorized: true,
+          primary_apply_slug: productionMissionPlan.target.primary_apply_slug,
+        },
+        halt_reason: null,
+        halt_detail: null,
+      });
+      if (!completedStepIds.includes(step.step_id)) {
+        completedStepIds.push(step.step_id);
+      }
+      continue;
+    }
+
+    let resolvedStep = step;
+    if (mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 && productionMissionPlan) {
+      const dynamicCommand = resolveProductionMissionRunnerStepCommandV1(
+        step.step_id,
+        productionMissionPlan,
+      );
+      if (dynamicCommand) {
+        resolvedStep = { ...step, command: dynamicCommand };
+      }
+      if (step.kind === "agent_dispatch" && step.dispatch) {
+        resolvedStep = {
+          ...resolvedStep,
+          dispatch: {
+            ...step.dispatch,
+            objective_summary: productionMissionDispatchObjectiveV1(productionMissionPlan.target),
+            expected_output_artifact_rel_paths:
+              productionMissionPlan.target.expected_agent_output_artifact_rel_paths,
+          },
+        };
+      }
+    }
+
     const skip = completedStepIds.includes(step.step_id);
     const result = executeRunnerStepV1({
-      step,
+      step: resolvedStep,
       cwd: args.rootDir,
       spawnFn,
       skip,
@@ -1260,12 +1390,33 @@ export function runBuckpartsRunnerV1(args: {
     });
     stepResults.push(result);
 
+    if (
+      mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 &&
+      step.step_id === "production_mission_plan" &&
+      result.status === "PASS"
+    ) {
+      productionMissionPlan = buildProductionMissionPlanSyncV1({ rootDir: args.rootDir, now });
+    }
+
     if (result.owner_decision_request_id) {
       ownerDecisionRequestId = result.owner_decision_request_id;
       ownerDecisionRequestPath = result.owner_decision_request_artifact_path ?? null;
     }
 
     if (result.status === "PASS" || result.status === "SKIPPED") {
+      if (
+        step.step_id === "census_baseline" &&
+        result.parsed_json_summary &&
+        typeof result.parsed_json_summary === "object"
+      ) {
+        const counts = (result.parsed_json_summary as Record<string, unknown>).classification_counts;
+        if (counts && typeof counts === "object") {
+          const proven = (counts as Record<string, unknown>).SAFE_BUYER_PATH_PROVEN;
+          if (typeof proven === "number") {
+            safeBuyerPathProvenBaseline = proven;
+          }
+        }
+      }
       if (!completedStepIds.includes(step.step_id)) {
         completedStepIds.push(step.step_id);
       }
@@ -1276,9 +1427,6 @@ export function runBuckpartsRunnerV1(args: {
       haltReason = result.halt_reason;
       haltStepId = step.step_id;
       haltDetail = result.halt_detail;
-      if (!completedStepIds.includes(step.step_id)) {
-        completedStepIds.push(step.step_id);
-      }
       if (step.phase === "analysis") {
         analysisHalted = true;
         continue;
@@ -1356,6 +1504,7 @@ export function runBuckpartsRunnerV1(args: {
       overall_status === "COMPLETE" || overall_status === "RESUMED_COMPLETE"
         ? ["UNKNOWN: Customer-visible coverage delta requires separate census diff — runner validates execution only."]
         : [],
+    safe_buyer_path_proven_baseline: safeBuyerPathProvenBaseline,
   };
 
   if (mission.mission_id === PRODUCTION_MISSION_RUNNER_MISSION_ID_V1 && writeArtifacts) {
@@ -1395,6 +1544,7 @@ export function runBuckpartsRunnerV1(args: {
       completed_step_ids: completedStepIds,
       last_halt_reason: haltReason,
       last_halt_step_id: haltStepId,
+      safe_buyer_path_proven_baseline: safeBuyerPathProvenBaseline,
     });
     writeRunnerReportArtifactV1(args.rootDir, report);
   }

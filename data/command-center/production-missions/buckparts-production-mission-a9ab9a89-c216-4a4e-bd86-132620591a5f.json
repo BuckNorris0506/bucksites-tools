@@ -1,0 +1,123 @@
+{
+  "contract": "buckparts_production_mission_lifecycle_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-06-27T14:49:20.510Z",
+  "run_id": "a9ab9a89-c216-4a4e-bd86-132620591a5f",
+  "runner_mission_id": "production_mission_v1",
+  "runner_artifact_rel_path": "data/command-center/runner-runs/buckparts-runner-production_mission_v1-a9ab9a89-c216-4a4e-bd86-132620591a5f.json",
+  "runner_overall_status": "FAILED",
+  "target": {
+    "batch_id": "fridge_safe_link_first4_deblocked",
+    "batch_label": "Fridge safe-link First4 deblocked cohort",
+    "primary_apply_slug": "edr4rxd1",
+    "target_slugs": [
+      "edr4rxd1",
+      "edr3rxd1",
+      "4396508"
+    ],
+    "expected_safe_buyer_path_proven_delta": 3,
+    "executability": "EXECUTABLE_AFTER_APPROVAL",
+    "founder_approval_required": true,
+    "dispatch_input_artifact_rel_paths": [
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.json",
+      "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json"
+    ],
+    "expected_agent_output_artifact_rel_paths": [
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json",
+      "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
+    ],
+    "guarded_apply_report_script": "scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
+    "guarded_apply_argv": [
+      "--",
+      "--slug",
+      "edr4rxd1"
+    ],
+    "dry_run_command_display": "node --import tsx scripts/report-supabase-csv-parity-guarded-apply-v1.ts -- --slug edr4rxd1",
+    "write_command_display": "# BLOCKED until founder approval\nnode --import tsx scripts/report-supabase-csv-parity-guarded-apply-v1.ts -- --slug edr4rxd1 --write-csv"
+  },
+  "phases": [
+    {
+      "phase_id": "coverage_sprint_ranking",
+      "status": "COMPLETE",
+      "artifact_rel_path": null,
+      "detail": "fridge_safe_link_first4_deblocked"
+    },
+    {
+      "phase_id": "census_baseline",
+      "status": "COMPLETE",
+      "artifact_rel_path": null,
+      "detail": "SAFE_BUYER_PATH_PROVEN=48"
+    },
+    {
+      "phase_id": "production_mission_plan",
+      "status": "COMPLETE",
+      "artifact_rel_path": null,
+      "detail": "edr4rxd1"
+    },
+    {
+      "phase_id": "external_agent_dispatch",
+      "status": "PENDING",
+      "artifact_rel_path": null,
+      "detail": null
+    },
+    {
+      "phase_id": "agent_result",
+      "status": "FAILED",
+      "artifact_rel_path": "data/command-center/agent-dispatch/results/30e23a657546ac19.json",
+      "detail": "data/command-center/agent-dispatch/results/30e23a657546ac19.json"
+    },
+    {
+      "phase_id": "validation",
+      "status": "FAILED",
+      "artifact_rel_path": "data/command-center/runner-runs/buckparts-runner-production_mission_v1-a9ab9a89-c216-4a4e-bd86-132620591a5f.json",
+      "detail": "{\"lint_pass\":\"SKIPPED\",\"build_pass\":false,\"tests_pass\":\"SKIPPED\",\"deploy_classifier_ran\":false,\"security_gate_ran\":false}"
+    },
+    {
+      "phase_id": "owner_decision_queue",
+      "status": "COMPLETE",
+      "artifact_rel_path": null,
+      "detail": "pending_count=0 linked=0"
+    },
+    {
+      "phase_id": "guarded_apply_primary",
+      "status": "SKIPPED",
+      "artifact_rel_path": null,
+      "detail": "node --import tsx scripts/report-supabase-csv-parity-guarded-apply-v1.ts -- --slug edr4rxd1"
+    },
+    {
+      "phase_id": "operations_metrics",
+      "status": "COMPLETE",
+      "artifact_rel_path": "data/command-center/operations-metrics/history-v1.jsonl",
+      "detail": "agent_success_rate=0"
+    }
+  ],
+  "safe_buyer_path_proven": {
+    "baseline": 48,
+    "at_run": 48,
+    "delta": 0,
+    "expected_delta": 3
+  },
+  "owner_decision_queue": {
+    "pending_count": 0,
+    "linked_request_ids": [],
+    "linked_request_artifact_paths": []
+  },
+  "operations_metrics": {
+    "snapshot_recorded": true,
+    "history_rel_path": "data/command-center/operations-metrics/history-v1.jsonl",
+    "aggregate_agent_success_rate": 0,
+    "aggregate_validation_pass_rate": 0.833
+  },
+  "lifecycle_complete": false,
+  "lifecycle_complete_reason": "Lifecycle incomplete — resume Runner or complete pending phases.",
+  "proven_facts": [
+    "PROVEN: Lifecycle artifact is read-only documentation of Foundation v2 stack execution.",
+    "PROVEN: Phases recorded=9 runner_status=FAILED."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: Zero proven delta at run time — founder-guarded CSV apply write not executed inside Runner."
+  ],
+  "recommended_next_action": "PROVEN: Complete agent dispatch result; record founder approval; then execute guarded apply write for slug edr4rxd1 separately."
+}

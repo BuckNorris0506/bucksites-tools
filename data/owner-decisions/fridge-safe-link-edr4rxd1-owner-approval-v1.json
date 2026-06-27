@@ -1,0 +1,33 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-06-10-edr4rxd1-approve_csv_manufacturer_rescue_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-edr4rxd1-manufacturer-rescue",
+      "source_decision_packet_id": "manufacturer_safe_link_rescue_apply_plan_edr4rxd1_v1",
+      "decided_at": "2026-06-26T12:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Approve single-slug edr4rxd1 manufacturer rescue CSV apply: promote verified Amazon EveryDrop EDR4RXD1 direct_buyable row to committed retailer_links.csv primary. Authorize guarded manufacturer-rescue-guarded-apply-bridge --write-csv only; no Supabase mutation from this row.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "prohibited_actions_still_apply": [
+        "Do not batch apply other First4 slugs without separate approval rows.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not mutate Supabase from this approval row — CSV apply only.",
+        "approve_csv_manufacturer_rescue_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "edr4rxd1_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr4rxd1-v1.json",
+        "target_slug": "edr4rxd1",
+        "target_asin": "B00UB38V2A",
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-06-26T12:00:00.000Z"
+      }
+    }
+  ]
+}

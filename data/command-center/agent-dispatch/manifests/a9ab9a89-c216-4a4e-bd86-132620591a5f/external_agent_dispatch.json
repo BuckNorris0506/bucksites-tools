@@ -1,0 +1,69 @@
+{
+  "contract": "buckparts_agent_dispatch_manifest_v1",
+  "manifest_id": "30e23a657546ac19",
+  "dispatch_id": "39d7412e-b484-4a33-8798-31717deae297",
+  "run_id": "a9ab9a89-c216-4a4e-bd86-132620591a5f",
+  "mission_id": "production_mission_v1",
+  "step_id": "external_agent_dispatch",
+  "created_at": "2026-06-27T14:45:28.107Z",
+  "updated_at": "2026-06-27T14:45:28.108Z",
+  "status": "RESULT_PENDING",
+  "template_id": "read_only_evidence_collection_v1",
+  "execution_surface": "EXTERNAL_OPERATOR",
+  "objective_class": "READ_ONLY_EVIDENCE_COLLECTION",
+  "objective_summary": "Package read-only owner-browser-proof evidence for production mission primary slug per mission plan; reference drafts under data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-*.json; do not mutate CSV or claim truth closure.",
+  "input_artifact_rel_paths": [
+    "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-batch-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json"
+  ],
+  "result_artifact_rel_path": "data/command-center/agent-dispatch/results/30e23a657546ac19.json",
+  "expected_result_contract": "buckparts_agent_result_v1",
+  "validation_contract": "buckparts_agent_result_validation_v1",
+  "timeout_at": "2026-06-28T14:45:28.107Z",
+  "retry_policy": {
+    "max_attempts": 3,
+    "attempt_number": 1,
+    "retry_after_validation_fail": true,
+    "retry_after_timeout": true
+  },
+  "ownership_boundaries": {
+    "runner_may_write": [
+      "dispatch manifest under data/command-center/agent-dispatch/manifests/",
+      "runner checkpoint and runner run artifact"
+    ],
+    "external_operator_may_write": [
+      "result artifact under data/command-center/agent-dispatch/results/",
+      "output evidence files referenced by result.output_artifact_rel_paths"
+    ],
+    "founder_required_for": [
+      "csv_apply_authorized",
+      "mutation_authorized",
+      "owner_mutation_approved",
+      "evidence_write_authorized",
+      "truth closure promotion to PROVEN buyer path"
+    ],
+    "runner_must_not": [
+      "invoke vendor APIs or chat surfaces",
+      "auto-approve external agent outputs",
+      "mutate product truth from result prose alone"
+    ]
+  },
+  "prohibited_actions": [
+    "mutate_csv",
+    "mutate_supabase",
+    "auto_promote_buy_links",
+    "truth_closure_without_repo_validation",
+    "commit_or_push_from_external_surface"
+  ],
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "proven_facts": [
+    "PROVEN: Dispatch manifest is read-only handoff — Runner does not call external agent APIs.",
+    "PROVEN: template_id=read_only_evidence_collection_v1 objective_class=READ_ONLY_EVIDENCE_COLLECTION.",
+    "PROVEN: Founder-only mutation approval remains required for CSV/Supabase/truth closure."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: External operator completion time until result artifact is written."
+  ]
+}

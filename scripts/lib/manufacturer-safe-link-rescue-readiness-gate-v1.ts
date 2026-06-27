@@ -50,6 +50,7 @@ import {
 } from "./manufacturer-safe-link-rescue-owner-browser-proof-evidence-v1";
 import {
   isOperationalOrchestratorBlockerV1,
+  filterEverydropOrchestratorBlockedReasonsV1,
   resolveEverydropWhirlpoolOwnerApplyLaneEligibleV1,
 } from "./manufacturer-safe-link-rescue-everydrop-readiness-unblockers-v1";
 import {
@@ -626,14 +627,27 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
   });
   if (!directBuyable) blockingReasons.push("not_guarded_apply_direct_buyable_candidate");
 
-  const directorBlocked = args.directorLane.guarded_apply_queue.some(
-    (q) =>
-      q.filter_slug === slug &&
-      q.blocked_reasons.filter(isOperationalOrchestratorBlockerV1).length > 0,
-  );
-  const operationalOrchestratorBlockers = args.row.blocked_reasons.filter(
-    isOperationalOrchestratorBlockerV1,
-  );
+  const directorBlocked = args.directorLane.guarded_apply_queue.some((q) => {
+    if (q.filter_slug !== slug) return false;
+    if (args.row.manufacturer_key === "everydrop_whirlpool") {
+      return (
+        filterEverydropOrchestratorBlockedReasonsV1({
+          adapterBlockers: q.blocked_reasons,
+          ownerProof,
+          now: args.now,
+        }).length > 0
+      );
+    }
+    return q.blocked_reasons.filter(isOperationalOrchestratorBlockerV1).length > 0;
+  });
+  const operationalOrchestratorBlockers =
+    args.row.manufacturer_key === "everydrop_whirlpool"
+      ? filterEverydropOrchestratorBlockedReasonsV1({
+          adapterBlockers: args.row.blocked_reasons,
+          ownerProof,
+          now: args.now,
+        })
+      : args.row.blocked_reasons.filter(isOperationalOrchestratorBlockerV1);
   const unresolved = operationalOrchestratorBlockers.length > 0 || directorBlocked;
   checks.push({
     check_id: "no_unresolved_blockers",

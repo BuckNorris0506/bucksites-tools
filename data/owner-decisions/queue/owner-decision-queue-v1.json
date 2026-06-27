@@ -3,9 +3,21 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-27T00:00:00.000Z",
-  "request_count": 0,
-  "pending_count": 0,
-  "request_artifact_paths": [],
-  "requests": []
+  "generated_at": "2026-06-27T15:02:50.544Z",
+  "request_count": 1,
+  "pending_count": 1,
+  "request_artifact_paths": [
+    "data/owner-decisions/queue/requests/odr-v1-1b199aa245ea.json"
+  ],
+  "requests": [
+    {
+      "decision_request_id": "odr-v1-1b199aa245ea",
+      "request_artifact_rel_path": "data/owner-decisions/queue/requests/odr-v1-1b199aa245ea.json",
+      "status": "PENDING_OWNER_DECISION",
+      "decision_type": "guarded_apply_bridge",
+      "target_slugs": [],
+      "source_system": "buckparts_runner_v1:production_mission_v1",
+      "updated_at": "2026-06-27T15:02:50.544Z"
+    }
+  ]
 }

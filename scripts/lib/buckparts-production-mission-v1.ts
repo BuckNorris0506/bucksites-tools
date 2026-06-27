@@ -30,6 +30,7 @@ import {
   PRODUCTION_MISSION_BROWSER_PROOF_RESULT_GLOB_V1,
   PRODUCTION_MISSION_RUNNER_MISSION_ID_V1,
 } from "./buckparts-production-mission-constants-v1";
+import { supabaseCsvParityApplyPlanRelPathV1 } from "./supabase-csv-parity-coverage-factory-v1";
 import {
   buildOwnerDecisionQueueProjectionV1,
   listOwnerDecisionRequestArtifactPathsV1,
@@ -67,6 +68,10 @@ export function browserProofResultRelPathV1(slug: string): string {
   return PRODUCTION_MISSION_BROWSER_PROOF_RESULT_GLOB_V1.replace("{slug}", slug.trim().toLowerCase());
 }
 
+export type ProductionMissionApplyExecutorKindV1 =
+  | "supabase_csv_parity"
+  | "manufacturer_rescue_bridge";
+
 export type ProductionMissionTargetV1 = {
   batch_id: string;
   batch_label: string;
@@ -77,6 +82,9 @@ export type ProductionMissionTargetV1 = {
   founder_approval_required: boolean;
   dispatch_input_artifact_rel_paths: readonly string[];
   expected_agent_output_artifact_rel_paths: string[];
+  apply_executor_kind: ProductionMissionApplyExecutorKindV1;
+  apply_factory_report_script: string | null;
+  apply_factory_argv: readonly string[];
   guarded_apply_report_script: string;
   guarded_apply_argv: readonly string[];
   dry_run_command_display: string;
@@ -150,6 +158,33 @@ function slugHasBrowserProofResult(rootDir: string, slug: string): boolean {
   return existsSync(path.join(rootDir, browserProofResultRelPathV1(slug)));
 }
 
+function slugHasParityApplyPlan(rootDir: string, slug: string): boolean {
+  return existsSync(path.join(rootDir, supabaseCsvParityApplyPlanRelPathV1(slug)));
+}
+
+function readBrowserProofCheckedAt(rootDir: string, slug: string): string | null {
+  const abs = path.join(rootDir, browserProofResultRelPathV1(slug));
+  if (!existsSync(abs)) return null;
+  try {
+    const raw = JSON.parse(readFileSync(abs, "utf8")) as { checked_at?: string };
+    return typeof raw.checked_at === "string" ? raw.checked_at : null;
+  } catch {
+    return null;
+  }
+}
+
+function browserProofFreshnessWarning(rootDir: string, slug: string, maxAgeDays = 14): string | null {
+  const checkedAt = readBrowserProofCheckedAt(rootDir, slug);
+  if (!checkedAt) return `UNKNOWN: Browser proof checked_at missing for ${slug}.`;
+  const ageMs = Date.now() - new Date(checkedAt).getTime();
+  if (!Number.isFinite(ageMs)) return `UNKNOWN: Browser proof checked_at invalid for ${slug}.`;
+  const ageDays = ageMs / (86_400_000);
+  if (ageDays > maxAgeDays) {
+    return `UNKNOWN: Browser proof for ${slug} is stale (${String(Math.floor(ageDays))} days) — founder refresh required before guarded apply.`;
+  }
+  return null;
+}
+
 export function resolveProductionMissionTargetV1(args: {
   rootDir: string;
   sprint: CoverageProductionSprintV2ReportV1;
@@ -176,10 +211,35 @@ export function resolveProductionMissionTargetV1(args: {
     expectedOutputs.push(browserProofResultRelPathV1(primary));
   }
 
-  const guardedScript = "scripts/report-supabase-csv-parity-guarded-apply-v1.ts";
-  const guardedArgv = ["--", "--slug", primary] as const;
-  const dryRun = `node --import tsx ${guardedScript} -- --slug ${primary}`;
-  const writeCmd = `# BLOCKED until founder approval\nnode --import tsx ${guardedScript} -- --slug ${primary} --write-csv`;
+  const useParity = slugHasParityApplyPlan(args.rootDir, primary);
+  const useManufacturer =
+    !useParity &&
+    (batchId === "fridge_safe_link_first4_deblocked" ||
+      winning?.infrastructure_reused?.some((i) => i.includes("first4") || i.includes("manufacturer")));
+
+  let applyExecutorKind: ProductionMissionApplyExecutorKindV1 = "supabase_csv_parity";
+  let applyFactoryScript: string | null =
+    "scripts/report-supabase-csv-parity-coverage-factory-v1.ts";
+  let applyFactoryArgv: readonly string[] = ["--", "--slug", primary];
+  let guardedScript = "scripts/report-supabase-csv-parity-guarded-apply-v1.ts";
+  let guardedArgv: readonly string[] = ["--", "--slug", primary];
+
+  if (useManufacturer) {
+    applyExecutorKind = "manufacturer_rescue_bridge";
+    applyFactoryScript = "scripts/report-manufacturer-safe-link-rescue-apply-plan-factory-v1.ts";
+    applyFactoryArgv = ["--"];
+    guardedScript = "scripts/report-manufacturer-rescue-guarded-apply-bridge-v1.ts";
+    guardedArgv = ["--"];
+  } else if (!useParity) {
+    applyFactoryScript = null;
+    applyFactoryArgv = [];
+  }
+
+  const dryRun = `node --import tsx ${guardedScript} ${guardedArgv.join(" ")}`.trim();
+  const writeCmd =
+    applyExecutorKind === "manufacturer_rescue_bridge"
+      ? `# BLOCKED until founder approval\nnode --import tsx ${guardedScript} -- --write-csv`
+      : `# BLOCKED until founder approval\nnode --import tsx ${guardedScript} -- --slug ${primary} --write-csv`;
 
   return {
     batch_id: batchId,
@@ -191,6 +251,9 @@ export function resolveProductionMissionTargetV1(args: {
     founder_approval_required: winning?.founder_approval_required ?? true,
     dispatch_input_artifact_rel_paths: PRODUCTION_MISSION_DISPATCH_INPUT_ARTIFACTS_V1,
     expected_agent_output_artifact_rel_paths: expectedOutputs,
+    apply_executor_kind: applyExecutorKind,
+    apply_factory_report_script: applyFactoryScript,
+    apply_factory_argv: applyFactoryArgv,
     guarded_apply_report_script: guardedScript,
     guarded_apply_argv: guardedArgv,
     dry_run_command_display: dryRun,
@@ -321,6 +384,21 @@ function buildProductionMissionPlanFromPartsV1(args: {
     unknown_facts.push(
       `UNKNOWN: Browser proof result missing for primary slug ${target.primary_apply_slug} — agent dispatch will halt until result artifacts exist.`,
     );
+  } else {
+    const staleWarning = browserProofFreshnessWarning(args.rootDir, target.primary_apply_slug);
+    if (staleWarning) {
+      unknown_facts.push(staleWarning);
+    }
+  }
+  const proven_facts = [
+    "PROVEN: Production mission v1 reuses coverage sprint v2 winning batch — no parallel batch ranker.",
+    `PROVEN: primary_apply_slug=${target.primary_apply_slug} batch_id=${target.batch_id} executor=${target.apply_executor_kind}.`,
+    "PROVEN: Runner performs dry-run guarded apply only — CSV write requires founder approval outside Runner.",
+  ];
+  if (target.apply_executor_kind === "manufacturer_rescue_bridge") {
+    proven_facts.push(
+      `PROVEN: guarded apply bound to manufacturer_rescue_bridge for batch ${target.batch_id}.`,
+    );
   }
 
   return {
@@ -349,11 +427,7 @@ function buildProductionMissionPlanFromPartsV1(args: {
       "validation",
       "owner_decision_queue",
     ],
-    proven_facts: [
-      "PROVEN: Production mission v1 reuses coverage sprint v2 winning batch — no parallel batch ranker.",
-      `PROVEN: primary_apply_slug=${target.primary_apply_slug} batch_id=${target.batch_id}.`,
-      "PROVEN: Runner performs dry-run guarded apply only — CSV write requires founder approval outside Runner.",
-    ],
+    proven_facts,
     unknown_facts,
     recommended_next_action: target.founder_approval_required
       ? `PROVEN: Complete agent dispatch result; record founder approval; then execute guarded apply write for slug ${target.primary_apply_slug} separately.`
@@ -367,6 +441,32 @@ export function productionMissionDispatchObjectiveV1(target: ProductionMissionTa
     `(batch ${target.batch_id}, expected proven delta +${String(target.expected_safe_buyer_path_proven_delta)}). ` +
     "Reference existing evidence files only; do not mutate CSV, Supabase, or claim truth closure."
   );
+}
+
+export function isProductionMissionApplyGoalSatisfiedV1(args: {
+  rootDir: string;
+  plan: ProductionMissionPlanV1;
+}): boolean {
+  const census = buildAllProductSafeBuyerPathCensusV1({ rootDir: args.rootDir });
+  const product = census.products.find((p) => p.slug === args.plan.target.primary_apply_slug);
+  return product?.page_classification === "SAFE_BUYER_PATH_PROVEN";
+}
+
+export function resolveProductionMissionRunnerStepCommandV1(
+  stepId: string,
+  plan: ProductionMissionPlanV1,
+): readonly string[] | null {
+  const { target } = plan;
+  if (stepId === "parity_factory_primary") {
+    if (!target.apply_factory_report_script) {
+      return null;
+    }
+    return ["node", "--import", "tsx", target.apply_factory_report_script, ...target.apply_factory_argv];
+  }
+  if (stepId === "guarded_apply_primary") {
+    return ["node", "--import", "tsx", target.guarded_apply_report_script, ...target.guarded_apply_argv];
+  }
+  return null;
 }
 
 function extractProvenFromCensusStep(report: BuckpartsRunnerReportV1): number | null {
@@ -429,8 +529,23 @@ export function assembleProductionMissionLifecycleArtifactV1(args: {
 
   const queue = buildOwnerDecisionQueueProjectionV1({ rootDir: args.rootDir, now });
 
-  const baseline = plan.census_baseline.safe_buyer_path_proven_count;
-  const atRun = extractProvenFromCensusStep(report) ?? args.metricsReport?.aggregate.safe_buyer_path_proven_count_current ?? "UNKNOWN";
+  const baseline =
+    report.safe_buyer_path_proven_baseline ??
+    extractProvenFromCensusStep(report) ??
+    plan.census_baseline.safe_buyer_path_proven_count;
+  const guardedPassed = report.steps.find(
+    (s) => s.step_id === "guarded_apply_primary" && s.status === "PASS",
+  );
+  const censusAtFinalize =
+    guardedPassed != null
+      ? buildAllProductSafeBuyerPathCensusV1({ rootDir: args.rootDir }).classification_counts
+          .SAFE_BUYER_PATH_PROVEN
+      : null;
+  const atRun =
+    censusAtFinalize ??
+    extractProvenFromCensusStep(report) ??
+    args.metricsReport?.aggregate.safe_buyer_path_proven_count_current ??
+    "UNKNOWN";
   let delta: number | "UNKNOWN" = "UNKNOWN";
   if (typeof atRun === "number") {
     delta = atRun - baseline;
@@ -458,13 +573,15 @@ export function assembleProductionMissionLifecycleArtifactV1(args: {
     {
       phase_id: "external_agent_dispatch",
       status:
-        dispatchStep?.status === "PASS"
+        dispatchStep?.status === "PASS" || agentValidationPass === true
           ? "COMPLETE"
           : dispatchStep?.status === "HALTED"
             ? "HALTED"
             : dispatchStep?.status === "FAIL"
               ? "FAILED"
-              : "PENDING",
+              : agentValidationPass === false
+                ? "FAILED"
+                : "PENDING",
       artifact_rel_path: dispatchStep?.agent_dispatch_manifest_rel_path ?? null,
       detail:
         agentValidationPass === true
@@ -528,20 +645,33 @@ export function assembleProductionMissionLifecycleArtifactV1(args: {
 
   const lifecycleComplete =
     Boolean(dispatchDone && agentDone && guardedRan && metricsDone) &&
-    (report.overall_status === "HALTED_APPROVAL_REQUIRED" ||
-      report.overall_status === "COMPLETE" ||
-      report.overall_status === "RESUMED_COMPLETE" ||
-      report.overall_status === "HALTED_EXTERNAL_AGENT");
+    (report.overall_status === "COMPLETE" || report.overall_status === "RESUMED_COMPLETE") &&
+    typeof delta === "number" &&
+    delta >= 1;
 
   let lifecycleCompleteReason = "Lifecycle incomplete — resume Runner or complete pending phases.";
-  if (lifecycleComplete && report.overall_status === "HALTED_APPROVAL_REQUIRED") {
+  if (lifecycleComplete) {
+    lifecycleCompleteReason = `PROVEN: Production mission lifecycle complete — SAFE_BUYER_PATH_PROVEN delta +${String(delta)}.`;
+  } else if (
+    Boolean(dispatchDone && agentDone && guardedRan && metricsDone) &&
+    report.overall_status === "HALTED_APPROVAL_REQUIRED"
+  ) {
     lifecycleCompleteReason =
-      "PROVEN: Full reference lifecycle through guarded apply dry-run halt — founder approval required for CSV write (+expected proven delta).";
-  } else if (lifecycleComplete && report.overall_status === "HALTED_EXTERNAL_AGENT") {
+      "PROVEN: Full reference lifecycle through guarded apply dry-run halt — founder approval and external --write-csv required.";
+  } else if (
+    Boolean(dispatchDone && agentDone && guardedRan && metricsDone) &&
+    report.overall_status === "HALTED_EXTERNAL_AGENT"
+  ) {
     lifecycleCompleteReason =
       "PROVEN: Lifecycle halted at agent dispatch — write agent result artifact and resume.";
-  } else if (lifecycleComplete) {
-    lifecycleCompleteReason = "PROVEN: Production mission reference lifecycle artifacts captured.";
+  } else if (
+    Boolean(dispatchDone && agentDone && guardedRan && metricsDone) &&
+    (report.overall_status === "COMPLETE" || report.overall_status === "RESUMED_COMPLETE") &&
+    typeof delta === "number" &&
+    delta === 0
+  ) {
+    lifecycleCompleteReason =
+      "Lifecycle incomplete — guarded apply write not reflected in census (delta=0). Execute external --write-csv and resume.";
   }
 
   return {

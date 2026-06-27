@@ -536,7 +536,7 @@ function changedCsvFields(
   after: Record<string, string>,
 ): string[] {
   const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
-  return [...keys]
+  return Array.from(keys)
     .filter((key) => (before[key] ?? "") !== (after[key] ?? ""))
     .sort();
 }
@@ -571,7 +571,7 @@ export function buildSupabaseCsvParityExecutionPlanFromApplyPlanV1(args: {
       execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW" as const,
       source_apply_plan_artifact_rel_path: args.applyPlanRelPath,
       source_apply_readiness_status: "PROVEN" as const,
-      planned_change_count: 1,
+      planned_change_count: 1 as const,
       target_file: FRIDGE_RETAILER_LINKS_CSV_REL_V1,
       row_patch_preview: [rowPatch],
       rollback_patch_preview: [
