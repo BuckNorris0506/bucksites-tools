@@ -51,11 +51,125 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
+## Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)
+
+**Read this section first** for HQ / Cursor / HyperAgent chat transfer.
+
+Prior foundation stack, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede this stopping point for Monday execution unless a fresh Command Center run proves otherwise.
+
+### Milestone summary (PROVEN — re-verify before citing)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| HEAD at handoff refresh | **`56b4167`** — Add owner browser proof refresh director |
+| **`origin/main`** | **`56b4167`** — same as HEAD at handoff refresh |
+| Working tree | Re-run `git status --short` before citing |
+
+**Recent commits on `main` (PROVEN — newest first):**
+
+| SHA | Subject |
+|-----|---------|
+| **`56b4167`** | Add owner browser proof refresh director |
+| **`3ce3ddf`** | Add edr3rxd1 ultrawf evidence readiness director |
+| **`3d8d9c5`** | Add HyperAgent evidence production director |
+| **`077b1a4`** | Exclude proven slugs from coverage steering |
+| **`00f133c`** | Apply 4396508 safe buyer path |
+| **`6932497`** | Activate 4396508 founder approval |
+
+```bash
+git rev-parse HEAD
+git log --oneline -6
+git status --short
+```
+
+### Proven coverage (re-run census before citing)
+
+**Source:** `node --import tsx scripts/report-all-product-safe-buyer-path-census-v1.ts` · **Sprint v2 inventory:** `npm run buckparts:coverage-production-sprint-v2`
+
+| Metric | Value (live at handoff refresh) |
+|--------|----------------------------------|
+| Site **`SAFE_BUYER_PATH_PROVEN`** | **50** |
+| Site **`SAFE_BUYER_PATH_SUPPRESSED_TRUST`** | **66** |
+| **`refrigerator_water`** proven / suppressed | **16 / 41** |
+| **`4396508`** page classification | **`SAFE_BUYER_PATH_PROVEN`** (applied at **`00f133c`**) |
+| **`edr4rxd1`** page classification | **`SAFE_BUYER_PATH_PROVEN`** |
+| Wedge completion **C3** | **FAIL** — `buyer_path_truth_status=MIXED` (16 safe mapped filters / 41 zero-safe) |
+
+```bash
+# Terminal — site + wedge census
+node --import tsx scripts/report-all-product-safe-buyer-path-census-v1.ts | jq '{site: .classification_counts, fridge: (.wedge_coverage[] | select(.wedge=="refrigerator_water"))}'
+
+# Terminal — C3 / wedge completion (refrigerator_water)
+node --import tsx scripts/report-wedge-completion-evaluator-v1.ts | jq '{wedge, overall_status, c3: (.blocking_criteria[] | select(.criterion_id=="C3") | {status, blocking_evidence, metrics})}'
+```
+
+**PROVEN:** C3 remains **FAIL** until `buyer_path_truth_status` clears **MIXED** on committed CSV — not from docs or Command Center prose alone.
+
+### Next best action (NBA)
+
+| Label | Finding |
+|-------|---------|
+| **Immediate guarded applies** | **Exhausted** — Coverage Sprint v2 `largest_achievable_executable_delta=0`; no First4 / parity CSV apply batch with positive delta without fresh evidence first |
+| **Current bottleneck** | **Owner browser proof freshness → committed evidence lane** — PASS proof exists on disk but goes **STALE** after 14-day policy; blocks apply-plan READY and guarded apply |
+| **Control-plane source** | **`owner-browser-proof-refresh-director-v1`** — ranked refresh queue + batched owner sessions (read-only; does not mutate evidence) |
+| **Session 1 (highest priority)** | **`edr3rxd1`, `ultrawf`** — expected **`+2`** `SAFE_BUYER_PATH_PROVEN` after fresh owner browser proof → committed evidence JSON → founder approval → guarded apply (per evidence-readiness director chain) |
+| **HyperAgent 14 cohort** | Up to **+5** near-term / **+6** optimistic after evidence lane clears — see `hyperagent-safe-link-evidence-production-director-v1` |
+
+**PROVEN:** Command Center root NBA may still steer demand-selected **air_purifier** batches — factory NBA for **refrigerator_water** coverage production is **owner browser proof refresh**, not another read-only discovery pass.
+
+```bash
+# Terminal — refresh queue + owner sessions (read-only)
+npm run buckparts:owner-browser-proof-refresh-director
+
+# Terminal — edr3rxd1 + ultrawf end-to-end readiness audit (read-only)
+npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director
+
+# Terminal — HyperAgent 14 cohort ranking (read-only)
+npm run buckparts:hyperagent-safe-link-evidence-production-director
+```
+
+**Artifacts (durable):**
+
+| Director | JSON | MD |
+|----------|------|-----|
+| Owner browser proof refresh | `data/fridge/batch-production/drafts/owner-browser-proof-refresh-director-v1.json` | `.../owner-browser-proof-refresh-director-v1.md` |
+| HyperAgent evidence production | `data/fridge/batch-production/drafts/hyperagent-safe-link-evidence-production-director-v1.json` | `.../hyperagent-safe-link-evidence-production-director-v1.md` |
+| edr3rxd1 + ultrawf evidence readiness | `data/fridge/batch-production/drafts/edr3rxd1-ultrawf-evidence-readiness-director-v1.json` | `.../edr3rxd1-ultrawf-evidence-readiness-director-v1.md` |
+
+**Do not:** mutate CSV/Supabase/evidence; regenerate browser proof in repo; activate founder approvals from directors (all `mutation_authorized: false`).
+
+### Strategic state (PROVEN / INFERRED)
+
+| Label | Finding |
+|-------|---------|
+| **Execution focus** | **PROVEN:** BuckParts remains the current execution focus — refrigerator_water safe-link rescue and coverage production |
+| **Authority-boundary platform thesis** | **INFERRED, NOT PROVEN** — documented in `docs/BuckParts-TO-AUTHORITY-BOUNDARY-THESIS.md` and `docs/BuckParts-AUTHORITY-BOUNDARY-STRATEGY-NOTE.md`; pattern proven **once** at Foundation v2 lifecycle, not at steady cadence |
+| **Proving lab** | **PROVEN:** **`refrigerator_water`** wedge — C3 incomplete, HyperAgent 14 cohort, owner-browser-proof refresh queue |
+
+### Exact next chat prompt (copy/paste)
+
+**Surface:** **Cursor**
+
+```
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — Owner browser proof refresh + guarded apply exhaustion**), then execute Session 1 owner browser proof refresh for edr3rxd1 and ultrawf using repo truth only.
+
+Constraints:
+- Read-only factory planning unless Jared explicitly authorizes evidence intake or apply.
+- Do NOT mutate CSV, Supabase, or committed evidence without founder approval.
+- Use owner-browser-proof-refresh-director-v1 and edr3rxd1-ultrawf-evidence-readiness-director-v1 as control-plane sources.
+- End with exact Browser/Terminal steps for Jared to refresh PASS owner-browser-proof (no auto-pass).
+
+First: re-run npm run buckparts:owner-browser-proof-refresh-director and npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director; summarize blockers and the smallest owner session checklist.
+```
+
+---
+
 ## Current stopping point — Foundation v1 stack COMPLETE (`613d6b8`)
 
-**Read this section first** for HQ / Cursor / HyperAgent pickup after **Runner v1**, **Coverage Production Sprint v2**, **Owner Decision Queue v1**, and **Agent Contract v1 (Foundation v2)**.
+**Superseded for next-move authority** by **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)** above. Retained for Runner / Coverage Sprint v2 / Owner Decision Queue / Agent Contract foundation context.
 
-Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, etc.) remain **PROVEN historical context** below — they do **not** supersede this foundation stack for Monday execution unless Command Center NBA explicitly overrides.
+Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, etc.) remain **PROVEN historical context** below — they do **not** supersede the owner-browser-proof refresh stopping point for Monday execution unless Command Center NBA explicitly overrides.
 
 ### Milestone summary (PROVEN — re-verify before citing)
 
@@ -1389,7 +1503,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, `npm run buckparts:command-surface`, `npm run buckparts:production-truth:ap`, and `node --import tsx scripts/report-fridge-safe-link-batch-factory-v1.ts` before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`3189b9b`** — AP demand-selected correctness-risk Command Center steering (`steering_override_source=demand_selected_correctness_risks`; root NBA **`CORRECTNESS_RISKS [CORRECTNESS_RESOLUTION_REQUIRED]`** while **BP-000005** / **BP-000006** block progression; demand lane still **`air_purifier` / `START_NEW_DEMAND_SELECTED_BATCH`**; open-batch proof **`open_batch_existence=PROVEN`**; mutation flags false; see **Current stopping point — AP demand-selected correctness-risk Command Center steering** at top). **Prior checkpoint `296dc32`** (open-batch proof + blocker reconciliation) and **`2295ebd`** (Holmes HAPF30 self-correction + Production Truth AP) are **superseded** for next-move authority. **Prior checkpoint `c780e82`** (AP CSV execution progress), **`a4fcaad`** (AP selector alignment), **`4bac7aa`** (Issue Registry CLOSED_PROVEN), and **`4246889`** (Customer Reality Command Center) remain documented below — treat as historical unless re-validated. Treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, census, and the three production directors (`buckparts:owner-browser-proof-refresh-director`, `buckparts:edr3rxd1-ultrawf-evidence-readiness-director`, `buckparts:hyperagent-safe-link-evidence-production-director`) before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`56b4167`** — owner browser proof refresh director + guarded apply exhaustion; site **`SAFE_BUYER_PATH_PROVEN=50`**; **`4396508`** proven; refrigerator_water **C3 FAIL** (`buyer_path_truth_status=MIXED`); factory NBA = **Session 1 owner browser proof refresh (`edr3rxd1`, `ultrawf`)** — see **Current stopping point — Owner browser proof refresh + guarded apply exhaustion** at top. **Prior checkpoints** (`613d6b8` foundation stack, `3189b9b` AP correctness steering, Customer Reality, FOH batch factory) remain documented below — treat as historical unless re-validated. Treat metric snapshots as **UNKNOWN** until re-run.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 
@@ -2626,7 +2740,7 @@ Current repo checkpoint:
 - Save credits: focused tests unless production/public route changes require build.
 
 First task:
-Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — AP demand-selected correctness-risk Command Center steering**, **Current next build priority**, **Do not do next**, and docs/BuckParts-TRUTH-MAP.md), then propose the single best next HQ move with exact copy/paste command. Do not implement until asked.
+Read docs/BuckParts-HQ-HANDOFF.md (especially **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)**, **Do not do next**, and docs/BuckParts-TRUTH-MAP.md), then re-run npm run buckparts:owner-browser-proof-refresh-director and npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director; propose Session 1 owner browser proof refresh checklist with exact Browser/Terminal steps. Do not mutate CSV/evidence/apply unless Jared explicitly authorizes.
 ```
 
 ---

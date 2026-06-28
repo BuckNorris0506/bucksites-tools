@@ -10,7 +10,7 @@
 
 | Question | Authority | Notes |
 |----------|-----------|--------|
-| **What should we do next operationally?** | **`docs/BuckParts-HQ-HANDOFF.md`** — **ONLY** current operational handoff | Read the top **Current stopping point — Foundation v1 stack COMPLETE** section first. |
+| **What should we do next operationally?** | **`docs/BuckParts-HQ-HANDOFF.md`** — **ONLY** current operational handoff | Read the top **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)** section first. |
 | **What principles bind all work?** | `docs/BuckParts-CONSTITUTION.md` | Governs when HQ guidance conflicts with durable principles. |
 | **How is the system structured?** | `docs/ARCHITECTURE.md` | Layers, partial state machines, invariants — repo-derived only. |
 | **What are live counts / NBA right now?** | **UNKNOWN** from docs alone | **PROVEN:** Re-run `node --import tsx scripts/report-buckparts-command-center.ts` before citing live Command Center numbers (`docs/BuckParts-HQ-HANDOFF.md`). |
@@ -53,7 +53,7 @@ Repo-truth map of four layers, manufacturer rescue partial state machines, syste
 
 ### `BuckParts-HQ-HANDOFF.md`
 
-**The only current operational handoff.** Foundation v1 stack (Runner v1, Coverage Production Sprint v2, Owner Decision Queue v1, Agent Contract v1, Operations Metrics v1, Production Mission v1), operating model, exact CLI paths, proven validation commands, and explicit **NOT IMPLEMENTED** deferred scope. Superseded sections below the foundation block are historical only.
+**The only current operational handoff.** Foundation v1 stack (Runner v1, Coverage Production Sprint v2, Owner Decision Queue v1, Agent Contract v1, Operations Metrics v1, Production Mission v1), **owner browser proof refresh director**, HyperAgent evidence production director, operating model, exact CLI paths, proven validation commands, and explicit **NOT IMPLEMENTED** deferred scope. Superseded sections below the current stopping point block are historical only.
 
 ### `BuckParts-AGENT-CONTRACT-V1.md`
 
@@ -85,6 +85,15 @@ Use when the task scope requires them — they do **not** replace the handoff fo
 ```bash
 # Current operational steering (stdout JSON — re-run before citing)
 node --import tsx scripts/report-buckparts-command-center.ts
+
+# Owner browser proof refresh queue (read-only control plane)
+npm run buckparts:owner-browser-proof-refresh-director
+
+# HyperAgent 14 cohort evidence production ranking (read-only)
+npm run buckparts:hyperagent-safe-link-evidence-production-director
+
+# edr3rxd1 + ultrawf evidence readiness audit (read-only)
+npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director
 
 # List Runner missions
 node --import tsx scripts/report-buckparts-runner-v1.ts --list-missions

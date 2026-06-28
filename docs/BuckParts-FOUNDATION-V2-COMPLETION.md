@@ -407,3 +407,30 @@ Appendix — Report metadata
 ### SAFE_TO_COMMIT verdict
 
 **SAFE_TO_COMMIT** — single new markdown file under `docs/`; no secrets; no mutation authority; no runtime behavior change; aligns with existing `ARCHITECTURE.md` and lifecycle artifacts already committed at `42abd9d`.
+
+---
+
+## Post–Foundation v2 operational state (2026-06-28 handoff refresh)
+
+**Purpose:** Record repo-truth deltas after Foundation v2 completion — without rewriting the historical completion record above.
+
+| Metric / milestone | At Foundation v2 completion (`42abd9d`) | Current (HEAD `56b4167`, re-run before citing) |
+|--------------------|--------------------------------------|--------------------------------------------------|
+| `SAFE_BUYER_PATH_PROVEN` (site) | **49** | **50** |
+| `4396508` classification | Suppressed / conflict lane | **`SAFE_BUYER_PATH_PROVEN`** (apply **`00f133c`**) |
+| `refrigerator_water` proven / suppressed | **15 / 42** (approx. at edr4rxd1 apply) | **16 / 41** |
+| Wedge completion **C3** | **FAIL** (`MIXED`) | **FAIL** (`MIXED` — 16 safe / 41 zero-safe mapped filters) |
+| Immediate guarded apply batches | First4 deblocked (+2 potential) | **Exhausted** — sprint v2 `largest_achievable_executable_delta=0` |
+| Factory NBA | Production mission / browser proof refresh ad hoc | **`owner-browser-proof-refresh-director-v1`** — Session 1: `edr3rxd1`, `ultrawf` (+2 expected) |
+
+**New read-only production directors (commits `3d8d9c5` → `56b4167`):**
+
+| Director | npm script |
+|----------|------------|
+| `hyperagent-safe-link-evidence-production-director-v1` | `npm run buckparts:hyperagent-safe-link-evidence-production-director` |
+| `edr3rxd1-ultrawf-evidence-readiness-director-v1` | `npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director` |
+| `owner-browser-proof-refresh-director-v1` | `npm run buckparts:owner-browser-proof-refresh-director` |
+
+**Strategic state:** BuckParts remains execution focus; authority-boundary platform thesis is **documented but NOT PROVEN** (`docs/BuckParts-TO-AUTHORITY-BOUNDARY-THESIS.md`); `refrigerator_water` is the proving lab.
+
+**Primary handoff:** `docs/BuckParts-HQ-HANDOFF.md` — **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)**.
