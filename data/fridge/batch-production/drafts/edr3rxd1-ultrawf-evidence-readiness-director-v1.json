@@ -1,0 +1,376 @@
+{
+  "contract": "edr3rxd1_ultrawf_evidence_readiness_director_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "founder_approval_activation_authorized": false,
+  "guarded_apply_authorized": false,
+  "source_command": "npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director",
+  "generated_at": "2026-06-28T16:06:00.595Z",
+  "pair_slugs": [
+    "edr3rxd1",
+    "ultrawf"
+  ],
+  "slug_audits": [
+    {
+      "slug": "edr3rxd1",
+      "oem_part_token": "EDR3RXD1",
+      "manufacturer_key": "everydrop_whirlpool",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+      "owner_browser_proof_verdict": "PASS_BROWSER_PROOF",
+      "owner_browser_proof_fresh": false,
+      "owner_browser_proof_age_days": 22.545840127314815,
+      "missing_artifacts": [
+        {
+          "artifact_kind": "committed_evidence_json",
+          "status": "MISSING",
+          "rel_path": "data/evidence/*.json (see committed-evidence-todo)",
+          "blocking_evidence": [
+            "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+            "launch_buy_links_gate_passes=false"
+          ],
+          "unblocks_with": "Owner commits evidence JSON from TODO packet (proof observations only)"
+        },
+        {
+          "artifact_kind": "owner_browser_proof_fresh",
+          "status": "STALE",
+          "rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+          "blocking_evidence": [
+            "browser_proof_stale_or_invalid_timestamp (>14d)"
+          ],
+          "unblocks_with": "Re-run owner browser proof session or refresh checked_at within 14d policy"
+        },
+        {
+          "artifact_kind": "apply_plan_proposal",
+          "status": "BLOCKED",
+          "rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+          "blocking_evidence": [
+            "browser_proof_stale_or_invalid_timestamp"
+          ],
+          "unblocks_with": "Resolve apply-plan blockers; manufacturer rescue apply-plan factory READY_FOR_OWNER_REVIEW"
+        },
+        {
+          "artifact_kind": "owner_classification_packet",
+          "status": "MISSING",
+          "rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-edr3rxd1-owner-classification-packet-v1.json",
+          "blocking_evidence": [
+            "apply plan not READY or packet not generated"
+          ],
+          "unblocks_with": "Owner classification review answers"
+        },
+        {
+          "artifact_kind": "founder_approval_row",
+          "status": "MISSING",
+          "rel_path": "data/owner-decisions/fridge-safe-link-edr3rxd1-owner-approval-v1.json",
+          "blocking_evidence": [
+            "owner_mutation_approved founder row absent"
+          ],
+          "unblocks_with": "Founder activates approval row — NOT performed by this factory"
+        },
+        {
+          "artifact_kind": "readiness_gate_ready_for_apply",
+          "status": "MISSING",
+          "rel_path": "manufacturer_safe_link_rescue_readiness_gate_v1 (regenerate after prerequisites)",
+          "blocking_evidence": [
+            "ready_for_apply=false in current gate snapshot"
+          ],
+          "unblocks_with": "All readiness gate checks PASS including founder approval"
+        },
+        {
+          "artifact_kind": "cursor_revalidation_pass",
+          "status": "MISSING",
+          "rel_path": "fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
+          "blocking_evidence": [
+            "VALIDATION_PARTIAL",
+            "DISCOVERY_CANDIDATES_OK not Verified Link"
+          ],
+          "unblocks_with": "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts"
+        },
+        {
+          "artifact_kind": "confusion_family_review_cleared",
+          "status": "NOT_REQUIRED",
+          "rel_path": null,
+          "blocking_evidence": [],
+          "unblocks_with": "n/a"
+        },
+        {
+          "artifact_kind": "batch_factory_eligible_now",
+          "status": "MISSING",
+          "rel_path": "fridge-safe-link-batch-factory-v1.json",
+          "blocking_evidence": [
+            "eligible_now_count=0"
+          ],
+          "unblocks_with": "Committed evidence + validation overlays"
+        }
+      ],
+      "blocking_evidence": [
+        "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+        "launch_buy_links_gate_passes=false",
+        "browser_proof_stale_or_invalid_timestamp (>14d)",
+        "browser_proof_stale_or_invalid_timestamp",
+        "apply plan not READY or packet not generated",
+        "owner_mutation_approved founder row absent",
+        "ready_for_apply=false in current gate snapshot",
+        "VALIDATION_PARTIAL",
+        "DISCOVERY_CANDIDATES_OK not Verified Link",
+        "eligible_now_count=0"
+      ],
+      "next_owner_action": "Refresh owner browser proof (stale >14d) before evidence commit",
+      "next_cursor_action": "npm run buckparts:fridge-safe-link-batch-factory && node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts",
+      "committed_evidence_todo_rel_path": "data/fridge/batch-production/drafts/edr3rxd1-committed-evidence-todo-v1.json",
+      "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+      "apply_plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "owner_classification_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-edr3rxd1-owner-classification-packet-v1.json",
+      "owner_classification_packet_generated": false,
+      "founder_approval_readiness": {
+        "ready_for_founder_packet": false,
+        "founder_decision_rel_path": "data/owner-decisions/fridge-safe-link-edr3rxd1-owner-approval-v1.json",
+        "founder_decision_exists": false,
+        "founder_decision_activated": false,
+        "prerequisites_met": [
+          "PASS owner browser proof"
+        ],
+        "prerequisites_missing": [
+          "browser proof fresh",
+          "apply plan (BLOCKED_STALE_BROWSER_PROOF)",
+          "committed evidence JSON"
+        ],
+        "recommended_founder_action": "Do NOT activate founder approval until committed evidence + apply plan + classification review complete"
+      },
+      "guarded_apply_readiness": {
+        "ready_for_guarded_apply_dry_run": false,
+        "ready_for_guarded_apply_write": false,
+        "guarded_apply_candidate_after_committed_evidence_alone": false,
+        "guarded_apply_candidate_after_full_evidence_lane": false,
+        "blocking_evidence": [
+          "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+          "launch_buy_links_gate_passes=false",
+          "browser_proof_stale_or_invalid_timestamp (>14d)",
+          "browser_proof_stale_or_invalid_timestamp",
+          "apply plan not READY or packet not generated",
+          "owner_mutation_approved founder row absent",
+          "ready_for_apply=false in current gate snapshot",
+          "VALIDATION_PARTIAL",
+          "DISCOVERY_CANDIDATES_OK not Verified Link",
+          "eligible_now_count=0",
+          "live_browser_capture_unavailable_or_failed",
+          "exact_token_not_proven",
+          "mutation_authorized=false",
+          "csv_apply_authorized=false"
+        ],
+        "dry_run_commands": [
+          "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
+          "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate"
+        ],
+        "write_commands_blocked": [
+          "# BLOCKED — founder approval + READY_FOR_APPLY required",
+          "# npm run buckparts:manufacturer-browser-proof-batch-commit-assist -- --slug edr3rxd1 --write-csv"
+        ],
+        "readiness_gate_status": "PENDING — regenerate gate after artifacts committed"
+      }
+    },
+    {
+      "slug": "ultrawf",
+      "oem_part_token": "ULTRAWF",
+      "manufacturer_key": "frigidaire",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+      "owner_browser_proof_verdict": "PASS_BROWSER_PROOF",
+      "owner_browser_proof_fresh": false,
+      "owner_browser_proof_age_days": 22.58750684027778,
+      "missing_artifacts": [
+        {
+          "artifact_kind": "committed_evidence_json",
+          "status": "MISSING",
+          "rel_path": "data/evidence/*.json (see committed-evidence-todo)",
+          "blocking_evidence": [
+            "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+            "launch_buy_links_gate_passes=false"
+          ],
+          "unblocks_with": "Owner commits evidence JSON from TODO packet (proof observations only)"
+        },
+        {
+          "artifact_kind": "owner_browser_proof_fresh",
+          "status": "STALE",
+          "rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+          "blocking_evidence": [
+            "browser_proof_stale_or_invalid_timestamp (>14d)"
+          ],
+          "unblocks_with": "Re-run owner browser proof session or refresh checked_at within 14d policy"
+        },
+        {
+          "artifact_kind": "apply_plan_proposal",
+          "status": "BLOCKED",
+          "rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
+          "blocking_evidence": [
+            "browser_proof_stale_or_invalid_timestamp"
+          ],
+          "unblocks_with": "Resolve apply-plan blockers; manufacturer rescue apply-plan factory READY_FOR_OWNER_REVIEW"
+        },
+        {
+          "artifact_kind": "owner_classification_packet",
+          "status": "PRESENT",
+          "rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-ultrawf-owner-classification-packet-v1.json",
+          "blocking_evidence": [],
+          "unblocks_with": "Owner classification review answers"
+        },
+        {
+          "artifact_kind": "founder_approval_row",
+          "status": "MISSING",
+          "rel_path": "data/owner-decisions/fridge-safe-link-ultrawf-owner-approval-v1.json",
+          "blocking_evidence": [
+            "owner_mutation_approved founder row absent"
+          ],
+          "unblocks_with": "Founder activates approval row — NOT performed by this factory"
+        },
+        {
+          "artifact_kind": "readiness_gate_ready_for_apply",
+          "status": "MISSING",
+          "rel_path": "manufacturer_safe_link_rescue_readiness_gate_v1 (regenerate after prerequisites)",
+          "blocking_evidence": [
+            "ready_for_apply=false in current gate snapshot"
+          ],
+          "unblocks_with": "All readiness gate checks PASS including founder approval"
+        },
+        {
+          "artifact_kind": "cursor_revalidation_pass",
+          "status": "MISSING",
+          "rel_path": "fridge-safe-link-owner-browser-proof-cursor-validation-v1.json",
+          "blocking_evidence": [
+            "VALIDATION_PARTIAL",
+            "DISCOVERY_CANDIDATES_OK not Verified Link"
+          ],
+          "unblocks_with": "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts"
+        },
+        {
+          "artifact_kind": "confusion_family_review_cleared",
+          "status": "BLOCKED",
+          "rel_path": null,
+          "blocking_evidence": [
+            "confusion_family_review_required"
+          ],
+          "unblocks_with": "Owner confusion-family classification packet review"
+        },
+        {
+          "artifact_kind": "batch_factory_eligible_now",
+          "status": "MISSING",
+          "rel_path": "fridge-safe-link-batch-factory-v1.json",
+          "blocking_evidence": [
+            "eligible_now_count=0"
+          ],
+          "unblocks_with": "Committed evidence + validation overlays"
+        }
+      ],
+      "blocking_evidence": [
+        "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+        "launch_buy_links_gate_passes=false",
+        "browser_proof_stale_or_invalid_timestamp (>14d)",
+        "browser_proof_stale_or_invalid_timestamp",
+        "owner_mutation_approved founder row absent",
+        "ready_for_apply=false in current gate snapshot",
+        "VALIDATION_PARTIAL",
+        "DISCOVERY_CANDIDATES_OK not Verified Link",
+        "confusion_family_review_required",
+        "eligible_now_count=0"
+      ],
+      "next_owner_action": "Complete confusion-family review in owner classification packet → commit evidence TODO → refresh proof if stale",
+      "next_cursor_action": "npm run buckparts:fridge-safe-link-batch-factory && node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts",
+      "committed_evidence_todo_rel_path": "data/fridge/batch-production/drafts/ultrawf-committed-evidence-todo-v1.json",
+      "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
+      "apply_plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "owner_classification_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-ultrawf-owner-classification-packet-v1.json",
+      "owner_classification_packet_generated": true,
+      "founder_approval_readiness": {
+        "ready_for_founder_packet": false,
+        "founder_decision_rel_path": "data/owner-decisions/fridge-safe-link-ultrawf-owner-approval-v1.json",
+        "founder_decision_exists": false,
+        "founder_decision_activated": false,
+        "prerequisites_met": [
+          "PASS owner browser proof",
+          "owner classification packet generated"
+        ],
+        "prerequisites_missing": [
+          "browser proof fresh",
+          "apply plan (BLOCKED_STALE_BROWSER_PROOF)",
+          "confusion_family_review_cleared",
+          "committed evidence JSON"
+        ],
+        "recommended_founder_action": "Do NOT activate founder approval until committed evidence + apply plan + classification review complete"
+      },
+      "guarded_apply_readiness": {
+        "ready_for_guarded_apply_dry_run": false,
+        "ready_for_guarded_apply_write": false,
+        "guarded_apply_candidate_after_committed_evidence_alone": false,
+        "guarded_apply_candidate_after_full_evidence_lane": false,
+        "blocking_evidence": [
+          "batch_factory repo_evidence_verdict not EXACT_PDP_PROVEN",
+          "launch_buy_links_gate_passes=false",
+          "browser_proof_stale_or_invalid_timestamp (>14d)",
+          "browser_proof_stale_or_invalid_timestamp",
+          "owner_mutation_approved founder row absent",
+          "ready_for_apply=false in current gate snapshot",
+          "VALIDATION_PARTIAL",
+          "DISCOVERY_CANDIDATES_OK not Verified Link",
+          "confusion_family_review_required",
+          "eligible_now_count=0",
+          "confusion_family_review_required",
+          "mutation_authorized=false",
+          "csv_apply_authorized=false"
+        ],
+        "dry_run_commands": [
+          "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
+          "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate"
+        ],
+        "write_commands_blocked": [
+          "# BLOCKED — founder approval + READY_FOR_APPLY required",
+          "# npm run buckparts:manufacturer-browser-proof-batch-commit-assist -- --slug ultrawf --write-csv"
+        ],
+        "readiness_gate_status": "PENDING — regenerate gate after artifacts committed"
+      }
+    }
+  ],
+  "pair_summary": {
+    "smallest_remaining_human_actions": [
+      "1. Owner commits evidence JSON from TODO packets (observations transcribed from proof only).",
+      "2. Re-run batch factory + owner-browser-proof Cursor validation.",
+      "3. edr3rxd1: refresh browser proof if stale; review official Whirlpool classification packet.",
+      "4. ultrawf: complete confusion-family review before apply plan can reach READY.",
+      "5. Founder approval activation (separate step — NOT performed here).",
+      "6. Regenerate readiness gate → guarded apply dry-run."
+    ],
+    "expected_proven_delta_if_pair_completes": 2,
+    "pair_blocked": true
+  },
+  "artifact_rel_paths_written": [
+    "data/fridge/batch-production/drafts/edr3rxd1-committed-evidence-todo-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+    "data/fridge/batch-production/drafts/ultrawf-committed-evidence-todo-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
+    "data/fridge/batch-production/drafts/fridge-safe-link-ultrawf-owner-classification-packet-v1.json"
+  ],
+  "proven_facts": [
+    "PROVEN: PASS owner browser proof artifacts on disk for both slugs.",
+    "PROVEN: neither slug has founder approval activated.",
+    "PROVEN: batch factory eligible_now_count=0.",
+    "PROVEN: guarded_apply_candidate_after_committed_evidence_alone=false for both slugs."
+  ],
+  "inferred_facts": [
+    "INFERRED: edr3rxd1 is the faster path — no confusion-family block when proof fresh.",
+    "INFERRED: ultrawf requires confusion-family clearance before apply-plan READY_FOR_OWNER_REVIEW."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: production /go first-hop without clicking /go.",
+    "UNKNOWN: whether Amazon secondary track required for launch-buy-links after official-manufacturer apply."
+  ],
+  "recommended_commands": [
+    "npm run buckparts:edr3rxd1-ultrawf-evidence-readiness-director",
+    "npm run buckparts:fridge-safe-link-batch-factory",
+    "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts",
+    "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
+    "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate"
+  ]
+}

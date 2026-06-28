@@ -1,0 +1,47 @@
+{
+  "contract": "fridge_safe_link_ultrawf_owner_classification_approval_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "approval_status": "PENDING_CONFUSION_FAMILY_REVIEW",
+  "not_an_approved_decision": true,
+  "generated_at": "2026-06-28T16:06:00.591Z",
+  "source_apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+  "target_slug": "ultrawf",
+  "oem_part_token": "ULTRAWF",
+  "manufacturer_key": "frigidaire",
+  "apply_plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+  "confusion_family_review_required": true,
+  "forbidden_tokens_for_slug": [
+    "EPTWFU01"
+  ],
+  "forbidden_tokens_detected_in_proof": [],
+  "owner_classification_review_v1": {
+    "owner_must_answer_before_guarded_apply": [
+      {
+        "question_id": "confusion_family_ultrawf_vs_eptwfu01",
+        "prompt": "Confirm ULTRAWF owner browser proof URLs are exact-token ULTRAWF / PureSource Ultra OEM — not EPTWFU01 or WF3CB family cross-listing?",
+        "required": true
+      },
+      {
+        "question_id": "approve_official_or_parts_distributor_primary",
+        "prompt": "If confusion-family cleared: approve Frigidaire.com or frigidaireapplianceparts.com official/authorized PDP as Verified Link primary?",
+        "required": true,
+        "blocked_until": "confusion_family_review_cleared"
+      },
+      {
+        "question_id": "amazon_b002jakram_audit",
+        "prompt": "Separately audit Amazon B002JAKRAM affiliate tag before any Amazon-primary apply (UNKNOWN in owner proof).",
+        "required": false
+      }
+    ]
+  },
+  "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+  "proven_facts": [
+    "PROVEN: PASS owner browser proof on disk.",
+    "PROVEN: confusion_family_review_required=true per frigidaire config.",
+    "PROVEN: forbidden_tokens_detected_in_proof=[]."
+  ],
+  "recommended_next_action": "Owner completes confusion-family review first; apply plan remains blocked until confusion_family_review_cleared."
+}

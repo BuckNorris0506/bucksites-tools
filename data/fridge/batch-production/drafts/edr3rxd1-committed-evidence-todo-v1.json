@@ -1,0 +1,66 @@
+{
+  "contract": "fridge_safe_link_committed_evidence_todo_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "generated_at": "2026-06-28T16:06:00.588Z",
+  "target_slug": "edr3rxd1",
+  "suggested_evidence_rel_path": "data/evidence/whirlpool-edr3rxd1-official-owner-browser-proof-evidence.TODO.json",
+  "evidence_write_not_authorized": true,
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+  "excluded_evidence_rel_paths": [
+    "data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json",
+    "amazon ASIN B087PDLZL9"
+  ],
+  "proposed_evidence_fields": {
+    "scope": "owner_browser_review_evidence_only",
+    "read_only": true,
+    "data_mutation": false,
+    "filter_slug": "edr3rxd1",
+    "token": "EDR3RXD1",
+    "verdict": "TODO_OWNER_COMMIT_FROM_PROOF_ARTIFACT_ONLY",
+    "mutation_ready": false,
+    "product_attribution": "oem_official",
+    "primary_proof_track": {
+      "path_type": "official_manufacturer_pdp",
+      "proposed_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+      "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
+    },
+    "secondary_amazon_audit_track": {
+      "proposed_canonical_url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS?th=1&linkCode=ll2&tag=buckparts20-20&linkId=82e2e75fd84e07958281d73b665776cc&language=en_US&ref_=as_li_ss_tl",
+      "normalized_amazon_pdp_url": "https://www.amazon.com/dp/B00UB441HS?tag=buckparts20-20",
+      "affiliate_tag_status": "PROVEN tag=buckparts20-20 in owner proof",
+      "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
+    },
+    "required_next_action": "Owner or authorized evidence commit script writes this file — NOT generated automatically by this factory."
+  },
+  "observations_from_proof_only": [
+    "PROVEN: Official Whirlpool page.",
+    "PROVEN: Product title: everydrop Refrigerator Water Filter 3 - EDR3RXD1 (Pack of 1).",
+    "PROVEN: Model: EDR3RXD1.",
+    "PROVEN: Price shown $48.00.",
+    "PROVEN: Add To Cart visible.",
+    "PROVEN: Genuine Filter warning visible.",
+    "PROVEN: Pack type 1 Pack visible.",
+    "PROVEN: ASIN is B00UB441HS.",
+    "PROVEN: URL includes affiliate tag buckparts20-20 (tag=buckparts20-20).",
+    "PROVEN: Product title shows everydrop by Whirlpool Ice and Water Refrigerator Filter 3, EDR3RXD1, Single-Pack.",
+    "PROVEN: Price shown: $48.00.",
+    "PROVEN: In Stock.",
+    "PROVEN: Ships from and sold by Amazon.com.",
+    "PROVEN: Prime delivery visible.",
+    "PROVEN: Brand/store is EveryDrop by Whirlpool.",
+    "PROVEN: Single count / pack of 1 shown."
+  ],
+  "mutation_ready": false,
+  "required_next_action": "Transcribe ONLY proven_observations from owner browser proof into a new data/evidence/*.json file; do not invent observations. Then re-run batch factory + Cursor validation.",
+  "proven_facts": [
+    "PROVEN: PASS owner browser proof at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json.",
+    "PROVEN: TODO packet does not write evidence — evidence_write_authorized=false.",
+    "PROVEN: data/evidence/amazon-edr3rxd1-aftermarket-pdp-evidence.2026-05-04.json is Waterdrop B087PDLZL9 — HARD_DO_NOT_USE; exclude from commit."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether committed evidence commit requires Amazon track, official-only track, or both for launch-buy-links gate."
+  ]
+}

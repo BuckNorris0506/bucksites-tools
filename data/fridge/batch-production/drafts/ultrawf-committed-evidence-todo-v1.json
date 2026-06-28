@@ -1,0 +1,76 @@
+{
+  "contract": "fridge_safe_link_committed_evidence_todo_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "generated_at": "2026-06-28T16:06:00.591Z",
+  "target_slug": "ultrawf",
+  "suggested_evidence_rel_path": "data/evidence/frigidaire-ultrawf-official-owner-browser-proof-evidence.TODO.json",
+  "evidence_write_not_authorized": true,
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+  "excluded_evidence_rel_paths": [],
+  "proposed_evidence_fields": {
+    "scope": "owner_browser_review_evidence_only",
+    "read_only": true,
+    "data_mutation": false,
+    "filter_slug": "ultrawf",
+    "token": "ULTRAWF",
+    "verdict": "TODO_OWNER_COMMIT_FROM_PROOF_ARTIFACT_ONLY",
+    "mutation_ready": false,
+    "product_attribution": "oem_official",
+    "primary_proof_track": {
+      "path_type": "official_manufacturer_pdp",
+      "proposed_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF",
+      "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
+    },
+    "secondary_amazon_audit_track": {
+      "proposed_canonical_url": "https://www.amazon.com/dp/B002JAKRAM",
+      "normalized_amazon_pdp_url": "https://www.amazon.com/dp/B002JAKRAM",
+      "affiliate_tag_status": "UNKNOWN — owner proof notes affiliate tag audit required",
+      "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
+    },
+    "required_next_action": "Owner or authorized evidence commit script writes this file — NOT generated automatically by this factory."
+  },
+  "observations_from_proof_only": [
+    "PROVEN: Page title/heading shows Frigidaire Water Filter ULTRAWF.",
+    "PROVEN: Item #1534529.",
+    "PROVEN: Frigidaire OEM Part #ULTRAWF.",
+    "PROVEN: PureSource Ultra description visible.",
+    "PROVEN: Price shown $59.99.",
+    "PROVEN: In Stock.",
+    "PROVEN: Add to Cart visible.",
+    "PROVEN: Genuine OEM Part badge visible.",
+    "PROVEN: Single filter/product image matches Frigidaire PureSource Ultra packaging.",
+    "PROVEN: Title shows Refrigerator Filter for Frigidaire ULTRAWF PureSource Ultra.",
+    "PROVEN: Model # ULTRAWF visible.",
+    "PROVEN: Frigidaire brand/store visible.",
+    "PROVEN: Price shown $59.99.",
+    "PROVEN: Pickup/delivery available.",
+    "PROVEN: Add to Cart visible.",
+    "PROVEN: Product image matches Frigidaire PureSource Ultra packaging.",
+    "PROVEN: Official Frigidaire page loaded.",
+    "PROVEN: Title shows PureSource Ultra Water and Ice Refrigerator Filter.",
+    "PROVEN: ULTRAWF visible.",
+    "PROVEN: Price shown $48.",
+    "PROVEN: Frigidaire/PureSource Ultra packaging visible.",
+    "PROVEN: Add subscription visible.",
+    "PROVEN: 1 Pack selected.",
+    "PROVEN: Title shows FRIGIDAIRE ULTRAWF Pure Source Ultra Water Filter, Original, White, 1 Count.",
+    "PROVEN: Frigidaire store visible.",
+    "PROVEN: Price shown $56.00.",
+    "PROVEN: In Stock.",
+    "PROVEN: Ships from and sold by Amazon.",
+    "PROVEN: Prime visible.",
+    "PROVEN: Single count / 1 Count."
+  ],
+  "mutation_ready": false,
+  "required_next_action": "Transcribe ONLY proven_observations from owner browser proof into a new data/evidence/*.json file; do not invent observations. Then re-run batch factory + Cursor validation.",
+  "proven_facts": [
+    "PROVEN: PASS owner browser proof at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json.",
+    "PROVEN: TODO packet does not write evidence — evidence_write_authorized=false."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: whether committed evidence commit requires Amazon track, official-only track, or both for launch-buy-links gate."
+  ]
+}
