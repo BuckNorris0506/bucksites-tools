@@ -109,30 +109,17 @@ describe("supabase-csv-parity-owner-review-insert-plan-v1", () => {
     assert.equal(built.pending_owner_browser_truth?.blocked_until_founder_approval, true);
   });
 
-  test("guarded apply dry-run resolves 4396508 and blocks write-csv without founder approval", async () => {
+  test("guarded apply dry-run resolves 4396508 with active founder approval", async () => {
     const dryRun = await runSupabaseCsvParityGuardedApplyV1({
       rootDir: REPO_ROOT,
       slug: "4396508",
       writeCsv: false,
     });
     assert.equal(dryRun.bridge_status, "DRY_RUN_READY");
-    assert.equal(dryRun.founder_decision_missing, true);
-    assert.equal(dryRun.write_csv_blocked_until_founder_approval, true);
-    assert.ok(
-      dryRun.blockers.some((b) => b.includes("founder_owner_mutation_approved_missing_or_inactive")) ===
-        false,
-      "dry-run should not add founder blocker when writeCsv=false",
-    );
-
-    const writeAttempt = await runSupabaseCsvParityGuardedApplyV1({
-      rootDir: REPO_ROOT,
-      slug: "4396508",
-      writeCsv: true,
-    });
-    assert.equal(writeAttempt.write_csv_applied, false);
-    assert.equal(writeAttempt.founder_decision_missing, true);
-    assert.ok(
-      writeAttempt.blockers.includes("founder_owner_mutation_approved_missing_or_inactive"),
-    );
+    assert.equal(dryRun.founder_decision_missing, false);
+    assert.equal(dryRun.write_csv_blocked_until_founder_approval, false);
+    assert.equal(dryRun.founder_decision_id, "decision-2026-06-10-4396508-approve_csv_supabase_parity_apply");
+    assert.equal(dryRun.mutation_authorized, true);
+    assert.equal(dryRun.blockers.length, 0);
   });
 });

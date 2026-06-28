@@ -43,14 +43,14 @@ function loadedRow(args: {
 }
 
 describe("supabase-csv-parity-guarded-apply founder activation", () => {
-  test("4396508 registry file is discovered and validates but deferred/none is inactive", () => {
+  test("4396508 registry file is discovered, validates, and active approval matches slug", () => {
     const loaded = loadFounderDecisionRowsForSupabaseCsvParityV1(process.cwd());
     const row439 = loaded.find((entry) =>
       entry.row.decision_id.includes("4396508"),
     );
     assert.ok(row439, "fridge-safe-link-4396508-owner-approval-v1.json row must load");
-    assert.equal(row439.row.decision_status, "deferred");
-    assert.equal(row439.row.allowed_next_scope, "none");
+    assert.equal(row439.row.decision_status, "approved");
+    assert.equal(row439.row.allowed_next_scope, "owner_mutation_approved");
     assert.deepEqual(row439.apply_context_target_slugs, ["4396508"]);
     assert.ok(
       row439.apply_context_apply_plan_rel_paths.includes(APPLY_PLAN_4396508.toLowerCase()),
@@ -60,9 +60,9 @@ describe("supabase-csv-parity-guarded-apply founder activation", () => {
       slug: "4396508",
       applyPlanRel: APPLY_PLAN_4396508,
       founderRows: loaded,
-      nowIso: "2026-06-27T20:00:00.000Z",
+      nowIso: "2026-06-28T20:00:00.000Z",
     });
-    assert.equal(active, null);
+    assert.equal(active?.decision_id, row439.row.decision_id);
   });
 
   test("deferred decisions are rejected even with apply_context correlation", () => {
