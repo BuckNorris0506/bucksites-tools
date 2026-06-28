@@ -108,6 +108,7 @@
     "buckparts:fridge-safe-link-gswf-ge-official-proof": "tsx scripts/report-fridge-safe-link-gswf-ge-official-proof-v1.ts",
     "buckparts:fridge-safe-link-everydrop-whirlpool-official-proof": "tsx scripts/report-fridge-safe-link-everydrop-whirlpool-official-proof-v1.ts",
     "buckparts:fridge-safe-link-batch-factory": "tsx scripts/report-fridge-safe-link-batch-factory-v1.ts",
+    "buckparts:hyperagent-safe-link-evidence-production-director": "tsx scripts/report-hyperagent-safe-link-evidence-production-director-v1.ts",
     "buckparts:ge-refrigerator-rescue-adapter": "tsx scripts/report-ge-refrigerator-rescue-adapter-v1.ts --write-drafts",
     "buckparts:ge-refrigerator-rescue-capture": "tsx scripts/capture-ge-refrigerator-rescue-browser-evidence-v1.ts",
     "buckparts:frigidaire-refrigerator-rescue-adapter": "tsx scripts/report-frigidaire-refrigerator-rescue-adapter-v1.ts",

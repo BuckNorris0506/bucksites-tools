@@ -1,0 +1,404 @@
+{
+  "contract": "hyperagent_safe_link_evidence_production_director_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "guarded_apply_work_generated": false,
+  "source_command": "npm run buckparts:hyperagent-safe-link-evidence-production-director",
+  "generated_at": "2026-06-28T15:58:30.464Z",
+  "active_production_cohort_id": "hyperagent_safe_link_14",
+  "cohort_slug_count": 14,
+  "excluded_proven_slugs": [
+    "edr4rxd1"
+  ],
+  "remaining_cohort_slug_count": 13,
+  "ranked_evidence_queue": [
+    {
+      "rank": 1,
+      "slug": "edr3rxd1",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": "PASS_BROWSER_PROOF",
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMMITTED_EVIDENCE",
+      "evidence_gap_steps": [
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 4,
+      "probability_to_safe_buyer_path_proven": 93,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Promote PASS owner-browser-proof URLs into committed evidence + re-run batch factory Cursor overlay.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 2,
+      "slug": "ultrawf",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": "PASS_BROWSER_PROOF",
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMMITTED_EVIDENCE",
+      "evidence_gap_steps": [
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 4,
+      "probability_to_safe_buyer_path_proven": 92,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Promote PASS owner-browser-proof URLs into committed evidence + re-run batch factory Cursor overlay.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 3,
+      "slug": "wfcb",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": "PASS_BROWSER_PROOF",
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMMITTED_EVIDENCE",
+      "evidence_gap_steps": [
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 4,
+      "probability_to_safe_buyer_path_proven": 90,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Promote PASS owner-browser-proof URLs into committed evidence + re-run batch factory Cursor overlay.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 4,
+      "slug": "eptwfu01",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": "PASS_BROWSER_PROOF",
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMMITTED_EVIDENCE",
+      "evidence_gap_steps": [
+        "OWNER_BROWSER_PROOF",
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 5,
+      "probability_to_safe_buyer_path_proven": 82,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Promote PASS owner-browser-proof URLs into committed evidence + re-run batch factory Cursor overlay.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 5,
+      "slug": "wf3cb",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": "PASS_BROWSER_PROOF",
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMMITTED_EVIDENCE",
+      "evidence_gap_steps": [
+        "OWNER_BROWSER_PROOF",
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 5,
+      "probability_to_safe_buyer_path_proven": 82,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Promote PASS owner-browser-proof URLs into committed evidence + re-run batch factory Cursor overlay.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 6,
+      "slug": "fppwfu01",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "APPLY_ELIGIBLE_AFTER_OWNER_BROWSER_PROOF",
+      "owner_browser_proof_verdict": "DISCOVERY_CANDIDATES_OK",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "DISCOVERY_CANDIDATES_OK",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "OWNER_BROWSER_PROOF",
+      "evidence_gap_steps": [
+        "OWNER_BROWSER_PROOF",
+        "CURSOR_REVALIDATION",
+        "COMMITTED_EVIDENCE",
+        "APPLY_PLAN_PROPOSAL",
+        "FOUNDER_APPROVAL"
+      ],
+      "evidence_gap_count": 5,
+      "probability_to_safe_buyer_path_proven": 64,
+      "expected_coverage_delta": 1,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Run owner browser proof session; record PASS_BROWSER_PROOF result artifact.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 7,
+      "slug": "frig-242017801",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "owner_browser_proof_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_LABEL_REQUIRED",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "COMPATIBILITY_DECISION",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 22,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Resolve compatibility/canonical alias decision before any evidence commit.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 8,
+      "slug": "da97-17376a",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "owner_browser_proof_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_LABEL_REQUIRED",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "SUPERSESSION_LABEL",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 20,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Apply supersession/EOL label handling before browser proof or evidence commit.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 9,
+      "slug": "mswf",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "owner_browser_proof_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_LABEL_REQUIRED",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "SUPERSESSION_LABEL",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 20,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Apply supersession/EOL label handling before browser proof or evidence commit.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 10,
+      "slug": "smartwater-mwfp",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "owner_browser_proof_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_LABEL_REQUIRED",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "SUPERSESSION_LABEL",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 20,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Apply supersession/EOL label handling before browser proof or evidence commit.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 11,
+      "slug": "wf2cb",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "NEEDS_COMPATIBILITY_OR_SUPERSESSION_LABEL",
+      "owner_browser_proof_verdict": "BLOCKED_LABEL_REQUIRED",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_LABEL_REQUIRED",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "SUPERSESSION_LABEL",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 20,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Apply supersession/EOL label handling before browser proof or evidence commit.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 12,
+      "slug": "frig-242086201",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "owner_browser_proof_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_CONFLICT",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "CONFLICT",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 12,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Owner reconciliation required — do not prepare apply evidence until conflict resolved.",
+      "guarded_apply_recommended": false
+    },
+    {
+      "rank": 13,
+      "slug": "purepour",
+      "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+      "batch_factory_state": "CONFLICT_REQUIRES_RECONCILIATION",
+      "owner_browser_proof_verdict": "BLOCKED_CONFLICT",
+      "owner_browser_proof_result_verdict": null,
+      "cursor_validation_verdict": "BLOCKED_CONFLICT",
+      "hyperagent_classification": "SAFE_CANDIDATE_FOUND",
+      "blocker_type": "CONFLICT",
+      "evidence_gap_steps": [],
+      "evidence_gap_count": 0,
+      "probability_to_safe_buyer_path_proven": 12,
+      "expected_coverage_delta": 0,
+      "model_compatibility_mapping_signal": "UNKNOWN",
+      "recommended_next_evidence_action": "Owner reconciliation required — do not prepare apply evidence until conflict resolved.",
+      "guarded_apply_recommended": false
+    }
+  ],
+  "expected_near_term_safe_buyer_path_proven_delta": {
+    "realistic": 5,
+    "optimistic": 6,
+    "note": "Realistic counts COMMITTED_EVIDENCE-only slugs with PASS_BROWSER_PROOF on disk. Optimistic caps at +6 per batch factory VALIDATION_PARTIAL near-term ceiling."
+  },
+  "smallest_executable_evidence_batch": {
+    "batch_id": "hyperagent_evidence_committed_evidence_pair_v1",
+    "batch_label": "Smallest near-term evidence commit pair (PASS browser proof on disk)",
+    "slug_count": 2,
+    "target_slugs": [
+      "edr3rxd1",
+      "ultrawf"
+    ],
+    "workload_type": "committed_evidence",
+    "expected_safe_buyer_path_proven_delta": 2,
+    "rationale": "Both slugs already have PASS_BROWSER_PROOF result artifacts; binding gap is committed evidence + Cursor revalidation — not another owner session.",
+    "commands": [
+      "npm run buckparts:fridge-safe-link-batch-factory",
+      "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts"
+    ]
+  },
+  "next_owner_browser_proof_session_targets": [
+    "fppwfu01"
+  ],
+  "next_cursor_validation_targets": [
+    "edr3rxd1",
+    "ultrawf",
+    "wfcb",
+    "eptwfu01",
+    "wf3cb",
+    "fppwfu01"
+  ],
+  "next_founder_approval_candidates": [
+    "edr3rxd1",
+    "ultrawf",
+    "wfcb",
+    "eptwfu01",
+    "wf3cb"
+  ],
+  "path_to_eliminate_buyer_path_truth_status_mixed": {
+    "current_buyer_path_truth_status": "MIXED",
+    "linked_filters_with_safe_gated_buy_path": 16,
+    "linked_filters_with_zero_safe_buy_path": 41,
+    "cohort_actionable_slug_count": 6,
+    "cohort_blocked_slug_count": 7,
+    "near_term_hyperagent_delta_realistic": 5,
+    "near_term_hyperagent_delta_optimistic": 6,
+    "filters_remaining_for_mixed_clear": 41,
+    "estimated_phases": [
+      {
+        "phase_id": "phase_1_committed_evidence",
+        "title": "Commit PASS owner-browser-proof evidence for top-ranked slugs",
+        "slug_count": 5,
+        "cumulative_proven_delta_estimate": 21,
+        "blockers": [
+          "committed_csv_browser_truth_not_direct_buyable",
+          "VALIDATION_PARTIAL"
+        ]
+      },
+      {
+        "phase_id": "phase_2_owner_browser_proof",
+        "title": "Complete remaining owner browser proof sessions (fppwfu01 + amazon gap closes)",
+        "slug_count": 1,
+        "cumulative_proven_delta_estimate": 22,
+        "blockers": [
+          "owner_browser_proof_required",
+          "discovery_candidates_only_not_verified_link"
+        ]
+      },
+      {
+        "phase_id": "phase_3_label_conflict_park",
+        "title": "Resolve compatibility/supersession labels and conflicts before evidence lane",
+        "slug_count": 7,
+        "cumulative_proven_delta_estimate": 22,
+        "blockers": [
+          "BLOCKED_LABEL_REQUIRED",
+          "BLOCKED_CONFLICT"
+        ]
+      },
+      {
+        "phase_id": "phase_4_outside_hyperagent_14",
+        "title": "Remaining refrigerator_water zero-safe filters outside HyperAgent 14 cohort",
+        "slug_count": 35,
+        "cumulative_proven_delta_estimate": 57,
+        "blockers": [
+          "outside_hyperagent_safe_link_14_scope"
+        ]
+      }
+    ],
+    "mixed_clear_note": "buyer_path_truth_status=MIXED clears when linked_filters_with_zero_safe_buy_path reaches 0 on committed CSV. HyperAgent 14 can realistically contribute up to +6 near-term (batch factory VALIDATION_PARTIAL cap); full MIXED clear requires additional rescue cohorts beyond this 14-slug factory."
+  },
+  "proven_facts": [
+    "PROVEN: hyperagent_safe_link_14 cohort = 14 slugs from FRIDGE_OWNER_BROWSER_PROOF_EXPECTED_SLUGS_V1.",
+    "PROVEN: census SAFE_BUYER_PATH_PROVEN count site-wide = 50.",
+    "PROVEN: excluded_proven_slugs in cohort = [edr4rxd1].",
+    "PROVEN: PASS_BROWSER_PROOF result artifacts on disk for [wf3cb, eptwfu01, edr3rxd1, edr4rxd1, wfcb, ultrawf].",
+    "PROVEN: batch factory eligible_now_count=0.",
+    "PROVEN: refrigerator_water buyer_path_truth_status=MIXED.",
+    "PROVEN: guarded_apply_work_generated=false — no guarded-apply recommendations for census-proven slugs."
+  ],
+  "inferred_facts": [
+    "INFERRED: smallest executable batch targets [edr3rxd1, ultrawf] for +2 near-term delta.",
+    "INFERRED: 5 slug(s) are one committed-evidence step from apply-plan candidacy.",
+    "INFERRED: 1 slug(s) still require owner browser proof sessions.",
+    "INFERRED: 7 slug(s) blocked on label/conflict — outside near-term evidence factory."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: exact calendar time to full MIXED clear — depends on founder approval cadence and label/conflict resolution outside HyperAgent lane.",
+    "UNKNOWN: whether amazon unverified/hold gaps on wf3cb/eptwfu01 block committed evidence without supplemental proof."
+  ],
+  "recommended_commands": [
+    "npm run buckparts:hyperagent-safe-link-evidence-production-director",
+    "npm run buckparts:fridge-safe-link-batch-factory",
+    "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts",
+    "npm run buckparts:fridge-safe-link-batch-factory",
+    "node --import tsx scripts/run-fridge-safe-link-owner-browser-proof-cursor-validation-v1.ts"
+  ]
+}
