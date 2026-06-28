@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-06-27T20:07:19.289Z",
+  "generated_at": "2026-06-28T15:10:03.187Z",
   "wedge": "refrigerator_water",
   "execution_plan_status": "READY_FOR_MUTATION_AUTH_REVIEW",
   "source_apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-4396508-apply-plan-proposal-v1.json",
