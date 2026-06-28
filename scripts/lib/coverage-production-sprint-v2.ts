@@ -171,17 +171,98 @@ function countSuppressedWithoutEvidence(
   ).length;
 }
 
+/** Slugs already SAFE_BUYER_PATH_PROVEN in census cannot yield +1 apply delta. */
+export function filterActionableCoverageSlugsV1(
+  census: AllProductSafeBuyerPathCensusV1,
+  slugs: readonly string[],
+): string[] {
+  const proven = new Set(
+    census.products
+      .filter((p) => p.page_classification === "SAFE_BUYER_PATH_PROVEN")
+      .map((p) => p.slug),
+  );
+  return slugs.filter((slug) => !proven.has(slug));
+}
+
+function first4DeblockedDryRunCommandsForSlug(slug: string): string[] {
+  if (slug === "4396508") {
+    return [
+      "npm run buckparts:fridge-safe-link-4396508-apply-plan-proposal",
+      "npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508",
+    ];
+  }
+  return [`npm run buckparts:supabase-csv-parity-coverage-factory -- --slug ${slug}`];
+}
+
+function filterBatchCommandsForSlugs(commands: string[], slugs: readonly string[]): string[] {
+  if (slugs.length === 0) return [];
+  return commands.filter((cmd) =>
+    slugs.some(
+      (slug) =>
+        cmd.includes(`--slug ${slug}`) ||
+        cmd.includes(`${slug}-apply-plan`) ||
+        cmd.includes(`/${slug}`),
+    ),
+  );
+}
+
+/** Drop census-proven slugs from a ranked batch; null when no actionable targets remain. */
+export function pruneSprintBatchForCensusV1(
+  batch: SprintProductionBatchV1,
+  census: AllProductSafeBuyerPathCensusV1,
+): SprintProductionBatchV1 | null {
+  if (batch.target_slugs.length === 0) {
+    if (batch.executability === "EXECUTABLE_AFTER_EVIDENCE") {
+      return batch;
+    }
+    return null;
+  }
+
+  const actionable = filterActionableCoverageSlugsV1(census, batch.target_slugs);
+  if (actionable.length === 0) return null;
+
+  const excludedProven = batch.target_slugs.filter((slug) => !actionable.includes(slug));
+  const delta = Math.min(batch.expected_safe_buyer_path_proven_delta, actionable.length);
+  const dryRunCommands =
+    batch.batch_id === "fridge_safe_link_first4_deblocked"
+      ? actionable.flatMap((slug) => first4DeblockedDryRunCommandsForSlug(slug))
+      : filterBatchCommandsForSlugs(batch.dry_run_commands, actionable);
+  const writeCommands = filterBatchCommandsForSlugs(batch.write_commands, actionable);
+
+  return {
+    ...batch,
+    target_slugs: actionable,
+    slug_count: actionable.length,
+    expected_safe_buyer_path_proven_delta: delta,
+    dry_run_commands: dryRunCommands,
+    write_commands: writeCommands,
+    blockers: [
+      ...batch.blockers,
+      ...(excludedProven.length > 0
+        ? [`census_already_safe_buyer_path_proven: ${excludedProven.join(", ")}`]
+        : []),
+    ],
+  };
+}
+
 function buildFirst4DeblockedBatch(args: {
   first4: First4ReviewV1 | null;
   hardDoNotUseAsin: string;
+  census: AllProductSafeBuyerPathCensusV1;
 }): Omit<SprintProductionBatchV1, "rank"> | null {
   if (!args.first4?.rows?.length) return null;
   const ready = args.first4.rows.filter(
     (r) =>
       r.owner_apply_review_ready === true && r.asin !== args.hardDoNotUseAsin,
   );
-  const slugs = ready.map((r) => r.slug);
+  const slugs = filterActionableCoverageSlugsV1(
+    args.census,
+    ready.map((r) => r.slug),
+  );
   if (slugs.length === 0) return null;
+  const excludedProven = ready
+    .map((r) => r.slug)
+    .filter((slug) => !slugs.includes(slug));
   return {
     batch_id: "fridge_safe_link_first4_deblocked",
     batch_label: "Fridge safe-link First4 deblocked cohort (policy-clean slugs only)",
@@ -195,15 +276,7 @@ function buildFirst4DeblockedBatch(args: {
       "fridge-safe-link-4396508-apply-plan-proposal-v1",
     ],
     founder_approval_required: true,
-    dry_run_commands: slugs.flatMap((slug) => {
-      if (slug === "4396508") {
-        return [
-          "npm run buckparts:fridge-safe-link-4396508-apply-plan-proposal",
-          "npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508",
-        ];
-      }
-      return [`npm run buckparts:supabase-csv-parity-coverage-factory -- --slug ${slug}`];
-    }),
+    dry_run_commands: slugs.flatMap((slug) => first4DeblockedDryRunCommandsForSlug(slug)),
     write_commands: slugs.map(
       (slug) =>
         `# BLOCKED until founder approval\nnpm run buckparts:supabase-csv-parity-guarded-apply -- --slug ${slug} --write-csv`,
@@ -212,6 +285,9 @@ function buildFirst4DeblockedBatch(args: {
       "No combined multi-slug execution plan on disk for non-parity slugs.",
       "owner_batch_apply_approval_not_recorded for First4 cohort.",
       "Per-slug guarded apply requires parity packages or slug-specific execution plans.",
+      ...(excludedProven.length > 0
+        ? [`census_already_safe_buyer_path_proven: ${excludedProven.join(", ")}`]
+        : []),
     ],
     customer_impact: `${String(slugs.length)} live fridge filter pages without /go CTA on buckparts.com/filter/* — high rescue-score Whirlpool/GE families.`,
   };
@@ -219,16 +295,22 @@ function buildFirst4DeblockedBatch(args: {
 
 function buildParityReadyBatch(
   parity: SupabaseCsvParityCoverageFactoryReportV1,
+  census: AllProductSafeBuyerPathCensusV1,
 ): Omit<SprintProductionBatchV1, "rank"> | null {
   const ready = parity.candidate_packages.filter(
     (p) => p.candidate_status === "READY_FOR_OWNER_REVIEW",
   );
   if (ready.length === 0) return null;
-  const slugs = ready.map((p) => p.filter_slug);
-  const delta = ready.reduce(
-    (sum, p) => sum + (p.expected_census_delta?.safe_buyer_path_proven_count_delta ?? 0),
-    0,
-  );
+  const allSlugs = ready.map((p) => p.filter_slug);
+  const slugs = filterActionableCoverageSlugsV1(census, allSlugs);
+  if (slugs.length === 0) return null;
+  const excludedProven = allSlugs.filter((slug) => !slugs.includes(slug));
+  const delta = ready
+    .filter((p) => slugs.includes(p.filter_slug))
+    .reduce(
+      (sum, p) => sum + (p.expected_census_delta?.safe_buyer_path_proven_count_delta ?? 0),
+      0,
+    );
   return {
     batch_id: "supabase_csv_parity_ready",
     batch_label: "Supabase CSV parity — ready candidates",
@@ -249,9 +331,14 @@ function buildParityReadyBatch(
       (slug) =>
         `# BLOCKED until founder approval\nnpm run buckparts:supabase-csv-parity-guarded-apply -- --slug ${slug} --write-csv`,
     ),
-    blockers: ready.flatMap((p) =>
-      p.blockers.length ? [`${p.filter_slug}: ${p.blockers[0]}`] : [],
-    ),
+    blockers: [
+      ...ready
+        .filter((p) => slugs.includes(p.filter_slug))
+        .flatMap((p) => (p.blockers.length ? [`${p.filter_slug}: ${p.blockers[0]}`] : [])),
+      ...(excludedProven.length > 0
+        ? [`census_already_safe_buyer_path_proven: ${excludedProven.join(", ")}`]
+        : []),
+    ],
     customer_impact: `Closes CSV/Supabase drift for ${String(slugs.length)} filter slug(s) with committed Supabase direct_buyable rows.`,
   };
 }
@@ -450,17 +537,28 @@ function rankBatches(batches: Omit<SprintProductionBatchV1, "rank">[]): SprintPr
 }
 
 function selectWinningBatch(batches: SprintProductionBatchV1[]): SprintProductionBatchV1 | null {
-  const executable = batches.filter(
+  const executableApply = batches.filter(
     (b) =>
-      b.executability === "EXECUTABLE_NOW" ||
-      b.executability === "EXECUTABLE_AFTER_APPROVAL",
+      (b.executability === "EXECUTABLE_NOW" || b.executability === "EXECUTABLE_AFTER_APPROVAL") &&
+      b.expected_safe_buyer_path_proven_delta >= 1 &&
+      b.target_slugs.length >= 1,
   );
-  if (executable.length === 0) {
-    return batches.find((b) => b.executability === "EXECUTABLE_AFTER_EVIDENCE") ?? batches[0] ?? null;
+  if (executableApply.length > 0) {
+    return executableApply.reduce((best, cur) =>
+      cur.expected_safe_buyer_path_proven_delta > best.expected_safe_buyer_path_proven_delta ? cur : best,
+    );
   }
-  return executable.reduce((best, cur) =>
-    cur.expected_safe_buyer_path_proven_delta > best.expected_safe_buyer_path_proven_delta ? cur : best,
+  const evidence = batches.filter(
+    (b) =>
+      b.executability === "EXECUTABLE_AFTER_EVIDENCE" &&
+      b.expected_safe_buyer_path_proven_delta >= 1,
   );
+  if (evidence.length > 0) {
+    return evidence.reduce((best, cur) =>
+      cur.expected_safe_buyer_path_proven_delta > best.expected_safe_buyer_path_proven_delta ? cur : best,
+    );
+  }
+  return batches.find((b) => b.executability === "EXECUTABLE_AFTER_EVIDENCE") ?? batches[0] ?? null;
 }
 
 export async function buildCoverageProductionSprintV2ReportV1(
@@ -507,8 +605,8 @@ export async function buildCoverageProductionSprintV2ReportV1(
   const rwNoEvidence = countSuppressedWithoutEvidence(census, HOMEKEEP_WEDGE_CATALOG.refrigerator_water);
 
   const rawBatches = [
-    buildParityReadyBatch(parity),
-    buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9" }),
+    buildParityReadyBatch(parity, census),
+    buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9", census }),
     buildOwnerBrowserProofBatch(batchFactory),
     buildHyperAgent14Batch(),
     buildPolicyBlockedWaterdropBatch(parity),
@@ -529,7 +627,7 @@ export async function buildCoverageProductionSprintV2ReportV1(
 
   const plusTenProof = [
     `PROVEN: parity factory ready_for_owner_review_count=${String(parity.ready_for_owner_review_count)} (expected batch delta=${String(parity.expected_safe_buyer_path_proven_batch_delta)}).`,
-    `PROVEN: First4 deblocked cohort max ${String(buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9" })?.slug_count ?? 0)} slug(s) with owner_apply_review_ready excluding B087PDLZL9.`,
+    `PROVEN: First4 deblocked cohort max ${String(buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9", census })?.slug_count ?? 0)} actionable slug(s) with owner_apply_review_ready excluding B087PDLZL9 and census-proven slugs.`,
     `PROVEN: batch factory eligible_now_count=${String(batchFactory?.cohort_summary?.eligible_now_count ?? 0)} — zero slugs apply-eligible with existing proof today.`,
     `PROVEN: ${String(rwNoEvidence)} of ${String(rw?.suppressed_trust_count ?? 0)} suppressed fridge slugs have zero evidence files — cannot batch-apply without evidence sprint.`,
     `PROVEN: largest EXECUTABLE_AFTER_APPROVAL delta=${String(largestExecutable)} < target ${String(COVERAGE_PRODUCTION_SPRINT_V2_MIN_BATCH_TARGET_V1)}.`,
@@ -593,7 +691,7 @@ export async function buildCoverageProductionSprintV2ReportV1(
 
   const recommended_next_action = winning
     ? winning.executability === "EXECUTABLE_AFTER_EVIDENCE"
-      ? `SPRINT V2 [EVIDENCE FIRST]: Run owner-browser-proof batch (${String(winning.slug_count)} slug target) via HyperAgent discovery + owner capture, then Cursor validation. Largest immediate CSV apply batch is First4 deblocked (+${String(buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9" })?.expected_safe_buyer_path_proven_delta ?? 0)}) after founder approval packets.`
+      ? `SPRINT V2 [EVIDENCE FIRST]: Run owner-browser-proof batch (${String(winning.slug_count)} slug target) via HyperAgent discovery + owner capture, then Cursor validation. Largest immediate CSV apply batch is First4 deblocked (+${String(buildFirst4DeblockedBatch({ first4, hardDoNotUseAsin: "B087PDLZL9", census })?.expected_safe_buyer_path_proven_delta ?? 0)}) after founder approval packets.`
       : `SPRINT V2 [APPLY BATCH]: Execute winning batch "${winning.batch_id}" (+${String(winning.expected_safe_buyer_path_proven_delta)} proven). Dry-run: ${winning.dry_run_commands[0] ?? "see ranked_production_batches"}. Founder approval required before any --write-csv.`
     : "Re-run census and refresh batch factory drafts.";
 

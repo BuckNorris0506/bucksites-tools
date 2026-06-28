@@ -210,6 +210,35 @@ describe("wedge completion director v1", () => {
       report: mockEvaluator,
       rootDir: REPO_ROOT,
       skipSprint: true,
+      sprint: {
+        ranked_production_batches: [
+          {
+            rank: 1,
+            batch_id: "fridge_safe_link_first4_deblocked",
+            batch_label: "First4",
+            target_slugs: ["edr4rxd1"],
+            slug_count: 1,
+            expected_safe_buyer_path_proven_delta: 1,
+            executability: "EXECUTABLE_AFTER_APPROVAL",
+            infrastructure_reused: [],
+            founder_approval_required: true,
+            dry_run_commands: [
+              "npm run buckparts:supabase-csv-parity-coverage-factory -- --slug edr4rxd1",
+            ],
+            write_commands: [],
+            blockers: [],
+            customer_impact: "test",
+          },
+        ],
+      } as import("./coverage-production-sprint-v2").CoverageProductionSprintV2ReportV1,
+      census: {
+        products: [
+          {
+            slug: "edr4rxd1",
+            page_classification: "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+          },
+        ],
+      } as import("./all-product-safe-buyer-path-census-v1").AllProductSafeBuyerPathCensusV1,
     });
 
     assert.equal(report.recommended_next_action.action_id, "coverage_production_mission_c3_v1");
@@ -221,6 +250,139 @@ describe("wedge completion director v1", () => {
     assert.ok(metrics);
     assert.equal(metrics.action_temporality, "RECORD_NOW_WAIT_REQUIRED");
     assert.ok(metrics.rank > 1);
+  });
+
+  test("C3 coverage mission excludes census-proven slugs and falls back to evidence prep", () => {
+    const mockEvaluator: WedgeCompletionEvaluatorReportV1 = {
+      contract: "wedge_completion_evaluator_v1",
+      audit_contract: "wedge_completion_audit_v1",
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      artifact_write_authorized: false,
+      source_command: "npm run buckparts:wedge-completion-evaluator",
+      standard_design_doc: "docs/BuckParts-WEDGE-COMPLETION-STANDARD-DESIGN.md",
+      generated_at: "2026-06-27T12:00:00.000Z",
+      wedge: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+      overall_status: "WEDGE_INCOMPLETE",
+      blocking_dimensions: ["coverage"],
+      blocking_criteria: [],
+      recommended_next_action: "test",
+      proven_facts: [],
+      unknown_facts: [],
+      dimensions: [
+        {
+          dimension_id: "coverage",
+          label: "Coverage",
+          status: "FAIL",
+          metrics: {},
+          criteria: [
+            {
+              criterion_id: "C3",
+              label: "All mapped filters have proven safe buyer paths",
+              status: "FAIL",
+              pass_condition_summary: "test",
+              evidence_paths: [],
+              blocking_evidence: ["buyer_path_truth_status=MIXED"],
+              metrics: { buyer_path_truth_status: "MIXED", safe_buyer_path_proven_count: 16 },
+              source_contracts: [],
+            },
+          ],
+        },
+        {
+          dimension_id: "customer_experience",
+          label: "CX",
+          status: "PASS",
+          metrics: {},
+          criteria: [],
+        },
+        {
+          dimension_id: "distribution",
+          label: "Distribution",
+          status: "PASS",
+          metrics: {},
+          criteria: [],
+        },
+        {
+          dimension_id: "measurement",
+          label: "Measurement",
+          status: "PASS",
+          metrics: {},
+          criteria: [],
+        },
+      ],
+    };
+
+    const census = {
+      products: [
+        { slug: "4396508", page_classification: "SAFE_BUYER_PATH_PROVEN" },
+        { slug: "edr4rxd1", page_classification: "SAFE_BUYER_PATH_PROVEN" },
+      ],
+    } as import("./all-product-safe-buyer-path-census-v1").AllProductSafeBuyerPathCensusV1;
+
+    const sprint = {
+      ranked_production_batches: [
+        {
+          rank: 1,
+          batch_id: "fridge_safe_link_first4_deblocked",
+          batch_label: "First4",
+          target_slugs: ["edr4rxd1", "4396508"],
+          slug_count: 2,
+          expected_safe_buyer_path_proven_delta: 2,
+          executability: "EXECUTABLE_AFTER_APPROVAL" as const,
+          infrastructure_reused: [],
+          founder_approval_required: true,
+          dry_run_commands: [
+            "npm run buckparts:supabase-csv-parity-guarded-apply -- --slug 4396508",
+          ],
+          write_commands: [],
+          blockers: [],
+          customer_impact: "test",
+        },
+        {
+          rank: 2,
+          batch_id: "fridge_owner_browser_proof_7",
+          batch_label: "Owner browser proof",
+          target_slugs: [],
+          slug_count: 7,
+          expected_safe_buyer_path_proven_delta: 7,
+          executability: "EXECUTABLE_AFTER_EVIDENCE" as const,
+          infrastructure_reused: [],
+          founder_approval_required: true,
+          dry_run_commands: [
+            "npm run buckparts:fridge-safe-link-batch-factory",
+            "npm run buckparts:manufacturer-browser-proof-batch-commit-assist",
+          ],
+          write_commands: [],
+          blockers: [],
+          customer_impact: "test",
+        },
+      ],
+    } as import("./coverage-production-sprint-v2").CoverageProductionSprintV2ReportV1;
+
+    const report = buildWedgeCompletionDirectorFromEvaluatorReportV1({
+      report: mockEvaluator,
+      rootDir: REPO_ROOT,
+      skipSprint: true,
+      sprint,
+      census,
+    });
+    assert.equal(report.recommended_next_action.action_id, "coverage_production_mission_c3_v1");
+    assert.equal(report.recommended_next_action.immediate_c3_delta_available, false);
+    assert.deepEqual(report.recommended_next_action.excluded_proven_slugs.sort(), [
+      "4396508",
+      "edr4rxd1",
+    ]);
+    assert.deepEqual(report.recommended_next_action.actionable_target_slugs, []);
+    assert.ok(
+      report.recommended_next_action.commands.some((c) =>
+        c.includes("fridge-safe-link-batch-factory"),
+      ),
+    );
+    assert.equal(
+      report.recommended_next_action.commands.some((c) => c.includes("4396508")),
+      false,
+    );
   });
 
   test("live refrigerator_water recommends coverage mission over metrics snapshot", async () => {

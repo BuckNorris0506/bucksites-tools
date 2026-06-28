@@ -172,6 +172,73 @@ function mockParityFactory(): SupabaseCsvParityCoverageFactoryReportV1 {
   };
 }
 
+test("coverage production sprint v2 excludes census-proven slugs from First4 batch", async () => {
+  const first4Json = JSON.stringify({
+    rows: [
+      { slug: "edr4rxd1", owner_apply_review_ready: true, asin: "B00UB38V2A" },
+      { slug: "4396508", owner_apply_review_ready: true, asin: "B00NXPKBQ2" },
+    ],
+  });
+  const census = mockCensus(50, 66);
+  census.products.push(
+    {
+      slug: "4396508",
+      wedge: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+      vertical_launch_state: "LIVE",
+      page_classification: "SAFE_BUYER_PATH_PROVEN",
+      indexable_in_repo_policy: true,
+      public_route: "/filter/4396508",
+      current_page_state: "proven",
+      retailer_row_state: "amazon direct_buyable",
+      evidence_files: [],
+      supabase_safe_path_missing_from_csv: false,
+      csv_safe_path_missing_from_supabase: false,
+      recommended_next_safe_action: "none",
+      owner_approval_required: false,
+      mutation_authorized: false,
+      rescue_priority_score: 0,
+    },
+    {
+      slug: "edr4rxd1",
+      wedge: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+      vertical_launch_state: "LIVE",
+      page_classification: "SAFE_BUYER_PATH_PROVEN",
+      indexable_in_repo_policy: true,
+      public_route: "/filter/edr4rxd1",
+      current_page_state: "proven",
+      retailer_row_state: "amazon direct_buyable",
+      evidence_files: [],
+      supabase_safe_path_missing_from_csv: false,
+      csv_safe_path_missing_from_supabase: false,
+      recommended_next_safe_action: "none",
+      owner_approval_required: false,
+      mutation_authorized: false,
+      rescue_priority_score: 0,
+    },
+  );
+
+  const report = await buildCoverageProductionSprintV2ReportV1({
+    rootDir: process.cwd(),
+    now: FIXED_NOW,
+    census,
+    parityFactory: mockParityFactory(),
+    fileExists: (abs) =>
+      abs.endsWith("fridge-safe-link-rescue-first4-apply-review-v1.json") ||
+      abs.endsWith("fridge-safe-link-batch-factory-v1.json"),
+    readText: (abs) => {
+      if (abs.endsWith("fridge-safe-link-rescue-first4-apply-review-v1.json")) return first4Json;
+      if (abs.endsWith("fridge-safe-link-batch-factory-v1.json")) return "{}";
+      return "{}";
+    },
+  });
+
+  const first4 = report.ranked_production_batches.find(
+    (b) => b.batch_id === "fridge_safe_link_first4_deblocked",
+  );
+  assert.equal(first4, undefined);
+  assert.notEqual(report.winning_batch?.batch_id, "fridge_safe_link_first4_deblocked");
+});
+
 test("coverage production sprint v2 ranks batches and proves +10 impossible with mock inputs", async () => {
   const first4Json = JSON.stringify({
     rows: [

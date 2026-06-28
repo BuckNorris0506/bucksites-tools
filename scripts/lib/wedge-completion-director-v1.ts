@@ -3,16 +3,22 @@
  * composed from Wedge Completion Evaluator v1 output. Does not mutate scoring.
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { parse } from "csv-parse/sync";
 
 import {
   buildCoverageProductionSprintV2ReportV1,
   COVERAGE_PRODUCTION_SPRINT_V2_SOURCE_COMMAND_V1,
+  filterActionableCoverageSlugsV1,
+  pruneSprintBatchForCensusV1,
   type CoverageProductionSprintV2ReportV1,
   type SprintProductionBatchV1,
 } from "./coverage-production-sprint-v2";
+import {
+  buildAllProductSafeBuyerPathCensusV1,
+  type AllProductSafeBuyerPathCensusV1,
+} from "./all-product-safe-buyer-path-census-v1";
 import {
   BUCKPARTS_PRODUCTION_MISSION_LIFECYCLE_DIR_REL_V1,
   BUCKPARTS_PRODUCTION_MISSION_SOURCE_COMMAND_V1,
@@ -87,6 +93,12 @@ export type WedgeCompletionDirectorRecommendedActionV1 = Omit<
   tie_break_reason: string | null;
   top_blocking_slug: string | null;
   top_blocking_summary: string | null;
+  /** Slugs that would yield +1 census delta on guarded apply (excludes SAFE_BUYER_PATH_PROVEN). */
+  actionable_target_slugs: string[];
+  /** True when an EXECUTABLE_NOW / EXECUTABLE_AFTER_APPROVAL batch has delta >= 1 after proven-slug exclusion. */
+  immediate_c3_delta_available: boolean;
+  /** Census-proven slugs removed from the source sprint batch recommendation. */
+  excluded_proven_slugs: string[];
 };
 
 export type WedgeCompletionDirectorReportV1 = {
@@ -205,7 +217,84 @@ function pickTopBlockingSlug(
 }
 
 function isFridgeBatch(batch: SprintProductionBatchV1, fridgeSlugs: Set<string>): boolean {
-  return batch.target_slugs.some((s) => fridgeSlugs.has(s));
+  if (batch.target_slugs.some((s) => fridgeSlugs.has(s))) return true;
+  return (
+    batch.batch_id === "fridge_safe_link_first4_deblocked" ||
+    batch.batch_id === "fridge_owner_browser_proof_7" ||
+    batch.batch_id === "hyperagent_safe_link_14" ||
+    batch.batch_id === "legacy_fridge_lifecycle_14"
+  );
+}
+
+function selectCoverageDirectorBatch(args: {
+  sprint: CoverageProductionSprintV2ReportV1 | null;
+  fridgeSlugs: Set<string>;
+  census: AllProductSafeBuyerPathCensusV1;
+  rootDir: string;
+}): {
+  applyBatch: SprintProductionBatchV1 | null;
+  evidenceBatch: SprintProductionBatchV1 | null;
+  excludedProvenSlugs: string[];
+} {
+  const fridgeBatches =
+    args.sprint?.ranked_production_batches?.filter((b) => isFridgeBatch(b, args.fridgeSlugs)) ?? [];
+
+  const excludedProvenSlugs = new Set<string>();
+  const prunedBatches: SprintProductionBatchV1[] = [];
+  for (const batch of fridgeBatches) {
+    const before = batch.target_slugs;
+    const pruned = pruneSprintBatchForCensusV1(batch, args.census);
+    for (const slug of before) {
+      if (filterActionableCoverageSlugsV1(args.census, [slug]).length === 0) {
+        excludedProvenSlugs.add(slug);
+      }
+    }
+    if (pruned) prunedBatches.push(pruned);
+  }
+
+  const first4Path = path.join(
+    args.rootDir,
+    "data/fridge/batch-production/drafts/fridge-safe-link-rescue-first4-apply-review-v1.json",
+  );
+  if (existsSync(first4Path)) {
+    try {
+      const first4 = JSON.parse(readFileSync(first4Path, "utf8")) as {
+        rows?: Array<{ slug?: string; owner_apply_review_ready?: boolean }>;
+      };
+      for (const row of first4.rows ?? []) {
+        if (
+          row.slug &&
+          row.owner_apply_review_ready === true &&
+          filterActionableCoverageSlugsV1(args.census, [row.slug]).length === 0
+        ) {
+          excludedProvenSlugs.add(row.slug);
+        }
+      }
+    } catch {
+      // ignore malformed first4 review artifact
+    }
+  }
+
+  const applyBatch =
+    prunedBatches.find(
+      (b) =>
+        (b.executability === "EXECUTABLE_NOW" || b.executability === "EXECUTABLE_AFTER_APPROVAL") &&
+        b.expected_safe_buyer_path_proven_delta >= 1 &&
+        b.target_slugs.length >= 1,
+    ) ?? null;
+
+  const evidenceBatch =
+    prunedBatches.find(
+      (b) =>
+        b.executability === "EXECUTABLE_AFTER_EVIDENCE" &&
+        b.expected_safe_buyer_path_proven_delta >= 1,
+    ) ?? null;
+
+  return {
+    applyBatch,
+    evidenceBatch,
+    excludedProvenSlugs: [...excludedProvenSlugs],
+  };
 }
 
 function buildReferenceabilityCandidate(args: {
@@ -266,26 +355,28 @@ function buildCoverageMissionCandidate(args: {
   report: WedgeCompletionEvaluatorReportV1;
   sprint: CoverageProductionSprintV2ReportV1 | null;
   fridgeSlugs: Set<string>;
+  census: AllProductSafeBuyerPathCensusV1;
+  rootDir: string;
 }): WedgeCompletionDirectorRankedCandidateV1 | null {
   if (statusForCriterion(args.report, "C3") !== "FAIL") return null;
 
   const c3 = criterionById(args.report, "C3")!;
-  const fridgeBatches =
-    args.sprint?.ranked_production_batches?.filter((b) => isFridgeBatch(b, args.fridgeSlugs)) ?? [];
-  const topBatch = fridgeBatches.find(
-    (b) =>
-      (b.executability === "EXECUTABLE_NOW" || b.executability === "EXECUTABLE_AFTER_APPROVAL") &&
-      b.expected_safe_buyer_path_proven_delta >= 1,
-  ) ?? fridgeBatches[0] ?? null;
+  const { applyBatch, evidenceBatch, excludedProvenSlugs } = selectCoverageDirectorBatch({
+    sprint: args.sprint,
+    fridgeSlugs: args.fridgeSlugs,
+    census: args.census,
+    rootDir: args.rootDir,
+  });
+  const immediateDelta = applyBatch != null;
+  const topBatch = applyBatch ?? evidenceBatch;
 
-  const commands = [
+  const baseCommands = [
     COVERAGE_PRODUCTION_SPRINT_V2_SOURCE_COMMAND_V1,
     BUCKPARTS_PRODUCTION_MISSION_SOURCE_COMMAND_V1,
     `${BUCKPARTS_RUNNER_SOURCE_COMMAND_V1} -- --mission production_mission_v1`,
   ];
-  if (topBatch?.dry_run_commands?.length) {
-    commands.push(...topBatch.dry_run_commands);
-  }
+
+  const commands = topBatch ? [...baseCommands, ...topBatch.dry_run_commands] : baseCommands;
 
   const artifactPaths = [
     "scripts/lib/coverage-production-sprint-v2.ts",
@@ -296,6 +387,36 @@ function buildCoverageMissionCandidate(args: {
     artifactPaths.push(`coverage_sprint_batch:${topBatch.batch_id}`);
   }
 
+  const tieBreakNotes = [
+    "C3 requires uniform buyer-path truth on all compat-mapped filters — not merely >=1 proven slug (coverage dimension order).",
+    "PROVEN lifecycle a6b27301-e040-4405-b613-5adcb6c99bb6 demonstrates production-mission progress toward clearing zero-safe mapped filters.",
+  ];
+  if (excludedProvenSlugs.length > 0) {
+    tieBreakNotes.push(
+      `Excluded census SAFE_BUYER_PATH_PROVEN slugs from actionable batch: ${excludedProvenSlugs.join(", ")}.`,
+    );
+  }
+  if (immediateDelta && applyBatch) {
+    tieBreakNotes.push(
+      `Top actionable apply batch ${applyBatch.batch_id} expected_safe_buyer_path_proven_delta=${String(applyBatch.expected_safe_buyer_path_proven_delta)} executability=${applyBatch.executability}; target_slugs=${applyBatch.target_slugs.join(", ") || "none"}.`,
+    );
+  } else if (evidenceBatch) {
+    tieBreakNotes.push(
+      `No immediately executable suppressed slug with guarded-apply path — fall back to evidence batch ${evidenceBatch.batch_id} (expected delta=${String(evidenceBatch.expected_safe_buyer_path_proven_delta)} after proof).`,
+    );
+  } else {
+    tieBreakNotes.push(
+      "No fridge batch with actionable delta >= 1 after excluding census-proven slugs — run coverage sprint for bottleneck detail.",
+    );
+  }
+
+  const expectedImpact =
+    immediateDelta && applyBatch
+      ? `Production mission can flip C3 PASS when every compat-mapped filter has a proven safe buyer path (buyer_path_truth_status PROVEN_SAFE_ROWS_EXIST — now ${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}). Next apply targets: ${applyBatch.target_slugs.join(", ")} (+${String(applyBatch.expected_safe_buyer_path_proven_delta)} delta). C4 already PASS — reuse production_mission_v1 loop.`
+      : evidenceBatch
+        ? `C3 still FAIL (buyer_path_truth_status=${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}). No immediately executable suppressed slug with guarded CSV apply — ${excludedProvenSlugs.length > 0 ? `recently proven: ${excludedProvenSlugs.join(", ")}. ` : ""}Next step: evidence-generation via ${evidenceBatch.batch_id} before apply-plan and guarded apply.`
+        : `C3 still FAIL (buyer_path_truth_status=${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}). No immediately executable suppressed slug with guarded apply path in current sprint ranking — review bottlenecks and collect owner-browser proof.`;
+
   return {
     action_id: "coverage_production_mission_c3_v1",
     rank: 0,
@@ -304,21 +425,22 @@ function buildCoverageMissionCandidate(args: {
     fail_criteria_addressed_count: 1,
     unknown_criteria_addressed_count: 0,
     dimensions_touched: ["coverage"],
-    expected_completion_impact:
-      `Production mission can flip C3 PASS when every compat-mapped filter has a proven safe buyer path (buyer_path_truth_status PROVEN_SAFE_ROWS_EXIST — now ${String(c3.metrics.buyer_path_truth_status ?? "UNKNOWN")}, proven_count=${String(c3.metrics.safe_buyer_path_proven_count ?? "UNKNOWN")}; MIXED means some mapped filters still lack safe gated buy paths). C4 already PASS — reuse production_mission_v1 loop.`,
-    factory_or_mission: "coverage_production_sprint_v2_v1 + production_mission_v1",
+    expected_completion_impact: expectedImpact,
+    factory_or_mission: immediateDelta
+      ? "coverage_production_sprint_v2_v1 + production_mission_v1"
+      : evidenceBatch
+        ? `${evidenceBatch.batch_id} + coverage_production_sprint_v2_v1`
+        : "coverage_production_sprint_v2_v1",
     report_script: "scripts/report-coverage-production-sprint-v2.ts",
     artifact_rel_paths: artifactPaths,
     commands,
-    immediate_session_pass_eligible: true,
-    action_temporality: "IMMEDIATE_SESSION_PASS_ELIGIBLE",
-    tie_break_notes: [
-      "C3 requires uniform buyer-path truth on all compat-mapped filters — not merely >=1 proven slug (coverage dimension order).",
-      "PROVEN lifecycle a6b27301-e040-4405-b613-5adcb6c99bb6 demonstrates production-mission progress toward clearing zero-safe mapped filters.",
-      topBatch
-        ? `Top fridge batch ${topBatch.batch_id} expected_safe_buyer_path_proven_delta=${String(topBatch.expected_safe_buyer_path_proven_delta)} executability=${topBatch.executability}.`
-        : "No sprint batch loaded — commands omit batch dry-runs.",
-    ],
+    immediate_session_pass_eligible: topBatch != null,
+    action_temporality: immediateDelta
+      ? "IMMEDIATE_SESSION_PASS_ELIGIBLE"
+      : evidenceBatch
+        ? "IMMEDIATE_SESSION_PASS_ELIGIBLE"
+        : "BLOCKED_OR_UNKNOWN",
+    tie_break_notes: tieBreakNotes,
   };
 }
 
@@ -530,6 +652,7 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
   rootDir: string;
   now?: () => Date;
   sprint?: CoverageProductionSprintV2ReportV1 | null;
+  census?: AllProductSafeBuyerPathCensusV1;
   skipSprint?: boolean;
 }): WedgeCompletionDirectorReportV1 {
   const now = args.now ?? (() => new Date());
@@ -542,12 +665,26 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
     );
   }
 
+  const census =
+    args.census ??
+    buildAllProductSafeBuyerPathCensusV1({
+      rootDir: args.rootDir,
+      now,
+    });
+
   const fridgeSlugs = loadFridgeCsvSlugs(args.rootDir);
+
+  const coverageSelection = selectCoverageDirectorBatch({
+    sprint,
+    fridgeSlugs,
+    census,
+    rootDir: args.rootDir,
+  });
 
   const candidates = [
     buildCompleteCandidate({ report }),
     buildReferenceabilityCandidate({ report }),
-    buildCoverageMissionCandidate({ report, sprint, fridgeSlugs }),
+    buildCoverageMissionCandidate({ report, sprint, fridgeSlugs, census, rootDir: args.rootDir }),
     buildOperationsMetricsCandidate({ report }),
     buildDailyOperatorCandidate({ report }),
     buildSearchIntentCandidate({ report }),
@@ -560,7 +697,17 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
   }
 
   const runnerUp = ranked[1];
-  const topBlock = pickTopBlockingSlug(report, winner.blocking_criterion_ids);
+  const actionableSlugs =
+    winner.action_id === "coverage_production_mission_c3_v1"
+      ? coverageSelection.applyBatch?.target_slugs ?? []
+      : [];
+  const topBlock =
+    actionableSlugs.length > 0
+      ? {
+          slug: actionableSlugs[0]!,
+          summary: `${actionableSlugs[0]}: next guarded-apply target (census not yet SAFE_BUYER_PATH_PROVEN)`,
+        }
+      : pickTopBlockingSlug(report, winner.blocking_criterion_ids);
   const recommended: WedgeCompletionDirectorRecommendedActionV1 = {
     action_id: winner.action_id,
     primary_dimension: winner.primary_dimension,
@@ -578,6 +725,9 @@ export function buildWedgeCompletionDirectorFromEvaluatorReportV1(args: {
     tie_break_reason: buildTieBreakReason(winner, runnerUp),
     top_blocking_slug: topBlock.slug,
     top_blocking_summary: topBlock.summary,
+    actionable_target_slugs: actionableSlugs,
+    immediate_c3_delta_available: coverageSelection.applyBatch != null,
+    excluded_proven_slugs: coverageSelection.excludedProvenSlugs,
   };
 
   const failBlockers = allBlockingCriteria(report).filter((c) => c.status === "FAIL");
@@ -615,12 +765,21 @@ export async function buildWedgeCompletionDirectorReportV1(
   deps: BuildWedgeCompletionDirectorDepsV1,
 ): Promise<WedgeCompletionDirectorReportV1> {
   const report = await buildWedgeCompletionEvaluatorReportV1(deps);
+  const now = deps.now ?? (() => new Date());
+  let census = deps.census ?? null;
+  if (census === null) {
+    census = buildAllProductSafeBuyerPathCensusV1({
+      rootDir: deps.rootDir,
+      now,
+    });
+  }
   let sprint: CoverageProductionSprintV2ReportV1 | null = deps.sprint ?? null;
   if (sprint === null && !deps.skipSprint) {
     try {
       sprint = await buildCoverageProductionSprintV2ReportV1({
         rootDir: deps.rootDir,
         now: deps.now,
+        census,
       });
     } catch {
       sprint = null;
@@ -631,6 +790,7 @@ export async function buildWedgeCompletionDirectorReportV1(
     rootDir: deps.rootDir,
     now: deps.now,
     sprint,
+    census,
     skipSprint: true,
   });
 }
@@ -657,6 +817,9 @@ export function buildWedgeCompletionDirectorReportUnknownV1(args: {
     tie_break_reason: null,
     top_blocking_slug: null,
     top_blocking_summary: null,
+    actionable_target_slugs: [],
+    immediate_c3_delta_available: false,
+    excluded_proven_slugs: [],
   };
 
   return {
