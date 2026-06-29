@@ -36,8 +36,8 @@ export function extractFounderDecisionApplyContextCorrelationV1(raw: Record<stri
     }
   }
   return {
-    apply_context_target_slugs: [...new Set(apply_context_target_slugs)],
-    apply_context_apply_plan_rel_paths: [...new Set(apply_context_apply_plan_rel_paths)],
+    apply_context_target_slugs: Array.from(new Set(apply_context_target_slugs)),
+    apply_context_apply_plan_rel_paths: Array.from(new Set(apply_context_apply_plan_rel_paths)),
   };
 }
 

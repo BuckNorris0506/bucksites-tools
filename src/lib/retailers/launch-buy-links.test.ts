@@ -20,7 +20,6 @@ import {
   summarizeBuyPathGateSuppression,
   staleBrowserTruthShadowClassification,
   summarizeStaleBrowserTruthShadowCounts,
-  R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS,
 } from "./launch-buy-links";
 
 describe("isSearchEngineDiscoveryUrl (major search hosts)", () => {
@@ -1054,7 +1053,6 @@ describe("staleBrowserTruthShadowClassification (diagnostics after live gate enf
   });
 
   it("filterRealBuyRetailerLinks excludes stale direct_buyable rows", () => {
-    const now = new Date("2026-06-10T12:00:00.000Z");
     const links = filterRealBuyRetailerLinks([
       {
         retailer_key: "amazon",
