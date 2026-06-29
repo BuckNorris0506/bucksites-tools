@@ -92,7 +92,7 @@ export function buildGuardedApplyTrustCurrencyPreflightV1(args: {
     contract: GUARDED_APPLY_TRUST_CURRENCY_PREFLIGHT_CONTRACT_V1,
     read_only: true,
     mutation_authorized: false,
-    blockers: [...new Set(blockers)],
+    blockers: Array.from(new Set(blockers)),
     trust_currency,
     owner_queue_stale_critical_count,
     revalidation_cadence_expired_count,

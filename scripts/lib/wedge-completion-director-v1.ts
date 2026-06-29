@@ -293,7 +293,7 @@ function selectCoverageDirectorBatch(args: {
   return {
     applyBatch,
     evidenceBatch,
-    excludedProvenSlugs: [...excludedProvenSlugs],
+    excludedProvenSlugs: Array.from(excludedProvenSlugs),
   };
 }
 

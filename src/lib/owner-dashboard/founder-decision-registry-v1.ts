@@ -666,7 +666,7 @@ function parseBoundArtifactsV1(
     }
     if (typeof entry_type !== "string" || !ENTRY_TYPES.has(entry_type as FounderDecisionRegistryBoundArtifactV1["entry_type"])) {
       errors.push(
-        `bound_artifacts_v1[${index}].entry_type must be one of: ${[...ENTRY_TYPES].join(", ")}`,
+        `bound_artifacts_v1[${index}].entry_type must be one of: ${Array.from(ENTRY_TYPES).join(", ")}`,
       );
     }
     if (
