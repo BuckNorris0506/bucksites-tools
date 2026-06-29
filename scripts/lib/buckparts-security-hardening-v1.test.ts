@@ -25,7 +25,7 @@ import {
 import { buildGuardedCsvWriteModeBlockersV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import type { FounderDecisionRegistryRowV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
-import { resolveWinningRepoEvidenceVerdictV1 } from "./fridge-safe-link-evidence-precedence-v1";
+import { resolveWinningRepoEvidenceVerdictV1 } from "./buckparts-decision-precedence-signals-v1";
 import {
   BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1,
   writeBuckpartsExecutionLedgerArtifactsV1,

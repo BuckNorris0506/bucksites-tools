@@ -105,7 +105,7 @@ function generatedAtMsV1(generated_at: string | null): number {
   return Number.isFinite(ms) ? ms : 0;
 }
 
-function resolveWinningRepoEvidenceVerdictV1(args: {
+export function resolveWinningRepoEvidenceVerdictV1(args: {
   rootDir: string;
   evidence_rel_paths: string[];
 }): {
