@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
 import type { AirPurifierApplyPlannerReportV1, ApPlannedChangeV1 } from "./lib/air-purifier-apply-planner-v1";
-import { AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 } from "./lib/air-purifier-apply-planner-batch-v2-v1";
 import {
+  AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1,
   AP_SUPABASE_PARITY_DEFAULT_BATCH_V2_PLAN_PATH_V1,
   AP_SUPABASE_PARITY_UPDATE_FIELDS_V1,
   buildSupabaseUpdatePatchFromAfterRowV1,
@@ -19,8 +20,95 @@ import {
   type ApDbRetailerLinkRowV1,
   type ApSupabaseParityDepsV1,
 } from "./lib/air-purifier-supabase-apply-parity-v1";
+import { bindArtifactsAtHashesV1 } from "./lib/truth-ledger-v1";
 
 const REPO_ROOT = process.cwd();
+const FIXTURE_PLAN_REL = "fixture-plan.json";
+
+function writeTrustCurrencyClearFixture(root: string, referenceTime: Date): void {
+  const dir = path.join(root, "data/truth-integrity");
+  mkdirSync(dir, { recursive: true });
+  const nextReAudit = new Date(referenceTime.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+  writeFileSync(
+    path.join(dir, "truth-integrity-registry-v1.json"),
+    `${JSON.stringify(
+      {
+        contract: "truth_integrity_registry_v1",
+        read_only: true,
+        data_mutation: false,
+        mutation_authorized: false,
+        findings: [
+          {
+            finding_id: "fixture-truth-integrity",
+            finding_code: "FIXTURE",
+            title: "Fixture finding",
+            status: "OPEN",
+            severity: "high",
+            truth_surface: "buy_path",
+            summary: "fixture",
+            proven_gap: "fixture",
+            false_safety_risk: "fixture",
+            smallest_safe_fix: "fixture",
+            re_audit: {
+              next_re_audit_after: nextReAudit,
+              last_re_audit_at: referenceTime.toISOString(),
+              cadence_days: 30,
+              re_audit_owner: "test",
+            },
+            validation_commands: { prove_gap: ["npm test"] },
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
+function writeAuthorizedApSupabaseFixtureRoot(args: {
+  slug: string;
+  plan: AirPurifierApplyPlannerReportV1;
+}): { root: string; cleanup: () => void } {
+  const root = mkdtempSync(path.join(tmpdir(), "ap-supabase-parity-"));
+  const referenceTime = new Date("2026-06-10T12:00:00.000Z");
+  writeTrustCurrencyClearFixture(root, referenceTime);
+  const planAbs = path.join(root, FIXTURE_PLAN_REL);
+  writeFileSync(planAbs, `${JSON.stringify(args.plan, null, 2)}\n`, "utf8");
+  const bound_artifacts_v1 = bindArtifactsAtHashesV1({
+    rootDir: root,
+    artifacts: [{ artifact_rel_path: FIXTURE_PLAN_REL, entry_type: "apply_plan" }],
+  });
+  mkdirSync(path.join(root, "data/owner-decisions"), { recursive: true });
+  writeFileSync(
+    path.join(root, "data/owner-decisions/ap-supabase-parity-fixture-v1.json"),
+    `${JSON.stringify({
+      contract: "founder_decision_registry_v1",
+      rows: [
+        {
+          decision_id: "decision-ap-supabase-fixture",
+          source_queue_row_id: "queue-ap-fixture",
+          source_decision_packet_id: "packet-ap-fixture",
+          decided_at: "2026-06-10T12:00:00.000Z",
+          decision_status: "approved",
+          owner_note: "Approve AP Supabase parity apply.",
+          allowed_next_scope: "owner_mutation_approved",
+          evidence_required_before_mutation: true,
+          prohibited_actions_still_apply: ["Do not apply other slugs."],
+          bound_artifacts_v1,
+          [`${args.slug}_apply_context_v1`]: {
+            target_slug: args.slug,
+            apply_plan_rel_path: FIXTURE_PLAN_REL,
+          },
+        },
+      ],
+    })}\n`,
+    "utf8",
+  );
+  return {
+    root,
+    cleanup: () => rmSync(root, { recursive: true, force: true }),
+  };
+}
 
 function searchSnapshot(slug: string) {
   const url = `https://levoit.com/search?q=${slug.toUpperCase()}`;
@@ -235,7 +323,7 @@ test("dry-run does not write", async () => {
   assert.equal(report.apply_status, "DRY_RUN_READY");
 });
 
-test("apply updates only matched row — no insert path exists on deps", async () => {
+test("apply without founder approval is BLOCKED", async () => {
   const slug = "levoit-rf-lv-h128";
   const deps = mockDeps({
     linksBySlug: { [slug]: [dbRowFromSnapshot(slug, searchSnapshot(slug))] },
@@ -244,36 +332,97 @@ test("apply updates only matched row — no insert path exists on deps", async (
   const report = await runAirPurifierSupabaseParityV1({
     rootDir: REPO_ROOT,
     mode: "apply",
-    planPath: "fixture-plan.json",
+    planPath: FIXTURE_PLAN_REL,
+    io_capability: "MUTATION",
     deps,
     readText: () => JSON.stringify(plan),
   });
-  assert.equal(report.apply_status, "APPLIED");
-  assert.equal(report.applied_change_count, 1);
-  assert.equal(deps.updateCalls.length, 1);
-  assert.equal(deps.updateCalls[0]!.id, `link-${slug}`);
-  assert.equal(deps.updateCalls[0]!.patch.browser_truth_classification, "direct_buyable");
-  assert.equal("insert" in deps, false);
+  assert.equal(report.apply_status, "BLOCKED");
+  assert.equal(report.mutation_authorized, false);
+  assert.ok(
+    report.mutation_preflight_blockers.includes(
+      "founder_owner_mutation_approved_missing_or_inactive",
+    ),
+  );
+  assert.equal(deps.updateCalls.length, 0);
 });
 
-test("already applied rows report ALREADY_APPLIED without update", async () => {
+test("apply with authorized founder decision updates matched row", async () => {
+  const slug = "levoit-rf-lv-h128";
+  const plan = minimalPlan([plannedChange(slug, "lv-h128-replacement-filter")]);
+  const { root, cleanup } = writeAuthorizedApSupabaseFixtureRoot({ slug, plan });
+  try {
+    const deps = mockDeps({
+      linksBySlug: { [slug]: [dbRowFromSnapshot(slug, searchSnapshot(slug))] },
+    });
+    const report = await runAirPurifierSupabaseParityV1({
+      rootDir: root,
+      mode: "apply",
+      planPath: FIXTURE_PLAN_REL,
+      io_capability: "MUTATION",
+      deps,
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+    });
+    assert.equal(report.apply_status, "APPLIED");
+    assert.equal(report.mutation_authorized, true);
+    assert.equal(report.applied_change_count, 1);
+    assert.equal(deps.updateCalls.length, 1);
+  } finally {
+    cleanup();
+  }
+});
+
+test("apply updates only matched row — no insert path exists on deps", async () => {
+  const slug = "levoit-rf-lv-h128";
+  const plan = minimalPlan([plannedChange(slug, "lv-h128-replacement-filter")]);
+  const { root, cleanup } = writeAuthorizedApSupabaseFixtureRoot({ slug, plan });
+  try {
+    const deps = mockDeps({
+      linksBySlug: { [slug]: [dbRowFromSnapshot(slug, searchSnapshot(slug))] },
+    });
+    const report = await runAirPurifierSupabaseParityV1({
+      rootDir: root,
+      mode: "apply",
+      planPath: FIXTURE_PLAN_REL,
+      io_capability: "MUTATION",
+      deps,
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+    });
+    assert.equal(report.apply_status, "APPLIED");
+    assert.equal(report.applied_change_count, 1);
+    assert.equal(deps.updateCalls.length, 1);
+    assert.equal(deps.updateCalls[0]!.id, `link-${slug}`);
+    assert.equal(deps.updateCalls[0]!.patch.browser_truth_classification, "direct_buyable");
+    assert.equal("insert" in deps, false);
+  } finally {
+    cleanup();
+  }
+});
+
+test("already applied rows report ALREADY_APPLIED without update when mutation authorized", async () => {
   const slug = "levoit-vital100-rf";
   const after = pdpSnapshot(slug, "vital100-air-purifier-replacement-filter");
-  const deps = mockDeps({
-    linksBySlug: { [slug]: [dbRowFromSnapshot(slug, after)] },
-  });
   const plan = minimalPlan([plannedChange(slug, "vital100-air-purifier-replacement-filter")]);
-  const report = await runAirPurifierSupabaseParityV1({
-    rootDir: REPO_ROOT,
-    mode: "apply",
-    planPath: "fixture-plan.json",
-    deps,
-    readText: () => JSON.stringify(plan),
-  });
-  assert.equal(report.apply_status, "ALREADY_APPLIED");
-  assert.equal(report.applied_change_count, 0);
-  assert.equal(report.already_applied_count, 1);
-  assert.equal(deps.updateCalls.length, 0);
+  const { root, cleanup } = writeAuthorizedApSupabaseFixtureRoot({ slug, plan });
+  try {
+    const deps = mockDeps({
+      linksBySlug: { [slug]: [dbRowFromSnapshot(slug, after)] },
+    });
+    const report = await runAirPurifierSupabaseParityV1({
+      rootDir: root,
+      mode: "apply",
+      planPath: FIXTURE_PLAN_REL,
+      io_capability: "MUTATION",
+      deps,
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+    });
+    assert.equal(report.apply_status, "ALREADY_APPLIED");
+    assert.equal(report.applied_change_count, 0);
+    assert.equal(report.already_applied_count, 1);
+    assert.equal(deps.updateCalls.length, 0);
+  } finally {
+    cleanup();
+  }
 });
 
 test("refuses when DB row matches neither before nor after snapshot", async () => {

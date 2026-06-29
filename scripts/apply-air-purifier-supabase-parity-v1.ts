@@ -15,12 +15,15 @@ async function main(): Promise<void> {
   loadEnv();
   const cli = parseApSupabaseParityCliArgsV1(process.argv.slice(2));
   const mode = cli.apply ? "apply" : "dry_run";
+  const mutationGateRef = { authorized: false };
 
   const report = await runAirPurifierSupabaseParityV1({
     rootDir,
     mode,
     planPath: cli.planPath ?? undefined,
-    deps: createApSupabaseParityLiveDepsV1(getSupabaseAdmin),
+    io_capability: mode === "apply" ? "MUTATION" : "READ_INDEX",
+    mutationGateRef,
+    deps: createApSupabaseParityLiveDepsV1(getSupabaseAdmin, mutationGateRef),
   });
 
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);

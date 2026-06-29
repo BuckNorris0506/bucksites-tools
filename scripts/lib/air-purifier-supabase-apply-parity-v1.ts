@@ -8,7 +8,11 @@ import path from "node:path";
 
 import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 
-import { AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 } from "./air-purifier-apply-planner-batch-v2-v1";
+import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
+import {
+  apSupabaseParityMutationAuthorizedV1,
+  buildApSupabaseParityMutationPreflightV1,
+} from "./air-purifier-supabase-apply-parity-mutation-gate-v1";
 import type {
   AirPurifierApplyPlannerReportV1,
   ApPlannedChangeV1,
@@ -18,6 +22,10 @@ import {
   AIR_PURIFIER_APPLY_PLANNER_REPORT_NAME_V1,
   AP_RETAILER_LINKS_CSV_REL_V1,
 } from "./air-purifier-apply-planner-v1";
+
+/** Kept local to avoid circular import with batch-v2 ↔ operating-checklist ↔ parity. */
+export const AIR_PURIFIER_APPLY_PLANNER_BATCH_V2_REPORT_NAME_V1 =
+  "air_purifier_apply_planner_batch_v2_v1" as const;
 
 export const AIR_PURIFIER_SUPABASE_PARITY_REPORT_NAME_V1 =
   "air_purifier_supabase_apply_parity_v1" as const;
@@ -110,6 +118,10 @@ export type AirPurifierSupabaseParityReportV1 = {
   applied_change_count: number;
   already_applied_count: number;
   blocked_reasons: string[];
+  mutation_authorized: boolean;
+  mutation_preflight_blockers: string[];
+  founder_decision_id: string | null;
+  io_capability: BuckpartsIoCapabilityV1;
   rows: ApSupabaseParityRowReportV1[];
   notes: string[];
 };
@@ -313,6 +325,8 @@ export function gateFailureForProjectedRowV1(
     browser_truth_classification:
       (projected.browser_truth_classification as string | null) ?? null,
     browser_truth_buyable_subtype: null,
+    browser_truth_checked_at:
+      (projected.browser_truth_checked_at as string | null) ?? null,
   });
 }
 
@@ -323,12 +337,39 @@ export async function runAirPurifierSupabaseParityV1(args: {
   deps: ApSupabaseParityDepsV1;
   now?: () => Date;
   readText?: (absPath: string) => string;
+  io_capability?: BuckpartsIoCapabilityV1;
+  mutationGateRef?: { authorized: boolean };
 }): Promise<AirPurifierSupabaseParityReportV1> {
   const generatedAt = (args.now ?? (() => new Date()))().toISOString();
   const relPlanPath = args.planPath?.trim() || AP_SUPABASE_PARITY_DEFAULT_PLAN_PATH_V1;
+  const io_capability = args.io_capability ?? "READ_INDEX";
   const plan = loadApSupabaseParityPlanV1(args.rootDir, relPlanPath, args.readText);
   const blocked_reasons = validateApSupabaseParityPlanV1(plan);
   const planned = plan.planned_changes ?? [];
+
+  const mutationPreflight =
+    args.mode === "apply"
+      ? buildApSupabaseParityMutationPreflightV1({
+          rootDir: args.rootDir,
+          mode: args.mode,
+          planRel: relPlanPath.replace(/\\/g, "/"),
+          plan,
+          io_capability,
+          now: args.now,
+          readText: args.readText,
+        })
+      : null;
+  const mutation_authorized =
+    args.mode === "dry_run"
+      ? false
+      : apSupabaseParityMutationAuthorizedV1(mutationPreflight!);
+  if (mutationPreflight && mutationPreflight.blockers.length > 0) {
+    blocked_reasons.push(...mutationPreflight.blockers);
+  }
+  if (args.mutationGateRef) {
+    args.mutationGateRef.authorized = mutation_authorized;
+  }
+
   const rows: ApSupabaseParityRowReportV1[] = [];
   let applied_change_count = 0;
   let already_applied_count = 0;
@@ -339,6 +380,7 @@ export async function runAirPurifierSupabaseParityV1(args: {
       deps: args.deps,
       mode: args.mode,
       blocked_reasons,
+      mutation_authorized,
     });
     rows.push(rowReport);
     if (rowReport.updated) applied_change_count += 1;
@@ -378,6 +420,10 @@ export async function runAirPurifierSupabaseParityV1(args: {
     applied_change_count,
     already_applied_count,
     blocked_reasons,
+    mutation_authorized,
+    mutation_preflight_blockers: mutationPreflight?.blockers ?? [],
+    founder_decision_id: mutationPreflight?.founder_decision_id ?? null,
+    io_capability,
     rows,
     notes,
   };
@@ -388,6 +434,7 @@ async function resolveParityRowV1(args: {
   deps: ApSupabaseParityDepsV1;
   mode: ApSupabaseParityModeV1;
   blocked_reasons: string[];
+  mutation_authorized: boolean;
 }): Promise<ApSupabaseParityRowReportV1> {
   const slug = args.change.filter_slug;
   const retailerKey = args.change.retailer_key;
@@ -459,7 +506,7 @@ async function resolveParityRowV1(args: {
   const would_update = match_mode === "before_row" && gateAfterProjected === null;
   let updated = false;
 
-  if (would_update && args.mode === "apply") {
+  if (would_update && args.mode === "apply" && args.mutation_authorized) {
     await args.deps.updateApprovedLink(link.id, afterProjected);
     updated = true;
   }
@@ -494,6 +541,7 @@ export function parseApSupabaseParityCliArgsV1(argv: string[]): {
 
 export function createApSupabaseParityLiveDepsV1(
   getSupabaseAdmin: () => import("@supabase/supabase-js").SupabaseClient,
+  mutationGateRef?: { authorized: boolean },
 ): ApSupabaseParityDepsV1 {
   return {
     async resolveFilterIdBySlug(slug) {
@@ -520,6 +568,9 @@ export function createApSupabaseParityLiveDepsV1(
       return (data ?? []) as ApDbRetailerLinkRowV1[];
     },
     async updateApprovedLink(id, patch) {
+      if (mutationGateRef && !mutationGateRef.authorized) {
+        throw new Error("AP_SUPABASE_PARITY_MUTATION_NOT_AUTHORIZED");
+      }
       const supabase = getSupabaseAdmin();
       const { error } = await supabase
         .from(AP_SUPABASE_PARITY_TARGET_TABLE_V1)
