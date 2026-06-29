@@ -51,6 +51,55 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
+## Security hardening — deployed state (`496c6a4`)
+
+**Read this section first** when picking up security gate / trust / `/go` / guarded-apply / founder-binding work.
+
+### Deploy anchor (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Final pushed/deployed HEAD | **`496c6a4`** |
+| Netlify production | **Published** for `main@496c6a4` |
+
+**Commit chain (security slice — newest first):**
+
+| SHA | Subject |
+|-----|---------|
+| **`496c6a4`** | Fix security hardening test import |
+| **`76b1e19`** | Fix Netlify security hardening runtime convergence |
+| **`bc55610`** | Fix security hardening build blockers |
+| **`d66ce8e`** | Harden homeowner buy-path trust gates |
+
+**HyperAgent final re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`.
+
+### Resolved scope (PROVEN on deployed slice)
+
+- `/go` freshness fail-closed
+- Decision precedence: DENY / UNKNOWN over ALLOW
+- Trust currency: expired / degraded blocking
+- Founder approval artifact binding
+- Truth-ledger hash binding (partial / apply-time)
+- READ_INDEX vs MUTATION capability enforcement
+- External signals read-only contract
+
+### Remaining blockers before any production-data lane
+
+1. Live Supabase apply lane ungated
+2. Founder approval `expires_at` optional
+3. Truth-ledger append / source chain deferred
+4. MCP / Supabase extraction controls audit-only
+
+```bash
+git rev-parse HEAD
+git log --oneline d66ce8e..496c6a4
+BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
+npm run buckparts:repo-runtime-convergence:check -- --enforce
+```
+
+---
+
 ## Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)
 
 **Read this section first** for HQ / Cursor / HyperAgent chat transfer.
