@@ -40,6 +40,15 @@ export async function GET(
     target,
     row.browser_truth_classification ?? undefined,
     row.browser_truth_buyable_subtype ?? null,
+    row.browser_truth_checked_at ?? null,
+    row.browser_truth_notes ?? null,
+    {
+      context: {
+        fridge_filter_slug: row.filter_slug,
+        fridge_models_for_filter: row.fridge_models_for_safety,
+        gated_retailer_link_count: 1,
+      },
+    },
   );
   if (!go) {
     return goFallbackRedirect(request, "/go-unavailable");

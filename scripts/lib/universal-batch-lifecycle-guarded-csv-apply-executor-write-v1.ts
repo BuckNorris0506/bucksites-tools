@@ -7,6 +7,10 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import { FRIDGE_RETAILER_LINKS_CSV_REL_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
+import {
+  assertWriteAllowedForCapabilityV1,
+  type BuckpartsIoCapabilityV1,
+} from "./buckparts-io-capabilities-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanRowPatchV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import {
   indexRetailerLinksBySlugV1,
@@ -381,6 +385,8 @@ export function buildGuardedCsvWriteModeBlockersV1(args: {
   mutationAuthorizationReview?: GuardedCsvWriteModeMutationAuthInputV1 | null;
   beforeRowParityProven: boolean;
   writePlan: GuardedCsvWritePlanV1;
+  truth_ledger_blockers?: string[];
+  io_capability?: BuckpartsIoCapabilityV1;
 }): string[] {
   const blockers: string[] = [];
   const requireCliFlag = args.requireCliFlag !== false;
@@ -437,6 +443,14 @@ export function buildGuardedCsvWriteModeBlockersV1(args: {
     blockers.push(...args.writePlan.blockers);
   }
 
+  if (args.truth_ledger_blockers?.length) {
+    blockers.push(...args.truth_ledger_blockers);
+  }
+
+  if (args.io_capability === "READ_INDEX") {
+    blockers.push("io_capability_read_index_cannot_mutate_csv");
+  }
+
   return blockers;
 }
 
@@ -446,10 +460,21 @@ export function executeGuardedCsvWriteModeV1(args: {
   fileExists?: (absPath: string) => boolean;
   readText?: (absPath: string) => string;
   writeText?: (absPath: string, content: string) => void;
+  io_capability?: BuckpartsIoCapabilityV1;
 }): ExecuteGuardedCsvWriteModeResultV1 {
   const fileExists = args.fileExists ?? ((abs: string) => existsSync(abs));
   const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
-  const writeText = args.writeText ?? ((abs: string, content: string) => writeFileSync(abs, content, "utf8"));
+  const ioCapability = args.io_capability ?? "MUTATION";
+  const writeText =
+    args.writeText ??
+    ((abs: string, content: string) => {
+      assertWriteAllowedForCapabilityV1({
+        capability: ioCapability,
+        relPath: abs,
+        rootDir: args.rootDir,
+      });
+      writeFileSync(abs, content, "utf8");
+    });
 
   const csvAbs = path.join(args.rootDir, args.writePlan.target_file);
   if (!fileExists(csvAbs)) {

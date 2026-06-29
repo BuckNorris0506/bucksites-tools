@@ -24,6 +24,7 @@ import {
   upsertOwnerDecisionRequestFromRunnerHaltV1,
   type OwnerDecisionRequestV1,
 } from "../../src/lib/owner-dashboard/owner-decision-queue-v1";
+import { bindArtifactsAtHashesV1 } from "./truth-ledger-v1";
 
 function withTempRoot(run: (root: string) => void): void {
   const root = mkdtempSync(path.join(tmpdir(), "odq-v1-"));
@@ -36,6 +37,12 @@ function withTempRoot(run: (root: string) => void): void {
 
 function writeRegistryRow(root: string, slug: string): void {
   mkdirSync(path.join(root, "data/owner-decisions"), { recursive: true });
+  const artifactRel = `data/owner-decisions/test-approval-artifact-${slug}.json`;
+  writeFileSync(path.join(root, artifactRel), '{"approval":true}\n', "utf8");
+  const bound_artifacts_v1 = bindArtifactsAtHashesV1({
+    rootDir: root,
+    artifacts: [{ artifact_rel_path: artifactRel, entry_type: "founder_approval" }],
+  });
   writeFileSync(
     path.join(root, "data/owner-decisions/test-approval.json"),
     `${JSON.stringify(
@@ -56,6 +63,7 @@ function writeRegistryRow(root: string, slug: string): void {
             prohibited_actions_still_apply: [
               "Do not run mutating npm scripts unless founder explicitly instructs otherwise.",
             ],
+            bound_artifacts_v1,
           },
         ],
       },
@@ -196,6 +204,7 @@ test("stale decision projection", () => {
       request,
       registryRows: [],
       referenceTimeIso: "2026-06-27T00:00:00.000Z",
+      rootDir: root,
     });
     assert.equal(effective, "STALE");
 
@@ -205,6 +214,142 @@ test("stale decision projection", () => {
     });
     assert.equal(projection.stale_count, 1);
     assert.equal(projection.stale_decisions[0]?.effective_status, "STALE");
+  });
+});
+
+test("expired request cannot authorize mutation even when registry approval exists", () => {
+  withTempRoot((root) => {
+    writeRegistryRow(root, "odr-v1-expired-with-approval");
+    const registry = JSON.parse(
+      readFileSync(path.join(root, "data/owner-decisions/test-approval.json"), "utf8"),
+    ) as { rows: Parameters<typeof resolveOwnerDecisionRequestEffectiveStatusV1>[0]["registryRows"] };
+    const request: OwnerDecisionRequestV1 = {
+      contract: OWNER_DECISION_REQUEST_CONTRACT_V1,
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      decision_request_id: "odr-v1-expired-with-approval",
+      created_at: "2026-05-01T00:00:00.000Z",
+      updated_at: "2026-05-01T00:00:00.000Z",
+      source_system: "test",
+      source_artifact_path: "data/test.json",
+      target_slugs: ["odr-v1-expired-with-approval"],
+      decision_type: "owner_mutation_approval",
+      options: [],
+      recommended_option: "approve_owner_mutation",
+      evidence_summary: "Expired request with stale registry match",
+      blockers: [],
+      risks: [],
+      exact_downstream_action_if_approved: "registry",
+      exact_downstream_action_if_rejected: "none",
+      expires_or_stale_after: "2026-05-15T00:00:00.000Z",
+      status: "PENDING_OWNER_DECISION",
+      founder_decision_registry_bridge: {
+        expected_allowed_next_scope: "owner_mutation_approved",
+        matching_registry_sources: [],
+        active_mutation_approval_decision_id: null,
+      },
+    };
+    writePendingRequest(root, request);
+
+    const effective = resolveOwnerDecisionRequestEffectiveStatusV1({
+      request,
+      registryRows: registry.rows,
+      referenceTimeIso: "2026-06-27T00:00:00.000Z",
+      rootDir: root,
+    });
+    assert.equal(effective, "STALE");
+
+    const freshRequest = {
+      ...request,
+      expires_or_stale_after: "2026-12-01T00:00:00.000Z",
+    };
+    assert.equal(
+      resolveOwnerDecisionRequestEffectiveStatusV1({
+        request: freshRequest,
+        registryRows: registry.rows,
+        referenceTimeIso: "2026-06-27T00:00:00.000Z",
+        rootDir: root,
+      }),
+      "APPROVED",
+    );
+  });
+});
+
+test("unrelated slug in owner_note cannot satisfy mutation approval match", () => {
+  withTempRoot((root) => {
+    mkdirSync(path.join(root, "data/owner-decisions"), { recursive: true });
+    writeFileSync(
+      path.join(root, "data/owner-decisions/unrelated-note.json"),
+      `${JSON.stringify(
+        {
+          contract: "founder_decision_registry_v1",
+          read_only: true,
+          data_mutation: false,
+          rows: [
+            {
+              decision_id: "approval-unrelated",
+              source_queue_row_id: "queue-test",
+              source_decision_packet_id: "owner_decision_request_v1:other-slug",
+              decided_at: "2026-06-01T00:00:00.000Z",
+              decision_status: "approved",
+              owner_note: "mentions ukf8001 in prose only",
+              allowed_next_scope: "owner_mutation_approved",
+              evidence_required_before_mutation: true,
+              prohibited_actions_still_apply: [],
+            },
+          ],
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    const request: OwnerDecisionRequestV1 = {
+      contract: OWNER_DECISION_REQUEST_CONTRACT_V1,
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      decision_request_id: "odr-v1-unrelated-slug",
+      created_at: "2026-06-27T00:00:00.000Z",
+      updated_at: "2026-06-27T00:00:00.000Z",
+      source_system: "test",
+      source_artifact_path: "data/parity-ukf8001.json",
+      target_slugs: ["ukf8001"],
+      decision_type: "owner_mutation_approval",
+      options: [],
+      recommended_option: "approve_owner_mutation",
+      evidence_summary: "test",
+      blockers: [],
+      risks: [],
+      exact_downstream_action_if_approved: "x",
+      exact_downstream_action_if_rejected: "none",
+      expires_or_stale_after: null,
+      status: "PENDING_OWNER_DECISION",
+      founder_decision_registry_bridge: {
+        expected_allowed_next_scope: "owner_mutation_approved",
+        matching_registry_sources: [],
+        active_mutation_approval_decision_id: null,
+      },
+    };
+    const effective = resolveOwnerDecisionRequestEffectiveStatusV1({
+      request,
+      registryRows: [
+        {
+          decision_id: "approval-unrelated",
+          source_queue_row_id: "queue-test",
+          source_decision_packet_id: "owner_decision_request_v1:other-slug",
+          decided_at: "2026-06-01T00:00:00.000Z",
+          decision_status: "approved",
+          owner_note: "mentions ukf8001 in prose only",
+          allowed_next_scope: "owner_mutation_approved",
+          evidence_required_before_mutation: true,
+          prohibited_actions_still_apply: [],
+        },
+      ],
+      referenceTimeIso: "2026-06-27T00:00:00.000Z",
+      rootDir: root,
+    });
+    assert.equal(effective, "PENDING_OWNER_DECISION");
   });
 });
 

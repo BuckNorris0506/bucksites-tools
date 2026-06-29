@@ -39,6 +39,8 @@ import {
   applyAmazonAffiliateRedirectUrl,
 } from "@/lib/retailers/go-redirect-gate";
 
+const FRESH_BROWSER_TRUTH_CHECKED_AT = "2026-05-01T00:00:00.000Z";
+
 function requestAt(url: string, headers?: Record<string, string>): NextRequest {
   return new NextRequest(url, { headers: new Headers(headers ?? {}) });
 }
@@ -92,6 +94,8 @@ describe("buildGoClickEventInsertRow", () => {
       "amazon",
       "https://www.amazon.com/dp/B00CONTRACT",
       "direct_buyable",
+      null,
+      FRESH_BROWSER_TRUTH_CHECKED_AT,
     );
     assert.ok(go);
     const row = buildGoClickEventInsertRow(
@@ -116,6 +120,8 @@ describe("buildGoClickEventInsertRow", () => {
       "amazon",
       "https://www.amazon.com/dp/B00CANON",
       "direct_buyable",
+      null,
+      FRESH_BROWSER_TRUTH_CHECKED_AT,
     );
     assert.ok(go);
     const row = buildGoClickEventInsertRow(
@@ -140,6 +146,8 @@ describe("buildGoClickEventInsertRow", () => {
       "amazon",
       "https://www.amazon.com/dp/B00SAFE",
       "direct_buyable",
+      null,
+      FRESH_BROWSER_TRUTH_CHECKED_AT,
     );
     assert.ok(go);
     const row = buildGoClickEventInsertRow(
@@ -157,6 +165,8 @@ describe("buildGoClickEventInsertRow", () => {
       "amazon",
       "  https://www.amazon.com/dp/B00TRIM  ",
       "direct_buyable",
+      null,
+      FRESH_BROWSER_TRUTH_CHECKED_AT,
     );
     assert.ok(go);
     const row = buildGoClickEventInsertRow(go, { id: "1" }, requestAt("https://x.test/"));
@@ -189,6 +199,8 @@ describe("logClickEventForGoRoute monitoring", () => {
         "amazon",
         "https://www.amazon.com/dp/B00SAFELOG?tag=raw-tag",
         "direct_buyable",
+      null,
+      FRESH_BROWSER_TRUTH_CHECKED_AT,
       );
       assert.ok(go);
 
@@ -262,7 +274,7 @@ describe("/go fallbacks use /go-unavailable (all wedges)", () => {
     const src = fs.readFileSync(abs, "utf8");
     assert.ok(src.includes('href="/search"'));
     assert.ok(src.includes('href="/"'));
-    assert.ok(src.includes("BuckParts could not safely open that store listing"));
+    assert.ok(src.includes("BuckParts could not safely open that retailer listing"));
   });
 });
 
@@ -275,7 +287,7 @@ describe("nextResponseRedirectAffiliateIfSafe (re-export path)", () => {
   });
   it("returns response whose Location matches outboundUrl (includes Amazon tag)", () => {
     const u = "https://www.amazon.com/dp/B00X";
-    const go = nextResponseRedirectAffiliateIfSafe("amazon", u, "direct_buyable");
+    const go = nextResponseRedirectAffiliateIfSafe("amazon", u, "direct_buyable", null, FRESH_BROWSER_TRUTH_CHECKED_AT);
     assert.ok(go);
     const expected = `https://www.amazon.com/dp/B00X?tag=${AMAZON_AFFILIATE_TAG}`;
     assert.equal(go.outboundUrl, expected);

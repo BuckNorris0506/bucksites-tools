@@ -189,6 +189,10 @@ describe("go/[linkId] routes use shared affiliate handler", () => {
         /row\.browser_truth_buyable_subtype|\bbuyableSubtype\b/.test(src),
         `${rel} must pass buyable subtype into nextResponseRedirectAffiliateIfSafe (same inputs as CTA gate)`,
       );
+      assert.ok(
+        /browser_truth_checked_at/.test(src),
+        `${rel} must pass browser_truth_checked_at into nextResponseRedirectAffiliateIfSafe`,
+      );
     });
   }
 });

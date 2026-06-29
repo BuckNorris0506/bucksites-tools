@@ -279,17 +279,37 @@ export type BuyLinkGateFailureKind =
   | "indirect_discovery"
   | "broken_destination"
   | "missing_browser_truth"
-  | "unsafe_browser_truth";
+  | "unsafe_browser_truth"
+  | "hard_denied_browser_truth"
+  | "missing_browser_truth_checked_at"
+  | "stale_browser_truth_checked_at";
+
+/** Repo-committed browser-truth notes that must block live CTAs and `/go` even when classification is direct_buyable. */
+export function isHardDeniedBrowserTruthNotes(
+  notes: string | null | undefined,
+): boolean {
+  const upper = (notes ?? "").trim().toUpperCase();
+  if (!upper) return false;
+  if (upper.includes("HARD_DO_NOT_USE")) return true;
+  if (upper.includes("WRONG_FAMILY")) return true;
+  if (upper.includes("WRONG-FAMILY")) return true;
+  return false;
+}
+
+export type BuyLinkGateLinkV1 = {
+  retailer_key?: string | null;
+  affiliate_url: string;
+  browser_truth_classification?: string | null;
+  browser_truth_buyable_subtype?: string | null;
+  browser_truth_checked_at?: string | null;
+  browser_truth_notes?: string | null;
+};
 
 /** Why a row is excluded from live buy CTAs / `/go` (single source of truth with `filterRealBuyRetailerLinks`). */
-export function buyLinkGateFailureKind<
-  T extends {
-    retailer_key?: string | null;
-    affiliate_url: string;
-    browser_truth_classification?: string | null;
-    browser_truth_buyable_subtype?: string | null;
-  },
->(link: T): BuyLinkGateFailureKind | null {
+export function buyLinkGateFailureKind<T extends BuyLinkGateLinkV1>(
+  link: T,
+  options?: { now?: Date; maxAgeMs?: number },
+): BuyLinkGateFailureKind | null {
   if (isSearchPlaceholderBuyLink(link.retailer_key, link.affiliate_url)) {
     return "search_placeholder";
   }
@@ -309,15 +329,29 @@ export function buyLinkGateFailureKind<
   ) {
     return "unsafe_browser_truth";
   }
+  if (isHardDeniedBrowserTruthNotes(link.browser_truth_notes)) {
+    return "hard_denied_browser_truth";
+  }
+  if (!isExplicitBuyableClassification(classification)) {
+    return "unsafe_browser_truth";
+  }
+  const checkedAtMs = parseBrowserTruthCheckedAtMs(link.browser_truth_checked_at);
+  if (checkedAtMs === null) {
+    return "missing_browser_truth_checked_at";
+  }
+  const maxAgeMs = options?.maxAgeMs ?? LIVE_BROWSER_TRUTH_MAX_AGE_MS;
+  const nowMs = (options?.now ?? new Date()).getTime();
+  if (nowMs - checkedAtMs > maxAgeMs) {
+    return "stale_browser_truth_checked_at";
+  }
   return null;
 }
 
-/**
- * R1 Wrong-Code Prevention — shadow/count mode only.
- * Classifies live `direct_buyable` rows with missing or aged `browser_truth_checked_at`.
- * Does NOT affect `buyLinkGateFailureKind`, CTAs, or `/go` until explicitly enforced later.
- */
-export const R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+/** Max age for live `browser_truth_checked_at` on direct_buyable rows (CTAs + `/go`). */
+export const LIVE_BROWSER_TRUTH_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+
+/** @deprecated Use LIVE_BROWSER_TRUTH_MAX_AGE_MS — retained for audit report compatibility. */
+export const R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS = LIVE_BROWSER_TRUTH_MAX_AGE_MS;
 
 export type StaleBrowserTruthShadowKind =
   | "missing_browser_truth_checked_at"
@@ -353,7 +387,7 @@ export function isBrowserTruthCheckedAtStaleForR1Shadow(
   checkedAt: string | null | undefined,
   options?: { now?: Date; maxAgeMs?: number },
 ): boolean {
-  const maxAgeMs = options?.maxAgeMs ?? R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS;
+  const maxAgeMs = options?.maxAgeMs ?? LIVE_BROWSER_TRUTH_MAX_AGE_MS;
   const checkedAtMs = parseBrowserTruthCheckedAtMs(checkedAt);
   if (checkedAtMs === null) return true;
   const nowMs = (options?.now ?? new Date()).getTime();
@@ -373,7 +407,7 @@ export function staleBrowserTruthShadowClassification<
   if (buyLinkGateFailureKind(link) !== null) return null;
   if (!isExplicitBuyableClassification(link.browser_truth_classification)) return null;
 
-  const maxAgeMs = options?.maxAgeMs ?? R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS;
+  const maxAgeMs = options?.maxAgeMs ?? LIVE_BROWSER_TRUTH_MAX_AGE_MS;
   const nowMs = (options?.now ?? new Date()).getTime();
   const checkedAtMs = parseBrowserTruthCheckedAtMs(link.browser_truth_checked_at);
 
@@ -467,6 +501,13 @@ export function summarizeBuyPathGateSuppression<
     else if (k === "broken_destination") hadBrokenDestinationRows = true;
     else if (k === "missing_browser_truth") hadMissingBrowserTruthRows = true;
     else if (k === "unsafe_browser_truth") hadUnsafeBrowserTruthRows = true;
+    else if (
+      k === "hard_denied_browser_truth" ||
+      k === "missing_browser_truth_checked_at" ||
+      k === "stale_browser_truth_checked_at"
+    ) {
+      hadUnsafeBrowserTruthRows = true;
+    }
   }
   return {
     hadSearchPlaceholderRows,
@@ -478,14 +519,7 @@ export function summarizeBuyPathGateSuppression<
 }
 
 /** Strips search-placeholder rows and browser-truth-unproven rows before rendering buy CTAs. */
-export function filterRealBuyRetailerLinks<
-  T extends {
-    retailer_key?: string | null;
-    affiliate_url: string;
-    browser_truth_classification?: string | null;
-    browser_truth_buyable_subtype?: string | null;
-  },
->(links: T[]): T[] {
+export function filterRealBuyRetailerLinks<T extends BuyLinkGateLinkV1>(links: T[]): T[] {
   return links.filter((l) => buyLinkGateFailureKind(l) === null);
 }
 

@@ -129,6 +129,22 @@ export type FounderDecisionRegistryRowV1 = {
    * `approve_for_next_planning_only` uses `read_only_agent` only — never `owner_mutation_approved`.
    */
   fridge_buyer_path_batch_apply_plan_approval_context_v1?: FounderDecisionRegistryFridgeBuyerPathBatchApplyPlanApprovalContextV1;
+  /**
+   * Tamper-evident artifact bindings required for owner_mutation_approved standing approvals.
+   * Guarded apply verifies sha256_at_binding matches on-disk artifact at mutation time.
+   */
+  bound_artifacts_v1?: FounderDecisionRegistryBoundArtifactV1[];
+};
+
+export type FounderDecisionRegistryBoundArtifactV1 = {
+  artifact_rel_path: string;
+  sha256_at_binding: string;
+  entry_type:
+    | "evidence"
+    | "founder_approval"
+    | "execution_plan"
+    | "apply_plan"
+    | "csv_mutation_closeout";
 };
 
 export type FounderDecisionRegistryDocumentV1 = {
@@ -613,6 +629,63 @@ function parseIsoInstant(label: string, v: unknown): string | null | undefined {
   return v.trim();
 }
 
+function parseBoundArtifactsV1(
+  raw: unknown,
+): { ok: true; bound?: FounderDecisionRegistryBoundArtifactV1[] } | { ok: false; errors: string[] } {
+  if (raw === undefined || raw === null) {
+    return { ok: true };
+  }
+  if (!Array.isArray(raw)) {
+    return { ok: false, errors: ["bound_artifacts_v1 must be an array when present"] };
+  }
+  const ENTRY_TYPES = new Set<FounderDecisionRegistryBoundArtifactV1["entry_type"]>([
+    "evidence",
+    "founder_approval",
+    "execution_plan",
+    "apply_plan",
+    "csv_mutation_closeout",
+  ]);
+  const bound: FounderDecisionRegistryBoundArtifactV1[] = [];
+  const errors: string[] = [];
+  raw.forEach((entry, index) => {
+    if (entry === null || typeof entry !== "object" || Array.isArray(entry)) {
+      errors.push(`bound_artifacts_v1[${index}] must be an object`);
+      return;
+    }
+    const o = entry as Record<string, unknown>;
+    const artifact_rel_path =
+      typeof o.artifact_rel_path === "string" ? o.artifact_rel_path.trim() : "";
+    const sha256_at_binding =
+      typeof o.sha256_at_binding === "string" ? o.sha256_at_binding.trim().toLowerCase() : "";
+    const entry_type = o.entry_type;
+    if (!artifact_rel_path) {
+      errors.push(`bound_artifacts_v1[${index}].artifact_rel_path must be a non-empty string`);
+    }
+    if (!/^[a-f0-9]{64}$/.test(sha256_at_binding)) {
+      errors.push(`bound_artifacts_v1[${index}].sha256_at_binding must be a 64-char hex sha256`);
+    }
+    if (typeof entry_type !== "string" || !ENTRY_TYPES.has(entry_type as FounderDecisionRegistryBoundArtifactV1["entry_type"])) {
+      errors.push(
+        `bound_artifacts_v1[${index}].entry_type must be one of: ${[...ENTRY_TYPES].join(", ")}`,
+      );
+    }
+    if (
+      artifact_rel_path &&
+      /^[a-f0-9]{64}$/.test(sha256_at_binding) &&
+      typeof entry_type === "string" &&
+      ENTRY_TYPES.has(entry_type as FounderDecisionRegistryBoundArtifactV1["entry_type"])
+    ) {
+      bound.push({
+        artifact_rel_path,
+        sha256_at_binding,
+        entry_type: entry_type as FounderDecisionRegistryBoundArtifactV1["entry_type"],
+      });
+    }
+  });
+  if (errors.length > 0) return { ok: false, errors };
+  return { ok: true, bound };
+}
+
 export function validateFounderDecisionRegistryRowV1(
   input: unknown,
 ): { ok: true; row: FounderDecisionRegistryRowV1 } | { ok: false; errors: string[] } {
@@ -702,6 +775,14 @@ export function validateFounderDecisionRegistryRowV1(
     errors.push(...fridgeApplyPlanParse.errors);
   } else if (fridgeApplyPlanParse.ctx) {
     fridgeApplyPlanCtx = fridgeApplyPlanParse.ctx;
+  }
+
+  let boundArtifacts: FounderDecisionRegistryBoundArtifactV1[] | undefined;
+  const boundParse = parseBoundArtifactsV1(o.bound_artifacts_v1);
+  if (!boundParse.ok) {
+    errors.push(...boundParse.errors);
+  } else if (boundParse.bound) {
+    boundArtifacts = boundParse.bound;
   }
 
   const contextCount = [codexCtx, batchCtx, fridgeBatchCtx, fridgeApplyPlanCtx].filter(Boolean).length;
@@ -797,6 +878,7 @@ export function validateFounderDecisionRegistryRowV1(
     ...(fridgeApplyPlanCtx
       ? { fridge_buyer_path_batch_apply_plan_approval_context_v1: fridgeApplyPlanCtx }
       : {}),
+    ...(boundArtifacts ? { bound_artifacts_v1: boundArtifacts } : {}),
   };
   return { ok: true, row };
 }
@@ -842,6 +924,9 @@ export function validateFounderDecisionRegistryDocumentV1(
 /**
  * PROVEN: `read_only_agent` never authorizes mutating repo scripts or production mutation.
  * INFERRED: Only `owner_mutation_approved` can surface as a mutation-shaped scope label — still subject to time bounds.
+ *
+ * INFORMATIONAL ONLY: does not verify `bound_artifacts_v1`. Mutation paths MUST use
+ * `founderRegistryRowPassesMutationApprovalGateV1` from founder-mutation-approval-gate-v1.
  */
 export function founderRegistryRowGrantsMutatingRepoAuthority(
   row: FounderDecisionRegistryRowV1,

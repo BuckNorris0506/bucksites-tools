@@ -8,10 +8,10 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from "node:path";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   type FounderDecisionRegistryRowV1,
 } from "./founder-decision-registry-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "./founder-decision-registry-scan-v1";
 
 export const OWNER_DECISION_QUEUE_CONTRACT_V1 = "owner_decision_queue_v1" as const;
@@ -237,35 +237,86 @@ export function loadFounderDecisionRegistryRowsV1(rootDir: string): FounderDecis
   return rows;
 }
 
+export function isOwnerDecisionRequestExpiredV1(args: {
+  request: Pick<OwnerDecisionRequestV1, "expires_or_stale_after">;
+  referenceTimeIso: string;
+}): boolean {
+  const staleAfter = args.request.expires_or_stale_after?.trim();
+  if (!staleAfter) return false;
+  const staleAt = Date.parse(staleAfter);
+  const now = Date.parse(args.referenceTimeIso);
+  return !Number.isNaN(staleAt) && !Number.isNaN(now) && now >= staleAt;
+}
+
+export function registryRowMatchesOwnerDecisionRequestV1(args: {
+  row: FounderDecisionRegistryRowV1;
+  request: Pick<
+    OwnerDecisionRequestV1,
+    "decision_request_id" | "source_artifact_path" | "target_slugs"
+  >;
+}): boolean {
+  const packetId = args.request.decision_request_id.trim();
+  const rowPacket = args.row.source_decision_packet_id.trim();
+  if (
+    rowPacket === `owner_decision_request_v1:${packetId}` ||
+    rowPacket.endsWith(`:${packetId}`) ||
+    rowPacket.includes(packetId)
+  ) {
+    return true;
+  }
+
+  const sourcePath = args.request.source_artifact_path.trim().toLowerCase();
+  if (sourcePath && rowPacket.toLowerCase().includes(sourcePath)) {
+    return true;
+  }
+
+  for (const slug of args.request.target_slugs) {
+    const s = slug.trim().toLowerCase();
+    if (!s) continue;
+    if (rowPacket.toLowerCase().includes(s)) return true;
+    const ctx = args.row.fridge_buyer_path_batch_approval_context_v1;
+    if (ctx?.proposed_batch_id?.toLowerCase().includes(s)) return true;
+    const applyCtx = args.row.fridge_buyer_path_batch_apply_plan_approval_context_v1;
+    if (applyCtx?.source_apply_plan_artifact_rel_path?.toLowerCase().includes(s)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 export function findMatchingActiveMutationApprovalForRequestV1(args: {
   request: Pick<OwnerDecisionRequestV1, "target_slugs" | "decision_request_id" | "source_artifact_path">;
   registryRows: FounderDecisionRegistryRowV1[];
   referenceTimeIso: string;
+  rootDir: string;
+  readText?: (abs: string) => string;
 }): { row: FounderDecisionRegistryRowV1; source: string } | null {
   for (const row of args.registryRows) {
-    if (!isFounderRegistryRowActiveMutationApproval(row, args.referenceTimeIso)) continue;
-    const haystack = JSON.stringify(row).toLowerCase();
-    const slugMatch = args.request.target_slugs.some((slug) => haystack.includes(slug.toLowerCase()));
-    const packetMatch =
-      row.source_decision_packet_id.includes(args.request.decision_request_id) ||
-      haystack.includes(args.request.source_artifact_path.toLowerCase());
-    if (slugMatch || packetMatch) {
-      return { row, source: row.decision_id };
+    const gate = founderRegistryRowPassesMutationApprovalGateV1({
+      row,
+      referenceTimeIso: args.referenceTimeIso,
+      rootDir: args.rootDir,
+      readText: args.readText,
+    });
+    if (!gate.ok) continue;
+    if (!registryRowMatchesOwnerDecisionRequestV1({ row, request: args.request })) {
+      continue;
     }
+    return { row, source: row.decision_id };
   }
   return null;
 }
 
 export function findMatchingRejectedDecisionForRequestV1(args: {
-  request: Pick<OwnerDecisionRequestV1, "target_slugs" | "source_artifact_path">;
+  request: Pick<OwnerDecisionRequestV1, "target_slugs" | "source_artifact_path" | "decision_request_id">;
   registryRows: FounderDecisionRegistryRowV1[];
 }): FounderDecisionRegistryRowV1 | null {
   for (const row of args.registryRows) {
     if (row.decision_status !== "rejected") continue;
-    const haystack = JSON.stringify(row).toLowerCase();
-    const slugMatch = args.request.target_slugs.some((slug) => haystack.includes(slug.toLowerCase()));
-    const sourceMatch = haystack.includes(args.request.source_artifact_path.toLowerCase());
-    if (slugMatch || sourceMatch) return row;
+    if (registryRowMatchesOwnerDecisionRequestV1({ row, request: args.request })) {
+      return row;
+    }
   }
   return null;
 }
@@ -274,10 +325,21 @@ export function resolveOwnerDecisionRequestEffectiveStatusV1(args: {
   request: OwnerDecisionRequestV1;
   registryRows: FounderDecisionRegistryRowV1[];
   referenceTimeIso: string;
+  rootDir: string;
+  readText?: (abs: string) => string;
   supersededByIds?: ReadonlySet<string>;
 }): OwnerDecisionRequestStatusV1 {
   if (args.supersededByIds?.has(args.request.decision_request_id)) {
     return "SUPERSEDED";
+  }
+
+  if (
+    isOwnerDecisionRequestExpiredV1({
+      request: args.request,
+      referenceTimeIso: args.referenceTimeIso,
+    })
+  ) {
+    return "STALE";
   }
 
   const rejected = findMatchingRejectedDecisionForRequestV1({
@@ -290,16 +352,10 @@ export function resolveOwnerDecisionRequestEffectiveStatusV1(args: {
     request: args.request,
     registryRows: args.registryRows,
     referenceTimeIso: args.referenceTimeIso,
+    rootDir: args.rootDir,
+    readText: args.readText,
   });
   if (approved) return "APPROVED";
-
-  if (args.request.expires_or_stale_after) {
-    const staleAt = Date.parse(args.request.expires_or_stale_after);
-    const now = Date.parse(args.referenceTimeIso);
-    if (!Number.isNaN(staleAt) && !Number.isNaN(now) && now >= staleAt) {
-      return "STALE";
-    }
-  }
 
   return "PENDING_OWNER_DECISION";
 }
@@ -364,11 +420,13 @@ export function buildOwnerDecisionQueueProjectionV1(args: {
       request,
       registryRows,
       referenceTimeIso: generatedAt,
+      rootDir: args.rootDir,
     });
     const approval = findMatchingActiveMutationApprovalForRequestV1({
       request,
       registryRows,
       referenceTimeIso: generatedAt,
+      rootDir: args.rootDir,
     });
     projections.push({
       ...request,
@@ -426,6 +484,7 @@ export function ownerDecisionRequestApprovalSatisfiesRunnerGateV1(args: {
     request,
     registryRows,
     referenceTimeIso: (args.now ?? (() => new Date()))().toISOString(),
+    rootDir: args.rootDir,
   });
   return effective === "APPROVED";
 }

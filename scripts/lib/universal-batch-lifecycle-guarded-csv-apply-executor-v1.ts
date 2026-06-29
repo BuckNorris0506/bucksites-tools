@@ -27,6 +27,7 @@ import {
   type GuardedCsvPostWriteValidationV1,
   type GuardedCsvWritePlanRowV1,
 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
+import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
 
 export {
   UNIVERSAL_BATCH_LIFECYCLE_GUARDED_CSV_APPLY_EXECUTOR_WRITE_CSV_FLAG_V1,
@@ -150,6 +151,8 @@ export type BuildUniversalBatchLifecycleGuardedCsvApplyExecutorInputV1 = {
   fileExists?: (absPath: string) => boolean;
   readText?: (absPath: string) => string;
   writeText?: (absPath: string, content: string) => void;
+  truth_ledger_blockers?: string[];
+  io_capability?: BuckpartsIoCapabilityV1;
 };
 
 function defaultFileExists(absPath: string): boolean {
@@ -439,6 +442,8 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
       mutationAuthorizationReview: input.mutationAuthorizationReview,
       beforeRowParityProven,
       writePlan,
+      truth_ledger_blockers: input.truth_ledger_blockers,
+      io_capability: input.io_capability,
     }).length === 0;
 
   const write_mode_blockers = buildGuardedCsvWriteModeBlockersV1({
@@ -448,6 +453,8 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
     mutationAuthorizationReview: input.mutationAuthorizationReview,
     beforeRowParityProven,
     writePlan,
+    truth_ledger_blockers: input.truth_ledger_blockers,
+    io_capability: input.io_capability,
   });
   if (appliedParityProven) {
     write_mode_blockers.push("csv_apply_already_applied: APPLIED_PARITY_PROVEN");
@@ -473,6 +480,7 @@ export function buildUniversalBatchLifecycleGuardedCsvApplyExecutorV1(
         fileExists,
         readText,
         writeText: input.writeText,
+        io_capability: input.io_capability ?? "MUTATION",
       });
       if (writeResult.ok) {
         write_mode_status = "APPLIED";

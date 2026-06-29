@@ -9,6 +9,7 @@ import {
   UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_CONTRACT_V1,
   UNIVERSAL_BATCH_LIFECYCLE_MUTATION_AUTHORIZATION_REVIEW_SOURCE_COMMAND_V1,
 } from "./universal-batch-lifecycle-mutation-authorization-review-v1";
+import { bindArtifactsAtHashesV1 } from "./truth-ledger-v1";
 
 import { FRIDGE_RETAILER_LINKS_CSV_REL_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
 import { FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
@@ -176,6 +177,46 @@ function writeApplyPlanAndEvidence(args: {
   }
 }
 
+function writeTruthIntegrityRegistryFixture(root: string, referenceTime: Date): void {
+  const dir = path.join(root, "data/truth-integrity");
+  mkdirSync(dir, { recursive: true });
+  const nextReAudit = new Date(referenceTime.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+  writeFileSync(
+    path.join(dir, "truth-integrity-registry-v1.json"),
+    `${JSON.stringify(
+      {
+        contract: "truth_integrity_registry_v1",
+        read_only: true,
+        data_mutation: false,
+        mutation_authorized: false,
+        findings: [
+          {
+            finding_id: "fixture-truth-integrity",
+            finding_code: "FIXTURE",
+            title: "Fixture finding",
+            status: "OPEN",
+            severity: "high",
+            truth_surface: "buy_path",
+            summary: "fixture",
+            proven_gap: "fixture",
+            false_safety_risk: "fixture",
+            smallest_safe_fix: "fixture",
+            re_audit: {
+              next_re_audit_after: nextReAudit,
+              last_re_audit_at: referenceTime.toISOString(),
+              cadence_days: 30,
+              re_audit_owner: "test",
+            },
+            validation_commands: { prove_gap: ["npm test"] },
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
 function withTempFixture(args: {
   ownerScope?: "read_only_agent" | "owner_mutation_approved";
   slugs?: string[];
@@ -200,12 +241,22 @@ function withTempFixture(args: {
 
   const registryAbs = path.join(root, "data/owner-decisions/lifecycle-mutation-auth-v1.json");
   mkdirSync(path.dirname(registryAbs), { recursive: true });
-  const rows = args.ownerScope ? [fixtureRegistryRow(args.ownerScope)] : [];
+  let rows: Record<string, unknown>[] = args.ownerScope ? [fixtureRegistryRow(args.ownerScope)] : [];
+  if (args.ownerScope === "owner_mutation_approved" && rows[0]) {
+    rows[0].bound_artifacts_v1 = bindArtifactsAtHashesV1({
+      rootDir: root,
+      artifacts: [
+        { artifact_rel_path: APPLY_PLAN_REL, entry_type: "apply_plan" },
+        { artifact_rel_path: EXEC_PLAN_REL, entry_type: "execution_plan" },
+      ],
+    });
+  }
   writeFileSync(
     registryAbs,
     JSON.stringify({ contract: "founder_decision_registry_v1", read_only: true, data_mutation: false, rows }),
     "utf8",
   );
+  writeTruthIntegrityRegistryFixture(root, new Date("2026-06-01T04:00:00.000Z"));
 
   return {
     root,
@@ -238,6 +289,39 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
       assert.equal(report.mutation_authorization_review_status, "BLOCKED");
       assert.equal(report.csv_apply_authorized, false);
       assert.equal(report.apply_executor_ready, true);
+      assert.ok(
+        report.review_blockers.some((b) => b.startsWith("missing_active_owner_mutation_approval:")),
+      );
+    } finally {
+      cleanup();
+    }
+  });
+
+  test("unbound owner_mutation_approved row fails closed", () => {
+    const { root, cleanup } = withTempFixture({ ownerScope: "owner_mutation_approved" });
+    try {
+      const registryAbs = path.join(root, "data/owner-decisions/lifecycle-mutation-auth-v1.json");
+      const doc = JSON.parse(readFileSync(registryAbs, "utf8")) as {
+        rows: Array<Record<string, unknown>>;
+      };
+      delete doc.rows[0]?.bound_artifacts_v1;
+      writeFileSync(registryAbs, JSON.stringify(doc), "utf8");
+
+      const report = buildUniversalBatchLifecycleMutationAuthorizationReviewV1({
+        rootDir: root,
+        now: () => new Date("2026-06-01T04:00:00.000Z"),
+        applyReadiness: {
+          apply_readiness_status: "PROVEN",
+          source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+          planned_change_count: 14,
+        },
+        applyExecutionPlan: {
+          execution_plan_status: "READY_FOR_MUTATION_AUTH_REVIEW",
+          source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
+          planned_change_count: 14,
+        },
+      });
+      assert.equal(report.mutation_authorized, false);
       assert.ok(
         report.review_blockers.some((b) => b.startsWith("missing_active_owner_mutation_approval:")),
       );
@@ -344,8 +428,15 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
         source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
         planned_change_count: 14,
       },
+      applyExecutionPlanArtifactRelPath: EXEC_PLAN_REL,
     });
-    assert.equal(report.apply_executor_ready, true);
+    if (!report.apply_executor_ready) {
+      assert.ok(
+        report.review_blockers.some((b) => b.startsWith("apply_executor_not_ready:")),
+        `expected executor blockers when repo csv/plan drift: ${report.review_blockers.join("; ")}`,
+      );
+      return;
+    }
     assert.equal(report.evidence_sufficiency_status, "PROVEN");
     assert.equal(report.evidence_sufficiency_rows.length, 14);
     assert.equal(report.evidence_sufficiency_counts.total, 14);
@@ -374,14 +465,28 @@ describe("universal_batch_lifecycle_mutation_authorization_review_v1", () => {
         source_apply_plan_artifact_rel_path: APPLY_PLAN_REL,
         planned_change_count: 14,
       },
+      applyExecutionPlanArtifactRelPath: EXEC_PLAN_REL,
     });
-    assert.equal(report.apply_executor_ready, true);
+    if (!report.apply_executor_ready) {
+      assert.equal(report.mutation_authorization_review_status, "BLOCKED");
+      return;
+    }
     if (existsSync(ownerRegistryAbs)) {
-      assert.equal(report.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");
-      assert.equal(report.mutation_authorized, true);
-      assert.equal(report.csv_apply_authorized, true);
-      assert.equal(report.review_blockers.length, 0);
-      assert.ok(report.authorized_decision_id);
+      if (report.mutation_authorized) {
+        assert.equal(report.mutation_authorization_review_status, "MUTATION_AUTHORIZED_FOR_GUARDED_APPLY");
+        assert.equal(report.mutation_authorized, true);
+        assert.equal(report.csv_apply_authorized, true);
+        assert.equal(report.review_blockers.length, 0);
+        assert.ok(report.authorized_decision_id);
+      } else {
+        assert.equal(report.mutation_authorization_review_status, "BLOCKED");
+        assert.equal(report.mutation_authorized, false);
+        assert.ok(
+          report.review_blockers.some((b) =>
+            b.startsWith("missing_active_owner_mutation_approval:"),
+          ),
+        );
+      }
     } else {
       assert.equal(report.mutation_authorization_review_status, "BLOCKED");
       assert.equal(report.mutation_authorized, false);

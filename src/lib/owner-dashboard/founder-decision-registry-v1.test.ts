@@ -12,6 +12,7 @@ import {
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
 } from "./founder-decision-registry-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 
 function minimalValidRow(
   overrides: Partial<FounderDecisionRegistryRowV1> = {},
@@ -103,6 +104,27 @@ test("approved + owner_mutation_approved is active for guarded apply when time b
   });
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), true);
   assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-06-27T20:00:00.000Z"), true);
+});
+
+test("owner_mutation_approved without bound_artifacts parses as active-but-unbound; mutation gate fails closed", () => {
+  const row = minimalValidRow({
+    decision_status: "approved",
+    allowed_next_scope: "owner_mutation_approved",
+    owner_note: "Approve single-slug guarded CSV apply.",
+    evidence_required_before_mutation: true,
+  });
+  const parsed = validateFounderDecisionRegistryRowV1(row);
+  assert.equal(parsed.ok, true);
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), true);
+  const gate = founderRegistryRowPassesMutationApprovalGateV1({
+    row,
+    referenceTimeIso: "2026-06-27T20:00:00.000Z",
+    rootDir: process.cwd(),
+  });
+  assert.equal(gate.ok, false);
+  if (!gate.ok) {
+    assert.ok(gate.blockers.includes("founder_approval_unbound_artifacts_v1"));
+  }
 });
 
 test("expired expires_at is not active mutation approval", () => {

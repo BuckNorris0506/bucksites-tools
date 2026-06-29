@@ -237,7 +237,9 @@ describe("isExplicitBuyableClassification", () => {
 });
 
 describe("buyable subtype foundation (strict direct_buyable gate)", () => {
-  it("direct_buyable without subtype still passes exactly as before", () => {
+  const freshCheckedAt = "2026-05-01T00:00:00.000Z";
+
+  it("direct_buyable without subtype still passes when checked_at is fresh", () => {
     assert.equal(
       passesDirectBuyableGate({
         browser_truth_classification: "direct_buyable",
@@ -249,6 +251,7 @@ describe("buyable subtype foundation (strict direct_buyable gate)", () => {
         retailer_key: "amazon",
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: freshCheckedAt,
       }),
       null,
     );
@@ -292,6 +295,7 @@ describe("buyable subtype foundation (strict direct_buyable gate)", () => {
 });
 
 describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with filterRealBuyRetailerLinks)", () => {
+  const freshCheckedAt = "2026-05-01T00:00:00.000Z";
   it("treats catalogsearch OEM slot as search_placeholder even with a live classification", () => {
     assert.equal(
       buyLinkGateFailureKind({
@@ -336,12 +340,13 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
     );
   });
 
-  it("allows OEM direct_buyable proof", () => {
+  it("allows OEM direct_buyable proof with fresh checked_at", () => {
     assert.equal(
       buyLinkGateFailureKind({
         retailer_key: "oem-catalog",
         affiliate_url: "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r1.htm",
         browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: freshCheckedAt,
       }),
       null,
     );
@@ -386,6 +391,7 @@ describe("buyLinkGateFailureKind / summarizeBuyPathGateSuppression (aligned with
         retailer_key: "amazon",
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: freshCheckedAt,
       }),
       null,
     );
@@ -1029,24 +1035,26 @@ describe("Waterdrop exact-proof purchase-option priority", () => {
   });
 });
 
-describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", () => {
+describe("staleBrowserTruthShadowClassification (diagnostics after live gate enforcement)", () => {
   const now = new Date("2026-06-10T12:00:00.000Z");
   const freshCheckedAt = "2026-05-01T00:00:00.000Z";
   const staleCheckedAt = "2026-01-01T00:00:00.000Z";
 
-  it("does not change buyLinkGateFailureKind for stale direct_buyable rows", () => {
+  it("buyLinkGateFailureKind blocks stale direct_buyable rows", () => {
+    const now = new Date("2026-06-10T12:00:00.000Z");
     assert.equal(
       buyLinkGateFailureKind({
         retailer_key: "amazon",
         affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
         browser_truth_classification: "direct_buyable",
         browser_truth_checked_at: staleCheckedAt,
-      }),
-      null,
+      }, { now }),
+      "stale_browser_truth_checked_at",
     );
   });
 
-  it("still includes stale direct_buyable rows in filterRealBuyRetailerLinks", () => {
+  it("filterRealBuyRetailerLinks excludes stale direct_buyable rows", () => {
+    const now = new Date("2026-06-10T12:00:00.000Z");
     const links = filterRealBuyRetailerLinks([
       {
         retailer_key: "amazon",
@@ -1055,10 +1063,10 @@ describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", ()
         browser_truth_checked_at: staleCheckedAt,
       },
     ]);
-    assert.equal(links.length, 1);
+    assert.equal(links.length, 0);
   });
 
-  it("classifies missing checked_at as missing_browser_truth_checked_at shadow", () => {
+  it("returns null for missing checked_at because buyLinkGateFailureKind enforces at gate", () => {
     const shadow = staleBrowserTruthShadowClassification(
       {
         retailer_key: "amazon",
@@ -1068,11 +1076,19 @@ describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", ()
       },
       { now },
     );
-    assert.equal(shadow?.shadow_kind, "missing_browser_truth_checked_at");
-    assert.equal(shadow?.enforce, false);
+    assert.equal(shadow, null);
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: null,
+      }, { now }),
+      "missing_browser_truth_checked_at",
+    );
   });
 
-  it("classifies aged checked_at as stale_browser_truth_checked_at shadow", () => {
+  it("returns null for stale checked_at because buyLinkGateFailureKind enforces at gate", () => {
     const shadow = staleBrowserTruthShadowClassification(
       {
         retailer_key: "amazon",
@@ -1082,10 +1098,16 @@ describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", ()
       },
       { now },
     );
-    assert.equal(shadow?.shadow_kind, "stale_browser_truth_checked_at");
-    assert.equal(shadow?.enforce, false);
-    assert.equal(shadow?.max_age_ms, R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS);
-    assert.ok((shadow?.age_ms ?? 0) > R1_SHADOW_STALE_BROWSER_TRUTH_MAX_AGE_MS);
+    assert.equal(shadow, null);
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: staleCheckedAt,
+      }, { now }),
+      "stale_browser_truth_checked_at",
+    );
   });
 
   it("returns null for fresh direct_buyable rows", () => {
@@ -1128,8 +1150,8 @@ describe("staleBrowserTruthShadowClassification (R1 shadow/count mode only)", ()
       { now },
     );
 
-    assert.equal(summary.live_direct_buyable_count, 2);
-    assert.equal(summary.stale_shadow_count, 1);
+    assert.equal(summary.live_direct_buyable_count, 1);
+    assert.equal(summary.stale_shadow_count, 0);
     assert.equal(summary.fresh_direct_buyable_count, 1);
   });
 });

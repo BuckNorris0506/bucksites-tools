@@ -25,12 +25,14 @@ describe("go-redirect-gate", () => {
   });
 
   describe("isAffiliateUrlSafeForGoRedirect", () => {
-    it("allows a normal retailer PDP", () => {
+    it("allows a normal retailer PDP with fresh browser_truth_checked_at", () => {
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
           "amazon",
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
+          null,
+          "2026-05-01T00:00:00.000Z",
         ),
         true,
       );
@@ -88,12 +90,14 @@ describe("go-redirect-gate", () => {
       );
     });
 
-    it("allows OEM rows with direct_buyable proof", () => {
+    it("allows OEM rows with direct_buyable proof and fresh checked_at", () => {
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
           "oem-catalog",
           "https://www.honeywellstore.com/store/products/true-hepa-replacement-filter-r-hrf-r1.htm",
           "direct_buyable",
+          null,
+          "2026-05-01T00:00:00.000Z",
         ),
         true,
       );
@@ -203,12 +207,17 @@ describe("go-redirect-gate", () => {
       );
     });
 
-    it("allows direct_buyable browser-truth classification", () => {
+    it("allows direct_buyable browser-truth classification with fresh checked_at", () => {
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
           "amazon",
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
+          null,
+          "2026-05-01T00:00:00.000Z",
+          null,
+          undefined,
+          { now: new Date("2026-06-10T12:00:00.000Z") },
         ),
         true,
       );
@@ -226,13 +235,19 @@ describe("go-redirect-gate", () => {
       );
     });
 
-    it("allows direct_buyable when subtype is missing (classification-only safety unchanged)", () => {
+    it("allows direct_buyable when subtype is missing with fresh checked_at", () => {
+      const now = new Date("2026-06-10T12:00:00.000Z");
+      const fresh = "2026-05-01T00:00:00.000Z";
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
           "amazon",
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
           null,
+          fresh,
+          null,
+          undefined,
+          { now },
         ),
         true,
       );
@@ -242,6 +257,10 @@ describe("go-redirect-gate", () => {
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
           undefined,
+          fresh,
+          null,
+          undefined,
+          { now },
         ),
         true,
       );
@@ -268,22 +287,45 @@ describe("go-redirect-gate", () => {
       );
     });
 
-    it("still allows direct_buyable regardless of browser_truth_checked_at age (R1 shadow only)", () => {
+    it("blocks direct_buyable when browser_truth_checked_at is stale (enforced)", () => {
+      const now = new Date("2026-06-10T12:00:00.000Z");
       assert.equal(
         isAffiliateUrlSafeForGoRedirect(
           "amazon",
           "https://www.amazon.com/dp/B00EXAMPLE",
           "direct_buyable",
+          null,
+          "2020-01-01T00:00:00.000Z",
+          null,
+          undefined,
+          { now },
         ),
-        true,
+        false,
+      );
+    });
+
+    it("blocks direct_buyable when browser_truth_checked_at is missing (fail closed)", () => {
+      const now = new Date("2026-06-10T12:00:00.000Z");
+      assert.equal(
+        isAffiliateUrlSafeForGoRedirect(
+          "amazon",
+          "https://www.amazon.com/dp/B00EXAMPLE",
+          "direct_buyable",
+          null,
+          null,
+          null,
+          undefined,
+          { now },
+        ),
+        false,
       );
     });
   });
 
-  describe("staleBrowserTruthShadowForGoRedirect (non-enforcing)", () => {
+  describe("staleBrowserTruthShadowForGoRedirect (diagnostics only; gate enforces)", () => {
     const now = new Date("2026-06-10T12:00:00.000Z");
 
-    it("reports stale shadow for live direct_buyable rows with aged checked_at", () => {
+    it("returns null for stale rows because buyLinkGateFailureKind blocks live paths", () => {
       const shadow = staleBrowserTruthShadowForGoRedirect(
         "amazon",
         "https://www.amazon.com/dp/B00EXAMPLE",
@@ -292,8 +334,7 @@ describe("go-redirect-gate", () => {
         "2020-01-01T00:00:00.000Z",
         { now },
       );
-      assert.equal(shadow?.shadow_kind, "stale_browser_truth_checked_at");
-      assert.equal(shadow?.enforce, false);
+      assert.equal(shadow, null);
     });
 
     it("returns null for fresh checked_at on live direct_buyable rows", () => {
@@ -315,7 +356,13 @@ describe("go-redirect-gate", () => {
     it("returns response + outboundUrl; Location matches outboundUrl exactly (Amazon tag)", () => {
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
       const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
-      const r = nextResponseRedirectAffiliateIfSafe("amazon", url, "direct_buyable");
+      const r = nextResponseRedirectAffiliateIfSafe(
+        "amazon",
+        url,
+        "direct_buyable",
+        null,
+        "2026-05-01T00:00:00.000Z",
+      );
       assert.ok(r);
       assert.equal(r.outboundUrl, expected);
       assert.equal(r.response.status, 302);
@@ -325,7 +372,13 @@ describe("go-redirect-gate", () => {
     it("trims affiliate URL for both outboundUrl and Location", () => {
       const url = "https://www.amazon.com/dp/B00EXAMPLE";
       const expected = `https://www.amazon.com/dp/B00EXAMPLE?tag=${AMAZON_AFFILIATE_TAG}`;
-      const r = nextResponseRedirectAffiliateIfSafe("amazon", `  ${url}  `, "direct_buyable");
+      const r = nextResponseRedirectAffiliateIfSafe(
+        "amazon",
+        `  ${url}  `,
+        "direct_buyable",
+        null,
+        "2026-05-01T00:00:00.000Z",
+      );
       assert.ok(r);
       assert.equal(r.outboundUrl, expected);
       assert.equal(r.response.headers.get("location"), expected);
@@ -382,6 +435,7 @@ describe("go-redirect-gate", () => {
         "https://www.amazon.com/dp/B00EXAMPLE",
         "direct_buyable",
         null,
+        "2026-05-01T00:00:00.000Z",
       );
       assert.ok(r);
       assert.equal(r.response.status, 302);

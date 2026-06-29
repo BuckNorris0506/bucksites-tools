@@ -7,11 +7,11 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   type FounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import type { UniversalBatchLifecycleApplyExecutionPlanReportV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
 import {
   UNIVERSAL_BATCH_LIFECYCLE_APPLY_EXECUTION_PLANS_DIR_REL_V1,
@@ -20,6 +20,10 @@ import {
 import type { UniversalBatchLifecycleApplyReadinessReportV1 } from "./universal-batch-lifecycle-apply-readiness-v1";
 import { FRIDGE_BUYER_PATH_BATCH_APPLY_PLAN_PROPOSAL_CONTRACT_V1 } from "./fridge-buyer-path-batch-apply-plan-proposal-v1";
 import { assessUniversalBatchLifecycleGuardedCsvApplyExecutorReadinessV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-v1";
+import {
+  buildGuardedApplyTrustCurrencyPreflightV1,
+  guardedApplyTrustCurrencyBlocksMutationV1,
+} from "./guarded-apply-trust-currency-preflight-v1";
 import {
   assessUniversalBatchLifecycleMutationAuthorizationEvidenceSufficiencyV1,
   type UniversalBatchLifecycleMutationAuthorizationEvidenceSufficiencyCountsV1,
@@ -115,6 +119,7 @@ function findLatestActiveLifecycleMutationApprovalRowV1(args: {
   rootDir: string;
   requiredPacketId: string;
   nowIso: string;
+  readText?: (abs: string) => string;
 }): FounderDecisionRegistryRowV1 | null {
   const files = scanFounderDecisionRegistryJsonFilesV1(args.rootDir);
   const matches: FounderDecisionRegistryRowV1[] = [];
@@ -124,7 +129,13 @@ function findLatestActiveLifecycleMutationApprovalRowV1(args: {
     if (!validated.ok) continue;
     for (const row of validated.doc.rows) {
       if (row.source_decision_packet_id !== args.requiredPacketId) continue;
-      if (!isFounderRegistryRowActiveMutationApproval(row, args.nowIso)) continue;
+      const gate = founderRegistryRowPassesMutationApprovalGateV1({
+        row,
+        referenceTimeIso: args.nowIso,
+        rootDir: args.rootDir,
+        readText: args.readText,
+      });
+      if (!gate.ok) continue;
       matches.push(row);
     }
   }
@@ -178,6 +189,16 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     "PROVEN: universal_batch_lifecycle_mutation_authorization_review_v1 is read-only; mutation remains blocked unless explicit owner_mutation_approved row validates.",
   ];
 
+  const trustPreflight = buildGuardedApplyTrustCurrencyPreflightV1({
+    rootDir: input.rootDir,
+    now,
+  });
+  if (guardedApplyTrustCurrencyBlocksMutationV1(trustPreflight)) {
+    review_blockers.push(...trustPreflight.blockers.map((b) => `trust_currency:${b}`));
+  } else {
+    proven_facts.push("PROVEN: guarded_apply_trust_currency_preflight_v1 blockers clear.");
+  }
+
   const applyReadinessStatus = input.applyReadiness?.apply_readiness_status ?? "UNKNOWN";
   const applyExecutionPlanStatus = input.applyExecutionPlan?.execution_plan_status ?? "UNKNOWN";
 
@@ -226,6 +247,7 @@ export function buildUniversalBatchLifecycleMutationAuthorizationReviewV1(
     rootDir: input.rootDir,
     requiredPacketId: required_founder_decision_packet_id,
     nowIso,
+    readText,
   });
 
   if (!approvalRow) {

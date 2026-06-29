@@ -17,6 +17,7 @@ const gatedLink: BuyLinkRow = {
   is_primary: true,
   retailer_key: "amazon",
   browser_truth_classification: "direct_buyable",
+  browser_truth_checked_at: "2026-05-01T00:00:00.000Z",
 };
 
 describe("TieredBuyLinks AP go attribution", () => {

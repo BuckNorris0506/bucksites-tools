@@ -1,0 +1,21 @@
+/** Re-export shim — canonical module lives in `src/lib/owner-dashboard/`. */
+export {
+  BUCKPARTS_TRUST_CURRENCY_CONTRACT_V1,
+  TRUST_CURRENCY_DUE_SOON_WINDOW_MS_V1,
+  isBuyerPathLinkTrustCurrencyPermittedV1,
+  mergeTrustCurrencyStatusesV1,
+  resolveBrowserProofTrustCurrencyV1,
+  resolveBuyerPathLinkTrustCurrencyV1,
+  resolveBuyLinkGateTrustCurrencyV1,
+  resolveRevalidationCadenceTrustCurrencyV1,
+  resolveSourceEvidenceIntegrityTrustCurrencyV1,
+  resolveTrustCurrencyV1,
+  trustCurrencyFailsClosedForGuardedApplyV1,
+  trustCurrencyFailsClosedForHomeownerBuyPathV1,
+  trustCurrencyFailsClosedForPublicTrustV1,
+  trustCurrencyStatusRankV1,
+  type TrustCurrencyDimensionV1,
+  type TrustCurrencyResolutionV1,
+  type TrustCurrencySignalV1,
+  type TrustCurrencyStatusV1,
+} from "@/lib/owner-dashboard/buckparts-trust-currency-resolver-v1";

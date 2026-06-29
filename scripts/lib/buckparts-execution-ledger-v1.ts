@@ -8,6 +8,10 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from "node:path";
 
 import {
+  createRepoIoV1,
+  type BuckpartsIoCapabilityV1,
+} from "./buckparts-io-capabilities-v1";
+import {
   COMMAND_CENTER_DISPATCH_RUN_REPORT_NAME_V1,
   COMMAND_CENTER_DISPATCH_RUNS_DIR_REL_V1,
 } from "./buckparts-command-center-dispatch-runner-v1";
@@ -866,9 +870,12 @@ export function loadBuckpartsExecutionLedgerReportV1(args: {
 export function writeBuckpartsExecutionLedgerArtifactsV1(args: {
   rootDir: string;
   report: BuckpartsExecutionLedgerReportV1;
+  io_capability?: BuckpartsIoCapabilityV1;
 }): { jsonRelPath: string } {
-  const abs = path.join(args.rootDir, BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1);
-  mkdirSync(path.dirname(abs), { recursive: true });
-  writeFileSync(abs, `${JSON.stringify(args.report, null, 2)}\n`, "utf8");
+  const io = createRepoIoV1({
+    rootDir: args.rootDir,
+    capability: args.io_capability ?? "READ_INDEX",
+  });
+  io.writeText(BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1, `${JSON.stringify(args.report, null, 2)}\n`);
   return { jsonRelPath: BUCKPARTS_EXECUTION_LEDGER_JSON_REL_V1 };
 }

@@ -7,6 +7,7 @@ export type RetailerLinkForGoRoute = {
   filter_id: string;
   retailer_key: string;
   filter_slug: string | null;
+  fridge_models_for_safety: Array<{ slug: string }>;
   browser_truth_classification?: string | null;
   browser_truth_buyable_subtype?: string | null;
   browser_truth_notes?: string | null;
@@ -53,12 +54,34 @@ export async function getRetailerLinkById(linkId: string): Promise<RetailerLinkF
 
   if (fErr) throw fErr;
 
+  const { data: maps, error: mErr } = await supabase
+    .from("compatibility_mappings")
+    .select("fridge_model_id")
+    .eq("filter_id", row.filter_id);
+
+  if (mErr) throw mErr;
+  const fridgeIds = Array.from(
+    new Set((maps ?? []).map((x) => x.fridge_model_id as string)),
+  );
+  let fridge_models_for_safety: Array<{ slug: string }> = [];
+  if (fridgeIds.length > 0) {
+    const { data: fm, error: fmErr } = await supabase
+      .from("fridge_models")
+      .select("slug")
+      .in("id", fridgeIds);
+    if (fmErr) throw fmErr;
+    fridge_models_for_safety = (fm ?? [])
+      .map((m) => ({ slug: String((m as { slug: string }).slug) }))
+      .filter((m) => m.slug.trim().length > 0);
+  }
+
   return {
     id: row.id,
     affiliate_url: row.affiliate_url,
     filter_id: row.filter_id,
     retailer_key: row.retailer_key,
     filter_slug: (fil as { slug?: string } | null)?.slug ?? null,
+    fridge_models_for_safety,
     browser_truth_classification: row.browser_truth_classification ?? null,
     browser_truth_buyable_subtype: row.browser_truth_buyable_subtype ?? null,
     browser_truth_notes: row.browser_truth_notes ?? null,

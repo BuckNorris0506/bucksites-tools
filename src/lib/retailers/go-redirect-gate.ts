@@ -3,8 +3,13 @@ import { NextResponse } from "next/server";
 import {
   buyLinkGateFailureKind,
   staleBrowserTruthShadowClassification,
+  type BuyLinkGateLinkV1,
   type StaleBrowserTruthShadowClassification,
 } from "@/lib/retailers/launch-buy-links";
+import {
+  isLiveBuyerPathLinkPermittedV1,
+  type LiveGoPathContextV1,
+} from "@/lib/retailers/live-buyer-path-go-decision-v1";
 
 /** Amazon Associates store ID applied at `/go` redirect time only (not stored on rows). */
 export const AMAZON_AFFILIATE_TAG = "buckparts20-20";
@@ -66,33 +71,43 @@ export function isHttpOrHttpsUrl(url: string): boolean {
   }
 }
 
+export type GoRedirectGateLinkV1 = BuyLinkGateLinkV1;
+
 /**
  * Final redirect gate for `/go/*`: must be http(s), must pass the same
- * buyer-path placeholder rules as CTAs, and must have browser-truth
- * evidence that marks it safe for live use.
+ * buyer-path rules as CTAs via central decision precedence, including fresh
+ * browser-truth recency.
  */
 export function isAffiliateUrlSafeForGoRedirect(
   retailerKey: string | null | undefined,
   affiliateUrl: string,
   classification?: string,
   browserTruthBuyableSubtype?: string | null,
+  browserTruthCheckedAt?: string | null,
+  browserTruthNotes?: string | null,
+  context?: LiveGoPathContextV1,
+  options?: { now?: Date },
 ): boolean {
   const u = affiliateUrl?.trim() ?? "";
   if (!u) return false;
   if (!isHttpOrHttpsUrl(u)) return false;
-  return (
-    buyLinkGateFailureKind({
+  return isLiveBuyerPathLinkPermittedV1({
+    link: {
       retailer_key: retailerKey,
       affiliate_url: u,
       browser_truth_classification: classification,
       browser_truth_buyable_subtype: browserTruthBuyableSubtype,
-    }) === null
-  );
+      browser_truth_checked_at: browserTruthCheckedAt,
+      browser_truth_notes: browserTruthNotes,
+    },
+    context,
+    now: options?.now,
+  });
 }
 
 /**
- * R1 shadow/count mode: reports stale browser-truth recency for rows that still pass `/go`.
- * Does not change `isAffiliateUrlSafeForGoRedirect` behavior.
+ * Diagnostics: reports stale browser-truth recency for rows that still pass live gates.
+ * Enforcement is in `buyLinkGateFailureKind` — shadow does not gate redirects.
  */
 export function staleBrowserTruthShadowForGoRedirect(
   retailerKey: string | null | undefined,
@@ -121,6 +136,12 @@ export type GoAffiliateRedirectResult = {
   outboundUrl: string;
 };
 
+export type NextResponseRedirectAffiliateIfSafeOptionsV1 = {
+  now?: Date;
+  context?: LiveGoPathContextV1;
+  status?: number;
+};
+
 /**
  * Builds the outbound `/go` retailer redirect only when `affiliateUrl` passes the
  * shared gate. Amazon US links get `tag=buckparts20-20` (and `/dp/{ASIN}` canonicalization)
@@ -131,10 +152,24 @@ export function nextResponseRedirectAffiliateIfSafe(
   affiliateUrl: string,
   classification?: string,
   browserTruthBuyableSubtype?: string | null,
-  status = 302,
+  browserTruthCheckedAt?: string | null,
+  browserTruthNotes?: string | null,
+  options?: NextResponseRedirectAffiliateIfSafeOptionsV1,
 ): GoAffiliateRedirectResult | null {
   const gated = affiliateUrl?.trim() ?? "";
-  if (!isAffiliateUrlSafeForGoRedirect(retailerKey, gated, classification, browserTruthBuyableSubtype)) {
+  const status = options?.status ?? 302;
+  if (
+    !isAffiliateUrlSafeForGoRedirect(
+      retailerKey,
+      gated,
+      classification,
+      browserTruthBuyableSubtype,
+      browserTruthCheckedAt,
+      browserTruthNotes,
+      options?.context,
+      { now: options?.now },
+    )
+  ) {
     return null;
   }
   const outboundUrl = applyAmazonAffiliateRedirectUrl(gated);
@@ -142,4 +177,12 @@ export function nextResponseRedirectAffiliateIfSafe(
     response: NextResponse.redirect(outboundUrl, status),
     outboundUrl,
   };
+}
+
+/** Expose gate failure kind for tests asserting CTA/`/go` alignment. */
+export function buyLinkGateFailureKindForGoLink(
+  link: GoRedirectGateLinkV1,
+  options?: { now?: Date; maxAgeMs?: number },
+): ReturnType<typeof buyLinkGateFailureKind> {
+  return buyLinkGateFailureKind(link, options);
 }

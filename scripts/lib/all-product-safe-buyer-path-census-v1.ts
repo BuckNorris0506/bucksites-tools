@@ -21,6 +21,15 @@ import {
   isManufacturerSiteSearchUrl,
 } from "@/lib/retailers/launch-buy-links";
 
+import {
+  decisionSignalsFromBuyLinkRowsV1,
+  decisionSignalsFromEvidenceFreshnessV1,
+} from "./buckparts-decision-precedence-signals-v1";
+import {
+  resolveDecisionPrecedenceV1,
+  type DecisionDispositionV1,
+} from "./buckparts-decision-precedence-resolver-v1";
+
 export const ALL_PRODUCT_SAFE_BUYER_PATH_CENSUS_CONTRACT_V1 =
   "all_product_safe_buyer_path_census_v1" as const;
 
@@ -55,6 +64,10 @@ export type AllProductCensusProductRowV1 = {
   owner_approval_required: boolean;
   mutation_authorized: false;
   rescue_priority_score: number;
+  /** Central precedence resolver — does not demote page_classification. */
+  public_trust_current: DecisionDispositionV1;
+  public_trust_mutation_permitted: boolean;
+  public_trust_deny_reasons: string[];
 };
 
 export type AllProductWedgeCoverageSummaryV1 = {
@@ -183,6 +196,7 @@ type RetailerLinkRow = {
   browser_truth_classification?: string | null;
   browser_truth_buyable_subtype?: string | null;
   browser_truth_notes?: string | null;
+  browser_truth_checked_at?: string | null;
 };
 
 function defaultFileExists(abs: string): boolean {
@@ -302,6 +316,8 @@ function summarizeRetailerRows(rows: RetailerLinkRow[]): {
       affiliate_url: (r.destination_url ?? r.affiliate_url ?? "").trim(),
       browser_truth_classification: r.browser_truth_classification ?? null,
       browser_truth_buyable_subtype: r.browser_truth_buyable_subtype ?? null,
+      browser_truth_checked_at: r.browser_truth_checked_at ?? null,
+      browser_truth_notes: r.browser_truth_notes ?? null,
     })),
   );
   const primary = rows.find((r) => isTruthyPrimary(r.is_primary)) ?? rows[0] ?? null;
@@ -315,6 +331,8 @@ function summarizeRetailerRows(rows: RetailerLinkRow[]): {
       affiliate_url: url,
       browser_truth_classification: primary.browser_truth_classification ?? null,
       browser_truth_buyable_subtype: primary.browser_truth_buyable_subtype ?? null,
+      browser_truth_checked_at: primary.browser_truth_checked_at ?? null,
+      browser_truth_notes: primary.browser_truth_notes ?? null,
     });
     has_search_placeholder_primary =
       gate === "search_placeholder" || isManufacturerSiteSearchUrl(url);
@@ -535,6 +553,22 @@ export function buildAllProductSafeBuyerPathCensusV1(
         wedge_live,
       });
 
+      const homeownerExposed =
+        classification === "SAFE_BUYER_PATH_PROVEN" && indexable_policy === true;
+      const precedence = resolveDecisionPrecedenceV1([
+        ...decisionSignalsFromBuyLinkRowsV1({
+          rows: retailerRows,
+          homeowner_exposed: homeownerExposed,
+        }),
+        ...decisionSignalsFromEvidenceFreshnessV1({
+          rootDir: deps.rootDir,
+          slug,
+          now: deps.now,
+          evidence_rel_paths: evidence_files,
+          homeowner_exposed: homeownerExposed,
+        }),
+      ]);
+
       if (classification === "SAFE_BUYER_PATH_PROVEN") safe_proven += 1;
       else if (classification === "SAFE_BUYER_PATH_SUPPRESSED_TRUST") suppressed += 1;
       else if (classification === "NOINDEX_UNPROVEN") noindex += 1;
@@ -562,6 +596,9 @@ export function buildAllProductSafeBuyerPathCensusV1(
         owner_approval_required: owner_approval,
         mutation_authorized: false,
         rescue_priority_score,
+        public_trust_current: precedence.effective_public_trust,
+        public_trust_mutation_permitted: precedence.mutation_permitted,
+        public_trust_deny_reasons: precedence.deny_signals.map((s) => s.reason),
       });
     }
 

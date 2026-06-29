@@ -23,6 +23,8 @@ export async function GET(
   let retailerKey: string | null = null;
   let classification: string | undefined = undefined;
   let buyableSubtype: string | null = null;
+  let checkedAt: string | null = null;
+  let browserTruthNotes: string | null = null;
 
   try {
     const row = await getVacuumRetailerLinkById(linkId);
@@ -30,6 +32,8 @@ export async function GET(
     retailerKey = row?.retailer_key ?? null;
     classification = row?.browser_truth_classification ?? undefined;
     buyableSubtype = row?.browser_truth_buyable_subtype ?? null;
+    checkedAt = row?.browser_truth_checked_at ?? null;
+    browserTruthNotes = row?.browser_truth_notes ?? null;
   } catch {
     return goFallbackRedirect(request, "/go-unavailable");
   }
@@ -43,6 +47,8 @@ export async function GET(
     target,
     classification,
     buyableSubtype,
+    checkedAt,
+    browserTruthNotes,
   );
   if (!go) {
     return goFallbackRedirect(request, "/go-unavailable");
