@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -19,7 +19,11 @@ import {
 } from "./rpwfe-official-ge-supabase-parity-mutation-gate-v1";
 import type { SupabaseLinksBySlugResultV1 } from "./fridge-supabase-vs-csv-retailer-links-diff-v1";
 import type { RetailerLinkCsvRowV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
-import { bindArtifactsAtHashesV1 } from "./truth-ledger-v1";
+import {
+  bindArtifactsAtHashesV1,
+  loadTruthLedgerAppendEntriesV1,
+  TRUTH_LEDGER_V1_JSONL_REL_V1,
+} from "./truth-ledger-v1";
 
 const goodRepoRow: RetailerLinkCsvRowV1 = {
   filter_slug: "rpwfe",
@@ -223,29 +227,43 @@ test("dry-run ready when supabase row drifts from repo csv", async () => {
 
 test("apply without founder approval is BLOCKED and does not update Supabase", async () => {
   let updateCount = 0;
-  const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
-    rootDir: "/tmp",
-    apply: true,
-    io_capability: "MUTATION",
-    fileExists: (p) => p.includes("retailer_links"),
-    readTextFile: () => csvText(),
-    writeTextFile: () => {},
-    deps: {
-      resolveFilterIdBySlug: async () => "filter-rpwfe",
-      fetchPrimaryOemRow: async () => [searchDbRow],
-      updateRowById: async () => {
-        updateCount += 1;
+  const root = mkdtempSync(path.join(tmpdir(), "rpwfe-no-founder-"));
+  const referenceTime = new Date("2026-06-10T12:00:00.000Z");
+  try {
+    writeTrustCurrencyClearFixture(root, referenceTime);
+    const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
+      rootDir: root,
+      apply: true,
+      io_capability: "MUTATION",
+      fileExists: (p) => p.includes("retailer_links"),
+      readTextFile: (p) => {
+        if (p.includes("retailer_links")) return csvText();
+        return readFileSync(p, "utf8");
       },
-      loadSupabaseSnapshot: async () => supabaseMatches,
-    },
-  });
+      writeTextFile: () => {},
+      now: () => referenceTime,
+      deps: {
+        resolveFilterIdBySlug: async () => "filter-rpwfe",
+        fetchPrimaryOemRow: async () => [searchDbRow],
+        updateRowById: async () => {
+          updateCount += 1;
+        },
+        loadSupabaseSnapshot: async () => supabaseMatches,
+      },
+    });
 
-  assert.equal(run.apply_status, "BLOCKED");
-  assert.equal(updateCount, 0);
-  assert.equal(run.mutation_authorized, false);
-  assert.ok(
-    run.blockers.includes("founder_owner_mutation_approved_missing_or_inactive"),
-  );
+      assert.equal(run.apply_status, "BLOCKED");
+    assert.equal(updateCount, 0);
+    assert.equal(run.mutation_authorized, false);
+    assert.ok(
+      run.blockers.includes("founder_owner_mutation_approved_missing_or_inactive"),
+    );
+    const ledger = loadTruthLedgerAppendEntriesV1({ rootDir: root });
+    assert.equal(ledger.length, 1);
+    assert.equal(ledger[0]!.apply_outcome, "blocked");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("READ_INDEX + apply blocks with io_capability_read_index_cannot_mutate_supabase", async () => {
@@ -327,6 +345,11 @@ test("apply with authorized founder decision updates matched row", async () => {
 
     assert.equal(run.apply_status, "APPLIED");
     assert.equal(updateCount, 1);
+    const ledger = loadTruthLedgerAppendEntriesV1({ rootDir: root });
+    assert.equal(ledger.length, 1);
+    assert.equal(ledger[0]!.mutation_lane, "rpwfe_official_ge_supabase_parity_apply_v1");
+    assert.equal(ledger[0]!.apply_outcome, "applied");
+    assert.ok(existsSync(path.join(root, TRUTH_LEDGER_V1_JSONL_REL_V1)));
     assert.equal(run.mutation_authorized, true);
     assert.equal(run.post_apply_parity_status, "SUPABASE_MATCHES_REPO_CSV");
     assert.equal(run.post_apply_is_direct_buyable_safe_cta, true);

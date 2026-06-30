@@ -17,7 +17,12 @@ import {
   isProtectedMutationRelPathV1,
 } from "./buckparts-io-capabilities-v1";
 import {
+  appendTruthLedgerMutationEntryV1,
   computeArtifactSha256FromTextV1,
+  loadTruthLedgerAppendEntriesV1,
+  TRUTH_LEDGER_CONTRACT_V1,
+  TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1,
+  TRUTH_LEDGER_V1_JSONL_REL_V1,
   verifyArtifactSha256V1,
   verifyFounderDecisionArtifactBindingsV1,
   buildGuardedApplyTruthLedgerBlockersV1,
@@ -30,7 +35,6 @@ import {
   BUCKPARTS_EXECUTION_LEDGER_CONTRACT_V1,
   writeBuckpartsExecutionLedgerArtifactsV1,
 } from "./buckparts-execution-ledger-v1";
-import { TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 } from "../../src/lib/owner-dashboard/truth-ledger-v1";
 
 function minimalMutationApprovalRow(
   overrides: Partial<FounderDecisionRegistryRowV1> = {},
@@ -243,9 +247,32 @@ describe("security hardening v1", () => {
     }
   });
 
-  test("truth ledger v1: append-only jsonl deferred with documented scope", () => {
-    assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, true);
-    assert.ok(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.remains_unknown_without_jsonl.length > 0);
+  test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
+    assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
+    assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);
+    const root = mkdtempSync(path.join(tmpdir(), "bp-tl-jsonl-"));
+    try {
+      const append = appendTruthLedgerMutationEntryV1({
+        rootDir: root,
+        io_capability: "MUTATION",
+        entry: {
+          contract: TRUTH_LEDGER_CONTRACT_V1,
+          entry_kind: "mutation_apply_outcome_v1",
+          recorded_at: "2026-06-10T12:00:00.000Z",
+          mutation_lane: "security_hardening_fixture",
+          founder_decision_id: null,
+          apply_outcome: "blocked",
+          blockers: ["fixture"],
+          bound_artifacts_v1: [],
+        },
+      });
+      assert.equal(append.ok, true);
+      const entries = loadTruthLedgerAppendEntriesV1({ rootDir: root });
+      assert.equal(entries.length, 1);
+      assert.equal(entries[0]!.mutation_lane, "security_hardening_fixture");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   test("execution ledger write routes through READ_INDEX capability", () => {

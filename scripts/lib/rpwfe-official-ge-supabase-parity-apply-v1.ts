@@ -24,6 +24,10 @@ import {
   rpwfeOfficialGeSupabaseParityMutationAuthorizedV1,
 } from "./rpwfe-official-ge-supabase-parity-mutation-gate-v1";
 import {
+  recordTruthLedgerMutationOutcomeV1,
+  type TruthLedgerMutationApplyOutcomeV1,
+} from "./truth-ledger-v1";
+import {
   buildRpwfeOfficialGeSupabaseParityPlanLaneFromInputsV1,
   type RpwfeOfficialGeSupabaseParityPlanLaneV1,
 } from "./rpwfe-official-ge-supabase-parity-plan-v1";
@@ -379,6 +383,24 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
       "No Waterdrop, Amazon, or compatible-replacement rows added or authorized.",
     ],
   };
+
+  if (args.apply) {
+    const applyOutcome: TruthLedgerMutationApplyOutcomeV1 =
+      run.apply_status === "BLOCKED" ? "blocked" : "applied";
+    const record = recordTruthLedgerMutationOutcomeV1({
+      rootDir: args.rootDir,
+      io_capability,
+      mutation_lane: "rpwfe_official_ge_supabase_parity_apply_v1",
+      founder_decision_id: mutationPreflight?.founder_decision_id ?? null,
+      apply_outcome: applyOutcome,
+      blockers: run.blockers,
+      now: args.now,
+    });
+    if (!record.ok) {
+      run.blockers.push(...record.blockers);
+      run.apply_status = "BLOCKED";
+    }
+  }
 
   if (args.apply || run.apply_status !== "BLOCKED") {
     const runAbs = path.join(args.rootDir, RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_RUN_REL_V1);

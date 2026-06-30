@@ -1,31 +1,31 @@
 /**
  * Tamper-evident Truth Ledger v1 — artifact sha256 binding for guarded apply.
  *
- * Scope (v1): hash verify at mutation choke points only. Append-only
- * `data/ops/truth-ledger-v1.jsonl` is DEFERRED — not required before guarded
- * apply in-repo; hash binding + founder row binding closes forgery at apply time.
- * UNKNOWN until jsonl: cross-mutation audit trail, offline tamper history, external
- * exposure attestation without re-reading all owner-decisions.
+ * Scope (v1): hash verify at mutation choke points; optional source_snapshot_v1
+ * chain on evidence artifacts; append-only `data/ops/truth-ledger-v1.jsonl` for
+ * mutation apply outcomes on high-risk Supabase parity lanes.
  */
 
+import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import type { FounderDecisionRegistryRowV1 } from "./founder-decision-registry-v1";
 
 export const TRUTH_LEDGER_CONTRACT_V1 = "truth_ledger_v1" as const;
 
+export const TRUTH_LEDGER_V1_JSONL_REL_V1 = "data/ops/truth-ledger-v1.jsonl" as const;
+
 export const TRUTH_LEDGER_V1_SOURCE_SNAPSHOT_CHAIN_OF_CUSTODY_DEFERRED_V1 = {
-  deferred: true as const,
+  deferred: false as const,
   proven_today: [
     "artifact_rel_path + sha256_at_binding at guarded apply (tamper-evident committed file integrity)",
     "founder bound_artifacts_v1 hash verify before mutation",
+    "optional source_snapshot_v1 chain verify when evidence artifact opts in",
   ],
   not_proven_today: [
-    "source_url snapshot at retrieval time",
-    "source_content_sha256 of live web page vs extracted claim",
-    "archived snapshot reference binding extracted_claim → evidence_sha256 → downstream artifact",
+    "source_content_sha256 of live web page vs extracted claim (when not archived)",
+    "requiring source_snapshot_v1 on all committed evidence (backward compat: absent is OK)",
   ],
   smallest_v1_design: {
     source_url: "string — URL retrieved for browser proof or evidence",
@@ -36,19 +36,27 @@ export const TRUTH_LEDGER_V1_SOURCE_SNAPSHOT_CHAIN_OF_CUSTODY_DEFERRED_V1 = {
     downstream_artifact_hash_binding: "truth_ledger bound_artifacts_v1 entry_type evidence",
   },
   should_fix_before_scale:
-    "Source snapshot integrity is SHOULD_FIX_BEFORE_SCALE — does not block current public trust if browser_truth_checked_at gate and hash binding hold.",
+    "Full live-web source_content_sha256 enforcement is SHOULD_FIX_BEFORE_SCALE — optional source_snapshot_v1 on evidence only.",
 } as const;
 
 export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
-  deferred: true as const,
+  deferred: false as const,
+  jsonl_rel_path: TRUTH_LEDGER_V1_JSONL_REL_V1,
   reason:
-    "Hash binding at guarded apply + founder bound_artifacts_v1 is sufficient for in-repo mutation fail-closed v1.",
-  remains_unknown_without_jsonl: [
-    "append-only cross-mutation audit trail",
+    "Append-only mutation apply outcome recording is proven for AP and RPWFE Supabase parity lanes.",
+  proven_today: [
+    "appendTruthLedgerMutationEntryV1 requires MUTATION io_capability",
+    "loadTruthLedgerAppendEntriesV1 reads append-only JSONL history",
+    "recordTruthLedgerMutationOutcomeV1 on AP and RPWFE apply paths",
+  ],
+  remains_unknown_without_full_lane_coverage: [
+    "universal-batch-lifecycle CSV executor append",
+    "manufacturer-rescue apply append",
     "detecting post-apply artifact edits without re-running apply",
-    "external exposure attestation bundle",
   ],
 } as const;
+
+export type TruthLedgerIoCapabilityV1 = "READ_INDEX" | "MUTATION";
 
 export type TruthLedgerEntryTypeV1 =
   | "evidence"
@@ -64,6 +72,28 @@ export type TruthLedgerBoundArtifactV1 = {
 };
 
 export type FounderDecisionBoundArtifactsV1 = {
+  bound_artifacts_v1: TruthLedgerBoundArtifactV1[];
+};
+
+export type TruthLedgerSourceSnapshotV1 = {
+  source_url: string;
+  retrieved_at: string;
+  extracted_claim?: string;
+  evidence_sha256: string;
+  source_content_sha256?: string;
+  archived_snapshot_rel_path?: string;
+};
+
+export type TruthLedgerMutationApplyOutcomeV1 = "applied" | "blocked";
+
+export type TruthLedgerMutationAppendEntryV1 = {
+  contract: typeof TRUTH_LEDGER_CONTRACT_V1;
+  entry_kind: "mutation_apply_outcome_v1";
+  recorded_at: string;
+  mutation_lane: string;
+  founder_decision_id: string | null;
+  apply_outcome: TruthLedgerMutationApplyOutcomeV1;
+  blockers: string[];
   bound_artifacts_v1: TruthLedgerBoundArtifactV1[];
 };
 
@@ -113,6 +143,72 @@ export function verifyArtifactSha256V1(args: {
   return { ok: true };
 }
 
+export function verifySourceSnapshotChainForEvidenceTextV1(args: {
+  evidenceText: string;
+  boundEvidenceSha256: string;
+}): { ok: true } | { ok: false; blockers: string[] } {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(args.evidenceText);
+  } catch {
+    return { ok: true };
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    return { ok: true };
+  }
+  const snapshot = (parsed as Record<string, unknown>).source_snapshot_v1;
+  if (snapshot === undefined || snapshot === null) {
+    return { ok: true };
+  }
+  if (typeof snapshot !== "object" || snapshot === null) {
+    return { ok: false, blockers: ["truth_ledger_source_snapshot_invalid"] };
+  }
+
+  const s = snapshot as Record<string, unknown>;
+  const sourceUrl = typeof s.source_url === "string" ? s.source_url.trim() : "";
+  const retrievedAt = typeof s.retrieved_at === "string" ? s.retrieved_at.trim() : "";
+  const evidenceSha256 =
+    typeof s.evidence_sha256 === "string" ? s.evidence_sha256.trim().toLowerCase() : "";
+  const bound = args.boundEvidenceSha256.trim().toLowerCase();
+
+  const blockers: string[] = [];
+  if (!sourceUrl) blockers.push("truth_ledger_source_snapshot_missing_source_url");
+  if (!retrievedAt) {
+    blockers.push("truth_ledger_source_snapshot_missing_retrieved_at");
+  } else if (Number.isNaN(Date.parse(retrievedAt))) {
+    blockers.push("truth_ledger_source_snapshot_invalid_retrieved_at");
+  }
+  if (!evidenceSha256) {
+    blockers.push("truth_ledger_source_snapshot_missing_evidence_sha256");
+  } else if (evidenceSha256 !== bound) {
+    blockers.push("truth_ledger_source_snapshot_chain_mismatch");
+  }
+
+  if (blockers.length > 0) return { ok: false, blockers };
+  return { ok: true };
+}
+
+function verifySourceSnapshotForEvidenceBindingV1(args: {
+  rootDir: string;
+  binding: TruthLedgerBoundArtifactV1;
+  readText?: (abs: string) => string;
+}): string[] {
+  if (args.binding.entry_type !== "evidence") return [];
+  const abs = path.join(args.rootDir, args.binding.artifact_rel_path);
+  let evidenceText: string;
+  try {
+    evidenceText = args.readText ? args.readText(abs) : readFileSync(abs, "utf8");
+  } catch {
+    return [`artifact_missing:${args.binding.artifact_rel_path}`];
+  }
+  const result = verifySourceSnapshotChainForEvidenceTextV1({
+    evidenceText,
+    boundEvidenceSha256: args.binding.sha256_at_binding,
+  });
+  if (result.ok) return [];
+  return result.blockers.map((b) => `${b}:expected_type=${args.binding.entry_type}`);
+}
+
 export function extractBoundArtifactsFromFounderRowV1(
   row: FounderDecisionRegistryRowV1 & Partial<FounderDecisionBoundArtifactsV1>,
 ): TruthLedgerBoundArtifactV1[] {
@@ -148,7 +244,15 @@ export function verifyFounderDecisionArtifactBindingsV1(args: {
     });
     if (!result.ok) {
       blockers.push(`${result.reason}:expected_type=${binding.entry_type}`);
+      continue;
     }
+    blockers.push(
+      ...verifySourceSnapshotForEvidenceBindingV1({
+        rootDir: args.rootDir,
+        binding,
+        readText: args.readText,
+      }),
+    );
   }
   if (blockers.length > 0) return { ok: false, blockers };
   return { ok: true };
@@ -168,7 +272,17 @@ export function buildGuardedApplyTruthLedgerBlockersV1(args: {
       expected_sha256: artifact.sha256_at_binding,
       readText: args.readText,
     });
-    if (!result.ok) blockers.push(result.reason);
+    if (!result.ok) {
+      blockers.push(result.reason);
+      continue;
+    }
+    blockers.push(
+      ...verifySourceSnapshotForEvidenceBindingV1({
+        rootDir: args.rootDir,
+        binding: artifact,
+        readText: args.readText,
+      }),
+    );
   }
   if (args.founderRow) {
     const founderVerify = verifyFounderDecisionArtifactBindingsV1({
@@ -201,4 +315,89 @@ export function bindArtifactsAtHashesV1(args: {
     });
   }
   return bound;
+}
+
+export function loadTruthLedgerAppendEntriesV1(args: {
+  rootDir: string;
+  readText?: (abs: string) => string;
+}): TruthLedgerMutationAppendEntryV1[] {
+  const abs = path.join(args.rootDir, TRUTH_LEDGER_V1_JSONL_REL_V1);
+  let text: string;
+  try {
+    text = args.readText ? args.readText(abs) : readFileSync(abs, "utf8");
+  } catch {
+    return [];
+  }
+  const entries: TruthLedgerMutationAppendEntryV1[] = [];
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    try {
+      const parsed = JSON.parse(trimmed) as TruthLedgerMutationAppendEntryV1;
+      if (
+        parsed?.contract === TRUTH_LEDGER_CONTRACT_V1 &&
+        parsed?.entry_kind === "mutation_apply_outcome_v1"
+      ) {
+        entries.push(parsed);
+      }
+    } catch {
+      continue;
+    }
+  }
+  return entries;
+}
+
+export function appendTruthLedgerMutationEntryV1(args: {
+  rootDir: string;
+  entry: TruthLedgerMutationAppendEntryV1;
+  io_capability: TruthLedgerIoCapabilityV1;
+  appendText?: (absPath: string, line: string) => void;
+  mkdir?: (dirAbs: string) => void;
+}): { ok: true } | { ok: false; blockers: string[] } {
+  if (args.io_capability !== "MUTATION") {
+    return { ok: false, blockers: ["truth_ledger_append_requires_mutation_capability"] };
+  }
+  const abs = path.join(args.rootDir, TRUTH_LEDGER_V1_JSONL_REL_V1);
+  const mkdirFn = args.mkdir ?? ((dir: string) => mkdirSync(dir, { recursive: true }));
+  const appendFn =
+    args.appendText ?? ((filePath: string, line: string) => appendFileSync(filePath, line, "utf8"));
+  try {
+    mkdirFn(path.dirname(abs));
+    appendFn(abs, `${JSON.stringify(args.entry)}\n`);
+    return { ok: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { ok: false, blockers: [`truth_ledger_append_failed:${msg}`] };
+  }
+}
+
+export function recordTruthLedgerMutationOutcomeV1(args: {
+  rootDir: string;
+  io_capability: TruthLedgerIoCapabilityV1;
+  mutation_lane: string;
+  founder_decision_id: string | null;
+  apply_outcome: TruthLedgerMutationApplyOutcomeV1;
+  blockers: string[];
+  bound_artifacts_v1?: TruthLedgerBoundArtifactV1[];
+  now?: () => Date;
+  appendText?: (absPath: string, line: string) => void;
+  mkdir?: (dirAbs: string) => void;
+}): { ok: true } | { ok: false; blockers: string[] } {
+  const entry: TruthLedgerMutationAppendEntryV1 = {
+    contract: TRUTH_LEDGER_CONTRACT_V1,
+    entry_kind: "mutation_apply_outcome_v1",
+    recorded_at: (args.now ?? (() => new Date()))().toISOString(),
+    mutation_lane: args.mutation_lane,
+    founder_decision_id: args.founder_decision_id,
+    apply_outcome: args.apply_outcome,
+    blockers: args.blockers,
+    bound_artifacts_v1: args.bound_artifacts_v1 ?? [],
+  };
+  return appendTruthLedgerMutationEntryV1({
+    rootDir: args.rootDir,
+    entry,
+    io_capability: args.io_capability,
+    appendText: args.appendText,
+    mkdir: args.mkdir,
+  });
 }

@@ -13,6 +13,10 @@ import {
   apSupabaseParityMutationAuthorizedV1,
   buildApSupabaseParityMutationPreflightV1,
 } from "./air-purifier-supabase-apply-parity-mutation-gate-v1";
+import {
+  recordTruthLedgerMutationOutcomeV1,
+  type TruthLedgerMutationApplyOutcomeV1,
+} from "./truth-ledger-v1";
 import type {
   AirPurifierApplyPlannerReportV1,
   ApPlannedChangeV1,
@@ -407,6 +411,24 @@ export async function runAirPurifierSupabaseParityV1(args: {
     "Matches approved rows by air_purifier_filter_id + retailer_key (status=approved).",
     "Do not use npm run seed:import:air-purifier for this parity apply.",
   ];
+
+  if (args.mode === "apply") {
+    const applyOutcome: TruthLedgerMutationApplyOutcomeV1 =
+      apply_status === "BLOCKED" ? "blocked" : "applied";
+    const record = recordTruthLedgerMutationOutcomeV1({
+      rootDir: args.rootDir,
+      io_capability,
+      mutation_lane: "air_purifier_supabase_parity_apply_v1",
+      founder_decision_id: mutationPreflight?.founder_decision_id ?? null,
+      apply_outcome: applyOutcome,
+      blockers: blocked_reasons,
+      now: args.now,
+    });
+    if (!record.ok) {
+      blocked_reasons.push(...record.blockers);
+      apply_status = "BLOCKED";
+    }
+  }
 
   return {
     report_name: AIR_PURIFIER_SUPABASE_PARITY_REPORT_NAME_V1,

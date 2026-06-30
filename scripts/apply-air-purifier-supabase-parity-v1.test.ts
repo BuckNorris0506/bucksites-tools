@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -20,7 +20,11 @@ import {
   type ApDbRetailerLinkRowV1,
   type ApSupabaseParityDepsV1,
 } from "./lib/air-purifier-supabase-apply-parity-v1";
-import { bindArtifactsAtHashesV1 } from "./lib/truth-ledger-v1";
+import {
+  bindArtifactsAtHashesV1,
+  loadTruthLedgerAppendEntriesV1,
+  TRUTH_LEDGER_V1_JSONL_REL_V1,
+} from "./lib/truth-ledger-v1";
 
 const REPO_ROOT = process.cwd();
 const FIXTURE_PLAN_REL = "fixture-plan.json";
@@ -326,26 +330,37 @@ test("dry-run does not write", async () => {
 
 test("apply without founder approval is BLOCKED", async () => {
   const slug = "levoit-rf-lv-h128";
-  const deps = mockDeps({
-    linksBySlug: { [slug]: [dbRowFromSnapshot(slug, searchSnapshot(slug))] },
-  });
-  const plan = minimalPlan([plannedChange(slug, "lv-h128-replacement-filter")]);
-  const report = await runAirPurifierSupabaseParityV1({
-    rootDir: REPO_ROOT,
-    mode: "apply",
-    planPath: FIXTURE_PLAN_REL,
-    io_capability: "MUTATION",
-    deps,
-    readText: () => JSON.stringify(plan),
-  });
-  assert.equal(report.apply_status, "BLOCKED");
-  assert.equal(report.mutation_authorized, false);
-  assert.ok(
-    report.mutation_preflight_blockers.includes(
-      "founder_owner_mutation_approved_missing_or_inactive",
-    ),
-  );
-  assert.equal(deps.updateCalls.length, 0);
+  const root = mkdtempSync(path.join(tmpdir(), "ap-supabase-no-founder-"));
+  const referenceTime = new Date("2026-06-10T12:00:00.000Z");
+  try {
+    writeTrustCurrencyClearFixture(root, referenceTime);
+    const plan = minimalPlan([plannedChange(slug, "lv-h128-replacement-filter")]);
+    writeFileSync(path.join(root, FIXTURE_PLAN_REL), `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+    const deps = mockDeps({
+      linksBySlug: { [slug]: [dbRowFromSnapshot(slug, searchSnapshot(slug))] },
+    });
+    const report = await runAirPurifierSupabaseParityV1({
+      rootDir: root,
+      mode: "apply",
+      planPath: FIXTURE_PLAN_REL,
+      io_capability: "MUTATION",
+      deps,
+      now: () => referenceTime,
+    });
+    assert.equal(report.apply_status, "BLOCKED");
+    assert.equal(report.mutation_authorized, false);
+    assert.ok(
+      report.mutation_preflight_blockers.includes(
+        "founder_owner_mutation_approved_missing_or_inactive",
+      ),
+    );
+    assert.equal(deps.updateCalls.length, 0);
+    const ledger = loadTruthLedgerAppendEntriesV1({ rootDir: root });
+    assert.equal(ledger.length, 1);
+    assert.equal(ledger[0]!.apply_outcome, "blocked");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test("apply with authorized founder decision updates matched row", async () => {
@@ -368,6 +383,11 @@ test("apply with authorized founder decision updates matched row", async () => {
     assert.equal(report.mutation_authorized, true);
     assert.equal(report.applied_change_count, 1);
     assert.equal(deps.updateCalls.length, 1);
+    const ledger = loadTruthLedgerAppendEntriesV1({ rootDir: root });
+    assert.equal(ledger.length, 1);
+    assert.equal(ledger[0]!.mutation_lane, "air_purifier_supabase_parity_apply_v1");
+    assert.equal(ledger[0]!.apply_outcome, "applied");
+    assert.ok(existsSync(path.join(root, TRUTH_LEDGER_V1_JSONL_REL_V1)));
   } finally {
     cleanup();
   }
