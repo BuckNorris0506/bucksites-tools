@@ -1,11 +1,17 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import {
   BUCKPARTS_MCP_CONTROL_PLANE_CONTRACT_V1,
+  BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1,
+  MCP_SUPABASE_EXTRACTION_BLOCKED_LIVE_BUILD_V1,
   businessSnapshotV1,
   commandCenterSummaryV1,
   laneStatusV1,
+  loadCommandCenterForMcpV1,
   nextBestActionV1,
   normalizeCommandCenterLaneNameV1,
   projectLaneStatusFromCommandCenterV1,
@@ -266,4 +272,42 @@ test("business_snapshot uses committed runner artifact when CC missing", async (
 
 test("MCP control plane contract is stable", () => {
   assert.equal(BUCKPARTS_MCP_CONTROL_PLANE_CONTRACT_V1, "buckparts_mcp_control_plane_v1");
+});
+
+test("loadCommandCenterForMcpV1 blocks live build without snapshot by default", async () => {
+  const root = mkdtempSync(path.join(tmpdir(), "mcp-cc-blocked-"));
+  const previous = process.env.BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD;
+  delete process.env.BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD;
+  try {
+    const loaded = await loadCommandCenterForMcpV1({ rootDir: root });
+    assert.equal(loaded.ok, false);
+    if (!loaded.ok) {
+      assert.ok(loaded.blockers.includes(MCP_SUPABASE_EXTRACTION_BLOCKED_LIVE_BUILD_V1));
+      assert.ok(loaded.truth_note.includes(BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1));
+    }
+  } finally {
+    if (previous === undefined) delete process.env.BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD;
+    else process.env.BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD = previous;
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test("loadCommandCenterForMcpV1 reads committed snapshot when present", async () => {
+  const root = mkdtempSync(path.join(tmpdir(), "mcp-cc-snapshot-"));
+  try {
+    const snapshotAbs = path.join(root, BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1);
+    mkdirSync(path.dirname(snapshotAbs), { recursive: true });
+    writeFileSync(
+      snapshotAbs,
+      `${JSON.stringify(minimalCommandCenterReport(), null, 2)}\n`,
+      "utf8",
+    );
+    const loaded = await loadCommandCenterForMcpV1({ rootDir: root });
+    assert.equal(loaded.ok, true);
+    if (loaded.ok) {
+      assert.equal(loaded.source, "committed_snapshot");
+    }
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

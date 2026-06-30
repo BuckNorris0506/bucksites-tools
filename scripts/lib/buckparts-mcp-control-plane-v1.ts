@@ -24,6 +24,11 @@ type McpReadOnlyEnvelopeV1 = {
 
 export const BUCKPARTS_MCP_CONTROL_PLANE_CONTRACT_V1 = "buckparts_mcp_control_plane_v1" as const;
 
+export const MCP_SUPABASE_EXTRACTION_BLOCKED_LIVE_BUILD_V1 =
+  "mcp_supabase_extraction_blocked_live_build" as const;
+
+export const BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD_ENV_V1 = "BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD" as const;
+
 export const BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1 =
   "data/reports/buckparts-command-center.json" as const;
 
@@ -58,6 +63,7 @@ export type CommandCenterMcpLoadResultV1 =
       truth_status: "UNKNOWN";
       repo_paths_read: string[];
       truth_note: string;
+      blockers: string[];
     };
 
 function envelope(): McpReadOnlyEnvelopeV1 & {
@@ -90,6 +96,10 @@ export function normalizeCommandCenterLaneNameV1(laneName: string): string {
   return LANE_NAME_ALIASES_V1[normalized] ?? normalized;
 }
 
+function mcpLiveCommandCenterBuildAllowedV1(): boolean {
+  return process.env[BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD_ENV_V1] === "1";
+}
+
 export async function loadCommandCenterForMcpV1(
   deps: BuckPartsMcpDepsV1 & {
     loadReport?: () => Promise<Record<string, unknown>>;
@@ -114,6 +124,7 @@ export async function loadCommandCenterForMcpV1(
         truth_status: "UNKNOWN",
         repo_paths_read: [],
         truth_note: `Command Center load failed: ${message}`,
+        blockers: ["mcp_command_center_load_failed"],
       };
     }
   }
@@ -134,8 +145,19 @@ export async function loadCommandCenterForMcpV1(
         truth_status: "UNKNOWN",
         repo_paths_read: [BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1],
         truth_note: "Committed Command Center snapshot exists but failed JSON parse.",
+        blockers: ["mcp_command_center_snapshot_parse_failed"],
       };
     }
+  }
+
+  if (!mcpLiveCommandCenterBuildAllowedV1()) {
+    return {
+      ok: false,
+      truth_status: "UNKNOWN",
+      repo_paths_read: [BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1],
+      truth_note: `MCP Command Center load blocked: committed snapshot missing at ${BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1}. Live build would invoke Supabase providers — set ${BUCKPARTS_MCP_ALLOW_LIVE_CC_BUILD_ENV_V1}=1 for local-only escape hatch.`,
+      blockers: [MCP_SUPABASE_EXTRACTION_BLOCKED_LIVE_BUILD_V1],
+    };
   }
 
   try {
@@ -157,6 +179,7 @@ export async function loadCommandCenterForMcpV1(
       truth_status: "UNKNOWN",
       repo_paths_read: [BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1],
       truth_note: `Command Center unavailable. Archive JSON to ${BUCKPARTS_COMMAND_CENTER_SNAPSHOT_JSON_REL_V1} or fix live build: ${message}`,
+      blockers: ["mcp_command_center_live_build_failed"],
     };
   }
 }

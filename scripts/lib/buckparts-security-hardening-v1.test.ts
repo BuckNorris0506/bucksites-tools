@@ -27,6 +27,7 @@ import {
   verifyFounderDecisionArtifactBindingsV1,
   buildGuardedApplyTruthLedgerBlockersV1,
 } from "./truth-ledger-v1";
+import { enforceMcpSupabaseExposureAuditV1 } from "../audit-buckparts-mcp-supabase-exposure-v1";
 import { buildGuardedCsvWriteModeBlockersV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import type { FounderDecisionRegistryRowV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
@@ -245,6 +246,13 @@ describe("security hardening v1", () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+
+  test("mcp supabase exposure audit is enforceable and not audit-only deferred", () => {
+    const report = enforceMcpSupabaseExposureAuditV1({ rootDir: process.cwd() });
+    assert.equal(report.enforce, true);
+    assert.equal(report.status, "PASS");
+    assert.equal(report.blockers.length, 0);
   });
 
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
