@@ -182,6 +182,11 @@ create policy "Public read reset_instructions"
 create policy "Anon insert click_events"
   on public.click_events for insert to anon with check (true);
 
+-- Search telemetry (table DDL: migrations/20260410170000_search_intelligence.sql).
+-- INSERT policy reconciled in migrations/20260610120000_security_advisor_rls_reconcile_v1.sql:
+--   catalog allowlist + raw_query/normalized_query length bounds; anon/authenticated INSERT only.
+-- upsert_search_gap: SECURITY DEFINER, search_path=public; anon EXECUTE retained for server telemetry.
+
 -- Optional: faster ILIKE search (uncomment if extension available)
 -- create extension if not exists pg_trgm;
 -- create index if not exists idx_fridge_models_model_trgm on public.fridge_models using gin (model_number gin_trgm_ops);
