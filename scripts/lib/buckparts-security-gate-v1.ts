@@ -844,6 +844,20 @@ function checkNpmAuditCriticalHigh(args: {
   });
 }
 
+function deployPreflightScriptText(args: {
+  rootDir: string;
+  readText: (absPath: string) => string | null;
+}): string | null {
+  const packageText = args.readText(path.join(args.rootDir, "package.json"));
+  if (packageText == null) return null;
+  try {
+    const parsed = JSON.parse(packageText) as { scripts?: Record<string, string> };
+    return parsed.scripts?.["buckparts:deploy:preflight"] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function checkNetlifyBuildEnforceChain(args: {
   rootDir: string;
   readText: (absPath: string) => string | null;
@@ -859,13 +873,24 @@ function checkNetlifyBuildEnforceChain(args: {
       evaluation_layer: "repo_static",
       evidence: [],
       notes: "netlify.toml not readable.",
-      remediation_hint: "Netlify build should run repo-runtime-convergence gate with --enforce before build.",
+      remediation_hint:
+        "Netlify build should run buckparts:deploy:preflight (MCP audit + convergence --enforce) before npm run build.",
     });
   }
-  const hasConvergence = text.includes("buckparts:repo-runtime-convergence:check");
-  const hasEnforce = text.includes("--enforce");
   const hasBuild = text.includes("npm run build");
-  const ok = hasConvergence && hasEnforce && hasBuild;
+  const hasDeployPreflight = text.includes("buckparts:deploy:preflight");
+  const preflightScript = deployPreflightScriptText(args);
+  const preflightHasMcpAudit =
+    preflightScript != null && preflightScript.includes("buckparts:mcp-supabase-exposure:audit");
+  const preflightHasConvergence =
+    preflightScript != null &&
+    preflightScript.includes("buckparts:repo-runtime-convergence:check") &&
+    preflightScript.includes("--enforce");
+  const ok =
+    hasBuild &&
+    hasDeployPreflight &&
+    preflightHasMcpAudit &&
+    preflightHasConvergence;
   const status: SecurityGateStatusV1 = ok ? "PASS" : "FAIL";
   return makeCheck({
     check_id: "netlify_build_enforce_chain",
@@ -874,14 +899,57 @@ function checkNetlifyBuildEnforceChain(args: {
     severity: "high",
     evaluation_layer: "repo_static",
     evidence: [
-      { kind: "file_path", ref: rel, detail: `convergence_check=${String(hasConvergence)}` },
-      { kind: "file_path", ref: rel, detail: `enforce_flag=${String(hasEnforce)}` },
+      { kind: "file_path", ref: rel, detail: `deploy_preflight=${String(hasDeployPreflight)}` },
       { kind: "file_path", ref: rel, detail: `npm_run_build=${String(hasBuild)}` },
+      {
+        kind: "file_path",
+        ref: "package.json",
+        detail: `preflight_mcp_audit=${String(preflightHasMcpAudit)}`,
+      },
+      {
+        kind: "file_path",
+        ref: "package.json",
+        detail: `preflight_convergence_enforce=${String(preflightHasConvergence)}`,
+      },
     ],
     notes: ok
-      ? "Netlify build runs repo-runtime-convergence:check --enforce before npm run build."
-      : "Netlify build chain missing convergence enforce or build step.",
-    remediation_hint: "Keep buckparts:repo-runtime-convergence:check -- --enforce && npm run build in netlify.toml.",
+      ? "Netlify build runs buckparts:deploy:preflight (MCP audit + convergence --enforce) before npm run build."
+      : "Netlify build chain missing deploy preflight, MCP audit, convergence enforce, or build step.",
+    remediation_hint:
+      "Keep npm run buckparts:deploy:preflight && npm run build in netlify.toml with package.json preflight chaining MCP audit and convergence --enforce.",
+  });
+}
+
+function checkMcpSupabaseExposureAuditInBuildChain(args: {
+  rootDir: string;
+  readText: (absPath: string) => string | null;
+}): SecurityGateCheckV1 {
+  const netlifyRel = "netlify.toml";
+  const netlifyText = args.readText(path.join(args.rootDir, netlifyRel)) ?? "";
+  const wiredInNetlify = netlifyText.includes("buckparts:deploy:preflight");
+  const preflightScript = deployPreflightScriptText(args);
+  const wiredInPreflight =
+    preflightScript != null && preflightScript.includes("buckparts:mcp-supabase-exposure:audit");
+  const wired = wiredInNetlify && wiredInPreflight;
+  return makeCheck({
+    check_id: "mcp_supabase_exposure_audit_in_build_chain",
+    category: "deploy_safety",
+    status: wired ? "PASS" : "WARN",
+    severity: "high",
+    evaluation_layer: "repo_static",
+    evidence: [
+      { kind: "file_path", ref: netlifyRel, detail: `deploy_preflight=${String(wiredInNetlify)}` },
+      {
+        kind: "file_path",
+        ref: "package.json",
+        detail: `preflight_mcp_audit=${String(wiredInPreflight)}`,
+      },
+    ],
+    notes: wired
+      ? "MCP/Supabase extraction audit is wired into Netlify deploy preflight chain."
+      : "MCP/Supabase extraction audit is not wired into Netlify deploy preflight chain.",
+    remediation_hint:
+      "Wire npm run buckparts:mcp-supabase-exposure:audit into buckparts:deploy:preflight and netlify.toml.",
   });
 }
 
@@ -1037,6 +1105,7 @@ export function buildBuckpartsSecurityGateReportV1(args: {
     checkMcpMutationToolPresent({ rootDir, readText }),
     checkNpmAuditCriticalHigh({ rootDir, runNpmAuditJson }),
     checkNetlifyBuildEnforceChain({ rootDir, readText }),
+    checkMcpSupabaseExposureAuditInBuildChain({ rootDir, readText }),
     checkShipGuardAvailable({ rootDir, readText }),
     checkSecurityGateInBuildChain({ rootDir, readText }),
   ];

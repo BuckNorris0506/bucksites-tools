@@ -28,8 +28,16 @@ function makeMiniRepo(files: Record<string, string>): string {
 function baseFixtureFiles(): Record<string, string> {
   return {
     "next.config.mjs": `const nextConfig = { experimental: {} };\nexport default nextConfig;\n`,
-    "netlify.toml": `[build]\n  command = "npm run buckparts:repo-runtime-convergence:check -- --enforce && npm run build"\n`,
-    "package.json": JSON.stringify({ scripts: { "buckparts:ship-guard": "tsx scripts/x.ts" } }),
+    "netlify.toml": `[build]\n  command = "npm run buckparts:deploy:preflight && npm run build"\n`,
+    "package.json": JSON.stringify({
+      scripts: {
+        "buckparts:ship-guard": "tsx scripts/x.ts",
+        "buckparts:deploy:preflight":
+          "npm run buckparts:mcp-supabase-exposure:audit && npm run buckparts:repo-runtime-convergence:check -- --enforce",
+        "buckparts:mcp-supabase-exposure:audit": "tsx scripts/audit-x.ts --enforce",
+        "buckparts:repo-runtime-convergence:check": "tsx scripts/check-x.ts",
+      },
+    }),
     "mcp/buckparts-truth/server.ts": `
 const READ_ONLY_ANNOTATIONS = { readOnlyHint: true, destructiveHint: false };
 server.registerTool("a", { annotations: READ_ONLY_ANNOTATIONS }, () => {});
@@ -62,7 +70,7 @@ test("contract envelope is read-only with stable contract id", () => {
   assert.equal(report.supabase_mutation_authorized, false);
   assert.equal(report.dependency_upgrade_authorized, false);
   assert.equal(report.automatic_fix_authorized, false);
-  assert.equal(report.check_count, 16);
+  assert.equal(report.check_count, 17);
 });
 
 test("secret_in_tracked_files FAIL with redacted evidence", () => {
@@ -179,6 +187,61 @@ test("security_gate_in_build_chain WARN only in slice 1", () => {
   assert.equal(
     report.checks.find((c) => c.check_id === "security_gate_in_build_chain")?.status,
     "WARN",
+  );
+});
+
+test("netlify_build_enforce_chain PASS when deploy preflight chains MCP audit and convergence", () => {
+  const root = makeMiniRepo(baseFixtureFiles());
+  const report = buildBuckpartsSecurityGateReportV1({
+    rootDir: root,
+    deps: {
+      listTrackedFiles: () => [],
+      listRouteFiles: () => [],
+      runNpmAuditJson: () => ({ status: "unavailable", detail: "offline" }),
+    },
+  });
+  assert.equal(
+    report.checks.find((c) => c.check_id === "netlify_build_enforce_chain")?.status,
+    "PASS",
+  );
+});
+
+test("mcp_supabase_exposure_audit_in_build_chain PASS when wired in netlify and package preflight", () => {
+  const root = makeMiniRepo(baseFixtureFiles());
+  const report = buildBuckpartsSecurityGateReportV1({
+    rootDir: root,
+    deps: {
+      listTrackedFiles: () => [],
+      listRouteFiles: () => [],
+      runNpmAuditJson: () => ({ status: "unavailable", detail: "offline" }),
+    },
+  });
+  assert.equal(
+    report.checks.find((c) => c.check_id === "mcp_supabase_exposure_audit_in_build_chain")?.status,
+    "PASS",
+  );
+});
+
+test("mcp_supabase_exposure_audit_in_build_chain WARN when netlify omits deploy preflight", () => {
+  const root = makeMiniRepo({
+    ...baseFixtureFiles(),
+    "netlify.toml": `[build]\n  command = "npm run build"\n`,
+  });
+  const report = buildBuckpartsSecurityGateReportV1({
+    rootDir: root,
+    deps: {
+      listTrackedFiles: () => [],
+      listRouteFiles: () => [],
+      runNpmAuditJson: () => ({ status: "unavailable", detail: "offline" }),
+    },
+  });
+  assert.equal(
+    report.checks.find((c) => c.check_id === "mcp_supabase_exposure_audit_in_build_chain")?.status,
+    "WARN",
+  );
+  assert.equal(
+    report.checks.find((c) => c.check_id === "netlify_build_enforce_chain")?.status,
+    "FAIL",
   );
 });
 

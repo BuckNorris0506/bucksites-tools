@@ -1,5 +1,5 @@
 [build]
-  command = "npm run buckparts:repo-runtime-convergence:check -- --enforce && npm run build"
+  command = "npm run buckparts:deploy:preflight && npm run build"
   ignore = "bash ./scripts/netlify-ignore-build.sh"
 
 [[plugins]]

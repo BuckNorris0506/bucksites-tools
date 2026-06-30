@@ -91,6 +91,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 - **Live Supabase apply lanes gated** (buyer-path flip mutations fail-closed without founder + trust + MUTATION):
   1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`); truth-ledger outcome recording in `scripts/lib/air-purifier-supabase-apply-parity-v1.ts` (`26d4b0a`)
   2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`); truth-ledger outcome recording in `scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.ts` (`26d4b0a`)
+- **MCP / Supabase extraction controls enforced in Netlify preflight** — `npm run buckparts:deploy:preflight` chains `buckparts:mcp-supabase-exposure:audit` (`--enforce`, exit 0/1) before `buckparts:repo-runtime-convergence:check -- --enforce`; `netlify.toml` runs preflight before `npm run build`. Static FAIL on MCP supabase-admin imports, public MCP listen surfaces, live Command Center fallback without escape hatch, and service-role writer inventory drift. **Anon catalog read surface remains WARN-only by design** (does not block deploy).
 
 **Scope boundary (PROVEN — `26d4b0a`):** No `data/**`, `data/retailer_links.csv`, public `/go` routes, or buyer-path gates changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation (from `e16b4a1`); owners must re-record approvals with an explicit `expires_at`. Truth-ledger slice adds code + tests only — no committed evidence or production JSONL seed file required for backward compat.
 
@@ -110,8 +111,7 @@ Apply requires all of:
 1. CI / Netlify execution validation for **`26d4b0a`** if not already published
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
 3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes
-4. MCP / Supabase extraction controls audit-only
-5. Inventory / gate broader lower-class service-role writers
+4. Inventory / gate broader lower-class service-role writers
 
 ```bash
 git rev-parse HEAD
@@ -121,6 +121,8 @@ BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/founder-decision-registry-v1.test.
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
 npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
+npm run buckparts:mcp-supabase-exposure:audit
+npm run buckparts:deploy:preflight
 npm run buckparts:repo-runtime-convergence:check -- --enforce
 ```
 

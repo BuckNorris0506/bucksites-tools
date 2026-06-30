@@ -84,6 +84,7 @@
     "buckparts:deploy-classifier:pre-push-summary": "tsx scripts/report-buckparts-deploy-classifier-v1.ts --push-ahead --summary-only",
     "buckparts:security-gate": "tsx scripts/report-buckparts-security-gate-v1.ts",
     "buckparts:mcp-supabase-exposure:audit": "tsx scripts/audit-buckparts-mcp-supabase-exposure-v1.ts --enforce",
+    "buckparts:deploy:preflight": "npm run buckparts:mcp-supabase-exposure:audit && npm run buckparts:repo-runtime-convergence:check -- --enforce",
     "buckparts:learning-outcomes-approved-insert:dry-run": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts",
     "buckparts:learning-outcomes-approved-insert:mutate": "tsx scripts/execute-learning-outcomes-approved-insert-v1.ts --mutate-approved-learning-outcome",
     "buckparts:daily": "tsx scripts/report-buckparts-daily-operator.ts",
