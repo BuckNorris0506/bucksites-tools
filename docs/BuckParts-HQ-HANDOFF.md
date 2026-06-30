@@ -51,7 +51,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Security hardening — deployed state (`e16b4a1`)
+## Security hardening — deployed state (`26d4b0a`)
 
 **Read this section first** when picking up security gate / trust / `/go` / guarded-apply / founder-binding work.
 
@@ -60,13 +60,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Final pushed/deployed HEAD | **`e16b4a1`** |
-| Netlify production | **Published** for `main@e16b4a1` (founder mutation approval expiry); prior Supabase apply gates at **`fb0b379`** (AP) and **`1fe3666`** (RPWFE/GE) |
+| Final pushed/deployed HEAD | **`26d4b0a`** |
+| Netlify production | **Published** for `main@26d4b0a` (truth-ledger mutation outcome recording); prior slices at **`e16b4a1`** (founder mutation approval expiry), **`fb0b379`** (AP Supabase apply gate), **`1fe3666`** (RPWFE/GE Supabase apply gate) |
 
 **Commit chain (security slice — newest first):**
 
 | SHA | Subject |
 |-----|---------|
+| **`26d4b0a`** | Record truth-ledger mutation outcomes |
 | **`e16b4a1`** | Require founder mutation approval `expires_at` (fail-closed) |
 | **`1fe3666`** | Gate RPWFE/GE live Supabase parity apply lane |
 | **`fb0b379`** | Gate AP live Supabase parity apply lane |
@@ -75,7 +76,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **`bc55610`** | Fix security hardening build blockers |
 | **`d66ce8e`** | Harden homeowner buy-path trust gates |
 
-**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`. **`e16b4a1` verdict:** `FOUNDER_APPROVAL_EXPIRY_RESOLVED`.
+**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`. **`e16b4a1` verdict:** `FOUNDER_APPROVAL_EXPIRY_RESOLVED`. **`26d4b0a` verdict:** `TRUTH_LEDGER_V1_MUTATION_OUTCOME_RESOLVED`.
 
 ### Resolved scope (PROVEN on deployed slice)
 
@@ -84,14 +85,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 - Trust currency: expired / degraded blocking
 - Founder approval artifact binding
 - **Founder mutation approval expiry** (`e16b4a1`, **published**) — `owner_mutation_approved` requires valid `expires_at`; missing / null / blank / unparseable / past `expires_at` fails closed; `expires_at` must be after `decided_at` (`founder-decision-registry-v1.ts` → `isFounderRegistryRowActiveMutationApproval` / `validateFounderDecisionRegistryRowV1`); AP and RPWFE Supabase apply gates inherit via `founderRegistryRowPassesMutationApprovalGateV1`
-- Truth-ledger hash binding (partial / apply-time)
+- **Truth-ledger v1 mutation outcome recording** (`26d4b0a`, **published**) — append-only JSONL at **`data/ops/truth-ledger-v1.jsonl`** (`TRUTH_LEDGER_V1_JSONL_REL_V1`); `appendTruthLedgerMutationEntryV1` / `recordTruthLedgerMutationOutcomeV1` require **`MUTATION`** IO capability (`READ_INDEX` append fails closed); hash binding at apply-time via `verifyFounderDecisionArtifactBindingsV1` / `buildGuardedApplyTruthLedgerBlockersV1`; **`source_snapshot_v1`** backward compatible when absent — when present, requires `source_url`, `retrieved_at`, and `evidence_sha256` matching the bound evidence artifact hash (broken chain → fail-closed blocker); **AP** and **RPWFE** Supabase parity apply lanes record **`applied`** and **`blocked`** outcomes on `apply` path (append failure forces `BLOCKED`)
 - READ_INDEX vs MUTATION capability enforcement
 - External signals read-only contract
 - **Live Supabase apply lanes gated** (buyer-path flip mutations fail-closed without founder + trust + MUTATION):
-  1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`)
-  2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`)
+  1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`); truth-ledger outcome recording in `scripts/lib/air-purifier-supabase-apply-parity-v1.ts` (`26d4b0a`)
+  2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`); truth-ledger outcome recording in `scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.ts` (`26d4b0a`)
 
-**Scope boundary (PROVEN — `e16b4a1`):** No `data/**`, `data/retailer_links.csv`, or public buyer-path routes changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation; owners must re-record approvals with an explicit `expires_at`.
+**Scope boundary (PROVEN — `26d4b0a`):** No `data/**`, `data/retailer_links.csv`, public `/go` routes, or buyer-path gates changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation (from `e16b4a1`); owners must re-record approvals with an explicit `expires_at`. Truth-ledger slice adds code + tests only — no committed evidence or production JSONL seed file required for backward compat.
 
 ### Live Supabase apply authority (PROVEN — both gated lanes)
 
@@ -106,13 +107,16 @@ Apply requires all of:
 
 ### Remaining blockers before broad production-data automation
 
-1. Truth-ledger source-snapshot chain-of-custody + append-only JSONL deferred
-2. MCP / Supabase extraction controls audit-only
-3. Inventory / gate broader lower-class service-role writers
+1. CI / Netlify execution validation for **`26d4b0a`** if not already published
+2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
+3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes
+4. MCP / Supabase extraction controls audit-only
+5. Inventory / gate broader lower-class service-role writers
 
 ```bash
 git rev-parse HEAD
-git log --oneline d66ce8e..e16b4a1
+git log --oneline d66ce8e..26d4b0a
+BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/truth-ledger-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/founder-decision-registry-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
