@@ -51,7 +51,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Security hardening — deployed state (`1fe3666`)
+## Security hardening — deployed state (`e16b4a1`)
 
 **Read this section first** when picking up security gate / trust / `/go` / guarded-apply / founder-binding work.
 
@@ -60,13 +60,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Final pushed/deployed HEAD | **`1fe3666`** |
-| Netlify production | **Published** for `main@496c6a4`; Supabase apply gates at **`fb0b379`** (AP) and **`1fe3666`** (RPWFE/GE) pushed — confirm CI/Netlify for `1fe3666` if not already published |
+| Final pushed/deployed HEAD | **`e16b4a1`** |
+| Netlify production | **Published** for `main@e16b4a1` (founder mutation approval expiry); prior Supabase apply gates at **`fb0b379`** (AP) and **`1fe3666`** (RPWFE/GE) |
 
 **Commit chain (security slice — newest first):**
 
 | SHA | Subject |
 |-----|---------|
+| **`e16b4a1`** | Require founder mutation approval `expires_at` (fail-closed) |
 | **`1fe3666`** | Gate RPWFE/GE live Supabase parity apply lane |
 | **`fb0b379`** | Gate AP live Supabase parity apply lane |
 | **`496c6a4`** | Fix security hardening test import |
@@ -74,7 +75,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **`bc55610`** | Fix security hardening build blockers |
 | **`d66ce8e`** | Harden homeowner buy-path trust gates |
 
-**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`.
+**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`. **`e16b4a1` verdict:** `FOUNDER_APPROVAL_EXPIRY_RESOLVED`.
 
 ### Resolved scope (PROVEN on deployed slice)
 
@@ -82,6 +83,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 - Decision precedence: DENY / UNKNOWN over ALLOW
 - Trust currency: expired / degraded blocking
 - Founder approval artifact binding
+- **Founder mutation approval expiry** (`e16b4a1`, **published**) — `owner_mutation_approved` requires valid `expires_at`; missing / null / blank / unparseable / past `expires_at` fails closed; `expires_at` must be after `decided_at` (`founder-decision-registry-v1.ts` → `isFounderRegistryRowActiveMutationApproval` / `validateFounderDecisionRegistryRowV1`); AP and RPWFE Supabase apply gates inherit via `founderRegistryRowPassesMutationApprovalGateV1`
 - Truth-ledger hash binding (partial / apply-time)
 - READ_INDEX vs MUTATION capability enforcement
 - External signals read-only contract
@@ -89,12 +91,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
   1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`)
   2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`)
 
+**Scope boundary (PROVEN — `e16b4a1`):** No `data/**`, `data/retailer_links.csv`, or public buyer-path routes changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation; owners must re-record approvals with an explicit `expires_at`.
+
 ### Live Supabase apply authority (PROVEN — both gated lanes)
 
 Apply requires all of:
 
 - **`MUTATION`** IO capability (not `READ_INDEX`)
-- Hash-bound **founder approval** matched to exact apply plan/path and slug identity
+- Hash-bound **founder approval** matched to exact apply plan/path and slug identity, with **valid non-expired `expires_at`** (inherited via `founderRegistryRowPassesMutationApprovalGateV1`)
 - Clean **trust-currency preflight** (`buildGuardedApplyTrustCurrencyPreflightV1`)
 - **Live deps fail-closed** — `updateApprovedLink` / `updateRowById` cannot execute when `mutation_authorized` is false
 
@@ -102,15 +106,14 @@ Apply requires all of:
 
 ### Remaining blockers before broad production-data automation
 
-1. CI/Netlify execution validation for **`1fe3666`** if not already published
-2. Founder approval **`expires_at`** optional
-3. Truth-ledger append / source chain deferred
-4. MCP / Supabase extraction controls audit-only
-5. Inventory / gate lower-class service-role writers
+1. Truth-ledger source-snapshot chain-of-custody + append-only JSONL deferred
+2. MCP / Supabase extraction controls audit-only
+3. Inventory / gate broader lower-class service-role writers
 
 ```bash
 git rev-parse HEAD
-git log --oneline d66ce8e..1fe3666
+git log --oneline d66ce8e..e16b4a1
+BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/founder-decision-registry-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
 npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
