@@ -4,6 +4,9 @@
 --
 -- Does NOT revoke anon/authenticated EXECUTE on upsert_search_gap (app uses anon server client).
 -- Does NOT change /go redirect or buyer-path gate behavior.
+--
+-- Live Supabase (confirmed): public.retailer_links retains status column; anon policy uses
+-- status = 'approved'. click_events/search_events table grants narrowed to INSERT only.
 
 -- ---------------------------------------------------------------------------
 -- 1) Enable RLS on fridge core catalog + telemetry tables
@@ -54,22 +57,33 @@ drop policy if exists "Public read reset_instructions" on public.reset_instructi
 create policy "Public read reset_instructions"
   on public.reset_instructions for select to anon using (true);
 
--- retailer_links holds live affiliate-ready rows only (candidates table is separate).
+-- Live DB: retailer_links.status exists; anon reads approved rows only (see 20260408120000).
 drop policy if exists "Public read retailer_links" on public.retailer_links;
 create policy "Public read retailer_links"
-  on public.retailer_links for select to anon using (true);
+  on public.retailer_links for select to anon using (status = 'approved');
 
 -- ---------------------------------------------------------------------------
--- 3) click_events: anon INSERT only (no public SELECT/UPDATE/DELETE)
+-- 3) click_events: anon INSERT only (no SELECT/UPDATE/DELETE/TRUNCATE)
 -- ---------------------------------------------------------------------------
+alter table public.click_events enable row level security;
+
+revoke all on table public.click_events from anon, authenticated;
+grant insert on table public.click_events to anon;
+
 drop policy if exists "Public read click_events" on public.click_events;
 drop policy if exists "Anon insert click_events" on public.click_events;
 create policy "Anon insert click_events"
   on public.click_events for insert to anon with check (true);
 
 -- ---------------------------------------------------------------------------
--- 4) search_events: tighten INSERT WITH CHECK (columns from 20260410170000)
+-- 4) search_events: INSERT-only grants + tightened INSERT policy (20260410170000)
 -- ---------------------------------------------------------------------------
+alter table public.search_events enable row level security;
+
+revoke all on table public.search_events from anon, authenticated;
+grant insert on table public.search_events to anon, authenticated;
+grant usage, select on sequence public.search_events_id_seq to anon, authenticated;
+
 drop policy if exists search_events_insert on public.search_events;
 create policy search_events_insert
   on public.search_events
@@ -201,18 +215,36 @@ grant execute on function public.upsert_search_gap(text, text, text, integer, te
 --   )
 -- order by 1;
 --
--- -- 2) Policies
+-- -- 2) Policies (retailer_links status-approved; click_events INSERT-only)
+-- select schemaname, tablename, policyname, roles, cmd, qual, with_check
+-- from pg_policies
+-- where schemaname = 'public'
+--   and tablename in ('retailer_links', 'click_events', 'search_events')
+-- order by tablename, policyname;
+-- -- Expect retailer_links: SELECT anon, qual (status = 'approved'::text)
+-- -- Expect click_events: INSERT anon only (no SELECT policies)
+-- -- Expect search_events: INSERT anon+authenticated with catalog/length with_check
+--
 -- select schemaname, tablename, policyname, roles, cmd, qual, with_check
 -- from pg_policies
 -- where schemaname = 'public'
 --   and tablename in (
 --     'brands','fridge_models','filters','fridge_model_aliases','filter_aliases',
---     'compatibility_mappings','help_pages','reset_instructions',
---     'retailer_links','click_events','search_events'
+--     'compatibility_mappings','help_pages','reset_instructions'
 --   )
 -- order by tablename, policyname;
 --
--- -- 3) Function search_path
+-- -- 3) Table grants (INSERT only on telemetry tables)
+-- select table_name, grantee, privilege_type
+-- from information_schema.table_privileges
+-- where table_schema = 'public'
+--   and table_name in ('click_events', 'search_events')
+--   and grantee in ('anon', 'authenticated')
+-- order by table_name, grantee, privilege_type;
+-- -- Expect click_events: anon INSERT only
+-- -- Expect search_events: anon+authenticated INSERT only (no SELECT/UPDATE/DELETE/TRUNCATE)
+--
+-- -- 4) Function search_path
 -- select p.proname,
 --        pg_get_function_identity_arguments(p.oid) as args,
 --        (
@@ -230,7 +262,7 @@ grant execute on function public.upsert_search_gap(text, text, text, integer, te
 --     'upsert_search_gap'
 --   );
 --
--- -- 4) upsert_search_gap grants
+-- -- 5) upsert_search_gap grants
 -- select grantee, privilege_type
 -- from information_schema.role_routine_grants
 -- where routine_schema = 'public'
