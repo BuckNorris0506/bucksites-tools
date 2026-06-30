@@ -81,3 +81,29 @@ test("P2 search_gaps writers are write_guarded with mutation_lane", () => {
   );
   assert.equal(guarded.get("scripts/search-gaps-classify.ts"), "search_gaps_classify_v1");
 });
+
+test("P1 staged search-gap pipeline writers are write_guarded with mutation_lane", () => {
+  const guarded = new Map(
+    SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter((e) => e.access_class === "write_guarded").map(
+      (e) => [e.rel_path, e.mutation_lane],
+    ),
+  );
+  assert.equal(guarded.get("scripts/search-gap-candidates-generate.ts"), "search_gap_candidates_generate_v1");
+  assert.equal(guarded.get("scripts/search-gap-candidates-apply.ts"), "search_gap_candidates_apply_v1");
+  assert.equal(
+    guarded.get("scripts/resolve-staged-compat-refrigerator.ts"),
+    "staged_compat_resolve_refrigerator_v1",
+  );
+  assert.equal(
+    guarded.get("scripts/reprocess-compat-after-models-refrigerator.ts"),
+    "staged_compat_reprocess_refrigerator_v1",
+  );
+  assert.equal(
+    guarded.get("scripts/apply-staged-compat-part-choice-refrigerator.ts"),
+    "staged_compat_part_choice_refrigerator_v1",
+  );
+  assert.equal(
+    guarded.get("scripts/apply-staged-filter-brand-refrigerator.ts"),
+    "staged_filter_brand_refrigerator_v1",
+  );
+});

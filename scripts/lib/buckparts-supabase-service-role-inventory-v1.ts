@@ -60,11 +60,13 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/apply-staged-compat-part-choice-refrigerator.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "staged_compat_part_choice_refrigerator_v1",
     },
     {
       rel_path: "scripts/apply-staged-filter-brand-refrigerator.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "staged_filter_brand_refrigerator_v1",
     },
     {
       rel_path: "scripts/hqii-candidate-queue-upsert.ts",
@@ -90,19 +92,23 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/reprocess-compat-after-models-refrigerator.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "staged_compat_reprocess_refrigerator_v1",
     },
     {
       rel_path: "scripts/resolve-staged-compat-refrigerator.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "staged_compat_resolve_refrigerator_v1",
     },
     {
       rel_path: "scripts/search-gap-candidates-apply.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gap_candidates_apply_v1",
     },
     {
       rel_path: "scripts/search-gap-candidates-generate.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gap_candidates_generate_v1",
     },
     {
       rel_path: "scripts/search-gaps-classify.ts",

@@ -5,7 +5,14 @@ import {
   isHomekeepWedgeCatalog,
 } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
+import {
+  assertSearchGapStagedSupabaseWriteAuthorizedV1,
+  buildSearchGapStagedMutationPreflightV1,
+  SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+
+const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
 
 type CandidateType =
   | "alias"
@@ -559,6 +566,16 @@ async function main() {
   console.log(
     `[search-gap-candidates-generate] candidates_attempted_insert=${proposals.length}`,
   );
+
+  if (!dryRun) {
+    assertSearchGapStagedSupabaseWriteAuthorizedV1(
+      buildSearchGapStagedMutationPreflightV1({
+        mode: "write",
+        operation: "candidate_generate",
+        catalog_scope: "multi_catalog",
+      }),
+    );
+  }
 
   let inserted = 0;
   if (!dryRun && proposals.length > 0) {

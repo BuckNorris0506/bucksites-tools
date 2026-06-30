@@ -1,5 +1,12 @@
 import { loadEnv } from "./lib/load-env";
+import {
+  assertSearchGapStagedSupabaseWriteAuthorizedV1,
+  buildSearchGapStagedMutationPreflightV1,
+  SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+
+const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
 
 type CandidateType =
   | "alias"
@@ -224,6 +231,16 @@ async function main() {
   const { data, error } = await query;
   if (error) throw error;
   const candidates = (data ?? []) as CandidateRow[];
+
+  if (!dryRun) {
+    assertSearchGapStagedSupabaseWriteAuthorizedV1(
+      buildSearchGapStagedMutationPreflightV1({
+        mode: "write",
+        operation: "candidate_apply_stage",
+        catalog_scope: "multi_catalog",
+      }),
+    );
+  }
 
   const results: Array<{
     candidate_id: number;

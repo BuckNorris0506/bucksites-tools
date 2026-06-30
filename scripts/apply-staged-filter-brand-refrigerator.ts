@@ -1,9 +1,15 @@
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
 import { needsBrandResolution } from "./lib/refrigerator-filter-brand-candidates";
+import {
+  assertSearchGapStagedSupabaseWriteAuthorizedV1,
+  buildSearchGapStagedMutationPreflightV1,
+  SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 
 const CATALOG = HOMEKEEP_WEDGE_CATALOG.refrigerator_water;
+const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
 
 function parseArgNumber(flag: string): number | null {
   const idx = process.argv.indexOf(flag);
@@ -159,6 +165,14 @@ async function main() {
     console.error("[apply-staged-filter-brand-refrigerator] nothing to update (already idempotent state).");
     return;
   }
+
+  assertSearchGapStagedSupabaseWriteAuthorizedV1(
+    buildSearchGapStagedMutationPreflightV1({
+      mode: "write",
+      operation: "staged_filter_brand_apply",
+      catalog_scope: CATALOG,
+    }),
+  );
 
   const { data: updated, error: upErr } = await supabase
     .from("staged_filter_part_additions")

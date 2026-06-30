@@ -1,6 +1,13 @@
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
+import {
+  assertSearchGapStagedSupabaseWriteAuthorizedV1,
+  buildSearchGapStagedMutationPreflightV1,
+  SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+
+const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
 
 function parseArgNumber(flag: string, fallback: number): number {
   const idx = process.argv.indexOf(flag);
@@ -145,6 +152,16 @@ async function main() {
     .limit(limit);
   if (error) throw error;
   const rows = (data ?? []) as StagedCompatRow[];
+
+  if (write) {
+    assertSearchGapStagedSupabaseWriteAuthorizedV1(
+      buildSearchGapStagedMutationPreflightV1({
+        mode: "write",
+        operation: "staged_compat_resolve",
+        catalog_scope: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+      }),
+    );
+  }
 
   let readyCount = 0;
   let reviewingCount = 0;

@@ -93,6 +93,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
   2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`); truth-ledger outcome recording in `scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.ts` (`26d4b0a`)
 - **MCP / Supabase extraction controls enforced in Netlify preflight** — `npm run buckparts:deploy:preflight` chains `buckparts:mcp-supabase-exposure:audit` (`--enforce`, exit 0/1) before `buckparts:repo-runtime-convergence:check -- --enforce`; `netlify.toml` runs preflight before `npm run build`. Static FAIL on MCP supabase-admin imports, public MCP listen surfaces, live Command Center fallback without escape hatch, and service-role writer inventory drift. **Anon catalog read surface remains WARN-only by design** (does not block deploy).
 - **P2 `search_gaps` service-role writers runtime-gated (Slice 1)** — `apply-search-gap-status-{refrigerator,air-purifier,whole-house-water}` and `search-gaps-classify` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding for ops-only `search_gaps` metadata.
+- **P1 staged search-gap pipeline writers runtime-gated (Slice 2)** — `search-gap-candidates-{generate,apply}`, `resolve-staged-compat-refrigerator`, `reprocess-compat-after-models-refrigerator`, `apply-staged-compat-part-choice-refrigerator`, and `apply-staged-filter-brand-refrigerator` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding — staged `search_gap_candidates` / `staged_*` tables only (live promotion remains `promote-staged-refrigerator`, not in this slice).
 
 **Scope boundary (PROVEN — `26d4b0a`):** No `data/**`, `data/retailer_links.csv`, public `/go` routes, or buyer-path gates changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation (from `e16b4a1`); owners must re-record approvals with an explicit `expires_at`. Truth-ledger slice adds code + tests only — no committed evidence or production JSONL seed file required for backward compat.
 
@@ -112,7 +113,7 @@ Apply requires all of:
 1. CI / Netlify execution validation for **`26d4b0a`** if not already published
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
 3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes
-4. Runtime-gate remaining **P1/P0** `write_unguarded` service-role lanes (`import-seed`, `vertical-seed`, `ingest-hqii-retailer-links`, `verify-oem --write-db`, staged/promote pipeline, etc.) — P2 `search_gaps` lanes gated in Slice 1
+4. Runtime-gate remaining **P0** `write_unguarded` service-role lanes (`import-seed`, `vertical-seed`, `ingest-hqii-retailer-links`, `verify-oem --write-db`, `promote-staged-refrigerator`, etc.) — P2 `search_gaps` lanes gated in Slice 1; P1 staged pipeline lanes gated in Slice 2 (**8** `write_unguarded` remain)
 
 ```bash
 git rev-parse HEAD

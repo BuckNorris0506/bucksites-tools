@@ -261,6 +261,11 @@ describe("security hardening v1", () => {
     assert.equal(drift.ok, true);
   });
 
+  test("staged search-gap pipeline P1 writers pass service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+  });
+
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);
