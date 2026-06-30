@@ -127,6 +127,7 @@ function writeAuthorizedRpwfeSupabaseFixtureRoot(): { root: string; cleanup: () 
           owner_note: "Approve RPWFE official GE Supabase parity apply.",
           allowed_next_scope: "owner_mutation_approved",
           evidence_required_before_mutation: true,
+          expires_at: "2027-06-01T00:00:00.000Z",
           prohibited_actions_still_apply: ["Do not apply other slugs."],
           bound_artifacts_v1,
           rpwfe_apply_context_v1: {

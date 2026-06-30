@@ -112,6 +112,9 @@ function fixtureRegistryRow(ownerScope: "read_only_agent" | "owner_mutation_appr
     owner_note: "Mutation authorization decision for lifecycle path.",
     allowed_next_scope: ownerScope,
     evidence_required_before_mutation: ownerScope === "owner_mutation_approved",
+    ...(ownerScope === "owner_mutation_approved"
+      ? { expires_at: "2027-06-01T00:00:00.000Z" }
+      : {}),
     prohibited_actions_still_apply: [
       "No Supabase writes in this review layer.",
       "No deploy in this review layer.",

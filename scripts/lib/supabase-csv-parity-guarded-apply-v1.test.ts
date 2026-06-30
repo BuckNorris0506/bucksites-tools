@@ -1,11 +1,17 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { describe, test } from "node:test";
 
 import type { FounderDecisionRegistryRowV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
+import { bindArtifactsAtHashesV1 } from "./truth-ledger-v1";
 import {
   extractSupabaseCsvParityApplyContextCorrelationV1,
   findActiveFounderDecisionForSupabaseCsvParitySlug,
   loadFounderDecisionRowsForSupabaseCsvParityV1,
+  runSupabaseCsvParityGuardedApplyV1,
   supabaseCsvParityFounderRowMatchesSlugAndApplyPlanV1,
   type SupabaseCsvParityFounderDecisionLoadedRowV1,
 } from "./supabase-csv-parity-guarded-apply-v1";
@@ -26,6 +32,7 @@ function approved4396508Row(
     allowed_next_scope: "owner_mutation_approved",
     evidence_required_before_mutation: true,
     prohibited_actions_still_apply: ["Do not batch apply other slugs."],
+    expires_at: "2027-06-01T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -43,17 +50,15 @@ function loadedRow(args: {
 }
 
 describe("supabase-csv-parity-guarded-apply founder activation", () => {
-  test("4396508 registry file is discovered, validates, and active approval matches slug", () => {
+  test("4396508 committed registry row without expires_at is not loaded (fail-closed)", () => {
     const loaded = loadFounderDecisionRowsForSupabaseCsvParityV1(process.cwd());
     const row439 = loaded.find((entry) =>
       entry.row.decision_id.includes("4396508"),
     );
-    assert.ok(row439, "fridge-safe-link-4396508-owner-approval-v1.json row must load");
-    assert.equal(row439.row.decision_status, "approved");
-    assert.equal(row439.row.allowed_next_scope, "owner_mutation_approved");
-    assert.deepEqual(row439.apply_context_target_slugs, ["4396508"]);
-    assert.ok(
-      row439.apply_context_apply_plan_rel_paths.includes(APPLY_PLAN_4396508.toLowerCase()),
+    assert.equal(
+      row439,
+      undefined,
+      "committed owner_mutation_approved rows without expires_at must not validate into loaded founder rows",
     );
 
     const active = findActiveFounderDecisionForSupabaseCsvParitySlug({
@@ -61,8 +66,9 @@ describe("supabase-csv-parity-guarded-apply founder activation", () => {
       applyPlanRel: APPLY_PLAN_4396508,
       founderRows: loaded,
       nowIso: "2026-06-28T20:00:00.000Z",
+      rootDir: process.cwd(),
     });
-    assert.equal(active?.decision_id, row439.row.decision_id);
+    assert.equal(active, null);
   });
 
   test("deferred decisions are rejected even with apply_context correlation", () => {
@@ -77,27 +83,41 @@ describe("supabase-csv-parity-guarded-apply founder activation", () => {
         }),
       ],
       nowIso: "2026-06-27T20:00:00.000Z",
+      rootDir: process.cwd(),
     });
     assert.equal(active, null);
   });
 
-  test("approved owner_mutation_approved decisions are accepted via apply_context", () => {
-    const active = findActiveFounderDecisionForSupabaseCsvParitySlug({
-      slug: "4396508",
-      applyPlanRel: APPLY_PLAN_4396508,
-      founderRows: [
-        loadedRow({
-          row: approved4396508Row({
-            decision_id: "decision-minimal",
-            owner_note: "Approved.",
+  test("approved owner_mutation_approved with bound artifacts accepted via apply_context", () => {
+    const root = mkdtempSync(path.join(tmpdir(), "supabase-founder-"));
+    try {
+      mkdirSync(path.dirname(path.join(root, APPLY_PLAN_4396508)), { recursive: true });
+      writeFileSync(path.join(root, APPLY_PLAN_4396508), '{"apply_plan":true}\n', "utf8");
+      const bound_artifacts_v1 = bindArtifactsAtHashesV1({
+        rootDir: root,
+        artifacts: [{ artifact_rel_path: APPLY_PLAN_4396508, entry_type: "apply_plan" }],
+      });
+      const active = findActiveFounderDecisionForSupabaseCsvParitySlug({
+        slug: "4396508",
+        applyPlanRel: APPLY_PLAN_4396508,
+        founderRows: [
+          loadedRow({
+            row: approved4396508Row({
+              decision_id: "decision-minimal",
+              owner_note: "Approved.",
+              bound_artifacts_v1,
+            }),
+            target_slugs: ["4396508"],
+            apply_plan_rel_paths: [APPLY_PLAN_4396508],
           }),
-          target_slugs: ["4396508"],
-          apply_plan_rel_paths: [APPLY_PLAN_4396508],
-        }),
-      ],
-      nowIso: "2026-06-27T20:00:00.000Z",
-    });
-    assert.equal(active?.decision_id, "decision-minimal");
+        ],
+        nowIso: "2026-06-27T20:00:00.000Z",
+        rootDir: root,
+      });
+      assert.equal(active?.decision_id, "decision-minimal");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   test("unrelated approved decisions cannot authorize another slug", () => {
@@ -117,6 +137,7 @@ describe("supabase-csv-parity-guarded-apply founder activation", () => {
       applyPlanRel: APPLY_PLAN_4396508,
       founderRows: [ukf8001Loaded],
       nowIso: "2026-06-27T20:00:00.000Z",
+      rootDir: process.cwd(),
     });
     assert.equal(active, null);
     assert.equal(
@@ -141,5 +162,31 @@ describe("supabase-csv-parity-guarded-apply founder activation", () => {
     assert.deepEqual(correlation.apply_context_apply_plan_rel_paths, [
       APPLY_PLAN_4396508.toLowerCase(),
     ]);
+  });
+});
+
+describe("supabase-csv-parity-guarded-apply committed evidence freshness", () => {
+  test("4396508 write mode fails closed when evidence exceeds 45-day window", async () => {
+    const report = await runSupabaseCsvParityGuardedApplyV1({
+      rootDir: process.cwd(),
+      slug: "4396508",
+      now: () => new Date("2026-06-28T15:10:03.187Z"),
+      writeCsv: true,
+    });
+    assert.ok(report.blockers.includes("committed_evidence_stale_beyond_max_age"));
+    assert.equal(report.write_csv_applied, false);
+    assert.equal(report.committed_evidence_freshness?.fresh, false);
+  });
+
+  test("ukf8001 write mode fails closed when evidence exceeds 45-day window", async () => {
+    const report = await runSupabaseCsvParityGuardedApplyV1({
+      rootDir: process.cwd(),
+      slug: "ukf8001",
+      now: () => new Date("2026-06-27T06:00:22.901Z"),
+      writeCsv: true,
+    });
+    assert.ok(report.blockers.includes("committed_evidence_stale_beyond_max_age"));
+    assert.equal(report.write_csv_applied, false);
+    assert.equal(report.committed_evidence_freshness?.fresh, false);
   });
 });

@@ -93,6 +93,7 @@ function writeAuthorizedApSupabaseFixtureRoot(args: {
           owner_note: "Approve AP Supabase parity apply.",
           allowed_next_scope: "owner_mutation_approved",
           evidence_required_before_mutation: true,
+          expires_at: "2027-06-01T00:00:00.000Z",
           prohibited_actions_still_apply: ["Do not apply other slugs."],
           bound_artifacts_v1,
           [`${args.slug}_apply_context_v1`]: {

@@ -101,9 +101,45 @@ test("approved + owner_mutation_approved is active for guarded apply when time b
     allowed_next_scope: "owner_mutation_approved",
     owner_note: "Approve single-slug guarded CSV apply.",
     evidence_required_before_mutation: true,
+    expires_at: "2027-06-01T00:00:00.000Z",
   });
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), true);
   assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-06-27T20:00:00.000Z"), true);
+});
+
+test("owner_mutation_approved without expires_at is inactive", () => {
+  const row = minimalValidRow({
+    decision_status: "approved",
+    allowed_next_scope: "owner_mutation_approved",
+    owner_note: "Approve single-slug guarded CSV apply.",
+    evidence_required_before_mutation: true,
+  });
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), false);
+  assert.equal(founderRegistryRowGrantsMutatingRepoAuthority(row, "2026-06-27T20:00:00.000Z"), false);
+});
+
+test("owner_mutation_approved with null expires_at is inactive", () => {
+  const row = minimalValidRow({
+    decision_status: "approved",
+    allowed_next_scope: "owner_mutation_approved",
+    owner_note: "Approve single-slug guarded CSV apply.",
+    evidence_required_before_mutation: true,
+    expires_at: null,
+  });
+  assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-06-27T20:00:00.000Z"), false);
+});
+
+test("validator rejects owner_mutation_approved without expires_at", () => {
+  const v = validateFounderDecisionRegistryRowV1(
+    minimalValidRow({
+      decision_status: "approved",
+      allowed_next_scope: "owner_mutation_approved",
+      owner_note: "Approve single-slug guarded CSV apply.",
+      evidence_required_before_mutation: true,
+    }),
+  );
+  assert.equal(v.ok, false);
+  if (!v.ok) assert.ok(v.errors.some((e) => e.includes("expires_at")));
 });
 
 test("owner_mutation_approved without bound_artifacts parses as active-but-unbound; mutation gate fails closed", () => {
@@ -112,6 +148,7 @@ test("owner_mutation_approved without bound_artifacts parses as active-but-unbou
     allowed_next_scope: "owner_mutation_approved",
     owner_note: "Approve single-slug guarded CSV apply.",
     evidence_required_before_mutation: true,
+    expires_at: "2027-06-01T00:00:00.000Z",
   });
   const parsed = validateFounderDecisionRegistryRowV1(row);
   assert.equal(parsed.ok, true);
@@ -124,6 +161,24 @@ test("owner_mutation_approved without bound_artifacts parses as active-but-unbou
   assert.equal(gate.ok, false);
   if (!gate.ok) {
     assert.ok(gate.blockers.includes("founder_approval_unbound_artifacts_v1"));
+  }
+});
+
+test("founderRegistryRowPassesMutationApprovalGateV1 fails closed without expires_at", () => {
+  const row = minimalValidRow({
+    decision_status: "approved",
+    allowed_next_scope: "owner_mutation_approved",
+    owner_note: "Approve single-slug guarded CSV apply.",
+    evidence_required_before_mutation: true,
+  });
+  const gate = founderRegistryRowPassesMutationApprovalGateV1({
+    row,
+    referenceTimeIso: "2026-06-27T20:00:00.000Z",
+    rootDir: process.cwd(),
+  });
+  assert.equal(gate.ok, false);
+  if (!gate.ok) {
+    assert.ok(gate.blockers.includes("founder_owner_mutation_approved_missing_or_inactive"));
   }
 });
 
@@ -145,6 +200,7 @@ test("past review_after is not active mutation approval", () => {
     allowed_next_scope: "owner_mutation_approved",
     owner_note: "Re-check PDP after partner reply.",
     evidence_required_before_mutation: true,
+    expires_at: "2027-06-01T00:00:00.000Z",
     review_after: "2026-05-10T00:00:00.000Z",
   });
   assert.equal(isFounderRegistryRowActiveMutationApproval(row, "2026-05-10T00:00:00.000Z"), false);
@@ -206,6 +262,7 @@ test("codex approve_readonly_findings rejects owner_mutation_approved scope", ()
     allowed_next_scope: "owner_mutation_approved",
     evidence_required_before_mutation: true,
     owner_note: "Narrow mutation window documented outside this Codex packet.",
+    expires_at: "2027-06-01T00:00:00.000Z",
   };
   const v = validateFounderDecisionRegistryRowV1(raw);
   assert.equal(v.ok, false);
@@ -256,6 +313,7 @@ test("batch approve_for_next_planning_only rejects owner_mutation_approved scope
     owner_note: "Bad scope.",
     allowed_next_scope: "owner_mutation_approved",
     evidence_required_before_mutation: true,
+    expires_at: "2027-06-01T00:00:00.000Z",
     prohibited_actions_still_apply: ["p"],
     batch_production_owner_review_context_v1: {
       review_packet_contract: "batch_owner_screenshot_draft_packet_v1",

@@ -6,12 +6,10 @@ import {
   extractFounderDecisionApplyContextCorrelationV1,
   findFounderOwnerApprovalForSlugV1,
   founderDecisionRowMatchesSlugIdentityV1,
-  loadFounderDecisionRowsWithSlugCorrelationV1,
   type FounderDecisionRowWithSlugCorrelationV1,
 } from "./founder-decision-slug-correlation-v1";
 import { manufacturerSafeLinkRescueApplyPlanRelV1 } from "./manufacturer-safe-link-rescue-apply-plan-factory-v1";
 
-const REPO_ROOT = process.cwd();
 const APPLY_PLAN_EDR3RXD1 = manufacturerSafeLinkRescueApplyPlanRelV1("edr3rxd1");
 const APPLY_PLAN_4396508 =
   "data/fridge/batch-production/drafts/fridge-safe-link-4396508-apply-plan-proposal-v1.json";
@@ -29,6 +27,7 @@ function approvedRow(
     allowed_next_scope: "owner_mutation_approved",
     evidence_required_before_mutation: true,
     prohibited_actions_still_apply: ["Do not batch apply other slugs."],
+    expires_at: "2027-06-01T00:00:00.000Z",
     ...overrides,
   };
 }
@@ -47,10 +46,19 @@ function loaded(args: {
 
 describe("founder-decision-slug-correlation-v1", () => {
   test("4396508 prohibited-actions mention of edr3rxd1 does not authorize edr3rxd1", () => {
-    const row439 = loadFounderDecisionRowsWithSlugCorrelationV1(REPO_ROOT).find((entry) =>
-      entry.row.decision_id.includes("4396508"),
-    );
-    assert.ok(row439, "4396508 founder row must load from repo");
+    const row439 = loaded({
+      row: approvedRow({
+        decision_id: "decision-2026-06-10-4396508-approve_csv_supabase_parity_apply",
+        source_queue_row_id: "queue-fridge-safe-link-4396508-csv-parity",
+        source_decision_packet_id: "fridge_safe_link_4396508_owner_classification_approval_packet_v1",
+        owner_note: "Approve 4396508 only.",
+        prohibited_actions_still_apply: [
+          "Do not batch apply edr3rxd1, gswf, or other First4 slugs without separate approval rows.",
+        ],
+      }),
+      target_slugs: ["4396508"],
+      apply_plan_rel_paths: [APPLY_PLAN_4396508],
+    });
 
     assert.equal(
       founderDecisionRowMatchesSlugIdentityV1({
@@ -70,10 +78,17 @@ describe("founder-decision-slug-correlation-v1", () => {
   });
 
   test("edr3rxd1 founder approval matches edr3rxd1 only", () => {
-    const rowEdr3 = loadFounderDecisionRowsWithSlugCorrelationV1(REPO_ROOT).find((entry) =>
-      entry.row.decision_id.includes("edr3rxd1"),
-    );
-    assert.ok(rowEdr3, "edr3rxd1 founder row must load from repo");
+    const rowEdr3 = loaded({
+      row: approvedRow({
+        decision_id: "decision-2026-06-28-edr3rxd1-approve_csv_manufacturer_rescue_apply",
+        source_queue_row_id: "queue-fridge-safe-link-edr3rxd1-manufacturer-rescue",
+        source_decision_packet_id: "fridge_safe_link_edr3rxd1_owner_classification_approval_packet_v1",
+        decided_at: "2026-06-28T18:00:00.000Z",
+        owner_note: "Approve edr3rxd1 only.",
+      }),
+      target_slugs: ["edr3rxd1"],
+      apply_plan_rel_paths: [APPLY_PLAN_EDR3RXD1],
+    });
     assert.deepEqual(rowEdr3.apply_context_target_slugs, ["edr3rxd1"]);
 
     const approval = findFounderOwnerApprovalForSlugV1({
@@ -86,10 +101,17 @@ describe("founder-decision-slug-correlation-v1", () => {
   });
 
   test("edr3rxd1 approval does not authorize ultrawf", () => {
-    const rowEdr3 = loadFounderDecisionRowsWithSlugCorrelationV1(REPO_ROOT).find((entry) =>
-      entry.row.decision_id.includes("edr3rxd1"),
-    );
-    assert.ok(rowEdr3);
+    const rowEdr3 = loaded({
+      row: approvedRow({
+        decision_id: "decision-2026-06-28-edr3rxd1-approve_csv_manufacturer_rescue_apply",
+        source_queue_row_id: "queue-fridge-safe-link-edr3rxd1-manufacturer-rescue",
+        source_decision_packet_id: "fridge_safe_link_edr3rxd1_owner_classification_approval_packet_v1",
+        decided_at: "2026-06-28T18:00:00.000Z",
+        owner_note: "Approve edr3rxd1 only.",
+      }),
+      target_slugs: ["edr3rxd1"],
+      apply_plan_rel_paths: [APPLY_PLAN_EDR3RXD1],
+    });
 
     assert.equal(
       founderDecisionRowMatchesSlugIdentityV1({

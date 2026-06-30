@@ -855,6 +855,18 @@ export function validateFounderDecisionRegistryRowV1(
     );
   }
 
+  if (allowed_next_scope === "owner_mutation_approved") {
+    if (expires_at == null || expires_at === undefined || expires_at.trim() === "") {
+      errors.push("owner_mutation_approved requires expires_at (non-null ISO 8601 instant)");
+    } else {
+      const decidedAtMs = Date.parse((o.decided_at as string).trim());
+      const expiresAtMs = Date.parse(expires_at);
+      if (!Number.isNaN(decidedAtMs) && !Number.isNaN(expiresAtMs) && expiresAtMs <= decidedAtMs) {
+        errors.push("owner_mutation_approved expires_at must be after decided_at");
+      }
+    }
+  }
+
   if (errors.length > 0) {
     return { ok: false, errors };
   }
@@ -948,10 +960,11 @@ export function isFounderRegistryRowActiveMutationApproval(
   }
   const now = Date.parse(referenceTimeIso);
   if (Number.isNaN(now)) return false;
-  if (r.expires_at != null && r.expires_at !== "") {
-    const exp = Date.parse(r.expires_at);
-    if (!Number.isNaN(exp) && now >= exp) return false;
+  if (r.expires_at == null || String(r.expires_at).trim() === "") {
+    return false;
   }
+  const exp = Date.parse(r.expires_at);
+  if (Number.isNaN(exp) || now >= exp) return false;
   if (r.review_after != null && r.review_after !== "") {
     const rev = Date.parse(r.review_after);
     if (!Number.isNaN(rev) && now >= rev) return false;

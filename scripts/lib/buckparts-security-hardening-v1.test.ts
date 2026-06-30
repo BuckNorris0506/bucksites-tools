@@ -45,6 +45,7 @@ function minimalMutationApprovalRow(
     allowed_next_scope: "owner_mutation_approved",
     evidence_required_before_mutation: true,
     prohibited_actions_still_apply: ["Do not mutate without evidence."],
+    expires_at: "2027-06-01T00:00:00.000Z",
     ...overrides,
   };
 }
