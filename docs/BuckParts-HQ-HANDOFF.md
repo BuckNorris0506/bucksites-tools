@@ -51,7 +51,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Security hardening — deployed state (`496c6a4`)
+## Security hardening — deployed state (`1fe3666`)
 
 **Read this section first** when picking up security gate / trust / `/go` / guarded-apply / founder-binding work.
 
@@ -60,19 +60,21 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Final pushed/deployed HEAD | **`496c6a4`** |
-| Netlify production | **Published** for `main@496c6a4` |
+| Final pushed/deployed HEAD | **`1fe3666`** |
+| Netlify production | **Published** for `main@496c6a4`; Supabase apply gates at **`fb0b379`** (AP) and **`1fe3666`** (RPWFE/GE) pushed — confirm CI/Netlify for `1fe3666` if not already published |
 
 **Commit chain (security slice — newest first):**
 
 | SHA | Subject |
 |-----|---------|
+| **`1fe3666`** | Gate RPWFE/GE live Supabase parity apply lane |
+| **`fb0b379`** | Gate AP live Supabase parity apply lane |
 | **`496c6a4`** | Fix security hardening test import |
 | **`76b1e19`** | Fix Netlify security hardening runtime convergence |
 | **`bc55610`** | Fix security hardening build blockers |
 | **`d66ce8e`** | Harden homeowner buy-path trust gates |
 
-**HyperAgent final re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`.
+**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`.
 
 ### Resolved scope (PROVEN on deployed slice)
 
@@ -83,18 +85,35 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 - Truth-ledger hash binding (partial / apply-time)
 - READ_INDEX vs MUTATION capability enforcement
 - External signals read-only contract
+- **Live Supabase apply lanes gated** (buyer-path flip mutations fail-closed without founder + trust + MUTATION):
+  1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`)
+  2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`)
 
-### Remaining blockers before any production-data lane
+### Live Supabase apply authority (PROVEN — both gated lanes)
 
-1. Live Supabase apply lane ungated
-2. Founder approval `expires_at` optional
+Apply requires all of:
+
+- **`MUTATION`** IO capability (not `READ_INDEX`)
+- Hash-bound **founder approval** matched to exact apply plan/path and slug identity
+- Clean **trust-currency preflight** (`buildGuardedApplyTrustCurrencyPreflightV1`)
+- **Live deps fail-closed** — `updateApprovedLink` / `updateRowById` cannot execute when `mutation_authorized` is false
+
+`dry_run` remains read-only and does not require founder approval.
+
+### Remaining blockers before broad production-data automation
+
+1. CI/Netlify execution validation for **`1fe3666`** if not already published
+2. Founder approval **`expires_at`** optional
 3. Truth-ledger append / source chain deferred
 4. MCP / Supabase extraction controls audit-only
+5. Inventory / gate lower-class service-role writers
 
 ```bash
 git rev-parse HEAD
-git log --oneline d66ce8e..496c6a4
+git log --oneline d66ce8e..1fe3666
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
+BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
+npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
 npm run buckparts:repo-runtime-convergence:check -- --enforce
 ```
 
