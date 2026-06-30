@@ -92,6 +92,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
   1. **Air-purifier** Supabase parity apply — `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` (`fb0b379`); truth-ledger outcome recording in `scripts/lib/air-purifier-supabase-apply-parity-v1.ts` (`26d4b0a`)
   2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`); truth-ledger outcome recording in `scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.ts` (`26d4b0a`)
 - **MCP / Supabase extraction controls enforced in Netlify preflight** — `npm run buckparts:deploy:preflight` chains `buckparts:mcp-supabase-exposure:audit` (`--enforce`, exit 0/1) before `buckparts:repo-runtime-convergence:check -- --enforce`; `netlify.toml` runs preflight before `npm run build`. Static FAIL on MCP supabase-admin imports, public MCP listen surfaces, live Command Center fallback without escape hatch, and service-role writer inventory drift. **Anon catalog read surface remains WARN-only by design** (does not block deploy).
+- **P2 `search_gaps` service-role writers runtime-gated (Slice 1)** — `apply-search-gap-status-{refrigerator,air-purifier,whole-house-water}` and `search-gaps-classify` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding for ops-only `search_gaps` metadata.
 
 **Scope boundary (PROVEN — `26d4b0a`):** No `data/**`, `data/retailer_links.csv`, public `/go` routes, or buyer-path gates changed. Committed `owner_mutation_approved` rows **without** `expires_at` no longer authorize mutation (from `e16b4a1`); owners must re-record approvals with an explicit `expires_at`. Truth-ledger slice adds code + tests only — no committed evidence or production JSONL seed file required for backward compat.
 
@@ -111,7 +112,7 @@ Apply requires all of:
 1. CI / Netlify execution validation for **`26d4b0a`** if not already published
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
 3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes
-4. Inventory / gate broader lower-class service-role writers
+4. Runtime-gate remaining **P1/P0** `write_unguarded` service-role lanes (`import-seed`, `vertical-seed`, `ingest-hqii-retailer-links`, `verify-oem --write-db`, staged/promote pipeline, etc.) — P2 `search_gaps` lanes gated in Slice 1
 
 ```bash
 git rev-parse HEAD
@@ -120,6 +121,7 @@ BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/truth-ledger-v1.test.ts' bash scri
 BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/founder-decision-registry-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
+BUCKPARTS_TEST_FILES='scripts/lib/search-gap-status-mutation-gate-v1.test.ts scripts/lib/buckparts-supabase-service-role-inventory-v1.test.ts' bash scripts/npm-test-v1.sh
 npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
 npm run buckparts:mcp-supabase-exposure:audit
 npm run buckparts:deploy:preflight

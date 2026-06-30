@@ -45,15 +45,18 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/apply-search-gap-status-air-purifier.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gap_status_air_purifier_v1",
     },
     {
       rel_path: "scripts/apply-search-gap-status-refrigerator.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gap_status_refrigerator_v1",
     },
     {
       rel_path: "scripts/apply-search-gap-status-whole-house-water.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gap_status_whole_house_water_v1",
     },
     {
       rel_path: "scripts/apply-staged-compat-part-choice-refrigerator.ts",
@@ -103,7 +106,8 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/search-gaps-classify.ts",
-      access_class: "write_unguarded",
+      access_class: "write_guarded",
+      mutation_lane: "search_gaps_classify_v1",
     },
     {
       rel_path: "scripts/verify-oem-retailer-links-playwright.ts",

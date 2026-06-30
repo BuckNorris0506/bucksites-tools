@@ -28,6 +28,7 @@ import {
   buildGuardedApplyTruthLedgerBlockersV1,
 } from "./truth-ledger-v1";
 import { enforceMcpSupabaseExposureAuditV1 } from "../audit-buckparts-mcp-supabase-exposure-v1";
+import { auditSupabaseServiceRoleInventoryDriftV1 } from "./buckparts-supabase-service-role-inventory-v1";
 import { buildGuardedCsvWriteModeBlockersV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import type { FounderDecisionRegistryRowV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
@@ -253,6 +254,11 @@ describe("security hardening v1", () => {
     assert.equal(report.enforce, true);
     assert.equal(report.status, "PASS");
     assert.equal(report.blockers.length, 0);
+  });
+
+  test("search_gaps P2 writers pass service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
   });
 
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {

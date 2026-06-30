@@ -8,11 +8,17 @@ import {
   type RefrigeratorGapClassification,
 } from "./lib/refrigerator-gap-classification";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import {
+  assertSearchGapSupabaseWriteAuthorizedV1,
+  buildSearchGapStatusMutationPreflightV1,
+  SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-status-mutation-gate-v1";
 import { HOMEKEEP_WEDGE_CATALOG, wedgeAllowsSearchGapCatalog, wedgeCatalogsForGapQuery } from "@/lib/catalog/identity";
 
 const PAGE = 2000;
 const WEDGE = HOMEKEEP_WEDGE_CATALOG.refrigerator_water;
 const ALLOWED_CATALOG_LIST = wedgeCatalogsForGapQuery(WEDGE);
+const mutationGateRef = SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1;
 
 type GapAction = "resolved" | "ignored";
 
@@ -90,6 +96,16 @@ async function main() {
   }
   if (!action) {
     throw new Error('Provide --action resolved | --action ignored');
+  }
+
+  if (write) {
+    assertSearchGapSupabaseWriteAuthorizedV1(
+      buildSearchGapStatusMutationPreflightV1({
+        mode: "write",
+        wedge: WEDGE,
+        operation: "status_update",
+      }),
+    );
   }
 
   const targetStatus: GapAction = action;

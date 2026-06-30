@@ -1,5 +1,12 @@
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+import {
+  assertSearchGapSupabaseWriteAuthorizedV1,
+  buildSearchGapStatusMutationPreflightV1,
+  SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1,
+} from "./lib/search-gap-status-mutation-gate-v1";
+
+const mutationGateRef = SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1;
 
 type SuggestedAction =
   | "add alias"
@@ -104,6 +111,16 @@ async function main() {
 
   const limit = parseArgNumber("--limit", 100);
   const write = process.argv.includes("--write");
+
+  if (write) {
+    assertSearchGapSupabaseWriteAuthorizedV1(
+      buildSearchGapStatusMutationPreflightV1({
+        mode: "write",
+        wedge: "all_wedges",
+        operation: "classify_likely_entity_type",
+      }),
+    );
+  }
 
   const { data, error } = await supabase
     .from("search_gaps")
