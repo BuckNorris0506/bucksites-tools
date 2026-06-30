@@ -6,7 +6,6 @@ import { describe, it } from "node:test";
 
 import {
   appendTruthLedgerMutationEntryV1,
-  bindArtifactsAtHashesV1,
   buildGuardedApplyTruthLedgerBlockersV1,
   computeArtifactSha256FromTextV1,
   loadTruthLedgerAppendEntriesV1,
