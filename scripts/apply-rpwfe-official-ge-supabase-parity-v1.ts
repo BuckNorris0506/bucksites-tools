@@ -18,11 +18,14 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 async function main(): Promise<void> {
   loadEnv();
   const apply = process.argv.includes("--apply");
+  const mutationGateRef = { authorized: false };
 
   const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
     rootDir,
     apply,
-    deps: createRpwfeSupabaseParityLiveDepsV1(getSupabaseAdmin),
+    io_capability: apply ? "MUTATION" : "READ_INDEX",
+    mutationGateRef,
+    deps: createRpwfeSupabaseParityLiveDepsV1(getSupabaseAdmin, mutationGateRef),
   });
 
   process.stdout.write(`${JSON.stringify(run, null, 2)}\n`);

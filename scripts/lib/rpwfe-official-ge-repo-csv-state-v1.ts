@@ -33,6 +33,8 @@ export function isRpwfeRepoCsvOfficialGeDirectBuyableApplied(
     affiliate_url: url,
     browser_truth_classification: row.browser_truth_classification ?? null,
     browser_truth_buyable_subtype: null,
+    browser_truth_checked_at: row.browser_truth_checked_at ?? null,
+    browser_truth_notes: row.browser_truth_notes ?? null,
   };
   return (
     row.filter_slug?.trim().toLowerCase() === FILTER_SLUG &&

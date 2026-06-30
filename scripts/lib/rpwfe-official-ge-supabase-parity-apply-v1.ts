@@ -17,6 +17,12 @@ import {
   RPWFE_OFFICIAL_GE_TARGET_URL_V1,
 } from "./rpwfe-official-ge-browser-capture-v1";
 import { isRpwfeRepoCsvOfficialGeDirectBuyableApplied } from "./rpwfe-official-ge-repo-csv-state-v1";
+import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
+import {
+  buildRpwfeOfficialGeSupabaseParityMutationPreflightV1,
+  RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
+  rpwfeOfficialGeSupabaseParityMutationAuthorizedV1,
+} from "./rpwfe-official-ge-supabase-parity-mutation-gate-v1";
 import {
   buildRpwfeOfficialGeSupabaseParityPlanLaneFromInputsV1,
   type RpwfeOfficialGeSupabaseParityPlanLaneV1,
@@ -63,7 +69,12 @@ export type RpwfeOfficialGeSupabaseParityApplyRunV1 = {
   generated_at: string;
   mode: "apply" | "dry_run";
   data_mutation: boolean;
-  owner_supabase_apply_authorized: true;
+  owner_supabase_apply_authorized: boolean;
+  mutation_authorized: boolean;
+  mutation_preflight_blockers: string[];
+  founder_decision_id: string | null;
+  io_capability: BuckpartsIoCapabilityV1;
+  apply_artifact_rel: typeof RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1;
   target_table: typeof TARGET_TABLE;
   filter_slug: typeof FILTER_SLUG;
   apply_status: RpwfeSupabaseParityApplyStatusV1;
@@ -194,6 +205,7 @@ export function validateRpwfeSupabaseParityApplyPreconditionsV1(args: {
     affiliate_url: url,
     browser_truth_classification: PROPOSED_CLASSIFICATION,
     browser_truth_buyable_subtype: null,
+    browser_truth_checked_at: args.repoRow.browser_truth_checked_at?.trim() || null,
   });
   if (gate !== null) blockers.push(`projected_gate_failure:${gate}`);
   return blockers;
@@ -207,12 +219,36 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
   readTextFile?: (abs: string) => string;
   writeTextFile?: (abs: string, content: string) => void;
   now?: () => Date;
+  io_capability?: BuckpartsIoCapabilityV1;
+  mutationGateRef?: { authorized: boolean };
 }): Promise<RpwfeOfficialGeSupabaseParityApplyRunV1> {
   const fileExists = args.fileExists ?? existsSync;
   const readTextFile = args.readTextFile ?? ((p: string) => readFileSync(p, "utf8"));
   const writeTextFile = args.writeTextFile ?? ((p: string, c: string) => writeFileSync(p, c, "utf8"));
   const generatedAt = (args.now ?? (() => new Date()))().toISOString();
+  const io_capability = args.io_capability ?? "READ_INDEX";
   const blockers: string[] = [];
+
+  const mutationPreflight = args.apply
+    ? buildRpwfeOfficialGeSupabaseParityMutationPreflightV1({
+        rootDir: args.rootDir,
+        mode: "apply",
+        planRel: RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
+        plan: { filter_slug: FILTER_SLUG },
+        io_capability,
+        now: args.now,
+        readText: readTextFile,
+      })
+    : null;
+  const mutation_authorized = args.apply
+    ? rpwfeOfficialGeSupabaseParityMutationAuthorizedV1(mutationPreflight!)
+    : false;
+  if (mutationPreflight && mutationPreflight.blockers.length > 0) {
+    blockers.push(...mutationPreflight.blockers);
+  }
+  if (args.mutationGateRef) {
+    args.mutationGateRef.authorized = mutation_authorized;
+  }
 
   const rows = loadFridgeRetailerLinksCsvRowsV1({
     rootDir: args.rootDir,
@@ -246,7 +282,7 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
           applyStatus = "ALREADY_APPLIED";
         } else if (blockers.length === 0) {
           applyStatus = args.apply ? "APPLIED" : "DRY_RUN_READY";
-          if (args.apply) {
+          if (args.apply && mutation_authorized) {
             await args.deps.updateRowById(beforeRow.id, projectedPatch);
             rowsUpdated = 1;
             const reloaded = await args.deps.fetchPrimaryOemRow(filterId);
@@ -290,7 +326,8 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
         affiliate_url: verifyRow.affiliate_url,
         browser_truth_classification: verifyRow.browser_truth_classification,
         browser_truth_buyable_subtype: null,
-      });
+        browser_truth_checked_at: verifyRow.browser_truth_checked_at,
+      }, { now: args.now?.() });
       postState = mapSignalsToRetailerLinkState({
         browserTruthClassification: verifyRow.browser_truth_classification,
         gateFailureKind: postGate,
@@ -300,6 +337,8 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
         affiliate_url: verifyRow.affiliate_url,
         browser_truth_classification: verifyRow.browser_truth_classification,
         browser_truth_buyable_subtype: null,
+        browser_truth_checked_at: verifyRow.browser_truth_checked_at,
+        browser_truth_notes: verifyRow.browser_truth_notes,
       });
     }
   }
@@ -309,7 +348,12 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
     generated_at: generatedAt,
     mode: args.apply ? "apply" : "dry_run",
     data_mutation: args.apply && rowsUpdated > 0,
-    owner_supabase_apply_authorized: true,
+    owner_supabase_apply_authorized: mutation_authorized,
+    mutation_authorized,
+    mutation_preflight_blockers: mutationPreflight?.blockers ?? [],
+    founder_decision_id: mutationPreflight?.founder_decision_id ?? null,
+    io_capability,
+    apply_artifact_rel: RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
     target_table: TARGET_TABLE,
     filter_slug: FILTER_SLUG,
     apply_status: blockers.length > 0 ? "BLOCKED" : applyStatus,
@@ -347,6 +391,7 @@ export async function executeRpwfeOfficialGeSupabaseParityApplyV1(args: {
 
 export function createRpwfeSupabaseParityLiveDepsV1(
   getSupabaseAdmin: () => import("@supabase/supabase-js").SupabaseClient,
+  mutationGateRef?: { authorized: boolean },
 ): RpwfeSupabaseParityApplyDepsV1 {
   const SELECT_COLS =
     "id, filter_id, retailer_name, affiliate_url, destination_url, retailer_key, retailer_slug, is_primary, browser_truth_classification, browser_truth_notes, browser_truth_checked_at";
@@ -374,6 +419,9 @@ export function createRpwfeSupabaseParityLiveDepsV1(
       return (data ?? []) as RpwfeSupabaseRetailerLinkRowV1[];
     },
     async updateRowById(id, patch) {
+      if (mutationGateRef && !mutationGateRef.authorized) {
+        throw new Error("RPWFE_OFFICIAL_GE_SUPABASE_PARITY_MUTATION_NOT_AUTHORIZED");
+      }
       const supabase = getSupabaseAdmin();
       const { error } = await supabase.from("retailer_links").update(patch).eq("id", id);
       if (error) throw error;

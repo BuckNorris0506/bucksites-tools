@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import { RPWFE_OFFICIAL_GE_TARGET_URL_V1 } from "./rpwfe-official-ge-browser-capture-v1";
@@ -10,8 +13,13 @@ import {
   validateRpwfeSupabaseParityApplyPreconditionsV1,
   type RpwfeSupabaseRetailerLinkRowV1,
 } from "./rpwfe-official-ge-supabase-parity-apply-v1";
+import {
+  RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
+  RPWFE_OFFICIAL_GE_SUPABASE_PARITY_IO_READ_INDEX_SUPABASE_BLOCKER_V1,
+} from "./rpwfe-official-ge-supabase-parity-mutation-gate-v1";
 import type { SupabaseLinksBySlugResultV1 } from "./fridge-supabase-vs-csv-retailer-links-diff-v1";
 import type { RetailerLinkCsvRowV1 } from "./universal-batch-lifecycle-apply-execution-plan-v1";
+import { bindArtifactsAtHashesV1 } from "./truth-ledger-v1";
 
 const goodRepoRow: RetailerLinkCsvRowV1 = {
   filter_slug: "rpwfe",
@@ -38,6 +46,103 @@ const searchDbRow: RpwfeSupabaseRetailerLinkRowV1 = {
   browser_truth_notes: null,
   browser_truth_checked_at: null,
 };
+
+function csvText(): string {
+  return `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\nrpwfe,GE Appliance Parts,${RPWFE_OFFICIAL_GE_TARGET_URL_V1},true,0,oem-parts-catalog,direct_buyable,RPWFE official GE BuckParts Verified Link official_manufacturer_official_ge,2026-06-02T14:23:08.624Z\n`;
+}
+
+function writeTrustCurrencyClearFixture(root: string, referenceTime: Date): void {
+  const dir = path.join(root, "data/truth-integrity");
+  mkdirSync(dir, { recursive: true });
+  const nextReAudit = new Date(referenceTime.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+  writeFileSync(
+    path.join(dir, "truth-integrity-registry-v1.json"),
+    `${JSON.stringify(
+      {
+        contract: "truth_integrity_registry_v1",
+        read_only: true,
+        data_mutation: false,
+        mutation_authorized: false,
+        findings: [
+          {
+            finding_id: "fixture-truth-integrity",
+            finding_code: "FIXTURE",
+            title: "Fixture finding",
+            status: "OPEN",
+            severity: "high",
+            truth_surface: "buy_path",
+            summary: "fixture",
+            proven_gap: "fixture",
+            false_safety_risk: "fixture",
+            smallest_safe_fix: "fixture",
+            re_audit: {
+              next_re_audit_after: nextReAudit,
+              last_re_audit_at: referenceTime.toISOString(),
+              cadence_days: 30,
+              re_audit_owner: "test",
+            },
+            validation_commands: { prove_gap: ["npm test"] },
+          },
+        ],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+}
+
+function writeAuthorizedRpwfeSupabaseFixtureRoot(): { root: string; cleanup: () => void } {
+  const root = mkdtempSync(path.join(tmpdir(), "rpwfe-supabase-parity-"));
+  const referenceTime = new Date("2026-06-10T12:00:00.000Z");
+  writeTrustCurrencyClearFixture(root, referenceTime);
+  mkdirSync(path.dirname(path.join(root, RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1)), {
+    recursive: true,
+  });
+  writeFileSync(
+    path.join(root, RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1),
+    '{"csv_apply":true}\n',
+    "utf8",
+  );
+  const bound_artifacts_v1 = bindArtifactsAtHashesV1({
+    rootDir: root,
+    artifacts: [
+      {
+        artifact_rel_path: RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
+        entry_type: "apply_plan",
+      },
+    ],
+  });
+  mkdirSync(path.join(root, "data/owner-decisions"), { recursive: true });
+  writeFileSync(
+    path.join(root, "data/owner-decisions/rpwfe-supabase-parity-fixture-v1.json"),
+    `${JSON.stringify({
+      contract: "founder_decision_registry_v1",
+      rows: [
+        {
+          decision_id: "decision-rpwfe-supabase-fixture",
+          source_queue_row_id: "queue-rpwfe-fixture",
+          source_decision_packet_id: "packet-rpwfe-fixture",
+          decided_at: "2026-06-10T12:00:00.000Z",
+          decision_status: "approved",
+          owner_note: "Approve RPWFE official GE Supabase parity apply.",
+          allowed_next_scope: "owner_mutation_approved",
+          evidence_required_before_mutation: true,
+          prohibited_actions_still_apply: ["Do not apply other slugs."],
+          bound_artifacts_v1,
+          rpwfe_apply_context_v1: {
+            target_slug: "rpwfe",
+            apply_plan_rel_path: RPWFE_OFFICIAL_GE_SUPABASE_PARITY_APPLY_ARTIFACT_REL_V1,
+          },
+        },
+      ],
+    })}\n`,
+    "utf8",
+  );
+  return {
+    root,
+    cleanup: () => rmSync(root, { recursive: true, force: true }),
+  };
+}
 
 function appliedDbRow(): RpwfeSupabaseRetailerLinkRowV1 {
   const patch = buildRpwfeSupabaseUpdatePatchFromRepoCsvRowV1(goodRepoRow);
@@ -98,8 +203,7 @@ test("dry-run ready when supabase row drifts from repo csv", async () => {
     rootDir: "/tmp",
     apply: false,
     fileExists: (p) => p.includes("retailer_links"),
-    readTextFile: () =>
-      `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\n${Object.values(goodRepoRow).join(",")}\n`,
+    readTextFile: () => csvText(),
     deps: {
       resolveFilterIdBySlug: async () => "filter-rpwfe",
       fetchPrimaryOemRow: async () => [searchDbRow],
@@ -113,70 +217,152 @@ test("dry-run ready when supabase row drifts from repo csv", async () => {
   assert.equal(run.apply_status, "DRY_RUN_READY");
   assert.equal(updated, false);
   assert.equal(run.rows_updated, 0);
+  assert.equal(run.mutation_authorized, false);
 });
 
-test("apply updates exactly one row and proves parity", async () => {
+test("apply without founder approval is BLOCKED and does not update Supabase", async () => {
   let updateCount = 0;
-  let current = searchDbRow;
   const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
     rootDir: "/tmp",
     apply: true,
+    io_capability: "MUTATION",
     fileExists: (p) => p.includes("retailer_links"),
-    readTextFile: () =>
-      `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\nrpwfe,GE Appliance Parts,${RPWFE_OFFICIAL_GE_TARGET_URL_V1},true,0,oem-parts-catalog,direct_buyable,RPWFE official GE BuckParts Verified Link official_manufacturer_official_ge,2026-06-02T14:23:08.624Z\n`,
+    readTextFile: () => csvText(),
     writeTextFile: () => {},
     deps: {
       resolveFilterIdBySlug: async () => "filter-rpwfe",
-      fetchPrimaryOemRow: async () => [current],
-      updateRowById: async (_id, patch) => {
-        updateCount += 1;
-        current = {
-          ...current,
-          retailer_name: String(patch.retailer_name),
-          affiliate_url: String(patch.affiliate_url),
-          destination_url: String(patch.destination_url),
-          browser_truth_classification: String(patch.browser_truth_classification),
-          browser_truth_notes: String(patch.browser_truth_notes),
-          browser_truth_checked_at: String(patch.browser_truth_checked_at),
-        };
-      },
-      loadSupabaseSnapshot: async () => {
-        if (dbRowMatchesRepoCsvForParityV1(current, goodRepoRow)) return supabaseMatches;
-        return {
-          status: "CHECKED",
-          slug_to_filter_id: new Map([["rpwfe", "filter-rpwfe"]]),
-          links_by_slug: new Map([["rpwfe", [current]]]),
-        } as unknown as SupabaseLinksBySlugResultV1;
-      },
-    },
-  });
-
-  assert.equal(run.apply_status, "APPLIED");
-  assert.equal(updateCount, 1);
-  assert.equal(run.post_apply_parity_status, "SUPABASE_MATCHES_REPO_CSV");
-  assert.equal(run.post_apply_is_direct_buyable_safe_cta, true);
-});
-
-test("already applied is noop", async () => {
-  const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
-    rootDir: "/tmp",
-    apply: true,
-    fileExists: (p) => p.includes("retailer_links"),
-    readTextFile: () =>
-      `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\nrpwfe,GE Appliance Parts,${RPWFE_OFFICIAL_GE_TARGET_URL_V1},true,0,oem-parts-catalog,direct_buyable,notes,2026-06-02T14:23:08.624Z\n`,
-    writeTextFile: () => {},
-    deps: {
-      resolveFilterIdBySlug: async () => "filter-rpwfe",
-      fetchPrimaryOemRow: async () => [appliedDbRow()],
+      fetchPrimaryOemRow: async () => [searchDbRow],
       updateRowById: async () => {
-        throw new Error("should not update");
+        updateCount += 1;
       },
       loadSupabaseSnapshot: async () => supabaseMatches,
     },
   });
 
-  assert.equal(run.apply_status, "ALREADY_APPLIED");
-  assert.equal(run.rows_updated, 0);
+  assert.equal(run.apply_status, "BLOCKED");
+  assert.equal(updateCount, 0);
+  assert.equal(run.mutation_authorized, false);
+  assert.ok(
+    run.blockers.includes("founder_owner_mutation_approved_missing_or_inactive"),
+  );
+});
+
+test("READ_INDEX + apply blocks with io_capability_read_index_cannot_mutate_supabase", async () => {
+  let updateCount = 0;
+  const { root, cleanup } = writeAuthorizedRpwfeSupabaseFixtureRoot();
+  try {
+    const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
+      rootDir: root,
+      apply: true,
+      io_capability: "READ_INDEX",
+      fileExists: (p) => p.includes("retailer_links"),
+      readTextFile: (p) => {
+        if (p.includes("retailer_links")) return csvText();
+        return readFileSync(p, "utf8");
+      },
+      writeTextFile: () => {},
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+      deps: {
+        resolveFilterIdBySlug: async () => "filter-rpwfe",
+        fetchPrimaryOemRow: async () => [searchDbRow],
+        updateRowById: async () => {
+          updateCount += 1;
+        },
+        loadSupabaseSnapshot: async () => supabaseMatches,
+      },
+    });
+
+    assert.equal(run.apply_status, "BLOCKED");
+    assert.equal(updateCount, 0);
+    assert.ok(
+      run.blockers.includes(RPWFE_OFFICIAL_GE_SUPABASE_PARITY_IO_READ_INDEX_SUPABASE_BLOCKER_V1),
+    );
+  } finally {
+    cleanup();
+  }
+});
+
+test("apply with authorized founder decision updates matched row", async () => {
+  let updateCount = 0;
+  let current = searchDbRow;
+  const { root, cleanup } = writeAuthorizedRpwfeSupabaseFixtureRoot();
+  try {
+    const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
+      rootDir: root,
+      apply: true,
+      io_capability: "MUTATION",
+      fileExists: (p) => p.includes("retailer_links"),
+      readTextFile: (p) => {
+        if (p.includes("retailer_links")) return csvText();
+        return readFileSync(p, "utf8");
+      },
+      writeTextFile: () => {},
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+      deps: {
+        resolveFilterIdBySlug: async () => "filter-rpwfe",
+        fetchPrimaryOemRow: async () => [current],
+        updateRowById: async (_id, patch) => {
+          updateCount += 1;
+          current = {
+            ...current,
+            retailer_name: String(patch.retailer_name),
+            affiliate_url: String(patch.affiliate_url),
+            destination_url: String(patch.destination_url),
+            browser_truth_classification: String(patch.browser_truth_classification),
+            browser_truth_notes: String(patch.browser_truth_notes),
+            browser_truth_checked_at: String(patch.browser_truth_checked_at),
+          };
+        },
+        loadSupabaseSnapshot: async () => {
+          if (dbRowMatchesRepoCsvForParityV1(current, goodRepoRow)) return supabaseMatches;
+          return {
+            status: "CHECKED",
+            slug_to_filter_id: new Map([["rpwfe", "filter-rpwfe"]]),
+            links_by_slug: new Map([["rpwfe", [current]]]),
+          } as unknown as SupabaseLinksBySlugResultV1;
+        },
+      },
+    });
+
+    assert.equal(run.apply_status, "APPLIED");
+    assert.equal(updateCount, 1);
+    assert.equal(run.mutation_authorized, true);
+    assert.equal(run.post_apply_parity_status, "SUPABASE_MATCHES_REPO_CSV");
+    assert.equal(run.post_apply_is_direct_buyable_safe_cta, true);
+  } finally {
+    cleanup();
+  }
+});
+
+test("already applied is noop", async () => {
+  const { root, cleanup } = writeAuthorizedRpwfeSupabaseFixtureRoot();
+  try {
+    const run = await executeRpwfeOfficialGeSupabaseParityApplyV1({
+      rootDir: root,
+      apply: true,
+      io_capability: "MUTATION",
+      fileExists: (p) => p.includes("retailer_links"),
+      readTextFile: (p) => {
+        if (p.includes("retailer_links")) return csvText();
+        return readFileSync(p, "utf8");
+      },
+      writeTextFile: () => {},
+      now: () => new Date("2026-06-10T12:00:00.000Z"),
+      deps: {
+        resolveFilterIdBySlug: async () => "filter-rpwfe",
+        fetchPrimaryOemRow: async () => [appliedDbRow()],
+        updateRowById: async () => {
+          throw new Error("should not update");
+        },
+        loadSupabaseSnapshot: async () => supabaseMatches,
+      },
+    });
+
+    assert.equal(run.apply_status, "ALREADY_APPLIED");
+    assert.equal(run.rows_updated, 0);
+  } finally {
+    cleanup();
+  }
 });
 
 test("blocks when more than one supabase row would match", async () => {
@@ -184,8 +370,7 @@ test("blocks when more than one supabase row would match", async () => {
     rootDir: "/tmp",
     apply: false,
     fileExists: (p) => p.includes("retailer_links"),
-    readTextFile: () =>
-      `filter_slug,retailer_name,affiliate_url,is_primary,sort_order,retailer_key,browser_truth_classification,browser_truth_notes,browser_truth_checked_at\nrpwfe,GE Appliance Parts,${RPWFE_OFFICIAL_GE_TARGET_URL_V1},true,0,oem-parts-catalog,direct_buyable,notes,2026-06-02T14:23:08.624Z\n`,
+    readTextFile: () => csvText(),
     deps: {
       resolveFilterIdBySlug: async () => "filter-rpwfe",
       fetchPrimaryOemRow: async () => [searchDbRow, { ...searchDbRow, id: "link-2" }],
