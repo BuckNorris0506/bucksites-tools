@@ -331,7 +331,7 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 - **`/go` redirect:** freshness fail-closed; decision precedence DENY/UNKNOWN over ALLOW (`d66ce8e` chain).
 - **AP Supabase parity apply:** `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` — requires `MUTATION`, trust currency, hash-bound founder approval with valid `expires_at`.
 - **RPWFE/GE Supabase parity apply:** `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` — same pattern.
-- **Truth ledger:** AP/RPWFE apply lanes record mutation outcomes to `data/ops/truth-ledger-v1.jsonl` on apply path (`26d4b0a`).
+- **Truth ledger:** AP/RPWFE apply lanes and promote-staged `--write` record mutation outcomes to `data/ops/truth-ledger-v1.jsonl` (`26d4b0a` + `promote-staged-refrigerator-run-v1.ts`).
 
 ### Service-role writer inventory (PROVEN — `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`)
 
@@ -344,7 +344,7 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 
 **Slice 2 (P1 staged pipeline):** capability-only — same MUTATION gate on staged `search_gap_candidates` / `staged_*` writers.
 
-**Slice 3 (P0 live promotion):** `scripts/promote-staged-refrigerator.ts` — MUTATION + trust + founder approval bound to `scripts/promote-staged-refrigerator.ts` (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
+**Slice 3 (P0 live promotion):** `scripts/promote-staged-refrigerator.ts` — MUTATION + trust + founder approval bound to `scripts/promote-staged-refrigerator.ts` (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`); writes execute in `scripts/lib/promote-staged-refrigerator-run-v1.ts`.
 
 **Remaining `write_unguarded` (7):** `ingest-hqii-retailer-links.ts`, `hqii-candidate-queue-upsert.ts`, `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts`.
 

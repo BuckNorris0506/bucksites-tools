@@ -76,10 +76,10 @@ Live mutation paths require **`BUCKPARTS_IO_CAPABILITY=MUTATION`**, hash-bound f
 
 ### Truth-ledger (PROVEN — partial coverage)
 
-- AP and RPWFE mutation outcomes append to **`data/ops/truth-ledger-v1.jsonl`** on apply path (`26d4b0a`).
-- Records **`applied`** and **`blocked`** outcomes; append requires MUTATION capability.
+- AP, RPWFE, and **promote-staged-refrigerator** mutation outcomes append to **`data/ops/truth-ledger-v1.jsonl`** on apply/write path (`26d4b0a` + promote run module).
+- Records **`applied`** and **`blocked`** outcomes; append requires MUTATION capability on write-intent paths.
 - **`source_snapshot_v1`** is backward compatible when absent; when present, requires `source_url`, `retrieved_at`, and `evidence_sha256` matching bound evidence hash.
-- **Remaining gap:** expand coverage to promote-staged, CSV/manufacturer apply lanes, and other guarded lanes (HQ handoff § Remaining blockers).
+- **Remaining gap:** CSV/manufacturer apply lanes and capability-only service-role guarded scripts (Slices 1–2).
 
 ### MCP / Supabase extraction controls (PROVEN)
 
@@ -111,7 +111,7 @@ Migration: `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1
 | `write_guarded` | **13** | Runtime gate before writes; inventory drift audit in deploy preflight |
 | `write_unguarded` | **7** | No runtime gate yet — see remaining work |
 
-**Slice 3 — promote-staged (P0 live promotion):** `scripts/promote-staged-refrigerator.ts` requires **MUTATION capability + trust preflight + active founder approval + valid expiry + plan-path binding** (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
+**Slice 3 — promote-staged (P0 live promotion):** `scripts/lib/promote-staged-refrigerator-run-v1.ts` (invoked by `scripts/promote-staged-refrigerator.ts`) requires **MUTATION capability + trust preflight + active founder approval + valid expiry + plan-path binding** (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
 
 **Remaining `write_unguarded` lanes (7):** `ingest-hqii-retailer-links.ts`, `hqii-candidate-queue-upsert.ts`, `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (HQ handoff).
 
@@ -194,7 +194,7 @@ HQ handoff second-wedge doctrine (PROVEN policy):
 Ordered from HQ handoff § Current stopping point and owner briefing:
 
 1. **Verify/publish Slice 3 deploy** — `2122959` promote-staged gate is PROVEN in-repo; Netlify publish status is **UNKNOWN** until confirmed.
-2. **Expand truth-ledger beyond AP/RPWFE** — include promote-staged, CSV/manufacturer apply lanes, and other guarded mutation paths.
+2. **Expand truth-ledger beyond AP/RPWFE/promote-staged** — CSV/manufacturer apply lanes and capability-only service-role guarded scripts (Slices 1–2).
 3. **Make `source_snapshot_v1` mandatory for buyer-path evidence** — currently backward compatible when absent; broken chain fails closed when present; mandatory binding is not yet enforced.
 4. **Gate retailer-link ingest pair:**
    - `scripts/ingest-hqii-retailer-links.ts`

@@ -114,5 +114,8 @@ test("P0 promote-staged-refrigerator writer is write_guarded with mutation_lane"
       (e) => [e.rel_path, e.mutation_lane],
     ),
   );
-  assert.equal(guarded.get("scripts/promote-staged-refrigerator.ts"), "promote_staged_refrigerator_v1");
+  assert.equal(
+    guarded.get("scripts/lib/promote-staged-refrigerator-run-v1.ts"),
+    "promote_staged_refrigerator_v1",
+  );
 });

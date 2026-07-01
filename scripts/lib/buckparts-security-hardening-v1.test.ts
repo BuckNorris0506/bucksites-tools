@@ -270,7 +270,7 @@ describe("security hardening v1", () => {
     const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
     assert.equal(drift.ok, true);
     const entry = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
-      (e) => e.rel_path === "scripts/promote-staged-refrigerator.ts",
+      (e) => e.rel_path === "scripts/lib/promote-staged-refrigerator-run-v1.ts",
     );
     assert.equal(entry?.access_class, "write_guarded");
     assert.equal(entry?.mutation_lane, "promote_staged_refrigerator_v1");

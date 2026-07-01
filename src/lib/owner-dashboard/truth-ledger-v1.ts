@@ -3,7 +3,7 @@
  *
  * Scope (v1): hash verify at mutation choke points; optional source_snapshot_v1
  * chain on evidence artifacts; append-only `data/ops/truth-ledger-v1.jsonl` for
- * mutation apply outcomes on high-risk Supabase parity lanes.
+ * mutation apply outcomes on high-risk Supabase parity and promote-staged lanes.
  */
 
 import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
@@ -43,15 +43,17 @@ export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
   deferred: false as const,
   jsonl_rel_path: TRUTH_LEDGER_V1_JSONL_REL_V1,
   reason:
-    "Append-only mutation apply outcome recording is proven for AP and RPWFE Supabase parity lanes.",
+    "Append-only mutation apply outcome recording is proven for AP, RPWFE Supabase parity, and promote-staged-refrigerator lanes.",
   proven_today: [
     "appendTruthLedgerMutationEntryV1 requires MUTATION io_capability",
     "loadTruthLedgerAppendEntriesV1 reads append-only JSONL history",
     "recordTruthLedgerMutationOutcomeV1 on AP and RPWFE apply paths",
+    "recordTruthLedgerMutationOutcomeV1 on promote-staged-refrigerator write path",
   ],
   remains_unknown_without_full_lane_coverage: [
     "universal-batch-lifecycle CSV executor append",
     "manufacturer-rescue apply append",
+    "search_gaps and staged pipeline capability-only service-role lanes",
     "detecting post-apply artifact edits without re-running apply",
   ],
 } as const;

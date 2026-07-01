@@ -83,9 +83,13 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     { rel_path: "scripts/lib/vertical-seed.ts", access_class: "write_unguarded" },
     {
-      rel_path: "scripts/promote-staged-refrigerator.ts",
+      rel_path: "scripts/lib/promote-staged-refrigerator-run-v1.ts",
       access_class: "write_guarded",
       mutation_lane: "promote_staged_refrigerator_v1",
+    },
+    {
+      rel_path: "scripts/promote-staged-refrigerator.ts",
+      access_class: "read_only",
     },
     {
       rel_path: "scripts/remove-demo-wedge-brands.ts",
