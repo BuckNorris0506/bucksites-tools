@@ -108,14 +108,16 @@ Migration: `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1
 
 | Class | Count | Pattern |
 |-------|------:|---------|
-| `write_guarded` | **15** | Runtime gate before writes; inventory drift audit in deploy preflight |
-| `write_unguarded` | **5** | No runtime gate yet — see remaining work |
+| `write_guarded` | **17** | Runtime gate before writes; inventory drift audit in deploy preflight |
+| `write_unguarded` | **3** | No runtime gate yet — see remaining work |
 
 **Slice 3 — promote-staged (P0 live promotion):** `scripts/lib/promote-staged-refrigerator-run-v1.ts` (invoked by `scripts/promote-staged-refrigerator.ts`) requires **MUTATION capability + trust preflight + active founder approval + valid expiry + plan-path binding** (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
 
-**Remaining `write_unguarded` lanes (5):** `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (HQ handoff).
+**Remaining `write_unguarded` lanes (3):** `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (HQ handoff).
 
 **Slice 4 resolved:** HQII retailer-link ingest pair — `ingest-hqii-retailer-links.ts` (default dry-run, `--write` gated) + `hqii-candidate-queue-upsert.ts` (`--write` gated); truth-ledger on write-intent.
+
+**Slice 5 resolved:** Seed import pair — `import-seed.ts` + `vertical-seed.ts` (default dry-run, `--write` gated); MUTATION + trust + founder + CSV pack artifact binding; truth-ledger on write-intent; `--prune-fridge-catalog --write` blocked (`prune_fridge_catalog_not_authorized_in_founder_schema_v1`).
 
 ### Strategic meaning
 
@@ -198,9 +200,7 @@ Ordered from HQ handoff § Current stopping point and owner briefing:
 1. **Verify/publish Slice 3 deploy** — `2122959` promote-staged gate is PROVEN in-repo; Netlify publish status is **UNKNOWN** until confirmed.
 2. **Expand truth-ledger beyond AP/RPWFE/promote-staged** — CSV/manufacturer apply lanes and capability-only service-role guarded scripts (Slices 1–2).
 3. **Make `source_snapshot_v1` mandatory for buyer-path evidence** — currently backward compatible when absent; broken chain fails closed when present; mandatory binding is not yet enforced.
-4. **Gate seed/import lanes:**
-   - `scripts/import-seed.ts`
-   - `scripts/lib/vertical-seed.ts`
+4. **Gate remaining unguarded lanes:** `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (seed import pair gated in Slice 5).
 5. **Future:** move `upsert_search_gap` to service-role-only telemetry — clears deferred SECURITY DEFINER WARN.
 6. **Future:** tighten `click_events` WITH CHECK — shape-constrain telemetry inserts; clears deferred WARN.
 

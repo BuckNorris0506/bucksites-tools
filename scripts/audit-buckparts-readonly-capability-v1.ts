@@ -31,6 +31,8 @@ const MUTATION_AUTHORIZATION_SOURCE_FILES = [
   "scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts",
   "scripts/lib/ingest-hqii-retailer-links-mutation-gate-v1.ts",
   "scripts/lib/hqii-candidate-queue-upsert-mutation-gate-v1.ts",
+  "scripts/lib/import-seed-mutation-gate-v1.ts",
+  "scripts/lib/vertical-seed-mutation-gate-v1.ts",
   "src/lib/owner-dashboard/owner-decision-queue-v1.ts",
 ];
 

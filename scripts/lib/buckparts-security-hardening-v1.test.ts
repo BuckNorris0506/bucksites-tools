@@ -304,6 +304,34 @@ describe("security hardening v1", () => {
     assert.equal(run?.mutation_lane, "hqii_candidate_queue_upsert_v1");
   });
 
+  test("import-seed writer passes service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const cli = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/import-seed.ts",
+    );
+    const run = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/import-seed-run-v1.ts",
+    );
+    assert.equal(cli?.access_class, "read_only");
+    assert.equal(run?.access_class, "write_guarded");
+    assert.equal(run?.mutation_lane, "import_seed_fridge_catalog_v1");
+  });
+
+  test("vertical-seed writer passes service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const lib = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/vertical-seed.ts",
+    );
+    const run = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/vertical-seed-run-v1.ts",
+    );
+    assert.equal(lib?.access_class, "read_only");
+    assert.equal(run?.access_class, "write_guarded");
+    assert.equal(run?.mutation_lane, "vertical_seed_catalog_v1");
+  });
+
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);

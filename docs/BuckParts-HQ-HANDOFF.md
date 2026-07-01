@@ -67,7 +67,7 @@ Prior foundation stack, owner browser proof refresh, AP correctness, and Custome
 | Repo HEAD (`origin/main`) | **`2122959`** — Gate staged refrigerator live promotion |
 | Last published Netlify deploy (RLS docs slice) | **`b13fb97`** — Document live Supabase RLS security fix |
 | Deploy status for `2122959` | **UNKNOWN** — re-run Netlify dashboard or `git log` on production before citing as live |
-| Service-role inventory | **15** `write_guarded` / **5** `write_unguarded` (`scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`) |
+| Service-role inventory | **17** `write_guarded` / **3** `write_unguarded` (`scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`) |
 | Supabase Security Advisor (live project `anmlqhrlmsnvxgneszbf`) | **ERROR count = 0** (RLS reconcile applied) |
 | Working tree | Re-run `git status --short` before citing |
 
@@ -100,12 +100,12 @@ Exports under `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) an
 
 | Theme (old audit) | Current repo status (HEAD `2122959`) |
 |-------------------|--------------------------------------|
-| Unguarded service-role writers | **Partially resolved** — **15** lanes `write_guarded` (Slices 1–4 + AP/RPWFE parity libs); **5** remain `write_unguarded` (listed below) |
+| Unguarded service-role writers | **Partially resolved** — **17** lanes `write_guarded` (Slices 1–5 + AP/RPWFE parity libs); **3** remain `write_unguarded` (listed below) |
 | MCP / Supabase extraction | **Resolved in repo** — `buckparts:mcp-supabase-exposure:audit --enforce` wired into `buckparts:deploy:preflight` |
 | Live Supabase apply / buyer-path mutation authority | **Resolved** for AP + RPWFE parity lanes — MUTATION + trust + founder + expiry |
 | Supabase RLS / Security Advisor errors | **Resolved live** — migration `20260610120000_security_advisor_rls_reconcile_v1.sql`; ERROR count **0** |
 | `/go` buyer-path trust | **Resolved** on deployed slice through `d66ce8e` → `26d4b0a` chain (freshness fail-closed, decision precedence) |
-| Broad production automation / seed importers | **Partially resolved** — HQII ingest pair gated (Slice 4); seed importers still `write_unguarded` |
+| Broad production automation / seed importers | **Resolved (Slice 5)** — `import-seed.ts` + `vertical-seed.ts` gated; writes in run libs; truth-ledger on `--write` |
 
 **Intentionally deferred residuals (not ERRORs):**
 
@@ -114,26 +114,25 @@ Exports under `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) an
 - Supabase **INFO:** RLS enabled with **no anon/authenticated policies** on private/service-role tables (`search_gaps`, `search_gap_candidates`, `staged_*`, `owner_report_artifacts`, `learning_outcomes`, etc.) — **accepted**; repo has no anon paths; ops/scripts use service role
 - Repo security gate **WARN** items (headers, rate limits, npm audit highs) — see `data/command-center/audits/buckparts-security-gate-v1.json`; separate from Supabase Advisor
 
-### Remaining `write_unguarded` service-role lanes (5)
+### Remaining `write_unguarded` service-role lanes (3)
 
 | Script | Suggested gate priority |
 |--------|-------------------------|
-| `scripts/import-seed.ts` | Later — bulk seed importers |
-| `scripts/lib/vertical-seed.ts` | Later — bulk seed importers |
 | `scripts/lib/learning-outcomes-writer.ts` | Later |
 | `scripts/remove-demo-wedge-brands.ts` | Later — one-off cleanup |
 | `scripts/verify-oem-retailer-links-playwright.ts` | Later — `--write-db` path |
 
 **Slice 4 resolved (PROVEN in-repo):** `scripts/ingest-hqii-retailer-links.ts` + `scripts/hqii-candidate-queue-upsert.ts` — MUTATION + trust + founder + input JSON artifact binding; writes in `scripts/lib/ingest-hqii-retailer-links-run-v1.ts` and `scripts/lib/hqii-candidate-queue-upsert-run-v1.ts`; truth-ledger on `--write`.
 
+**Slice 5 resolved (PROVEN in-repo):** `scripts/import-seed.ts` + `scripts/lib/vertical-seed.ts` (and vertical wrapper CLIs) — MUTATION + trust + founder + full CSV pack artifact binding; writes in `scripts/lib/import-seed-run-v1.ts` and `scripts/lib/vertical-seed-run-v1.ts`; truth-ledger on `--write`. Default dry-run; `--prune-fridge-catalog --write` blocked (`prune_fridge_catalog_not_authorized_in_founder_schema_v1`) until founder schema supports destructive prune authorization.
+
 Inventory source: `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`. Drift audit: `auditSupabaseServiceRoleInventoryDriftV1`.
 
 ### Next recommended work (ordered)
 
 1. **Deploy / CI check** — confirm Netlify published; re-run `npm run buckparts:deploy:preflight` on CI
-2. **Slice 5 — gate seed importers** — `import-seed.ts`, `vertical-seed.ts`
-3. **Future — service-role-only `upsert_search_gap` refactor** — removes anon/authenticated EXECUTE on `SECURITY DEFINER` RPC (clears deferred WARN)
-4. **Future — tighter `click_events` INSERT `WITH CHECK`** — shape-constrain telemetry inserts (clears deferred WARN)
+2. **Future — service-role-only `upsert_search_gap` refactor** — removes anon/authenticated EXECUTE on `SECURITY DEFINER` RPC (clears deferred WARN)
+3. **Future — tighter `click_events` INSERT `WITH CHECK`** — shape-constrain telemetry inserts (clears deferred WARN)
 
 ---
 
@@ -195,7 +194,7 @@ Apply requires all of:
 1. **Deploy / CI validation for `2122959`** — Slice 3 promote gate not proven live until Netlify publishes
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
 3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes or capability-only service-role guarded scripts (Slices 1–2)
-4. Runtime-gate remaining **`write_unguarded`** service-role lanes (**5**) — see **§ Current stopping point** for explicit list; **next:** seed importers
+4. Runtime-gate remaining **`write_unguarded`** service-role lanes (**3**) — see **§ Current stopping point** for explicit list
 
 ```bash
 git rev-parse HEAD

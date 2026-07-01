@@ -77,7 +77,17 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       access_class: "write_guarded",
       mutation_lane: "hqii_candidate_queue_upsert_v1",
     },
-    { rel_path: "scripts/import-seed.ts", access_class: "write_unguarded" },
+    { rel_path: "scripts/import-seed.ts", access_class: "read_only" },
+    {
+      rel_path: "scripts/lib/import-seed-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "import_seed_fridge_catalog_v1",
+    },
+    { rel_path: "scripts/import-air-purifier-seed.ts", access_class: "read_only" },
+    { rel_path: "scripts/import-vacuum-seed.ts", access_class: "read_only" },
+    { rel_path: "scripts/import-humidifier-seed.ts", access_class: "read_only" },
+    { rel_path: "scripts/import-appliance-air-seed.ts", access_class: "read_only" },
+    { rel_path: "scripts/import-whole-house-water-seed.ts", access_class: "read_only" },
     {
       rel_path: "scripts/ingest-hqii-retailer-links.ts",
       access_class: "read_only",
@@ -91,7 +101,12 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       rel_path: "scripts/lib/learning-outcomes-writer.ts",
       access_class: "write_unguarded",
     },
-    { rel_path: "scripts/lib/vertical-seed.ts", access_class: "write_unguarded" },
+    { rel_path: "scripts/lib/vertical-seed.ts", access_class: "read_only" },
+    {
+      rel_path: "scripts/lib/vertical-seed-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "vertical_seed_catalog_v1",
+    },
     {
       rel_path: "scripts/lib/promote-staged-refrigerator-run-v1.ts",
       access_class: "write_guarded",

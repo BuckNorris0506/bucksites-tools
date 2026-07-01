@@ -1,20 +1,40 @@
 /**
- * CSV → Supabase for humidifier vertical only. Same layout as air-purifier under data/humidifier/
+ * CSV → Supabase for humidifier vertical only.
+ * Default: dry-run. Mutation requires --write plus founder + trust + CSV binding + MUTATION.
  */
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
+import { getSupabaseAdmin } from "./lib/supabase-admin";
 import { log } from "./lib/log";
-import { runVerticalSeed } from "./lib/vertical-seed";
+import {
+  createVerticalSeedLiveDepsV1,
+  parseVerticalSeedCliArgsV1,
+  runVerticalSeedV1,
+} from "./lib/vertical-seed-run-v1";
 
 loadEnv();
 const cwd = process.cwd();
-const useSample = process.argv.includes("--sample");
+const { useSample, write } = parseVerticalSeedCliArgsV1(process.argv);
 
 async function main() {
-  log("import-humidifier", `Starting (sample=${useSample})`);
+  log("import-humidifier", `Starting (dry_run=${!write}, sample=${useSample})`);
   try {
-    await runVerticalSeed(HOMEKEEP_WEDGE_CATALOG.humidifier, cwd, useSample);
-    log("import-humidifier", "Done.");
+    const result = await runVerticalSeedV1({
+      rootDir: cwd,
+      verticalKey: HOMEKEEP_WEDGE_CATALOG.humidifier,
+      useSample,
+      write,
+      deps: createVerticalSeedLiveDepsV1(getSupabaseAdmin),
+    });
+    console.log(JSON.stringify(result.report, null, 2));
+    if (result.report.apply_status === "BLOCKED") {
+      console.error("[import-humidifier] BLOCKED");
+    } else if (!write) {
+      log("import-humidifier", "Dry-run complete.");
+    } else {
+      log("import-humidifier", "Done.");
+    }
+    process.exit(result.exit_code);
   } catch (e) {
     if (e instanceof Error) {
       console.error("[import-humidifier] FAILED:", e.message);
@@ -22,7 +42,7 @@ async function main() {
     } else {
       console.error("[import-humidifier] FAILED:", e);
     }
-    process.exitCode = 1;
+    process.exit(1);
   }
 }
 
