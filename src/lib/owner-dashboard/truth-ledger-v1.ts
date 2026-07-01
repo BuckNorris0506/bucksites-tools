@@ -43,7 +43,7 @@ export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
   deferred: false as const,
   jsonl_rel_path: TRUTH_LEDGER_V1_JSONL_REL_V1,
   reason:
-    "Append-only mutation apply outcome recording is proven for AP, RPWFE Supabase parity, promote-staged-refrigerator, HQII retailer-link ingest, and seed import lanes.",
+    "Append-only mutation apply outcome recording is proven for AP, RPWFE Supabase parity, promote-staged-refrigerator, HQII retailer-link ingest, seed import, learning-outcomes insert, remove-demo-wedge-brands, and verify-oem write-db lanes.",
   proven_today: [
     "appendTruthLedgerMutationEntryV1 requires MUTATION io_capability",
     "loadTruthLedgerAppendEntriesV1 reads append-only JSONL history",
@@ -53,6 +53,9 @@ export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
     "recordTruthLedgerMutationOutcomeV1 on hqii-candidate-queue-upsert write path",
     "recordTruthLedgerMutationOutcomeV1 on import-seed write path",
     "recordTruthLedgerMutationOutcomeV1 on vertical-seed write path",
+    "recordTruthLedgerMutationOutcomeV1 on learning-outcomes insert write path",
+    "recordTruthLedgerMutationOutcomeV1 on remove-demo-wedge-brands write path",
+    "recordTruthLedgerMutationOutcomeV1 on verify-oem-retailer-links write-db path",
   ],
   remains_unknown_without_full_lane_coverage: [
     "universal-batch-lifecycle CSV executor append",

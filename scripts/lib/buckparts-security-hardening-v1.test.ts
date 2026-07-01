@@ -332,6 +332,49 @@ describe("security hardening v1", () => {
     assert.equal(run?.mutation_lane, "vertical_seed_catalog_v1");
   });
 
+  test("slice 6 writers pass service-role inventory guarded audit with zero write_unguarded", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const unguarded = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter(
+      (e) => e.access_class === "write_unguarded",
+    );
+    assert.equal(unguarded.length, 0);
+    const guarded = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter(
+      (e) => e.access_class === "write_guarded",
+    );
+    assert.equal(guarded.length, 20);
+
+    const loWriter = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/learning-outcomes-writer.ts",
+    );
+    const loRun = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/learning-outcomes-insert-run-v1.ts",
+    );
+    assert.equal(loWriter?.access_class, "read_only");
+    assert.equal(loRun?.access_class, "write_guarded");
+    assert.equal(loRun?.mutation_lane, "learning_outcomes_insert_v1");
+
+    const removeCli = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/remove-demo-wedge-brands.ts",
+    );
+    const removeRun = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/remove-demo-wedge-brands-run-v1.ts",
+    );
+    assert.equal(removeCli?.access_class, "read_only");
+    assert.equal(removeRun?.access_class, "write_guarded");
+    assert.equal(removeRun?.mutation_lane, "remove_demo_wedge_brands_v1");
+
+    const oemCli = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/verify-oem-retailer-links-playwright.ts",
+    );
+    const oemRun = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/verify-oem-retailer-links-run-v1.ts",
+    );
+    assert.equal(oemCli?.access_class, "read_only");
+    assert.equal(oemRun?.access_class, "write_guarded");
+    assert.equal(oemRun?.mutation_lane, "verify_oem_retailer_links_write_db_v1");
+  });
+
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);

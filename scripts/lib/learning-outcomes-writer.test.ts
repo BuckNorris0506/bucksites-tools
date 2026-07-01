@@ -1,10 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import {
-  insertLearningOutcome,
-  validateLearningOutcomeInput,
-} from "./learning-outcomes-writer";
+import { performInsertLearningOutcomeV1 } from "./learning-outcomes-insert-run-v1";
+import { validateLearningOutcomeInput } from "./learning-outcomes-writer";
 
 function validInput() {
   return {
@@ -56,7 +54,7 @@ test("date defaults to now when missing", async () => {
     }),
   };
 
-  await insertLearningOutcome(validInput(), {
+  await performInsertLearningOutcomeV1(validInput(), {
     now: () => fixedNow,
     supabase: mockSupabase,
   });
@@ -80,7 +78,7 @@ test("insert function calls supabase with correct payload shape (mock client)", 
   };
 
   const input = validInput();
-  await insertLearningOutcome(input, { supabase: mockSupabase });
+  await performInsertLearningOutcomeV1(input, { supabase: mockSupabase });
 
   assert.equal(tableName, "learning_outcomes");
   assert.equal(inserted?.outcome, input.outcome);

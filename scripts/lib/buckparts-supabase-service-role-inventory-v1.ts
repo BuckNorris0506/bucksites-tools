@@ -99,7 +99,12 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/lib/learning-outcomes-writer.ts",
-      access_class: "write_unguarded",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/lib/learning-outcomes-insert-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "learning_outcomes_insert_v1",
     },
     { rel_path: "scripts/lib/vertical-seed.ts", access_class: "read_only" },
     {
@@ -118,7 +123,12 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/remove-demo-wedge-brands.ts",
-      access_class: "write_unguarded",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/lib/remove-demo-wedge-brands-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "remove_demo_wedge_brands_v1",
     },
     {
       rel_path: "scripts/reprocess-compat-after-models-refrigerator.ts",
@@ -147,7 +157,12 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/verify-oem-retailer-links-playwright.ts",
-      access_class: "write_unguarded",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/lib/verify-oem-retailer-links-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "verify_oem_retailer_links_write_db_v1",
     },
     {
       rel_path: "scripts/apply-air-purifier-supabase-parity-v1.ts",

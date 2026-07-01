@@ -1,6 +1,3 @@
-import { loadEnv } from "./load-env";
-import { getSupabaseAdmin } from "./supabase-admin";
-
 const OUTCOMES = new Set(["pass", "fail", "blocked", "unknown"]);
 const CONFIDENCE = new Set(["exact", "likely", "uncertain"]);
 const CTA_STATUS = new Set(["live", "not_live", "blocked"]);
@@ -18,15 +15,6 @@ export type LearningOutcomeInsertInput = {
   cta_status: "live" | "not_live" | "blocked";
   index_status: string | null;
   date_checked?: string;
-};
-
-type WriterDeps = {
-  now?: () => Date;
-  supabase?: {
-    from: (table: string) => {
-      insert: (payload: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
-    };
-  };
 };
 
 function isNullableString(value: unknown): value is string | null {
@@ -79,40 +67,5 @@ export function validateLearningOutcomeInput(
   }
   if (value.date_checked !== undefined && !isValidDateString(value.date_checked)) {
     throw new Error("date_checked must be a valid ISO date string when provided");
-  }
-}
-
-export async function insertLearningOutcome(
-  input: LearningOutcomeInsertInput,
-  deps: WriterDeps = {},
-): Promise<void> {
-  validateLearningOutcomeInput(input);
-
-  const now = deps.now ?? (() => new Date());
-  const supabase =
-    deps.supabase ??
-    (() => {
-      loadEnv();
-      return getSupabaseAdmin();
-    })();
-
-  const payload: Record<string, unknown> = {
-    slug: input.slug,
-    part_number: input.part_number,
-    model_number: input.model_number,
-    candidate_url: input.candidate_url,
-    outcome: input.outcome,
-    reason: input.reason,
-    reason_detail: input.reason_detail,
-    evidence: input.evidence,
-    confidence: input.confidence,
-    cta_status: input.cta_status,
-    index_status: input.index_status,
-    date_checked: input.date_checked ?? now().toISOString(),
-  };
-
-  const { error } = await supabase.from("learning_outcomes").insert(payload);
-  if (error) {
-    throw new Error(`failed to insert learning_outcomes: ${error.message}`);
   }
 }

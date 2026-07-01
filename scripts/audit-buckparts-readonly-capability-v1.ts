@@ -33,6 +33,9 @@ const MUTATION_AUTHORIZATION_SOURCE_FILES = [
   "scripts/lib/hqii-candidate-queue-upsert-mutation-gate-v1.ts",
   "scripts/lib/import-seed-mutation-gate-v1.ts",
   "scripts/lib/vertical-seed-mutation-gate-v1.ts",
+  "scripts/lib/learning-outcomes-mutation-gate-v1.ts",
+  "scripts/lib/remove-demo-wedge-brands-mutation-gate-v1.ts",
+  "scripts/lib/verify-oem-retailer-links-mutation-gate-v1.ts",
   "src/lib/owner-dashboard/owner-decision-queue-v1.ts",
 ];
 

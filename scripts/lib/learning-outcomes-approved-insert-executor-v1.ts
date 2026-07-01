@@ -7,6 +7,10 @@ import type {
 import { candidateMatchesApproval, createConfidenceApprovalLookup } from "./learning-outcomes-confidence-approvals-registry-v1";
 import { buildLearningOutcomesWriterReadyBatchReviewV1 } from "./learning-outcomes-insert-plan-v1";
 import type { LearningOutcomeInsertInput } from "./learning-outcomes-writer";
+import type { LearningOutcomesInsertApplyStatusV1 } from "./learning-outcomes-insert-run-v1";
+import { runLearningOutcomesGatedInsertV1 } from "./learning-outcomes-insert-run-v1";
+import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
+import type { FounderDecisionRowWithSlugCorrelationV1 } from "./founder-decision-slug-correlation-v1";
 
 const CONFIDENCE = new Set(["exact", "likely", "uncertain"]);
 const EXECUTOR_CAP = 1 as const;
@@ -40,6 +44,10 @@ export type LearningOutcomesApprovedInsertExecutorV1Report = {
    */
   owner_approval_required: boolean;
   data_mutation: boolean;
+  apply_status?: LearningOutcomesInsertApplyStatusV1;
+  mutation_authorized?: boolean;
+  mutation_preflight_blockers?: string[];
+  founder_decision_id?: string | null;
   proven_facts: string[];
   unknown_facts: string[];
 };
@@ -182,12 +190,15 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
   mode: LearningOutcomesApprovedInsertExecutorModeV1;
   evidenceImport: EvidenceToLearningOutcomesCandidateImportV1;
   approvalsLoaded: LearningOutcomesConfidenceApprovalsLoadedV1;
+  rootDir?: string;
+  io_capability?: BuckpartsIoCapabilityV1;
+  founderRows?: readonly FounderDecisionRowWithSlugCorrelationV1[];
   deps?: Partial<LearningOutcomesApprovedInsertExecutorDepsV1>;
 }): Promise<LearningOutcomesApprovedInsertExecutorV1Report> {
   const unknown_facts: string[] = [];
   const proven_facts: string[] = [
     "learning_outcomes_approved_insert_executor_v1 selects at most one row from writer-ready batch review that also matches a valid entry in data/ops/learning-outcomes-confidence-approvals.json (candidateMatchesApproval on source_file + slug or token).",
-    "Inserts use insertLearningOutcome from scripts/lib/learning-outcomes-writer.ts only — no raw SQL in this executor.",
+    "Inserts use performInsertLearningOutcomeV1 from scripts/lib/learning-outcomes-insert-run-v1.ts (gated) — no raw SQL in this executor.",
     "Default mode is DRY_RUN (no insertLearningOutcome call). Mutation requires mode MUTATE_APPROVED (CLI: --mutate-approved-learning-outcome).",
     "Multipack conversion-batch evidence paths and evidence_jsonb_stub.multipack rows are excluded from selection.",
     "Selection enforces outcome pass, cta live, and https candidate_url in addition to writer-ready classification — not shelf fit, revenue, buy readiness, or public publish approval.",
@@ -218,13 +229,6 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
   let inserted_count = 0;
   let post_insert_read_model: LearningOutcomesReadModelV1 | undefined;
 
-  const insertFn =
-    args.deps?.insertLearningOutcome ??
-    (async (input: LearningOutcomeInsertInput) => {
-      const { insertLearningOutcome } = await import("./learning-outcomes-writer");
-      await insertLearningOutcome(input);
-    });
-
   const readFn =
     args.deps?.fetchReadModel ??
     (async () => {
@@ -232,15 +236,33 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
       return fetchLearningOutcomesReadModelV1FromSupabase();
     });
 
+  let apply_status: LearningOutcomesInsertApplyStatusV1 | undefined;
+  let mutation_authorized: boolean | undefined;
+  let mutation_preflight_blockers: string[] | undefined;
+  let founder_decision_id: string | null | undefined;
+
   if (args.mode === "MUTATE_APPROVED") {
-    if (chosen.length > 0) {
-      try {
-        await insertFn(chosen[0].payload);
-        inserted_count = 1;
-      } catch (e) {
-        unknown_facts.push(`insertLearningOutcome failed: ${e instanceof Error ? e.message : String(e)}`);
-        inserted_count = 0;
-      }
+    const rootDir = args.rootDir ?? process.cwd();
+    const gated = await runLearningOutcomesGatedInsertV1({
+      rootDir,
+      writeIntent: true,
+      input: chosen.length > 0 ? chosen[0].payload : null,
+      evidenceSourceRel: chosen.length > 0 ? chosen[0].source_file : null,
+      io_capability: args.io_capability,
+      founderRows: args.founderRows,
+      deps: args.deps?.insertLearningOutcome
+        ? { performInsert: args.deps.insertLearningOutcome }
+        : undefined,
+    });
+    inserted_count = gated.inserted_count;
+    apply_status = gated.apply_status;
+    mutation_authorized = gated.mutation_authorized;
+    mutation_preflight_blockers = gated.mutation_preflight_blockers;
+    founder_decision_id = gated.founder_decision_id;
+    if (gated.apply_status === "BLOCKED" && gated.mutation_preflight_blockers.length > 0) {
+      unknown_facts.push(
+        `mutation gate blocked: ${gated.mutation_preflight_blockers.join(", ")}`,
+      );
     }
     post_insert_read_model = await readFn();
   }
@@ -256,7 +278,15 @@ export async function runLearningOutcomesApprovedInsertExecutorV1(args: {
     skipped_count: skipped_reasons.length,
     inserted_or_planned_rows,
     skipped_reasons,
-    ...(args.mode === "MUTATE_APPROVED" ? { post_insert_read_model } : {}),
+    ...(args.mode === "MUTATE_APPROVED"
+      ? {
+          post_insert_read_model,
+          apply_status,
+          mutation_authorized,
+          mutation_preflight_blockers,
+          founder_decision_id,
+        }
+      : {}),
     owner_approval_required,
     data_mutation,
     proven_facts,

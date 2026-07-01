@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
+import type { FounderDecisionRegistryRowV1 } from "../src/lib/owner-dashboard/founder-decision-registry-v1";
 import type {
   EvidenceToLearningOutcomesCandidateImportV1,
   EvidenceToLoImportCandidateV1,
@@ -12,6 +16,12 @@ import {
   runLearningOutcomesApprovedInsertExecutorV1,
   type LearningOutcomesApprovedInsertExecutorV1Report,
 } from "./lib/learning-outcomes-approved-insert-executor-v1";
+import type { FounderDecisionRowWithSlugCorrelationV1 } from "./lib/founder-decision-slug-correlation-v1";
+import {
+  LEARNING_OUTCOMES_CONFIDENCE_APPROVALS_REL_V1,
+  LEARNING_OUTCOMES_PLAN_REL_V1,
+} from "./lib/learning-outcomes-mutation-gate-v1";
+import { bindArtifactsAtHashesV1 } from "./lib/truth-ledger-v1";
 
 function baseImport(candidates: EvidenceToLoImportCandidateV1[]): EvidenceToLearningOutcomesCandidateImportV1 {
   return {
@@ -75,6 +85,106 @@ function loadedRegistry(
     invalid_entries: [],
     proven_facts: [],
     unknown_facts: [],
+  };
+}
+
+function approvedMutateRow(
+  overrides: Partial<FounderDecisionRegistryRowV1> = {},
+): FounderDecisionRegistryRowV1 {
+  return {
+    decision_id: "decision-lo-exec-fixture",
+    source_queue_row_id: "queue-lo-exec-fixture",
+    source_decision_packet_id: "packet-lo-exec-fixture",
+    decided_at: "2026-06-10T12:00:00.000Z",
+    decision_status: "approved",
+    owner_note: "Approve learning outcomes insert.",
+    allowed_next_scope: "owner_mutation_approved",
+    evidence_required_before_mutation: true,
+    prohibited_actions_still_apply: ["Do not insert unbound learning outcomes."],
+    expires_at: "2027-06-01T00:00:00.000Z",
+    ...overrides,
+  };
+}
+
+function writeTrustCurrencyClearFixture(root: string, referenceTime: Date): void {
+  const dir = path.join(root, "data/truth-integrity");
+  mkdirSync(dir, { recursive: true });
+  const nextReAudit = new Date(referenceTime.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+  writeFileSync(
+    path.join(dir, "truth-integrity-registry-v1.json"),
+    JSON.stringify({
+      contract: "truth_integrity_registry_v1",
+      read_only: true,
+      data_mutation: false,
+      mutation_authorized: false,
+      findings: [
+        {
+          finding_id: "fixture-truth-integrity",
+          finding_code: "FIXTURE",
+          title: "Fixture finding",
+          status: "OPEN",
+          severity: "high",
+          truth_surface: "buy_path",
+          summary: "fixture",
+          proven_gap: "fixture",
+          false_safety_risk: "fixture",
+          smallest_safe_fix: "fixture",
+          re_audit: {
+            next_re_audit_after: nextReAudit,
+            last_re_audit_at: referenceTime.toISOString(),
+            cadence_days: 30,
+            re_audit_owner: "test",
+          },
+          validation_commands: { prove_gap: ["npm test"] },
+        },
+      ],
+    }),
+  );
+}
+
+function authorizedMutateContext(evidenceRel: string): {
+  rootDir: string;
+  founderRows: FounderDecisionRowWithSlugCorrelationV1[];
+  cleanup: () => void;
+} {
+  const rootDir = mkdtempSync(path.join(tmpdir(), "lo-exec-mutate-"));
+  const referenceTime = new Date("2026-06-10T12:00:00.000Z");
+  writeTrustCurrencyClearFixture(rootDir, referenceTime);
+  mkdirSync(path.join(rootDir, path.dirname(evidenceRel)), { recursive: true });
+  mkdirSync(path.join(rootDir, "data/ops"), { recursive: true });
+  mkdirSync(path.dirname(path.join(rootDir, LEARNING_OUTCOMES_PLAN_REL_V1)), { recursive: true });
+  writeFileSync(path.join(rootDir, evidenceRel), JSON.stringify({ fixture: true }), "utf8");
+  writeFileSync(
+    path.join(rootDir, LEARNING_OUTCOMES_CONFIDENCE_APPROVALS_REL_V1),
+    JSON.stringify({ approvals: [] }),
+    "utf8",
+  );
+  writeFileSync(
+    path.join(rootDir, LEARNING_OUTCOMES_PLAN_REL_V1),
+    'export const learningOutcomesLane = "fixture";\n',
+    "utf8",
+  );
+  const bound_artifacts_v1 = bindArtifactsAtHashesV1({
+    rootDir,
+    artifacts: [
+      {
+        artifact_rel_path: LEARNING_OUTCOMES_CONFIDENCE_APPROVALS_REL_V1,
+        entry_type: "apply_plan",
+      },
+      { artifact_rel_path: evidenceRel, entry_type: "apply_plan" },
+      { artifact_rel_path: LEARNING_OUTCOMES_PLAN_REL_V1, entry_type: "apply_plan" },
+    ],
+  });
+  return {
+    rootDir,
+    founderRows: [
+      {
+        row: approvedMutateRow({ bound_artifacts_v1 }),
+        apply_context_target_slugs: [],
+        apply_context_apply_plan_rel_paths: [LEARNING_OUTCOMES_PLAN_REL_V1],
+      },
+    ],
+    cleanup: () => rmSync(rootDir, { recursive: true, force: true }),
   };
 }
 
@@ -160,24 +270,32 @@ test("approved insert executor mutate calls insertLearningOutcome exactly once w
     proven_facts: [],
     unknown_facts: [],
   };
-  const report = await runLearningOutcomesApprovedInsertExecutorV1({
-    mode: "MUTATE_APPROVED",
-    evidenceImport: baseImport([cand]),
-    approvalsLoaded: loaded,
-    deps: {
-      insertLearningOutcome: async (input) => {
-        payloads.push(input);
+  const ctx = authorizedMutateContext(sf);
+  try {
+    const report = await runLearningOutcomesApprovedInsertExecutorV1({
+      mode: "MUTATE_APPROVED",
+      evidenceImport: baseImport([cand]),
+      approvalsLoaded: loaded,
+      rootDir: ctx.rootDir,
+      io_capability: "MUTATION",
+      founderRows: ctx.founderRows,
+      deps: {
+        insertLearningOutcome: async (input) => {
+          payloads.push(input);
+        },
+        fetchReadModel: async () => stubRead,
       },
-      fetchReadModel: async () => stubRead,
-    },
-  });
-  assert.equal(payloads.length, 1);
-  assert.equal(payloads[0].slug, slug);
-  assert.equal(payloads[0].confidence, "likely");
-  assert.equal(report.inserted_count, 1);
-  assert.equal(report.data_mutation, true);
-  assert.deepEqual(report.post_insert_read_model, stubRead);
-  assertExecutorNoBannedClaims(report);
+    });
+    assert.equal(payloads.length, 1);
+    assert.equal(payloads[0].slug, slug);
+    assert.equal(payloads[0].confidence, "likely");
+    assert.equal(report.inserted_count, 1);
+    assert.equal(report.data_mutation, true);
+    assert.deepEqual(report.post_insert_read_model, stubRead);
+    assertExecutorNoBannedClaims(report);
+  } finally {
+    ctx.cleanup();
+  }
 });
 
 test("approved insert executor skips rows without registry approval", async () => {
@@ -324,35 +442,43 @@ test("approved insert executor caps to one insert when two registry-approved wri
     },
   ]);
   const payloads: unknown[] = [];
-  const report = await runLearningOutcomesApprovedInsertExecutorV1({
-    mode: "MUTATE_APPROVED",
-    evidenceImport: baseImport([a, b]),
-    approvalsLoaded: loaded,
-    deps: {
-      insertLearningOutcome: async (input) => {
-        payloads.push(input);
+  const ctxA = authorizedMutateContext(a.source_file);
+  try {
+    const report = await runLearningOutcomesApprovedInsertExecutorV1({
+      mode: "MUTATE_APPROVED",
+      evidenceImport: baseImport([a, b]),
+      approvalsLoaded: loaded,
+      rootDir: ctxA.rootDir,
+      io_capability: "MUTATION",
+      founderRows: ctxA.founderRows,
+      deps: {
+        insertLearningOutcome: async (input) => {
+          payloads.push(input);
+        },
+        fetchReadModel: async () =>
+          ({
+            contract: "learning_outcomes_read_model_v1",
+            runtime_status: "OK",
+            total_outcomes: 2,
+            recent_outcomes: 2,
+            recent_window_days: 30,
+            by_outcome: { pass: 2, fail: 0, blocked: 0, unknown: 0 },
+            by_confidence: { exact: 2, likely: 0, uncertain: 0, unset: 0 },
+            by_cta_status: { live: 2, not_live: 0, blocked: 0, unset: 0 },
+            latest_outcomes: [],
+            proven_facts: [],
+            unknown_facts: [],
+          }) satisfies LearningOutcomesReadModelV1,
       },
-      fetchReadModel: async () =>
-        ({
-          contract: "learning_outcomes_read_model_v1",
-          runtime_status: "OK",
-          total_outcomes: 2,
-          recent_outcomes: 2,
-          recent_window_days: 30,
-          by_outcome: { pass: 2, fail: 0, blocked: 0, unknown: 0 },
-          by_confidence: { exact: 2, likely: 0, uncertain: 0, unset: 0 },
-          by_cta_status: { live: 2, not_live: 0, blocked: 0, unset: 0 },
-          latest_outcomes: [],
-          proven_facts: [],
-          unknown_facts: [],
-        }) satisfies LearningOutcomesReadModelV1,
-    },
-  });
-  assert.equal(payloads.length, 1);
-  assert.equal(report.inserted_count, 1);
-  assert.equal(report.selected_count, 1);
-  assert.ok(report.skipped_reasons.some((s) => /executor v1 cap/i.test(s)));
-  assertExecutorNoBannedClaims(report);
+    });
+    assert.equal(payloads.length, 1);
+    assert.equal(report.inserted_count, 1);
+    assert.equal(report.selected_count, 1);
+    assert.ok(report.skipped_reasons.some((s) => /executor v1 cap/i.test(s)));
+    assertExecutorNoBannedClaims(report);
+  } finally {
+    ctxA.cleanup();
+  }
 });
 
 test("approved insert executor skips not_live cta rows", async () => {

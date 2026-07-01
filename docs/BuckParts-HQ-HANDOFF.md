@@ -67,7 +67,7 @@ Prior foundation stack, owner browser proof refresh, AP correctness, and Custome
 | Repo HEAD (`origin/main`) | **`2122959`** — Gate staged refrigerator live promotion |
 | Last published Netlify deploy (RLS docs slice) | **`b13fb97`** — Document live Supabase RLS security fix |
 | Deploy status for `2122959` | **UNKNOWN** — re-run Netlify dashboard or `git log` on production before citing as live |
-| Service-role inventory | **17** `write_guarded` / **3** `write_unguarded` (`scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`) |
+| Service-role inventory | **20** `write_guarded` / **0** `write_unguarded` (`scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`) |
 | Supabase Security Advisor (live project `anmlqhrlmsnvxgneszbf`) | **ERROR count = 0** (RLS reconcile applied) |
 | Working tree | Re-run `git status --short` before citing |
 
@@ -100,7 +100,7 @@ Exports under `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) an
 
 | Theme (old audit) | Current repo status (HEAD `2122959`) |
 |-------------------|--------------------------------------|
-| Unguarded service-role writers | **Partially resolved** — **17** lanes `write_guarded` (Slices 1–5 + AP/RPWFE parity libs); **3** remain `write_unguarded` (listed below) |
+| Unguarded service-role writers | **Resolved (Slice 6)** — **20** lanes `write_guarded`; **0** `write_unguarded` |
 | MCP / Supabase extraction | **Resolved in repo** — `buckparts:mcp-supabase-exposure:audit --enforce` wired into `buckparts:deploy:preflight` |
 | Live Supabase apply / buyer-path mutation authority | **Resolved** for AP + RPWFE parity lanes — MUTATION + trust + founder + expiry |
 | Supabase RLS / Security Advisor errors | **Resolved live** — migration `20260610120000_security_advisor_rls_reconcile_v1.sql`; ERROR count **0** |
@@ -114,13 +114,15 @@ Exports under `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) an
 - Supabase **INFO:** RLS enabled with **no anon/authenticated policies** on private/service-role tables (`search_gaps`, `search_gap_candidates`, `staged_*`, `owner_report_artifacts`, `learning_outcomes`, etc.) — **accepted**; repo has no anon paths; ops/scripts use service role
 - Repo security gate **WARN** items (headers, rate limits, npm audit highs) — see `data/command-center/audits/buckparts-security-gate-v1.json`; separate from Supabase Advisor
 
-### Remaining `write_unguarded` service-role lanes (3)
+### Slice 6 resolved — final service-role write lanes (PROVEN in-repo)
 
-| Script | Suggested gate priority |
-|--------|-------------------------|
-| `scripts/lib/learning-outcomes-writer.ts` | Later |
-| `scripts/remove-demo-wedge-brands.ts` | Later — one-off cleanup |
-| `scripts/verify-oem-retailer-links-playwright.ts` | Later — `--write-db` path |
+| Lane | CLI (read_only) | Run lib (`write_guarded`) | Gate |
+|------|-----------------|---------------------------|------|
+| Learning outcomes insert | `scripts/execute-learning-outcomes-approved-insert-v1.ts` (`--mutate-approved-learning-outcome`) | `scripts/lib/learning-outcomes-insert-run-v1.ts` | MUTATION + trust + founder + `data/ops/learning-outcomes-confidence-approvals.json` + evidence `source_file` when repo-relative/hashable |
+| Remove demo wedge brands | `scripts/remove-demo-wedge-brands.ts` (default dry-run; `--write`) | `scripts/lib/remove-demo-wedge-brands-run-v1.ts` | MUTATION + trust + founder + plan binding + `apply_context_target_slugs` includes `purebrand` and `poewat`; `BUCKPARTS_ALLOW_FROZEN=true` required on `--write` |
+| Verify OEM retailer links | `scripts/verify-oem-retailer-links-playwright.ts` (default CSV report; `--write-db` gated) | `scripts/lib/verify-oem-retailer-links-run-v1.ts` | MUTATION + trust + founder + CSV artifact binding for every loaded retailer_links CSV rel path |
+
+All three record truth-ledger mutation outcomes on write-intent paths. `scripts/lib/learning-outcomes-writer.ts` is validation-only (`read_only`).
 
 **Slice 4 resolved (PROVEN in-repo):** `scripts/ingest-hqii-retailer-links.ts` + `scripts/hqii-candidate-queue-upsert.ts` — MUTATION + trust + founder + input JSON artifact binding; writes in `scripts/lib/ingest-hqii-retailer-links-run-v1.ts` and `scripts/lib/hqii-candidate-queue-upsert-run-v1.ts`; truth-ledger on `--write`.
 
@@ -194,7 +196,7 @@ Apply requires all of:
 1. **Deploy / CI validation for `2122959`** — Slice 3 promote gate not proven live until Netlify publishes
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
 3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes or capability-only service-role guarded scripts (Slices 1–2)
-4. Runtime-gate remaining **`write_unguarded`** service-role lanes (**3**) — see **§ Current stopping point** for explicit list
+4. ~~Runtime-gate remaining **`write_unguarded`** service-role lanes~~ — **DONE (Slice 6)**
 
 ```bash
 git rev-parse HEAD

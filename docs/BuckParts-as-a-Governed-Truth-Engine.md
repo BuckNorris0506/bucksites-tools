@@ -108,12 +108,12 @@ Migration: `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1
 
 | Class | Count | Pattern |
 |-------|------:|---------|
-| `write_guarded` | **17** | Runtime gate before writes; inventory drift audit in deploy preflight |
-| `write_unguarded` | **3** | No runtime gate yet — see remaining work |
+| `write_guarded` | **20** | Runtime gate before writes; inventory drift audit in deploy preflight |
+| `write_unguarded` | **0** | All inventoried service-role write lanes gated (Slice 6 complete) |
 
 **Slice 3 — promote-staged (P0 live promotion):** `scripts/lib/promote-staged-refrigerator-run-v1.ts` (invoked by `scripts/promote-staged-refrigerator.ts`) requires **MUTATION capability + trust preflight + active founder approval + valid expiry + plan-path binding** (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
 
-**Remaining `write_unguarded` lanes (3):** `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (HQ handoff).
+**Slice 6 resolved:** Final three lanes — learning-outcomes approved insert (`learning_outcomes_insert_v1`), remove-demo-wedge-brands (`remove_demo_wedge_brands_v1`), verify-oem `--write-db` (`verify_oem_retailer_links_write_db_v1`); truth-ledger on write-intent.
 
 **Slice 4 resolved:** HQII retailer-link ingest pair — `ingest-hqii-retailer-links.ts` (default dry-run, `--write` gated) + `hqii-candidate-queue-upsert.ts` (`--write` gated); truth-ledger on write-intent.
 

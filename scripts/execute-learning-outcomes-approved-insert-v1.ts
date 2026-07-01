@@ -34,10 +34,14 @@ async function main() {
     mode: mutate ? "MUTATE_APPROVED" : "DRY_RUN",
     evidenceImport,
     approvalsLoaded,
+    rootDir,
   });
 
   // eslint-disable-next-line no-console -- CLI artifact
   console.log(JSON.stringify(report, null, 2));
+  if (report.apply_status === "BLOCKED") {
+    process.exit(1);
+  }
 }
 
 main().catch((e) => {
