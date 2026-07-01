@@ -2,7 +2,7 @@
 
 **Status:** Repo-truth architecture reference — derived from committed docs and source only.  
 **Governing:** `docs/BuckParts-CONSTITUTION.md` (Trust Hierarchy, Truth Contract, Automation Doctrine)  
-**Primary context:** `docs/BuckParts-HQ-HANDOFF.md`, `docs/BuckParts-AGENT-CONTRACT-V1.md`, `docs/BuckParts-OPERATIONS-METRICS-V1.md`, `docs/BuckParts-PRODUCTION-MISSION-V1.md`
+**Primary context:** `docs/BuckParts-HQ-HANDOFF.md` (§ Current stopping point `2122959`), `docs/BuckParts-AGENT-CONTRACT-V1.md`, `docs/BuckParts-OPERATIONS-METRICS-V1.md`, `docs/BuckParts-PRODUCTION-MISSION-V1.md`
 
 **PROVEN:** This document describes what exists in-repo. It does not authorize mutation, deploy, or new systems.
 
@@ -319,6 +319,51 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 - **What changed:** `coverage_production_sprint_v2_v1` ranks executable batches by expected `SAFE_BUYER_PATH_PROVEN` delta using existing factories only.
 - **Why it changed:** Stop slug-by-slug optimization; prioritize batches with proven executability (`docs/BuckParts-HQ-HANDOFF.md` §2).
 - **Invariants enforced:** **INV-011** (demand/ranking does not substitute for evidence), **INV-014** (read-only ranking), **INV-001** (no buy authority from ranking alone).
+
+---
+
+## 5. SECURITY, RLS & SERVICE-ROLE BOUNDARIES
+
+**Status (HEAD `2122959`):** Repo-truth summary. Full deploy anchors and next work: `docs/BuckParts-HQ-HANDOFF.md` § Current stopping point.
+
+### Buyer-path and live Supabase apply (PROVEN — gated lanes)
+
+- **`/go` redirect:** freshness fail-closed; decision precedence DENY/UNKNOWN over ALLOW (`d66ce8e` chain).
+- **AP Supabase parity apply:** `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` — requires `MUTATION`, trust currency, hash-bound founder approval with valid `expires_at`.
+- **RPWFE/GE Supabase parity apply:** `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` — same pattern.
+- **Truth ledger:** AP/RPWFE apply lanes record mutation outcomes to `data/ops/truth-ledger-v1.jsonl` on apply path (`26d4b0a`).
+
+### Service-role writer inventory (PROVEN — `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`)
+
+| Class | Count | Gate pattern |
+|-------|------:|--------------|
+| `write_guarded` | **13** | Runtime gate before writes; inventory drift audit in deploy preflight |
+| `write_unguarded` | **7** | No runtime gate yet — see HQ handoff for list |
+
+**Slice 1 (P2 `search_gaps`):** capability-only — `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`.
+
+**Slice 2 (P1 staged pipeline):** capability-only — same MUTATION gate on staged `search_gap_candidates` / `staged_*` writers.
+
+**Slice 3 (P0 live promotion):** `scripts/promote-staged-refrigerator.ts` — MUTATION + trust + founder approval bound to `scripts/promote-staged-refrigerator.ts` (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`).
+
+**Remaining `write_unguarded` (7):** `ingest-hqii-retailer-links.ts`, `hqii-candidate-queue-upsert.ts`, `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts`.
+
+### MCP / deploy preflight (PROVEN)
+
+- `npm run buckparts:deploy:preflight` chains `buckparts:mcp-supabase-exposure:audit --enforce` then `buckparts:repo-runtime-convergence:check -- --enforce`.
+- Static FAIL on MCP supabase-admin imports, public MCP listen surfaces, and service-role inventory drift.
+
+### Supabase RLS (PROVEN live — project `anmlqhrlmsnvxgneszbf`)
+
+- Migration: `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1.sql`
+- **Security Advisor ERROR count = 0**
+- **Deferred WARN:** `click_events` INSERT `WITH CHECK (true)`; `upsert_search_gap` `SECURITY DEFINER` callable by anon/authenticated (telemetry via `src/lib/search/telemetry.ts`)
+- **Accepted INFO:** private tables (`search_gaps`, `staged_*`, etc.) — RLS on, no anon policies; service-role ops only
+
+### IO capability (PROVEN)
+
+- `BUCKPARTS_IO_CAPABILITY=READ_INDEX` (default) vs `MUTATION` — `scripts/lib/buckparts-io-capabilities-v1.ts`
+- Protected paths (e.g. `data/retailer_links.csv`, evidence trees) fail closed on READ_INDEX writes
 
 ---
 

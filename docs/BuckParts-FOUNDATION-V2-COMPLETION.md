@@ -412,9 +412,11 @@ Appendix — Report metadata
 
 ## Post–Foundation v2 operational state (2026-06-28 handoff refresh)
 
+**Note (2026-07-01):** For security, Supabase RLS, MCP preflight, and service-role inventory, **`docs/BuckParts-HQ-HANDOFF.md` § Current stopping point (`2122959`)** supersedes HEAD references in this table.
+
 **Purpose:** Record repo-truth deltas after Foundation v2 completion — without rewriting the historical completion record above.
 
-| Metric / milestone | At Foundation v2 completion (`42abd9d`) | Current (HEAD `56b4167`, re-run before citing) |
+| Metric / milestone | At Foundation v2 completion (`42abd9d`) | Current (HEAD `2122959` for security; `56b4167` for coverage metrics — re-run before citing) |
 |--------------------|--------------------------------------|--------------------------------------------------|
 | `SAFE_BUYER_PATH_PROVEN` (site) | **49** | **50** |
 | `4396508` classification | Suppressed / conflict lane | **`SAFE_BUYER_PATH_PROVEN`** (apply **`00f133c`**) |
@@ -433,4 +435,4 @@ Appendix — Report metadata
 
 **Strategic state:** BuckParts remains execution focus; authority-boundary platform thesis is **documented but NOT PROVEN** (`docs/BuckParts-TO-AUTHORITY-BOUNDARY-THESIS.md`); `refrigerator_water` is the proving lab.
 
-**Primary handoff:** `docs/BuckParts-HQ-HANDOFF.md` — **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)**.
+**Primary handoff:** `docs/BuckParts-HQ-HANDOFF.md` — **§ Current stopping point — Security / RLS / service-role gating (`2122959`)** for security work; **§ Historical stopping point — Owner browser proof refresh (`56b4167`)** for coverage/browser proof context.

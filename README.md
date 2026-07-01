@@ -105,5 +105,6 @@ Affiliate links in the UI point at `/go/{retailer_link.id}` so each outbound cli
 
 ## Security notes
 
-- Use the **anon** key only; RLS allows `SELECT` on catalog tables and `INSERT` on `click_events`.
+- Use the **anon** key only; RLS allows `SELECT` on catalog tables and `INSERT` on `click_events` / `search_events` (see `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1.sql`).
 - Do **not** expose the service role key in this app.
+- **Deploy preflight (PROVEN):** `npm run buckparts:deploy:preflight` runs MCP Supabase exposure audit (`--enforce`) before repo runtime convergence check. See `docs/BuckParts-HQ-HANDOFF.md` § Current stopping point.

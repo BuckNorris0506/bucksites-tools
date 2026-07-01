@@ -375,12 +375,14 @@ security_hardening_external_signals.status = BLOCKING
 | Unit tests for staleness / head-drift | ✅ | No mutation |
 | GHA artifact upload workflow | ⚠️ | Adds automation but read-only drops; defer if security focus is narrow |
 | Sentry API pull workflow | ❌ | Requires secrets + network; wait |
-| Wiring external signals into mutation gates | ❌ | Wait until security hardening clears |
+| Wiring external signals into mutation gates | ❌ | Wait — service-role Slices 1–3 do not consume external signals yet |
 | Replacing `wrong_code_prevention_v1` | ❌ | Wait |
 
 ---
 
 ## 13. What must wait until after security hardening
+
+**Partial update (HEAD `2122959`):** Core security hardening (buyer-path `/go`, AP/RPWFE Supabase apply gates, MCP deploy preflight, RLS ERROR reconcile, service-role Slices 1–3) is **landed in repo**. Items below remain deferred until ingest/seed lanes are gated and external-signals wiring is explicitly scoped.
 
 1. **Any `blocks_mutation: true` from external signals** affecting guarded apply, CSV apply, or evidence writes.
 2. **GitHub Actions deploy-readiness gate** blocking merge/deploy from CC JSON.

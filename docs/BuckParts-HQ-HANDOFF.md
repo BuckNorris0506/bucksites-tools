@@ -4,6 +4,8 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
+> **Current operational stopping point (repo HEAD `2122959`):** Security / RLS / service-role gating — see **§ Current stopping point — Security / RLS / service-role gating (`2122959`)** below. Prior owner-browser-proof stopping point (`56b4167`) is **historical only**.
+
 ## Execution Stack
 
 **Cursor**
@@ -51,32 +53,94 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Security hardening — deployed state (`26d4b0a`)
+## Current stopping point — Security / RLS / service-role gating (`2122959`)
 
-**Read this section first** when picking up security gate / trust / `/go` / guarded-apply / founder-binding work.
+**Read this section first** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope.
 
-### Deploy anchor (PROVEN)
+Prior foundation stack, owner browser proof refresh, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede this stopping point unless a fresh Command Center run proves otherwise.
+
+### Milestone summary (PROVEN — re-verify before citing)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Final pushed/deployed HEAD | **`26d4b0a`** |
-| Netlify production | **Published** for `main@26d4b0a` (truth-ledger mutation outcome recording); prior slices at **`e16b4a1`** (founder mutation approval expiry), **`fb0b379`** (AP Supabase apply gate), **`1fe3666`** (RPWFE/GE Supabase apply gate) |
+| Repo HEAD (`origin/main`) | **`2122959`** — Gate staged refrigerator live promotion |
+| Last published Netlify deploy (RLS docs slice) | **`b13fb97`** — Document live Supabase RLS security fix |
+| Deploy status for `2122959` | **UNKNOWN** — re-run Netlify dashboard or `git log` on production before citing as live |
+| Service-role inventory | **13** `write_guarded` / **7** `write_unguarded` (`scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`) |
+| Supabase Security Advisor (live project `anmlqhrlmsnvxgneszbf`) | **ERROR count = 0** (RLS reconcile applied) |
+| Working tree | Re-run `git status --short` before citing |
 
-**Commit chain (security slice — newest first):**
+**Recent commits on `main` (security / RLS / service-role slice — newest first):**
 
 | SHA | Subject |
 |-----|---------|
-| **`26d4b0a`** | Record truth-ledger mutation outcomes |
-| **`e16b4a1`** | Require founder mutation approval `expires_at` (fail-closed) |
-| **`1fe3666`** | Gate RPWFE/GE live Supabase parity apply lane |
-| **`fb0b379`** | Gate AP live Supabase parity apply lane |
-| **`496c6a4`** | Fix security hardening test import |
-| **`76b1e19`** | Fix Netlify security hardening runtime convergence |
-| **`bc55610`** | Fix security hardening build blockers |
-| **`d66ce8e`** | Harden homeowner buy-path trust gates |
+| **`2122959`** | Gate staged refrigerator live promotion (Slice 3 — P0 live catalog promotion) |
+| **`b13fb97`** | Document live Supabase RLS security fix |
+| **`bccfd4e`** | Revise Supabase RLS migration for live grant drift |
+| **`420f544`** | Add Supabase security advisor RLS migration |
+| **`f1eb888`** | Gate staged search gap service role writes (Slice 2) |
+| **`a0cb33c`** | Gate search gaps service role writes (Slice 1) |
+| **`d40858c`** | Wire MCP Supabase audit into deploy preflight |
+| **`2e5439d`** | Enforce MCP Supabase extraction controls |
+| **`ee0080d`** | Update HQ handoff for truth ledger outcomes |
+| **`26d4b0a`** | Record truth-ledger mutation outcomes (prior deploy anchor for buyer-path / AP / RPWFE gates) |
 
-**HyperAgent re-audit (PROVEN):** Security gates preserved; hotfixes (`bc55610`, `76b1e19`, `496c6a4`) did not weaken `d66ce8e`. **`1fe3666` verdict:** `RPWFE_SUPABASE_APPLY_GATE_RESOLVED`. **`e16b4a1` verdict:** `FOUNDER_APPROVAL_EXPIRY_RESOLVED`. **`26d4b0a` verdict:** `TRUTH_LEDGER_V1_MUTATION_OUTCOME_RESOLVED`.
+```bash
+git rev-parse HEAD
+git log --oneline -12
+git status --short
+npm run buckparts:mcp-supabase-exposure:audit
+npm run buckparts:deploy:preflight
+```
+
+### Audit #2 / pre-hardening reconciliation (do not paste full audit)
+
+Exports under `audit-exports/` (`buckparts-audit-2-business-report.md`, CSVs) and any HyperAgent security packet anchored at **`5cb5fb3`** are **pre-hardening** snapshots. **Do not** treat ranked findings **F1–F6** or action items **A1–A5** from that upload as current severity without re-audit at HEAD **`2122959`**.
+
+| Theme (old audit) | Current repo status (HEAD `2122959`) |
+|-------------------|--------------------------------------|
+| Unguarded service-role writers | **Partially resolved** — **13** lanes `write_guarded` (Slices 1–3 + AP/RPWFE parity libs); **7** remain `write_unguarded` (listed below) |
+| MCP / Supabase extraction | **Resolved in repo** — `buckparts:mcp-supabase-exposure:audit --enforce` wired into `buckparts:deploy:preflight` |
+| Live Supabase apply / buyer-path mutation authority | **Resolved** for AP + RPWFE parity lanes — MUTATION + trust + founder + expiry |
+| Supabase RLS / Security Advisor errors | **Resolved live** — migration `20260610120000_security_advisor_rls_reconcile_v1.sql`; ERROR count **0** |
+| `/go` buyer-path trust | **Resolved** on deployed slice through `d66ce8e` → `26d4b0a` chain (freshness fail-closed, decision precedence) |
+| Broad production automation / seed importers | **Unresolved** — seed + HQII ingest lanes still `write_unguarded` |
+
+**Intentionally deferred residuals (not ERRORs):**
+
+- Supabase **WARN:** `click_events` INSERT policy `WITH CHECK (true)` — telemetry shape not constrained in SQL yet
+- Supabase **WARN:** `upsert_search_gap` `SECURITY DEFINER` executable by anon/authenticated — required by `src/lib/search/telemetry.ts` until service-role telemetry refactor
+- Supabase **INFO:** RLS enabled with **no anon/authenticated policies** on private/service-role tables (`search_gaps`, `search_gap_candidates`, `staged_*`, `owner_report_artifacts`, `learning_outcomes`, etc.) — **accepted**; repo has no anon paths; ops/scripts use service role
+- Repo security gate **WARN** items (headers, rate limits, npm audit highs) — see `data/command-center/audits/buckparts-security-gate-v1.json`; separate from Supabase Advisor
+
+### Remaining `write_unguarded` service-role lanes (7)
+
+| Script | Suggested gate priority |
+|--------|-------------------------|
+| `scripts/ingest-hqii-retailer-links.ts` | **Next** — retailer-link ingest pair |
+| `scripts/hqii-candidate-queue-upsert.ts` | **Next** — retailer-link ingest pair |
+| `scripts/import-seed.ts` | Later — bulk seed importers |
+| `scripts/lib/vertical-seed.ts` | Later — bulk seed importers |
+| `scripts/lib/learning-outcomes-writer.ts` | Later |
+| `scripts/remove-demo-wedge-brands.ts` | Later — one-off cleanup |
+| `scripts/verify-oem-retailer-links-playwright.ts` | Later — `--write-db` path |
+
+Inventory source: `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`. Drift audit: `auditSupabaseServiceRoleInventoryDriftV1`.
+
+### Next recommended work (ordered)
+
+1. **Deploy / CI check for `2122959`** — confirm Netlify published after Slice 3; re-run `npm run buckparts:deploy:preflight` on CI
+2. **Slice 4 — gate retailer-link ingest pair** — `ingest-hqii-retailer-links.ts` + `hqii-candidate-queue-upsert.ts` (founder + trust pattern TBD; not capability-only)
+3. **Later — gate seed importers** — `import-seed.ts`, `vertical-seed.ts`
+4. **Future — service-role-only `upsert_search_gap` refactor** — removes anon/authenticated EXECUTE on `SECURITY DEFINER` RPC (clears deferred WARN)
+5. **Future — tighter `click_events` INSERT `WITH CHECK`** — shape-constrain telemetry inserts (clears deferred WARN)
+
+---
+
+## Security hardening — deployed scope reference (`26d4b0a` → `2122959`)
+
+**Historical label:** Buyer-path / trust / founder-binding slice landed through **`26d4b0a`**; service-role and RLS slices landed **`a0cb33c` → `2122959`**. Use **§ Current stopping point** above for HEAD and deploy anchors.
 
 ### Resolved scope (PROVEN on deployed slice)
 
@@ -93,7 +157,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
   2. **RPWFE/GE** Supabase parity apply — `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` (`1fe3666`); truth-ledger outcome recording in `scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.ts` (`26d4b0a`)
 - **MCP / Supabase extraction controls enforced in Netlify preflight** — `npm run buckparts:deploy:preflight` chains `buckparts:mcp-supabase-exposure:audit` (`--enforce`, exit 0/1) before `buckparts:repo-runtime-convergence:check -- --enforce`; `netlify.toml` runs preflight before `npm run build`. Static FAIL on MCP supabase-admin imports, public MCP listen surfaces, live Command Center fallback without escape hatch, and service-role writer inventory drift. **Anon catalog read surface remains WARN-only by design** (does not block deploy).
 - **P2 `search_gaps` service-role writers runtime-gated (Slice 1)** — `apply-search-gap-status-{refrigerator,air-purifier,whole-house-water}` and `search-gaps-classify` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding for ops-only `search_gaps` metadata.
-- **P1 staged search-gap pipeline writers runtime-gated (Slice 2)** — `search-gap-candidates-{generate,apply}`, `resolve-staged-compat-refrigerator`, `reprocess-compat-after-models-refrigerator`, `apply-staged-compat-part-choice-refrigerator`, and `apply-staged-filter-brand-refrigerator` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding — staged `search_gap_candidates` / `staged_*` tables only (live promotion remains `promote-staged-refrigerator`, not in this slice).
+- **P1 staged search-gap pipeline writers runtime-gated (Slice 2)** — `search-gap-candidates-{generate,apply}`, `resolve-staged-compat-refrigerator`, `reprocess-compat-after-models-refrigerator`, `apply-staged-compat-part-choice-refrigerator`, and `apply-staged-filter-brand-refrigerator` require `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane`. No founder/plan binding — staged `search_gap_candidates` / `staged_*` tables only.
 - **P0 promote-staged-refrigerator live catalog promotion runtime-gated (Slice 3)** — `scripts/promote-staged-refrigerator.ts` requires **`BUCKPARTS_IO_CAPABILITY=MUTATION`**, clean **trust-currency preflight**, and **active founder approval** bound to `scripts/promote-staged-refrigerator.ts` (via `apply_context_apply_plan_rel_paths` + `founderRegistryRowPassesMutationApprovalGateV1` including valid non-expired `expires_at`) before `--write`; default/dry-run unchanged; inventory reclassified to `write_guarded` with `mutation_lane: promote_staged_refrigerator_v1`. **Operator prerequisite:** record `owner_mutation_approved` with `expires_at` and apply-plan binding to `scripts/promote-staged-refrigerator.ts` before live promotion writes.
 - **Supabase Security Advisor RLS reconcile (live — project `anmlqhrlmsnvxgneszbf`)** — migration `supabase/migrations/20260610120000_security_advisor_rls_reconcile_v1.sql` applied; **Security Advisor ERROR count = 0**. **PROVEN live:** RLS enabled on flagged public catalog/telemetry tables (`brands`, `fridge_models`, `filters`, `fridge_model_aliases`, `filter_aliases`, `compatibility_mappings`, `help_pages`, `reset_instructions`, `retailer_links`, `click_events`, `search_events`); `retailer_links` anon SELECT policy `status = 'approved'` (live DB retains `status` column); `click_events` table grants **anon INSERT only**; `search_events` table grants **anon + authenticated INSERT only** (no SELECT/UPDATE/DELETE/TRUNCATE); function `search_path` fixed on `norm_compact`, `set_updated_at_learning_outcomes`, `set_updated_at_search_gaps`, `upsert_search_gap`. **WARN intentionally deferred:** `click_events` INSERT policy `WITH CHECK (true)` (telemetry shape not constrained in SQL yet); `upsert_search_gap` `SECURITY DEFINER` executable by anon/authenticated (required by `src/lib/search/telemetry.ts` via anon server client until service-role telemetry refactor). **INFO accepted:** RLS enabled with **no anon/authenticated policies** on private/service-role tables (`search_gaps`, `search_gap_candidates`, `staged_*`, `owner_report_artifacts`, `learning_outcomes`, etc.) — repo has no anon read/write paths to these tables; ops/scripts use service role.
 
@@ -128,19 +192,19 @@ Apply requires all of:
 
 ### Remaining blockers before broad production-data automation
 
-1. CI / Netlify execution validation for **`26d4b0a`** if not already published
+1. **Deploy / CI validation for `2122959`** — Slice 3 promote gate not proven live until Netlify publishes
 2. Truth-ledger append is post-DB-write / non-atomic — consider pre-write intent or append-before-write
-3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes
-4. Runtime-gate remaining **P0** `write_unguarded` service-role lanes (`import-seed`, `vertical-seed`, `ingest-hqii-retailer-links`, `verify-oem --write-db`, etc.) — P2 `search_gaps` lanes gated in Slice 1; P1 staged pipeline lanes gated in Slice 2; **`promote-staged-refrigerator` gated in Slice 3** (**7** `write_unguarded` remain)
+3. Truth-ledger coverage does not yet include CSV / manufacturer apply lanes or promote-staged-refrigerator
+4. Runtime-gate remaining **`write_unguarded`** service-role lanes (**7**) — see **§ Current stopping point** for explicit list; **next:** HQII retailer-link ingest pair
 
 ```bash
 git rev-parse HEAD
-git log --oneline d66ce8e..26d4b0a
+git log --oneline 26d4b0a..HEAD
 BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/truth-ledger-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='src/lib/owner-dashboard/founder-decision-registry-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/buckparts-security-hardening-v1.test.ts' bash scripts/npm-test-v1.sh
 BUCKPARTS_TEST_FILES='scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.test.ts scripts/apply-air-purifier-supabase-parity-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.test.ts scripts/lib/rpwfe-official-ge-supabase-parity-apply-v1.test.ts' bash scripts/npm-test-v1.sh
-BUCKPARTS_TEST_FILES='scripts/lib/search-gap-status-mutation-gate-v1.test.ts scripts/lib/buckparts-supabase-service-role-inventory-v1.test.ts' bash scripts/npm-test-v1.sh
+BUCKPARTS_TEST_FILES='scripts/lib/search-gap-status-mutation-gate-v1.test.ts scripts/lib/search-gap-staged-mutation-gate-v1.test.ts scripts/lib/promote-staged-refrigerator-mutation-gate-v1.test.ts scripts/lib/buckparts-supabase-service-role-inventory-v1.test.ts' bash scripts/npm-test-v1.sh
 npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
 npm run buckparts:mcp-supabase-exposure:audit
 npm run buckparts:deploy:preflight
@@ -149,19 +213,19 @@ npm run buckparts:repo-runtime-convergence:check -- --enforce
 
 ---
 
-## Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)
+## Historical stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`) — superseded
 
-**Read this section first** for HQ / Cursor / HyperAgent chat transfer.
+**Superseded by § Current stopping point — Security / RLS / service-role gating (`2122959`)** for security, deploy, Supabase, and service-role work. Retained for refrigerator coverage / Session 1 browser proof context only.
 
-Prior foundation stack, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede this stopping point for Monday execution unless a fresh Command Center run proves otherwise.
+Prior foundation stack, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede the security stopping point unless a fresh Command Center run proves otherwise.
 
-### Milestone summary (PROVEN — re-verify before citing)
+### Milestone summary (historical — re-verify before citing)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
 | HEAD at handoff refresh | **`56b4167`** — Add owner browser proof refresh director |
-| **`origin/main`** | **`56b4167`** — same as HEAD at handoff refresh |
+| **`origin/main`** | **Superseded** — see security stopping point (`2122959`) |
 | Working tree | Re-run `git status --short` before citing |
 
 **Recent commits on `main` (PROVEN — newest first):**
@@ -265,7 +329,7 @@ First: re-run npm run buckparts:owner-browser-proof-refresh-director and npm run
 
 ## Current stopping point — Foundation v1 stack COMPLETE (`613d6b8`)
 
-**Superseded for next-move authority** by **Current stopping point — Owner browser proof refresh + guarded apply exhaustion (`56b4167`)** above. Retained for Runner / Coverage Sprint v2 / Owner Decision Queue / Agent Contract foundation context.
+**Superseded for next-move authority** by **§ Current stopping point — Security / RLS / service-role gating (`2122959`)** for security/deploy work. For refrigerator Session 1 browser proof, see **§ Historical stopping point — Owner browser proof refresh (`56b4167`)**. Retained for Runner / Coverage Sprint v2 / Owner Decision Queue / Agent Contract foundation context.
 
 Prior tactical stopping points (AP demand-selected correctness, Holmes HAPF30, etc.) remain **PROVEN historical context** below — they do **not** supersede the owner-browser-proof refresh stopping point for Monday execution unless Command Center NBA explicitly overrides.
 
@@ -1601,7 +1665,7 @@ npm run lint
 
 **HQ handoff vs operating truth:** HQ handoff is **not** the source of operating truth. This file is migration/context for future chats only. **`npm run buckparts:command-center`** JSON (`scripts/report-buckparts-command-center.ts`) is. The owner dashboard (`src/app/ownerdashboard/[secret]/page.tsx`) is the **visual/readable surface** for Command Center truth — not a parallel truth builder. Update this handoff after milestones (not every small decision); **`b85e90b`** (external measurement freshness lane) qualifies.
 
-**Evidence timestamp:** Re-run `npm run buckparts:command-center`, census, and the three production directors (`buckparts:owner-browser-proof-refresh-director`, `buckparts:edr3rxd1-ultrawf-evidence-readiness-director`, `buckparts:hyperagent-safe-link-evidence-production-director`) before trusting live numbers. **Latest repo checkpoint (HEAD / origin main):** **`56b4167`** — owner browser proof refresh director + guarded apply exhaustion; site **`SAFE_BUYER_PATH_PROVEN=50`**; **`4396508`** proven; refrigerator_water **C3 FAIL** (`buyer_path_truth_status=MIXED`); factory NBA = **Session 1 owner browser proof refresh (`edr3rxd1`, `ultrawf`)** — see **Current stopping point — Owner browser proof refresh + guarded apply exhaustion** at top. **Prior checkpoints** (`613d6b8` foundation stack, `3189b9b` AP correctness steering, Customer Reality, FOH batch factory) remain documented below — treat as historical unless re-validated. Treat metric snapshots as **UNKNOWN** until re-run.
+**Evidence timestamp:** Re-run `npm run buckparts:command-center`, census, and the three production directors (`buckparts:owner-browser-proof-refresh-director`, `buckparts:edr3rxd1-ultrawf-evidence-readiness-director`, `buckparts:hyperagent-safe-link-evidence-production-director`) before trusting live numbers. **Security/repo checkpoint (HEAD / origin main):** **`2122959`** — see **§ Current stopping point — Security / RLS / service-role gating** at top. **Coverage checkpoint (historical `56b4167`):** site **`SAFE_BUYER_PATH_PROVEN=50`**; **`4396508`** proven; refrigerator_water **C3 FAIL** (`buyer_path_truth_status=MIXED`); factory NBA = **Session 1 owner browser proof refresh (`edr3rxd1`, `ultrawf`)** — treat as **UNKNOWN** until re-run. **Prior checkpoints** remain documented below — treat as historical unless re-validated.
 
 **Rule:** If a fact is not in this file, a cited repo path, or the output of a named command, treat it as **UNKNOWN**—do not invent.
 

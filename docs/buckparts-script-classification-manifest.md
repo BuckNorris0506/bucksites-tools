@@ -16,10 +16,12 @@ Scope: read-only classification manifest (no runtime/code behavior changes).
 ### Staged compatibility/part-resolution workflow (fridge)
 - Paths: `supabase/migrations/20260410190000_candidate_application_staging.sql`, `scripts/review-staged-compat-refrigerator.ts`, `scripts/resolve-staged-compat-refrigerator.ts`, `scripts/reprocess-compat-after-models-refrigerator.ts`, `scripts/review-staged-part-resolution-refrigerator.ts`, `scripts/apply-staged-compat-part-choice-refrigerator.ts`, `scripts/promote-staged-refrigerator.ts`
 - Why keep: controlled promotion flow for high-risk mapping decisions.
+- **Service-role gating (HEAD `2122959`):** staged pipeline scripts + `promote-staged-refrigerator.ts` are `write_guarded` in `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`. Slice 1–2 = MUTATION capability; Slice 3 promote = MUTATION + trust + founder approval bound to `scripts/promote-staged-refrigerator.ts`.
 
 ### Retailer offer candidate queue (new model)
-- Paths: `supabase/migrations/20260424133000_retailer_offer_candidates_phase1_state.sql`, `scripts/ingest-hqii-retailer-links.ts`, `scripts/buckparts-schema-preflight.ts`
+- Paths: `supabase/migrations/20260424133000_retailer_offer_candidates_phase1_state.sql`, `scripts/ingest-hqii-retailer-links.ts`, `scripts/buckparts-schema-preflight.ts`, `scripts/hqii-candidate-queue-upsert.ts`
 - Why keep: active candidate lifecycle and schema preflight guard.
+- **Service-role gating:** ingest pair still `write_unguarded` — next recommended gate slice per HQ handoff.
 
 ### Operational reporting/runbooks
 - Paths: `scripts/report-homekeep-*.ts`, `scripts/report-*-mapping-guardrails.ts`, `scripts/runbook-*.ts`, `scripts/audit-homekeep-traffic-monetization-readiness.ts`
