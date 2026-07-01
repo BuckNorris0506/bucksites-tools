@@ -276,6 +276,34 @@ describe("security hardening v1", () => {
     assert.equal(entry?.mutation_lane, "promote_staged_refrigerator_v1");
   });
 
+  test("ingest-hqii-retailer-links P0 writer passes service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const cli = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/ingest-hqii-retailer-links.ts",
+    );
+    const run = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/ingest-hqii-retailer-links-run-v1.ts",
+    );
+    assert.equal(cli?.access_class, "read_only");
+    assert.equal(run?.access_class, "write_guarded");
+    assert.equal(run?.mutation_lane, "ingest_hqii_retailer_links_v1");
+  });
+
+  test("hqii-candidate-queue-upsert writer passes service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const cli = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/hqii-candidate-queue-upsert.ts",
+    );
+    const run = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/lib/hqii-candidate-queue-upsert-run-v1.ts",
+    );
+    assert.equal(cli?.access_class, "read_only");
+    assert.equal(run?.access_class, "write_guarded");
+    assert.equal(run?.mutation_lane, "hqii_candidate_queue_upsert_v1");
+  });
+
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);

@@ -331,14 +331,14 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 - **`/go` redirect:** freshness fail-closed; decision precedence DENY/UNKNOWN over ALLOW (`d66ce8e` chain).
 - **AP Supabase parity apply:** `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` — requires `MUTATION`, trust currency, hash-bound founder approval with valid `expires_at`.
 - **RPWFE/GE Supabase parity apply:** `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` — same pattern.
-- **Truth ledger:** AP/RPWFE apply lanes and promote-staged `--write` record mutation outcomes to `data/ops/truth-ledger-v1.jsonl` (`26d4b0a` + `promote-staged-refrigerator-run-v1.ts`).
+- **Truth ledger:** AP/RPWFE apply lanes, promote-staged `--write`, and HQII retailer-link ingest pair record mutation outcomes to `data/ops/truth-ledger-v1.jsonl`.
 
 ### Service-role writer inventory (PROVEN — `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`)
 
 | Class | Count | Gate pattern |
 |-------|------:|--------------|
-| `write_guarded` | **13** | Runtime gate before writes; inventory drift audit in deploy preflight |
-| `write_unguarded` | **7** | No runtime gate yet — see HQ handoff for list |
+| `write_guarded` | **15** | Runtime gate before writes; inventory drift audit in deploy preflight |
+| `write_unguarded` | **5** | No runtime gate yet — see HQ handoff for list |
 
 **Slice 1 (P2 `search_gaps`):** capability-only — `BUCKPARTS_IO_CAPABILITY=MUTATION` before `--write`.
 
@@ -346,7 +346,9 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 
 **Slice 3 (P0 live promotion):** `scripts/promote-staged-refrigerator.ts` — MUTATION + trust + founder approval bound to `scripts/promote-staged-refrigerator.ts` (`scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts`); writes execute in `scripts/lib/promote-staged-refrigerator-run-v1.ts`.
 
-**Remaining `write_unguarded` (7):** `ingest-hqii-retailer-links.ts`, `hqii-candidate-queue-upsert.ts`, `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts`.
+**Slice 4 (P0 HQII retailer-link ingest):** `scripts/ingest-hqii-retailer-links.ts` and `scripts/hqii-candidate-queue-upsert.ts` — MUTATION + trust + founder + input JSON artifact binding (`scripts/lib/ingest-hqii-retailer-links-mutation-gate-v1.ts`, `scripts/lib/hqii-candidate-queue-upsert-mutation-gate-v1.ts`); writes execute in run libs; truth-ledger on `--write`. `ingest-hqii-retailer-links` defaults to dry-run; requires explicit `--write` for mutation.
+
+**Remaining `write_unguarded` (5):** `import-seed.ts`, `vertical-seed.ts`, `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts`.
 
 ### MCP / deploy preflight (PROVEN)
 

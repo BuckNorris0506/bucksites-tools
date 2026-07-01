@@ -70,12 +70,22 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
     },
     {
       rel_path: "scripts/hqii-candidate-queue-upsert.ts",
-      access_class: "write_unguarded",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/lib/hqii-candidate-queue-upsert-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "hqii_candidate_queue_upsert_v1",
     },
     { rel_path: "scripts/import-seed.ts", access_class: "write_unguarded" },
     {
       rel_path: "scripts/ingest-hqii-retailer-links.ts",
-      access_class: "write_unguarded",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/lib/ingest-hqii-retailer-links-run-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "ingest_hqii_retailer_links_v1",
     },
     {
       rel_path: "scripts/lib/learning-outcomes-writer.ts",
