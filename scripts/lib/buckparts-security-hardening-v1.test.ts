@@ -28,7 +28,7 @@ import {
   buildGuardedApplyTruthLedgerBlockersV1,
 } from "./truth-ledger-v1";
 import { enforceMcpSupabaseExposureAuditV1 } from "../audit-buckparts-mcp-supabase-exposure-v1";
-import { auditSupabaseServiceRoleInventoryDriftV1 } from "./buckparts-supabase-service-role-inventory-v1";
+import { auditSupabaseServiceRoleInventoryDriftV1, SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1 } from "./buckparts-supabase-service-role-inventory-v1";
 import { buildGuardedCsvWriteModeBlockersV1 } from "./universal-batch-lifecycle-guarded-csv-apply-executor-write-v1";
 import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import type { FounderDecisionRegistryRowV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
@@ -264,6 +264,16 @@ describe("security hardening v1", () => {
   test("staged search-gap pipeline P1 writers pass service-role inventory guarded audit", () => {
     const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
     assert.equal(drift.ok, true);
+  });
+
+  test("promote-staged-refrigerator P0 writer passes service-role inventory guarded audit", () => {
+    const drift = auditSupabaseServiceRoleInventoryDriftV1({ rootDir: process.cwd() });
+    assert.equal(drift.ok, true);
+    const entry = SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.find(
+      (e) => e.rel_path === "scripts/promote-staged-refrigerator.ts",
+    );
+    assert.equal(entry?.access_class, "write_guarded");
+    assert.equal(entry?.mutation_lane, "promote_staged_refrigerator_v1");
   });
 
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {

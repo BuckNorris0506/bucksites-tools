@@ -28,6 +28,7 @@ const MUTATION_AUTHORIZATION_SOURCE_FILES = [
   "scripts/lib/manufacturer-rescue-control-plane-convergence-v1.ts",
   "scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts",
   "scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts",
+  "scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts",
   "src/lib/owner-dashboard/owner-decision-queue-v1.ts",
 ];
 

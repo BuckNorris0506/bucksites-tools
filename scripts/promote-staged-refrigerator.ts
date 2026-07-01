@@ -1,6 +1,13 @@
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
+import {
+  assertPromoteStagedRefrigeratorWriteAuthorizedV1,
+  buildPromoteStagedRefrigeratorMutationPreflightV1,
+  PROMOTE_STAGED_REFRIGERATOR_MUTATION_GATE_REF_V1,
+} from "./lib/promote-staged-refrigerator-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
+
+const mutationGateRef = PROMOTE_STAGED_REFRIGERATOR_MUTATION_GATE_REF_V1;
 
 type StagedStatus = "ready" | "promoted";
 
@@ -296,6 +303,15 @@ async function main() {
   loadEnv();
   const write = process.argv.includes("--write");
   const limit = parseArgNumber("--limit", 200);
+
+  if (write) {
+    assertPromoteStagedRefrigeratorWriteAuthorizedV1(
+      buildPromoteStagedRefrigeratorMutationPreflightV1({
+        rootDir: process.cwd(),
+        mode: "write",
+      }),
+    );
+  }
 
   const models = await promoteModels(limit, write);
   const filters = await promoteFilters(limit, write);

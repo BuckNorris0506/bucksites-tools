@@ -107,3 +107,12 @@ test("P1 staged search-gap pipeline writers are write_guarded with mutation_lane
     "staged_filter_brand_refrigerator_v1",
   );
 });
+
+test("P0 promote-staged-refrigerator writer is write_guarded with mutation_lane", () => {
+  const guarded = new Map(
+    SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1.filter((e) => e.access_class === "write_guarded").map(
+      (e) => [e.rel_path, e.mutation_lane],
+    ),
+  );
+  assert.equal(guarded.get("scripts/promote-staged-refrigerator.ts"), "promote_staged_refrigerator_v1");
+});
