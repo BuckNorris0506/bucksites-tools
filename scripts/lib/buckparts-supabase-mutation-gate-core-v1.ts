@@ -24,6 +24,12 @@ export type SupabaseMutationGatePreflightV1 = {
   io_capability: BuckpartsIoCapabilityV1;
 };
 
+/** Minimal fields lane-specific gate preflights must expose for core authorization assert. */
+export type SupabaseMutationGateAuthorizationInputV1 = Pick<
+  SupabaseMutationGatePreflightV1,
+  "mode" | "mutation_authorized" | "blockers"
+>;
+
 export function resolveIoCapabilityFromEnvV1(): BuckpartsIoCapabilityV1 {
   const raw = process.env[BUCKPARTS_IO_CAPABILITY_ENV_V1]?.trim().toUpperCase();
   if (raw === "MUTATION") return "MUTATION";
@@ -85,7 +91,7 @@ export class SupabaseMutationGateBlockedError extends Error {
 }
 
 export function assertSupabaseMutationAuthorizedV1(
-  preflight: SupabaseMutationGatePreflightV1,
+  preflight: SupabaseMutationGateAuthorizationInputV1,
 ): void {
   if (!isSupabaseWriteIntentModeV1(preflight.mode)) return;
   if (preflight.mutation_authorized) return;
