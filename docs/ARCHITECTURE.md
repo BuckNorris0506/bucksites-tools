@@ -331,8 +331,8 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 - **`/go` redirect:** freshness fail-closed; decision precedence DENY/UNKNOWN over ALLOW (`d66ce8e` chain).
 - **AP Supabase parity apply:** `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` — requires `MUTATION`, trust currency, hash-bound founder approval with valid `expires_at`.
 - **RPWFE/GE Supabase parity apply:** `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` — same pattern.
-- **Truth ledger:** **10** founder-gated `write_guarded` run libs record **`applied`** / **`blocked`** to `data/ops/truth-ledger-v1.jsonl` — AP/RPWFE apply, promote-staged, HQII ingest pair, seed import pair, learning-outcomes insert, remove-demo-wedge-brands, verify-oem `--write-db`.
-- **Truth-ledger gap:** **10** capability-only search-gap/staged lanes (Slices 1–2) are runtime-gated but do **not** append outcomes yet. Append remains post-mutation / non-atomic.
+- **Truth ledger:** all **20** inventoried `write_guarded` lanes record **`applied`** / **`blocked`** to `data/ops/truth-ledger-v1.jsonl` — **10** founder-gated run libs plus **10** capability-only Slice 1–2 scripts via `recordCapabilityOnlyMutationTruthLedgerOutcomeV1`.
+- **Append limitation:** post-mutation / non-atomic on all lanes (documented in `truth-ledger-v1.ts` `append_limitation_v1`).
 
 ### Service-role writer inventory (PROVEN — `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`)
 

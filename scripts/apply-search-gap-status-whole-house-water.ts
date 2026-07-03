@@ -2,6 +2,8 @@
  * Manual search_gaps status updates for whole-house-water-related rows only.
  * Dry-run by default; use --write to persist.
  */
+import path from "node:path";
+
 import { loadEnv } from "./lib/load-env";
 import {
   classifyWholeHouseWaterSearchGap,
@@ -9,9 +11,11 @@ import {
 } from "./lib/whole-house-water-gap-classification";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import {
-  assertSearchGapSupabaseWriteAuthorizedV1,
   buildSearchGapStatusMutationPreflightV1,
+  finalizeSearchGapStatusWriteIntentV1,
   SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1,
+  searchGapSupabaseMutationAuthorizedV1,
+  type SearchGapStatusMutationPreflightV1,
 } from "./lib/search-gap-status-mutation-gate-v1";
 import { HOMEKEEP_WEDGE_CATALOG, wedgeAllowsSearchGapCatalog, wedgeCatalogsForGapQuery } from "@/lib/catalog/identity";
 
@@ -19,6 +23,7 @@ const PAGE = 2000;
 const WEDGE = HOMEKEEP_WEDGE_CATALOG.whole_house_water;
 const ALLOWED_CATALOG_LIST = wedgeCatalogsForGapQuery(WEDGE);
 const mutationGateRef = SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1;
+const rootDir = path.resolve(__dirname, "..");
 
 type GapAction = "resolved" | "ignored";
 
@@ -98,14 +103,22 @@ async function main() {
     throw new Error('Provide --action resolved | --action ignored');
   }
 
+  let writePreflight: SearchGapStatusMutationPreflightV1 | null = null;
   if (write) {
-    assertSearchGapSupabaseWriteAuthorizedV1(
-      buildSearchGapStatusMutationPreflightV1({
-        mode: "write",
-        wedge: WEDGE,
-        operation: "status_update",
-      }),
-    );
+    writePreflight = buildSearchGapStatusMutationPreflightV1({
+      mode: "write",
+      wedge: WEDGE,
+      operation: "status_update",
+    });
+    if (!searchGapSupabaseMutationAuthorizedV1(writePreflight)) {
+      finalizeSearchGapStatusWriteIntentV1({
+        rootDir,
+        preflight: writePreflight,
+        apply_outcome: "blocked",
+        blockers: [...writePreflight.blockers],
+      });
+      process.exit(1);
+    }
   }
 
   const targetStatus: GapAction = action;
@@ -235,6 +248,16 @@ async function main() {
     console.error(
       "[apply-search-gap-status-whole-house-water] dry-run only. Re-run with --write to update search_gaps.status.",
     );
+  } else if (writePreflight) {
+    const record = finalizeSearchGapStatusWriteIntentV1({
+      rootDir,
+      preflight: writePreflight,
+      apply_outcome: "applied",
+      blockers: [],
+    });
+    if (!record.ok) {
+      process.exit(1);
+    }
   }
 }
 

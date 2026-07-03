@@ -378,6 +378,11 @@ describe("security hardening v1", () => {
   test("truth ledger v1: append-only jsonl is proven with MUTATION capability", () => {
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.deferred, false);
     assert.equal(TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.jsonl_rel_path, TRUTH_LEDGER_V1_JSONL_REL_V1);
+    assert.ok(
+      TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1.proven_today.some((line) =>
+        line.includes("recordCapabilityOnlyMutationTruthLedgerOutcomeV1"),
+      ),
+    );
     const root = mkdtempSync(path.join(tmpdir(), "bp-tl-jsonl-"));
     try {
       const append = appendTruthLedgerMutationEntryV1({
@@ -400,6 +405,32 @@ describe("security hardening v1", () => {
       assert.equal(entries[0]!.mutation_lane, "security_hardening_fixture");
     } finally {
       rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  test("capability-only write_guarded scripts wire truth-ledger finalize helpers", () => {
+    const statusPaths = [
+      "scripts/apply-search-gap-status-refrigerator.ts",
+      "scripts/apply-search-gap-status-air-purifier.ts",
+      "scripts/apply-search-gap-status-whole-house-water.ts",
+      "scripts/search-gaps-classify.ts",
+    ];
+    const stagedPaths = [
+      "scripts/search-gap-candidates-generate.ts",
+      "scripts/search-gap-candidates-apply.ts",
+      "scripts/resolve-staged-compat-refrigerator.ts",
+      "scripts/reprocess-compat-after-models-refrigerator.ts",
+      "scripts/apply-staged-compat-part-choice-refrigerator.ts",
+      "scripts/apply-staged-filter-brand-refrigerator.ts",
+    ];
+    const root = process.cwd();
+    for (const rel of statusPaths) {
+      const text = readFileSync(path.join(root, rel), "utf8");
+      assert.ok(text.includes("finalizeSearchGapStatusWriteIntentV1"), rel);
+    }
+    for (const rel of stagedPaths) {
+      const text = readFileSync(path.join(root, rel), "utf8");
+      assert.ok(text.includes("finalizeSearchGapStagedWriteIntentV1"), rel);
     }
   });
 

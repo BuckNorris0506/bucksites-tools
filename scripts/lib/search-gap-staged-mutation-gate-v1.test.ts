@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
@@ -7,6 +10,7 @@ import { IO_CAPABILITY_READ_INDEX_CANNOT_MUTATE_SUPABASE_V1 } from "./buckparts-
 import {
   assertSearchGapStagedSupabaseWriteAuthorizedV1,
   buildSearchGapStagedMutationPreflightV1,
+  finalizeSearchGapStagedWriteIntentV1,
   mutationLaneForSearchGapStagedOperationV1,
   SEARCH_GAP_MUTATION_LANE_CANDIDATES_APPLY_V1,
   SEARCH_GAP_MUTATION_LANE_CANDIDATES_GENERATE_V1,
@@ -58,4 +62,33 @@ test("mutationLaneForSearchGapStagedOperationV1 maps candidate_generate lane", (
     mutationLaneForSearchGapStagedOperationV1("candidate_generate"),
     SEARCH_GAP_MUTATION_LANE_CANDIDATES_GENERATE_V1,
   );
+});
+
+test("finalizeSearchGapStagedWriteIntentV1 records capability-only applied outcome", () => {
+  const lines: string[] = [];
+  const preflight = buildSearchGapStagedMutationPreflightV1({
+    mode: "write",
+    operation: "candidate_generate",
+    catalog_scope: "multi_catalog",
+    io_capability: "MUTATION",
+  });
+  const root = mkdtempSync(path.join(tmpdir(), "sg-staged-tl-"));
+  try {
+    const result = finalizeSearchGapStagedWriteIntentV1({
+      rootDir: root,
+      preflight,
+      apply_outcome: "applied",
+      blockers: [],
+      appendText: (_abs, line) => lines.push(line),
+      mkdir: () => undefined,
+    });
+    assert.equal(result.ok, true);
+    assert.equal(lines.length, 1);
+    const parsed = JSON.parse(lines[0]!);
+    assert.equal(parsed.mutation_lane, SEARCH_GAP_MUTATION_LANE_CANDIDATES_GENERATE_V1);
+    assert.equal(parsed.apply_outcome, "applied");
+    assert.equal(parsed.founder_decision_id, null);
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

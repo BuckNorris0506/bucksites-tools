@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
@@ -7,6 +10,7 @@ import { IO_CAPABILITY_READ_INDEX_CANNOT_MUTATE_SUPABASE_V1 } from "./buckparts-
 import {
   assertSearchGapSupabaseWriteAuthorizedV1,
   buildSearchGapStatusMutationPreflightV1,
+  finalizeSearchGapStatusWriteIntentV1,
   mutationLaneForSearchGapWedgeV1,
   SEARCH_GAP_MUTATION_LANE_CLASSIFY_V1,
   SEARCH_GAP_MUTATION_LANE_STATUS_REFRIGERATOR_V1,
@@ -56,4 +60,33 @@ test("mutationLaneForSearchGapWedgeV1 maps refrigerator status lane", () => {
     mutationLaneForSearchGapWedgeV1(HOMEKEEP_WEDGE_CATALOG.refrigerator_water, "status_update"),
     SEARCH_GAP_MUTATION_LANE_STATUS_REFRIGERATOR_V1,
   );
+});
+
+test("finalizeSearchGapStatusWriteIntentV1 records capability-only blocked outcome", () => {
+  const lines: string[] = [];
+  const preflight = buildSearchGapStatusMutationPreflightV1({
+    mode: "write",
+    wedge: "all_wedges",
+    operation: "classify_likely_entity_type",
+    io_capability: "READ_INDEX",
+  });
+  const root = mkdtempSync(path.join(tmpdir(), "sg-status-tl-"));
+  try {
+    const result = finalizeSearchGapStatusWriteIntentV1({
+      rootDir: root,
+      preflight,
+      apply_outcome: "blocked",
+      blockers: [...preflight.blockers],
+      appendText: (_abs, line) => lines.push(line),
+      mkdir: () => undefined,
+    });
+    assert.equal(result.ok, true);
+    assert.equal(lines.length, 1);
+    const parsed = JSON.parse(lines[0]!);
+    assert.equal(parsed.mutation_lane, SEARCH_GAP_MUTATION_LANE_CLASSIFY_V1);
+    assert.equal(parsed.founder_decision_id, null);
+    assert.equal(parsed.apply_outcome, "blocked");
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });

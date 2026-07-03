@@ -7,11 +7,15 @@ import type { HomekeepWedgeCatalog } from "@/lib/catalog/identity";
 
 import type { BuckpartsIoCapabilityV1 } from "./buckparts-io-capabilities-v1";
 import {
+  recordCapabilityOnlyMutationTruthLedgerOutcomeV1,
+} from "./capability-only-mutation-truth-ledger-v1";
+import {
   assertSupabaseMutationAuthorizedV1,
   buildSupabaseMutationGatePreflightV1,
   type SupabaseMutationGateModeV1,
   type SupabaseMutationGatePreflightV1,
 } from "./buckparts-supabase-mutation-gate-core-v1";
+import type { TruthLedgerMutationApplyOutcomeV1 } from "./truth-ledger-v1";
 
 export const SEARCH_GAP_STAGED_MUTATION_GATE_CONTRACT_V1 =
   "search_gap_staged_mutation_gate_v1" as const;
@@ -108,4 +112,26 @@ export function assertSearchGapStagedSupabaseWriteAuthorizedV1(
   preflight: SearchGapStagedMutationPreflightV1,
 ): void {
   assertSupabaseMutationAuthorizedV1(preflight);
+}
+
+export function finalizeSearchGapStagedWriteIntentV1(args: {
+  rootDir: string;
+  preflight: SearchGapStagedMutationPreflightV1;
+  apply_outcome: TruthLedgerMutationApplyOutcomeV1;
+  blockers: string[];
+  now?: () => Date;
+  appendText?: (absPath: string, line: string) => void;
+  mkdir?: (dirAbs: string) => void;
+  recordTruthLedger?: typeof recordCapabilityOnlyMutationTruthLedgerOutcomeV1;
+}): { ok: true } | { ok: false; blockers: string[] } {
+  const record = args.recordTruthLedger ?? recordCapabilityOnlyMutationTruthLedgerOutcomeV1;
+  return record({
+    rootDir: args.rootDir,
+    mutation_lane: args.preflight.mutation_lane,
+    apply_outcome: args.apply_outcome,
+    blockers: args.blockers,
+    now: args.now,
+    appendText: args.appendText,
+    mkdir: args.mkdir,
+  });
 }

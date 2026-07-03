@@ -144,20 +144,24 @@ All three record truth-ledger mutation outcomes on write-intent paths. `scripts/
 
 Inventory source: `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`. Drift audit: `auditSupabaseServiceRoleInventoryDriftV1`.
 
-### Truth-ledger coverage (founder-gated write lanes — PROVEN)
+### Truth-ledger coverage (all 20 `write_guarded` lanes — PROVEN)
 
-**10** founder-gated `write_guarded` run libs append **`applied`** / **`blocked`** outcomes to **`data/ops/truth-ledger-v1.jsonl`** on write-intent (`recordTruthLedgerMutationOutcomeV1` in `src/lib/owner-dashboard/truth-ledger-v1.ts`): AP parity, RPWFE parity, promote-staged, HQII ingest pair, seed import pair, learning-outcomes insert, remove-demo-wedge-brands, verify-oem `--write-db`.
+**20** inventoried `write_guarded` run libs / write CLIs append **`applied`** / **`blocked`** outcomes to **`data/ops/truth-ledger-v1.jsonl`** on write-intent (`recordTruthLedgerMutationOutcomeV1` or `recordCapabilityOnlyMutationTruthLedgerOutcomeV1` in `scripts/lib/capability-only-mutation-truth-ledger-v1.ts`).
 
-**Explicit remaining gap — 10 capability-only guarded lanes (Slices 1–2):** `search_gaps` status writers (3), `search-gaps-classify`, staged pipeline writers (6) — runtime-gated by **`BUCKPARTS_IO_CAPABILITY=MUTATION`** only; **no** founder/plan binding and **no** truth-ledger outcome append yet.
+| Class | Count | Ledger recorder |
+|-------|------:|-----------------|
+| Founder-gated run libs | **10** | `recordTruthLedgerMutationOutcomeV1` — AP/RPWFE parity, promote-staged, HQII ingest pair, seed import pair, learning-outcomes insert, remove-demo wedges, verify-oem `--write-db` |
+| Capability-only Slice 1–2 | **10** | `recordCapabilityOnlyMutationTruthLedgerOutcomeV1` — `search_gaps` status (3 wedges), classify, candidates generate/apply, staged compat resolve/reprocess/part-choice, staged filter brand |
 
-**Known limitation:** truth-ledger append remains **post-mutation / non-atomic** — DB write may succeed before JSONL append; append failure on write-intent paths forces blocked reporting but does not roll back Supabase.
+Capability-only lanes: **`founder_decision_id: null`**, **`bound_artifacts_v1: []`**, one JSONL line per script invocation (not per row).
+
+**Known limitation:** truth-ledger append remains **post-mutation / non-atomic** — DB write may succeed before JSONL append; append failure on write-intent forces exit 1.
 
 ### Next recommended work (ordered)
 
-1. **Future — truth-ledger on capability-only search-gap/staged lanes** — optional ops audit trail for Slice 1–2 writers
-2. **Future — atomic or pre-write truth-ledger intent** — reduce post-mutation append gap
-3. **Future — service-role-only `upsert_search_gap` refactor** — removes anon/authenticated EXECUTE on `SECURITY DEFINER` RPC (clears deferred WARN)
-4. **Future — tighter `click_events` INSERT `WITH CHECK`** — shape-constrain telemetry inserts (clears deferred WARN)
+1. **Future — atomic or pre-write truth-ledger intent** — reduce post-mutation append gap
+2. **Future — service-role-only `upsert_search_gap` refactor** — removes anon/authenticated EXECUTE on `SECURITY DEFINER` RPC (clears deferred WARN)
+3. **Future — tighter `click_events` INSERT `WITH CHECK`** — shape-constrain telemetry inserts (clears deferred WARN)
 
 ---
 
@@ -217,9 +221,9 @@ Apply requires all of:
 ### Remaining blockers before broad production-data automation
 
 1. Truth-ledger append is **post-DB-write / non-atomic** — consider pre-write intent or append-before-write
-2. **10** capability-only `write_guarded` search-gap/staged lanes (Slices 1–2) do **not** yet append truth-ledger outcomes
-3. CSV / manufacturer apply lanes outside inventoried service-role writers remain outside truth-ledger coverage (`truth-ledger-v1.ts` `remains_unknown_without_full_lane_coverage`)
-4. ~~Runtime-gate remaining **`write_unguarded`** service-role lanes~~ — **DONE (Slice 6, deployed `e19ebbd`)**
+2. CSV / manufacturer apply lanes outside inventoried service-role writers remain outside truth-ledger coverage (`truth-ledger-v1.ts` `remains_unknown_without_full_lane_coverage`)
+3. ~~Runtime-gate remaining **`write_unguarded`** service-role lanes~~ — **DONE (Slice 6, deployed `e19ebbd`)**
+4. ~~Capability-only search-gap/staged truth-ledger~~ — **DONE (all 20 `write_guarded` lanes record outcomes)**
 
 ```bash
 git rev-parse HEAD

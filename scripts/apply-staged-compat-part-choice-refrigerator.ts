@@ -1,13 +1,18 @@
+import path from "node:path";
+
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
 import {
-  assertSearchGapStagedSupabaseWriteAuthorizedV1,
   buildSearchGapStagedMutationPreflightV1,
+  finalizeSearchGapStagedWriteIntentV1,
   SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+  searchGapStagedSupabaseMutationAuthorizedV1,
+  type SearchGapStagedMutationPreflightV1,
 } from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 
 const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
+const rootDir = path.resolve(__dirname, "..");
 
 function arg(flag: string): string | null {
   const i = process.argv.indexOf(flag);
@@ -84,14 +89,22 @@ async function main() {
     return;
   }
 
+  let writePreflight: SearchGapStagedMutationPreflightV1 | null = null;
   if (write) {
-    assertSearchGapStagedSupabaseWriteAuthorizedV1(
-      buildSearchGapStagedMutationPreflightV1({
-        mode: "write",
-        operation: "staged_compat_part_choice",
-        catalog_scope: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
-      }),
-    );
+    writePreflight = buildSearchGapStagedMutationPreflightV1({
+      mode: "write",
+      operation: "staged_compat_part_choice",
+      catalog_scope: HOMEKEEP_WEDGE_CATALOG.refrigerator_water,
+    });
+    if (!searchGapStagedSupabaseMutationAuthorizedV1(writePreflight)) {
+      finalizeSearchGapStagedWriteIntentV1({
+        rootDir,
+        preflight: writePreflight,
+        apply_outcome: "blocked",
+        blockers: [...writePreflight.blockers],
+      });
+      process.exit(1);
+    }
     const { error: upErr } = await supabase
       .from("staged_compatibility_mapping_additions")
       .update({ part_id: filterId, status: "ready" })
@@ -114,6 +127,18 @@ async function main() {
       2,
     ),
   );
+
+  if (write && writePreflight) {
+    const record = finalizeSearchGapStagedWriteIntentV1({
+      rootDir,
+      preflight: writePreflight,
+      apply_outcome: "applied",
+      blockers: [],
+    });
+    if (!record.ok) {
+      process.exit(1);
+    }
+  }
 }
 
 main().catch((err) => {

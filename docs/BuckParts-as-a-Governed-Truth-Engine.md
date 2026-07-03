@@ -74,14 +74,13 @@ Live mutation paths require **`BUCKPARTS_IO_CAPABILITY=MUTATION`**, hash-bound f
 - Missing, null, blank, unparseable, or past `expires_at` fails closed (`founder-decision-registry-v1.ts` → `isFounderRegistryRowActiveMutationApproval`).
 - High-risk lanes require **active approval plus plan/path binding** (`founderRegistryRowPassesMutationApprovalGateV1`, `verifyFounderDecisionArtifactBindingsV1`).
 
-### Truth-ledger (PROVEN — founder-gated lanes; explicit gaps)
+### Truth-ledger (PROVEN — all 20 inventoried `write_guarded` lanes)
 
-- **10** founder-gated `write_guarded` run libs append **`applied`** / **`blocked`** to **`data/ops/truth-ledger-v1.jsonl`** on write-intent: AP + RPWFE parity apply (`26d4b0a`), promote-staged (`a28ad31`), HQII ingest pair (`6ae0b2e`), seed import pair (`6756914`), learning-outcomes insert + remove-demo wedges + verify-oem `--write-db` (`1107eb2`).
-- Records require **MUTATION** capability on write-intent paths; append failure forces blocked reporting on gated paths.
-- **`source_snapshot_v1`** is backward compatible when absent; when present, requires `source_url`, `retrieved_at`, and `evidence_sha256` matching bound evidence hash.
-- **Remaining gap — 10 capability-only guarded lanes (Slices 1–2):** `search_gaps` status writers + `search-gaps-classify` + staged pipeline writers — MUTATION gate only; **no** truth-ledger append.
+- **10** founder-gated run libs append via `recordTruthLedgerMutationOutcomeV1` on write-intent.
+- **10** capability-only Slice 1–2 scripts append via `recordCapabilityOnlyMutationTruthLedgerOutcomeV1` (`scripts/lib/capability-only-mutation-truth-ledger-v1.ts`): `search_gaps` status (3), classify, candidates generate/apply, staged compat resolve/reprocess/part-choice, filter brand apply.
+- Capability-only entries: **`founder_decision_id: null`**, **`bound_artifacts_v1: []`**, one line per invocation.
 - **Known limitation:** append is **post-mutation / non-atomic** — Supabase write may precede JSONL record.
-- **Outside scope:** CSV/manufacturer apply lanes not in service-role inventory (`truth-ledger-v1.ts` `remains_unknown_without_full_lane_coverage`).
+- **Outside inventoried service-role writers:** CSV/manufacturer apply lanes (`truth-ledger-v1.ts` `remains_unknown_without_full_lane_coverage`).
 
 ### MCP / Supabase extraction controls (PROVEN)
 
@@ -199,14 +198,13 @@ HQ handoff second-wedge doctrine (PROVEN policy):
 
 Ordered from HQ handoff § Current stopping point and owner briefing:
 
-1. **Truth-ledger on capability-only search-gap/staged lanes** — **10** Slice 1–2 writers gated but not yet appending outcomes.
-2. **Atomic or pre-write truth-ledger intent** — append remains post-mutation / non-atomic on founder-gated lanes.
-3. **Make `source_snapshot_v1` mandatory for buyer-path evidence** — currently backward compatible when absent; broken chain fails closed when present; mandatory binding is not yet enforced.
-4. **CSV/manufacturer apply lanes** outside inventoried service-role writers — truth-ledger coverage still unknown (`truth-ledger-v1.ts`).
-5. **Future:** move `upsert_search_gap` to service-role-only telemetry — clears deferred SECURITY DEFINER WARN.
-6. **Future:** tighten `click_events` WITH CHECK — shape-constrain telemetry inserts; clears deferred WARN.
+1. **Atomic or pre-write truth-ledger intent** — append remains post-mutation / non-atomic on all lanes.
+2. **Make `source_snapshot_v1` mandatory for buyer-path evidence** — currently backward compatible when absent; broken chain fails closed when present; mandatory binding is not yet enforced.
+3. **CSV/manufacturer apply lanes** outside inventoried service-role writers — truth-ledger coverage still unknown (`truth-ledger-v1.ts`).
+4. **Future:** move `upsert_search_gap` to service-role-only telemetry — clears deferred SECURITY DEFINER WARN.
+5. **Future:** tighten `click_events` WITH CHECK — shape-constrain telemetry inserts; clears deferred WARN.
 
-**Closed at `e19ebbd`:** all **20** inventoried service-role write lanes are `write_guarded` (**0** `write_unguarded`); founder-gated lanes including learning-outcomes insert, remove-demo wedges, and verify-oem `--write-db` record truth-ledger outcomes.
+**Closed at `e19ebbd` + capability-only ledger slice:** all **20** inventoried service-role write lanes are `write_guarded` (**0** `write_unguarded`); all append truth-ledger outcomes on write-intent.
 
 **Netlify credit rule:** batch local commits; push deploy-worthy milestones only (HQ handoff § Netlify credit rule).
 

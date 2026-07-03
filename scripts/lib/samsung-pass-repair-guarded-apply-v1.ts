@@ -8,11 +8,11 @@ import path from "node:path";
 import { parse } from "csv-parse/sync";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import {
   SAMSUNG_PASS_REPAIR_APPLY_PLAN_CONTRACT_V1,
   SAMSUNG_PASS_REPAIR_APPLY_PLAN_JSON_REL_V1,
@@ -241,8 +241,16 @@ function findOwnerApprovalRow(args: {
       );
       continue;
     }
-    if (!isFounderRegistryRowActiveMutationApproval(rowValidation.row, args.referenceTimeIso)) {
-      errors.push("owner approval row is not an active mutation approval (expired or review_after due)");
+    const gate = founderRegistryRowPassesMutationApprovalGateV1({
+      row: rowValidation.row,
+      referenceTimeIso: args.referenceTimeIso,
+      rootDir: args.rootDir,
+      readText: args.readText,
+    });
+    if (!gate.ok) {
+      errors.push(
+        `owner approval row fails mutation approval gate: ${gate.blockers.join(",")}`,
+      );
       continue;
     }
     return { row, errors: [] };

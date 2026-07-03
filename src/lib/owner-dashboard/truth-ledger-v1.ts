@@ -43,7 +43,7 @@ export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
   deferred: false as const,
   jsonl_rel_path: TRUTH_LEDGER_V1_JSONL_REL_V1,
   reason:
-    "Append-only mutation apply outcome recording is proven for AP, RPWFE Supabase parity, promote-staged-refrigerator, HQII retailer-link ingest, seed import, learning-outcomes insert, remove-demo-wedge-brands, and verify-oem write-db lanes.",
+    "Append-only mutation apply outcome recording is proven for all 20 inventoried write_guarded service-role lanes: founder-gated apply/ingest/seed/promote/Slice 6 lanes plus capability-only search-gap/staged Slice 1–2 lanes.",
   proven_today: [
     "appendTruthLedgerMutationEntryV1 requires MUTATION io_capability",
     "loadTruthLedgerAppendEntriesV1 reads append-only JSONL history",
@@ -56,13 +56,19 @@ export const TRUTH_LEDGER_V1_APPEND_ONLY_JSONL_DEFERRED_V1 = {
     "recordTruthLedgerMutationOutcomeV1 on learning-outcomes insert write path",
     "recordTruthLedgerMutationOutcomeV1 on remove-demo-wedge-brands write path",
     "recordTruthLedgerMutationOutcomeV1 on verify-oem-retailer-links write-db path",
+    "recordCapabilityOnlyMutationTruthLedgerOutcomeV1 on search_gaps status writers (3 wedges)",
+    "recordCapabilityOnlyMutationTruthLedgerOutcomeV1 on search-gaps-classify write path",
+    "recordCapabilityOnlyMutationTruthLedgerOutcomeV1 on search-gap-candidates generate/apply write paths",
+    "recordCapabilityOnlyMutationTruthLedgerOutcomeV1 on staged compat resolve/reprocess/part-choice write paths",
+    "recordCapabilityOnlyMutationTruthLedgerOutcomeV1 on staged filter brand apply write path",
   ],
   remains_unknown_without_full_lane_coverage: [
     "universal-batch-lifecycle CSV executor append",
     "manufacturer-rescue apply append",
-    "search_gaps and staged pipeline capability-only service-role lanes",
     "detecting post-apply artifact edits without re-running apply",
   ],
+  append_limitation_v1:
+    "Mutation outcome append remains post-DB-write / non-atomic on all lanes — Supabase write may precede JSONL record.",
 } as const;
 
 export type TruthLedgerIoCapabilityV1 = "READ_INDEX" | "MUTATION";

@@ -4,7 +4,7 @@
  *
  *   npx tsx scripts/audit-buckparts-readonly-capability-v1.ts
  */
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -12,11 +12,9 @@ const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.
 
 const READONLY_REPORT_GLOBS = [
   "scripts/report-buckparts-command-center.ts",
-  "scripts/report-evidence-freshness-recovery-v1.ts",
   "scripts/report-buckparts-execution-ledger-v1.ts",
   "scripts/report-all-product-safe-buyer-path-census-v1.ts",
   "scripts/report-universal-batch-lifecycle-mutation-authorization-review-v1.ts",
-  "scripts/report-manufacturer-rescue-control-plane-convergence-v1.ts",
 ];
 
 const MUTATION_AUTHORIZATION_SOURCE_FILES = [
@@ -25,7 +23,6 @@ const MUTATION_AUTHORIZATION_SOURCE_FILES = [
   "scripts/lib/universal-batch-lifecycle-mutation-authorization-review-v1.ts",
   "scripts/lib/supabase-csv-parity-guarded-apply-v1.ts",
   "scripts/lib/manufacturer-rescue-guarded-apply-bridge-v1.ts",
-  "scripts/lib/manufacturer-rescue-control-plane-convergence-v1.ts",
   "scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts",
   "scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts",
   "scripts/lib/promote-staged-refrigerator-mutation-gate-v1.ts",
@@ -64,6 +61,8 @@ const REPORT_MUTATION_NAME_PATTERN = /guarded-apply|apply-executor|write-csv|-ap
 
 function auditReadonlyReportFile(relPath: string): string[] {
   const abs = path.join(REPO_ROOT, relPath);
+  // Explicit priority list may lag renames/removals; dynamic discovery covers live reports.
+  if (!existsSync(abs)) return [];
   const text = readFileSync(abs, "utf8");
   const violations: string[] = [];
   for (const pattern of FORBIDDEN_IMPORT_PATTERNS) {
@@ -84,7 +83,11 @@ function auditReadonlyReportFile(relPath: string): string[] {
 function auditMutationAuthorizationGate(relPath: string): string[] {
   if (ACTIVE_MUTATION_APPROVAL_ALLOWLIST.has(relPath)) return [];
   const abs = path.join(REPO_ROOT, relPath);
-  if (!readFileSync(abs, "utf8").includes("isFounderRegistryRowActiveMutationApproval")) {
+  if (!existsSync(abs)) {
+    return [`${relPath}: mutation authorization source file missing`];
+  }
+  const text = readFileSync(abs, "utf8");
+  if (!text.includes("isFounderRegistryRowActiveMutationApproval")) {
     return [];
   }
   const violations: string[] = [];
@@ -130,12 +133,14 @@ function main(): void {
   }
   for (const rel of MUTATION_AUTHORIZATION_SOURCE_FILES) {
     filesAudited.add(rel);
+    const abs = path.join(REPO_ROOT, rel);
+    if (!existsSync(abs)) {
+      violations.push(`${rel}: mutation authorization source file missing`);
+      continue;
+    }
     violations.push(...auditMutationAuthorizationGate(rel));
-    const text = readFileSync(path.join(REPO_ROOT, rel), "utf8");
-    if (
-      MUTATION_AUTHORIZATION_SOURCE_FILES.includes(rel) &&
-      !text.includes("founderRegistryRowPassesMutationApprovalGateV1")
-    ) {
+    const text = readFileSync(abs, "utf8");
+    if (!text.includes("founderRegistryRowPassesMutationApprovalGateV1")) {
       violations.push(
         `${rel}: mutation authorization file missing founderRegistryRowPassesMutationApprovalGateV1`,
       );

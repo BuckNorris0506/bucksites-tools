@@ -1,15 +1,20 @@
+import path from "node:path";
+
 import { HOMEKEEP_WEDGE_CATALOG } from "@/lib/catalog/identity";
 import { loadEnv } from "./lib/load-env";
 import { needsBrandResolution } from "./lib/refrigerator-filter-brand-candidates";
 import {
-  assertSearchGapStagedSupabaseWriteAuthorizedV1,
   buildSearchGapStagedMutationPreflightV1,
+  finalizeSearchGapStagedWriteIntentV1,
   SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+  searchGapStagedSupabaseMutationAuthorizedV1,
+  type SearchGapStagedMutationPreflightV1,
 } from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 
 const CATALOG = HOMEKEEP_WEDGE_CATALOG.refrigerator_water;
 const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
+const rootDir = path.resolve(__dirname, "..");
 
 function parseArgNumber(flag: string): number | null {
   const idx = process.argv.indexOf(flag);
@@ -166,13 +171,20 @@ async function main() {
     return;
   }
 
-  assertSearchGapStagedSupabaseWriteAuthorizedV1(
-    buildSearchGapStagedMutationPreflightV1({
-      mode: "write",
-      operation: "staged_filter_brand_apply",
-      catalog_scope: CATALOG,
-    }),
-  );
+  const writePreflight = buildSearchGapStagedMutationPreflightV1({
+    mode: "write",
+    operation: "staged_filter_brand_apply",
+    catalog_scope: CATALOG,
+  });
+  if (!searchGapStagedSupabaseMutationAuthorizedV1(writePreflight)) {
+    finalizeSearchGapStagedWriteIntentV1({
+      rootDir,
+      preflight: writePreflight,
+      apply_outcome: "blocked",
+      blockers: [...writePreflight.blockers],
+    });
+    process.exit(1);
+  }
 
   const { data: updated, error: upErr } = await supabase
     .from("staged_filter_part_additions")
@@ -187,6 +199,16 @@ async function main() {
   }
 
   console.error(`[apply-staged-filter-brand-refrigerator] updated id=${stagedId} ok`);
+
+  const record = finalizeSearchGapStagedWriteIntentV1({
+    rootDir,
+    preflight: writePreflight,
+    apply_outcome: "applied",
+    blockers: [],
+  });
+  if (!record.ok) {
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

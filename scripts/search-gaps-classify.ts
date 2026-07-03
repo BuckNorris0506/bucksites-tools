@@ -1,12 +1,17 @@
+import path from "node:path";
+
 import { loadEnv } from "./lib/load-env";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 import {
-  assertSearchGapSupabaseWriteAuthorizedV1,
   buildSearchGapStatusMutationPreflightV1,
+  finalizeSearchGapStatusWriteIntentV1,
   SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1,
+  searchGapSupabaseMutationAuthorizedV1,
+  type SearchGapStatusMutationPreflightV1,
 } from "./lib/search-gap-status-mutation-gate-v1";
 
 const mutationGateRef = SEARCH_GAP_STATUS_MUTATION_GATE_REF_V1;
+const rootDir = path.resolve(__dirname, "..");
 
 type SuggestedAction =
   | "add alias"
@@ -112,14 +117,22 @@ async function main() {
   const limit = parseArgNumber("--limit", 100);
   const write = process.argv.includes("--write");
 
+  let writePreflight: SearchGapStatusMutationPreflightV1 | null = null;
   if (write) {
-    assertSearchGapSupabaseWriteAuthorizedV1(
-      buildSearchGapStatusMutationPreflightV1({
-        mode: "write",
-        wedge: "all_wedges",
-        operation: "classify_likely_entity_type",
-      }),
-    );
+    writePreflight = buildSearchGapStatusMutationPreflightV1({
+      mode: "write",
+      wedge: "all_wedges",
+      operation: "classify_likely_entity_type",
+    });
+    if (!searchGapSupabaseMutationAuthorizedV1(writePreflight)) {
+      finalizeSearchGapStatusWriteIntentV1({
+        rootDir,
+        preflight: writePreflight,
+        apply_outcome: "blocked",
+        blockers: [...writePreflight.blockers],
+      });
+      process.exit(1);
+    }
   }
 
   const { data, error } = await supabase
@@ -179,6 +192,18 @@ async function main() {
       2,
     ),
   );
+
+  if (write && writePreflight) {
+    const record = finalizeSearchGapStatusWriteIntentV1({
+      rootDir,
+      preflight: writePreflight,
+      apply_outcome: "applied",
+      blockers: [],
+    });
+    if (!record.ok) {
+      process.exit(1);
+    }
+  }
 }
 
 main().catch((err) => {

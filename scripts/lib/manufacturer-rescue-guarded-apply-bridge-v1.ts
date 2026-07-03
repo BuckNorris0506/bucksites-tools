@@ -8,11 +8,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import {
   buildAllProductSafeBuyerPathCensusV1,
   type AllProductSafeBuyerPathCensusV1,
@@ -275,12 +275,20 @@ function findActiveFounderDecisionForSlug(args: {
   applyPlanRel: string | null;
   founderRows: FounderDecisionRegistryRowV1[];
   nowIso: string;
+  rootDir: string;
+  readText?: (abs: string) => string;
 }): FounderDecisionRegistryRowV1 | null {
   const slug = normalizeSlug(args.slug);
   for (const row of args.founderRows) {
     if (row.decision_status !== "approved") continue;
     if (row.allowed_next_scope !== "owner_mutation_approved") continue;
-    if (!isFounderRegistryRowActiveMutationApproval(row, args.nowIso)) continue;
+    const gate = founderRegistryRowPassesMutationApprovalGateV1({
+      row,
+      referenceTimeIso: args.nowIso,
+      rootDir: args.rootDir,
+      readText: args.readText,
+    });
+    if (!gate.ok) continue;
     const haystack = JSON.stringify(row).toLowerCase();
     if (haystack.includes(slug) || (args.applyPlanRel && haystack.includes(args.applyPlanRel.toLowerCase()))) {
       return row;
@@ -372,6 +380,8 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
         applyPlanRel: applyPlanLoad.rel,
         founderRows: loadFounderDecisionRows(args.rootDir),
         nowIso: now().toISOString(),
+        rootDir: args.rootDir,
+        readText: args.readText,
       })
     : null;
   if (!founderRow) {

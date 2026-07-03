@@ -9,10 +9,10 @@ import path from "node:path";
 import { parse } from "csv-parse/sync";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryDocumentV1,
   validateFounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import { buildRefrigeratorTruthScoreboardV1 } from "./refrigerator-truth-scoreboard-v1";
 import {
   SAMSUNG_PASS_GUARDED_APPLY_REPORT_JSON_REL_V1,
@@ -203,8 +203,16 @@ function verifyOwnerApproval(args: {
     if (row.decision_status !== "approved") continue;
     if (row.allowed_next_scope !== "owner_mutation_approved") continue;
     if (row.evidence_required_before_mutation !== true) continue;
-    if (!isFounderRegistryRowActiveMutationApproval(rowValidation.row, args.referenceTimeIso)) {
-      blockers.push("owner approval row is not an active mutation approval");
+    const gate = founderRegistryRowPassesMutationApprovalGateV1({
+      row: rowValidation.row,
+      referenceTimeIso: args.referenceTimeIso,
+      rootDir: args.rootDir,
+      readText: (abs) => readFileSync(abs, "utf8"),
+    });
+    if (!gate.ok) {
+      blockers.push(
+        `owner approval row fails mutation approval gate: ${gate.blockers.join(",")}`,
+      );
       continue;
     }
     return { valid: true, decisionId: row.decision_id ?? null, blockers: [] };

@@ -7,11 +7,11 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import path from "node:path";
 
 import {
-  isFounderRegistryRowActiveMutationApproval,
   validateFounderDecisionRegistryRowV1,
   type FounderDecisionRegistryRowV1,
 } from "../../src/lib/owner-dashboard/founder-decision-registry-v1";
 import { scanFounderDecisionRegistryJsonFilesV1 } from "../../src/lib/owner-dashboard/founder-decision-registry-scan-v1";
+import { founderRegistryRowPassesMutationApprovalGateV1 } from "./founder-mutation-approval-gate-v1";
 import {
   buildSupabaseCsvParityCoverageFactoryV1,
   buildSupabaseCsvParityReferencePackageForSlugV1,
@@ -157,13 +157,21 @@ export function findActiveFounderDecisionForSupabaseCsvParitySlug(args: {
   applyPlanRel: string;
   founderRows: SupabaseCsvParityFounderDecisionLoadedRowV1[];
   nowIso: string;
+  rootDir: string;
+  readText?: (abs: string) => string;
 }): FounderDecisionRegistryRowV1 | null {
   const slug = normalizeSlug(args.slug);
   for (const loaded of args.founderRows) {
     const row = loaded.row;
     if (row.decision_status !== "approved") continue;
     if (row.allowed_next_scope !== "owner_mutation_approved") continue;
-    if (!isFounderRegistryRowActiveMutationApproval(row, args.nowIso)) continue;
+    const gate = founderRegistryRowPassesMutationApprovalGateV1({
+      row,
+      referenceTimeIso: args.nowIso,
+      rootDir: args.rootDir,
+      readText: args.readText,
+    });
+    if (!gate.ok) continue;
     if (
       supabaseCsvParityFounderRowMatchesSlugAndApplyPlanV1({
         slug,
@@ -377,6 +385,8 @@ export async function runSupabaseCsvParityGuardedApplyV1(args: {
     applyPlanRel,
     founderRows: loadFounderDecisionRowsForSupabaseCsvParityV1(args.rootDir),
     nowIso: now().toISOString(),
+    rootDir: args.rootDir,
+    readText: args.readText,
   });
   const founderDecisionMissing = founderRow == null;
   if (writeCsv && founderDecisionMissing) {

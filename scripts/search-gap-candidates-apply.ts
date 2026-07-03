@@ -1,12 +1,17 @@
+import path from "node:path";
+
 import { loadEnv } from "./lib/load-env";
 import {
-  assertSearchGapStagedSupabaseWriteAuthorizedV1,
   buildSearchGapStagedMutationPreflightV1,
+  finalizeSearchGapStagedWriteIntentV1,
   SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1,
+  searchGapStagedSupabaseMutationAuthorizedV1,
+  type SearchGapStagedMutationPreflightV1,
 } from "./lib/search-gap-staged-mutation-gate-v1";
 import { getSupabaseAdmin } from "./lib/supabase-admin";
 
 const mutationGateRef = SEARCH_GAP_STAGED_MUTATION_GATE_REF_V1;
+const rootDir = path.resolve(__dirname, "..");
 
 type CandidateType =
   | "alias"
@@ -232,14 +237,22 @@ async function main() {
   if (error) throw error;
   const candidates = (data ?? []) as CandidateRow[];
 
+  let writePreflight: SearchGapStagedMutationPreflightV1 | null = null;
   if (!dryRun) {
-    assertSearchGapStagedSupabaseWriteAuthorizedV1(
-      buildSearchGapStagedMutationPreflightV1({
-        mode: "write",
-        operation: "candidate_apply_stage",
-        catalog_scope: "multi_catalog",
-      }),
-    );
+    writePreflight = buildSearchGapStagedMutationPreflightV1({
+      mode: "write",
+      operation: "candidate_apply_stage",
+      catalog_scope: "multi_catalog",
+    });
+    if (!searchGapStagedSupabaseMutationAuthorizedV1(writePreflight)) {
+      finalizeSearchGapStagedWriteIntentV1({
+        rootDir,
+        preflight: writePreflight,
+        apply_outcome: "blocked",
+        blockers: [...writePreflight.blockers],
+      });
+      process.exit(1);
+    }
   }
 
   const results: Array<{
@@ -296,6 +309,18 @@ async function main() {
       2,
     ),
   );
+
+  if (!dryRun && writePreflight) {
+    const record = finalizeSearchGapStagedWriteIntentV1({
+      rootDir,
+      preflight: writePreflight,
+      apply_outcome: "applied",
+      blockers: [],
+    });
+    if (!record.ok) {
+      process.exit(1);
+    }
+  }
 }
 
 main().catch((err) => {
