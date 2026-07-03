@@ -10,6 +10,7 @@ import {
   shouldShowMultipackFallbackCopy,
   isCompatibleReplacementFilterPdp,
   isExplicitBuyableClassification,
+  isHardDeniedBrowserTruthNotes,
   isKnownBrokenUrl,
   isKnownIndirectDiscoveryUrl,
   passesDirectBuyableGate,
@@ -289,6 +290,65 @@ describe("buyable subtype foundation (strict direct_buyable gate)", () => {
         browser_truth_buyable_subtype: BUYABLE_SUBTYPES.BLOCKED_UNSAFE,
       }),
       "unsafe_browser_truth",
+    );
+  });
+});
+
+describe("isHardDeniedBrowserTruthNotes (explicit status tokens only)", () => {
+  it("hard-denies explicit HARD_DO_NOT_USE and WRONG_FAMILY status labels", () => {
+    assert.equal(isHardDeniedBrowserTruthNotes("HARD_DO_NOT_USE"), true);
+    assert.equal(isHardDeniedBrowserTruthNotes("HARD_DO_NOT_USE wrong-family token mismatch"), true);
+    assert.equal(isHardDeniedBrowserTruthNotes("WRONG_FAMILY: model mismatch"), true);
+    assert.equal(isHardDeniedBrowserTruthNotes("WRONG-FAMILY: model mismatch"), true);
+    assert.equal(isHardDeniedBrowserTruthNotes("BLOCKED_WRONG_FAMILY_RISK"), true);
+    assert.equal(isHardDeniedBrowserTruthNotes("WRONG_FAMILY"), true);
+  });
+
+  it("does not hard-deny clearance or observational wrong-family prose", () => {
+    const safeNotes = [
+      "wrong_family_tokens_seen []",
+      "PROVEN: wrong_family_tokens_seen [] in primary buy box.",
+      "WRONG_FAMILY tokens cleared",
+      "no wrong-family tokens detected",
+      "no forbidden wrong-family tokens detected",
+      "prior wrong-family flag cleared",
+      "not wrong-family in primary product area",
+      "model-first wrong-family proof",
+      "Wrong-family LV-H132/LV-H134 not in primary",
+      "wrong-family R1/R2 not dominant",
+      "(Filter B / FLT4825 wrong-family) and phantom AC4225",
+    ];
+    for (const notes of safeNotes) {
+      assert.equal(isHardDeniedBrowserTruthNotes(notes), false, notes);
+    }
+  });
+
+  it("buyLinkGateFailureKind does not hard-deny direct_buyable rows with clearance prose", () => {
+    const freshCheckedAt = "2026-05-01T00:00:00.000Z";
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "oem-catalog",
+        affiliate_url: "https://levoit.com/products/core-300-air-purifier-replacement-filter",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: freshCheckedAt,
+        browser_truth_notes:
+          "Official PDP; Add to Cart present. PROVEN: wrong_family_tokens_seen [] in primary buy box.",
+      }),
+      null,
+    );
+  });
+
+  it("buyLinkGateFailureKind still hard-denies explicit WRONG_FAMILY status on direct_buyable", () => {
+    const freshCheckedAt = "2026-05-01T00:00:00.000Z";
+    assert.equal(
+      buyLinkGateFailureKind({
+        retailer_key: "amazon",
+        affiliate_url: "https://www.amazon.com/dp/B00EXAMPLE",
+        browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: freshCheckedAt,
+        browser_truth_notes: "WRONG_FAMILY: model mismatch",
+      }),
+      "hard_denied_browser_truth",
     );
   });
 });

@@ -27,7 +27,7 @@ const PARTIAL_QUARANTINED_FILTER_PAGE_NOTE_V1 =
   "Some refrigerator models linked to this filter are under compatibility review because our reference data maps conflicting part families (for example mixed Samsung DA29/DA97, GE MWF/XWFE/RPWFE, or LG LT generations). Verify your exact fridge model and part number before buying." as const;
 
 export const SINGLE_FILTER_FAMILY_AMBIGUITY_FILTER_PAGE_NOTE_V1 =
-  "Some refrigerator models linked to this filter map multiple part numbers without proven single-family proof. Verify your exact fridge model and compare the number on your old filter before buying." as const;
+  "Double-check before you buy: Some refrigerators can use more than one filter type. Match the part number on your old filter or refrigerator manual before ordering." as const;
 
 export const FRIDGE_SEARCH_COMPAT_UNDER_REVIEW_V1 =
   "Compatibility under review — BuckParts is verifying water filter fit for this refrigerator model." as const;

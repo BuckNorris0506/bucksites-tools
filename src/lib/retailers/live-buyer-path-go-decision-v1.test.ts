@@ -153,6 +153,24 @@ describe("live-buyer-path-go-decision-v1", () => {
     assert.equal(filterRealBuyRetailerLinks([link]).length, 0);
   });
 
+  it("clearance wrong_family_tokens_seen prose does not hard-deny /go", () => {
+    const link = liveLink({
+      browser_truth_notes:
+        "Official PDP; Add to Cart present. PROVEN: wrong_family_tokens_seen [] in primary buy box.",
+    });
+    assert.equal(buyLinkGateFailureKindForGoLink(link), null);
+    assert.equal(resolveLiveBuyerPathGoDecisionV1({ link, now }).permitted, true);
+    assert.equal(filterRealBuyRetailerLinks([link]).length, 1);
+  });
+
+  it("observational not-wrong-family prose does not hard-deny /go", () => {
+    const link = liveLink({
+      browser_truth_notes: "prior wrong-family flag cleared; not wrong-family in primary product area",
+    });
+    assert.equal(buyLinkGateFailureKindForGoLink(link), null);
+    assert.equal(resolveLiveBuyerPathGoDecisionV1({ link, now }).permitted, true);
+  });
+
   it("CTA and /go share the same decision result", () => {
     const cases = [
       liveLink(),

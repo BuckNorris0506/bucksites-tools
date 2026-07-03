@@ -284,15 +284,41 @@ export type BuyLinkGateFailureKind =
   | "missing_browser_truth_checked_at"
   | "stale_browser_truth_checked_at";
 
-/** Repo-committed browser-truth notes that must block live CTAs and `/go` even when classification is direct_buyable. */
+/**
+ * Repo-committed browser-truth notes that must block live CTAs and `/go` even when
+ * classification is direct_buyable.
+ *
+ * PROVEN: must not use bare substring matching for `WRONG_FAMILY` / `WRONG-FAMILY`.
+ * Clearance and observational prose such as `wrong_family_tokens_seen []`,
+ * `no wrong-family tokens detected`, and `prior wrong-family flag cleared` would
+ * false-positive and block live buyer paths.
+ *
+ * Hard-deny only on explicit status tokens:
+ * - `HARD_DO_NOT_USE`
+ * - `BLOCKED_WRONG_FAMILY` / `BLOCKED_WRONG_FAMILY_RISK`
+ * - `WRONG_FAMILY:` / `WRONG-FAMILY:` status labels
+ * - notes that are exactly `WRONG_FAMILY` / `WRONG-FAMILY`
+ */
 export function isHardDeniedBrowserTruthNotes(
   notes: string | null | undefined,
 ): boolean {
   const upper = (notes ?? "").trim().toUpperCase();
   if (!upper) return false;
-  if (upper.includes("HARD_DO_NOT_USE")) return true;
-  if (upper.includes("WRONG_FAMILY")) return true;
-  if (upper.includes("WRONG-FAMILY")) return true;
+
+  // Underscore-aware token boundary (do not split HARD_DO_NOT_USE / BLOCKED_WRONG_FAMILY).
+  if (/(?:^|[^A-Z0-9_])HARD_DO_NOT_USE(?:[^A-Z0-9_]|$)/.test(upper)) {
+    return true;
+  }
+  if (/(?:^|[^A-Z0-9_])BLOCKED_WRONG_FAMILY(?:_RISK)?(?:[^A-Z0-9_]|$)/.test(upper)) {
+    return true;
+  }
+  // Explicit status label — requires `:` so observational prose is not matched.
+  if (/(?:^|[^A-Z0-9_])WRONG[_-]FAMILY\s*:/.test(upper)) {
+    return true;
+  }
+  if (/^WRONG[_-]FAMILY$/.test(upper)) {
+    return true;
+  }
   return false;
 }
 
