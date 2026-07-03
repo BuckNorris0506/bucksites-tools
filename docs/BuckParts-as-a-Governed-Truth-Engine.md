@@ -2,7 +2,7 @@
 
 **Status:** Strategic thesis — grounded in repo truth where available; owner briefing incorporated where repo does not prove a claim.  
 **Governing:** `docs/BuckParts-CONSTITUTION.md` (Truth Contract, Trust Hierarchy, Automation Doctrine)  
-**Sources:** `docs/BuckParts-HQ-HANDOFF.md` (§ Current stopping point — Security / RLS / service-role gating, `2122959`), `docs/ARCHITECTURE.md`, `docs/BuckParts-TO-AUTHORITY-BOUNDARY-THESIS.md`, `docs/README.md`  
+**Sources:** `docs/BuckParts-HQ-HANDOFF.md` (§ Current stopping point — Security / RLS / service-role gating, `e19ebbd`), `docs/ARCHITECTURE.md`, `docs/BuckParts-TO-AUTHORITY-BOUNDARY-THESIS.md`, `docs/README.md`  
 **Does not authorize:** mutation, deploy, product expansion, or relaxation of trust gates.
 
 ---
@@ -50,7 +50,7 @@ BuckParts **does** guarantee that every published answer is **sourced, confidenc
 
 ## 3. Security / trust-integrity architecture
 
-**Current owner thesis/state (June 30, 2026):** BuckParts moved from trust-by-convention to **enforceable production trust boundaries**. The repo HEAD at security stopping point `2122959` documents this slice as PROVEN in-repo; live Netlify deploy of `2122959` remains **UNKNOWN** until verified (HQ handoff).
+**Current owner thesis/state (July 2026):** BuckParts moved from trust-by-convention to **enforceable production trust boundaries**. Repo HEAD and **Netlify production** at **`e19ebbd`** — service-role inventory **closed** (**20** `write_guarded` / **0** `write_unguarded`).
 
 ### Buyer-path fail-closed (PROVEN)
 
@@ -74,12 +74,14 @@ Live mutation paths require **`BUCKPARTS_IO_CAPABILITY=MUTATION`**, hash-bound f
 - Missing, null, blank, unparseable, or past `expires_at` fails closed (`founder-decision-registry-v1.ts` → `isFounderRegistryRowActiveMutationApproval`).
 - High-risk lanes require **active approval plus plan/path binding** (`founderRegistryRowPassesMutationApprovalGateV1`, `verifyFounderDecisionArtifactBindingsV1`).
 
-### Truth-ledger (PROVEN — partial coverage)
+### Truth-ledger (PROVEN — founder-gated lanes; explicit gaps)
 
-- AP, RPWFE, and **promote-staged-refrigerator** mutation outcomes append to **`data/ops/truth-ledger-v1.jsonl`** on apply/write path (`26d4b0a` + promote run module).
-- Records **`applied`** and **`blocked`** outcomes; append requires MUTATION capability on write-intent paths.
+- **10** founder-gated `write_guarded` run libs append **`applied`** / **`blocked`** to **`data/ops/truth-ledger-v1.jsonl`** on write-intent: AP + RPWFE parity apply (`26d4b0a`), promote-staged (`a28ad31`), HQII ingest pair (`6ae0b2e`), seed import pair (`6756914`), learning-outcomes insert + remove-demo wedges + verify-oem `--write-db` (`1107eb2`).
+- Records require **MUTATION** capability on write-intent paths; append failure forces blocked reporting on gated paths.
 - **`source_snapshot_v1`** is backward compatible when absent; when present, requires `source_url`, `retrieved_at`, and `evidence_sha256` matching bound evidence hash.
-- **Remaining gap:** CSV/manufacturer apply lanes and capability-only service-role guarded scripts (Slices 1–2).
+- **Remaining gap — 10 capability-only guarded lanes (Slices 1–2):** `search_gaps` status writers + `search-gaps-classify` + staged pipeline writers — MUTATION gate only; **no** truth-ledger append.
+- **Known limitation:** append is **post-mutation / non-atomic** — Supabase write may precede JSONL record.
+- **Outside scope:** CSV/manufacturer apply lanes not in service-role inventory (`truth-ledger-v1.ts` `remains_unknown_without_full_lane_coverage`).
 
 ### MCP / Supabase extraction controls (PROVEN)
 
@@ -187,7 +189,7 @@ HQ handoff second-wedge doctrine (PROVEN policy):
 | `SAFE_BUYER_PATH_PROVEN` filters | **52** | **DISCREPANCY** — HQ handoff historical census at `56b4167` records **50** site-wide; Foundation v2 production mission artifact records baseline **48 → 49** after one proven guarded apply. Re-run `node --import tsx scripts/report-all-product-safe-buyer-path-census-v1.ts` before citing live count. |
 | Air purifier direct-buyable | **34** | **PROVEN** — `data/air-purifier/batch-production/audits/ap-supabase-vs-csv-diff-v1.json`, `data/command-center/evidence-freshness-recovery-v1.json`, and related convergence packets record `csv_safe_direct_buyable_count: 34`. |
 | Revenue | **Pre-revenue** | **PROVEN consistent** — HQ handoff § monetization: revenue/commission dollars not computed in evidenced read-only reports. |
-| Architecture | **Real architecture** | **PROVEN** — Truth → Command Center → Runner → External AI → Validation → Owner Decision Queue → Approved Mutation; six operating systems locked in `docs/BuckParts-OPERATING-SYSTEM-ARCHITECTURE-LOCK.md`; security hardening slice through `2122959`. |
+| Architecture | **Real architecture** | **PROVEN** — Truth → Command Center → Runner → External AI → Validation → Owner Decision Queue → Approved Mutation; six operating systems locked in `docs/BuckParts-OPERATING-SYSTEM-ARCHITECTURE-LOCK.md`; service-role security baseline deployed through **`e19ebbd`**. |
 
 **Note on the 52 figure:** HQ handoff § monetization records **`direct_buyable_links: 52`** and **`safe_cta_links: 52`** from command-surface CTA coverage metrics — a **different measure** than `SAFE_BUYER_PATH_PROVEN` census classification. Do not conflate retailer-link CTA counts with proven buyer-path page classification without a fresh census run.
 
@@ -197,12 +199,16 @@ HQ handoff second-wedge doctrine (PROVEN policy):
 
 Ordered from HQ handoff § Current stopping point and owner briefing:
 
-1. **Verify/publish Slice 3 deploy** — `2122959` promote-staged gate is PROVEN in-repo; Netlify publish status is **UNKNOWN** until confirmed.
-2. **Expand truth-ledger beyond AP/RPWFE/promote-staged** — CSV/manufacturer apply lanes and capability-only service-role guarded scripts (Slices 1–2).
+1. **Truth-ledger on capability-only search-gap/staged lanes** — **10** Slice 1–2 writers gated but not yet appending outcomes.
+2. **Atomic or pre-write truth-ledger intent** — append remains post-mutation / non-atomic on founder-gated lanes.
 3. **Make `source_snapshot_v1` mandatory for buyer-path evidence** — currently backward compatible when absent; broken chain fails closed when present; mandatory binding is not yet enforced.
-4. **Gate remaining unguarded lanes:** `learning-outcomes-writer.ts`, `remove-demo-wedge-brands.ts`, `verify-oem-retailer-links-playwright.ts` (seed import pair gated in Slice 5).
+4. **CSV/manufacturer apply lanes** outside inventoried service-role writers — truth-ledger coverage still unknown (`truth-ledger-v1.ts`).
 5. **Future:** move `upsert_search_gap` to service-role-only telemetry — clears deferred SECURITY DEFINER WARN.
 6. **Future:** tighten `click_events` WITH CHECK — shape-constrain telemetry inserts; clears deferred WARN.
+
+**Closed at `e19ebbd`:** all **20** inventoried service-role write lanes are `write_guarded` (**0** `write_unguarded`); founder-gated lanes including learning-outcomes insert, remove-demo wedges, and verify-oem `--write-db` record truth-ledger outcomes.
+
+**Netlify credit rule:** batch local commits; push deploy-worthy milestones only (HQ handoff § Netlify credit rule).
 
 First-wedge execution continues in parallel: owner browser proof freshness → committed evidence → founder approval → guarded apply for refrigerator_water slugs (e.g. `edr3rxd1`, `ultrawf` per HQ handoff Session 1 priority). Directors and readiness gates remain read-only until explicit founder authorization.
 

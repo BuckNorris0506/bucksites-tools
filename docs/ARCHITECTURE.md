@@ -2,7 +2,7 @@
 
 **Status:** Repo-truth architecture reference — derived from committed docs and source only.  
 **Governing:** `docs/BuckParts-CONSTITUTION.md` (Trust Hierarchy, Truth Contract, Automation Doctrine)  
-**Primary context:** `docs/BuckParts-HQ-HANDOFF.md` (§ Current stopping point `2122959`), `docs/BuckParts-AGENT-CONTRACT-V1.md`, `docs/BuckParts-OPERATIONS-METRICS-V1.md`, `docs/BuckParts-PRODUCTION-MISSION-V1.md`
+**Primary context:** `docs/BuckParts-HQ-HANDOFF.md` (§ Current stopping point `e19ebbd`), `docs/BuckParts-AGENT-CONTRACT-V1.md`, `docs/BuckParts-OPERATIONS-METRICS-V1.md`, `docs/BuckParts-PRODUCTION-MISSION-V1.md`
 
 **PROVEN:** This document describes what exists in-repo. It does not authorize mutation, deploy, or new systems.
 
@@ -324,14 +324,15 @@ Each entry: what changed, why, and **invariant IDs enforced** (or **at risk** if
 
 ## 5. SECURITY, RLS & SERVICE-ROLE BOUNDARIES
 
-**Status (HEAD `2122959`):** Repo-truth summary. Full deploy anchors and next work: `docs/BuckParts-HQ-HANDOFF.md` § Current stopping point.
+**Status (HEAD `e19ebbd`, Netlify production green):** Repo-truth summary. Full deploy anchors and next work: `docs/BuckParts-HQ-HANDOFF.md` § Current stopping point.
 
 ### Buyer-path and live Supabase apply (PROVEN — gated lanes)
 
 - **`/go` redirect:** freshness fail-closed; decision precedence DENY/UNKNOWN over ALLOW (`d66ce8e` chain).
 - **AP Supabase parity apply:** `scripts/lib/air-purifier-supabase-apply-parity-mutation-gate-v1.ts` — requires `MUTATION`, trust currency, hash-bound founder approval with valid `expires_at`.
 - **RPWFE/GE Supabase parity apply:** `scripts/lib/rpwfe-official-ge-supabase-parity-mutation-gate-v1.ts` — same pattern.
-- **Truth ledger:** AP/RPWFE apply lanes, promote-staged `--write`, HQII retailer-link ingest pair, seed import pair, learning-outcomes insert, remove-demo-wedge-brands, and verify-oem `--write-db` record mutation outcomes to `data/ops/truth-ledger-v1.jsonl`.
+- **Truth ledger:** **10** founder-gated `write_guarded` run libs record **`applied`** / **`blocked`** to `data/ops/truth-ledger-v1.jsonl` — AP/RPWFE apply, promote-staged, HQII ingest pair, seed import pair, learning-outcomes insert, remove-demo-wedge-brands, verify-oem `--write-db`.
+- **Truth-ledger gap:** **10** capability-only search-gap/staged lanes (Slices 1–2) are runtime-gated but do **not** append outcomes yet. Append remains post-mutation / non-atomic.
 
 ### Service-role writer inventory (PROVEN — `scripts/lib/buckparts-supabase-service-role-inventory-v1.ts`)
 
