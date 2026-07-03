@@ -1,0 +1,89 @@
+{
+  "report_name": "buckparts_frigidaire_ultrawf_official_owner_browser_proof_evidence_v1",
+  "generated_at": "2026-07-03T17:13:04.000Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "filter_slug": "ultrawf",
+  "token": "ULTRAWF",
+  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER",
+  "mutation_ready": false,
+  "mutation_ready_basis": "Evidence only — does not authorize retailer_links.csv, Supabase, Verified Link, or founder approval.",
+  "product_attribution": "oem_official",
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+  "checked_at": "2026-07-03T17:13:04.000Z",
+  "primary_proof_track": {
+    "path_type": "authorized_parts_distributor_pdp",
+    "authorized_parts_distributor_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    "canonical_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
+  },
+  "secondary_proof_track": {
+    "path_type": "retailer_direct_pdp",
+    "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+    "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
+  },
+  "secondary_amazon_audit_track": null,
+  "confusion_family_review": {
+    "status": "CLEARED",
+    "question_id": "confusion_family_ultrawf_vs_eptwfu01",
+    "owner_answer": "CONFIRMED_EXACT_TOKEN_ULTRAWF_PURESOURCE_ULTRA_OEM_NOT_EPTWFU01_OR_WF3CB",
+    "forbidden_tokens_for_slug": ["EPTWFU01"],
+    "forbidden_tokens_observed": [],
+    "basis": [
+      "PROVEN: Page title shows Frigidaire Water Filter ULTRAWF.",
+      "PROVEN: Item shows Frigidaire OEM Part #ULTRAWF.",
+      "PROVEN: Product line visible: PureSource Ultra.",
+      "PROVEN: Genuine OEM Part badge visible.",
+      "PROVEN: No aftermarket brand visible.",
+      "PROVEN: Model ULTRAWF visible on Home Depot secondary confirmation.",
+      "PROVEN: forbidden_tokens_detected_in_proof=[] on owner classification packet generation."
+    ]
+  },
+  "owner_primary_approval": {
+    "question_id": "approve_official_or_parts_distributor_primary",
+    "owner_answer": "YES_APPROVE_FRIGIDAIREAPPLIANCEPARTS_COM_AS_PRIMARY",
+    "approved_primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    "path_type": "authorized_parts_distributor_pdp"
+  },
+  "owner_browser_finding": {
+    "source": "owner_browser_visual_inspection",
+    "checked_at": "2026-07-03T17:13:04.000Z",
+    "screenshot_file_committed": false,
+    "primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    "secondary_url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-ULTRAWF-PureSource-Ultra-ULTRAWF/203618461",
+    "exact_token_visible": true,
+    "tokens_visible": ["ULTRAWF"],
+    "brand_visible": "Frigidaire",
+    "product_line_visible": "PureSource Ultra",
+    "price_visible_usd": 59.99,
+    "in_stock_visible": true,
+    "genuine_oem_badge_visible": true,
+    "aftermarket_brand_visible": false
+  },
+  "exact_token_proof": "Owner browser inspection on 2026-07-03 showed Frigidaire OEM Part #ULTRAWF and PureSource Ultra on frigidaireapplianceparts.com PartDetail ULTRAWF/1534529; Home Depot secondary confirmation showed model ULTRAWF.",
+  "buyability_proof": "Owner browser inspection on 2026-07-03 showed price $59.99 and In Stock on frigidaireapplianceparts.com; Home Depot secondary showed $59.99 with pickup and delivery available.",
+  "observations_from_proof_only": [
+    "PROVEN: Page title shows Frigidaire Water Filter ULTRAWF.",
+    "PROVEN: Item shows Frigidaire OEM Part #ULTRAWF.",
+    "PROVEN: Brand visible: Frigidaire.",
+    "PROVEN: Product line visible: PureSource Ultra.",
+    "PROVEN: Price shown $59.99.",
+    "PROVEN: Status In Stock.",
+    "PROVEN: Genuine OEM Part badge visible.",
+    "PROVEN: No aftermarket brand visible.",
+    "PROVEN: Title shows Refrigerator Filter for Frigidaire ULTRAWF PureSource Ultra.",
+    "PROVEN: Model ULTRAWF visible.",
+    "PROVEN: Brand/store Frigidaire visible.",
+    "PROVEN: Price shown $59.99.",
+    "PROVEN: Pickup available.",
+    "PROVEN: Delivery available.",
+    "PROVEN: No aftermarket brand visible."
+  ],
+  "required_next_action": "Re-run batch factory, cursor validation, apply-plan factory, and readiness gate. Founder approval and CSV apply remain unauthorized from this evidence file alone.",
+  "notes": [
+    "Evidence transcribed only from data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json (2026-07-03 refresh).",
+    "No retailer_links.csv, Supabase, /go, or founder-approval mutation is authorized by this file."
+  ]
+}

@@ -302,6 +302,51 @@ test("no candidate is READY_FOR_APPLY without owner approval", () => {
 
 test("no candidate is READY_FOR_APPLY with unresolved confusion-family review", () => {
   const row = baseQueueRow({
+    filter_slug: "wf3cb",
+    oem_part_token: "WF3CB",
+    manufacturer_key: "frigidaire",
+    blocked_reasons: ["confusion_family_review_required"],
+    repo_proven_official_target_url:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/1",
+  });
+  const proof = {
+    contract: "fridge_safe_link_owner_browser_proof_result_v1",
+    verdict: "PASS_BROWSER_PROOF",
+    checked_at: "2026-06-10T12:00:00.000Z",
+    slug: "wf3cb",
+    oem_part_token: "WF3CB",
+    owner_proof_urls: [
+      {
+        url: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/1",
+        path_type: "authorized_parts_distributor_pdp",
+        browser_proof_status: "PASS",
+        proven_observations: ["PROVEN: WF3CB OEM token visible."],
+      },
+    ],
+  };
+  const candidate = assessManufacturerRescueReadinessCandidateV1({
+    rootDir: "/tmp/buckparts-no-confusion-clearance",
+    row,
+    directorLane: minimalDirectorLane(["wf3cb"]),
+    deployMarker: { marker: "UNKNOWN", marker_source_path: null, proof_after_marker_proven: "UNKNOWN" },
+    now: () => new Date("2026-06-10T12:00:00.000Z"),
+    founderRows: [],
+    fileExists: (abs) =>
+      abs.endsWith("fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json"),
+    readText: (abs) => {
+      if (abs.endsWith("fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json")) {
+        return JSON.stringify(proof);
+      }
+      throw new Error(`unexpected read: ${abs}`);
+    },
+  });
+  assert.equal(candidate.readiness_status, "PENDING_CONFUSION_FAMILY_REVIEW");
+  assert.equal(candidate.ready_for_apply, false);
+  assert.ok(candidate.blocking_reasons.includes("confusion_family_review_required"));
+});
+
+test("confusion-family clearance artifacts unblock readiness confusion check", () => {
+  const row = baseQueueRow({
     blocked_reasons: ["confusion_family_review_required"],
   });
   const candidate = assessManufacturerRescueReadinessCandidateV1({
@@ -309,11 +354,54 @@ test("no candidate is READY_FOR_APPLY with unresolved confusion-family review", 
     row,
     directorLane: minimalDirectorLane(),
     deployMarker: { marker: "UNKNOWN", marker_source_path: null, proof_after_marker_proven: "UNKNOWN" },
-    now: () => new Date("2026-06-10T12:00:00.000Z"),
+    now: () => new Date("2026-07-03T18:00:00.000Z"),
     founderRows: [],
   });
-  assert.equal(candidate.readiness_status, "PENDING_CONFUSION_FAMILY_REVIEW");
-  assert.equal(candidate.ready_for_apply, false);
+  const confusionCheck = candidate.checks.find((c) => c.check_id === "confusion_family_cleared");
+  assert.ok(confusionCheck);
+  assert.equal(confusionCheck.status, "PASS");
+  assert.ok(!candidate.blocking_reasons.includes("confusion_family_review_required"));
+  const unresolvedCheck = candidate.checks.find((c) => c.check_id === "no_unresolved_blockers");
+  assert.ok(unresolvedCheck);
+  assert.equal(unresolvedCheck.status, "PASS");
+  assert.ok(!candidate.blocking_reasons.includes("unresolved_orchestrator_or_director_blockers"));
+});
+
+test("frigidaire lane stays ineligible without founder approval even when clearance is proven", () => {
+  const row = baseQueueRow({
+    blocked_reasons: ["confusion_family_review_required"],
+  });
+  const candidate = assessManufacturerRescueReadinessCandidateV1({
+    rootDir: REPO_ROOT,
+    row,
+    directorLane: minimalDirectorLane(),
+    deployMarker: { marker: "UNKNOWN", marker_source_path: null, proof_after_marker_proven: "UNKNOWN" },
+    now: () => new Date("2026-07-03T18:00:00.000Z"),
+    founderRows: [],
+  });
+  const laneCheck = candidate.checks.find((c) => c.check_id === "owner_apply_lane_eligible");
+  assert.ok(laneCheck);
+  assert.equal(laneCheck.status, "FAIL");
+  assert.match(laneCheck.notes, /owner_mutation_approved/i);
+  assert.ok(candidate.blocking_reasons.includes("owner_apply_lane_eligible_false"));
+  assert.ok(candidate.blocking_reasons.includes("owner_apply_approval_missing"));
+  assert.notEqual(candidate.readiness_status, "READY_FOR_APPLY");
+});
+
+test("live ultrawf is READY_FOR_APPLY when founder approval and clearance are present", () => {
+  const gate = buildManufacturerSafeLinkRescueReadinessGateV1({
+    rootDir: REPO_ROOT,
+    now: () => new Date("2026-07-03T20:00:00.000Z"),
+  });
+  const ultrawf = gate.candidates.find((c) => c.filter_slug === "ultrawf");
+  assert.ok(ultrawf, "ultrawf should be in readiness gate scope");
+  assert.equal(ultrawf.readiness_status, "READY_FOR_APPLY");
+  assert.equal(ultrawf.ready_for_apply, true);
+  assert.equal(ultrawf.blocking_reasons.length, 0);
+  const laneCheck = ultrawf.checks.find((c) => c.check_id === "owner_apply_lane_eligible");
+  assert.ok(laneCheck);
+  assert.equal(laneCheck.status, "PASS");
+  assert.ok(!laneCheck.notes.includes("adapter owner_apply_lane_eligible=false"));
 });
 
 test("zero READY_FOR_APPLY is valid when nothing is actually ready", () => {

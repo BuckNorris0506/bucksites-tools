@@ -44,11 +44,18 @@ export function mapSignalsToRetailerLinkState(
     return RETAILER_LINK_STATES.BLOCKED_DESTINATION_UNAVAILABLE;
   }
 
-  if (input.gateFailureKind === "missing_browser_truth") {
+  if (
+    input.gateFailureKind === "missing_browser_truth" ||
+    input.gateFailureKind === "missing_browser_truth_checked_at"
+  ) {
     return RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_MISSING;
   }
 
-  if (input.gateFailureKind === "unsafe_browser_truth") {
+  if (
+    input.gateFailureKind === "unsafe_browser_truth" ||
+    input.gateFailureKind === "hard_denied_browser_truth" ||
+    input.gateFailureKind === "stale_browser_truth_checked_at"
+  ) {
     return RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE;
   }
 

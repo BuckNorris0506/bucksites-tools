@@ -1,14 +1,14 @@
 {
   "contract": "manufacturer_safe_link_rescue_scoreboard_v1",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "generated_at": "2026-06-26T02:10:46.330Z",
+  "generated_at": "2026-07-03T21:55:52.145Z",
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
   "coverage_unlocked": false,
-  "total_rescue_candidates": 26,
-  "browser_proofed": 6,
-  "owner_review_ready": 6,
+  "total_rescue_candidates": 25,
+  "browser_proofed": 5,
+  "owner_review_ready": 5,
   "safe_buyer_paths_unlocked": 0,
   "remaining_opportunity": 20,
   "by_manufacturer": [
@@ -28,9 +28,9 @@
     },
     {
       "manufacturer_key": "frigidaire",
-      "rescue_candidates": 10,
-      "browser_proofed": 4,
-      "owner_review_ready": 4,
+      "rescue_candidates": 9,
+      "browser_proofed": 3,
+      "owner_review_ready": 3,
       "remaining_opportunity": 6
     }
   ]

@@ -1,0 +1,63 @@
+{
+  "contract": "fridge_safe_link_edr3rxd1_owner_classification_approval_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "approval_status": "PENDING_OWNER_REVIEW",
+  "not_an_approved_decision": true,
+  "generated_at": "2026-07-03T17:38:02.011Z",
+  "source_apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+  "target_slug": "edr3rxd1",
+  "oem_part_token": "EDR3RXD1",
+  "manufacturer_key": "everydrop_whirlpool",
+  "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+  "proposed_official_destination": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+  "proposed_csv_row": {
+    "filter_slug": "edr3rxd1",
+    "retailer_name": "Whirlpool",
+    "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+    "is_primary": true,
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+    "browser_truth_checked_at": "2026-07-03T17:25:00.000Z",
+    "customer_visible_label": "BuckParts Verified Link",
+    "label_subtype": "official_manufacturer_official_whirlpool"
+  },
+  "owner_classification_review_v1": {
+    "owner_must_answer_before_guarded_apply": [
+      {
+        "question_id": "approve_official_whirlpool_verified_link",
+        "prompt": "Approve promoting official Whirlpool everydrop EDR3RXD1 PDP as BuckParts Verified Link primary for slug edr3rxd1?",
+        "required": true
+      },
+      {
+        "question_id": "browser_truth_classification",
+        "prompt": "Set browser_truth_classification for proposed row?",
+        "required": true,
+        "recommended_value": "direct_buyable",
+        "recommended_basis": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
+      },
+      {
+        "question_id": "confirm_b087_excluded",
+        "prompt": "Confirm Amazon B087PDLZL9 remains HARD_DO_NOT_USE and is not promoted for edr3rxd1?",
+        "required": true
+      },
+      {
+        "question_id": "authorize_guarded_csv_apply",
+        "prompt": "Authorize manufacturer-rescue guarded CSV apply for edr3rxd1 only after readiness gate READY_FOR_APPLY?",
+        "required": true
+      }
+    ]
+  },
+  "explicit_risks": [
+    "production_go_first_hop=UNKNOWN_NOT_TESTED_NO_SAFE_NO_CLICK_PATH",
+    "Amazon B00UB441HS pass candidate exists in owner proof — separate Amazon parity path not in this official-manufacturer apply plan."
+  ],
+  "proven_facts": [
+    "PROVEN: apply plan READY_FOR_OWNER_REVIEW from manufacturer rescue factory.",
+    "PROVEN: no founder approval row on disk for edr3rxd1."
+  ],
+  "recommended_next_action": "Owner answers classification questions; then founder decision template — still no activation from this packet."
+}

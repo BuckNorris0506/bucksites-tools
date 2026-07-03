@@ -4,7 +4,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -92,7 +92,12 @@ export const MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_SOURCE_COMMAND_V1 =
 export const MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1 =
   "data/fridge/batch-production/closeout/manufacturer-rescue-guarded-apply-bridge-closeout-v1.json" as const;
 
+export const MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_DIR_REL_V1 =
+  "data/fridge/batch-production/closeout" as const;
+
 export const MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_CSV_FLAG_V1 = "--write-csv" as const;
+
+export const MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_SLUG_FLAG_V1 = "--slug" as const;
 
 export const MANUFACTURER_RESCUE_GUARDED_APPLY_REQUIRED_READINESS_CHECKS_V1 = [
   "browser_proof_exists",
@@ -113,6 +118,8 @@ export type ManufacturerRescueGuardedApplyBridgeStatusV1 =
 export type ManufacturerRescueGuardedApplyBridgePreconditionsV1 = {
   ok: boolean;
   blockers: string[];
+  /** Explicit CLI `--slug` when provided; otherwise null (default single-ready selection). */
+  requested_slug: string | null;
   ready_slug: string | null;
   readiness_gate: ManufacturerRescueReadinessGateReportV1 | null;
   runner_ready_for_apply_slug: string | null;
@@ -297,8 +304,21 @@ function findActiveFounderDecisionForSlug(args: {
   return null;
 }
 
+function readinessGateReadyForApplySlugsV1(
+  readiness_gate: ManufacturerRescueReadinessGateReportV1 | null,
+): string[] {
+  if (!readiness_gate) return [];
+  const fromSummary = (readiness_gate.readiness_summary?.ready_for_apply_slugs ?? []).map(normalizeSlug);
+  const fromCandidates = readiness_gate.candidates
+    .filter((c) => c.ready_for_apply)
+    .map((c) => normalizeSlug(c.filter_slug));
+  return Array.from(new Set([...fromSummary, ...fromCandidates]));
+}
+
 export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: {
   rootDir: string;
+  /** When set, select this READY_FOR_APPLY slug even if ready_for_apply_count > 1. */
+  targetSlug?: string | null;
   now?: () => Date;
   fileExists?: (abs: string) => boolean;
   readText?: (abs: string) => string;
@@ -307,6 +327,10 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
   const readText = args.readText ?? defaultReadText;
   const now = args.now ?? (() => new Date());
   const blockers: string[] = [];
+  const requested_slug =
+    typeof args.targetSlug === "string" && args.targetSlug.trim()
+      ? normalizeSlug(args.targetSlug)
+      : null;
 
   const readiness_gate = loadManufacturerSafeLinkRescueReadinessGateV1({
     rootDir: args.rootDir,
@@ -322,18 +346,34 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
     blockers.push(`runner_artifact_missing:${MANUFACTURER_SAFE_LINK_RESCUE_RUNNER_JSON_REL_V1}`);
   }
 
-  const ready_slug = readiness_gate?.ready_for_apply_slug ?? null;
-  if (!ready_slug) {
-    blockers.push("readiness_gate_ready_for_apply_slug_missing");
-  }
-  if ((readiness_gate?.ready_for_apply_count ?? 0) !== 1) {
-    blockers.push(
-      `readiness_gate_ready_for_apply_count_invalid: count=${String(readiness_gate?.ready_for_apply_count ?? 0)} expected=1`,
-    );
+  const readyForApplySlugs = readinessGateReadyForApplySlugsV1(readiness_gate);
+  let ready_slug: string | null = null;
+  if (requested_slug) {
+    ready_slug = requested_slug;
+    if (!readyForApplySlugs.includes(requested_slug)) {
+      blockers.push(`requested_slug_not_ready_for_apply: slug=${requested_slug}`);
+    }
+  } else {
+    ready_slug = readiness_gate?.ready_for_apply_slug
+      ? normalizeSlug(readiness_gate.ready_for_apply_slug)
+      : null;
+    if (!ready_slug) {
+      blockers.push("readiness_gate_ready_for_apply_slug_missing");
+    }
+    if ((readiness_gate?.ready_for_apply_count ?? 0) !== 1) {
+      blockers.push(
+        `readiness_gate_ready_for_apply_count_invalid: count=${String(readiness_gate?.ready_for_apply_count ?? 0)} expected=1`,
+      );
+    }
   }
 
-  const runner_ready_for_apply_slug = runnerLoaded?.report.ready_for_apply_slug ?? null;
-  if (ready_slug && runner_ready_for_apply_slug !== ready_slug) {
+  const runner_ready_for_apply_slug = runnerLoaded?.report.ready_for_apply_slug
+    ? normalizeSlug(runnerLoaded.report.ready_for_apply_slug)
+    : null;
+  // Runner tracks a single primary READY_FOR_APPLY slug. When --slug selects among multiple
+  // ready candidates, readiness_gate.ready_for_apply_slugs is the authority — do not require
+  // runner primary to match the explicit target.
+  if (!requested_slug && ready_slug && runner_ready_for_apply_slug !== ready_slug) {
     blockers.push(
       `runner_ready_for_apply_slug_mismatch: runner=${String(runner_ready_for_apply_slug)} gate=${ready_slug}`,
     );
@@ -391,6 +431,7 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
   return {
     ok: blockers.length === 0,
     blockers,
+    requested_slug,
     ready_slug,
     readiness_gate,
     runner_ready_for_apply_slug,
@@ -399,6 +440,54 @@ export function assessManufacturerRescueGuardedApplyBridgePreconditionsV1(args: 
     apply_plan_rel_path: applyPlanLoad.plan ? applyPlanLoad.rel : null,
     founder_decision_id: founderRow?.decision_id ?? null,
   };
+}
+
+export function manufacturerRescueGuardedApplyBridgeWriteCommandV1(slug: string | null): string {
+  if (slug) {
+    return `npm run buckparts:manufacturer-rescue-guarded-apply-bridge -- --slug ${normalizeSlug(slug)} --write-csv`;
+  }
+  return MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_SOURCE_COMMAND_V1;
+}
+
+export function manufacturerRescueGuardedApplyBridgeCloseoutSlugRelV1(slug: string): string {
+  return `${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_DIR_REL_V1}/manufacturer-rescue-guarded-apply-bridge-closeout-${normalizeSlug(slug)}-v1.json`;
+}
+
+export function writeManufacturerRescueGuardedApplyBridgeCloseoutArtifactsV1(args: {
+  rootDir: string;
+  slug: string;
+  closeout: ManufacturerRescueGuardedApplyBridgeCloseoutV1;
+}): void {
+  writeJsonArtifact(args.rootDir, MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1, args.closeout);
+  writeJsonArtifact(args.rootDir, manufacturerRescueGuardedApplyBridgeCloseoutSlugRelV1(args.slug), {
+    ...args.closeout,
+    closeout_durability_tier: "slug_indexed",
+  });
+}
+
+export function listManufacturerRescueGuardedApplyBridgeSlugIndexedCloseoutRelsV1(args: {
+  rootDir: string;
+  fileExists?: (abs: string) => boolean;
+}): string[] {
+  const fileExists = args.fileExists ?? defaultFileExists;
+  const dirAbs = path.join(args.rootDir, MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_DIR_REL_V1);
+  let names: string[] = [];
+  try {
+    names = readdirSync(dirAbs);
+  } catch {
+    return [];
+  }
+  const mainBase = path.basename(MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1);
+  return names
+    .filter(
+      (name) =>
+        name.startsWith("manufacturer-rescue-guarded-apply-bridge-closeout-") &&
+        name.endsWith("-v1.json") &&
+        name !== mainBase,
+    )
+    .map((name) => `${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_DIR_REL_V1}/${name}`)
+    .filter((rel) => fileExists(path.join(args.rootDir, rel)))
+    .sort();
 }
 
 export function buildManufacturerRescueUniversalExecutionPlanV1(args: {
@@ -659,6 +748,8 @@ export function buildManufacturerRescueGuardedApplyBridgeCloseoutV1(args: {
 export function runManufacturerRescueGuardedApplyBridgeV1(args: {
   rootDir: string;
   writeCsv?: boolean;
+  /** Explicit READY_FOR_APPLY slug when multiple candidates are ready. */
+  targetSlug?: string | null;
   now?: () => Date;
   fileExists?: (abs: string) => boolean;
   readText?: (abs: string) => string;
@@ -672,6 +763,7 @@ export function runManufacturerRescueGuardedApplyBridgeV1(args: {
 
   const preconditions = assessManufacturerRescueGuardedApplyBridgePreconditionsV1({
     rootDir: args.rootDir,
+    targetSlug: args.targetSlug,
     now,
     fileExists,
     readText,
@@ -791,7 +883,15 @@ export function runManufacturerRescueGuardedApplyBridgeV1(args: {
       post_apply_refresh_ran,
       now,
     });
-    writeJsonArtifact(args.rootDir, MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1, closeout);
+    if (write_csv_applied) {
+      writeManufacturerRescueGuardedApplyBridgeCloseoutArtifactsV1({
+        rootDir: args.rootDir,
+        slug: preconditions.ready_slug,
+        closeout,
+      });
+    } else {
+      writeJsonArtifact(args.rootDir, MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1, closeout);
+    }
   }
 
   const data_mutation = write_csv_applied;
@@ -826,13 +926,33 @@ export function runManufacturerRescueGuardedApplyBridgeV1(args: {
       bridge_status === "APPLIED"
         ? `Review ${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_CLOSEOUT_JSON_REL_V1} — verify SAFE_BUYER_PATH_PROVEN for ${String(preconditions.ready_slug)}.`
         : bridge_status === "DRY_RUN_READY"
-          ? `Dry-run ready for ${String(preconditions.ready_slug)} — invoke ${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_SOURCE_COMMAND_V1} when founder authorization remains active.`
+          ? `Dry-run ready for ${String(preconditions.ready_slug)} — invoke ${manufacturerRescueGuardedApplyBridgeWriteCommandV1(preconditions.requested_slug ?? preconditions.ready_slug)} when founder authorization remains active.`
           : `Bridge blocked (${String(blockers.length)} blockers) — resolve readiness gate, founder approval, and apply plan artifacts first.`,
   };
 }
 
 export function parseManufacturerRescueGuardedApplyBridgeCliArgsV1(argv: readonly string[]): {
   writeCsv: boolean;
+  targetSlug: string | null;
 } {
-  return { writeCsv: argv.includes(MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_CSV_FLAG_V1) };
+  let targetSlug: string | null = null;
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i] ?? "";
+    if (arg === MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_SLUG_FLAG_V1) {
+      const next = argv[i + 1];
+      if (typeof next === "string" && next.trim() && !next.startsWith("--")) {
+        targetSlug = normalizeSlug(next);
+        i += 1;
+      }
+      continue;
+    }
+    if (arg.startsWith(`${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_SLUG_FLAG_V1}=`)) {
+      const value = arg.slice(`${MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_SLUG_FLAG_V1}=`.length);
+      if (value.trim()) targetSlug = normalizeSlug(value);
+    }
+  }
+  return {
+    writeCsv: argv.includes(MANUFACTURER_RESCUE_GUARDED_APPLY_BRIDGE_WRITE_CSV_FLAG_V1),
+    targetSlug,
+  };
 }

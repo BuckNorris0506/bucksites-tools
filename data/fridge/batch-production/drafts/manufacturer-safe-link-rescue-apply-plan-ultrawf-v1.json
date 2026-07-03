@@ -11,16 +11,16 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-28T16:06:00.591Z",
+  "generated_at": "2026-07-03T17:38:02.913Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
   "filter_slug": "ultrawf",
   "manufacturer_key": "frigidaire",
   "oem_part_token": "ULTRAWF",
-  "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+  "plan_status": "READY_FOR_OWNER_REVIEW",
   "owner_approval_required": true,
   "readiness_gate_required_after_owner_approval": true,
   "proof_artifact_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
-  "browser_proof_checked_at": "2026-06-06T02:00:00.000Z",
+  "browser_proof_checked_at": "2026-07-03T17:13:04.000Z",
   "official_destination_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
   "retailer_key": "oem-parts-catalog",
   "retailer_slug": "oem-parts-catalog",
@@ -38,11 +38,38 @@
     "detected_forbidden_tokens": [],
     "notes": "no forbidden wrong-family tokens detected"
   },
-  "current_csv_row": null,
-  "proposed_csv_row": null,
-  "blockers": [
-    "browser_proof_stale_or_invalid_timestamp"
+  "current_csv_row": {
+    "filter_slug": "ultrawf",
+    "retailer_name": "OEM parts catalog (keyword lookup)",
+    "affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=ULTRAWF",
+    "is_primary": true,
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": null,
+    "browser_truth_notes": null,
+    "browser_truth_checked_at": null
+  },
+  "proposed_csv_row": {
+    "filter_slug": "ultrawf",
+    "retailer_name": "Frigidaire",
+    "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    "is_primary": true,
+    "sort_order": "0",
+    "retailer_key": "oem-parts-catalog",
+    "browser_truth_classification": "direct_buyable",
+    "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+    "browser_truth_checked_at": "2026-07-03T17:13:04.000Z",
+    "customer_visible_label": "BuckParts Verified Link",
+    "label_subtype": "official_manufacturer_official_frigidaire"
+  },
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: owner browser proof PASS with fresh checked_at=2026-07-03T17:13:04.000Z.",
+    "PROVEN: official destination https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529 matches orchestrator repo truth when present.",
+    "PROVEN: apply plan is read-only — owner_approval_required=true; csv_apply_authorized=false.",
+    "PROVEN: manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority."
   ],
-  "proven_facts": [],
-  "unknown_facts": []
+  "unknown_facts": [
+    "orchestrator repo_proven_official_target_url=https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/ULTRAWF differs from owner-proof official URL; using owner-proof URL https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529"
+  ]
 }

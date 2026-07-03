@@ -11,8 +11,8 @@ import { buyLinkGateFailureKind } from "@/lib/retailers/launch-buy-links";
 import { mapSignalsToRetailerLinkState, RETAILER_LINK_STATES } from "@/lib/retailers/retailer-link-state";
 
 import {
-  FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1,
   FRIGIDAIRE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
+  frigidaireConfusionFamilyReviewIsUnresolvedV1,
 } from "./manufacturer-safe-link-rescue-frigidaire-config-v1";
 import { EVERYDROP_WRONG_FAMILY_FORBIDDEN_TOKENS_V1 } from "./manufacturer-safe-link-rescue-everydrop-whirlpool-config-v1";
 import { GE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1 } from "./manufacturer-safe-link-rescue-ge-config-v1";
@@ -321,11 +321,19 @@ function assessExactTokenForSlug(args: {
   };
 }
 
-function hasUnresolvedConfusionFamilyReview(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
-  return (
-    FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1.has(row.filter_slug) ||
-    row.blocked_reasons.includes("confusion_family_review_required")
-  );
+function hasUnresolvedConfusionFamilyReview(args: {
+  row: ManufacturerRescueOrchestratorQueueRowV1;
+  rootDir: string;
+  fileExists: (abs: string) => boolean;
+  readText: (abs: string) => string;
+}): boolean {
+  return frigidaireConfusionFamilyReviewIsUnresolvedV1({
+    rootDir: args.rootDir,
+    filterSlug: args.row.filter_slug,
+    blockedReasons: args.row.blocked_reasons,
+    fileExists: args.fileExists,
+    readText: args.readText,
+  });
 }
 
 function hasUnresolvedSupersessionReview(row: ManufacturerRescueOrchestratorQueueRowV1): boolean {
@@ -454,7 +462,14 @@ export function buildManufacturerRescueApplyPlanForSlugV1(args: {
     });
   }
 
-  if (hasUnresolvedConfusionFamilyReview(args.row)) {
+  if (
+    hasUnresolvedConfusionFamilyReview({
+      row: args.row,
+      rootDir: args.rootDir,
+      fileExists,
+      readText,
+    })
+  ) {
     plan_status = "BLOCKED_CONFUSION_FAMILY_REVIEW";
     blockers.push("confusion_family_review_required");
     return finalizePlan({
@@ -621,23 +636,44 @@ export function buildManufacturerRescueApplyPlanForSlugV1(args: {
 
   const repoUrl = args.row.repo_proven_official_target_url?.trim() || null;
   if (repoUrl && normalizeUrlForCompare(repoUrl) !== normalizeUrlForCompare(officialUrl)) {
-    plan_status = "BLOCKED_DESTINATION_URL_MISMATCH";
-    blockers.push("official_proof_url_mismatch_vs_orchestrator_repo_proven_url");
-    return finalizePlan({
-      args,
-      now,
-      plan_status,
-      blockers,
-      proven_facts,
-      unknown_facts,
-      proofRel,
-      checkedAt,
-      officialUrl,
-      current: null,
-      proposed: null,
-      exactToken,
-      wrongFamily,
+    // Owner-proof official URL is authoritative. Only hard-block when the orchestrator
+    // URL is also currently PASS in owner_proof_urls (true multi-official conflict).
+    const repoAlsoProvenInOwnerProof = (ownerProof?.owner_proof_urls ?? []).some((row) => {
+      const rowUrl = (row.url ?? "").trim();
+      if (!rowUrl) return false;
+      if ((row.browser_proof_status ?? "").trim() !== "PASS") return false;
+      const pathType = (row.path_type ?? "").trim();
+      if (
+        pathType !== "official_manufacturer_pdp" &&
+        pathType !== "official_manufacturer_accessory_pdp" &&
+        pathType !== "authorized_parts_distributor_pdp"
+      ) {
+        return false;
+      }
+      return normalizeUrlForCompare(rowUrl) === normalizeUrlForCompare(repoUrl);
     });
+    if (repoAlsoProvenInOwnerProof) {
+      plan_status = "BLOCKED_DESTINATION_URL_MISMATCH";
+      blockers.push("official_proof_url_mismatch_vs_orchestrator_repo_proven_url");
+      return finalizePlan({
+        args,
+        now,
+        plan_status,
+        blockers,
+        proven_facts,
+        unknown_facts,
+        proofRel,
+        checkedAt,
+        officialUrl,
+        current: null,
+        proposed: null,
+        exactToken,
+        wrongFamily,
+      });
+    }
+    unknown_facts.push(
+      `orchestrator repo_proven_official_target_url=${repoUrl} differs from owner-proof official URL; using owner-proof URL ${officialUrl}`,
+    );
   }
 
   const current = loadPrimaryRetailerLinkRow({
@@ -720,19 +756,26 @@ export function buildManufacturerRescueApplyPlanForSlugV1(args: {
     proofRel: proofRel ?? "UNKNOWN",
   });
 
-  const gate = buyLinkGateFailureKind({
-    retailer_key: proposed.retailer_key,
-    affiliate_url: proposed.affiliate_url ?? "",
-    browser_truth_classification: proposed.browser_truth_classification,
-    browser_truth_buyable_subtype: null,
-  });
+  const gate = buyLinkGateFailureKind(
+    {
+      retailer_key: proposed.retailer_key,
+      affiliate_url: proposed.affiliate_url ?? "",
+      browser_truth_classification: proposed.browser_truth_classification,
+      browser_truth_buyable_subtype: null,
+      browser_truth_notes: proposed.browser_truth_notes,
+      browser_truth_checked_at: proposed.browser_truth_checked_at,
+    },
+    { now: now() },
+  );
   const linkState = mapSignalsToRetailerLinkState({
     browserTruthClassification: proposed.browser_truth_classification,
     gateFailureKind: gate,
   });
   if (gate !== null || linkState !== RETAILER_LINK_STATES.LIVE_DIRECT_BUYABLE) {
     plan_status = "UNKNOWN";
-    blockers.push(`proposed_row_not_live_direct_buyable:${linkState}`);
+    blockers.push(
+      `proposed_row_not_live_direct_buyable:${linkState}${gate ? `:gate=${gate}` : ""}`,
+    );
     return finalizePlan({
       args,
       now,

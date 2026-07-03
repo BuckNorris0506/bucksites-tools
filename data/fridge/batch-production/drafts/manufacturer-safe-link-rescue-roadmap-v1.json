@@ -1,7 +1,7 @@
 {
   "contract": "manufacturer_safe_link_rescue_roadmap_v1",
   "director_contract": "manufacturer_safe_link_rescue_director_v1",
-  "generated_at": "2026-06-26T02:21:07.884Z",
+  "generated_at": "2026-07-03T21:55:52.146Z",
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
@@ -12,11 +12,10 @@
       "stage_order": 1,
       "title": "Owner reviews (highest leverage)",
       "workload_type": "owner_review",
-      "slug_count": 6,
+      "slug_count": 5,
       "filter_slugs": [
         "edr4rxd1",
         "edr3rxd1",
-        "ultrawf",
         "eptwfu01",
         "wf3cb",
         "wfcb"
@@ -37,17 +36,14 @@
       "stage_order": 2,
       "title": "Guarded apply candidates (post-owner approval)",
       "workload_type": "guarded_apply",
-      "slug_count": 6,
+      "slug_count": 3,
       "filter_slugs": [
-        "edr4rxd1",
-        "edr3rxd1",
-        "ultrawf",
         "eptwfu01",
         "wf3cb",
         "wfcb"
       ],
       "estimated_browser_hours": 0,
-      "estimated_safe_paths_after_stage": 6,
+      "estimated_safe_paths_after_stage": 3,
       "becomes_available_after_stage": [
         "Up to one safe buyer path per slug in repo CSV (separate apply executor).",
         "Production /go validation still UNKNOWN until post-apply parity check."
@@ -112,21 +108,21 @@
       "blockers_remaining": [
         "browser_evidence_artifact_missing",
         "confusion_family_review_required",
+        "repo_proven_official_pdp_url_missing",
         "exact_token_not_proven",
-        "live_browser_capture_unavailable_or_failed",
-        "repo_proven_official_pdp_url_missing"
+        "live_browser_capture_unavailable_or_failed"
       ]
     }
   ],
   "cumulative_safe_paths_unlockable": [
     0,
-    6,
-    6,
-    6
+    3,
+    3,
+    3
   ],
   "why_this_order_was_chosen": [
     "Stage 1 prioritizes owner-review-ready lanes — browser PASS already on disk for guarded apply candidates; founder review is the binding constraint before any CSV mutation.",
-    "Manufacturers ranked by expected_coverage_unlock_score — top: frigidaire (4 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.).",
+    "Manufacturers ranked by expected_coverage_unlock_score — top: frigidaire (3 owner-review-ready slug(s) — highest near-term coverage unlock potential after founder review.).",
     "Browser capture work ordered after owner-review/apply stages because PASS proof must exist before guarded apply; new captures feed future owner-review lanes only.",
     "Blocked/not-ready slugs parked last — no PDP inference, no weakening of wrong-family or supersession gates.",
     "All estimates are planning projections — coverage_unlocked remains false until separate authorized apply executor mutates repo CSV."

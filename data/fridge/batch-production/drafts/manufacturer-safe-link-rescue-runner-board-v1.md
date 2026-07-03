@@ -1,8 +1,8 @@
 # Manufacturer safe-link rescue runner board v1
 
-- generated_at: **2026-06-26T17:49:53.960Z**
-- director_generated_at: **2026-06-26T17:49:52.913Z**
-- orchestrator_generated_at: **2026-06-26T17:49:52.361Z**
+- generated_at: **2026-07-03T21:55:52.150Z**
+- director_generated_at: **2026-07-03T21:55:52.146Z**
+- orchestrator_generated_at: **2026-07-03T21:55:52.145Z**
 - ready_for_apply_slug: **NONE**
 - remaining_opportunity: **20**
 
@@ -15,59 +15,59 @@
 
 ## Execution order (top 15)
 
-1. `edr4rxd1` — **BROWSER_PROOF** (everydrop_whirlpool)
-   - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
+1. `edr4rxd1` — **REAUDIT_DUE** (everydrop_whirlpool)
+   - Re-run orchestrator + director + model correctness audit after apply; parity UNKNOWN until validation passes.
 
-2. `edr3rxd1` — **BROWSER_PROOF** (everydrop_whirlpool)
-   - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
+2. `edr3rxd1` — **REAUDIT_DUE** (everydrop_whirlpool)
+   - Re-run orchestrator + director + model correctness audit after apply; parity UNKNOWN until validation passes.
 
-3. `ultrawf` — **BROWSER_PROOF** (frigidaire)
+3. `eptwfu01` — **BROWSER_PROOF** (frigidaire)
    - Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.
 
-4. `eptwfu01` — **BROWSER_PROOF** (frigidaire)
+4. `wf3cb` — **BROWSER_PROOF** (frigidaire)
    - Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.
 
-5. `wf3cb` — **BROWSER_PROOF** (frigidaire)
+5. `wfcb` — **BROWSER_PROOF** (frigidaire)
    - Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.
 
-6. `wfcb` — **BROWSER_PROOF** (frigidaire)
-   - Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.
-
-7. `gswf` — **BROWSER_PROOF** (ge_appliance_parts)
+6. `gswf` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-8. `xwfe` — **BROWSER_PROOF** (ge_appliance_parts)
+7. `xwfe` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-9. `4396508` — **BROWSER_PROOF** (everydrop_whirlpool)
+8. `xwf` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-10. `xwf` — **BROWSER_PROOF** (ge_appliance_parts)
+9. `gswf2` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-11. `gswf2` — **BROWSER_PROOF** (ge_appliance_parts)
+10. `opfg3f` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-12. `opfg3f` — **BROWSER_PROOF** (ge_appliance_parts)
+11. `smartwater-mwfp` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-13. `smartwater-mwfp` — **BROWSER_PROOF** (ge_appliance_parts)
+12. `w10413645a` — **BROWSER_PROOF** (everydrop_whirlpool)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-14. `w10413645a` — **BROWSER_PROOF** (everydrop_whirlpool)
+13. `mswf` — **BROWSER_PROOF** (ge_appliance_parts)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
-15. `mswf` — **BROWSER_PROOF** (ge_appliance_parts)
+14. `pfmwf` — **BROWSER_PROOF** (ge_appliance_parts)
+   - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
+
+15. `4396842` — **BROWSER_PROOF** (everydrop_whirlpool)
    - Refresh on-disk browser proof artifact (PASS required) before owner review or apply.
 
 ## Stage counts
 
 - DISCOVER: **0**
-- BROWSER_PROOF: **19**
+- BROWSER_PROOF: **14**
 - OWNER_REVIEW: **0**
 - READY_FOR_APPLY: **0**
-- APPLIED: **0**
-- REAUDIT_DUE: **0**
+- APPLIED: **2**
+- REAUDIT_DUE: **2**
 - COMPLETE: **1**
 - BLOCKED: **7**
 
@@ -77,13 +77,13 @@
 
 - remaining_slug_count: **7**
 - bottleneck_stage: **BROWSER_PROOF**
-- estimated_browser_hours_remaining: **3.5**
+- estimated_browser_hours_remaining: **1.5**
 
 ### frigidaire
 
-- remaining_slug_count: **4**
+- remaining_slug_count: **3**
 - bottleneck_stage: **BROWSER_PROOF**
-- estimated_browser_hours_remaining: **2**
+- estimated_browser_hours_remaining: **1.5**
 
 ### ge_appliance_parts
 
@@ -93,10 +93,14 @@
 
 ## Bottlenecks
 
-- **BROWSER_PROOF** (19 slugs) — dominant blocker: `owner_apply_approval_missing`
-  - examples: `edr4rxd1`, `edr3rxd1`, `ultrawf`, `eptwfu01`, `wf3cb`
+- **BROWSER_PROOF** (14 slugs) — dominant blocker: `owner_apply_approval_missing`
+  - examples: `eptwfu01`, `wf3cb`, `wfcb`, `gswf`, `xwfe`
 - **BLOCKED** (7 slugs) — dominant blocker: `repo_proven_official_pdp_url_missing`
   - examples: `frig-242086201`, `fppwfu01`, `frig-242017801`, `wf2cb`, `frig-242294502`
+- **REAUDIT_DUE** (2 slugs) — dominant blocker: `NONE`
+  - examples: `edr4rxd1`, `edr3rxd1`
+- **APPLIED** (2 slugs) — dominant blocker: `live_browser_capture_unavailable_or_failed`
+  - examples: `4396508`, `ukf8001`
 
 ## Post-apply validation checklist
 
@@ -109,5 +113,5 @@
 
 ## Recommended next action
 
-PENDING_BROWSER_REFRESH for edr4rxd1: Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window).
+PENDING_BROWSER_REFRESH for eptwfu01: Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window).
 

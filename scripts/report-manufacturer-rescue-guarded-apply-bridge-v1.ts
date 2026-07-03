@@ -3,7 +3,8 @@
  * Manufacturer Rescue Guarded Apply Bridge v1 — dry-run by default.
  *
  *   npm run buckparts:manufacturer-rescue-guarded-apply-bridge
- *   npm run buckparts:manufacturer-rescue-guarded-apply-bridge -- --write-csv
+ *   npm run buckparts:manufacturer-rescue-guarded-apply-bridge -- --slug edr3rxd1
+ *   npm run buckparts:manufacturer-rescue-guarded-apply-bridge -- --slug edr3rxd1 --write-csv
  */
 
 import path from "node:path";
@@ -18,10 +19,13 @@ import {
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), ".."));
 
 function main(): void {
-  const { writeCsv } = parseManufacturerRescueGuardedApplyBridgeCliArgsV1(process.argv.slice(2));
+  const { writeCsv, targetSlug } = parseManufacturerRescueGuardedApplyBridgeCliArgsV1(
+    process.argv.slice(2),
+  );
   const report = runManufacturerRescueGuardedApplyBridgeV1({
     rootDir: REPO_ROOT,
     writeCsv,
+    targetSlug,
   });
 
   process.stderr.write(

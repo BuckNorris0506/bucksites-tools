@@ -22,12 +22,8 @@ import {
 } from "./ge-refrigerator-rescue-adapter-v1";
 import { buildGeRefrigeratorRescueOwnerApprovalLaneV1 } from "./ge-refrigerator-rescue-owner-approval-packet-v1";
 import {
-  FRIGIDAIRE_REFRIGERATOR_RESCUE_ADAPTER_CONTRACT_V1,
-  type FrigidaireRefrigeratorRescueCohortRowV1,
-} from "./frigidaire-refrigerator-rescue-adapter-v1";
-import {
-  FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1,
   FRIGIDAIRE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
+  loadFrigidaireConfusionFamilyOwnerClearanceV1,
 } from "./manufacturer-safe-link-rescue-frigidaire-config-v1";
 import type { ManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
 import { buildManufacturerSafeLinkRescueDirectorCommandCenterLaneV1 } from "./manufacturer-safe-link-rescue-director-command-center-v1";
@@ -53,6 +49,10 @@ import {
   filterEverydropOrchestratorBlockedReasonsV1,
   resolveEverydropWhirlpoolOwnerApplyLaneEligibleV1,
 } from "./manufacturer-safe-link-rescue-everydrop-readiness-unblockers-v1";
+import {
+  filterFrigidaireOrchestratorBlockedReasonsV1,
+  resolveFrigidaireOwnerApplyLaneEligibleV1,
+} from "./manufacturer-safe-link-rescue-frigidaire-readiness-unblockers-v1";
 import {
   MANUFACTURER_SAFE_LINK_RESCUE_ORCHESTRATOR_CONTRACT_V1,
   type ManufacturerRescueOrchestratorQueueRowV1,
@@ -246,27 +246,6 @@ export function loadManufacturerRescueDeployBuildMarkerV1(args: {
   };
 }
 
-function loadFrigidaireAdapterRow(
-  rootDir: string,
-  slug: string,
-  fileExists: (abs: string) => boolean,
-  readText: (abs: string) => string,
-): FrigidaireRefrigeratorRescueCohortRowV1 | null {
-  const rel = "data/fridge/batch-production/drafts/frigidaire-refrigerator-rescue-adapter-v1.json";
-  const abs = path.join(rootDir, rel);
-  if (!fileExists(abs)) return null;
-  try {
-    const parsed = JSON.parse(readText(abs)) as {
-      contract?: string;
-      rows?: FrigidaireRefrigeratorRescueCohortRowV1[];
-    };
-    if (parsed.contract !== FRIGIDAIRE_REFRIGERATOR_RESCUE_ADAPTER_CONTRACT_V1) return null;
-    return parsed.rows?.find((r) => r.filter_slug === slug) ?? null;
-  } catch {
-    return null;
-  }
-}
-
 function loadGeAdapterRow(
   rootDir: string,
   slug: string,
@@ -295,6 +274,7 @@ function resolveOwnerApplyLaneEligible(args: {
   orchestratorRow: ManufacturerRescueOrchestratorQueueRowV1;
   ownerProof: OwnerBrowserProofResultV1 | null;
   applyPlanRel: string | null;
+  ownerApprovalAccepted: boolean;
   now?: () => Date;
   fileExists: (abs: string) => boolean;
   readText: (abs: string) => string;
@@ -311,12 +291,16 @@ function resolveOwnerApplyLaneEligible(args: {
     });
   }
   if (args.manufacturerKey === "frigidaire") {
-    const row = loadFrigidaireAdapterRow(args.rootDir, args.slug, args.fileExists, args.readText);
-    if (!row) return { eligible: "UNKNOWN", source_note: "frigidaire adapter row missing" };
-    return {
-      eligible: (row.owner_apply_lane_eligible as boolean) === true,
-      source_note: `frigidaire adapter owner_apply_lane_eligible=${String(row.owner_apply_lane_eligible)}`,
-    };
+    return resolveFrigidaireOwnerApplyLaneEligibleV1({
+      rootDir: args.rootDir,
+      row: args.orchestratorRow,
+      ownerProof: args.ownerProof,
+      applyPlanRel: args.applyPlanRel,
+      ownerApprovalAccepted: args.ownerApprovalAccepted,
+      fileExists: args.fileExists,
+      readText: args.readText,
+      now: args.now,
+    });
   }
   if (args.manufacturerKey === "ge_appliance_parts") {
     const row = loadGeAdapterRow(args.rootDir, args.slug, args.fileExists, args.readText);
@@ -553,18 +537,21 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
     blockingReasons.push("browser_proof_after_deploy_marker_not_proven");
   }
 
-  const confusionRequired =
-    FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1.has(slug) ||
-    args.row.blocked_reasons.includes("confusion_family_review_required");
-  const confusionCleared = !confusionRequired;
+  const confusionClearance = loadFrigidaireConfusionFamilyOwnerClearanceV1({
+    rootDir: args.rootDir,
+    filterSlug: slug,
+    blockedReasons: args.row.blocked_reasons,
+    fileExists,
+    readText,
+  });
   checks.push({
     check_id: "confusion_family_cleared",
-    status: confusionCleared ? "PASS" : "FAIL",
-    notes: confusionCleared
-      ? "no confusion-family review required"
-      : "Frigidaire confusion-family review required before apply",
+    status: confusionClearance.unresolved ? "FAIL" : "PASS",
+    notes: confusionClearance.notes,
   });
-  if (!confusionCleared) blockingReasons.push("confusion_family_review_required");
+  if (confusionClearance.unresolved) {
+    blockingReasons.push("confusion_family_review_required");
+  }
 
   const applyPlanRel = findApplyPlanRel(args.rootDir, slug, fileExists);
   if (applyPlanRel) sourcePaths.add(applyPlanRel);
@@ -591,6 +578,7 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
     orchestratorRow: args.row,
     ownerProof,
     applyPlanRel,
+    ownerApprovalAccepted: ownerApproval.approved,
     now: args.now,
     fileExists,
     readText,
@@ -638,6 +626,17 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
         }).length > 0
       );
     }
+    if (args.row.manufacturer_key === "frigidaire") {
+      return (
+        filterFrigidaireOrchestratorBlockedReasonsV1({
+          adapterBlockers: q.blocked_reasons,
+          rootDir: args.rootDir,
+          filterSlug: slug,
+          fileExists,
+          readText,
+        }).length > 0
+      );
+    }
     return q.blocked_reasons.filter(isOperationalOrchestratorBlockerV1).length > 0;
   });
   const operationalOrchestratorBlockers =
@@ -647,7 +646,15 @@ export function assessManufacturerRescueReadinessCandidateV1(args: {
           ownerProof,
           now: args.now,
         })
-      : args.row.blocked_reasons.filter(isOperationalOrchestratorBlockerV1);
+      : args.row.manufacturer_key === "frigidaire"
+        ? filterFrigidaireOrchestratorBlockedReasonsV1({
+            adapterBlockers: args.row.blocked_reasons,
+            rootDir: args.rootDir,
+            filterSlug: slug,
+            fileExists,
+            readText,
+          })
+        : args.row.blocked_reasons.filter(isOperationalOrchestratorBlockerV1);
   const unresolved = operationalOrchestratorBlockers.length > 0 || directorBlocked;
   checks.push({
     check_id: "no_unresolved_blockers",

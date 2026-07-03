@@ -11,42 +11,41 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T18:22:29.709Z",
+  "generated_at": "2026-07-03T17:38:02.916Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
+  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
   "browser_proof_max_age_days": 14,
   "candidate_count": 26,
-  "ready_for_owner_review_count": 0,
-  "blocked_count": 26,
-  "apply_plans_written": [],
+  "ready_for_owner_review_count": 2,
+  "blocked_count": 24,
+  "apply_plans_written": [
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json"
+  ],
   "slug_results": [
     {
       "filter_slug": "edr4rxd1",
       "manufacturer_key": "everydrop_whirlpool",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "plan_status": "UNKNOWN",
       "apply_plan_artifact_rel_path": null,
       "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
+        "repo_csv_already_direct_buyable_at_official_destination"
       ]
     },
     {
       "filter_slug": "edr3rxd1",
       "manufacturer_key": "everydrop_whirlpool",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
-      "apply_plan_artifact_rel_path": null,
-      "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
-      ]
+      "plan_status": "READY_FOR_OWNER_REVIEW",
+      "apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+      "blockers": []
     },
     {
       "filter_slug": "ultrawf",
       "manufacturer_key": "frigidaire",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
-      "apply_plan_artifact_rel_path": null,
-      "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
-      ]
+      "plan_status": "READY_FOR_OWNER_REVIEW",
+      "apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
+      "blockers": []
     },
     {
       "filter_slug": "eptwfu01",
@@ -257,14 +256,14 @@
     }
   ],
   "inspect_summary": {
-    "recommended_next_action": "No READY_FOR_OWNER_REVIEW apply plans — resolve browser proof, confusion-family, or CSV blockers first.",
+    "recommended_next_action": "Owner review 2 manufacturer rescue apply-plan artifact(s); founder owner_mutation_approved required before guarded CSV apply; regenerate readiness gate after plans committed.",
     "readiness_gate_promotion_authority_note": "manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority — apply plans do not grant apply slots."
   },
   "proven_facts": [
     "PROVEN: Factory is read-only — no CSV, Supabase, SQL, or production mutation authorized.",
     "PROVEN: owner_approval_required=true on every apply plan artifact.",
     "PROVEN: evaluated 26 orchestrator rescue row(s).",
-    "PROVEN: 0 apply plan(s) READY_FOR_OWNER_REVIEW.",
+    "PROVEN: 2 apply plan(s) READY_FOR_OWNER_REVIEW.",
     "PROVEN: Readiness Gate remains sole READY_FOR_APPLY promotion authority."
   ],
   "unknown_facts": [

@@ -3,16 +3,19 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "approval_status": "PENDING_CONFUSION_FAMILY_REVIEW",
+  "approval_status": "CONFUSION_FAMILY_CLEARED_OWNER_ANSWERS_RECORDED",
   "not_an_approved_decision": true,
-  "generated_at": "2026-06-28T16:06:00.591Z",
+  "generated_at": "2026-07-03T17:38:02.015Z",
+  "owner_answers_recorded_at": "2026-07-03T17:20:30.000Z",
   "source_apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
   "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json",
+  "source_committed_evidence_rel_path": "data/evidence/frigidaire-ultrawf-official-owner-browser-proof-evidence.2026-07-03.json",
   "target_slug": "ultrawf",
   "oem_part_token": "ULTRAWF",
   "manufacturer_key": "frigidaire",
-  "apply_plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+  "apply_plan_status": "READY_FOR_OWNER_REVIEW",
   "confusion_family_review_required": true,
+  "confusion_family_cleared": true,
   "forbidden_tokens_for_slug": [
     "EPTWFU01"
   ],
@@ -35,13 +38,54 @@
         "prompt": "Separately audit Amazon B002JAKRAM affiliate tag before any Amazon-primary apply (UNKNOWN in owner proof).",
         "required": false
       }
+    ],
+    "owner_answers_v1": [
+      {
+        "question_id": "confusion_family_ultrawf_vs_eptwfu01",
+        "answer": "YES_CONFIRMED_EXACT_TOKEN_ULTRAWF_PURESOURCE_ULTRA_OEM_NOT_EPTWFU01_OR_WF3CB",
+        "answered_at": "2026-07-03T17:20:30.000Z",
+        "answered_by": "owner",
+        "basis": [
+          "PROVEN: Page title shows Frigidaire Water Filter ULTRAWF.",
+          "PROVEN: Item shows Frigidaire OEM Part #ULTRAWF.",
+          "PROVEN: Product line visible: PureSource Ultra.",
+          "PROVEN: Genuine OEM Part badge visible.",
+          "PROVEN: No aftermarket brand visible.",
+          "PROVEN: Model ULTRAWF visible on Home Depot secondary confirmation.",
+          "PROVEN: forbidden_tokens_detected_in_proof=[]"
+        ]
+      },
+      {
+        "question_id": "approve_official_or_parts_distributor_primary",
+        "answer": "YES_APPROVE_FRIGIDAIREAPPLIANCEPARTS_COM_AS_PRIMARY",
+        "answered_at": "2026-07-03T17:20:30.000Z",
+        "answered_by": "owner",
+        "approved_primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "path_type": "authorized_parts_distributor_pdp",
+        "basis": [
+          "PROVEN: frigidaireapplianceparts.com authorized_parts_distributor_pdp PASS on 2026-07-03 refresh.",
+          "PROVEN: Price $59.99, In Stock, Genuine OEM Part badge."
+        ]
+      },
+      {
+        "question_id": "amazon_b002jakram_audit",
+        "answer": "DEFERRED_NOT_REQUIRED_FOR_AUTHORIZED_DISTRIBUTOR_PRIMARY",
+        "answered_at": "2026-07-03T17:20:30.000Z",
+        "answered_by": "owner",
+        "required": false,
+        "basis": [
+          "PROVEN: 2026-07-03 refresh did not re-check Amazon B002JAKRAM.",
+          "PROVEN: Primary path is frigidaireapplianceparts.com authorized distributor, not Amazon."
+        ]
+      }
     ]
   },
   "census_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
   "proven_facts": [
     "PROVEN: PASS owner browser proof on disk.",
     "PROVEN: confusion_family_review_required=true per frigidaire config.",
+    "PROVEN: confusion_family_cleared=true (owner confusion-family clearance proven via data/fridge/batch-production/drafts/fridge-safe-link-ultrawf-owner-classification-packet-v1.json, data/evidence/frigidaire-ultrawf-official-owner-browser-proof-evidence.2026-07-03.json).",
     "PROVEN: forbidden_tokens_detected_in_proof=[]."
   ],
-  "recommended_next_action": "Owner completes confusion-family review first; apply plan remains blocked until confusion_family_review_cleared."
+  "recommended_next_action": "Confusion-family owner clearance recorded — proceed when apply plan is READY_FOR_OWNER_REVIEW."
 }

@@ -1,0 +1,66 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-03-edr3rxd1-approve_csv_manufacturer_rescue_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-edr3rxd1-manufacturer-rescue",
+      "source_decision_packet_id": "manufacturer_safe_link_rescue_apply_plan_edr3rxd1_v1",
+      "decided_at": "2026-07-03T20:00:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Founder accepts the Whirlpool official Pack Of 2 / EDR3RXV2P page as the primary verified link for EDR3RXD1. Single-pack Whirlpool official page is UNKNOWN/not proven. Amazon B00UB441HS remains secondary retailer-direct proof only. Amazon B087PDLZL9 remains HARD_DO_NOT_USE.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-03T20:00:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not batch apply any other filter slug without a separate founder approval row for that exact slug.",
+        "Do not promote Amazon B087PDLZL9 (Waterdrop aftermarket) — HARD_DO_NOT_USE.",
+        "Do not promote Amazon B00UB441HS as the official primary — secondary retailer-direct proof only.",
+        "Do not bind Amazon aftermarket Waterdrop evidence for this slug.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not mutate Supabase from this approval row — CSV apply only.",
+        "Do not write or overwrite evidence JSON under data/evidence/.",
+        "approve_csv_manufacturer_rescue_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "edr3rxd1_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+        "owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+        "owner_classification_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-edr3rxd1-owner-classification-packet-v1.json",
+        "founder_option_id": "approve_csv_manufacturer_rescue_apply",
+        "target_slug": "edr3rxd1",
+        "oem_part_token": "EDR3RXD1",
+        "official_destination_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+        "retailer_key": "oem-parts-catalog",
+        "product_attribution": "oem_official",
+        "owner_browser_truth_classification": "direct_buyable",
+        "pack_of_2_caveat_accepted": true,
+        "pack_model_token": "EDR3RXV2P",
+        "amazon_b00ub441hs_role": "secondary_retailer_direct_proof_only",
+        "amazon_b087pdlzl9_role": "HARD_DO_NOT_USE",
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-03T20:00:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+          "sha256_at_binding": "f80954426cb63c9b0d80c63abd1bb8f510797395c81e35179ec82819e31f2f6b",
+          "entry_type": "apply_plan"
+        },
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json",
+          "sha256_at_binding": "31053e40801b4461989416e50cdddcf0af079d3540fa1f15440166d37d1cc0d5",
+          "entry_type": "evidence"
+        },
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-edr3rxd1-owner-classification-packet-v1.json",
+          "sha256_at_binding": "aa0551b93638dd7ec7c9dd0c09163b88990771a18cc789777a87bd947f9be970",
+          "entry_type": "evidence"
+        }
+      ]
+    }
+  ]
+}

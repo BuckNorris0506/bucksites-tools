@@ -11,13 +11,13 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T17:49:53.960Z",
+  "generated_at": "2026-07-03T21:55:52.150Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-runner",
   "director_cc_lane_contract": "manufacturer_safe_link_rescue_director_v1",
   "director_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-director-v1.json",
   "orchestrator_source_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
-  "director_generated_at": "2026-06-26T17:49:52.913Z",
-  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
+  "director_generated_at": "2026-07-03T21:55:52.146Z",
+  "orchestrator_generated_at": "2026-07-03T21:55:52.145Z",
   "ready_for_apply_slug": null,
   "ready_for_apply_enforced": true,
   "readiness_gate_contract": "manufacturer_safe_link_rescue_readiness_gate_v1",
@@ -26,16 +26,16 @@
   "readiness_gate_artifact": {
     "status": "loaded",
     "source_artifact_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
-    "generated_at": "2026-06-26T17:49:53.454Z",
+    "generated_at": "2026-07-03T21:55:52.149Z",
     "stale_reason": null
   },
   "readiness_gate_summary": {
     "artifact_status": "loaded",
-    "generated_at": "2026-06-26T17:49:53.454Z",
+    "generated_at": "2026-07-03T21:55:52.149Z",
     "ready_for_apply_count": 0,
     "by_status": {
       "READY_FOR_APPLY": 0,
-      "PENDING_BROWSER_REFRESH": 6,
+      "PENDING_BROWSER_REFRESH": 3,
       "PENDING_CONFUSION_FAMILY_REVIEW": 0,
       "PENDING_OWNER_APPROVAL": 0,
       "PENDING_APPLY_PLAN": 0,
@@ -44,9 +44,9 @@
       "UNKNOWN_READINESS": 0
     },
     "top_pending_work_item": {
-      "filter_slug": "edr4rxd1",
+      "filter_slug": "eptwfu01",
       "readiness_status": "PENDING_BROWSER_REFRESH",
-      "recommended_next_action": "Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window)."
+      "recommended_next_action": "Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window)."
     }
   },
   "slug_states": [
@@ -54,21 +54,16 @@
       "filter_slug": "edr4rxd1",
       "manufacturer_key": "everydrop_whirlpool",
       "oem_part_token": "EDR4RXD1",
-      "stage": "BROWSER_PROOF",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
+      "stage": "REAUDIT_DUE",
+      "readiness_status": "NOT_IN_READINESS_GATE",
       "execution_rank": 1,
-      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "next_executable_action": "Re-run orchestrator + director + model correctness audit after apply; parity UNKNOWN until validation passes.",
       "executable_now": true,
-      "blocked_reasons": [
-        "live_browser_capture_unavailable_or_failed",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
-      ],
+      "blocked_reasons": [],
       "trust_risk": "LOW",
-      "director_value_score": 1447,
+      "director_value_score": 1444,
       "boardy_safety_rules": [
-        "browser_proof_freshness"
+        "reaudit_after_apply"
       ],
       "orchestrator_recommended_next_action": "Complete owner-browser checklist or rerun capture for edr4rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN.",
       "coverage_unlocked": false
@@ -77,44 +72,18 @@
       "filter_slug": "edr3rxd1",
       "manufacturer_key": "everydrop_whirlpool",
       "oem_part_token": "EDR3RXD1",
-      "stage": "BROWSER_PROOF",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
+      "stage": "REAUDIT_DUE",
+      "readiness_status": "NOT_IN_READINESS_GATE",
       "execution_rank": 2,
-      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
+      "next_executable_action": "Re-run orchestrator + director + model correctness audit after apply; parity UNKNOWN until validation passes.",
       "executable_now": true,
-      "blocked_reasons": [
-        "live_browser_capture_unavailable_or_failed",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
-      ],
+      "blocked_reasons": [],
       "trust_risk": "LOW",
-      "director_value_score": 1434,
+      "director_value_score": 1431,
       "boardy_safety_rules": [
-        "browser_proof_freshness"
+        "reaudit_after_apply"
       ],
       "orchestrator_recommended_next_action": "Complete owner-browser checklist or rerun capture for edr3rxd1; do not draft apply plan until whirlpool_official_pdp_proof_result=PROVEN.",
-      "coverage_unlocked": false
-    },
-    {
-      "filter_slug": "ultrawf",
-      "manufacturer_key": "frigidaire",
-      "oem_part_token": "ULTRAWF",
-      "stage": "BROWSER_PROOF",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
-      "execution_rank": 3,
-      "next_executable_action": "Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
-      "executable_now": true,
-      "blocked_reasons": [
-        "confusion_family_review_required"
-      ],
-      "trust_risk": "MEDIUM",
-      "director_value_score": 1320,
-      "boardy_safety_rules": [
-        "browser_proof_freshness",
-        "wrong_family_validation"
-      ],
-      "orchestrator_recommended_next_action": "Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
       "coverage_unlocked": false
     },
     {
@@ -123,7 +92,7 @@
       "oem_part_token": "EPTWFU01",
       "stage": "BROWSER_PROOF",
       "readiness_status": "PENDING_BROWSER_REFRESH",
-      "execution_rank": 4,
+      "execution_rank": 3,
       "next_executable_action": "Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
       "executable_now": true,
       "blocked_reasons": [
@@ -144,7 +113,7 @@
       "oem_part_token": "WF3CB",
       "stage": "BROWSER_PROOF",
       "readiness_status": "PENDING_BROWSER_REFRESH",
-      "execution_rank": 5,
+      "execution_rank": 4,
       "next_executable_action": "Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
       "executable_now": true,
       "blocked_reasons": [
@@ -165,7 +134,7 @@
       "oem_part_token": "WFCB",
       "stage": "BROWSER_PROOF",
       "readiness_status": "PENDING_BROWSER_REFRESH",
-      "execution_rank": 6,
+      "execution_rank": 5,
       "next_executable_action": "Run read-only browser proof capture — Owner review Frigidaire owner browser proof — no PDP inference; separate apply authorization required.",
       "executable_now": true,
       "blocked_reasons": [
@@ -187,7 +156,7 @@
       "oem_part_token": "GSWF",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 7,
+      "execution_rank": 6,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -210,7 +179,7 @@
       "oem_part_token": "XWFE",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 8,
+      "execution_rank": 7,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -229,36 +198,12 @@
       "coverage_unlocked": false
     },
     {
-      "filter_slug": "4396508",
-      "manufacturer_key": "everydrop_whirlpool",
-      "oem_part_token": "4396508",
-      "stage": "BROWSER_PROOF",
-      "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 9,
-      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
-      "executable_now": true,
-      "blocked_reasons": [
-        "live_browser_capture_unavailable_or_failed",
-        "repo_proven_official_target_url_missing",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
-      ],
-      "trust_risk": "UNKNOWN",
-      "director_value_score": 812,
-      "boardy_safety_rules": [
-        "browser_proof_freshness"
-      ],
-      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for 4396508 — owner browser discovery required before capture.",
-      "coverage_unlocked": false
-    },
-    {
       "filter_slug": "xwf",
       "manufacturer_key": "ge_appliance_parts",
       "oem_part_token": "XWF",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 10,
+      "execution_rank": 8,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -282,7 +227,7 @@
       "oem_part_token": "GSWF2",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 11,
+      "execution_rank": 9,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -305,7 +250,7 @@
       "oem_part_token": "OPFG3F",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 12,
+      "execution_rank": 10,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -328,7 +273,7 @@
       "oem_part_token": "MWFP",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 13,
+      "execution_rank": 11,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -351,15 +296,13 @@
       "oem_part_token": "W10413645A",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 14,
+      "execution_rank": 12,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
         "live_browser_capture_unavailable_or_failed",
         "repo_proven_official_target_url_missing",
         "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false",
         "supersession_review_required"
       ],
       "trust_risk": "UNKNOWN",
@@ -376,7 +319,7 @@
       "oem_part_token": "MSWF",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 15,
+      "execution_rank": 13,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -399,7 +342,7 @@
       "oem_part_token": "PFMWF",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 16,
+      "execution_rank": 14,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
@@ -422,15 +365,13 @@
       "oem_part_token": "4396842",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 17,
+      "execution_rank": 15,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
         "live_browser_capture_unavailable_or_failed",
         "repo_proven_official_target_url_missing",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
+        "exact_token_not_proven"
       ],
       "trust_risk": "UNKNOWN",
       "director_value_score": 553,
@@ -441,44 +382,18 @@
       "coverage_unlocked": false
     },
     {
-      "filter_slug": "ukf8001",
-      "manufacturer_key": "everydrop_whirlpool",
-      "oem_part_token": "UKF8001",
-      "stage": "BROWSER_PROOF",
-      "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 18,
-      "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
-      "executable_now": true,
-      "blocked_reasons": [
-        "live_browser_capture_unavailable_or_failed",
-        "repo_proven_official_target_url_missing",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
-      ],
-      "trust_risk": "UNKNOWN",
-      "director_value_score": 331,
-      "boardy_safety_rules": [
-        "browser_proof_freshness"
-      ],
-      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for ukf8001 — owner browser discovery required before capture.",
-      "coverage_unlocked": false
-    },
-    {
       "filter_slug": "4396395",
       "manufacturer_key": "everydrop_whirlpool",
       "oem_part_token": "4396395",
       "stage": "BROWSER_PROOF",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 19,
+      "execution_rank": 16,
       "next_executable_action": "Refresh on-disk browser proof artifact (PASS required) before owner review or apply.",
       "executable_now": true,
       "blocked_reasons": [
         "live_browser_capture_unavailable_or_failed",
         "repo_proven_official_target_url_missing",
-        "exact_token_not_proven",
-        "mutation_authorized=false",
-        "verified_link_authorized=false"
+        "exact_token_not_proven"
       ],
       "trust_risk": "UNKNOWN",
       "director_value_score": 283,
@@ -489,12 +404,56 @@
       "coverage_unlocked": false
     },
     {
+      "filter_slug": "4396508",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "4396508",
+      "stage": "APPLIED",
+      "readiness_status": "NOT_IN_READINESS_GATE",
+      "execution_rank": 17,
+      "next_executable_action": "Apply detected in repo CSV — hold until post-apply re-audit checklist runs; do not claim coverage unlocked.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 797,
+      "boardy_safety_rules": [
+        "reaudit_after_apply"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for 4396508 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
+      "filter_slug": "ukf8001",
+      "manufacturer_key": "everydrop_whirlpool",
+      "oem_part_token": "UKF8001",
+      "stage": "APPLIED",
+      "readiness_status": "NOT_IN_READINESS_GATE",
+      "execution_rank": 18,
+      "next_executable_action": "Apply detected in repo CSV — hold until post-apply re-audit checklist runs; do not claim coverage unlocked.",
+      "executable_now": false,
+      "blocked_reasons": [
+        "live_browser_capture_unavailable_or_failed",
+        "repo_proven_official_target_url_missing",
+        "exact_token_not_proven"
+      ],
+      "trust_risk": "UNKNOWN",
+      "director_value_score": 286,
+      "boardy_safety_rules": [
+        "reaudit_after_apply"
+      ],
+      "orchestrator_recommended_next_action": "No repo-proven official Whirlpool PDP for ukf8001 — owner browser discovery required before capture.",
+      "coverage_unlocked": false
+    },
+    {
       "filter_slug": "frig-242086201",
       "manufacturer_key": "frigidaire",
       "oem_part_token": "242086201",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 20,
+      "execution_rank": 19,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -515,7 +474,7 @@
       "oem_part_token": "FPPWFU01",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 21,
+      "execution_rank": 20,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -536,7 +495,7 @@
       "oem_part_token": "242017801",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 22,
+      "execution_rank": 21,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -554,7 +513,7 @@
       "oem_part_token": "WF2CB",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 23,
+      "execution_rank": 22,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -575,7 +534,7 @@
       "oem_part_token": "242294502",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 24,
+      "execution_rank": 23,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -593,7 +552,7 @@
       "oem_part_token": "PPWFU01",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 25,
+      "execution_rank": 24,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: confusion_family_review_required, repo_proven_official_pdp_url_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -614,7 +573,7 @@
       "oem_part_token": "MWF",
       "stage": "BLOCKED",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 26,
+      "execution_rank": 25,
       "next_executable_action": "Parked — resolve blockers before any capture or apply: known_broken_destination, owner_apply_approval_missing, csv_apply_not_authorized, supabase_mutation_not_authorized, browser_evidence_artifact_missing.",
       "executable_now": false,
       "blocked_reasons": [
@@ -636,7 +595,7 @@
       "oem_part_token": "RPWFE",
       "stage": "COMPLETE",
       "readiness_status": "NOT_IN_READINESS_GATE",
-      "execution_rank": 27,
+      "execution_rank": 26,
       "next_executable_action": "No action — reference lane complete; buyer path already repo-proven.",
       "executable_now": false,
       "blocked_reasons": [
@@ -646,7 +605,7 @@
         "repo_csv_already_applied_official_ge"
       ],
       "trust_risk": "UNKNOWN",
-      "director_value_score": -4690,
+      "director_value_score": -4678,
       "boardy_safety_rules": [],
       "orchestrator_recommended_next_action": "Reference lane — repo CSV direct_buyable already applied; no rescue capture needed.",
       "coverage_unlocked": false
@@ -655,13 +614,11 @@
   "execution_order": [
     "edr4rxd1",
     "edr3rxd1",
-    "ultrawf",
     "eptwfu01",
     "wf3cb",
     "wfcb",
     "gswf",
     "xwfe",
-    "4396508",
     "xwf",
     "gswf2",
     "opfg3f",
@@ -670,8 +627,9 @@
     "mswf",
     "pfmwf",
     "4396842",
-    "ukf8001",
     "4396395",
+    "4396508",
+    "ukf8001",
     "frig-242086201",
     "fppwfu01",
     "frig-242017801",
@@ -687,23 +645,23 @@
       "remaining_slug_count": 7,
       "stage_counts": {
         "DISCOVER": 0,
-        "BROWSER_PROOF": 7,
+        "BROWSER_PROOF": 3,
         "OWNER_REVIEW": 0,
         "READY_FOR_APPLY": 0,
-        "APPLIED": 0,
-        "REAUDIT_DUE": 0,
+        "APPLIED": 2,
+        "REAUDIT_DUE": 2,
         "COMPLETE": 0,
         "BLOCKED": 0
       },
-      "estimated_browser_hours_remaining": 3.5,
+      "estimated_browser_hours_remaining": 1.5,
       "bottleneck_stage": "BROWSER_PROOF"
     },
     {
       "manufacturer_key": "frigidaire",
-      "remaining_slug_count": 4,
+      "remaining_slug_count": 3,
       "stage_counts": {
         "DISCOVER": 0,
-        "BROWSER_PROOF": 4,
+        "BROWSER_PROOF": 3,
         "OWNER_REVIEW": 0,
         "READY_FOR_APPLY": 0,
         "APPLIED": 0,
@@ -711,7 +669,7 @@
         "COMPLETE": 0,
         "BLOCKED": 6
       },
-      "estimated_browser_hours_remaining": 2,
+      "estimated_browser_hours_remaining": 1.5,
       "bottleneck_stage": "BROWSER_PROOF"
     },
     {
@@ -735,14 +693,14 @@
     {
       "bottleneck_id": "bottleneck_browser_proof",
       "stage": "BROWSER_PROOF",
-      "slug_count": 19,
+      "slug_count": 14,
       "dominant_blocker": "owner_apply_approval_missing",
       "example_slugs": [
-        "edr4rxd1",
-        "edr3rxd1",
-        "ultrawf",
         "eptwfu01",
-        "wf3cb"
+        "wf3cb",
+        "wfcb",
+        "gswf",
+        "xwfe"
       ]
     },
     {
@@ -756,6 +714,26 @@
         "frig-242017801",
         "wf2cb",
         "frig-242294502"
+      ]
+    },
+    {
+      "bottleneck_id": "bottleneck_reaudit_due",
+      "stage": "REAUDIT_DUE",
+      "slug_count": 2,
+      "dominant_blocker": "NONE",
+      "example_slugs": [
+        "edr4rxd1",
+        "edr3rxd1"
+      ]
+    },
+    {
+      "bottleneck_id": "bottleneck_applied",
+      "stage": "APPLIED",
+      "slug_count": 2,
+      "dominant_blocker": "live_browser_capture_unavailable_or_failed",
+      "example_slugs": [
+        "4396508",
+        "ukf8001"
       ]
     }
   ],
@@ -806,46 +784,13 @@
     },
     {
       "reason": "confusion_family_review_required",
-      "slug_count": 8,
+      "slug_count": 7,
       "example_slugs": [
         "eptwfu01",
         "fppwfu01",
         "frig-242086201",
         "purepour",
-        "ultrawf"
-      ]
-    },
-    {
-      "reason": "exact_token_not_proven",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ]
-    },
-    {
-      "reason": "live_browser_capture_unavailable_or_failed",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ]
-    },
-    {
-      "reason": "mutation_authorized=false",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
+        "wf2cb"
       ]
     },
     {
@@ -860,14 +805,25 @@
       ]
     },
     {
-      "reason": "verified_link_authorized=false",
-      "slug_count": 7,
+      "reason": "exact_token_not_proven",
+      "slug_count": 5,
       "example_slugs": [
         "4396395",
         "4396508",
         "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
+        "ukf8001",
+        "w10413645a"
+      ]
+    },
+    {
+      "reason": "live_browser_capture_unavailable_or_failed",
+      "slug_count": 5,
+      "example_slugs": [
+        "4396395",
+        "4396508",
+        "4396842",
+        "ukf8001",
+        "w10413645a"
       ]
     },
     {
@@ -922,13 +878,13 @@
     "next_executable_slug": "edr4rxd1",
     "ready_for_apply_slug": null,
     "remaining_opportunity": 20,
-    "recommended_next_action": "PENDING_BROWSER_REFRESH for edr4rxd1: Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window).",
+    "recommended_next_action": "PENDING_BROWSER_REFRESH for eptwfu01: Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window).",
     "readiness_gate_ready_for_apply_count": 0,
     "readiness_gate_artifact_status": "loaded",
     "top_pending_work_item": {
-      "filter_slug": "edr4rxd1",
+      "filter_slug": "eptwfu01",
       "readiness_status": "PENDING_BROWSER_REFRESH",
-      "recommended_next_action": "Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window)."
+      "recommended_next_action": "Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window)."
     }
   },
   "proven_facts": [
@@ -938,7 +894,7 @@
     "PROVEN: Readiness gate promotion artifact loaded from data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json.",
     "PROVEN: Boardy safety contract requires browser proof freshness, wrong-family validation, one-at-a-time apply, and re-audit after apply.",
     "PROVEN: Consumed Command Center director lane manufacturer_safe_link_rescue_director_v1.",
-    "PROVEN: Orchestrator contract manufacturer_safe_link_rescue_orchestrator_v1 with 27 unified queue rows."
+    "PROVEN: Orchestrator contract manufacturer_safe_link_rescue_orchestrator_v1 with 26 unified queue rows."
   ],
   "unknown_facts": [
     "UNKNOWN: live Supabase/runtime parity after any future apply.",

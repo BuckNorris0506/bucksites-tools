@@ -41,8 +41,30 @@ test("each gate failure maps correctly", () => {
     RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_MISSING,
   );
   assert.equal(
+    mapSignalsToRetailerLinkState({ gateFailureKind: "missing_browser_truth_checked_at" }),
+    RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_MISSING,
+  );
+  assert.equal(
     mapSignalsToRetailerLinkState({ gateFailureKind: "unsafe_browser_truth" }),
     RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE,
+  );
+  assert.equal(
+    mapSignalsToRetailerLinkState({ gateFailureKind: "hard_denied_browser_truth" }),
+    RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE,
+  );
+  assert.equal(
+    mapSignalsToRetailerLinkState({ gateFailureKind: "stale_browser_truth_checked_at" }),
+    RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_UNSAFE,
+  );
+});
+
+test("missing checked_at gate failure does not fall through to LIVE_DIRECT_BUYABLE", () => {
+  assert.equal(
+    mapSignalsToRetailerLinkState({
+      gateFailureKind: "missing_browser_truth_checked_at",
+      browserTruthClassification: "direct_buyable",
+    }),
+    RETAILER_LINK_STATES.BLOCKED_BROWSER_TRUTH_MISSING,
   );
 });
 

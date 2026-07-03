@@ -3,7 +3,7 @@
  * PDP URL shapes are PROVEN only from owner browser proof — no token inference.
  */
 
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -79,6 +79,108 @@ export const FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1 = new Set<string>([
   "wfcb",
   "purepour",
 ]);
+
+export type FrigidaireConfusionFamilyOwnerClearanceV1 = {
+  required: boolean;
+  cleared: boolean;
+  unresolved: boolean;
+  sources: string[];
+  notes: string;
+};
+
+/**
+ * Confusion-family slugs require explicit owner clearance.
+ * Clearance is proven by classification packet and/or committed evidence — not by slug membership alone.
+ */
+export function loadFrigidaireConfusionFamilyOwnerClearanceV1(args: {
+  rootDir: string;
+  filterSlug: string;
+  blockedReasons?: readonly string[];
+  fileExists?: (abs: string) => boolean;
+  readText?: (abs: string) => string;
+}): FrigidaireConfusionFamilyOwnerClearanceV1 {
+  const slug = args.filterSlug.trim().toLowerCase();
+  const requiredByConfig = FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1.has(slug);
+  const requiredByBlocker = (args.blockedReasons ?? []).includes(
+    "confusion_family_review_required",
+  );
+  const required = requiredByConfig || requiredByBlocker;
+  if (!required) {
+    return {
+      required: false,
+      cleared: true,
+      unresolved: false,
+      sources: [],
+      notes: "no confusion-family review required",
+    };
+  }
+
+  const fileExists = args.fileExists ?? ((abs: string) => existsSync(abs));
+  const readText =
+    args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const sources: string[] = [];
+
+  const classificationRel =
+    `data/fridge/batch-production/drafts/fridge-safe-link-${slug}-owner-classification-packet-v1.json`;
+  const classificationAbs = path.join(args.rootDir, classificationRel);
+  if (fileExists(classificationAbs)) {
+    try {
+      const doc = JSON.parse(readText(classificationAbs)) as {
+        confusion_family_cleared?: unknown;
+      };
+      if (doc.confusion_family_cleared === true) {
+        sources.push(classificationRel);
+      }
+    } catch {
+      // ignore malformed classification packet
+    }
+  }
+
+  const evidenceDir = path.join(args.rootDir, "data/evidence");
+  try {
+    const names = readdirSync(evidenceDir);
+    for (const name of names) {
+      if (!name.includes(slug) || !name.endsWith(".json")) continue;
+      const rel = `data/evidence/${name}`;
+      const abs = path.join(args.rootDir, rel);
+      if (!fileExists(abs)) continue;
+      try {
+        const doc = JSON.parse(readText(abs)) as {
+          confusion_family_review?: { status?: unknown };
+        };
+        const status = doc.confusion_family_review?.status;
+        if (typeof status === "string" && status.trim().toUpperCase() === "CLEARED") {
+          sources.push(rel);
+        }
+      } catch {
+        // ignore malformed evidence
+      }
+    }
+  } catch {
+    // evidence dir missing
+  }
+
+  const cleared = sources.length > 0;
+  return {
+    required: true,
+    cleared,
+    unresolved: !cleared,
+    sources,
+    notes: cleared
+      ? `owner confusion-family clearance proven via ${sources.join(", ")}`
+      : "Frigidaire confusion-family review required — no owner clearance artifact found",
+  };
+}
+
+export function frigidaireConfusionFamilyReviewIsUnresolvedV1(args: {
+  rootDir: string;
+  filterSlug: string;
+  blockedReasons?: readonly string[];
+  fileExists?: (abs: string) => boolean;
+  readText?: (abs: string) => string;
+}): boolean {
+  return loadFrigidaireConfusionFamilyOwnerClearanceV1(args).unresolved;
+}
 
 export const FRIGIDAIRE_REFRIGERATOR_RESCUE_VALIDATION_GATE_IDS_V1 = [
   "frigidaire_search_placeholder_detected",
@@ -429,15 +531,21 @@ export function loadFrigidaireRepoProvenOfficialTargetUrlV1(args: {
     if (parsed.verdict !== "PASS_BROWSER_PROOF") {
       return { url: null, source: null, path_type: null };
     }
+    const allowedPathTypes = new Set([
+      "official_manufacturer_pdp",
+      "official_manufacturer_accessory_pdp",
+      "authorized_parts_distributor_pdp",
+    ]);
     for (const row of parsed.owner_proof_urls ?? []) {
       const url = (row.url ?? "").trim();
       if (!url || !frigidairePdpDiscoveryStrategy.isOfficialPdpUrl(url)) continue;
-      if (row.path_type !== "official_manufacturer_pdp") continue;
+      const pathType = (row.path_type ?? "").trim();
+      if (!allowedPathTypes.has(pathType)) continue;
       if ((row.browser_proof_status ?? "").trim() !== "PASS") continue;
       return {
         url,
         source: "owner_browser_proof_result",
-        path_type: row.path_type,
+        path_type: pathType,
       };
     }
   } catch {

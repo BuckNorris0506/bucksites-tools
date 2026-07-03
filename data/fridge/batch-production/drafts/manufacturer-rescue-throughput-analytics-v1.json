@@ -11,23 +11,23 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T20:25:32.378Z",
+  "generated_at": "2026-07-03T21:55:52.153Z",
   "source_command": "npm run buckparts:manufacturer-rescue-throughput-analytics",
   "artifact_intake": {
     "orchestrator": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-orchestrator-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T17:49:52.361Z"
+      "generated_at": "2026-07-03T21:55:52.145Z"
     },
     "director": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-director-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T17:49:52.913Z"
+      "generated_at": "2026-07-03T21:55:52.146Z"
     },
     "browser_proof_factory": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-factory-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T20:02:46.830Z"
+      "generated_at": "2026-06-26T18:56:29.399Z"
     },
     "browser_proof_refresh_orchestrator": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-browser-proof-refresh-orchestrator-v1.json",
@@ -37,17 +37,17 @@
     "readiness_gate": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T17:49:53.454Z"
+      "generated_at": "2026-07-03T21:55:52.149Z"
     },
     "runner": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T17:49:53.960Z"
+      "generated_at": "2026-07-03T21:55:52.150Z"
     },
     "apply_plan_factory": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-factory-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T18:22:29.709Z"
+      "generated_at": "2026-07-03T17:38:02.916Z"
     },
     "owner_approval_packet_factory": {
       "artifact_rel": "data/fridge/batch-production/drafts/manufacturer-rescue-owner-approval-packet-factory-v1.json",
@@ -57,54 +57,54 @@
     "execution_ledger": {
       "artifact_rel": "data/command-center/execution-ledger-v1.json",
       "status": "LOADED",
-      "generated_at": "2026-06-26T20:02:47.408Z"
+      "generated_at": "2026-07-03T21:55:51.552Z"
     }
   },
   "intake_complete": true,
   "funnel_metrics": {
     "stage_counts": {
       "rescue_candidate": 1,
-      "browser_proof_capture_scheduled": 25,
+      "browser_proof_capture_scheduled": 21,
       "browser_proof_fresh_official_pass": 0,
-      "apply_plan_ready_for_owner_review": 0,
+      "apply_plan_ready_for_owner_review": 1,
       "owner_approval_packet_cohort": 0,
       "readiness_gate_ready_for_apply": 0,
       "runner_ready_for_apply": 0,
-      "applied_or_complete": 0
+      "applied_or_complete": 2
     },
     "stage_conversion_rates": {
-      "rescue_candidate": 26,
-      "browser_proof_capture_scheduled": 25,
-      "browser_proof_fresh_official_pass": 0,
-      "apply_plan_ready_for_owner_review": 0,
-      "owner_approval_packet_cohort": 0,
-      "readiness_gate_ready_for_apply": 0,
-      "runner_ready_for_apply": 0,
-      "applied_or_complete": 0
+      "rescue_candidate": 25,
+      "browser_proof_capture_scheduled": 24,
+      "browser_proof_fresh_official_pass": 3,
+      "apply_plan_ready_for_owner_review": 3,
+      "owner_approval_packet_cohort": 2,
+      "readiness_gate_ready_for_apply": 2,
+      "runner_ready_for_apply": 2,
+      "applied_or_complete": 2
     },
-    "rescue_candidate_count": 26,
-    "furthest_stage_reached": "browser_proof_capture_scheduled"
+    "rescue_candidate_count": 25,
+    "furthest_stage_reached": "applied_or_complete"
   },
   "stage_ages": [
     {
       "stage": "browser_proof_stale",
       "slug_count": 6,
-      "average_age_days": 21,
-      "median_age_days": 21,
+      "average_age_days": 28,
+      "median_age_days": 28,
       "notes": "Days since owner_proof_checked_at for STALE assessments in browser proof factory."
     },
     {
       "stage": "browser_proof_capture_scheduled",
       "slug_count": 25,
-      "average_age_days": 21,
-      "median_age_days": 21,
+      "average_age_days": 28,
+      "median_age_days": 28,
       "notes": "19 slug(s) MISSING proof — age UNKNOWN (no checked_at)."
     },
     {
       "stage": "browser_proof_fresh_official_pass",
       "slug_count": 0,
-      "average_age_days": 21,
-      "median_age_days": 21,
+      "average_age_days": 28,
+      "median_age_days": 28,
       "notes": "Guarded nominees pending refresh use stale proof ages as proxy; fresh PASS slugs use checked_at."
     }
   ],
@@ -125,13 +125,13 @@
     },
     {
       "blocker_reason": "owner_apply_approval_missing",
-      "slug_count": 16,
+      "slug_count": 13,
       "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
         "eptwfu01",
         "gswf",
-        "gswf2"
+        "gswf2",
+        "mswf",
+        "mwf"
       ],
       "source_systems": [
         "readiness_gate",
@@ -182,58 +182,16 @@
     },
     {
       "blocker_reason": "confusion_family_review_required",
-      "slug_count": 8,
+      "slug_count": 7,
       "example_slugs": [
         "eptwfu01",
         "fppwfu01",
         "frig-242086201",
         "purepour",
-        "ultrawf"
+        "wf2cb"
       ],
       "source_systems": [
         "readiness_gate",
-        "runner"
-      ]
-    },
-    {
-      "blocker_reason": "exact_token_not_proven",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ],
-      "source_systems": [
-        "runner"
-      ]
-    },
-    {
-      "blocker_reason": "live_browser_capture_unavailable_or_failed",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ],
-      "source_systems": [
-        "runner"
-      ]
-    },
-    {
-      "blocker_reason": "mutation_authorized=false",
-      "slug_count": 7,
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ],
-      "source_systems": [
         "runner"
       ]
     },
@@ -252,74 +210,31 @@
       ]
     },
     {
-      "blocker_reason": "verified_link_authorized=false",
-      "slug_count": 7,
+      "blocker_reason": "exact_token_not_proven",
+      "slug_count": 5,
       "example_slugs": [
         "4396395",
         "4396508",
         "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
+        "ukf8001",
+        "w10413645a"
       ],
       "source_systems": [
         "runner"
       ]
     },
     {
-      "blocker_reason": "apply_plan_artifact_missing",
-      "slug_count": 6,
+      "blocker_reason": "live_browser_capture_unavailable_or_failed",
+      "slug_count": 5,
       "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
-        "eptwfu01",
-        "ultrawf",
-        "wf3cb"
+        "4396395",
+        "4396508",
+        "4396842",
+        "ukf8001",
+        "w10413645a"
       ],
       "source_systems": [
-        "readiness_gate"
-      ]
-    },
-    {
-      "blocker_reason": "browser_proof_stale_or_invalid_timestamp",
-      "slug_count": 6,
-      "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
-        "eptwfu01",
-        "ultrawf",
-        "wf3cb"
-      ],
-      "source_systems": [
-        "apply_plan_factory",
-        "readiness_gate"
-      ]
-    },
-    {
-      "blocker_reason": "owner_apply_lane_eligible_false",
-      "slug_count": 6,
-      "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
-        "eptwfu01",
-        "ultrawf",
-        "wf3cb"
-      ],
-      "source_systems": [
-        "readiness_gate"
-      ]
-    },
-    {
-      "blocker_reason": "unresolved_orchestrator_or_director_blockers",
-      "slug_count": 6,
-      "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
-        "eptwfu01",
-        "ultrawf",
-        "wf3cb"
-      ],
-      "source_systems": [
-        "readiness_gate"
+        "runner"
       ]
     },
     {
@@ -337,6 +252,43 @@
       ]
     },
     {
+      "blocker_reason": "apply_plan_artifact_missing",
+      "slug_count": 3,
+      "example_slugs": [
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "source_systems": [
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "browser_proof_stale_or_invalid_timestamp",
+      "slug_count": 3,
+      "example_slugs": [
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "source_systems": [
+        "apply_plan_factory",
+        "readiness_gate"
+      ]
+    },
+    {
+      "blocker_reason": "owner_apply_lane_eligible_false",
+      "slug_count": 3,
+      "example_slugs": [
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "source_systems": [
+        "readiness_gate"
+      ]
+    },
+    {
       "blocker_reason": "supersession_review_required",
       "slug_count": 3,
       "example_slugs": [
@@ -346,6 +298,18 @@
       ],
       "source_systems": [
         "runner"
+      ]
+    },
+    {
+      "blocker_reason": "unresolved_orchestrator_or_director_blockers",
+      "slug_count": 3,
+      "example_slugs": [
+        "eptwfu01",
+        "wf3cb",
+        "wfcb"
+      ],
+      "source_systems": [
+        "readiness_gate"
       ]
     },
     {
@@ -367,13 +331,23 @@
       "source_systems": [
         "runner"
       ]
+    },
+    {
+      "blocker_reason": "repo_csv_already_direct_buyable_at_official_destination",
+      "slug_count": 1,
+      "example_slugs": [
+        "edr4rxd1"
+      ],
+      "source_systems": [
+        "apply_plan_factory"
+      ]
     }
   ],
   "manufacturer_throughput": [
     {
       "manufacturer_key": "frigidaire",
-      "rescue_candidate_count": 10,
-      "capture_scheduled_count": 10,
+      "rescue_candidate_count": 9,
+      "capture_scheduled_count": 9,
       "fresh_official_pass_count": 0,
       "apply_plan_ready_count": 0,
       "owner_approval_cohort_slug_count": 0,
@@ -401,21 +375,21 @@
       "rescue_candidate_count": 7,
       "capture_scheduled_count": 7,
       "fresh_official_pass_count": 0,
-      "apply_plan_ready_count": 0,
+      "apply_plan_ready_count": 1,
       "owner_approval_cohort_slug_count": 0,
       "readiness_ready_for_apply_count": 0,
       "runner_ready_for_apply_count": 0,
       "runner_blocked_count": 0,
       "dominant_runner_stage": "BROWSER_PROOF",
-      "dominant_bottleneck": "browser_proof_stale_or_invalid_timestamp"
+      "dominant_bottleneck": "UNKNOWN"
     }
   ],
   "weekly_unlock_capacity_estimate": {
     "estimated_slugs_per_week": "UNKNOWN",
-    "theoretical_ceiling_if_primary_bottleneck_cleared": 6,
+    "theoretical_ceiling_if_primary_bottleneck_cleared": 3,
     "single_blocker_browser_proof_refresh_candidates": 0,
     "readiness_ready_for_apply_count": 0,
-    "execution_ledger_manufacturer_rescue_entries_30d": 4,
+    "execution_ledger_manufacturer_rescue_entries_30d": 6,
     "methodology": "Committed-artifact snapshot only. estimated_slugs_per_week remains UNKNOWN without proven historical apply throughput in execution ledger.",
     "assumptions": [
       "Theoretical ceiling counts readiness gate PENDING_BROWSER_REFRESH guarded nominees only.",
@@ -445,34 +419,34 @@
     {
       "rank": 2,
       "bottleneck_id": "blocker_owner_apply_approval_missing",
-      "slug_count": 16,
+      "slug_count": 13,
       "dominant_blocker": "owner_apply_approval_missing",
       "affected_manufacturers": [
         "ge_appliance_parts"
       ],
       "example_slugs": [
-        "edr3rxd1",
-        "edr4rxd1",
         "eptwfu01",
         "gswf",
-        "gswf2"
+        "gswf2",
+        "mswf",
+        "mwf"
       ],
-      "leverage_score": 160
+      "leverage_score": 130
     },
     {
       "rank": 3,
       "bottleneck_id": "bottleneck_browser_proof",
-      "slug_count": 19,
+      "slug_count": 14,
       "dominant_blocker": "owner_apply_approval_missing",
       "affected_manufacturers": [],
       "example_slugs": [
-        "edr4rxd1",
-        "edr3rxd1",
-        "ultrawf",
         "eptwfu01",
-        "wf3cb"
+        "wf3cb",
+        "wfcb",
+        "gswf",
+        "xwfe"
       ],
-      "leverage_score": 152
+      "leverage_score": 112
     },
     {
       "rank": 4,
@@ -528,7 +502,7 @@
     {
       "rank": 7,
       "bottleneck_id": "blocker_confusion_family_review_required",
-      "slug_count": 8,
+      "slug_count": 7,
       "dominant_blocker": "confusion_family_review_required",
       "affected_manufacturers": [
         "frigidaire"
@@ -538,14 +512,46 @@
         "fppwfu01",
         "frig-242086201",
         "purepour",
-        "ultrawf"
+        "wf2cb"
       ],
-      "leverage_score": 80
+      "leverage_score": 70
     },
     {
       "rank": 8,
-      "bottleneck_id": "blocker_exact_token_not_proven",
+      "bottleneck_id": "blocker_repo_proven_official_pdp_url_missing",
       "slug_count": 7,
+      "dominant_blocker": "repo_proven_official_pdp_url_missing",
+      "affected_manufacturers": [
+        "frigidaire"
+      ],
+      "example_slugs": [
+        "fppwfu01",
+        "frig-242017801",
+        "frig-242086201",
+        "frig-242294502",
+        "purepour"
+      ],
+      "leverage_score": 70
+    },
+    {
+      "rank": 9,
+      "bottleneck_id": "bottleneck_blocked",
+      "slug_count": 7,
+      "dominant_blocker": "repo_proven_official_pdp_url_missing",
+      "affected_manufacturers": [],
+      "example_slugs": [
+        "frig-242086201",
+        "fppwfu01",
+        "frig-242017801",
+        "wf2cb",
+        "frig-242294502"
+      ],
+      "leverage_score": 56
+    },
+    {
+      "rank": 10,
+      "bottleneck_id": "blocker_exact_token_not_proven",
+      "slug_count": 5,
       "dominant_blocker": "exact_token_not_proven",
       "affected_manufacturers": [
         "everydrop_whirlpool"
@@ -554,44 +560,10 @@
         "4396395",
         "4396508",
         "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
+        "ukf8001",
+        "w10413645a"
       ],
-      "leverage_score": 70
-    },
-    {
-      "rank": 9,
-      "bottleneck_id": "blocker_live_browser_capture_unavailable_or_failed",
-      "slug_count": 7,
-      "dominant_blocker": "live_browser_capture_unavailable_or_failed",
-      "affected_manufacturers": [
-        "everydrop_whirlpool"
-      ],
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ],
-      "leverage_score": 70
-    },
-    {
-      "rank": 10,
-      "bottleneck_id": "blocker_mutation_authorized=false",
-      "slug_count": 7,
-      "dominant_blocker": "mutation_authorized=false",
-      "affected_manufacturers": [
-        "everydrop_whirlpool"
-      ],
-      "example_slugs": [
-        "4396395",
-        "4396508",
-        "4396842",
-        "edr3rxd1",
-        "edr4rxd1"
-      ],
-      "leverage_score": 70
+      "leverage_score": 50
     }
   ],
   "recommended_highest_leverage_improvement": {
@@ -615,9 +587,9 @@
   },
   "proven_facts": [
     "PROVEN: Analytics is read-only — no CSV, Supabase, SQL, or browser mutation.",
-    "PROVEN: 26 rescue candidate slug(s) in committed orchestrator.",
-    "PROVEN: funnel furthest stage reached: browser_proof_capture_scheduled.",
-    "PROVEN: 19 distinct blocker reason(s) aggregated.",
+    "PROVEN: 25 rescue candidate slug(s) in committed orchestrator.",
+    "PROVEN: funnel furthest stage reached: applied_or_complete.",
+    "PROVEN: 18 distinct blocker reason(s) aggregated.",
     "PROVEN: all nine upstream committed artifacts LOADED."
   ],
   "unknown_facts": [

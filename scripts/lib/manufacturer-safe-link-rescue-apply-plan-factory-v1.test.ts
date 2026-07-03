@@ -115,7 +115,7 @@ test("no plan generated for unresolved confusion-family review", () => {
       oem_part_token: "WF3CB",
       blocked_reasons: ["confusion_family_review_required"],
     }),
-    rootDir: REPO_ROOT,
+    rootDir: "/tmp/buckparts-no-confusion-clearance",
     fileExists: (abs) => abs.endsWith("fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json"),
     readText: (abs) => {
       if (abs.endsWith("fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json")) {
@@ -123,7 +123,14 @@ test("no plan generated for unresolved confusion-family review", () => {
           ...proof,
           slug: "wf3cb",
           oem_part_token: "WF3CB",
-          owner_proof_urls: proof.owner_proof_urls,
+          owner_proof_urls: [
+            {
+              url: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/1",
+              path_type: "authorized_parts_distributor_pdp",
+              browser_proof_status: "PASS",
+              proven_observations: ["PROVEN: WF3CB OEM token visible."],
+            },
+          ],
         });
       }
       throw new Error(`unexpected read: ${abs}`);
@@ -132,6 +139,58 @@ test("no plan generated for unresolved confusion-family review", () => {
   });
   assert.equal(plan.plan_status, "BLOCKED_CONFUSION_FAMILY_REVIEW");
   assert.equal(plan.proposed_csv_row, null);
+});
+
+test("owner confusion-family clearance unblocks apply-plan confusion gate", () => {
+  const proof = {
+    contract: FRIDGE_OWNER_BROWSER_PROOF_RESULT_CONTRACT_V1,
+    verdict: "PASS_BROWSER_PROOF",
+    checked_at: "2026-07-03T17:13:04.000Z",
+    slug: "ultrawf",
+    oem_part_token: "ULTRAWF",
+    owner_proof_urls: [
+      {
+        url: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        path_type: "authorized_parts_distributor_pdp",
+        browser_proof_status: "PASS",
+        proven_observations: [
+          "PROVEN: Frigidaire OEM Part #ULTRAWF.",
+          "PROVEN: PureSource Ultra.",
+        ],
+      },
+    ],
+  };
+  const plan = buildManufacturerRescueApplyPlanForSlugV1({
+    row: baseQueueRow({
+      filter_slug: "ultrawf",
+      manufacturer_key: "frigidaire",
+      oem_part_token: "ULTRAWF",
+      blocked_reasons: ["confusion_family_review_required"],
+      repo_proven_official_target_url:
+        "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+    }),
+    rootDir: REPO_ROOT,
+    fileExists: (abs) =>
+      abs.endsWith("fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json") ||
+      abs.endsWith("retailer_links.csv") ||
+      abs.includes("data/evidence/") ||
+      abs.includes("owner-classification-packet"),
+    readText: (abs) => {
+      if (abs.endsWith("fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json")) {
+        return JSON.stringify(proof);
+      }
+      if (abs.endsWith("retailer_links.csv")) {
+        return mockCsvForSlug(
+          "ultrawf",
+          "https://www.frigidaire.com/en/catalogsearch/result/?q=ULTRAWF",
+        );
+      }
+      return readFileSync(abs, "utf8");
+    },
+    now: () => new Date("2026-07-03T18:00:00.000Z"),
+  });
+  assert.notEqual(plan.plan_status, "BLOCKED_CONFUSION_FAMILY_REVIEW");
+  assert.ok(!plan.blockers.includes("confusion_family_review_required"));
 });
 
 test("valid fresh proof fixture generates READY_FOR_OWNER_REVIEW plan", () => {

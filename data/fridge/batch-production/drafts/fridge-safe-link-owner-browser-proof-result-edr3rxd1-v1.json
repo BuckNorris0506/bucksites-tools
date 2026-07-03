@@ -16,13 +16,13 @@
   "brand_slug": "whirlpool",
   "product_line": "EveryDrop Filter 3",
   "verdict": "PASS_BROWSER_PROOF",
-  "checked_at": "2026-06-06T03:00:00.000Z",
+  "checked_at": "2026-07-03T17:25:00.000Z",
   "capture_method": "owner_browser_visual_inspection",
   "verified_by": "owner",
   "mission_context": {
-    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
-    "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
-    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "mission_type": "OWNER_BROWSER_PROOF_REFRESH",
+    "coverage_batch": "coverage_batch_a_session_1",
+    "session_date": "2026-07-03",
     "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
     "assist_validation_status": "VALIDATION_PARTIAL"
   },
@@ -34,39 +34,69 @@
       "url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
       "path_type": "official_manufacturer_pdp",
       "browser_proof_status": "PASS",
-      "assessment": "Official manufacturer proof URL.",
+      "assessment": "Official manufacturer PDP PASS for EDR3RXD1 identity and buyability. Pack-of-2 caveat: page shows Pack Of 2 selected; model EDR3RXV2P likely 2-pack SKU. No single-pack Whirlpool proof recorded in this session.",
       "proven_observations": [
-        "PROVEN: Official Whirlpool page.",
-        "PROVEN: Product title: everydrop Refrigerator Water Filter 3 - EDR3RXD1 (Pack of 1).",
-        "PROVEN: Model: EDR3RXD1.",
-        "PROVEN: Price shown $48.00.",
-        "PROVEN: Add To Cart visible.",
-        "PROVEN: Genuine Filter warning visible.",
-        "PROVEN: Pack type 1 Pack visible."
+        "PROVEN: Page is on whirlpool.com official site.",
+        "PROVEN: Title visible: Everydrop® Refrigerator Water Filter 3 - EDR3RXD1 (Pack Of 2).",
+        "PROVEN: Breadcrumb/category visible under Whirlpool appliance parts/accessories.",
+        "PROVEN: Image shows Everydrop Filter 3 packaging.",
+        "PROVEN: Price visible $86.39.",
+        "PROVEN: Add To Cart button visible.",
+        "PROVEN: Pack Type selector visible with 2 Pack selected and 1 Pack option visible.",
+        "PROVEN: No Waterdrop or aftermarket branding visible.",
+        "PROVEN: Model visible on page: EDR3RXV2P (likely the 2-pack SKU)."
+      ],
+      "inferred_observations": [
+        "INFERRED: EDR3RXV2P is the 2-pack SKU variant for EDR3RXD1 Filter 3 family.",
+        "INFERRED: 1 Pack option is visible but not selected/proven as the reviewed buy path in this session."
+      ],
+      "unknown_observations": [
+        "UNKNOWN: Single-pack Whirlpool PDP buyability not proven in this session (only Pack Of 2 page checked)."
+      ],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 2,
+      "retailer": "Amazon",
+      "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Retailer-direct Amazon OEM listing ASIN B00UB441HS (single-pack). Not official manufacturer path. Not B087PDLZL9.",
+      "proven_observations": [
+        "PROVEN: ASIN is B00UB441HS.",
+        "PROVEN: Title shows everydrop by Whirlpool Ice and Water Refrigerator Filter 3, EDR3RXD1, Single-Pack.",
+        "PROVEN: Brand is EveryDrop by Whirlpool.",
+        "PROVEN: Price visible $43.31 / list price $59.99.",
+        "PROVEN: In Stock.",
+        "PROVEN: Ships from and sold by Amazon.",
+        "PROVEN: No Waterdrop branding visible.",
+        "PROVEN: Listing is NOT Amazon ASIN B087PDLZL9."
       ],
       "inferred_observations": [],
-      "unknown_observations": [],
+      "unknown_observations": [
+        "UNKNOWN: Affiliate tag status on the owner-checked Amazon URL for this refresh."
+      ],
       "screenshot_paths": []
     }
   ],
   "hold_candidates": [
     {
-      "priority": 2,
+      "priority": 3,
       "retailer": "Home Depot",
       "url": "https://www.homedepot.com/p/Whirlpool-EveryDrop-Ice-and-Water-Refrigeration-Filter-EDR3RXD1/302727620",
       "path_type": "retailer_direct_pdp",
       "browser_proof_status": "PASS_IDENTITY_BUT_HOLD_NOT_BUYABLE",
-      "assessment": "OEM identity confirmed but not a buyable safe-link proof — pickup and delivery unavailable in owner session.",
+      "assessment": "OEM identity confirmed but buyability weak — pickup and delivery unavailable. Do not use as primary live buy path.",
       "proven_observations": [
-        "PROVEN: Product page shows EveryDrop Ice and Water Refrigeration Filter.",
-        "PROVEN: Model shown: EDR3RXD1.",
-        "PROVEN: Price shown: $59.99.",
-        "PROVEN: Whirlpool / refrigerator filter context visible.",
-        "PROVEN: Page shows On Display at Liberty.",
-        "PROVEN: Pickup and delivery are unavailable."
+        "PROVEN: Model EDR3RXD1 visible.",
+        "PROVEN: Brand/store Whirlpool visible.",
+        "PROVEN: Price shown $59.99.",
+        "PROVEN: Image shows EveryDrop Filter 3.",
+        "PROVEN: Pickup unavailable.",
+        "PROVEN: Delivery unavailable."
       ],
       "inferred_observations": [
-        "INFERRED: Identity pass only — do not treat as buyable safe-link proof while fulfillment is unavailable."
+        "INFERRED: Identity-only secondary evidence — not a buyable safe-link primary."
       ],
       "unknown_observations": [],
       "screenshot_paths": []
@@ -75,26 +105,26 @@
   "amazon_pass_candidates": [
     {
       "retailer": "Amazon",
-      "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS?th=1&linkCode=ll2&tag=buckparts20-20&linkId=82e2e75fd84e07958281d73b665776cc&language=en_US&ref_=as_li_ss_tl",
-      "normalized_amazon_pdp_url": "https://www.amazon.com/dp/B00UB441HS?tag=buckparts20-20",
+      "url": "https://www.amazon.com/Whirlpool-EDR3RXD1-Everydrop-Refrigerator-Filter/dp/B00UB441HS",
+      "normalized_amazon_pdp_url": "https://www.amazon.com/dp/B00UB441HS",
       "path_type": "retailer_direct_pdp",
       "browser_proof_status": "PASS_BROWSER_PROOF_AMAZON_CANDIDATE",
-      "assessment": "Owner browser proof input only — do not authorize production link mutation from this result alone.",
+      "assessment": "Owner browser proof input only — do not authorize production link mutation from this result alone. Single-pack Amazon track; official Whirlpool path is Pack Of 2.",
       "proven_observations": [
         "PROVEN: ASIN is B00UB441HS.",
-        "PROVEN: URL includes affiliate tag buckparts20-20 (tag=buckparts20-20).",
         "PROVEN: Product title shows everydrop by Whirlpool Ice and Water Refrigerator Filter 3, EDR3RXD1, Single-Pack.",
-        "PROVEN: Price shown: $48.00.",
-        "PROVEN: In Stock.",
-        "PROVEN: Ships from and sold by Amazon.com.",
-        "PROVEN: Prime delivery visible.",
         "PROVEN: Brand/store is EveryDrop by Whirlpool.",
-        "PROVEN: Single count / pack of 1 shown."
+        "PROVEN: Price visible $43.31 / list price $59.99.",
+        "PROVEN: In Stock.",
+        "PROVEN: Ships from and sold by Amazon.",
+        "PROVEN: No Waterdrop branding visible.",
+        "PROVEN: Listing is NOT Amazon ASIN B087PDLZL9."
       ],
       "inferred_observations": [
-        "INFERRED: Repo logic may prefer normalized Amazon PDP form https://www.amazon.com/dp/B00UB441HS?tag=buckparts20-20 for affiliate audit."
+        "INFERRED: Normalized Amazon PDP form https://www.amazon.com/dp/B00UB441HS is preferred for later affiliate audit."
       ],
       "unknown_observations": [
+        "UNKNOWN: Affiliate tag status on the owner-checked Amazon URL for this refresh.",
         "UNKNOWN: Whether retailer_links.csv or Supabase already stores this Amazon URL for slug edr3rxd1."
       ],
       "screenshot_paths": []
@@ -125,21 +155,24 @@
     "amazon_affiliate_tag_mutation"
   ],
   "proven_facts": [
-    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug edr3rxd1 based on Whirlpool official and Amazon B00UB441HS OEM signals.",
-    "PROVEN: Home Depot /302727620 shows EDR3RXD1 EveryDrop identity but pickup and delivery unavailable — held not buyable.",
-    "PROVEN: Amazon B00UB441HS owner-provided affiliate URL contains tag=buckparts20-20.",
+    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug edr3rxd1 on 2026-07-03 refresh.",
+    "PROVEN: Whirlpool.com official_manufacturer_pdp PASS for EDR3RXD1 identity and buyability (Pack Of 2 page; model EDR3RXV2P likely 2-pack SKU; Add To Cart visible; no Waterdrop branding).",
+    "PROVEN: Amazon B00UB441HS retailer_direct_pdp PASS (single-pack OEM listing).",
+    "PROVEN: Home Depot /302727620 shows EDR3RXD1 EveryDrop identity but pickup and delivery unavailable — held not buyable; not primary live buy path.",
     "PROVEN: Amazon B087PDLZL9 remains HARD_DO_NOT_USE Waterdrop aftermarket — excluded from all proof and candidate lists.",
     "PROVEN: draft result artifact is read_only=true with all mutation flags false."
   ],
   "inferred_facts": [
-    "INFERRED: Overall slug PASS_BROWSER_PROOF rests on Whirlpool official + Amazon B00UB441HS; Home Depot is identity-only hold.",
-    "INFERRED: Normalized Amazon PDP https://www.amazon.com/dp/B00UB441HS?tag=buckparts20-20 is the preferred form for later affiliate audit."
+    "INFERRED: Official manufacturer path for apply-plan official-pass is Whirlpool.com Pack Of 2 page; single-pack Whirlpool buy path not proven in this session.",
+    "INFERRED: Amazon B00UB441HS remains secondary retailer-direct single-pack track for affiliate audit only."
   ],
   "unknown_facts": [
-    "UNKNOWN: Whether retailer_links.csv or Supabase already references Amazon B00UB441HS for edr3rxd1.",
-    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band; paths not recorded here.",
+    "UNKNOWN: Affiliate tag status on the owner-checked Amazon URL for this refresh.",
+    "UNKNOWN: Whether retailer_links.csv or Supabase already references Amazon B00UB441HS or Whirlpool official URL for edr3rxd1.",
+    "UNKNOWN: screenshot file paths in repo — owner provided observations out-of-band; paths not recorded here.",
     "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone.",
-    "UNKNOWN: production /go first-hop without clicking /go."
+    "UNKNOWN: production /go first-hop without clicking /go.",
+    "UNKNOWN: Single-pack Whirlpool PDP buyability (1 Pack option visible but not selected/proven)."
   ],
-  "recommended_next_action": "Continue remaining OWNER_BROWSER_PROOF_ASSIST session slug fppwfu01. Do not mutate retailer_links.csv, Supabase, evidence, or /go from this intake. B087PDLZL9 guard remains HARD_DO_NOT_USE. A separate read-only apply-plan proposal may reference B00UB441HS with tag=buckparts20-20 — still no CSV/Supabase/Verified Link apply without explicit owner authorization."
+  "recommended_next_action": "Promote official Whirlpool manufacturer PASS (Pack Of 2 caveat preserved) into committed evidence JSON. Re-run batch factory / cursor validation / apply-plan factory. B087PDLZL9 guard remains HARD_DO_NOT_USE. Still no CSV/Supabase/Verified Link apply without explicit founder authorization."
 }

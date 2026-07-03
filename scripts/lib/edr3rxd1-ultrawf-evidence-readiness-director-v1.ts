@@ -23,8 +23,8 @@ import {
 } from "./manufacturer-safe-link-rescue-apply-plan-factory-v1";
 import { filterEverydropOrchestratorBlockedReasonsV1 } from "./manufacturer-safe-link-rescue-everydrop-readiness-unblockers-v1";
 import {
-  FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1,
   FRIGIDAIRE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1,
+  loadFrigidaireConfusionFamilyOwnerClearanceV1,
 } from "./manufacturer-safe-link-rescue-frigidaire-config-v1";
 import { loadManufacturerRescueOrchestratorInputV1 } from "./manufacturer-safe-link-rescue-director-v1";
 import {
@@ -381,59 +381,110 @@ export function buildUltrawfOwnerClassificationPacketV1(args: {
   applyPlan: ManufacturerRescueApplyPlanV1;
   census: AllProductSafeBuyerPathCensusV1;
   now: () => Date;
+  rootDir: string;
+  fileExists?: (abs: string) => boolean;
+  readText?: (abs: string) => string;
 }): Record<string, unknown> {
   const forbiddenDetected = forbiddenTokensDetected("ultrawf", args.proof);
-  const confusionRequired = FRIGIDAIRE_CONFUSION_FAMILY_REVIEW_SLUGS_V1.has("ultrawf");
+  const clearance = loadFrigidaireConfusionFamilyOwnerClearanceV1({
+    rootDir: args.rootDir,
+    filterSlug: "ultrawf",
+    fileExists: args.fileExists,
+    readText: args.readText,
+  });
+  const confusionRequired = clearance.required;
+  const confusionCleared = clearance.cleared;
+
+  const fileExists = args.fileExists ?? existsSync;
+  const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const existingAbs = path.join(args.rootDir, ULTRAWF_OWNER_CLASSIFICATION_PACKET_REL_V1);
+  let preservedAnswers: unknown = undefined;
+  let preservedAnswersRecordedAt: unknown = undefined;
+  let preservedEvidenceRel: unknown = undefined;
+  if (fileExists(existingAbs)) {
+    try {
+      const existing = JSON.parse(readText(existingAbs)) as {
+        owner_classification_review_v1?: { owner_answers_v1?: unknown };
+        owner_answers_recorded_at?: unknown;
+        source_committed_evidence_rel_path?: unknown;
+        confusion_family_cleared?: unknown;
+      };
+      preservedAnswers = existing.owner_classification_review_v1?.owner_answers_v1;
+      preservedAnswersRecordedAt = existing.owner_answers_recorded_at;
+      preservedEvidenceRel = existing.source_committed_evidence_rel_path;
+      if (existing.confusion_family_cleared === true && !confusionCleared) {
+        // Prefer durable evidence/packet clearance loader; keep packet flag if already set.
+      }
+    } catch {
+      // ignore malformed prior packet
+    }
+  }
+
+  const questions = [
+    {
+      question_id: "confusion_family_ultrawf_vs_eptwfu01",
+      prompt:
+        "Confirm ULTRAWF owner browser proof URLs are exact-token ULTRAWF / PureSource Ultra OEM — not EPTWFU01 or WF3CB family cross-listing?",
+      required: true,
+    },
+    {
+      question_id: "approve_official_or_parts_distributor_primary",
+      prompt:
+        "If confusion-family cleared: approve Frigidaire.com or frigidaireapplianceparts.com official/authorized PDP as Verified Link primary?",
+      required: true,
+      blocked_until: "confusion_family_review_cleared",
+    },
+    {
+      question_id: "amazon_b002jakram_audit",
+      prompt:
+        "Separately audit Amazon B002JAKRAM affiliate tag before any Amazon-primary apply (UNKNOWN in owner proof).",
+      required: false,
+    },
+  ];
 
   return {
     contract: "fridge_safe_link_ultrawf_owner_classification_approval_packet_v1",
     read_only: true,
     data_mutation: false,
     mutation_authorized: false,
-    approval_status: "PENDING_CONFUSION_FAMILY_REVIEW",
+    approval_status: confusionCleared
+      ? "CONFUSION_FAMILY_CLEARED_OWNER_ANSWERS_RECORDED"
+      : "PENDING_CONFUSION_FAMILY_REVIEW",
     not_an_approved_decision: true,
     generated_at: args.now().toISOString(),
+    ...(preservedAnswersRecordedAt
+      ? { owner_answers_recorded_at: preservedAnswersRecordedAt }
+      : {}),
     source_apply_plan_rel_path: ULTRAWF_APPLY_PLAN_REL_V1,
     source_owner_browser_proof_rel_path: FRIDGE_OWNER_BROWSER_PROOF_RESULT_ULTRAWF_REL_V1,
+    ...(typeof preservedEvidenceRel === "string"
+      ? { source_committed_evidence_rel_path: preservedEvidenceRel }
+      : {}),
     target_slug: "ultrawf",
     oem_part_token: "ULTRAWF",
     manufacturer_key: "frigidaire",
     apply_plan_status: args.applyPlan.plan_status,
     confusion_family_review_required: confusionRequired,
+    confusion_family_cleared: confusionCleared,
     forbidden_tokens_for_slug: FRIGIDAIRE_WRONG_FAMILY_FORBIDDEN_TOKENS_V1.ultrawf ?? [],
     forbidden_tokens_detected_in_proof: forbiddenDetected,
     owner_classification_review_v1: {
-      owner_must_answer_before_guarded_apply: [
-        {
-          question_id: "confusion_family_ultrawf_vs_eptwfu01",
-          prompt:
-            "Confirm ULTRAWF owner browser proof URLs are exact-token ULTRAWF / PureSource Ultra OEM — not EPTWFU01 or WF3CB family cross-listing?",
-          required: true,
-        },
-        {
-          question_id: "approve_official_or_parts_distributor_primary",
-          prompt:
-            "If confusion-family cleared: approve Frigidaire.com or frigidaireapplianceparts.com official/authorized PDP as Verified Link primary?",
-          required: true,
-          blocked_until: "confusion_family_review_cleared",
-        },
-        {
-          question_id: "amazon_b002jakram_audit",
-          prompt:
-            "Separately audit Amazon B002JAKRAM affiliate tag before any Amazon-primary apply (UNKNOWN in owner proof).",
-          required: false,
-        },
-      ],
+      owner_must_answer_before_guarded_apply: questions,
+      ...(Array.isArray(preservedAnswers)
+        ? { owner_answers_v1: preservedAnswers }
+        : {}),
     },
     census_page_classification:
       args.census.products.find((p) => p.slug === "ultrawf")?.page_classification ?? "UNKNOWN",
     proven_facts: [
       "PROVEN: PASS owner browser proof on disk.",
       `PROVEN: confusion_family_review_required=${String(confusionRequired)} per frigidaire config.`,
+      `PROVEN: confusion_family_cleared=${String(confusionCleared)} (${clearance.notes}).`,
       `PROVEN: forbidden_tokens_detected_in_proof=[${forbiddenDetected.join(", ")}].`,
     ],
-    recommended_next_action:
-      "Owner completes confusion-family review first; apply plan remains blocked until confusion_family_review_cleared.",
+    recommended_next_action: confusionCleared
+      ? "Confusion-family owner clearance recorded — proceed when apply plan is READY_FOR_OWNER_REVIEW."
+      : "Owner completes confusion-family review first; apply plan remains blocked until confusion_family_review_cleared.",
   };
 }
 
@@ -606,12 +657,20 @@ export function buildSlugEvidenceReadinessAuditV1(args: {
           applyPlan,
           census: args.census,
           now: args.now,
+          rootDir: args.rootDir,
+          fileExists,
+          readText,
         });
 
   const founderApproved = hasFounderApprovalV1(args.rootDir, slug);
-  const confusionBlocked =
-    slug === "ultrawf" ||
-    args.orchestratorRow.blocked_reasons.includes("confusion_family_review_required");
+  const confusionClearance = loadFrigidaireConfusionFamilyOwnerClearanceV1({
+    rootDir: args.rootDir,
+    filterSlug: slug,
+    blockedReasons: args.orchestratorRow.blocked_reasons,
+    fileExists,
+    readText,
+  });
+  const confusionBlocked = confusionClearance.unresolved;
 
   const factoryRow = buildFridgeSafeLinkBatchFactoryV1({ rootDir: args.rootDir }).rows.find(
     (r) => r.slug === slug,

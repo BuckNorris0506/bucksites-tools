@@ -3,17 +3,17 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-03T21:55:52.164Z",
+  "generated_at": "2026-07-03T21:55:51.553Z",
   "source_command": "npm run buckparts:manufacturer-rescue-guarded-apply-bridge",
-  "filter_slug": "ultrawf",
+  "filter_slug": "edr3rxd1",
   "bridge_status": "APPLIED",
   "write_csv_applied": true,
   "previous_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
   "new_page_classification": "SAFE_BUYER_PATH_PROVEN",
   "safe_buyer_path_proven_delta": 1,
   "census_delta": {
-    "safe_buyer_path_proven_count_before": 32,
-    "safe_buyer_path_proven_count_after": 33,
+    "safe_buyer_path_proven_count_before": 31,
+    "safe_buyer_path_proven_count_after": 32,
     "safe_buyer_path_proven_count_delta": 1
   },
   "customer_closure_delta": {
@@ -32,8 +32,8 @@
   "source_artifact_paths": {
     "readiness_gate": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
     "runner": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json",
-    "apply_plan": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
-    "execution_plan": "data/fridge/batch-production/apply-execution-plans/manufacturer-rescue-guarded-apply-execution-plan-ultrawf-v1-a6a87198586f.json"
+    "apply_plan": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
+    "execution_plan": "data/fridge/batch-production/apply-execution-plans/manufacturer-rescue-guarded-apply-execution-plan-edr3rxd1-v1-fc6a449d5957.json"
   },
   "guarded_executor_summary": {
     "executor_status": "PRE_APPLY_DRY_RUN_READY",
@@ -42,8 +42,9 @@
   },
   "post_apply_refresh_ran": true,
   "proven_facts": [
-    "PROVEN: bridge closeout for ultrawf with bridge_status=APPLIED.",
+    "PROVEN: bridge closeout for edr3rxd1 with bridge_status=APPLIED.",
     "PROVEN: classification SAFE_BUYER_PATH_SUPPRESSED_TRUST -> SAFE_BUYER_PATH_PROVEN."
   ],
-  "unknown_facts": []
+  "unknown_facts": [],
+  "closeout_durability_tier": "slug_indexed"
 }

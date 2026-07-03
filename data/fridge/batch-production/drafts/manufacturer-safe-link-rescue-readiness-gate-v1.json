@@ -11,230 +11,19 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-06-26T17:49:53.454Z",
+  "generated_at": "2026-07-03T21:55:52.149Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "orchestrator_generated_at": "2026-06-26T17:49:52.361Z",
-  "director_generated_at": "2026-06-26T17:49:52.913Z",
+  "orchestrator_generated_at": "2026-07-03T21:55:52.145Z",
+  "director_generated_at": "2026-07-03T21:55:52.146Z",
   "browser_proof_max_age_days": 14,
   "deploy_build_marker": {
     "marker": "UNKNOWN",
     "marker_source_path": null,
     "proof_after_marker_proven": "UNKNOWN"
   },
-  "candidate_count": 6,
+  "candidate_count": 3,
   "candidates": [
-    {
-      "filter_slug": "edr4rxd1",
-      "manufacturer_key": "everydrop_whirlpool",
-      "oem_part_token": "EDR4RXD1",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
-      "ready_for_apply": false,
-      "director_value_score": 1447,
-      "checks": [
-        {
-          "check_id": "browser_proof_exists",
-          "status": "PASS",
-          "notes": "owner browser proof PASS at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json"
-        },
-        {
-          "check_id": "browser_proof_fresh",
-          "status": "FAIL",
-          "notes": "proof stale checked_at=2026-06-05T22:00:00.000Z"
-        },
-        {
-          "check_id": "browser_proof_after_deploy_marker",
-          "status": "PASS",
-          "notes": "deploy/build marker not provable in repo — requirement waived"
-        },
-        {
-          "check_id": "confusion_family_cleared",
-          "status": "PASS",
-          "notes": "no confusion-family review required"
-        },
-        {
-          "check_id": "apply_plan_exists",
-          "status": "FAIL",
-          "notes": "no apply-plan artifact on disk"
-        },
-        {
-          "check_id": "owner_approval_exists",
-          "status": "FAIL",
-          "notes": "no founder decision row with owner_mutation_approved for slug/apply plan"
-        },
-        {
-          "check_id": "owner_apply_lane_eligible",
-          "status": "FAIL",
-          "notes": "no owner_apply_lane_eligible contract for everydrop_whirlpool"
-        },
-        {
-          "check_id": "wrong_family_safe",
-          "status": "PASS",
-          "notes": "no forbidden wrong-family tokens detected"
-        },
-        {
-          "check_id": "direct_buyable_exact_token_safe",
-          "status": "PASS",
-          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
-        },
-        {
-          "check_id": "no_unresolved_blockers",
-          "status": "FAIL",
-          "notes": "orchestrator/director blockers remain: live_browser_capture_unavailable_or_failed, exact_token_not_proven, mutation_authorized=false, verified_link_authorized=false"
-        }
-      ],
-      "blocking_reasons": [
-        "browser_proof_stale_or_invalid_timestamp",
-        "apply_plan_artifact_missing",
-        "owner_apply_approval_missing",
-        "owner_apply_lane_eligible_false",
-        "unresolved_orchestrator_or_director_blockers"
-      ],
-      "source_paths_read": [
-        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr4rxd1-v1.json"
-      ]
-    },
-    {
-      "filter_slug": "edr3rxd1",
-      "manufacturer_key": "everydrop_whirlpool",
-      "oem_part_token": "EDR3RXD1",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
-      "ready_for_apply": false,
-      "director_value_score": 1434,
-      "checks": [
-        {
-          "check_id": "browser_proof_exists",
-          "status": "PASS",
-          "notes": "owner browser proof PASS at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
-        },
-        {
-          "check_id": "browser_proof_fresh",
-          "status": "FAIL",
-          "notes": "proof stale checked_at=2026-06-06T03:00:00.000Z"
-        },
-        {
-          "check_id": "browser_proof_after_deploy_marker",
-          "status": "PASS",
-          "notes": "deploy/build marker not provable in repo — requirement waived"
-        },
-        {
-          "check_id": "confusion_family_cleared",
-          "status": "PASS",
-          "notes": "no confusion-family review required"
-        },
-        {
-          "check_id": "apply_plan_exists",
-          "status": "FAIL",
-          "notes": "no apply-plan artifact on disk"
-        },
-        {
-          "check_id": "owner_approval_exists",
-          "status": "FAIL",
-          "notes": "no founder decision row with owner_mutation_approved for slug/apply plan"
-        },
-        {
-          "check_id": "owner_apply_lane_eligible",
-          "status": "FAIL",
-          "notes": "no owner_apply_lane_eligible contract for everydrop_whirlpool"
-        },
-        {
-          "check_id": "wrong_family_safe",
-          "status": "PASS",
-          "notes": "no forbidden wrong-family tokens detected"
-        },
-        {
-          "check_id": "direct_buyable_exact_token_safe",
-          "status": "PASS",
-          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
-        },
-        {
-          "check_id": "no_unresolved_blockers",
-          "status": "FAIL",
-          "notes": "orchestrator/director blockers remain: live_browser_capture_unavailable_or_failed, exact_token_not_proven, mutation_authorized=false, verified_link_authorized=false"
-        }
-      ],
-      "blocking_reasons": [
-        "browser_proof_stale_or_invalid_timestamp",
-        "apply_plan_artifact_missing",
-        "owner_apply_approval_missing",
-        "owner_apply_lane_eligible_false",
-        "unresolved_orchestrator_or_director_blockers"
-      ],
-      "source_paths_read": [
-        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json"
-      ]
-    },
-    {
-      "filter_slug": "ultrawf",
-      "manufacturer_key": "frigidaire",
-      "oem_part_token": "ULTRAWF",
-      "readiness_status": "PENDING_BROWSER_REFRESH",
-      "ready_for_apply": false,
-      "director_value_score": 1320,
-      "checks": [
-        {
-          "check_id": "browser_proof_exists",
-          "status": "PASS",
-          "notes": "owner browser proof PASS at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
-        },
-        {
-          "check_id": "browser_proof_fresh",
-          "status": "FAIL",
-          "notes": "proof stale checked_at=2026-06-06T02:00:00.000Z"
-        },
-        {
-          "check_id": "browser_proof_after_deploy_marker",
-          "status": "PASS",
-          "notes": "deploy/build marker not provable in repo — requirement waived"
-        },
-        {
-          "check_id": "confusion_family_cleared",
-          "status": "FAIL",
-          "notes": "Frigidaire confusion-family review required before apply"
-        },
-        {
-          "check_id": "apply_plan_exists",
-          "status": "FAIL",
-          "notes": "no apply-plan artifact on disk"
-        },
-        {
-          "check_id": "owner_approval_exists",
-          "status": "FAIL",
-          "notes": "no founder decision row with owner_mutation_approved for slug/apply plan"
-        },
-        {
-          "check_id": "owner_apply_lane_eligible",
-          "status": "FAIL",
-          "notes": "frigidaire adapter owner_apply_lane_eligible=false"
-        },
-        {
-          "check_id": "wrong_family_safe",
-          "status": "PASS",
-          "notes": "no forbidden wrong-family tokens detected"
-        },
-        {
-          "check_id": "direct_buyable_exact_token_safe",
-          "status": "PASS",
-          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
-        },
-        {
-          "check_id": "no_unresolved_blockers",
-          "status": "FAIL",
-          "notes": "orchestrator/director blockers remain: confusion_family_review_required"
-        }
-      ],
-      "blocking_reasons": [
-        "browser_proof_stale_or_invalid_timestamp",
-        "confusion_family_review_required",
-        "apply_plan_artifact_missing",
-        "owner_apply_approval_missing",
-        "owner_apply_lane_eligible_false",
-        "unresolved_orchestrator_or_director_blockers"
-      ],
-      "source_paths_read": [
-        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json"
-      ]
-    },
     {
       "filter_slug": "eptwfu01",
       "manufacturer_key": "frigidaire",
@@ -261,7 +50,7 @@
         {
           "check_id": "confusion_family_cleared",
           "status": "FAIL",
-          "notes": "Frigidaire confusion-family review required before apply"
+          "notes": "Frigidaire confusion-family review required — no owner clearance artifact found"
         },
         {
           "check_id": "apply_plan_exists",
@@ -276,7 +65,7 @@
         {
           "check_id": "owner_apply_lane_eligible",
           "status": "FAIL",
-          "notes": "frigidaire adapter owner_apply_lane_eligible=false"
+          "notes": "frigidaire lane requires fresh PASS official/authorized owner proof (pass=true, fresh=false)"
         },
         {
           "check_id": "wrong_family_safe",
@@ -332,7 +121,7 @@
         {
           "check_id": "confusion_family_cleared",
           "status": "FAIL",
-          "notes": "Frigidaire confusion-family review required before apply"
+          "notes": "Frigidaire confusion-family review required — no owner clearance artifact found"
         },
         {
           "check_id": "apply_plan_exists",
@@ -347,7 +136,7 @@
         {
           "check_id": "owner_apply_lane_eligible",
           "status": "FAIL",
-          "notes": "frigidaire adapter owner_apply_lane_eligible=false"
+          "notes": "frigidaire lane requires fresh PASS official/authorized owner proof (pass=true, fresh=false)"
         },
         {
           "check_id": "wrong_family_safe",
@@ -403,7 +192,7 @@
         {
           "check_id": "confusion_family_cleared",
           "status": "FAIL",
-          "notes": "Frigidaire confusion-family review required before apply"
+          "notes": "Frigidaire confusion-family review required — no owner clearance artifact found"
         },
         {
           "check_id": "apply_plan_exists",
@@ -418,7 +207,7 @@
         {
           "check_id": "owner_apply_lane_eligible",
           "status": "FAIL",
-          "notes": "frigidaire adapter owner_apply_lane_eligible=false"
+          "notes": "frigidaire lane requires fresh PASS official/authorized owner proof (pass=true, fresh=false)"
         },
         {
           "check_id": "wrong_family_safe",
@@ -452,14 +241,14 @@
   "ready_for_apply_slug": null,
   "ready_for_apply_count": 0,
   "top_pending_work_item": {
-    "filter_slug": "edr4rxd1",
+    "filter_slug": "eptwfu01",
     "readiness_status": "PENDING_BROWSER_REFRESH",
-    "recommended_next_action": "Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window)."
+    "recommended_next_action": "Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window)."
   },
   "readiness_summary": {
     "by_status": {
       "READY_FOR_APPLY": 0,
-      "PENDING_BROWSER_REFRESH": 6,
+      "PENDING_BROWSER_REFRESH": 3,
       "PENDING_CONFUSION_FAMILY_REVIEW": 0,
       "PENDING_OWNER_APPROVAL": 0,
       "PENDING_APPLY_PLAN": 0,
@@ -476,12 +265,12 @@
       "ready_for_apply_slug": ".ready_for_apply_slug",
       "top_pending_work_item": ".top_pending_work_item"
     },
-    "recommended_next_action": "PENDING_BROWSER_REFRESH: Refresh owner browser proof artifact for edr4rxd1 (PASS required, within freshness window)."
+    "recommended_next_action": "PENDING_BROWSER_REFRESH: Refresh owner browser proof artifact for eptwfu01 (PASS required, within freshness window)."
   },
   "proven_facts": [
     "PROVEN: Readiness gate is read-only — no CSV, Supabase, SQL, or browser automation.",
     "PROVEN: ready_for_apply_count=0 (max 1 enforced by runner).",
-    "PROVEN: candidate_count=6 guarded-apply scoped slug(s)."
+    "PROVEN: candidate_count=3 guarded-apply scoped slug(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: deploy/build marker not found in committed repo artifacts.",
