@@ -64,7 +64,7 @@ export function FridgeModelFilterSection({
         <p className="max-w-prose text-base leading-relaxed text-bp-muted">
           Same numbers as the chips above—here with notes and {BUCKPARTS_VERIFIED_LINK_PLURAL.toLowerCase()}.{" "}
           <strong className="font-medium text-bp-text">Not a ranked list.</strong> Open filter
-          details before using any verified link.
+          details before using any BuckParts Verified Link.
         </p>
       </div>
 
