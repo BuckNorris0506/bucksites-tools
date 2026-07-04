@@ -1,0 +1,67 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-04-wf3cb-approve_csv_manufacturer_rescue_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-wf3cb-manufacturer-rescue",
+      "source_decision_packet_id": "manufacturer_safe_link_rescue_apply_plan_wf3cb_v1",
+      "decided_at": "2026-07-04T15:38:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "APPROVE WF3CB GUARDED APPLY. Approve single-slug wf3cb manufacturer rescue CSV apply: promote Frigidaire.com official manufacturer PDP https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB as primary Verified Link for WF3CB / PureSource 3 only. Confusion-family review cleared via committed evidence. Authorize guarded manufacturer-rescue-guarded-apply-bridge --write-csv only for this slug; no Supabase mutation from this row alone — scoped Supabase sync remains a separate step.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-04T15:38:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not batch apply any other filter slug without a separate founder approval row for that exact slug.",
+        "Do not promote PureSource Ultra II or PureSource Ultra family tokens as the wf3cb primary.",
+        "Do not promote Lowe's or Home Depot retailer PDPs as primary — failed as proof this session.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not mutate Supabase from this approval row — CSV apply only; scoped retailer_links sync is separate.",
+        "Do not write or overwrite evidence JSON under data/evidence/.",
+        "approve_csv_manufacturer_rescue_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "wf3cb_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json",
+        "primary_evidence_rel_path": "data/evidence/frigidaire-wf3cb-official-owner-browser-proof-evidence.2026-07-04.json",
+        "owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+        "founder_option_id": "approve_csv_manufacturer_rescue_apply",
+        "target_slug": "wf3cb",
+        "oem_part_token": "WF3CB",
+        "product_line": "PureSource 3",
+        "official_destination_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "retailer_key": "oem-parts-catalog",
+        "destination_path_type": "official_manufacturer_pdp",
+        "product_attribution": "oem_official",
+        "owner_browser_truth_classification": "direct_buyable",
+        "frigidaire_com_official_primary_approved": true,
+        "confusion_family_cleared": true,
+        "owner_approval_text": "APPROVE WF3CB GUARDED APPLY",
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "scoped_supabase_sync_required_after_csv_apply": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-04T15:38:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json",
+          "sha256_at_binding": "772042c209e27cfaa9b74235158fcda0406c2047d75fc7463041f35a1e9ac40c",
+          "entry_type": "apply_plan"
+        },
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+          "sha256_at_binding": "0511c47206d8e6845c50bfadcdb16c582f1f6686260c3b26909ea498935ca791",
+          "entry_type": "evidence"
+        },
+        {
+          "artifact_rel_path": "data/evidence/frigidaire-wf3cb-official-owner-browser-proof-evidence.2026-07-04.json",
+          "sha256_at_binding": "b46a09e92972dfca73d31b00310813f8bb539f0eb1e3806d3a442ac29c790024",
+          "entry_type": "evidence"
+        }
+      ]
+    }
+  ]
+}
