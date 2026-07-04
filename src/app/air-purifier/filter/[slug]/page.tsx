@@ -110,14 +110,14 @@ export default async function AirPurifierFilterPage({ params }: Props) {
         alsoKnownAs={filter.also_known_as}
         goAttribution={buildAirPurifierFilterGoAttribution(filter.slug) ?? undefined}
         wayfinding={
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          <p className="text-sm text-bp-muted">
             <Link
               href="/air-purifier/search"
-              className="hover:text-neutral-800 dark:hover:text-neutral-200"
+              className="transition-colors hover:text-bp-text"
             >
               Search
             </Link>
-            <span className="mx-2">·</span>
+            <span className="mx-2 text-bp-muted/70">·</span>
             <span>{filter.brand.name}</span>
           </p>
         }
