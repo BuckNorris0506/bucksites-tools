@@ -1,0 +1,53 @@
+{
+  "contract": "fridge_safe_link_eptwfu01_retailer_links_supabase_parity_closeout_v1",
+  "read_only": true,
+  "data_mutation": true,
+  "mutation_authorized": true,
+  "generated_at": "2026-07-04T03:53:00.111Z",
+  "allowed_slugs": [
+    "eptwfu01"
+  ],
+  "allowed_supabase_table": "public.retailer_links",
+  "row_count_applied": 1,
+  "inserted": 0,
+  "updated": 1,
+  "before": [
+    {
+      "filter_slug": "eptwfu01",
+      "status": "CSV_HAS_WIN_SUPABASE_MISSING_OR_STALE",
+      "supabase_primary": {
+        "id": "96dd791c-4a8f-42f4-9b4d-cb424ea5e879",
+        "filter_id": "07c9f84e-5bcd-4cb0-86cc-8ab66d054e3f",
+        "affiliate_url": "https://www.frigidaire.com/en/catalogsearch/result/?q=EPTWFU01",
+        "retailer_name": "OEM parts catalog (keyword lookup)",
+        "browser_truth_classification": "",
+        "browser_truth_notes": "",
+        "browser_truth_checked_at": "",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "mismatched_fields": [
+        "affiliate_url",
+        "retailer_name",
+        "browser_truth_classification",
+        "browser_truth_notes",
+        "browser_truth_checked_at"
+      ]
+    }
+  ],
+  "ops": [
+    {
+      "filter_slug": "eptwfu01",
+      "action": "update",
+      "filter_id": "07c9f84e-5bcd-4cb0-86cc-8ab66d054e3f",
+      "existing_id": "96dd791c-4a8f-42f4-9b4d-cb424ea5e879",
+      "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084"
+    }
+  ],
+  "proven_facts": [
+    "PROVEN: applied 1 retailer_links row(s) for lane allowlist only.",
+    "PROVEN: inserted=0 updated=1.",
+    "PROVEN: brands/filters/models/aliases/compatibility_mappings were not written.",
+    "PROVEN: allowed Supabase table scope is exactly public.retailer_links."
+  ]
+}

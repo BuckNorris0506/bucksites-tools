@@ -1,0 +1,88 @@
+{
+  "report_name": "buckparts_frigidaire_eptwfu01_official_owner_browser_proof_evidence_v1",
+  "generated_at": "2026-07-04T01:21:44.000Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "filter_slug": "eptwfu01",
+  "token": "EPTWFU01",
+  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER",
+  "mutation_ready": false,
+  "mutation_ready_basis": "Evidence only — does not authorize retailer_links.csv, Supabase, Verified Link, or founder approval.",
+  "product_attribution": "oem_official",
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+  "checked_at": "2026-07-04T01:21:44.000Z",
+  "primary_proof_track": {
+    "path_type": "authorized_parts_distributor_pdp",
+    "authorized_parts_distributor_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    "canonical_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json"
+  },
+  "secondary_proof_track": null,
+  "secondary_amazon_audit_track": null,
+  "failed_official_manufacturer_track": {
+    "path_type": "official_manufacturer_pdp",
+    "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+    "status": "FAIL",
+    "notes": "PROVEN: Requested Frigidaire.com EPTWFU01 accessory page is not available in Coverage Batch B owner browser session."
+  },
+  "confusion_family_review": {
+    "status": "CLEARED",
+    "question_id": "confusion_family_eptwfu01_vs_ultrawf_wf3cb",
+    "owner_answer": "CONFIRMED_EXACT_TOKEN_EPTWFU01_PURESOURCE_ULTRA_II_OEM_NOT_ULTRAWF_OR_WF3CB",
+    "forbidden_tokens_for_slug": ["ULTRAWF", "WF3CB"],
+    "forbidden_tokens_observed": [],
+    "basis": [
+      "PROVEN: Page title/heading: Frigidaire Water Filter EPTWFU01.",
+      "PROVEN: Item #3516084.",
+      "PROVEN: Frigidaire OEM Part #EPTWFU01.",
+      "PROVEN: Package/text indicates PureSource Ultra II (not PureSource Ultra).",
+      "PROVEN: Price $59.99, In Stock, Add to Cart visible.",
+      "PROVEN: No ULTRAWF product identity shown.",
+      "PROVEN: No WF3CB product identity shown.",
+      "PROVEN: forbidden_tokens_detected_in_proof=[] on owner classification packet generation."
+    ]
+  },
+  "owner_primary_approval": {
+    "question_id": "approve_official_or_parts_distributor_primary",
+    "owner_answer": "YES_APPROVE_FRIGIDAIREAPPLIANCEPARTS_COM_AS_PRIMARY",
+    "approved_primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    "path_type": "authorized_parts_distributor_pdp"
+  },
+  "owner_browser_finding": {
+    "source": "owner_browser_visual_inspection",
+    "checked_at": "2026-07-04T01:21:44.000Z",
+    "screenshot_file_committed": false,
+    "primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    "secondary_url": null,
+    "exact_token_visible": true,
+    "tokens_visible": ["EPTWFU01"],
+    "brand_visible": "Frigidaire",
+    "product_line_visible": "PureSource Ultra II",
+    "price_visible_usd": 59.99,
+    "in_stock_visible": true,
+    "genuine_oem_badge_visible": "UNKNOWN",
+    "aftermarket_brand_visible": false
+  },
+  "exact_token_proof": "Owner browser inspection on 2026-07-04 showed Frigidaire OEM Part #EPTWFU01 and PureSource Ultra II on frigidaireapplianceparts.com PartDetail EPTWFU01/3516084; ULTRAWF and WF3CB product identity not shown.",
+  "buyability_proof": "Owner browser inspection on 2026-07-04 showed price $59.99, In Stock, and Add to Cart on frigidaireapplianceparts.com PartDetail EPTWFU01/3516084.",
+  "observations_from_proof_only": [
+    "PROVEN: Page title/heading: Frigidaire Water Filter EPTWFU01.",
+    "PROVEN: Item #3516084.",
+    "PROVEN: Frigidaire OEM Part #EPTWFU01.",
+    "PROVEN: Package/text indicates PureSource Ultra II.",
+    "PROVEN: Price visible: $59.99.",
+    "PROVEN: In Stock.",
+    "PROVEN: Add to Cart visible.",
+    "PROVEN: No ULTRAWF product identity shown.",
+    "PROVEN: No WF3CB product identity shown.",
+    "PROVEN: Frigidaire.com official EPTWFU01 URL is not available this session."
+  ],
+  "required_next_action": "Re-run apply-plan factory and readiness gate. Founder approval, CSV apply, and scoped Supabase sync remain unauthorized from this evidence file alone.",
+  "notes": [
+    "Evidence transcribed only from data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json (2026-07-04 Coverage Batch B refresh).",
+    "EPTWFU01 is PureSource Ultra II — not ULTRAWF (PureSource Ultra) and not WF3CB (PureSource 3).",
+    "No retailer_links.csv, Supabase, /go, or founder-approval mutation is authorized by this file."
+  ]
+}

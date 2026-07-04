@@ -16,13 +16,13 @@
   "brand_slug": "frigidaire",
   "product_line": "PureSource Plus",
   "verdict": "PASS_BROWSER_PROOF",
-  "checked_at": "2026-06-06T00:00:00.000Z",
+  "checked_at": "2026-07-04T01:21:44.000Z",
   "capture_method": "owner_browser_visual_inspection",
   "verified_by": "owner",
   "mission_context": {
-    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
-    "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
-    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "mission_type": "OWNER_BROWSER_PROOF_REFRESH",
+    "coverage_batch": "coverage_batch_b_frigidaire_cluster",
+    "session_date": "2026-07-04",
     "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
     "assist_validation_status": "VALIDATION_PARTIAL"
   },
@@ -34,106 +34,38 @@
       "url": "https://www.warnersstellian.com/product/10012/frigidaire-wfcb",
       "path_type": "authorized_dealer_pdp",
       "browser_proof_status": "PASS",
-      "assessment": "Acceptable authorized-dealer PDP proof.",
+      "assessment": "Authorized-dealer PDP proof for WFCB / PureSource Plus — not Frigidaire.com official manufacturer proof. Repo manufacturer-rescue official-pass path types do not include authorized_dealer_pdp.",
       "proven_observations": [
         "PROVEN: Product title: Frigidaire Water Filter - White.",
         "PROVEN: WFCB visible.",
-        "PROVEN: Stocked in warehouse.",
-        "PROVEN: Price shown $39.99.",
         "PROVEN: Frigidaire PureSource Plus packaging visible.",
+        "PROVEN: Price shown $39.99.",
+        "PROVEN: Stocked in Warehouse.",
         "PROVEN: Add to cart visible."
       ],
       "inferred_observations": [],
       "unknown_observations": [],
       "screenshot_paths": []
-    },
-    {
-      "priority": 2,
-      "retailer": "Frigidaire.com",
-      "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WFCB",
-      "path_type": "official_manufacturer_pdp",
-      "browser_proof_status": "PASS",
-      "assessment": "Official manufacturer proof URL.",
-      "proven_observations": [
-        "PROVEN: Product title: PureSource Plus Water and Ice Refrigerator Filter.",
-        "PROVEN: WFCB visible.",
-        "PROVEN: Frigidaire official site.",
-        "PROVEN: Price shown $33.60.",
-        "PROVEN: OEM packaging visible.",
-        "PROVEN: Add subscription visible."
-      ],
-      "inferred_observations": [],
-      "unknown_observations": [],
-      "screenshot_paths": []
     }
   ],
-  "hold_candidates": [
-    {
-      "priority": 3,
-      "retailer": "Home Depot",
-      "url": "https://www.homedepot.com/p/Frigidaire-PureSource-Plus-Water-Filter-WFCB/308000660",
-      "path_type": "retailer_direct_pdp",
-      "browser_proof_status": "PASS_IDENTITY_BUT_HOLD_OUT_OF_STOCK",
-      "assessment": "OEM identity confirmed but not a stocked direct-buy safe candidate in this owner session.",
-      "proven_observations": [
-        "PROVEN: Product title: Frigidaire PureSource Plus Water Filter.",
-        "PROVEN: WFCB visible.",
-        "PROVEN: Price shown $22.49.",
-        "PROVEN: Frigidaire packaging / genuine filters image visible.",
-        "PROVEN: Out of Stock."
-      ],
-      "inferred_observations": [],
-      "unknown_observations": [],
-      "screenshot_paths": []
-    }
-  ],
-  "amazon_pass_candidates": [
-    {
-      "retailer": "Amazon",
-      "browser_proof_status": "PASS_BROWSER_PROOF_AMAZON_CANDIDATE",
-      "assessment": "Owner browser proof input only — do not mutate affiliate links or retailer_links.csv from this result alone.",
-      "proven_observations": [
-        "PROVEN: Product title: Frigidaire PureSource WFCB Water Filter.",
-        "PROVEN: Frigidaire store visible.",
-        "PROVEN: Price shown $22.49.",
-        "PROVEN: In Stock.",
-        "PROVEN: Prime two-day delivery visible.",
-        "PROVEN: Ships from and sold by Amazon.com."
-      ],
-      "inferred_observations": [],
-      "unknown_observations": [
-        "UNKNOWN: Exact Amazon /dp URL and ASIN for this good listing not captured in owner session notes."
-      ],
-      "screenshot_paths": []
-    }
-  ],
-  "failed_candidates": [
-    {
-      "retailer": "Amazon",
-      "action": "DO_NOT_USE",
-      "browser_proof_status": "FAIL_BROWSER_PROOF",
-      "assessment": "Aftermarket Swift Green listing — not acceptable for OEM safe-link purposes.",
-      "proven_observations": [
-        "PROVEN: Product title: Frigidaire WFCB, WF1CB, 469906, RG100 OEM Refrigerator Water Filter.",
-        "PROVEN: Brand/store shown: Swift Green Filters.",
-        "PROVEN: Currently unavailable."
-      ],
-      "inferred_observations": [],
-      "unknown_observations": [
-        "UNKNOWN: Exact Amazon /dp URL for Swift Green listing not captured in owner session notes."
-      ],
-      "screenshot_paths": []
-    }
-  ],
+  "failed_candidates": [],
   "urls_to_avoid": [
     {
       "retailer": "Amazon",
       "action": "DO_NOT_USE",
-      "reason": "Swift Green Filters aftermarket listing with multi-OEM title — FAIL_BROWSER_PROOF for OEM safe-link purposes.",
-      "evidence_level": "PROVEN"
+      "reason": "Prior session: Swift Green Filters aftermarket multi-OEM listing — FAIL for OEM safe-link purposes. Not re-checked this session; keep excluded.",
+      "evidence_level": "PROVEN_PRIOR_SESSION"
     }
   ],
-  "unverified_candidates": [],
+  "confusion_family_observations": {
+    "status": "OBSERVED_IDENTITY_ON_DEALER_PDP",
+    "forbidden_tokens_for_slug": [],
+    "forbidden_tokens_observed_on_primary": [],
+    "notes": [
+      "PROVEN: Warners Stellian PDP shows WFCB / PureSource Plus packaging.",
+      "UNKNOWN: Frigidaire.com official WFCB page was not screenshot-proven this session."
+    ]
+  },
   "not_authorized": [
     "retailer_links_csv_mutation",
     "filters_csv_mutation",
@@ -146,24 +78,21 @@
     "truth_closure",
     "VALIDATION_PASS",
     "live_link_mutation_from_this_result_alone",
-    "amazon_affiliate_tag_mutation"
+    "treat_authorized_dealer_as_official_manufacturer_primary"
   ],
   "proven_facts": [
-    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug wfcb based on Warners Stellian, Frigidaire.com, and Amazon good candidate OEM identity signals.",
-    "PROVEN: Home Depot /308000660 shows WFCB OEM identity but Out of Stock in owner session.",
-    "PROVEN: Swift Green Amazon listing excluded as DO_NOT_USE for OEM safe-link purposes.",
+    "PROVEN: Warners Stellian dealer PDP shows WFCB / PureSource Plus, $39.99, Stocked in Warehouse, Add to cart.",
+    "PROVEN: path_type authorized_dealer_pdp is not in manufacturer-rescue official-pass set (official_manufacturer_pdp | authorized_parts_distributor_pdp | official_manufacturer_accessory_pdp).",
     "PROVEN: draft result artifact is read_only=true with all mutation flags false."
   ],
   "inferred_facts": [
-    "INFERRED: Amazon good Frigidaire listing at $22.49 matches Home Depot observed price but HD is not buyable while OOS.",
-    "INFERRED: WFCB remains an older PureSource Plus line with medium wrong-part risk on unverified Amazon ASINs."
+    "INFERRED: Manufacturer-rescue apply-plan READY requires official/authorized-distributor PASS — dealer-only proof is insufficient for READY_FOR_OWNER_REVIEW."
   ],
   "unknown_facts": [
-    "UNKNOWN: Exact Amazon /dp URLs and ASINs for good vs bad Amazon listings — not captured in owner session notes.",
-    "UNKNOWN: Whether accepted Amazon candidate URLs already carry BuckParts affiliate tag enforcement.",
-    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band; paths not recorded here.",
-    "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone.",
-    "UNKNOWN: production /go first-hop without clicking /go."
+    "UNKNOWN: Frigidaire.com official WFCB accessory page — screenshot not provided this session.",
+    "UNKNOWN: Home Depot WFCB stock status not re-checked this session.",
+    "UNKNOWN: Exact Amazon /dp for good Frigidaire listing not captured.",
+    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band."
   ],
-  "recommended_next_action": "Continue remaining OWNER_BROWSER_PROOF_ASSIST session slugs. TODO: Audit all accepted Amazon candidate links for BuckParts affiliate tag/tag enforcement separately — do not perform that mutation in this intake step. A separate read-only apply-plan proposal may be drafted later — still no CSV/Supabase/Verified Link apply without explicit owner authorization."
+  "recommended_next_action": "Capture Frigidaire.com official WFCB PDP (or FrigidaireApplianceParts PartDetail if available) before apply-plan READY. Do not promote Warners Stellian as official manufacturer primary."
 }

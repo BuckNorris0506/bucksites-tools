@@ -45,5 +45,6 @@
     "PROVEN: bridge closeout for eptwfu01 with bridge_status=APPLIED.",
     "PROVEN: classification SAFE_BUYER_PATH_SUPPRESSED_TRUST -> SAFE_BUYER_PATH_PROVEN."
   ],
-  "unknown_facts": []
+  "unknown_facts": [],
+  "closeout_durability_tier": "slug_indexed"
 }

@@ -1,0 +1,80 @@
+{
+  "contract": "fridge_safe_link_eptwfu01_owner_classification_approval_packet_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "approval_status": "CONFUSION_FAMILY_CLEARED_OWNER_ANSWERS_RECORDED",
+  "not_an_approved_decision": true,
+  "generated_at": "2026-07-04T01:21:44.000Z",
+  "owner_answers_recorded_at": "2026-07-04T01:21:44.000Z",
+  "source_apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json",
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+  "source_committed_evidence_rel_path": "data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json",
+  "target_slug": "eptwfu01",
+  "oem_part_token": "EPTWFU01",
+  "manufacturer_key": "frigidaire",
+  "apply_plan_status": "PENDING_FACTORY",
+  "confusion_family_review_required": true,
+  "confusion_family_cleared": true,
+  "forbidden_tokens_for_slug": [
+    "ULTRAWF",
+    "WF3CB"
+  ],
+  "forbidden_tokens_detected_in_proof": [],
+  "product_line_confirmed": "PureSource Ultra II",
+  "owner_classification_review_v1": {
+    "owner_must_answer_before_guarded_apply": [
+      {
+        "question_id": "confusion_family_eptwfu01_vs_ultrawf_wf3cb",
+        "prompt": "Confirm EPTWFU01 owner browser proof URLs are exact-token EPTWFU01 / PureSource Ultra II OEM — not ULTRAWF (PureSource Ultra) or WF3CB (PureSource 3)?",
+        "required": true
+      },
+      {
+        "question_id": "approve_official_or_parts_distributor_primary",
+        "prompt": "If confusion-family cleared: approve frigidaireapplianceparts.com authorized distributor PDP as Verified Link primary (Frigidaire.com official URL not available this session)?",
+        "required": true,
+        "blocked_until": "confusion_family_review_cleared"
+      }
+    ],
+    "owner_answers_v1": [
+      {
+        "question_id": "confusion_family_eptwfu01_vs_ultrawf_wf3cb",
+        "answer": "YES_CONFIRMED_EXACT_TOKEN_EPTWFU01_PURESOURCE_ULTRA_II_OEM_NOT_ULTRAWF_OR_WF3CB",
+        "answered_at": "2026-07-04T01:21:44.000Z",
+        "answered_by": "owner",
+        "basis": [
+          "PROVEN: Page title/heading: Frigidaire Water Filter EPTWFU01.",
+          "PROVEN: Item #3516084.",
+          "PROVEN: Frigidaire OEM Part #EPTWFU01.",
+          "PROVEN: Package/text indicates PureSource Ultra II.",
+          "PROVEN: Price $59.99, In Stock, Add to Cart visible.",
+          "PROVEN: No ULTRAWF product identity shown.",
+          "PROVEN: No WF3CB product identity shown.",
+          "PROVEN: forbidden_tokens_detected_in_proof=[]"
+        ]
+      },
+      {
+        "question_id": "approve_official_or_parts_distributor_primary",
+        "answer": "YES_APPROVE_FRIGIDAIREAPPLIANCEPARTS_COM_AS_PRIMARY",
+        "answered_at": "2026-07-04T01:21:44.000Z",
+        "answered_by": "owner",
+        "approved_primary_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+        "path_type": "authorized_parts_distributor_pdp",
+        "basis": [
+          "PROVEN: frigidaireapplianceparts.com authorized_parts_distributor_pdp PASS on 2026-07-04 refresh.",
+          "PROVEN: Frigidaire.com official EPTWFU01 URL is not available this session.",
+          "PROVEN: Price $59.99, In Stock, Add to Cart."
+        ]
+      }
+    ]
+  },
+  "blocking_reasons": [],
+  "proven_facts": [
+    "PROVEN: confusion_family_cleared=true from owner answers grounded in 2026-07-04 owner-browser proof.",
+    "PROVEN: EPTWFU01 is PureSource Ultra II — not ULTRAWF and not WF3CB.",
+    "PROVEN: packet is not founder mutation approval — not_an_approved_decision=true."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: founder owner_mutation_approved row not created by this packet."
+  ]
+}

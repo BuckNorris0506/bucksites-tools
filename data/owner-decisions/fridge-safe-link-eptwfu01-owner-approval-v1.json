@@ -1,0 +1,72 @@
+{
+  "contract": "founder_decision_registry_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "rows": [
+    {
+      "decision_id": "decision-2026-07-04-eptwfu01-approve_csv_manufacturer_rescue_apply",
+      "source_queue_row_id": "queue-fridge-safe-link-eptwfu01-manufacturer-rescue",
+      "source_decision_packet_id": "manufacturer_safe_link_rescue_apply_plan_eptwfu01_v1",
+      "decided_at": "2026-07-04T03:38:00.000Z",
+      "decision_status": "approved",
+      "owner_note": "Approve single-slug eptwfu01 manufacturer rescue CSV apply: promote FrigidaireApplianceParts authorized distributor PDP https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084 as primary Verified Link for EPTWFU01 / PureSource Ultra II only. Confusion-family review cleared. Frigidaire.com official accessory page was not available this session and is not approved as primary. Authorize guarded manufacturer-rescue-guarded-apply-bridge --write-csv only for this slug; no Supabase mutation from this row alone — scoped Supabase sync remains a separate step.",
+      "allowed_next_scope": "owner_mutation_approved",
+      "evidence_required_before_mutation": true,
+      "expires_at": "2027-07-04T03:38:00.000Z",
+      "prohibited_actions_still_apply": [
+        "Do not batch apply any other filter slug without a separate founder approval row for that exact slug.",
+        "Do not promote PureSource Ultra (non-II) or PureSource 3 family tokens as the eptwfu01 primary.",
+        "Do not promote Frigidaire.com official accessory URL as primary — not available this session.",
+        "Do not mutate filters.csv, compatibility_mappings.csv, or fridge_models.csv.",
+        "Do not mutate Supabase from this approval row — CSV apply only; scoped retailer_links sync is separate.",
+        "Do not write or overwrite evidence JSON under data/evidence/.",
+        "approve_csv_manufacturer_rescue_apply authorizes guarded executor --write-csv — not automatic apply."
+      ],
+      "eptwfu01_apply_context_v1": {
+        "apply_plan_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json",
+        "primary_evidence_rel_path": "data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json",
+        "owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+        "owner_classification_packet_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-eptwfu01-owner-classification-packet-v1.json",
+        "founder_option_id": "approve_csv_manufacturer_rescue_apply",
+        "target_slug": "eptwfu01",
+        "oem_part_token": "EPTWFU01",
+        "product_line": "PureSource Ultra II",
+        "official_destination_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+        "retailer_key": "oem-parts-catalog",
+        "destination_path_type": "authorized_parts_distributor_pdp",
+        "product_attribution": "oem_official",
+        "owner_browser_truth_classification": "direct_buyable",
+        "frigidaire_com_official_primary_approved": false,
+        "confusion_family_cleared": true,
+        "mutation_authorized": false,
+        "apply_not_executed": true,
+        "separate_guarded_apply_executor_required": true,
+        "scoped_supabase_sync_required_after_csv_apply": true,
+        "owner_approved_by": "Jared",
+        "approved_at": "2026-07-04T03:38:00.000Z"
+      },
+      "bound_artifacts_v1": [
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json",
+          "sha256_at_binding": "48bdfa276482a6973fcdfc8a25784d68da7a4bc60473de9818bb48dc17d23a2b",
+          "entry_type": "apply_plan"
+        },
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+          "sha256_at_binding": "77251078093849746d8dd4faaa660aaa449cbb661b9aea425898ef5de6421764",
+          "entry_type": "evidence"
+        },
+        {
+          "artifact_rel_path": "data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json",
+          "sha256_at_binding": "b6f8b3df8c7df21babc6684ab4d7d41365fe80e79d666f125d0b13e970bc91dc",
+          "entry_type": "evidence"
+        },
+        {
+          "artifact_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-eptwfu01-owner-classification-packet-v1.json",
+          "sha256_at_binding": "4e627c759fce8f73183ce6819532c8da34eedd2f23ee90e33ac2072ce8f2e3de",
+          "entry_type": "evidence"
+        }
+      ]
+    }
+  ]
+}

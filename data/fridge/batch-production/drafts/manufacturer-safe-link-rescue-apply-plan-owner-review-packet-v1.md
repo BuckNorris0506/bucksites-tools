@@ -1,8 +1,8 @@
 # Manufacturer safe-link rescue apply plan owner review packet v1
 
-- generated_at: **2026-07-03T17:38:02.916Z**
-- orchestrator_generated_at: **2026-06-26T02:10:46.330Z**
-- ready_for_owner_review_count: **2**
+- generated_at: **2026-07-04T01:30:00.385Z**
+- orchestrator_generated_at: **2026-07-03T21:55:52.145Z**
+- ready_for_owner_review_count: **1**
 - blocked_count: **24**
 
 ## Authorization
@@ -18,34 +18,23 @@ manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY pro
 
 ## Ready for owner review
 
-### edr3rxd1
-- manufacturer: **everydrop_whirlpool**
-- official_destination_url: https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html
-- proof_artifact_path: `data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json`
-- browser_proof_checked_at: **2026-07-03T17:25:00.000Z**
-- apply_plan_artifact: `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json`
-- current affiliate_url: https://www.whirlpoolparts.com/catalog.jsp?search=stw=&path=&searchKeyword=EDR3RXD1
-- proposed affiliate_url: https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html
-- exact_token_evidence: exact token EDR3RXD1 proven in owner browser proof observations
-- wrong_family_evidence: no forbidden wrong-family tokens detected
-
-### ultrawf
+### eptwfu01
 - manufacturer: **frigidaire**
-- official_destination_url: https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529
-- proof_artifact_path: `data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json`
-- browser_proof_checked_at: **2026-07-03T17:13:04.000Z**
-- apply_plan_artifact: `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json`
-- current affiliate_url: https://www.frigidaire.com/en/catalogsearch/result/?q=ULTRAWF
-- proposed affiliate_url: https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529
-- exact_token_evidence: exact token ULTRAWF proven in owner browser proof observations
+- official_destination_url: https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084
+- proof_artifact_path: `data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json`
+- browser_proof_checked_at: **2026-07-04T01:21:44.000Z**
+- apply_plan_artifact: `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json`
+- current affiliate_url: https://www.frigidaire.com/en/catalogsearch/result/?q=EPTWFU01
+- proposed affiliate_url: https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084
+- exact_token_evidence: exact token EPTWFU01 proven in owner browser proof observations
 - wrong_family_evidence: no forbidden wrong-family tokens detected
 
 ## Blocked slugs
 
-- **edr4rxd1** — UNKNOWN (repo_csv_already_direct_buyable_at_official_destination)
-- **eptwfu01** — BLOCKED_STALE_BROWSER_PROOF (browser_proof_stale_or_invalid_timestamp)
-- **wf3cb** — BLOCKED_STALE_BROWSER_PROOF (browser_proof_stale_or_invalid_timestamp)
-- **wfcb** — BLOCKED_STALE_BROWSER_PROOF (browser_proof_stale_or_invalid_timestamp)
+- **edr4rxd1** — BLOCKED_NOT_GUARDED_APPLY_CANDIDATE (not_guarded_apply_direct_buyable_candidate)
+- **edr3rxd1** — BLOCKED_NOT_GUARDED_APPLY_CANDIDATE (not_guarded_apply_direct_buyable_candidate)
+- **wf3cb** — BLOCKED_MISSING_BROWSER_PROOF (browser_proof_missing_or_not_pass)
+- **wfcb** — BLOCKED_MISSING_BROWSER_PROOF (browser_proof_missing_or_not_pass)
 - **gswf** — BLOCKED_MISSING_BROWSER_PROOF (browser_proof_missing_or_not_pass)
 - **xwfe** — BLOCKED_MISSING_BROWSER_PROOF (browser_proof_missing_or_not_pass)
 - **4396508** — BLOCKED_MISSING_BROWSER_PROOF (browser_proof_missing_or_not_pass)
@@ -69,5 +58,5 @@ manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY pro
 
 ## Recommended next action
 
-Owner review 2 manufacturer rescue apply-plan artifact(s); founder owner_mutation_approved required before guarded CSV apply; regenerate readiness gate after plans committed.
+Owner review 1 manufacturer rescue apply-plan artifact(s); founder owner_mutation_approved required before guarded CSV apply; regenerate readiness gate after plans committed.
 

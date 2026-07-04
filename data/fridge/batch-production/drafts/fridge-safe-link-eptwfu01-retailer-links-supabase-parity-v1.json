@@ -1,0 +1,101 @@
+{
+  "contract": "fridge_safe_link_eptwfu01_retailer_links_supabase_parity_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "mode": "dry_run",
+  "generated_at": "2026-07-04T03:53:06.510Z",
+  "allowed_slugs": [
+    "eptwfu01"
+  ],
+  "allowed_supabase_table": "public.retailer_links",
+  "supabase_truth_status": "CHECKED",
+  "supabase_unavailable_reason": null,
+  "row_count_planned": 0,
+  "rows": [
+    {
+      "filter_slug": "eptwfu01",
+      "status": "CSV_AND_SUPABASE_MATCH",
+      "filter_id": "07c9f84e-5bcd-4cb0-86cc-8ab66d054e3f",
+      "csv_primary": {
+        "filter_slug": "eptwfu01",
+        "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+        "retailer_name": "Frigidaire",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+        "browser_truth_checked_at": "2026-07-04T01:21:44.000Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "96dd791c-4a8f-42f4-9b4d-cb424ea5e879",
+        "filter_id": "07c9f84e-5bcd-4cb0-86cc-8ab66d054e3f",
+        "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+        "retailer_name": "Frigidaire",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+        "browser_truth_checked_at": "2026-07-04T01:21:44+00:00",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "field_parity": [
+        {
+          "field": "affiliate_url",
+          "csv_value": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+          "supabase_value": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+          "match": true
+        },
+        {
+          "field": "retailer_name",
+          "csv_value": "Frigidaire",
+          "supabase_value": "Frigidaire",
+          "match": true
+        },
+        {
+          "field": "browser_truth_classification",
+          "csv_value": "direct_buyable",
+          "supabase_value": "direct_buyable",
+          "match": true
+        },
+        {
+          "field": "browser_truth_notes",
+          "csv_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+          "supabase_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+          "match": true
+        },
+        {
+          "field": "browser_truth_checked_at",
+          "csv_value": "2026-07-04T01:21:44.000Z",
+          "supabase_value": "2026-07-04T01:21:44+00:00",
+          "match": true
+        },
+        {
+          "field": "is_primary",
+          "csv_value": "true",
+          "supabase_value": "true",
+          "match": true
+        },
+        {
+          "field": "retailer_key",
+          "csv_value": "oem-parts-catalog",
+          "supabase_value": "oem-parts-catalog",
+          "match": true
+        }
+      ],
+      "mismatched_fields": [],
+      "planned_action": "none"
+    }
+  ],
+  "all_in_parity": true,
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: lane allowlist is exactly eptwfu01.",
+    "PROVEN: live /filter/[slug] reads Supabase public.retailer_links via getFilterBySlug.",
+    "PROVEN: allowed Supabase table scope is exactly public.retailer_links.",
+    "PROVEN: csv_sha256=74b135d0ad9566e6ac7ed4d935edfc6b9f9deb701d9619c2d9ada9517bf944dd",
+    "PROVEN: row_count_planned=0 (max 1).",
+    "PROVEN: founder decisions considered: decision-2026-07-04-eptwfu01-approve_csv_manufacturer_rescue_apply."
+  ],
+  "unknown_facts": [],
+  "recommended_next_action": "Parity already holds — no scoped write required."
+}

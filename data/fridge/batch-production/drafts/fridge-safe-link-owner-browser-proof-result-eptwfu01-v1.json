@@ -16,13 +16,13 @@
   "brand_slug": "frigidaire",
   "product_line": "PureSource Ultra II",
   "verdict": "PASS_BROWSER_PROOF",
-  "checked_at": "2026-06-05T20:00:00.000Z",
+  "checked_at": "2026-07-04T01:21:44.000Z",
   "capture_method": "owner_browser_visual_inspection",
   "verified_by": "owner",
   "mission_context": {
-    "mission_type": "OWNER_BROWSER_PROOF_ASSIST",
-    "bundle_id": "6d1c66c0-acd6-4083-9169-99f2a21ec8e8",
-    "manifest_id": "e2425548-6548-4d91-a01b-04e1cdee3818",
+    "mission_type": "OWNER_BROWSER_PROOF_REFRESH",
+    "coverage_batch": "coverage_batch_b_frigidaire_cluster",
+    "session_date": "2026-07-04",
     "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
     "assist_validation_status": "VALIDATION_PARTIAL"
   },
@@ -34,70 +34,56 @@
       "url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
       "path_type": "authorized_parts_distributor_pdp",
       "browser_proof_status": "PASS",
-      "assessment": "Strong authorized Frigidaire parts distributor proof URL.",
+      "assessment": "Authorized Frigidaire parts distributor PDP — primary buy path proven this session.",
       "proven_observations": [
         "PROVEN: Page title/heading: Frigidaire Water Filter EPTWFU01.",
         "PROVEN: Item #3516084.",
         "PROVEN: Frigidaire OEM Part #EPTWFU01.",
-        "PROVEN: Product copy says water filter EPTWFU01, also known as Frigidaire PureSource Ultra II.",
+        "PROVEN: Package/text indicates PureSource Ultra II.",
         "PROVEN: Price visible: $59.99.",
         "PROVEN: In Stock.",
         "PROVEN: Add to Cart visible.",
-        "PROVEN: Page shows Genuine OEM Part.",
-        "PROVEN: Product image shows Frigidaire PureSource Ultra II / EPTWFU01 packaging."
+        "PROVEN: No ULTRAWF product identity shown.",
+        "PROVEN: No WF3CB product identity shown."
       ],
       "inferred_observations": [],
       "unknown_observations": [],
       "screenshot_paths": []
-    },
+    }
+  ],
+  "failed_candidates": [
     {
       "priority": 2,
-      "retailer": "Home Depot",
-      "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-EPTWFU01-PureSource-Ultra-II-EPTWFU01/304492642",
-      "path_type": "retailer_direct_pdp",
-      "browser_proof_status": "PASS",
-      "assessment": "Acceptable retailer PDP proof.",
-      "proven_observations": [
-        "PROVEN: Product title: Refrigerator Filter for Frigidaire EPTWFU01 PureSource Ultra II.",
-        "PROVEN: Brand/shop label: Frigidaire.",
-        "PROVEN: Model shown: EPTWFU01.",
-        "PROVEN: Price visible: $59.99.",
-        "PROVEN: Add to Cart visible.",
-        "PROVEN: Pickup/delivery availability visible.",
-        "PROVEN: Product image shows Frigidaire PureSource Ultra II / EPTWFU01 packaging."
-      ],
-      "inferred_observations": [],
-      "unknown_observations": [],
-      "screenshot_paths": []
-    },
-    {
-      "priority": 3,
       "retailer": "Frigidaire.com",
       "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
       "path_type": "official_manufacturer_pdp",
-      "browser_proof_status": "PASS",
-      "assessment": "Official manufacturer proof URL.",
+      "browser_proof_status": "FAIL",
+      "assessment": "Official manufacturer URL not usable as proof this session — requested page is not available.",
       "proven_observations": [
-        "PROVEN: Product title: PureSource Ultra II Water and Ice Refrigerator Filter.",
-        "PROVEN: Part token visible: EPTWFU01.",
-        "PROVEN: Frigidaire brand visible.",
-        "PROVEN: Price visible: $48.",
-        "PROVEN: Add subscription visible.",
-        "PROVEN: Product image shows Frigidaire PureSource Ultra II / EPTWFU01 packaging."
+        "PROVEN: Requested Frigidaire.com EPTWFU01 accessory page is not available."
       ],
       "inferred_observations": [],
       "unknown_observations": [],
       "screenshot_paths": []
     }
   ],
-  "unverified_candidates": [
+  "urls_to_avoid": [
     {
-      "retailer": "Amazon",
-      "url": "https://www.amazon.com/Frigidaire-EPTWFU01-PureSource-Refrigerator-Replacement/dp/B0CXKH95V1",
-      "status": "HOLD_SINGLE_FILTER_BUY_PATH",
-      "reason": "Owner confirmed OEM identity (Frigidaire, EPTWFU01, PureSource Ultra II, In Stock, ships from and sold by Amazon.com, 2-pack $112.51) but screenshot shows 2 Pack / Set of 2 selected — not primary single-filter proof per session checklist."
+      "retailer": "Frigidaire.com",
+      "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/EPTWFU01",
+      "action": "DO_NOT_USE_AS_PROOF",
+      "reason": "Requested page is not available in Coverage Batch B owner browser session.",
+      "evidence_level": "PROVEN"
     }
   ],
+  "confusion_family_observations": {
+    "status": "OBSERVED_CLEARED_ON_PRIMARY_PDP",
+    "forbidden_tokens_for_slug": ["ULTRAWF", "WF3CB"],
+    "forbidden_tokens_observed_on_primary": [],
+    "notes": [
+      "PROVEN: Primary distributor PDP shows EPTWFU01 / PureSource Ultra II — not ULTRAWF (PureSource Ultra) and not WF3CB (PureSource 3)."
+    ]
+  },
   "not_authorized": [
     "retailer_links_csv_mutation",
     "filters_csv_mutation",
@@ -112,19 +98,19 @@
     "live_link_mutation_from_this_result_alone"
   ],
   "proven_facts": [
-    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug eptwfu01.",
-    "PROVEN: frigidaireapplianceparts.com, Home Depot, and Frigidaire.com PDPs loaded and show EPTWFU01 / PureSource Ultra II OEM signals per owner screenshot review.",
+    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug eptwfu01 on authorized distributor PDP.",
+    "PROVEN: frigidaireapplianceparts.com PartDetail EPTWFU01/3516084 shows EPTWFU01 / PureSource Ultra II, $59.99, In Stock, Add to Cart.",
+    "PROVEN: Frigidaire.com official EPTWFU01 URL is not available this session — not used as proof.",
     "PROVEN: draft result artifact is read_only=true with all mutation flags false."
   ],
   "inferred_facts": [
-    "INFERRED: Amazon B0CXKH95V1 supports OEM identity but 2-pack selection in owner screenshot is not primary single-filter buy-path proof.",
-    "INFERRED: Main wrong-part confusion risk remains EPTWFU01 (Ultra II) vs ULTRAWF (Ultra) per session worksheet wrong-part notes."
+    "INFERRED: Authorized parts distributor path is acceptable Frigidaire official-path class for manufacturer-rescue apply-plan (same class as Batch A ultrawf)."
   ],
   "unknown_facts": [
-    "UNKNOWN: Amazon B0CXKH95V1 single-pack option and price — not separately verified in this owner session.",
-    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band; paths not recorded here.",
-    "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone.",
-    "UNKNOWN: production /go first-hop without clicking /go."
+    "UNKNOWN: Home Depot EPTWFU01 secondary not re-checked this session.",
+    "UNKNOWN: Amazon B0CXKH95V1 not re-checked this session.",
+    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band.",
+    "UNKNOWN: live retailer_links.csv / Supabase parity — no buyer-path mutation authorized from this result alone."
   ],
-  "recommended_next_action": "Continue remaining OWNER_BROWSER_PROOF_ASSIST session slugs. A separate read-only apply-plan proposal may be drafted later — still no CSV/Supabase/Verified Link apply without explicit owner authorization."
+  "recommended_next_action": "Draft committed evidence JSON and classification packet with confusion_family_cleared=true for eptwfu01; run apply-plan factory. Still no CSV/Supabase apply without founder approval and scoped Supabase sync."
 }

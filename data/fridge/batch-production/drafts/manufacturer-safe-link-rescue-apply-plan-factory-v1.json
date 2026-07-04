@@ -11,67 +11,59 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-07-03T17:38:02.916Z",
+  "generated_at": "2026-07-04T01:30:00.385Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-apply-plan-factory",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "orchestrator_generated_at": "2026-06-26T02:10:46.330Z",
+  "orchestrator_generated_at": "2026-07-03T21:55:52.145Z",
   "browser_proof_max_age_days": 14,
-  "candidate_count": 26,
-  "ready_for_owner_review_count": 2,
+  "candidate_count": 25,
+  "ready_for_owner_review_count": 1,
   "blocked_count": 24,
   "apply_plans_written": [
-    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
-    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json"
+    "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json"
   ],
   "slug_results": [
     {
       "filter_slug": "edr4rxd1",
       "manufacturer_key": "everydrop_whirlpool",
-      "plan_status": "UNKNOWN",
+      "plan_status": "BLOCKED_NOT_GUARDED_APPLY_CANDIDATE",
       "apply_plan_artifact_rel_path": null,
       "blockers": [
-        "repo_csv_already_direct_buyable_at_official_destination"
+        "not_guarded_apply_direct_buyable_candidate"
       ]
     },
     {
       "filter_slug": "edr3rxd1",
       "manufacturer_key": "everydrop_whirlpool",
-      "plan_status": "READY_FOR_OWNER_REVIEW",
-      "apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-edr3rxd1-v1.json",
-      "blockers": []
-    },
-    {
-      "filter_slug": "ultrawf",
-      "manufacturer_key": "frigidaire",
-      "plan_status": "READY_FOR_OWNER_REVIEW",
-      "apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-ultrawf-v1.json",
-      "blockers": []
+      "plan_status": "BLOCKED_NOT_GUARDED_APPLY_CANDIDATE",
+      "apply_plan_artifact_rel_path": null,
+      "blockers": [
+        "not_guarded_apply_direct_buyable_candidate"
+      ]
     },
     {
       "filter_slug": "eptwfu01",
       "manufacturer_key": "frigidaire",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
-      "apply_plan_artifact_rel_path": null,
-      "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
-      ]
+      "plan_status": "READY_FOR_OWNER_REVIEW",
+      "apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json",
+      "blockers": []
     },
     {
       "filter_slug": "wf3cb",
       "manufacturer_key": "frigidaire",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
       "apply_plan_artifact_rel_path": null,
       "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
+        "browser_proof_missing_or_not_pass"
       ]
     },
     {
       "filter_slug": "wfcb",
       "manufacturer_key": "frigidaire",
-      "plan_status": "BLOCKED_STALE_BROWSER_PROOF",
+      "plan_status": "BLOCKED_MISSING_BROWSER_PROOF",
       "apply_plan_artifact_rel_path": null,
       "blockers": [
-        "browser_proof_stale_or_invalid_timestamp"
+        "browser_proof_missing_or_not_pass"
       ]
     },
     {
@@ -256,14 +248,14 @@
     }
   ],
   "inspect_summary": {
-    "recommended_next_action": "Owner review 2 manufacturer rescue apply-plan artifact(s); founder owner_mutation_approved required before guarded CSV apply; regenerate readiness gate after plans committed.",
+    "recommended_next_action": "Owner review 1 manufacturer rescue apply-plan artifact(s); founder owner_mutation_approved required before guarded CSV apply; regenerate readiness gate after plans committed.",
     "readiness_gate_promotion_authority_note": "manufacturer_safe_link_rescue_readiness_gate_v1 remains sole READY_FOR_APPLY promotion authority — apply plans do not grant apply slots."
   },
   "proven_facts": [
     "PROVEN: Factory is read-only — no CSV, Supabase, SQL, or production mutation authorized.",
     "PROVEN: owner_approval_required=true on every apply plan artifact.",
-    "PROVEN: evaluated 26 orchestrator rescue row(s).",
-    "PROVEN: 2 apply plan(s) READY_FOR_OWNER_REVIEW.",
+    "PROVEN: evaluated 25 orchestrator rescue row(s).",
+    "PROVEN: 1 apply plan(s) READY_FOR_OWNER_REVIEW.",
     "PROVEN: Readiness Gate remains sole READY_FOR_APPLY promotion authority."
   ],
   "unknown_facts": [

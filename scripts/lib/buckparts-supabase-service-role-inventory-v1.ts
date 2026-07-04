@@ -53,6 +53,21 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       access_class: "read_only",
     },
     {
+      rel_path: "scripts/lib/fridge-retailer-links-scoped-supabase-parity-core-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "fridge_retailer_links_scoped_supabase_parity_core_v1",
+    },
+    {
+      rel_path: "scripts/lib/fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.ts",
+      access_class: "read_only",
+    },
+    {
+      rel_path: "scripts/report-fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.ts",
+      access_class: "read_only",
+    },
+
+
+    {
       rel_path: "scripts/apply-search-gap-status-air-purifier.ts",
       access_class: "write_guarded",
       mutation_lane: "search_gap_status_air_purifier_v1",
