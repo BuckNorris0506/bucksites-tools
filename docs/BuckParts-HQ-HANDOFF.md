@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `d5cbe78`):** Coverage Batch B **partial** — `eptwfu01` **live closed** (Verified Link on `/filter/eptwfu01`) — see **§ Current stopping point — eptwfu01 live closeout (`d5cbe78`)** below. Remaining Batch B: `wf3cb` + `wfcb` blocked on official/authorized proof. Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
+> **Current operational stopping point (repo HEAD / `origin/main` / `c21cfd5`):** **Browser Proof Collector v1** landed — see **§ Current stopping point — Browser Proof Collector v1 (`c21cfd5`)** below. Coverage Batch B remains **partial** (`eptwfu01` live; `wf3cb` / `wfcb` need official/authorized proof via **collector-headed** drafts, then existing owner-proof gates). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
 
 ## Execution Stack
 
@@ -53,16 +53,103 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — eptwfu01 live closeout (`d5cbe78`)
+## Current stopping point — Browser Proof Collector v1 (`c21cfd5`)
 
-**Read this section first** for refrigerator coverage / Verified Link / manufacturer-rescue work.
+**Read this section first** for owner-browser-proof capture / Frigidaire Batch B proof refresh.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`c21cfd5`** — Add browser proof collector |
+| Package script | `npm run buckparts:browser-proof-collector` |
+
+**Files (committed in `c21cfd5`):**
+
+| Path | Role |
+|------|------|
+| `package.json` | `buckparts:browser-proof-collector` script |
+| `scripts/lib/browser-proof-collector-v1.ts` | Classifier, Playwright capture + fallbacks, draft writer |
+| `scripts/lib/browser-proof-collector-v1.test.ts` | Unit tests (11) |
+| `scripts/run-browser-proof-collector-v1.ts` | CLI (`--slug`, `--token`, `--url`, `--forbidden`, `--headed`, `--wait-ms`, `--timeout-ms`, `--user-agent`) |
+
+**Validation before commit (PROVEN):**
+
+| Check | Result |
+|-------|--------|
+| `node --import tsx --test scripts/lib/browser-proof-collector-v1.test.ts` | **11/11 PASS** |
+| `npm run build` | **PASS** |
+| `npm run buckparts:deploy:preflight` | **PASS** |
+
+### Live WF3CB collector proof (PROVEN)
+
+| Mode | Result |
+|------|--------|
+| **Headless** Playwright | **UNKNOWN** (fail-closed) on Frigidaire.com WF3CB — `net::ERR_HTTP2_PROTOCOL_ERROR` / timeouts across fallback attempts |
+| **Headed** Playwright + desktop Chrome UA | **Succeeded** — draft `overall=PASS` |
+
+Headed PASS draft captured:
+
+- Official Frigidaire PDP (`official_manufacturer_pdp` / `product_pdp`)
+- Exact token **WF3CB**
+- PureSource 3 in title/H1
+- Price / buying / subscription signals
+- No **EPTWFU01**, no **ULTRAWF**
+
+Safety flags on that PASS draft (PROVEN):
+
+- `owner_review_required=true`
+- `promotes_to_owner_browser_proof_result=false`
+- All mutation / approval / apply flags **false**
+
+**Generated WF3CB collector draft was not committed.** Parked in stash:
+
+`park browser proof collector draft wf3cb headed pass 20260704-092952`
+
+### Operating rule (PROVEN — do not weaken)
+
+- Browser Proof Collector **replaces the default manual screenshot loop** for candidate URL inspection.
+- Collector **PASS is draft evidence only**.
+- Collector **cannot** create: owner-browser-proof-result, founder approval, apply plan, CSV mutation, Supabase write, readiness PASS, or live link mutation.
+- Confusion-family slugs (Frigidaire cluster including `wf3cb` / `wfcb` / `eptwfu01`) **still require owner review**.
+- Capture failure remains **UNKNOWN**, never auto-PASS.
+
+### Next production step
+
+1. Use **collector-headed** mode to refresh/produce Frigidaire proof **drafts** first (`wf3cb`, then `wfcb`).
+2. Separately author `owner-browser-proof-result` + evidence + classification clearance + founder approval + apply plan through **existing** gates.
+3. Then guarded CSV apply + **scoped** Supabase `retailer_links` sync (do not assume CSV-only is live).
+
+```bash
+# Headed collector (owner/local) — draft only
+npm run buckparts:browser-proof-collector -- \
+  --slug wf3cb \
+  --token WF3CB \
+  --url "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB" \
+  --forbidden EPTWFU01,ULTRAWF \
+  --headed \
+  --wait-ms 3000 \
+  --timeout-ms 60000
+
+git rev-parse HEAD
+git status --short
+npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
+npm run buckparts:deploy:preflight
+```
+
+---
+
+## Coverage milestone — eptwfu01 live closeout (`d5cbe78`)
+
+**Coverage state** — Batch B partial. `eptwfu01` live Verified Link closed at `d5cbe78`. Proof capture for remaining slugs uses **§ Browser Proof Collector v1 (`c21cfd5`)** above.
 
 ### Milestone summary (PROVEN — live browser validated by Jared)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`d5cbe78`** — Apply eptwfu01 verified Frigidaire buyer path |
+| Commit | **`d5cbe78`** — Apply eptwfu01 verified Frigidaire buyer path |
 | Lane | Coverage Batch B — **`eptwfu01` only** (live closed) |
 | Site `SAFE_BUYER_PATH_PROVEN` | **52 → 53** (+1) — repo census in apply closeout |
 | Fridge `SAFE_BUYER_PATH_PROVEN` | **18 → 19** (+1) — this lane |
@@ -109,26 +196,18 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Slug | Status |
 |------|--------|
 | **`eptwfu01`** | **Live closed** (`d5cbe78`) |
-| **`wf3cb`** | **Blocked** — needs official/authorized owner browser proof (Lowe’s-only proof is not official-pass class) |
-| **`wfcb`** | **Blocked** — needs official/authorized owner browser proof (dealer PDP is not official-pass class) |
+| **`wf3cb`** | **Blocked** on committed owner-browser-proof-result for official/authorized path — collector-headed draft PASS exists in stash only (not committed; not apply-ready) |
+| **`wfcb`** | **Blocked** — needs official/authorized proof (dealer PDP is not official-pass class) |
 
-**Next work item:** capture official/authorized proof for **`wf3cb`**, then **`wfcb`** (Frigidaire.com accessory or FrigidaireApplianceParts PartDetail — do not invent PartDetail IDs). Then evidence → classification clearance → apply plan → founder approval → CSV apply → **scoped Supabase sync**.
+**Next work item:** collector-headed drafts for **`wf3cb`**, then **`wfcb`**, then separately author owner-browser-proof-result / evidence / approval / apply through existing gates (do not invent PartDetail IDs).
 
 **Do not** treat CSV-only apply as live — `/filter/[slug]` reads Supabase `public.retailer_links`.
-
-```bash
-git rev-parse HEAD
-git status --short
-npm run buckparts:fridge-safe-link-eptwfu01-retailer-links-supabase-parity
-npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
-npm run buckparts:deploy:preflight
-```
 
 ---
 
 ## Historical stopping point — Coverage Batch A closeout (`aa82ae7`)
 
-**Historical** — Batch A live Verified Links for `edr3rxd1` + `ultrawf`. Current coverage work uses **§ eptwfu01 live closeout (`d5cbe78`)** above.
+**Historical** — Batch A live Verified Links for `edr3rxd1` + `ultrawf`. Current proof tooling uses **§ Browser Proof Collector v1 (`c21cfd5`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
 
 ### Milestone summary (PROVEN — live browser validated by Jared)
 
@@ -189,7 +268,7 @@ npm run buckparts:deploy:preflight
 
 ## Historical stopping point — Security / RLS / service-role gating (`e19ebbd`)
 
-**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Coverage work uses **§ eptwfu01 live closeout (`d5cbe78`)** above.
+**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Proof capture uses **§ Browser Proof Collector v1 (`c21cfd5`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
 
 Prior foundation stack, owner browser proof refresh, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede the Batch A closeout for refrigerator Verified Link work unless a fresh Command Center run proves otherwise.
 
