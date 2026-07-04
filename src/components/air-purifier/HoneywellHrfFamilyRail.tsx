@@ -11,28 +11,28 @@ export function isHoneywellHrfSlug(slug: string): boolean {
   return HONEYWELL_HRF_SERIES.some((s) => s.slug === slug.trim().toLowerCase());
 }
 
+const familyLinkClass =
+  "font-medium text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55";
+
 export function HoneywellHrfFamilyRail({ currentSlug }: { currentSlug: string }) {
   const s = currentSlug.trim().toLowerCase();
   if (!isHoneywellHrfSlug(s)) return null;
 
   return (
     <div className="max-w-2xl space-y-1.5">
-      <p className="text-sm leading-snug text-neutral-600 dark:text-neutral-400">
+      <p className="text-sm leading-snug text-bp-muted">
         Choose your Honeywell R size:
       </p>
-      <p className="text-sm text-neutral-500 dark:text-neutral-400">
+      <p className="text-sm text-bp-muted">
         {HONEYWELL_HRF_SERIES.map((item, i) => (
           <Fragment key={item.slug}>
             {i > 0 ? (
-              <span className="mx-1.5 text-neutral-400 dark:text-neutral-500">·</span>
+              <span className="mx-1.5 text-bp-muted/70">·</span>
             ) : null}
             {item.slug === s ? (
-              <span className="font-semibold text-neutral-900 dark:text-neutral-100">{item.label}</span>
+              <span className="font-semibold text-bp-text">{item.label}</span>
             ) : (
-              <Link
-                href={`/air-purifier/filter/${item.slug}`}
-                className="font-medium text-neutral-700 underline-offset-2 hover:text-neutral-900 hover:underline dark:text-neutral-300 dark:hover:text-neutral-100"
-              >
+              <Link href={`/air-purifier/filter/${item.slug}`} className={familyLinkClass}>
                 {item.label}
               </Link>
             )}
