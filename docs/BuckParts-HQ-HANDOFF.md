@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `07044bc`):** **Browser Proof Collector batch candidate mode** landed — see **§ Current stopping point — Browser Proof Collector batch mode (`07044bc`)** below. Coverage Batch B remains **partial** (`eptwfu01` live; `wf3cb` / `wfcb` need official/authorized proof via **batch collector-headed** drafts, then existing owner-proof gates). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
+> **Current operational stopping point (repo HEAD / `origin/main` / `bf6e6eb`):** **Browser Proof Collector owner-review bridge** landed — see **§ Current stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)** below. Coverage Batch B remains **partial** (`eptwfu01` live; `wf3cb` has collector batch PASS + bridge packet in stash only; `wfcb` still needs proof). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
 
 ## Execution Stack
 
@@ -53,7 +53,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Browser Proof Collector batch mode (`07044bc`)
+## Current stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)
 
 **Read this section first** for owner-browser-proof capture / Frigidaire Batch B proof refresh.
 
@@ -62,90 +62,112 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`07044bc`** — Add browser proof collector batch mode |
-| Package script | `npm run buckparts:browser-proof-collector` |
+| Repo HEAD / `origin/main` | **`bf6e6eb`** — Add browser proof collector owner review bridge |
+| Package script | `npm run buckparts:browser-proof-collector-owner-review-bridge` |
+| Contract | **`browser_proof_collector_owner_review_packet_v1`** |
 
 **Commit chain:**
 
 | SHA | Role |
 |-----|------|
-| **`07044bc`** | Batch candidate mode (multi-URL rank + early-stop) |
+| **`bf6e6eb`** | Owner-review bridge (collector PASS draft → intermediate review packet) |
+| **`3183130`** | Document browser proof collector batch mode closeout |
+| **`07044bc`** | Batch candidate mode |
 | **`16a6d4e`** | Document browser proof collector closeout |
 | **`c21cfd5`** | Add browser proof collector (single-URL base) |
 
-**Files changed by batch mode (`07044bc`):**
+**Files (`bf6e6eb`):**
 
 | Path | Role |
 |------|------|
-| `scripts/lib/browser-proof-collector-v1.ts` | Batch runner, ranking, early-stop, draft fields |
-| `scripts/lib/browser-proof-collector-v1.test.ts` | Unit tests (**13**) |
-| `scripts/run-browser-proof-collector-v1.ts` | CLI: repeated `--url`, `--urls-file`, `--collect-all` |
+| `package.json` | `buckparts:browser-proof-collector-owner-review-bridge` |
+| `scripts/lib/browser-proof-collector-owner-review-bridge-v1.ts` | Bridge lib |
+| `scripts/lib/browser-proof-collector-owner-review-bridge-v1.test.ts` | Unit tests |
+| `scripts/run-browser-proof-collector-owner-review-bridge-v1.ts` | CLI (`--draft`, `--no-write`) |
+
+### Bridge behavior (PROVEN)
+
+- **Input:** collector draft JSON path (`--draft`)
+- Reads **best PASS** candidate
+- Writes **intermediate owner-review packet only**
+- **Output path pattern:** `data/fridge/batch-production/drafts/browser-proof-collector/{slug}/browser-proof-collector-owner-review-packet-{slug}-{sha12}-{stamp}.json`
+- Embeds **draft-only previews** for owner-browser-proof-result and evidence (`activation_status=DRAFT_ONLY_NOT_ACTIVATED`)
+- Does **not** write live `fridge-safe-link-owner-browser-proof-result-*.json`
+- Does **not** write `data/evidence/` files
+- Flags: `owner_acceptance_required=true`, `owner_acceptance_status=PENDING_OWNER_ACCEPTANCE`, `activates_owner_browser_proof_result=false`, `activates_evidence_json=false`, `founder_approval_authorized=false`, `mutation_authorized=false`
+
+### Live WF3CB bridge proof (PROVEN)
+
+Used parked WF3CB batch PASS collector draft (`park browser proof collector batch wf3cb pass 20260704-095215`).
+
+| Field | Value |
+|-------|-------|
+| Bridge write | **Succeeded** (owner-review packet) |
+| Best candidate | Official Frigidaire PDP (`official_manufacturer_pdp`) |
+| Exact token | **WF3CB** visible |
+| Forbidden tokens | No **EPTWFU01**, no **ULTRAWF** |
+| Screenshot / capture attempts | Carried forward from collector draft |
+| Non-best failures | Lowe’s + Home Depot preserved as failed/non-best candidates |
+
+**Generated bridge packet was not committed.** Parked in stash:
+
+`park browser proof collector owner review packet wf3cb 20260704-101250`
+
+### Operating rule (PROVEN — do not weaken)
+
+Pipeline:
+
+1. **Collector batch PASS** (headed) → draft only
+2. **Bridge owner-review packet** → still draft only; owner acceptance required
+3. **Owner acceptance** → separately author activated `owner-browser-proof-result` + evidence through existing gates
+4. Then classification clearance / founder approval / apply plan / CSV apply / scoped Supabase sync as authorized
+
+- Bridge **does not make anything apply-ready**.
+- Collector PASS and bridge packet are **not** readiness-consumed paths.
+- Confusion-family slugs still require owner review.
+
+### Next production step
+
+1. Owner accept WF3CB bridge packet (stash), then author activated owner-browser-proof-result + evidence for `wf3cb`.
+2. Run batch collector + bridge for **`wfcb`**.
+3. Founder approval → guarded CSV apply → scoped Supabase `retailer_links` sync (do not assume CSV-only is live).
+
+```bash
+# Bridge: collector draft → owner-review packet (draft only)
+npm run buckparts:browser-proof-collector-owner-review-bridge -- \
+  --draft data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/<batch-draft>.json
+
+git rev-parse HEAD
+git status --short
+npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
+npm run buckparts:deploy:preflight
+```
+
+---
+
+## Prior tooling — Browser Proof Collector batch mode (`07044bc`)
+
+**Prior** — batch candidate mode. Current proof pipeline uses **§ owner-review bridge (`bf6e6eb`)** above.
 
 ### Batch mode behavior (PROVEN)
 
-- Repeated **`--url`** supported
-- **`--urls-file`** supported (one URL per line; `#` comments)
-- **`--collect-all`** supported (disable early-stop)
-- One **batch draft** artifact written (`browser-proof-collector-batch-{slug}-…json`)
-- Per-candidate **screenshots** preserved
-- **Ranking:** PASS official manufacturer → PASS authorized distributor → PASS retailer direct → other PASS → UNKNOWN → FAIL_AS_PROOF
-- **Default early-stop:** only on PASS + `official_manufacturer_pdp` or `authorized_parts_distributor_pdp` (retailer PASS alone continues)
-
-**Validation (`07044bc`) (PROVEN):**
-
-| Check | Result |
-|-------|--------|
-| `node --import tsx --test scripts/lib/browser-proof-collector-v1.test.ts` | **13/13 PASS** |
-| `npm run build` | **PASS** |
-| `npm run buckparts:deploy:preflight` | **PASS** |
+- Repeated **`--url`**, **`--urls-file`**, **`--collect-all`**
+- One batch draft; per-candidate screenshots
+- Ranking: PASS official manufacturer → authorized distributor → retailer direct → other PASS → UNKNOWN → FAIL_AS_PROOF
+- Default early-stop only on official manufacturer or authorized parts distributor PASS
 
 ### Live WF3CB batch proof (PROVEN)
-
-Command: Frigidaire.com + Lowe’s + Home Depot, with `--headed --wait-ms 3000 --timeout-ms 60000 --collect-all`.
 
 | Field | Value |
 |-------|-------|
 | `overall` | **PASS** |
 | `best` | **PASS / `official_manufacturer_pdp`** |
 | `candidates` | **3** |
-| `early_stop` | **false** (`--collect-all`) |
-| `owner_review_required` | **true** |
-| `promotes_to_owner_browser_proof_result` | **false** |
+| Stash | `park browser proof collector batch wf3cb pass 20260704-095215` |
 
-Per-candidate outcomes:
-
-| Candidate | Result |
-|-----------|--------|
-| **Frigidaire.com** official PDP | **PASS** — WF3CB, PureSource 3, price/buying/subscription signals; no EPTWFU01; no ULTRAWF |
-| **Lowe’s** | **Failed as proof** — blocked / access denied |
-| **Home Depot** | **Failed as proof** — error page |
-
-**Generated batch draft was not committed.** Parked in stash:
-
-`park browser proof collector batch wf3cb pass 20260704-095215`
-
-### Prior single-URL collector notes (historical under `c21cfd5` / `16a6d4e`)
-
-- Headless Frigidaire.com WF3CB fail-closed as **UNKNOWN** (`ERR_HTTP2_PROTOCOL_ERROR` / timeouts)
-- Headed single-URL Frigidaire.com reached **PASS** (draft-only); stash `park browser proof collector draft wf3cb headed pass 20260704-092952`
-
-### Operating rule (PROVEN — do not weaken)
-
-- **Batch collector is now the default proof-gathering path** before manual screenshots.
-- Collector draft **PASS is still not apply-ready**.
-- Owner-browser-proof-result, evidence, founder approval, apply plan, CSV apply, and Supabase sync remain **separate gated steps**.
-- Collector **cannot** create those artifacts or authorize mutation / readiness PASS / live link mutation.
-- Confusion-family slugs (Frigidaire cluster including `wf3cb` / `wfcb` / `eptwfu01`) **still require owner review**.
-- Capture failure remains **UNKNOWN**, never auto-PASS.
-
-### Next production step
-
-1. Use **batch collector-headed** mode for Frigidaire proof **drafts** (`wf3cb` done in stash; next **`wfcb`**).
-2. Separately author `owner-browser-proof-result` + evidence + classification clearance + founder approval + apply plan through **existing** gates.
-3. Then guarded CSV apply + **scoped** Supabase `retailer_links` sync (do not assume CSV-only is live).
+Per-candidate: Frigidaire.com PASS; Lowe’s blocked; Home Depot error page.
 
 ```bash
-# Batch headed collector (owner/local) — draft only
 npm run buckparts:browser-proof-collector -- \
   --slug wf3cb \
   --token WF3CB \
@@ -157,18 +179,13 @@ npm run buckparts:browser-proof-collector -- \
   --wait-ms 3000 \
   --timeout-ms 60000 \
   --collect-all
-
-git rev-parse HEAD
-git status --short
-npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
-npm run buckparts:deploy:preflight
 ```
 
 ---
 
 ## Coverage milestone — eptwfu01 live closeout (`d5cbe78`)
 
-**Coverage state** — Batch B partial. `eptwfu01` live Verified Link closed at `d5cbe78`. Proof capture for remaining slugs uses **§ Browser Proof Collector batch mode (`07044bc`)** above.
+**Coverage state** — Batch B partial. `eptwfu01` live Verified Link closed at `d5cbe78`. Proof capture for remaining slugs uses **§ Browser Proof Collector owner-review bridge (`bf6e6eb`)** above.
 
 ### Milestone summary (PROVEN — live browser validated by Jared)
 
@@ -222,7 +239,7 @@ npm run buckparts:deploy:preflight
 | Slug | Status |
 |------|--------|
 | **`eptwfu01`** | **Live closed** (`d5cbe78`) |
-| **`wf3cb`** | **Blocked** on committed owner-browser-proof-result for official/authorized path — batch collector-headed draft PASS in stash only (`park browser proof collector batch wf3cb pass 20260704-095215`; not apply-ready) |
+| **`wf3cb`** | **Blocked** on committed owner-browser-proof-result — batch PASS + owner-review packet in stash only (`park browser proof collector batch wf3cb pass 20260704-095215`, `park browser proof collector owner review packet wf3cb 20260704-101250`; not apply-ready) |
 | **`wfcb`** | **Blocked** — needs official/authorized proof (dealer PDP is not official-pass class) |
 
 **Next work item:** collector-headed drafts for **`wf3cb`**, then **`wfcb`**, then separately author owner-browser-proof-result / evidence / approval / apply through existing gates (do not invent PartDetail IDs).
@@ -233,7 +250,7 @@ npm run buckparts:deploy:preflight
 
 ## Historical stopping point — Coverage Batch A closeout (`aa82ae7`)
 
-**Historical** — Batch A live Verified Links for `edr3rxd1` + `ultrawf`. Current proof tooling uses **§ Browser Proof Collector batch mode (`07044bc`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
+**Historical** — Batch A live Verified Links for `edr3rxd1` + `ultrawf`. Current proof tooling uses **§ Browser Proof Collector owner-review bridge (`bf6e6eb`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
 
 ### Milestone summary (PROVEN — live browser validated by Jared)
 
@@ -294,7 +311,7 @@ npm run buckparts:deploy:preflight
 
 ## Historical stopping point — Security / RLS / service-role gating (`e19ebbd`)
 
-**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Proof capture uses **§ Browser Proof Collector batch mode (`07044bc`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
+**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Proof capture uses **§ Browser Proof Collector owner-review bridge (`bf6e6eb`)**; coverage milestone **§ eptwfu01 live closeout (`d5cbe78`)**.
 
 Prior foundation stack, owner browser proof refresh, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede the Batch A closeout for refrigerator Verified Link work unless a fresh Command Center run proves otherwise.
 
