@@ -9,7 +9,7 @@ import {
 } from "@/lib/catalog/browse";
 
 export const metadata: Metadata = {
-  title: "Air purifier filter replacement | BuckParts",
+  title: "Air purifier filter replacement",
   description:
     "Find the air purifier replacement filter for your unit. Search by model number or filter number, then compare the part number with your old filter or manual before buying.",
 };
