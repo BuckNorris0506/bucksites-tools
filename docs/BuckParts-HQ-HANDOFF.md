@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `6bc843a`):** **WF3CB guarded CSV apply complete** — see **§ Current stopping point — WF3CB guarded verified link (`6bc843a`)** below. Frigidaire Batch B is **partial** (`eptwfu01` + `wf3cb` CSV-proven; `wfcb` still needs proof). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
+> **Current operational stopping point (repo HEAD / `origin/main` / `ced91f6`):** **AP UI split-brain repaint lane complete** — see **§ Current stopping point — AP UI split-brain repaint (`ced91f6`)** below. WF3CB guarded CSV apply (`6bc843a`) and Frigidaire Batch B partial state remain **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -53,9 +53,62 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — WF3CB guarded verified link (`6bc843a`)
+## Current stopping point — AP UI split-brain repaint (`ced91f6`)
 
-**Read this section first** for Frigidaire Batch B / manufacturer-rescue guarded apply state.
+**Read this section first** for live air-purifier / vertical browse UI (`bp-*` token) state.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`ced91f6`** — Repaint Honeywell HRF rail with BuckParts tokens |
+| Lane status | **Complete and pushed** — live AP UI split-brain repaint |
+| Scope | **AP + shared vertical/browse/trust surfaces listed below** — **not** whole-site design complete |
+
+**Commit chain (AP UI repaint lane):**
+
+| SHA | Role |
+|-----|------|
+| **`ced91f6`** | Honeywell HRF family rail |
+| **`7e7aa0a`** | AP model/filter detail breadcrumbs |
+| **`0bd10fe`** | AP search results |
+| **`9e03599`** | AP hub |
+| **`fab9f79`** | `VerticalModelPageContent` |
+| **`b472dd7`** | `VerticalBrandHubPage` |
+| **`54dd30d`** | `CategoryBrowseSections` |
+| **`bf40270`** | `ModelTruthPanel` |
+
+**Surfaces touched (PROVEN):** `ModelTruthPanel`, `CategoryBrowseSections`, `VerticalBrandHubPage`, `VerticalModelPageContent`, `src/app/air-purifier/page.tsx`, `src/app/air-purifier/search/page.tsx`, AP model/filter wrapper breadcrumbs, `HoneywellHrfFamilyRail` — raw Tailwind `neutral-*` / `amber-*` replaced with existing `bp-*` tokens.
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** during each slice |
+| `customer-language-doctrine.test.ts` | **PASS** during each slice |
+| `customer-ux-doctrine.test.ts` | **Pre-existing fail** in `FridgeModelFilterSection.tsx` (`\bverified\b`) — **not caused by this lane** |
+| Targeted raw-class scan | **No `neutral-*` or `amber-*` hits** in `src/app/air-purifier`, `src/components/air-purifier`, `src/components/vertical`, `src/components/catalog`, `src/components/trust` |
+| `git status --short` after `ced91f6` | **Clean** |
+
+### Next recommended lanes (NOT started)
+
+1. **Shopper-facing trust-copy leak cleanup** — Q-marker / internal repo evidence / status-legend wording on public surfaces.
+2. **AP SEO parity** — canonical / robots parity (separate from UI lane; metadata untouched in repaint).
+3. **Broader non-AP raw-class cleanup** — only after live trust-copy and AP SEO work.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+rg -n 'neutral-[0-9]|amber-[0-9]' src/app/air-purifier src/components/air-purifier src/components/vertical src/components/catalog src/components/trust || true
+```
+
+---
+
+## Prior stopping point — WF3CB guarded verified link (`6bc843a`)
+
+**Prior** — manufacturer-rescue CSV apply for `wf3cb`; data lane unchanged by AP UI repaint above.
 
 ### Milestone summary (PROVEN)
 
@@ -208,7 +261,7 @@ npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
 
 ## Prior stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)
 
-**Prior** — owner-review bridge tooling landed; WF3CB lane now **complete through guarded CSV apply** per **§ Current stopping point (`6bc843a`)** above.
+**Prior** — owner-review bridge tooling landed; WF3CB lane **complete through guarded CSV apply** per **§ Prior stopping point — WF3CB (`6bc843a`)** above.
 
 ### Milestone summary (PROVEN — historical)
 
