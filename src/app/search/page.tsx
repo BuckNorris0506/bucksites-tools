@@ -259,7 +259,7 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className="rounded-lg border border-bp-border bg-bp-trust-soft/50 p-4 text-sm leading-relaxed text-bp-text/90">
           Search can return models, filter numbers, alternates, or pages to compare. Open a
           result to check what BuckParts found, then compare the part number with your old filter
-          or manual. Store buttons only show when BuckParts has enough listing evidence for that page—so not every
+          or manual. Store buttons only show after BuckParts checks the listing against the part number on that page—so not every
           result includes a way to buy.
         </div>
         <SearchForm initialQuery={query} />
