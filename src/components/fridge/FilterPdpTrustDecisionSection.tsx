@@ -32,7 +32,7 @@ export function FilterPdpTrustDecisionSection({
       <div className="mt-4 space-y-4 text-sm leading-relaxed text-bp-text/90">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">
-            What to compare (Q2)
+            What to compare
           </p>
           <ul className="mt-2 list-disc space-y-1.5 pl-5">
             {COMPARE_BEFORE_BUY_CHECKLIST_LINES.map((line) => (
@@ -42,7 +42,7 @@ export function FilterPdpTrustDecisionSection({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">
-            What is uncertain (Q5)
+            What is uncertain
           </p>
           <p className="mt-2">
             {compatibleModelCount === 0
@@ -52,7 +52,7 @@ export function FilterPdpTrustDecisionSection({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">
-            Buying options (Q7)
+            Buying options
           </p>
           <p className="mt-2">
             {buyingOptionsShown ? BUCKPARTS_VERIFIED_LINK_WHEN_SHOWN_NOTE : BUCKPARTS_VERIFIED_LINK_NONE_YET}
@@ -60,7 +60,7 @@ export function FilterPdpTrustDecisionSection({
         </div>
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-bp-muted">
-            What to avoid (Q9)
+            What to avoid
           </p>
           <p className="mt-2">
             Do not order from a BuckParts Verified Link until the part number on the retailer product page
