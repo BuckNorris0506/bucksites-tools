@@ -110,6 +110,8 @@
     "buckparts:supabase-csv-parity-guarded-apply": "tsx scripts/report-supabase-csv-parity-guarded-apply-v1.ts",
     "buckparts:coverage-batch-a-fridge-retailer-links-supabase-parity": "tsx scripts/report-coverage-batch-a-fridge-retailer-links-supabase-parity-v1.ts",
     "buckparts:fridge-safe-link-eptwfu01-retailer-links-supabase-parity": "tsx scripts/report-fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.ts",
+    "buckparts:browser-proof-collector": "tsx scripts/run-browser-proof-collector-v1.ts",
+
 
     "buckparts:coverage-production-sprint-v2": "tsx scripts/report-coverage-production-sprint-v2.ts",
     "buckparts:fridge-safe-link-gswf-apply-readiness": "tsx scripts/report-fridge-safe-link-gswf-apply-readiness-v1.ts",

@@ -1,0 +1,323 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  buildCaptureAttemptPlanV1,
+  buildBrowserProofCollectorDraftFromFactsV1,
+  classifyBrowserProofCandidateV1,
+  enforceCaptureFailureNeverPassV1,
+  extractBrowserProofVisibleFactsV1,
+  inferBrowserProofPageTypeV1,
+  inferBrowserProofSourceClassV1,
+  resolveForbiddenTokensV1,
+  type BrowserProofCaptureAttemptV1,
+} from "./browser-proof-collector-v1";
+
+test("WF3CB official PDP-like fixture => PASS", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/water-filters/WF3CB",
+    finalUrl:
+      "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/water-filters/WF3CB",
+    title: "Frigidaire PureSource 3 Water Filter WF3CB",
+    h1: "PureSource 3 Replacement Water Filter WF3CB",
+    textSample:
+      "OEM Part #WF3CB. PureSource 3. Price $49.99. In Stock. Add to Cart. Add Subscription.",
+    purchaseActions: ["Add to Cart", "Add Subscription"],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  assert.equal(facts.page_type, "product_pdp");
+  assert.equal(facts.source_class, "official_manufacturer_pdp");
+  assert.equal(facts.exact_expected_token_present, true);
+  assert.deepEqual(facts.forbidden_tokens_present, []);
+
+  const result = classifyBrowserProofCandidateV1(facts);
+  assert.equal(result.verdict, "PASS");
+  assert.equal(result.blockers.length, 0);
+});
+
+test("FrigidaireApplianceParts search page-like fixture => FAIL_AS_PROOF", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl: "https://www.frigidaireapplianceparts.com/Search?q=WF3CB",
+    finalUrl: "https://www.frigidaireapplianceparts.com/Search?q=WF3CB",
+    title: "Search results for WF3CB",
+    h1: "Search Results",
+    textSample: "Showing 12 results for WF3CB. Browse related water filters.",
+    purchaseActions: [],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  assert.equal(facts.page_type, "search_page");
+  assert.equal(facts.source_class, "search_or_catalog");
+
+  const result = classifyBrowserProofCandidateV1(facts);
+  assert.equal(result.verdict, "FAIL_AS_PROOF");
+  assert.ok(result.blockers.some((b) => b.includes("page_is_search_not_pdp")));
+});
+
+test("forbidden token present => not PASS", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/999",
+    finalUrl: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/999",
+    title: "Frigidaire Water Filter WF3CB also lists EPTWFU01",
+    h1: "WF3CB / EPTWFU01 Water Filter",
+    textSample: "WF3CB PureSource 3. Also see EPTWFU01 PureSource Ultra II. $59.99 In Stock Add to Cart.",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  assert.ok(facts.forbidden_tokens_present.includes("EPTWFU01"));
+  const result = classifyBrowserProofCandidateV1(facts);
+  assert.notEqual(result.verdict, "PASS");
+  assert.ok(result.verdict === "UNKNOWN" || result.verdict === "FAIL_AS_PROOF");
+});
+
+test("not-found page => FAIL_AS_PROOF", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+    finalUrl: "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+    title: "Page Not Found",
+    h1: "Requested page is not available",
+    textSample: "Sorry, the requested page is not available.",
+    purchaseActions: [],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  assert.equal(facts.page_type, "not_found");
+  const result = classifyBrowserProofCandidateV1(facts);
+  assert.equal(result.verdict, "FAIL_AS_PROOF");
+});
+
+test("EPTWFU01 PartDetail-like fixture => PASS (prior proof shape)", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    finalUrl:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    title: "Frigidaire Water Filter EPTWFU01",
+    h1: "Frigidaire Water Filter EPTWFU01",
+    textSample:
+      "Item #3516084. Frigidaire OEM Part #EPTWFU01. PureSource Ultra II. $59.99. In Stock. Add to Cart.",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "EPTWFU01",
+    forbiddenTokens: ["ULTRAWF", "WF3CB"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  assert.equal(facts.page_type, "product_pdp");
+  assert.equal(facts.source_class, "authorized_parts_distributor_pdp");
+  assert.equal(classifyBrowserProofCandidateV1(facts).verdict, "PASS");
+});
+
+test("draft never authorizes mutation or owner-proof promotion", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    finalUrl:
+      "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084",
+    title: "EPTWFU01",
+    h1: "EPTWFU01",
+    textSample: "EPTWFU01 $59.99 In Stock Add to Cart",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "EPTWFU01",
+    forbiddenTokens: ["ULTRAWF", "WF3CB"],
+    captureSucceeded: true,
+    navigationError: null,
+  });
+
+  const draft = buildBrowserProofCollectorDraftFromFactsV1({
+    input: {
+      slug: "eptwfu01",
+      expected_token: "EPTWFU01",
+      candidate_url: facts.final_url,
+      forbidden_tokens: ["ULTRAWF", "WF3CB"],
+    },
+    facts,
+  });
+
+  assert.equal(draft.mutation_authorized, false);
+  assert.equal(draft.promotes_to_owner_browser_proof_result, false);
+  assert.equal(draft.founder_approval_authorized, false);
+  assert.equal(draft.apply_plan_proposal_justified, false);
+  assert.equal(draft.owner_review_required, true);
+  assert.equal(draft.confusion_family_owner_review_required, true);
+  assert.ok(draft.not_authorized.includes("owner_browser_proof_result_auto_write"));
+});
+
+test("wf3cb default forbidden tokens include EPTWFU01 and ULTRAWF", () => {
+  assert.deepEqual(resolveForbiddenTokensV1("wf3cb").sort(), ["EPTWFU01", "ULTRAWF"]);
+});
+
+test("infer page type and source class for PartDetail vs search", () => {
+  assert.equal(
+    inferBrowserProofPageTypeV1({
+      finalUrl: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/1",
+      title: "WF3CB",
+      textSample: "WF3CB",
+    }),
+    "product_pdp",
+  );
+  assert.equal(
+    inferBrowserProofSourceClassV1({
+      finalUrl: "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/WF3CB/1",
+      pageType: "product_pdp",
+    }),
+    "authorized_parts_distributor_pdp",
+  );
+  assert.equal(
+    inferBrowserProofPageTypeV1({
+      finalUrl: "https://www.frigidaire.com/en/catalogsearch/result/?q=WF3CB",
+      title: "Search",
+      textSample: "results",
+    }),
+    "search_page",
+  );
+});
+
+test("capture failure remains UNKNOWN and records attempt errors", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl:
+      "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    finalUrl: "about:blank",
+    title: "",
+    h1: "",
+    textSample: "",
+    purchaseActions: [],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: false,
+    navigationError:
+      "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/...",
+  });
+
+  const classified = classifyBrowserProofCandidateV1(facts);
+  assert.equal(classified.verdict, "UNKNOWN");
+  assert.notEqual(classified.verdict, "PASS");
+
+  const attempts: BrowserProofCaptureAttemptV1[] = [
+    {
+      attempt_id: "a1_domcontentloaded_collector_ua",
+      wait_until: "domcontentloaded",
+      user_agent_mode: "collector",
+      user_agent: "collector",
+      headed: false,
+      wait_ms: 2000,
+      timeout_ms: 48000,
+      launch_args: [],
+      success: false,
+      error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+      final_url: "about:blank",
+    },
+    {
+      attempt_id: "a4_load_desktop_chrome_ua_disable_http2",
+      wait_until: "load",
+      user_agent_mode: "desktop_chrome",
+      user_agent: "chrome",
+      headed: false,
+      wait_ms: 2000,
+      timeout_ms: 48000,
+      launch_args: ["--disable-http2"],
+      success: false,
+      error: "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR",
+      final_url: "about:blank",
+    },
+  ];
+
+  const draft = buildBrowserProofCollectorDraftFromFactsV1({
+    input: {
+      slug: "wf3cb",
+      expected_token: "WF3CB",
+      candidate_url:
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      forbidden_tokens: ["EPTWFU01", "ULTRAWF"],
+    },
+    facts,
+    captureAttempts: attempts,
+  });
+
+
+  assert.equal(draft.overall_verdict, "UNKNOWN");
+  assert.equal(draft.capture_attempts.length, 2);
+  assert.ok(draft.capture_attempts.every((a) => a.success === false));
+  assert.ok(draft.capture_attempts.every((a) => Boolean(a.error)));
+  assert.ok(
+    draft.unknown_facts.some((f) => f.includes("all capture attempts failed")),
+  );
+  assert.ok(draft.recommended_next_action.includes("a1_domcontentloaded_collector_ua"));
+});
+
+test("no failed capture can produce PASS even if classifier is forced", () => {
+  const facts = extractBrowserProofVisibleFactsV1({
+    candidateUrl: "https://example.com/WF3CB",
+    finalUrl: "about:blank",
+    title: "WF3CB PureSource 3 $49.99 In Stock Add to Cart",
+    h1: "WF3CB",
+    textSample: "WF3CB PureSource 3 $49.99 In Stock Add to Cart",
+    purchaseActions: ["Add to Cart"],
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    captureSucceeded: false,
+    navigationError: "net::ERR_HTTP2_PROTOCOL_ERROR",
+  });
+
+  assert.equal(
+    enforceCaptureFailureNeverPassV1({ facts, verdict: "PASS" }),
+    "UNKNOWN",
+  );
+
+  const draft = buildBrowserProofCollectorDraftFromFactsV1({
+    input: {
+      slug: "wf3cb",
+      expected_token: "WF3CB",
+      candidate_url:
+        "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      forbidden_tokens: ["EPTWFU01", "ULTRAWF"],
+    },
+    facts,
+    captureAttempts: [
+      {
+        attempt_id: "forced_fail",
+
+        wait_until: "load",
+        user_agent_mode: "desktop_chrome",
+        user_agent: "chrome",
+        headed: false,
+        wait_ms: 0,
+        timeout_ms: 1000,
+        launch_args: ["--disable-http2"],
+        success: false,
+        error: "net::ERR_HTTP2_PROTOCOL_ERROR",
+        final_url: "about:blank",
+      },
+    ],
+  });
+  assert.equal(draft.overall_verdict, "UNKNOWN");
+  assert.notEqual(draft.candidates[0]?.verdict, "PASS");
+});
+
+test("capture attempt plan includes load, networkidle, desktop UA, and http2 mitigation", () => {
+  const plan = buildCaptureAttemptPlanV1({ wait_ms: 3000, timeout_ms: 60000 });
+  assert.ok(plan.some((p) => p.wait_until === "domcontentloaded"));
+  assert.ok(plan.some((p) => p.wait_until === "load"));
+  assert.ok(plan.some((p) => p.wait_until === "networkidle"));
+  assert.ok(plan.some((p) => p.user_agent_mode === "desktop_chrome"));
+  assert.ok(plan.some((p) => p.launch_args.includes("--disable-http2")));
+  assert.ok(plan.every((p) => p.wait_ms === 3000));
+  assert.ok(plan.every((p) => p.timeout_ms === 60000));
+});
