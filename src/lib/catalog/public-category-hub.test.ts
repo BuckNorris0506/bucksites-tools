@@ -42,7 +42,7 @@ test("unproven wedges show honest browse-preview status", () => {
   const cards = buildPublicCategoryHubCards().filter((c) => !c.isLive);
   assert.equal(cards.length, 4);
   for (const card of cards) {
-    assert.equal(card.statusLabel, "Being verified");
+    assert.equal(card.statusLabel, "Browse preview");
     assert.match(card.statusNote ?? "", /Browse preview/i);
     assert.match(card.statusNote ?? "", /part-page checks pass/i);
   }

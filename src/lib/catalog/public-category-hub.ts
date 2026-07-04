@@ -33,7 +33,7 @@ const HUB_CARD_STATIC: Record<CatalogBrowseCategory, HubCardStatic> = {
     href: "/air-purifier",
     title: "Air purifier filters",
     description:
-      "Air purifier filter lookup with truth-gated buying options where listing checks pass—not every filter is verified.",
+      "Air purifier filter lookup—buying options appear only where listing checks pass, not on every filter.",
   },
   whole_house_water: {
     href: "/whole-house-water",
@@ -79,7 +79,7 @@ export function buildPublicCategoryHubCards(): PublicCategoryHubCard[] {
       verticalSlug,
       ...staticCard,
       isLive,
-      statusLabel: isLive ? null : "Being verified",
+      statusLabel: isLive ? null : "Browse preview",
       statusNote: isLive
         ? null
         : "Browse preview. Buying options appear only after part-page checks pass.",

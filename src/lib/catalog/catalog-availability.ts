@@ -89,7 +89,7 @@ const CATALOG_CARD_DEFS_ALL: CatalogCardDef[] = [
     href: "/air-purifier",
     title: "Air purifier filters",
     description:
-      "Air purifier filter lookup with truth-gated buying options where listing checks pass—not every filter is verified.",
+      "Air purifier filter lookup—buying options appear only where listing checks pass, not on every filter.",
   },
   {
     category: "vacuum",

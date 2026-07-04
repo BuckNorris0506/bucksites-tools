@@ -41,7 +41,7 @@ export default async function AirPurifierHomePage() {
         </h1>
         <p className="max-w-2xl text-pretty text-lg leading-relaxed text-bp-muted">
           Search by the air purifier model number or the filter number printed on the part you’re
-          replacing. BuckParts is opening air purifier filter lookup with truth-gated buying options—buying options appear only where listing checks pass, not on every filter.
+          replacing. BuckParts is opening air purifier filter lookup—buying options appear only where listing checks pass, not on every filter.
         </p>
         <ul className="max-w-2xl list-inside list-disc space-y-1 text-sm text-bp-muted">
           <li>Use the model number on your air purifier or the filter number on the old filter.</li>

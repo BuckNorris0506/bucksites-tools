@@ -181,7 +181,7 @@ describe("public merchant-priority copy guard", () => {
     assert.ok(/Air purifier filter replacement/i.test(src));
     assert.ok(/Find the right air purifier filter replacement/i.test(src));
     assert.ok(/air purifier model number or the filter number/i.test(src));
-    assert.ok(/truth-gated buying options/i.test(src));
+    assert.ok(/listing checks pass/i.test(src));
     assert.ok(/not on every filter/i.test(src));
     assert.ok(/If we have checked a retailer product page for that filter/i.test(src));
     assert.ok(/If no buying option appears yet/i.test(src));
@@ -201,7 +201,8 @@ describe("public merchant-priority copy guard", () => {
           /model or part number on your unit/i,
           /filter number printed on the old part/i,
           /Buying options appear only when the\s+destination looks safe enough to show/i,
-          /Being verified/i,
+          /checks the listing against the part number/i,
+          /Browse preview/i,
         ],
       },
       {
