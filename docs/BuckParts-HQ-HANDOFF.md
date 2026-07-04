@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `bf6e6eb`):** **Browser Proof Collector owner-review bridge** landed — see **§ Current stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)** below. Coverage Batch B remains **partial** (`eptwfu01` live; `wf3cb` has collector batch PASS + bridge packet in stash only; `wfcb` still needs proof). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
+> **Current operational stopping point (repo HEAD / `origin/main` / `6bc843a`):** **WF3CB guarded CSV apply complete** — see **§ Current stopping point — WF3CB guarded verified link (`6bc843a`)** below. Frigidaire Batch B is **partial** (`eptwfu01` + `wf3cb` CSV-proven; `wfcb` still needs proof). Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
 
 ## Execution Stack
 
@@ -53,28 +53,170 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)
+## Current stopping point — WF3CB guarded verified link (`6bc843a`)
 
-**Read this section first** for owner-browser-proof capture / Frigidaire Batch B proof refresh.
+**Read this section first** for Frigidaire Batch B / manufacturer-rescue guarded apply state.
 
 ### Milestone summary (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`bf6e6eb`** — Add browser proof collector owner review bridge |
-| Package script | `npm run buckparts:browser-proof-collector-owner-review-bridge` |
-| Contract | **`browser_proof_collector_owner_review_packet_v1`** |
+| Repo HEAD / `origin/main` | **`6bc843a`** — Apply wf3cb guarded verified link |
+| Working tree | **Clean** (Jared terminal-proven after cleanup; re-validate with `git status --short`) |
+| Build | **PASS** (Jared terminal-proven before commit; re-validated this session) |
+| Deploy preflight | **PASS** (`buckparts:deploy:preflight`; re-validated this session) |
+| Supabase sync in this step | **NOT performed** — founder approval row explicitly scopes CSV-only; census shows `csv_safe_path_missing_from_supabase=true` for `wf3cb` |
 
-**Commit chain:**
+**Commit chain (WF3CB lane):**
 
 | SHA | Role |
 |-----|------|
-| **`bf6e6eb`** | Owner-review bridge (collector PASS draft → intermediate review packet) |
-| **`3183130`** | Document browser proof collector batch mode closeout |
-| **`07044bc`** | Batch candidate mode |
-| **`16a6d4e`** | Document browser proof collector closeout |
-| **`c21cfd5`** | Add browser proof collector (single-URL base) |
+| **`6bc843a`** | Guarded CSV apply — Frigidaire.com official PDP primary for `wf3cb` |
+| **`4cb4327`** | Dry-run execution plan recorded |
+| **`ce4f1f6`** | Founder approval (`APPROVE WF3CB GUARDED APPLY`) |
+| **`bb44944`** | Activated collector proof + committed evidence |
+| **`57635c0`** | Document browser proof collector review bridge |
+| **`bf6e6eb`** | Owner-review bridge tooling |
+
+**Committed WF3CB artifacts (PROVEN):**
+
+| Path | Role |
+|------|------|
+| `data/retailer_links.csv` | Primary row: Frigidaire official PDP, `direct_buyable`, `oem-parts-catalog` |
+| `data/owner-decisions/fridge-safe-link-wf3cb-owner-approval-v1.json` | Founder approval (`owner_mutation_approved`; CSV-only scope) |
+| `data/evidence/frigidaire-wf3cb-official-owner-browser-proof-evidence.2026-07-04.json` | Committed evidence; confusion-family **CLEARED** |
+| `data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json` | Activated owner browser proof |
+| `data/fridge/batch-production/apply-execution-plans/manufacturer-rescue-guarded-apply-execution-plan-wf3cb-v1-e433161a2551.json` | Dry-run execution plan |
+| `data/fridge/batch-production/closeout/manufacturer-rescue-guarded-apply-bridge-closeout-wf3cb-v1.json` | Apply closeout (`bridge_status=APPLIED`) |
+
+### End-to-end pipeline (PROVEN)
+
+```
+browser proof collector (batch, headed)
+  → owner review bridge packet
+  → activated proof + evidence (owner acceptance)
+  → founder approval
+  → dry-run execution plan
+  → guarded CSV apply (--write-csv)
+  → census proof
+```
+
+**Primary URL (PROVEN):** `https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB`
+
+### Census proof (PROVEN — this session `buckparts:all-product-safe-buyer-path-census`)
+
+| Metric | Value |
+|--------|-------|
+| `wf3cb` `page_classification` | **SAFE_BUYER_PATH_PROVEN** |
+| `wf3cb` `public_trust_current` | **ALLOW** |
+| `refrigerator_water` safe buyer paths | **20 / 57** |
+| Site-wide `SAFE_BUYER_PATH_PROVEN` | **54** |
+| Closeout delta (artifact) | 53 → 54 (`safe_buyer_path_proven_count_delta=1`) |
+
+Classification transition (closeout artifact): `SAFE_BUYER_PATH_SUPPRESSED_TRUST` → `SAFE_BUYER_PATH_PROVEN`.
+
+### Known issue (terminal-proven — Jared)
+
+First guarded `--write-csv` attempt **blocked incorrectly** because the on-disk **readiness gate artifact was stale** relative to post-approval state. Mitigation: **rerun readiness gate**, then apply **without restoring** the refreshed readiness artifact to the committed tree. Mark as **architecture improvement candidate** — tighten readiness artifact freshness coupling in guarded-apply bridge preflight.
+
+### Next strategic question (founder decision — not repo-authorized)
+
+Choose one sequencing path:
+
+1. **Mature collector → bridge → apply into batch mode** (repeatable multi-slug factory)
+2. **Proceed to `wfcb`** (next Frigidaire Batch B slug)
+3. **Continue Frigidaire Batch B** beyond `wfcb`
+4. **Fix readiness/write coupling first** (stale-artifact false block)
+
+Scoped **Supabase `retailer_links` sync** for `wf3cb` remains a **separate authorized step** (Batch A / `eptwfu01` parity pattern). CSV-only is **not** live on `/filter/wf3cb` until that sync runs.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+npm run buckparts:deploy:preflight
+npm run buckparts:all-product-safe-buyer-path-census
+npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
+```
+
+---
+
+## Architecture review — WF3CB lane (`6bc843a`)
+
+**Verdict:** Architecture **holds**. Guarded apply succeeded end-to-end; fail-closed gates worked (including blocking the first stale-readiness attempt). **Improvement needed:** readiness artifact staleness vs guarded-apply bridge preflight coupling (see stopping point above).
+
+### Command Center lobe / synapse reporting
+
+| Lobe / synapse | CC reports? | Evidence |
+|----------------|-------------|----------|
+| Browser proof collector v1 | **UNKNOWN** | `scripts/run-browser-proof-collector-v1.ts`, `scripts/lib/browser-proof-collector-v1.ts` — no `command_center_v2` or execution-ledger hook |
+| Owner review bridge v1 | **UNKNOWN** | `scripts/run-browser-proof-collector-owner-review-bridge-v1.ts`, `scripts/lib/browser-proof-collector-owner-review-bridge-v1.ts` — draft packets only; no CC lane |
+| Owner decisions | **PROVEN** | `data/owner-decisions/fridge-safe-link-wf3cb-owner-approval-v1.json`; CC lanes `batch_production_owner_decisions_lane_v1`, `founder_decision_registry_summary_v1`, `owner_decision_queue_v1` in `scripts/report-buckparts-command-center.ts` |
+| Readiness gate | **PROVEN** | `scripts/report-manufacturer-safe-link-rescue-readiness-gate-v1.ts` (ledger refresh); `scripts/lib/manufacturer-safe-link-rescue-readiness-gate-v1.ts` (`.command_center_v2.manufacturer_safe_link_rescue_runner_v1.readiness_gate_summary`); CC `manufacturer_safe_link_rescue_director_v1` / `manufacturer_safe_link_rescue_runner_v1` |
+| Guarded apply bridge | **PARTIAL** | `scripts/lib/manufacturer-rescue-guarded-apply-bridge-v1.ts` refreshes `data/command-center/execution-ledger-v1.json` and writes closeout; **no dedicated `command_center_v2` lane** for bridge status |
+| Universal guarded CSV executor | **PARTIAL** | `scripts/lib/universal-batch-lifecycle-guarded-csv-apply-executor-v1.ts` defines `.command_center_v2.universal_batch_lifecycle_guarded_csv_apply_executor_v1`; surfaced indirectly via `universal_batch_lifecycle_*` truth table in `scripts/report-buckparts-command-center.ts` — not a top-level CC digest neuron |
+| Safe buyer path census | **PROVEN** | `scripts/lib/all-product-safe-buyer-path-census-v1.ts` → `.command_center_v2.all_product_safe_buyer_path_census_v1`; wired in `scripts/report-buckparts-command-center.ts` |
+| Deploy preflight / convergence gate | **PARTIAL** | `npm run buckparts:deploy:preflight` = MCP audit + `scripts/check-repo-runtime-convergence-gate-v1.ts` (`repo_runtime_convergence_gate_v1`, wedge=`air_purifier`); ledger refresh on convergence check; deploy monitor lanes `deploy_live_site_monitor_v1` / `deploy_publish_queue_v1` in CC — **preflight bundle itself is not a CC lobe** |
+
+**Exact improvements recommended:**
+
+1. **Readiness freshness binding** — guarded apply bridge should reject or auto-refresh stale `manufacturer-safe-link-rescue-readiness-gate-v1.json` when founder approval timestamp is newer than readiness `generated_at`, or hash-bind readiness to approval row.
+2. **Collector + bridge CC lanes** — add read-only `command_center_v2.browser_proof_collector_v1` and `browser_proof_collector_owner_review_bridge_v1` indexing draft artifact counts / pending acceptance (no false READY_FOR_APPLY).
+3. **Guarded apply bridge CC lane** — index latest per-slug closeout (`manufacturer-rescue-guarded-apply-bridge-closeout-*.json`) into CC v2 for operator visibility without parsing closeout manually.
+
+---
+
+## Constitution review — WF3CB flow (`6bc843a`)
+
+**Verdict:** **No amendment required.** WF3CB flow aligns with the Constitution as written.
+
+| Constitutional principle | WF3CB adherence |
+|--------------------------|-----------------|
+| §4 Trust Hierarchy — fit truth before monetization | Official manufacturer PDP with exact **WF3CB** token; Lowe's/Home Depot failures preserved, not promoted |
+| §5 Truth Contract — evidence before claims | Committed evidence + owner browser proof before CSV apply |
+| §6 Uncertainty — FULL or UNKNOWN | Search-placeholder primary replaced only after PASS proof; confusion-family cleared explicitly |
+| §7 Evidence Standards — discovery ≠ closure | Collector → bridge packet → owner activation → founder approval → apply (multi-gate) |
+| §11–12 Automation — validated gates publish authority | Bridge does not activate proof; readiness + founder approval required; guarded executor dry-run before `--write-csv` |
+| §13 Founder Authority | `data/owner-decisions/fridge-safe-link-wf3cb-owner-approval-v1.json` records scoped approval; does not claim Supabase sync |
+
+**Optional documentation note (not an amendment):** Appendix B could eventually list `browser_proof_collector_v1` + `browser_proof_collector_owner_review_packet_v1` as subordinate workflow specs — **UNKNOWN whether that adds value**; current Constitution already covers the behavior without naming those contracts.
+
+---
+
+## Vision review — Boardy.ai status update (`6bc843a`)
+
+**Use the block below verbatim or lightly edited for Boardy.ai.**
+
+---
+
+**BuckParts — WF3CB lane closed (repo `6bc843a`)**
+
+**What we built:** End-to-end manufacturer-rescue pipeline for Frigidaire WF3CB (PureSource 3): headed browser proof → owner review → committed evidence → founder approval → guarded CSV apply. Primary buying path is now the official Frigidaire.com PDP with `direct_buyable` browser truth in `retailer_links.csv`.
+
+**Why it matters:** WF3CB moves from suppressed search-placeholder to a **proven safe buyer path** — homeowners get an official manufacturer link backed by committed evidence, not a keyword search hop.
+
+**Risk avoided:** Wrong-family promotion (EPTWFU01 / ULTRAWF), retailer PDPs that failed proof (Lowe's, Home Depot), and unguarded CSV mutation. Fail-closed gates blocked the first apply attempt when readiness artifact was stale — proving the safety layer works, but exposing a coupling bug to fix.
+
+**Proof metrics (census):** `wf3cb` = SAFE_BUYER_PATH_PROVEN, public_trust ALLOW; refrigerator_water **20/57** safe paths; site-wide **54** SAFE_BUYER_PATH_PROVEN.
+
+**Architecture health:** Core architecture holds. Gaps: browser proof collector + owner-review bridge not yet indexed in Command Center; readiness/apply coupling needs hardening.
+
+**Next decision needed:** Batch-mode maturity vs proceed to WFCB vs continue Frigidaire Batch B vs fix readiness/write coupling first. Separate step still required: scoped Supabase `retailer_links` sync for `wf3cb` before live `/filter/wf3cb` reflects the new primary.
+
+---
+
+## Prior stopping point — Browser Proof Collector owner-review bridge (`bf6e6eb`)
+
+**Prior** — owner-review bridge tooling landed; WF3CB lane now **complete through guarded CSV apply** per **§ Current stopping point (`6bc843a`)** above.
+
+### Milestone summary (PROVEN — historical)
+
+| Item | Value |
+|------|-------|
+| Repo HEAD (at bridge land) | **`bf6e6eb`** — Add browser proof collector owner review bridge |
+| Package script | `npm run buckparts:browser-proof-collector-owner-review-bridge` |
+| Contract | **`browser_proof_collector_owner_review_packet_v1`** |
 
 **Files (`bf6e6eb`):**
 
@@ -88,66 +230,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 ### Bridge behavior (PROVEN)
 
 - **Input:** collector draft JSON path (`--draft`)
-- Reads **best PASS** candidate
-- Writes **intermediate owner-review packet only**
+- Writes **intermediate owner-review packet only** — does **not** activate proof or evidence
 - **Output path pattern:** `data/fridge/batch-production/drafts/browser-proof-collector/{slug}/browser-proof-collector-owner-review-packet-{slug}-{sha12}-{stamp}.json`
-- Embeds **draft-only previews** for owner-browser-proof-result and evidence (`activation_status=DRAFT_ONLY_NOT_ACTIVATED`)
-- Does **not** write live `fridge-safe-link-owner-browser-proof-result-*.json`
-- Does **not** write `data/evidence/` files
-- Flags: `owner_acceptance_required=true`, `owner_acceptance_status=PENDING_OWNER_ACCEPTANCE`, `activates_owner_browser_proof_result=false`, `activates_evidence_json=false`, `founder_approval_authorized=false`, `mutation_authorized=false`
-
-### Live WF3CB bridge proof (PROVEN)
-
-Used parked WF3CB batch PASS collector draft (`park browser proof collector batch wf3cb pass 20260704-095215`).
-
-| Field | Value |
-|-------|-------|
-| Bridge write | **Succeeded** (owner-review packet) |
-| Best candidate | Official Frigidaire PDP (`official_manufacturer_pdp`) |
-| Exact token | **WF3CB** visible |
-| Forbidden tokens | No **EPTWFU01**, no **ULTRAWF** |
-| Screenshot / capture attempts | Carried forward from collector draft |
-| Non-best failures | Lowe’s + Home Depot preserved as failed/non-best candidates |
-
-**Generated bridge packet was not committed.** Parked in stash:
-
-`park browser proof collector owner review packet wf3cb 20260704-101250`
-
-### Operating rule (PROVEN — do not weaken)
-
-Pipeline:
-
-1. **Collector batch PASS** (headed) → draft only
-2. **Bridge owner-review packet** → still draft only; owner acceptance required
-3. **Owner acceptance** → separately author activated `owner-browser-proof-result` + evidence through existing gates
-4. Then classification clearance / founder approval / apply plan / CSV apply / scoped Supabase sync as authorized
-
-- Bridge **does not make anything apply-ready**.
-- Collector PASS and bridge packet are **not** readiness-consumed paths.
-- Confusion-family slugs still require owner review.
-
-### Next production step
-
-1. Owner accept WF3CB bridge packet (stash), then author activated owner-browser-proof-result + evidence for `wf3cb`.
-2. Run batch collector + bridge for **`wfcb`**.
-3. Founder approval → guarded CSV apply → scoped Supabase `retailer_links` sync (do not assume CSV-only is live).
-
-```bash
-# Bridge: collector draft → owner-review packet (draft only)
-npm run buckparts:browser-proof-collector-owner-review-bridge -- \
-  --draft data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/<batch-draft>.json
-
-git rev-parse HEAD
-git status --short
-npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
-npm run buckparts:deploy:preflight
-```
 
 ---
 
 ## Prior tooling — Browser Proof Collector batch mode (`07044bc`)
 
-**Prior** — batch candidate mode. Current proof pipeline uses **§ owner-review bridge (`bf6e6eb`)** above.
+**Prior** — batch candidate mode. Current proof pipeline completed through **§ WF3CB guarded apply (`6bc843a`)** above.
 
 ### Batch mode behavior (PROVEN)
 
