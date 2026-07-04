@@ -22,9 +22,12 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   };
 }
 
+const searchResultCardClass =
+  "bp-card-interactive block rounded-lg border border-bp-border bg-bp-surface p-4 transition-colors hover:border-bp-muted/50 hover:bg-bp-trust-soft/40";
+
 function ResultBadge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex w-fit rounded-md bg-neutral-100 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300">
+    <span className="inline-flex w-fit rounded-md border border-bp-border bg-bp-trust-soft/40 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-bp-trust">
       {children}
     </span>
   );
@@ -49,30 +52,30 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
   const filters = hits.filter((h) => h.kind === "filter");
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 text-bp-text">
       <div className="space-y-4">
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          <Link href="/air-purifier" className="hover:text-neutral-800 dark:hover:text-neutral-200">
+        <p className="text-sm text-bp-muted">
+          <Link href="/air-purifier" className="transition-colors hover:text-bp-text">
             ← Air purifier home
           </Link>
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl">
+        <h1 className="text-2xl font-semibold tracking-tight text-bp-text sm:text-3xl">
           Search air purifier filters
         </h1>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm text-bp-muted">
           Results show units and replacement filters separately.
         </p>
         <SearchForm initialQuery={query} actionPath="/air-purifier/search" />
       </div>
 
       {error && (
-        <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+        <p className="rounded-md border border-bp-block/25 bg-bp-block-soft p-3 text-sm text-bp-block">
           {error}
         </p>
       )}
 
       {query.length > 0 && query.length < 2 && (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm text-bp-muted">
           Type at least two characters to search.
         </p>
       )}
@@ -81,39 +84,36 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
         <div className="space-y-10">
           {models.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="text-sm font-semibold text-bp-text">
                 Air purifier models
-                <span className="ml-2 font-normal text-neutral-500 dark:text-neutral-400">
+                <span className="ml-2 font-normal text-bp-muted">
                   ({models.length})
                 </span>
               </h2>
               <ul className="space-y-2">
                 {models.map((hit) => (
                   <li key={hit.slug}>
-                    <Link
-                      href={`/air-purifier/model/${hit.slug}`}
-                      className="block rounded-lg border border-neutral-200 bg-white p-4 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80"
-                    >
+                    <Link href={`/air-purifier/model/${hit.slug}`} className={searchResultCardClass}>
                       <ResultBadge>Unit model</ResultBadge>
-                      <p className="mt-2 font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                      <p className="bp-code mt-2 text-base font-semibold text-bp-text">
                         {hit.model_number}
                       </p>
-                      <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                        <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                      <p className="mt-1 text-sm text-bp-muted">
+                        <span className="font-medium text-bp-text/90">
                           Brand:
                         </span>{" "}
                         {hit.brand_name}
                       </p>
                       {hit.compatible_filters && hit.compatible_filters.length > 0 && (
-                        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                          <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                        <p className="mt-2 text-sm text-bp-muted">
+                          <span className="font-medium text-bp-text/90">
                             Compatible filter
                             {hit.compatible_filters.length > 1 ? "s" : ""}:
                           </span>{" "}
                           {hit.compatible_filters.map((f, i) => (
                             <span key={f.slug}>
                               {i > 0 && ", "}
-                              <span className="font-mono text-neutral-800 dark:text-neutral-200">
+                              <span className="bp-code text-sm font-medium text-bp-text">
                                 {f.oem_part_number}
                               </span>
                             </span>
@@ -121,7 +121,7 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
                         </p>
                       )}
                       {hit.via === "alias" && hit.matchedAlias && (
-                        <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2 text-xs text-bp-muted">
                           Matched alternate: {hit.matchedAlias}
                         </p>
                       )}
@@ -134,39 +134,36 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
 
           {filters.length > 0 && (
             <section className="space-y-3">
-              <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              <h2 className="text-sm font-semibold text-bp-text">
                 Replacement filters
-                <span className="ml-2 font-normal text-neutral-500 dark:text-neutral-400">
+                <span className="ml-2 font-normal text-bp-muted">
                   ({filters.length})
                 </span>
               </h2>
               <ul className="space-y-2">
                 {filters.map((hit) => (
                   <li key={hit.slug}>
-                    <Link
-                      href={`/air-purifier/filter/${hit.slug}`}
-                      className="block rounded-lg border border-neutral-200 bg-white p-4 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/80"
-                    >
+                    <Link href={`/air-purifier/filter/${hit.slug}`} className={searchResultCardClass}>
                       <ResultBadge>Filter number</ResultBadge>
-                      <p className="mt-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                      <p className="mt-2 text-xs font-medium uppercase tracking-wide text-bp-muted">
                         Part number
                       </p>
-                      <p className="font-mono text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                      <p className="bp-code text-base font-semibold text-bp-text">
                         {hit.oem_part_number}
                       </p>
                       {hit.name && (
-                        <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                        <p className="mt-1 text-sm text-bp-muted">
                           {hit.name}
                         </p>
                       )}
-                      <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-                        <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                      <p className="mt-2 text-sm text-bp-muted">
+                        <span className="font-medium text-bp-text/90">
                           Brand:
                         </span>{" "}
                         {hit.brand_name}
                       </p>
                       {hit.via === "alias" && hit.matchedAlias && (
-                        <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
+                        <p className="mt-2 text-xs text-bp-muted">
                           Matched alternate: {hit.matchedAlias}
                         </p>
                       )}
@@ -178,7 +175,7 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
           )}
 
           {models.length === 0 && filters.length === 0 && (
-            <p className="text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+            <p className="text-sm leading-relaxed text-bp-muted">
               No matches for “{query}”. Try the model number on the unit or a
               filter number from your current cartridge.
             </p>
