@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / Netlify `aa82ae7`):** Coverage Batch A **closed** (live Verified Links for `edr3rxd1` + `ultrawf`) — see **§ Current stopping point — Coverage Batch A closeout (`aa82ae7`)** below. Security / RLS / service-role baseline remains in force (historical section at `e19ebbd`). Prior owner-browser-proof stopping point (`56b4167`) is **historical only**.
+> **Current operational stopping point (repo HEAD / `origin/main` / `d5cbe78`):** Coverage Batch B **partial** — `eptwfu01` **live closed** (Verified Link on `/filter/eptwfu01`) — see **§ Current stopping point — eptwfu01 live closeout (`d5cbe78`)** below. Remaining Batch B: `wf3cb` + `wfcb` blocked on official/authorized proof. Coverage Batch A (`aa82ae7`) and security baseline (`e19ebbd`) are **historical**.
 
 ## Execution Stack
 
@@ -53,7 +53,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — Coverage Batch A closeout (`aa82ae7`)
+## Current stopping point — eptwfu01 live closeout (`d5cbe78`)
 
 **Read this section first** for refrigerator coverage / Verified Link / manufacturer-rescue work.
 
@@ -62,10 +62,82 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`d5cbe78`** — Apply eptwfu01 verified Frigidaire buyer path |
+| Lane | Coverage Batch B — **`eptwfu01` only** (live closed) |
+| Site `SAFE_BUYER_PATH_PROVEN` | **52 → 53** (+1) — repo census in apply closeout |
+| Fridge `SAFE_BUYER_PATH_PROVEN` | **18 → 19** (+1) — this lane |
+
+**Commit:**
+
+| SHA | Role |
+|-----|------|
+| **`d5cbe78`** | CSV manufacturer-rescue apply + scoped Supabase `retailer_links` sync for `eptwfu01` (live PDP parity) |
+
+### Live route (Jared screenshots)
+
+| Route | Purpose |
+|-------|---------|
+| **`/filter/[slug]`** | Filter PDP (Verified Link lives here) |
+| **`/fridge/[slug]`** | Refrigerator **model** route (not the filter PDP) |
+
+**Live filter PDP validated:**
+
+- https://buckparts.com/filter/eptwfu01 — BuckParts Verified Link button labeled **Frigidaire** → `https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/EPTWFU01/3516084`
+- Destination shows **EPTWFU01**, OEM Part #**EPTWFU01**, **PureSource Ultra II**, **In Stock**, **Add to Cart**
+
+### Apply chain (PROVEN)
+
+1. **CSV apply** — manufacturer-rescue guarded apply for `eptwfu01` only (`write_csv_applied=true`; classification `SAFE_BUYER_PATH_SUPPRESSED_TRUST` → `SAFE_BUYER_PATH_PROVEN`).
+2. **Scoped Supabase sync** — `eptwfu01` only, **`public.retailer_links` only** (no brands/filters/models/aliases/compatibility_mappings; no full seed import).
+3. Post-write parity: `all_in_parity=true`, `row_count_planned=0`.
+
+**Artifacts:**
+
+| Artifact | Path |
+|----------|------|
+| CSV apply closeout | `data/fridge/batch-production/closeout/manufacturer-rescue-guarded-apply-bridge-closeout-eptwfu01-v1.json` |
+| Supabase parity closeout | `data/fridge/batch-production/closeout/fridge-safe-link-eptwfu01-retailer-links-supabase-parity-closeout-v1.json` |
+| Post-write parity report | `data/fridge/batch-production/drafts/fridge-safe-link-eptwfu01-retailer-links-supabase-parity-v1.json` |
+| Owner approval | `data/owner-decisions/fridge-safe-link-eptwfu01-owner-approval-v1.json` |
+| Apply plan | `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json` |
+| Evidence | `data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json` |
+
+**Dry-run (read-only):** `npm run buckparts:fridge-safe-link-eptwfu01-retailer-links-supabase-parity`
+
+### Remaining Batch B
+
+| Slug | Status |
+|------|--------|
+| **`eptwfu01`** | **Live closed** (`d5cbe78`) |
+| **`wf3cb`** | **Blocked** — needs official/authorized owner browser proof (Lowe’s-only proof is not official-pass class) |
+| **`wfcb`** | **Blocked** — needs official/authorized owner browser proof (dealer PDP is not official-pass class) |
+
+**Next work item:** capture official/authorized proof for **`wf3cb`**, then **`wfcb`** (Frigidaire.com accessory or FrigidaireApplianceParts PartDetail — do not invent PartDetail IDs). Then evidence → classification clearance → apply plan → founder approval → CSV apply → **scoped Supabase sync**.
+
+**Do not** treat CSV-only apply as live — `/filter/[slug]` reads Supabase `public.retailer_links`.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run buckparts:fridge-safe-link-eptwfu01-retailer-links-supabase-parity
+npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
+npm run buckparts:deploy:preflight
+```
+
+---
+
+## Historical stopping point — Coverage Batch A closeout (`aa82ae7`)
+
+**Historical** — Batch A live Verified Links for `edr3rxd1` + `ultrawf`. Current coverage work uses **§ eptwfu01 live closeout (`d5cbe78`)** above.
+
+### Milestone summary (PROVEN — live browser validated by Jared)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
 | Repo HEAD / `origin/main` | **`aa82ae7`** — Sync Coverage Batch A live retailer links and clean customer copy |
-| Netlify production | **`aa82ae7`** published |
-| Working tree | Clean at closeout (`git status` empty vs `origin/main`) |
-| Site `SAFE_BUYER_PATH_PROVEN` | **31 → 33** (+2) |
+| Netlify production | **`aa82ae7`** published (superseded for coverage by `d5cbe78`) |
+| Site `SAFE_BUYER_PATH_PROVEN` | **31 → 33** (+2) — Jared live at Batch A closeout |
 | Fridge `SAFE_BUYER_PATH_PROVEN` | **16 → 18** (+2) |
 
 **Commits (newest first):**
@@ -83,12 +155,10 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **`/filter/[slug]`** | Filter PDP (Verified Link lives here) |
 | **`/fridge/[slug]`** | Refrigerator **model** route (not the filter PDP) |
 
-**Live filter PDPs validated:**
+**Live filter PDPs validated (Batch A):**
 
 - https://buckparts.com/filter/edr3rxd1 — BuckParts Verified Link → Whirlpool official Filter 3 page (`EDR3RXD1` Pack Of 2 / `EDR3RXV2P` caveat accepted in founder approval)
 - https://buckparts.com/filter/ultrawf — BuckParts Verified Link → FrigidaireApplianceParts `ULTRAWF/1534529`
-
-**Customer copy on those pages (live):** improved single-family ambiguity warning; “What we checked for this filter” section (no raw repo paths / no “repo evidence” leak).
 
 ### Why Batch A needed scoped Supabase sync (PROVEN)
 
@@ -115,33 +185,11 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 - **Fridge CSV↔Supabase parity is not covered** by current preflight — Batch A proved a silent fridge runtime gap after CSV-only apply.
 - Future fridge Verified Link batches must include **scoped Supabase parity dry-run** (and write when authorized) before treating live PDPs as done.
 
-### Next highest-leverage coverage batch (repo directors only — not started)
-
-From committed manufacturer-rescue readiness work queue + owner-browser-proof-refresh director (Session 2):
-
-| Item | Value |
-|------|-------|
-| **Batch B (recommended)** | Frigidaire PASS-proof refresh cluster: **`eptwfu01`**, **`wf3cb`**, **`wfcb`** |
-| **Expected delta** | **+3** `SAFE_BUYER_PATH_PROVEN` (site **33→36**, fridge **18→21**) if refresh → evidence → approval → CSV apply → **scoped Supabase sync** all succeed |
-| **Current readiness** | All three **`PENDING_BROWSER_REFRESH`** (stale owner-browser-proof `checked_at`; confusion-family clearance + apply plans + founder approvals still required) |
-| **Control-plane sources** | `data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-work-queue-v1.md` (top pending: `eptwfu01`); `data/fridge/batch-production/drafts/owner-browser-proof-refresh-director-v1.md` (`session_2_frigidaire_pass_proof_cluster`); director next-actions ranks frigidaire first |
-| **Blockers** | Fresh owner browser proof; Frigidaire confusion-family owner clearance; apply-plan factory; founder approvals; guarded CSV apply; **scoped Supabase retailer_links sync** (do not assume CSV-only is live) |
-
-**Do not start browser proof, approvals, or mutation from this closeout alone.**
-
-```bash
-git rev-parse HEAD
-git status --short
-npm run buckparts:coverage-batch-a-fridge-retailer-links-supabase-parity
-npm run buckparts:manufacturer-safe-link-rescue-readiness-gate
-npm run buckparts:deploy:preflight
-```
-
 ---
 
 ## Historical stopping point — Security / RLS / service-role gating (`e19ebbd`)
 
-**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Coverage work uses **§ Coverage Batch A closeout (`aa82ae7`)** above.
+**Read this section** for HQ / Cursor / HyperAgent chat transfer when security, Supabase, MCP, deploy preflight, or service-role gating is in scope. Coverage work uses **§ eptwfu01 live closeout (`d5cbe78`)** above.
 
 Prior foundation stack, owner browser proof refresh, AP correctness, and Customer Reality sections below remain **PROVEN historical context** — they do **not** supersede the Batch A closeout for refrigerator Verified Link work unless a fresh Command Center run proves otherwise.
 
