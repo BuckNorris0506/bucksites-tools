@@ -18,6 +18,15 @@ import type { ReactNode } from "react";
 import { BUCKPARTS_VERIFIED_LINK_PRIMARY_CTA_SR_PREFIX } from "@/lib/copy/buckparts-verified-link-copy";
 import type { ApGoAttributionV1 } from "@/lib/retailers/ap-go-attribution-v1";
 
+const sectionLabelClass =
+  "text-xs font-medium uppercase tracking-wide text-bp-muted";
+
+const detailLinkClass =
+  "font-medium text-bp-trust underline decoration-bp-trust/30 underline-offset-2 hover:decoration-bp-trust/55";
+
+const alternateRowClass =
+  "flex flex-col gap-0.5 px-3 py-3 text-sm transition-colors hover:bg-bp-trust-soft/35";
+
 export type VerticalModelFilterRow = {
   id: string;
   slug: string;
@@ -87,52 +96,50 @@ export function VerticalModelPageContent({
     <article className="space-y-10">
       {wayfinding}
       {utilityIntro ? (
-        <p className="max-w-2xl text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+        <p className="max-w-2xl text-sm leading-relaxed text-bp-muted">
           {utilityIntro}
         </p>
       ) : null}
 
-      <div className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 sm:p-6">
-        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-          Brand
-        </p>
-        <p className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{brandName}</p>
+      <div className="rounded-xl border border-bp-border bg-bp-surface p-5 sm:p-6">
+        <p className={sectionLabelClass}>Brand</p>
+        <p className="text-lg font-semibold text-bp-text">{brandName}</p>
 
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
-          Model {modelNumber}
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-bp-text">
+          Model <span className="bp-code">{modelNumber}</span>
         </h1>
-        <p className="mt-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
+        <p className="mt-1 text-sm leading-relaxed text-bp-text/90">
           {title}
         </p>
         {series && (
-          <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">Series: {series}</p>
+          <p className="mt-1 text-sm text-bp-muted">Series: {series}</p>
         )}
 
-        <p className="mt-5 rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-2.5 text-sm leading-relaxed text-neutral-800 dark:border-neutral-700 dark:bg-neutral-900/50 dark:text-neutral-200">
+        <p className="mt-5 rounded-lg border border-bp-border bg-bp-trust-soft/40 px-3 py-2.5 text-sm leading-relaxed text-bp-text/90">
           {fitConfirmation}
         </p>
 
         {filters.length === 0 ? (
-          <p className="mt-6 text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="mt-6 text-sm text-bp-muted">
             We don’t have a replacement filter listed for this model yet. Try another spelling in
             search, or check the sticker on the unit and your manual for the original part number.
           </p>
         ) : (
           <>
-            <div className="mt-6 border-t border-neutral-100 pt-6 dark:border-neutral-800">
-              <p className="text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+            <div className="mt-6 border-t border-bp-border pt-6">
+              <p className={sectionLabelClass}>
                 {filters.length > 1 ? "Primary part on file" : "Your replacement"}
               </p>
-              <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+              <p className="bp-code mt-2 text-xl font-semibold tracking-tight text-bp-text">
                 {primary.oem_part_number}
               </p>
               {primary.name && (
-                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="mt-1 text-sm text-bp-text/90">
                   {primary.name}
                 </p>
               )}
               {(primaryInterval ?? sharedInterval) && (
-                <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
+                <p className="mt-2 text-sm text-bp-text/90">
                   {primaryInterval ?? sharedInterval}
                 </p>
               )}
@@ -182,13 +189,10 @@ export function VerticalModelPageContent({
               )}
 
               <p className="mt-4 text-sm">
-                <Link
-                  href={`${path}/${primary.slug}`}
-                  className="font-medium text-neutral-900 underline decoration-neutral-400 underline-offset-2 hover:decoration-neutral-600 dark:text-neutral-100"
-                >
+                <Link href={`${path}/${primary.slug}`} className={detailLinkClass}>
                   All details for this part
                 </Link>
-                <span className="text-neutral-500 dark:text-neutral-400">
+                <span className="text-bp-muted">
                   {" "}
                   (notes, compatible models, BuckParts Verified Links when listed)
                 </span>
@@ -196,25 +200,22 @@ export function VerticalModelPageContent({
             </div>
 
             {alternates.length > 0 && (
-              <div className="mt-8 border-t border-neutral-100 pt-6 dark:border-neutral-800">
-                <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              <div className="mt-8 border-t border-bp-border pt-6">
+                <h2 className="text-sm font-semibold text-bp-text">
                   Other parts that also fit this model
                 </h2>
-                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                <p className="mt-1 text-xs text-bp-muted">
                   Less common crosses — open each for full part details.
                 </p>
-                <ul className="mt-3 divide-y divide-neutral-200 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+                <ul className="mt-3 divide-y divide-bp-border rounded-lg border border-bp-border">
                   {alternates.map((f) => (
                     <li key={f.id}>
-                      <Link
-                        href={`${path}/${f.slug}`}
-                        className="flex flex-col gap-0.5 px-3 py-3 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900/80"
-                      >
-                        <span className="font-mono font-semibold text-neutral-900 dark:text-neutral-100">
+                      <Link href={`${path}/${f.slug}`} className={alternateRowClass}>
+                        <span className="bp-code font-semibold text-bp-text">
                           {f.oem_part_number}
                         </span>
                         {f.name && (
-                          <span className="text-neutral-600 dark:text-neutral-400">{f.name}</span>
+                          <span className="text-bp-muted">{f.name}</span>
                         )}
                       </Link>
                     </li>
@@ -226,29 +227,29 @@ export function VerticalModelPageContent({
         )}
       </div>
 
-      <section className="border-t border-neutral-200 pt-8 dark:border-neutral-800">
-        <h2 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+      <section className="border-t border-bp-border pt-8">
+        <h2 className="text-sm font-semibold text-bp-text">
           {notesSectionTitle}
         </h2>
-        <p className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mt-2 text-sm text-bp-muted">
           <Link
             href={searchHref}
-            className="font-medium text-neutral-900 underline underline-offset-2 dark:text-neutral-100"
+            className="font-medium text-bp-trust underline underline-offset-2"
           >
             {expandedSearchFooter ? "Search again" : "Back to search"}
           </Link>
           {expandedSearchFooter ? (
-            <span className="text-neutral-500 dark:text-neutral-400">
+            <span className="text-bp-muted">
               {" "}
               if you need a different model or part number.
             </span>
           ) : null}
         </p>
         {(series || sharedInterval || notes) && (
-          <div className="mt-4 space-y-3 text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="mt-4 space-y-3 text-sm text-bp-muted">
             {sharedInterval && filters.length > 1 && (
               <p>
-                <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                <span className="font-medium text-bp-text/90">
                   Timing when several parts fit:
                 </span>{" "}
                 {sharedInterval}
