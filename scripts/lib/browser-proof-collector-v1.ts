@@ -7,7 +7,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { chromium } from "playwright";
@@ -71,6 +71,13 @@ export type BrowserProofCollectorInputV1 = {
   slug: string;
   expected_token: string;
   candidate_url: string;
+  forbidden_tokens?: readonly string[];
+};
+
+export type BrowserProofCollectorBatchInputV1 = {
+  slug: string;
+  expected_token: string;
+  candidate_urls: readonly string[];
   forbidden_tokens?: readonly string[];
 };
 
@@ -149,6 +156,15 @@ export type BrowserProofCollectorDraftV1 = {
     user_agent_mode: BrowserProofUserAgentModeV1;
   };
   capture_attempts: BrowserProofCaptureAttemptV1[];
+  batch_mode: boolean;
+  collect_all: boolean;
+  early_stop: {
+    stopped: boolean;
+    reason: string | null;
+    stopped_after_candidate_url: string | null;
+  };
+  best_candidate_url: string | null;
+  best_candidate_rank: number | null;
   slug: string;
   expected_token: string;
   forbidden_tokens: string[];
@@ -450,9 +466,95 @@ export function classifyBrowserProofCandidateV1(
 function overallVerdictV1(
   candidates: readonly BrowserProofCollectorCandidateResultV1[],
 ): BrowserProofCollectorVerdictV1 {
+  if (candidates.length === 0) return "UNKNOWN";
   if (candidates.some((c) => c.verdict === "PASS")) return "PASS";
   if (candidates.every((c) => c.verdict === "FAIL_AS_PROOF")) return "FAIL_AS_PROOF";
   return "UNKNOWN";
+}
+
+/**
+ * Rank: PASS official manufacturer > PASS authorized distributor > PASS retailer direct
+ * > PASS other > UNKNOWN > FAIL_AS_PROOF. Lower is better.
+ */
+export function rankBrowserProofCandidateV1(
+  candidate: Pick<BrowserProofCollectorCandidateResultV1, "verdict" | "facts">,
+): number {
+  if (candidate.verdict === "FAIL_AS_PROOF") return 100;
+  if (candidate.verdict === "UNKNOWN") return 50;
+  // PASS
+  switch (candidate.facts.source_class) {
+    case "official_manufacturer_pdp":
+      return 0;
+    case "authorized_parts_distributor_pdp":
+      return 1;
+    case "retailer_direct_pdp":
+      return 2;
+    case "authorized_dealer_pdp":
+      return 3;
+    default:
+      return 4;
+  }
+}
+
+/**
+ * Early-stop only on official-pass class PASS (manufacturer or authorized parts distributor).
+ * Retailer/dealer PASS alone is not safe to stop — continue looking for better proof.
+ */
+export function isSafeEarlyStopPassV1(
+  candidate: Pick<BrowserProofCollectorCandidateResultV1, "verdict" | "facts">,
+): boolean {
+  if (candidate.verdict !== "PASS") return false;
+  return (
+    candidate.facts.source_class === "official_manufacturer_pdp" ||
+    candidate.facts.source_class === "authorized_parts_distributor_pdp"
+  );
+}
+
+export function selectBestBrowserProofCandidateV1(
+  candidates: readonly BrowserProofCollectorCandidateResultV1[],
+): BrowserProofCollectorCandidateResultV1 | null {
+  if (candidates.length === 0) return null;
+  let best = candidates[0]!;
+  let bestRank = rankBrowserProofCandidateV1(best);
+  for (let i = 1; i < candidates.length; i++) {
+    const c = candidates[i]!;
+    const r = rankBrowserProofCandidateV1(c);
+    if (r < bestRank) {
+      best = c;
+      bestRank = r;
+    }
+  }
+  return best;
+}
+
+export function buildCandidateResultFromFactsV1(args: {
+  candidateUrl: string;
+  facts: BrowserProofVisibleFactsV1;
+  screenshotRelPath?: string | null;
+  captureAttempts?: BrowserProofCaptureAttemptV1[];
+}): BrowserProofCollectorCandidateResultV1 {
+  const classified = classifyBrowserProofCandidateV1(args.facts);
+  const verdict = enforceCaptureFailureNeverPassV1({
+    facts: args.facts,
+    verdict: classified.verdict,
+  });
+  const blockers =
+    verdict === classified.verdict
+      ? classified.blockers
+      : [...classified.blockers, "capture_failure_forced_unknown"];
+  const assessment =
+    verdict === classified.verdict
+      ? classified.assessment
+      : "UNKNOWN: capture failure cannot produce PASS.";
+  return {
+    candidate_url: args.candidateUrl,
+    verdict,
+    blockers,
+    facts: args.facts,
+    screenshot_rel_path: args.screenshotRelPath ?? null,
+    assessment,
+    capture_attempts: args.captureAttempts ?? [],
+  };
 }
 
 export function isUsableCaptureFinalUrlV1(finalUrl: string | null | undefined): boolean {
@@ -564,56 +666,50 @@ export function buildCaptureAttemptPlanV1(
   return plan;
 }
 
-export function buildBrowserProofCollectorDraftFromFactsV1(args: {
-  input: BrowserProofCollectorInputV1;
-  facts: BrowserProofVisibleFactsV1;
-  screenshotRelPath?: string | null;
+export function buildBrowserProofCollectorDraftFromCandidatesV1(args: {
+  slug: string;
+  expectedToken: string;
+  forbiddenTokens?: readonly string[];
+  candidates: readonly BrowserProofCollectorCandidateResultV1[];
   captureMethod?: "playwright_headless" | "playwright_headed" | "fixture_only";
   captureOptions?: BrowserProofCaptureOptionsV1;
-  captureAttempts?: BrowserProofCaptureAttemptV1[];
+  collectAll?: boolean;
+  earlyStop?: {
+    stopped: boolean;
+    reason: string | null;
+    stopped_after_candidate_url: string | null;
+  };
   now?: () => Date;
 }): BrowserProofCollectorDraftV1 {
   const now = args.now ?? (() => new Date());
-  const forbidden = resolveForbiddenTokensV1(
-    args.input.slug,
-    args.input.forbidden_tokens,
-  );
-  const classified = classifyBrowserProofCandidateV1(args.facts);
-  const verdict = enforceCaptureFailureNeverPassV1({
-    facts: args.facts,
-    verdict: classified.verdict,
-  });
-  const blockers =
-    verdict === classified.verdict
-      ? classified.blockers
-      : [...classified.blockers, "capture_failure_forced_unknown"];
-  const assessment =
-    verdict === classified.verdict
-      ? classified.assessment
-      : "UNKNOWN: capture failure cannot produce PASS.";
-
-  const captureAttempts = args.captureAttempts ?? [];
-  const candidate: BrowserProofCollectorCandidateResultV1 = {
-    candidate_url: args.input.candidate_url,
-    verdict,
-    blockers,
-    facts: args.facts,
-    screenshot_rel_path: args.screenshotRelPath ?? null,
-    assessment,
-    capture_attempts: captureAttempts,
-  };
-  const confusion = confusionFamilyOwnerReviewRequiredV1(args.input.slug);
-  const overall = overallVerdictV1([candidate]);
+  const forbidden = resolveForbiddenTokensV1(args.slug, args.forbiddenTokens);
+  const candidates = [...args.candidates];
+  const best = selectBestBrowserProofCandidateV1(candidates);
+  const overall = overallVerdictV1(candidates);
+  const confusion = confusionFamilyOwnerReviewRequiredV1(args.slug);
   const headed = args.captureOptions?.headed === true;
   const wait_ms = args.captureOptions?.wait_ms ?? DEFAULT_WAIT_MS;
   const timeout_ms = args.captureOptions?.timeout_ms ?? DEFAULT_GOTO_MS;
   const user_agent_mode: BrowserProofUserAgentModeV1 = args.captureOptions?.user_agent?.trim()
     ? "custom"
     : "desktop_chrome";
-
-  const attemptErrors = captureAttempts
+  const allAttempts = candidates.flatMap((c) => c.capture_attempts);
+  const attemptErrors = allAttempts
     .filter((a) => !a.success)
     .map((a) => `${a.attempt_id}: ${a.error ?? "unknown_error"}`);
+  const batch_mode = candidates.length > 1;
+  const collect_all = args.collectAll === true;
+  const early_stop = args.earlyStop ?? {
+    stopped: false,
+    reason: null,
+    stopped_after_candidate_url: null,
+  };
+  const bestRank = best ? rankBrowserProofCandidateV1(best) : null;
+
+  const bestNote =
+    best && best.verdict === "PASS"
+      ? ` Best candidate: ${best.candidate_url} (${best.facts.source_class}).`
+      : "";
 
   return {
     contract: BROWSER_PROOF_COLLECTOR_CONTRACT_V1,
@@ -638,28 +734,42 @@ export function buildBrowserProofCollectorDraftFromFactsV1(args: {
       timeout_ms,
       user_agent_mode,
     },
-    capture_attempts: captureAttempts,
-    slug: args.input.slug.trim().toLowerCase(),
-    expected_token: normToken(args.input.expected_token),
+    capture_attempts: allAttempts,
+    batch_mode,
+    collect_all,
+    early_stop,
+    best_candidate_url: best?.candidate_url ?? null,
+    best_candidate_rank: bestRank,
+    slug: args.slug.trim().toLowerCase(),
+    expected_token: normToken(args.expectedToken),
     forbidden_tokens: forbidden,
     confusion_family_owner_review_required: confusion,
     owner_review_required: true,
-    candidates: [candidate],
+    candidates,
     overall_verdict: overall,
     recommended_next_action:
       overall === "PASS"
-        ? "Owner review draft collector output. If accepted, manually author owner-browser-proof-result + evidence; do not treat collector PASS as apply-ready."
+        ? `Owner review draft collector output.${bestNote} If accepted, manually author owner-browser-proof-result + evidence; do not treat collector PASS as apply-ready.`
         : overall === "FAIL_AS_PROOF"
-          ? "Candidate is not usable as browser proof. Capture a product PDP (official manufacturer or authorized parts distributor PartDetail), not search/category."
+          ? "No candidate is usable as browser proof. Capture a product PDP (official manufacturer or authorized parts distributor PartDetail), not search/category."
           : attemptErrors.length > 0
-            ? `Resolve UNKNOWN capture failure. Attempts: ${attemptErrors.join(" | ")}. Retry with --headed --wait-ms 3000 or owner browser checklist.`
+            ? `Resolve UNKNOWN capture failure. Attempts: ${attemptErrors.slice(0, 5).join(" | ")}${attemptErrors.length > 5 ? " …" : ""}. Retry with --headed --wait-ms 3000 or owner browser checklist.`
             : "Resolve UNKNOWN (blocked page, ambiguous identity/buyability, or capture failure) before owner-browser-proof-result.",
     proven_facts: [
       "PROVEN: browser_proof_collector_v1 is draft-only; all mutation and approval flags false.",
       "PROVEN: collector does not write owner-browser-proof-result or founder approvals.",
       "PROVEN: capture failure can never produce PASS.",
       `PROVEN: overall_verdict=${overall}.`,
-      `PROVEN: capture_attempts=${String(captureAttempts.length)} success=${String(captureAttempts.some((a) => a.success))}.`,
+      `PROVEN: candidate_count=${String(candidates.length)} batch_mode=${String(batch_mode)}.`,
+      `PROVEN: capture_attempts=${String(allAttempts.length)} success=${String(allAttempts.some((a) => a.success))}.`,
+      ...(best
+        ? [
+            `PROVEN: best_candidate_rank=${String(bestRank)} source_class=${best.facts.source_class} verdict=${best.verdict}.`,
+          ]
+        : []),
+      ...(early_stop.stopped
+        ? [`PROVEN: early_stop after official-pass class PASS (${early_stop.reason}).`]
+        : []),
       ...(confusion
         ? ["PROVEN: confusion-family slug — owner review remains required even on collector PASS."]
         : []),
@@ -667,7 +777,7 @@ export function buildBrowserProofCollectorDraftFromFactsV1(args: {
     unknown_facts: [
       "UNKNOWN: owner acceptance of this draft as committed browser proof.",
       "UNKNOWN: readiness-gate eligibility until owner-browser-proof-result is authored separately.",
-      ...(attemptErrors.length > 0 && !args.facts.capture_succeeded
+      ...(attemptErrors.length > 0 && candidates.every((c) => !c.facts.capture_succeeded)
         ? [`UNKNOWN: all capture attempts failed (${attemptErrors.length}).`]
         : []),
     ],
@@ -683,6 +793,33 @@ export function buildBrowserProofCollectorDraftFromFactsV1(args: {
       "live_link_mutation",
     ],
   };
+}
+
+export function buildBrowserProofCollectorDraftFromFactsV1(args: {
+  input: BrowserProofCollectorInputV1;
+  facts: BrowserProofVisibleFactsV1;
+  screenshotRelPath?: string | null;
+  captureMethod?: "playwright_headless" | "playwright_headed" | "fixture_only";
+  captureOptions?: BrowserProofCaptureOptionsV1;
+  captureAttempts?: BrowserProofCaptureAttemptV1[];
+  now?: () => Date;
+}): BrowserProofCollectorDraftV1 {
+  const candidate = buildCandidateResultFromFactsV1({
+    candidateUrl: args.input.candidate_url,
+    facts: args.facts,
+    screenshotRelPath: args.screenshotRelPath,
+    captureAttempts: args.captureAttempts,
+  });
+  return buildBrowserProofCollectorDraftFromCandidatesV1({
+    slug: args.input.slug,
+    expectedToken: args.input.expected_token,
+    forbiddenTokens: args.input.forbidden_tokens,
+    candidates: [candidate],
+    captureMethod: args.captureMethod,
+    captureOptions: args.captureOptions,
+    collectAll: false,
+    now: args.now,
+  });
 }
 
 async function extractPurchaseActionsFromPageV1(
@@ -938,6 +1075,29 @@ export function browserProofCollectorArtifactPathsV1(args: {
   };
 }
 
+export function browserProofCollectorBatchDraftPathV1(args: {
+  slug: string;
+  candidateUrls: readonly string[];
+  generatedAtIso: string;
+}): string {
+  const slug = args.slug.trim().toLowerCase();
+  const stamp = args.generatedAtIso.replace(/[:.]/g, "-");
+  const batchHash = createHash("sha256")
+    .update(args.candidateUrls.join("\n"))
+    .digest("hex")
+    .slice(0, 12);
+  const base = `${BROWSER_PROOF_COLLECTOR_DRAFT_DIR_REL_V1}/${slug}`;
+  return `${base}/browser-proof-collector-batch-${slug}-${batchHash}-${stamp}.json`;
+}
+
+export function browserProofCollectorScreenshotPathV1(args: {
+  slug: string;
+  candidateUrl: string;
+  generatedAtIso: string;
+}): string {
+  return browserProofCollectorArtifactPathsV1(args).screenshotRel;
+}
+
 export function writeBrowserProofCollectorDraftV1(args: {
   rootDir: string;
   draft: BrowserProofCollectorDraftV1;
@@ -949,34 +1109,48 @@ export function writeBrowserProofCollectorDraftV1(args: {
   return args.draftJsonRel;
 }
 
-export async function runBrowserProofCollectorV1(args: {
+async function captureOneCandidateV1(args: {
   rootDir: string;
-  input: BrowserProofCollectorInputV1;
-  writeDrafts?: boolean;
-  captureOptions?: BrowserProofCaptureOptionsV1;
-  now?: () => Date;
-}): Promise<{ draft: BrowserProofCollectorDraftV1; draft_json_rel: string | null }> {
-  const now = args.now ?? (() => new Date());
-  const generatedAt = now().toISOString();
-  const forbidden = resolveForbiddenTokensV1(args.input.slug, args.input.forbidden_tokens);
-  const paths = browserProofCollectorArtifactPathsV1({
-    slug: args.input.slug,
-    candidateUrl: args.input.candidate_url,
-    generatedAtIso: generatedAt,
+  slug: string;
+  expectedToken: string;
+  forbiddenTokens: readonly string[];
+  candidateUrl: string;
+  generatedAtIso: string;
+  writeDrafts: boolean;
+  captureOptions: BrowserProofCaptureOptionsV1;
+}): Promise<BrowserProofCollectorCandidateResultV1> {
+  const screenshotRel = browserProofCollectorScreenshotPathV1({
+    slug: args.slug,
+    candidateUrl: args.candidateUrl,
+    generatedAtIso: args.generatedAtIso,
   });
-  const writeDrafts = args.writeDrafts !== false;
-  const captureOptions = args.captureOptions ?? {};
-  const captureMethod =
-    captureOptions.headed === true ? "playwright_headed" : "playwright_headless";
 
-  let capture: Awaited<ReturnType<typeof capturePageSignalsWithFallbacksV1>>;
   try {
-    capture = await capturePageSignalsWithFallbacksV1({
-      url: args.input.candidate_url,
+    const capture = await capturePageSignalsWithFallbacksV1({
+      url: args.candidateUrl,
       rootDir: args.rootDir,
-      screenshotRel: paths.screenshotRel,
-      writeScreenshot: writeDrafts,
-      options: captureOptions,
+      screenshotRel,
+      writeScreenshot: args.writeDrafts,
+      options: args.captureOptions,
+    });
+    const facts = extractBrowserProofVisibleFactsV1({
+      candidateUrl: args.candidateUrl,
+      finalUrl: capture.finalUrl,
+      title: capture.title,
+      h1: capture.h1,
+      textSample: capture.textSample,
+      purchaseActions: capture.purchaseActions,
+      expectedToken: args.expectedToken,
+      forbiddenTokens: args.forbiddenTokens,
+      captureSucceeded: capture.captureSucceeded,
+      navigationError: capture.navigationError,
+    });
+    return buildCandidateResultFromFactsV1({
+      candidateUrl: args.candidateUrl,
+      facts,
+      screenshotRelPath:
+        args.writeDrafts && capture.captureSucceeded ? screenshotRel : null,
+      captureAttempts: capture.attempts,
     });
   } catch (e) {
     const err = e instanceof Error ? e.message : String(e);
@@ -986,9 +1160,9 @@ export async function runBrowserProofCollectorV1(args: {
         wait_until: "domcontentloaded",
         user_agent_mode: "collector",
         user_agent: BROWSER_PROOF_COLLECTOR_UA_V1,
-        headed: captureOptions.headed === true,
-        wait_ms: captureOptions.wait_ms ?? DEFAULT_WAIT_MS,
-        timeout_ms: captureOptions.timeout_ms ?? DEFAULT_GOTO_MS,
+        headed: args.captureOptions.headed === true,
+        wait_ms: args.captureOptions.wait_ms ?? DEFAULT_WAIT_MS,
+        timeout_ms: args.captureOptions.timeout_ms ?? DEFAULT_GOTO_MS,
         launch_args: [],
         success: false,
         error: err,
@@ -996,91 +1170,180 @@ export async function runBrowserProofCollectorV1(args: {
       },
     ];
     const facts = extractBrowserProofVisibleFactsV1({
-      candidateUrl: args.input.candidate_url,
+      candidateUrl: args.candidateUrl,
       finalUrl: "",
       title: "",
       h1: "",
       textSample: "",
       purchaseActions: [],
-      expectedToken: args.input.expected_token,
-      forbiddenTokens: forbidden,
+      expectedToken: args.expectedToken,
+      forbiddenTokens: args.forbiddenTokens,
       captureSucceeded: false,
       navigationError: err,
     });
-    const draft = buildBrowserProofCollectorDraftFromFactsV1({
-      input: { ...args.input, forbidden_tokens: forbidden },
+    return buildCandidateResultFromFactsV1({
+      candidateUrl: args.candidateUrl,
       facts,
       screenshotRelPath: null,
-      captureMethod,
-      captureOptions,
       captureAttempts: attempts,
-      now,
     });
-    const draft_json_rel = writeDrafts
-      ? writeBrowserProofCollectorDraftV1({
-          rootDir: args.rootDir,
-          draft,
-          draftJsonRel: paths.draftJsonRel,
-        })
-      : null;
-    return { draft, draft_json_rel };
+  }
+}
+
+export async function runBrowserProofCollectorBatchV1(args: {
+  rootDir: string;
+  input: BrowserProofCollectorBatchInputV1;
+  writeDrafts?: boolean;
+  captureOptions?: BrowserProofCaptureOptionsV1;
+  collectAll?: boolean;
+  now?: () => Date;
+}): Promise<{ draft: BrowserProofCollectorDraftV1; draft_json_rel: string | null }> {
+  const now = args.now ?? (() => new Date());
+  const generatedAt = now().toISOString();
+  const urls = [
+    ...new Set(
+      args.input.candidate_urls.map((u) => u.trim()).filter((u) => u.length > 0),
+    ),
+  ];
+  if (urls.length === 0) {
+    throw new Error("browser_proof_collector_batch_requires_at_least_one_url");
   }
 
-  const facts = extractBrowserProofVisibleFactsV1({
-    candidateUrl: args.input.candidate_url,
-    finalUrl: capture.finalUrl,
-    title: capture.title,
-    h1: capture.h1,
-    textSample: capture.textSample,
-    purchaseActions: capture.purchaseActions,
+  const forbidden = resolveForbiddenTokensV1(args.input.slug, args.input.forbidden_tokens);
+  const writeDrafts = args.writeDrafts !== false;
+  const captureOptions = args.captureOptions ?? {};
+  const captureMethod =
+    captureOptions.headed === true ? "playwright_headed" : "playwright_headless";
+  const collectAll = args.collectAll === true;
+
+  const candidates: BrowserProofCollectorCandidateResultV1[] = [];
+  let earlyStop: {
+    stopped: boolean;
+    reason: string | null;
+    stopped_after_candidate_url: string | null;
+  } = { stopped: false, reason: null, stopped_after_candidate_url: null };
+
+  for (const url of urls) {
+    const candidate = await captureOneCandidateV1({
+      rootDir: args.rootDir,
+      slug: args.input.slug,
+      expectedToken: args.input.expected_token,
+      forbiddenTokens: forbidden,
+      candidateUrl: url,
+      generatedAtIso: generatedAt,
+      writeDrafts,
+      captureOptions,
+    });
+    candidates.push(candidate);
+
+    if (!collectAll && isSafeEarlyStopPassV1(candidate)) {
+      earlyStop = {
+        stopped: true,
+        reason: `PASS_${candidate.facts.source_class}`,
+        stopped_after_candidate_url: url,
+      };
+      break;
+    }
+  }
+
+  const draft = buildBrowserProofCollectorDraftFromCandidatesV1({
+    slug: args.input.slug,
     expectedToken: args.input.expected_token,
     forbiddenTokens: forbidden,
-    captureSucceeded: capture.captureSucceeded,
-    navigationError: capture.navigationError,
-  });
-
-  const draft = buildBrowserProofCollectorDraftFromFactsV1({
-    input: { ...args.input, forbidden_tokens: forbidden },
-    facts,
-    screenshotRelPath:
-      writeDrafts && capture.captureSucceeded ? paths.screenshotRel : null,
+    candidates,
     captureMethod,
     captureOptions,
-    captureAttempts: capture.attempts,
+    collectAll,
+    earlyStop,
     now,
   });
+
+  const draftJsonRel =
+    urls.length === 1
+      ? browserProofCollectorArtifactPathsV1({
+          slug: args.input.slug,
+          candidateUrl: urls[0]!,
+          generatedAtIso: generatedAt,
+        }).draftJsonRel
+      : browserProofCollectorBatchDraftPathV1({
+          slug: args.input.slug,
+          candidateUrls: urls,
+          generatedAtIso: generatedAt,
+        });
 
   const draft_json_rel = writeDrafts
     ? writeBrowserProofCollectorDraftV1({
         rootDir: args.rootDir,
         draft,
-        draftJsonRel: paths.draftJsonRel,
+        draftJsonRel,
       })
     : null;
 
   return { draft, draft_json_rel };
 }
 
+export async function runBrowserProofCollectorV1(args: {
+  rootDir: string;
+  input: BrowserProofCollectorInputV1;
+  writeDrafts?: boolean;
+  captureOptions?: BrowserProofCaptureOptionsV1;
+  collectAll?: boolean;
+  now?: () => Date;
+}): Promise<{ draft: BrowserProofCollectorDraftV1; draft_json_rel: string | null }> {
+  return runBrowserProofCollectorBatchV1({
+    rootDir: args.rootDir,
+    input: {
+      slug: args.input.slug,
+      expected_token: args.input.expected_token,
+      candidate_urls: [args.input.candidate_url],
+      forbidden_tokens: args.input.forbidden_tokens,
+    },
+    writeDrafts: args.writeDrafts,
+    captureOptions: args.captureOptions,
+    collectAll: args.collectAll,
+    now: args.now,
+  });
+}
+
+export function loadBrowserProofCollectorUrlsFileV1(args: {
+  rootDir: string;
+  relPath: string;
+  readText?: (abs: string) => string;
+}): string[] {
+  const readText = args.readText ?? ((abs: string) => readFileSync(abs, "utf8"));
+  const abs = path.isAbsolute(args.relPath)
+    ? args.relPath
+    : path.join(args.rootDir, args.relPath);
+  return readText(abs)
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+}
+
 export function parseBrowserProofCollectorCliArgsV1(argv: readonly string[]): {
   slug: string | null;
   token: string | null;
-  url: string | null;
+  urls: string[];
+  urls_file: string | null;
   forbidden: string[];
   writeDrafts: boolean;
   headed: boolean;
   wait_ms: number | null;
   timeout_ms: number | null;
   user_agent: string | null;
+  collect_all: boolean;
 } {
   let slug: string | null = null;
   let token: string | null = null;
-  let url: string | null = null;
+  const urls: string[] = [];
+  let urls_file: string | null = null;
   let forbidden: string[] = [];
   let writeDrafts = true;
   let headed = false;
   let wait_ms: number | null = null;
   let timeout_ms: number | null = null;
   let user_agent: string | null = null;
+  let collect_all = false;
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
@@ -1092,7 +1355,10 @@ export function parseBrowserProofCollectorCliArgsV1(argv: readonly string[]): {
       token = next;
       i++;
     } else if (a === "--url" && next) {
-      url = next;
+      urls.push(next);
+      i++;
+    } else if (a === "--urls-file" && next) {
+      urls_file = next;
       i++;
     } else if (a === "--forbidden" && next) {
       forbidden = next
@@ -1104,6 +1370,8 @@ export function parseBrowserProofCollectorCliArgsV1(argv: readonly string[]): {
       writeDrafts = false;
     } else if (a === "--headed") {
       headed = true;
+    } else if (a === "--collect-all") {
+      collect_all = true;
     } else if (a === "--wait-ms" && next) {
       wait_ms = Number(next);
       i++;
@@ -1119,12 +1387,14 @@ export function parseBrowserProofCollectorCliArgsV1(argv: readonly string[]): {
   return {
     slug,
     token,
-    url,
+    urls,
+    urls_file,
     forbidden,
     writeDrafts,
     headed,
     wait_ms: Number.isFinite(wait_ms) ? wait_ms : null,
     timeout_ms: Number.isFinite(timeout_ms) ? timeout_ms : null,
     user_agent,
+    collect_all,
   };
 }

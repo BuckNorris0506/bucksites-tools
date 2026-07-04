@@ -3,13 +3,19 @@ import test from "node:test";
 
 import {
   buildCaptureAttemptPlanV1,
+  buildBrowserProofCollectorDraftFromCandidatesV1,
   buildBrowserProofCollectorDraftFromFactsV1,
+  buildCandidateResultFromFactsV1,
   classifyBrowserProofCandidateV1,
   enforceCaptureFailureNeverPassV1,
   extractBrowserProofVisibleFactsV1,
   inferBrowserProofPageTypeV1,
   inferBrowserProofSourceClassV1,
+  isSafeEarlyStopPassV1,
+  parseBrowserProofCollectorCliArgsV1,
+  rankBrowserProofCandidateV1,
   resolveForbiddenTokensV1,
+  selectBestBrowserProofCandidateV1,
   type BrowserProofCaptureAttemptV1,
 } from "./browser-proof-collector-v1";
 
@@ -320,4 +326,118 @@ test("capture attempt plan includes load, networkidle, desktop UA, and http2 mit
   assert.ok(plan.some((p) => p.launch_args.includes("--disable-http2")));
   assert.ok(plan.every((p) => p.wait_ms === 3000));
   assert.ok(plan.every((p) => p.timeout_ms === 60000));
+});
+
+function candidateFixture(args: {
+  url: string;
+  verdictFacts: Parameters<typeof extractBrowserProofVisibleFactsV1>[0];
+}): ReturnType<typeof buildCandidateResultFromFactsV1> {
+  const facts = extractBrowserProofVisibleFactsV1(args.verdictFacts);
+  const candidate = buildCandidateResultFromFactsV1({
+    candidateUrl: args.url,
+    facts,
+  });
+  return candidate;
+}
+
+test("batch ranking prefers official manufacturer PASS over retailer PASS", () => {
+  const official = candidateFixture({
+    url: "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+    verdictFacts: {
+      candidateUrl: "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+      finalUrl: "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+      title: "WF3CB PureSource 3",
+      h1: "WF3CB",
+      textSample: "WF3CB PureSource 3 $49.99 In Stock Add to Cart",
+      purchaseActions: ["Add to Cart"],
+      expectedToken: "WF3CB",
+      forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+      captureSucceeded: true,
+      navigationError: null,
+    },
+  });
+  const retailer = candidateFixture({
+    url: "https://www.lowes.com/pd/Frigidaire-WF3CB/1003164400",
+    verdictFacts: {
+      candidateUrl: "https://www.lowes.com/pd/Frigidaire-WF3CB/1003164400",
+      finalUrl: "https://www.lowes.com/pd/Frigidaire-WF3CB/1003164400",
+      title: "WF3CB PureSource 3",
+      h1: "WF3CB",
+      textSample: "WF3CB PureSource 3 $52.99 In Stock Add to Cart",
+      purchaseActions: ["Add to Cart"],
+      expectedToken: "WF3CB",
+      forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+      captureSucceeded: true,
+      navigationError: null,
+    },
+  });
+  const failSearch = candidateFixture({
+    url: "https://www.frigidaireapplianceparts.com/Search?q=WF3CB",
+    verdictFacts: {
+      candidateUrl: "https://www.frigidaireapplianceparts.com/Search?q=WF3CB",
+      finalUrl: "https://www.frigidaireapplianceparts.com/Search?q=WF3CB",
+      title: "Search results for WF3CB",
+      h1: "Search Results",
+      textSample: "Showing 12 results for WF3CB",
+      purchaseActions: [],
+      expectedToken: "WF3CB",
+      forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+      captureSucceeded: true,
+      navigationError: null,
+    },
+  });
+
+  assert.equal(official.verdict, "PASS");
+  assert.equal(official.facts.source_class, "official_manufacturer_pdp");
+  assert.equal(retailer.verdict, "PASS");
+  assert.equal(retailer.facts.source_class, "retailer_direct_pdp");
+  assert.equal(failSearch.verdict, "FAIL_AS_PROOF");
+
+  assert.ok(rankBrowserProofCandidateV1(official) < rankBrowserProofCandidateV1(retailer));
+  assert.ok(rankBrowserProofCandidateV1(retailer) < rankBrowserProofCandidateV1(failSearch));
+
+  const best = selectBestBrowserProofCandidateV1([failSearch, retailer, official]);
+  assert.equal(best?.candidate_url, official.candidate_url);
+
+  assert.equal(isSafeEarlyStopPassV1(official), true);
+  assert.equal(isSafeEarlyStopPassV1(retailer), false);
+  assert.equal(isSafeEarlyStopPassV1(failSearch), false);
+
+  const draft = buildBrowserProofCollectorDraftFromCandidatesV1({
+    slug: "wf3cb",
+    expectedToken: "WF3CB",
+    forbiddenTokens: ["EPTWFU01", "ULTRAWF"],
+    candidates: [retailer, official, failSearch],
+    collectAll: true,
+  });
+  assert.equal(draft.batch_mode, true);
+  assert.equal(draft.overall_verdict, "PASS");
+  assert.equal(draft.best_candidate_url, official.candidate_url);
+  assert.equal(draft.mutation_authorized, false);
+  assert.equal(draft.promotes_to_owner_browser_proof_result, false);
+  assert.equal(draft.owner_review_required, true);
+  assert.equal(draft.candidates.length, 3);
+});
+
+test("CLI accepts repeated --url and --collect-all", () => {
+  const parsed = parseBrowserProofCollectorCliArgsV1([
+    "--slug",
+    "wf3cb",
+    "--token",
+    "WF3CB",
+    "--url",
+    "https://www.frigidaire.com/en/p/accessories/water-filters/WF3CB",
+    "--url",
+    "https://www.lowes.com/pd/Frigidaire-WF3CB/1003164400",
+    "--url",
+    "https://www.homedepot.com/p/WF3CB/123",
+    "--forbidden",
+    "EPTWFU01,ULTRAWF",
+    "--headed",
+    "--collect-all",
+  ]);
+  assert.equal(parsed.slug, "wf3cb");
+  assert.equal(parsed.urls.length, 3);
+  assert.equal(parsed.collect_all, true);
+  assert.equal(parsed.headed, true);
 });
