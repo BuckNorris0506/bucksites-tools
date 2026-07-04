@@ -11,34 +11,245 @@
   "production_go_click_authorized": false,
   "coverage_unlocked": false,
   "browser_automation_authorized": false,
-  "generated_at": "2026-07-04T03:46:40.041Z",
+  "generated_at": "2026-07-04T15:27:41.053Z",
   "source_command": "npm run buckparts:manufacturer-safe-link-rescue-readiness-gate",
   "orchestrator_contract": "manufacturer_safe_link_rescue_orchestrator_v1",
-  "orchestrator_generated_at": "2026-07-04T03:46:40.037Z",
-  "director_generated_at": "2026-07-04T03:46:40.039Z",
+  "orchestrator_generated_at": "2026-07-03T21:55:52.145Z",
+  "director_generated_at": "2026-07-03T21:55:52.146Z",
   "browser_proof_max_age_days": 14,
   "deploy_build_marker": {
     "marker": "UNKNOWN",
     "marker_source_path": null,
     "proof_after_marker_proven": "UNKNOWN"
   },
-  "candidate_count": 0,
-  "candidates": [],
-  "ready_for_apply_slug": null,
-  "ready_for_apply_count": 0,
-  "top_pending_work_item": null,
+  "candidate_count": 3,
+  "candidates": [
+    {
+      "filter_slug": "eptwfu01",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "EPTWFU01",
+      "readiness_status": "READY_FOR_APPLY",
+      "ready_for_apply": true,
+      "director_value_score": 1300,
+      "checks": [
+        {
+          "check_id": "browser_proof_exists",
+          "status": "PASS",
+          "notes": "owner browser proof PASS at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json"
+        },
+        {
+          "check_id": "browser_proof_fresh",
+          "status": "PASS",
+          "notes": "proof age 0.6d within 14d"
+        },
+        {
+          "check_id": "browser_proof_after_deploy_marker",
+          "status": "PASS",
+          "notes": "deploy/build marker not provable in repo — requirement waived"
+        },
+        {
+          "check_id": "confusion_family_cleared",
+          "status": "PASS",
+          "notes": "owner confusion-family clearance proven via data/fridge/batch-production/drafts/fridge-safe-link-eptwfu01-owner-classification-packet-v1.json, data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json"
+        },
+        {
+          "check_id": "apply_plan_exists",
+          "status": "PASS",
+          "notes": "apply plan at data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json"
+        },
+        {
+          "check_id": "owner_approval_exists",
+          "status": "PASS",
+          "notes": "founder decision decision-2026-07-04-eptwfu01-approve_csv_manufacturer_rescue_apply approved for slug or apply plan"
+        },
+        {
+          "check_id": "owner_apply_lane_eligible",
+          "status": "PASS",
+          "notes": "frigidaire guarded-apply lane: fresh PASS official/authorized proof, committed evidence data/evidence/frigidaire-eptwfu01-official-owner-browser-proof-evidence.2026-07-04.json, confusion-family cleared when required, apply plan READY_FOR_OWNER_REVIEW, founder approval accepted; no mutation authorization"
+        },
+        {
+          "check_id": "wrong_family_safe",
+          "status": "PASS",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "check_id": "direct_buyable_exact_token_safe",
+          "status": "PASS",
+          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
+        },
+        {
+          "check_id": "no_unresolved_blockers",
+          "status": "PASS",
+          "notes": "no unresolved orchestrator/director blockers beyond expected mutation gates"
+        }
+      ],
+      "blocking_reasons": [],
+      "source_paths_read": [
+        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-eptwfu01-v1.json",
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-eptwfu01-v1.json"
+      ]
+    },
+    {
+      "filter_slug": "wf3cb",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "WF3CB",
+      "readiness_status": "PENDING_OWNER_APPROVAL",
+      "ready_for_apply": false,
+      "director_value_score": 1227,
+      "checks": [
+        {
+          "check_id": "browser_proof_exists",
+          "status": "PASS",
+          "notes": "owner browser proof PASS at data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json"
+        },
+        {
+          "check_id": "browser_proof_fresh",
+          "status": "PASS",
+          "notes": "proof age 0.0d within 14d"
+        },
+        {
+          "check_id": "browser_proof_after_deploy_marker",
+          "status": "PASS",
+          "notes": "deploy/build marker not provable in repo — requirement waived"
+        },
+        {
+          "check_id": "confusion_family_cleared",
+          "status": "PASS",
+          "notes": "owner confusion-family clearance proven via data/evidence/frigidaire-wf3cb-official-owner-browser-proof-evidence.2026-07-04.json"
+        },
+        {
+          "check_id": "apply_plan_exists",
+          "status": "PASS",
+          "notes": "apply plan at data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json"
+        },
+        {
+          "check_id": "owner_approval_exists",
+          "status": "FAIL",
+          "notes": "no founder decision row with owner_mutation_approved for slug/apply plan"
+        },
+        {
+          "check_id": "owner_apply_lane_eligible",
+          "status": "FAIL",
+          "notes": "frigidaire lane requires accepted founder owner_mutation_approved decision"
+        },
+        {
+          "check_id": "wrong_family_safe",
+          "status": "PASS",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "check_id": "direct_buyable_exact_token_safe",
+          "status": "PASS",
+          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
+        },
+        {
+          "check_id": "no_unresolved_blockers",
+          "status": "PASS",
+          "notes": "no unresolved orchestrator/director blockers beyond expected mutation gates"
+        }
+      ],
+      "blocking_reasons": [
+        "owner_apply_approval_missing",
+        "owner_apply_lane_eligible_false"
+      ],
+      "source_paths_read": [
+        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+        "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json"
+      ]
+    },
+    {
+      "filter_slug": "wfcb",
+      "manufacturer_key": "frigidaire",
+      "oem_part_token": "WFCB",
+      "readiness_status": "BLOCKED_MISSING_PROOF",
+      "ready_for_apply": false,
+      "director_value_score": 1117,
+      "checks": [
+        {
+          "check_id": "browser_proof_exists",
+          "status": "FAIL",
+          "notes": "missing or non-PASS owner browser proof for wfcb"
+        },
+        {
+          "check_id": "browser_proof_fresh",
+          "status": "PASS",
+          "notes": "proof age 0.6d within 14d"
+        },
+        {
+          "check_id": "browser_proof_after_deploy_marker",
+          "status": "PASS",
+          "notes": "deploy/build marker not provable in repo — requirement waived"
+        },
+        {
+          "check_id": "confusion_family_cleared",
+          "status": "FAIL",
+          "notes": "Frigidaire confusion-family review required — no owner clearance artifact found"
+        },
+        {
+          "check_id": "apply_plan_exists",
+          "status": "FAIL",
+          "notes": "no apply-plan artifact on disk"
+        },
+        {
+          "check_id": "owner_approval_exists",
+          "status": "FAIL",
+          "notes": "no founder decision row with owner_mutation_approved for slug/apply plan"
+        },
+        {
+          "check_id": "owner_apply_lane_eligible",
+          "status": "FAIL",
+          "notes": "frigidaire lane requires fresh PASS official/authorized owner proof (pass=false, fresh=true)"
+        },
+        {
+          "check_id": "wrong_family_safe",
+          "status": "PASS",
+          "notes": "no forbidden wrong-family tokens detected"
+        },
+        {
+          "check_id": "direct_buyable_exact_token_safe",
+          "status": "PASS",
+          "notes": "orchestrator guarded-apply candidate with PASS browser truth and search placeholder primary"
+        },
+        {
+          "check_id": "no_unresolved_blockers",
+          "status": "FAIL",
+          "notes": "orchestrator/director blockers remain: confusion_family_review_required, repo_proven_official_pdp_url_missing"
+        }
+      ],
+      "blocking_reasons": [
+        "browser_proof_missing_or_not_pass",
+        "confusion_family_review_required",
+        "apply_plan_artifact_missing",
+        "owner_apply_approval_missing",
+        "owner_apply_lane_eligible_false",
+        "unresolved_orchestrator_or_director_blockers"
+      ],
+      "source_paths_read": [
+        "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wfcb-v1.json"
+      ]
+    }
+  ],
+  "ready_for_apply_slug": "eptwfu01",
+  "ready_for_apply_count": 1,
+  "top_pending_work_item": {
+    "filter_slug": "wf3cb",
+    "readiness_status": "PENDING_OWNER_APPROVAL",
+    "recommended_next_action": "Record founder owner_mutation_approved decision for wf3cb apply plan."
+  },
   "readiness_summary": {
     "by_status": {
-      "READY_FOR_APPLY": 0,
+      "READY_FOR_APPLY": 1,
       "PENDING_BROWSER_REFRESH": 0,
       "PENDING_CONFUSION_FAMILY_REVIEW": 0,
-      "PENDING_OWNER_APPROVAL": 0,
+      "PENDING_OWNER_APPROVAL": 1,
       "PENDING_APPLY_PLAN": 0,
       "BLOCKED_WRONG_FAMILY_RISK": 0,
-      "BLOCKED_MISSING_PROOF": 0,
+      "BLOCKED_MISSING_PROOF": 1,
       "UNKNOWN_READINESS": 0
     },
-    "ready_for_apply_slugs": []
+    "ready_for_apply_slugs": [
+      "eptwfu01"
+    ]
   },
   "inspect_summary": {
     "recommended_jq_paths": {
@@ -47,12 +258,12 @@
       "ready_for_apply_slug": ".ready_for_apply_slug",
       "top_pending_work_item": ".top_pending_work_item"
     },
-    "recommended_next_action": "UNKNOWN — no guarded-apply candidates in readiness gate scope."
+    "recommended_next_action": "READY_FOR_APPLY proven for eptwfu01 — guarded apply executor only."
   },
   "proven_facts": [
     "PROVEN: Readiness gate is read-only — no CSV, Supabase, SQL, or browser automation.",
-    "PROVEN: ready_for_apply_count=0 (max 1 enforced by runner).",
-    "PROVEN: candidate_count=0 guarded-apply scoped slug(s)."
+    "PROVEN: ready_for_apply_count=1 (max 1 enforced by runner).",
+    "PROVEN: candidate_count=3 guarded-apply scoped slug(s)."
   ],
   "unknown_facts": [
     "UNKNOWN: deploy/build marker not found in committed repo artifacts.",

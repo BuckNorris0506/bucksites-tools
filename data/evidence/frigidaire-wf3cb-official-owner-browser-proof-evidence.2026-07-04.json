@@ -1,0 +1,105 @@
+{
+  "report_name": "buckparts_frigidaire_wf3cb_official_owner_browser_proof_evidence_v1",
+  "generated_at": "2026-07-04T15:24:00.000Z",
+  "scope": "owner_browser_review_evidence_only",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "filter_slug": "wf3cb",
+  "token": "WF3CB",
+  "verdict": "EXACT_PDP_PROVEN_FROM_OWNER_BROWSER",
+  "mutation_ready": false,
+  "mutation_ready_basis": "Evidence only — does not authorize retailer_links.csv, Supabase, Verified Link, or founder approval.",
+  "product_attribution": "oem_official",
+  "source_owner_browser_proof_rel_path": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json",
+  "source_binding_v1": {
+    "source_owner_review_packet_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/browser-proof-collector-owner-review-packet-wf3cb-56c29d5c7ee1-2026-07-04T15-09-15-388Z.json",
+    "source_owner_review_packet_sha256": "b8301d0aa9550113f96206bfefc251c6412bfdcd6da0ce7cbb506adfae8655b6",
+    "source_collector_draft_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/browser-proof-collector-batch-wf3cb-33a9ac253b09-2026-07-04T14-46-36-028Z.json",
+    "source_collector_draft_sha256": "56c29d5c7ee1a795032a0661645fefbeee0e47e6f04559883393e02403732331",
+    "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png",
+    "owner_acceptance_text": "APPROVE WF3CB OWNER REVIEW PACKET"
+  },
+  "checked_at": "2026-07-04T14:46:36.028Z",
+  "primary_proof_track": {
+    "path_type": "official_manufacturer_pdp",
+    "official_manufacturer_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    "canonical_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    "source": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-wf3cb-v1.json"
+  },
+  "secondary_proof_track": null,
+  "secondary_amazon_audit_track": null,
+  "failed_retailer_tracks": [
+    {
+      "path_type": "retailer_direct_pdp",
+      "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+      "status": "FAIL",
+      "notes": "PROVEN: Collector batch session blocked/access denied; not usable as primary."
+    },
+    {
+      "path_type": "retailer_direct_pdp",
+      "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+      "status": "FAIL",
+      "notes": "PROVEN: Collector batch session error page; not usable as primary."
+    }
+  ],
+  "confusion_family_review": {
+    "status": "CLEARED",
+    "question_id": "confusion_family_wf3cb_vs_eptwfu01_ultrawf",
+    "owner_answer": "CONFIRMED_EXACT_TOKEN_WF3CB_PURESOURCE_3_OEM_NOT_EPTWFU01_OR_ULTRAWF",
+    "forbidden_tokens_for_slug": ["EPTWFU01", "ULTRAWF"],
+    "forbidden_tokens_observed": [],
+    "basis": [
+      "PROVEN: Page title: PureSource® 3 Water and Ice Refrigerator Filter White-WF3CB | Frigidaire.",
+      "PROVEN: H1: PureSource® 3 Water and Ice Refrigerator Filter.",
+      "PROVEN: Exact token WF3CB visible on page.",
+      "PROVEN: Price-like text and Add subscription / Purchase parts controls visible.",
+      "PROVEN: No EPTWFU01 product identity shown.",
+      "PROVEN: No ULTRAWF product identity shown.",
+      "PROVEN: Owner acceptance text APPROVE WF3CB OWNER REVIEW PACKET."
+    ]
+  },
+  "owner_primary_approval": {
+    "question_id": "approve_official_or_parts_distributor_primary",
+    "owner_answer": "YES_APPROVE_FRIGIDAIRE_COM_OFFICIAL_MANUFACTURER_PDP_AS_PRIMARY",
+    "approved_primary_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    "path_type": "official_manufacturer_pdp"
+  },
+  "owner_browser_finding": {
+    "source": "browser_proof_collector_headed_playwright",
+    "checked_at": "2026-07-04T14:46:36.028Z",
+    "screenshot_file_committed": false,
+    "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png",
+    "primary_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+    "secondary_url": null,
+    "exact_token_visible": true,
+    "tokens_visible": ["WF3CB"],
+    "brand_visible": "Frigidaire",
+    "product_line_visible": "PureSource 3",
+    "price_visible_usd": 52.99,
+    "in_stock_visible": "UNKNOWN",
+    "genuine_oem_badge_visible": "UNKNOWN",
+    "aftermarket_brand_visible": false
+  },
+  "exact_token_proof": "Headed Browser Proof Collector on 2026-07-04 showed PureSource® 3 Water and Ice Refrigerator Filter White-WF3CB on frigidaire.com official accessory PDP; EPTWFU01 and ULTRAWF product identity not shown. Owner accepted review packet APPROVE WF3CB OWNER REVIEW PACKET.",
+  "buyability_proof": "Headed Browser Proof Collector on 2026-07-04 showed price-like text ($39.75 / $52.99) and Add subscription / Purchase parts controls on frigidaire.com WF3CB official PDP.",
+  "observations_from_proof_only": [
+    "PROVEN: Page title: PureSource® 3 Water and Ice Refrigerator Filter White-WF3CB | Frigidaire.",
+    "PROVEN: H1: PureSource® 3 Water and Ice Refrigerator Filter.",
+    "PROVEN: Exact token WF3CB visible on page.",
+    "PROVEN: Price-like text visible.",
+    "PROVEN: Purchase control visible: Add subscription.",
+    "PROVEN: Purchase control visible: Purchase parts.",
+    "PROVEN: No EPTWFU01 product identity shown.",
+    "PROVEN: No ULTRAWF product identity shown.",
+    "PROVEN: Collector screenshot at data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png.",
+    "PROVEN: Lowe's and Home Depot batch candidates failed as proof this session."
+  ],
+  "required_next_action": "Re-run apply-plan factory and readiness gate. Founder approval, CSV apply, and scoped Supabase sync remain unauthorized from this evidence file alone.",
+  "notes": [
+    "Evidence activated from owner-accepted browser_proof_collector_owner_review_packet_v1 (sha256 b8301d0aa9550113f96206bfefc251c6412bfdcd6da0ce7cbb506adfae8655b6).",
+    "Source collector draft sha256 56c29d5c7ee1a795032a0661645fefbeee0e47e6f04559883393e02403732331.",
+    "WF3CB is PureSource 3 — not EPTWFU01 (PureSource Ultra II) and not ULTRAWF (PureSource Ultra).",
+    "No retailer_links.csv, Supabase, /go, or founder-approval mutation is authorized by this file."
+  ]
+}

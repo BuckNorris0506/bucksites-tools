@@ -1,0 +1,287 @@
+{
+  "contract": "browser_proof_collector_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "verified_link_authorized": false,
+  "csv_apply_authorized": false,
+  "supabase_mutation_authorized": false,
+  "evidence_write_authorized": false,
+  "production_go_click_authorized": false,
+  "apply_plan_proposal_justified": false,
+  "promotes_to_owner_browser_proof_result": false,
+  "founder_approval_authorized": false,
+  "generated_at": "2026-07-04T14:47:23.202Z",
+  "capture_method": "playwright_headed",
+  "capture_options": {
+    "headed": true,
+    "wait_ms": 3000,
+    "timeout_ms": 60000,
+    "user_agent_mode": "desktop_chrome"
+  },
+  "capture_attempts": [
+    {
+      "attempt_id": "a1_domcontentloaded_collector_ua",
+      "wait_until": "domcontentloaded",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": true,
+      "wait_ms": 3000,
+      "timeout_ms": 60000,
+      "launch_args": [],
+      "success": false,
+      "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\nCall log:\n\u001b[2m  - navigating to \"https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a2_load_collector_ua",
+      "wait_until": "load",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": true,
+      "wait_ms": 3000,
+      "timeout_ms": 60000,
+      "launch_args": [],
+      "success": false,
+      "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\nCall log:\n\u001b[2m  - navigating to \"https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\", waiting until \"load\"\u001b[22m\n",
+      "final_url": "about:blank"
+    },
+    {
+      "attempt_id": "a3_load_desktop_chrome_ua",
+      "wait_until": "load",
+      "user_agent_mode": "desktop_chrome",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+      "headed": true,
+      "wait_ms": 3000,
+      "timeout_ms": 60000,
+      "launch_args": [],
+      "success": true,
+      "error": null,
+      "final_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB"
+    },
+    {
+      "attempt_id": "a1_domcontentloaded_collector_ua",
+      "wait_until": "domcontentloaded",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": true,
+      "wait_ms": 3000,
+      "timeout_ms": 60000,
+      "launch_args": [],
+      "success": true,
+      "error": null,
+      "final_url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+    },
+    {
+      "attempt_id": "a1_domcontentloaded_collector_ua",
+      "wait_until": "domcontentloaded",
+      "user_agent_mode": "collector",
+      "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+      "headed": true,
+      "wait_ms": 3000,
+      "timeout_ms": 60000,
+      "launch_args": [],
+      "success": true,
+      "error": null,
+      "final_url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+    }
+  ],
+  "batch_mode": true,
+  "collect_all": true,
+  "early_stop": {
+    "stopped": false,
+    "reason": null,
+    "stopped_after_candidate_url": null
+  },
+  "best_candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+  "best_candidate_rank": 0,
+  "slug": "wf3cb",
+  "expected_token": "WF3CB",
+  "forbidden_tokens": [
+    "EPTWFU01",
+    "ULTRAWF"
+  ],
+  "confusion_family_owner_review_required": true,
+  "owner_review_required": true,
+  "candidates": [
+    {
+      "candidate_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "verdict": "PASS",
+      "blockers": [],
+      "facts": {
+        "final_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+        "title": "PureSource® 3 Water and Ice Refrigerator Filter White-WF3CB | Frigidaire",
+        "h1": "PureSource® 3 Water and Ice Refrigerator Filter",
+        "visible_text_snippet": "Skip to Header\nSkip to Main Content\nSkip to Footer\nImportant Recall Information\n\nOur brands:\n\nLog in / Order status Contact us\n Deliver to: 28088\nKitchen\nAir Care\nSmall Appliances\nLaundry\nFilters\nAccessories\nOwner Support\nBlog\nSale\nHome /\nFrigidaire /\nFilters /\nWater Filters /\nWF3CB\nPureSource® 3 Water and Ice Refrigerator Filter\nWF3CB\n$3975 Save $13.24\n$5299\nPack Options1 Pack\n\n1 Pack\n\n2 Pack\n\n3 Pack\n\nBuying options\nOne-time purchase\nSubscribe & Save 25%\nSelect a delivery frequency\n6 months\nSubscription program terms\n\nAvailability for: 28088.\nAdd subscription\n  Check compatibility\n\n\nEnter your appliance model number to confirm.\n\nWhere do I find my model number?\n\nThe Frigidaire.com Advantage\n\nPrice match guarantee\n\nVIP customer support\n\nFree delivery on appliance orders over $399\n\nHow ofte",
+        "exact_expected_token_present": true,
+        "forbidden_tokens_present": [],
+        "price_like_text_present": true,
+        "stock_or_buyability_signal_present": false,
+        "add_to_cart_or_subscription_signals": [
+          "Add subscription Add subscription",
+          "Purchase parts"
+        ],
+        "unavailable_signal_present": false,
+        "page_type": "product_pdp",
+        "source_class": "official_manufacturer_pdp",
+        "capture_succeeded": true,
+        "navigation_error": null,
+        "extraction_uncertain": false
+      },
+      "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png",
+      "assessment": "PASS: product PDP with exact expected token visible and buyability signal; draft only — owner review still required.",
+      "capture_attempts": [
+        {
+          "attempt_id": "a1_domcontentloaded_collector_ua",
+          "wait_until": "domcontentloaded",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": true,
+          "wait_ms": 3000,
+          "timeout_ms": 60000,
+          "launch_args": [],
+          "success": false,
+          "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\nCall log:\n\u001b[2m  - navigating to \"https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\", waiting until \"domcontentloaded\"\u001b[22m\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a2_load_collector_ua",
+          "wait_until": "load",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": true,
+          "wait_ms": 3000,
+          "timeout_ms": 60000,
+          "launch_args": [],
+          "success": false,
+          "error": "page.goto: net::ERR_HTTP2_PROTOCOL_ERROR at https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\nCall log:\n\u001b[2m  - navigating to \"https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB\", waiting until \"load\"\u001b[22m\n",
+          "final_url": "about:blank"
+        },
+        {
+          "attempt_id": "a3_load_desktop_chrome_ua",
+          "wait_until": "load",
+          "user_agent_mode": "desktop_chrome",
+          "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          "headed": true,
+          "wait_ms": 3000,
+          "timeout_ms": 60000,
+          "launch_args": [],
+          "success": true,
+          "error": null,
+          "final_url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB"
+        }
+      ]
+    },
+    {
+      "candidate_url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+      "verdict": "FAIL_AS_PROOF",
+      "blockers": [
+        "page_blocked",
+        "exact_expected_token_missing"
+      ],
+      "facts": {
+        "final_url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+        "title": "Access Denied",
+        "h1": "Access Denied",
+        "visible_text_snippet": "Access Denied\nYou don't have permission to access \"http://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400\" on this server.\n\nReference #18.9451c317.1783176406.486e2a6\n\nhttps://errors.edgesuite.net/18.9451c317.1783176406.486e2a6",
+        "exact_expected_token_present": false,
+        "forbidden_tokens_present": [],
+        "price_like_text_present": false,
+        "stock_or_buyability_signal_present": false,
+        "add_to_cart_or_subscription_signals": [],
+        "unavailable_signal_present": false,
+        "page_type": "blocked",
+        "source_class": "retailer_direct_pdp",
+        "capture_succeeded": true,
+        "navigation_error": null,
+        "extraction_uncertain": false
+      },
+      "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-7dc431e4a264-2026-07-04T14-46-36-028Z.png",
+      "assessment": "FAIL_AS_PROOF: exact expected token not visibly present.",
+      "capture_attempts": [
+        {
+          "attempt_id": "a1_domcontentloaded_collector_ua",
+          "wait_until": "domcontentloaded",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": true,
+          "wait_ms": 3000,
+          "timeout_ms": 60000,
+          "launch_args": [],
+          "success": true,
+          "error": null,
+          "final_url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400"
+        }
+      ]
+    },
+    {
+      "candidate_url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+      "verdict": "FAIL_AS_PROOF",
+      "blockers": [
+        "page_type_unknown",
+        "exact_expected_token_missing"
+      ],
+      "facts": {
+        "final_url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+        "title": "Error Page",
+        "h1": "",
+        "visible_text_snippet": "#1 Home Improvement Retailer\nOops!! Something went wrong. Please refresh page\nRefresh\nHow doers get more done™\nNeed Help? Visit our Customer Service Center",
+        "exact_expected_token_present": false,
+        "forbidden_tokens_present": [],
+        "price_like_text_present": false,
+        "stock_or_buyability_signal_present": false,
+        "add_to_cart_or_subscription_signals": [],
+        "unavailable_signal_present": false,
+        "page_type": "unknown",
+        "source_class": "retailer_direct_pdp",
+        "capture_succeeded": true,
+        "navigation_error": null,
+        "extraction_uncertain": false
+      },
+      "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-76d1c79b79be-2026-07-04T14-46-36-028Z.png",
+      "assessment": "FAIL_AS_PROOF: exact expected token not visibly present.",
+      "capture_attempts": [
+        {
+          "attempt_id": "a1_domcontentloaded_collector_ua",
+          "wait_until": "domcontentloaded",
+          "user_agent_mode": "collector",
+          "user_agent": "BuckPartsBrowserProofCollector/1.0 (+https://buckparts.com; read-only evidence collection)",
+          "headed": true,
+          "wait_ms": 3000,
+          "timeout_ms": 60000,
+          "launch_args": [],
+          "success": true,
+          "error": null,
+          "final_url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978"
+        }
+      ]
+    }
+  ],
+  "overall_verdict": "PASS",
+  "recommended_next_action": "Owner review draft collector output. Best candidate: https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB (official_manufacturer_pdp). If accepted, manually author owner-browser-proof-result + evidence; do not treat collector PASS as apply-ready.",
+  "proven_facts": [
+    "PROVEN: browser_proof_collector_v1 is draft-only; all mutation and approval flags false.",
+    "PROVEN: collector does not write owner-browser-proof-result or founder approvals.",
+    "PROVEN: capture failure can never produce PASS.",
+    "PROVEN: overall_verdict=PASS.",
+    "PROVEN: candidate_count=3 batch_mode=true.",
+    "PROVEN: capture_attempts=5 success=true.",
+    "PROVEN: best_candidate_rank=0 source_class=official_manufacturer_pdp verdict=PASS.",
+    "PROVEN: confusion-family slug — owner review remains required even on collector PASS."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: owner acceptance of this draft as committed browser proof.",
+    "UNKNOWN: readiness-gate eligibility until owner-browser-proof-result is authored separately."
+  ],
+  "not_authorized": [
+    "retailer_links_csv_mutation",
+    "supabase_mutation",
+    "data/evidence_mutation",
+    "owner_browser_proof_result_auto_write",
+    "founder_approval_auto_create",
+    "apply_plan_auto_create",
+    "readiness_gate_auto_pass",
+    "VALIDATION_PASS",
+    "live_link_mutation"
+  ]
+}

@@ -16,49 +16,107 @@
   "brand_slug": "frigidaire",
   "product_line": "PureSource 3",
   "verdict": "PASS_BROWSER_PROOF",
-  "checked_at": "2026-07-04T01:21:44.000Z",
-  "capture_method": "owner_browser_visual_inspection",
+  "checked_at": "2026-07-04T14:46:36.028Z",
+  "capture_method": "browser_proof_collector_headed_playwright",
   "verified_by": "owner",
+  "owner_acceptance": "APPROVE WF3CB OWNER REVIEW PACKET",
+  "owner_accepted_at": "2026-07-04T15:24:00.000Z",
+  "source_binding_v1": {
+    "source_owner_review_packet_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/browser-proof-collector-owner-review-packet-wf3cb-56c29d5c7ee1-2026-07-04T15-09-15-388Z.json",
+    "source_owner_review_packet_sha256": "b8301d0aa9550113f96206bfefc251c6412bfdcd6da0ce7cbb506adfae8655b6",
+    "source_collector_draft_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/browser-proof-collector-batch-wf3cb-33a9ac253b09-2026-07-04T14-46-36-028Z.json",
+    "source_collector_draft_sha256": "56c29d5c7ee1a795032a0661645fefbeee0e47e6f04559883393e02403732331",
+    "screenshot_rel_path": "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png",
+    "owner_acceptance_text": "APPROVE WF3CB OWNER REVIEW PACKET"
+  },
   "mission_context": {
     "mission_type": "OWNER_BROWSER_PROOF_REFRESH",
     "coverage_batch": "coverage_batch_b_frigidaire_cluster",
     "session_date": "2026-07-04",
     "session_worksheet": "data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-session-v1.md",
-    "assist_validation_status": "VALIDATION_PARTIAL"
+    "assist_validation_status": "VALIDATION_PARTIAL",
+    "collector_pipeline": "batch_collector_pass_to_owner_review_bridge_to_activated_proof"
   },
   "live_buckparts_url": "https://buckparts.com/filter/wf3cb",
   "owner_proof_urls": [
     {
       "priority": 1,
+      "retailer": "frigidaire.com",
+      "url": "https://www.frigidaire.com/en/p/accessories/refrigerator-accessories/refrigerator-accessories-and-consumables/water-filters/WF3CB",
+      "path_type": "official_manufacturer_pdp",
+      "browser_proof_status": "PASS",
+      "assessment": "Official Frigidaire manufacturer PDP — primary buy path proven via headed Browser Proof Collector and owner-accepted review packet.",
+      "proven_observations": [
+        "PROVEN: Page title: PureSource® 3 Water and Ice Refrigerator Filter White-WF3CB | Frigidaire.",
+        "PROVEN: H1: PureSource® 3 Water and Ice Refrigerator Filter.",
+        "PROVEN: Exact token WF3CB visible on page.",
+        "PROVEN: Price-like text visible ($39.75 / $52.99 in collector snippet).",
+        "PROVEN: Purchase control visible: Add subscription.",
+        "PROVEN: Purchase control visible: Purchase parts.",
+        "PROVEN: No EPTWFU01 product identity shown.",
+        "PROVEN: No ULTRAWF product identity shown.",
+        "PROVEN: Collector screenshot at data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": [
+        "data/fridge/batch-production/drafts/browser-proof-collector/wf3cb/screenshots/browser-proof-collector-wf3cb-b12204ef1d54-2026-07-04T14-46-36-028Z.png"
+      ]
+    }
+  ],
+  "failed_candidates": [
+    {
+      "priority": 2,
       "retailer": "Lowes",
       "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
       "path_type": "retailer_direct_pdp",
-      "browser_proof_status": "PASS",
-      "assessment": "Secondary retailer/direct PDP only — not Frigidaire.com official manufacturer proof.",
+      "browser_proof_status": "FAIL",
+      "assessment": "Collector batch candidate failed as proof — blocked / access denied; exact token not visibly present.",
       "proven_observations": [
-        "PROVEN: Product title: Frigidaire Push-in Refrigerator Water Filter WF3CB PureSource 3.",
-        "PROVEN: Item #661176.",
-        "PROVEN: Model #WF3CB.",
-        "PROVEN: Frigidaire / PureSource 3 packaging visible.",
-        "PROVEN: Price visible: $52.99.",
-        "PROVEN: Pickup/shipping availability visible.",
-        "PROVEN: No EPTWFU01 product identity shown.",
-        "PROVEN: No ULTRAWF product identity shown."
+        "PROVEN: Collector verdict FAIL_AS_PROOF for Lowe's candidate in batch run."
+      ],
+      "inferred_observations": [],
+      "unknown_observations": [],
+      "screenshot_paths": []
+    },
+    {
+      "priority": 3,
+      "retailer": "Home Depot",
+      "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+      "path_type": "retailer_direct_pdp",
+      "browser_proof_status": "FAIL",
+      "assessment": "Collector batch candidate failed as proof — error page / exact token not visibly present.",
+      "proven_observations": [
+        "PROVEN: Collector verdict FAIL_AS_PROOF for Home Depot candidate in batch run."
       ],
       "inferred_observations": [],
       "unknown_observations": [],
       "screenshot_paths": []
     }
   ],
-  "failed_candidates": [],
-  "urls_to_avoid": [],
+  "urls_to_avoid": [
+    {
+      "retailer": "Lowes",
+      "url": "https://www.lowes.com/pd/Frigidaire-PureSource-174-3-Replacement-Water-Filter/1003164400",
+      "action": "DO_NOT_USE_AS_PROOF",
+      "reason": "Collector batch session: blocked/access denied; not usable as official/authorized primary.",
+      "evidence_level": "PROVEN"
+    },
+    {
+      "retailer": "Home Depot",
+      "url": "https://www.homedepot.com/p/Frigidaire-Refrigerator-Filter-for-Frigidaire-WF3CB-PureSource-3-HDWF3CB/313853978",
+      "action": "DO_NOT_USE_AS_PROOF",
+      "reason": "Collector batch session: error page; not usable as official/authorized primary.",
+      "evidence_level": "PROVEN"
+    }
+  ],
   "confusion_family_observations": {
-    "status": "OBSERVED_CLEARED_ON_SECONDARY_RETAILER_PDP",
+    "status": "OBSERVED_CLEARED_ON_PRIMARY_PDP",
     "forbidden_tokens_for_slug": ["EPTWFU01", "ULTRAWF"],
     "forbidden_tokens_observed_on_primary": [],
     "notes": [
-      "PROVEN: Lowe's PDP shows WF3CB / PureSource 3 — not EPTWFU01 (Ultra II) and not ULTRAWF (Ultra).",
-      "UNKNOWN: Frigidaire.com official WF3CB page was not screenshot-proven this session."
+      "PROVEN: Frigidaire.com official PDP shows WF3CB / PureSource 3 — not EPTWFU01 (Ultra II) and not ULTRAWF (Ultra).",
+      "PROVEN: Owner accepted browser_proof_collector_owner_review_packet for WF3CB (APPROVE WF3CB OWNER REVIEW PACKET)."
     ]
   },
   "not_authorized": [
@@ -73,21 +131,19 @@
     "truth_closure",
     "VALIDATION_PASS",
     "live_link_mutation_from_this_result_alone",
-    "treat_lowes_as_official_manufacturer_primary"
+    "founder_approval_auto_create",
+    "apply_plan_auto_create"
   ],
   "proven_facts": [
-    "PROVEN: Lowe's PDP shows WF3CB / PureSource 3 OEM identity and buyability signals this session.",
-    "PROVEN: Lowe's path_type is retailer_direct_pdp — secondary only, not official manufacturer.",
+    "PROVEN: owner verdict PASS_BROWSER_PROOF for slug wf3cb on Frigidaire.com official_manufacturer_pdp.",
+    "PROVEN: exact token WF3CB and PureSource 3 identity visible; forbidden tokens EPTWFU01 and ULTRAWF not present.",
+    "PROVEN: activated from owner-accepted collector owner-review packet (sha256 b8301d0aa9550113f96206bfefc251c6412bfdcd6da0ce7cbb506adfae8655b6).",
     "PROVEN: draft result artifact is read_only=true with all mutation flags false."
   ],
-  "inferred_facts": [
-    "INFERRED: Manufacturer-rescue apply-plan READY requires official_manufacturer_pdp or authorized_parts_distributor_pdp PASS — Lowe's alone is insufficient for READY_FOR_OWNER_REVIEW."
-  ],
+  "inferred_facts": [],
   "unknown_facts": [
-    "UNKNOWN: Frigidaire.com official WF3CB accessory page — screenshot not provided this session.",
-    "UNKNOWN: Home Depot WF3CB / HDWF3CB listing not re-checked this session.",
-    "UNKNOWN: Amazon B0045LLC7K not verified this session.",
-    "UNKNOWN: screenshot file paths in repo — owner provided screenshots out-of-band."
+    "UNKNOWN: founder approval and apply-plan readiness until authored separately.",
+    "UNKNOWN: live /filter/wf3cb Verified Link until CSV apply + scoped Supabase sync."
   ],
-  "recommended_next_action": "Capture Frigidaire.com official WF3CB PDP (or authorized FrigidaireApplianceParts PartDetail if available) before apply-plan READY. Do not promote Lowe's as official manufacturer primary."
+  "recommended_next_action": "Re-run readiness gate and apply-plan factory. Founder approval, CSV apply, and scoped Supabase sync remain unauthorized from this proof result alone."
 }
