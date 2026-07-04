@@ -3,7 +3,7 @@
   "read_only": true,
   "data_mutation": false,
   "mutation_authorized": false,
-  "generated_at": "2026-07-04T15:42:19.460Z",
+  "generated_at": "2026-07-04T15:48:02.401Z",
   "wedge": "refrigerator_water",
   "execution_plan_status": "READY_FOR_MUTATION_AUTH_REVIEW",
   "source_apply_plan_artifact_rel_path": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json",

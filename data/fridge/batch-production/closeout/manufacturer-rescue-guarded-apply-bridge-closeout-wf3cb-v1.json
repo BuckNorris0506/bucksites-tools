@@ -1,0 +1,50 @@
+{
+  "contract": "manufacturer_rescue_guarded_apply_bridge_closeout_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "generated_at": "2026-07-04T15:48:02.452Z",
+  "source_command": "npm run buckparts:manufacturer-rescue-guarded-apply-bridge",
+  "filter_slug": "wf3cb",
+  "bridge_status": "APPLIED",
+  "write_csv_applied": true,
+  "previous_page_classification": "SAFE_BUYER_PATH_SUPPRESSED_TRUST",
+  "new_page_classification": "SAFE_BUYER_PATH_PROVEN",
+  "safe_buyer_path_proven_delta": 1,
+  "census_delta": {
+    "safe_buyer_path_proven_count_before": 53,
+    "safe_buyer_path_proven_count_after": 54,
+    "safe_buyer_path_proven_count_delta": 1
+  },
+  "customer_closure_delta": {
+    "customer_visible_closures_count_before": 0,
+    "customer_visible_closures_count_after": 0,
+    "customer_visible_closures_count_delta": 0,
+    "closure_confidence_before": "LOW",
+    "closure_confidence_after": "LOW"
+  },
+  "execution_ledger_entry": {
+    "trigger_source": "npm run buckparts:manufacturer-rescue-guarded-apply-bridge",
+    "ledger_rel_path": "data/command-center/execution-ledger-v1.json",
+    "entries_indexed": 11,
+    "latest_entry_summary": null
+  },
+  "source_artifact_paths": {
+    "readiness_gate": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-readiness-gate-v1.json",
+    "runner": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-runner-v1.json",
+    "apply_plan": "data/fridge/batch-production/drafts/manufacturer-safe-link-rescue-apply-plan-wf3cb-v1.json",
+    "execution_plan": "data/fridge/batch-production/apply-execution-plans/manufacturer-rescue-guarded-apply-execution-plan-wf3cb-v1-e433161a2551.json"
+  },
+  "guarded_executor_summary": {
+    "executor_status": "PRE_APPLY_DRY_RUN_READY",
+    "row_patch_count": 1,
+    "post_write_validation_status": "PROVEN"
+  },
+  "post_apply_refresh_ran": true,
+  "proven_facts": [
+    "PROVEN: bridge closeout for wf3cb with bridge_status=APPLIED.",
+    "PROVEN: classification SAFE_BUYER_PATH_SUPPRESSED_TRUST -> SAFE_BUYER_PATH_PROVEN."
+  ],
+  "unknown_facts": [],
+  "closeout_durability_tier": "slug_indexed"
+}
