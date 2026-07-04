@@ -5,7 +5,7 @@
  */
 
 /** Bump when doctrine or scan list changes meaningfully. */
-export const CUSTOMER_LANGUAGE_DOCTRINE_VERSION = 3;
+export const CUSTOMER_LANGUAGE_DOCTRINE_VERSION = 4;
 
 export const CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH =
   "docs/BuckParts-CUSTOMER-LANGUAGE-AND-DEFINITIONS.md" as const;
@@ -69,11 +69,81 @@ export const PUBLIC_BANNED_BACKEND_JARGON_V1 = [
   "compat row",
 ] as const;
 
+/**
+ * Additional homeowner-facing leaks (ERROR copy / internal vocabulary).
+ * Matched inside string literals only so identifiers and data-attributes are not false positives.
+ * Short tokens (`repo`, `slug`) use word-boundary matching.
+ */
+export const PUBLIC_BANNED_CUSTOMER_COPY_LEAKS_V1 = [
+  "repo",
+  "repository",
+  "supabase",
+  "slug",
+  "browser truth",
+  "direct buyable",
+  "search placeholder",
+] as const;
+
 /** Public trust routes scanned for backend jargon (homeowner copy). */
 export const PUBLIC_TRUST_PAGE_REL_PATHS_V1 = [
   "src/app/truth-policy/page.tsx",
   "src/app/wrong-part-prevention/page.tsx",
 ] as const;
+
+/**
+ * Public customer-facing surfaces scanned for ERROR-copy / internal-jargon leaks.
+ * Does not include owner dashboard, scripts, tests, data JSON, or docs.
+ */
+export const PUBLIC_CUSTOMER_COPY_SURFACE_REL_PATHS_V1 = [
+  "src/components/fridge/FilterPdpRepoEvidenceSection.tsx",
+  "src/app/search/page.tsx",
+  "src/app/not-found.tsx",
+  "src/app/air-purifier/search/page.tsx",
+  "src/app/vacuum/search/page.tsx",
+  "src/app/humidifier/search/page.tsx",
+  "src/lib/fridge/fridge-filter-pdp-customer-safety-v1.ts",
+] as const;
+
+/** Extract quoted string literals from TS/TSX for customer-copy scans. */
+export function extractPublicCopyStringLiteralsV1(source: string): string[] {
+  const withoutBlockComments = source.replace(/\/\*[\s\S]*?\*\//g, "");
+  const withoutLineComments = withoutBlockComments.replace(/^\s*\/\/.*$/gm, "");
+  const literals: string[] = [];
+  const re = /(["'`])((?:\\.|(?!\1)[^\\])*?)\1/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(withoutLineComments)) !== null) {
+    const body = match[2] ?? "";
+    if (body.includes("${")) continue;
+    // Skip import/module paths and bare technical paths (no spaces).
+    if ((body.startsWith("./") || body.startsWith("../") || body.startsWith("@/")) && !/\s/.test(body)) {
+      continue;
+    }
+    if (body.includes("/") && !/\s/.test(body) && !body.includes("://")) {
+      continue;
+    }
+    literals.push(body);
+  }
+  return literals;
+}
+
+/** True when a banned leak phrase appears in customer-facing string literals. */
+export function publicCopyLiteralsContainBannedLeakV1(
+  literals: readonly string[],
+  bannedPhrase: string,
+): boolean {
+  const needle = bannedPhrase.toLowerCase();
+  const useWordBoundary = !needle.includes(" ") && !needle.includes("_") && needle.length <= 12;
+  for (const literal of literals) {
+    const hay = literal.toLowerCase();
+    if (useWordBoundary) {
+      const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      if (new RegExp(`\\b${escaped}\\b`, "i").test(hay)) return true;
+    } else if (hay.includes(needle)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export type WaterdropLiveCtaStatusV1 = "NOT_LIVE" | "BLOCKED" | "LIVE";
 

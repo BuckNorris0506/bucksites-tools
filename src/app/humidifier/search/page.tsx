@@ -39,11 +39,8 @@ export default async function HumidifierSearchPage({ searchParams }: Props) {
     try {
       const raw = await searchHumidifierCatalog(query);
       hits = await enrichHumidifierModelHitsWithFilters(raw);
-    } catch (e) {
-      error =
-        e instanceof Error
-          ? e.message
-          : "Search is temporarily unavailable. Check your Supabase configuration.";
+    } catch {
+      error = "Search is temporarily unavailable. Please try again in a moment.";
       hits = [];
     }
   }

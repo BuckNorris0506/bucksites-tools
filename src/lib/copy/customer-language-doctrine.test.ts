@@ -6,6 +6,7 @@ import { describe, it } from "node:test";
 
 import {
   CUSTOMER_LANGUAGE_DOCTRINE_REL_PATH,
+  extractPublicCopyStringLiteralsV1,
   FULL_TRUTH_OR_UNKNOWN_RULE_V1,
   LIVE_SITE_SMOKE_CHECK_ALIAS_NPM_SCRIPT_V1,
   LIVE_SITE_SMOKE_CHECK_NPM_SCRIPT_V1,
@@ -13,10 +14,17 @@ import {
   OWNER_MANUFACTURER_CATALOG_SEARCH_REMEDIATION_V1,
   PUBLIC_BANNED_BACKEND_HOMEOWNER_PHRASES_V1,
   PUBLIC_BANNED_BACKEND_JARGON_V1,
+  PUBLIC_BANNED_CUSTOMER_COPY_LEAKS_V1,
+  PUBLIC_CUSTOMER_COPY_SURFACE_REL_PATHS_V1,
   PUBLIC_TRUST_PAGE_REL_PATHS_V1,
+  publicCopyLiteralsContainBannedLeakV1,
   UNIVERSAL_PAGE_TRUST_CONTRACT_REL_PATH,
   WATERDROP_DA29_00020B_RESEARCH_DRAFT_REL_PATH,
 } from "@/lib/copy/customer-language-doctrine";
+import {
+  customerFacingFilterProofStatusV1,
+} from "@/components/fridge/FilterPdpRepoEvidenceSection";
+import { SINGLE_FILTER_FAMILY_AMBIGUITY_FILTER_PAGE_NOTE_V1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
 
 const REPO_ROOT = path.resolve(path.join(path.dirname(fileURLToPath(import.meta.url)), "../../.."));
 
@@ -91,5 +99,44 @@ describe("customer language doctrine", () => {
     assert.match(md, /DESIGN ONLY/i);
     assert.match(md, /not customer-facing/i);
     assert.match(md, /DA29-00020B/i);
+  });
+
+  it("public customer-copy surfaces do not leak internal jargon in string literals", () => {
+    for (const rel of PUBLIC_CUSTOMER_COPY_SURFACE_REL_PATHS_V1) {
+      const src = readFileSync(path.join(REPO_ROOT, rel), "utf8");
+      const literals = extractPublicCopyStringLiteralsV1(src);
+      for (const phrase of PUBLIC_BANNED_CUSTOMER_COPY_LEAKS_V1) {
+        assert.ok(
+          !publicCopyLiteralsContainBannedLeakV1(literals, phrase),
+          `${rel}: banned customer-copy leak "${phrase}" in string literals`,
+        );
+      }
+    }
+  });
+
+  it("filter PDP proof status maps enums to homeowner English", () => {
+    assert.equal(
+      customerFacingFilterProofStatusV1("direct_buyable"),
+      "We checked a direct product page for this filter.",
+    );
+    assert.equal(
+      customerFacingFilterProofStatusV1("search_placeholder"),
+      "We only found a store search page, not a direct product page, so we're not linking it yet.",
+    );
+    assert.equal(
+      customerFacingFilterProofStatusV1(null),
+      "We haven't confirmed a safe store link yet.",
+    );
+    assert.equal(
+      customerFacingFilterProofStatusV1("likely_valid"),
+      "We haven't confirmed a safe store link yet.",
+    );
+  });
+
+  it("fridge single-family ambiguity warning stays homeowner-readable", () => {
+    assert.equal(
+      SINGLE_FILTER_FAMILY_AMBIGUITY_FILTER_PAGE_NOTE_V1,
+      "Double-check before you buy: Some refrigerators can use more than one filter type. Match the part number on your old filter or refrigerator manual before ordering.",
+    );
   });
 });

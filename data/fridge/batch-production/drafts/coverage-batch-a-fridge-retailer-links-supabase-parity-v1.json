@@ -1,0 +1,172 @@
+{
+  "contract": "coverage_batch_a_fridge_retailer_links_supabase_parity_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "mode": "dry_run",
+  "generated_at": "2026-07-04T00:41:23.030Z",
+  "allowed_slugs": [
+    "edr3rxd1",
+    "ultrawf"
+  ],
+  "supabase_truth_status": "CHECKED",
+  "supabase_unavailable_reason": null,
+  "row_count_planned": 0,
+  "rows": [
+    {
+      "filter_slug": "edr3rxd1",
+      "status": "CSV_AND_SUPABASE_MATCH",
+      "filter_id": "a1208ab2-0774-43be-8d0b-1e1e17e6f953",
+      "csv_primary": {
+        "filter_slug": "edr3rxd1",
+        "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+        "retailer_name": "Whirlpool",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+        "browser_truth_checked_at": "2026-07-03T17:25:00.000Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "2d5f5238-f439-44b1-8c11-06ae1f7d662a",
+        "filter_id": "a1208ab2-0774-43be-8d0b-1e1e17e6f953",
+        "affiliate_url": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+        "retailer_name": "Whirlpool",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+        "browser_truth_checked_at": "2026-07-03T17:25:00+00:00",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "field_parity": [
+        {
+          "field": "affiliate_url",
+          "csv_value": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "supabase_value": "https://www.whirlpool.com/accessories/kitchen-accessories/refrigerator/p.ice-and-water-refrigerator-filter-3.edr3rxd1.html",
+          "match": true
+        },
+        {
+          "field": "retailer_name",
+          "csv_value": "Whirlpool",
+          "supabase_value": "Whirlpool",
+          "match": true
+        },
+        {
+          "field": "browser_truth_classification",
+          "csv_value": "direct_buyable",
+          "supabase_value": "direct_buyable",
+          "match": true
+        },
+        {
+          "field": "browser_truth_notes",
+          "csv_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+          "supabase_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-edr3rxd1-v1.json; BuckParts Verified Link (official_manufacturer_official_whirlpool).",
+          "match": true
+        },
+        {
+          "field": "browser_truth_checked_at",
+          "csv_value": "2026-07-03T17:25:00.000Z",
+          "supabase_value": "2026-07-03T17:25:00+00:00",
+          "match": true
+        },
+        {
+          "field": "is_primary",
+          "csv_value": "true",
+          "supabase_value": "true",
+          "match": true
+        },
+        {
+          "field": "retailer_key",
+          "csv_value": "oem-parts-catalog",
+          "supabase_value": "oem-parts-catalog",
+          "match": true
+        }
+      ],
+      "mismatched_fields": [],
+      "planned_action": "none"
+    },
+    {
+      "filter_slug": "ultrawf",
+      "status": "CSV_AND_SUPABASE_MATCH",
+      "filter_id": "af419042-ddd6-4af9-b331-7b546084e729",
+      "csv_primary": {
+        "filter_slug": "ultrawf",
+        "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "retailer_name": "Frigidaire",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+        "browser_truth_checked_at": "2026-07-03T17:13:04.000Z",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "supabase_primary": {
+        "id": "b23eac97-d064-46e1-b086-617e4a79f002",
+        "filter_id": "af419042-ddd6-4af9-b331-7b546084e729",
+        "affiliate_url": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+        "retailer_name": "Frigidaire",
+        "browser_truth_classification": "direct_buyable",
+        "browser_truth_notes": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+        "browser_truth_checked_at": "2026-07-03T17:13:04+00:00",
+        "is_primary": true,
+        "retailer_key": "oem-parts-catalog"
+      },
+      "field_parity": [
+        {
+          "field": "affiliate_url",
+          "csv_value": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+          "supabase_value": "https://www.frigidaireapplianceparts.com/PartDetail/Water-Filter/ULTRAWF/1534529",
+          "match": true
+        },
+        {
+          "field": "retailer_name",
+          "csv_value": "Frigidaire",
+          "supabase_value": "Frigidaire",
+          "match": true
+        },
+        {
+          "field": "browser_truth_classification",
+          "csv_value": "direct_buyable",
+          "supabase_value": "direct_buyable",
+          "match": true
+        },
+        {
+          "field": "browser_truth_notes",
+          "csv_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+          "supabase_value": "Manufacturer rescue apply plan v1; owner browser proof data/fridge/batch-production/drafts/fridge-safe-link-owner-browser-proof-result-ultrawf-v1.json; BuckParts Verified Link (official_manufacturer_official_frigidaire).",
+          "match": true
+        },
+        {
+          "field": "browser_truth_checked_at",
+          "csv_value": "2026-07-03T17:13:04.000Z",
+          "supabase_value": "2026-07-03T17:13:04+00:00",
+          "match": true
+        },
+        {
+          "field": "is_primary",
+          "csv_value": "true",
+          "supabase_value": "true",
+          "match": true
+        },
+        {
+          "field": "retailer_key",
+          "csv_value": "oem-parts-catalog",
+          "supabase_value": "oem-parts-catalog",
+          "match": true
+        }
+      ],
+      "mismatched_fields": [],
+      "planned_action": "none"
+    }
+  ],
+  "all_in_parity": true,
+  "blockers": [],
+  "proven_facts": [
+    "PROVEN: Coverage Batch A allowlist is exactly edr3rxd1 and ultrawf.",
+    "PROVEN: live /filter/[slug] reads Supabase public.retailer_links via getFilterBySlug.",
+    "PROVEN: csv_sha256=48828150eaa4d9e65b203a3f719f9bbb415166a55b22f128d290c055b38d665a",
+    "PROVEN: row_count_planned=0 (max 2).",
+    "PROVEN: founder decisions considered: decision-2026-07-03-edr3rxd1-approve_csv_manufacturer_rescue_apply, decision-2026-07-03-ultrawf-approve_csv_manufacturer_rescue_apply."
+  ],
+  "unknown_facts": [],
+  "recommended_next_action": "Parity already holds — no scoped write required."
+}

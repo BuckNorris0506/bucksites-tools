@@ -236,11 +236,8 @@ export default async function SearchPage({ searchParams }: Props) {
     try {
       const raw = await searchCatalog(query);
       hits = await enrichAllSearchHitsWithCompatibleFilters(raw);
-    } catch (e) {
-      error =
-        e instanceof Error
-          ? e.message
-          : "Search is temporarily unavailable. Check your Supabase configuration.";
+    } catch {
+      error = "Search is temporarily unavailable. Please try again in a moment.";
       hits = [];
     }
   }

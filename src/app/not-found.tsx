@@ -7,7 +7,7 @@ export default function NotFound() {
         Page not found
       </h1>
       <p className="text-sm text-neutral-600 dark:text-neutral-400">
-        That slug does not match anything in the catalog.
+        We couldn&apos;t find a page for that address. Try searching for your model or filter number.
       </p>
       <Link
         href="/"

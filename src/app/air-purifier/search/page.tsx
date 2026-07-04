@@ -39,11 +39,8 @@ export default async function AirPurifierSearchPage({ searchParams }: Props) {
     try {
       const raw = await searchAirPurifierCatalog(query);
       hits = await enrichAirPurifierModelHitsWithFilters(raw);
-    } catch (e) {
-      error =
-        e instanceof Error
-          ? e.message
-          : "Search is temporarily unavailable. Check your Supabase configuration.";
+    } catch {
+      error = "Search is temporarily unavailable. Please try again in a moment.";
       hits = [];
     }
   }

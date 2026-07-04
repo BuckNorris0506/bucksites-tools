@@ -44,6 +44,15 @@ export const SUPABASE_SERVICE_ROLE_INVENTORY_ENTRIES_V1: SupabaseServiceRoleInve
       mutation_lane: "rpwfe_official_ge_supabase_parity_apply_v1",
     },
     {
+      rel_path: "scripts/lib/coverage-batch-a-fridge-retailer-links-supabase-parity-v1.ts",
+      access_class: "write_guarded",
+      mutation_lane: "coverage_batch_a_fridge_retailer_links_supabase_parity_v1",
+    },
+    {
+      rel_path: "scripts/report-coverage-batch-a-fridge-retailer-links-supabase-parity-v1.ts",
+      access_class: "read_only",
+    },
+    {
       rel_path: "scripts/apply-search-gap-status-air-purifier.ts",
       access_class: "write_guarded",
       mutation_lane: "search_gap_status_air_purifier_v1",
