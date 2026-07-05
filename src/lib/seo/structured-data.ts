@@ -132,3 +132,50 @@ export function buildRefrigeratorFilterProductJsonLd(
 export function refrigeratorFilterMetadataDescription(oemPartNumber: string): string {
   return `Part ${oemPartNumber} refrigerator water filter — compatible models and replacement timing.`;
 }
+
+export type AirPurifierFilterProductJsonLdInput = {
+  slug: string;
+  oemPartNumber: string;
+  name: string | null;
+  brandName: string;
+  description: string;
+  siteUrl?: string;
+};
+
+/**
+ * Minimal Product JSON-LD for air purifier filter PDPs.
+ * Omits `image` — `air_purifier_filters` has no repo-proven product image field.
+ * Returns null when required proven fields are missing.
+ */
+export function buildAirPurifierFilterProductJsonLd(
+  input: AirPurifierFilterProductJsonLdInput,
+): JsonLdObject | null {
+  const oem = input.oemPartNumber.trim();
+  const brandName = input.brandName.trim();
+  const description = input.description.trim();
+  const slug = input.slug.trim();
+  if (!oem || !brandName || !description || !slug) {
+    return null;
+  }
+
+  const name = input.name?.trim() || oem;
+  const pageUrl = absoluteUrl(`/air-purifier/filter/${slug}`, input.siteUrl);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${pageUrl}#product`,
+    name,
+    description,
+    mpn: oem,
+    brand: {
+      "@type": "Brand",
+      name: brandName,
+    },
+    url: pageUrl,
+  };
+}
+
+export function airPurifierFilterMetadataDescription(oemPartNumber: string): string {
+  return `Part ${oemPartNumber} air purifier filter — compatible models and replacement timing.`;
+}

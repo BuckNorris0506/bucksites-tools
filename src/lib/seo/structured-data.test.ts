@@ -3,11 +3,13 @@ import test from "node:test";
 
 import {
   FORBIDDEN_JSON_LD_KEYS,
+  buildAirPurifierFilterProductJsonLd,
   buildOrganizationJsonLd,
   buildRefrigeratorFilterProductJsonLd,
   buildSiteWideJsonLdGraph,
   buildWebSiteJsonLd,
   jsonLdContainsForbiddenKeys,
+  airPurifierFilterMetadataDescription,
   refrigeratorFilterMetadataDescription,
 } from "@/lib/seo/structured-data";
 
@@ -86,6 +88,22 @@ test("Product JSON-LD falls back to OEM for name and returns null when required 
     }),
     null,
   );
+});
+
+test("air purifier Product JSON-LD uses AP filter path and proven fields only", () => {
+  const description = airPurifierFilterMetadataDescription("HRF-AP1");
+  const product = buildAirPurifierFilterProductJsonLd({
+    slug: "honeywell-hrf-ap1",
+    oemPartNumber: "HRF-AP1",
+    name: "Honeywell HRF-AP1 filter",
+    brandName: "Honeywell",
+    description,
+    siteUrl: SITE_URL,
+  });
+  assert.ok(product);
+  assert.equal(product!.url, `${SITE_URL}/air-purifier/filter/honeywell-hrf-ap1`);
+  assert.equal(product!.mpn, "HRF-AP1");
+  assert.equal(jsonLdContainsForbiddenKeys(product!).length, 0);
 });
 
 test("forbidden key scanner covers Phase 1 deny list including nested keys", () => {

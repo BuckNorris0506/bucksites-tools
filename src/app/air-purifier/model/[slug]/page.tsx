@@ -20,7 +20,13 @@ import {
   ModelTruthPanelCopyProvider,
 } from "@/components/trust/ModelTruthPanel";
 import { buildModelPageTrust } from "@/lib/trust/part-trust";
-import { getAirPurifierModelReviewOverride } from "@/lib/air-purifier/air-purifier-model-review-overrides";
+import {
+  getAirPurifierModelReviewOverride,
+  isAirPurifierModelUnderOwnerReview,
+} from "@/lib/air-purifier/air-purifier-model-review-overrides";
+import { classifyPageState } from "@/lib/page-state/page-state";
+import { getRobotsFromPageState } from "@/lib/page-state/page-state-meta";
+import { canonicalAlternatesForIndexablePath } from "@/lib/seo/canonical";
 
 export const dynamic = "force-dynamic";
 
@@ -29,15 +35,41 @@ const AIR_PURIFIER_MODEL_PRIMARY_BUY_SUPPRESS =
 
 type Props = { params: { slug: string } };
 
+function classifyAirPurifierModelPageState(args: {
+  underOwnerReview: boolean;
+  mappedFilterCount: number;
+  validCtaCount: number;
+}) {
+  return classifyPageState({
+    isIndexable: !args.underOwnerReview && args.mappedFilterCount > 0,
+    validCtaCount: args.underOwnerReview ? 0 : args.validCtaCount,
+    buyerPathState: args.underOwnerReview ? "suppress_buy" : null,
+    hasDemandSignal: null,
+  });
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const model = await getAirPurifierModelBySlug(params.slug);
   if (!model) {
     return { title: "Model not found" };
   }
+  const underOwnerReview = isAirPurifierModelUnderOwnerReview(params.slug);
+  const validCtaCount = model.filters.reduce(
+    (count, filter) => count + filter.retailer_links.length,
+    0,
+  );
+  const pageState = classifyAirPurifierModelPageState({
+    underOwnerReview,
+    mappedFilterCount: model.filters.length,
+    validCtaCount,
+  });
+  const title = `${model.model_number} air purifier filters`;
   return {
-    title: `${model.model_number} air purifier filters`,
+    title,
     description: `Replacement filter numbers for ${model.brand.name} air purifier model ${model.model_number}. Confirm fit, see alternates if listed, compare buying options.`,
     openGraph: { title: `${model.model_number} · ${model.brand.name}` },
+    robots: getRobotsFromPageState(pageState),
+    ...canonicalAlternatesForIndexablePath(`/air-purifier/model/${params.slug}`, pageState),
   };
 }
 
