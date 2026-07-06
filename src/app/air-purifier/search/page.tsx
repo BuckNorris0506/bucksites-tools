@@ -6,6 +6,7 @@ import {
   enrichAirPurifierModelHitsWithFilters,
   searchAirPurifierCatalog,
 } from "@/lib/data/air-purifier/search";
+import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +14,14 @@ type Props = { searchParams: { q?: string } };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const query = searchParams.q?.trim() ?? "";
+  const canonical = canonicalAlternatesForPath("/air-purifier/search");
   if (!query) {
-    return { title: "Search air purifier filters" };
+    return { title: "Search air purifier filters", ...canonical };
   }
   return {
     title: `Air purifier search: ${query}`,
     description: `Results for air purifier models and filters matching “${query}”.`,
+    ...canonical,
   };
 }
 

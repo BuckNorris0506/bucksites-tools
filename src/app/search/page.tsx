@@ -20,6 +20,7 @@ import {
   type SearchHitModel,
 } from "@/lib/data/search";
 import { resolveFridgeSearchModelHitDisplayV1 } from "@/lib/fridge/fridge-filter-pdp-customer-safety-v1";
+import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 import { SITE_DISPLAY_NAME } from "@/lib/site-brand";
 
 export const dynamic = "force-dynamic";
@@ -28,16 +29,19 @@ type Props = { searchParams: { q?: string } };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const query = searchParams.q?.trim() ?? "";
+  const canonical = canonicalAlternatesForPath("/search");
   if (!query) {
     return {
       title: `Search filters · ${SITE_DISPLAY_NAME}`,
       description: `Look up refrigerator water filters by fridge model or filter number on ${SITE_DISPLAY_NAME}. Compare what we list on file with your old filter before you buy.`,
+      ...canonical,
     };
   }
   return {
     title: `Search “${query}” · ${SITE_DISPLAY_NAME}`,
     description: `Search results for “${query}” on ${SITE_DISPLAY_NAME}: refrigerator water filters first; other categories we maintain may appear when they match. Open a result to verify the part against your unit and old filter.`,
     robots: undefined,
+    ...canonical,
   };
 }
 

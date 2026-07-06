@@ -5,6 +5,7 @@ import {
   PUBLIC_CATEGORY_HUB_BROWSE_DISCLAIMER,
   buildPublicCategoryHubCards,
 } from "@/lib/catalog/public-category-hub";
+import { canonicalAlternatesForPath } from "@/lib/seo/canonical";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   title: "Browse replacement filters",
   description:
     "Browse replacement filter categories on BuckParts—refrigerator water, air purifier, whole-house water, vacuum, humidifier, and appliance air. Search is still the fastest path when you know a model or part number.",
+  ...canonicalAlternatesForPath("/catalog"),
 };
 
 export default function CatalogPage() {
