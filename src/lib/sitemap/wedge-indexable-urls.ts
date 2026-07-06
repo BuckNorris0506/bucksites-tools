@@ -2,10 +2,15 @@
  * URLs for the three operational wedges, aligned with public discovery gating
  * (same usefulness rules as browse/search — no orphan-only filter rows).
  */
-import { getSupabaseServerClient } from "@/lib/supabase/server-client";
+import { isAirPurifierModelUnderOwnerReview } from "@/lib/air-purifier/air-purifier-model-review-overrides";
 import { loadAirPurifierUsefulFilterIds } from "@/lib/data/air-purifier-filter-usefulness";
 import { loadRefrigeratorUsefulFilterIds } from "@/lib/data/refrigerator-filter-usefulness";
 import { loadWholeHouseWaterUsefulFilterIds } from "@/lib/data/whole-house-water-filter-usefulness";
+import {
+  resolveFridgeCustomerSafetyV1,
+} from "@/lib/fridge/fridge-learned-failure-customer-guard-v1";
+import { resolveFridgeModelPdpCustomerSafetyV1 } from "@/lib/fridge/fridge-model-pdp-customer-safety-v1";
+import { getSupabaseServerClient } from "@/lib/supabase/server-client";
 import {
   getSitemapLaunchVerticals,
   isVerticalLive,
@@ -23,6 +28,75 @@ function siteBase(): string {
 function abs(path: string): string {
   const b = siteBase();
   return path.startsWith("/") ? `${b}${path}` : `${b}/${path}`;
+}
+
+async function distinctModelIdsWithMappings(
+  mappingsTable: string,
+  modelIdColumn: string,
+): Promise<Set<string>> {
+  const supabase = getSupabaseServerClient();
+  const out = new Set<string>();
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabase
+      .from(mappingsTable)
+      .select(modelIdColumn)
+      .range(from, from + PAGE - 1);
+    if (error) throw error;
+    const chunk = data ?? [];
+    for (const row of chunk) {
+      const id = (row as unknown as Record<string, string | undefined>)[modelIdColumn];
+      if (typeof id === "string" && id.length > 0) out.add(id);
+    }
+    if (chunk.length < PAGE) break;
+  }
+  return out;
+}
+
+/** Mirrors AP model PDP `classifyAirPurifierModelPageState` indexability (owner review + mapped filters). */
+export function isApModelSitemapIndexable(slug: string, hasMappedFilters: boolean): boolean {
+  if (!hasMappedFilters) return false;
+  return !isAirPurifierModelUnderOwnerReview(slug);
+}
+
+/** Mirrors fridge model PDP metadata indexability (mapped filters, quarantine, prefer_noindex). */
+export function isFridgeModelSitemapIndexable(slug: string, hasMappedFilters: boolean): boolean {
+  if (!hasMappedFilters) return false;
+  const customerSafety = resolveFridgeCustomerSafetyV1({ fridgeModelSlug: slug });
+  if (customerSafety.quarantine) return false;
+  const modelPdpSafety = resolveFridgeModelPdpCustomerSafetyV1({ fridgeModelSlug: slug });
+  if (modelPdpSafety.prefer_noindex) return false;
+  return true;
+}
+
+async function indexableModelSlugsFromTables(args: {
+  modelsTable: string;
+  mappingsTable: string;
+  modelIdColumn: string;
+  isSlugIndexable: (slug: string, hasMappedFilters: boolean) => boolean;
+}): Promise<string[]> {
+  const mappedModelIds = await distinctModelIdsWithMappings(
+    args.mappingsTable,
+    args.modelIdColumn,
+  );
+  const supabase = getSupabaseServerClient();
+  const out: string[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabase
+      .from(args.modelsTable)
+      .select("id, slug")
+      .range(from, from + PAGE - 1);
+    if (error) throw error;
+    const chunk = data ?? [];
+    for (const row of chunk) {
+      const id = (row as { id?: string }).id;
+      const slug = (row as { slug?: string }).slug;
+      if (typeof slug !== "string" || slug.length === 0) continue;
+      const hasMappedFilters = typeof id === "string" && mappedModelIds.has(id);
+      if (args.isSlugIndexable(slug, hasMappedFilters)) out.push(slug);
+    }
+    if (chunk.length < PAGE) break;
+  }
+  return out;
 }
 
 async function allSlugsFromTable(table: string): Promise<string[]> {
@@ -184,9 +258,21 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
     whModelSlugs,
     whPartSlugs,
   ] = await Promise.all([
-    allSlugsFromTable("fridge_models"),
+    indexableModelSlugsFromTables({
+      modelsTable: "fridge_models",
+      mappingsTable: "compatibility_mappings",
+      modelIdColumn: "fridge_model_id",
+      isSlugIndexable: isFridgeModelSitemapIndexable,
+    }),
     filterSlugsByIds("filters", usefulFridge),
-    liveAp ? allSlugsFromTable("air_purifier_models") : Promise.resolve<string[]>([]),
+    liveAp
+      ? indexableModelSlugsFromTables({
+          modelsTable: "air_purifier_models",
+          mappingsTable: "air_purifier_compatibility_mappings",
+          modelIdColumn: "air_purifier_model_id",
+          isSlugIndexable: isApModelSitemapIndexable,
+        })
+      : Promise.resolve<string[]>([]),
     liveAp ? filterSlugsByIds("air_purifier_filters", usefulAp) : Promise.resolve<string[]>([]),
     liveWh ? allSlugsFromTable("whole_house_water_models") : Promise.resolve<string[]>([]),
     liveWh ? filterSlugsByIds("whole_house_water_parts", usefulWh) : Promise.resolve<string[]>([]),
@@ -307,4 +393,6 @@ export async function collectHomekeepWedgeSitemapUrls(): Promise<SitemapUrl[]> {
 export const __test_only__ = {
   liveStaticPaths,
   getSitemapDynamicUrlVerticals,
+  isApModelSitemapIndexable,
+  isFridgeModelSitemapIndexable,
 };
