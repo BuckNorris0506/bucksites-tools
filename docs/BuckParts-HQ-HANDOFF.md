@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `4b66234`):** **Model sitemap indexability alignment lane complete** — see **§ Current stopping point — model sitemap indexability (`4b66234`)** below. AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `2c15bca`):** **Search/hub canonical cleanup lane complete** — see **§ Current stopping point — search/hub canonicals (`2c15bca`)** below. Model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -53,9 +53,80 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — model sitemap indexability (`4b66234`)
+## Current stopping point — search/hub canonicals (`2c15bca`)
 
-**Read this section first** for LIVE sitemap vs model-page robots/canonical alignment.
+**Read this section first** for LIVE hub/search canonical metadata on indexable public surfaces.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`2c15bca`** — Add canonicals for search and hub pages |
+| Lane status | **Complete and pushed** — HyperAgent SEO/indexing follow-on (canonical cleanup) |
+| Scope | **`src/app/search/page.tsx`**, **`src/app/air-purifier/search/page.tsx`**, **`src/app/air-purifier/page.tsx`**, **`src/app/catalog/page.tsx`**, **`src/lib/seo/canonical.test.ts`** — **no** robots/indexing policy, PDP page-state canonical, sitemap model logic, routes, data, or buy-gate changes |
+
+### Audit finding (PROVEN — HyperAgent SEO/indexing follow-on)
+
+| Item | Detail |
+|------|--------|
+| **Gap** | **`/search`** and **`/air-purifier/search`** were indexable, param-driven, and **canonical-less** |
+| **Gap** | **`/air-purifier`** and **`/catalog`** had no explicit self-canonical |
+
+**Not claimed:** rankings growth, traffic growth, revenue, or conversion improvement.
+
+### What shipped (PROVEN — repo truth only)
+
+| Path | Canonical |
+|------|-----------|
+| **`/search`** | **`/search`** — query params stripped (base path only) |
+| **`/air-purifier/search`** | **`/air-purifier/search`** — query params stripped |
+| **`/air-purifier`** | **`/air-purifier`** |
+| **`/catalog`** | **`/catalog`** |
+
+| Guardrail | Status |
+|-----------|--------|
+| **Robots / indexing** | **Unchanged** — no new noindex; existing layout/indexing policy preserved |
+| **PDP page-state canonical** | **Untouched** — `canonicalAlternatesForIndexablePath` on filter/model PDPs unchanged |
+| **Sitemap model indexability** | **Untouched** — `indexableModelSlugsFromTables()` from **`4b66234`** unchanged |
+| **Out of scope** | Trust pages, sitemap static routes, brand coverage floors, `lastModified` — **not** changed |
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** |
+| `src/app/vertical-launch-metadata.test.ts` | **PASS** |
+| `src/lib/seo/canonical.test.ts` | **PASS** |
+| `src/app/sitemap.test.ts` | **PASS** |
+| Scoped `BUCKPARTS_TEST_FILES=… npm-test-v1.sh` (sitemap/indexability) | **PASS** |
+| `git status --short` after `2c15bca` | **Clean** |
+
+### Next recommended lanes (NOT started)
+
+1. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
+2. **Trust-page sitemap policy** — whether `/about`, `/truth-policy`, etc. belong in sitemap — **UNKNOWN** until founder steers.
+3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+node --import tsx --test src/lib/seo/canonical.test.ts
+node --import tsx --test src/app/vertical-launch-metadata.test.ts
+```
+
+---
+
+## Prior completed lane — HQ handoff after sitemap indexability (`3aef3d6`)
+
+**Docs-only** — recorded **`4b66234`** model sitemap indexability stopping point and prior lanes.
+
+---
+
+## Prior completed lane — model sitemap indexability (`4b66234`)
+
+**Historical reference** for LIVE sitemap vs model-page robots/canonical alignment at **`4b66234`** — superseded for pickup by **§ Current stopping point — search/hub canonicals (`2c15bca`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -97,11 +168,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after `4b66234` | **Clean** |
 
-### Next recommended lanes (NOT started)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — search/hub canonicals)
 
-1. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
-2. **Broader SEO/indexing follow-ons** — search canonicals, trust-page sitemap policy, WHW model emission when wedge goes LIVE — **UNKNOWN** priority until founder steers.
-3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
+Historical at `4b66234` pickup; **do not** treat as current NBA:
+
+1. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses.
+2. ~~Search canonicals~~ — **Complete** (`2c15bca`).
+3. **Trust-page sitemap policy** — deferred.
+4. **Broader homepage / proof-stack copy cleanup** — deferred.
 
 ```bash
 git rev-parse HEAD
@@ -121,7 +195,7 @@ BUCKPARTS_TEST_FILES='src/app/sitemap.test.ts src/lib/sitemap/wedge-indexable-ur
 
 ## Prior completed lane — AP hub demand lookup (`323e692`)
 
-**Historical reference** for LIVE air-purifier hub internal routing at **`323e692`** — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
+**Historical reference** for LIVE air-purifier hub internal routing at **`323e692`** — superseded for pickup by **§ Current stopping point — search/hub canonicals (`2c15bca`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -165,7 +239,7 @@ BUCKPARTS_TEST_FILES='src/app/sitemap.test.ts src/lib/sitemap/wedge-indexable-ur
 | `src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts` | **PASS** |
 | `git status --short` after `323e692` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — search/hub canonicals)
 
 Historical at `323e692` pickup; **do not** treat as current NBA:
 
@@ -190,7 +264,7 @@ node --import tsx --test src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts
 
 ## Prior completed lane — AP SEO parity (`a50ae13`)
 
-**Historical reference** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) at **`a50ae13`** — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
+**Historical reference** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) at **`a50ae13`** — superseded for pickup by **§ Current stopping point — search/hub canonicals (`2c15bca`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -224,7 +298,7 @@ node --import tsx --test src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts
 | `src/app/sitemap.test.ts` | **PASS** |
 | `git status --short` after `a50ae13` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — search/hub canonicals)
 
 Historical at `a50ae13` pickup; **do not** treat as current NBA:
 
@@ -259,7 +333,7 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 
 ## Prior stopping point — AP UI split-brain repaint (`ced91f6`)
 
-**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
+**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — search/hub canonicals (`2c15bca`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -295,7 +369,7 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 | Targeted raw-class scan | **No `neutral-*` or `amber-*` hits** in `src/app/air-purifier`, `src/components/air-purifier`, `src/components/vertical`, `src/components/catalog`, `src/components/trust` |
 | `git status --short` after `ced91f6` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — search/hub canonicals)
 
 Historical at `ced91f6` pickup; **do not** treat as current NBA:
 
@@ -303,7 +377,8 @@ Historical at `ced91f6` pickup; **do not** treat as current NBA:
 2. ~~AP SEO parity~~ — **Complete** (`a50ae13`).
 3. ~~AP hub demand lookup~~ — **Complete** (`323e692`).
 4. ~~Model sitemap indexability~~ — **Complete** (`4b66234`).
-5. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
+5. ~~Search/hub canonicals~~ — **Complete** (`2c15bca`).
+6. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
 
 ```bash
 git rev-parse HEAD
