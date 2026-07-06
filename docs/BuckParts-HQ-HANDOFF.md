@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `ced91f6`):** **AP UI split-brain repaint lane complete** — see **§ Current stopping point — AP UI split-brain repaint (`ced91f6`)** below. WF3CB guarded CSV apply (`6bc843a`) and Frigidaire Batch B partial state remain **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `a50ae13`):** **AP SEO parity demand-capture slice complete** — see **§ Current stopping point — AP SEO parity (`a50ae13`)** below. AP UI split-brain repaint (`ced91f6`) and trust-copy cleanup (`71c597e`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -53,9 +53,76 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — AP UI split-brain repaint (`ced91f6`)
+## Current stopping point — AP SEO parity (`a50ae13`)
 
-**Read this section first** for live air-purifier / vertical browse UI (`bp-*` token) state.
+**Read this section first** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) state.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`a50ae13`** — Add air purifier SEO parity for PDPs |
+| Lane status | **Complete and pushed** — AP filter/model PDP SEO parity (demand-capture slice 1) |
+| Scope | **`src/app/air-purifier/filter/[slug]/page.tsx`**, **`src/app/air-purifier/model/[slug]/page.tsx`**, **`src/lib/seo/structured-data.ts`** (+ tests) — **no** sitemap/route/metadata-title/buy-gate changes |
+
+### What shipped (PROVEN — repo truth only)
+
+| Surface | SEO parity added |
+|---------|------------------|
+| **AP filter PDP** | Page-state **`robots`** via `getRobotsFromPageState` + `classifyPageState` (useful-filter id gate aligned with sitemap) |
+| **AP filter PDP** | **Indexable-only** self-referencing **`canonicalAlternatesForIndexablePath`** (`/air-purifier/filter/{slug}`) |
+| **AP filter PDP** | **Minimal Product JSON-LD** (`buildAirPurifierFilterProductJsonLd`) from proven fields only (`slug`, `oem_part_number`, `name`, `brand.name`) — **no** offers/image/invented facts; emitted only when indexable |
+| **AP model PDP** | Page-state **`robots`** + **indexable-only canonical** (`/air-purifier/model/{slug}`); owner-review override (`blueair-411a-max`) → noindex |
+| **AP model PDP** | **Product JSON-LD intentionally not added** — fridge model PDPs also omit Product schema; **UNKNOWN** follow-on unless repo gains safe model-level fields |
+
+**Not claimed:** traffic, rankings, revenue, or conversion improvements.
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** |
+| `src/lib/seo/canonical.test.ts` | **PASS** |
+| `src/lib/seo/structured-data.test.ts` | **PASS** |
+| `src/app/vertical-launch-metadata.test.ts` | **PASS** |
+| `src/app/sitemap.test.ts` | **PASS** |
+| `git status --short` after `a50ae13` | **Clean** |
+
+### Next recommended lanes (NOT started)
+
+1. **Operate GSC/search-gap demand loop** — identify highest-value fridge/AP search misses from repo GSC artifacts + Command Center lanes (read-only steering first).
+2. **Deeper HEAD-accurate SEO/indexing audit** — fresh repo truth on canonical/robots/page-state/sitemap alignment across wedges.
+3. **Only then choose next page-promotion / internal-linking slice** — after demand loop + audit, not before.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+node --import tsx --test src/lib/seo/canonical.test.ts
+node --import tsx --test src/lib/seo/structured-data.test.ts
+```
+
+---
+
+## Prior completed lane — trust-copy leak cleanup (`71c597e`)
+
+**Complete** between AP UI repaint and AP SEO parity — shopper-facing operator wording removed; gates unchanged.
+
+| SHA | Slice |
+|-----|-------|
+| **`f901634`** | Remove Q-marker suffixes from fridge filter PDP trust headings |
+| **`a4d3375`** | Replace `listing evidence` jargon on global `/search` |
+| **`7b7f01d`** | Branded `BuckParts Verified Link` copy + `customer-ux-doctrine` false-positive fix |
+| **`71c597e`** | Replace catalog/AP `truth-gated` / `Being verified` wording |
+
+**Validation (PROVEN during lane):** `npm run build` **PASS**; `customer-language-doctrine.test.ts` **PASS**; `customer-ux-doctrine.test.ts` **PASS** after slice 3 test fix; `trust-ui.test.ts` / `public-category-hub.test.ts` updated for slice 4.
+
+---
+
+## Prior stopping point — AP UI split-brain repaint (`ced91f6`)
+
+**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — AP SEO parity (`a50ae13`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -87,15 +154,17 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 |-------|--------|
 | `npm run build` | **PASS** during each slice |
 | `customer-language-doctrine.test.ts` | **PASS** during each slice |
-| `customer-ux-doctrine.test.ts` | **Pre-existing fail** in `FridgeModelFilterSection.tsx` (`\bverified\b`) — **not caused by this lane** |
+| `customer-ux-doctrine.test.ts` | **PASS** after trust-copy slice 3 (was pre-existing fail before that lane) |
 | Targeted raw-class scan | **No `neutral-*` or `amber-*` hits** in `src/app/air-purifier`, `src/components/air-purifier`, `src/components/vertical`, `src/components/catalog`, `src/components/trust` |
 | `git status --short` after `ced91f6` | **Clean** |
 
-### Next recommended lanes (NOT started)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — AP SEO parity)
 
-1. **Shopper-facing trust-copy leak cleanup** — Q-marker / internal repo evidence / status-legend wording on public surfaces.
-2. **AP SEO parity** — canonical / robots parity (separate from UI lane; metadata untouched in repaint).
-3. **Broader non-AP raw-class cleanup** — only after live trust-copy and AP SEO work.
+Historical at `ced91f6` pickup; **do not** treat as current NBA:
+
+1. ~~Shopper-facing trust-copy leak cleanup~~ — **Complete** (`71c597e`).
+2. ~~AP SEO parity~~ — **Complete** (`a50ae13`).
+3. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
 
 ```bash
 git rev-parse HEAD
