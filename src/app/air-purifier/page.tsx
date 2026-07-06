@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ApHubDemandLookupsSection } from "@/components/air-purifier/ApHubDemandLookupsSection";
 import { CategoryBrowseSections } from "@/components/catalog/CategoryBrowseSections";
 import { SearchForm } from "@/components/SearchForm";
+import { resolveApHubDemandLookupsForHub } from "@/lib/air-purifier/ap-hub-demand-lookups-v1";
 import {
   listBrowseBrands,
   listBrowseFilters,
@@ -18,11 +20,13 @@ export default async function AirPurifierHomePage() {
   let brands: Awaited<ReturnType<typeof listBrowseBrands>> = [];
   let models: Awaited<ReturnType<typeof listBrowseModels>> = [];
   let filters: Awaited<ReturnType<typeof listBrowseFilters>> = [];
+  let demandLookups: Awaited<ReturnType<typeof resolveApHubDemandLookupsForHub>> = [];
   try {
-    [brands, models, filters] = await Promise.all([
+    [brands, models, filters, demandLookups] = await Promise.all([
       listBrowseBrands("air_purifier"),
       listBrowseModels("air_purifier"),
       listBrowseFilters("air_purifier"),
+      resolveApHubDemandLookupsForHub(),
     ]);
   } catch {
     // DB unavailable — still render search + shell.
@@ -59,6 +63,8 @@ export default async function AirPurifierHomePage() {
           <SearchForm actionPath="/air-purifier/search" />
         </div>
       </section>
+
+      <ApHubDemandLookupsSection lookups={demandLookups} />
 
       <CategoryBrowseSections
         categoryLabel="air purifier filters"
