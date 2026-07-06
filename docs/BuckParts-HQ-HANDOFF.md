@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `323e692`):** **AP hub demand lookup links lane complete** — see **§ Current stopping point — AP hub demand lookup (`323e692`)** below. AP SEO parity (`a50ae13`), HQ handoff (`1c7f049`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `4b66234`):** **Model sitemap indexability alignment lane complete** — see **§ Current stopping point — model sitemap indexability (`4b66234`)** below. AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -53,9 +53,75 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — AP hub demand lookup (`323e692`)
+## Current stopping point — model sitemap indexability (`4b66234`)
 
-**Read this section first** for LIVE air-purifier hub internal routing toward GSC-steered model lookups.
+**Read this section first** for LIVE sitemap vs model-page robots/canonical alignment.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`4b66234`** — Align model sitemap emission with indexability |
+| Lane status | **Complete and pushed** — sitemap/model page-robots alignment slice |
+| Scope | **`src/lib/sitemap/wedge-indexable-urls.ts`**, **`src/lib/sitemap/wedge-indexable-urls.test.ts`** — **no** routes, metadata, data, buy-gate, filter useful-id gate, or trust-page changes |
+
+### Audit finding (PROVEN — HyperAgent SEO/indexing)
+
+| Item | Detail |
+|------|--------|
+| **Mismatch** | Sitemap emitted every **`fridge_models`** / **`air_purifier_models`** slug unconditionally while model PDPs can render **noindex** |
+| **Prior emitter** | `allSlugsFromTable("fridge_models")` and `allSlugsFromTable("air_purifier_models")` in **`wedge-indexable-urls.ts`** |
+| **Model noindex causes** | Zero mapped filters; AP owner review; fridge quarantine; fridge **`prefer_noindex`** |
+
+**Not claimed:** rankings growth, traffic growth, revenue, or conversion improvement.
+
+### What shipped (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **Model sitemap alignment** | `indexableModelSlugsFromTables()` — emits model URLs only when page indexability gates pass |
+| **AP exclusion** | Owner-review slugs via `isAirPurifierModelUnderOwnerReview` — **`blueair-411a-max` excluded** |
+| **AP exclusion** | Zero-mapping models excluded (requires `air_purifier_compatibility_mappings` row) |
+| **Fridge exclusion** | Zero-mapping models excluded (requires `compatibility_mappings` row) |
+| **Fridge gates reused** | `resolveFridgeCustomerSafetyV1` (**quarantine**) + `resolveFridgeModelPdpCustomerSafetyV1` (**`prefer_noindex`**) |
+| **Filter gates unchanged** | `filterSlugsByIds` + `loadRefrigeratorUsefulFilterIds` / `loadAirPurifierUsefulFilterIds` — useful-id gates **not** weakened |
+| **Out of scope** | Trust pages, search canonicals, `lastModified`, brand coverage floors — **not** changed this slice |
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `node --import tsx scripts/report-buckparts-sitemap-indexability-audit-v1.ts` | **PASS** (read-only) |
+| Scoped `BUCKPARTS_TEST_FILES=… npm-test-v1.sh` (sitemap/indexability) | **PASS** |
+| `npm run build` | **PASS** |
+| `git status --short` after `4b66234` | **Clean** |
+
+### Next recommended lanes (NOT started)
+
+1. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
+2. **Broader SEO/indexing follow-ons** — search canonicals, trust-page sitemap policy, WHW model emission when wedge goes LIVE — **UNKNOWN** priority until founder steers.
+3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+node --import tsx scripts/report-buckparts-sitemap-indexability-audit-v1.ts
+BUCKPARTS_TEST_FILES='src/app/sitemap.test.ts src/lib/sitemap/wedge-indexable-urls.test.ts scripts/lib/buckparts-sitemap-indexability-audit-v1.test.ts' bash scripts/npm-test-v1.sh
+```
+
+---
+
+## Prior completed lane — HQ handoff after AP demand lookup (`1cc6670`)
+
+**Docs-only** — recorded **`323e692`** AP hub demand lookup stopping point and prior lanes.
+
+---
+
+## Prior completed lane — AP hub demand lookup (`323e692`)
+
+**Historical reference** for LIVE air-purifier hub internal routing at **`323e692`** — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -99,11 +165,13 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts` | **PASS** |
 | `git status --short` after `323e692` | **Clean** |
 
-### Next recommended lanes (NOT started)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
 
-1. **Deeper HEAD-accurate SEO/indexing audit** — canonical/robots/page-state/sitemap alignment across wedges at current HEAD.
-2. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
-3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
+Historical at `323e692` pickup; **do not** treat as current NBA:
+
+1. ~~Deeper HEAD-accurate SEO/indexing audit (model sitemap mismatch)~~ — **Complete** (`4b66234`).
+2. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses.
+3. **Broader homepage / proof-stack copy cleanup** — deferred.
 
 ```bash
 git rev-parse HEAD
@@ -122,7 +190,7 @@ node --import tsx --test src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts
 
 ## Prior completed lane — AP SEO parity (`a50ae13`)
 
-**Historical reference** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) at **`a50ae13`** — superseded for pickup by **§ Current stopping point — AP hub demand lookup (`323e692`)** above.
+**Historical reference** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) at **`a50ae13`** — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -156,13 +224,13 @@ node --import tsx --test src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts
 | `src/app/sitemap.test.ts` | **PASS** |
 | `git status --short` after `a50ae13` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — AP hub demand lookup)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
 
 Historical at `a50ae13` pickup; **do not** treat as current NBA:
 
-1. ~~Operate GSC/search-gap demand loop~~ — **Partially exercised** for AP hub slice 2 (`323e692`); continue for fridge + remaining AP misses.
-2. **Deeper HEAD-accurate SEO/indexing audit** — still **NOT started**.
-3. ~~Choose page-promotion / internal-linking slice~~ — **AP hub slice 2 complete** (`323e692`); further promotion only after audit + fresh GSC steering.
+1. ~~Operate GSC/search-gap demand loop~~ — **Partially exercised** (`323e692`); continue for fridge + remaining AP misses.
+2. ~~Deeper HEAD-accurate SEO/indexing audit (model sitemap)~~ — **Complete** (`4b66234`).
+3. ~~Choose page-promotion / internal-linking slice~~ — **AP hub slice 2 complete** (`323e692`); further promotion after fresh GSC steering.
 
 ```bash
 git rev-parse HEAD
@@ -191,7 +259,7 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 
 ## Prior stopping point — AP UI split-brain repaint (`ced91f6`)
 
-**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — AP hub demand lookup (`323e692`)** above.
+**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — model sitemap indexability (`4b66234`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -227,14 +295,15 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 | Targeted raw-class scan | **No `neutral-*` or `amber-*` hits** in `src/app/air-purifier`, `src/components/air-purifier`, `src/components/vertical`, `src/components/catalog`, `src/components/trust` |
 | `git status --short` after `ced91f6` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — AP hub demand lookup)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — model sitemap indexability)
 
 Historical at `ced91f6` pickup; **do not** treat as current NBA:
 
 1. ~~Shopper-facing trust-copy leak cleanup~~ — **Complete** (`71c597e`).
 2. ~~AP SEO parity~~ — **Complete** (`a50ae13`).
 3. ~~AP hub demand lookup~~ — **Complete** (`323e692`).
-4. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
+4. ~~Model sitemap indexability~~ — **Complete** (`4b66234`).
+5. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
 
 ```bash
 git rev-parse HEAD
