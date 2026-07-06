@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `a50ae13`):** **AP SEO parity demand-capture slice complete** — see **§ Current stopping point — AP SEO parity (`a50ae13`)** below. AP UI split-brain repaint (`ced91f6`) and trust-copy cleanup (`71c597e`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `323e692`):** **AP hub demand lookup links lane complete** — see **§ Current stopping point — AP hub demand lookup (`323e692`)** below. AP SEO parity (`a50ae13`), HQ handoff (`1c7f049`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -53,9 +53,76 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — AP SEO parity (`a50ae13`)
+## Current stopping point — AP hub demand lookup (`323e692`)
 
-**Read this section first** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) state.
+**Read this section first** for LIVE air-purifier hub internal routing toward GSC-steered model lookups.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`323e692`** — Add AP hub demand lookup links |
+| Lane status | **Complete and pushed** — AP hub demand-capture slice 2 (internal linking) |
+| Scope | **`src/app/air-purifier/page.tsx`**, **`src/components/air-purifier/ApHubDemandLookupsSection.tsx`**, **`src/lib/air-purifier/ap-hub-demand-lookups-v1.ts`** (+ test) — **no** buyer CTAs, compatibility claims, routes, metadata, data, or buy-gate changes |
+
+### GSC steering input (PROVEN — founder artifact)
+
+| Item | Value |
+|------|-------|
+| Fresh GSC fetch | **Succeeded** on **2026-07-06** |
+| Date range | **2026-06-04..2026-07-03** |
+| Top AP model page signal | **`/air-purifier/model/shark-hp150`** — **58** impressions, **2** clicks, avg position **11.17** |
+
+**Not claimed:** rankings growth, traffic growth, revenue, or conversion improvement.
+
+### What shipped (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **AP hub section** | **“Air purifier model lookups”** — neutral copy (“pages BuckParts is seeing in Google Search”; not a popularity ranking) |
+| **Shark HP150** | **First** promoted link — slug **`shark-hp150`** → `/air-purifier/model/shark-hp150`; repo-proven in **`data/air-purifier/models.csv`** + **`compatibility_mappings.csv`** → `shark-hepa-he15fkp` |
+| **Shark HP300** | **Second** only with repo-proven model/filter mapping — slug **`shark-hp300`** → `shark-hepa-he3fkp` |
+| **Levoit LAP-V102S-AUSR** | **Intentionally not promoted** — slug not in **`data/air-purifier/models.csv`** (audit JSON only) |
+| **Winix SKU 1022-0233-00** | **Intentionally not promoted** — slug not in **`data/air-purifier/models.csv`** (audit JSON only) |
+| **Runtime gate** | `resolveApHubDemandLookupsForHub()` links only models with mapped filters and not under owner review |
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** |
+| `src/lib/copy/customer-language-doctrine.test.ts` | **PASS** |
+| `src/lib/copy/customer-ux-doctrine.test.ts` | **PASS** |
+| `src/app/vertical-launch-metadata.test.ts` | **PASS** |
+| `src/app/sitemap.test.ts` | **PASS** |
+| `src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts` | **PASS** |
+| `git status --short` after `323e692` | **Clean** |
+
+### Next recommended lanes (NOT started)
+
+1. **Deeper HEAD-accurate SEO/indexing audit** — canonical/robots/page-state/sitemap alignment across wedges at current HEAD.
+2. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
+3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
+
+```bash
+git rev-parse HEAD
+git status --short
+npm run build
+node --import tsx --test src/lib/air-purifier/ap-hub-demand-lookups-v1.test.ts
+```
+
+---
+
+## Prior completed lane — HQ handoff after AP SEO parity (`1c7f049`)
+
+**Docs-only** — recorded **`a50ae13`** AP SEO parity stopping point, trust-copy (`71c597e`), and AP UI repaint (`ced91f6`) as prior lanes.
+
+---
+
+## Prior completed lane — AP SEO parity (`a50ae13`)
+
+**Historical reference** for LIVE air-purifier filter/model PDP SEO (robots, canonical, JSON-LD) at **`a50ae13`** — superseded for pickup by **§ Current stopping point — AP hub demand lookup (`323e692`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -89,11 +156,13 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `src/app/sitemap.test.ts` | **PASS** |
 | `git status --short` after `a50ae13` | **Clean** |
 
-### Next recommended lanes (NOT started)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — AP hub demand lookup)
 
-1. **Operate GSC/search-gap demand loop** — identify highest-value fridge/AP search misses from repo GSC artifacts + Command Center lanes (read-only steering first).
-2. **Deeper HEAD-accurate SEO/indexing audit** — fresh repo truth on canonical/robots/page-state/sitemap alignment across wedges.
-3. **Only then choose next page-promotion / internal-linking slice** — after demand loop + audit, not before.
+Historical at `a50ae13` pickup; **do not** treat as current NBA:
+
+1. ~~Operate GSC/search-gap demand loop~~ — **Partially exercised** for AP hub slice 2 (`323e692`); continue for fridge + remaining AP misses.
+2. **Deeper HEAD-accurate SEO/indexing audit** — still **NOT started**.
+3. ~~Choose page-promotion / internal-linking slice~~ — **AP hub slice 2 complete** (`323e692`); further promotion only after audit + fresh GSC steering.
 
 ```bash
 git rev-parse HEAD
@@ -122,7 +191,7 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 
 ## Prior stopping point — AP UI split-brain repaint (`ced91f6`)
 
-**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — AP SEO parity (`a50ae13`)** above.
+**Historical reference** for live air-purifier / vertical browse UI (`bp-*` token) state at `ced91f6` — superseded for pickup by **§ Current stopping point — AP hub demand lookup (`323e692`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -158,13 +227,14 @@ node --import tsx --test src/lib/seo/structured-data.test.ts
 | Targeted raw-class scan | **No `neutral-*` or `amber-*` hits** in `src/app/air-purifier`, `src/components/air-purifier`, `src/components/vertical`, `src/components/catalog`, `src/components/trust` |
 | `git status --short` after `ced91f6` | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by § Current stopping point — AP SEO parity)
+### Next recommended lanes (NOT started — superseded by § Current stopping point — AP hub demand lookup)
 
 Historical at `ced91f6` pickup; **do not** treat as current NBA:
 
 1. ~~Shopper-facing trust-copy leak cleanup~~ — **Complete** (`71c597e`).
 2. ~~AP SEO parity~~ — **Complete** (`a50ae13`).
-3. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
+3. ~~AP hub demand lookup~~ — **Complete** (`323e692`).
+4. **Broader non-AP raw-class cleanup** — homepage `VerifiedLinkCard` / `StatusLegend` proof-stack wording; deferred.
 
 ```bash
 git rev-parse HEAD
