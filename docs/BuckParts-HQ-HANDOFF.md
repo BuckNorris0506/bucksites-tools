@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `2c15bca`):** **Search/hub canonical cleanup lane complete** — see **§ Current stopping point — search/hub canonicals (`2c15bca`)** below. Model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `46ffa3b`):** **Search/hub canonical cleanup (`2c15bca`) complete** — see **§ Current stopping point — search/hub canonicals (`2c15bca`)** and **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)** below. Model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
 
 ## Execution Stack
 
@@ -102,9 +102,9 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | Scoped `BUCKPARTS_TEST_FILES=… npm-test-v1.sh` (sitemap/indexability) | **PASS** |
 | `git status --short` after `2c15bca` | **Clean** |
 
-### Next recommended lanes (NOT started)
+### Next recommended lanes (NOT started — demand-loop steering refreshed 2026-07-06)
 
-1. **Continue GSC/search-gap demand loop** — fridge + remaining AP misses; read-only steering before further promotion slices.
+1. ~~Continue GSC/search-gap demand loop (read-only steering)~~ — **Fresh cycle complete** — see **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; no new AP/fridge promotion until founder steers beyond repo-proven CSV slugs.
 2. **Trust-page sitemap policy** — whether `/about`, `/truth-policy`, etc. belong in sitemap — **UNKNOWN** until founder steers.
 3. **Broader homepage / proof-stack copy cleanup** — `VerifiedLinkCard` / `StatusLegend` wording; deferred.
 
@@ -115,6 +115,79 @@ npm run build
 node --import tsx --test src/lib/seo/canonical.test.ts
 node --import tsx --test src/app/vertical-launch-metadata.test.ts
 ```
+
+---
+
+## Fresh GSC / search-miss demand loop — steering (`2026-07-06`)
+
+**Read this section** for latest founder-terminal GSC + search-miss steering after **`2c15bca`** / **`46ffa3b`** handoff. **Docs-only update** — no production lane authorized by this section alone.
+
+### Repo state (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Repo HEAD / `origin/main` | **`46ffa3b`** — Update HQ handoff after search canonical cleanup |
+| Code stopping point | **`2c15bca`** — search/hub canonicals |
+| `git status --short` after fresh demand-loop checks | **Clean** |
+
+**Not claimed:** rankings improved, traffic improved, revenue, conversion, or campaign readiness.
+
+### Fresh GSC fetch (PROVEN — founder artifact)
+
+| Item | Value |
+|------|-------|
+| `fetched_at` | **2026-07-06T03:54:06.178Z** |
+| Date range | **2026-06-04..2026-07-03** |
+| `total_clicks` | **3** |
+| `total_impressions` | **289** |
+
+| Page | Impressions | Clicks | Avg position |
+|------|-------------|--------|--------------|
+| **`/air-purifier`** (AP hub) | **125** | **0** | **43.672** |
+| **`/air-purifier/model/shark-hp150`** | **58** | **2** | **11.1724** |
+| **`/catalog`** | **17** | **1** | **10.4706** |
+
+| Tracked AP filter pilot pages | In-range signal |
+|-------------------------------|-----------------|
+| `medify-ma50-rf` | **ZERO_IN_RANGE** |
+| `levoit-rf-rar040` | **ZERO_IN_RANGE** |
+| `coway-max2-hepa` | **ZERO_IN_RANGE** |
+
+### Search-miss audit (PROVEN — founder artifact)
+
+| Item | Value |
+|------|-------|
+| `total_rows` | **267** |
+| `miss_rows` | **9** |
+| `refrigerator_water` misses | **0** |
+| `air_purifier` misses | **0** |
+| `whole_house_water` misses | **9** |
+
+### Promotion candidate truth (PROVEN — committed CSV only)
+
+| Candidate | Repo truth | Steering |
+|-----------|------------|----------|
+| **`shark-hp150`** | **Found** in **`data/air-purifier/models.csv`** + **`data/air-purifier/compatibility_mappings.csv`** | Already promoted first on AP hub (`323e692`) |
+| **`shark-hp300`** | **Found** in committed AP **`models.csv`** + **`compatibility_mappings.csv`** | Eligible for hub promotion only with existing lane gates |
+| **`levoit-lap-v102s-ausr`** | **Not** in committed **`models.csv`** — audit JSON only (`ap-supabase-vs-csv-diff-v1`) | **Do not promote yet** |
+| **`winix-sku-1022-0233-00`** | **Not** in committed **`models.csv`** — audit JSON only | **Do not promote yet** |
+
+### Steering summary (NOT authorization)
+
+- **LIVE wedge demand** in-range concentrates on **AP hub**, **`shark-hp150` model page**, and **`/catalog`** — not on tracked AP filter pilot pages (all **ZERO_IN_RANGE**).
+- **Search misses** are **WHW-only** (9 rows); **fridge** and **AP** show **0** misses in this audit window.
+- **Next implementation slice** should **not** assume traffic/ranking lift; founder must choose among trust-page sitemap policy, WHW (NOINDEX_UNPROVEN wedge), or further AP promotion limited to **CSV-proven** slugs only.
+
+```bash
+git rev-parse HEAD
+git status --short
+```
+
+---
+
+## Prior completed lane — HQ handoff after search/hub canonicals (`46ffa3b`)
+
+**Docs-only** — recorded **`2c15bca`** search/hub canonical stopping point; superseded for demand steering by **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)** above.
 
 ---
 
