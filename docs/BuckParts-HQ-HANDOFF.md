@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `46ffa3b`):** **Search/hub canonical cleanup (`2c15bca`) complete** — see **§ Current stopping point — search/hub canonicals (`2c15bca`)** and **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)** below. Model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete.
+> **Current operational stopping point (repo HEAD / `origin/main` / `39c9e6f`):** **GOAT slice — Daily Operator read-only next coverage opportunities (`39c9e6f`) complete** — see **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** below. Prior **`efc2fec`** demand-loop steering handoff (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Apply remains founder-gated** — observe → prioritize → **surface** improved; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,9 +53,89 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — search/hub canonicals (`2c15bca`)
+## Current stopping point — daily next coverage opportunities (`39c9e6f`)
 
-**Read this section first** for LIVE hub/search canonical metadata on indexable public surfaces.
+**Read this section first** for LIVE Daily Operator observe → prioritize → surface posture.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`39c9e6f`** — Add daily next coverage opportunities |
+| Prior stopping point | **`efc2fec`** — Update HQ handoff with fresh demand loop status |
+| Lane status | **Complete and pushed** — GOAT slice (read-only surface only; **no** apply path) |
+| Scope | **`scripts/lib/coverage-opportunity-ranking-v1.ts`** (new), **`scripts/report-buckparts-daily-operator.ts`**, **`scripts/report-buckparts-daily-operator.test.ts`** — **no** `data/**`, **`retailer_links.csv`**, Supabase writes, guarded apply, or production buy-link changes |
+
+### GOAT audit alignment (PROVEN — design intent)
+
+| Loop stage | Status |
+|------------|--------|
+| **Observe** | Daily Operator composes census, demand, and command-center signals |
+| **Prioritize** | CSV tier mirror + census rescue scoring rank opportunities |
+| **Surface** | **`next_coverage_opportunities`** in JSON + human stdout (max **10**) |
+| **Apply** | **Not added** — remains **founder-gated** by design; **`mutation_authorized: false`** on every row |
+
+**Not claimed:** autonomous apply readiness, traffic/ranking/revenue/conversion improvement, or campaign readiness.
+
+### What shipped (PROVEN — repo truth only)
+
+| Path | Change |
+|------|--------|
+| **`scripts/lib/coverage-opportunity-ranking-v1.ts`** | New read-only helper — composes **`buildAllProductSafeBuyerPathCensusV1`**, CSV coverage tiers (mirror of **`prioritize-coverage-next-batch`**), optional GSC page match; **`demand_weight`** = **`UNKNOWN`** when per-slug demand is not proven |
+| **`scripts/report-buckparts-daily-operator.ts`** | Adds **`next_coverage_opportunities`** to **`buckparts_daily_operator_v1`** JSON + **NEXT COVERAGE OPPORTUNITIES** human section |
+| **`scripts/report-buckparts-daily-operator.test.ts`** | **+2** tests (**27/27** total in file) |
+
+| Guardrail | Status |
+|-----------|--------|
+| **`data/**` committed changes** | **None** |
+| **`retailer_links.csv`** | **Untouched** |
+| **Supabase writes** | **None** |
+| **CSV apply / guarded apply** | **None added** |
+| **`mutation_authorized`** | **`false`** on section + every opportunity row |
+| **WHW public/index promotion** | **Blocked** — NOINDEX_UNPROVEN rows, if surfaced, carry explicit not-for-public-index reason |
+| **Non-CSV AP model slugs** | **Excluded** from opportunities (e.g. Levoit/Winix audit-only slugs) |
+
+### Daily Operator runtime (PROVEN — founder terminal after `39c9e6f`)
+
+| Item | Value |
+|------|-------|
+| **`npm run buckparts:daily`** | **PASS** — emits **`next_coverage_opportunities`** |
+| **Daily Operator `runtime_status`** | **`BLOCKED`** (stop-the-line lane; not caused by new coverage section) |
+| **STOP-THE-LINE** | **`production_truth_ap: blocking fail=1`** |
+| **Blocking case** | **`ap-safe-winix-filter-h-116130`** — **`status=FAIL`** |
+| **Standalone diagnostic** | **`npm run buckparts:production-truth:ap`** |
+| **Coverage opportunities `runtime_status`** | **`OK`** — top **10** ranked **refrigerator_water** **TIER 1** **SAFE_BUYER_PATH_SUPPRESSED_TRUST** rows (e.g. **`gswf`**, **`da97-17376b`**, **`fppwfu01`**, **`frig-242086201`**, **`wf2cb`**, **`xwfe`**, **`frig-242017801`**, **`frig-242294502`**, **`purepour`**, **`wfcb`**) |
+
+**Note:** Local **`npm run buckparts:daily`** may touch **`data/command-center/execution-ledger-v1.json`** via Command Center read path — restore with **`git checkout -- data/command-center/execution-ledger-v1.json`** before unrelated commits.
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `npm run build` | **PASS** |
+| `npm run buckparts:daily` | **PASS** |
+| `BUCKPARTS_TEST_FILES='scripts/report-buckparts-daily-operator.test.ts' bash scripts/npm-test-v1.sh` | **PASS** — **27/27** |
+| `git status --short` after **`39c9e6f`** commit/push | **Clean** |
+
+### Next recommended lanes (NOT started — founder-gated apply only)
+
+1. **Resolve AP Production Truth blocker** — **`ap-safe-winix-filter-h-116130`** via read-only diagnostic **`npm run buckparts:production-truth:ap`**; owner review before any CSV/apply lane.
+2. **Founder review top-10 coverage queue** — read-only **`next_coverage_opportunities`** output; no autonomous apply.
+3. **Trust-page sitemap policy** — **UNKNOWN** until founder steers (from **`efc2fec`** demand loop).
+4. **WHW search-miss backlog (9 rows)** — wedge **NOINDEX_UNPROVEN**; not for public index promotion without launch proof.
+
+```bash
+git rev-parse HEAD
+npm run buckparts:daily
+npm run buckparts:production-truth:ap
+```
+
+---
+
+## Prior completed lane — search/hub canonicals (`2c15bca`)
+
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -120,14 +200,14 @@ node --import tsx --test src/app/vertical-launch-metadata.test.ts
 
 ## Fresh GSC / search-miss demand loop — steering (`2026-07-06`)
 
-**Read this section** for latest founder-terminal GSC + search-miss steering after **`2c15bca`** / **`46ffa3b`** handoff. **Docs-only update** — no production lane authorized by this section alone.
+**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
 
 ### Repo state (PROVEN)
 
 | Item | Value |
 |------|-------|
-| Repo HEAD / `origin/main` | **`46ffa3b`** — Update HQ handoff after search canonical cleanup |
-| Code stopping point | **`2c15bca`** — search/hub canonicals |
+| Repo HEAD / `origin/main` | **`efc2fec`** — Update HQ handoff with fresh demand loop status |
+| Code stopping point | **`2c15bca`** — search/hub canonicals (code unchanged through **`39c9e6f`**) |
 | `git status --short` after fresh demand-loop checks | **Clean** |
 
 **Not claimed:** rankings improved, traffic improved, revenue, conversion, or campaign readiness.
@@ -182,6 +262,12 @@ node --import tsx --test src/app/vertical-launch-metadata.test.ts
 git rev-parse HEAD
 git status --short
 ```
+
+---
+
+## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
+
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
 
 ---
 
