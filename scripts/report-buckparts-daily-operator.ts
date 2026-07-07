@@ -22,6 +22,10 @@ import {
   parseGa4TrustFunnelArtifact,
   type Ga4TrustFunnelArtifact,
 } from "@/lib/owner-dashboard/ga4-trust-funnel-artifact";
+import {
+  buildNextCoverageOpportunitiesV1,
+  type NextCoverageOpportunitiesSectionV1,
+} from "./lib/coverage-opportunity-ranking-v1";
 
 type UnknownableNumber = number | "UNKNOWN";
 type RuntimeStatus = "OK" | "ATTENTION" | "BLOCKED" | "UNKNOWN";
@@ -60,6 +64,7 @@ type DailyOperatorOptions = {
     liveSiteSmokeCheck?: () => Promise<LiveSiteMonitorV1>;
     gscExternalDemand?: () => Promise<OwnerGscExternalDemandNeuron>;
     ga4TrustFunnel?: () => Promise<Ga4TrustFunnelRead>;
+    nextCoverageOpportunities?: () => NextCoverageOpportunitiesSectionV1;
   };
 };
 
@@ -139,6 +144,7 @@ export type BuckpartsDailyOperatorReport = {
     evaluated_actions: RecommendationAuthorityRecord[];
   };
   production_truth_ap: BuckpartsDailyOperatorProductionTruthApV1 | null;
+  next_coverage_opportunities: NextCoverageOpportunitiesSectionV1;
   next_owner_action: string;
   next_agent_action: string;
   validation_status: {
@@ -667,6 +673,29 @@ export async function buildBuckpartsDailyOperatorReport(
     unknownFacts.push("deployed commit sync remains UNKNOWN unless LIVE_SITE_DEPLOY_COMMIT or another production deploy SHA source is proven.");
   }
 
+  const next_coverage_opportunities =
+    providers.nextCoverageOpportunities?.() ??
+    buildNextCoverageOpportunitiesV1({
+      rootDir,
+      now,
+      gsc,
+      internalSearchRuntimeOk:
+        commandCenter?.search_and_click_intelligence_summary.runtime_status === "OK",
+    });
+  if (next_coverage_opportunities.runtime_status === "UNKNOWN") {
+    blocked_jobs.push({
+      job_or_signal: "next_coverage_opportunities",
+      status: "UNKNOWN",
+      reason: next_coverage_opportunities.unknown_facts[0] ?? "next coverage opportunities unavailable",
+    });
+  }
+  provenFacts.push(
+    ...next_coverage_opportunities.proven_facts.filter(
+      (fact) => !provenFacts.some((existing) => existing === fact),
+    ),
+  );
+  unknownFacts.push(...next_coverage_opportunities.unknown_facts);
+
   return {
     contract: "buckparts_daily_operator_v1",
     generated_at: now().toISOString(),
@@ -747,6 +776,7 @@ export async function buildBuckpartsDailyOperatorReport(
       evaluated_actions: recommendationAuthority.evaluated_actions,
     },
     production_truth_ap: productionTruthAp,
+    next_coverage_opportunities,
     next_owner_action: recommendationAuthority.next_owner_action,
     next_agent_action: recommendationAuthority.next_agent_action,
     validation_status: {
@@ -853,6 +883,22 @@ function recommendationAuthorityLines(authority: BuckpartsDailyOperatorReport["r
   ];
 }
 
+function nextCoverageOpportunityLines(
+  section: BuckpartsDailyOperatorReport["next_coverage_opportunities"],
+): string[] {
+  const header = `- Read-only owner-review queue; runtime_status=${section.runtime_status}; mutation_authorized=false.`;
+  if (section.opportunities.length === 0) {
+    return [header, "- No ranked opportunities (see JSON for unknown_facts)."];
+  }
+  return [
+    header,
+    ...section.opportunities.map(
+      (row) =>
+        `- #${row.rank} ${row.slug} (${row.wedge}, ${row.coverage_priority_tier}): ${row.reason}; blocker: ${row.current_blocker}`,
+    ),
+  ];
+}
+
 export function formatBuckpartsDailyOperatorHumanReport(
   report: BuckpartsDailyOperatorReport,
   options: HumanOutputOptions = {},
@@ -904,6 +950,9 @@ export function formatBuckpartsDailyOperatorHumanReport(
     "",
     "RECOMMENDATION AUTHORITY",
     ...recommendationAuthorityLines(report.recommendation_authority),
+    "",
+    "NEXT COVERAGE OPPORTUNITIES",
+    ...nextCoverageOpportunityLines(report.next_coverage_opportunities),
     "",
     "NEXT ACTION",
     `- Owner: ${report.next_owner_action}`,

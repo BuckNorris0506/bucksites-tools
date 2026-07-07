@@ -1037,3 +1037,48 @@ test("Daily Operator emits UNKNOWN/blocked facts when required inputs are missin
   assert.equal(report.site_health.live_site_smoke, null);
   assert.equal(report.site_health.route_health_status, "UNKNOWN");
 });
+
+test("Daily Operator includes read-only next_coverage_opportunities section", async () => {
+  const report = await buildBuckpartsDailyOperatorReport({ now: fixedNow, providers: providers() });
+  assert.equal(report.next_coverage_opportunities.contract, "buckparts_next_coverage_opportunities_v1");
+  assert.equal(report.next_coverage_opportunities.read_only, true);
+  assert.equal(report.next_coverage_opportunities.data_mutation, false);
+  assert.equal(report.next_coverage_opportunities.mutation_authorized, false);
+  assert.ok(report.next_coverage_opportunities.opportunities.length <= 10);
+  for (const row of report.next_coverage_opportunities.opportunities) {
+    assert.equal(row.mutation_authorized, false);
+    assert.equal(typeof row.owner_approval_required, "boolean");
+    assert.ok(row.source_signals.includes("all_product_safe_buyer_path_census_v1"));
+    if (row.page_classification === "NOINDEX_UNPROVEN") {
+      assert.ok(row.reason.includes("not for public index promotion"));
+    }
+  }
+  const output = renderBuckpartsDailyOperatorOutput(report);
+  assert.ok(output.includes("\nNEXT COVERAGE OPPORTUNITIES\n"));
+  const parsed = JSON.parse(renderBuckpartsDailyOperatorOutput(report, { json: true }));
+  assert.equal(parsed.next_coverage_opportunities.contract, "buckparts_next_coverage_opportunities_v1");
+});
+
+test("buildNextCoverageOpportunitiesV1 ranks deterministically from repo census + CSV tiers", async () => {
+  const { buildNextCoverageOpportunitiesV1 } = await import("./lib/coverage-opportunity-ranking-v1");
+  const section = buildNextCoverageOpportunitiesV1({ rootDir: process.cwd(), now: fixedNow });
+  assert.equal(section.contract, "buckparts_next_coverage_opportunities_v1");
+  assert.ok(section.opportunities.length > 0);
+  assert.ok(section.opportunities.length <= 10);
+  assert.equal(section.opportunities[0]!.rank, 1);
+  for (let i = 1; i < section.opportunities.length; i += 1) {
+    assert.equal(section.opportunities[i]!.rank, i + 1);
+  }
+  const tier1 = section.opportunities.filter((row) => row.coverage_priority_tier === "TIER 1");
+  if (tier1.length > 0) {
+    assert.equal(section.opportunities[0]!.coverage_priority_tier, "TIER 1");
+    assert.equal(section.opportunities[0]!.wedge, "refrigerator_water");
+  }
+  assert.ok(
+    section.opportunities.every(
+      (row) =>
+        row.page_classification === "SAFE_BUYER_PATH_SUPPRESSED_TRUST" ||
+        (row.page_classification === "NOINDEX_UNPROVEN" && row.wedge === "whole_house_water"),
+    ),
+  );
+});
