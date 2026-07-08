@@ -214,8 +214,9 @@ function evalAssertion(args: {
   model: AirPurifierModelWithFilters | null;
   csvAuthority: CsvPrimaryAuthorityV1 | null;
   rawPrimaryAffiliateUrl: string | null;
+  now?: () => Date;
 }): ProductionTruthAssertionResultV1 {
-  const { assertion, filter, model, csvAuthority, rawPrimaryAffiliateUrl } = args;
+  const { assertion, filter, model, csvAuthority, rawPrimaryAffiliateUrl, now } = args;
   const base = {
     assertion_id: assertion.assertion_id,
     kind: assertion.kind,
@@ -313,6 +314,10 @@ function evalAssertion(args: {
         selectedBuy.affiliate_url,
         selectedBuy.browser_truth_classification ?? undefined,
         selectedBuy.browser_truth_buyable_subtype ?? null,
+        selectedBuy.browser_truth_checked_at ?? null,
+        selectedBuy.browser_truth_notes ?? null,
+        undefined,
+        now ? { now: now() } : undefined,
       );
       return {
         ...base,
@@ -320,7 +325,7 @@ function evalAssertion(args: {
         actual: safe,
         detail: safe
           ? "/go redirect gate passes for selected buy link."
-          : ` /go redirect gate blocked: failure=${buyLinkGateFailureKind(selectedBuy) ?? "gate"}.`,
+          : ` /go redirect gate blocked: failure=${buyLinkGateFailureKind(selectedBuy, now ? { now: now() } : undefined) ?? "gate"}.`,
       };
     }
 
@@ -501,6 +506,7 @@ export async function buildProductionTruthApReportV1(
         model,
         csvAuthority,
         rawPrimaryAffiliateUrl,
+        now,
       }),
     );
 

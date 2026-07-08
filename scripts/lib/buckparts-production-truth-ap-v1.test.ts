@@ -33,7 +33,7 @@ function mockWinixFilter(): AirPurifierFilterWithModels {
         browser_truth_classification: "direct_buyable",
         browser_truth_buyable_subtype: "SINGLE_UNIT_DIRECT_BUYABLE",
         browser_truth_notes: "proof",
-        browser_truth_checked_at: "2026-06-10T00:00:00.000Z",
+        browser_truth_checked_at: "2026-06-12T18:47:54.123Z",
       },
     ],
     official_reference_links: [],
@@ -207,6 +207,63 @@ describe("buildProductionTruthApReportV1 (mocked runtime)", () => {
     assert.equal(report.summary.inventory_warning_count, 1);
   });
 
+  it("passes go_redirect_gate_safe when selected buy link has fresh browser truth recency", async () => {
+    const report = await buildProductionTruthApReportV1({
+      now: () => new Date("2026-07-07T00:00:00.000Z"),
+      supabaseConfigured: () => true,
+      getFilterBySlug: async (slug) => (slug === "winix-filter-h-116130" ? mockWinixFilter() : null),
+      getModelBySlug: async () => null,
+      fetchRawApprovedLinks: async () => [],
+    });
+
+    const winix = report.cases.find((c) => c.case_id === "ap-safe-winix-filter-h-116130");
+    assert.ok(winix);
+    const goGate = winix.assertions.find((a) => a.assertion_id === "go_gate_safe");
+    assert.ok(goGate);
+    assert.equal(goGate.status, "PASS");
+    assert.equal(goGate.actual, true);
+  });
+
+  it("fails go_redirect_gate_safe when browser_truth_checked_at is missing (fail closed)", async () => {
+    const filter = mockWinixFilter();
+    filter.retailer_links[0]!.browser_truth_checked_at = null;
+
+    const report = await buildProductionTruthApReportV1({
+      now: () => new Date("2026-07-07T00:00:00.000Z"),
+      supabaseConfigured: () => true,
+      getFilterBySlug: async () => filter,
+      getModelBySlug: async () => null,
+      fetchRawApprovedLinks: async () => [],
+    });
+
+    const winix = report.cases.find((c) => c.case_id === "ap-safe-winix-filter-h-116130");
+    assert.ok(winix);
+    const goGate = winix.assertions.find((a) => a.assertion_id === "go_gate_safe");
+    assert.ok(goGate);
+    assert.equal(goGate.status, "FAIL");
+    assert.match(goGate.detail, /missing_browser_truth_checked_at/);
+  });
+
+  it("fails go_redirect_gate_safe when browser_truth_checked_at is stale", async () => {
+    const filter = mockWinixFilter();
+    filter.retailer_links[0]!.browser_truth_checked_at = "2026-01-01T00:00:00.000Z";
+
+    const report = await buildProductionTruthApReportV1({
+      now: () => new Date("2026-07-07T00:00:00.000Z"),
+      supabaseConfigured: () => true,
+      getFilterBySlug: async () => filter,
+      getModelBySlug: async () => null,
+      fetchRawApprovedLinks: async () => [],
+    });
+
+    const winix = report.cases.find((c) => c.case_id === "ap-safe-winix-filter-h-116130");
+    assert.ok(winix);
+    const goGate = winix.assertions.find((a) => a.assertion_id === "go_gate_safe");
+    assert.ok(goGate);
+    assert.equal(goGate.status, "FAIL");
+    assert.match(goGate.detail, /stale_browser_truth_checked_at/);
+  });
+
   it("marks holmes no_search_primary_win as non-blocking in golden contract", () => {
     const holmes = PRODUCTION_TRUTH_GOLDEN_CASES_AP_V1.find(
       (c) => c.case_id === "ap-suppressed-holmes-hapf30",
@@ -233,6 +290,8 @@ describe("countRawSafeCtaRowsV1", () => {
         affiliate_url: "https://www.winixamerica.com/product/filter-h-116130/",
         retailer_key: "oem-catalog",
         browser_truth_classification: "direct_buyable",
+        browser_truth_checked_at: "2026-06-12T18:47:54.123Z",
+        browser_truth_notes: "proof",
       },
       {
         affiliate_url: "https://www.holmesproducts.com/search?q=HOLMES-HAPF30",
