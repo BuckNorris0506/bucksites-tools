@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (repo HEAD / `origin/main` / `39c9e6f`):** **GOAT slice — Daily Operator read-only next coverage opportunities (`39c9e6f`) complete** — see **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** below. Prior **`efc2fec`** demand-loop steering handoff (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Apply remains founder-gated** — observe → prioritize → **surface** improved; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (repo HEAD / `origin/main` / `97f9fbe`):** **AP Production Truth go-gate evaluation fix (`97f9fbe`) complete** — see **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** below. Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Apply remains founder-gated** — observe → prioritize → **surface** live; AP Production Truth blocker **resolved**; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,9 +53,87 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — daily next coverage opportunities (`39c9e6f`)
+## Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Read this section first** for LIVE Daily Operator observe → prioritize → surface posture.
+**Read this section first** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix.
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`97f9fbe`** — Fix AP production truth go gate evaluation |
+| Prior stopping point | **`3a30c3e`** — Update HQ handoff after daily coverage opportunities |
+| Lane status | **Complete and pushed** — evaluator parity fix only; **no** `/go` gate weakening |
+| Scope | **`scripts/lib/buckparts-production-truth-ap-v1.ts`**, **`scripts/lib/buckparts-production-truth-ap-v1.test.ts`** — **no** `data/**`, **`retailer_links.csv`**, Supabase, public CTA, or live `/go` route changes |
+
+### What changed (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **False blocker** | **`ap-safe-winix-filter-h-116130`** failed **`go_gate_safe`** while **`safe_cta_present`** and **`primary_pdp_path`** passed |
+| **Root cause** | **`go_redirect_gate_safe`** called **`isAffiliateUrlSafeForGoRedirect`** without **`browser_truth_checked_at`** / **`browser_truth_notes`** on the selected buy link |
+| **Fix** | Pass full selected-buy browser-truth fields into **`isAffiliateUrlSafeForGoRedirect`** (same shape live `/go` gate expects) |
+| **Recency** | Report **`now`** threaded through assertion eval for consistent stale/missing checks |
+| **Fail-closed** | Missing or stale **`browser_truth_checked_at`** still **FAIL** — not weakened |
+
+**Not claimed:** autonomous apply readiness, traffic/ranking/revenue/conversion improvement, or campaign readiness.
+
+### AP Production Truth validation (PROVEN — founder terminal)
+
+| Check | Result |
+|-------|--------|
+| `npm run buckparts:production-truth:ap` | **PASS** |
+| Summary | **`total_cases=4`**, **`pass=4`**, **`fail=0`**, **`skip=0`**, **`unknown=0`** |
+| **`ap-safe-winix-filter-h-116130`** | **PASS** — **`go_gate_safe`** **PASS** |
+| Scoped tests | **PASS** — **58/58** (`buckparts-production-truth-ap-v1.test.ts`, `go-redirect-gate.test.ts`, `live-buyer-path-go-decision-v1.test.ts`) |
+| `npm run build` | **PASS** |
+
+### Daily Operator validation (PROVEN — founder terminal after `97f9fbe`)
+
+| Item | Value |
+|------|-------|
+| `npm run buckparts:daily` | **PASS** |
+| **`runtime_status`** | **`ATTENTION`** (no stop-the-line) |
+| **STOP-THE-LINE** | **None** |
+| **AP Production Truth lane** | **`pass=4`**, **`fail=0`**, **`inventory_warnings=1`** |
+| **`next_coverage_opportunities`** | **Still live** — observe → prioritize → **surface** unchanged |
+
+### Remaining ATTENTION items (NOT blockers — PROVEN)
+
+| Item | Status |
+|------|--------|
+| Unknown / human-review lanes | Still present in Daily Operator authority graph |
+| **`ap-suppressed-holmes-hapf30`** inventory warning | **Non-blocking** — OEM search-primary hygiene (`no_search_primary_win` **FAIL**, case **PASS**) |
+| Revenue / conversions | **`UNKNOWN_NOT_CONNECTED`** — no affiliate revenue feed |
+| Deploy sync | **`UNKNOWN_DEPLOY_COMMIT`** — local HEAD not deployed-commit proof |
+
+**Note:** Local **`npm run buckparts:daily`** may touch **`data/command-center/execution-ledger-v1.json`** via Command Center read path — restore with **`git checkout -- data/command-center/execution-ledger-v1.json`** before unrelated commits.
+
+### Validation proof (PROVEN)
+
+| Check | Result |
+|-------|--------|
+| `git status --short` after **`97f9fbe`** commit/push | **Clean** |
+
+### Next recommended lanes (NOT started — founder-gated apply only)
+
+1. **Founder review top-10 coverage queue** — read-only **`next_coverage_opportunities`** from **`npm run buckparts:daily`**; no autonomous apply.
+2. **Holmes HAPF30 OEM search-primary hygiene** — inventory warning only; rescue out of scope unless owner-scoped.
+3. **Trust-page sitemap policy** — **UNKNOWN** until founder steers (from **`efc2fec`** demand loop).
+4. **WHW search-miss backlog (9 rows)** — wedge **NOINDEX_UNPROVEN**; not for public index promotion without launch proof.
+
+```bash
+git rev-parse HEAD
+npm run buckparts:production-truth:ap
+npm run buckparts:daily
+```
+
+---
+
+## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
+
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -96,16 +174,14 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **WHW public/index promotion** | **Blocked** — NOINDEX_UNPROVEN rows, if surfaced, carry explicit not-for-public-index reason |
 | **Non-CSV AP model slugs** | **Excluded** from opportunities (e.g. Levoit/Winix audit-only slugs) |
 
-### Daily Operator runtime (PROVEN — founder terminal after `39c9e6f`)
+### Daily Operator runtime (PROVEN — founder terminal at `39c9e6f`; superseded by `97f9fbe`)
 
 | Item | Value |
 |------|-------|
 | **`npm run buckparts:daily`** | **PASS** — emits **`next_coverage_opportunities`** |
-| **Daily Operator `runtime_status`** | **`BLOCKED`** (stop-the-line lane; not caused by new coverage section) |
-| **STOP-THE-LINE** | **`production_truth_ap: blocking fail=1`** |
-| **Blocking case** | **`ap-safe-winix-filter-h-116130`** — **`status=FAIL`** |
-| **Standalone diagnostic** | **`npm run buckparts:production-truth:ap`** |
-| **Coverage opportunities `runtime_status`** | **`OK`** — top **10** ranked **refrigerator_water** **TIER 1** **SAFE_BUYER_PATH_SUPPRESSED_TRUST** rows (e.g. **`gswf`**, **`da97-17376b`**, **`fppwfu01`**, **`frig-242086201`**, **`wf2cb`**, **`xwfe`**, **`frig-242017801`**, **`frig-242294502`**, **`purepour`**, **`wfcb`**) |
+| **Daily Operator `runtime_status`** | **`BLOCKED`** at **`39c9e6f`** — false **`production_truth_ap`** stop-the-line (**resolved** at **`97f9fbe`**) |
+| **STOP-THE-LINE (historical)** | **`production_truth_ap: blocking fail=1`** — **`ap-safe-winix-filter-h-116130`** **`go_gate_safe`** **FAIL** |
+| **Coverage opportunities `runtime_status`** | **`OK`** — top **10** ranked **refrigerator_water** **TIER 1** **SAFE_BUYER_PATH_SUPPRESSED_TRUST** rows |
 
 **Note:** Local **`npm run buckparts:daily`** may touch **`data/command-center/execution-ledger-v1.json`** via Command Center read path — restore with **`git checkout -- data/command-center/execution-ledger-v1.json`** before unrelated commits.
 
@@ -118,9 +194,9 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `BUCKPARTS_TEST_FILES='scripts/report-buckparts-daily-operator.test.ts' bash scripts/npm-test-v1.sh` | **PASS** — **27/27** |
 | `git status --short` after **`39c9e6f`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — founder-gated apply only)
+### Next recommended lanes (NOT started — superseded by `97f9fbe`)
 
-1. **Resolve AP Production Truth blocker** — **`ap-safe-winix-filter-h-116130`** via read-only diagnostic **`npm run buckparts:production-truth:ap`**; owner review before any CSV/apply lane.
+1. ~~Resolve AP Production Truth blocker~~ — **Resolved** at **`97f9fbe`** — see **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)**.
 2. **Founder review top-10 coverage queue** — read-only **`next_coverage_opportunities`** output; no autonomous apply.
 3. **Trust-page sitemap policy** — **UNKNOWN** until founder steers (from **`efc2fec`** demand loop).
 4. **WHW search-miss backlog (9 rows)** — wedge **NOINDEX_UNPROVEN**; not for public index promotion without launch proof.
@@ -133,9 +209,15 @@ npm run buckparts:production-truth:ap
 
 ---
 
+## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
+
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** above.
+
+---
+
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -200,14 +282,14 @@ node --import tsx --test src/app/vertical-launch-metadata.test.ts
 
 ## Fresh GSC / search-miss demand loop — steering (`2026-07-06`)
 
-**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
+**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** above.
 
 ### Repo state (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Repo HEAD / `origin/main` | **`efc2fec`** — Update HQ handoff with fresh demand loop status |
-| Code stopping point | **`2c15bca`** — search/hub canonicals (code unchanged through **`39c9e6f`**) |
+| Code stopping point | **`2c15bca`** — search/hub canonicals (code unchanged through **`97f9fbe`**) |
 | `git status --short` after fresh demand-loop checks | **Clean** |
 
 **Not claimed:** rankings improved, traffic improved, revenue, conversion, or campaign readiness.
@@ -267,7 +349,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — daily next coverage opportunities (`39c9e6f`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — AP Production Truth go-gate fix (`97f9fbe`)** above.
 
 ---
 
