@@ -1,0 +1,487 @@
+{
+  "contract": "gswf_wrong_part_repair_apply_plan_owner_review_v1",
+  "read_only": true,
+  "data_mutation": false,
+  "mutation_authorized": false,
+  "owner_approval_required": true,
+  "apply_authorized": false,
+  "apply_plan_authorized": false,
+  "csv_apply_authorized": false,
+  "verified_link_authorized": false,
+  "retailer_links_mutation_authorized": false,
+  "buy_cta_authorized": false,
+  "supabase_mutation_authorized": false,
+  "generated_at": "2026-07-10T01:51:50.360Z",
+  "source_command": "npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review",
+  "family_key": "filter::ge::gswf",
+  "source_owner_review_packet": {
+    "contract": "gswf_family_reconciliation_owner_review_v1",
+    "rel_path": "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json",
+    "row_category": "proven_wrong_part_repair",
+    "slug_count": 13
+  },
+  "target_csv_rel_path": "data/compatibility_mappings.csv",
+  "excluded_from_plan": {
+    "partial_browser_proof_required_slugs": [
+      "ge-gfe28hmkww",
+      "ge-gsc25frshss",
+      "ge-gse26gshess"
+    ],
+    "no_filter_suppression_slugs": [
+      "ge-gte18gsnrss"
+    ],
+    "reason": "PARTIAL rows require owner-browser Tier-1 proof; no-filter row requires separate suppression lane — neither is authorized in this compat-only apply-plan design."
+  },
+  "planned_rows": [
+    {
+      "fridge_slug": "ge-cwe23sshww",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "rpwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gfe24jgkww",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2",
+        "smartwater-mwfp"
+      ],
+      "after_mappings": [
+        "smartwater-mwfp",
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [
+        "smartwater-mwfp"
+      ],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gfe27jmkes",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gfe28gmkbb",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "rpwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gfe28gskes",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "rpwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gfe28hskss",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2",
+        "smartwater-mwfp"
+      ],
+      "after_mappings": [
+        "rpwfe",
+        "smartwater-mwfp"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [
+        "smartwater-mwfp"
+      ],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gne25jmkww",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "MWF/XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gne27jstss",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2",
+        "xwf"
+      ],
+      "after_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [
+        "xwf"
+      ],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "MWF/XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gse25hskss",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2",
+        "xwf"
+      ],
+      "after_mappings": [
+        "xwf",
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [
+        "xwf"
+      ],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "MWF/XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-gye22gskww",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "rpwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-pfe28kmkww",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2",
+        "xwf"
+      ],
+      "after_mappings": [
+        "rpwfe",
+        "xwf"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [
+        "xwf"
+      ],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-pfe28kynbb",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "rpwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "rpwfe",
+      "added_filter_slugs": [
+        "rpwfe"
+      ],
+      "hyperagent_actual_filter": "RPWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    },
+    {
+      "fridge_slug": "ge-pvd28bymfs",
+      "operation": "surgical_remove_gswf_family_mappings",
+      "before_mappings": [
+        "gswf",
+        "gswf2"
+      ],
+      "after_mappings": [
+        "xwfe"
+      ],
+      "wrong_part_removals": [
+        "gswf",
+        "gswf2"
+      ],
+      "preserved_mappings": [],
+      "proposed_remap_target_filter_slug": "xwfe",
+      "added_filter_slugs": [
+        "xwfe"
+      ],
+      "hyperagent_actual_filter": "XWFE",
+      "hyperagent_evidence_confidence": "PROVEN",
+      "cursor_verdict": "VALIDATION_PASS_READY_FOR_OWNER_REVIEW",
+      "source_row_category": "proven_wrong_part_repair",
+      "mutation_authorized": false,
+      "csv_apply_authorized": false,
+      "verified_link_authorized": false,
+      "buy_cta_authorized": false,
+      "not_applied": true
+    }
+  ],
+  "wrong_part_family_filter_slugs": [
+    "gswf",
+    "gswf2"
+  ],
+  "rollup_removed_filter_slugs": [
+    "gswf",
+    "gswf2"
+  ],
+  "rollup_added_filter_slugs": [
+    "rpwfe",
+    "xwfe"
+  ],
+  "planned_compat_row_removals": 26,
+  "planned_compat_row_additions": 13,
+  "owner_approval_requirements": [
+    "Owner must explicitly approve filter::ge::gswf wrong-part repair apply plan before any CSV or Supabase compat mutation.",
+    "Owner must confirm each of the 13 planned rows after reviewing before/after mapping intent in this packet.",
+    "Owner must complete browser-proof Tier-1 capture for 3 PARTIAL slugs before including them in any apply executor.",
+    "Owner must approve no-filter suppression for ge-gte18gsnrss in a separate lane — not included in this plan.",
+    "No GSWF buy CTA, retailer_links.csv edit, or Verified Link promotion is authorized by approving this compat-only design.",
+    "Re-validate committed compatibility_mappings.csv and live Supabase state immediately before any future guarded apply.",
+    "BP-000003 caution behavior must remain until post-apply re-audit proves safe customer-facing posture."
+  ],
+  "risk_notes": [
+    "owner_approval_required=true — this artifact designs a future CSV repair only; nothing has been applied.",
+    "mutation_authorized=false, csv_apply_authorized=false, buy_cta_authorized=false on packet and every planned row.",
+    "Only 13 of 17 GSWF mission slugs are included — 3 PARTIAL browser-proof rows and 1 no-filter row are explicitly excluded.",
+    "Surgical removals are limited to wrong-part family slugs: gswf|gswf2.",
+    "Planned compat row removals=26; additions=13.",
+    "Proposed remap targets come only from gswf-family-reconciliation-owner-review-v1 proposed_remap_target_filter_slug fields.",
+    "Unrelated valid mappings (e.g. smartwater-mwfp, xwf) are preserved where present in committed CSV.",
+    "No retailer_links.csv changes, public buy CTA changes, manual-evidence commits, or page updates in this plan.",
+    "Live Supabase compatibility_mappings may differ from committed CSV at apply time — re-validate before execution."
+  ],
+  "exact_repo_paths_read": [
+    "data/compatibility_mappings.csv",
+    "data/filter_aliases.csv",
+    "data/filters.csv",
+    "data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json"
+  ],
+  "proven_facts": [
+    "PROVEN: 13 proven_wrong_part_repair rows planned from data/fridge/batch-production/drafts/gswf-family-reconciliation-owner-review-v1.json.",
+    "PROVEN: Excluded 3 PARTIAL and 1 no-filter slug(s) from this plan.",
+    "PROVEN: Surgical removals limited to gswf|gswf2 where present in source rows.",
+    "PROVEN: planned_compat_row_removals=26; planned_compat_row_additions=13.",
+    "PROVEN: mutation_authorized=false; apply_authorized=false; buy_cta_authorized=false; retailer_links_mutation_authorized=false.",
+    "PROVEN: Read-only apply-plan design — compatibility_mappings.csv not modified."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: When owner will approve this GSWF wrong-part repair apply plan.",
+    "UNKNOWN: Whether live Supabase compatibility_mappings matches committed CSV at apply time.",
+    "UNKNOWN: Whether post-apply manual-evidence capture is needed before lifting GSWF caution copy."
+  ]
+}
