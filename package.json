@@ -166,6 +166,7 @@
     "buckparts:hyperagent-dispatch-registry": "tsx scripts/report-hyperagent-dispatch-registry-v1.ts",
     "buckparts:hyperagent-orchestrator-v0": "tsx scripts/dispatch-hyperagent-orchestrator-v0.ts",
     "buckparts:edr4rxd1-owner-review-packet": "tsx scripts/report-edr4rxd1-owner-review-packet-v1.ts",
+    "buckparts:gswf-family-reconciliation-owner-review": "tsx scripts/report-gswf-family-reconciliation-owner-review-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
