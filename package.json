@@ -169,6 +169,7 @@
     "buckparts:gswf-family-reconciliation-owner-review": "tsx scripts/report-gswf-family-reconciliation-owner-review-v1.ts",
     "buckparts:gswf-wrong-part-repair-apply-plan-owner-review": "tsx scripts/report-gswf-wrong-part-repair-apply-plan-owner-review-v1.ts",
     "buckparts:gswf-wrong-part-repair-guarded-apply": "tsx scripts/apply-gswf-wrong-part-repair-guarded-v1.ts",
+    "buckparts:gswf-partial-owner-browser-proof-packet": "tsx scripts/report-gswf-partial-owner-browser-proof-packet-v1.ts",
     "buckparts:fridge-buyer-path-batch-proposal": "tsx scripts/report-fridge-buyer-path-batch-proposal-v1.ts",
     "buckparts:fridge-buyer-path-batch-approval": "tsx scripts/report-fridge-buyer-path-batch-approval-v1.ts",
     "buckparts:owner-drift-detector": "tsx scripts/report-owner-drift-detector-v1.ts",
