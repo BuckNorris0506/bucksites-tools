@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`4337055` — Add GSWF Supabase compatibility sync plan):** **Read-only GSWF 13-row Supabase compatibility sync plan owner packet landed** — see **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** below. Actual repo HEAD / `origin/main`: **`4337055`**. Prior operational stopping points: **`77eeeb8`** — Update HQ handoff after Product JSON-LD suppression; **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer; **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. Product JSON-LD suppression remains documented at **`7d099c2`** / handoff **`77eeeb8`**. **No** Supabase mutation; **no** founder approval for Supabase apply; **no** guarded Supabase apply executor; **no** Offer JSON-LD lane completed; **no** GSWF buy CTA; **no** retailer_links / buy CTA / sitemap/robots mutation claimed; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (`d5c0c95` — Add GSWF Supabase compatibility guarded dry run):** **Guarded GSWF Supabase compatibility sync dry-run executor landed** — see **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** below. Actual repo HEAD / `origin/main`: **`d5c0c95`**. Prior operational stopping points: **`853ee79`** — Update HQ handoff after GSWF Supabase sync plan; **`4337055`** — Add GSWF Supabase compatibility sync plan; **`77eeeb8`** — Update HQ handoff after Product JSON-LD suppression; **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer; **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. Supabase sync plan remains documented at **`4337055`** / handoff **`853ee79`**. Product JSON-LD suppression remains documented at **`7d099c2`** / handoff **`77eeeb8`**. **No** Supabase mutation; **no** founder approval for Supabase apply; **no** live Netlify deploy after **`d5c0c95`** while credits are exhausted; **no** Offer JSON-LD lane completed; **no** GSWF buy CTA; **no** retailer_links / buy CTA / sitemap/robots mutation claimed; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,9 +53,74 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)
+## Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)
 
-**Read this section first** for LIVE GSWF post-CSV-apply Supabase compatibility sync **owner-review** posture (read-only compare; **no** Supabase mutation).
+**Read this section first** for LIVE GSWF Supabase compatibility sync **guarded dry-run executor** posture (default dry-run; mutation surface disabled; **no** Supabase mutation).
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`d5c0c95`** — Add GSWF Supabase compatibility guarded dry run |
+| Prior operational stopping points | **`853ee79`** — Update HQ handoff after GSWF Supabase sync plan; **`4337055`** — Add GSWF Supabase compatibility sync plan |
+| Lane status | **Complete and pushed** — guarded dry-run executor only; Supabase mutation surface **disabled** |
+| Scope | **`package.json`**, **`scripts/apply-gswf-wrong-part-repair-supabase-compat-sync-guarded-v1.ts`**, **`scripts/lib/gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.ts`**, **`scripts/lib/gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.test.ts`**, dry-run drafts under **`data/fridge/batch-production/drafts/`** — **no** CSV / Supabase / retailer_links / buy CTA / sitemap / robots / Product JSON-LD mutation |
+
+### Executor truth (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **Lane** | Guarded Supabase compatibility sync dry-run executor for the **13**-slug plan from **`4337055`** |
+| **Default mode** | **dry-run / read-only** |
+| **Dry-run result** | **`DRY_RUN_READY`** |
+| **Planned future Supabase changes** | **26** removals + **13** additions (plan only — **not** applied) |
+| **owner_approval_present** | **false** |
+| **Auth flags** | **`data_mutation=false`**; **`supabase_mutation_authorized=false`** |
+| **Apply without approval** | **BLOCKED** |
+| **Apply with matching approval** | Still **BLOCKED** — mutation surface disabled in this lane |
+| **Supabase mutation applied** | **No** |
+| **Artifacts** | `data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-guarded-dry-run-v1.json` · `…-v1.md` |
+| **Command** | `npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- --dry-run --write-artifacts` |
+| **Future approval path (not created)** | `data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json` |
+
+**Not claimed:** founder approval artifact; Supabase mutation; CSV mutation; retailer_links change; buy CTA change; sitemap/robots change; Product JSON-LD change; live Netlify deploy after **`d5c0c95`** while credits are exhausted; Offer JSON-LD lane; GSWF buy CTA; autonomous apply readiness; traffic/ranking/revenue/conversion improvement. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **Root `AGENTS.md` operating contract unchanged**. **Product JSON-LD suppression remains** at **`7d099c2`** / handoff **`77eeeb8`**. **GSWF CSV repair remains applied** at **`8361fba`**. **Supabase sync plan remains** at **`4337055`** / handoff **`853ee79`**.
+
+### Validation (PROVEN — before commit of `d5c0c95`)
+
+| Check | Result |
+|-------|--------|
+| Scoped tests (`gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.test.ts`) | **PASS** — **6/6** |
+| Dry-run with `--write-artifacts` | **PASS** — **`DRY_RUN_READY`** |
+| `npm run build` | **PASS** |
+| `git status --short` after **`d5c0c95`** commit/push | **Clean** |
+
+### Current recommendation (NOT started — founder-gated)
+
+1. Founder review whether to create a Supabase compat sync owner-approval artifact for this exact plan (**not** created in this lane).
+2. Do **not** enable Supabase mutation surface / `--apply` until founder explicitly authorizes a future apply lane.
+3. Do **not** include excluded slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**, **`ge-gte18gsnrss`**) in any future Supabase sync apply.
+4. Live Netlify deploy after **`d5c0c95`** remains deferred while credits are exhausted.
+5. **Offer JSON-LD lane** remains **not started**.
+6. **No GSWF buy CTA**.
+
+```bash
+git rev-parse HEAD
+node --import tsx --test scripts/lib/gswf-wrong-part-repair-supabase-compat-sync-guarded-apply-v1.test.ts
+npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply -- --dry-run --write-artifacts
+```
+
+---
+
+## Prior completed lane — HQ handoff after GSWF Supabase sync plan (`853ee79`)
+
+**Docs-only** — recorded **`4337055`** GSWF Supabase compatibility sync plan stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
+
+---
+
+## Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)
+
+**Historical reference** for LIVE GSWF post-CSV-apply Supabase compatibility sync **owner-review** posture (read-only compare; **no** Supabase mutation) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above. **Plan packet truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -82,7 +147,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **Artifacts** | `data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json` · `…-v1.md` |
 | **Command** | `npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review -- --write-artifacts` |
 
-**Not claimed:** Supabase mutation; founder approval artifact for Supabase apply; guarded Supabase apply executor; CSV mutation; retailer_links change; buy CTA change; sitemap/robots change; GSWF buy CTA; Offer JSON-LD lane; autonomous apply readiness; traffic/ranking/revenue/conversion improvement. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **Root `AGENTS.md` operating contract unchanged**. **Product JSON-LD suppression remains** at **`7d099c2`** / handoff **`77eeeb8`**. **GSWF CSV repair remains applied** at **`8361fba`**.
+**Not claimed (at this lane):** Supabase mutation; founder approval artifact for Supabase apply; ~~guarded Supabase dry-run executor~~ (later completed at **`d5c0c95`**); CSV mutation; retailer_links change; buy CTA change; sitemap/robots change; GSWF buy CTA; Offer JSON-LD lane; autonomous apply readiness; traffic/ranking/revenue/conversion improvement. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **Root `AGENTS.md` operating contract unchanged**. **Product JSON-LD suppression remains** at **`7d099c2`** / handoff **`77eeeb8`**. **GSWF CSV repair remains applied** at **`8361fba`**.
 
 ### Validation (PROVEN — before commit of `4337055`)
 
@@ -93,9 +158,9 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after **`4337055`** commit/push | **Clean** |
 
-### Current recommendation (NOT started — founder-gated)
+### Next recommended lanes (NOT started — superseded by `d5c0c95`)
 
-1. Founder review of the Supabase sync-plan packet — decide whether to authorize a future guarded Supabase apply (separate approval + executor; **not** this packet).
+1. ~~Guarded Supabase sync dry-run executor~~ — **Completed** at **`d5c0c95`** — see **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)**. Founder approval / mutation surface still **not** authorized.
 2. Do **not** include excluded slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**, **`ge-gte18gsnrss`**) in any future Supabase sync apply.
 3. **Offer JSON-LD lane** remains **not started**.
 4. **3 PARTIAL** GSWF slugs / **`ge-gte18gsnrss`** no-filter lanes remain separate.
@@ -111,13 +176,13 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review 
 
 ## Prior completed lane — HQ handoff after Product JSON-LD suppression (`77eeeb8`)
 
-**Docs-only** — recorded **`7d099c2`** fridge Product JSON-LD suppress stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`7d099c2`** fridge Product JSON-LD suppress stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)
 
-**Historical reference** for LIVE fridge filter Product-snippet structured-data posture (suppress incomplete Product; **no** invented offers/reviews) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above. **Suppression truth remains in force.**
+**Historical reference** for LIVE fridge filter Product-snippet structured-data posture (suppress incomplete Product; **no** invented offers/reviews) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above. **Suppression truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -151,11 +216,11 @@ npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review 
 | `npm run build` | **PASS** |
 | `git status --short` after **`7d099c2`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `4337055`)
+### Next recommended lanes (NOT started — superseded by `d5c0c95`)
 
 1. Recrawl / monitor GSC Product-snippet status for **`/filter/4396710`**, **`/filter/4396508`**, **`/filter/4396395`** after deploy (read-only ops).
 2. **Offer JSON-LD lane** remains **not started** — requires truthful bound price/availability + founder policy to allow Offer keys.
-3. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only packet only; Supabase apply still **not** performed) — see **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)**.
+3. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only packet only; Supabase apply still **not** performed) — see **§ Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)**.
 4. **3 PARTIAL** GSWF slugs / **`ge-gte18gsnrss`** no-filter lanes remain separate.
 5. **No GSWF buy CTA**.
 
@@ -169,13 +234,13 @@ BUCKPARTS_TEST_FILES='src/lib/seo/structured-data.test.ts src/lib/seo/fridge-pha
 
 ## Prior completed lane — HQ handoff after agent loop contract (`3ad4eea`)
 
-**Docs-only** — recorded **`84ae957`** root **`AGENTS.md`** Agent Loop Contract stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`84ae957`** root **`AGENTS.md`** Agent Loop Contract stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — AGENTS.md agent loop contract (`84ae957`)
 
-**Historical reference** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above. **`AGENTS.md` remains in force as the agent operating contract.**
+**Historical reference** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above. **`AGENTS.md` remains in force as the agent operating contract.**
 
 ### Milestone summary (PROVEN)
 
@@ -209,10 +274,10 @@ BUCKPARTS_TEST_FILES='src/lib/seo/structured-data.test.ts src/lib/seo/fridge-pha
 | `npm run build` | **PASS** |
 | `git status --short` after **`84ae957`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `4337055`)
+### Next recommended lanes (NOT started — superseded by `d5c0c95`)
 
 1. Use **`AGENTS.md`** as the default agent operating loop; still read HQ for the live stopping point.
-2. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only; apply still not performed) — see **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)**.
+2. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only; apply still not performed) — see **§ Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)**.
 3. **3 PARTIAL** GSWF slugs still need exact-model Tier-1 proof; **`ge-gte18gsnrss`** no-filter lane remains separate.
 4. ~~**Product-snippet structured-data** issue~~ — **Completed** at **`7d099c2`** — see **§ Prior completed lane — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)**.
 5. **No GSWF buy CTA**.
@@ -227,13 +292,13 @@ git rev-parse HEAD
 
 ## Prior completed lane — HQ handoff after GSWF compatibility repair apply (`fb8b7d7`)
 
-**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above. **Applied CSV truth remains in force.**
+**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above. **Applied CSV truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -268,9 +333,9 @@ git rev-parse HEAD
 | `npm run build` | **PASS** |
 | `git status --short` after **`8361fba`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `4337055`)
+### Next recommended lanes (NOT started — superseded by `d5c0c95`)
 
-1. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only packet; Supabase apply still founder-gated) — see **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)**.
+1. ~~**Supabase compatibility sync** plan~~ — **Completed** at **`4337055`** (read-only packet; Supabase apply still founder-gated) — see **§ Prior completed lane — GSWF Supabase compatibility sync plan (`4337055`)**.
 2. **Do not include** the **3** PARTIAL slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**) in any further apply until **exact-model Tier-1** proof exists.
 3. **`ge-gte18gsnrss`** no-filter suppression remains a **separate** read-only / founder-gated lane.
 4. ~~**Product-snippet structured-data** issue~~ — **Completed** at **`7d099c2`** — see **§ Prior completed lane — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)**.
@@ -287,7 +352,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF wrong-part repair owner approval (`4cbe40c`)
 
-**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 | Item | Value |
 |------|-------|
@@ -300,7 +365,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF PARTIAL owner-browser proof packet (`3b067ee`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -353,7 +418,7 @@ npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
 
 ## Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -416,13 +481,13 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF guarded dry run / header truth (`4dc0c0f` / `b69a642` / `ecddcca`)
 
-**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -488,19 +553,19 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF repair plan (`3fdc809`)
 
-**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — AP hub handoff commit reference fix (`297ba4f`)
 
-**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — GSWF family reconciliation owner packet (`2c90b2d`)
 
-**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -562,13 +627,13 @@ npm run buckparts:daily
 
 ## Prior completed lane — HQ handoff after GSWF owner packet (`2451e83`)
 
-**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -646,7 +711,7 @@ npm run buckparts:daily
 
 ## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
 
-**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -724,19 +789,19 @@ npm run buckparts:production-truth:ap
 
 ## Prior completed lane — HQ handoff after AP production truth fix (`e4c623b`)
 
-**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
 
-**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -868,7 +933,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility sync plan (`4337055`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — GSWF Supabase compatibility guarded dry-run (`d5c0c95`)** above.
 
 ---
 
