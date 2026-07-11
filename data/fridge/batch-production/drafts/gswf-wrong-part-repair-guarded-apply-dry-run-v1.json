@@ -7,8 +7,8 @@
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
   "owner_approval_rel_path": "data/owner-decisions/gswf-wrong-part-repair-owner-approval-v1.json",
   "target_csv_rel_path": "data/compatibility_mappings.csv",
-  "owner_approval_decision_id": null,
-  "owner_approval_valid": false,
+  "owner_approval_decision_id": "decision-2026-07-11-gswf-wrong-part-repair-approve_apply_plan",
+  "owner_approval_valid": true,
   "owner_approval_required_for_apply": true,
   "planned_slug_count": 13,
   "planned_removals": 26,
@@ -811,11 +811,11 @@
     "Re-run dry-run after rollback to confirm before_mappings match the apply plan again.",
     "Rollback does not mutate Supabase, filters.csv, fridge_models.csv, manual evidence, pages, retailer links, sitemap/robots, buy CTA, or HQ handoff."
   ],
-  "generated_at": "2026-07-10T14:56:01.334Z",
+  "generated_at": "2026-07-11T15:37:34.147Z",
   "proven_facts": [
     "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false.",
     "PROVEN: planned_removals=26; planned_additions=13; planned_slug_count=13.",
-    "PROVEN: owner_approval_valid=false; decision_id=none; apply requires owner approval.",
+    "PROVEN: owner_approval_valid=true; decision_id=decision-2026-07-11-gswf-wrong-part-repair-approve_apply_plan; apply requires owner approval.",
     "PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.",
     "PROVEN: untouched_slug_row_keys_count=891 (non-planned rows preserved in dry-run/apply simulation).",
     "PROVEN: before_mappings matched apply plan; simulated after_mappings match planned targets; removals limited to gswf/gswf2."

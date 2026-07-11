@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -91,6 +92,9 @@ function writeFixture(args: {
   );
 
   if (args.includeApproval) {
+    const applyPlanRel = GSWF_WRONG_PART_REPAIR_APPLY_PLAN_OWNER_REVIEW_JSON_REL_V1;
+    const applyPlanText = readFileSync(path.join(args.root, applyPlanRel), "utf8");
+    const applyPlanSha = createHash("sha256").update(applyPlanText, "utf8").digest("hex");
     writeFileSync(
       path.join(args.root, GSWF_WRONG_PART_OWNER_APPROVAL_JSON_REL_V1),
       `${JSON.stringify(
@@ -108,15 +112,23 @@ function writeFixture(args: {
               owner_note: "Test fixture approval for guarded apply executor only.",
               allowed_next_scope: "owner_mutation_approved",
               evidence_required_before_mutation: true,
+              expires_at: "2027-07-10T12:00:00.000Z",
               prohibited_actions_still_apply: [
                 "Do not mutate retailer_links.csv or buy CTA from this approval alone.",
               ],
               gswf_wrong_part_repair_owner_approval_context_v1: {
                 founder_option_id: "approve_apply_plan",
                 option_id: "approve_apply_plan",
-                apply_plan_rel_path: GSWF_WRONG_PART_REPAIR_APPLY_PLAN_OWNER_REVIEW_JSON_REL_V1,
+                apply_plan_rel_path: applyPlanRel,
                 approved_slug_count: 13,
               },
+              bound_artifacts_v1: [
+                {
+                  artifact_rel_path: applyPlanRel,
+                  sha256_at_binding: applyPlanSha,
+                  entry_type: "apply_plan",
+                },
+              ],
             },
           ],
         },
@@ -136,7 +148,11 @@ test("dry-run on repo is safe and does not mutate compatibility_mappings.csv", (
   assert.equal(report.apply_status, "DRY_RUN_READY");
   assert.equal(report.mode, "dry_run");
   assert.equal(report.data_mutation, false);
-  assert.equal(report.owner_approval_valid, false);
+  assert.equal(report.owner_approval_valid, true);
+  assert.equal(
+    report.owner_approval_decision_id,
+    "decision-2026-07-11-gswf-wrong-part-repair-approve_apply_plan",
+  );
   assert.equal(report.owner_approval_required_for_apply, true);
   assert.equal(report.planned_slug_count, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_slug_count);
   assert.equal(report.planned_removals, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_removals);
@@ -197,14 +213,17 @@ test("apply is blocked without explicit owner approval and does not mutate CSV",
   }
 });
 
-test("apply on repo without approval is blocked and leaves committed CSV untouched", () => {
+test("repo dry-run with founder approval stays non-mutating; suite never applies on ROOT", () => {
   const csvPath = path.join(ROOT, "data/compatibility_mappings.csv");
   const before = readFileSync(csvPath, "utf8");
-  const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: ROOT, mode: "apply" });
-  assert.equal(report.apply_status, "BLOCKED");
+  const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: ROOT, mode: "dry_run" });
+  assert.equal(report.owner_approval_valid, true);
+  assert.equal(report.apply_status, "DRY_RUN_READY");
   assert.equal(report.data_mutation, false);
-  assert.equal(report.owner_approval_valid, false);
+  assert.equal(report.mode, "dry_run");
   assert.equal(readFileSync(csvPath, "utf8"), before);
+  // Safety: this suite must not call mode:"apply" against ROOT once owner approval exists.
+  assert.ok(existsSync(path.join(ROOT, GSWF_WRONG_PART_OWNER_APPROVAL_JSON_REL_V1)));
 });
 
 test("blocks dry-run when before mappings mismatch apply plan", () => {

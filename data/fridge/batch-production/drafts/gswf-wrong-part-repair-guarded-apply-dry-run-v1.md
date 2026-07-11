@@ -1,6 +1,6 @@
 # GSWF wrong-part repair guarded apply dry-run v1
 
-Generated: 2026-07-10T14:56:01.334Z
+Generated: 2026-07-11T15:37:34.147Z
 
 ## Status
 
@@ -8,9 +8,9 @@ Generated: 2026-07-10T14:56:01.334Z
 - mode: **dry_run**
 - apply_status: **DRY_RUN_READY**
 - data_mutation: **false**
-- owner_approval_valid: **false**
+- owner_approval_valid: **true**
 - owner_approval_required_for_apply: **true**
-- owner_approval_decision_id: `none`
+- owner_approval_decision_id: `decision-2026-07-11-gswf-wrong-part-repair-approve_apply_plan`
 
 ## Sources
 
