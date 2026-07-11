@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`84ae957` — Add BuckParts agent loop contract):** **Root `AGENTS.md` Agent Loop Contract landed** — see **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** below. Actual repo HEAD / `origin/main`: **`84ae957`**. Prior operational stopping points: **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **GSWF 13-row CSV repair remains applied** at **`8361fba`** — see that prior lane; **no** GSWF buy CTA; **no** Supabase compat sync claimed; **no** Product-snippet fix claimed; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (`7d099c2` — Suppress fridge Product JSON-LD without truthful offer):** **Fridge filter Product JSON-LD suppressed unless truthful Offer eligibility exists** — see **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** below. Actual repo HEAD / `origin/main`: **`7d099c2`**. Prior operational stopping points: **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract; **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair (owner approval **`4cbe40c`**; PARTIAL proof **`3b067ee`**; guarded dry-run **`31f9bf8`**; handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`** / **`08a40e3`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Root `AGENTS.md` remains the agent operating contract** (`84ae957` / handoff **`3ad4eea`**). **GSWF 13-row CSV repair remains applied** at **`8361fba`**. **No** Offer JSON-LD lane completed; **no** GSWF buy CTA; **no** Supabase compat sync claimed; **no** retailer_links / buy CTA / sitemap/robots mutation claimed; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,16 +53,74 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — AGENTS.md agent loop contract (`84ae957`)
+## Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)
 
-**Read this section first** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation).
+**Read this section first** for LIVE fridge filter Product-snippet structured-data posture (suppress incomplete Product; **no** invented offers/reviews).
 
 ### Milestone summary (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Branch | **`main`** |
-| Repo HEAD / `origin/main` | **`84ae957`** — Add BuckParts agent loop contract |
+| Repo HEAD / `origin/main` | **`7d099c2`** — Suppress fridge Product JSON-LD without truthful offer |
+| Prior operational stopping points | **`3ad4eea`** — Update HQ handoff after agent loop contract; **`84ae957`** — Add BuckParts agent loop contract |
+| Lane status | **Complete and pushed** — fridge Product JSON-LD Offer-gate / suppress only |
+| Scope | **`src/app/filter/[slug]/page.tsx`**, **`src/lib/seo/structured-data.ts`**, **`src/lib/seo/structured-data.test.ts`**, **`src/lib/seo/fridge-phase1-metadata.test.ts`** — **no** GSWF / `compatibility_mappings.csv` / Supabase / retailer_links / buy CTA / sitemap / robots changes |
+
+### What changed (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **Lane** | Product-snippet structured-data fix — suppress incomplete fridge Product JSON-LD |
+| **Emit gate** | **`canEmitRefrigeratorFilterProductJsonLdV1`** / **`resolveRefrigeratorFilterProductJsonLdV1`** — Product emits only when **`hasTruthfulOfferJsonLd === true`** |
+| **Live page wiring** | Fridge filter page passes **`hasTruthfulOfferJsonLd: false`** → **no Product JSON-LD** on `/filter/[slug]` |
+| **GSC-flagged coverage** | **`/filter/4396710`**, **`/filter/4396508`**, **`/filter/4396395`** covered by suppression (all fridge filters without truthful Offer) |
+| **Forbidden keys** | Still bans inventing **`offers`**, **`review`**, **`aggregateRating`**, prices, availability |
+| **Not added** | No Offer JSON-LD; no fake reviews/ratings/prices/availability |
+
+**Not claimed:** Offer JSON-LD lane completed; buy CTA change; retailer_links change; Supabase sync; sitemap/robots change; GSWF change; autonomous apply readiness; traffic/ranking/revenue/conversion improvement. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **Root `AGENTS.md` operating contract unchanged** — see **§ Prior completed lane — AGENTS.md agent loop contract (`84ae957`)** / handoff **`3ad4eea`**. **GSWF CSV repair applied truth unchanged** at **`8361fba`**.
+
+### Validation (PROVEN — founder terminal)
+
+| Check | Result |
+|-------|--------|
+| `src/lib/seo/structured-data.test.ts` | **PASS** — **8/8** |
+| Scoped SEO tests (`structured-data` + `fridge-phase1-metadata`) | **PASS** — **12/12** |
+| `npm run build` | **PASS** |
+| `git status --short` after **`7d099c2`** commit/push | **Clean** |
+
+### Current recommendation (NOT started — founder-gated)
+
+1. Recrawl / monitor GSC Product-snippet status for **`/filter/4396710`**, **`/filter/4396508`**, **`/filter/4396395`** after deploy (read-only ops).
+2. **Offer JSON-LD lane** remains **not started** — requires truthful bound price/availability + founder policy to allow Offer keys.
+3. **Supabase compatibility sync** for applied GSWF CSV repair remains **UNKNOWN / not performed**.
+4. **3 PARTIAL** GSWF slugs / **`ge-gte18gsnrss`** no-filter lanes remain separate.
+5. **No GSWF buy CTA**.
+
+```bash
+git rev-parse HEAD
+node --import tsx --test src/lib/seo/structured-data.test.ts
+BUCKPARTS_TEST_FILES='src/lib/seo/structured-data.test.ts src/lib/seo/fridge-phase1-metadata.test.ts' bash scripts/npm-test-v1.sh
+```
+
+---
+
+## Prior completed lane — HQ handoff after agent loop contract (`3ad4eea`)
+
+**Docs-only** — recorded **`84ae957`** root **`AGENTS.md`** Agent Loop Contract stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
+
+---
+
+## Prior completed lane — AGENTS.md agent loop contract (`84ae957`)
+
+**Historical reference** for the root **`AGENTS.md`** BuckParts Agent Loop Contract (docs/operating contract only — **no** production mutation) — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above. **`AGENTS.md` remains in force as the agent operating contract.**
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD at lane | **`84ae957`** — Add BuckParts agent loop contract |
 | Prior operational stopping points | **`fb8b7d7`** — Update HQ handoff after GSWF compatibility repair apply; **`8361fba`** — Apply GSWF wrong-part compatibility repair |
 | Lane status | **Complete and pushed** — root agent operating contract only |
 | Scope | **`AGENTS.md`** (new) — **no** production logic, CSV, Supabase, retailer_links, routes, sitemap/robots, or buy CTA changes |
@@ -78,7 +136,7 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | **Standing rules preserved** | No mixed dirty trees; no autonomous apply; no buy CTA without proof; no invented Product **`offers`** / **`review`** / **`aggregateRating`** without truthful bound evidence |
 | **Founder gates called out** | Compatibility CSV; retailer_links / public buy guidance; Supabase; public routes; sitemap/robots; trust-copy that alters homeowner buy guidance |
 
-**Not claimed:** production logic change; Product-snippet structured-data fix; Supabase sync; new buy CTA; autonomous apply readiness. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **GSWF CSV repair applied truth unchanged** — see **§ Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)** below.
+**Not claimed (at this lane):** production logic change beyond docs/operating contract; Product-snippet structured-data fix (later completed at **`7d099c2`**); Supabase sync; new buy CTA; autonomous apply readiness. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **GSWF CSV repair applied truth unchanged** — see **§ Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)** below.
 
 ### Validation (PROVEN — founder terminal)
 
@@ -89,12 +147,12 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after **`84ae957`** commit/push | **Clean** |
 
-### Current recommendation (NOT started — founder-gated)
+### Next recommended lanes (NOT started — superseded by `7d099c2`)
 
 1. Use **`AGENTS.md`** as the default agent operating loop; still read HQ for the live stopping point.
 2. **Supabase compatibility sync** for the applied GSWF CSV repair remains **UNKNOWN / not performed**.
 3. **3 PARTIAL** GSWF slugs still need exact-model Tier-1 proof; **`ge-gte18gsnrss`** no-filter lane remains separate.
-4. **Product-snippet structured-data** issue remains **separate and untouched**.
+4. ~~**Product-snippet structured-data** issue~~ — **Completed** at **`7d099c2`** — see **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)**.
 5. **No GSWF buy CTA**.
 
 ```bash
@@ -107,13 +165,13 @@ git rev-parse HEAD
 
 ## Prior completed lane — HQ handoff after GSWF compatibility repair apply (`fb8b7d7`)
 
-**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`8361fba`** GSWF compatibility repair apply stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part compatibility repair apply (`8361fba`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above. **Applied CSV truth remains in force.**
+**Historical reference** for LIVE **`filter::ge::gswf`** founder-approved **13**-row compatibility repair apply posture (CSV mutated; post-apply dry-run fail-closed) — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above. **Applied CSV truth remains in force.**
 
 ### Milestone summary (PROVEN)
 
@@ -148,13 +206,13 @@ git rev-parse HEAD
 | `npm run build` | **PASS** |
 | `git status --short` after **`8361fba`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `84ae957`)
+### Next recommended lanes (NOT started — superseded by `7d099c2`)
 
 1. **Supabase compatibility sync** for the applied CSV repair remains **UNKNOWN / not performed** — separate founder-gated lane.
 2. **Do not include** the **3** PARTIAL slugs (**`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`**) in any further apply until **exact-model Tier-1** proof exists.
 3. **`ge-gte18gsnrss`** no-filter suppression remains a **separate** read-only / founder-gated lane.
-4. **Product-snippet structured-data** issue remains **separate and untouched**.
-5. ~~**`AGENTS.md` loop contract**~~ — **Completed** at **`84ae957`** — see **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)**.
+4. ~~**Product-snippet structured-data** issue~~ — **Completed** at **`7d099c2`** — see **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)**.
+5. ~~**`AGENTS.md` loop contract**~~ — **Completed** at **`84ae957`** — see **§ Prior completed lane — AGENTS.md agent loop contract (`84ae957`)**.
 6. **No GSWF buy CTA**.
 
 ```bash
@@ -167,7 +225,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF wrong-part repair owner approval (`4cbe40c`)
 
-**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for founder owner-approval artifact that unlocked the **13**-row guarded apply — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 | Item | Value |
 |------|-------|
@@ -180,7 +238,7 @@ BUCKPARTS_TEST_FILES='scripts/lib/gswf-wrong-part-repair-guarded-apply-v1.test.t
 
 ## Prior completed lane — GSWF PARTIAL owner-browser proof packet (`3b067ee`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready) — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -233,7 +291,7 @@ npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
 
 ## Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied at this commit) — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -296,13 +354,13 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF guarded dry run / header truth (`4dc0c0f` / `b69a642` / `ecddcca`)
 
-**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -368,19 +426,19 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF repair plan (`3fdc809`)
 
-**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — AP hub handoff commit reference fix (`297ba4f`)
 
-**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — GSWF family reconciliation owner packet (`2c90b2d`)
 
-**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -442,13 +500,13 @@ npm run buckparts:daily
 
 ## Prior completed lane — HQ handoff after GSWF owner packet (`2451e83`)
 
-**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -526,7 +584,7 @@ npm run buckparts:daily
 
 ## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
 
-**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -604,19 +662,19 @@ npm run buckparts:production-truth:ap
 
 ## Prior completed lane — HQ handoff after AP production truth fix (`e4c623b`)
 
-**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
 
-**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -748,7 +806,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — AGENTS.md agent loop contract (`84ae957`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — fridge Product JSON-LD suppress without truthful Offer (`7d099c2`)** above.
 
 ---
 
