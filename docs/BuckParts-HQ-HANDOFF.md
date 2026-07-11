@@ -4,7 +4,7 @@
 
 **Constitution:** `docs/BuckParts-CONSTITUTION.md` is the governing document for durable principles. If conflict exists between HQ guidance and the BuckParts Constitution, the Constitution governs.
 
-> **Current operational stopping point (`31f9bf8` — Add GSWF wrong-part guarded apply dry run):** **GSWF wrong-part guarded apply dry-run complete** — see **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** below. Actual repo HEAD / `origin/main`: **`b69a642`** (Fix AP hub handoff reference after dry run update; docs-only after **`4dc0c0f`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Apply remains founder-gated** — observe → prioritize → **surface** live; **no** GSWF buy CTA; **no** GSWF CSV apply until owner explicitly approves the 13-row plan via **`data/owner-decisions/gswf-wrong-part-repair-owner-approval-v1.json`**; **no** autonomous apply readiness claimed.
+> **Current operational stopping point (`3b067ee` — Add GSWF partial owner browser proof packet):** **GSWF PARTIAL owner-browser proof packet complete** — see **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** below. Actual repo HEAD / `origin/main`: **`3b067ee`**. Prior operational stopping point: **`31f9bf8`** — Add GSWF wrong-part guarded apply dry run (handoff docs **`4dc0c0f`** / **`b69a642`** / **`ecddcca`**). GSWF wrong-part repair apply-plan owner packet (`83f15ef` / **`3fdc809`** handoff), AP hub handoff commit-reference fix (**`297ba4f`**), GSWF family reconciliation owner packet (`2c90b2d` / **`2451e83`** handoff), AP Production Truth go-gate fix (`97f9fbe` / **`e4c623b`** handoff), Daily Operator read-only **`next_coverage_opportunities`** (`39c9e6f` / **`3a30c3e`** handoff), **`efc2fec`** demand-loop steering (**§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**), search/hub canonicals (`2c15bca`), model sitemap indexability (`4b66234`), AP hub demand lookup (`323e692`), AP SEO parity (`a50ae13`), trust-copy cleanup (`71c597e`), and AP UI repaint (`ced91f6`) remain **§ Prior completed lanes** below. WF3CB guarded CSV apply (`6bc843a`) is **§ Prior stopping point — WF3CB (`6bc843a`)**. Whole-site `bp-*` design is **not** complete. **Apply remains founder-gated** — observe → prioritize → **surface** live; **no** GSWF buy CTA; **no** GSWF CSV apply until owner explicitly approves the 13-row plan via **`data/owner-decisions/gswf-wrong-part-repair-owner-approval-v1.json`**; **no** autonomous apply readiness claimed.
 
 ## Execution Stack
 
@@ -53,9 +53,62 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 
 ---
 
-## Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
+## Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)
 
-**Read this section first** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied).
+**Read this section first** for LIVE **`filter::ge::gswf`** PARTIAL slug owner-browser proof posture (3 excluded rows; **not** apply-ready).
+
+### Milestone summary (PROVEN)
+
+| Item | Value |
+|------|-------|
+| Branch | **`main`** |
+| Repo HEAD / `origin/main` | **`3b067ee`** — Add GSWF partial owner browser proof packet |
+| Prior operational stopping point | **`31f9bf8`** — Add GSWF wrong-part guarded apply dry run |
+| Lane status | **Complete and pushed** — read-only owner-browser proof packet only |
+| Scope | **`scripts/lib/gswf-partial-owner-browser-proof-packet-v1.ts`**, **`scripts/report-gswf-partial-owner-browser-proof-packet-v1.ts`**, **`scripts/lib/gswf-partial-owner-browser-proof-packet-v1.test.ts`**, **`package.json`** script, draft artifacts under **`data/fridge/batch-production/drafts/`** — **no** `compatibility_mappings.csv`, **`retailer_links.csv`**, Supabase, public routes, sitemap/robots, or buy CTA changes |
+
+### What changed (PROVEN — repo truth only)
+
+| Item | Detail |
+|------|--------|
+| **Lane** | Read-only owner-browser proof packet for the **3** excluded PARTIAL GSWF slugs |
+| **New command** | **`npm run buckparts:gswf-partial-owner-browser-proof-packet -- --write-artifacts`** |
+| **Artifacts** | **`data/fridge/batch-production/drafts/gswf-partial-owner-browser-proof-packet-v1.json`**, **`.md`** |
+| **Target slugs** | **`ge-gfe28hmkww`**, **`ge-gsc25frshss`**, **`ge-gse26gshess`** |
+| **Proof summary** | **`exact_model_tier1_proven=0`**; **`browser_proof_required=3`** |
+| **Apply inclusion** | **`include_in_gswf_wrong_part_apply_plan=false`** |
+| **Hypothesized remaps (INFERRED only)** | **`ge-gfe28hmkww` → `rpwfe`**; **`ge-gsc25frshss` → `mwf`**; **`ge-gse26gshess` → `mwf`** |
+| **Guardrails** | **`mutation_authorized=false`**; **`buy_cta_authorized=false`** |
+
+**Not claimed:** autonomous apply readiness, traffic/ranking/revenue/conversion improvement, or campaign readiness. Revenue/conversions remain **`UNKNOWN_NOT_CONNECTED`** unless repo proves otherwise. **No** GSWF buy CTA. **No** CSV/Supabase/retailer_links mutation.
+
+### Validation (PROVEN — founder terminal)
+
+| Check | Result |
+|-------|--------|
+| Scoped tests | **PASS** — **5/5** (`gswf-partial-owner-browser-proof-packet-v1.test.ts`) |
+| `npm run buckparts:gswf-partial-owner-browser-proof-packet -- --write-artifacts` | **PASS** |
+| `npm run build` | **PASS** |
+| `git status --short` after **`3b067ee`** commit/push | **Clean** |
+
+### Current recommendation (NOT started — founder-gated)
+
+1. **Do not include** these **3** PARTIAL slugs in any apply plan until **exact-model Tier-1** proof exists.
+2. **Do not apply** the GSWF **13**-row repair unless owner **explicitly approves** the guarded plan.
+3. **No GSWF buy CTA**.
+4. **Next lane** may be exact-model owner-browser proof **capture design** or **no-filter suppression** lane for **`ge-gte18gsnrss`** — still **read-only**.
+
+```bash
+git rev-parse HEAD
+npm run buckparts:gswf-partial-owner-browser-proof-packet
+npm run buckparts:gswf-wrong-part-repair-guarded-apply -- --dry-run
+```
+
+---
+
+## Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)
+
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair **guarded apply dry-run** posture (executor designed; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -101,12 +154,12 @@ Legacy alias: "best next action" = the same requirement as execution surface + e
 | `npm run build` | **PASS** |
 | `git status --short` after **`31f9bf8`** commit/push | **Clean** |
 
-### Current recommendation (NOT started — founder-gated)
+### Next recommended lanes (NOT started — superseded by `3b067ee`)
 
-1. **Do not apply** yet unless owner **explicitly approves** the **13**-row repair plan (owner-approval artifact).
-2. **No GSWF buy CTA**.
-3. **Browser-proof** (**3** PARTIAL) and **no-filter** (**`ge-gte18gsnrss`**) remain **separate lanes**.
-4. Re-run dry-run after any CSV drift before considering a future guarded apply.
+1. ~~Owner-browser proof packet for 3 PARTIAL slugs~~ — **Completed** at **`3b067ee`** — see **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)**.
+2. **Do not apply** the **13**-row plan until owner approval artifact exists.
+3. **No-filter** (**`ge-gte18gsnrss`**) remains a **separate** read-only lane.
+4. **No GSWF buy CTA**.
 
 ```bash
 git rev-parse HEAD
@@ -116,9 +169,15 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 
 ---
 
+## Prior completed lane — HQ handoff after GSWF guarded dry run / header truth (`4dc0c0f` / `b69a642` / `ecddcca`)
+
+**Docs-only** — recorded **`31f9bf8`** guarded dry-run stopping point and subsequent header/AP-hub reference truth fixes; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
+
+---
+
 ## Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)
 
-**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Historical reference** for LIVE **`filter::ge::gswf`** wrong-part repair apply-plan design posture (13 proven rows only; **not** applied) — superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -167,9 +226,9 @@ npm run buckparts:gswf-wrong-part-repair-apply-plan-owner-review
 | `npm run build` | **PASS** |
 | `git status --short` after **`83f15ef`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `31f9bf8`)
+### Next recommended lanes (NOT started — superseded by `3b067ee`)
 
-1. ~~Guarded apply-executor design~~ — **Completed** at **`31f9bf8`** — see **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)**.
+1. ~~Guarded apply-executor design~~ — **Completed** at **`31f9bf8`** — see **§ Prior completed lane — GSWF wrong-part guarded apply dry-run (`31f9bf8`)**.
 2. **Do not apply** until owner approval artifact exists and founder authorizes `--apply`.
 3. **Browser-proof** (**3** PARTIAL) and **no-filter** (**`ge-gte18gsnrss`**) rows remain **separate lanes**.
 4. **Do not add GSWF buy CTA** while family reconciliation / apply remain unapproved.
@@ -184,19 +243,19 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 
 ## Prior completed lane — HQ handoff after GSWF repair plan (`3fdc809`)
 
-**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — recorded **`83f15ef`** GSWF wrong-part repair apply-plan owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
 ## Prior completed lane — AP hub handoff commit reference fix (`297ba4f`)
 
-**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — fixed AP hub handoff commit reference; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
 ## Prior completed lane — GSWF family reconciliation owner packet (`2c90b2d`)
 
-**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Historical reference** for LIVE Daily Operator **`gswf`** coverage-opportunity investigation and **`filter::ge::gswf`** family reconciliation owner posture — superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -241,7 +300,7 @@ npm run buckparts:gswf-family-reconciliation-owner-review
 | `npm run build` | **PASS** |
 | `git status --short` after **`2c90b2d`** commit/push | **Clean** |
 
-### Next recommended lanes (NOT started — superseded by `31f9bf8`)
+### Next recommended lanes (NOT started — superseded by `3b067ee`)
 
 1. ~~Owner-review / apply-plan design for 13 proven wrong-part rows~~ — **Completed** at **`83f15ef`** — see **§ Prior completed lane — GSWF wrong-part repair apply-plan owner packet (`83f15ef`)**.
 2. **Do not add GSWF buy CTA** until family reconciliation / apply are owner-approved.
@@ -258,13 +317,13 @@ npm run buckparts:daily
 
 ## Prior completed lane — HQ handoff after GSWF owner packet (`2451e83`)
 
-**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — recorded **`2c90b2d`** GSWF family reconciliation owner packet stopping point; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
 ## Prior completed lane — AP Production Truth go-gate fix (`97f9fbe`)
 
-**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Historical reference** for LIVE Daily Operator + AP Production Truth posture after the false **`go_gate_safe`** blocker fix — superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -342,7 +401,7 @@ npm run buckparts:daily
 
 ## Prior completed lane — daily next coverage opportunities (`39c9e6f`)
 
-**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Historical reference** for GOAT read-only **`next_coverage_opportunities`** surface at **`39c9e6f`** — superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -420,19 +479,19 @@ npm run buckparts:production-truth:ap
 
 ## Prior completed lane — HQ handoff after AP production truth fix (`e4c623b`)
 
-**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — recorded **`97f9fbe`** AP Production Truth go-gate stopping point; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
 ## Prior completed lane — HQ handoff after daily coverage opportunities (`3a30c3e`)
 
-**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — recorded **`39c9e6f`** GOAT **`next_coverage_opportunities`** stopping point; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
 ## Prior completed lane — search/hub canonicals (`2c15bca`)
 
-**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Historical reference** for LIVE hub/search canonical metadata on indexable public surfaces at **`2c15bca`** — superseded for pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Milestone summary (PROVEN)
 
@@ -497,14 +556,14 @@ node --import tsx --test src/app/vertical-launch-metadata.test.ts
 
 ## Fresh GSC / search-miss demand loop — steering (`2026-07-06`)
 
-**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Read this section** for founder-terminal GSC + search-miss steering recorded at **`efc2fec`**. **Docs-only update** — no production lane authorized by this section alone. Superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ### Repo state (PROVEN)
 
 | Item | Value |
 |------|-------|
 | Repo HEAD / `origin/main` | **`efc2fec`** — Update HQ handoff with fresh demand loop status |
-| Code stopping point | **`2c15bca`** — search/hub canonicals (code unchanged through **`31f9bf8`**) |
+| Code stopping point | **`2c15bca`** — search/hub canonicals (code unchanged through **`3b067ee`**) |
 | `git status --short` after fresh demand-loop checks | **Clean** |
 
 **Not claimed:** rankings improved, traffic improved, revenue, conversion, or campaign readiness.
@@ -564,7 +623,7 @@ git status --short
 
 ## Prior completed lane — HQ handoff fresh demand loop status (`efc2fec`)
 
-**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — GSWF wrong-part guarded apply dry-run (`31f9bf8`)** above.
+**Docs-only** — recorded **§ Fresh GSC / search-miss demand loop — steering (`2026-07-06`)**; superseded for operational pickup by **§ Current stopping point — GSWF PARTIAL owner-browser proof packet (`3b067ee`)** above.
 
 ---
 
