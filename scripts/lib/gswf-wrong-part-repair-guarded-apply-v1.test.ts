@@ -140,12 +140,12 @@ function writeFixture(args: {
   }
 }
 
-test("dry-run on repo is safe and does not mutate compatibility_mappings.csv", () => {
+test("post-apply repo dry-run is BLOCKED for before_mappings mismatch and does not mutate CSV", () => {
   const csvPath = path.join(ROOT, "data/compatibility_mappings.csv");
   const before = readFileSync(csvPath, "utf8");
   const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: ROOT, mode: "dry_run" });
 
-  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.apply_status, "BLOCKED");
   assert.equal(report.mode, "dry_run");
   assert.equal(report.data_mutation, false);
   assert.equal(report.owner_approval_valid, true);
@@ -157,43 +157,80 @@ test("dry-run on repo is safe and does not mutate compatibility_mappings.csv", (
   assert.equal(report.planned_slug_count, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_slug_count);
   assert.equal(report.planned_removals, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_removals);
   assert.equal(report.planned_additions, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_additions);
-  assert.equal(report.planned_removal_row_keys.length, 26);
-  assert.equal(report.planned_addition_row_keys.length, 13);
-  assert.equal(report.csv_row_count_after, report.csv_row_count_before - 13);
   assert.equal(readFileSync(csvPath, "utf8"), before);
-  assert.ok(!("applied_removals" in report));
-  assert.ok(!("applied_additions" in report));
-  for (const row of report.row_results) {
-    assert.equal(row.status, "planned");
-  }
 
-  for (const removal of report.planned_removal_row_keys) {
-    const filter = removal.split(",")[1]!;
+  const beforeMismatchReasons = report.blocked_reasons.filter((reason) =>
+    reason.includes("before_mappings mismatch"),
+  );
+  assert.equal(beforeMismatchReasons.length, GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1.length);
+  for (const slug of GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1) {
     assert.ok(
-      (GSWF_WRONG_PART_FAMILY_FILTER_SLUGS_V1 as readonly string[]).includes(filter),
-      `unexpected removal ${removal}`,
+      beforeMismatchReasons.some((reason) => reason.includes(`before_mappings mismatch for ${slug}`)),
+      `expected before_mappings mismatch for ${slug}`,
     );
   }
-  for (const addition of report.planned_addition_row_keys) {
-    const filter = addition.split(",")[1]!;
-    assert.ok(filter === "rpwfe" || filter === "xwfe", `unexpected addition ${addition}`);
-  }
 
-  const planned = new Set(report.before_after_diff.map((row) => row.fridge_slug));
-  for (const slug of GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1) {
-    assert.equal(planned.has(slug), false);
-  }
-  for (const slug of GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1) {
-    assert.equal(planned.has(slug), false);
-  }
   assert.deepEqual(
     report.excluded_slugs_untouched.sort(),
     [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1, ...GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1].sort(),
   );
-  assert.deepEqual(
-    report.before_after_diff.map((row) => row.fridge_slug).sort(),
-    [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1].sort(),
-  );
+});
+
+test("pre-apply dry-run on isolated fixture is DRY_RUN_READY and does not mutate CSV", () => {
+  const tmp = mkdtempSync(path.join(tmpdir(), "gswf-guarded-apply-pre-apply-"));
+  try {
+    writeFixture({ root: tmp, includeApproval: true });
+    const csvPath = path.join(tmp, "data/compatibility_mappings.csv");
+    const before = readFileSync(csvPath, "utf8");
+    const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: tmp, mode: "dry_run" });
+
+    assert.equal(report.apply_status, "DRY_RUN_READY");
+    assert.equal(report.mode, "dry_run");
+    assert.equal(report.data_mutation, false);
+    assert.equal(report.owner_approval_valid, true);
+    assert.equal(report.planned_slug_count, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_slug_count);
+    assert.equal(report.planned_removals, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_removals);
+    assert.equal(report.planned_additions, GSWF_WRONG_PART_EXPECTED_APPLY_COUNTS_V1.planned_additions);
+    assert.equal(report.planned_removal_row_keys.length, 26);
+    assert.equal(report.planned_addition_row_keys.length, 13);
+    assert.equal(report.csv_row_count_after, report.csv_row_count_before - 13);
+    assert.equal(readFileSync(csvPath, "utf8"), before);
+    assert.ok(!("applied_removals" in report));
+    assert.ok(!("applied_additions" in report));
+    for (const row of report.row_results) {
+      assert.equal(row.status, "planned");
+    }
+
+    for (const removal of report.planned_removal_row_keys) {
+      const filter = removal.split(",")[1]!;
+      assert.ok(
+        (GSWF_WRONG_PART_FAMILY_FILTER_SLUGS_V1 as readonly string[]).includes(filter),
+        `unexpected removal ${removal}`,
+      );
+    }
+    for (const addition of report.planned_addition_row_keys) {
+      const filter = addition.split(",")[1]!;
+      assert.ok(filter === "rpwfe" || filter === "xwfe", `unexpected addition ${addition}`);
+    }
+
+    const planned = new Set(report.before_after_diff.map((row) => row.fridge_slug));
+    for (const slug of GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1) {
+      assert.equal(planned.has(slug), false);
+    }
+    for (const slug of GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1) {
+      assert.equal(planned.has(slug), false);
+    }
+    assert.deepEqual(
+      report.excluded_slugs_untouched.sort(),
+      [...GSWF_WRONG_PART_EXCLUDED_PARTIAL_SLUGS_V1, ...GSWF_WRONG_PART_EXCLUDED_NO_FILTER_SLUGS_V1].sort(),
+    );
+    assert.deepEqual(
+      report.before_after_diff.map((row) => row.fridge_slug).sort(),
+      [...GSWF_WRONG_PART_PLANNED_FRIDGE_SLUGS_V1].sort(),
+    );
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
 });
 
 test("apply is blocked without explicit owner approval and does not mutate CSV", () => {
@@ -218,9 +255,10 @@ test("repo dry-run with founder approval stays non-mutating; suite never applies
   const before = readFileSync(csvPath, "utf8");
   const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: ROOT, mode: "dry_run" });
   assert.equal(report.owner_approval_valid, true);
-  assert.equal(report.apply_status, "DRY_RUN_READY");
+  assert.equal(report.apply_status, "BLOCKED");
   assert.equal(report.data_mutation, false);
   assert.equal(report.mode, "dry_run");
+  assert.ok(report.blocked_reasons.some((reason) => reason.includes("before_mappings mismatch")));
   assert.equal(readFileSync(csvPath, "utf8"), before);
   // Safety: this suite must not call mode:"apply" against ROOT once owner approval exists.
   assert.ok(existsSync(path.join(ROOT, GSWF_WRONG_PART_OWNER_APPROVAL_JSON_REL_V1)));
@@ -248,6 +286,8 @@ test("write dry-run artifacts only to allowed draft paths", () => {
   const tmp = mkdtempSync(path.join(tmpdir(), "gswf-guarded-apply-report-"));
   try {
     const report = runGswfWrongPartRepairGuardedApplyV1({ rootDir: ROOT, mode: "dry_run" });
+    assert.equal(report.apply_status, "BLOCKED");
+    assert.equal(report.data_mutation, false);
     const written = writeGswfWrongPartRepairGuardedApplyDryRunArtifactsV1({
       rootDir: tmp,
       report,
@@ -269,6 +309,7 @@ test("write dry-run artifacts only to allowed draft paths", () => {
     assert.ok(!jsonText.includes('"applied_additions"'));
     assert.ok(jsonText.includes('"planned_removal_row_keys"'));
     assert.ok(jsonText.includes('"planned_addition_row_keys"'));
+    assert.ok(jsonText.includes('"apply_status": "BLOCKED"'));
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }

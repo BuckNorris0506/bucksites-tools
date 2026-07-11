@@ -2,8 +2,22 @@
   "contract": "gswf_wrong_part_repair_guarded_apply_v1",
   "mode": "dry_run",
   "data_mutation": false,
-  "apply_status": "DRY_RUN_READY",
-  "blocked_reasons": [],
+  "apply_status": "BLOCKED",
+  "blocked_reasons": [
+    "before_mappings mismatch for ge-cwe23sshww: CSV has rpwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-gfe24jgkww: CSV has smartwater-mwfp|xwfe, plan expects gswf|gswf2|smartwater-mwfp",
+    "before_mappings mismatch for ge-gfe27jmkes: CSV has xwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-gfe28gmkbb: CSV has rpwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-gfe28gskes: CSV has rpwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-gfe28hskss: CSV has rpwfe|smartwater-mwfp, plan expects gswf|gswf2|smartwater-mwfp",
+    "before_mappings mismatch for ge-gne25jmkww: CSV has xwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-gne27jstss: CSV has xwf|xwfe, plan expects gswf|gswf2|xwf",
+    "before_mappings mismatch for ge-gse25hskss: CSV has xwf|xwfe, plan expects gswf|gswf2|xwf",
+    "before_mappings mismatch for ge-gye22gskww: CSV has rpwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-pfe28kmkww: CSV has rpwfe|xwf, plan expects gswf|gswf2|xwf",
+    "before_mappings mismatch for ge-pfe28kynbb: CSV has rpwfe, plan expects gswf|gswf2",
+    "before_mappings mismatch for ge-pvd28bymfs: CSV has xwfe, plan expects gswf|gswf2"
+  ],
   "apply_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-apply-plan-owner-review-v1.json",
   "owner_approval_rel_path": "data/owner-decisions/gswf-wrong-part-repair-owner-approval-v1.json",
   "target_csv_rel_path": "data/compatibility_mappings.csv",
@@ -255,246 +269,9 @@
       "csv_row_key": "ge-pvd28bymfs,xwfe"
     }
   ],
-  "planned_removal_row_keys": [
-    "ge-cwe23sshww,gswf",
-    "ge-cwe23sshww,gswf2",
-    "ge-gfe24jgkww,gswf",
-    "ge-gfe24jgkww,gswf2",
-    "ge-gfe27jmkes,gswf",
-    "ge-gfe27jmkes,gswf2",
-    "ge-gfe28gmkbb,gswf",
-    "ge-gfe28gmkbb,gswf2",
-    "ge-gfe28gskes,gswf",
-    "ge-gfe28gskes,gswf2",
-    "ge-gfe28hskss,gswf",
-    "ge-gfe28hskss,gswf2",
-    "ge-gne25jmkww,gswf",
-    "ge-gne25jmkww,gswf2",
-    "ge-gne27jstss,gswf",
-    "ge-gne27jstss,gswf2",
-    "ge-gse25hskss,gswf",
-    "ge-gse25hskss,gswf2",
-    "ge-gye22gskww,gswf",
-    "ge-gye22gskww,gswf2",
-    "ge-pfe28kmkww,gswf",
-    "ge-pfe28kmkww,gswf2",
-    "ge-pfe28kynbb,gswf",
-    "ge-pfe28kynbb,gswf2",
-    "ge-pvd28bymfs,gswf",
-    "ge-pvd28bymfs,gswf2"
-  ],
-  "planned_addition_row_keys": [
-    "ge-cwe23sshww,rpwfe",
-    "ge-gfe24jgkww,xwfe",
-    "ge-gfe27jmkes,xwfe",
-    "ge-gfe28gmkbb,rpwfe",
-    "ge-gfe28gskes,rpwfe",
-    "ge-gfe28hskss,rpwfe",
-    "ge-gne25jmkww,xwfe",
-    "ge-gne27jstss,xwfe",
-    "ge-gse25hskss,xwfe",
-    "ge-gye22gskww,rpwfe",
-    "ge-pfe28kmkww,rpwfe",
-    "ge-pfe28kynbb,rpwfe",
-    "ge-pvd28bymfs,xwfe"
-  ],
-  "row_results": [
-    {
-      "csv_row_key": "ge-cwe23sshww,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-cwe23sshww,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe24jgkww,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe24jgkww,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe27jmkes,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe27jmkes,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gmkbb,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gmkbb,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gskes,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gskes,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28hskss,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28hskss,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne25jmkww,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne25jmkww,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne27jstss,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne27jstss,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gse25hskss,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gse25hskss,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gye22gskww,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gye22gskww,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kmkww,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kmkww,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kynbb,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kynbb,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pvd28bymfs,gswf",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pvd28bymfs,gswf2",
-      "operation": "remove",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-cwe23sshww,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe24jgkww,xwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe27jmkes,xwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gmkbb,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28gskes,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gfe28hskss,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne25jmkww,xwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gne27jstss,xwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gse25hskss,xwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-gye22gskww,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kmkww,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pfe28kynbb,rpwfe",
-      "operation": "add",
-      "status": "planned"
-    },
-    {
-      "csv_row_key": "ge-pvd28bymfs,xwfe",
-      "operation": "add",
-      "status": "planned"
-    }
-  ],
+  "planned_removal_row_keys": [],
+  "planned_addition_row_keys": [],
+  "row_results": [],
   "before_after_diff": [
     {
       "fridge_slug": "ge-cwe23sshww",
@@ -764,7 +541,7 @@
       "proposed_remap_target_filter_slug": "xwfe"
     }
   ],
-  "csv_row_count_before": 922,
+  "csv_row_count_before": 909,
   "csv_row_count_after": 909,
   "untouched_slug_row_keys_count": 891,
   "rollback_instructions": [
@@ -811,14 +588,14 @@
     "Re-run dry-run after rollback to confirm before_mappings match the apply plan again.",
     "Rollback does not mutate Supabase, filters.csv, fridge_models.csv, manual evidence, pages, retailer links, sitemap/robots, buy CTA, or HQ handoff."
   ],
-  "generated_at": "2026-07-11T15:37:34.147Z",
+  "generated_at": "2026-07-11T15:49:15.410Z",
   "proven_facts": [
-    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false.",
+    "PROVEN: mode=dry_run; apply_status=BLOCKED; data_mutation=false.",
     "PROVEN: planned_removals=26; planned_additions=13; planned_slug_count=13.",
     "PROVEN: owner_approval_valid=true; decision_id=decision-2026-07-11-gswf-wrong-part-repair-approve_apply_plan; apply requires owner approval.",
     "PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.",
     "PROVEN: untouched_slug_row_keys_count=891 (non-planned rows preserved in dry-run/apply simulation).",
-    "PROVEN: before_mappings matched apply plan; simulated after_mappings match planned targets; removals limited to gswf/gswf2."
+    "PROVEN: apply/dry-run blocked before CSV mutation."
   ],
   "unknown_facts": [
     "UNKNOWN: When owner will create gswf-wrong-part-repair-owner-approval-v1.json.",
