@@ -20,7 +20,7 @@ import {
   isIndexablePageState,
 } from "@/lib/seo/canonical";
 import {
-  buildRefrigeratorFilterProductJsonLd,
+  resolveRefrigeratorFilterProductJsonLdV1,
   refrigeratorFilterMetadataDescription,
 } from "@/lib/seo/structured-data";
 import { classifyPageState } from "@/lib/page-state/page-state";
@@ -146,13 +146,16 @@ export default async function FilterPage({ params }: Props) {
         : "show_buy",
     hasDemandSignal: null,
   });
+  // Product snippets require offers|review|aggregateRating. Do not invent those.
+  // Until a founder-gated truthful Offer JSON-LD lane exists, suppress Product entirely.
   const filterProductJsonLd = isIndexablePageState(filterPageState)
-    ? buildRefrigeratorFilterProductJsonLd({
+    ? resolveRefrigeratorFilterProductJsonLdV1({
         slug: filter.slug,
         oemPartNumber: filter.oem_part_number,
         name: filter.name,
         brandName: filter.brand.name,
         description: refrigeratorFilterMetadataDescription(filter.oem_part_number),
+        hasTruthfulOfferJsonLd: false,
       })
     : null;
 

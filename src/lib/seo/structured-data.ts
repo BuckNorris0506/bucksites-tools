@@ -93,11 +93,46 @@ export type RefrigeratorFilterProductJsonLdInput = {
   brandName: string;
   description: string;
   siteUrl?: string;
+  /**
+   * True only when a truthful Offer JSON-LD object is included with Product.
+   * Google Product snippets require offers | review | aggregateRating.
+   * BuckParts forbids inventing those keys — without a truthful Offer, Product must not emit.
+   */
+  hasTruthfulOfferJsonLd?: boolean;
 };
 
 /**
- * Minimal Product JSON-LD for refrigerator filter PDPs.
+ * Product JSON-LD may emit on fridge filter PDPs only when a truthful Offer is present.
+ * Review / aggregateRating are never invented. Offer attachment is a separate founder-gated lane.
+ */
+export function canEmitRefrigeratorFilterProductJsonLdV1(args: {
+  hasTruthfulOfferJsonLd: boolean;
+}): boolean {
+  return args.hasTruthfulOfferJsonLd === true;
+}
+
+/**
+ * Resolve fridge filter Product JSON-LD for page emission.
+ * Suppresses Product when no truthful Offer JSON-LD can be emitted (default / current policy).
+ */
+export function resolveRefrigeratorFilterProductJsonLdV1(
+  input: RefrigeratorFilterProductJsonLdInput,
+): JsonLdObject | null {
+  if (
+    !canEmitRefrigeratorFilterProductJsonLdV1({
+      hasTruthfulOfferJsonLd: input.hasTruthfulOfferJsonLd === true,
+    })
+  ) {
+    return null;
+  }
+  return buildRefrigeratorFilterProductJsonLd(input);
+}
+
+/**
+ * Minimal Product JSON-LD fields for refrigerator filter PDPs (identity only).
  * Omits `image` — `filters` has no repo-proven product image field.
+ * Omits offers/review/aggregateRating — forbidden without truthful bound evidence.
+ * Prefer `resolveRefrigeratorFilterProductJsonLdV1` for live page emission (Offer gate).
  * Returns null when required proven fields are missing.
  */
 export function buildRefrigeratorFilterProductJsonLd(

@@ -8,7 +8,9 @@ import {
   buildRefrigeratorFilterProductJsonLd,
   buildSiteWideJsonLdGraph,
   buildWebSiteJsonLd,
+  canEmitRefrigeratorFilterProductJsonLdV1,
   jsonLdContainsForbiddenKeys,
+  resolveRefrigeratorFilterProductJsonLdV1,
   airPurifierFilterMetadataDescription,
   refrigeratorFilterMetadataDescription,
 } from "@/lib/seo/structured-data";
@@ -43,7 +45,7 @@ test("WebSite JSON-LD includes SearchAction for /search?q=", () => {
   assert.equal(jsonLdContainsForbiddenKeys(site).length, 0);
 });
 
-test("Product JSON-LD includes proven filter fields and omits image", () => {
+test("Product field builder includes proven filter fields and omits image and forbidden keys", () => {
   const description = refrigeratorFilterMetadataDescription("LT1000P");
   const product = buildRefrigeratorFilterProductJsonLd({
     slug: "lt1000p",
@@ -62,6 +64,9 @@ test("Product JSON-LD includes proven filter fields and omits image", () => {
   assert.equal(product!.url, `${SITE_URL}/filter/lt1000p`);
   assert.equal("image" in product!, false);
   assert.equal("sku" in product!, false);
+  assert.equal("offers" in product!, false);
+  assert.equal("review" in product!, false);
+  assert.equal("aggregateRating" in product!, false);
   assert.equal(jsonLdContainsForbiddenKeys(product!).length, 0);
 });
 
@@ -88,6 +93,54 @@ test("Product JSON-LD falls back to OEM for name and returns null when required 
     }),
     null,
   );
+});
+
+test("fridge Product JSON-LD is suppressed without truthful Offer (GSC Product snippets)", () => {
+  assert.equal(canEmitRefrigeratorFilterProductJsonLdV1({ hasTruthfulOfferJsonLd: false }), false);
+  assert.equal(canEmitRefrigeratorFilterProductJsonLdV1({ hasTruthfulOfferJsonLd: true }), true);
+
+  const description = refrigeratorFilterMetadataDescription("4396508");
+  const base = {
+    oemPartNumber: "4396508",
+    name: "Whirlpool 4396508",
+    brandName: "Whirlpool",
+    description,
+    siteUrl: SITE_URL,
+  } as const;
+
+  // GSC-flagged / non-Offer-eligible fridge filter slugs must not emit Product.
+  for (const slug of ["4396710", "4396508", "4396395"] as const) {
+    assert.equal(
+      resolveRefrigeratorFilterProductJsonLdV1({
+        ...base,
+        slug,
+        hasTruthfulOfferJsonLd: false,
+      }),
+      null,
+      `expected Product suppress for /filter/${slug}`,
+    );
+    assert.equal(
+      resolveRefrigeratorFilterProductJsonLdV1({
+        ...base,
+        slug,
+      }),
+      null,
+      `expected Product suppress when hasTruthfulOfferJsonLd omitted for /filter/${slug}`,
+    );
+  }
+
+  // Offer-eligible path may resolve identity Product fields, still without inventing offers.
+  const whenOfferEligible = resolveRefrigeratorFilterProductJsonLdV1({
+    ...base,
+    slug: "4396508",
+    hasTruthfulOfferJsonLd: true,
+  });
+  assert.ok(whenOfferEligible);
+  assert.equal(whenOfferEligible!["@type"], "Product");
+  assert.equal("offers" in whenOfferEligible!, false);
+  assert.equal("review" in whenOfferEligible!, false);
+  assert.equal("aggregateRating" in whenOfferEligible!, false);
+  assert.equal(jsonLdContainsForbiddenKeys(whenOfferEligible!).length, 0);
 });
 
 test("air purifier Product JSON-LD uses AP filter path and proven fields only", () => {

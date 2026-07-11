@@ -27,7 +27,8 @@ test("fridge Phase 1 pages wire canonical helpers", () => {
   const filter = read("src/app/filter/[slug]/page.tsx");
   assert.ok(filter.includes("canonicalAlternatesForIndexablePath"));
   assert.ok(filter.includes("`/filter/${params.slug}`"));
-  assert.ok(filter.includes("buildRefrigeratorFilterProductJsonLd"));
+  assert.ok(filter.includes("resolveRefrigeratorFilterProductJsonLdV1"));
+  assert.ok(filter.includes("hasTruthfulOfferJsonLd: false"));
   assert.ok(filter.includes("JsonLdScript"));
 
   const brand = read("src/app/brand/[slug]/page.tsx");
