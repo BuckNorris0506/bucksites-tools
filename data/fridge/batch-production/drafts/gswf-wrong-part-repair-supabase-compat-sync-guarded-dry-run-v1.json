@@ -1,0 +1,334 @@
+{
+  "contract": "gswf_wrong_part_repair_supabase_compat_sync_guarded_apply_v1",
+  "mode": "dry_run",
+  "read_only": true,
+  "data_mutation": false,
+  "supabase_mutation_authorized": false,
+  "csv_mutation_authorized": false,
+  "apply_status": "DRY_RUN_READY",
+  "blocked_reasons": [],
+  "sync_plan_rel_path": "data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json",
+  "owner_approval_rel_path": "data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json",
+  "owner_approval_present": false,
+  "owner_approval_decision_id": null,
+  "owner_approval_valid": false,
+  "owner_approval_required_for_apply": true,
+  "csv_apply_commit": "8361fba",
+  "planned_slug_count": 13,
+  "planned_removals": 26,
+  "planned_additions": 13,
+  "classification_counts": {
+    "IN_SYNC": 0,
+    "SUPABASE_HAS_REMOVED_WRONG_ROWS_PENDING": 0,
+    "SUPABASE_MISSING_ADDED_ROWS_PENDING": 0,
+    "CONFLICT_REQUIRES_REVIEW": 13,
+    "UNKNOWN_READ_FAILED": 0
+  },
+  "excluded_slugs_untouched": [
+    "ge-gfe28hmkww",
+    "ge-gsc25frshss",
+    "ge-gse26gshess",
+    "ge-gte18gsnrss"
+  ],
+  "planned_supabase_row_deltas": [
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-cwe23sshww",
+      "filter_slug": "gswf",
+      "row_key": "ge-cwe23sshww,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-cwe23sshww",
+      "filter_slug": "gswf2",
+      "row_key": "ge-cwe23sshww,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-cwe23sshww",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-cwe23sshww,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe24jgkww",
+      "filter_slug": "gswf",
+      "row_key": "ge-gfe24jgkww,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe24jgkww",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gfe24jgkww,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gfe24jgkww",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gfe24jgkww,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe27jmkes",
+      "filter_slug": "gswf",
+      "row_key": "ge-gfe27jmkes,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe27jmkes",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gfe27jmkes,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gfe27jmkes",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gfe27jmkes,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gmkbb",
+      "filter_slug": "gswf",
+      "row_key": "ge-gfe28gmkbb,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gmkbb",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gfe28gmkbb,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gfe28gmkbb",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-gfe28gmkbb,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gskes",
+      "filter_slug": "gswf",
+      "row_key": "ge-gfe28gskes,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28gskes",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gfe28gskes,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gfe28gskes",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-gfe28gskes,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28hskss",
+      "filter_slug": "gswf",
+      "row_key": "ge-gfe28hskss,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gfe28hskss",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gfe28hskss,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gfe28hskss",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-gfe28hskss,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gne25jmkww",
+      "filter_slug": "gswf",
+      "row_key": "ge-gne25jmkww,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gne25jmkww",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gne25jmkww,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gne25jmkww",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gne25jmkww,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gne27jstss",
+      "filter_slug": "gswf",
+      "row_key": "ge-gne27jstss,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gne27jstss",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gne27jstss,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gne27jstss",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gne27jstss,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gse25hskss",
+      "filter_slug": "gswf",
+      "row_key": "ge-gse25hskss,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gse25hskss",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gse25hskss,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gse25hskss",
+      "filter_slug": "xwfe",
+      "row_key": "ge-gse25hskss,xwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gye22gskww",
+      "filter_slug": "gswf",
+      "row_key": "ge-gye22gskww,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-gye22gskww",
+      "filter_slug": "gswf2",
+      "row_key": "ge-gye22gskww,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-gye22gskww",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-gye22gskww,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pfe28kmkww",
+      "filter_slug": "gswf",
+      "row_key": "ge-pfe28kmkww,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pfe28kmkww",
+      "filter_slug": "gswf2",
+      "row_key": "ge-pfe28kmkww,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-pfe28kmkww",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-pfe28kmkww,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pfe28kynbb",
+      "filter_slug": "gswf",
+      "row_key": "ge-pfe28kynbb,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pfe28kynbb",
+      "filter_slug": "gswf2",
+      "row_key": "ge-pfe28kynbb,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-pfe28kynbb",
+      "filter_slug": "rpwfe",
+      "row_key": "ge-pfe28kynbb,rpwfe"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pvd28bymfs",
+      "filter_slug": "gswf",
+      "row_key": "ge-pvd28bymfs,gswf"
+    },
+    {
+      "operation": "remove",
+      "fridge_slug": "ge-pvd28bymfs",
+      "filter_slug": "gswf2",
+      "row_key": "ge-pvd28bymfs,gswf2"
+    },
+    {
+      "operation": "add",
+      "fridge_slug": "ge-pvd28bymfs",
+      "filter_slug": "xwfe",
+      "row_key": "ge-pvd28bymfs,xwfe"
+    }
+  ],
+  "planned_removal_row_keys": [
+    "ge-cwe23sshww,gswf",
+    "ge-cwe23sshww,gswf2",
+    "ge-gfe24jgkww,gswf",
+    "ge-gfe24jgkww,gswf2",
+    "ge-gfe27jmkes,gswf",
+    "ge-gfe27jmkes,gswf2",
+    "ge-gfe28gmkbb,gswf",
+    "ge-gfe28gmkbb,gswf2",
+    "ge-gfe28gskes,gswf",
+    "ge-gfe28gskes,gswf2",
+    "ge-gfe28hskss,gswf",
+    "ge-gfe28hskss,gswf2",
+    "ge-gne25jmkww,gswf",
+    "ge-gne25jmkww,gswf2",
+    "ge-gne27jstss,gswf",
+    "ge-gne27jstss,gswf2",
+    "ge-gse25hskss,gswf",
+    "ge-gse25hskss,gswf2",
+    "ge-gye22gskww,gswf",
+    "ge-gye22gskww,gswf2",
+    "ge-pfe28kmkww,gswf",
+    "ge-pfe28kmkww,gswf2",
+    "ge-pfe28kynbb,gswf",
+    "ge-pfe28kynbb,gswf2",
+    "ge-pvd28bymfs,gswf",
+    "ge-pvd28bymfs,gswf2"
+  ],
+  "planned_addition_row_keys": [
+    "ge-cwe23sshww,rpwfe",
+    "ge-gfe24jgkww,xwfe",
+    "ge-gfe27jmkes,xwfe",
+    "ge-gfe28gmkbb,rpwfe",
+    "ge-gfe28gskes,rpwfe",
+    "ge-gfe28hskss,rpwfe",
+    "ge-gne25jmkww,xwfe",
+    "ge-gne27jstss,xwfe",
+    "ge-gse25hskss,xwfe",
+    "ge-gye22gskww,rpwfe",
+    "ge-pfe28kmkww,rpwfe",
+    "ge-pfe28kynbb,rpwfe",
+    "ge-pvd28bymfs,xwfe"
+  ],
+  "generated_at": "2026-07-11T23:48:17.499Z",
+  "source_command": "npm run buckparts:gswf-wrong-part-repair-supabase-compat-sync-guarded-apply",
+  "proven_facts": [
+    "PROVEN: mode=dry_run; apply_status=DRY_RUN_READY; data_mutation=false; supabase_mutation_authorized=false.",
+    "PROVEN: sync_plan_rel_path=data/fridge/batch-production/drafts/gswf-wrong-part-repair-supabase-compat-sync-plan-owner-review-v1.json.",
+    "PROVEN: planned_slug_count=13; planned_removals=26; planned_additions=13.",
+    "PROVEN: owner_approval_present=false; owner_approval_valid=false; decision_id=none.",
+    "PROVEN: excluded_slugs_untouched=ge-gfe28hmkww|ge-gsc25frshss|ge-gse26gshess|ge-gte18gsnrss.",
+    "PROVEN: csv_apply_commit=8361fba.",
+    "PROVEN: no founder approval artifact at data/owner-decisions/gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json (expected for this dry-run lane).",
+    "PROVEN: sync plan shape verified (read_only=true; supabase_mutation_authorized=false; removals=26; additions=13; CONFLICT_REQUIRES_REVIEW=13)."
+  ],
+  "unknown_facts": [
+    "UNKNOWN: When founder will create gswf-wrong-part-repair-supabase-compat-sync-owner-approval-v1.json.",
+    "UNKNOWN: Whether a future apply session will enable the Supabase mutation surface after approval."
+  ],
+  "risk_notes": [
+    "This executor does not mutate Supabase or CSV.",
+    "Do not run retailer_links / buy CTA / sitemap / robots / Product JSON-LD changes from this executor.",
+    "Do not include PARTIAL or no-filter excluded slugs in any future Supabase sync apply.",
+    "Apply mode remains fail-closed without a matching founder approval artifact for this exact sync plan."
+  ]
+}
